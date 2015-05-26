@@ -1,0 +1,144 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NewFtcConfigurationActivity"
+    android:orientation="vertical">
+
+    <include layout="@layout/header"
+        android:id="@+id/included_header"/>
+
+    <LinearLayout
+      android:id="@+id/holdsDevices"
+      android:layout_below="@id/included_header"
+      android:layout_above="@+id/scan_bottom"
+      android:paddingBottom="8dp"
+      android:paddingLeft="@dimen/activity_horizontal_margin"
+      android:paddingRight="@dimen/activity_horizontal_margin"
+      android:paddingTop="5dp"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+
+      <Button
+        android:id="@+id/scanButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:text="@string/scan" />
+
+      <TextView
+        android:id="@+id/scanButton_text"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/scanButton_text"/>
+
+      <LinearLayout
+        android:id="@+id/warning_layout"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+
+      <!-- red line -->
+      <View
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:background="#FF0000" />
+
+      <RelativeLayout
+        android:id="@+id/devices_holder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+          android:text="Devices:"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textStyle="bold"
+          android:textSize="16sp"/>
+
+        <include
+          layout="@layout/info_button"
+          android:id="@+id/devices_info_btn"
+          android:onClick="devices_info"/>
+
+      </RelativeLayout>
+
+      <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:orientation="vertical">
+          <ListView
+            android:id="@+id/controllersList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+          <LinearLayout
+            android:id="@+id/empty_devicelist"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"/>
+
+
+        </LinearLayout>
+      </ScrollView>
+    </LinearLayout>
+
+  <LinearLayout
+    android:id="@+id/scan_bottom"
+    android:layout_alignParentBottom="true"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="8dp"
+    android:paddingBottom="5dp">
+
+    <!-- red line -->
+    <View
+      android:layout_width="match_parent"
+      android:layout_height="2dip"
+      android:background="#FF0000" />
+
+    <RelativeLayout
+      android:id="@+id/save_holder"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+    <Button
+      android:id="@+id/writeXML"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:onClick="saveConfiguration"
+      android:textSize="12sp"
+      android:minHeight="0dp"
+      android:minWidth="0dp"
+      android:text="@string/save_configuration" />
+
+    <include
+      layout="@layout/info_button"
+      android:id="@+id/save_config_btn"
+      android:layout_width="60dp"
+      android:layout_height="60dp"
+      android:onClick="save_config"/>
+    </RelativeLayout>
+
+    <TextView
+      android:id="@+id/writeXML_text"
+      android:layout_marginBottom="5dp"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/writeXML_text"/>
+  </LinearLayout>
+
+</RelativeLayout>

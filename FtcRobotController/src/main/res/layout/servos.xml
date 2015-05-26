@@ -1,0 +1,417 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditServoControllerActivity"
+    android:orientation="vertical">
+
+    <include layout="@layout/header"
+        android:id="@+id/included_header"/>
+
+  <!-- ****************************************************** Save Button ******************************************************-->
+
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+    <Button
+      android:id="@+id/servo_controller_saveButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="5dp"
+      android:layout_marginEnd="5dp"
+      android:text="@string/done_button"
+      android:onClick="saveServoController"
+      android:layout_gravity="center_horizontal"/>
+
+    <Button
+      android:id="@+id/servo_controller_cancelButton"
+      android:layout_toRightOf="@id/servo_controller_saveButton"
+      android:layout_toEndOf="@id/servo_controller_saveButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="5dp"
+      android:layout_marginEnd="5dp"
+      android:text="@string/cancel"
+      android:onClick="cancelServoController"
+      android:layout_gravity="center_horizontal"/>
+
+  </RelativeLayout>
+
+  <!-- just draw a grey line -->
+  <View
+    android:layout_height="2dip"
+    android:background="@android:color/darker_gray"
+    android:layout_width="match_parent"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:keepScreenOn="true"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+
+        <EditText
+            android:id="@+id/servocontroller_name"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/servo_controller_name"
+            android:inputType="text"
+            android:maxLength="200"
+            android:hint="@string/name_prompt_text">
+        </EditText>
+
+        <TextView
+            android:id="@+id/controller_name_text"
+            android:layout_marginBottom="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/servo_controller_name_prompt">
+        </TextView>
+
+      <!-- just draw a red line -->
+      <View
+        android:layout_height="2dip"
+        android:background="#FF0000"
+        android:layout_width="match_parent"/>
+
+        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                     android:id="@+id/tableLayout_servocontroller"
+                     android:layout_width="match_parent"
+                     android:layout_height="match_parent" >
+
+            <!-- 2 columns -->
+            <TableRow
+                android:id="@+id/table_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/port_title"
+                    android:paddingRight="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@string/port"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/attached_title"
+                    android:text="@string/attached"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+
+
+            </TableRow>
+
+            <!-- just draw a red line -->
+            <View
+                android:layout_height="2dip"
+                android:background="#FF0000" />
+
+            <!-- ****************************************************** Servo 1 ******************************************************-->
+            <TableRow
+                android:id="@+id/row_port"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/row_port1"
+                    android:textStyle="bold"
+                    android:textSize="22sp"
+                    android:paddingRight="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@string/row_port1"/>
+
+                <CheckBox
+                    android:id="@+id/checkbox_port1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/editTextResult_servo1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLength="200"
+                        android:hint="@string/name_prompt_text">
+                    </EditText>
+
+                    <TextView
+                        android:id="@+id/namePromptText_servo1"
+                        android:layout_marginBottom="30dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/editTextResult_servo1"
+                        android:text="@string/servo_name_prompt">
+                    </TextView>
+                </RelativeLayout>
+            </TableRow>
+
+            <!-- ****************************************************** Servo 2 ******************************************************-->
+            <TableRow
+                android:id="@+id/row_port2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/port2"
+                    android:textStyle="bold"
+                    android:textSize="22sp"
+                    android:paddingRight="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@string/row_port2"/>
+
+                <CheckBox
+                    android:id="@+id/checkbox_port2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/editTextResult_servo2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLength="200"
+                        android:hint="@string/name_prompt_text">
+                    </EditText>
+
+                    <TextView
+                        android:id="@+id/namePromptText_servo2"
+                        android:layout_marginBottom="30dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/editTextResult_servo2"
+                        android:text="@string/servo_name_prompt">
+                    </TextView>
+                </RelativeLayout>
+            </TableRow>
+
+            <!-- ****************************************************** Servo 3 ******************************************************-->
+            <TableRow
+                android:id="@+id/row_port3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/port3"
+                    android:textStyle="bold"
+                    android:textSize="22sp"
+                    android:paddingRight="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@string/row_port3"/>
+
+                <CheckBox
+                    android:id="@+id/checkbox_port3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/editTextResult_servo3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLength="200"
+                        android:hint="@string/name_prompt_text">
+                    </EditText>
+
+                    <TextView
+                        android:id="@+id/namePromptText_servo3"
+                        android:layout_marginBottom="30dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/editTextResult_servo3"
+                        android:text="@string/servo_name_prompt">
+                    </TextView>
+                </RelativeLayout>
+            </TableRow>
+
+            <!-- ****************************************************** Servo 4 ******************************************************-->
+            <TableRow
+                android:id="@+id/row_port4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/port4"
+                    android:textStyle="bold"
+                    android:textSize="22sp"
+                    android:paddingRight="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@string/row_port4"/>
+
+                <CheckBox
+                    android:id="@+id/checkbox_port4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/editTextResult_servo4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLength="200"
+                        android:hint="@string/name_prompt_text">
+                    </EditText>
+
+                    <TextView
+                        android:id="@+id/namePromptText_servo4"
+                        android:layout_marginBottom="30dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/editTextResult_servo4"
+                        android:text="@string/servo_name_prompt">
+                    </TextView>
+                </RelativeLayout>
+            </TableRow>
+
+            <!-- ****************************************************** Servo 5 ******************************************************-->
+            <TableRow
+                android:id="@+id/row_port5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/port5"
+                    android:textStyle="bold"
+                    android:textSize="22sp"
+                    android:paddingRight="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@string/row_port5"/>
+
+                <CheckBox
+                    android:id="@+id/checkbox_port5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/editTextResult_servo5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLength="200"
+                        android:hint="@string/name_prompt_text">
+                    </EditText>
+
+                    <TextView
+                        android:id="@+id/namePromptText_servo5"
+                        android:layout_marginBottom="30dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/editTextResult_servo5"
+                        android:text="@string/servo_name_prompt">
+                    </TextView>
+                </RelativeLayout>
+            </TableRow>
+
+            <!-- ****************************************************** Servo 6 ******************************************************-->
+            <TableRow
+                android:id="@+id/row_port6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dip" >
+
+                <TextView
+                    android:id="@+id/port6"
+                    android:textStyle="bold"
+                    android:textSize="22sp"
+                    android:paddingRight="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingLeft="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@string/row_port6"/>
+
+                <CheckBox
+                    android:id="@+id/checkbox_port6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginStart="30dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/editTextResult_servo6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLength="200"
+                        android:hint="@string/name_prompt_text">
+                    </EditText>
+
+                    <TextView
+                        android:id="@+id/namePromptText_servo6"
+                        android:layout_marginBottom="30dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/editTextResult_servo6"
+                        android:text="@string/servo_name_prompt">
+                    </TextView>
+                </RelativeLayout>
+            </TableRow>
+
+        </TableLayout>
+    </LinearLayout>
+  </ScrollView>
+</LinearLayout>

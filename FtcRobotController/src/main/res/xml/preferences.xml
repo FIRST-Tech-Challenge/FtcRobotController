@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceCategory
+    android:title="@string/pref_wifi_channel_selection_title">
+
+    <PreferenceScreen
+      android:title="Change Wifi Channel"
+      android:key="pref_launch_settings">
+      <intent
+        android:action="android.intent.action.VIEW"
+        android:data="com.qualcomm.ftcrobotcontroller.FtcWifiChannelSelectorActivity"
+        android:targetPackage="com.qualcomm.ftcrobotcontroller"
+        android:targetClass="com.qualcomm.ftcrobotcontroller.FtcWifiChannelSelectorActivity" />
+    </PreferenceScreen>
+  </PreferenceCategory>
+
+  <PreferenceCategory
+    android:title="@string/pref_configure_robot_title">
+    <PreferenceScreen
+      android:title="@string/configure_activity">
+      <intent
+        android:action="android.intent.action.VIEW"
+        android:data="com.qualcomm.ftcrobotcontroller.FtcConfigurationActivity"
+        android:targetPackage="com.qualcomm.ftcrobotcontroller"
+        android:targetClass="com.qualcomm.ftcrobotcontroller.FtcConfigurationActivity" />
+    </PreferenceScreen>
+
+    <PreferenceScreen
+      android:title="@string/title_activity_load">
+      <intent
+        android:action="android.intent.action.VIEW"
+        android:data="com.qualcomm.ftcrobotcontroller.FtcLoadFileActivity"
+        android:targetPackage="com.qualcomm.ftcrobotcontroller"
+        android:targetClass="com.qualcomm.ftcrobotcontroller.FtcLoadFileActivity" />
+    </PreferenceScreen>
+
+    <PreferenceScreen
+      android:title="@string/title_activity_autoconfigure">
+      <intent
+        android:action="android.intent.action.VIEW"
+        android:data="com.qualcomm.ftcrobotcontroller.AutoConfigureActivity"
+        android:targetPackage="com.qualcomm.ftcrobotcontroller"
+        android:targetClass="com.qualcomm.ftcrobotcontroller.AutoConfigureActivity" />
+    </PreferenceScreen>
+  </PreferenceCategory>
+</PreferenceScreen>

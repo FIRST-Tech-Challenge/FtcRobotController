@@ -1,0 +1,2 @@
+# ignore the .DS_Store files (which are by the MacOS Finder).
+.DS_Store

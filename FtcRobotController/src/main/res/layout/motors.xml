@@ -1,0 +1,212 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditMotorControllerActivity"
+    android:orientation="vertical">
+
+    <include layout="@layout/header"
+        android:id="@+id/included_header"/>
+
+  <RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+    <Button
+      android:id="@+id/motor_controller_saveButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="5dp"
+      android:layout_marginEnd="5dp"
+      android:text="@string/done_button"
+      android:onClick="saveMotorController"
+      android:layout_gravity="center_horizontal"/>
+
+    <Button
+      android:id="@+id/motor_controller_cancelButton"
+      android:layout_toRightOf="@id/motor_controller_saveButton"
+      android:layout_toEndOf="@id/motor_controller_saveButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="5dp"
+      android:layout_marginEnd="5dp"
+      android:text="@string/cancel"
+      android:onClick="cancelMotorController"
+      android:layout_gravity="center_horizontal"/>
+  </RelativeLayout>
+
+  <!-- just draw a grey line -->
+  <View
+    android:layout_height="2dip"
+    android:background="@android:color/darker_gray"
+    android:layout_width="match_parent"/>
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:keepScreenOn="true"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" >
+
+        <EditText
+            android:id="@+id/controller_name"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:maxLength="200"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/motor_controller_name"
+            android:inputType="text"
+            android:hint="@string/name_prompt_text">
+        </EditText>
+
+        <TextView
+            android:id="@+id/controller_name_text"
+            android:layout_marginBottom="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/motor_controller_name_text">
+        </TextView>
+
+      <!-- just draw a red line -->
+      <View
+        android:layout_height="2dip"
+        android:background="#FF0000"
+        android:layout_width="match_parent"/>
+
+        <TableLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/tableLayout_servocontroller"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+        <!-- 2 columns -->
+        <TableRow
+            android:id="@+id/table_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <TextView
+                android:id="@+id/port_title"
+                android:paddingRight="20dp"
+                android:paddingLeft="5dp"
+                android:text="@string/port"
+                android:textStyle="bold"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/attached_title"
+                android:text="@string/attached"
+                android:textStyle="bold"
+                android:textSize="18sp" />
+
+
+        </TableRow>
+
+        <!-- just draw a red line -->
+        <View
+            android:layout_height="2dip"
+            android:background="#FF0000" />
+
+        <!-- ****************************************************** Motor 1 ******************************************************-->
+        <TableRow
+            android:id="@+id/row_port"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dip" >
+
+            <TextView
+                android:id="@+id/port1"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:paddingRight="20dp"
+                android:paddingLeft="5dp"
+                android:text="@string/motor_port1"/>
+
+            <CheckBox
+                android:id="@+id/checkbox_port1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/editTextResult_motor1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLength="200"
+                    android:hint="@string/motor_name">
+                </EditText>
+
+                <TextView
+                    android:id="@+id/titleTextView_motor1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/editTextResult_motor1"
+                    android:text="@string/motor_name_prompt">
+                </TextView>
+            </RelativeLayout>
+        </TableRow>
+
+        <!-- ****************************************************** Motor 2 ******************************************************-->
+        <TableRow
+            android:id="@+id/row_port2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="2dip" >
+
+            <TextView
+                android:id="@+id/port2"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:paddingRight="20dp"
+                android:paddingLeft="5dp"
+                android:text="@string/motor_port2"/>
+
+            <CheckBox
+                android:id="@+id/checkbox_port2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/editTextResult_motor2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:inputType="text"
+                    android:maxLength="200"
+                    android:hint="@string/name_prompt_text">
+                </EditText>
+
+                <TextView
+                    android:id="@+id/namePromptText_motor2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/editTextResult_motor2"
+                    android:text="@string/motor_name_prompt">
+                </TextView>
+            </RelativeLayout>
+        </TableRow>
+      </TableLayout>
+    </LinearLayout>
+  </ScrollView>
+</LinearLayout>
