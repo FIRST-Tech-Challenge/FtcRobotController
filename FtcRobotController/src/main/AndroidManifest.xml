@@ -57,7 +57,7 @@
       android:name=".FtcWifiChannelSelectorActivity"
       android:label="@string/app_name" >
       <intent-filter>
-        <action android:name="@string/action_intent_wifi_channel_selector"/>
+        <action android:name="ActionWifiChannelSelection"/>
         <category android:name="android.intent.category.DEFAULT" />
       </intent-filter>
     </activity>
