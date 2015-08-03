@@ -66,19 +66,12 @@ public class NxtTeleOp extends OpMode {
 
   int numOpLoops = 1;
 
-  /**
-   * Constructor
-   */
-  public NxtTeleOp() {
-
-  }
-
   /*
    * Code to run when the op mode is first enabled goes here
    * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
    */
   @Override
-  public void start() {
+  public void init() {
 
     motorRight = hardwareMap.dcMotor.get("motor_2");
     motorLeft = hardwareMap.dcMotor.get("motor_1");
@@ -226,7 +219,7 @@ public class NxtTeleOp extends OpMode {
 
     // Every 17 loops, switch to read mode so we can read data from the NXT device.
     // Only necessary on NXT devices.
-    if (numOpLoops % 19 == 0) {
+    if (wheelController.getMotorControllerDeviceMode() == DcMotorController.DeviceMode.READ_ONLY) {
 
       // Update the reads after some loops, when the command has successfully propagated through.
       telemetry.addData("Text", "free flow text");
@@ -244,21 +237,10 @@ public class NxtTeleOp extends OpMode {
     // Update the current devMode
     devMode = wheelController.getMotorControllerDeviceMode();
     numOpLoops++;
-
-  }
-
-  /*
-   * Code to run when the op mode is first disabled goes here
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#stop()
-   */
-  @Override
-  public void stop() {
-
   }
 
   // If the device is in either of these two modes, the op mode is allowed to write to the HW.
   private boolean allowedToWrite(){
     return (devMode == DcMotorController.DeviceMode.WRITE_ONLY);
   }
-
 }

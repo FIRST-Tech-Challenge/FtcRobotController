@@ -79,12 +79,12 @@ public class K9TeleOp extends OpMode {
 	}
 
 	/*
-	 * Code to run when the op mode is first enabled goes here
+	 * Code to run when the op mode is initialized goes here
 	 * 
-	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#init()
 	 */
 	@Override
-	public void start() {
+	public void init() {
 
 
 		/*

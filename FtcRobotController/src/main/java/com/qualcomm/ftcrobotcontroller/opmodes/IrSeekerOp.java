@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Qualcomm Technologies Inc
+ * Copyright (c) 2014, 2015 Qualcomm Technologies Inc
  *
  * All rights reserved.
  *
@@ -55,12 +55,8 @@ public class IrSeekerOp extends OpMode {
   DcMotor motorRight;
   DcMotor motorLeft;
 
-  public IrSeekerOp() {
-
-  }
-
   @Override
-  public void start() {
+  public void init() {
     irSeeker = hardwareMap.irSeekerSensor.get("ir_seeker");
     motorRight = hardwareMap.dcMotor.get("motor_2");
     motorLeft = hardwareMap.dcMotor.get("motor_1");
@@ -70,14 +66,16 @@ public class IrSeekerOp extends OpMode {
 
   @Override
   public void loop() {
+    double angle = 0;
+    double strength = 0;
 
     // Is an IR signal detected?
     if (irSeeker.signalDetected()) {
       // an IR signal is detected
 
       // Get the angle and strength of the signal
-      double angle = irSeeker.getAngle();
-      double strength = irSeeker.getStrength();
+      angle = irSeeker.getAngle();
+      strength = irSeeker.getStrength();
 
       // which direction should we move?
       if (angle < 0) {
@@ -103,11 +101,9 @@ public class IrSeekerOp extends OpMode {
       motorLeft.setPower(0.0);
     }
 
-    DbgLog.msg(irSeeker.toString());
-  }
+    telemetry.addData("angle", angle);
+    telemetry.addData("strength", strength);
 
-  @Override
-  public void stop() {
-    // no action needed
+    DbgLog.msg(irSeeker.toString());
   }
 }

@@ -45,7 +45,7 @@ public class K9Line extends OpMode {
 	
 	final static double MOTOR_POWER = 0.15; // Higher values will cause the robot to move faster
 	final static double HOLD_IR_SIGNAL_STRENGTH = 0.20; // Higher values will cause the robot to follow closer
-	final static double LIGHT_THRESHOLD = 0.5;
+	final static double LIGHT_THRESHOLD = 170;
 
 	double armPosition;
 	double clawPosition;
@@ -64,12 +64,12 @@ public class K9Line extends OpMode {
 	}
 
 	/*
-	 * Code to run when the op mode is first enabled goes here
+	 * Code to run when the op mode is initialized goes here
 	 * 
-	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#init()
 	 */
 	@Override
-	public void start() {
+	public void init() {
 
 		/*
 		 * Use the hardwareMap to get the dc motors and servos by name.
@@ -104,8 +104,8 @@ public class K9Line extends OpMode {
 		 */
 		reflectedLight = hardwareMap.lightSensor.get("light_sensor");
 
-        // turn on LED of light sensor.
-        reflectedLight.enableLed(true);
+		// turn on LED of light sensor.
+		reflectedLight.enableLed(true);
 	}
 
 	/*
@@ -115,23 +115,19 @@ public class K9Line extends OpMode {
 	 */
 	@Override
 	public void loop() {
-		double reflection = 0.0;
+		int reflection = 0;
 		double left, right = 0.0;
 		
 		// keep manipulator out of the way.
 		arm.setPosition(armPosition);
 		claw.setPosition(clawPosition);
 
-        /*
-         * As a temporary fix, turn on LED in run() event rather than in start().
-         */
-        // turn on LED of light sensor.
-        //reflectedLight.enableLed(true);
-
 		/*
 		 * read the light sensor.
 		 */
-		reflection = reflectedLight.getLightLevel();
+
+		//reflection = reflectedLight.getLightLevel();
+		reflection = reflectedLight.getLightDetectedRaw();
 		
 		/*
 		 * compare measured value to threshold.

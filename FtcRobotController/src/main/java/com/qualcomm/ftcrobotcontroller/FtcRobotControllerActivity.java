@@ -48,52 +48,45 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.qualcomm.analytics.Analytics;
 import com.qualcomm.ftccommon.DbgLog;
+import com.qualcomm.ftccommon.FtcEventLoop;
 import com.qualcomm.ftccommon.FtcRobotControllerService;
 import com.qualcomm.ftccommon.FtcRobotControllerService.FtcRobotControllerBinder;
+import com.qualcomm.ftccommon.LaunchActivityConstantsList;
 import com.qualcomm.ftccommon.Restarter;
 import com.qualcomm.ftccommon.UpdateUI;
+import com.qualcomm.ftcrobotcontroller.opmodes.FtcOpModeRegister;
 import com.qualcomm.modernrobotics.ModernRoboticsHardwareFactory;
-import com.qualcomm.robotcore.exception.RobotCoreException;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
-import com.qualcomm.robotcore.hardware.DeviceManager;
 import com.qualcomm.robotcore.hardware.HardwareFactory;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.hardware.configuration.Utility;
-import com.qualcomm.robotcore.hardware.mock.MockDeviceManager;
-import com.qualcomm.robotcore.hardware.mock.MockHardwareFactory;
-import com.qualcomm.robotcore.util.BatteryChecker;
 import com.qualcomm.robotcore.util.Dimmer;
 import com.qualcomm.robotcore.util.ImmersiveMode;
 import com.qualcomm.robotcore.util.RobotLog;
-import com.qualcomm.robotcore.util.SerialNumber;
 import com.qualcomm.robotcore.wifi.WifiDirectAssistant;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 
 public class FtcRobotControllerActivity extends Activity {
 
   private static final int REQUEST_CONFIG_WIFI_CHANNEL = 1;
-  private static final boolean USE_MOCK_HARDWARE_FACTORY = false;
+  private static final boolean USE_DEVICE_EMULATION = false;
   private static final int NUM_GAMEPADS = 2;
 
-  protected static final String VIEW_LOGS_ACTION = "com.qualcomm.ftcrobotcontroller.VIEW_LOGS";
+  public static final String CONFIGURE_FILENAME = "CONFIGURE_FILENAME";
 
   protected SharedPreferences preferences;
 
   protected UpdateUI.Callback callback;
   protected Context context;
   private Utility utility;
-  private boolean launched;
+  protected ImageButton buttonMenu;
 
   protected TextView textDeviceName;
   protected TextView textWifiDirectStatus;
@@ -104,7 +97,6 @@ public class FtcRobotControllerActivity extends Activity {
   protected ImmersiveMode immersion;
 
   protected UpdateUI updateUI;
-  protected BatteryChecker batteryChecker;
   protected Dimmer dimmer;
   protected LinearLayout entireScreenLayout;
 
@@ -148,9 +140,16 @@ public class FtcRobotControllerActivity extends Activity {
 
     setContentView(R.layout.activity_ftc_controller);
 
-    context = this;
     utility = new Utility(this);
+    context = this;
     entireScreenLayout = (LinearLayout) findViewById(R.id.entire_screen);
+    buttonMenu = (ImageButton) findViewById(R.id.menu_buttons);
+    buttonMenu.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        openOptionsMenu();
+      }
+    });
 
     textDeviceName = (TextView) findViewById(R.id.textDeviceName);
     textWifiDirectStatus = (TextView) findViewById(R.id.textWifiDirectStatus);
@@ -163,7 +162,6 @@ public class FtcRobotControllerActivity extends Activity {
     dimmer = new Dimmer(this);
     dimmer.longBright();
     Restarter restarter = new RobotRestarter();
-    Analytics analytics = new Analytics(this);
 
     updateUI = new UpdateUI(this, dimmer);
     updateUI.setRestarter(restarter);
@@ -174,9 +172,9 @@ public class FtcRobotControllerActivity extends Activity {
     PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-    launched = false;
-
     hittingMenuButtonBrightensScreen();
+
+    if (USE_DEVICE_EMULATION) { ModernRoboticsHardwareFactory.enableDeviceEmulation(); }
   }
 
   @Override
@@ -200,6 +198,7 @@ public class FtcRobotControllerActivity extends Activity {
         return false;
       }
     });
+
   }
 
   @Override
@@ -253,17 +252,22 @@ public class FtcRobotControllerActivity extends Activity {
         requestRobotRestart();
         return true;
       case R.id.action_settings:
-        startActivity(new Intent(getBaseContext(), FtcRobotControllerSettingsActivity.class));
+        // The string to launch this activity must match what's in AndroidManifest of FtcCommon for this activity.
+        Intent settingsIntent = new Intent("com.qualcomm.ftccommon.FtcRobotControllerSettingsActivity.intent.action.Launch");
+        startActivityForResult(settingsIntent, LaunchActivityConstantsList.FTC_ROBOT_CONTROLLER_ACTIVITY_CONFIGURE_ROBOT);
         return true;
       case R.id.action_about:
-        startActivity(new Intent(getBaseContext(), AboutActivity.class));
+        // The string to launch this activity must match what's in AndroidManifest of FtcCommon for this activity.
+        Intent intent = new Intent("com.qualcomm.ftccommon.configuration.AboutActivity.intent.action.Launch");
+        startActivity(intent);
         return true;
       case R.id.action_exit_app:
         finish();
         return true;
       case R.id.action_view_logs:
-        Intent viewLogsIntent = new Intent(VIEW_LOGS_ACTION);
-        viewLogsIntent.putExtra(ViewLogsActivity.FILENAME, RobotLog.getLogFilename(this));
+        // The string to launch this activity must match what's in AndroidManifest of FtcCommon for this activity.
+        Intent viewLogsIntent = new Intent("com.qualcomm.ftccommon.ViewLogsActivity.intent.action.Launch");
+        viewLogsIntent.putExtra(LaunchActivityConstantsList.VIEW_LOGS_ACTIVITY_FILENAME, RobotLog.getLogFilename(this));
         startActivity(viewLogsIntent);
         return true;
       default:
@@ -276,6 +280,7 @@ public class FtcRobotControllerActivity extends Activity {
     super.onConfigurationChanged(newConfig);
     // don't destroy assets on screen rotation
   }
+
   @Override
   protected void onActivityResult(int request, int result, Intent intent) {
     if (request == REQUEST_CONFIG_WIFI_CHANNEL) {
@@ -284,6 +289,16 @@ public class FtcRobotControllerActivity extends Activity {
         toast.setGravity(Gravity.CENTER, 0, 0);
         showToast(toast);
       }
+    }
+    if (request == LaunchActivityConstantsList.FTC_ROBOT_CONTROLLER_ACTIVITY_CONFIGURE_ROBOT) {
+      if (result == RESULT_OK) {
+        Serializable extra = intent.getSerializableExtra(FtcRobotControllerActivity.CONFIGURE_FILENAME);
+        if (extra != null) {
+          utility.saveToPreferences(extra.toString(), R.string.pref_hardware_config_filename);
+          utility.updateHeader(Utility.NO_FILE, R.string.pref_hardware_config_filename, R.id.active_filename, R.id.included_header);
+        }
+      }
+
     }
   }
 
@@ -306,52 +321,18 @@ public class FtcRobotControllerActivity extends Activity {
 
     HardwareFactory factory;
 
-    if (USE_MOCK_HARDWARE_FACTORY) {
-      // TODO: temp testing code. This will be removed in a future release
-      try {
-        factory = buildMockHardware();
-      } catch (RobotCoreException e) {
-        DbgLog.logStacktrace(e);
-        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-        return;
-      } catch (InterruptedException e) {
-        DbgLog.logStacktrace(e);
-        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-        return;
-      }
-  } else {
-      // Modern Robotics Factory for use with Modern Robotics hardware
-      ModernRoboticsHardwareFactory modernroboticsFactory = new ModernRoboticsHardwareFactory(context);
-      modernroboticsFactory.setXmlInputStream(fis);
-      factory = modernroboticsFactory;
-    }
+    // Modern Robotics Factory for use with Modern Robotics hardware
+    ModernRoboticsHardwareFactory modernRoboticsFactory = new ModernRoboticsHardwareFactory(context);
+    modernRoboticsFactory.setXmlInputStream(fis);
+    factory = modernRoboticsFactory;
 
-    eventLoop = new FtcEventLoop(factory, callback);
+    eventLoop = new FtcEventLoop(factory, new FtcOpModeRegister(), callback, this);
 
     controllerService.setCallback(callback);
     controllerService.setupRobot(eventLoop);
-
-    long milliseconds = 180000; //milliseconds
-    batteryChecker = new BatteryChecker(this, eventLoop, milliseconds);
-    batteryChecker.startBatteryMonitoring();
   }
 
   private FileInputStream fileSetup() {
-    boolean hasConfigFile = preferences.contains(getString(R.string.pref_hardware_config_filename));
-    String activeFilename = utility.getFilenameFromPrefs(R.string.pref_hardware_config_filename, Utility.NO_FILE);
-    if (!launched) {
-      if (!hasConfigFile ||
-          activeFilename.equalsIgnoreCase(Utility.NO_FILE) ||
-          activeFilename.toLowerCase().contains(Utility.UNSAVED.toLowerCase())) {
-        utility.saveToPreferences(Utility.NO_FILE, R.string.pref_hardware_config_filename);
-        DbgLog.msg("No default config file, so launching Hardware Wizard");
-        launched = true;
-        startActivity(new Intent(getBaseContext(), FtcLoadFileActivity.class));
-        return null;
-      }
-    }
-
-    utility.updateHeader(Utility.NO_FILE, R.string.pref_hardware_config_filename, R.id.active_filename, R.id.included_header);
 
     final String filename = Utility.CONFIG_FILES_DIR
         + utility.getFilenameFromPrefs(R.string.pref_hardware_config_filename, Utility.NO_FILE) + Utility.FILE_EXT;
@@ -363,35 +344,16 @@ public class FtcRobotControllerActivity extends Activity {
       String msg = "Cannot open robot configuration file - " + filename;
       utility.complainToast(msg, context);
       DbgLog.msg(msg);
-      return null;
+      utility.saveToPreferences(Utility.NO_FILE, R.string.pref_hardware_config_filename);
+      fis = null;
     }
+    utility.updateHeader(Utility.NO_FILE, R.string.pref_hardware_config_filename, R.id.active_filename, R.id.included_header);
     return fis;
-  }
-
-  // TODO: temp testing code. This will be removed in a future release
-  private MockHardwareFactory buildMockHardware() throws RobotCoreException, InterruptedException{
-    DeviceManager dm = new MockDeviceManager(null, null);
-    DcMotorController mc = dm.createUsbDcMotorController(new SerialNumber("MC"));
-    DcMotorController mc2 = dm.createUsbDcMotorController(new SerialNumber("MC2"));
-    ServoController sc = dm.createUsbServoController(new SerialNumber("SC"));
-
-    HardwareMap hwMap = new HardwareMap();
-    hwMap.dcMotor.put("left", new DcMotor(mc, 1));
-    hwMap.dcMotor.put("right", new DcMotor(mc, 2));
-    hwMap.dcMotor.put("flag", new DcMotor(mc2, 1));
-    hwMap.dcMotor.put("arm", new DcMotor(mc2, 2));
-    hwMap.servo.put("a", new Servo(sc, 1));
-    hwMap.servo.put("b", new Servo(sc, 6));
-
-    hwMap.appContext = this;
-
-    return new MockHardwareFactory(hwMap);
   }
 
   private void requestRobotShutdown() {
     if (controllerService == null) return;
     controllerService.shutdownRobot();
-    batteryChecker.endBatteryMonitoring();
   }
 
   private void requestRobotRestart() {

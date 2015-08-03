@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Qualcomm Technologies Inc
+ * Copyright (c) 2014, 2015 Qualcomm Technologies Inc
  *
  * All rights reserved.
  *
