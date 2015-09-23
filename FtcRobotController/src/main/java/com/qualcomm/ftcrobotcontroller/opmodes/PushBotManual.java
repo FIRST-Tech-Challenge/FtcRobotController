@@ -5,8 +5,9 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 // PushBotManual
 //
 /**
- * Extends the PushBotTelemetry and PushBotHardware classes to provide a basic
- * manual operational mode for the Push Bot.
+ * Provide a basic manual operational mode that uses the left and right
+ * drive motors, left arm motor, servo motors and gamepad input from two
+ * gamepads for the Push Bot.
  *
  * @author SSI Robotics
  * @version 2015-08-01-06-01
@@ -18,11 +19,11 @@ public class PushBotManual extends PushBotTelemetry
     //
     // PushBotManual
     //
-    //--------
-    // Constructs the class.
-    //
-    // The system calls this member when the class is instantiated.
-    //--------
+    /**
+     * Construct the class.
+     *
+     * The system calls this member when the class is instantiated.
+     */
     public PushBotManual ()
 
     {
@@ -36,17 +37,19 @@ public class PushBotManual extends PushBotTelemetry
         //
         // All via self-construction.
 
-    } // PushBotManual::PushBotManual
+    } // PushBotManual
 
     //--------------------------------------------------------------------------
     //
     // loop
     //
-    //--------
-    // Initializes the class.
-    //
-    // The system calls this member repeatedly while the OpMode is running.
-    //--------
+    /**
+     * Implement a state machine that controls the robot during
+     * manual-operation.  The state machine uses gamepad input to transition
+     * between states.
+     *
+     * The system calls this member repeatedly while the OpMode is running.
+     */
     @Override public void loop ()
 
     {
@@ -71,22 +74,16 @@ public class PushBotManual extends PushBotTelemetry
         //
         // Manage the drive wheel motors.
         //
-        float l_gp1_left_stick_y = -gamepad1.left_stick_y;
-        float l_left_drive_power
-            = (float)scale_motor_power (l_gp1_left_stick_y);
-
-        float l_gp1_right_stick_y = -gamepad1.right_stick_y;
-        float l_right_drive_power
-            = (float)scale_motor_power (l_gp1_right_stick_y);
+        float l_left_drive_power = scale_motor_power (-gamepad1.left_stick_y);
+        float l_right_drive_power = scale_motor_power (-gamepad1.right_stick_y);
 
         set_drive_power (l_left_drive_power, l_right_drive_power);
 
         //
         // Manage the arm motor.
         //
-        float l_gp2_left_stick_y = -gamepad2.left_stick_y;
-        float l_left_arm_power = (float)scale_motor_power (l_gp2_left_stick_y);
-        v_motor_left_arm.setPower (l_left_arm_power);
+        float l_left_arm_power = scale_motor_power (-gamepad2.left_stick_y);
+        m_left_arm_power (l_left_arm_power);
 
         //----------------------------------------------------------------------
         //
@@ -115,12 +112,8 @@ public class PushBotManual extends PushBotTelemetry
         // Send telemetry data to the driver station.
         //
         update_telemetry (); // Update common telemetry
-        telemetry.addData ("10", "GP1 Left: " + l_gp1_left_stick_y);
-        telemetry.addData ("11", "GP1 Right: " + l_gp1_right_stick_y);
-        telemetry.addData ("12", "GP2 Left: " + l_gp2_left_stick_y);
-        telemetry.addData ("13", "GP2 X: " + gamepad2.x);
-        telemetry.addData ("14", "GP2 Y: " + gamepad2.b);
+        update_gamepad_telemetry ();
 
-    } // PushBotManual::loop
+    } // loop
 
 } // PushBotManual

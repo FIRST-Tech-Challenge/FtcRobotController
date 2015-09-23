@@ -63,9 +63,9 @@ public class K9IrSeeker extends OpMode {
 	}
 
 	/*
-	 * Code to run when the op mode is initialized goes here
+	 * Code to run when the op mode is first enabled goes here
 	 * 
-	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#init()
+	 * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
 	 */
 	@Override
 	public void init() {

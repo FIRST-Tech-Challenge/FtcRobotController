@@ -60,6 +60,10 @@ public class IrSeekerOp extends OpMode {
     irSeeker = hardwareMap.irSeekerSensor.get("ir_seeker");
     motorRight = hardwareMap.dcMotor.get("motor_2");
     motorLeft = hardwareMap.dcMotor.get("motor_1");
+  }
+
+  @Override
+  public void start() {
 
     motorLeft.setDirection(DcMotor.Direction.REVERSE);
   }
@@ -78,11 +82,11 @@ public class IrSeekerOp extends OpMode {
       strength = irSeeker.getStrength();
 
       // which direction should we move?
-      if (angle < 0) {
+      if (angle < -20) {
         // we need to move to the left
         motorRight.setPower(MOTOR_POWER);
         motorLeft.setPower(-MOTOR_POWER);
-      } else if (angle > 0) {
+      } else if (angle > 20) {
         // we need to move to the right
         motorRight.setPower(-MOTOR_POWER);
         motorLeft.setPower(MOTOR_POWER);

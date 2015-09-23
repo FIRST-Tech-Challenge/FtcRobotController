@@ -112,7 +112,7 @@ public class LinearK9TeleOp extends LinearOpMode {
       telemetry.addData("neck", neck.getPosition());
       telemetry.addData("jaw", jaw.getPosition());
 
-      waitOneHardwareCycle();
+      waitOneFullHardwareCycle();
     }
   }
 }

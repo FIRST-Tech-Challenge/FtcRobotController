@@ -44,7 +44,7 @@ public class PushBotDriveTouch extends LinearOpMode {
             telemetry.addData("isPressed", String.valueOf(touchSensor.isPressed()));
 
             // Wait for a hardware cycle to allow other processes to run
-            waitOneHardwareCycle();
+            waitOneFullHardwareCycle();
         }
 
     }
