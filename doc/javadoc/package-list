@@ -1,4 +1,5 @@
 com.qualcomm.ftccommon
+com.qualcomm.hardware
 com.qualcomm.robotcore.eventloop
 com.qualcomm.robotcore.eventloop.opmode
 com.qualcomm.robotcore.exception
