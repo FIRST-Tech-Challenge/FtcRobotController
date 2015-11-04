@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 
 /*
  * An example linear op mode where the pushbot
- * will drive in a square pattern using sleep() 
+ * will drive in a square pattern using sleep()
  * and a for loop.
  */
 public class PushBotSquare extends LinearOpMode {
@@ -18,8 +18,8 @@ public class PushBotSquare extends LinearOpMode {
         leftMotor = hardwareMap.dcMotor.get("left_drive");
         rightMotor = hardwareMap.dcMotor.get("right_drive");
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        leftMotor.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
-        rightMotor.setChannelMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        leftMotor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
+        rightMotor.setMode(DcMotorController.RunMode.RUN_USING_ENCODERS);
 
         waitForStart();
 

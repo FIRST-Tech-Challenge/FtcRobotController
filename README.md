@@ -18,7 +18,48 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
   http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
 
+**************************************************************************************
 
+Release 15.11.04.001
+
+ * Added Support for Modern Robotics Gyro.
+  - The GyroSensor class now supports the MR Gyro Sensor.
+  - Users can access heading data (about Z axis)
+  - Users can also access raw gyro data (X, Y, & Z axes).
+  - Example MRGyroTest.java op mode included.
+ * Improved error messages
+  - More descriptive error messages for exceptions in user code.
+ * Updated DcMotor API
+ * Enable read mode on new address in setI2cAddress
+ * Fix so that driver station app resets the gamepads when switching op modes.
+ * USB-related code changes to make USB comm more responsive and to display more explicit error messages.
+  - Fix so that USB will recover properly if the USB bus returns garbage data.
+  - Fix USB initializtion race condition.
+  - Better error reporting during FTDI open.
+  - More explicit messages during USB failures.
+  - Fixed bug so that USB device is closed if event loop teardown method was not called.
+ * Fixed timer UI issue
+ * Fixed duplicate name UI bug (Legacy Module configuration).
+ * Fixed race condition in EventLoopManager.
+ * Fix to keep references stable when updating gamepad.
+ * For legacy Matrix motor/servo controllers removed necessity of appending "Motor" and "Servo" to controller names.
+ * Updated HT color sensor driver to use constants from ModernRoboticsUsbLegacyModule class.
+ * Updated MR color sensor driver to use constants from ModernRoboticsUsbDeviceInterfaceModule class. 
+ * Correctly handle I2C Address change in all color sensors
+ * Updated/cleaned up op modes.
+  - Updated comments in LinearI2cAddressChange.java example op mode.
+  - Replaced the calls to "setChannelMode" with "setMode" (to match the new of the DcMotor  method).
+  - Removed K9AutoTime.java op mode.
+  - Added MRGyroTest.java op mode (demonstrates how to use MR Gyro Sensor).
+  - Added MRRGBExample.java op mode (demonstrates how to use MR Color Sensor).
+  - Added HTRGBExample.java op mode (demonstrates how to use HT legacy color sensor).
+  - Added MatrixControllerDemo.java (demonstrates how to use legacy Matrix controller).
+ * Updated javadoc documentation.
+ * Updated release .apk files for Robot Controller and Driver Station apps.
+
+T. Eng
+November 5, 2015
+ 
 **************************************************************************************
 
 Release 15.10.06.002

@@ -40,7 +40,7 @@ import com.qualcomm.robotcore.util.TypeConversion;
 import java.util.concurrent.locks.Lock;
 
 /**
- * A simple example of a linear op mode that will approach an IR beacon
+ * A simple example of a linear op mode that shows how to change the I2C address.
  */
 public class LinearI2cAddressChange extends LinearOpMode {
 
@@ -48,20 +48,35 @@ public class LinearI2cAddressChange extends LinearOpMode {
   // trigger bytes used to change I2C address on ModernRobotics sensors.
   public static final byte TRIGGER_BYTE_1 = 0x55;
   public static final byte TRIGGER_BYTE_2 = (byte) 0xaa;
+
+  // Expected bytes from the Modern Robotics IR Seeker V3 memory map
   public static final byte IR_SEEKER_V3_FIRMWARE_REV = 0x12;
   public static final byte IR_SEEKER_V3_SENSOR_ID = 0x49;
   public static final byte IR_SEEKER_V3_ORIGINAL_ADDRESS = 0x38;
 
+  // Expected bytes from the Modern Robotics Color Sensor memory map
+  public static final byte COLOR_SENSOR_FIRMWARE_REV = 0x10;
+  public static final byte COLOR_SENSOR_SENSOR_ID = 0x43;
+  public static final byte COLOR_SENSOR_ORIGINAL_ADDRESS = 0x3C;
+
   public static final byte MANUFACTURER_CODE = 0x4d;
+  // Currently, this is set to expect the bytes from the IR Seeker.
+  // If you change these values so you're setting "FIRMWARE_REV" to
+  // COLOR_SENSOR_FIRMWARE_REV, and "SENSOR_ID" to "COLOR_SENSOR_SENSOR_ID",
+  // you'll be able to change the I2C address of the ModernRoboticsColorSensor.
+  // If the bytes you're expecting are different than what this op mode finds,
+  // a comparison will be printed out into the logfile.
   public static final byte FIRMWARE_REV = IR_SEEKER_V3_FIRMWARE_REV;
   public static final byte SENSOR_ID = IR_SEEKER_V3_SENSOR_ID;
 
+  // These byte values are common with most Modern Robotics sensors.
   public static final int READ_MODE = 0x80;
   public static final int ADDRESS_MEMORY_START = 0x0;
   public static final int TOTAL_MEMORY_LENGTH = 0x0c;
   public static final int BUFFER_CHANGE_ADDRESS_LENGTH = 0x03;
 
-  int port = 3;
+  // The port where your sensor is connected.
+  int port = 5;
 
   byte[] readCache;
   Lock readLock;
@@ -72,6 +87,7 @@ public class LinearI2cAddressChange extends LinearOpMode {
   // I2c addresses on Modern Robotics devices must be divisible by 2, and between 0x7e and 0x10
   // Different hardware may have different rules.
   // Be sure to read the requirements for the hardware you're using!
+  // If you use an invalid address, you may make your device completely unusable.
   int newAddress = 0x42;
 
   DeviceInterfaceModule dim;
@@ -115,8 +131,8 @@ public class LinearI2cAddressChange extends LinearOpMode {
       count++;
       // if we go too long with failure, we probably are expecting the wrong bytes.
       if (count >= 10)  {
-        telemetry.addData("I2cAddressChange", String.format("Looping too long with no change, probably have the wrong address. Current address: %02x", currentAddress));
-        hardwareMap.irSeekerSensor.get(String.format("Looping too long with no change, probably have the wrong address. Current address: %02x", currentAddress));
+        telemetry.addData("I2cAddressChange", String.format("Looping too long with no change, probably have the wrong address. Current address: 0x%02x", currentAddress));
+        hardwareMap.irSeekerSensor.get(String.format("Looping too long with no change, probably have the wrong address. Current address: 0x%02x", currentAddress));
       }
     }
 
@@ -149,7 +165,8 @@ public class LinearI2cAddressChange extends LinearOpMode {
       sleep(1000);
     }
 
-    telemetry.addData("I2cAddressChange", "Successfully changed the I2C address." + String.format("New address: %02x", newAddress));
+    telemetry.addData("I2cAddressChange", "Successfully changed the I2C address." + String.format("New address: 0x%02x", newAddress));
+    RobotLog.i("Successfully changed the I2C address." + String.format("New address: 0x%02x", newAddress));
 
     /**** IMPORTANT NOTE ******/
     // You need to add a line like this at the top of your op mode
@@ -170,7 +187,6 @@ public class LinearI2cAddressChange extends LinearOpMode {
         if (TypeConversion.unsignedByteToInt(cache[i]) != TypeConversion.unsignedByteToInt( (byte) byteArray[i])) {
           mismatch = String.format("i: %d, byteArray[i]: %02x, cache[i]: %02x", i, byteArray[i], cache[i]);
           allMatch = false;
-          break;
         }
       }
       RobotLog.e(s.toString() + "\n allMatch: " + allMatch + ", mismatch: " + mismatch);
