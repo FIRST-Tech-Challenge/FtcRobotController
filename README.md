@@ -20,6 +20,41 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
 **************************************************************************************
 
+Release 16.01.04
+
+ * Updated compileSdkVersion for apps
+ * Prevent Wifi from entering power saving mode
+ * removed unused import from driver station
+ * Corrrected "Dead zone" joystick code.
+ * LED.getDeviceName and .getConnectionInfo() return null
+ * apps check for ROBOCOL_VERSION mismatch
+ * Fix for Telemetry also has off-by-one errors in its data string sizing / short size limitations error
+ * User telemetry output is sorted.
+ * added formatting variants to DbgLog and RobotLog APIs
+ * code modified to allow for a long list of op mode names.
+ * changes to improve thread safety of RobocolDatagramSocket
+ * Fix for "missing hardware leaves robot controller disconnected from driver station" error
+ * fix for "fast tapping of Init/Start causes problems" (toast is now only instantiated on UI thread).
+ * added some log statements for thread life cycle.
+ * moved gamepad reset logic inside of initActiveOpMode() for robustness
+ * changes made to mitigate risk of race conditions on public methods.
+ * changes to try and flag when WiFi Direct name contains non-printable characters.
+ * fix to correct race condition between .run() and .close() in ReadWriteRunnableStandard.
+ * updated FTDI driver
+ * made ReadWriteRunnableStanard interface public.
+ * fixed off-by-one errors in Command constructor
+ * moved specific hardware implmentations into their own package.
+ * moved specific gamepad implemnatations to the hardware library.
+ * changed LICENSE file to new BSD version.
+ * fixed race condition when shutting down Modern Robotics USB devices.
+ * methods in the ColorSensor classes have been synchronized.
+ * corrected isBusy() status to reflect end of motion.
+ * corrected "back" button keycode.
+ * the notSupported() method of the GyroSensor class was changed to protected (it should not be public).
+
+
+**************************************************************************************
+
 Release 15.11.04.001
 
  * Added Support for Modern Robotics Gyro.
