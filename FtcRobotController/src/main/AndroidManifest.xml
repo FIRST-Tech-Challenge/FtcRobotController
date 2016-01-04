@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.qualcomm.ftcrobotcontroller"
-          android:versionCode="5"
-          android:versionName="1.25">
+          android:versionCode="6"
+          android:versionName="1.5">
 
 
   <uses-permission
@@ -12,6 +12,9 @@
   <uses-permission
     android:name="android.permission.CHANGE_WIFI_STATE"
     android:required="true" />
+  <uses-permission
+      android:name="android.permission.WAKE_LOCK"
+      android:required="true" />
   <uses-permission
     android:name="android.permission.ACCESS_NETWORK_STATE"
     android:required="true" />
@@ -45,9 +48,10 @@
       android:launchMode="singleTask" >
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
-
         <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
 
+      <intent-filter>
         <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
       </intent-filter>
 
