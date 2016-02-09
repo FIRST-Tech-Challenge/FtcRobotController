@@ -126,7 +126,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       android:textColor="#990000"
       android:textStyle="bold"
       android:minLines="2"
-      android:maxLines="4"
+      android:maxLines="6"
       android:text="" />
 
     <TextView

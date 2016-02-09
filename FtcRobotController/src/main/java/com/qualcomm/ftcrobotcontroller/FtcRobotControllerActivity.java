@@ -39,6 +39,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -72,6 +73,8 @@ import com.qualcomm.robotcore.wifi.WifiDirectAssistant;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FtcRobotControllerActivity extends Activity {
 
@@ -104,6 +107,7 @@ public class FtcRobotControllerActivity extends Activity {
   protected FtcRobotControllerService controllerService;
 
   protected FtcEventLoop eventLoop;
+  protected Queue<UsbDevice> receivedUsbAttachmentNotifications;
 
   protected class RobotRestarter implements Restarter {
 
@@ -129,15 +133,44 @@ public class FtcRobotControllerActivity extends Activity {
   @Override
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
-    if (UsbManager.ACTION_USB_ACCESSORY_ATTACHED.equals(intent.getAction())) {
-      // a new USB device has been attached
-      DbgLog.msg("USB Device attached; app restart may be needed");
+
+    if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(intent.getAction())) {
+      UsbDevice usbDevice = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+      if (usbDevice != null) {  // paranoia
+        // We might get attachment notifications before the event loop is set up, so
+        // we hold on to them and pass them along only when we're good and ready.
+        if (receivedUsbAttachmentNotifications != null) { // *total* paranoia
+          receivedUsbAttachmentNotifications.add(usbDevice);
+          passReceivedUsbAttachmentsToEventLoop();
+        }
+      }
+    }
+  }
+
+  protected void passReceivedUsbAttachmentsToEventLoop() {
+    if (this.eventLoop != null) {
+      for (;;) {
+        UsbDevice usbDevice = receivedUsbAttachmentNotifications.poll();
+        if (usbDevice == null)
+          break;
+        this.eventLoop.onUsbDeviceAttached(usbDevice);
+      }
+    }
+    else {
+      // Paranoia: we don't want the pending list to grow without bound when we don't
+      // (yet) have an event loop
+      while (receivedUsbAttachmentNotifications.size() > 100) {
+        receivedUsbAttachmentNotifications.poll();
+      }
     }
   }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    receivedUsbAttachmentNotifications = new ConcurrentLinkedQueue<UsbDevice>();
+    eventLoop = null;
 
     setContentView(R.layout.activity_ftc_controller);
 
@@ -336,6 +369,8 @@ public class FtcRobotControllerActivity extends Activity {
 
     controllerService.setCallback(callback);
     controllerService.setupRobot(eventLoop);
+
+    passReceivedUsbAttachmentsToEventLoop();
   }
 
   private FileInputStream fileSetup() {

@@ -31,6 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsUsbDeviceInterfaceModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.IrSeekerSensor;
@@ -106,7 +107,7 @@ public class LinearI2cAddressChange extends LinearOpMode {
     // I2c addresses on Modern Robotics devices must be divisible by 2, and between 0x7e and 0x10
     // Different hardware may have different rules.
     // Be sure to read the requirements for the hardware you're using!
-    IrSeekerSensor.throwIfModernRoboticsI2cAddressIsInvalid(newAddress);
+    ModernRoboticsUsbDeviceInterfaceModule.throwIfModernRoboticsI2cAddressIsInvalid(newAddress);
 
     // wait for the start button to be pressed
     waitForStart();
