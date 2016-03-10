@@ -21,6 +21,40 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
 **************************************************************************************
 
+Release 16.03.09
+
+ * Changes made to make the FTC SDK synchronous (significant change!)
+    - waitOneFullHardwareCycle() and waitForNextHardwareCycle() are no longer needed and have been deprecated.
+    - runOpMode() (for a LinearOpMode) is now decoupled from the system's hardware read/write thread.
+    - loop() (for an OpMode) is now decoupled from the system's hardware read/write thread.
+    - Methods are synchronous.
+    - For example, if you call setMode(DcMotorController.RunMode.RESET_ENCODERS) for a motor, the encoder is guaranteed to be reset when the method call is complete.
+    - For legacy module (NXT compatible), user no longer has to toggle between read and write modes when reading from or writing to a legacy device.
+ * Changes made to enhance reliability/robustness during ESD event.
+ * Changes made to make code thread safe.
+ * Debug keystore added so that user-generated robot controller APKs will all use the same signed key (to avoid conflicts if a team has multiple developer laptops for example).
+ * Firmware version information for Modern Robotics modules are now logged.
+ * Changes made to improve USB comm reliability and robustness.
+ * Added support for voltage indicator for legacy (NXT-compatible) motor controllers.
+ * Changes made to provide auto stop capabilities for op modes.
+    - A LinearOpMode class will stop when the statements in runOpMode() are complete.  User does not have to push the stop button on the driver station.
+    - If an op mode is stopped by the driver station, but there is a run away/uninterruptible thread persisting, the app will log an error message then force itself to crash to stop the runaway thread.
+ * Driver Station UI modified to display lowest measured voltage below current voltage (12V battery).
+ * Driver Station UI modified to have color background for current voltage (green=good, yellow=caution, red=danger, extremely low voltage).
+ * javadoc improved (edits and additional classes).
+ * Added app build time to About activity for driver station and robot controller apps.
+ * Display local IP addresses on Driver Station About activity.
+ * Added I2cDeviceSynchImpl.
+ * Added I2cDeviceSync interface.
+ * Added seconds() and milliseconds() to ElapsedTime for clarity.
+ * Added getCallbackCount() to I2cDevice.
+ * Added missing clearI2cPortActionFlag.
+ * Added code to create log messages while waiting for LinearOpMode shutdown.
+ * Fix so Wifi Direct Config activity will no longer launch multiple times.
+ * Added the ability to specify an alternate i2c address in software for the Modern Robotics gyro.
+ 
+**************************************************************************************
+
 Release 16.02.09
 
  * Improved battery checker feature so that voltage values get refreshed regularly (every 250 msec) on Driver Station (DS) user interface.
