@@ -18,6 +18,13 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
   http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
 
+**************************************************************************************
+
+Release 16.07.08
+
+ * For the ftc_app project, the gradle files have been modified to support Android Studio 2.1.x.
+
+
 
 **************************************************************************************
 
