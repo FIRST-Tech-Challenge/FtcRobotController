@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
+
+preferences.xml in FtcRobotController
+
 Copyright (c) 2014, 2015 Qualcomm Technologies Inc
 
 All rights reserved.
@@ -50,23 +53,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <PreferenceCategory
     android:title="@string/pref_configure_robot_title">
-
     <PreferenceScreen
-      android:title="@string/configure_activity"
-      android:key="@string/pref_launch_configure">
+        android:title="@string/pref_view_logs"
+        android:key="@string/pref_launch_viewlogs">
       <intent
-        android:action="com.qualcomm.ftccommon.configuration.FtcLoadFileActivity.intent.action.Launch"
-        android:targetPackage="com.qualcomm.ftccommon"
-        android:targetClass="com.qualcomm.ftccommon.configuration.FtcLoadFileActivity" />
-    </PreferenceScreen>
-
-    <PreferenceScreen
-      android:title="@string/title_activity_autoconfigure"
-      android:key="@string/pref_launch_autoconfigure">
-      <intent
-        android:action="com.qualcomm.ftccommon.configuration.FtcAutoconfigureActivity.intent.action.Launch"
-        android:targetPackage="com.qualcomm.ftccommon"
-        android:targetClass="com.qualcomm.ftccommon.configuration.AutoConfigureActivity" />
+        android:action="com.qualcomm.ftccommon.ViewLogsActivity.intent.action.Launch"
+        android:targetClass="com.qualcomm.ftccommon.ViewLogsActivity" />
     </PreferenceScreen>
   </PreferenceCategory>
+
 </PreferenceScreen>

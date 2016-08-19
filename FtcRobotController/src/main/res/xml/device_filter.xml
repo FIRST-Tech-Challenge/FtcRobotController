@@ -31,6 +31,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
+<!-- see also RobotUsbDevice.getUsbIdentifiers() -->
 <resources>
    <usb-device vendor-id="1027" product-id="24577" /> <!-- FT232 Modern Robotics -->
 </resources>

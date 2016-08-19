@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!--
+
+strings.xml in FtcRobotController
+
 Copyright (c) 2014, 2015 Qualcomm Technologies Inc
 
 All rights reserved.
@@ -36,34 +39,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <resources>
 
   <string name="app_name">FTC Robot Controller</string>
-  <string name="ok">OK</string>
 
-  <string name="pref_configure_robot_title">Robot Configuration Settings</string>
-  <string name="configure_activity">Configure Robot</string>
-  <string name="title_activity_wifi_channel_selector">Wifi Channel Selection</string>
-
-  <string name="restart_robot_menu_item">Restart Robot</string>
-  <string name="action_exit_app">Exit</string>
-  <string name="about_menu_item">About</string>
-  <string name="settings_activity">Settings</string>
+  <!-- Menu -->
+  <string name="inspection_mode_menu_item">Self Inspect</string>
+  <string name="programming_mode_menu_item">Programming Mode</string>
+  <string name="blocks_menu_item">Blocks</string>
   <string name="settings_menu_item">Settings</string>
-  <string name="pref_hardware_config_filename">pref_hardware_config_filename</string>
-  <string name="action_settings">Settings</string>
-  <string name="title_activity_autoconfigure">Autoconfigure Robot</string>
-
-  <!-- Fix Misconfigured Wifi Direct -->
-  <string name="title_activity_config_wifi_direct">Configure Wifi Direct</string>
-
-  <!-- View Logs -->
-  <string name="view_logs_menu_item">View logs</string>
-  <string name="action_view_logs">View logs</string>
-  <string name="title_activity_view_logs">View Logs</string>
-  <string name="button_text_clear_logs">Clear Logs</string>
+  <string name="restart_robot_menu_item">Restart Robot</string>
+  <string name="configure_robot_menu_item">Configure Robot</string>
+  <string name="about_menu_item">About</string>
+  <string name="exit_menu_item">Exit</string>
 
   <!-- Preferences -->
-  <string name="pref_launch_settings">pref_launch_settings</string>
-  <string name="pref_change_wifi_channel">Change Wifi Channel</string>
-  <string name="pref_launch_configure">pref_launch_configure</string>
-  <string name="pref_launch_autoconfigure">pref_launch_autoconfigure</string>
+  <string name="pref_view_logs">View Logs</string>
+
+  <!-- Toast messages -->  
+  <string name="toastWifiConfigurationComplete">Configuration Complete</string>
+  <string name="toastRestartingRobot">Restarting Robot</string>
 
 </resources>

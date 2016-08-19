@@ -18,6 +18,37 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
   http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
 
+
+**************************************************************************************
+
+Version 2.00 (released on 16.08.19)
+ * This is the new release for the upcoming 2016-2017 FIRST Tech Challenge Season.
+ * Channel change is enabled in the FTC Robot Controller app for Moto G 2nd and 3rd Gen phones.
+ * Users can now use annotations to register/disable their Op Modes.
+ * Changes in the Android SDK, JDK and build tool requirements (minsdk=19, java 1.7, build tools 23.0.3).
+ * Standardized units in analog input.
+ * Cleaned up code for existing analog sensor classes.
+ * setChannelMode and getChannelMode were REMOVED from the DcMotorController class.  This is important - we no longer set the motor modes through the motor controller.
+ * setMode and getMode were added to the DcMotor class.  
+ * ContinuousRotationServo class has been added to the FTC SDK.
+ * Range.clip() method has been overloaded so it can support this operation for int, short and byte integers.
+ * Some changes have been made (new methods added) on how a user can access items from the hardware map.
+ * Users can now set the zero power behavior for a DC motor so that the motor will brake or float when power is zero.
+ * Prototype Blockly Programming Mode has been added to FTC Robot Controller.  Users can place the Robot Controller into this mode, and then use a device (such as a laptop) that has a Javascript enabled browser to write Blockly-based Op Modes directly onto the Robot Controller.
+ * Users can now configure the robot remotely through the FTC Driver Station app.
+ * Android Studio project supports Android Studio 2.1.x and compile SDK Version 23 (Marshmallow).
+ * Vuforia Computer Vision SDK integrated into FTC SDK.  Users can use sample vision targets to get localization information on a standard FTC field.
+ * Project structure has been reorganized so that there is now a TeamCode package that users can use to place their local/custom Op Modes into this package.
+ * Inspection function has been integrated into the FTC Robot Controller and Driver Station Apps (Thanks Team HazMat… 9277 & 10650!).
+ * Audio cues have been incorporated into FTC SDK.
+ * Swap mechanism added to FTC Robot Controller configuration activity.  For example, if you have two motor controllers on a robot, and you misidentified them in your configuration file, you can use the Swap button to swap the devices within the configuration file (so you do not have to manually re-enter in the configuration info for the two devices).
+ * Fix mechanism added to all user to replace an electronic module easily.  For example, suppose a servo controller dies on your robot. You replace the broken module with a new module, which has a different serial number from the original servo controller.  You can use the Fix button to automatically reconfigure your configuration file to use the serial number of the new module.
+ * Improvements made to fix resiliency and responsiveness of the system.
+ * For LinearOpMode the user now must for a telemetry.update() to update the telemetry data on the driver station.  This update() mechanism ensures that the driver station gets the updated data properly and at the same time.
+ * The Auto Configure function of the Robot Controller is now template based.  If there is a commonly used robot configuration, a template can be created so that the Auto Configure mechanism can be used to quickly configure a robot of this type.
+ * The logic to detect a runaway op mode (both in the LinearOpMode and OpMode types) and to abort the run, then auto recover has been improved/implemented.
+ * Fix has been incorporated so that Logitech F310 gamepad mappings will be correct for Marshmallow users.
+
 **************************************************************************************
 
 Release 16.07.08

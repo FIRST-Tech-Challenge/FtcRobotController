@@ -34,6 +34,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
   <item
+    android:id="@+id/action_blocks"
+    android:orderInCategory="98"
+    android:showAsAction="never" 
+    android:visible="false"
+    android:title="@string/blocks_menu_item"/>
+  <item
     android:id="@+id/action_settings"
     android:orderInCategory="99"
     android:showAsAction="never"
@@ -45,10 +51,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     android:title="@string/restart_robot_menu_item"/>
 
   <item
-    android:id="@+id/action_view_logs"
+    android:id="@+id/action_configure_robot"
     android:orderInCategory="101"
     android:showAsAction="never"
-    android:title="@string/view_logs_menu_item"/>
+    android:title="@string/configure_robot_menu_item"/>
+
+  <item
+    android:id="@+id/action_programming_mode"
+    android:orderInCategory="103"
+    android:showAsAction="never"
+    android:title="@string/programming_mode_menu_item"/>
+
+  <item
+      android:id="@+id/action_inspection_mode"
+      android:orderInCategory="104"
+      android:showAsAction="never"
+      android:title="@string/inspection_mode_menu_item"/>
 
   <item
     android:id="@+id/action_about"
@@ -60,6 +78,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     android:id="@+id/action_exit_app"
     android:orderInCategory="1000"
     android:icon="@android:drawable/ic_menu_info_details"
-    android:title="@string/action_exit_app"/>
+    android:title="@string/exit_menu_item"/>
 
 </menu>
