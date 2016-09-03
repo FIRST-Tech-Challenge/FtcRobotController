@@ -329,6 +329,14 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createUserI2cDevice(com.qualcomm.robotcore.hardware.I2cController,%20int,%20UserSensorType)">createUserI2cDevice</a></strong>(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.html" title="interface in com.qualcomm.robotcore.hardware">I2cController</a>&nbsp;controller,
+                   int&nbsp;channel,
+                   UserSensorType&nbsp;type)</code>
+<div class="block">Returns a new instance of a user-defined sensor type.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>java.util.Map&lt;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>,<a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.DeviceType.html" title="enum in com.qualcomm.robotcore.hardware">DeviceManager.DeviceType</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#scanForUsbDevices()">scanForUsbDevices</a></strong>()</code>
 <div class="block">Get a listing of all Modern Robotics devices connected.</div>
@@ -585,6 +593,18 @@
                         int&nbsp;channel)</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>controller</code> - I2c Controller Module this device is conneced to</dd><dd><code>channel</code> - the channel it's connected to on the Controller</dd>
 <dt><span class="strong">Returns:</span></dt><dd>an instance of an I2c Channel device</dd></dl>
+</li>
+</ul>
+<a name="createUserI2cDevice(com.qualcomm.robotcore.hardware.I2cController, int, UserSensorType)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createUserI2cDevice</h4>
+<pre><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;createUserI2cDevice(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.html" title="interface in com.qualcomm.robotcore.hardware">I2cController</a>&nbsp;controller,
+                                 int&nbsp;channel,
+                                 UserSensorType&nbsp;type)</pre>
+<div class="block">Returns a new instance of a user-defined sensor type.</div>
 </li>
 </ul>
 <a name="createNxtDcMotorController(com.qualcomm.robotcore.hardware.LegacyModule, int)">

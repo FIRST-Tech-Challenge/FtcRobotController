@@ -123,10 +123,6 @@ extends java.lang.Object</pre>
 <div class="block">Callback to monitor when event loop changes state</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.State.html" title="enum in com.qualcomm.robotcore.eventloop">EventLoopManager.State</a></strong></code>&nbsp;</td>
-</tr>
 </table>
 </li>
 </ul>
@@ -280,7 +276,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#peerConnected()">peerConnected</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#peerConnected(boolean)">peerConnected</a></strong>(boolean&nbsp;peerLikelyChanged)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -746,13 +742,13 @@ extends java.lang.Object</pre>
 <dd><code><a href="../../../../com/qualcomm/robotcore/exception/RobotCoreException.html" title="class in com.qualcomm.robotcore.exception">RobotCoreException</a></code></dd></dl>
 </li>
 </ul>
-<a name="peerConnected()">
+<a name="peerConnected(boolean)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>peerConnected</h4>
-<pre>public&nbsp;void&nbsp;peerConnected()</pre>
+<pre>public&nbsp;void&nbsp;peerConnected(boolean&nbsp;peerLikelyChanged)</pre>
 </li>
 </ul>
 <a name="peerDisconnected()">

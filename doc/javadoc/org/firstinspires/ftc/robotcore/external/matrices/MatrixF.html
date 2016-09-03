@@ -237,6 +237,22 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/firstinspires/ftc/robotcore/external/matrices/MatrixF.html#formatAsTransform()">formatAsTransform</a></strong>()</code>
+<div class="block">A simple utility that extracts positioning information from a transformation matrix
+ and formats it in a form palatable to a human being.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/firstinspires/ftc/robotcore/external/matrices/MatrixF.html#formatAsTransform(org.firstinspires.ftc.robotcore.external.navigation.AxesReference,%20org.firstinspires.ftc.robotcore.external.navigation.AxesOrder,%20org.firstinspires.ftc.robotcore.external.navigation.AngleUnit)">formatAsTransform</a></strong>(<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AxesReference.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AxesReference</a>&nbsp;axesReference,
+                 <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AxesOrder</a>&nbsp;axesOrder,
+                 <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;unit)</code>
+<div class="block">A simple utility that extracts positioning information from a transformation matrix
+ and formats it in a form palatable to a human being.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>abstract float</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/firstinspires/ftc/robotcore/external/matrices/MatrixF.html#get(int,%20int)">get</a></strong>(int&nbsp;row,
    int&nbsp;col)</code>
@@ -661,6 +677,7 @@ public&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/
  coordinates</a> is automatically provided.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>him</code> - the 3D coordinate or 3D homogeneous coordinate that is to be transformed</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the normalized homogeneous coordinate resulting from the transformation.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="https://en.wikipedia.org/wiki/Homogeneous_coordinates">Homogeneous coordinates</a>, 
+<a href="https://en.wikipedia.org/wiki/Transformation_matrix">Transformation Matrix</a>, 
 <a href="../../../../../../org/firstinspires/ftc/robotcore/external/matrices/VectorF.html#normalized3D()"><code>VectorF.normalized3D()</code></a></dd></dl>
 </li>
 </ul>
@@ -676,6 +693,43 @@ protected&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/extern
  size of the receiver matrix.</div>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../../org/firstinspires/ftc/robotcore/external/matrices/MatrixF.html#transform(org.firstinspires.ftc.robotcore.external.matrices.VectorF)"><code>transform(VectorF)</code></a>, 
 <a href="https://en.wikipedia.org/wiki/Homogeneous_coordinates">Homogeneous coordinates</a></dd></dl>
+</li>
+</ul>
+<a name="formatAsTransform()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>formatAsTransform</h4>
+<pre>public&nbsp;java.lang.String&nbsp;formatAsTransform()</pre>
+<div class="block">A simple utility that extracts positioning information from a transformation matrix
+ and formats it in a form palatable to a human being. This should only be invoked on
+ a matrix which is a transformation matrix.
+
+ We report here using an extrinsic angle reference, meaning that all three angles are
+ rotations in the (fixed) field coordinate system, as this is perhaps easiest to
+ conceptually understand. And we use an angle order of XYZ, which results in the Z
+ angle, being applied last (after X and Y rotations) and so representing the robot's
+ heading on the field, which is often what is of most interest in robot navigation.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>a description of the angles represented by this transformation matrix.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../../org/firstinspires/ftc/robotcore/external/matrices/MatrixF.html#formatAsTransform(org.firstinspires.ftc.robotcore.external.navigation.AxesReference,%20org.firstinspires.ftc.robotcore.external.navigation.AxesOrder,%20org.firstinspires.ftc.robotcore.external.navigation.AngleUnit)"><code>formatAsTransform(AxesReference, AxesOrder, AngleUnit)</code></a>, 
+<a href="https://en.wikipedia.org/wiki/Transformation_matrix">Transformation Matrix</a></dd></dl>
+</li>
+</ul>
+<a name="formatAsTransform(org.firstinspires.ftc.robotcore.external.navigation.AxesReference, org.firstinspires.ftc.robotcore.external.navigation.AxesOrder, org.firstinspires.ftc.robotcore.external.navigation.AngleUnit)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>formatAsTransform</h4>
+<pre>public&nbsp;java.lang.String&nbsp;formatAsTransform(<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AxesReference.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AxesReference</a>&nbsp;axesReference,
+                                 <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AxesOrder</a>&nbsp;axesOrder,
+                                 <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;unit)</pre>
+<div class="block">A simple utility that extracts positioning information from a transformation matrix
+ and formats it in a form palatable to a human being. This should only be invoked on
+ a matrix which is a transformation matrix.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>axesReference</code> - the reference frame of the angles to use in reporting the transformation</dd><dd><code>axesOrder</code> - the order of the angles to use in reporting the transformation</dd><dd><code>unit</code> - the angular unit to use in reporting the transformation</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a description of the angles represented by this transformation matrix.</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../../../org/firstinspires/ftc/robotcore/external/matrices/MatrixF.html#formatAsTransform()"><code>formatAsTransform()</code></a>, 
+<a href="https://en.wikipedia.org/wiki/Transformation_matrix">Transformation Matrix</a></dd></dl>
 </li>
 </ul>
 <a name="transposed()">

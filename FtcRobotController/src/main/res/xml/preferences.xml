@@ -34,9 +34,15 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+See https://developer.android.com/guide/topics/ui/settings.html
 -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".FtcRobotControllerActivity"
+    >
 
   <PreferenceCategory
     android:title="@string/pref_change_wifi_channel">
@@ -53,6 +59,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <PreferenceCategory
     android:title="@string/pref_configure_robot_title">
+
     <PreferenceScreen
         android:title="@string/pref_view_logs"
         android:key="@string/pref_launch_viewlogs">
@@ -60,6 +67,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         android:action="com.qualcomm.ftccommon.ViewLogsActivity.intent.action.Launch"
         android:targetClass="com.qualcomm.ftccommon.ViewLogsActivity" />
     </PreferenceScreen>
+
+    <SwitchPreference
+        android:key="@string/pref_sound_on_off"
+        android:title="@string/pref_sound_on_off_title"
+        android:defaultValue="true"
+        />
+
   </PreferenceCategory>
 
 </PreferenceScreen>

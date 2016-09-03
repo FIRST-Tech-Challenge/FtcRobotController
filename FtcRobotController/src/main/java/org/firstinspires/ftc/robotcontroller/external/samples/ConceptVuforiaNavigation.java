@@ -41,7 +41,6 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -313,26 +312,6 @@ public class ConceptVuforiaNavigation extends LinearOpMode {
      * and formats it in a form palatable to a human being.
      */
     String format(OpenGLMatrix transformationMatrix) {
-        /**
-         * An easy way to understand what a transform does is to look at the location
-         * to which it transforms the origin of the coordinate system. Calling getTranslation()
-         * carries out an equivalent computation as it extracts the translational aspect.
-         */
-        VectorF translation = transformationMatrix.getTranslation();
-
-        /**
-         * Figure out in which direction we'd be looking after the transformation. Note that
-         * the decomposition of a transformation into orientation angles can be subtle. See
-         * {@link Orientation} for a full discussion.
-         *
-         * We report here using an extrinsic angle reference, meaning that all three angles are
-         * rotations in the (fixed) field coordinate system, as this is perhaps easiest to
-         * conceptually understand. And we use an angle order of XYZ, which results in the Z
-         * angle, being applied last (after X and Y rotations) and so representing the robot's
-         * heading on the field, which is often what is of most interest in robot navigation.
-         */
-        Orientation orientation = Orientation.getOrientation(transformationMatrix, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-        return String.format("%s %s", orientation.toString(), translation.toString());
+        return transformationMatrix.formatAsTransform();
     }
 }

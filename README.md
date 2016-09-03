@@ -21,6 +21,28 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
 **************************************************************************************
 
+Version 2.10 (released on 16.09.03)
+ * Support for Adafruit IMU.
+ * Improvements to ModernRoboticsI2cGyro class
+    - Block on reset of z axis.
+    - isCalibrating() returns true while gyro is calibration.
+ * Updated sample gyro program.
+ * Blockly enhancements
+    - support for android.graphics.Color.
+    - added support for ElapsedTime.
+    - improved look and legibility of blocks.
+    - support for compass sensor.
+    - support for ultrasonic sensor.
+    - support for IrSeeker.
+    - support for LED.
+    - support for color sensor.
+    - support for CRServo
+    - prompt user to configure robot before using programming mode.
+ * Provides ability to disable audio cues.
+ * various bug fixes and improvements.
+
+**************************************************************************************
+
 Version 2.00 (released on 16.08.19)
  * This is the new release for the upcoming 2016-2017 FIRST Tech Challenge Season.
  * Channel change is enabled in the FTC Robot Controller app for Moto G 2nd and 3rd Gen phones.

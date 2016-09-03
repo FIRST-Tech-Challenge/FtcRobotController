@@ -396,10 +396,16 @@ public class FtcRobotControllerActivity extends Activity {
     int id = item.getItemId();
 
     if (id == R.id.action_programming_mode) {
-      Intent programmingModeIntent = new Intent(ProgrammingModeActivity.launchIntent);
-      programmingModeIntent.putExtra(
-          LaunchActivityConstantsList.PROGRAMMING_MODE_ACTIVITY_NETWORK_TYPE, networkType);
-      startActivity(programmingModeIntent);
+      if (cfgFileMgr.getActiveConfig().isNoConfig()) {
+        // Tell the user they must configure the robot before starting programming mode.
+        AppUtil.getInstance().showToast(
+            context, context.getString(R.string.toastConfigureRobotBeforeProgrammingMode));
+      } else {
+        Intent programmingModeIntent = new Intent(ProgrammingModeActivity.launchIntent);
+        programmingModeIntent.putExtra(
+            LaunchActivityConstantsList.PROGRAMMING_MODE_ACTIVITY_NETWORK_TYPE, networkType);
+        startActivity(programmingModeIntent);
+      }
       return true;
     } else if (id == R.id.action_inspection_mode) {
       Intent inspectionModeIntent = new Intent(RcInspectionActivity.rcLaunchIntent);
