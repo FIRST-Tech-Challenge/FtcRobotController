@@ -59,7 +59,7 @@ This is done inside Android Studio directly, using the following steps:
     Start with a capital letter, and remember that there may be more similar classes later.
 
 Once your copy has been created, you should prepare it for use on your robot.
-This is done by adusting the OpMode's name, and enabling it to be displayed on the
+This is done by adjusting the OpMode's name, and enabling it to be displayed on the
 Driver Station's OpMode list.
 
 Each OpMode sample class begins with several lines of code like the ones shown below:
@@ -108,14 +108,14 @@ Note: Some names start with "Team" and others start with "team".  This is intent
 
 2)  In the new Team0417 folder, delete the TeamCode.iml file.
 
-3)  the new Team0417 folder, rename the "src/main/java/org/firstinspires/teamcode" folder
+3)  the new Team0417 folder, rename the "src/main/java/org/firstinspires/ftc/teamcode" folder
     to a matching name with a lowercase 'team' eg:  "team0417".
 
-4)  In the new team0417 folder, edit the "AndroidManifest.xml" file, change the line that contains
+4)  In the new Team0417/src/main folder, edit the "AndroidManifest.xml" file, change the line that contains
          package="org.firstinspires.ftc.teamcode"
     to be
          package="org.firstinspires.ftc.team0417"
 
-5)  Add:    include ':Team0417' to the "Gradle Scripts/settings.gradle" file.
+5)  Add:    include ':Team0417' to the "/settings.gradle" file.
     
-6)  Open up Android Studios and clean out any old files by ising the menu to "Build/Clean Project""
+6)  Open up Android Studios and clean out any old files by using the menu to "Build/Clean Project""

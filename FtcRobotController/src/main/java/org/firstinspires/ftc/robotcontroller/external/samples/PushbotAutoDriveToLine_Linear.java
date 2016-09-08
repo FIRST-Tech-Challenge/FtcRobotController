@@ -36,7 +36,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.LightSensor;
-import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
 /**
  * This file illustrates the concept of driving up to a line and then stopping.
@@ -45,7 +44,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
  *
  * The code shows using two different light sensors:
  *   The Primary sensor shown in this code is a legacy NXT Light sensor (called "light sensor")
- *   Alternative "commented out" code uses a MR Optical Distance Sensor (also called "light sensor")
+ *   Alternative "commented out" code uses a MR Optical Distance Sensor (called "sensor_ods")
  *   instead of the LEGO sensor.  Chose to use one sensor or the other.
  *
  *   Setting the correct WHITE_THRESHOLD value is key to stopping correctly.
@@ -85,7 +84,7 @@ public class PushbotAutoDriveToLine_Linear extends LinearOpMode {
 
         // get a reference to our Light Sensor object.
         lightSensor = hardwareMap.lightSensor.get("light sensor");                // Primary LEGO Light Sensor
-        //  lightSensor = hardwareMap.opticalDistanceSensor.get("light sensor");  // Alternative MR ODS sensor.
+        //  lightSensor = hardwareMap.opticalDistanceSensor.get("sensor_ods");  // Alternative MR ODS sensor.
 
         // turn on LED of light sensor.
         lightSensor.enableLed(true);

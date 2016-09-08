@@ -18,6 +18,21 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
   http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
 
+**************************************************************************************
+
+Version 2.20 (released on 16.09.08)
+  * Support for Modern Robotics Compass Sensor.
+  * Support for Modern Robotics Range Sensor.
+  * Revise device names for Pushbot templates to match the names used in Pushbot guide.
+  * Fixed bug so that IrSeekerSensorV3 device is accessible as IrSeekerSensor in hardwareMap.
+  * Modified computer vision code to require an individual Vuforia license (per legal requirement from PTC).
+  * Minor fixes.
+  * Blockly enhancements:
+     - Support for Voltage Sensor.
+     - Support for Analog Input.
+     - Support for Analog Output.
+     - Support for Light Sensor.
+     - Support for Servo Controller.
 
 **************************************************************************************
 

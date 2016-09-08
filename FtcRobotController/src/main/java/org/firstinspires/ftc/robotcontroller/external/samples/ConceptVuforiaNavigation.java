@@ -78,7 +78,10 @@ import java.util.List;
  * see  ftc_app/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
+ *
+ * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
+ * is explained below.
  */
 
 @Autonomous(name="Concept: Vuforia Navigation", group ="Concept")
@@ -105,9 +108,22 @@ public class ConceptVuforiaNavigation extends LinearOpMode {
          *
          * Note that in addition to indicating which camera is in use, we also need to tell the system
          * the location of the phone on the robot; see phoneLocationOnRobot below.
+         *
+         * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
+         * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
+         * Vuforia will not load without a valid license being provided. Vuforia 'Development' license
+         * keys, which is what is needed here, can be obtained free of charge from the Vuforia developer
+         * web site at https://developer.vuforia.com/license-manager.
+         *
+         * Valid Vuforia license keys are always 380 characters long, and look as if they contain mostly
+         * random data. As an example, here is a example of a fragment of a valid key:
+         *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
+         * Once you've obtained a license key, copy the string form of the key from the Vuforia web site
+         * and paste it in to your code as the value of the 'vuforiaLicenseKey' field of the
+         * {@link Parameters} instance with which you initialize Vuforia.
          */
-
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
+        parameters.vuforiaLicenseKey = "ATsODcD/////AAAAAVw2lR...d45oGpdljdOh5LuFB9nDNfckoxb8COxKSFX";
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
