@@ -1,0 +1,817 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>I2cDevice</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="I2cDevice";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../index-all.html">Index</a></li>
+<li><a href="../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../com/qualcomm/robotcore/hardware/I2cControllerPortDeviceImpl.html" title="class in com.qualcomm.robotcore.hardware"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceImpl.html" title="class in com.qualcomm.robotcore.hardware"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../index.html?com/qualcomm/robotcore/hardware/I2cDevice.html" target="_top">Frames</a></li>
+<li><a href="I2cDevice.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">com.qualcomm.robotcore.hardware</div>
+<h2 title="Interface I2cDevice" class="title">Interface I2cDevice</h2>
+</div>
+<div class="contentContainer">
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<dl>
+<dt>All Superinterfaces:</dt>
+<dd><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>, <a href="../../../../com/qualcomm/robotcore/hardware/I2cControllerPortDevice.html" title="interface in com.qualcomm.robotcore.hardware">I2cControllerPortDevice</a></dd>
+</dl>
+<dl>
+<dt>All Known Implementing Classes:</dt>
+<dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceImpl.html" title="class in com.qualcomm.robotcore.hardware">I2cDeviceImpl</a></dd>
+</dl>
+<hr>
+<br>
+<pre>public interface <span class="strong">I2cDevice</span>
+extends <a href="../../../../com/qualcomm/robotcore/hardware/I2cControllerPortDevice.html" title="interface in com.qualcomm.robotcore.hardware">I2cControllerPortDevice</a>, <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a></pre>
+<div class="block">The <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html" title="interface in com.qualcomm.robotcore.hardware"><code>I2cDevice</code></a> interface abstracts the engine used to interact on with a specific I2c device
+ on a port of an <a href="../../../../com/qualcomm/robotcore/hardware/I2cController.html" title="interface in com.qualcomm.robotcore.hardware"><code>I2cController</code></a>.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceSynch.html" title="interface in com.qualcomm.robotcore.hardware"><code>I2cDeviceSynch</code></a></dd></dl>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested_class_summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested_classes_inherited_from_class_com.qualcomm.robotcore.hardware.HardwareDevice">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from interface&nbsp;com.qualcomm.robotcore.hardware.<a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a></h3>
+<code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.Manufacturer.html" title="enum in com.qualcomm.robotcore.hardware">HardwareDevice.Manufacturer</a></code></li>
+</ul>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#clearI2cPortActionFlag()">clearI2cPortActionFlag</a></strong>()</code>
+<div class="block">Clears the flag that <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#setI2cPortActionFlag()"><code>setI2cPortActionFlag()</code></a> sets</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#copyBufferIntoWriteBuffer(byte[])">copyBufferIntoWriteBuffer</a></strong>(byte[]&nbsp;buffer)</code>
+<div class="block">Atomically copies the provided buffer into the user portion of the write cache, beginning
+ immediately following the four-byte header.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#deregisterForPortReadyBeginEndCallback()">deregisterForPortReadyBeginEndCallback</a></strong>()</code>
+<div class="block">Unregisters any portIsReady() begin / end notifications object if any is present.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#deregisterForPortReadyCallback()">deregisterForPortReadyCallback</a></strong>()</code>
+<div class="block">Unregisters any callback currently registered.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#enableI2cReadMode(com.qualcomm.robotcore.hardware.I2cAddr,%20int,%20int)">enableI2cReadMode</a></strong>(<a href="../../../../com/qualcomm/robotcore/hardware/I2cAddr.html" title="class in com.qualcomm.robotcore.hardware">I2cAddr</a>&nbsp;i2cAddr,
+                 int&nbsp;register,
+                 int&nbsp;count)</code>
+<div class="block">Enable read mode for this I2C device.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#enableI2cWriteMode(com.qualcomm.robotcore.hardware.I2cAddr,%20int,%20int)">enableI2cWriteMode</a></strong>(<a href="../../../../com/qualcomm/robotcore/hardware/I2cAddr.html" title="class in com.qualcomm.robotcore.hardware">I2cAddr</a>&nbsp;i2cAddr,
+                  int&nbsp;register,
+                  int&nbsp;count)</code>
+<div class="block">Enable write mode for this I2C device.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getCallbackCount()">getCallbackCount</a></strong>()</code>
+<div class="block">Returns the number of callbacks ever experienced by this I2cDevice instance, whether or not
+ they were ever seen by a registered callback.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/I2cController.html" title="interface in com.qualcomm.robotcore.hardware">I2cController</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getController()">getController</a></strong>()</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;
+<div class="block"><i>Use of <a href="../../../../com/qualcomm/robotcore/hardware/I2cControllerPortDevice.html#getI2cController()"><code>I2cControllerPortDevice.getI2cController()</code></a> is suggested instead</i></div>
+</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getCopyOfReadBuffer()">getCopyOfReadBuffer</a></strong>()</code>
+<div class="block">Atomically returns a copy of that portion of the read-cache which does not include the
+ initial four-byte header section: that contains the read payload most recently read from
+ the controller.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getCopyOfWriteBuffer()">getCopyOfWriteBuffer</a></strong>()</code>
+<div class="block">Atomically returns a copy that portion of the write-cache which does not include the
+ initial four-byte header section.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyCallback.html" title="interface in com.qualcomm.robotcore.hardware">I2cController.I2cPortReadyCallback</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cPortReadyCallback()">getI2cPortReadyCallback</a></strong>()</code>
+<div class="block">Returns the callback previously registered with <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#registerForI2cPortReadyCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyCallback)"><code>registerForI2cPortReadyCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyCallback)</code></a>, or
+ null if no callback is currently registered.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cReadCache()">getI2cReadCache</a></strong>()</code>
+<div class="block">Returns access to the read-cache into which data from the controller is read.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.util.concurrent.locks.Lock</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cReadCacheLock()">getI2cReadCacheLock</a></strong>()</code>
+<div class="block">Returns access to the lock controlling the read-cache.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cWriteCache()">getI2cWriteCache</a></strong>()</code>
+<div class="block">Returns access to the write-cache from which data is written to the controller.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.util.concurrent.locks.Lock</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cWriteCacheLock()">getI2cWriteCacheLock</a></strong>()</code>
+<div class="block">Returns access to the lock controlling the write-cache.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyBeginEndNotifications.html" title="interface in com.qualcomm.robotcore.hardware">I2cController.I2cPortReadyBeginEndNotifications</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getPortReadyBeginEndCallback()">getPortReadyBeginEndCallback</a></strong>()</code>
+<div class="block">Returns the object, if any, currently registered for portIsReady() begin / end notifications</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#isArmed()">isArmed</a></strong>()</code>
+<div class="block">Returns whether, as of this instant, this I2cDevice is alive and operational in
+ its normally expected mode; that is, whether it is currently in communication
+ with its underlying hardware or whether it is in some other state</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#isI2cPortActionFlagSet()">isI2cPortActionFlagSet</a></strong>()</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;
+<div class="block"><i>this method returns a value that is rarely that which is expected</i></div>
+</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#isI2cPortInReadMode()">isI2cPortInReadMode</a></strong>()</code>
+<div class="block">Queries whether or not the controller has reported that it is in read mode.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#isI2cPortInWriteMode()">isI2cPortInWriteMode</a></strong>()</code>
+<div class="block">Queries whether or not the controller has reported that it is in write mode.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#isI2cPortReady()">isI2cPortReady</a></strong>()</code>
+<div class="block">Returns whether the I2cDevice instance has experienced a callback since the last issuance
+ of work to the controller.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#readI2cCacheFromController()">readI2cCacheFromController</a></strong>()</code>
+<div class="block">Enqueue a request to the controller to read the range of data from the HW device that
+ was previously indicated in <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#enableI2cReadMode(com.qualcomm.robotcore.hardware.I2cAddr,%20int,%20int)"><code>enableI2cReadMode(I2cAddr, int, int)</code></a> and subsequently written
+ to the controller.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#readI2cCacheFromModule()">readI2cCacheFromModule</a></strong>()</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;
+<div class="block"><i>Use of <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#readI2cCacheFromController()"><code>readI2cCacheFromController()</code></a> is suggested instead</i></div>
+</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#registerForI2cPortReadyCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyCallback)">registerForI2cPortReadyCallback</a></strong>(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyCallback.html" title="interface in com.qualcomm.robotcore.hardware">I2cController.I2cPortReadyCallback</a>&nbsp;callback)</code>
+<div class="block">Registers an object to get <a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyCallback.html#portIsReady(int)"><code>portIsReady()</code></a>
+ callbacks at regular intervals from the <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html" title="interface in com.qualcomm.robotcore.hardware"><code>I2cDevice</code></a>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#registerForPortReadyBeginEndCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyBeginEndNotifications)">registerForPortReadyBeginEndCallback</a></strong>(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyBeginEndNotifications.html" title="interface in com.qualcomm.robotcore.hardware">I2cController.I2cPortReadyBeginEndNotifications</a>&nbsp;callback)</code>
+<div class="block">Register for notifications as to when <a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyCallback.html#portIsReady(int)"><code>portIsReady()</code></a>
+ begin and end.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#setI2cPortActionFlag()">setI2cPortActionFlag</a></strong>()</code>
+<div class="block">Set the flag in the write cache that indicates that when the write cache is next transferred
+ to the controller an i2c transaction should take place.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cCacheToController()">writeI2cCacheToController</a></strong>()</code>
+<div class="block">Enqueue a request to the controller to write the current contents of the write cache
+ to the HW device.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cCacheToModule()">writeI2cCacheToModule</a></strong>()</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;
+<div class="block"><i>Use of <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cCacheToController()"><code>writeI2cCacheToController()</code></a> is suggested instead</i></div>
+</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cPortFlagOnlyToController()">writeI2cPortFlagOnlyToController</a></strong>()</code>
+<div class="block">Enqueue a request to the controller to reissue the previous i2c transaction to the HW device.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cPortFlagOnlyToModule()">writeI2cPortFlagOnlyToModule</a></strong>()</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;
+<div class="block"><i>Use of <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cPortFlagOnlyToController()"><code>writeI2cPortFlagOnlyToController()</code></a> is suggested instead</i></div>
+</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_com.qualcomm.robotcore.hardware.I2cControllerPortDevice">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;com.qualcomm.robotcore.hardware.<a href="../../../../com/qualcomm/robotcore/hardware/I2cControllerPortDevice.html" title="interface in com.qualcomm.robotcore.hardware">I2cControllerPortDevice</a></h3>
+<code><a href="../../../../com/qualcomm/robotcore/hardware/I2cControllerPortDevice.html#getI2cController()">getI2cController</a>, <a href="../../../../com/qualcomm/robotcore/hardware/I2cControllerPortDevice.html#getPort()">getPort</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_com.qualcomm.robotcore.hardware.HardwareDevice">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;com.qualcomm.robotcore.hardware.<a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a></h3>
+<code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html#close()">close</a>, <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html#getConnectionInfo()">getConnectionInfo</a>, <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html#getDeviceName()">getDeviceName</a>, <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html#getManufacturer()">getManufacturer</a>, <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html#getVersion()">getVersion</a>, <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html#resetDeviceConfigurationForOpMode()">resetDeviceConfigurationForOpMode</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="enableI2cReadMode(com.qualcomm.robotcore.hardware.I2cAddr, int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>enableI2cReadMode</h4>
+<pre>void&nbsp;enableI2cReadMode(<a href="../../../../com/qualcomm/robotcore/hardware/I2cAddr.html" title="class in com.qualcomm.robotcore.hardware">I2cAddr</a>&nbsp;i2cAddr,
+                     int&nbsp;register,
+                     int&nbsp;count)</pre>
+<div class="block">Enable read mode for this I2C device. This simply sets bytes in the header of the write-cache;
+ it does not enqueue or transmit any data.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>i2cAddr</code> - the address of the device on the I2c bus which should be read</dd><dd><code>register</code> - I2c register number within the device at which to start reading</dd><dd><code>count</code> - number of bytes to read</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cCacheToController()"><code>writeI2cCacheToController()</code></a></dd></dl>
+</li>
+</ul>
+<a name="enableI2cWriteMode(com.qualcomm.robotcore.hardware.I2cAddr, int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>enableI2cWriteMode</h4>
+<pre>void&nbsp;enableI2cWriteMode(<a href="../../../../com/qualcomm/robotcore/hardware/I2cAddr.html" title="class in com.qualcomm.robotcore.hardware">I2cAddr</a>&nbsp;i2cAddr,
+                      int&nbsp;register,
+                      int&nbsp;count)</pre>
+<div class="block">Enable write mode for this I2C device. This simply sets bytes in the header of the write-cache;
+ it does not enqueue or transmit any data.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>i2cAddr</code> - the address of the device on the I2c bus which should be written</dd><dd><code>register</code> - mem address at which to start writing</dd><dd><code>count</code> - number of bytes to write</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cCacheToController()"><code>writeI2cCacheToController()</code></a></dd></dl>
+</li>
+</ul>
+<a name="isI2cPortInReadMode()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isI2cPortInReadMode</h4>
+<pre>boolean&nbsp;isI2cPortInReadMode()</pre>
+<div class="block">Queries whether or not the controller has reported that it is in read mode.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>whether or not this port is in read mode</dd></dl>
+</li>
+</ul>
+<a name="isI2cPortInWriteMode()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isI2cPortInWriteMode</h4>
+<pre>boolean&nbsp;isI2cPortInWriteMode()</pre>
+<div class="block">Queries whether or not the controller has reported that it is in write mode.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>whether or not this port is in write mode</dd></dl>
+</li>
+</ul>
+<a name="readI2cCacheFromController()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>readI2cCacheFromController</h4>
+<pre>void&nbsp;readI2cCacheFromController()</pre>
+<div class="block">Enqueue a request to the controller to read the range of data from the HW device that
+ was previously indicated in <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#enableI2cReadMode(com.qualcomm.robotcore.hardware.I2cAddr,%20int,%20int)"><code>enableI2cReadMode(I2cAddr, int, int)</code></a> and subsequently written
+ to the controller.</div>
+</li>
+</ul>
+<a name="writeI2cCacheToController()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeI2cCacheToController</h4>
+<pre>void&nbsp;writeI2cCacheToController()</pre>
+<div class="block">Enqueue a request to the controller to write the current contents of the write cache
+ to the HW device.</div>
+</li>
+</ul>
+<a name="writeI2cPortFlagOnlyToController()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeI2cPortFlagOnlyToController</h4>
+<pre>void&nbsp;writeI2cPortFlagOnlyToController()</pre>
+<div class="block">Enqueue a request to the controller to reissue the previous i2c transaction to the HW device.</div>
+</li>
+</ul>
+<a name="setI2cPortActionFlag()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setI2cPortActionFlag</h4>
+<pre>void&nbsp;setI2cPortActionFlag()</pre>
+<div class="block">Set the flag in the write cache that indicates that when the write cache is next transferred
+ to the controller an i2c transaction should take place. This will be either a read transaction
+ or a write transaction according to whether the <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#enableI2cReadMode(com.qualcomm.robotcore.hardware.I2cAddr,%20int,%20int)"><code>enableI2cReadMode(I2cAddr, int, int)</code></a> or
+ <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#enableI2cWriteMode(com.qualcomm.robotcore.hardware.I2cAddr,%20int,%20int)"><code>enableI2cWriteMode(I2cAddr, int, int)</code></a> has most recently been called.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#clearI2cPortActionFlag()"><code>clearI2cPortActionFlag()</code></a></dd></dl>
+</li>
+</ul>
+<a name="isI2cPortActionFlagSet()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isI2cPortActionFlagSet</h4>
+<pre>@Deprecated
+boolean&nbsp;isI2cPortActionFlagSet()</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>this method returns a value that is rarely that which is expected</i></div>
+<div class="block">Returns whether the action flag is set in the read cache. This is rarely what is actually
+ desired by the <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html" title="interface in com.qualcomm.robotcore.hardware"><code>I2cDevice</code></a> client; it's use generally should be avoided.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the value of the action flag in the read cache.</dd></dl>
+</li>
+</ul>
+<a name="clearI2cPortActionFlag()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clearI2cPortActionFlag</h4>
+<pre>void&nbsp;clearI2cPortActionFlag()</pre>
+<div class="block">Clears the flag that <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#setI2cPortActionFlag()"><code>setI2cPortActionFlag()</code></a> sets</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#setI2cPortActionFlag()"><code>setI2cPortActionFlag()</code></a></dd></dl>
+</li>
+</ul>
+<a name="getI2cReadCache()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getI2cReadCache</h4>
+<pre>byte[]&nbsp;getI2cReadCache()</pre>
+<div class="block">Returns access to the read-cache into which data from the controller is read. The returned
+ byte array may be retained for repeated use; <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cReadCache()"><code>getI2cReadCache()</code></a> need not be repeatedly
+ called. The lock returned by <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cReadCacheLock()"><code>getI2cReadCacheLock()</code></a> must be held whenever the data
+ in the returned byte array is accessed. Note that the returned byte array contains an initial
+ header section, four bytes in size, which contains the information manipulated by
+ <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#enableI2cReadMode(com.qualcomm.robotcore.hardware.I2cAddr,%20int,%20int)"><code>enableI2cReadMode(I2cAddr, int, int)</code></a> and <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#enableI2cWriteMode(com.qualcomm.robotcore.hardware.I2cAddr,%20int,%20int)"><code>enableI2cWriteMode(I2cAddr, int, int)</code></a>.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the read-cache of this I2cDevice</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cReadCacheLock()"><code>getI2cReadCacheLock()</code></a>, 
+<a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getCopyOfReadBuffer()"><code>getCopyOfReadBuffer()</code></a></dd></dl>
+</li>
+</ul>
+<a name="getI2cReadCacheLock()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getI2cReadCacheLock</h4>
+<pre>java.util.concurrent.locks.Lock&nbsp;getI2cReadCacheLock()</pre>
+<div class="block">Returns access to the lock controlling the read-cache. This lock must be held a while
+ the data accessible from <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cReadCache()"><code>getI2cReadCache()</code></a> is accessed.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the lock gating access to the read cache</dd></dl>
+</li>
+</ul>
+<a name="getI2cWriteCache()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getI2cWriteCache</h4>
+<pre>byte[]&nbsp;getI2cWriteCache()</pre>
+<div class="block">Returns access to the write-cache from which data is written to the controller. The returned
+ byte array may be retained for repeated use; <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cWriteCache()"><code>getI2cWriteCache()</code></a> need not be repeatedly
+ called. The lock returned by <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cWriteCacheLock()"><code>getI2cWriteCacheLock()</code></a> must be held whenever the data
+ in the returned byte array is accessed or written. Note that the returned byte array contains
+ an inital header section, four bytes in size, which contains the information manipulated by
+ <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#enableI2cReadMode(com.qualcomm.robotcore.hardware.I2cAddr,%20int,%20int)"><code>enableI2cReadMode(I2cAddr, int, int)</code></a> and <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#enableI2cWriteMode(com.qualcomm.robotcore.hardware.I2cAddr,%20int,%20int)"><code>enableI2cWriteMode(I2cAddr, int, int)</code></a>.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the write-cache of this I2cDevice</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cWriteCacheLock()"><code>getI2cWriteCacheLock()</code></a>, 
+<a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getCopyOfWriteBuffer()"><code>getCopyOfWriteBuffer()</code></a></dd></dl>
+</li>
+</ul>
+<a name="getI2cWriteCacheLock()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getI2cWriteCacheLock</h4>
+<pre>java.util.concurrent.locks.Lock&nbsp;getI2cWriteCacheLock()</pre>
+<div class="block">Returns access to the lock controlling the write-cache. This lock must be held a while
+ the data accessible from <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cWriteCache()"><code>getI2cWriteCache()</code></a> is accessed</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the lock gating access to the write cache</dd></dl>
+</li>
+</ul>
+<a name="getCopyOfReadBuffer()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCopyOfReadBuffer</h4>
+<pre>byte[]&nbsp;getCopyOfReadBuffer()</pre>
+<div class="block">Atomically returns a copy of that portion of the read-cache which does not include the
+ initial four-byte header section: that contains the read payload most recently read from
+ the controller. The read-cache lock need not be held while executing this method.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>a copy of the read payload</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cReadCache()"><code>getI2cReadCache()</code></a></dd></dl>
+</li>
+</ul>
+<a name="getCopyOfWriteBuffer()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCopyOfWriteBuffer</h4>
+<pre>byte[]&nbsp;getCopyOfWriteBuffer()</pre>
+<div class="block">Atomically returns a copy that portion of the write-cache which does not include the
+ initial four-byte header section. The write-cache lock need not be held to execute this
+ method.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>a copy of the user-data portion of the write-cache</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cWriteCache()"><code>getI2cWriteCache()</code></a></dd></dl>
+</li>
+</ul>
+<a name="copyBufferIntoWriteBuffer(byte[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>copyBufferIntoWriteBuffer</h4>
+<pre>void&nbsp;copyBufferIntoWriteBuffer(byte[]&nbsp;buffer)</pre>
+<div class="block">Atomically copies the provided buffer into the user portion of the write cache, beginning
+ immediately following the four-byte header. The write-cache lock need not be held to execute this
+ method.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>buffer</code> - the data to copy into the write cache</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cWriteCache()"><code>getI2cWriteCache()</code></a></dd></dl>
+</li>
+</ul>
+<a name="registerForI2cPortReadyCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyCallback)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>registerForI2cPortReadyCallback</h4>
+<pre>void&nbsp;registerForI2cPortReadyCallback(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyCallback.html" title="interface in com.qualcomm.robotcore.hardware">I2cController.I2cPortReadyCallback</a>&nbsp;callback)</pre>
+<div class="block">Registers an object to get <a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyCallback.html#portIsReady(int)"><code>portIsReady()</code></a>
+ callbacks at regular intervals from the <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html" title="interface in com.qualcomm.robotcore.hardware"><code>I2cDevice</code></a>. Only one object may be registered for a callback
+ with an <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html" title="interface in com.qualcomm.robotcore.hardware"><code>I2cDevice</code></a> at any given time.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>callback</code> - </dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getI2cPortReadyCallback()"><code>getI2cPortReadyCallback()</code></a>, 
+<a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#deregisterForPortReadyCallback()"><code>deregisterForPortReadyCallback()</code></a></dd></dl>
+</li>
+</ul>
+<a name="getI2cPortReadyCallback()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getI2cPortReadyCallback</h4>
+<pre><a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyCallback.html" title="interface in com.qualcomm.robotcore.hardware">I2cController.I2cPortReadyCallback</a>&nbsp;getI2cPortReadyCallback()</pre>
+<div class="block">Returns the callback previously registered with <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#registerForI2cPortReadyCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyCallback)"><code>registerForI2cPortReadyCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyCallback)</code></a>, or
+ null if no callback is currently registered.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the currently registered callback</dd></dl>
+</li>
+</ul>
+<a name="deregisterForPortReadyCallback()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>deregisterForPortReadyCallback</h4>
+<pre>void&nbsp;deregisterForPortReadyCallback()</pre>
+<div class="block">Unregisters any callback currently registered.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#registerForI2cPortReadyCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyCallback)"><code>registerForI2cPortReadyCallback(I2cController.I2cPortReadyCallback)</code></a></dd></dl>
+</li>
+</ul>
+<a name="getCallbackCount()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCallbackCount</h4>
+<pre>int&nbsp;getCallbackCount()</pre>
+<div class="block">Returns the number of callbacks ever experienced by this I2cDevice instance, whether or not
+ they were ever seen by a registered callback. This method is mostly useful for debugging and
+ gathering of statistics.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the number of port-is-ready callbacks ever experienced by this <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html" title="interface in com.qualcomm.robotcore.hardware"><code>I2cDevice</code></a> instance</dd></dl>
+</li>
+</ul>
+<a name="isI2cPortReady()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isI2cPortReady</h4>
+<pre>boolean&nbsp;isI2cPortReady()</pre>
+<div class="block">Returns whether the I2cDevice instance has experienced a callback since the last issuance
+ of work to the controller. It is difficult to use this method effectively; in most
+ circumstances, one is better off registering a <a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyCallback.html#portIsReady(int)"><code>portIsReady()</code></a>
+ callback and putting your processing logic there. Inside the callback, the port is, by definition, ready.
+ Alternately, consider using the <a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceSynch.html" title="interface in com.qualcomm.robotcore.hardware"><code>I2cDeviceSynch</code></a> interface instead.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>whether the port is ready for new work</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceSynch.html" title="interface in com.qualcomm.robotcore.hardware"><code>I2cDeviceSynch</code></a>, 
+<a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#registerForI2cPortReadyCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyCallback)"><code>registerForI2cPortReadyCallback(I2cController.I2cPortReadyCallback)</code></a></dd></dl>
+</li>
+</ul>
+<a name="registerForPortReadyBeginEndCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyBeginEndNotifications)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>registerForPortReadyBeginEndCallback</h4>
+<pre>void&nbsp;registerForPortReadyBeginEndCallback(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyBeginEndNotifications.html" title="interface in com.qualcomm.robotcore.hardware">I2cController.I2cPortReadyBeginEndNotifications</a>&nbsp;callback)</pre>
+<div class="block">Register for notifications as to when <a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyCallback.html#portIsReady(int)"><code>portIsReady()</code></a>
+ begin and end. Only one object may be registered for such notifications with an I2cDevice at
+ any given time.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>callback</code> - </dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#getPortReadyBeginEndCallback()"><code>getPortReadyBeginEndCallback()</code></a>, 
+<a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#deregisterForPortReadyBeginEndCallback()"><code>deregisterForPortReadyBeginEndCallback()</code></a></dd></dl>
+</li>
+</ul>
+<a name="getPortReadyBeginEndCallback()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPortReadyBeginEndCallback</h4>
+<pre><a href="../../../../com/qualcomm/robotcore/hardware/I2cController.I2cPortReadyBeginEndNotifications.html" title="interface in com.qualcomm.robotcore.hardware">I2cController.I2cPortReadyBeginEndNotifications</a>&nbsp;getPortReadyBeginEndCallback()</pre>
+<div class="block">Returns the object, if any, currently registered for portIsReady() begin / end notifications</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the currently registered notification receiver, or null if none exists</dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#registerForPortReadyBeginEndCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyBeginEndNotifications)"><code>registerForPortReadyBeginEndCallback(I2cController.I2cPortReadyBeginEndNotifications)</code></a></dd></dl>
+</li>
+</ul>
+<a name="deregisterForPortReadyBeginEndCallback()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>deregisterForPortReadyBeginEndCallback</h4>
+<pre>void&nbsp;deregisterForPortReadyBeginEndCallback()</pre>
+<div class="block">Unregisters any portIsReady() begin / end notifications object if any is present.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#registerForPortReadyBeginEndCallback(com.qualcomm.robotcore.hardware.I2cController.I2cPortReadyBeginEndNotifications)"><code>registerForPortReadyBeginEndCallback(I2cController.I2cPortReadyBeginEndNotifications)</code></a></dd></dl>
+</li>
+</ul>
+<a name="isArmed()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isArmed</h4>
+<pre>boolean&nbsp;isArmed()</pre>
+<div class="block">Returns whether, as of this instant, this I2cDevice is alive and operational in
+ its normally expected mode; that is, whether it is currently in communication
+ with its underlying hardware or whether it is in some other state</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the arming status of this I2cDevice</dd></dl>
+</li>
+</ul>
+<a name="getController()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getController</h4>
+<pre>@Deprecated
+<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.html" title="interface in com.qualcomm.robotcore.hardware">I2cController</a>&nbsp;getController()</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Use of <a href="../../../../com/qualcomm/robotcore/hardware/I2cControllerPortDevice.html#getI2cController()"><code>I2cControllerPortDevice.getI2cController()</code></a> is suggested instead</i></div>
+</li>
+</ul>
+<a name="readI2cCacheFromModule()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>readI2cCacheFromModule</h4>
+<pre>@Deprecated
+void&nbsp;readI2cCacheFromModule()</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Use of <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#readI2cCacheFromController()"><code>readI2cCacheFromController()</code></a> is suggested instead</i></div>
+</li>
+</ul>
+<a name="writeI2cCacheToModule()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeI2cCacheToModule</h4>
+<pre>@Deprecated
+void&nbsp;writeI2cCacheToModule()</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Use of <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cCacheToController()"><code>writeI2cCacheToController()</code></a> is suggested instead</i></div>
+</li>
+</ul>
+<a name="writeI2cPortFlagOnlyToModule()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>writeI2cPortFlagOnlyToModule</h4>
+<pre>@Deprecated
+void&nbsp;writeI2cPortFlagOnlyToModule()</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Use of <a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cPortFlagOnlyToController()"><code>writeI2cPortFlagOnlyToController()</code></a> is suggested instead</i></div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../index-all.html">Index</a></li>
+<li><a href="../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../com/qualcomm/robotcore/hardware/I2cControllerPortDeviceImpl.html" title="class in com.qualcomm.robotcore.hardware"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceImpl.html" title="class in com.qualcomm.robotcore.hardware"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../index.html?com/qualcomm/robotcore/hardware/I2cDevice.html" target="_top">Frames</a></li>
+<li><a href="I2cDevice.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+</body>
+</html>
