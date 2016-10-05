@@ -127,7 +127,7 @@ implements java.lang.Iterable&lt;DEVICE_TYPE&gt;</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#HardwareMap.DeviceMapping()">HardwareMap.DeviceMapping</a></strong>()</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#HardwareMap.DeviceMapping(java.lang.Class)">HardwareMap.DeviceMapping</a></strong>(java.lang.Class&lt;<a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html" title="type parameter in HardwareMap.DeviceMapping">DEVICE_TYPE</a>&gt;&nbsp;deviceTypeClass)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -155,25 +155,29 @@ implements java.lang.Iterable&lt;DEVICE_TYPE&gt;</pre>
 <td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#get(java.lang.String)">get</a></strong>(java.lang.String&nbsp;deviceName)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>java.lang.Class&lt;<a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html" title="type parameter in HardwareMap.DeviceMapping">DEVICE_TYPE</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#getDeviceTypeClass()">getDeviceTypeClass</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.Iterator&lt;<a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html" title="type parameter in HardwareMap.DeviceMapping">DEVICE_TYPE</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#iterator()">iterator</a></strong>()</code>
 <div class="block">Returns an iterator over all the devices in this DeviceMapping.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#put(java.lang.String,%20DEVICE_TYPE)">put</a></strong>(java.lang.String&nbsp;deviceName,
    <a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html" title="type parameter in HardwareMap.DeviceMapping">DEVICE_TYPE</a>&nbsp;device)</code>
 <div class="block">Registers a new device in this DeviceMapping under the indicated name.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#remove(java.lang.String)">remove</a></strong>(java.lang.String&nbsp;deviceName)</code>
 <div class="block">Removes the device with the indicated name (if any) from this DeviceMapping.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#size()">size</a></strong>()</code>
 <div class="block">Returns the number of devices currently in this DeviceMapping</div>
@@ -201,13 +205,13 @@ implements java.lang.Iterable&lt;DEVICE_TYPE&gt;</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="HardwareMap.DeviceMapping()">
+<a name="HardwareMap.DeviceMapping(java.lang.Class)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>HardwareMap.DeviceMapping</h4>
-<pre>public&nbsp;HardwareMap.DeviceMapping()</pre>
+<pre>public&nbsp;HardwareMap.DeviceMapping(java.lang.Class&lt;<a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html" title="type parameter in HardwareMap.DeviceMapping">DEVICE_TYPE</a>&gt;&nbsp;deviceTypeClass)</pre>
 </li>
 </ul>
 </li>
@@ -218,6 +222,15 @@ implements java.lang.Iterable&lt;DEVICE_TYPE&gt;</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getDeviceTypeClass()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDeviceTypeClass</h4>
+<pre>public&nbsp;java.lang.Class&lt;<a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html" title="type parameter in HardwareMap.DeviceMapping">DEVICE_TYPE</a>&gt;&nbsp;getDeviceTypeClass()</pre>
+</li>
+</ul>
 <a name="get(java.lang.String)">
 <!--   -->
 </a>

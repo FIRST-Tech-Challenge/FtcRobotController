@@ -70,7 +70,7 @@ android {
     // Advanced user code might just want to use Vuforia directly, so we set up the libs as needed
     buildTypes {
         release {
-            debuggable true
+            //debuggable true
             ndk {
                 abiFilters "armeabi-v7a"
             }

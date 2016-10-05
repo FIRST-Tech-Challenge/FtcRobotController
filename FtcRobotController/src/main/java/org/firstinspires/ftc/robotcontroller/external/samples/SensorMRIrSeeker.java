@@ -43,7 +43,7 @@ import com.qualcomm.robotcore.hardware.IrSeekerSensor;
  * the Modern Robotics ITR Seeker
  *
  * The op mode assumes that the IR Seeker
- * is configured with a name of "ir seeker".
+ * is configured with a name of "sensor_ir".
  *
  * Set the switch on the Modern Robotics IR beacon to 1200 at 180.  <br>
  * Turn on the IR beacon.
@@ -57,12 +57,12 @@ import com.qualcomm.robotcore.hardware.IrSeekerSensor;
 public class SensorMRIrSeeker extends LinearOpMode {
 
   @Override
-  public void runOpMode() throws InterruptedException {
+  public void runOpMode() {
 
     IrSeekerSensor irSeeker;    // Hardware Device Object
 
     // get a reference to our GyroSensor object.
-    irSeeker = hardwareMap.irSeekerSensor.get("seeker");
+    irSeeker = hardwareMap.irSeekerSensor.get("sensor_ir");
 
     // wait for the start button to be pressed.
     waitForStart();
@@ -83,7 +83,6 @@ public class SensorMRIrSeeker extends LinearOpMode {
       }
 
       telemetry.update();
-      idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
     }
   }
 }

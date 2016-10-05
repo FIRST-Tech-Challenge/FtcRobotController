@@ -65,15 +65,31 @@ becomes obsolete.
 
 ### Device Configuration Names
 
-The textual device names (assigned to a device during the robot configuration process) should
-be unambiguous, and be constructed to allow easy entry on the phone keypad.
+The following device names are used in the external samples
+ 
+** Motors
+left_drive
+right_drive
+left_arm
 
-This dictates that ONLY lower case letters, and the space character should be used.
-The names should be functional descriptions which can be used to trace wiring (eg: left motor).
-Avoid assigning numeric designations which don’t help with troubleshooting.
+** Servos
+left_hand
+right_hand
+arm
+claw
 
-* Examples of good names are: “tool”, “left motor”, “right claw servo”, “rear light sensor”
-* Examples of bad names would be: “Left_Motor”,  “motor_1”,  “Servo#2”.
+** Sensors
+sensor_color
+sensor_ir
+sensor_light
+sensor_ods
+sensor_range
+sensor_touch
+
+** Localization
+compass
+gyro
+imu 
 
 ### Device Object Names
 

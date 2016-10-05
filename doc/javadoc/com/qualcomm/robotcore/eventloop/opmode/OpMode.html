@@ -137,13 +137,33 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#msStuckDetectInit">msStuckDetectInit</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#msStuckDetectInitLoop">msStuckDetectInitLoop</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#msStuckDetectLoop">msStuckDetectLoop</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#msStuckDetectStart">msStuckDetectStart</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#msStuckDetectStop">msStuckDetectStop</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/firstinspires/ftc/robotcore/external/Telemetry.html" title="interface in org.firstinspires.ftc.robotcore.external">Telemetry</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#telemetry">telemetry</a></strong></code>
 <div class="block">The <a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#telemetry"><code>telemetry</code></a> field contains an object in which a user may accumulate data which
  is to be transmitted to the driver station.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#time">time</a></strong></code>
 <div class="block">number of seconds this op mode has been running, this is
@@ -324,12 +344,57 @@ extends java.lang.Object</pre>
 <a name="time">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>time</h4>
 <pre>public&nbsp;double time</pre>
 <div class="block">number of seconds this op mode has been running, this is
  updated before every call to loop.</div>
+</li>
+</ul>
+<a name="msStuckDetectInit">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>msStuckDetectInit</h4>
+<pre>protected&nbsp;int msStuckDetectInit</pre>
+</li>
+</ul>
+<a name="msStuckDetectInitLoop">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>msStuckDetectInitLoop</h4>
+<pre>protected&nbsp;int msStuckDetectInitLoop</pre>
+</li>
+</ul>
+<a name="msStuckDetectStart">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>msStuckDetectStart</h4>
+<pre>protected&nbsp;int msStuckDetectStart</pre>
+</li>
+</ul>
+<a name="msStuckDetectLoop">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>msStuckDetectLoop</h4>
+<pre>protected&nbsp;int msStuckDetectLoop</pre>
+</li>
+</ul>
+<a name="msStuckDetectStop">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>msStuckDetectStop</h4>
+<pre>protected&nbsp;int msStuckDetectStop</pre>
 </li>
 </ul>
 </li>

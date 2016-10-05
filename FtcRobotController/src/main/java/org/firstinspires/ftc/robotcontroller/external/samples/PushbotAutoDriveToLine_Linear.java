@@ -43,7 +43,7 @@ import com.qualcomm.robotcore.hardware.LightSensor;
  * The code is structured as a LinearOpMode
  *
  * The code shows using two different light sensors:
- *   The Primary sensor shown in this code is a legacy NXT Light sensor (called "light sensor")
+ *   The Primary sensor shown in this code is a legacy NXT Light sensor (called "sensor_light")
  *   Alternative "commented out" code uses a MR Optical Distance Sensor (called "sensor_ods")
  *   instead of the LEGO sensor.  Chose to use one sensor or the other.
  *
@@ -71,7 +71,7 @@ public class PushbotAutoDriveToLine_Linear extends LinearOpMode {
     static final double     APPROACH_SPEED  = 0.5;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         /* Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
@@ -83,7 +83,7 @@ public class PushbotAutoDriveToLine_Linear extends LinearOpMode {
         // robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // get a reference to our Light Sensor object.
-        lightSensor = hardwareMap.lightSensor.get("light sensor");                // Primary LEGO Light Sensor
+        lightSensor = hardwareMap.lightSensor.get("sensor_light");                // Primary LEGO Light Sensor
         //  lightSensor = hardwareMap.opticalDistanceSensor.get("sensor_ods");  // Alternative MR ODS sensor.
 
         // turn on LED of light sensor.
@@ -94,7 +94,8 @@ public class PushbotAutoDriveToLine_Linear extends LinearOpMode {
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
-        while (!isStarted()) {
+        // Abort this loop is started or stopped.
+        while (!(isStarted() || isStopRequested())) {
 
             // Display the light level while we are waiting to start
             telemetry.addData("Light Level", lightSensor.getLightDetected());
@@ -112,7 +113,6 @@ public class PushbotAutoDriveToLine_Linear extends LinearOpMode {
             // Display the light level while we are looking for the line
             telemetry.addData("Light Level",  lightSensor.getLightDetected());
             telemetry.update();
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
 
         // Stop all motors

@@ -86,7 +86,10 @@ public class ConceptRegisterOpModes
     // manager.register("K9 Telop",               K9botTeleopTank_Linear.class);
 
     // Sensor Samples
+    // manager.register("AdaFruit IMU",           SensorAdafruitIMU.class);
+    // manager.register("AdaFruit IMU Cal",       SensorAdafruitIMUCalibration.class);
     // manager.register("AdaFruit Color",         SensorAdafruitRGB.class);
+    // manager.register("DIM DIO",                SensorDIO.class);
     // manager.register("HT Color",               SensorHTColor.class);
     // manager.register("LEGO Light",             SensorLEGOLight.class);
     // manager.register("LEGO Touch",             SensorLEGOTouch.class);

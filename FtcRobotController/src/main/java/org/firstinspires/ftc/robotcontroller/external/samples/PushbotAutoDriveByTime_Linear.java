@@ -72,7 +72,7 @@ public class PushbotAutoDriveByTime_Linear extends LinearOpMode {
     static final double     TURN_SPEED    = 0.5;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         /*
          * Initialize the drive system variables.
@@ -96,7 +96,6 @@ public class PushbotAutoDriveByTime_Linear extends LinearOpMode {
         while (opModeIsActive() && (runtime.seconds() < 3.0)) {
             telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
-            idle();
         }
 
         // Step 2:  Spin right for 1.3 seconds
@@ -106,7 +105,6 @@ public class PushbotAutoDriveByTime_Linear extends LinearOpMode {
         while (opModeIsActive() && (runtime.seconds() < 1.3)) {
             telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
-            idle();
         }
 
         // Step 3:  Drive Backwards for 1 Second
@@ -116,7 +114,6 @@ public class PushbotAutoDriveByTime_Linear extends LinearOpMode {
         while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
-            idle();
         }
 
         // Step 4:  Stop and close the claw.
@@ -128,6 +125,5 @@ public class PushbotAutoDriveByTime_Linear extends LinearOpMode {
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);
-        idle();
     }
 }

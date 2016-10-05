@@ -40,7 +40,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 /*
  * This is an example LinearOpMode that shows how to use
  * a legacy (NXT-compatible) Touch Sensor.
- * It assumes that the touch sensor is configured with a name of "touch sensor".
+ * It assumes that the touch sensor is configured with a name of "sensor_touch".
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
@@ -52,10 +52,10 @@ public class SensorLEGOTouch extends LinearOpMode {
   TouchSensor touchSensor;  // Hardware Device Object
 
   @Override
-  public void runOpMode() throws InterruptedException {
+  public void runOpMode() {
 
     // get a reference to our Light Sensor object.
-    touchSensor = hardwareMap.touchSensor.get("touch sensor");
+    touchSensor = hardwareMap.touchSensor.get("sensor_touch");
     int counter = 0;
 
     // wait for the start button to be pressed.
@@ -63,7 +63,7 @@ public class SensorLEGOTouch extends LinearOpMode {
 
     // while the op mode is active, loop and read the light levels.
     // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
-    while (true) {
+    while (opModeIsActive()) {
 
       // send the info back to driver station using telemetry function.
       if (touchSensor.isPressed())
@@ -72,7 +72,6 @@ public class SensorLEGOTouch extends LinearOpMode {
         telemetry.addData("Touch", "Is Not Pressed");
 
       telemetry.update();
-      idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
     }
   }
 }

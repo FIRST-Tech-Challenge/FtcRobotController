@@ -66,7 +66,7 @@ public class K9botTeleopTank_Linear extends LinearOpMode {
     final double    ARM_SPEED       = 0.01 ;                            // sets rate to move servo
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         double left;
         double right;
 
@@ -118,7 +118,6 @@ public class K9botTeleopTank_Linear extends LinearOpMode {
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
             robot.waitForTick(40);
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
     }
 }
