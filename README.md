@@ -22,6 +22,66 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
   http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
 
+**************************************************************************************
+
+Version 2.6 (released on 16.12.16)
+  * Fixes for Gyro class:
+     - Improve (decrease) sensor refresh latency.
+     - fix isCalibrating issues.
+  * Blocks Programming mode changes:
+     - Blocks now ignores a device in the configuration xml if the name is empty. Other devices work in configuration work fine.
+     
+**************************************************************************************
+
+Version 2.5 (internal release on released on 16.12.13)
+  * Blocks Programming mode changes:
+     - Added blocks support for AdafruitBNO055IMU.
+     - Added Download Op Mode button to FtcBocks.html.
+     - Added support for copying blocks in one OpMode and pasting them in an other OpMode. The clipboard content is stored on the phone, so the programming mode server must be running.
+     - Modified Utilities section of the toolbox.
+     - In Programming Mode, display information about the active connections.
+     - Fixed paste location when workspace has been scrolled.
+     - Added blocks support for the android Accelerometer.
+     - Fixed issue where Blocks Upload Op Mode truncated name at first dot.
+     - Added blocks support for Android SoundPool.
+     - Added type safety to blocks for Acceleration.
+     - Added type safety to blocks for AdafruitBNO055IMU.Parameters.
+     - Added type safety to blocks for AnalogInput.
+     - Added type safety to blocks for AngularVelocity.
+     - Added type safety to blocks for Color.
+     - Added type safety to blocks for ColorSensor.
+     - Added type safety to blocks for CompassSensor.
+     - Added type safety to blocks for CRServo.
+     - Added type safety to blocks for DigitalChannel.
+     - Added type safety to blocks for ElapsedTime.
+     - Added type safety to blocks for Gamepad.
+     - Added type safety to blocks for GyroSensor.
+     - Added type safety to blocks for IrSeekerSensor.
+     - Added type safety to blocks for LED.
+     - Added type safety to blocks for LightSensor.
+     - Added type safety to blocks for LinearOpMode.
+     - Added type safety to blocks for MagneticFlux.
+     - Added type safety to blocks for MatrixF.     
+     - Added type safety to blocks for MrI2cCompassSensor.
+     - Added type safety to blocks for MrI2cRangeSensor.
+     - Added type safety to blocks for OpticalDistanceSensor.
+     - Added type safety to blocks for Orientation.
+     - Added type safety to blocks for Position.
+     - Added type safety to blocks for Quaternion.
+     - Added type safety to blocks for Servo.
+     - Added type safety to blocks for ServoController.
+     - Added type safety to blocks for Telemetry.
+     - Added type safety to blocks for Temperature.
+     - Added type safety to blocks for TouchSensor.
+     - Added type safety to blocks for UltrasonicSensor.
+     - Added type safety to blocks for VectorF.
+     - Added type safety to blocks for Velocity.
+     - Added type safety to blocks for VoltageSensor.
+     - Added type safety to blocks for VuforiaLocalizer.Parameters.
+     - Added type safety to blocks for VuforiaTrackable.
+     - Added type safety to blocks for VuforiaTrackables.
+     - Added type safety to blocks for enums in AdafruitBNO055IMU.Parameters.
+     - Added type safety to blocks for AndroidAccelerometer, AndroidGyroscope, AndroidOrientation, and AndroidTextToSpeech.
 
 **************************************************************************************
 
