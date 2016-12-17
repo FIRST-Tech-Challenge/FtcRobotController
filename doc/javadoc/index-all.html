@@ -299,11 +299,11 @@
 </dd>
 <dt><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><span class="strong">AngularVelocity</span></a> - Class in <a href="./org/firstinspires/ftc/robotcore/external/navigation/package-summary.html">org.firstinspires.ftc.robotcore.external.navigation</a></dt>
 <dd>
-<div class="block">Instances of <a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>AngularVelocity</code></a> represent a rotation rate about a set of three axes.</div>
+<div class="block">Instances of <a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>AngularVelocity</code></a> represent an instantaneous body-referenced 3D rotation rate.</div>
 </dd>
 <dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#AngularVelocity()">AngularVelocity()</a></span> - Constructor for class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#AngularVelocity(org.firstinspires.ftc.robotcore.external.navigation.AxesReference,%20org.firstinspires.ftc.robotcore.external.navigation.AxesOrder,%20org.firstinspires.ftc.robotcore.external.navigation.AngleUnit,%20float,%20float,%20float,%20long)">AngularVelocity(AxesReference, AxesOrder, AngleUnit, float, float, float, long)</a></span> - Constructor for class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
+<dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#AngularVelocity(org.firstinspires.ftc.robotcore.external.navigation.AngleUnit,%20float,%20float,%20float,%20long)">AngularVelocity(AngleUnit, float, float, float, long)</a></span> - Constructor for class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./com/qualcomm/robotcore/eventloop/opmode/AnnotatedOpModeManager.html" title="interface in com.qualcomm.robotcore.eventloop.opmode"><span class="strong">AnnotatedOpModeManager</span></a> - Interface in <a href="./com/qualcomm/robotcore/eventloop/opmode/package-summary.html">com.qualcomm.robotcore.eventloop.opmode</a></dt>
 <dd>
@@ -349,10 +349,6 @@
 <div class="block">Provides an easy and non-centralized way of determining the OpMode list
  shown on an FTC Driver Station.</div>
 </dd>
-<dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#axesOrder">axesOrder</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
-<dd>
-<div class="block">the order of axes around which our three rotations occur</div>
-</dd>
 <dt><a href="./org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation"><span class="strong">AxesOrder</span></a> - Enum in <a href="./org/firstinspires/ftc/robotcore/external/navigation/package-summary.html">org.firstinspires.ftc.robotcore.external.navigation</a></dt>
 <dd>
 <div class="block"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation"><code>AxesOrder</code></a> indicates the chronological order of axes about which the three rotations
@@ -361,10 +357,6 @@
 <dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/Orientation.html#axesOrder">axesOrder</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/Orientation.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">Orientation</a></dt>
 <dd>
 <div class="block">the order of axes around which our three rotations occur</div>
-</dd>
-<dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#axesReference">axesReference</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
-<dd>
-<div class="block">whether we have extrinsic or intrinsic rotations</div>
 </dd>
 <dt><a href="./org/firstinspires/ftc/robotcore/external/navigation/AxesReference.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation"><span class="strong">AxesReference</span></a> - Enum in <a href="./org/firstinspires/ftc/robotcore/external/navigation/package-summary.html">org.firstinspires.ftc.robotcore.external.navigation</a></dt>
 <dd>
@@ -1456,10 +1448,6 @@
 <dt><span class="strong"><a href="./com/qualcomm/robotcore/hardware/LegacyModulePortDeviceImpl.html#finishConstruction()">finishConstruction()</a></span> - Method in class com.qualcomm.robotcore.hardware.<a href="./com/qualcomm/robotcore/hardware/LegacyModulePortDeviceImpl.html" title="class in com.qualcomm.robotcore.hardware">LegacyModulePortDeviceImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/Orientation.html#firstAngle">firstAngle</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/Orientation.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">Orientation</a></dt>
-<dd>
-<div class="block">the chronologically first rotation made in the <a href="./org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation"><code>AxesOrder</code></a></div>
-</dd>
-<dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#firstAngleRate">firstAngleRate</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
 <dd>
 <div class="block">the chronologically first rotation made in the <a href="./org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation"><code>AxesOrder</code></a></div>
 </dd>
@@ -4707,10 +4695,6 @@
 <dd>
 <div class="block">the chronologically second rotation made in the <a href="./org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation"><code>AxesOrder</code></a></div>
 </dd>
-<dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#secondAngleRate">secondAngleRate</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
-<dd>
-<div class="block">the chronologically second rotation made in the <a href="./org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation"><code>AxesOrder</code></a></div>
-</dd>
 <dt><span class="strong"><a href="./com/qualcomm/robotcore/util/ElapsedTime.html#seconds()">seconds()</a></span> - Method in class com.qualcomm.robotcore.util.<a href="./com/qualcomm/robotcore/util/ElapsedTime.html" title="class in com.qualcomm.robotcore.util">ElapsedTime</a></dt>
 <dd>
 <div class="block">Returns the same data as does <a href="./com/qualcomm/robotcore/util/ElapsedTime.html#time()"><code>ElapsedTime.time()</code></a>, but always in units of seconds</div>
@@ -5568,10 +5552,6 @@
 <dd>
 <div class="block">the chronologically third rotation made in the <a href="./org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation"><code>AxesOrder</code></a></div>
 </dd>
-<dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#thirdAngleRate">thirdAngleRate</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
-<dd>
-<div class="block">the chronologically third rotation made in the <a href="./org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation"><code>AxesOrder</code></a></div>
-</dd>
 <dt><span class="strong"><a href="./com/qualcomm/robotcore/util/Range.html#throwIfRangeIsInvalid(double,%20double,%20double)">throwIfRangeIsInvalid(double, double, double)</a></span> - Static method in class com.qualcomm.robotcore.util.<a href="./com/qualcomm/robotcore/util/Range.html" title="class in com.qualcomm.robotcore.util">Range</a></dt>
 <dd>
 <div class="block">Throw an IllegalArgumentException if 'number' is less than 'min' or greater than 'max'</div>
@@ -5608,10 +5588,6 @@
 <dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/Orientation.html#toAxesOrder(org.firstinspires.ftc.robotcore.external.navigation.AxesOrder)">toAxesOrder(AxesOrder)</a></span> - Method in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/Orientation.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">Orientation</a></dt>
 <dd>
 <div class="block">Converst the <a href="./org/firstinspires/ftc/robotcore/external/navigation/Orientation.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Orientation</code></a> to an equivalent one with the indicated ordering of axes</div>
-</dd>
-<dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#toAxesReference(org.firstinspires.ftc.robotcore.external.navigation.AxesReference)">toAxesReference(AxesReference)</a></span> - Method in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
-<dd>
-<div class="block">Converts the <a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>AngularVelocity</code></a> to an equivalent one with the indicted point of view.</div>
 </dd>
 <dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/Orientation.html#toAxesReference(org.firstinspires.ftc.robotcore.external.navigation.AxesReference)">toAxesReference(AxesReference)</a></span> - Method in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/Orientation.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">Orientation</a></dt>
 <dd>
@@ -6373,6 +6349,11 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/Acceleration.html#xAccel">xAccel</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/Acceleration.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">Acceleration</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#xRotationRate">xRotationRate</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
+<dd>
+<div class="block">the instantaneous body-referenced rotation rate about the x-axis in units
+ of "<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#unit"><code>AngularVelocity.unit</code></a>s per second".</div>
+</dd>
 <dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/Velocity.html#xVeloc">xVeloc</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/Velocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">Velocity</a></dt>
 <dd>&nbsp;</dd>
 </dl>
@@ -6395,6 +6376,11 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/Acceleration.html#yAccel">yAccel</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/Acceleration.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">Acceleration</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#yRotationRate">yRotationRate</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
+<dd>
+<div class="block">the instantaneous body-referenced rotation rate about the y-axis in units
+ of "<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#unit"><code>AngularVelocity.unit</code></a>s per second".</div>
+</dd>
 <dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/Velocity.html#yVeloc">yVeloc</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/Velocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">Velocity</a></dt>
 <dd>&nbsp;</dd>
 </dl>
@@ -6419,6 +6405,11 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/TempUnit.html#zeroCelsiusK">zeroCelsiusK</a></span> - Static variable in enum org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/TempUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">TempUnit</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#zRotationRate">zRotationRate</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">AngularVelocity</a></dt>
+<dd>
+<div class="block">the instantaneous body-referenced rotation rate about the z-axis in units
+ of "<a href="./org/firstinspires/ftc/robotcore/external/navigation/AngularVelocity.html#unit"><code>AngularVelocity.unit</code></a>s per second".</div>
+</dd>
 <dt><span class="strong"><a href="./com/qualcomm/ftccommon/LaunchActivityConstantsList.html#ZTE_WIFI_CHANNEL_EDITOR_PACKAGE">ZTE_WIFI_CHANNEL_EDITOR_PACKAGE</a></span> - Static variable in class com.qualcomm.ftccommon.<a href="./com/qualcomm/ftccommon/LaunchActivityConstantsList.html" title="class in com.qualcomm.ftccommon">LaunchActivityConstantsList</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./org/firstinspires/ftc/robotcore/external/navigation/Velocity.html#zVeloc">zVeloc</a></span> - Variable in class org.firstinspires.ftc.robotcore.external.navigation.<a href="./org/firstinspires/ftc/robotcore/external/navigation/Velocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">Velocity</a></dt>

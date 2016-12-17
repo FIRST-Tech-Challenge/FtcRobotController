@@ -63,9 +63,8 @@ public class TemplateOpMode_Iterative extends OpMode
 {
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-
-    // private DcMotor leftMotor = null;
-    // private DcMotor rightMotor = null;
+    private DcMotor leftMotor = null;
+    private DcMotor rightMotor = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
