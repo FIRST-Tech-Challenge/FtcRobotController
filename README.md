@@ -27,6 +27,7 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 Version 2.61 (released on 16.12.19)
   * Blocks Programming mode changes:
      - Fix to correct issue when an exception was thrown because an OpticalDistanceSensor object appears twice in the hardware map (the second time as a LightSensor).
+
 **************************************************************************************
 
 Version 2.6 (released on 16.12.16)
