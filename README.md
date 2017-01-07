@@ -24,6 +24,12 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
 **************************************************************************************
 
+Version 2.62 (built on 17.01.07)
+  * Added no pointer check before calling modeToByte() in finishModeSwitchIfNecessary method for ModernRoboticsUsbDcMotorController class.
+  * Changes to enhance Modern Robotics USB protocol robustness.
+
+**************************************************************************************
+
 Version 2.61 (released on 16.12.19)
   * Blocks Programming mode changes:
      - Fix to correct issue when an exception was thrown because an OpticalDistanceSensor object appears twice in the hardware map (the second time as a LightSensor).
