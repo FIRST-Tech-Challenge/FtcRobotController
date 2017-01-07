@@ -25,7 +25,7 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 **************************************************************************************
 
 Version 2.62 (built on 17.01.07)
-  * Added no pointer check before calling modeToByte() in finishModeSwitchIfNecessary method for ModernRoboticsUsbDcMotorController class.
+  * Added null pointer check before calling modeToByte() in finishModeSwitchIfNecessary method for ModernRoboticsUsbDcMotorController class.
   * Changes to enhance Modern Robotics USB protocol robustness.
 
 **************************************************************************************
