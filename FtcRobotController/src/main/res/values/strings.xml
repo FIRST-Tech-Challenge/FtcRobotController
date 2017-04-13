@@ -50,11 +50,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <string name="about_menu_item">About</string>
   <string name="exit_menu_item">Exit</string>
 
-  <!-- Preferences -->
-  <string name="pref_view_logs">View Logs</string>
-  <string name="pref_sound_on_off_title">Sound</string>
-
-  <!-- Toast messages -->  
+  <!-- Toast messages -->
   <string name="toastWifiConfigurationComplete">Configuration Complete</string>
   <string name="toastRestartingRobot">Restarting Robot</string>
   <string name="toastConfigureRobotBeforeProgrammingMode">You must Configure Robot before starting Programming Mode.</string>

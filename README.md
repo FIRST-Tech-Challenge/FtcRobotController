@@ -6,6 +6,15 @@ The FTC Robot Controller app is designed to work in conjunction with the FTC Dri
 The FTC Driver Station app is available through Google Play.
 
 To use this SDK, download/clone the entire project to your local computer.
+
+*** Important note regarding the repository size ***:  this repository is large and it can take a long time and a lot of space to clone the entire repository. If you would like to save time and space, there are some options that you can choose to download only the most current version of the Android project folder.
+
+If you are a git user, you can use the --depth command line argument to only clone the most current version of the repository:
+
+  git clone --depth=1 https://github.com/ftctechnh/ftc_app.git
+
+Or, if you prefer, you can use the "Download Zip" button available through the main repository page.  You can also download the project folder (as a .zip or .tar.gz archive file) from the Downloads subsection of the Releases page for this repository.
+
 Use Android Studio to import the folder  ("Import project (Eclipse ADT, Gradle, etc.)").
 
 The Javadoc reference documentation for the FTC SDK is now available online.  Visit the following URL to view the FTC SDK documentation as a live website:
@@ -22,6 +31,44 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
   http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
 
+**************************************************************************************
+
+Version 3.00 (built on 17.04.013)
+
+*** Use this version of the software at YOUR OWN RISK!!! ***
+
+This software is being released as an "alpha" version.  Use this version at your own risk!
+
+This pre-release software contains SIGNIFICANT changes, including changes to the Wi-Fi Direct pairing mechanism, rewrites of the I2C sensor classes, changes to the USB/FTDI layer, and the introduction of support for the REV Robotics Expansion Hub and the REV Robotics color-range-light sensor.  These changes were implemented to improve the reliability resiliency of the FTC control system.
+
+Please note, however, that version 3.00 is considered "alpha" code.  This code is being released so that the FIRST community will have an opportunity to test the new REV Expansion Hub electronics module when it becomes available in May.  The developers do not recommend using this code for critical applications (i.e., competition use).
+
+*** Use this version of the software at YOUR OWN RISK!!! ***
+
+Changes include:
+ * Major rework of sensor-related infrastructure.  Includes rewriting sensor classes to implement synchronous I2C communication.
+ * Fix to reset Autonomous timer back to 30 seconds.
+ * Implementation of specific motor profiles for approved 12V motors (includes Tetrix, AndyMark, Matrix and REV models).
+ * Modest improvements to enhance Wi-Fi P2P pairing.
+ * Fixes telemetry log addition race.
+ * Publishes all the sources (not just a select few).
+ * Includes Block programming improvements
+    - Addition of optimized Vuforia blocks.
+    - Auto scrollbar to projects and sounds pages.
+    - Fixed blocks paste bug.
+    - Blocks execute after while-opModeIsActive loop (to allow for cleanup before exiting op mode).
+    - Added gyro integratedZValue block.
+    - Fixes bug with projects page for Firefox browser.
+    - Added IsSpeaking block to AndroidTextToSpeech.  
+ * Implements support for the REV Robotics Expansion Hub.
+    - Implements support for integral REV IMU (physically installed on I2C bus 0, uses same Bosch BNO055 9 axis abslute orientation sensor as Adafruit 9DOF abs orientation sensor).
+    - Implements support for REV color/range/light sensor.
+    - Provides support to update Expansion Hub firmware through FTC SDK.
+    - Detects REV firmware version and records in log file.
+    - Includes support for REV Control Hub (note that the REV Control Hub is not yet approved for FTC use).
+    - Implements FTC Blocks programming support for REV Expansion Hub and sensor hardware.
+    - Detects and alerts when I2C device disconnect.
+    
 **************************************************************************************
 
 Version 2.62 (built on 17.01.07)

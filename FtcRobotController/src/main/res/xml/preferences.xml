@@ -45,34 +45,37 @@ See https://developer.android.com/guide/topics/ui/settings.html
     >
 
   <PreferenceCategory
-    android:title="@string/pref_change_wifi_channel">
+    android:title="@string/prefcat_configure_robot">
+
+    <EditTextPreference
+        android:title="@string/prefedit_device_name_rc"
+        android:summary="@string/prefedit_device_name_summary_rc"
+        android:key="@string/pref_device_name"
+        android:defaultValue=""
+        />
+
+    <SwitchPreference
+        android:title="@string/prefedit_sound_on_off"
+        android:summary="@string/prefedit_sound_on_off_summary"
+        android:key="@string/pref_sound_on_off"
+        android:defaultValue="true"
+        />
 
     <PreferenceScreen
-      android:title="@string/pref_change_wifi_channel"
-      android:key="@string/pref_launch_settings">
-      <intent
-        android:action="com.qualcomm.ftccommon.FtcWifiChannelSelectorActivity.intent.action.Launch"
-        android:targetPackage="com.qualcomm.ftccommon"
-        android:targetClass="com.qualcomm.ftccommon.FtcWifiChannelSelectorActivity" />
+        android:title="@string/titleAdvancedRCSettings"
+        android:summary="@string/summaryAdvancedRCSettings"
+        android:key="@string/pref_launch_advanced_rc_settings">
+        <intent android:action="com.qualcomm.ftccommon.FtcAdvancedRCSettingsActivity.intent.action.Launch"/>
     </PreferenceScreen>
-  </PreferenceCategory>
-
-  <PreferenceCategory
-    android:title="@string/pref_configure_robot_title">
 
     <PreferenceScreen
-        android:title="@string/pref_view_logs"
+        android:title="@string/prefedit_view_logs"
+        android:summary="@string/prefedit_view_logs_summary"
         android:key="@string/pref_launch_viewlogs">
       <intent
         android:action="com.qualcomm.ftccommon.ViewLogsActivity.intent.action.Launch"
         android:targetClass="com.qualcomm.ftccommon.ViewLogsActivity" />
     </PreferenceScreen>
-
-    <SwitchPreference
-        android:key="@string/pref_sound_on_off"
-        android:title="@string/pref_sound_on_off_title"
-        android:defaultValue="true"
-        />
 
   </PreferenceCategory>
 

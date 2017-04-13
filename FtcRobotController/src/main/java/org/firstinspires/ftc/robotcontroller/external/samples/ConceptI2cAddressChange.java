@@ -32,7 +32,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsUsbDeviceInterfaceModule;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -139,8 +138,8 @@ public class ConceptI2cAddressChange extends LinearOpMode {
       count++;
       // if we go too long with failure, we probably are expecting the wrong bytes.
       if (count >= 10)  {
-        telemetry.addData("I2cAddressChange", String.format("Looping too long with no change, probably have the wrong address. Current address: 0x%02x", currentAddress));
-        hardwareMap.irSeekerSensor.get(String.format("Looping too long with no change, probably have the wrong address. Current address: 0x%02x", currentAddress));
+        telemetry.addData("I2cAddressChange", String.format("Looping too long with no change, probably have the wrong address. Current address: 8bit=0x%02x", currentAddress.get8Bit()));
+        hardwareMap.irSeekerSensor.get(String.format("Looping too long with no change, probably have the wrong address. Current address: 8bit=0x%02x", currentAddress.get8Bit()));
         telemetry.update();
       }
     }
@@ -172,9 +171,9 @@ public class ConceptI2cAddressChange extends LinearOpMode {
       sleep(1000);
     }
 
-    telemetry.addData("I2cAddressChange", "Successfully changed the I2C address. New address: 0x%02x", newAddress);
+    telemetry.addData("I2cAddressChange", "Successfully changed the I2C address. New address: 8bit=0x%02x", newAddress.get8Bit());
     telemetry.update();
-    RobotLog.i("Successfully changed the I2C address." + String.format("New address: 0x%02x", newAddress));
+    RobotLog.i("Successfully changed the I2C address." + String.format("New address: 8bit=0x%02x", newAddress.get8Bit()));
 
     /**** IMPORTANT NOTE ******/
     // You need to add a line like this at the top of your op mode
