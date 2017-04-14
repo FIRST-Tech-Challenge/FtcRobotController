@@ -33,13 +33,13 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
 **************************************************************************************
 
-Version 3.00 (built on 17.04.013)
+Version 3.00 (built on 17.04.13)
 
 *** Use this version of the software at YOUR OWN RISK!!! ***
 
 This software is being released as an "alpha" version.  Use this version at your own risk!
 
-This pre-release software contains SIGNIFICANT changes, including changes to the Wi-Fi Direct pairing mechanism, rewrites of the I2C sensor classes, changes to the USB/FTDI layer, and the introduction of support for the REV Robotics Expansion Hub and the REV Robotics color-range-light sensor.  These changes were implemented to improve the reliability resiliency of the FTC control system.
+This pre-release software contains SIGNIFICANT changes, including changes to the Wi-Fi Direct pairing mechanism, rewrites of the I2C sensor classes, changes to the USB/FTDI layer, and the introduction of support for the REV Robotics Expansion Hub and the REV Robotics color-range-light sensor.  These changes were implemented to improve the reliability and resiliency of the FTC control system.
 
 Please note, however, that version 3.00 is considered "alpha" code.  This code is being released so that the FIRST community will have an opportunity to test the new REV Expansion Hub electronics module when it becomes available in May.  The developers do not recommend using this code for critical applications (i.e., competition use).
 
@@ -60,8 +60,8 @@ Changes include:
     - Added gyro integratedZValue block.
     - Fixes bug with projects page for Firefox browser.
     - Added IsSpeaking block to AndroidTextToSpeech.  
- * Implements support for the REV Robotics Expansion Hub.
-    - Implements support for integral REV IMU (physically installed on I2C bus 0, uses same Bosch BNO055 9 axis abslute orientation sensor as Adafruit 9DOF abs orientation sensor).
+ * Implements support for the REV Robotics Expansion Hub
+    - Implements support for integral REV IMU (physically installed on I2C bus 0, uses same Bosch BNO055 9 axis absolute orientation sensor as Adafruit 9DOF abs orientation sensor).
     - Implements support for REV color/range/light sensor.
     - Provides support to update Expansion Hub firmware through FTC SDK.
     - Detects REV firmware version and records in log file.
