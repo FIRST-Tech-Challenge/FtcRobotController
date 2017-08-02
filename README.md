@@ -5,7 +5,7 @@ If you are new to the *FIRST* Tech Challenge software and control system, you sh
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/ftctechnh/ftc_app/wiki
 
-Note that the wiki is an "evergreen" document that is constantly being updated and edited.  It typically contains the most current information about the *FIRST* Tech Challenge software and control system.
+Note that the wiki is an "evergreen" document that is constantly being updated and edited.  It contains the most current information about the *FIRST* Tech Challenge software and control system.
 
 ## Downloading the Project
 It is important to note that this repository is large and can take a long time and use a lot of space to download. If you would like to save time and space, there are some options that you can choose to download only the most current version of the Android project folder:
