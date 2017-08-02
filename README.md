@@ -10,13 +10,13 @@ It is important to note that this repository is large and can take a long time a
 
 * If you are a git user, *FIRST* recommends that you use the --depth command line argument to only clone the most current version of the repository:
 
-<p><center>git clone --depth=1 https://github.com/ftctechnh/ftc_app.git</center></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git clone --depth=1 https://github.com/ftctechnh/ftc_app.git</p>
 
 * Or, if you prefer, you can use the "Download Zip" button available through the main repository page.  Downloading the project as a .ZIP file will keep the size of the download manageable.
 
 * You can also download the project folder (as a .zip or .tar.gz archive file) from the Downloads subsection of the Releases page for this repository.
 
-Once you have downloaded and uncompressed your folder (if needed) you can use use Android Studio to import the folder  ("Import project (Eclipse ADT, Gradle, etc.)").
+Once you have downloaded and uncompressed (if needed) your folder, you can use Android Studio to import the folder  ("Import project (Eclipse ADT, Gradle, etc.)").
 
 ## Getting Help
 ### User Documentation and Tutorials
