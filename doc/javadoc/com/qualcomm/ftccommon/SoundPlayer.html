@@ -105,15 +105,20 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>android.media.SoundPool.OnLoadCompleteListener</dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">SoundPlayer</span>
-extends java.lang.Object</pre>
+extends java.lang.Object
+implements android.media.SoundPool.OnLoadCompleteListener</pre>
 <div class="block"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html" title="class in com.qualcomm.ftccommon"><code>SoundPlayer</code></a> is a simple utility class that plays sounds on the phone. The class
  is typically used through its singleton instance.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#play-Context-int-"><code>play(Context, int)</code></a></dd>
+<dd><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#play-android.content.Context-int-"><code>play(Context, int)</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -160,7 +165,7 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected Context</code></td>
+<td class="colFirst"><code>protected android.content.Context</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#context">context</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -180,7 +185,7 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#loadedSounds">loadedSounds</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected Looper</code></td>
+<td class="colFirst"><code>protected android.os.Looper</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#looper">looper</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
@@ -188,7 +193,7 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#msFinishPlaying">msFinishPlaying</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected SharedPreferences</code></td>
+<td class="colFirst"><code>protected android.content.SharedPreferences</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#sharedPreferences">sharedPreferences</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
@@ -200,7 +205,7 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#soundOnLevel">soundOnLevel</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected SoundPool</code></td>
+<td class="colFirst"><code>protected android.media.SoundPool</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#soundPool">soundPool</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -260,12 +265,12 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#getMsDuration-Context-int-">getMsDuration</a></span>(Context&nbsp;context,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#getMsDuration-android.content.Context-int-">getMsDuration</a></span>(android.content.Context&nbsp;context,
              int&nbsp;resourceId)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#loadAndPlay-Context-int-boolean-">loadAndPlay</a></span>(Context&nbsp;context,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#loadAndPlay-android.content.Context-int-boolean-">loadAndPlay</a></span>(android.content.Context&nbsp;context,
            int&nbsp;resourceId,
            boolean&nbsp;waitForCompletion)</code>
 <div class="block">Loads the requested sound if necessary, then (eventually) plays it.</div>
@@ -273,7 +278,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#onLoadComplete-SoundPool-int-int-">onLoadComplete</a></span>(SoundPool&nbsp;soundPool,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#onLoadComplete-android.media.SoundPool-int-int-">onLoadComplete</a></span>(android.media.SoundPool&nbsp;soundPool,
               int&nbsp;sampleId,
               int&nbsp;status)</code>
 <div class="block">Called when a sound has completed loading.</div>
@@ -281,7 +286,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#play-Context-int-">play</a></span>(Context&nbsp;context,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#play-android.content.Context-int-">play</a></span>(android.content.Context&nbsp;context,
     int&nbsp;resId)</code>
 <div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
  initiates its play once any current sound is finished playing.</div>
@@ -289,7 +294,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#play-Context-int-boolean-">play</a></span>(Context&nbsp;context,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#play-android.content.Context-int-boolean-">play</a></span>(android.content.Context&nbsp;context,
     int&nbsp;resId,
     boolean&nbsp;waitForCompletion)</code>
 <div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
@@ -376,7 +381,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>soundPool</h4>
-<pre>protected&nbsp;SoundPool soundPool</pre>
+<pre>protected&nbsp;android.media.SoundPool soundPool</pre>
 </li>
 </ul>
 <a name="currentlyLoading">
@@ -421,7 +426,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>looper</h4>
-<pre>protected&nbsp;Looper looper</pre>
+<pre>protected&nbsp;android.os.Looper looper</pre>
 </li>
 </ul>
 <a name="context">
@@ -430,7 +435,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>context</h4>
-<pre>protected&nbsp;Context context</pre>
+<pre>protected&nbsp;android.content.Context context</pre>
 </li>
 </ul>
 <a name="sharedPreferences">
@@ -439,7 +444,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>sharedPreferences</h4>
-<pre>protected&nbsp;SharedPreferences sharedPreferences</pre>
+<pre>protected&nbsp;android.content.SharedPreferences sharedPreferences</pre>
 </li>
 </ul>
 <a name="soundOnLevel">
@@ -530,13 +535,13 @@ extends java.lang.Object</pre>
 <pre>protected&nbsp;void&nbsp;shutdown()</pre>
 </li>
 </ul>
-<a name="play-Context-int-">
+<a name="play-android.content.Context-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>play</h4>
-<pre>public&nbsp;void&nbsp;play(Context&nbsp;context,
+<pre>public&nbsp;void&nbsp;play(android.content.Context&nbsp;context,
                  int&nbsp;resId)</pre>
 <div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
  initiates its play once any current sound is finished playing.</div>
@@ -547,13 +552,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="play-Context-int-boolean-">
+<a name="play-android.content.Context-int-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>play</h4>
-<pre>public&nbsp;void&nbsp;play(Context&nbsp;context,
+<pre>public&nbsp;void&nbsp;play(android.content.Context&nbsp;context,
                  int&nbsp;resId,
                  boolean&nbsp;waitForCompletion)</pre>
 <div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
@@ -566,13 +571,13 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="loadAndPlay-Context-int-boolean-">
+<a name="loadAndPlay-android.content.Context-int-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>loadAndPlay</h4>
-<pre>protected&nbsp;void&nbsp;loadAndPlay(Context&nbsp;context,
+<pre>protected&nbsp;void&nbsp;loadAndPlay(android.content.Context&nbsp;context,
                            int&nbsp;resourceId,
                            boolean&nbsp;waitForCompletion)</pre>
 <div class="block">Loads the requested sound if necessary, then (eventually) plays it.
@@ -582,13 +587,13 @@ extends java.lang.Object</pre>
  complete.</div>
 </li>
 </ul>
-<a name="getMsDuration-Context-int-">
+<a name="getMsDuration-android.content.Context-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getMsDuration</h4>
-<pre>protected&nbsp;int&nbsp;getMsDuration(Context&nbsp;context,
+<pre>protected&nbsp;int&nbsp;getMsDuration(android.content.Context&nbsp;context,
                             int&nbsp;resourceId)</pre>
 </li>
 </ul>
@@ -620,17 +625,19 @@ extends java.lang.Object</pre>
 <pre>protected&nbsp;long&nbsp;getCurrentMilliseconds()</pre>
 </li>
 </ul>
-<a name="onLoadComplete-SoundPool-int-int-">
+<a name="onLoadComplete-android.media.SoundPool-int-int-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>onLoadComplete</h4>
-<pre>public&nbsp;void&nbsp;onLoadComplete(SoundPool&nbsp;soundPool,
+<pre>public&nbsp;void&nbsp;onLoadComplete(android.media.SoundPool&nbsp;soundPool,
                            int&nbsp;sampleId,
                            int&nbsp;status)</pre>
 <div class="block">Called when a sound has completed loading.</div>
 <dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>onLoadComplete</code>&nbsp;in interface&nbsp;<code>android.media.SoundPool.OnLoadCompleteListener</code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>soundPool</code> - SoundPool object from the load() method</dd>
 <dd><code>sampleId</code> - the sample ID of the sound loaded.</dd>

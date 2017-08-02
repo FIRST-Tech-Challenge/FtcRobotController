@@ -71,12 +71,33 @@
 <h1 title="Deprecated API" class="title">Deprecated API</h1>
 <h2 title="Contents">Contents</h2>
 <ul>
+<li><a href="#class">Deprecated Classes</a></li>
 <li><a href="#enum">Deprecated Enums</a></li>
 <li><a href="#method">Deprecated Methods</a></li>
 <li><a href="#enum.constant">Deprecated Enum Constants</a></li>
 </ul>
 </div>
-<div class="contentContainer"><a name="enum">
+<div class="contentContainer"><a name="class">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<table class="deprecatedSummary" border="0" cellpadding="3" cellspacing="0" summary="Deprecated Classes table, listing deprecated classes, and an explanation">
+<caption><span>Deprecated Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Class and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colOne"><a href="com/qualcomm/robotcore/eventloop/opmode/AnnotatedOpModeRegistrar.html" title="class in com.qualcomm.robotcore.eventloop.opmode">com.qualcomm.robotcore.eventloop.opmode.AnnotatedOpModeRegistrar</a>
+<div class="block"><span class="deprecationComment">The function formerly performed by this class is now automatically executed by the system</span></div>
+</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<a name="enum">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -153,37 +174,42 @@
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/I2cController.html#readI2cCacheFromModule-int-">com.qualcomm.robotcore.hardware.I2cController.readI2cCacheFromModule(int)</a></td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="com/qualcomm/robotcore/eventloop/opmode/AnnotatedOpModeRegistrar.html#register-com.qualcomm.robotcore.eventloop.opmode.OpModeManager-">com.qualcomm.robotcore.eventloop.opmode.AnnotatedOpModeRegistrar.register(OpModeManager)</a>
+<div class="block"><span class="deprecationComment">functionality now automatically called by the system</span></div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/DigitalChannelController.html#setDigitalChannelMode-int-com.qualcomm.robotcore.hardware.DigitalChannelController.Mode-">com.qualcomm.robotcore.hardware.DigitalChannelController.setDigitalChannelMode(int, DigitalChannelController.Mode)</a>
 <div class="block"><span class="deprecationComment">use <a href="com/qualcomm/robotcore/hardware/DigitalChannelController.html#setDigitalChannelMode-int-com.qualcomm.robotcore.hardware.DigitalChannel.Mode-"><code>DigitalChannelController.setDigitalChannelMode(int, DigitalChannel.Mode)</code></a> instead</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/I2cDeviceSynchImpl.html#setI2cAddr-com.qualcomm.robotcore.hardware.I2cAddr-">com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl.setI2cAddr(I2cAddr)</a></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/I2cDeviceSynchSimple.html#setI2cAddr-com.qualcomm.robotcore.hardware.I2cAddr-">com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple.setI2cAddr(I2cAddr)</a>
 <div class="block"><span class="deprecationComment">Use <a href="com/qualcomm/robotcore/hardware/I2cAddrConfig.html#setI2cAddress-com.qualcomm.robotcore.hardware.I2cAddr-"><code>I2cAddrConfig.setI2cAddress(I2cAddr)</code></a> instead.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/DigitalChannel.html#setMode-com.qualcomm.robotcore.hardware.DigitalChannelController.Mode-">com.qualcomm.robotcore.hardware.DigitalChannel.setMode(DigitalChannelController.Mode)</a>
 <div class="block"><span class="deprecationComment">use <a href="com/qualcomm/robotcore/hardware/DigitalChannel.html#setMode-com.qualcomm.robotcore.hardware.DigitalChannel.Mode-"><code>DigitalChannel.setMode(Mode)</code></a> instead</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/DigitalChannelImpl.html#setMode-com.qualcomm.robotcore.hardware.DigitalChannelController.Mode-">com.qualcomm.robotcore.hardware.DigitalChannelImpl.setMode(DigitalChannelController.Mode)</a></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/DcMotor.html#setPowerFloat--">com.qualcomm.robotcore.hardware.DcMotor.setPowerFloat()</a>
 <div class="block"><span class="deprecationComment">This method is deprecated in favor of direct use of
        <a href="com/qualcomm/robotcore/hardware/DcMotor.html#setZeroPowerBehavior-com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior-"><code>setZeroPowerBehavior()</code></a> and
        <a href="com/qualcomm/robotcore/hardware/DcMotorSimple.html#setPower-double-"><code>setPower()</code></a>.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/DcMotorImpl.html#setPowerFloat--">com.qualcomm.robotcore.hardware.DcMotorImpl.setPowerFloat()</a></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/eventloop/opmode/LinearOpMode.html#waitForNextHardwareCycle--">com.qualcomm.robotcore.eventloop.opmode.LinearOpMode.waitForNextHardwareCycle()</a>
 <div class="block"><span class="deprecationComment">The need for user code to synchronize with the loop() thread has been
              obviated by improvements in the modern motor and servo controller implementations.
@@ -192,7 +218,7 @@
              If one simply wants to allow other threads to run, <a href="com/qualcomm/robotcore/eventloop/opmode/LinearOpMode.html#idle--"><code>LinearOpMode.idle()</code></a> is a good choice.</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/eventloop/opmode/LinearOpMode.html#waitOneFullHardwareCycle--">com.qualcomm.robotcore.eventloop.opmode.LinearOpMode.waitOneFullHardwareCycle()</a>
 <div class="block"><span class="deprecationComment">The need for user code to synchronize with the loop() thread has been
              obviated by improvements in the modern motor and servo controller implementations.
@@ -201,26 +227,26 @@
              If one simply wants to allow other threads to run, <a href="com/qualcomm/robotcore/eventloop/opmode/LinearOpMode.html#idle--"><code>LinearOpMode.idle()</code></a> is a good choice.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cCacheToModule--">com.qualcomm.robotcore.hardware.I2cDevice.writeI2cCacheToModule()</a>
 <div class="block"><span class="deprecationComment">Use of <a href="com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cCacheToController--"><code>I2cDevice.writeI2cCacheToController()</code></a> is suggested instead</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/I2cDeviceImpl.html#writeI2cCacheToModule--">com.qualcomm.robotcore.hardware.I2cDeviceImpl.writeI2cCacheToModule()</a></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/I2cController.html#writeI2cCacheToModule-int-">com.qualcomm.robotcore.hardware.I2cController.writeI2cCacheToModule(int)</a></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cPortFlagOnlyToModule--">com.qualcomm.robotcore.hardware.I2cDevice.writeI2cPortFlagOnlyToModule()</a>
 <div class="block"><span class="deprecationComment">Use of <a href="com/qualcomm/robotcore/hardware/I2cDevice.html#writeI2cPortFlagOnlyToController--"><code>I2cDevice.writeI2cPortFlagOnlyToController()</code></a> is suggested instead</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/I2cDeviceImpl.html#writeI2cPortFlagOnlyToModule--">com.qualcomm.robotcore.hardware.I2cDeviceImpl.writeI2cPortFlagOnlyToModule()</a></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/qualcomm/robotcore/hardware/I2cController.html#writeI2cPortFlagOnlyToModule-int-">com.qualcomm.robotcore.hardware.I2cController.writeI2cPortFlagOnlyToModule(int)</a></td>
 </tr>
 </tbody>

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -98,7 +98,13 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>Service</li>
+<li>android.content.Context</li>
+<li>
+<ul class="inheritance">
+<li>android.content.ContextWrapper</li>
+<li>
+<ul class="inheritance">
+<li>android.app.Service</li>
 <li>
 <ul class="inheritance">
 <li>com.qualcomm.ftccommon.FtcRobotControllerService</li>
@@ -107,13 +113,22 @@ var activeTableTab = "activeTableTab";
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+</li>
+</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>android.content.ComponentCallbacks, android.content.ComponentCallbacks2, <a href="../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopManagerClient.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">EventLoopManagerClient</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">FtcRobotControllerService</span>
-extends Service</pre>
+extends android.app.Service
+implements <a href="../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopManagerClient.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">EventLoopManagerClient</a></pre>
 </li>
 </ul>
 </div>
@@ -156,6 +171,27 @@ extends Service</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#TAG">TAG</a></span></code>&nbsp;</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.android.app.Service">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;android.app.Service</h3>
+<code>START_CONTINUATION_MASK, START_FLAG_REDELIVERY, START_FLAG_RETRY, START_NOT_STICKY, START_REDELIVER_INTENT, START_STICKY, START_STICKY_COMPATIBILITY</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.android.content.Context">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;android.content.Context</h3>
+<code>ACCESSIBILITY_SERVICE, ACCOUNT_SERVICE, ACTIVITY_SERVICE, ALARM_SERVICE, APP_OPS_SERVICE, APPWIDGET_SERVICE, AUDIO_SERVICE, BATTERY_SERVICE, BIND_ABOVE_CLIENT, BIND_ADJUST_WITH_ACTIVITY, BIND_ALLOW_OOM_MANAGEMENT, BIND_AUTO_CREATE, BIND_DEBUG_UNBIND, BIND_IMPORTANT, BIND_NOT_FOREGROUND, BIND_WAIVE_PRIORITY, BLUETOOTH_SERVICE, CAMERA_SERVICE, CAPTIONING_SERVICE, CARRIER_CONFIG_SERVICE, CLIPBOARD_SERVICE, CONNECTIVITY_SERVICE, CONSUMER_IR_SERVICE, CONTEXT_IGNORE_SECURITY, CONTEXT_INCLUDE_CODE, CONTEXT_RESTRICTED, DEVICE_POLICY_SERVICE, DISPLAY_SERVICE, DOWNLOAD_SERVICE, DROPBOX_SERVICE, FINGERPRINT_SERVICE, INPUT_METHOD_SERVICE, INPUT_SERVICE, JOB_SCHEDULER_SERVICE, KEYGUARD_SERVICE, LAUNCHER_APPS_SERVICE, LAYOUT_INFLATER_SERVICE, LOCATION_SERVICE, MEDIA_PROJECTION_SERVICE, MEDIA_ROUTER_SERVICE, MEDIA_SESSION_SERVICE, MIDI_SERVICE, MODE_APPEND, MODE_ENABLE_WRITE_AHEAD_LOGGING, MODE_MULTI_PROCESS, MODE_PRIVATE, MODE_WORLD_READABLE, MODE_WORLD_WRITEABLE, NETWORK_STATS_SERVICE, NFC_SERVICE, NOTIFICATION_SERVICE, NSD_SERVICE, POWER_SERVICE, PRINT_SERVICE, RESTRICTIONS_SERVICE, SEARCH_SERVICE, SENSOR_SERVICE, STORAGE_SERVICE, TELECOM_SERVICE, TELEPHONY_SERVICE, TELEPHONY_SUBSCRIPTION_SERVICE, TEXT_SERVICES_MANAGER_SERVICE, TV_INPUT_SERVICE, UI_MODE_SERVICE, USAGE_STATS_SERVICE, USB_SERVICE, USER_SERVICE, VIBRATOR_SERVICE, WALLPAPER_SERVICE, WIFI_P2P_SERVICE, WIFI_SERVICE, WINDOW_SERVICE</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.android.content.ComponentCallbacks2">
+<!--   -->
+</a>
+<h3>Fields inherited from interface&nbsp;android.content.ComponentCallbacks2</h3>
+<code>TRIM_MEMORY_BACKGROUND, TRIM_MEMORY_COMPLETE, TRIM_MEMORY_MODERATE, TRIM_MEMORY_RUNNING_CRITICAL, TRIM_MEMORY_RUNNING_LOW, TRIM_MEMORY_RUNNING_MODERATE, TRIM_MEMORY_UI_HIDDEN</code></li>
+</ul>
 </li>
 </ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -204,58 +240,83 @@ extends Service</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#getRobotStatus--">getRobotStatus</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>IBinder</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onBind-Intent-">onBind</a></span>(Intent&nbsp;intent)</code>&nbsp;</td>
+<td class="colFirst"><code>WebServer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#getWebServer--">getWebServer</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onCreate--">onCreate</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>android.os.IBinder</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onBind-android.content.Intent-">onBind</a></span>(android.content.Intent&nbsp;intent)</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onDestroy--">onDestroy</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onCreate--">onCreate</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onDestroy--">onDestroy</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>CallbackResult</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onNetworkConnectionEvent-NetworkConnection.Event-">onNetworkConnectionEvent</a></span>(NetworkConnection.Event&nbsp;event)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onReceive-Context-Intent-">onReceive</a></span>(Context&nbsp;context,
-         Intent&nbsp;intent)</code>&nbsp;</td>
-</tr>
 <tr id="i9" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onReceive-android.content.Context-android.content.Intent-">onReceive</a></span>(android.content.Context&nbsp;context,
+         android.content.Intent&nbsp;intent)</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onStartCommand-Intent-int-int-">onStartCommand</a></span>(Intent&nbsp;intent,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onStartCommand-android.content.Intent-int-int-">onStartCommand</a></span>(android.content.Intent&nbsp;intent,
               int&nbsp;flags,
               int&nbsp;startId)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onUnbind-Intent-">onUnbind</a></span>(Intent&nbsp;intent)</code>&nbsp;</td>
-</tr>
 <tr id="i11" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onUnbind-android.content.Intent-">onUnbind</a></span>(android.content.Intent&nbsp;intent)</code>&nbsp;</td>
+</tr>
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#setCallback-com.qualcomm.ftccommon.UpdateUI.Callback-">setCallback</a></span>(<a href="../../../com/qualcomm/ftccommon/UpdateUI.Callback.html" title="class in com.qualcomm.ftccommon">UpdateUI.Callback</a>&nbsp;callback)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#setupRobot-com.qualcomm.robotcore.eventloop.EventLoop-com.qualcomm.robotcore.eventloop.EventLoop-">setupRobot</a></span>(<a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;eventLoop,
           <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;idleEventLoop)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#shutdownRobot--">shutdownRobot</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#startLEDS--">startLEDS</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#stopLEDS--">stopLEDS</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.android.app.Service">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;android.app.Service</h3>
+<code>dump, getApplication, onConfigurationChanged, onLowMemory, onRebind, onStart, onTaskRemoved, onTrimMemory, startForeground, stopForeground, stopSelf, stopSelf, stopSelfResult</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.android.content.ContextWrapper">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;android.content.ContextWrapper</h3>
+<code>attachBaseContext, bindService, checkCallingOrSelfPermission, checkCallingOrSelfUriPermission, checkCallingPermission, checkCallingUriPermission, checkPermission, checkSelfPermission, checkUriPermission, checkUriPermission, clearWallpaper, createConfigurationContext, createDisplayContext, createPackageContext, databaseList, deleteDatabase, deleteFile, enforceCallingOrSelfPermission, enforceCallingOrSelfUriPermission, enforceCallingPermission, enforceCallingUriPermission, enforcePermission, enforceUriPermission, enforceUriPermission, fileList, getApplicationContext, getApplicationInfo, getAssets, getBaseContext, getCacheDir, getClassLoader, getCodeCacheDir, getContentResolver, getDatabasePath, getDir, getExternalCacheDir, getExternalCacheDirs, getExternalFilesDir, getExternalFilesDirs, getExternalMediaDirs, getFilesDir, getFileStreamPath, getMainLooper, getNoBackupFilesDir, getObbDir, getObbDirs, getPackageCodePath, getPackageManager, getPackageName, getPackageResourcePath, getResources, getSharedPreferences, getSystemService, getSystemServiceName, getTheme, getWallpaper, getWallpaperDesiredMinimumHeight, getWallpaperDesiredMinimumWidth, grantUriPermission, isRestricted, openFileInput, openFileOutput, openOrCreateDatabase, openOrCreateDatabase, peekWallpaper, registerReceiver, registerReceiver, removeStickyBroadcast, removeStickyBroadcastAsUser, revokeUriPermission, sendBroadcast, sendBroadcast, sendBroadcastAsUser, sendBroadcastAsUser, sendOrderedBroadcast, sendOrderedBroadcast, sendOrderedBroadcastAsUser, sendStickyBroadcast, sendStickyBroadcastAsUser, sendStickyOrderedBroadcast, sendStickyOrderedBroadcastAsUser, setTheme, setWallpaper, setWallpaper, startActivities, startActivities, startActivity, startActivity, startInstrumentation, startIntentSender, startIntentSender, startService, stopService, unbindService, unregisterReceiver</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.android.content.Context">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;android.content.Context</h3>
+<code>getColor, getColorStateList, getDrawable, getString, getString, getSystemService, getText, obtainStyledAttributes, obtainStyledAttributes, obtainStyledAttributes, obtainStyledAttributes, registerComponentCallbacks, unregisterComponentCallbacks</code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
@@ -315,14 +376,14 @@ extends Service</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="onReceive-Context-Intent-">
+<a name="onReceive-android.content.Context-android.content.Intent-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onReceive</h4>
-<pre>public&nbsp;void&nbsp;onReceive(Context&nbsp;context,
-                      Intent&nbsp;intent)</pre>
+<pre>public&nbsp;void&nbsp;onReceive(android.content.Context&nbsp;context,
+                      android.content.Intent&nbsp;intent)</pre>
 </li>
 </ul>
 <a name="getNetworkConnection--">
@@ -361,6 +422,19 @@ extends Service</pre>
 <pre>public&nbsp;Robot&nbsp;getRobot()</pre>
 </li>
 </ul>
+<a name="getWebServer--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getWebServer</h4>
+<pre>public&nbsp;WebServer&nbsp;getWebServer()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopManagerClient.html#getWebServer--">getWebServer</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopManagerClient.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">EventLoopManagerClient</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="onCreate--">
 <!--   -->
 </a>
@@ -368,35 +442,51 @@ extends Service</pre>
 <li class="blockList">
 <h4>onCreate</h4>
 <pre>public&nbsp;void&nbsp;onCreate()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>onCreate</code>&nbsp;in class&nbsp;<code>android.app.Service</code></dd>
+</dl>
 </li>
 </ul>
-<a name="onStartCommand-Intent-int-int-">
+<a name="onStartCommand-android.content.Intent-int-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onStartCommand</h4>
-<pre>public&nbsp;int&nbsp;onStartCommand(Intent&nbsp;intent,
+<pre>public&nbsp;int&nbsp;onStartCommand(android.content.Intent&nbsp;intent,
                           int&nbsp;flags,
                           int&nbsp;startId)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>onStartCommand</code>&nbsp;in class&nbsp;<code>android.app.Service</code></dd>
+</dl>
 </li>
 </ul>
-<a name="onBind-Intent-">
+<a name="onBind-android.content.Intent-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onBind</h4>
-<pre>public&nbsp;IBinder&nbsp;onBind(Intent&nbsp;intent)</pre>
+<pre>public&nbsp;android.os.IBinder&nbsp;onBind(android.content.Intent&nbsp;intent)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>onBind</code>&nbsp;in class&nbsp;<code>android.app.Service</code></dd>
+</dl>
 </li>
 </ul>
-<a name="onUnbind-Intent-">
+<a name="onUnbind-android.content.Intent-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onUnbind</h4>
-<pre>public&nbsp;boolean&nbsp;onUnbind(Intent&nbsp;intent)</pre>
+<pre>public&nbsp;boolean&nbsp;onUnbind(android.content.Intent&nbsp;intent)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>onUnbind</code>&nbsp;in class&nbsp;<code>android.app.Service</code></dd>
+</dl>
 </li>
 </ul>
 <a name="onDestroy--">
@@ -406,6 +496,10 @@ extends Service</pre>
 <li class="blockList">
 <h4>onDestroy</h4>
 <pre>public&nbsp;void&nbsp;onDestroy()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>onDestroy</code>&nbsp;in class&nbsp;<code>android.app.Service</code></dd>
+</dl>
 </li>
 </ul>
 <a name="startLEDS--">

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":9,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -98,7 +98,7 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>Activity</li>
+<li>ThemedActivity</li>
 <li>
 <ul class="inheritance">
 <li>com.qualcomm.ftccommon.FtcLynxFirmwareUpdateActivity</li>
@@ -113,7 +113,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">FtcLynxFirmwareUpdateActivity</span>
-extends Activity</pre>
+extends ThemedActivity</pre>
 <div class="block"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html" title="class in com.qualcomm.ftccommon"><code>FtcLynxFirmwareUpdateActivity</code></a> manages the updating of the firmware on
  all available attached lynx modules.</div>
 </li>
@@ -174,24 +174,16 @@ extends Activity</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#firmwareImageFile">firmwareImageFile</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static java.io.File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#LYNX_FIRMWARE_UPDATE_DIR">LYNX_FIRMWARE_UPDATE_DIR</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>protected java.util.List&lt;<a href="../../../com/qualcomm/ftccommon/USBAccessibleLynxModule.html" title="class in com.qualcomm.ftccommon">USBAccessibleLynxModule</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#modulesToUpdate">modulesToUpdate</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#msResponseWait">msResponseWait</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected NetworkConnectionHandler</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#networkConnectionHandler">networkConnectionHandler</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.io.File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#RC_APP_UPDATE_DIR">RC_APP_UPDATE_DIR</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected RecvLoopRunnable.RecvLoopCallback</code></td>
@@ -258,30 +250,34 @@ extends Activity</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#getLynxModulesForFirmwareUpdate--">getLynxModulesForFirmwareUpdate</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#getTag--">getTag</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#initializeDirectories--">initializeDirectories</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onCreate-Bundle-">onCreate</a></span>(Bundle&nbsp;savedInstanceState)</code>&nbsp;</td>
-</tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onDestroy--">onDestroy</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onCreate-android.os.Bundle-">onCreate</a></span>(android.os.Bundle&nbsp;savedInstanceState)</code>&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onStart--">onStart</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onDestroy--">onDestroy</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onStop--">onStop</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onStart--">onStart</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onUpdateLynxFirmwareClicked-View-">onUpdateLynxFirmwareClicked</a></span>(View&nbsp;view)</code>&nbsp;</td>
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onStop--">onStop</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i10" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onUpdateLynxFirmwareClicked-android.view.View-">onUpdateLynxFirmwareClicked</a></span>(android.view.View&nbsp;view)</code>&nbsp;</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#sendOrInject-Command-">sendOrInject</a></span>(Command&nbsp;cmd)</code>&nbsp;</td>
 </tr>
@@ -318,24 +314,6 @@ extends Activity</pre>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../constant-values.html#com.qualcomm.ftccommon.FtcLynxFirmwareUpdateActivity.TAG">Constant Field Values</a></dd>
 </dl>
-</li>
-</ul>
-<a name="LYNX_FIRMWARE_UPDATE_DIR">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>LYNX_FIRMWARE_UPDATE_DIR</h4>
-<pre>public static final&nbsp;java.io.File LYNX_FIRMWARE_UPDATE_DIR</pre>
-</li>
-</ul>
-<a name="RC_APP_UPDATE_DIR">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>RC_APP_UPDATE_DIR</h4>
-<pre>public static final&nbsp;java.io.File RC_APP_UPDATE_DIR</pre>
 </li>
 </ul>
 <a name="networkConnectionHandler">
@@ -453,6 +431,15 @@ extends Activity</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getTag--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTag</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getTag()</pre>
+</li>
+</ul>
 <a name="initializeDirectories--">
 <!--   -->
 </a>
@@ -462,13 +449,13 @@ extends Activity</pre>
 <pre>public static&nbsp;void&nbsp;initializeDirectories()</pre>
 </li>
 </ul>
-<a name="onCreate-Bundle-">
+<a name="onCreate-android.os.Bundle-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onCreate</h4>
-<pre>protected&nbsp;void&nbsp;onCreate(Bundle&nbsp;savedInstanceState)</pre>
+<pre>protected&nbsp;void&nbsp;onCreate(android.os.Bundle&nbsp;savedInstanceState)</pre>
 </li>
 </ul>
 <a name="onStart--">
@@ -489,13 +476,13 @@ extends Activity</pre>
 <pre>protected&nbsp;void&nbsp;onDestroy()</pre>
 </li>
 </ul>
-<a name="onUpdateLynxFirmwareClicked-View-">
+<a name="onUpdateLynxFirmwareClicked-android.view.View-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onUpdateLynxFirmwareClicked</h4>
-<pre>public&nbsp;void&nbsp;onUpdateLynxFirmwareClicked(View&nbsp;view)</pre>
+<pre>public&nbsp;void&nbsp;onUpdateLynxFirmwareClicked(android.view.View&nbsp;view)</pre>
 </li>
 </ul>
 <a name="onStop--">

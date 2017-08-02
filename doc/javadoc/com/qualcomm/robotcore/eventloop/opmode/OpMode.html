@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":6,"i3":6,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":10,"i1":10,"i2":6,"i3":10,"i4":10,"i5":10,"i6":10,"i7":6,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/LinearOpMode.LinearOpModeHelper.html" title="class in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeAndMeta.html" title="class in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManager.html" title="interface in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/qualcomm/robotcore/eventloop/opmode/OpMode.html" target="_top">Frames</a></li>
@@ -107,7 +107,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/LinearOpMode.html" title="class in com.qualcomm.robotcore.eventloop.opmode">LinearOpMode</a>, <a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManagerImpl.DefaultOpMode.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpModeManagerImpl.DefaultOpMode</a></dd>
+<dd><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/LinearOpMode.html" title="class in com.qualcomm.robotcore.eventloop.opmode">LinearOpMode</a></dd>
 </dl>
 <hr>
 <br>
@@ -151,33 +151,39 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected int</code></td>
+<td class="colFirst"><code>OpModeServices</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#internalOpModeServices">internalOpModeServices</a></span></code>
+<div class="block">this is logically an internal field.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#msStuckDetectInit">msStuckDetectInit</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected int</code></td>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#msStuckDetectInitLoop">msStuckDetectInitLoop</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected int</code></td>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#msStuckDetectLoop">msStuckDetectLoop</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected int</code></td>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#msStuckDetectStart">msStuckDetectStart</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected int</code></td>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#msStuckDetectStop">msStuckDetectStop</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/firstinspires/ftc/robotcore/external/Telemetry.html" title="interface in org.firstinspires.ftc.robotcore.external">Telemetry</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#telemetry">telemetry</a></span></code>
 <div class="block">The <a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#telemetry"><code>telemetry</code></a> field contains an object in which a user may accumulate data which
  is to be transmitted to the driver station.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#time">time</a></span></code>
 <div class="block">number of seconds this op mode has been running, this is
@@ -237,28 +243,34 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#internalPostInitLoop--">internalPostInitLoop</a></span>()</code>
+<div class="block">automatically update telemetry in a non-linear opmode</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#internalPostLoop--">internalPostLoop</a></span>()</code>
+<div class="block">automatically update telemetry in a non-linear opmode</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#internalPreInit--">internalPreInit</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#internalUpdateTelemetryNow-TelemetryMessage-">internalUpdateTelemetryNow</a></span>(TelemetryMessage&nbsp;telemetry)</code>
+<div class="block">This is an internal SDK method, not intended for use by user opmodes.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#loop--">loop</a></span>()</code>
 <div class="block">User defined loop method</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#postInitLoop--">postInitLoop</a></span>()</code>
-<div class="block">automatically update telemetry in a non-linear opmode</div>
-</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#postLoop--">postLoop</a></span>()</code>
-<div class="block">automatically update telemetry in a non-linear opmode</div>
-</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#preInit--">preInit</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#requestOpModeStop--">requestOpModeStop</a></span>()</code>
 <div class="block">Requests that this OpMode be shut down if it the currently active opMode, much as if the stop
@@ -266,25 +278,25 @@ extends java.lang.Object</pre>
  then this function has no effect.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#resetStartTime--">resetStartTime</a></span>()</code>
 <div class="block">Reset the start time to zero.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#start--">start</a></span>()</code>
 <div class="block">User defined start method.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#stop--">stop</a></span>()</code>
 <div class="block">User defined stop method</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#updateTelemetry-org.firstinspires.ftc.robotcore.external.Telemetry-">updateTelemetry</a></span>(<a href="../../../../../org/firstinspires/ftc/robotcore/external/Telemetry.html" title="interface in org.firstinspires.ftc.robotcore.external">Telemetry</a>&nbsp;telemetry)</code>
 <div class="block">Refreshes the user's telemetry on the driver station with the contents of the provided telemetry
@@ -372,7 +384,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>msStuckDetectInit</h4>
-<pre>protected&nbsp;int msStuckDetectInit</pre>
+<pre>public&nbsp;int msStuckDetectInit</pre>
 </li>
 </ul>
 <a name="msStuckDetectInitLoop">
@@ -381,7 +393,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>msStuckDetectInitLoop</h4>
-<pre>protected&nbsp;int msStuckDetectInitLoop</pre>
+<pre>public&nbsp;int msStuckDetectInitLoop</pre>
 </li>
 </ul>
 <a name="msStuckDetectStart">
@@ -390,7 +402,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>msStuckDetectStart</h4>
-<pre>protected&nbsp;int msStuckDetectStart</pre>
+<pre>public&nbsp;int msStuckDetectStart</pre>
 </li>
 </ul>
 <a name="msStuckDetectLoop">
@@ -399,16 +411,26 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>msStuckDetectLoop</h4>
-<pre>protected&nbsp;int msStuckDetectLoop</pre>
+<pre>public&nbsp;int msStuckDetectLoop</pre>
 </li>
 </ul>
 <a name="msStuckDetectStop">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>msStuckDetectStop</h4>
-<pre>protected&nbsp;int msStuckDetectStop</pre>
+<pre>public&nbsp;int msStuckDetectStop</pre>
+</li>
+</ul>
+<a name="internalOpModeServices">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>internalOpModeServices</h4>
+<pre>public&nbsp;OpModeServices internalOpModeServices</pre>
+<div class="block">this is logically an internal field. DO NOT USE</div>
 </li>
 </ul>
 </li>
@@ -568,33 +590,50 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="preInit--">
+<a name="internalPreInit--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>preInit</h4>
-<pre>protected&nbsp;void&nbsp;preInit()</pre>
+<h4>internalPreInit</h4>
+<pre>public&nbsp;void&nbsp;internalPreInit()</pre>
 </li>
 </ul>
-<a name="postInitLoop--">
+<a name="internalPostInitLoop--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>postInitLoop</h4>
-<pre>protected&nbsp;void&nbsp;postInitLoop()</pre>
+<h4>internalPostInitLoop</h4>
+<pre>public&nbsp;void&nbsp;internalPostInitLoop()</pre>
 <div class="block">automatically update telemetry in a non-linear opmode</div>
 </li>
 </ul>
-<a name="postLoop--">
+<a name="internalPostLoop--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>internalPostLoop</h4>
+<pre>public&nbsp;void&nbsp;internalPostLoop()</pre>
+<div class="block">automatically update telemetry in a non-linear opmode</div>
+</li>
+</ul>
+<a name="internalUpdateTelemetryNow-TelemetryMessage-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>postLoop</h4>
-<pre>protected&nbsp;void&nbsp;postLoop()</pre>
-<div class="block">automatically update telemetry in a non-linear opmode</div>
+<h4>internalUpdateTelemetryNow</h4>
+<pre>public final&nbsp;void&nbsp;internalUpdateTelemetryNow(TelemetryMessage&nbsp;telemetry)</pre>
+<div class="block">This is an internal SDK method, not intended for use by user opmodes.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>telemetry</code> - the telemetry data to transmit</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html#telemetry"><code>telemetry</code></a>, 
+<a href="../../../../../org/firstinspires/ftc/robotcore/external/Telemetry.html#update--"><code>Telemetry.update()</code></a></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -625,7 +664,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/LinearOpMode.LinearOpModeHelper.html" title="class in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeAndMeta.html" title="class in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManager.html" title="interface in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/qualcomm/robotcore/eventloop/opmode/OpMode.html" target="_top">Frames</a></li>

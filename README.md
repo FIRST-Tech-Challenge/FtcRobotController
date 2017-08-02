@@ -1,35 +1,85 @@
-# ftc_app
-FTC Android Studio project to create FTC Robot Controller app.
+## Welcome!
+This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 
-This is the FTC SDK that can be used to create an FTC Robot Controller app, with custom op modes.
-The FTC Robot Controller app is designed to work in conjunction with the FTC Driver Station app.
-The FTC Driver Station app is available through Google Play.
+If you are new to the *FIRST* Tech Challenge software and control system, you should visit the online wiki to learn how to install, configure, and use the software and control system:
 
-To use this SDK, download/clone the entire project to your local computer.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/ftctechnh/ftc_app/wiki
 
-*** Important note regarding the repository size ***:  this repository is large and it can take a long time and a lot of space to clone the entire repository. If you would like to save time and space, there are some options that you can choose to download only the most current version of the Android project folder.
+## Downloading the Project
+It is important to note that this repository is large and can take a long time and use a lot of space to download. If you would like to save time and space, there are some options that you can choose to download only the most current version of the Android project folder:
 
-If you are a git user, you can use the --depth command line argument to only clone the most current version of the repository:
+* If you are a git user, *FIRST* recommends that you use the --depth command line argument to only clone the most current version of the repository:
 
-  git clone --depth=1 https://github.com/ftctechnh/ftc_app.git
+<p><center>git clone --depth=1 https://github.com/ftctechnh/ftc_app.git</center></p>
 
-Or, if you prefer, you can use the "Download Zip" button available through the main repository page.  You can also download the project folder (as a .zip or .tar.gz archive file) from the Downloads subsection of the Releases page for this repository.
+* Or, if you prefer, you can use the "Download Zip" button available through the main repository page.  Downloading the project as a .ZIP file will keep the size of the download manageable.
 
-Use Android Studio to import the folder  ("Import project (Eclipse ADT, Gradle, etc.)").
+* You can also download the project folder (as a .zip or .tar.gz archive file) from the Downloads subsection of the Releases page for this repository.
 
+Once you have downloaded and uncompressed your folder (if needed) you can use use Android Studio to import the folder  ("Import project (Eclipse ADT, Gradle, etc.)").
+
+## Getting Help
+### User Documentation and Tutorials
+*FIRST* maintains an online wiki with information and tutorials on how to use the *FIRST* Tech Challenge software and robot control system.  You can access the wiki at the following address:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/ftctechnh/ftc_app/wiki
+
+### Javadoc Reference Material
 The Javadoc reference documentation for the FTC SDK is now available online.  Visit the following URL to view the FTC SDK documentation as a live website:
 
-http://ftctechnh.github.io/ftc_app/doc/javadoc/index.html
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://ftctechnh.github.io/ftc_app/doc/javadoc/index.html    
 
 Documentation for the FTC SDK is also included with this repository.  There is a subfolder called "doc" which contains several subfolders:
 
  * The folder "apk" contains the .apk files for the FTC Driver Station and FTC Robot Controller apps.
  * The folder "javadoc" contains the JavaDoc user documentation for the FTC SDK.
- * The folder "tutorial" contains PDF files that help teach the basics of using the FTC SDK.
 
+### Online User Forum
 For technical questions regarding the SDK, please visit the FTC Technology forum:
 
-  http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
+
+
+
+**************************************************************************************
+# Release Information
+**************************************************************************************
+
+Version 3.2 (built on 17.08.02)
+
+This version of the software introduces the "OnBot Java" Development Tool.  Similar to the FTC Blocks Development Tool, the FTC OnBot Java Development Tool allows a user to create, edit and build op modes dynamically using only a Javascript-enabled web browser.
+
+The OnBot Java Development Tool is an integrated development environment (IDE) that is served up by the Robot Controller.  Op modes are created and edited using a Javascript-enabled browser (Google Chromse is recommended).  Op modes are saved on the Robot Controller Android device directly.  
+
+The OnBot Java Development Tool provides a Java programming environment that does NOT need Android Studio.
+
+
+
+Changes with version 3.2 include:
+ * Enhanced web-based development tools
+    - Introduction of OnBot Java Development Tool.
+    - Web-based programming and management features are "always on" (user no longer needs to put Robot Controller into programming mode).
+    - Web-based management interface (where user can change Robot Controller name and also easily download Robot Controller log file).
+    - OnBot Java, Blocks and Management features available from web based interface.
+
+* Blocks Programming Development Tool:
+    - Changed "LynxI2cColorRangeSensor" block to "REV Color/range sensor" block.
+    - Fixed tooltip for ColorSensor.isLightOn block.
+    Added blocks for ColorSensor.getNormalizedColors and LynxI2cColorRangeSensor.getNormalizedColors.
+
+* Added example op modes for digital touch sensor and REV Robotics Color Distance sensor.
+* User selectable color themes.
+* Includes many minor enhancements and fixes (too numerous to list).
+
+Known issues:
+* Auto complete function is incomplete and does not support the following (for now):
+     - Access via *this* keyword
+     - Access via *super* keyword
+     - Members of the super cloass, not overridden by the class
+     - Any methods provided in the current class
+     - Inner classes
+     - Can't handle casted objects
+     - Any objects coming from an parenthetically enclosed expression
 
 **************************************************************************************
 
@@ -94,7 +144,7 @@ Changes include:
     - Includes support for REV Control Hub (note that the REV Control Hub is not yet approved for FTC use).
     - Implements FTC Blocks programming support for REV Expansion Hub and sensor hardware.
     - Detects and alerts when I2C device disconnect.
-    
+
 **************************************************************************************
 
 Version 2.62 (built on 17.01.07)
@@ -115,7 +165,7 @@ Version 2.6 (released on 16.12.16)
      - fix isCalibrating issues.
   * Blocks Programming mode changes:
      - Blocks now ignores a device in the configuration xml if the name is empty. Other devices work in configuration work fine.
-     
+
 **************************************************************************************
 
 Version 2.5 (internal release on released on 16.12.13)
@@ -223,7 +273,7 @@ Version 2.30 (released on 16.10.05)
      - Fix for CompassSensor setMode block
   * Vuforia
      - Fix deadlock / make camera data available while Vuforia is running.
-     - Update to Vuforia 6.0.117 (recommended by Vuforia and Google to close security loophole). 
+     - Update to Vuforia 6.0.117 (recommended by Vuforia and Google to close security loophole).
   * Fix for autonomous 30 second timer bug (where timer was in effect, even though it appeared to have timed out).
   * opModeIsActive changes to allow cleanup after op mode is stopped (with enforced 2 second safety timeout).
   * Fix to avoid reading i2c twice.
@@ -351,7 +401,7 @@ Release 16.03.09
  * Added code to create log messages while waiting for LinearOpMode shutdown.
  * Fix so Wifi Direct Config activity will no longer launch multiple times.
  * Added the ability to specify an alternate i2c address in software for the Modern Robotics gyro.
- 
+
 **************************************************************************************
 
 Release 16.02.09
@@ -435,7 +485,7 @@ Release 15.11.04.001
  * Fix to keep references stable when updating gamepad.
  * For legacy Matrix motor/servo controllers removed necessity of appending "Motor" and "Servo" to controller names.
  * Updated HT color sensor driver to use constants from ModernRoboticsUsbLegacyModule class.
- * Updated MR color sensor driver to use constants from ModernRoboticsUsbDeviceInterfaceModule class. 
+ * Updated MR color sensor driver to use constants from ModernRoboticsUsbDeviceInterfaceModule class.
  * Correctly handle I2C Address change in all color sensors
  * Updated/cleaned up op modes.
   - Updated comments in LinearI2cAddressChange.java example op mode.
@@ -450,7 +500,7 @@ Release 15.11.04.001
 
 T. Eng
 November 5, 2015
- 
+
 **************************************************************************************
 
 Release 15.10.06.002

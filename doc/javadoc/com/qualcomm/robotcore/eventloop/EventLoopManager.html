@@ -199,7 +199,9 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#EventLoopManager-Context-">EventLoopManager</a></span>(Context&nbsp;context)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#EventLoopManager-android.content.Context-com.qualcomm.robotcore.eventloop.opmode.EventLoopManagerClient-com.qualcomm.robotcore.eventloop.EventLoop-">EventLoopManager</a></span>(android.content.Context&nbsp;context,
+                <a href="../../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopManagerClient.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">EventLoopManagerClient</a>&nbsp;eventLoopManagerClient,
+                <a href="../../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;idleEventLoop)</code>
 <div class="block">Constructor</div>
 </td>
 </tr>
@@ -270,69 +272,69 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i10" class="altColor">
+<td class="colFirst"><code>WebServer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#getWebServer--">getWebServer</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>CallbackResult</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#heartbeatEvent-RobocolDatagram-long-">heartbeatEvent</a></span>(RobocolDatagram&nbsp;packet,
               long&nbsp;tReceived)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>CallbackResult</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#onNetworkConnectionEvent-NetworkConnection.Event-">onNetworkConnectionEvent</a></span>(NetworkConnection.Event&nbsp;event)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>CallbackResult</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#packetReceived-RobocolDatagram-">packetReceived</a></span>(RobocolDatagram&nbsp;packet)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#peerConnected-boolean-">peerConnected</a></span>(boolean&nbsp;peerLikelyChanged)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#peerDisconnected--">peerDisconnected</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>CallbackResult</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#peerDiscoveryEvent-RobocolDatagram-">peerDiscoveryEvent</a></span>(RobocolDatagram&nbsp;packet)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#refreshSystemTelemetry--">refreshSystemTelemetry</a></span>()</code>
 <div class="block">Do our best to maintain synchrony of the system error / warning state between applications
  without incurring undo overhead.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#refreshSystemTelemetryNow--">refreshSystemTelemetryNow</a></span>()</code>
 <div class="block">Forces an immediate refresh of the system telemetry</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#registerSyncdDevice-com.qualcomm.robotcore.eventloop.SyncdDevice-">registerSyncdDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.html" title="interface in com.qualcomm.robotcore.eventloop">SyncdDevice</a>&nbsp;device)</code>
 <div class="block">Register a sync'd device</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>CallbackResult</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#reportGlobalError-java.lang.String-boolean-">reportGlobalError</a></span>(java.lang.String&nbsp;error,
                  boolean&nbsp;recoverable)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#sendTelemetryData-TelemetryMessage-">sendTelemetryData</a></span>(TelemetryMessage&nbsp;telemetry)</code>
 <div class="block">Send telemetry data</div>
 </td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#setEventLoop-com.qualcomm.robotcore.eventloop.EventLoop-">setEventLoop</a></span>(<a href="../../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;eventLoop)</code>
 <div class="block">Replace the current event loop with a new event loop</div>
 </td>
-</tr>
-<tr id="i22" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#setIdleEventLoop-com.qualcomm.robotcore.eventloop.EventLoop-">setIdleEventLoop</a></span>(<a href="../../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;idleEventLoop)</code>&nbsp;</td>
 </tr>
 <tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -488,13 +490,15 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="EventLoopManager-Context-">
+<a name="EventLoopManager-android.content.Context-com.qualcomm.robotcore.eventloop.opmode.EventLoopManagerClient-com.qualcomm.robotcore.eventloop.EventLoop-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>EventLoopManager</h4>
-<pre>public&nbsp;EventLoopManager(Context&nbsp;context)</pre>
+<pre>public&nbsp;EventLoopManager(android.content.Context&nbsp;context,
+                        <a href="../../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopManagerClient.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">EventLoopManagerClient</a>&nbsp;eventLoopManagerClient,
+                        <a href="../../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;idleEventLoop)</pre>
 <div class="block">Constructor</div>
 </li>
 </ul>
@@ -506,13 +510,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="setIdleEventLoop-com.qualcomm.robotcore.eventloop.EventLoop-">
+<a name="getWebServer--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setIdleEventLoop</h4>
-<pre>public&nbsp;void&nbsp;setIdleEventLoop(<a href="../../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;idleEventLoop)</pre>
+<h4>getWebServer</h4>
+<pre>public&nbsp;WebServer&nbsp;getWebServer()</pre>
 </li>
 </ul>
 <a name="setMonitor-com.qualcomm.robotcore.eventloop.EventLoopManager.EventLoopMonitor-">

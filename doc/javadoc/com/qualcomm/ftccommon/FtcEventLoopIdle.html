@@ -73,13 +73,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.classes.inherited.from.class.com.qualcomm.ftccommon.FtcEventLoopBase">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.qualcomm.ftccommon.FtcEventLoopBase">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -119,7 +119,10 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">FtcEventLoopIdle</span>
 extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="class in com.qualcomm.ftccommon">FtcEventLoopBase</a></pre>
 <div class="block"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html" title="class in com.qualcomm.ftccommon"><code>FtcEventLoopIdle</code></a> is an eventloop that runs whenever a full <a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html" title="class in com.qualcomm.ftccommon"><code>FtcEventLoop</code></a>
- is inappropriate.</div>
+ is inappropriate.
+
+ This event loop should be robust in the face of errors and exceptions, staying up until
+ it's explicitly shut down.</div>
 </li>
 </ul>
 </div>
@@ -147,12 +150,23 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <!--   -->
 </a>
 <h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html#TAG">TAG</a></span></code>&nbsp;</td>
+</tr>
+</table>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.com.qualcomm.ftccommon.FtcEventLoopBase">
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;com.qualcomm.ftccommon.<a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="class in com.qualcomm.ftccommon">FtcEventLoopBase</a></h3>
-<code><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#activityContext">activityContext</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#ftcEventLoopHandler">ftcEventLoopHandler</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#networkConnectionHandler">networkConnectionHandler</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#programmingModeController">programmingModeController</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#robotCfgFileMgr">robotCfgFileMgr</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#runningOnDriverStation">runningOnDriverStation</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#TAG">TAG</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#usbScanManager">usbScanManager</a></code></li>
+<code><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#activityContext">activityContext</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#ftcEventLoopHandler">ftcEventLoopHandler</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#networkConnectionHandler">networkConnectionHandler</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#programmingModeController">programmingModeController</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#registeredOpModes">registeredOpModes</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#robotCfgFileMgr">robotCfgFileMgr</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#runningOnDriverStation">runningOnDriverStation</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#usbScanManager">usbScanManager</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#userOpmodeRegister">userOpmodeRegister</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.com.qualcomm.robotcore.eventloop.EventLoop">
@@ -175,9 +189,10 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html#FtcEventLoopIdle-HardwareFactory-com.qualcomm.ftccommon.UpdateUI.Callback-Activity-com.qualcomm.ftccommon.ProgrammingModeController-">FtcEventLoopIdle</a></span>(HardwareFactory&nbsp;hardwareFactory,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html#FtcEventLoopIdle-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-android.app.Activity-com.qualcomm.ftccommon.ProgrammingModeController-">FtcEventLoopIdle</a></span>(HardwareFactory&nbsp;hardwareFactory,
+                <a href="../../../com/qualcomm/robotcore/eventloop/opmode/OpModeRegister.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">OpModeRegister</a>&nbsp;userOpmodeRegister,
                 <a href="../../../com/qualcomm/ftccommon/UpdateUI.Callback.html" title="class in com.qualcomm.ftccommon">UpdateUI.Callback</a>&nbsp;callback,
-                Activity&nbsp;activityContext,
+                android.app.Activity&nbsp;activityContext,
                 <a href="../../../com/qualcomm/ftccommon/ProgrammingModeController.html" title="interface in com.qualcomm.ftccommon">ProgrammingModeController</a>&nbsp;programmingModeController)</code>&nbsp;</td>
 </tr>
 </table>
@@ -196,7 +211,7 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManagerImpl.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpModeManagerImpl</a></code></td>
+<td class="colFirst"><code>OpModeManagerImpl</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html#getOpModeManager--">getOpModeManager</a></span>()</code>
 <div class="block">Returns the OpModeManager associated with this event loop</div>
 </td>
@@ -228,7 +243,7 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html#onUsbDeviceAttached-UsbDevice-">onUsbDeviceAttached</a></span>(UsbDevice&nbsp;usbDevice)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html#onUsbDeviceAttached-android.hardware.usb.UsbDevice-">onUsbDeviceAttached</a></span>(android.hardware.usb.UsbDevice&nbsp;usbDevice)</code>
 <div class="block">Notifies the event loop that a UsbDevice has just been attached to the system.</div>
 </td>
 </tr>
@@ -270,7 +285,7 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.qualcomm.ftccommon.<a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="class in com.qualcomm.ftccommon">FtcEventLoopBase</a></h3>
-<code><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#enterFirmwareUpdateMode-RobotUsbDevice-">enterFirmwareUpdateMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#getLynxUsbDeviceForFirmwareUpdate-com.qualcomm.robotcore.util.SerialNumber-">getLynxUsbDeviceForFirmwareUpdate</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#getUSBAccessibleLynxDevices-boolean-">getUSBAccessibleLynxDevices</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandActivateConfiguration-java.lang.String-">handleCommandActivateConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandClearRememberedGroups--">handleCommandClearRememberedGroups</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDeleteConfiguration-java.lang.String-">handleCommandDeleteConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDisconnectWifiDirect--">handleCommandDisconnectWifiDirect</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDismissAlertDialog-Command-">handleCommandDismissAlertDialog</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDismissProgress-Command-">handleCommandDismissProgress</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandGetCandidateLynxFirmwareImages-Command-">handleCommandGetCandidateLynxFirmwareImages</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandGetUSBAccessibleLynxModules-Command-">handleCommandGetUSBAccessibleLynxModules</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandLynxChangeModuleAddresses-Command-">handleCommandLynxChangeModuleAddresses</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandLynxFirmwareUpdate-Command-">handleCommandLynxFirmwareUpdate</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestActiveConfiguration-java.lang.String-">handleCommandRequestActiveConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestConfigurations--">handleCommandRequestConfigurations</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestConfigurationTemplates--">handleCommandRequestConfigurationTemplates</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestInspectionReport--">handleCommandRequestInspectionReport</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestParticularConfiguration-java.lang.String-">handleCommandRequestParticularConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestRememberedGroups--">handleCommandRequestRememberedGroups</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRestartRobot--">handleCommandRestartRobot</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandSaveConfiguration-java.lang.String-">handleCommandSaveConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowAlertDialog-Command-">handleCommandShowAlertDialog</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowProgress-Command-">handleCommandShowProgress</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowToast-Command-">handleCommandShowToast</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandStartProgrammingMode--">handleCommandStartProgrammingMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandStopProgrammingMode--">handleCommandStopProgrammingMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#processCommand-Command-">processCommand</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#startUsbScanMangerIfNecessary--">startUsbScanMangerIfNecessary</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#updateLynxFirmware-com.qualcomm.robotcore.util.SerialNumber-com.qualcomm.ftccommon.CommandList.FWImage-">updateLynxFirmware</a></code></li>
+<code><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#checkForChangedOpModes--">checkForChangedOpModes</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#enterFirmwareUpdateMode-RobotUsbDevice-">enterFirmwareUpdateMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#getLynxUsbDeviceForFirmwareUpdate-com.qualcomm.robotcore.util.SerialNumber-">getLynxUsbDeviceForFirmwareUpdate</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#getUSBAccessibleLynxDevices-boolean-">getUSBAccessibleLynxDevices</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandActivateConfiguration-java.lang.String-">handleCommandActivateConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandClearRememberedGroups--">handleCommandClearRememberedGroups</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDeleteConfiguration-java.lang.String-">handleCommandDeleteConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDisconnectWifiDirect--">handleCommandDisconnectWifiDirect</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDismissAllDialogs-Command-">handleCommandDismissAllDialogs</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDismissDialog-Command-">handleCommandDismissDialog</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDismissProgress-Command-">handleCommandDismissProgress</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandGetCandidateLynxFirmwareImages-Command-">handleCommandGetCandidateLynxFirmwareImages</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandGetUSBAccessibleLynxModules-Command-">handleCommandGetUSBAccessibleLynxModules</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandLynxChangeModuleAddresses-Command-">handleCommandLynxChangeModuleAddresses</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandLynxFirmwareUpdate-Command-">handleCommandLynxFirmwareUpdate</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestConfigurations--">handleCommandRequestConfigurations</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestConfigurationTemplates--">handleCommandRequestConfigurationTemplates</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestInspectionReport--">handleCommandRequestInspectionReport</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestParticularConfiguration-java.lang.String-">handleCommandRequestParticularConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestRememberedGroups--">handleCommandRequestRememberedGroups</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRestartRobot--">handleCommandRestartRobot</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandSaveConfiguration-java.lang.String-">handleCommandSaveConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowDialog-Command-">handleCommandShowDialog</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowProgress-Command-">handleCommandShowProgress</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowToast-Command-">handleCommandShowToast</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandStartDriverStationProgramAndManage--">handleCommandStartDriverStationProgramAndManage</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandStartProgrammingMode--">handleCommandStartProgrammingMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandStopProgrammingMode--">handleCommandStopProgrammingMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#processCommand-Command-">processCommand</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#sendUIState--">sendUIState</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#startUsbScanMangerIfNecessary--">startUsbScanMangerIfNecessary</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#updateLynxFirmware-com.qualcomm.robotcore.util.SerialNumber-com.qualcomm.ftccommon.CommandList.FWImage-">updateLynxFirmware</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -287,21 +302,43 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="TAG">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>TAG</h4>
+<pre>public static final&nbsp;java.lang.String TAG</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../constant-values.html#com.qualcomm.ftccommon.FtcEventLoopIdle.TAG">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="FtcEventLoopIdle-HardwareFactory-com.qualcomm.ftccommon.UpdateUI.Callback-Activity-com.qualcomm.ftccommon.ProgrammingModeController-">
+<a name="FtcEventLoopIdle-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-android.app.Activity-com.qualcomm.ftccommon.ProgrammingModeController-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>FtcEventLoopIdle</h4>
 <pre>public&nbsp;FtcEventLoopIdle(HardwareFactory&nbsp;hardwareFactory,
+                        <a href="../../../com/qualcomm/robotcore/eventloop/opmode/OpModeRegister.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">OpModeRegister</a>&nbsp;userOpmodeRegister,
                         <a href="../../../com/qualcomm/ftccommon/UpdateUI.Callback.html" title="class in com.qualcomm.ftccommon">UpdateUI.Callback</a>&nbsp;callback,
-                        Activity&nbsp;activityContext,
+                        android.app.Activity&nbsp;activityContext,
                         <a href="../../../com/qualcomm/ftccommon/ProgrammingModeController.html" title="interface in com.qualcomm.ftccommon">ProgrammingModeController</a>&nbsp;programmingModeController)</pre>
 </li>
 </ul>
@@ -329,6 +366,10 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
  Threading: called on the RobotSetupRunnable.run() thread, before the EventLoopRunnable.run()
  thread is created.</div>
 <dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#init-com.qualcomm.robotcore.eventloop.EventLoopManager-">init</a></code>&nbsp;in interface&nbsp;<code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a></code></dd>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#init-com.qualcomm.robotcore.eventloop.EventLoopManager-">init</a></code>&nbsp;in class&nbsp;<code><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="class in com.qualcomm.ftccommon">FtcEventLoopBase</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>eventLoopManager</code> - event loop manager that is responsible for this event loop</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -418,14 +459,14 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
                                     java.util.concurrent.TimeUnit&nbsp;unit)</pre>
 </li>
 </ul>
-<a name="onUsbDeviceAttached-UsbDevice-">
+<a name="onUsbDeviceAttached-android.hardware.usb.UsbDevice-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onUsbDeviceAttached</h4>
-<pre>public&nbsp;void&nbsp;onUsbDeviceAttached(UsbDevice&nbsp;usbDevice)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-UsbDevice-">EventLoop</a></code></span></div>
+<pre>public&nbsp;void&nbsp;onUsbDeviceAttached(android.hardware.usb.UsbDevice&nbsp;usbDevice)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-android.hardware.usb.UsbDevice-">EventLoop</a></code></span></div>
 <div class="block">Notifies the event loop that a UsbDevice has just been attached to the system. User interface
  activities that receive UsbManager.ACTION_USB_DEVICE_ATTACHED notifications should retrieve
  the UsbDevice using intent.getParcelableExtra(UsbManager.EXTRA_DEVICE) then pass that along
@@ -462,7 +503,7 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <dd><code>java.lang.InterruptedException</code></dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#handleUsbModuleDetach-RobotUsbModule-"><code>EventLoop.handleUsbModuleDetach(RobotUsbModule)</code></a>, 
-<a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-UsbDevice-"><code>EventLoop.onUsbDeviceAttached(UsbDevice)</code></a></dd>
+<a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-android.hardware.usb.UsbDevice-"><code>EventLoop.onUsbDeviceAttached(UsbDevice)</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -513,7 +554,7 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <ul class="blockList">
 <li class="blockList">
 <h4>getOpModeManager</h4>
-<pre>public&nbsp;<a href="../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManagerImpl.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpModeManagerImpl</a>&nbsp;getOpModeManager()</pre>
+<pre>public&nbsp;OpModeManagerImpl&nbsp;getOpModeManager()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#getOpModeManager--">EventLoop</a></code></span></div>
 <div class="block">Returns the OpModeManager associated with this event loop</div>
 <dl>
@@ -590,13 +631,13 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.classes.inherited.from.class.com.qualcomm.ftccommon.FtcEventLoopBase">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.qualcomm.ftccommon.FtcEventLoopBase">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

@@ -47,8 +47,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeAndMeta.html" title="class in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManagerImpl.html" title="class in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html" title="class in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManagerNotifier.html" title="interface in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/qualcomm/robotcore/eventloop/opmode/OpModeManager.html" target="_top">Frames</a></li>
@@ -101,10 +101,6 @@ var activeTableTab = "activeTableTab";
 <dt>All Known Subinterfaces:</dt>
 <dd><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/AnnotatedOpModeManager.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">AnnotatedOpModeManager</a></dd>
 </dl>
-<dl>
-<dt>All Known Implementing Classes:</dt>
-<dd><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManagerImpl.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpModeManagerImpl</a></dd>
-</dl>
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">OpModeManager</span></pre>
@@ -155,14 +151,14 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManager.html#register-com.qualcomm.robotcore.eventloop.opmode.OpModeMeta-java.lang.Class-">register</a></span>(<a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeMeta.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpModeMeta</a>&nbsp;name,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManager.html#register-OpModeMeta-java.lang.Class-">register</a></span>(OpModeMeta&nbsp;name,
         java.lang.Class&lt;? extends <a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpMode</a>&gt;&nbsp;opModeClass)</code>
 <div class="block">Registers a class for display on the driver station and availability for game play.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManager.html#register-com.qualcomm.robotcore.eventloop.opmode.OpModeMeta-com.qualcomm.robotcore.eventloop.opmode.OpMode-">register</a></span>(<a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeMeta.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpModeMeta</a>&nbsp;name,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManager.html#register-OpModeMeta-com.qualcomm.robotcore.eventloop.opmode.OpMode-">register</a></span>(OpModeMeta&nbsp;name,
         <a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpMode</a>&nbsp;opModeInstance)</code>
 <div class="block">Register an *instance* of a class for display on the driver station and availability
  for game play.</div>
@@ -238,13 +234,13 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="register-com.qualcomm.robotcore.eventloop.opmode.OpModeMeta-java.lang.Class-">
+<a name="register-OpModeMeta-java.lang.Class-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>register</h4>
-<pre>void&nbsp;register(<a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeMeta.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpModeMeta</a>&nbsp;name,
+<pre>void&nbsp;register(OpModeMeta&nbsp;name,
               java.lang.Class&lt;? extends <a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpMode</a>&gt;&nbsp;opModeClass)</pre>
 <div class="block">Registers a class for display on the driver station and availability for game play.
  New instances of this class will be created as needed.</div>
@@ -272,13 +268,13 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="register-com.qualcomm.robotcore.eventloop.opmode.OpModeMeta-com.qualcomm.robotcore.eventloop.opmode.OpMode-">
+<a name="register-OpModeMeta-com.qualcomm.robotcore.eventloop.opmode.OpMode-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>register</h4>
-<pre>void&nbsp;register(<a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeMeta.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpModeMeta</a>&nbsp;name,
+<pre>void&nbsp;register(OpModeMeta&nbsp;name,
               <a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpMode</a>&nbsp;opModeInstance)</pre>
 <div class="block">Register an *instance* of a class for display on the driver station and availability
  for game play. You won't likely use this method very often.</div>
@@ -316,8 +312,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeAndMeta.html" title="class in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManagerImpl.html" title="class in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html" title="class in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/qualcomm/robotcore/eventloop/opmode/OpModeManagerNotifier.html" title="interface in com.qualcomm.robotcore.eventloop.opmode"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/qualcomm/robotcore/eventloop/opmode/OpModeManager.html" target="_top">Frames</a></li>
