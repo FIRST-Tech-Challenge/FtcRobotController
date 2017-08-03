@@ -44,7 +44,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 
-import org.firstinspires.ftc.robotcore.internal.AppUtil;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 /*
  * This is an example LinearOpMode that shows how to use a color sensor in a generic

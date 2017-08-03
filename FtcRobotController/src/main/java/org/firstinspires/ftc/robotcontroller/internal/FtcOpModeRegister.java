@@ -31,10 +31,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package org.firstinspires.ftc.robotcontroller.internal;
 
-import com.google.blocks.ftcrobotcontroller.runtime.BlocksOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
-import com.qualcomm.robotcore.eventloop.opmode.AnnotatedOpModeRegistrar;
+
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptNullOp;
 
 /**
@@ -63,16 +62,6 @@ public class FtcOpModeRegister implements OpModeRegister {
      * @see com.qualcomm.robotcore.eventloop.opmode.Autonomous
      */
     public void register(OpModeManager manager) {
-
-        /**
-         * Register OpModes implemented in the Blocks visual programming language.
-         */
-        BlocksOpMode.registerAll(manager);
-
-        /**
-         * Register OpModes that use the annotation-based registration mechanism.
-         */
-        AnnotatedOpModeRegistrar.register(manager);
 
         /**
          * Any manual OpMode class registrations should go here.

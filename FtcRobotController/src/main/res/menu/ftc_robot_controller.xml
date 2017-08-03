@@ -34,37 +34,45 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
   <item
-    android:id="@+id/action_blocks"
-    android:orderInCategory="98"
-    android:showAsAction="never" 
-    android:visible="false"
-    android:title="@string/blocks_menu_item"/>
-  <item
     android:id="@+id/action_settings"
-    android:orderInCategory="99"
+    android:orderInCategory="100"
     android:showAsAction="never"
     android:title="@string/settings_menu_item"/>
   <item
     android:id="@+id/action_restart_robot"
-    android:orderInCategory="100"
+    android:orderInCategory="200"
     android:showAsAction="never"
     android:title="@string/restart_robot_menu_item"/>
 
   <item
     android:id="@+id/action_configure_robot"
-    android:orderInCategory="101"
+    android:orderInCategory="300"
     android:showAsAction="never"
     android:title="@string/configure_robot_menu_item"/>
 
   <item
-    android:id="@+id/action_programming_mode"
-    android:orderInCategory="103"
+    android:id="@+id/action_blocks"
+    android:orderInCategory="400"
     android:showAsAction="never"
+    android:visible="false"
+    android:title="@string/blocks_menu_item"/>
+
+  <item
+    android:id="@+id/action_programming_mode"
+    android:orderInCategory="500"
+    android:showAsAction="never"
+    android:visible="false"
     android:title="@string/programming_mode_menu_item"/>
 
   <item
+    android:id="@+id/action_program_and_manage"
+    android:orderInCategory="550"
+    android:showAsAction="never"
+    android:title="@string/program_and_manage_menu_item"/>
+
+  <item
       android:id="@+id/action_inspection_mode"
-      android:orderInCategory="104"
+      android:orderInCategory="600"
       android:showAsAction="never"
       android:title="@string/inspection_mode_menu_item"/>
 

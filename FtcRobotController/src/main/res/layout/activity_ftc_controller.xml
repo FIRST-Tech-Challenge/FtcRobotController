@@ -35,6 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              xmlns:style="http://schemas.android.com/apk/res-auto"
               tools:context="org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity"
               android:focusable="true"
               android:id="@+id/entire_screen"
@@ -45,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     android:id="@+id/top_bar"
     android:layout_width="fill_parent"
     android:layout_height="80dp"
-    android:background="@color/black">
+    android:background="@color/background_black">
 
     <ImageView
       android:id="@+id/robotIcon"
@@ -60,7 +61,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       android:layout_toEndOf="@id/robotIcon"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:textColor="@color/white"
+      android:textColor="?attr/textWhite"
       android:textAppearance="?android:attr/textAppearanceMedium"
       android:padding="8dp"
       android:textStyle="bold"/>
@@ -71,7 +72,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/icon_menu"
-      android:background="@color/black"
+      android:background="@android:color/transparent"
       android:padding="15dp"
       android:adjustViewBounds="true"
       android:layout_alignParentEnd="true"
@@ -136,14 +137,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
            allow for a bigger camera monitor view in the common case when the
            error is not in fact present
         -->
-        <TextView
+        <TextView style="@style/FtcTextViewStyleBold"
             android:id="@+id/textErrorMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text=""
             android:visibility="invisible"
-            android:textColor="#990000"
-            android:textStyle="bold"/>
+            android:textColor="?attr/textMediumDark" />
 
     </FrameLayout>
 
@@ -163,13 +163,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       android:visibility="invisible"
       android:text="" />
 
+    <!-- invisible except when programming mode is activated from the DS -->
     <TextView
       android:id="@+id/textRemoteProgrammingMode"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="#ff0066B3"
+      android:background="?attr/backgroundLight"
       android:gravity="center"
-      android:textColor="#ffffffff"
+      android:textColor="?attr/textWhite"
       android:textSize="40sp"
       android:textStyle="bold"
       android:visibility="invisible"
