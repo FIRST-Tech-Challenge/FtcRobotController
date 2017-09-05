@@ -160,7 +160,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected android.app.Activity</code></td>
+<td class="colFirst"><code>protected Activity</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#activityContext">activityContext</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -223,10 +223,10 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected </code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#FtcEventLoopBase-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-android.app.Activity-com.qualcomm.ftccommon.ProgrammingModeController-">FtcEventLoopBase</a></span>(HardwareFactory&nbsp;hardwareFactory,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#FtcEventLoopBase-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-Activity-com.qualcomm.ftccommon.ProgrammingModeController-">FtcEventLoopBase</a></span>(HardwareFactory&nbsp;hardwareFactory,
                 <a href="../../../com/qualcomm/robotcore/eventloop/opmode/OpModeRegister.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">OpModeRegister</a>&nbsp;userOpmodeRegister,
                 <a href="../../../com/qualcomm/ftccommon/UpdateUI.Callback.html" title="class in com.qualcomm.ftccommon">UpdateUI.Callback</a>&nbsp;callback,
-                android.app.Activity&nbsp;activityContext,
+                Activity&nbsp;activityContext,
                 <a href="../../../com/qualcomm/ftccommon/ProgrammingModeController.html" title="interface in com.qualcomm.ftccommon">ProgrammingModeController</a>&nbsp;programmingModeController)</code>&nbsp;</td>
 </tr>
 </table>
@@ -420,7 +420,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;com.qualcomm.robotcore.eventloop.<a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a></h3>
-<code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#getOpModeManager--">getOpModeManager</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#handleUsbModuleAttach-RobotUsbModule-">handleUsbModuleAttach</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#handleUsbModuleDetach-RobotUsbModule-">handleUsbModuleDetach</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#loop--">loop</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-android.hardware.usb.UsbDevice-">onUsbDeviceAttached</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#pendUsbDeviceAttachment-com.qualcomm.robotcore.util.SerialNumber-long-java.util.concurrent.TimeUnit-">pendUsbDeviceAttachment</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#processedRecentlyAttachedUsbDevices--">processedRecentlyAttachedUsbDevices</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#refreshUserTelemetry-TelemetryMessage-double-">refreshUserTelemetry</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#requestOpModeStop-com.qualcomm.robotcore.eventloop.opmode.OpMode-">requestOpModeStop</a></code></li>
+<code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#getOpModeManager--">getOpModeManager</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#handleUsbModuleAttach-RobotUsbModule-">handleUsbModuleAttach</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#handleUsbModuleDetach-RobotUsbModule-">handleUsbModuleDetach</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#loop--">loop</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-UsbDevice-">onUsbDeviceAttached</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#pendUsbDeviceAttachment-com.qualcomm.robotcore.util.SerialNumber-long-java.util.concurrent.TimeUnit-">pendUsbDeviceAttachment</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#processedRecentlyAttachedUsbDevices--">processedRecentlyAttachedUsbDevices</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#refreshUserTelemetry-TelemetryMessage-double-">refreshUserTelemetry</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#requestOpModeStop-com.qualcomm.robotcore.eventloop.opmode.OpMode-">requestOpModeStop</a></code></li>
 </ul>
 </li>
 </ul>
@@ -464,7 +464,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 <ul class="blockList">
 <li class="blockList">
 <h4>activityContext</h4>
-<pre>protected&nbsp;android.app.Activity activityContext</pre>
+<pre>protected&nbsp;Activity activityContext</pre>
 </li>
 </ul>
 <a name="robotCfgFileMgr">
@@ -538,7 +538,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="FtcEventLoopBase-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-android.app.Activity-com.qualcomm.ftccommon.ProgrammingModeController-">
+<a name="FtcEventLoopBase-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-Activity-com.qualcomm.ftccommon.ProgrammingModeController-">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -547,7 +547,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 <pre>protected&nbsp;FtcEventLoopBase(HardwareFactory&nbsp;hardwareFactory,
                            <a href="../../../com/qualcomm/robotcore/eventloop/opmode/OpModeRegister.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">OpModeRegister</a>&nbsp;userOpmodeRegister,
                            <a href="../../../com/qualcomm/ftccommon/UpdateUI.Callback.html" title="class in com.qualcomm.ftccommon">UpdateUI.Callback</a>&nbsp;callback,
-                           android.app.Activity&nbsp;activityContext,
+                           Activity&nbsp;activityContext,
                            <a href="../../../com/qualcomm/ftccommon/ProgrammingModeController.html" title="interface in com.qualcomm.ftccommon">ProgrammingModeController</a>&nbsp;programmingModeController)</pre>
 </li>
 </ul>

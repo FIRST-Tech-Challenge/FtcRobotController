@@ -47,6 +47,41 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 # Release Information
 **************************************************************************************
 
+Version 3.3 (built on 17.09.04)
+
+This version of the software includes improves for the FTC Blocks Programming Tool and the OnBot Java Programming Tool.
+
+Changes with verion 3.3 include:
+ * Android Studio ftc_app project has been updated to use Gradle Plugin 2.3.3.
+ * Android Studio ftc_app project is already using gradle 3.5 distribution.
+ * Robot Controller log has been renamed to /sdcard/RobotControllerLog.txt (note that this change was actually introduced w/ v3.2).
+ * Improvements in I2C reliability.
+ * Optimized I2C read for REV Expansion Hub, with v1.7 firmware or greater.
+ * Updated all external/samples (available through OnBot and in Android project folder).
+ * Vuforia
+    - Added support for VuMarks that will be used for the 2017-2018 season game.
+ * Blocks
+    - Update to latest Google Blockly release.
+    - Sample op modes can be selected as a template when creating new op mode.
+    - Fixed bug where the blocks would disappear temporarily when mouse button is held down.
+    - Added blocks for Range.clip and Range.scale.
+    - User can now disable/enable Block op modes.
+    - Fix to prevent occasional Blocks deadlock.
+ * OnBot Java
+    - Significant improvements with autocomplete function for OnBot Java editor.
+    - Sample op modes can be selected as a template when creating new op mode.
+    - Fixes and changes to complete hardware setup feature.
+    - Updated (and more useful) onBot welcome message.
+    
+Known issues:
+ * Android Studio
+    - After updating to the new v3.3 Android Studio project folder, if you get error messages indicating "InvalidVirtualFileAccessException" then you might need to do a File->Invalidate Caches / Restart to clear the error.
+
+ * OnBot Java
+    - Sometimes when you push the build button to build all op modes, the RC returns an error message that the build failed.  If you press the build button a second time, the build typically suceeds.
+    
+**************************************************************************************
+
 Version 3.2 (built on 17.08.02)
 
 This version of the software introduces the "OnBot Java" Development Tool.  Similar to the FTC Blocks Development Tool, the FTC OnBot Java Development Tool allows a user to create, edit and build op modes dynamically using only a Javascript-enabled web browser.

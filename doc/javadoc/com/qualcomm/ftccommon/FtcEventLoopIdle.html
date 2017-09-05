@@ -189,10 +189,10 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html#FtcEventLoopIdle-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-android.app.Activity-com.qualcomm.ftccommon.ProgrammingModeController-">FtcEventLoopIdle</a></span>(HardwareFactory&nbsp;hardwareFactory,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html#FtcEventLoopIdle-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-Activity-com.qualcomm.ftccommon.ProgrammingModeController-">FtcEventLoopIdle</a></span>(HardwareFactory&nbsp;hardwareFactory,
                 <a href="../../../com/qualcomm/robotcore/eventloop/opmode/OpModeRegister.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">OpModeRegister</a>&nbsp;userOpmodeRegister,
                 <a href="../../../com/qualcomm/ftccommon/UpdateUI.Callback.html" title="class in com.qualcomm.ftccommon">UpdateUI.Callback</a>&nbsp;callback,
-                android.app.Activity&nbsp;activityContext,
+                Activity&nbsp;activityContext,
                 <a href="../../../com/qualcomm/ftccommon/ProgrammingModeController.html" title="interface in com.qualcomm.ftccommon">ProgrammingModeController</a>&nbsp;programmingModeController)</code>&nbsp;</td>
 </tr>
 </table>
@@ -243,7 +243,7 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html#onUsbDeviceAttached-android.hardware.usb.UsbDevice-">onUsbDeviceAttached</a></span>(android.hardware.usb.UsbDevice&nbsp;usbDevice)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html#onUsbDeviceAttached-UsbDevice-">onUsbDeviceAttached</a></span>(UsbDevice&nbsp;usbDevice)</code>
 <div class="block">Notifies the event loop that a UsbDevice has just been attached to the system.</div>
 </td>
 </tr>
@@ -329,7 +329,7 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="FtcEventLoopIdle-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-android.app.Activity-com.qualcomm.ftccommon.ProgrammingModeController-">
+<a name="FtcEventLoopIdle-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-Activity-com.qualcomm.ftccommon.ProgrammingModeController-">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -338,7 +338,7 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <pre>public&nbsp;FtcEventLoopIdle(HardwareFactory&nbsp;hardwareFactory,
                         <a href="../../../com/qualcomm/robotcore/eventloop/opmode/OpModeRegister.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">OpModeRegister</a>&nbsp;userOpmodeRegister,
                         <a href="../../../com/qualcomm/ftccommon/UpdateUI.Callback.html" title="class in com.qualcomm.ftccommon">UpdateUI.Callback</a>&nbsp;callback,
-                        android.app.Activity&nbsp;activityContext,
+                        Activity&nbsp;activityContext,
                         <a href="../../../com/qualcomm/ftccommon/ProgrammingModeController.html" title="interface in com.qualcomm.ftccommon">ProgrammingModeController</a>&nbsp;programmingModeController)</pre>
 </li>
 </ul>
@@ -459,14 +459,14 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
                                     java.util.concurrent.TimeUnit&nbsp;unit)</pre>
 </li>
 </ul>
-<a name="onUsbDeviceAttached-android.hardware.usb.UsbDevice-">
+<a name="onUsbDeviceAttached-UsbDevice-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onUsbDeviceAttached</h4>
-<pre>public&nbsp;void&nbsp;onUsbDeviceAttached(android.hardware.usb.UsbDevice&nbsp;usbDevice)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-android.hardware.usb.UsbDevice-">EventLoop</a></code></span></div>
+<pre>public&nbsp;void&nbsp;onUsbDeviceAttached(UsbDevice&nbsp;usbDevice)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-UsbDevice-">EventLoop</a></code></span></div>
 <div class="block">Notifies the event loop that a UsbDevice has just been attached to the system. User interface
  activities that receive UsbManager.ACTION_USB_DEVICE_ATTACHED notifications should retrieve
  the UsbDevice using intent.getParcelableExtra(UsbManager.EXTRA_DEVICE) then pass that along
@@ -503,7 +503,7 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <dd><code>java.lang.InterruptedException</code></dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#handleUsbModuleDetach-RobotUsbModule-"><code>EventLoop.handleUsbModuleDetach(RobotUsbModule)</code></a>, 
-<a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-android.hardware.usb.UsbDevice-"><code>EventLoop.onUsbDeviceAttached(UsbDevice)</code></a></dd>
+<a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-UsbDevice-"><code>EventLoop.onUsbDeviceAttached(UsbDevice)</code></a></dd>
 </dl>
 </li>
 </ul>

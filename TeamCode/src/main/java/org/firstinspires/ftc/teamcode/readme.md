@@ -23,7 +23,7 @@ The full description of this convention is found in the samples/sample_conventio
 A brief synopsis of the naming convention is given here:
 The prefix of the name will be one of the following:
 
-* Template: This is a minimally functional OpMode used to illustrate the skeleton/structure
+* Basic:    This is a minimally functional OpMode used to illustrate the skeleton/structure
             of a particular style of OpMode.  These are bare bones examples.
 * Sensor:   This is a Sample OpMode that shows how to use a specific sensor.
             It is not intended as a functioning robot, it is simply showing the minimal code
@@ -42,7 +42,7 @@ The prefix of the name will be one of the following:
 
 Once you are familiar with the range of samples available, you can choose one to be the
 basis for your own robot.  In all cases, the desired sample(s) needs to be copied into
-your team's module to be used.
+your TeamCode module to be used.
 
 This is done inside Android Studio directly, using the following steps:
 

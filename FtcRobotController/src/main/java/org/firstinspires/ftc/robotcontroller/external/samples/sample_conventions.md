@@ -1,5 +1,5 @@
 ## Sample Class/Opmode conventions
-#### V 1.0.0  7/19/2016
+#### V 1.1.0  8/9/2017
 
 This document defines the FTC Sample OpMode and Class conventions.
 
@@ -10,8 +10,8 @@ A range of different samples classes will reside in the java/external/samples fo
 For ease of understanding, the class names will follow a naming convention which indicates
 the purpose of each class.  The prefix of the name will be one of the following:
 
-Template:	This is a minimally functional OpMode used to illustrate the skeleton/structure
-            of a particular style of OpMode.  These are bare bones examples.
+Basic:	    This is a minimally functional OpMode used to illustrate the skeleton/structure
+            of a particular style of OpMode.  These are bare bones Tank Drive examples.
 
 Sensor:    	This is a Sample OpMode that shows how to use a specific sensor.
             It is not intended to drive a functioning robot, it is simply showing the minimal code
@@ -67,29 +67,34 @@ becomes obsolete.
 
 The following device names are used in the external samples
  
-** Motors
+** Motors:
 left_drive
 right_drive
 left_arm
 
-** Servos
+** Servos:
 left_hand
 right_hand
 arm
 claw
 
-** Sensors
+** Sensors:
 sensor_color
 sensor_ir
 sensor_light
 sensor_ods
 sensor_range
 sensor_touch
+sensor_color_distance
+sensor_digital
+digin
+digout
 
-** Localization
+** Localization:
 compass
 gyro
 imu 
+navx
 
 ### Device Object Names
 
