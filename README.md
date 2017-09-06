@@ -47,6 +47,16 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 # Release Information
 **************************************************************************************
 
+Version 3.4 (built on 17.09.06)
+
+Changes with verion 3.4 include:
+ * Added telemetry.update() statement for BlankLinearOpMode template.
+ * Renamed sample Block op modes to be more consistent with Java samples.
+ * Added some additional sample Block op modes.
+ * Reworded OnBot Java readme slightly.
+
+**************************************************************************************
+
 Version 3.3 (built on 17.09.04)
 
 This version of the software includes improves for the FTC Blocks Programming Tool and the OnBot Java Programming Tool.
