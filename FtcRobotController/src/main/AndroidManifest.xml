@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.qualcomm.ftcrobotcontroller"
-          android:versionCode="24"
-          android:versionName="3.4">
+          android:versionCode="25"
+          android:versionName="3.5">
 
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -242,45 +242,53 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeAutoCloseOnTeardown--">closeAutoCloseOnTeardown</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#close--">close</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeMotorControllers--">closeMotorControllers</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeAutoCloseOnTeardown--">closeAutoCloseOnTeardown</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeServoControllers--">closeServoControllers</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeBatteryMonitoring--">closeBatteryMonitoring</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeMotorControllers--">closeMotorControllers</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeServoControllers--">closeServoControllers</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#displayGamePadInfo-java.lang.String-">displayGamePadInfo</a></span>(java.lang.String&nbsp;activeOpModeName)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html" title="class in com.qualcomm.robotcore.eventloop">EventLoopManager</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#getEventLoopManager--">getEventLoopManager</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;LynxUsbDeviceImpl&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#getExtantLynxDeviceImpls--">getExtantLynxDeviceImpls</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../com/qualcomm/robotcore/hardware/Gamepad.html" title="class in com.qualcomm.robotcore.hardware">Gamepad</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#getGamepads--">getGamepads</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#getHardwareMap--">getHardwareMap</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#getOpMode-java.lang.String-">getOpMode</a></span>(java.lang.String&nbsp;extra)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#init-com.qualcomm.robotcore.eventloop.EventLoopManager-">init</a></span>(<a href="../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html" title="class in com.qualcomm.robotcore.eventloop">EventLoopManager</a>&nbsp;eventLoopManager)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#refreshUserTelemetry-TelemetryMessage-double-">refreshUserTelemetry</a></span>(TelemetryMessage&nbsp;telemetry,
                     double&nbsp;requestedInterval)</code>
@@ -288,22 +296,22 @@ extends java.lang.Object</pre>
  interval has passed since the last transmission.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#restartRobot--">restartRobot</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#sendBatteryInfo--">sendBatteryInfo</a></span>()</code>
 <div class="block">Send robot phone power % and robot battery voltage level to Driver station</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#sendTelemetry-java.lang.String-java.lang.String-">sendTelemetry</a></span>(java.lang.String&nbsp;tag,
              java.lang.String&nbsp;msg)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#updateBatteryStatus-BatteryChecker.BatteryStatus-">updateBatteryStatus</a></span>(BatteryChecker.BatteryStatus&nbsp;status)</code>&nbsp;</td>
 </tr>
@@ -546,6 +554,15 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;init(<a href="../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html" title="class in com.qualcomm.robotcore.eventloop">EventLoopManager</a>&nbsp;eventLoopManager)</pre>
 </li>
 </ul>
+<a name="close--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>close</h4>
+<pre>public&nbsp;void&nbsp;close()</pre>
+</li>
+</ul>
 <a name="getEventLoopManager--">
 <!--   -->
 </a>
@@ -646,7 +663,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>closeMotorControllers</h4>
-<pre>public&nbsp;void&nbsp;closeMotorControllers()</pre>
+<pre>protected&nbsp;void&nbsp;closeMotorControllers()</pre>
 </li>
 </ul>
 <a name="closeServoControllers--">
@@ -655,7 +672,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>closeServoControllers</h4>
-<pre>public&nbsp;void&nbsp;closeServoControllers()</pre>
+<pre>protected&nbsp;void&nbsp;closeServoControllers()</pre>
 </li>
 </ul>
 <a name="closeAutoCloseOnTeardown--">
@@ -664,7 +681,16 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>closeAutoCloseOnTeardown</h4>
-<pre>public&nbsp;void&nbsp;closeAutoCloseOnTeardown()</pre>
+<pre>protected&nbsp;void&nbsp;closeAutoCloseOnTeardown()</pre>
+</li>
+</ul>
+<a name="closeBatteryMonitoring--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>closeBatteryMonitoring</h4>
+<pre>protected&nbsp;void&nbsp;closeBatteryMonitoring()</pre>
 </li>
 </ul>
 <a name="restartRobot--">

@@ -42,6 +42,23 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
 
 
+**************************************************************************************
+# Release Information
+**************************************************************************************
+
+Version 3.5 (built on 17.10.30)
+
+Changes with version 3.5 include:
+ * Introduced a fix to prevent random op mode stops, which can occur after the Robot Controller app has been paused and then resumed (for example, when a user temporarily turns off the display of the Robot Controller phone, and then turns the screen back on).
+ * Introduced a fix to prevent random op mode stops, which were previously caused by random peer disconnect events on the Driver Station.
+ * Fixes issue where log files would be closed on pause of the RC or DS, but not re-opened upon resume.
+ * Fixes issue with battery handler (voltage) start/stop race.
+ * Fixes issue where Android Studio generated op modes would disappear from available list in certain situations.
+ * Fixes problem where OnBot Java would not build on REV Robotics Control Hub.
+ * Fixes problem where OnBot Java would not build if the date and time on the Robot Controller device was "rewound" (set to an earlier date/time).
+ * Improved error message on OnBot Java that occurs when renaming a file fails.
+ * Removed unneeded resources from android.jar binaries used by OnBot Java to reduce final size of Robot Controller app.
+ * Added MR_ANALOG_TOUCH_SENSOR block to Blocks Programming Tool.
 
 **************************************************************************************
 # Release Information
@@ -49,7 +66,7 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 
 Version 3.4 (built on 17.09.06)
 
-Changes with verion 3.4 include:
+Changes with version 3.4 include:
  * Added telemetry.update() statement for BlankLinearOpMode template.
  * Renamed sample Block op modes to be more consistent with Java samples.
  * Added some additional sample Block op modes.
@@ -86,7 +103,6 @@ Changes with verion 3.3 include:
 Known issues:
  * Android Studio
     - After updating to the new v3.3 Android Studio project folder, if you get error messages indicating "InvalidVirtualFileAccessException" then you might need to do a File->Invalidate Caches / Restart to clear the error.
-
  * OnBot Java
     - Sometimes when you push the build button to build all op modes, the RC returns an error message that the build failed.  If you press the build button a second time, the build typically suceeds.
     
@@ -184,8 +200,7 @@ Changes include:
     - Fixes bug with projects page for Firefox browser.
     - Added IsSpeaking block to AndroidTextToSpeech.  
  * Implements support for the REV Robotics Expansion Hub
-    - Implements support for integral REV IMU (physically installed on I2C bus 0, uses same Bosch BNO055 9 axis absolute orientation sensor as Adafruit 9DOF abs orientation sensor).
-    - Implements support for REV color/range/light sensor.
+    - Implements support for integral REV IMU (physically installed on I2C bus 0, uses same Bosch BNO055 9 axis absolute orientation sensor as Adafruit 9DOF abs orientation sensor).    - Implements support for REV color/range/light sensor.
     - Provides support to update Expansion Hub firmware through FTC SDK.
     - Detects REV firmware version and records in log file.
     - Includes support for REV Control Hub (note that the REV Control Hub is not yet approved for FTC use).
