@@ -42,6 +42,14 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
 
 
+**************************************************************************************
+# Release Information
+**************************************************************************************
+
+Version 3.7 (built on 18.03.12)
+
+Changes include:
+ * Interim fix to allow FTC apps to run on Android Nougat (7.x) devices.
 
 **************************************************************************************
 # Release Information
