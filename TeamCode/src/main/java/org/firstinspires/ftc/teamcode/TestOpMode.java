@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.splinelib.AssetsTrajectoryLoader;
+import com.acmerobotics.splinelib.trajectory.AssetsTrajectoryLoader;
 import com.acmerobotics.splinelib.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
