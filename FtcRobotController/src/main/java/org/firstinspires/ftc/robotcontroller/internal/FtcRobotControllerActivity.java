@@ -56,6 +56,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.acmerobotics.dashboard.RobotDashboard;
 import com.google.blocks.ftcrobotcontroller.BlocksActivity;
 import com.google.blocks.ftcrobotcontroller.ProgrammingModeActivity;
 import com.google.blocks.ftcrobotcontroller.ProgrammingModeControllerImpl;
@@ -305,6 +306,8 @@ public class FtcRobotControllerActivity extends Activity
     ServiceController.startService(FtcRobotControllerWatchdogService.class);
     bindToService();
     logPackageVersions();
+
+    RobotDashboard.start();
   }
 
   protected UpdateUI createUpdateUI() {
@@ -384,6 +387,8 @@ public class FtcRobotControllerActivity extends Activity
 
     preferencesHelper.getSharedPreferences().unregisterOnSharedPreferenceChangeListener(sharedPreferencesListener);
     RobotLog.cancelWriteLogcatToDisk();
+
+    RobotDashboard.stop();
   }
 
   protected void bindToService() {
@@ -582,6 +587,8 @@ public class FtcRobotControllerActivity extends Activity
     controllerService.setupRobot(eventLoop, idleLoop);
 
     passReceivedUsbAttachmentsToEventLoop();
+
+    RobotDashboard.attachEventLoop(eventLoop);
   }
 
   protected OpModeRegister createOpModeRegister() {

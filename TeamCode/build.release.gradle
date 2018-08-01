@@ -1,3 +1,8 @@
+repositories {
+    jcenter()
+    mavenLocal()
+}
+
 dependencies {
     compile project(':FtcRobotController')
     compile (name: 'RobotCore-release', ext: 'aar')
@@ -5,4 +10,6 @@ dependencies {
     compile (name: 'FtcCommon-release', ext: 'aar')
     compile (name:'Analytics-release', ext:'aar')
     compile (name:'WirelessP2p-release', ext:'aar')
+
+    compile 'com.acmerobotics.splinelib:core:0.1-SNAPSHOT'
 }
