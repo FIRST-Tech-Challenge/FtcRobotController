@@ -41,7 +41,7 @@ public class MyMecanumDrive extends MecanumDrive {
     }
 
     private static double encoderTicksToInches(int ticks) {
-        return 2 * Math.PI * ticks / TICKS_PER_REV;
+        return 2 * 2 * Math.PI * ticks / TICKS_PER_REV;
     }
 
     @NotNull
