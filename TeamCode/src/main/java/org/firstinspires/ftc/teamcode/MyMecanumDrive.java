@@ -1,6 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.acmerobotics.splinelib.drive.MecanumDrive;
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.lynx.LynxNackException;
+import com.qualcomm.hardware.lynx.commands.core.LynxGetBulkInputDataCommand;
+import com.qualcomm.hardware.lynx.commands.core.LynxGetBulkInputDataResponse;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -11,6 +17,7 @@ import com.qualcomm.robotcore.hardware.configuration.MotorConfigurationType;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,10 +28,14 @@ public class MyMecanumDrive extends MecanumDrive {
 
     public static final PIDCoefficients NORMAL_VELOCITY_PID = new PIDCoefficients(20, 8, 12);
 
+    private LynxModule frontHub;
+
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
 
     public MyMecanumDrive(HardwareMap hardwareMap) {
         super(6.82);
+
+        frontHub = hardwareMap.get(LynxModule.class, "frontHub");
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
@@ -47,12 +58,22 @@ public class MyMecanumDrive extends MecanumDrive {
     @NotNull
     @Override
     public List<Double> getMotorPositions() {
-        return Arrays.asList(
-                encoderTicksToInches(leftFront.getCurrentPosition()),
-                encoderTicksToInches(leftRear.getCurrentPosition()),
-                encoderTicksToInches(rightRear.getCurrentPosition()),
-                encoderTicksToInches(rightFront.getCurrentPosition())
-        );
+        LynxGetBulkInputDataCommand command = new LynxGetBulkInputDataCommand(frontHub);
+        List<Double> positions = new ArrayList<>();
+        try {
+            LynxGetBulkInputDataResponse response = command.sendReceive();
+            // TODO: make this less awful
+            positions.add(encoderTicksToInches(response.getEncoder(0)));
+            positions.add(encoderTicksToInches(response.getEncoder(1)));
+            positions.add(-encoderTicksToInches(response.getEncoder(2)));
+            positions.add(-encoderTicksToInches(response.getEncoder(3)));
+            return positions;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (LynxNackException e) {
+            // TODO: what should we do here?
+        }
+        return Arrays.asList(0.0, 0.0, 0.0, 0.0);
     }
 
     @Override
