@@ -1,9 +1,12 @@
 package com.acmerobotics.splinelib.drive;
 
+import com.acmerobotics.dashboard.RobotDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.splinelib.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+// TODO: is it OK for an empirical track width to be much smaller than the physical track width
 public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
 
     @Override
@@ -29,13 +32,15 @@ public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
             if (imu.getParameters().angleUnit == BNO055IMU.AngleUnit.DEGREES) {
                 angle = Math.toRadians(angle);
             }
-            if (angle >= Math.PI) {
+            RobotDashboard.getInstance().getTelemetry().addData("angle", angle);
+            RobotDashboard.getInstance().getTelemetry().update();
+            if (angle >= Math.PI / 2.0) {
                 drive.setVelocity(new Pose2d(0.0, 0.0, 0.0));
                 break;
             }
             drive.updatePoseEstimate(System.nanoTime() / 1e9);
         }
-        double effectiveTrackWidth = drive.getPoseEstimate().heading() / Math.PI;
+        double effectiveTrackWidth = 2.0 * drive.getPoseEstimate().heading() / Math.PI;
 
         telemetry.log().clear();
         telemetry.log().add("Calibration complete");

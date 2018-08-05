@@ -8,6 +8,7 @@ import org.apache.commons.math3.stat.regression.SimpleRegression;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: kV seems to be double what it should actually be
 public abstract class FeedforwardTuningOpMode extends LinearOpMode {
 
     private double distance;
@@ -29,7 +30,7 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
     private static List<Double> numericalDerivative(List<Double> x, List<Double> y) {
         List<Double> deriv = new ArrayList<>();
         for (int i = 2; i < x.size(); i++) {
-            deriv.add((y.get(i) - y.get(i-2)) / (x.get(i) - x.get(i - 2)));
+            deriv.add((y.get(i) - y.get(i-2)) / (x.get(i) - x.get(i-2)));
         }
         deriv.add(0, deriv.get(0));
         deriv.add(deriv.get(deriv.size() - 1));
