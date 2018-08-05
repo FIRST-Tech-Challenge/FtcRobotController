@@ -1,23 +1,32 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.acmerobotics.splinelib.Pose2d;
+import com.acmerobotics.splinelib.Vector2d;
 import com.acmerobotics.splinelib.Waypoint;
 import com.acmerobotics.splinelib.control.PIDCoefficients;
-import com.acmerobotics.splinelib.followers.GVFFollower;
 import com.acmerobotics.splinelib.followers.MecanumPIDVAFollower;
 import com.acmerobotics.splinelib.path.Path;
 import com.acmerobotics.splinelib.path.QuinticSplineSegment;
 import com.acmerobotics.splinelib.trajectory.DriveConstraints;
 import com.acmerobotics.splinelib.trajectory.MecanumConstraints;
 import com.acmerobotics.splinelib.trajectory.PathTrajectorySegment;
-import com.acmerobotics.splinelib.trajectory.TankConstraints;
 import com.acmerobotics.splinelib.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYSeries;
+import org.knowm.xchart.style.MatlabTheme;
+import org.knowm.xchart.style.markers.None;
+
 import java.io.File;
-import java.util.Arrays;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @Autonomous
 public class SplineFollowTest extends LinearOpMode {
@@ -38,9 +47,14 @@ public class SplineFollowTest extends LinearOpMode {
                 0.03631,
                 0,
                 0);
-        CSVWriter writer = new CSVWriter(new File(LoggingUtil.getLogRoot(this), "SplineFollowTest-" + System.currentTimeMillis() + ".csv"));
+        File logRoot = LoggingUtil.getLogRoot(this);
+        String prefix = "SplineFollowTest-" + System.currentTimeMillis();
+        CSVWriter writer = new CSVWriter(new File(logRoot, prefix + ".csv"));
 
         waitForStart();
+
+        List<Vector2d> targetPositions = new ArrayList<>();
+        List<Vector2d> actualPositions = new ArrayList<>();
 
         double startTime = System.nanoTime() / 1e9;
         follower.followTrajectory(trajectory, startTime);
@@ -58,8 +72,53 @@ public class SplineFollowTest extends LinearOpMode {
             writer.put("currentHeading", currentPose.getHeading());
             writer.write();
 
+            targetPositions.add(targetPose.pos());
+            actualPositions.add(currentPose.pos());
+
             follower.update(currentPose, time);
             drive.updatePoseEstimate(time);
+        }
+
+        /*
+        val graph = XYChart(600, 400)
+        graph.title = "Tank GVF Follower Sim"
+        graph.addSeries(
+                "Target Trajectory",
+                pathPoints.map { it.x }.toDoubleArray(),
+                pathPoints.map { it.y }.toDoubleArray())
+        graph.addSeries(
+                "Actual Trajectory",
+                actualPositions.map { it.x }.toDoubleArray(),
+                actualPositions.map { it.y }.toDoubleArray())
+        graph.seriesMap.values.forEach { it.marker = None() }
+        GraphUtil.saveGraph("tankGVFSim", graph)*/
+        double[] targetX = new double[targetPositions.size()];
+        double[] targetY = new double[targetPositions.size()];
+        double[] actualX = new double[actualPositions.size()];
+        double[] actualY = new double[actualPositions.size()];
+
+        for (int i = 0; i < targetX.length; i++) {
+            targetX[i] = targetPositions.get(i).x();
+            targetY[i] = targetPositions.get(i).y();
+            actualX[i] = actualPositions.get(i).x();
+            actualY[i] = actualPositions.get(i).y();
+        }
+
+        XYChart chart = new XYChart(600, 400);
+        chart.addSeries("Target", targetX, targetY);
+        chart.addSeries("Actual", actualX, actualY);
+        for (XYSeries series : chart.getSeriesMap().values()) {
+            series.setMarker(new None());
+        }
+        chart.getStyler().setTheme(new MatlabTheme());
+        try {
+            BitmapEncoder.saveBitmapWithDPI(
+                    chart,
+                    new File(logRoot, prefix + ".png").getAbsolutePath(),
+                    BitmapEncoder.BitmapFormat.PNG,
+                    300);
+        } catch (IOException e) {
+            Log.w("SplineFollowTest", e);
         }
 
         writer.close();
