@@ -1,4 +1,4 @@
-package com.acmerobotics.splinelib.trajectory;
+package com.acmerobotics.roadrunner.trajectory;
 
 import com.acmerobotics.splinelib.trajectory.Trajectory;
 import com.acmerobotics.splinelib.trajectory.TrajectoryConfig;
