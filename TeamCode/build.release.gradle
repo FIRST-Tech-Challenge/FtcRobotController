@@ -11,7 +11,7 @@ dependencies {
     implementation (name:'Analytics-release', ext:'aar')
     implementation (name:'WirelessP2p-release', ext:'aar')
 
-    implementation 'com.acmerobotics.splinelib:core:0.1-SNAPSHOT'
+    implementation 'com.acmerobotics.roadrunner:core:0.1-SNAPSHOT'
 
     implementation 'org.knowm.xchart:xchart:3.5.2'
 }
