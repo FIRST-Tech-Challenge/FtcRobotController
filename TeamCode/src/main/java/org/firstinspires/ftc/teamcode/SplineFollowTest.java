@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.Waypoint;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.followers.MecanumPIDVAFollower;
 import com.acmerobotics.roadrunner.path.Path;
@@ -34,8 +33,8 @@ public class SplineFollowTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         MyMecanumDrive drive = new MyMecanumDrive(hardwareMap);
         Path path = new Path(new QuinticSplineSegment(
-                new Waypoint(0.0, 0.0, 60.0, 0.0),
-                new Waypoint(40.0, 40.0, 60.0, 0.0)
+                new QuinticSplineSegment.Waypoint(0.0, 0.0, 60.0, 0.0),
+                new QuinticSplineSegment.Waypoint(40.0, 40.0, 60.0, 0.0)
         ));
         DriveConstraints baseConstraints = new DriveConstraints(20.0, 30.0, Math.PI / 2, Math.PI / 2);
         MecanumConstraints constraints = new MecanumConstraints(baseConstraints, drive.getTrackWidth(), drive.getWheelBase());
@@ -57,8 +56,8 @@ public class SplineFollowTest extends LinearOpMode {
         List<Vector2d> actualPositions = new ArrayList<>();
 
         double startTime = System.nanoTime() / 1e9;
-        follower.followTrajectory(trajectory, startTime);
-        while (opModeIsActive() && follower.isFollowing(System.nanoTime() / 1e9)) {
+        follower.followTrajectory(trajectory);
+        while (opModeIsActive() && follower.isFollowing()) {
             double time = System.nanoTime() / 1e9;
             Pose2d currentPose = drive.getPoseEstimate();
             Pose2d targetPose = trajectory.get(time - startTime);
@@ -75,33 +74,20 @@ public class SplineFollowTest extends LinearOpMode {
             targetPositions.add(targetPose.pos());
             actualPositions.add(currentPose.pos());
 
-            follower.update(currentPose, time);
-            drive.updatePoseEstimate(time);
+            follower.update(currentPose);
+            drive.updatePoseEstimate();
         }
 
-        /*
-        val graph = XYChart(600, 400)
-        graph.title = "Tank GVF Follower Sim"
-        graph.addSeries(
-                "Target Trajectory",
-                pathPoints.map { it.x }.toDoubleArray(),
-                pathPoints.map { it.y }.toDoubleArray())
-        graph.addSeries(
-                "Actual Trajectory",
-                actualPositions.map { it.x }.toDoubleArray(),
-                actualPositions.map { it.y }.toDoubleArray())
-        graph.seriesMap.values.forEach { it.marker = None() }
-        GraphUtil.saveGraph("tankGVFSim", graph)*/
         double[] targetX = new double[targetPositions.size()];
         double[] targetY = new double[targetPositions.size()];
         double[] actualX = new double[actualPositions.size()];
         double[] actualY = new double[actualPositions.size()];
 
         for (int i = 0; i < targetX.length; i++) {
-            targetX[i] = targetPositions.get(i).x();
-            targetY[i] = targetPositions.get(i).y();
-            actualX[i] = actualPositions.get(i).x();
-            actualY[i] = actualPositions.get(i).y();
+            targetX[i] = targetPositions.get(i).getX();
+            targetY[i] = targetPositions.get(i).getY();
+            actualX[i] = actualPositions.get(i).getX();
+            actualY[i] = actualPositions.get(i).getY();
         }
 
         XYChart chart = new XYChart(600, 400);

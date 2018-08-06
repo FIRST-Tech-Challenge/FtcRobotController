@@ -55,7 +55,7 @@ public class MyMecanumDrive extends MecanumDrive {
 
     @NotNull
     @Override
-    public List<Double> getMotorPositions() {
+    public List<Double> getWheelPositions() {
         LynxGetBulkInputDataCommand command = new LynxGetBulkInputDataCommand(frontHub);
         List<Double> positions = new ArrayList<>();
         try {

@@ -85,7 +85,7 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
         List<Double> powerSamples = new ArrayList<>();
         List<Double> positionSamples = new ArrayList<>();
 
-        drive.resetPoseEstimate(new Pose2d());
+        drive.setPoseEstimate(new Pose2d());
         while (true) {
             double elapsedTime = System.nanoTime() / 1e9 - startTime;
             if (elapsedTime > t) {
@@ -97,10 +97,10 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
 
             timeSamples.add(elapsedTime);
             powerSamples.add(power);
-            positionSamples.add(drive.getPoseEstimate().x());
+            positionSamples.add(drive.getPoseEstimate().getX());
 
             drive.setVelocity(new Pose2d(power, 0.0, 0.0));
-            drive.updatePoseEstimate(elapsedTime);
+            drive.updatePoseEstimate();
         }
 
         List<Double> velocitySamples = numericalDerivative(timeSamples, positionSamples);

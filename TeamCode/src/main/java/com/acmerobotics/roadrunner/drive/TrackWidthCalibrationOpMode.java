@@ -25,7 +25,7 @@ public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
         telemetry.update();
 
         drive.setVelocity(new Pose2d(0.0, 0.0, 0.2));
-        drive.resetPoseEstimate(new Pose2d(0.0, 0.0, 0.0));
+        drive.setPoseEstimate(new Pose2d());
         while (opModeIsActive()) {
             double angle = imu.getAngularOrientation().firstAngle;
             if (imu.getParameters().angleUnit == BNO055IMU.AngleUnit.DEGREES) {
@@ -37,9 +37,9 @@ public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
                 drive.setVelocity(new Pose2d(0.0, 0.0, 0.0));
                 break;
             }
-            drive.updatePoseEstimate(System.nanoTime() / 1e9);
+            drive.updatePoseEstimate();
         }
-        double effectiveTrackWidth = 2.0 * drive.getPoseEstimate().heading() / Math.PI;
+        double effectiveTrackWidth = 2.0 * drive.getPoseEstimate().getHeading() / Math.PI;
 
         telemetry.log().clear();
         telemetry.log().add("Calibration complete");
