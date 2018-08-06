@@ -1,7 +1,5 @@
 package com.acmerobotics.roadrunner.trajectory;
 
-import com.acmerobotics.splinelib.trajectory.Trajectory;
-import com.acmerobotics.splinelib.trajectory.TrajectoryConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.module.kotlin.KotlinModule;
