@@ -12,4 +12,6 @@
 apply from: '../build.common.gradle'
 dependencies {
     implementation project(':FtcDashboard')
+
+    implementation 'com.android.support:multidex:1.0.3'
 }
