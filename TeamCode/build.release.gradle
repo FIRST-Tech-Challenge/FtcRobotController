@@ -11,7 +11,9 @@ dependencies {
     implementation (name:'Analytics-release', ext:'aar')
     implementation (name:'WirelessP2p-release', ext:'aar')
 
-    implementation 'com.acmerobotics.roadrunner:core:0.1-SNAPSHOT'
+    implementation project(':FtcDashboard')
 
-    implementation 'org.knowm.xchart:xchart:3.5.2'
+    implementation 'com.acmerobotics.roadrunner:core:0.1.0'
+
+    implementation 'com.android.support:multidex:1.0.3'
 }

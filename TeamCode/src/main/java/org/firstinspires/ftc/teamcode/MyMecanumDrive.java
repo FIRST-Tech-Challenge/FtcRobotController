@@ -31,7 +31,7 @@ public class MyMecanumDrive extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
 
     public MyMecanumDrive(HardwareMap hardwareMap) {
-        super(6.82);
+        super(16.22, 0);
 
         frontHub = hardwareMap.get(LynxModule.class, "frontHub");
 
@@ -41,7 +41,7 @@ public class MyMecanumDrive extends MecanumDrive {
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
         for (DcMotorEx motor : Arrays.asList(leftFront, leftRear, rightRear, rightFront)) {
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor.setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, NORMAL_VELOCITY_PID);
         }
 

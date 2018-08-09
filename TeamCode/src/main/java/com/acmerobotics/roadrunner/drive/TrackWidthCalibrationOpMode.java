@@ -1,12 +1,19 @@
 package com.acmerobotics.roadrunner.drive;
 
-import com.acmerobotics.dashboard.RobotDashboard;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-// TODO: is it OK for an empirical track width to be much smaller than the physical track width
 public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
+    private int totalRevolutions;
+
+    public TrackWidthCalibrationOpMode(int totalRevolutions) {
+        this.totalRevolutions = totalRevolutions;
+    }
+
+    public TrackWidthCalibrationOpMode() {
+        this(4);
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -24,22 +31,28 @@ public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
         telemetry.log().add("Running...");
         telemetry.update();
 
-        drive.setVelocity(new Pose2d(0.0, 0.0, 0.2));
+        int revolutions = 0;
+        boolean startedMoving = false;
+        double lastHeading = 0;
+
         drive.setPoseEstimate(new Pose2d());
-        while (opModeIsActive()) {
-            double angle = imu.getAngularOrientation().firstAngle;
+        drive.setVelocity(new Pose2d(0.0, 0.0, 0.2));
+        while (opModeIsActive() && (!startedMoving || revolutions <= totalRevolutions)) {
+            double heading = imu.getAngularOrientation().firstAngle;
             if (imu.getParameters().angleUnit == BNO055IMU.AngleUnit.DEGREES) {
-                angle = Math.toRadians(angle);
+                heading = Math.toRadians(heading);
             }
-            RobotDashboard.getInstance().getTelemetry().addData("angle", angle);
-            RobotDashboard.getInstance().getTelemetry().update();
-            if (angle >= Math.PI / 2.0) {
-                drive.setVelocity(new Pose2d(0.0, 0.0, 0.0));
-                break;
+            if (heading >= Math.PI / 2.0) {
+                startedMoving = true;
+            }
+            if (startedMoving && (lastHeading < 0.0 && heading >= 0.0)) {
+                revolutions++;
             }
             drive.updatePoseEstimate();
+            lastHeading = heading;
         }
-        double effectiveTrackWidth = 2.0 * drive.getPoseEstimate().getHeading() / Math.PI;
+        drive.setVelocity(new Pose2d(0.0, 0.0, 0.0));
+        double effectiveTrackWidth = drive.getPoseEstimate().getHeading() / (2.0 * Math.PI * totalRevolutions);
 
         telemetry.log().clear();
         telemetry.log().add("Calibration complete");
