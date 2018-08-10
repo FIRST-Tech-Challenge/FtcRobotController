@@ -4,13 +4,13 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
-import org.firstinspires.ftc.teamcode.CSVWriter;
-import org.firstinspires.ftc.teamcode.LoggingUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Op mode for computing kV, kStatic, and kA from various drive routines.
+ */
 public abstract class FeedforwardTuningOpMode extends LinearOpMode {
     private static final double MAX_POWER = 0.7;
     private static final double EPSILON = 1e-2;
@@ -20,6 +20,12 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
     private double wheelDiameter;
     private double wheelGearRatio;
 
+    /**
+     * @param distance allowable forward travel distance
+     * @param wheelMotorRpm wheel motor rpm
+     * @param wheelDiameter wheel diameter
+     * @param wheelGearRatio wheel gear ratio (output / input)
+     */
     public FeedforwardTuningOpMode(double distance, double wheelMotorRpm, double wheelDiameter, double wheelGearRatio) {
         this.distance = distance;
         this.wheelMotorRpm = wheelMotorRpm;
@@ -44,10 +50,6 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Drive drive = initDrive();
-
-        File logRoot = LoggingUtil.getLogRoot(this);
-        String prefix = "AccelFF-" + System.currentTimeMillis();
-        CSVWriter writer = new CSVWriter(new File(logRoot, prefix + ".csv"));
 
         telemetry.log().add("Press play to begin the feedforward tuning routine");
         telemetry.update();
@@ -189,10 +191,6 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
 
                 timeSamples.add(elapsedTime);
                 positionSamples.add(drive.getPoseEstimate().getX());
-
-                writer.put("time", elapsedTime);
-                writer.put("position", drive.getPoseEstimate().getX());
-                writer.write();
 
                 drive.updatePoseEstimate();
             }

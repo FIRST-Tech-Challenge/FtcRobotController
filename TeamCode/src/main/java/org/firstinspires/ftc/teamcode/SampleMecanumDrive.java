@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
-import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.lynx.LynxNackException;
-import com.qualcomm.hardware.lynx.commands.core.LynxGetBulkInputDataCommand;
-import com.qualcomm.hardware.lynx.commands.core.LynxGetBulkInputDataResponse;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -19,21 +15,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MyMecanumDrive extends MecanumDrive {
+public class SampleMecanumDrive extends MecanumDrive {
+    // TODO: change your drive motor
     public static final MotorConfigurationType MOTOR_CONFIG = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
 
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
+    /**
+     * These were good velocity PID values for a ~40lb robot with 1:1 belt-driven wheels off AM
+     * orbital 20s. Adjust accordingly (or tune them yourself, see
+     * https://github.com/acmerobotics/relic-recovery/blob/master/TeamCode/src/main/java/com/acmerobotics/relicrecovery/opmodes/tuner/DriveVelocityPIDTuner.java
+     */
     public static final PIDCoefficients NORMAL_VELOCITY_PID = new PIDCoefficients(20, 8, 12);
 
-    private LynxModule frontHub;
-
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private List<DcMotorEx> motors;
 
-    public MyMecanumDrive(HardwareMap hardwareMap) {
-        super(16.22, 0);
-
-        frontHub = hardwareMap.get(LynxModule.class, "frontHub");
+    public SampleMecanumDrive(HardwareMap hardwareMap) {
+        // TODO: this needs to be tuned using FeedforwardTuningOpMode
+        super(1);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
@@ -41,37 +41,33 @@ public class MyMecanumDrive extends MecanumDrive {
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
         for (DcMotorEx motor : Arrays.asList(leftFront, leftRear, rightRear, rightFront)) {
-//            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            // TODO: decide whether or not to use the built-in velocity PID
+            // if you keep it, then don't tune kStatic or kA
+            // otherwise, at least tune kStatic and kA potentially
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor.setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, NORMAL_VELOCITY_PID);
         }
 
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
     }
 
     private static double encoderTicksToInches(int ticks) {
-        return 2 * 2 * Math.PI * ticks / TICKS_PER_REV;
+        // TODO: modify this appropriately
+        // wheel radius * radians/rev * wheel revs/motor revs * motor revs
+        return 2 * 2 * Math.PI * 1.0 * ticks / TICKS_PER_REV;
     }
 
     @NotNull
     @Override
     public List<Double> getWheelPositions() {
-        LynxGetBulkInputDataCommand command = new LynxGetBulkInputDataCommand(frontHub);
-        List<Double> positions = new ArrayList<>();
-        try {
-            LynxGetBulkInputDataResponse response = command.sendReceive();
-            // TODO: make this less awful
-            positions.add(encoderTicksToInches(response.getEncoder(0)));
-            positions.add(encoderTicksToInches(response.getEncoder(1)));
-            positions.add(-encoderTicksToInches(response.getEncoder(2)));
-            positions.add(-encoderTicksToInches(response.getEncoder(3)));
-            return positions;
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } catch (LynxNackException e) {
-            // TODO: what should we do here?
+        List<Double> wheelPositions = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            wheelPositions.add(encoderTicksToInches(motors.get(i).getCurrentPosition()));
         }
-        return Arrays.asList(0.0, 0.0, 0.0, 0.0);
+        return wheelPositions;
     }
 
     @Override
