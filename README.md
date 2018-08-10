@@ -37,3 +37,7 @@ This routine is implemented in `FeedforwardTuningOpMode`. Like the last op mode,
 ### Following a Trajectory
 
 Now your tuned drive class can be used to follow trajectories/paths. Begin by instantiating your follower with the necessary arguments and calling `followPath()`/`followTrajectory()`. Then poll `update()` with the current pose estimate until it's finished (pose estimates can be computed with `Drive.updatePoseEstimate()` or another external mechanism).
+
+## Dashboard
+
+This project also contains some code for interfacing Road Runner with [FTC Dashboard](https://github.com/acmerobotics/ftc-dashboard).
