@@ -33,3 +33,7 @@ Additionally, it's necessary to determine the relationship between robot velocit
 **Note**: In FTC, the easiest way to achieve good performance is to use the built-in velocity PID modes of the motor controllers. This effectively removes the acceleration term from the previous equation (power is now proportional to velocity, not voltage). Additionally, FTC batteries are pretty far from ideal voltage sources, creating further issues for acceleration feedforward (or direct voltage control of any sort).
 
 This routine is implemented in `FeedforwardTuningOpMode`. Like the last op mode, this one will walk you through the process of tuning the coefficients. Again, from a practical standpoint in FTC, kV alone without kStatic and kA paired with motor velocity PID is the best configuration for beginners.
+
+### Following a Trajectory
+
+Now your tuned drive class can be used to follow trajectories/paths. Begin by instantiating your follower with the necessary arguments and calling `followPath()`/`followTrajectory()`. Then poll `update()` with the current pose estimate until it's finished (pose estimates can be computed with `Drive.updatePoseEstimate()` or another external mechanism).
