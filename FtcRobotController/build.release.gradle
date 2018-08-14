@@ -1,3 +1,7 @@
+repositories {
+    jcenter()
+}
+
 dependencies {
     implementation (name:'Inspection-release', ext: 'aar')
     implementation (name:'Blocks-release', ext: 'aar')
@@ -6,4 +10,6 @@ dependencies {
     implementation (name:'FtcCommon-release', ext: 'aar')
     implementation (name:'Analytics-release', ext:'aar')
     implementation (name:'WirelessP2p-release', ext:'aar')
+
+    implementation 'com.acmerobotics.dashboard:dashboard:0.1.0'
 }

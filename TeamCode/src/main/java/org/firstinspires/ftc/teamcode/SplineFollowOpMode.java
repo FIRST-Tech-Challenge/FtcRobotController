@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.RobotDashboard;
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 public class SplineFollowOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        RobotDashboard dashboard = RobotDashboard.getInstance();
+        FtcDashboard dashboard = FtcDashboard.getInstance();
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         // change these constraints to something reasonable for your drive
         DriveConstraints baseConstraints = new DriveConstraints(20.0, 30.0, Math.PI / 2, Math.PI / 2);

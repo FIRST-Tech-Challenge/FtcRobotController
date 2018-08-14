@@ -1,6 +1,5 @@
 repositories {
     jcenter()
-    mavenLocal()
 }
 
 dependencies {
@@ -11,9 +10,9 @@ dependencies {
     implementation (name:'Analytics-release', ext:'aar')
     implementation (name:'WirelessP2p-release', ext:'aar')
 
-    implementation project(':FtcDashboard')
-
     implementation 'com.acmerobotics.roadrunner:core:0.1.0'
+
+    implementation 'com.acmerobotics.dashboard:dashboard:0.1.0'
 
     implementation 'com.android.support:multidex:1.0.3'
 }
