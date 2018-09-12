@@ -24,7 +24,7 @@ The process is relatively similar for tank and mecanum drives. Simply extend `Ta
 
 Although the track width of a robot (distance between a pair of wheels on opposite sides) can be determined physically, that number doesn't always match up with the drive's behavior due to friction and other factors. Instead, it's better to empirically calculate the track width by turning the robot in place a fixed angle and measuring the change in drive encoder positions.
 
-This routine is implemented in `TrackWidthCalibrationOpMode`. Before running the op mode, make sure the drive's track width is set to 1. Additionally, the value returned corresponds to a wheel base of 0.
+This routine is implemented in `TrackWidthCalibrationOpMode`. Before running the op mode, make sure the drive's track width is set to 1.
 
 ### Drive Characterization
 

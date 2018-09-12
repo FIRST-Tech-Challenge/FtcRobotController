@@ -61,7 +61,7 @@ public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
             lastHeading = heading;
         }
         drive.setVelocity(new Pose2d(0.0, 0.0, 0.0));
-        double effectiveTrackWidth = drive.getPoseEstimate().getHeading() / (2.0 * Math.PI * totalRevolutions);
+        double effectiveTrackWidth = drive.getPoseEstimate().getHeading() / (4.0 * Math.PI * totalRevolutions);
 
         telemetry.log().clear();
         telemetry.log().add("Calibration complete");
