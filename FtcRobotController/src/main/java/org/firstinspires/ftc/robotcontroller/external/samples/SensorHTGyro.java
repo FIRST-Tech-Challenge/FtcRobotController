@@ -30,9 +30,9 @@
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.hardware.hitechnic.HiTechnicNxtGyroSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.IntegratingGyroscope;
 
@@ -45,7 +45,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
  */
-@Autonomous(name = "Sensor: HT Gyro", group = "Sensor")
+@TeleOp(name = "Sensor: HT Gyro", group = "Sensor")
 @Disabled
 public class SensorHTGyro extends LinearOpMode {
 

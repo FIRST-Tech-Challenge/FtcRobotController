@@ -8,7 +8,6 @@ dependencies {
     implementation (name:'RobotCore-release', ext: 'aar')
     implementation (name:'Hardware-release', ext: 'aar')
     implementation (name:'FtcCommon-release', ext: 'aar')
-    implementation (name:'Analytics-release', ext:'aar')
     implementation (name:'WirelessP2p-release', ext:'aar')
 
     implementation 'com.acmerobotics.dashboard:dashboard:0.1.0'
