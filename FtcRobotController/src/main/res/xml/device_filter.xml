@@ -31,8 +31,20 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
+<!--
+https://developer.android.com/guide/topics/connectivity/usb/host
+-->
+
 <!-- see also RobotUsbDevice.getUsbIdentifiers() -->
 <resources>
    <usb-device vendor-id="1027" product-id="24577" /> <!-- FT232 Modern Robotics: 0x0403/0x6001 -->
    <usb-device vendor-id="1027" product-id="24597" /> <!-- FT232 Lynx: 0x0403/0x6015 -->
+
+   <!-- cameras -->
+   <!-- We don't currently auto-connect to UVC cameras, instead relying
+        on the app itself to poll. But we could change that if we wished -->
+   <!-- Update: turns out we need that if we are to get onNewIntent() notifications
+        in our activity when cameras attach. See FtcRobotControllerActivity. -->
+   <usb-device class="14" subclass="2"/>
+
 </resources>

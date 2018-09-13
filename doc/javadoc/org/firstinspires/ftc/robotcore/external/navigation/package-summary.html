@@ -81,23 +81,27 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MotionDetection.MotionDetectionListener.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation">MotionDetection.MotionDetectionListener</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation">VuforiaLocalizer</a></td>
 <td class="colLast">
 <div class="block">Robot "localization" denotes a robot's ability to establish its own position and
  orientation within its frame of reference.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackable.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation">VuforiaTrackable</a></td>
 <td class="colLast">
 <div class="block"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackable.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation"><code>VuforiaTrackable</code></a> provides access to an individual trackable Vuforia target.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackable.Listener.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation">VuforiaTrackable.Listener</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackables.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation">VuforiaTrackables</a></td>
 <td class="colLast">
 <div class="block"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackables.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation"><code>VuforiaTrackables</code></a> represents a set of targets that can be visually tracked.</div>
@@ -117,7 +121,7 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Acceleration.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">Acceleration</a></td>
 <td class="colLast">
-<div class="block">Instances of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Acceleration.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Acceleration</code></a> represent a double integration of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Position.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Position</code></a> over time.</div>
+<div class="block">Instances of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Acceleration.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Acceleration</code></a> represent the second derivative of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Position.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Position</code></a> over time.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -130,6 +134,12 @@
 <td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MagneticFlux.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">MagneticFlux</a></td>
 <td class="colLast">
 <div class="block">Instances of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MagneticFlux.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>MagneticFlux</code></a> represent a three-dimensional magnetic strength vector.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MotionDetection.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">MotionDetection</a></td>
+<td class="colLast">
+<div class="block">A class that will notify listeners when a phone is in motion.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -168,8 +178,18 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Velocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">Velocity</a></td>
 <td class="colLast">
-<div class="block">Instances of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Velocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Velocity</code></a> represent an integration of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Position.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Position</code></a> over time.</div>
+<div class="block">Instances of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Velocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Velocity</code></a> represent the derivative of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Position.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Position</code></a> over time.</div>
 </td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaBase</a></td>
+<td class="colLast">
+<div class="block">An abstract base class that provides simplified access to Vuforia.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.TrackingResults.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaBase.TrackingResults</a></td>
+<td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.CloseableFrame.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaLocalizer.CloseableFrame</a></td>
@@ -185,11 +205,31 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaRelicRecovery.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaRelicRecovery</a></td>
+<td class="colLast">
+<div class="block">A class that provides simplified access to Vuforia for the Relic Recovery game (2017-2018).</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaRelicRecovery.TrackingResults.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaRelicRecovery.TrackingResults</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaRoverRuckus.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaRoverRuckus</a></td>
+<td class="colLast">
+<div class="block">A class that provides simplified access to Vuforia for the Rover Ruckus game (2018-2019).</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackableDefaultListener.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaTrackableDefaultListener</a></td>
 <td class="colLast">
 <div class="block"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackableDefaultListener.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>VuforiaTrackableDefaultListener</code></a> is the default listener used for <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackable.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation"><code>VuforiaTrackable</code></a>
  implementations.</div>
 </td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackableDefaultListener.PoseAndCamera.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaTrackableDefaultListener.PoseAndCamera</a></td>
+<td class="colLast">&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuMarkInstanceId.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuMarkInstanceId</a></td>
@@ -279,7 +319,7 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.CameraDirection.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">VuforiaLocalizer.CameraDirection</a></td>
 <td class="colLast">
-<div class="block"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.CameraDirection.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation"><code>VuforiaLocalizer.CameraDirection</code></a> enumerates the identities of the cameras that Vuforia can use.</div>
+<div class="block"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.CameraDirection.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation"><code>VuforiaLocalizer.CameraDirection</code></a> enumerates the identities of the builtin phone cameras that Vuforia can use.</div>
 </td>
 </tr>
 <tr class="rowColor">

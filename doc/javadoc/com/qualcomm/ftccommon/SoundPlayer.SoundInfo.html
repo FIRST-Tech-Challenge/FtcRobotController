@@ -17,6 +17,12 @@
     catch(err) {
     }
 //-->
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var altColor = "altColor";
+var rowColor = "rowColor";
+var tableTab = "tableTab";
+var activeTableTab = "activeTableTab";
 </script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -41,8 +47,8 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../com/qualcomm/ftccommon/SoundPlayer.LoadedSoundCache.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../com/qualcomm/ftccommon/UpdateUI.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundFromFile.html" title="interface in com.qualcomm.ftccommon"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../com/qualcomm/ftccommon/SoundPlayer.StopWhat.html" title="enum in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" target="_top">Frames</a></li>
@@ -69,13 +75,13 @@
 <li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods.inherited.from.class.java.lang.Object">Method</a></li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
 <a name="skip.navbar.top">
@@ -92,7 +98,12 @@
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
+<li>RefCounted</li>
+<li>
+<ul class="inheritance">
 <li>com.qualcomm.ftccommon.SoundPlayer.SoundInfo</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -106,7 +117,7 @@
 <hr>
 <br>
 <pre>protected class <span class="typeNameLabel">SoundPlayer.SoundInfo</span>
-extends java.lang.Object</pre>
+extends RefCounted</pre>
 </li>
 </ul>
 </div>
@@ -124,6 +135,22 @@ extends java.lang.Object</pre>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#cbSize">cbSize</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>Context</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#context">context</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.io.File</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#file">file</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#hashString">hashString</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>long</code></td>
@@ -156,8 +183,12 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#SoundInfo-int-int-int-">SoundInfo</a></span>(int&nbsp;resourceId,
-         int&nbsp;sampleId,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#SoundInfo-Context-int-int-">SoundInfo</a></span>(Context&nbsp;context,
+         int&nbsp;resourceId,
+         int&nbsp;msDuration)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#SoundInfo-java.io.File-int-">SoundInfo</a></span>(java.io.File&nbsp;file,
          int&nbsp;msDuration)</code>&nbsp;</td>
 </tr>
 </table>
@@ -169,12 +200,43 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr id="i0" class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#computeHash--">computeHash</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#destructor--">destructor</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>java.io.InputStream</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#getInputStream--">getInputStream</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.lang.Object</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#getKey--">getKey</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#initialize-int-">initialize</a></span>(int&nbsp;sampleId)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html#toString--">toString</a></span>()</code>&nbsp;</td>
+</tr>
+</table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -190,13 +252,40 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
+<a name="context">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>context</h4>
+<pre>public final&nbsp;Context context</pre>
+</li>
+</ul>
 <a name="resourceId">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>resourceId</h4>
-<pre>public&nbsp;int resourceId</pre>
+<pre>public final&nbsp;int resourceId</pre>
+</li>
+</ul>
+<a name="file">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>file</h4>
+<pre>public final&nbsp;java.io.File file</pre>
+</li>
+</ul>
+<a name="msDuration">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>msDuration</h4>
+<pre>public final&nbsp;long msDuration</pre>
 </li>
 </ul>
 <a name="sampleId">
@@ -208,13 +297,22 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;int sampleId</pre>
 </li>
 </ul>
-<a name="msDuration">
+<a name="hashString">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>msDuration</h4>
-<pre>public&nbsp;long msDuration</pre>
+<h4>hashString</h4>
+<pre>public&nbsp;java.lang.String hashString</pre>
+</li>
+</ul>
+<a name="cbSize">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>cbSize</h4>
+<pre>public&nbsp;int cbSize</pre>
 </li>
 </ul>
 <a name="msLastPlay">
@@ -234,15 +332,87 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="SoundInfo-int-int-int-">
+<a name="SoundInfo-Context-int-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SoundInfo</h4>
+<pre>public&nbsp;SoundInfo(Context&nbsp;context,
+                 int&nbsp;resourceId,
+                 int&nbsp;msDuration)</pre>
+</li>
+</ul>
+<a name="SoundInfo-java.io.File-int-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SoundInfo</h4>
-<pre>public&nbsp;SoundInfo(int&nbsp;resourceId,
-                 int&nbsp;sampleId,
+<pre>public&nbsp;SoundInfo(java.io.File&nbsp;file,
                  int&nbsp;msDuration)</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method.detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="toString--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+</li>
+</ul>
+<a name="initialize-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>initialize</h4>
+<pre>public&nbsp;void&nbsp;initialize(int&nbsp;sampleId)</pre>
+</li>
+</ul>
+<a name="destructor--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>destructor</h4>
+<pre>protected&nbsp;void&nbsp;destructor()</pre>
+</li>
+</ul>
+<a name="getInputStream--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInputStream</h4>
+<pre>public&nbsp;java.io.InputStream&nbsp;getInputStream()</pre>
+</li>
+</ul>
+<a name="computeHash--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>computeHash</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;computeHash()</pre>
+</li>
+</ul>
+<a name="getKey--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getKey</h4>
+<pre>public&nbsp;java.lang.Object&nbsp;getKey()</pre>
 </li>
 </ul>
 </li>
@@ -272,8 +442,8 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../com/qualcomm/ftccommon/SoundPlayer.LoadedSoundCache.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../com/qualcomm/ftccommon/UpdateUI.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundFromFile.html" title="interface in com.qualcomm.ftccommon"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../com/qualcomm/ftccommon/SoundPlayer.StopWhat.html" title="enum in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" target="_top">Frames</a></li>
@@ -300,13 +470,13 @@ extends java.lang.Object</pre>
 <li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods.inherited.from.class.java.lang.Object">Method</a></li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
 <a name="skip.navbar.bottom">

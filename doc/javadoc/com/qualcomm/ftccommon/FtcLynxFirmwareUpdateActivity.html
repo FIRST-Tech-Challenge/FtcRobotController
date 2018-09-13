@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.ReceiveLoopCallback.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.FwResponseStatus.html" title="enum in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html" target="_top">Frames</a></li>
@@ -135,6 +135,10 @@ extends ThemedActivity</pre>
 <th class="colLast" scope="col">Class and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected static class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.FwResponseStatus.html" title="enum in com.qualcomm.ftccommon">FtcLynxFirmwareUpdateActivity.FwResponseStatus</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.ReceiveLoopCallback.html" title="class in com.qualcomm.ftccommon">FtcLynxFirmwareUpdateActivity.ReceiveLoopCallback</a></span></code>&nbsp;</td>
 </tr>
@@ -167,33 +171,37 @@ extends ThemedActivity</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#enableUpdateButton">enableUpdateButton</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#cancelUpdate">cancelUpdate</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#enableUpdateButton">enableUpdateButton</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected FWImage</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#firmwareImageFile">firmwareImageFile</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected java.util.List&lt;<a href="../../../com/qualcomm/ftccommon/USBAccessibleLynxModule.html" title="class in com.qualcomm.ftccommon">USBAccessibleLynxModule</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#modulesToUpdate">modulesToUpdate</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#msResponseWait">msResponseWait</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected NetworkConnectionHandler</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#networkConnectionHandler">networkConnectionHandler</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected RecvLoopRunnable.RecvLoopCallback</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#recvLoopCallback">recvLoopCallback</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#remoteConfigure">remoteConfigure</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#TAG">TAG</a></span></code>&nbsp;</td>
 </tr>
@@ -236,10 +244,11 @@ extends ThemedActivity</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected &lt;T&gt;&nbsp;T</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#awaitResponse-java.util.concurrent.BlockingQueue-T-long-java.util.concurrent.TimeUnit-">awaitResponse</a></span>(java.util.concurrent.BlockingQueue&lt;T&gt;&nbsp;queue,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#awaitResponse-java.util.concurrent.BlockingQueue-T-long-java.util.concurrent.TimeUnit--">awaitResponse</a></span>(java.util.concurrent.BlockingQueue&lt;T&gt;&nbsp;queue,
              T&nbsp;defaultResponse,
              long&nbsp;time,
-             java.util.concurrent.TimeUnit&nbsp;timeUnit)</code>&nbsp;</td>
+             java.util.concurrent.TimeUnit&nbsp;timeUnit,
+             &lt;any&gt;&nbsp;status)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>protected <a href="../../../com/qualcomm/ftccommon/CommandList.LynxFirmwareImagesResp.html" title="class in com.qualcomm.ftccommon">CommandList.LynxFirmwareImagesResp</a></code></td>
@@ -267,17 +276,21 @@ extends ThemedActivity</pre>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onStart--">onStart</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onPause--">onPause</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onStop--">onStop</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onStart--">onStart</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i10" class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onStop--">onStop</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#onUpdateLynxFirmwareClicked-View-">onUpdateLynxFirmwareClicked</a></span>(View&nbsp;view)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#sendOrInject-Command-">sendOrInject</a></span>(Command&nbsp;cmd)</code>&nbsp;</td>
 </tr>
@@ -377,6 +390,15 @@ extends ThemedActivity</pre>
 <li class="blockList">
 <h4>enableUpdateButton</h4>
 <pre>protected&nbsp;boolean enableUpdateButton</pre>
+</li>
+</ul>
+<a name="cancelUpdate">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>cancelUpdate</h4>
+<pre>protected&nbsp;boolean cancelUpdate</pre>
 </li>
 </ul>
 <a name="availableLynxImages">
@@ -485,6 +507,15 @@ extends ThemedActivity</pre>
 <pre>public&nbsp;void&nbsp;onUpdateLynxFirmwareClicked(View&nbsp;view)</pre>
 </li>
 </ul>
+<a name="onPause--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>onPause</h4>
+<pre>protected&nbsp;void&nbsp;onPause()</pre>
+</li>
+</ul>
 <a name="onStop--">
 <!--   -->
 </a>
@@ -533,9 +564,9 @@ extends ThemedActivity</pre>
                               T&nbsp;defaultResponse)</pre>
 </li>
 </ul>
-<a name="awaitResponse-java.util.concurrent.BlockingQueue-java.lang.Object-long-java.util.concurrent.TimeUnit-">
+<a name="awaitResponse-java.util.concurrent.BlockingQueue-java.lang.Object-long-java.util.concurrent.TimeUnit--any--">
 <!--   -->
-</a><a name="awaitResponse-java.util.concurrent.BlockingQueue-T-long-java.util.concurrent.TimeUnit-">
+</a><a name="awaitResponse-java.util.concurrent.BlockingQueue-T-long-java.util.concurrent.TimeUnit--">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -544,7 +575,8 @@ extends ThemedActivity</pre>
 <pre>protected&nbsp;&lt;T&gt;&nbsp;T&nbsp;awaitResponse(java.util.concurrent.BlockingQueue&lt;T&gt;&nbsp;queue,
                               T&nbsp;defaultResponse,
                               long&nbsp;time,
-                              java.util.concurrent.TimeUnit&nbsp;timeUnit)</pre>
+                              java.util.concurrent.TimeUnit&nbsp;timeUnit,
+                              &lt;any&gt;&nbsp;status)</pre>
 </li>
 </ul>
 </li>
@@ -575,7 +607,7 @@ extends ThemedActivity</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../com/qualcomm/ftccommon/FtcEventLoopIdle.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.ReceiveLoopCallback.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.FwResponseStatus.html" title="enum in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html" target="_top">Frames</a></li>

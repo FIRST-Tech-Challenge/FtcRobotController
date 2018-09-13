@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -250,12 +250,20 @@ implements java.lang.Iterable&lt;<a href="../../../../com/qualcomm/robotcore/har
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#lightSensor">lightSensor</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected java.lang.Object</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#lock">lock</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap.DeviceMapping</a>&lt;<a href="../../../../com/qualcomm/robotcore/hardware/OpticalDistanceSensor.html" title="interface in com.qualcomm.robotcore.hardware">OpticalDistanceSensor</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#opticalDistanceSensor">opticalDistanceSensor</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap.DeviceMapping</a>&lt;<a href="../../../../com/qualcomm/robotcore/hardware/PWMOutput.html" title="interface in com.qualcomm.robotcore.hardware">PWMOutput</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#pwmOutput">pwmOutput</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected java.util.Map&lt;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>,<a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#serialNumberMap">serialNumberMap</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap.DeviceMapping</a>&lt;<a href="../../../../com/qualcomm/robotcore/hardware/Servo.html" title="interface in com.qualcomm.robotcore.hardware">Servo</a>&gt;</code></td>
@@ -315,67 +323,105 @@ implements java.lang.Iterable&lt;<a href="../../../../com/qualcomm/robotcore/har
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#get-java.lang.Class-com.qualcomm.robotcore.util.SerialNumber-">get</a></span>(java.lang.Class&lt;? extends T&gt;&nbsp;classOrInterface,
+   <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber)</code>
+<div class="block">(Advanced) Returns the device with the indicated <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util"><code>SerialNumber</code></a>, if it exists,
+ cast to the indicated class or interface; otherwise, null.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#get-java.lang.Class-java.lang.String-">get</a></span>(java.lang.Class&lt;? extends T&gt;&nbsp;classOrInterface,
    java.lang.String&nbsp;deviceName)</code>
 <div class="block">Retrieves the (first) device with the indicated name which is also an instance of the
  indicated class or interface.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#get-java.lang.String-">get</a></span>(java.lang.String&nbsp;deviceName)</code>
 <div class="block">Returns the (first) device with the indicated name.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;java.util.List&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#getAll-java.lang.Class-">getAll</a></span>(java.lang.Class&lt;? extends T&gt;&nbsp;classOrInterface)</code>
 <div class="block">Returns all the devices which are instances of the indicated class or interface.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.util.Set&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#getNamesOf-com.qualcomm.robotcore.hardware.HardwareDevice-">getNamesOf</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;device)</code>
 <div class="block">Returns all the names by which the device is known.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#internalPut-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-com.qualcomm.robotcore.hardware.HardwareDevice-">internalPut</a></span>(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+           java.lang.String&nbsp;deviceName,
+           <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;device)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.Iterator&lt;<a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#iterator--">iterator</a></span>()</code>
 <div class="block">Returns an iterator of all the devices in the HardwareMap.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#logDevices--">logDevices</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#put-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-com.qualcomm.robotcore.hardware.HardwareDevice-">put</a></span>(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+   java.lang.String&nbsp;deviceName,
+   <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;device)</code>
+<div class="block">(Advanced) Puts a device in the overall map without having it also reside in a type-specific DeviceMapping.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#put-java.lang.String-com.qualcomm.robotcore.hardware.HardwareDevice-">put</a></span>(java.lang.String&nbsp;deviceName,
    <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;device)</code>
 <div class="block">Puts a device in the overall map without having it also reside in a type-specific DeviceMapping.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#rebuildDeviceNamesIfNecessary--">rebuildDeviceNamesIfNecessary</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#recordDeviceName-java.lang.String-com.qualcomm.robotcore.hardware.HardwareDevice-">recordDeviceName</a></span>(java.lang.String&nbsp;deviceName,
                 <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;device)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#remove-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-com.qualcomm.robotcore.hardware.HardwareDevice-">remove</a></span>(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+      java.lang.String&nbsp;deviceName,
+      <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;device)</code>
+<div class="block">(Advanced) Removes a device from the overall map, if present.</div>
+</td>
+</tr>
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#remove-java.lang.String-com.qualcomm.robotcore.hardware.HardwareDevice-">remove</a></span>(java.lang.String&nbsp;deviceName,
       <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;device)</code>
-<div class="block">Removes a device from the overall map, if present.</div>
+<div class="block">(Advanced) Removes a device from the overall map, if present.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#size--">size</a></span>()</code>
 <div class="block">Returns the number of unique device objects currently found in this HardwareMap.</div>
+</td>
+</tr>
+<tr id="i15" class="rowColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#tryGet-java.lang.Class-java.lang.String-">tryGet</a></span>(java.lang.Class&lt;? extends T&gt;&nbsp;classOrInterface,
+      java.lang.String&nbsp;deviceName)</code>
+<div class="block">Retrieves the (first) device with the indicated name which is also an instance of the
+ indicated class or interface.</div>
 </td>
 </tr>
 </table>
@@ -659,6 +705,15 @@ implements java.lang.Iterable&lt;<a href="../../../../com/qualcomm/robotcore/har
 <pre>protected&nbsp;java.util.Map&lt;<a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>,java.util.Set&lt;java.lang.String&gt;&gt; deviceNames</pre>
 </li>
 </ul>
+<a name="serialNumberMap">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>serialNumberMap</h4>
+<pre>protected&nbsp;java.util.Map&lt;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>,<a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&gt; serialNumberMap</pre>
+</li>
+</ul>
 <a name="allDeviceMappings">
 <!--   -->
 </a>
@@ -671,10 +726,19 @@ implements java.lang.Iterable&lt;<a href="../../../../com/qualcomm/robotcore/har
 <a name="appContext">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>appContext</h4>
 <pre>public final&nbsp;Context appContext</pre>
+</li>
+</ul>
+<a name="lock">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>lock</h4>
+<pre>protected final&nbsp;java.lang.Object lock</pre>
 </li>
 </ul>
 </li>
@@ -726,8 +790,40 @@ implements java.lang.Iterable&lt;<a href="../../../../com/qualcomm/robotcore/har
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#get-java.lang.String-"><code>get(String)</code></a>, 
 <a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#getAll-java.lang.Class-"><code>getAll(Class)</code></a>, 
-<a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#get-java.lang.String-"><code>HardwareMap.DeviceMapping.get(String)</code></a></dd>
+<a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#get-java.lang.String-"><code>HardwareMap.DeviceMapping.get(String)</code></a>, 
+<a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#tryGet-java.lang.Class-java.lang.String-"><code>tryGet(Class, String)</code></a></dd>
 </dl>
+</li>
+</ul>
+<a name="tryGet-java.lang.Class-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>tryGet</h4>
+<pre>public&nbsp;&lt;T&gt;&nbsp;T&nbsp;tryGet(java.lang.Class&lt;? extends T&gt;&nbsp;classOrInterface,
+                    java.lang.String&nbsp;deviceName)</pre>
+<div class="block">Retrieves the (first) device with the indicated name which is also an instance of the
+ indicated class or interface. If no such device is found, null is returned. 
+ 
+ This is not commonly used; <a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#get-java.lang.Class-java.lang.String-"><code>get(java.lang.Class&lt;? extends T&gt;, java.lang.String)</code></a> is the usual method for retreiving items from 
+ the map.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#get-java.lang.Class-java.lang.String-"><code>get(Class, String)</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="get-java.lang.Class-com.qualcomm.robotcore.util.SerialNumber-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>get</h4>
+<pre>public&nbsp;&lt;T&gt;&nbsp;T&nbsp;get(java.lang.Class&lt;? extends T&gt;&nbsp;classOrInterface,
+                 <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber)</pre>
+<div class="block">(Advanced) Returns the device with the indicated <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util"><code>SerialNumber</code></a>, if it exists,
+ cast to the indicated class or interface; otherwise, null.</div>
 </li>
 </ul>
 <a name="get-java.lang.String-">
@@ -791,6 +887,35 @@ implements java.lang.Iterable&lt;<a href="../../../../com/qualcomm/robotcore/har
 </dl>
 </li>
 </ul>
+<a name="put-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-com.qualcomm.robotcore.hardware.HardwareDevice-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>put</h4>
+<pre>public&nbsp;void&nbsp;put(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+                java.lang.String&nbsp;deviceName,
+                <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;device)</pre>
+<div class="block">(Advanced) Puts a device in the overall map without having it also reside in a type-specific DeviceMapping.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>serialNumber</code> - the <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util"><code>SerialNumber</code></a> of the device</dd>
+<dd><code>deviceName</code> - the name by which the device is to be known (case sensitive)</dd>
+<dd><code>device</code> - the device to be stored by that name</dd>
+</dl>
+</li>
+</ul>
+<a name="internalPut-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-com.qualcomm.robotcore.hardware.HardwareDevice-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>internalPut</h4>
+<pre>protected&nbsp;void&nbsp;internalPut(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+                           java.lang.String&nbsp;deviceName,
+                           <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;device)</pre>
+</li>
+</ul>
 <a name="remove-java.lang.String-com.qualcomm.robotcore.hardware.HardwareDevice-">
 <!--   -->
 </a>
@@ -799,14 +924,37 @@ implements java.lang.Iterable&lt;<a href="../../../../com/qualcomm/robotcore/har
 <h4>remove</h4>
 <pre>public&nbsp;boolean&nbsp;remove(java.lang.String&nbsp;deviceName,
                       <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;device)</pre>
-<div class="block">Removes a device from the overall map, if present. If the device is also present in a
- DeviceMapping, then the device should be removed using
- <a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.html#remove-java.lang.String-com.qualcomm.robotcore.hardware.HardwareDevice-"><code>DeviceMapping.remove()</code></a>
+<div class="block">(Advanced) Removes a device from the overall map, if present. If the device is also present in a
+ DeviceMapping, then the device should be removed using <a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#remove-java.lang.String-"><code>HardwareMap.DeviceMapping.remove(java.lang.String)</code></a>
  instead of calling this method.
 
  <p>This is normally called only by code in the SDK itself, not by user code.</p></div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>deviceName</code> - the name of the device to remove</dd>
+<dd><code>device</code> - the device to remove under that name</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>whether a device was removed or not</dd>
+</dl>
+</li>
+</ul>
+<a name="remove-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-com.qualcomm.robotcore.hardware.HardwareDevice-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>remove</h4>
+<pre>public&nbsp;boolean&nbsp;remove(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+                      java.lang.String&nbsp;deviceName,
+                      <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;device)</pre>
+<div class="block">(Advanced) Removes a device from the overall map, if present. If the device is also present in a
+ DeviceMapping, then the device should be removed using <a href="../../../../com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#remove-java.lang.String-"><code>HardwareMap.DeviceMapping.remove(java.lang.String)</code></a>
+ instead of calling this method.
+
+ <p>This is normally called only by code in the SDK itself, not by user code.</p></div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>serialNumber</code> - (optional) the serial number of the device</dd>
 <dd><code>deviceName</code> - the name of the device to remove</dd>
 <dd><code>device</code> - the device to remove under that name</dd>
 <dt><span class="returnLabel">Returns:</span></dt>

@@ -30,9 +30,9 @@
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CompassSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -49,7 +49,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
  *
  * @see <a href="http://www.modernroboticsinc.com/compass">MR Compass Sensor</a>
  */
-@Autonomous(name = "Sensor: MR compass", group = "Sensor")
+@TeleOp(name = "Sensor: MR compass", group = "Sensor")
 @Disabled   // comment out or remove this line to enable this opmode
 public class SensorMRCompass extends LinearOpMode {
 

@@ -105,10 +105,15 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Manager.html" title="interface in com.qualcomm.robotcore.eventloop">SyncdDevice.Manager</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">EventLoopManager</span>
-extends java.lang.Object</pre>
+extends java.lang.Object
+implements <a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Manager.html" title="interface in com.qualcomm.robotcore.eventloop">SyncdDevice.Manager</a></pre>
 <div class="block">Event Loop Manager
  <p>
  Takes RobocolDatagram messages, converts them into the appropriate data type, and then passes it
@@ -282,7 +287,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>CallbackResult</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#onNetworkConnectionEvent-NetworkConnection.Event-">onNetworkConnectionEvent</a></span>(NetworkConnection.Event&nbsp;event)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#onNetworkConnectionEvent-NetworkConnection.NetworkEvent-">onNetworkConnectionEvent</a></span>(NetworkConnection.NetworkEvent&nbsp;event)</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>CallbackResult</code></td>
@@ -652,13 +657,13 @@ extends java.lang.Object</pre>
  without incurring undo overhead.</div>
 </li>
 </ul>
-<a name="onNetworkConnectionEvent-NetworkConnection.Event-">
+<a name="onNetworkConnectionEvent-NetworkConnection.NetworkEvent-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onNetworkConnectionEvent</h4>
-<pre>public&nbsp;CallbackResult&nbsp;onNetworkConnectionEvent(NetworkConnection.Event&nbsp;event)</pre>
+<pre>public&nbsp;CallbackResult&nbsp;onNetworkConnectionEvent(NetworkConnection.NetworkEvent&nbsp;event)</pre>
 </li>
 </ul>
 <a name="start-com.qualcomm.robotcore.eventloop.EventLoop-">
@@ -716,6 +721,8 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;registerSyncdDevice(<a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.html" title="interface in com.qualcomm.robotcore.eventloop">SyncdDevice</a>&nbsp;device)</pre>
 <div class="block">Register a sync'd device</div>
 <dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Manager.html#registerSyncdDevice-com.qualcomm.robotcore.eventloop.SyncdDevice-">registerSyncdDevice</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Manager.html" title="interface in com.qualcomm.robotcore.eventloop">SyncdDevice.Manager</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>device</code> - sync'd device</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -733,6 +740,8 @@ extends java.lang.Object</pre>
 <div class="block">Unregisters a device from this event loop. It is specifically permitted to unregister
  a device which is not currently registered; such an operation has no effect.</div>
 <dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Manager.html#unregisterSyncdDevice-com.qualcomm.robotcore.eventloop.SyncdDevice-">unregisterSyncdDevice</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Manager.html" title="interface in com.qualcomm.robotcore.eventloop">SyncdDevice.Manager</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>device</code> - the device to be unregistered. May not be null.</dd>
 <dt><span class="seeLabel">See Also:</span></dt>

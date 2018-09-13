@@ -109,7 +109,14 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">Acceleration</span>
 extends java.lang.Object</pre>
-<div class="block">Instances of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Acceleration.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Acceleration</code></a> represent a double integration of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Position.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Position</code></a> over time.</div>
+<div class="block">Instances of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Acceleration.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Acceleration</code></a> represent the second derivative of <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Position.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Position</code></a> over time. This
+ is also to say that <code>Position</code> is a double integration of <code>Acceleration</code> with respect
+ to time.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Velocity.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Velocity</code></a>, 
+<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Position.html" title="class in org.firstinspires.ftc.robotcore.external.navigation"><code>Position</code></a></dd>
+</dl>
 </li>
 </ul>
 </div>
@@ -137,7 +144,8 @@ extends java.lang.Object</pre>
 <tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/Acceleration.html#earthGravity">earthGravity</a></span></code>
-<div class="block">The (nominal) acceleration due to Earth's gravity</div>
+<div class="block">The (nominal) acceleration due to Earth's gravity
+ The units are in m/s^2</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -244,7 +252,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>earthGravity</h4>
 <pre>public static final&nbsp;double earthGravity</pre>
-<div class="block">The (nominal) acceleration due to Earth's gravity</div>
+<div class="block">The (nominal) acceleration due to Earth's gravity
+ The units are in m/s^2</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../../../constant-values.html#org.firstinspires.ftc.robotcore.external.navigation.Acceleration.earthGravity">Constant Field Values</a></dd>

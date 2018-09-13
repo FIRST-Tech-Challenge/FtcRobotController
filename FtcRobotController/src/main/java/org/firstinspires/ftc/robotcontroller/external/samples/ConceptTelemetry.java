@@ -29,9 +29,9 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -47,7 +47,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  *
  * @see Telemetry
  */
-@Autonomous(name = "Concept: Telemetry", group = "Concept")
+@TeleOp(name = "Concept: Telemetry", group = "Concept")
 @Disabled
 public class ConceptTelemetry extends LinearOpMode  {
     /** keeps track of the line of the poem which is to be emitted next */

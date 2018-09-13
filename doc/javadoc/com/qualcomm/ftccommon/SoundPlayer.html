@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":9,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":42,"i23":42,"i24":10,"i25":10,"i26":10,"i27":9,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../com/qualcomm/ftccommon/Restarter.html" title="interface in com.qualcomm.ftccommon"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../com/qualcomm/ftccommon/SoundPlayer.LoadedSoundCache.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../com/qualcomm/ftccommon/SoundPlayer.CurrentlyPlaying.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?com/qualcomm/ftccommon/SoundPlayer.html" target="_top">Frames</a></li>
@@ -110,10 +110,10 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">SoundPlayer</span>
 extends java.lang.Object</pre>
 <div class="block"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html" title="class in com.qualcomm.ftccommon"><code>SoundPlayer</code></a> is a simple utility class that plays sounds on the phone. The class
- is typically used through its singleton instance.</div>
+ is used through its singleton instance.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#play-Context-int-"><code>play(Context, int)</code></a></dd>
+<dd><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlaying-Context-int-"><code>startPlaying(Context, int)</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -134,6 +134,14 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Class and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected static class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.CurrentlyPlaying.html" title="class in com.qualcomm.ftccommon">SoundPlayer.CurrentlyPlaying</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected static class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.InstanceHolder.html" title="class in com.qualcomm.ftccommon">SoundPlayer.InstanceHolder</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.LoadedSoundCache.html" title="class in com.qualcomm.ftccommon">SoundPlayer.LoadedSoundCache</a></span></code>
 <div class="block"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.LoadedSoundCache.html" title="class in com.qualcomm.ftccommon"><code>SoundPlayer.LoadedSoundCache</code></a> keeps track of loaded sounds, mapping sound resource id to loaded
@@ -141,8 +149,20 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected static interface&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundFromFile.html" title="interface in com.qualcomm.ftccommon">SoundPlayer.SoundFromFile</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected static class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.StopWhat.html" title="enum in com.qualcomm.ftccommon">SoundPlayer.StopWhat</a></span></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -160,32 +180,40 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected Context</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#context">context</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#currentlyLoadingInfo">currentlyLoadingInfo</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#currentlyLoading">currentlyLoading</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected java.util.concurrent.CountDownLatch</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#currentlyLoadingLatch">currentlyLoadingLatch</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#DEBUG">DEBUG</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected java.util.Set&lt;<a href="../../../com/qualcomm/ftccommon/SoundPlayer.CurrentlyPlaying.html" title="class in com.qualcomm.ftccommon">SoundPlayer.CurrentlyPlaying</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#currentlyPlayingSounds">currentlyPlayingSounds</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected java.util.concurrent.ExecutorService</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#executorService">executorService</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#isRobotController">isRobotController</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../com/qualcomm/ftccommon/SoundPlayer.LoadedSoundCache.html" title="class in com.qualcomm.ftccommon">SoundPlayer.LoadedSoundCache</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#loadedSounds">loadedSounds</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected Looper</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#looper">looper</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected java.lang.Object</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#lock">lock</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#msFinishPlaying">msFinishPlaying</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected float</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#masterVolume">masterVolume</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#msSoundTransmissionFreshness">msSoundTransmissionFreshness</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.util.concurrent.ScheduledExecutorService</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#scheduledThreadPool">scheduledThreadPool</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected SharedPreferences</code></td>
@@ -193,11 +221,11 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected float</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#soundOffLevel">soundOffLevel</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#soundOffVolume">soundOffVolume</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected float</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#soundOnLevel">soundOnLevel</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#soundOnVolume">soundOnVolume</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected SoundPool</code></td>
@@ -208,8 +236,16 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#TAG">TAG</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected static <a href="../../../com/qualcomm/ftccommon/SoundPlayer.html" title="class in com.qualcomm.ftccommon">SoundPlayer</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#theInstance">theInstance</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected java.util.concurrent.ExecutorService</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#threadPool">threadPool</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#TRACE">TRACE</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected Tracer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#tracer">tracer</a></span></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -241,75 +277,235 @@ extends java.lang.Object</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>static <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#addRef-com.qualcomm.ftccommon.SoundPlayer.SoundInfo-">addRef</a></span>(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;soundInfo)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#close--">close</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code>protected long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#getCurrentMilliseconds--">getCurrentMilliseconds</a></span>()</code>&nbsp;</td>
-</tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>protected static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#copy-java.io.InputStream-java.io.OutputStream-int-">copy</a></span>(java.io.InputStream&nbsp;inputStream,
+    java.io.OutputStream&nbsp;outputStream,
+    int&nbsp;cbToCopy)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#ensureCached-Context-int-">ensureCached</a></span>(Context&nbsp;context,
+            int&nbsp;resId)</code>
+<div class="block">Ensures this local sound is also in the local cache.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>protected <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#ensureCached-java.lang.String-com.qualcomm.ftccommon.SoundPlayer.SoundFromFile-">ensureCached</a></span>(java.lang.String&nbsp;hashString,
+            <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundFromFile.html" title="interface in com.qualcomm.ftccommon">SoundPlayer.SoundFromFile</a>&nbsp;ifAbsent)</code>
+<div class="block">returns a new ref on the returned <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon"><code>SoundPlayer.SoundInfo</code></a>; caller must releaseRef()</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#ensureLoaded-Context-java.io.File-">ensureLoaded</a></span>(Context&nbsp;context,
+            java.io.File&nbsp;file)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>protected <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#ensureLoaded-Context-int-">ensureLoaded</a></span>(Context&nbsp;context,
+            int&nbsp;resourceId)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#ensureLoaded-java.lang.String-com.qualcomm.ftccommon.SoundPlayer.SoundFromFile-">ensureLoaded</a></span>(java.lang.String&nbsp;hashString,
+            <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundFromFile.html" title="interface in com.qualcomm.ftccommon">SoundPlayer.SoundFromFile</a>&nbsp;ifAbsent)</code>
+<div class="block">returns a new ref on the returned <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon"><code>SoundPlayer.SoundInfo</code></a>; caller must releaseRef()</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>static <a href="../../../com/qualcomm/ftccommon/SoundPlayer.html" title="class in com.qualcomm.ftccommon">SoundPlayer</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#getInstance--">getInstance</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>float</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#getMasterVolume--">getMasterVolume</a></span>()</code>
+<div class="block">Returns the master volume control that is applied to all played sounds</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#getMsDuration-Context-java.io.File-">getMsDuration</a></span>(Context&nbsp;context,
+             java.io.File&nbsp;file)</code>&nbsp;</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#getMsDuration-Context-int-">getMsDuration</a></span>(Context&nbsp;context,
              int&nbsp;resourceId)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#loadAndPlay-Context-int-boolean-">loadAndPlay</a></span>(Context&nbsp;context,
-           int&nbsp;resourceId,
-           boolean&nbsp;waitForCompletion)</code>
-<div class="block">Loads the requested sound if necessary, then (eventually) plays it.</div>
-</td>
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>protected long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#getMsNow--">getMsNow</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>CallbackResult</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#handleCommandPlaySound-java.lang.String-">handleCommandPlaySound</a></span>(java.lang.String&nbsp;extra)</code>&nbsp;</td>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>CallbackResult</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#handleCommandRequestSound-Command-">handleCommandRequestSound</a></span>(Command&nbsp;requestSoundCommand)</code>&nbsp;</td>
+</tr>
+<tr id="i15" class="rowColor">
+<td class="colFirst"><code>CallbackResult</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#handleCommandStopPlayingSounds-Command-">handleCommandStopPlayingSounds</a></span>(Command&nbsp;stopPlayingSoundsCommand)</code>&nbsp;</td>
+</tr>
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#internalStopPlaying-com.qualcomm.ftccommon.SoundPlayer.StopWhat-">internalStopPlaying</a></span>(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.StopWhat.html" title="enum in com.qualcomm.ftccommon">SoundPlayer.StopWhat</a>&nbsp;stopWhat)</code>&nbsp;</td>
+</tr>
+<tr id="i17" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#isLocalSoundOn--">isLocalSoundOn</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i18" class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#loadAndStartPlaying-Context-java.io.File-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">loadAndStartPlaying</a></span>(Context&nbsp;context,
+                   java.io.File&nbsp;file,
+                   <a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a>&nbsp;params,
+                   &lt;any&gt;&nbsp;runWhenStarted,
+                   java.lang.Runnable&nbsp;runWhenFinished)</code>&nbsp;</td>
+</tr>
+<tr id="i19" class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#loadAndStartPlaying-Context-int-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">loadAndStartPlaying</a></span>(Context&nbsp;context,
+                   int&nbsp;resourceId,
+                   <a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a>&nbsp;params,
+                   &lt;any&gt;&nbsp;runWhenStarted,
+                   java.lang.Runnable&nbsp;runWhenFinished)</code>&nbsp;</td>
+</tr>
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#onLoadComplete-SoundPool-int-int-">onLoadComplete</a></span>(SoundPool&nbsp;soundPool,
               int&nbsp;sampleId,
-              int&nbsp;status)</code>
-<div class="block">Called when a sound has completed loading.</div>
-</td>
+              int&nbsp;status)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i21" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#play-Context-java.io.File-float-int-float-">play</a></span>(Context&nbsp;context,
+    java.io.File&nbsp;file,
+    float&nbsp;volume,
+    int&nbsp;loop,
+    float&nbsp;rate)</code>&nbsp;</td>
+</tr>
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#play-Context-int-">play</a></span>(Context&nbsp;context,
     int&nbsp;resId)</code>
-<div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
- initiates its play once any current sound is finished playing.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">use <a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlaying-Context-int-"><code>startPlaying(Context, int)</code></a> instead</span></div>
+</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#play-Context-int-boolean-">play</a></span>(Context&nbsp;context,
     int&nbsp;resId,
     boolean&nbsp;waitForCompletion)</code>
-<div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
- initiates its play, optionally waiting for any currently playing sound to finish first.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">use <code>#startPlaying(Context, int, PlaySoundParams, Consumer, Runnable)</code> instead</span></div>
+</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#playLoadedSound-com.qualcomm.ftccommon.SoundPlayer.SoundInfo-boolean-">playLoadedSound</a></span>(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;soundInfo,
-               boolean&nbsp;waitForCompletion)</code>&nbsp;</td>
+<tr id="i24" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#prefillSoundCache-int...-">prefillSoundCache</a></span>(int...&nbsp;resourceIds)</code>
+<div class="block">Ensures that these local sounds are also in the local cache</div>
+</td>
 </tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#shutdown--">shutdown</a></span>()</code>&nbsp;</td>
+<tr id="i25" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#preload-Context-java.io.File-">preload</a></span>(Context&nbsp;context,
+       java.io.File&nbsp;file)</code>
+<div class="block">Preloads the sound so as to to reduce delays if the sound is subsequently played.</div>
+</td>
 </tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startup--">startup</a></span>()</code>&nbsp;</td>
+<tr id="i26" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#preload-Context-int-">preload</a></span>(Context&nbsp;context,
+       int&nbsp;resourceId)</code>
+<div class="block">Preloads the sound so as to to reduce delays if the sound is subsequently played.</div>
+</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i27" class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#releaseRef-com.qualcomm.ftccommon.SoundPlayer.SoundInfo-">releaseRef</a></span>(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;soundInfo)</code>&nbsp;</td>
+</tr>
+<tr id="i28" class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#safeClose-java.lang.Object-">safeClose</a></span>(java.lang.Object&nbsp;closeable)</code>&nbsp;</td>
+</tr>
+<tr id="i29" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#setMasterVolume-float-">setMasterVolume</a></span>(float&nbsp;masterVolume)</code>
+<div class="block">Sets the master volume control that is applied to all played sounds</div>
+</td>
+</tr>
+<tr id="i30" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlaying-Context-java.io.File-">startPlaying</a></span>(Context&nbsp;context,
+            java.io.File&nbsp;file)</code>&nbsp;</td>
+</tr>
+<tr id="i31" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlaying-Context-java.io.File-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">startPlaying</a></span>(Context&nbsp;context,
+            java.io.File&nbsp;file,
+            <a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a>&nbsp;params,
+            &lt;any&gt;&nbsp;runWhenStarted,
+            java.lang.Runnable&nbsp;runWhenFinished)</code>&nbsp;</td>
+</tr>
+<tr id="i32" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlaying-Context-int-">startPlaying</a></span>(Context&nbsp;context,
+            int&nbsp;resId)</code>
+<div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
+ initiates its play once any current non-looping sound is finished playing.</div>
+</td>
+</tr>
+<tr id="i33" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlaying-Context-int-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">startPlaying</a></span>(Context&nbsp;context,
+            int&nbsp;resId,
+            <a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a>&nbsp;params,
+            &lt;any&gt;&nbsp;runWhenStarted,
+            java.lang.Runnable&nbsp;runWhenFinished)</code>
+<div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
+ initiates its play, optionally waiting for any currently non-looping playing sounds to finish first.</div>
+</td>
+</tr>
+<tr id="i34" class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlayingLoadedSound-com.qualcomm.ftccommon.SoundPlayer.SoundInfo-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">startPlayingLoadedSound</a></span>(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;soundInfo,
+                       <a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a>&nbsp;paramsIn,
+                       &lt;any&gt;&nbsp;runWhenStarted,
+                       java.lang.Runnable&nbsp;runWhenFinished)</code>&nbsp;</td>
+</tr>
+<tr id="i35" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#stopPlayingAll--">stopPlayingAll</a></span>()</code>
+<div class="block">Stops playing all sounds that are currently playing</div>
+</td>
+</tr>
+<tr id="i36" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#stopPlayingLoops--">stopPlayingLoops</a></span>()</code>
+<div class="block">Stops playing all sounds that are currently playing in a loop</div>
+</td>
+</tr>
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#waitForLoadCompletion--">waitForLoadCompletion</a></span>()</code>&nbsp;</td>
 </tr>
@@ -348,26 +544,53 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="DEBUG">
+<a name="TRACE">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>DEBUG</h4>
-<pre>public static final&nbsp;boolean DEBUG</pre>
+<h4>TRACE</h4>
+<pre>public static&nbsp;boolean TRACE</pre>
+</li>
+</ul>
+<a name="tracer">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>tracer</h4>
+<pre>protected&nbsp;Tracer tracer</pre>
+</li>
+</ul>
+<a name="msSoundTransmissionFreshness">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>msSoundTransmissionFreshness</h4>
+<pre>public static final&nbsp;int msSoundTransmissionFreshness</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../constant-values.html#com.qualcomm.ftccommon.SoundPlayer.DEBUG">Constant Field Values</a></dd>
+<dd><a href="../../../constant-values.html#com.qualcomm.ftccommon.SoundPlayer.msSoundTransmissionFreshness">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
-<a name="theInstance">
+<a name="lock">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>theInstance</h4>
-<pre>protected static&nbsp;<a href="../../../com/qualcomm/ftccommon/SoundPlayer.html" title="class in com.qualcomm.ftccommon">SoundPlayer</a> theInstance</pre>
+<h4>lock</h4>
+<pre>protected final&nbsp;java.lang.Object lock</pre>
+</li>
+</ul>
+<a name="isRobotController">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isRobotController</h4>
+<pre>protected final&nbsp;boolean isRobotController</pre>
 </li>
 </ul>
 <a name="soundPool">
@@ -379,22 +602,22 @@ extends java.lang.Object</pre>
 <pre>protected&nbsp;SoundPool soundPool</pre>
 </li>
 </ul>
-<a name="currentlyLoading">
+<a name="currentlyLoadingLatch">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>currentlyLoading</h4>
-<pre>protected volatile&nbsp;int currentlyLoading</pre>
+<h4>currentlyLoadingLatch</h4>
+<pre>protected&nbsp;java.util.concurrent.CountDownLatch currentlyLoadingLatch</pre>
 </li>
 </ul>
-<a name="msFinishPlaying">
+<a name="currentlyLoadingInfo">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>msFinishPlaying</h4>
-<pre>protected&nbsp;long msFinishPlaying</pre>
+<h4>currentlyLoadingInfo</h4>
+<pre>protected&nbsp;<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a> currentlyLoadingInfo</pre>
 </li>
 </ul>
 <a name="loadedSounds">
@@ -406,31 +629,22 @@ extends java.lang.Object</pre>
 <pre>protected&nbsp;<a href="../../../com/qualcomm/ftccommon/SoundPlayer.LoadedSoundCache.html" title="class in com.qualcomm.ftccommon">SoundPlayer.LoadedSoundCache</a> loadedSounds</pre>
 </li>
 </ul>
-<a name="executorService">
+<a name="threadPool">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>executorService</h4>
-<pre>protected&nbsp;java.util.concurrent.ExecutorService executorService</pre>
+<h4>threadPool</h4>
+<pre>protected&nbsp;java.util.concurrent.ExecutorService threadPool</pre>
 </li>
 </ul>
-<a name="looper">
+<a name="scheduledThreadPool">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>looper</h4>
-<pre>protected&nbsp;Looper looper</pre>
-</li>
-</ul>
-<a name="context">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>context</h4>
-<pre>protected&nbsp;Context context</pre>
+<h4>scheduledThreadPool</h4>
+<pre>protected&nbsp;java.util.concurrent.ScheduledExecutorService scheduledThreadPool</pre>
 </li>
 </ul>
 <a name="sharedPreferences">
@@ -442,22 +656,40 @@ extends java.lang.Object</pre>
 <pre>protected&nbsp;SharedPreferences sharedPreferences</pre>
 </li>
 </ul>
-<a name="soundOnLevel">
+<a name="soundOnVolume">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>soundOnLevel</h4>
-<pre>protected&nbsp;float soundOnLevel</pre>
+<h4>soundOnVolume</h4>
+<pre>protected&nbsp;float soundOnVolume</pre>
 </li>
 </ul>
-<a name="soundOffLevel">
+<a name="soundOffVolume">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>soundOffVolume</h4>
+<pre>protected&nbsp;float soundOffVolume</pre>
+</li>
+</ul>
+<a name="masterVolume">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>masterVolume</h4>
+<pre>protected&nbsp;float masterVolume</pre>
+</li>
+</ul>
+<a name="currentlyPlayingSounds">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>soundOffLevel</h4>
-<pre>protected&nbsp;float soundOffLevel</pre>
+<h4>currentlyPlayingSounds</h4>
+<pre>protected&nbsp;java.util.Set&lt;<a href="../../../com/qualcomm/ftccommon/SoundPlayer.CurrentlyPlaying.html" title="class in com.qualcomm.ftccommon">SoundPlayer.CurrentlyPlaying</a>&gt; currentlyPlayingSounds</pre>
 </li>
 </ul>
 </li>
@@ -512,22 +744,156 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;close()</pre>
 </li>
 </ul>
-<a name="startup--">
+<a name="prefillSoundCache-int...-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>startup</h4>
-<pre>protected&nbsp;void&nbsp;startup()</pre>
+<h4>prefillSoundCache</h4>
+<pre>public&nbsp;void&nbsp;prefillSoundCache(int...&nbsp;resourceIds)</pre>
+<div class="block">Ensures that these local sounds are also in the local cache</div>
 </li>
 </ul>
-<a name="shutdown--">
+<a name="startPlaying-Context-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>shutdown</h4>
-<pre>protected&nbsp;void&nbsp;shutdown()</pre>
+<h4>startPlaying</h4>
+<pre>public&nbsp;void&nbsp;startPlaying(Context&nbsp;context,
+                         int&nbsp;resId)</pre>
+<div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
+ initiates its play once any current non-looping sound is finished playing.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>context</code> - the context in which resId is to be interpreted</dd>
+<dd><code>resId</code> - the resource id of the raw resource containing the sound.</dd>
+</dl>
+</li>
+</ul>
+<a name="startPlaying-Context-java.io.File-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>startPlaying</h4>
+<pre>public&nbsp;void&nbsp;startPlaying(Context&nbsp;context,
+                         java.io.File&nbsp;file)</pre>
+</li>
+</ul>
+<a name="startPlaying-Context-int-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>startPlaying</h4>
+<pre>public&nbsp;void&nbsp;startPlaying(Context&nbsp;context,
+                         int&nbsp;resId,
+                         <a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a>&nbsp;params,
+                         &lt;any&gt;&nbsp;runWhenStarted,
+                         java.lang.Runnable&nbsp;runWhenFinished)</pre>
+<div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
+ initiates its play, optionally waiting for any currently non-looping playing sounds to finish first.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>context</code> - the context in which resId is to be interpreted</dd>
+<dd><code>resId</code> - the resource id of the raw resource containing the sound.</dd>
+<dd><code>params</code> - controls how the playback proceeds</dd>
+<dd><code>runWhenStarted</code> - executed when the stream starts to play</dd>
+<dd><code>runWhenFinished</code> - executed when the stream finishes playing</dd>
+</dl>
+</li>
+</ul>
+<a name="startPlaying-Context-java.io.File-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>startPlaying</h4>
+<pre>public&nbsp;void&nbsp;startPlaying(Context&nbsp;context,
+                         java.io.File&nbsp;file,
+                         <a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a>&nbsp;params,
+                         &lt;any&gt;&nbsp;runWhenStarted,
+                         java.lang.Runnable&nbsp;runWhenFinished)</pre>
+</li>
+</ul>
+<a name="stopPlayingAll--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>stopPlayingAll</h4>
+<pre>public&nbsp;void&nbsp;stopPlayingAll()</pre>
+<div class="block">Stops playing all sounds that are currently playing</div>
+</li>
+</ul>
+<a name="stopPlayingLoops--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>stopPlayingLoops</h4>
+<pre>public&nbsp;void&nbsp;stopPlayingLoops()</pre>
+<div class="block">Stops playing all sounds that are currently playing in a loop</div>
+</li>
+</ul>
+<a name="internalStopPlaying-com.qualcomm.ftccommon.SoundPlayer.StopWhat-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>internalStopPlaying</h4>
+<pre>protected&nbsp;void&nbsp;internalStopPlaying(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.StopWhat.html" title="enum in com.qualcomm.ftccommon">SoundPlayer.StopWhat</a>&nbsp;stopWhat)</pre>
+</li>
+</ul>
+<a name="preload-Context-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>preload</h4>
+<pre>public&nbsp;boolean&nbsp;preload(Context&nbsp;context,
+                       int&nbsp;resourceId)</pre>
+<div class="block">Preloads the sound so as to to reduce delays if the sound is subsequently played.</div>
+</li>
+</ul>
+<a name="preload-Context-java.io.File-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>preload</h4>
+<pre>public&nbsp;boolean&nbsp;preload(Context&nbsp;context,
+                       java.io.File&nbsp;file)</pre>
+<div class="block">Preloads the sound so as to to reduce delays if the sound is subsequently played.</div>
+</li>
+</ul>
+<a name="setMasterVolume-float-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMasterVolume</h4>
+<pre>public&nbsp;void&nbsp;setMasterVolume(float&nbsp;masterVolume)</pre>
+<div class="block">Sets the master volume control that is applied to all played sounds</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#getMasterVolume--"><code>getMasterVolume()</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="getMasterVolume--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMasterVolume</h4>
+<pre>public&nbsp;float&nbsp;getMasterVolume()</pre>
+<div class="block">Returns the master volume control that is applied to all played sounds</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#setMasterVolume-float-"><code>setMasterVolume(float)</code></a></dd>
+</dl>
 </li>
 </ul>
 <a name="play-Context-int-">
@@ -536,15 +902,10 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>play</h4>
-<pre>public&nbsp;void&nbsp;play(Context&nbsp;context,
-                 int&nbsp;resId)</pre>
-<div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
- initiates its play once any current sound is finished playing.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>context</code> - the context in which resId is to be interpreted</dd>
-<dd><code>resId</code> - the resource id of the raw resource containing the sound.</dd>
-</dl>
+<pre>@Deprecated
+public&nbsp;void&nbsp;play(Context&nbsp;context,
+                             int&nbsp;resId)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">use <a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlaying-Context-int-"><code>startPlaying(Context, int)</code></a> instead</span></div>
 </li>
 </ul>
 <a name="play-Context-int-boolean-">
@@ -553,33 +914,78 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>play</h4>
-<pre>public&nbsp;void&nbsp;play(Context&nbsp;context,
-                 int&nbsp;resId,
-                 boolean&nbsp;waitForCompletion)</pre>
-<div class="block">Asynchronously loads the indicated sound from its resource (if not already loaded), then
- initiates its play, optionally waiting for any currently playing sound to finish first.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>context</code> - the context in which resId is to be interpreted</dd>
-<dd><code>resId</code> - the resource id of the raw resource containing the sound.</dd>
-<dd><code>waitForCompletion</code> - whether to wait for any current sound to finish playing first or not</dd>
-</dl>
+<pre>@Deprecated
+public&nbsp;void&nbsp;play(Context&nbsp;context,
+                             int&nbsp;resId,
+                             boolean&nbsp;waitForCompletion)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">use <code>#startPlaying(Context, int, PlaySoundParams, Consumer, Runnable)</code> instead</span></div>
 </li>
 </ul>
-<a name="loadAndPlay-Context-int-boolean-">
+<a name="loadAndStartPlaying-Context-int-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>loadAndPlay</h4>
-<pre>protected&nbsp;void&nbsp;loadAndPlay(Context&nbsp;context,
-                           int&nbsp;resourceId,
-                           boolean&nbsp;waitForCompletion)</pre>
-<div class="block">Loads the requested sound if necessary, then (eventually) plays it.
- Note: this always runs on our dedicate executor thread. We do that because
- that allows us to have a looper that *only* sees load completions, which will
- prevent us from accepting new play requests while we're waiting for loads to
- complete.</div>
+<h4>loadAndStartPlaying</h4>
+<pre>protected&nbsp;void&nbsp;loadAndStartPlaying(Context&nbsp;context,
+                                   int&nbsp;resourceId,
+                                   <a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a>&nbsp;params,
+                                   &lt;any&gt;&nbsp;runWhenStarted,
+                                   java.lang.Runnable&nbsp;runWhenFinished)</pre>
+</li>
+</ul>
+<a name="loadAndStartPlaying-Context-java.io.File-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>loadAndStartPlaying</h4>
+<pre>protected&nbsp;void&nbsp;loadAndStartPlaying(Context&nbsp;context,
+                                   java.io.File&nbsp;file,
+                                   <a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a>&nbsp;params,
+                                   &lt;any&gt;&nbsp;runWhenStarted,
+                                   java.lang.Runnable&nbsp;runWhenFinished)</pre>
+</li>
+</ul>
+<a name="ensureLoaded-Context-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ensureLoaded</h4>
+<pre>protected&nbsp;<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;ensureLoaded(Context&nbsp;context,
+                                             int&nbsp;resourceId)</pre>
+</li>
+</ul>
+<a name="ensureLoaded-Context-java.io.File-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ensureLoaded</h4>
+<pre>protected&nbsp;<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;ensureLoaded(Context&nbsp;context,
+                                             java.io.File&nbsp;file)</pre>
+</li>
+</ul>
+<a name="isLocalSoundOn--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isLocalSoundOn</h4>
+<pre>public&nbsp;boolean&nbsp;isLocalSoundOn()</pre>
+</li>
+</ul>
+<a name="startPlayingLoadedSound-com.qualcomm.ftccommon.SoundPlayer.SoundInfo-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>startPlayingLoadedSound</h4>
+<pre>protected&nbsp;void&nbsp;startPlayingLoadedSound(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;soundInfo,
+                                       <a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a>&nbsp;paramsIn,
+                                       &lt;any&gt;&nbsp;runWhenStarted,
+                                       java.lang.Runnable&nbsp;runWhenFinished)</pre>
 </li>
 </ul>
 <a name="getMsDuration-Context-int-">
@@ -592,6 +998,16 @@ extends java.lang.Object</pre>
                             int&nbsp;resourceId)</pre>
 </li>
 </ul>
+<a name="getMsDuration-Context-java.io.File-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMsDuration</h4>
+<pre>protected&nbsp;int&nbsp;getMsDuration(Context&nbsp;context,
+                            java.io.File&nbsp;file)</pre>
+</li>
+</ul>
 <a name="waitForLoadCompletion--">
 <!--   -->
 </a>
@@ -601,41 +1017,140 @@ extends java.lang.Object</pre>
 <pre>protected&nbsp;void&nbsp;waitForLoadCompletion()</pre>
 </li>
 </ul>
-<a name="playLoadedSound-com.qualcomm.ftccommon.SoundPlayer.SoundInfo-boolean-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>playLoadedSound</h4>
-<pre>protected&nbsp;void&nbsp;playLoadedSound(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;soundInfo,
-                               boolean&nbsp;waitForCompletion)</pre>
-</li>
-</ul>
-<a name="getCurrentMilliseconds--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getCurrentMilliseconds</h4>
-<pre>protected&nbsp;long&nbsp;getCurrentMilliseconds()</pre>
-</li>
-</ul>
 <a name="onLoadComplete-SoundPool-int-int-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>onLoadComplete</h4>
 <pre>public&nbsp;void&nbsp;onLoadComplete(SoundPool&nbsp;soundPool,
                            int&nbsp;sampleId,
                            int&nbsp;status)</pre>
-<div class="block">Called when a sound has completed loading.</div>
+</li>
+</ul>
+<a name="getMsNow--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMsNow</h4>
+<pre>protected&nbsp;long&nbsp;getMsNow()</pre>
+</li>
+</ul>
+<a name="ensureLoaded-java.lang.String-com.qualcomm.ftccommon.SoundPlayer.SoundFromFile-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ensureLoaded</h4>
+<pre>protected&nbsp;<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;ensureLoaded(java.lang.String&nbsp;hashString,
+                                             <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundFromFile.html" title="interface in com.qualcomm.ftccommon">SoundPlayer.SoundFromFile</a>&nbsp;ifAbsent)</pre>
+<div class="block">returns a new ref on the returned <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon"><code>SoundPlayer.SoundInfo</code></a>; caller must releaseRef()</div>
+</li>
+</ul>
+<a name="ensureCached-Context-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ensureCached</h4>
+<pre>protected&nbsp;void&nbsp;ensureCached(Context&nbsp;context,
+                            int&nbsp;resId)</pre>
+<div class="block">Ensures this local sound is also in the local cache.</div>
+</li>
+</ul>
+<a name="ensureCached-java.lang.String-com.qualcomm.ftccommon.SoundPlayer.SoundFromFile-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ensureCached</h4>
+<pre>protected&nbsp;<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;ensureCached(java.lang.String&nbsp;hashString,
+                                             <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundFromFile.html" title="interface in com.qualcomm.ftccommon">SoundPlayer.SoundFromFile</a>&nbsp;ifAbsent)</pre>
+<div class="block">returns a new ref on the returned <a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon"><code>SoundPlayer.SoundInfo</code></a>; caller must releaseRef()</div>
+</li>
+</ul>
+<a name="handleCommandPlaySound-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>handleCommandPlaySound</h4>
+<pre>public&nbsp;CallbackResult&nbsp;handleCommandPlaySound(java.lang.String&nbsp;extra)</pre>
+</li>
+</ul>
+<a name="handleCommandStopPlayingSounds-Command-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>handleCommandStopPlayingSounds</h4>
+<pre>public&nbsp;CallbackResult&nbsp;handleCommandStopPlayingSounds(Command&nbsp;stopPlayingSoundsCommand)</pre>
+</li>
+</ul>
+<a name="copy-java.io.InputStream-java.io.OutputStream-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>copy</h4>
+<pre>protected static&nbsp;void&nbsp;copy(java.io.InputStream&nbsp;inputStream,
+                           java.io.OutputStream&nbsp;outputStream,
+                           int&nbsp;cbToCopy)
+                    throws java.io.IOException</pre>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>soundPool</code> - SoundPool object from the load() method</dd>
-<dd><code>sampleId</code> - the sample ID of the sound loaded.</dd>
-<dd><code>status</code> - the status of the load operation (0 = success)</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
 </dl>
+</li>
+</ul>
+<a name="handleCommandRequestSound-Command-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>handleCommandRequestSound</h4>
+<pre>public&nbsp;CallbackResult&nbsp;handleCommandRequestSound(Command&nbsp;requestSoundCommand)</pre>
+</li>
+</ul>
+<a name="safeClose-java.lang.Object-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>safeClose</h4>
+<pre>protected&nbsp;void&nbsp;safeClose(java.lang.Object&nbsp;closeable)</pre>
+</li>
+</ul>
+<a name="addRef-com.qualcomm.ftccommon.SoundPlayer.SoundInfo-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addRef</h4>
+<pre>public static&nbsp;<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;addRef(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;soundInfo)</pre>
+</li>
+</ul>
+<a name="releaseRef-com.qualcomm.ftccommon.SoundPlayer.SoundInfo-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>releaseRef</h4>
+<pre>public static&nbsp;void&nbsp;releaseRef(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;soundInfo)</pre>
+</li>
+</ul>
+<a name="play-Context-java.io.File-float-int-float-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>play</h4>
+<pre>public&nbsp;void&nbsp;play(Context&nbsp;context,
+                 java.io.File&nbsp;file,
+                 float&nbsp;volume,
+                 int&nbsp;loop,
+                 float&nbsp;rate)</pre>
 </li>
 </ul>
 </li>
@@ -666,7 +1181,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../com/qualcomm/ftccommon/Restarter.html" title="interface in com.qualcomm.ftccommon"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../com/qualcomm/ftccommon/SoundPlayer.LoadedSoundCache.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../com/qualcomm/ftccommon/SoundPlayer.CurrentlyPlaying.html" title="class in com.qualcomm.ftccommon"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?com/qualcomm/ftccommon/SoundPlayer.html" target="_top">Frames</a></li>

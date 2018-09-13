@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -224,57 +224,100 @@ implements <a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" 
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/PIDFCoefficients.html" title="class in com.qualcomm.robotcore.hardware">PIDFCoefficients</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#getPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-">getPIDFCoefficients</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a>&nbsp;mode)</code>
+<div class="block">Returns the PIDF control coefficients used when running in the indicated mode
+ on this motor.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#getTargetPositionTolerance--">getTargetPositionTolerance</a></span>()</code>
 <div class="block">Returns the current target positioning tolerance of this motor</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#getVelocity--">getVelocity</a></span>()</code>
+<div class="block">Returns the current velocity of the motor, in ticks per second</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#getVelocity-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-">getVelocity</a></span>(<a href="../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;unit)</code>
 <div class="block">Returns the current velocity of the motor, in angular units per second</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#internalSetTargetPosition-int-">internalSetTargetPosition</a></span>(int&nbsp;position)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#isMotorEnabled--">isMotorEnabled</a></span>()</code>
 <div class="block">Returns whether this motor is energized</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#setMotorDisable--">setMotorDisable</a></span>()</code>
 <div class="block">Individually de-energizes this particular motor</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#setMotorEnable--">setMotorEnable</a></span>()</code>
 <div class="block">Individually energizes this particular motor</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#setPIDCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDCoefficients-">setPIDCoefficients</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a>&nbsp;mode,
                   <a href="../../../../com/qualcomm/robotcore/hardware/PIDCoefficients.html" title="class in com.qualcomm.robotcore.hardware">PIDCoefficients</a>&nbsp;pidCoefficients)</code>
 <div class="block">Sets the PID control coefficients for one of the PID modes of this motor.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#setPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDFCoefficients-">setPIDFCoefficients</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a>&nbsp;mode,
+                   <a href="../../../../com/qualcomm/robotcore/hardware/PIDFCoefficients.html" title="class in com.qualcomm.robotcore.hardware">PIDFCoefficients</a>&nbsp;pidfCoefficients)</code>
+<div class="block"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDFCoefficients-"><code>DcMotorEx.setPIDFCoefficients(com.qualcomm.robotcore.hardware.DcMotor.RunMode, com.qualcomm.robotcore.hardware.PIDFCoefficients)</code></a> is a superset enhancement to <a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPIDCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDCoefficients-"><code>DcMotorEx.setPIDCoefficients(com.qualcomm.robotcore.hardware.DcMotor.RunMode, com.qualcomm.robotcore.hardware.PIDCoefficients)</code></a>.</div>
+</td>
+</tr>
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#setPositionPIDFCoefficients-double-">setPositionPIDFCoefficients</a></span>(double&nbsp;p)</code>
+<div class="block">A shorthand for setting the PIDF coefficients for the <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html#RUN_TO_POSITION"><code>DcMotor.RunMode.RUN_TO_POSITION</code></a>
+ mode.</div>
+</td>
+</tr>
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#setTargetPositionTolerance-int-">setTargetPositionTolerance</a></span>(int&nbsp;tolerance)</code>
 <div class="block">Sets the target positioning tolerance of this motor</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#setVelocity-double-">setVelocity</a></span>(double&nbsp;angularRate)</code>
+<div class="block">Sets the velocity of the motor</div>
+</td>
+</tr>
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#setVelocity-double-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-">setVelocity</a></span>(double&nbsp;angularRate,
            <a href="../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;unit)</code>
 <div class="block">Sets the velocity of the motor</div>
+</td>
+</tr>
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorImplEx.html#setVelocityPIDFCoefficients-double-double-double-double-">setVelocityPIDFCoefficients</a></span>(double&nbsp;p,
+                           double&nbsp;i,
+                           double&nbsp;d,
+                           double&nbsp;f)</code>
+<div class="block">A shorthand for setting the PIDF coefficients for the <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html#RUN_USING_ENCODER"><code>DcMotor.RunMode.RUN_USING_ENCODER</code></a>
+ mode.</div>
 </td>
 </tr>
 </table>
@@ -422,6 +465,23 @@ implements <a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" 
 </dl>
 </li>
 </ul>
+<a name="setVelocity-double-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setVelocity</h4>
+<pre>public&nbsp;void&nbsp;setVelocity(double&nbsp;angularRate)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setVelocity-double-">DcMotorEx</a></code></span></div>
+<div class="block">Sets the velocity of the motor</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setVelocity-double-">setVelocity</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" title="interface in com.qualcomm.robotcore.hardware">DcMotorEx</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>angularRate</code> - the desired ticks per second</dd>
+</dl>
+</li>
+</ul>
 <a name="setVelocity-double-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-">
 <!--   -->
 </a>
@@ -440,6 +500,23 @@ implements <a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" 
 <dd><code>unit</code> - the units in which angularRate is expressed</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getVelocity-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-"><code>DcMotorEx.getVelocity(AngleUnit)</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="getVelocity--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVelocity</h4>
+<pre>public&nbsp;double&nbsp;getVelocity()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getVelocity--">DcMotorEx</a></code></span></div>
+<div class="block">Returns the current velocity of the motor, in ticks per second</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getVelocity--">getVelocity</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" title="interface in com.qualcomm.robotcore.hardware">DcMotorEx</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the current velocity of the motor</dd>
 </dl>
 </li>
 </ul>
@@ -485,7 +562,8 @@ implements <a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" 
 <div class="block">Sets the PID control coefficients for one of the PID modes of this motor.
  Note that in some controller implementations, setting the PID coefficients for one
  mode on a motor might affect other modes on that motor, or might affect the PID
- coefficients used by other motors on the same controller.</div>
+ coefficients used by other motors on the same controller (this is not true on the
+ REV Expansion Hub).</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPIDCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDCoefficients-">setPIDCoefficients</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" title="interface in com.qualcomm.robotcore.hardware">DcMotorEx</a></code></dd>
@@ -494,6 +572,88 @@ implements <a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" 
 <dd><code>pidCoefficients</code> - the new coefficients to use when in that mode on this motor</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><code>#getPIDCoefficients(RunMode)</code></dd>
+</dl>
+</li>
+</ul>
+<a name="setPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDFCoefficients-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setPIDFCoefficients</h4>
+<pre>public&nbsp;void&nbsp;setPIDFCoefficients(<a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a>&nbsp;mode,
+                                <a href="../../../../com/qualcomm/robotcore/hardware/PIDFCoefficients.html" title="class in com.qualcomm.robotcore.hardware">PIDFCoefficients</a>&nbsp;pidfCoefficients)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDFCoefficients-">DcMotorEx</a></code></span></div>
+<div class="block"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDFCoefficients-"><code>DcMotorEx.setPIDFCoefficients(com.qualcomm.robotcore.hardware.DcMotor.RunMode, com.qualcomm.robotcore.hardware.PIDFCoefficients)</code></a> is a superset enhancement to <a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPIDCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDCoefficients-"><code>DcMotorEx.setPIDCoefficients(com.qualcomm.robotcore.hardware.DcMotor.RunMode, com.qualcomm.robotcore.hardware.PIDCoefficients)</code></a>. In addition
+ to the proportional, integral, and derivative coefficients previously supported, a feed-forward
+ coefficient may also be specified. Further, a selection of motor control algorithms is offered:
+ the originally-shipped Legacy PID algorithm, and a PIDF algorithm which avails itself of the
+ feed-forward coefficient. Note that the feed-forward coefficient is not used by the Legacy PID
+ algorithm; thus, the feed-forward coefficient must be indicated as zero if the Legacy PID
+ algorithm is used. Also: the internal implementation of these algorithms may be different: it
+ is not the case that the use of PIDF with the F term as zero necessarily exhibits exactly the
+ same behavior as the use of the LegacyPID algorithm, though in practice they will be quite close.
+
+ Readers are reminded that <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html#RUN_TO_POSITION"><code>DcMotor.RunMode.RUN_TO_POSITION</code></a> mode makes use of <em>both</em>
+ the coefficients set for RUN_TO_POSITION <em>and</em> the coefficients set for RUN_WITH_ENCODER,
+ due to the fact that internally the RUN_TO_POSITION logic calculates an on-the-fly velocity goal
+ on each control cycle, then (logically) runs the RUN_WITH_ENCODER logic. Because of that double-
+ layering, only the proportional ('p') coefficient makes logical sense for use in the RUN_TO_POSITION
+ coefficients.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDFCoefficients-">setPIDFCoefficients</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" title="interface in com.qualcomm.robotcore.hardware">DcMotorEx</a></code></dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setVelocityPIDFCoefficients-double-double-double-double-"><code>DcMotorEx.setVelocityPIDFCoefficients(double, double, double, double)</code></a>, 
+<a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPositionPIDFCoefficients-double-"><code>DcMotorEx.setPositionPIDFCoefficients(double)</code></a>, 
+<code>#getPIDFCoefficients(RunMode)</code></dd>
+</dl>
+</li>
+</ul>
+<a name="setVelocityPIDFCoefficients-double-double-double-double-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setVelocityPIDFCoefficients</h4>
+<pre>public&nbsp;void&nbsp;setVelocityPIDFCoefficients(double&nbsp;p,
+                                        double&nbsp;i,
+                                        double&nbsp;d,
+                                        double&nbsp;f)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setVelocityPIDFCoefficients-double-double-double-double-">DcMotorEx</a></code></span></div>
+<div class="block">A shorthand for setting the PIDF coefficients for the <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html#RUN_USING_ENCODER"><code>DcMotor.RunMode.RUN_USING_ENCODER</code></a>
+ mode. <a href="../../../../com/qualcomm/robotcore/hardware/MotorControlAlgorithm.html#PIDF"><code>MotorControlAlgorithm.PIDF</code></a> is used.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setVelocityPIDFCoefficients-double-double-double-double-">setVelocityPIDFCoefficients</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" title="interface in com.qualcomm.robotcore.hardware">DcMotorEx</a></code></dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><code>#setPIDFCoefficients(RunMode, PIDFCoefficients)</code></dd>
+</dl>
+</li>
+</ul>
+<a name="setPositionPIDFCoefficients-double-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setPositionPIDFCoefficients</h4>
+<pre>public&nbsp;void&nbsp;setPositionPIDFCoefficients(double&nbsp;p)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPositionPIDFCoefficients-double-">DcMotorEx</a></code></span></div>
+<div class="block">A shorthand for setting the PIDF coefficients for the <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html#RUN_TO_POSITION"><code>DcMotor.RunMode.RUN_TO_POSITION</code></a>
+ mode. <a href="../../../../com/qualcomm/robotcore/hardware/MotorControlAlgorithm.html#PIDF"><code>MotorControlAlgorithm.PIDF</code></a> is used.
+
+ Readers are reminded that <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html#RUN_TO_POSITION"><code>DcMotor.RunMode.RUN_TO_POSITION</code></a> mode makes use of <em>both</em>
+ the coefficients set for RUN_TO_POSITION <em>and</em> the coefficients set for RUN_WITH_ENCODER,
+ due to the fact that internally the RUN_TO_POSITION logic calculates an on-the-fly velocity goal
+ on each control cycle, then (logically) runs the RUN_WITH_ENCODER logic. Because of that double-
+ layering, only the proportional ('p') coefficient makes logical sense for use in the RUN_TO_POSITION
+ coefficients.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPositionPIDFCoefficients-double-">setPositionPIDFCoefficients</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" title="interface in com.qualcomm.robotcore.hardware">DcMotorEx</a></code></dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setVelocityPIDFCoefficients-double-double-double-double-"><code>DcMotorEx.setVelocityPIDFCoefficients(double, double, double, double)</code></a>, 
+<code>#setPIDFCoefficients(RunMode, PIDFCoefficients)</code></dd>
 </dl>
 </li>
 </ul>
@@ -514,6 +674,28 @@ implements <a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" 
 <dd><code>mode</code> - either <code>RunMode#RUN_USING_ENCODER</code> or <code>RunMode#RUN_TO_POSITION</code></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the PID control coefficients used when running in the indicated mode on this motor</dd>
+</dl>
+</li>
+</ul>
+<a name="getPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPIDFCoefficients</h4>
+<pre>public&nbsp;<a href="../../../../com/qualcomm/robotcore/hardware/PIDFCoefficients.html" title="class in com.qualcomm.robotcore.hardware">PIDFCoefficients</a>&nbsp;getPIDFCoefficients(<a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a>&nbsp;mode)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-">DcMotorEx</a></code></span></div>
+<div class="block">Returns the PIDF control coefficients used when running in the indicated mode
+ on this motor.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-">getPIDFCoefficients</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html" title="interface in com.qualcomm.robotcore.hardware">DcMotorEx</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>mode</code> - either <code>RunMode#RUN_USING_ENCODER</code> or <code>RunMode#RUN_TO_POSITION</code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the PIDF control coefficients used when running in the indicated mode on this motor</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><code>#setPIDFCoefficients(RunMode, PIDFCoefficients)</code></dd>
 </dl>
 </li>
 </ul>

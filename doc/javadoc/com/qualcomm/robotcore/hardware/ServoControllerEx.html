@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -166,13 +166,13 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/ServoController.htm
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/ServoControllerEx.html#setServoPwmDisable-int-">setServoPwmDisable</a></span>(int&nbsp;servo)</code>
-<div class="block">Returns whether the PWM is energized a this particular servo</div>
+<div class="block">Individually de-energizes the PWM for a particular servo</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/ServoControllerEx.html#setServoPwmEnable-int-">setServoPwmEnable</a></span>(int&nbsp;servo)</code>
-<div class="block">Individually denergizes the PWM for a particular servo</div>
+<div class="block">Individually energizes the PWM for a particular servo</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -180,6 +180,13 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/ServoController.htm
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/ServoControllerEx.html#setServoPwmRange-int-com.qualcomm.robotcore.hardware.PwmControl.PwmRange-">setServoPwmRange</a></span>(int&nbsp;servo,
                 <a href="../../../../com/qualcomm/robotcore/hardware/PwmControl.PwmRange.html" title="class in com.qualcomm.robotcore.hardware">PwmControl.PwmRange</a>&nbsp;range)</code>
 <div class="block">Sets the PWM range of the indicated servo.</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/ServoControllerEx.html#setServoType-int-ServoConfigurationType-">setServoType</a></span>(int&nbsp;servo,
+            ServoConfigurationType&nbsp;servoType)</code>
+<div class="block">Sets the servo type for a particular servo</div>
 </td>
 </tr>
 </table>
@@ -256,7 +263,7 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/ServoController.htm
 <li class="blockList">
 <h4>setServoPwmEnable</h4>
 <pre>void&nbsp;setServoPwmEnable(int&nbsp;servo)</pre>
-<div class="block">Individually denergizes the PWM for a particular servo</div>
+<div class="block">Individually energizes the PWM for a particular servo</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>servo</code> - the servo port number on the controller</dd>
@@ -272,7 +279,7 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/ServoController.htm
 <li class="blockList">
 <h4>setServoPwmDisable</h4>
 <pre>void&nbsp;setServoPwmDisable(int&nbsp;servo)</pre>
-<div class="block">Returns whether the PWM is energized a this particular servo</div>
+<div class="block">Individually de-energizes the PWM for a particular servo</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>servo</code> - the servo port number on the controller</dd>
@@ -284,7 +291,7 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/ServoController.htm
 <a name="isServoPwmEnabled-int-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isServoPwmEnabled</h4>
 <pre>boolean&nbsp;isServoPwmEnabled(int&nbsp;servo)</pre>
@@ -294,6 +301,22 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/ServoController.htm
 <dd><code>servo</code> - the servo port number on the controller</dd>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../com/qualcomm/robotcore/hardware/PwmControl.html#isPwmEnabled--"><code>PwmControl.isPwmEnabled()</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="setServoType-int-ServoConfigurationType-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setServoType</h4>
+<pre>void&nbsp;setServoType(int&nbsp;servo,
+                  ServoConfigurationType&nbsp;servoType)</pre>
+<div class="block">Sets the servo type for a particular servo</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>servo</code> - the servo port number on the controller</dd>
+<dd><code>servoType</code> - the ServoConfigurationType instance to set</dd>
 </dl>
 </li>
 </ul>

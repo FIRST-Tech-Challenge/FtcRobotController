@@ -463,6 +463,10 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/VisuallyIdentifiableHardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">VisuallyIdentifiableHardwareDevice</a></td>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/VoltageSensor.html" title="interface in com.qualcomm.robotcore.hardware">VoltageSensor</a></td>
 <td class="colLast">
 <div class="block">Voltage Sensor</div>
@@ -674,45 +678,65 @@
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/PIDFCoefficients.html" title="class in com.qualcomm.robotcore.hardware">PIDFCoefficients</a></td>
+<td class="colLast">
+<div class="block"><a href="../../../../com/qualcomm/robotcore/hardware/PIDFCoefficients.html" title="class in com.qualcomm.robotcore.hardware"><code>PIDFCoefficients</code></a> conveys a set of configuration parameters for a PIDF algorithm,
+ a PID algorithm which includes an additional feed-forward term.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/PwmControl.PwmRange.html" title="class in com.qualcomm.robotcore.hardware">PwmControl.PwmRange</a></td>
 <td class="colLast">
 <div class="block">PwmRange instances are used to specify the upper and lower pulse widths
  and overall framing rate for a servo.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/PWMOutputImpl.html" title="class in com.qualcomm.robotcore.hardware">PWMOutputImpl</a></td>
 <td class="colLast">
 <div class="block">Control a single digital port</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/PWMOutputImplEx.html" title="class in com.qualcomm.robotcore.hardware">PWMOutputImplEx</a></td>
 <td class="colLast">
 <div class="block">Created by bob on 2016-03-12.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/ScannedDevices.html" title="class in com.qualcomm.robotcore.hardware">ScannedDevices</a></td>
+<td class="colLast">
+<div class="block"><a href="../../../../com/qualcomm/robotcore/hardware/ScannedDevices.html" title="class in com.qualcomm.robotcore.hardware"><code>ScannedDevices</code></a> is a simple distinguished kind of map of serial numbers
+ to device types.</div>
+</td>
+</tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/ScannedDevices.MapAdapter.html" title="class in com.qualcomm.robotcore.hardware">ScannedDevices.MapAdapter</a></td>
+<td class="colLast">
+<div class="block">There *has* to be an easier way here, somehow.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/ServoImpl.html" title="class in com.qualcomm.robotcore.hardware">ServoImpl</a></td>
 <td class="colLast">
 <div class="block">ServoImpl provides an implementation of the Servo interface that operates on top
  of an instance of the ServoController interface.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/ServoImplEx.html" title="class in com.qualcomm.robotcore.hardware">ServoImplEx</a></td>
 <td class="colLast">
 <div class="block">ServoImplEx provides access to extended functionality on servos.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/TimestampedData.html" title="class in com.qualcomm.robotcore.hardware">TimestampedData</a></td>
 <td class="colLast">
 <div class="block">TimestampedData pairs together data which has been read with the timestamp at which
  the read occurred, as best that can be determined</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/TimestampedI2cData.html" title="class in com.qualcomm.robotcore.hardware">TimestampedI2cData</a></td>
 <td class="colLast">
 <div class="block"><a href="../../../../com/qualcomm/robotcore/hardware/TimestampedI2cData.html" title="class in com.qualcomm.robotcore.hardware"><code>TimestampedI2cData</code></a> extends <a href="../../../../com/qualcomm/robotcore/hardware/TimestampedData.html" title="class in com.qualcomm.robotcore.hardware"><code>TimestampedData</code></a> so as to provide an indication
@@ -735,80 +759,93 @@
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/ControlSystem.html" title="enum in com.qualcomm.robotcore.hardware">ControlSystem</a></td>
+<td class="colLast">
+<div class="block">Used to specify what type of control system a particular piece of hardware is connected to</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a></td>
 <td class="colLast">
 <div class="block">The run mode of a motor <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware"><code>DcMotor.RunMode</code></a> controls how the motor interprets the
  it's parameter settings passed through power- and encoder-related methods.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.ZeroPowerBehavior.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.ZeroPowerBehavior</a></td>
 <td class="colLast">
 <div class="block">ZeroPowerBehavior provides an indication as to a motor's behavior when a power level of zero
  is applied.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorSimple.Direction.html" title="enum in com.qualcomm.robotcore.hardware">DcMotorSimple.Direction</a></td>
 <td class="colLast">
 <div class="block">DcMotors can be configured to internally reverse the values
  to which, e.g., their motor power is set.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.DeviceType.html" title="enum in com.qualcomm.robotcore.hardware">DeviceManager.DeviceType</a></td>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.UsbDeviceType.html" title="enum in com.qualcomm.robotcore.hardware">DeviceManager.UsbDeviceType</a></td>
 <td class="colLast">
-<div class="block">Enum of known USB Device Types (Note that the MR .AAR library has an internal copy of this)</div>
+<div class="block">Enum of known USB Device Types</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/DigitalChannel.Mode.html" title="enum in com.qualcomm.robotcore.hardware">DigitalChannel.Mode</a></td>
 <td class="colLast">
 <div class="block">Digital channel mode - input or output</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/DigitalChannelController.Mode.html" title="enum in com.qualcomm.robotcore.hardware">DigitalChannelController.Mode</a></td>
 <td class="colLast">Deprecated
 <div class="block"><span class="deprecationComment">use <a href="../../../../com/qualcomm/robotcore/hardware/DigitalChannel.Mode.html" title="enum in com.qualcomm.robotcore.hardware"><code>DigitalChannel.Mode</code></a> instead</span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.Manufacturer.html" title="enum in com.qualcomm.robotcore.hardware">HardwareDevice.Manufacturer</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDeviceHealth.HealthStatus.html" title="enum in com.qualcomm.robotcore.hardware">HardwareDeviceHealth.HealthStatus</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceSynch.ReadMode.html" title="enum in com.qualcomm.robotcore.hardware">I2cDeviceSynch.ReadMode</a></td>
 <td class="colLast">
 <div class="block"><a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceSynch.ReadMode.html" title="enum in com.qualcomm.robotcore.hardware"><code>I2cDeviceSynch.ReadMode</code></a> controls whether when asked to read we read only once or read multiple times.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceSynchImpl.CONTROLLER_PORT_MODE.html" title="enum in com.qualcomm.robotcore.hardware">I2cDeviceSynchImpl.CONTROLLER_PORT_MODE</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceSynchImpl.READ_CACHE_STATUS.html" title="enum in com.qualcomm.robotcore.hardware">I2cDeviceSynchImpl.READ_CACHE_STATUS</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceSynchImpl.WRITE_CACHE_STATUS.html" title="enum in com.qualcomm.robotcore.hardware">I2cDeviceSynchImpl.WRITE_CACHE_STATUS</a></td>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/I2cWaitControl.html" title="enum in com.qualcomm.robotcore.hardware">I2cWaitControl</a></td>
 <td class="colLast">
 <div class="block">Values in <a href="../../../../com/qualcomm/robotcore/hardware/I2cWaitControl.html" title="enum in com.qualcomm.robotcore.hardware"><code>I2cWaitControl</code></a> control the semantics of waiting on I2c writes</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/IrSeekerSensor.Mode.html" title="enum in com.qualcomm.robotcore.hardware">IrSeekerSensor.Mode</a></td>
 <td class="colLast">
 <div class="block">Enumeration of device modes</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a href="../../../../com/qualcomm/robotcore/hardware/MotorControlAlgorithm.html" title="enum in com.qualcomm.robotcore.hardware">MotorControlAlgorithm</a></td>
+<td class="colLast">
+<div class="block"> indicates the control algorithm variant to use with
+ <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html#RUN_TO_POSITION"><code>DcMotor.RunMode.RUN_TO_POSITION</code></a> and <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html#RUN_USING_ENCODER"><code>DcMotor.RunMode.RUN_USING_ENCODER</code></a>.</div>
 </td>
 </tr>
 <tr class="rowColor">

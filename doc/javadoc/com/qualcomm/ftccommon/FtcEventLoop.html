@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10};
+var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -271,55 +271,59 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#handleCommandScan-java.lang.String-">handleCommandScan</a></span>(java.lang.String&nbsp;extra)</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#handleCommandSetMatchNumber-java.lang.String-">handleCommandSetMatchNumber</a></span>(java.lang.String&nbsp;extra)</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#handleUsbModuleAttach-RobotUsbModule-">handleUsbModuleAttach</a></span>(RobotUsbModule&nbsp;module)</code>
 <div class="block">Process the fact that (we believe) that the indicated module has now reappeared after a
  previously observed detachment.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#handleUsbModuleDetach-RobotUsbModule-">handleUsbModuleDetach</a></span>(RobotUsbModule&nbsp;module)</code>
 <div class="block">Process the fact that a usb module has now become detached from the system.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#init-com.qualcomm.robotcore.eventloop.EventLoopManager-">init</a></span>(<a href="../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html" title="class in com.qualcomm.robotcore.eventloop">EventLoopManager</a>&nbsp;eventLoopManager)</code>
 <div class="block">Init method</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#loop--">loop</a></span>()</code>
 <div class="block">Loop method, this will be called repeatedly while the robot is running.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#onUsbDeviceAttached-UsbDevice-">onUsbDeviceAttached</a></span>(UsbDevice&nbsp;usbDevice)</code>
 <div class="block">Deal with the fact that a UsbDevice has recently attached to the system</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#pendUsbDeviceAttachment-com.qualcomm.robotcore.util.SerialNumber-long-java.util.concurrent.TimeUnit-">pendUsbDeviceAttachment</a></span>(<a href="../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
                        long&nbsp;time,
                        java.util.concurrent.TimeUnit&nbsp;unit)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>CallbackResult</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#processCommand-Command-">processCommand</a></span>(Command&nbsp;command)</code>
 <div class="block">If the driver station sends over a command, it will be routed to this method.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#processedRecentlyAttachedUsbDevices--">processedRecentlyAttachedUsbDevices</a></span>()</code>
 <div class="block">Process any usb devices that might have recently attached.</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#refreshUserTelemetry-TelemetryMessage-double-">refreshUserTelemetry</a></span>(TelemetryMessage&nbsp;telemetry,
                     double&nbsp;sInterval)</code>
@@ -327,23 +331,23 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
  here provided if a sufficiently long duration has passed since the last update.</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#requestOpModeStop-com.qualcomm.robotcore.eventloop.opmode.OpMode-">requestOpModeStop</a></span>(<a href="../../../com/qualcomm/robotcore/eventloop/opmode/OpMode.html" title="class in com.qualcomm.robotcore.eventloop.opmode">OpMode</a>&nbsp;opModeToStopIfActive)</code>
 <div class="block">Requests that an OpMode be stopped if it's the currently active one</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#sendUIState--">sendUIState</a></span>()</code>
 <div class="block">The driver station is requesting our opmode list/ UI state.</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#setUsbModuleAttachmentHandler-com.qualcomm.ftccommon.UsbModuleAttachmentHandler-">setUsbModuleAttachmentHandler</a></span>(<a href="../../../com/qualcomm/ftccommon/UsbModuleAttachmentHandler.html" title="interface in com.qualcomm.ftccommon">UsbModuleAttachmentHandler</a>&nbsp;handler)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoop.html#teardown--">teardown</a></span>()</code>
 <div class="block">Teardown method</div>
@@ -355,7 +359,7 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.qualcomm.ftccommon.<a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="class in com.qualcomm.ftccommon">FtcEventLoopBase</a></h3>
-<code><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#checkForChangedOpModes--">checkForChangedOpModes</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#enterFirmwareUpdateMode-RobotUsbDevice-">enterFirmwareUpdateMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#getLynxUsbDeviceForFirmwareUpdate-com.qualcomm.robotcore.util.SerialNumber-">getLynxUsbDeviceForFirmwareUpdate</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#getUSBAccessibleLynxDevices-boolean-">getUSBAccessibleLynxDevices</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandActivateConfiguration-java.lang.String-">handleCommandActivateConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandClearRememberedGroups--">handleCommandClearRememberedGroups</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDeleteConfiguration-java.lang.String-">handleCommandDeleteConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDisconnectWifiDirect--">handleCommandDisconnectWifiDirect</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDismissAllDialogs-Command-">handleCommandDismissAllDialogs</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDismissDialog-Command-">handleCommandDismissDialog</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDismissProgress-Command-">handleCommandDismissProgress</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandGetCandidateLynxFirmwareImages-Command-">handleCommandGetCandidateLynxFirmwareImages</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandGetUSBAccessibleLynxModules-Command-">handleCommandGetUSBAccessibleLynxModules</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandLynxChangeModuleAddresses-Command-">handleCommandLynxChangeModuleAddresses</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandLynxFirmwareUpdate-Command-">handleCommandLynxFirmwareUpdate</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestConfigurations--">handleCommandRequestConfigurations</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestConfigurationTemplates--">handleCommandRequestConfigurationTemplates</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestInspectionReport--">handleCommandRequestInspectionReport</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestParticularConfiguration-java.lang.String-">handleCommandRequestParticularConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestRememberedGroups--">handleCommandRequestRememberedGroups</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRestartRobot--">handleCommandRestartRobot</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandSaveConfiguration-java.lang.String-">handleCommandSaveConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowDialog-Command-">handleCommandShowDialog</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowProgress-Command-">handleCommandShowProgress</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowToast-Command-">handleCommandShowToast</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandStartDriverStationProgramAndManage--">handleCommandStartDriverStationProgramAndManage</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandStartProgrammingMode--">handleCommandStartProgrammingMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandStopProgrammingMode--">handleCommandStopProgrammingMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#startUsbScanMangerIfNecessary--">startUsbScanMangerIfNecessary</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#updateLynxFirmware-com.qualcomm.robotcore.util.SerialNumber-com.qualcomm.ftccommon.CommandList.FWImage-">updateLynxFirmware</a></code></li>
+<code><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#checkForChangedOpModes--">checkForChangedOpModes</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#enterFirmwareUpdateMode-RobotUsbDevice-">enterFirmwareUpdateMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#getLynxUsbDeviceForFirmwareUpdate-com.qualcomm.robotcore.util.SerialNumber-">getLynxUsbDeviceForFirmwareUpdate</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#getUSBAccessibleLynxDevices-boolean-">getUSBAccessibleLynxDevices</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandActivateConfiguration-java.lang.String-">handleCommandActivateConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandClearRememberedGroups--">handleCommandClearRememberedGroups</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDeleteConfiguration-java.lang.String-">handleCommandDeleteConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDisconnectWifiDirect--">handleCommandDisconnectWifiDirect</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDismissAllDialogs-Command-">handleCommandDismissAllDialogs</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDismissDialog-Command-">handleCommandDismissDialog</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandDismissProgress-Command-">handleCommandDismissProgress</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandGetCandidateLynxFirmwareImages-Command-">handleCommandGetCandidateLynxFirmwareImages</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandGetUSBAccessibleLynxModules-Command-">handleCommandGetUSBAccessibleLynxModules</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandLynxChangeModuleAddresses-Command-">handleCommandLynxChangeModuleAddresses</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandLynxFirmwareUpdate-Command-">handleCommandLynxFirmwareUpdate</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestAboutInfo-Command-">handleCommandRequestAboutInfo</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestConfigurations--">handleCommandRequestConfigurations</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestConfigurationTemplates--">handleCommandRequestConfigurationTemplates</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestInspectionReport--">handleCommandRequestInspectionReport</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestParticularConfiguration-java.lang.String-">handleCommandRequestParticularConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRequestRememberedGroups--">handleCommandRequestRememberedGroups</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandRestartRobot--">handleCommandRestartRobot</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandSaveConfiguration-java.lang.String-">handleCommandSaveConfiguration</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowDialog-Command-">handleCommandShowDialog</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowProgress-Command-">handleCommandShowProgress</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandShowToast-Command-">handleCommandShowToast</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandStartDriverStationProgramAndManage--">handleCommandStartDriverStationProgramAndManage</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandStartProgrammingMode--">handleCommandStartProgrammingMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandStopProgrammingMode--">handleCommandStopProgrammingMode</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandVisuallyIdentify-Command-">handleCommandVisuallyIdentify</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#startUsbScanMangerIfNecessary--">startUsbScanMangerIfNecessary</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#talkToParentLynxModule-com.qualcomm.robotcore.hardware.DeviceManager-LynxUsbDevice-int-org.firstinspires.ftc.robotcore.external.Consumer-">talkToParentLynxModule</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#updateFirmwareOnce-com.qualcomm.ftccommon.FtcEventLoopBase.LynxUsbDeviceContainer-java.lang.String-byte:A-com.qualcomm.robotcore.util.SerialNumber-">updateFirmwareOnce</a>, <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#updateLynxFirmware-com.qualcomm.robotcore.util.SerialNumber-com.qualcomm.ftccommon.CommandList.FWImage-">updateLynxFirmware</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -677,6 +681,15 @@ extends <a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="c
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#sendUIState--">sendUIState</a></code>&nbsp;in class&nbsp;<code><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html" title="class in com.qualcomm.ftccommon">FtcEventLoopBase</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="handleCommandSetMatchNumber-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>handleCommandSetMatchNumber</h4>
+<pre>protected&nbsp;void&nbsp;handleCommandSetMatchNumber(java.lang.String&nbsp;extra)</pre>
 </li>
 </ul>
 <a name="handleCommandInitOpMode-java.lang.String-">

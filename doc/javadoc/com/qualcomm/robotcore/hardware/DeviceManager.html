@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/qualcomm/robotcore/hardware/DeviceInterfaceModule.html" title="interface in com.qualcomm.robotcore.hardware"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.DeviceType.html" title="enum in com.qualcomm.robotcore.hardware"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.UsbDeviceType.html" title="enum in com.qualcomm.robotcore.hardware"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/qualcomm/robotcore/hardware/DeviceManager.html" target="_top">Frames</a></li>
@@ -120,8 +120,8 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.DeviceType.html" title="enum in com.qualcomm.robotcore.hardware">DeviceManager.DeviceType</a></span></code>
-<div class="block">Enum of known USB Device Types (Note that the MR .AAR library has an internal copy of this)</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.UsbDeviceType.html" title="enum in com.qualcomm.robotcore.hardware">DeviceManager.UsbDeviceType</a></span></code>
+<div class="block">Enum of known USB Device Types</div>
 </td>
 </tr>
 </table>
@@ -154,16 +154,16 @@ var activeTableTab = "activeTableTab";
                             java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/AnalogInput.html" title="class in com.qualcomm.robotcore.hardware">AnalogInput</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createAnalogInputDevice-com.qualcomm.robotcore.hardware.AnalogInputController-int-java.lang.String-">createAnalogInputDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/AnalogInputController.html" title="interface in com.qualcomm.robotcore.hardware">AnalogInputController</a>&nbsp;controller,
-                       int&nbsp;channel,
-                       java.lang.String&nbsp;name)</code>&nbsp;</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/AnalogOutput.html" title="class in com.qualcomm.robotcore.hardware">AnalogOutput</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createAnalogOutputDevice-com.qualcomm.robotcore.hardware.AnalogOutputController-int-java.lang.String-">createAnalogOutputDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/AnalogOutputController.html" title="interface in com.qualcomm.robotcore.hardware">AnalogOutputController</a>&nbsp;controller,
                         int&nbsp;channel,
                         java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createAnalogSensor-com.qualcomm.robotcore.hardware.AnalogInputController-int-AnalogSensorConfigurationType-">createAnalogSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/AnalogInputController.html" title="interface in com.qualcomm.robotcore.hardware">AnalogInputController</a>&nbsp;controller,
+                  int&nbsp;channel,
+                  AnalogSensorConfigurationType&nbsp;type)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/CRServo.html" title="interface in com.qualcomm.robotcore.hardware">CRServo</a></code></td>
@@ -173,11 +173,18 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/CRServo.html" title="interface in com.qualcomm.robotcore.hardware">CRServo</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createCRServoEx-com.qualcomm.robotcore.hardware.ServoController-int-java.lang.String-">createCRServoEx</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/ServoController.html" title="interface in com.qualcomm.robotcore.hardware">ServoController</a>&nbsp;controller,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createCRServoEx-com.qualcomm.robotcore.hardware.ServoControllerEx-int-java.lang.String-ServoConfigurationType-">createCRServoEx</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/ServoControllerEx.html" title="interface in com.qualcomm.robotcore.hardware">ServoControllerEx</a>&nbsp;controller,
                int&nbsp;portNumber,
-               java.lang.String&nbsp;name)</code>&nbsp;</td>
+               java.lang.String&nbsp;name,
+               ServoConfigurationType&nbsp;servoType)</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createCustomServoDevice-com.qualcomm.robotcore.hardware.ServoController-int-ServoConfigurationType-">createCustomServoDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/ServoController.html" title="interface in com.qualcomm.robotcore.hardware">ServoController</a>&nbsp;controller,
+                       int&nbsp;portNumber,
+                       ServoConfigurationType&nbsp;servoConfigurationType)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.html" title="interface in com.qualcomm.robotcore.hardware">DcMotor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createDcMotor-com.qualcomm.robotcore.hardware.DcMotorController-int-MotorConfigurationType-java.lang.String-">createDcMotor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DcMotorController.html" title="interface in com.qualcomm.robotcore.hardware">DcMotorController</a>&nbsp;controller,
              int&nbsp;portNumber,
@@ -186,25 +193,25 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of a DcMotor</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.html" title="interface in com.qualcomm.robotcore.hardware">DcMotor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createDcMotorEx-com.qualcomm.robotcore.hardware.DcMotorController-int-MotorConfigurationType-java.lang.String-">createDcMotorEx</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DcMotorController.html" title="interface in com.qualcomm.robotcore.hardware">DcMotorController</a>&nbsp;controller,
                int&nbsp;portNumber,
                MotorConfigurationType&nbsp;motorType,
                java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/DeviceInterfaceModule.html" title="interface in com.qualcomm.robotcore.hardware">DeviceInterfaceModule</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createDeviceInterfaceModule-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-">createDeviceInterfaceModule</a></span>(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
                            java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/DigitalChannel.html" title="interface in com.qualcomm.robotcore.hardware">DigitalChannel</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createDigitalChannelDevice-com.qualcomm.robotcore.hardware.DigitalChannelController-int-java.lang.String-">createDigitalChannelDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DigitalChannelController.html" title="interface in com.qualcomm.robotcore.hardware">DigitalChannelController</a>&nbsp;controller,
-                          int&nbsp;channel,
-                          java.lang.String&nbsp;name)</code>&nbsp;</td>
-</tr>
 <tr id="i10" class="altColor">
+<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createDigitalDevice-com.qualcomm.robotcore.hardware.DigitalChannelController-int-DigitalIoDeviceConfigurationType-">createDigitalDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DigitalChannelController.html" title="interface in com.qualcomm.robotcore.hardware">DigitalChannelController</a>&nbsp;controller,
+                   int&nbsp;channel,
+                   DigitalIoDeviceConfigurationType&nbsp;type)</code>&nbsp;</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/AccelerationSensor.html" title="interface in com.qualcomm.robotcore.hardware">AccelerationSensor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createHTAccelerationSensor-com.qualcomm.robotcore.hardware.LegacyModule-int-java.lang.String-">createHTAccelerationSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/LegacyModule.html" title="interface in com.qualcomm.robotcore.hardware">LegacyModule</a>&nbsp;legacyModule,
                           int&nbsp;physicalPort,
@@ -212,7 +219,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of a AccelerationSensor</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/ColorSensor.html" title="interface in com.qualcomm.robotcore.hardware">ColorSensor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createHTColorSensor-com.qualcomm.robotcore.hardware.LegacyModule-int-java.lang.String-">createHTColorSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/LegacyModule.html" title="interface in com.qualcomm.robotcore.hardware">LegacyModule</a>&nbsp;controller,
                    int&nbsp;channel,
@@ -220,7 +227,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of a ColorSensor</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/CompassSensor.html" title="interface in com.qualcomm.robotcore.hardware">CompassSensor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createHTCompassSensor-com.qualcomm.robotcore.hardware.LegacyModule-int-java.lang.String-">createHTCompassSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/LegacyModule.html" title="interface in com.qualcomm.robotcore.hardware">LegacyModule</a>&nbsp;legacyModule,
                      int&nbsp;physicalPort,
@@ -228,7 +235,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of a NxtCompassSensor</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorController.html" title="interface in com.qualcomm.robotcore.hardware">DcMotorController</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createHTDcMotorController-com.qualcomm.robotcore.hardware.LegacyModule-int-java.lang.String-">createHTDcMotorController</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/LegacyModule.html" title="interface in com.qualcomm.robotcore.hardware">LegacyModule</a>&nbsp;legacyModule,
                          int&nbsp;physicalPort,
@@ -236,7 +243,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of an NXT DcMotorController</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/GyroSensor.html" title="interface in com.qualcomm.robotcore.hardware">GyroSensor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createHTGyroSensor-com.qualcomm.robotcore.hardware.LegacyModule-int-java.lang.String-">createHTGyroSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/LegacyModule.html" title="interface in com.qualcomm.robotcore.hardware">LegacyModule</a>&nbsp;legacyModule,
                   int&nbsp;physicalPort,
@@ -244,7 +251,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of a GyroSensor</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/IrSeekerSensor.html" title="interface in com.qualcomm.robotcore.hardware">IrSeekerSensor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createHTIrSeekerSensor-com.qualcomm.robotcore.hardware.LegacyModule-int-java.lang.String-">createHTIrSeekerSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/LegacyModule.html" title="interface in com.qualcomm.robotcore.hardware">LegacyModule</a>&nbsp;legacyModule,
                       int&nbsp;physicalPort,
@@ -252,7 +259,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of a IrSeekerSensor</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/LightSensor.html" title="interface in com.qualcomm.robotcore.hardware">LightSensor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createHTLightSensor-com.qualcomm.robotcore.hardware.LegacyModule-int-java.lang.String-">createHTLightSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/LegacyModule.html" title="interface in com.qualcomm.robotcore.hardware">LegacyModule</a>&nbsp;legacyModule,
                    int&nbsp;physicalPort,
@@ -260,7 +267,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of a LightSensor</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/ServoController.html" title="interface in com.qualcomm.robotcore.hardware">ServoController</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createHTServoController-com.qualcomm.robotcore.hardware.LegacyModule-int-java.lang.String-">createHTServoController</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/LegacyModule.html" title="interface in com.qualcomm.robotcore.hardware">LegacyModule</a>&nbsp;legacyModule,
                        int&nbsp;physicalPort,
@@ -268,25 +275,25 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of an NXT ServoController</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/TouchSensorMultiplexer.html" title="interface in com.qualcomm.robotcore.hardware">TouchSensorMultiplexer</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createHTTouchSensorMultiplexer-com.qualcomm.robotcore.hardware.LegacyModule-int-java.lang.String-">createHTTouchSensorMultiplexer</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/LegacyModule.html" title="interface in com.qualcomm.robotcore.hardware">LegacyModule</a>&nbsp;legacyModule,
                               int&nbsp;port,
                               java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/I2cDevice.html" title="interface in com.qualcomm.robotcore.hardware">I2cDevice</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createI2cDevice-com.qualcomm.robotcore.hardware.I2cController-DeviceConfiguration.I2cChannel-java.lang.String-">createI2cDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.html" title="interface in com.qualcomm.robotcore.hardware">I2cController</a>&nbsp;controller,
                DeviceConfiguration.I2cChannel&nbsp;channel,
                java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/I2cDeviceSynch.html" title="interface in com.qualcomm.robotcore.hardware">I2cDeviceSynch</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createI2cDeviceSynch-com.qualcomm.robotcore.hardware.RobotCoreLynxModule-DeviceConfiguration.I2cChannel-java.lang.String-">createI2cDeviceSynch</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/RobotCoreLynxModule.html" title="interface in com.qualcomm.robotcore.hardware">RobotCoreLynxModule</a>&nbsp;module,
                     DeviceConfiguration.I2cChannel&nbsp;channel,
                     java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/LED.html" title="class in com.qualcomm.robotcore.hardware">LED</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createLED-com.qualcomm.robotcore.hardware.DigitalChannelController-int-java.lang.String-">createLED</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DigitalChannelController.html" title="interface in com.qualcomm.robotcore.hardware">DigitalChannelController</a>&nbsp;controller,
          int&nbsp;channel,
@@ -294,13 +301,19 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of an LED</div>
 </td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/ColorSensor.html" title="interface in com.qualcomm.robotcore.hardware">ColorSensor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createLynxColorRangeSensor-com.qualcomm.robotcore.hardware.RobotCoreLynxModule-DeviceConfiguration.I2cChannel-java.lang.String-">createLynxColorRangeSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/RobotCoreLynxModule.html" title="interface in com.qualcomm.robotcore.hardware">RobotCoreLynxModule</a>&nbsp;module,
                           DeviceConfiguration.I2cChannel&nbsp;channel,
                           java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
+<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createLynxCustomServoDevice-com.qualcomm.robotcore.hardware.ServoControllerEx-int-ServoConfigurationType-">createLynxCustomServoDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/ServoControllerEx.html" title="interface in com.qualcomm.robotcore.hardware">ServoControllerEx</a>&nbsp;controller,
+                           int&nbsp;portNumber,
+                           ServoConfigurationType&nbsp;servoConfigurationType)</code>&nbsp;</td>
+</tr>
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/RobotCoreLynxModule.html" title="interface in com.qualcomm.robotcore.hardware">RobotCoreLynxModule</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createLynxModule-com.qualcomm.robotcore.hardware.RobotCoreLynxUsbDevice-int-boolean-java.lang.String-">createLynxModule</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/RobotCoreLynxUsbDevice.html" title="interface in com.qualcomm.robotcore.hardware">RobotCoreLynxUsbDevice</a>&nbsp;lynxUsbDevice,
                 int&nbsp;moduleAddress,
@@ -309,14 +322,14 @@ var activeTableTab = "activeTableTab";
 <div class="block">Creates an instance of a LynxModule</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/RobotCoreLynxUsbDevice.html" title="interface in com.qualcomm.robotcore.hardware">RobotCoreLynxUsbDevice</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createLynxUsbDevice-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-">createLynxUsbDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
                    java.lang.String&nbsp;name)</code>
 <div class="block">Creates an instance of a Lynx USB device</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/ColorSensor.html" title="interface in com.qualcomm.robotcore.hardware">ColorSensor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createModernRoboticsI2cColorSensor-com.qualcomm.robotcore.hardware.I2cController-DeviceConfiguration.I2cChannel-java.lang.String-">createModernRoboticsI2cColorSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.html" title="interface in com.qualcomm.robotcore.hardware">I2cController</a>&nbsp;controller,
                                   DeviceConfiguration.I2cChannel&nbsp;channel,
@@ -324,13 +337,13 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of a ColorSensor</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/ColorSensor.html" title="interface in com.qualcomm.robotcore.hardware">ColorSensor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createModernRoboticsI2cColorSensor-com.qualcomm.robotcore.hardware.RobotCoreLynxModule-DeviceConfiguration.I2cChannel-java.lang.String-">createModernRoboticsI2cColorSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/RobotCoreLynxModule.html" title="interface in com.qualcomm.robotcore.hardware">RobotCoreLynxModule</a>&nbsp;module,
                                   DeviceConfiguration.I2cChannel&nbsp;channel,
                                   java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/GyroSensor.html" title="interface in com.qualcomm.robotcore.hardware">GyroSensor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createModernRoboticsI2cGyroSensor-com.qualcomm.robotcore.hardware.I2cController-DeviceConfiguration.I2cChannel-java.lang.String-">createModernRoboticsI2cGyroSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.html" title="interface in com.qualcomm.robotcore.hardware">I2cController</a>&nbsp;i2cController,
                                  DeviceConfiguration.I2cChannel&nbsp;channel,
@@ -338,27 +351,11 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of a GyroSensor</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/GyroSensor.html" title="interface in com.qualcomm.robotcore.hardware">GyroSensor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createModernRoboticsI2cGyroSensor-com.qualcomm.robotcore.hardware.RobotCoreLynxModule-DeviceConfiguration.I2cChannel-java.lang.String-">createModernRoboticsI2cGyroSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/RobotCoreLynxModule.html" title="interface in com.qualcomm.robotcore.hardware">RobotCoreLynxModule</a>&nbsp;module,
                                  DeviceConfiguration.I2cChannel&nbsp;channel,
                                  java.lang.String&nbsp;name)</code>&nbsp;</td>
-</tr>
-<tr id="i29" class="rowColor">
-<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/OpticalDistanceSensor.html" title="interface in com.qualcomm.robotcore.hardware">OpticalDistanceSensor</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createMRAnalogOpticalDistanceSensor-com.qualcomm.robotcore.hardware.AnalogInputController-int-java.lang.String-">createMRAnalogOpticalDistanceSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/AnalogInputController.html" title="interface in com.qualcomm.robotcore.hardware">AnalogInputController</a>&nbsp;analogInputController,
-                                   int&nbsp;physicalPort,
-                                   java.lang.String&nbsp;name)</code>
-<div class="block">Create an instance of an OpticalDistanceSensor</div>
-</td>
-</tr>
-<tr id="i30" class="altColor">
-<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/TouchSensor.html" title="interface in com.qualcomm.robotcore.hardware">TouchSensor</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createMRAnalogTouchSensor-com.qualcomm.robotcore.hardware.AnalogInputController-int-java.lang.String-">createMRAnalogTouchSensor</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/AnalogInputController.html" title="interface in com.qualcomm.robotcore.hardware">AnalogInputController</a>&nbsp;analogInputController,
-                         int&nbsp;physicalPort,
-                         java.lang.String&nbsp;name)</code>
-<div class="block">Create an instance of a Modern Robotics TouchSensor on an analog controller</div>
-</td>
 </tr>
 <tr id="i31" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/TouchSensor.html" title="interface in com.qualcomm.robotcore.hardware">TouchSensor</a></code></td>
@@ -403,12 +400,6 @@ var activeTableTab = "activeTableTab";
                      java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i37" class="rowColor">
-<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/PWMOutput.html" title="interface in com.qualcomm.robotcore.hardware">PWMOutput</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createPwmOutputDeviceEx-com.qualcomm.robotcore.hardware.PWMOutputController-int-java.lang.String-">createPwmOutputDeviceEx</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/PWMOutputController.html" title="interface in com.qualcomm.robotcore.hardware">PWMOutputController</a>&nbsp;controller,
-                       int&nbsp;channel,
-                       java.lang.String&nbsp;name)</code>&nbsp;</td>
-</tr>
-<tr id="i38" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/Servo.html" title="interface in com.qualcomm.robotcore.hardware">Servo</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createServo-com.qualcomm.robotcore.hardware.ServoController-int-java.lang.String-">createServo</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/ServoController.html" title="interface in com.qualcomm.robotcore.hardware">ServoController</a>&nbsp;controller,
            int&nbsp;portNumber,
@@ -416,53 +407,61 @@ var activeTableTab = "activeTableTab";
 <div class="block">Create an instance of a Servo</div>
 </td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/Servo.html" title="interface in com.qualcomm.robotcore.hardware">Servo</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createServoEx-com.qualcomm.robotcore.hardware.ServoController-int-java.lang.String-">createServoEx</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/ServoController.html" title="interface in com.qualcomm.robotcore.hardware">ServoController</a>&nbsp;controller,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createServoEx-com.qualcomm.robotcore.hardware.ServoControllerEx-int-java.lang.String-ServoConfigurationType-">createServoEx</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/ServoControllerEx.html" title="interface in com.qualcomm.robotcore.hardware">ServoControllerEx</a>&nbsp;controller,
              int&nbsp;portNumber,
-             java.lang.String&nbsp;name)</code>&nbsp;</td>
+             java.lang.String&nbsp;name,
+             ServoConfigurationType&nbsp;servoType)</code>&nbsp;</td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorController.html" title="interface in com.qualcomm.robotcore.hardware">DcMotorController</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createUsbDcMotorController-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-">createUsbDcMotorController</a></span>(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
                           java.lang.String&nbsp;name)</code>
 <div class="block">Create an instance of a DcMotorController</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/LegacyModule.html" title="interface in com.qualcomm.robotcore.hardware">LegacyModule</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createUsbLegacyModule-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-">createUsbLegacyModule</a></span>(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
                      java.lang.String&nbsp;name)</code>
 <div class="block">Create an instance of a LegacyModule</div>
 </td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/ServoController.html" title="interface in com.qualcomm.robotcore.hardware">ServoController</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createUsbServoController-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-">createUsbServoController</a></span>(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
                         java.lang.String&nbsp;name)</code>
 <div class="block">Create an instance of a ServoController</div>
 </td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createUserI2cDevice-com.qualcomm.robotcore.hardware.I2cController-DeviceConfiguration.I2cChannel-UserI2cSensorType-java.lang.String-">createUserI2cDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.html" title="interface in com.qualcomm.robotcore.hardware">I2cController</a>&nbsp;controller,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createUserI2cDevice-com.qualcomm.robotcore.hardware.I2cController-DeviceConfiguration.I2cChannel-I2cDeviceConfigurationType-java.lang.String-">createUserI2cDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.html" title="interface in com.qualcomm.robotcore.hardware">I2cController</a>&nbsp;controller,
                    DeviceConfiguration.I2cChannel&nbsp;channel,
-                   UserI2cSensorType&nbsp;type,
+                   I2cDeviceConfigurationType&nbsp;type,
                    java.lang.String&nbsp;name)</code>
 <div class="block">Returns a new instance of a user-defined sensor type.</div>
 </td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createUserI2cDevice-com.qualcomm.robotcore.hardware.RobotCoreLynxModule-DeviceConfiguration.I2cChannel-UserI2cSensorType-java.lang.String-">createUserI2cDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/RobotCoreLynxModule.html" title="interface in com.qualcomm.robotcore.hardware">RobotCoreLynxModule</a>&nbsp;lynxModule,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createUserI2cDevice-com.qualcomm.robotcore.hardware.RobotCoreLynxModule-DeviceConfiguration.I2cChannel-I2cDeviceConfigurationType-java.lang.String-">createUserI2cDevice</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/RobotCoreLynxModule.html" title="interface in com.qualcomm.robotcore.hardware">RobotCoreLynxModule</a>&nbsp;lynxModule,
                    DeviceConfiguration.I2cChannel&nbsp;channel,
-                   UserI2cSensorType&nbsp;type,
+                   I2cDeviceConfigurationType&nbsp;type,
                    java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
+<tr id="i44" class="altColor">
+<td class="colFirst"><code>WebcamName</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#createWebcamName-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-">createWebcamName</a></span>(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+                java.lang.String&nbsp;name)</code>
+<div class="block">Creates a <code>WebcamName</code> from the indicated serialized contents</div>
+</td>
+</tr>
 <tr id="i45" class="rowColor">
-<td class="colFirst"><code>java.util.Map&lt;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>,<a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.DeviceType.html" title="enum in com.qualcomm.robotcore.hardware">DeviceManager.DeviceType</a>&gt;</code></td>
+<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/ScannedDevices.html" title="class in com.qualcomm.robotcore.hardware">ScannedDevices</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.html#scanForUsbDevices--">scanForUsbDevices</a></span>()</code>
-<div class="block">Get a listing of all Modern Robotics devices connected.</div>
+<div class="block">Get a listing of currently connected USB devices</div>
 </td>
 </tr>
 </table>
@@ -486,9 +485,9 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>scanForUsbDevices</h4>
-<pre>java.util.Map&lt;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>,<a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.DeviceType.html" title="enum in com.qualcomm.robotcore.hardware">DeviceManager.DeviceType</a>&gt;&nbsp;scanForUsbDevices()
-                                                                throws <a href="../../../../com/qualcomm/robotcore/exception/RobotCoreException.html" title="class in com.qualcomm.robotcore.exception">RobotCoreException</a></pre>
-<div class="block">Get a listing of all Modern Robotics devices connected.
+<pre><a href="../../../../com/qualcomm/robotcore/hardware/ScannedDevices.html" title="class in com.qualcomm.robotcore.hardware">ScannedDevices</a>&nbsp;scanForUsbDevices()
+                          throws <a href="../../../../com/qualcomm/robotcore/exception/RobotCoreException.html" title="class in com.qualcomm.robotcore.exception">RobotCoreException</a></pre>
+<div class="block">Get a listing of currently connected USB devices
  <p>
  This method will attempt to open all USB devices that are using an FTDI USB chipset. It will
  then probe the device to determine if it is a Modern Robotics device. Finally, it will close the
@@ -600,15 +599,16 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="createServoEx-com.qualcomm.robotcore.hardware.ServoController-int-java.lang.String-">
+<a name="createServoEx-com.qualcomm.robotcore.hardware.ServoControllerEx-int-java.lang.String-ServoConfigurationType-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createServoEx</h4>
-<pre><a href="../../../../com/qualcomm/robotcore/hardware/Servo.html" title="interface in com.qualcomm.robotcore.hardware">Servo</a>&nbsp;createServoEx(<a href="../../../../com/qualcomm/robotcore/hardware/ServoController.html" title="interface in com.qualcomm.robotcore.hardware">ServoController</a>&nbsp;controller,
+<pre><a href="../../../../com/qualcomm/robotcore/hardware/Servo.html" title="interface in com.qualcomm.robotcore.hardware">Servo</a>&nbsp;createServoEx(<a href="../../../../com/qualcomm/robotcore/hardware/ServoControllerEx.html" title="interface in com.qualcomm.robotcore.hardware">ServoControllerEx</a>&nbsp;controller,
                     int&nbsp;portNumber,
-                    java.lang.String&nbsp;name)</pre>
+                    java.lang.String&nbsp;name,
+                    ServoConfigurationType&nbsp;servoType)</pre>
 </li>
 </ul>
 <a name="createCRServo-com.qualcomm.robotcore.hardware.ServoController-int-java.lang.String-">
@@ -622,15 +622,38 @@ var activeTableTab = "activeTableTab";
                       java.lang.String&nbsp;name)</pre>
 </li>
 </ul>
-<a name="createCRServoEx-com.qualcomm.robotcore.hardware.ServoController-int-java.lang.String-">
+<a name="createCRServoEx-com.qualcomm.robotcore.hardware.ServoControllerEx-int-java.lang.String-ServoConfigurationType-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createCRServoEx</h4>
-<pre><a href="../../../../com/qualcomm/robotcore/hardware/CRServo.html" title="interface in com.qualcomm.robotcore.hardware">CRServo</a>&nbsp;createCRServoEx(<a href="../../../../com/qualcomm/robotcore/hardware/ServoController.html" title="interface in com.qualcomm.robotcore.hardware">ServoController</a>&nbsp;controller,
+<pre><a href="../../../../com/qualcomm/robotcore/hardware/CRServo.html" title="interface in com.qualcomm.robotcore.hardware">CRServo</a>&nbsp;createCRServoEx(<a href="../../../../com/qualcomm/robotcore/hardware/ServoControllerEx.html" title="interface in com.qualcomm.robotcore.hardware">ServoControllerEx</a>&nbsp;controller,
                         int&nbsp;portNumber,
-                        java.lang.String&nbsp;name)</pre>
+                        java.lang.String&nbsp;name,
+                        ServoConfigurationType&nbsp;servoType)</pre>
+</li>
+</ul>
+<a name="createCustomServoDevice-com.qualcomm.robotcore.hardware.ServoController-int-ServoConfigurationType-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createCustomServoDevice</h4>
+<pre><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;createCustomServoDevice(<a href="../../../../com/qualcomm/robotcore/hardware/ServoController.html" title="interface in com.qualcomm.robotcore.hardware">ServoController</a>&nbsp;controller,
+                                       int&nbsp;portNumber,
+                                       ServoConfigurationType&nbsp;servoConfigurationType)</pre>
+</li>
+</ul>
+<a name="createLynxCustomServoDevice-com.qualcomm.robotcore.hardware.ServoControllerEx-int-ServoConfigurationType-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createLynxCustomServoDevice</h4>
+<pre><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;createLynxCustomServoDevice(<a href="../../../../com/qualcomm/robotcore/hardware/ServoControllerEx.html" title="interface in com.qualcomm.robotcore.hardware">ServoControllerEx</a>&nbsp;controller,
+                                           int&nbsp;portNumber,
+                                           ServoConfigurationType&nbsp;servoConfigurationType)</pre>
 </li>
 </ul>
 <a name="createUsbLegacyModule-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-">
@@ -712,15 +735,15 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="createAnalogInputDevice-com.qualcomm.robotcore.hardware.AnalogInputController-int-java.lang.String-">
+<a name="createAnalogSensor-com.qualcomm.robotcore.hardware.AnalogInputController-int-AnalogSensorConfigurationType-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>createAnalogInputDevice</h4>
-<pre><a href="../../../../com/qualcomm/robotcore/hardware/AnalogInput.html" title="class in com.qualcomm.robotcore.hardware">AnalogInput</a>&nbsp;createAnalogInputDevice(<a href="../../../../com/qualcomm/robotcore/hardware/AnalogInputController.html" title="interface in com.qualcomm.robotcore.hardware">AnalogInputController</a>&nbsp;controller,
-                                    int&nbsp;channel,
-                                    java.lang.String&nbsp;name)</pre>
+<h4>createAnalogSensor</h4>
+<pre><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;createAnalogSensor(<a href="../../../../com/qualcomm/robotcore/hardware/AnalogInputController.html" title="interface in com.qualcomm.robotcore.hardware">AnalogInputController</a>&nbsp;controller,
+                                  int&nbsp;channel,
+                                  AnalogSensorConfigurationType&nbsp;type)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>controller</code> - Analog Input Controller Module this device is connected to</dd>
@@ -746,18 +769,19 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="createDigitalChannelDevice-com.qualcomm.robotcore.hardware.DigitalChannelController-int-java.lang.String-">
+<a name="createDigitalDevice-com.qualcomm.robotcore.hardware.DigitalChannelController-int-DigitalIoDeviceConfigurationType-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>createDigitalChannelDevice</h4>
-<pre><a href="../../../../com/qualcomm/robotcore/hardware/DigitalChannel.html" title="interface in com.qualcomm.robotcore.hardware">DigitalChannel</a>&nbsp;createDigitalChannelDevice(<a href="../../../../com/qualcomm/robotcore/hardware/DigitalChannelController.html" title="interface in com.qualcomm.robotcore.hardware">DigitalChannelController</a>&nbsp;controller,
-                                          int&nbsp;channel,
-                                          java.lang.String&nbsp;name)</pre>
+<h4>createDigitalDevice</h4>
+<pre><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;createDigitalDevice(<a href="../../../../com/qualcomm/robotcore/hardware/DigitalChannelController.html" title="interface in com.qualcomm.robotcore.hardware">DigitalChannelController</a>&nbsp;controller,
+                                   int&nbsp;channel,
+                                   DigitalIoDeviceConfigurationType&nbsp;type)</pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>controller</code> - Device Interface Module this device is connected to</dd>
+<dd><code>type</code> - </dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>- an instance of an Digital Channel device</dd>
 </dl>
@@ -778,17 +802,6 @@ var activeTableTab = "activeTableTab";
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>- an instance of an Digital Channel device</dd>
 </dl>
-</li>
-</ul>
-<a name="createPwmOutputDeviceEx-com.qualcomm.robotcore.hardware.PWMOutputController-int-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createPwmOutputDeviceEx</h4>
-<pre><a href="../../../../com/qualcomm/robotcore/hardware/PWMOutput.html" title="interface in com.qualcomm.robotcore.hardware">PWMOutput</a>&nbsp;createPwmOutputDeviceEx(<a href="../../../../com/qualcomm/robotcore/hardware/PWMOutputController.html" title="interface in com.qualcomm.robotcore.hardware">PWMOutputController</a>&nbsp;controller,
-                                  int&nbsp;channel,
-                                  java.lang.String&nbsp;name)</pre>
 </li>
 </ul>
 <a name="createI2cDevice-com.qualcomm.robotcore.hardware.I2cController-DeviceConfiguration.I2cChannel-java.lang.String-">
@@ -820,7 +833,7 @@ var activeTableTab = "activeTableTab";
                                     java.lang.String&nbsp;name)</pre>
 </li>
 </ul>
-<a name="createUserI2cDevice-com.qualcomm.robotcore.hardware.I2cController-DeviceConfiguration.I2cChannel-UserI2cSensorType-java.lang.String-">
+<a name="createUserI2cDevice-com.qualcomm.robotcore.hardware.I2cController-DeviceConfiguration.I2cChannel-I2cDeviceConfigurationType-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -828,12 +841,12 @@ var activeTableTab = "activeTableTab";
 <h4>createUserI2cDevice</h4>
 <pre><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;createUserI2cDevice(<a href="../../../../com/qualcomm/robotcore/hardware/I2cController.html" title="interface in com.qualcomm.robotcore.hardware">I2cController</a>&nbsp;controller,
                                    DeviceConfiguration.I2cChannel&nbsp;channel,
-                                   UserI2cSensorType&nbsp;type,
+                                   I2cDeviceConfigurationType&nbsp;type,
                                    java.lang.String&nbsp;name)</pre>
 <div class="block">Returns a new instance of a user-defined sensor type.</div>
 </li>
 </ul>
-<a name="createUserI2cDevice-com.qualcomm.robotcore.hardware.RobotCoreLynxModule-DeviceConfiguration.I2cChannel-UserI2cSensorType-java.lang.String-">
+<a name="createUserI2cDevice-com.qualcomm.robotcore.hardware.RobotCoreLynxModule-DeviceConfiguration.I2cChannel-I2cDeviceConfigurationType-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -841,7 +854,7 @@ var activeTableTab = "activeTableTab";
 <h4>createUserI2cDevice</h4>
 <pre><a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html" title="interface in com.qualcomm.robotcore.hardware">HardwareDevice</a>&nbsp;createUserI2cDevice(<a href="../../../../com/qualcomm/robotcore/hardware/RobotCoreLynxModule.html" title="interface in com.qualcomm.robotcore.hardware">RobotCoreLynxModule</a>&nbsp;lynxModule,
                                    DeviceConfiguration.I2cChannel&nbsp;channel,
-                                   UserI2cSensorType&nbsp;type,
+                                   I2cDeviceConfigurationType&nbsp;type,
                                    java.lang.String&nbsp;name)</pre>
 </li>
 </ul>
@@ -904,6 +917,24 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
+<a name="createWebcamName-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createWebcamName</h4>
+<pre>WebcamName&nbsp;createWebcamName(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+                            java.lang.String&nbsp;name)
+                     throws <a href="../../../../com/qualcomm/robotcore/exception/RobotCoreException.html" title="class in com.qualcomm.robotcore.exception">RobotCoreException</a>,
+                            java.lang.InterruptedException</pre>
+<div class="block">Creates a <code>WebcamName</code> from the indicated serialized contents</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/qualcomm/robotcore/exception/RobotCoreException.html" title="class in com.qualcomm.robotcore.exception">RobotCoreException</a></code></dd>
+<dd><code>java.lang.InterruptedException</code></dd>
+</dl>
+</li>
+</ul>
 <a name="createHTServoController-com.qualcomm.robotcore.hardware.LegacyModule-int-java.lang.String-">
 <!--   -->
 </a>
@@ -955,26 +986,6 @@ var activeTableTab = "activeTableTab";
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>digitalController</code> - controller this device is connected to</dd>
-<dd><code>physicalPort</code> - the port number of the device on that controller</dd>
-<dd><code>name</code> - the name of this device in the hardware map</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>a TouchSensor</dd>
-</dl>
-</li>
-</ul>
-<a name="createMRAnalogTouchSensor-com.qualcomm.robotcore.hardware.AnalogInputController-int-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createMRAnalogTouchSensor</h4>
-<pre><a href="../../../../com/qualcomm/robotcore/hardware/TouchSensor.html" title="interface in com.qualcomm.robotcore.hardware">TouchSensor</a>&nbsp;createMRAnalogTouchSensor(<a href="../../../../com/qualcomm/robotcore/hardware/AnalogInputController.html" title="interface in com.qualcomm.robotcore.hardware">AnalogInputController</a>&nbsp;analogInputController,
-                                      int&nbsp;physicalPort,
-                                      java.lang.String&nbsp;name)</pre>
-<div class="block">Create an instance of a Modern Robotics TouchSensor on an analog controller</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>analogInputController</code> - controller this device is connected to</dd>
 <dd><code>physicalPort</code> - the port number of the device on that controller</dd>
 <dd><code>name</code> - the name of this device in the hardware map</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -1137,25 +1148,6 @@ var activeTableTab = "activeTableTab";
                                              java.lang.String&nbsp;name)</pre>
 </li>
 </ul>
-<a name="createMRAnalogOpticalDistanceSensor-com.qualcomm.robotcore.hardware.AnalogInputController-int-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createMRAnalogOpticalDistanceSensor</h4>
-<pre><a href="../../../../com/qualcomm/robotcore/hardware/OpticalDistanceSensor.html" title="interface in com.qualcomm.robotcore.hardware">OpticalDistanceSensor</a>&nbsp;createMRAnalogOpticalDistanceSensor(<a href="../../../../com/qualcomm/robotcore/hardware/AnalogInputController.html" title="interface in com.qualcomm.robotcore.hardware">AnalogInputController</a>&nbsp;analogInputController,
-                                                          int&nbsp;physicalPort,
-                                                          java.lang.String&nbsp;name)</pre>
-<div class="block">Create an instance of an OpticalDistanceSensor</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>analogInputController</code> - controller this sensor is connected to</dd>
-<dd><code>physicalPort</code> - the port number on the controller it's plugged into</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>an OpticalDistanceSensor</dd>
-</dl>
-</li>
-</ul>
 <a name="createAdafruitI2cColorSensor-com.qualcomm.robotcore.hardware.I2cController-DeviceConfiguration.I2cChannel-java.lang.String-">
 <!--   -->
 </a>
@@ -1293,7 +1285,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/qualcomm/robotcore/hardware/DeviceInterfaceModule.html" title="interface in com.qualcomm.robotcore.hardware"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.DeviceType.html" title="enum in com.qualcomm.robotcore.hardware"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/qualcomm/robotcore/hardware/DeviceManager.UsbDeviceType.html" title="enum in com.qualcomm.robotcore.hardware"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/qualcomm/robotcore/hardware/DeviceManager.html" target="_top">Frames</a></li>

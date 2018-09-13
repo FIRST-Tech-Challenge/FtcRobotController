@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":42,"i2":10,"i3":10,"i4":9,"i5":10,"i6":10,"i7":10};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
+var methods = {"i0":9,"i1":9,"i2":10,"i3":10,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":9};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -73,13 +73,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -111,13 +111,18 @@ var activeTableTab = "activeTableTab";
 </dl>
 <hr>
 <br>
-<pre>public class <span class="typeNameLabel">SerialNumber</span>
+<pre>public abstract class <span class="typeNameLabel">SerialNumber</span>
 extends java.lang.Object
 implements java.io.Serializable</pre>
-<div class="block">Instances of <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util"><code>SerialNumber</code></a> represent serial numbers of devices on the USB bus.
+<div class="block">Instances of <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util"><code>SerialNumber</code></a> represent serial number indentifiers of hardware devices. For
+ USB-attached devices, these are usually the low-level USB serial number (see <code>UsbDevice#getSerialNumber()</code>,
+ but that is not required. Rather, the notion of <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util"><code>SerialNumber</code></a> is a general purpose one
+ representing a user-visible digital identity for a particular device instance.
+
  'Fake' serial numbers are serial numbers that will *never* appear for a real device; they
  are useful, for example, as the serial number of a <code>ControllerConfiguration</code> that
- has not yet been associated with a actual USB controller device.
+ has not yet been associated with a actual controller device. Fake serial numbers are never
+ shown to users.
 
  Note that *all* serial numbers loaded in memory at any given instant are guaranteed unique and
  different, even the fake ones; this allows code that processes USB-device-bound <code>ControllerConfiguration</code>s to operate easily on unbound ones as well, a significant coding
@@ -136,6 +141,45 @@ implements java.io.Serializable</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected static java.util.HashMap&lt;java.lang.String,java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#deviceDisplayNames">deviceDisplayNames</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#embedded">embedded</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#fakePrefix">fakePrefix</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#lynxModulePrefix">lynxModulePrefix</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#serialNumberString">serialNumberString</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#vendorProductPrefix">vendorProductPrefix</a></span></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -145,15 +189,12 @@ implements java.io.Serializable</pre>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colOne" scope="col">Constructor and Description</th>
+<th class="colFirst" scope="col">Modifier</th>
+<th class="colLast" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#SerialNumber--">SerialNumber</a></span>()</code>
-<div class="block">Constructs a new unique, fake serial number</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#SerialNumber-java.lang.String-">SerialNumber</a></span>(java.lang.String&nbsp;initializer)</code>
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#SerialNumber-java.lang.String-">SerialNumber</a></span>(java.lang.String&nbsp;serialNumberString)</code>
 <div class="block">Constructs a serial number using the supplied initialization string.</div>
 </td>
 </tr>
@@ -167,53 +208,100 @@ implements java.io.Serializable</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>static <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#createEmbedded--">createEmbedded</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#createFake--">createFake</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;object)</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#getSerialNumber--">getSerialNumber</a></span>()</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">no need to use; use toString() if string form is sought</span></div>
-</div>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#equals-java.lang.String-">equals</a></span>(java.lang.String&nbsp;string)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>static <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#fromString-java.lang.String-">fromString</a></span>(java.lang.String&nbsp;serialNumberString)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#fromStringOrNull-java.lang.String-">fromStringOrNull</a></span>(java.lang.String&nbsp;serialNumberString)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>static <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#fromUsbOrNull-java.lang.String-">fromUsbOrNull</a></span>(java.lang.String&nbsp;serialNumberString)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#fromVidPid-int-int-java.lang.String-">fromVidPid</a></span>(int&nbsp;vid,
+          int&nbsp;pid,
+          java.lang.String&nbsp;connectionPath)</code>
+<div class="block">Makes up a serial-number-like-thing for USB devices that internally lack a serial number.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#getDeviceDisplayName-com.qualcomm.robotcore.util.SerialNumber-">getDeviceDisplayName</a></span>(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber)</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#getScannableDeviceSerialNumber--">getScannableDeviceSerialNumber</a></span>()</code>
+<div class="block">Returns the <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util"><code>SerialNumber</code></a> of the device associated with this one that would appear
+ in a <a href="../../../../com/qualcomm/robotcore/hardware/ScannedDevices.html" title="class in com.qualcomm.robotcore.hardware"><code>ScannedDevices</code></a>.</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#getString--">getString</a></span>()</code>
+<div class="block">Returns the string contents of the serial number.</div>
+</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#isFake--">isFake</a></span>()</code>
-<div class="block">Returns whether or not this serial number is a fake one or not</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#isEmbedded--">isEmbedded</a></span>()</code>
+<div class="block">Returns whether the serial number is the one used for the embedded 
+ Expansion Hub inside a Rev Control Hub.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#isLegacyFake-java.lang.String-">isLegacyFake</a></span>(java.lang.String&nbsp;initializer)</code>
-<div class="block">Returns whether the indicated serial number initialization string is one of the legacy
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#isFake--">isFake</a></span>()</code>
+<div class="block">Returns whether the indicated serial number is one of the legacy
  fake serial number forms or not.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#isReal--">isReal</a></span>()</code>
-<div class="block">Returns whether or not this serial number is a real one or not</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#isUsb--">isUsb</a></span>()</code>
+<div class="block">Returns whether the serial number is one of an actual USB device.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#toString--">toString</a></span>()</code>&nbsp;</td>
+<tr id="i15" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#isVendorProduct--">isVendorProduct</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#toString-Context-">toString</a></span>(Context&nbsp;context)</code>&nbsp;</td>
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#matches-java.lang.Object-">matches</a></span>(java.lang.Object&nbsp;pattern)</code>&nbsp;</td>
+</tr>
+<tr id="i17" class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html#noteSerialNumberType-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-">noteSerialNumberType</a></span>(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+                    java.lang.String&nbsp;typeName)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -221,7 +309,7 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</code></li>
+<code>clone, finalize, getClass, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -231,34 +319,102 @@ implements java.io.Serializable</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="fakePrefix">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fakePrefix</h4>
+<pre>protected static final&nbsp;java.lang.String fakePrefix</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.qualcomm.robotcore.util.SerialNumber.fakePrefix">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="vendorProductPrefix">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>vendorProductPrefix</h4>
+<pre>protected static final&nbsp;java.lang.String vendorProductPrefix</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.qualcomm.robotcore.util.SerialNumber.vendorProductPrefix">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="lynxModulePrefix">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>lynxModulePrefix</h4>
+<pre>protected static final&nbsp;java.lang.String lynxModulePrefix</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.qualcomm.robotcore.util.SerialNumber.lynxModulePrefix">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="embedded">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>embedded</h4>
+<pre>protected static final&nbsp;java.lang.String embedded</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.qualcomm.robotcore.util.SerialNumber.embedded">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="serialNumberString">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>serialNumberString</h4>
+<pre>protected final&nbsp;java.lang.String serialNumberString</pre>
+</li>
+</ul>
+<a name="deviceDisplayNames">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>deviceDisplayNames</h4>
+<pre>protected static final&nbsp;java.util.HashMap&lt;java.lang.String,java.lang.String&gt; deviceDisplayNames</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="SerialNumber--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>SerialNumber</h4>
-<pre>public&nbsp;SerialNumber()</pre>
-<div class="block">Constructs a new unique, fake serial number</div>
-</li>
-</ul>
 <a name="SerialNumber-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SerialNumber</h4>
-<pre>public&nbsp;SerialNumber(java.lang.String&nbsp;initializer)</pre>
+<pre>protected&nbsp;SerialNumber(java.lang.String&nbsp;serialNumberString)</pre>
 <div class="block">Constructs a serial number using the supplied initialization string. If the initialization
  string is a legacy form of fake serial number, a unique fake serial number is created.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>initializer</code> - the initialization string for the serial number.</dd>
+<dd><code>serialNumberString</code> - the initialization string for the serial number.</dd>
 </dl>
 </li>
 </ul>
@@ -270,6 +426,72 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="createFake--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createFake</h4>
+<pre>public static&nbsp;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;createFake()</pre>
+</li>
+</ul>
+<a name="createEmbedded--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createEmbedded</h4>
+<pre>public static&nbsp;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;createEmbedded()</pre>
+</li>
+</ul>
+<a name="fromString-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fromString</h4>
+<pre>public static&nbsp;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;fromString(java.lang.String&nbsp;serialNumberString)</pre>
+</li>
+</ul>
+<a name="fromStringOrNull-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fromStringOrNull</h4>
+<pre>public static&nbsp;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;fromStringOrNull(java.lang.String&nbsp;serialNumberString)</pre>
+</li>
+</ul>
+<a name="fromUsbOrNull-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fromUsbOrNull</h4>
+<pre>public static&nbsp;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;fromUsbOrNull(java.lang.String&nbsp;serialNumberString)</pre>
+</li>
+</ul>
+<a name="fromVidPid-int-int-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fromVidPid</h4>
+<pre>public static&nbsp;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;fromVidPid(int&nbsp;vid,
+                                      int&nbsp;pid,
+                                      java.lang.String&nbsp;connectionPath)</pre>
+<div class="block">Makes up a serial-number-like-thing for USB devices that internally lack a serial number.</div>
+</li>
+</ul>
+<a name="isVendorProduct--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isVendorProduct</h4>
+<pre>public&nbsp;boolean&nbsp;isVendorProduct()</pre>
+</li>
+</ul>
 <a name="isFake--">
 <!--   -->
 </a>
@@ -277,42 +499,68 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>isFake</h4>
 <pre>public&nbsp;boolean&nbsp;isFake()</pre>
-<div class="block">Returns whether or not this serial number is a fake one or not</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>whether or not this serial number is a fake one or not</dd>
-</dl>
-</li>
-</ul>
-<a name="isReal--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isReal</h4>
-<pre>public&nbsp;boolean&nbsp;isReal()</pre>
-<div class="block">Returns whether or not this serial number is a real one or not</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>whether or not this serial number is a real one or not</dd>
-</dl>
-</li>
-</ul>
-<a name="isLegacyFake-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isLegacyFake</h4>
-<pre>public static&nbsp;boolean&nbsp;isLegacyFake(java.lang.String&nbsp;initializer)</pre>
-<div class="block">Returns whether the indicated serial number initialization string is one of the legacy
+<div class="block">Returns whether the indicated serial number is one of the legacy
  fake serial number forms or not.</div>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>initializer</code> - the serial number initialization string to test</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>whether the the serial number initialization string is a legacy fake form of serial number</dd>
+<dd>whether the the serial number is a legacy fake form of serial number</dd>
 </dl>
+</li>
+</ul>
+<a name="isUsb--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isUsb</h4>
+<pre>public&nbsp;boolean&nbsp;isUsb()</pre>
+<div class="block">Returns whether the serial number is one of an actual USB device.</div>
+</li>
+</ul>
+<a name="isEmbedded--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isEmbedded</h4>
+<pre>public&nbsp;boolean&nbsp;isEmbedded()</pre>
+<div class="block">Returns whether the serial number is the one used for the embedded 
+ Expansion Hub inside a Rev Control Hub.</div>
+</li>
+</ul>
+<a name="getString--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getString()</pre>
+<div class="block">Returns the string contents of the serial number. Result is not intended to be
+ displayed to humans.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><code>Object.toString()</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getScannableDeviceSerialNumber--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getScannableDeviceSerialNumber</h4>
+<pre>public&nbsp;<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;getScannableDeviceSerialNumber()</pre>
+<div class="block">Returns the <a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util"><code>SerialNumber</code></a> of the device associated with this one that would appear
+ in a <a href="../../../../com/qualcomm/robotcore/hardware/ScannedDevices.html" title="class in com.qualcomm.robotcore.hardware"><code>ScannedDevices</code></a>.</div>
+</li>
+</ul>
+<a name="matches-java.lang.Object-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>matches</h4>
+<pre>public&nbsp;boolean&nbsp;matches(java.lang.Object&nbsp;pattern)</pre>
 </li>
 </ul>
 <a name="equals-java.lang.Object-">
@@ -328,6 +576,15 @@ implements java.io.Serializable</pre>
 </dl>
 </li>
 </ul>
+<a name="equals-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>equals</h4>
+<pre>public&nbsp;boolean&nbsp;equals(java.lang.String&nbsp;string)</pre>
+</li>
+</ul>
 <a name="hashCode--">
 <!--   -->
 </a>
@@ -341,37 +598,23 @@ implements java.io.Serializable</pre>
 </dl>
 </li>
 </ul>
-<a name="toString--">
+<a name="noteSerialNumberType-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>toString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-</dl>
+<h4>noteSerialNumberType</h4>
+<pre>public static&nbsp;void&nbsp;noteSerialNumberType(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+                                        java.lang.String&nbsp;typeName)</pre>
 </li>
 </ul>
-<a name="toString-Context-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>toString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toString(Context&nbsp;context)</pre>
-</li>
-</ul>
-<a name="getSerialNumber--">
+<a name="getDeviceDisplayName-com.qualcomm.robotcore.util.SerialNumber-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>getSerialNumber</h4>
-<pre>@Deprecated
-public&nbsp;java.lang.String&nbsp;getSerialNumber()</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">no need to use; use toString() if string form is sought</span></div>
+<h4>getDeviceDisplayName</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getDeviceDisplayName(<a href="../../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber)</pre>
 </li>
 </ul>
 </li>
@@ -427,13 +670,13 @@ public&nbsp;java.lang.String&nbsp;getSerialNumber()</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

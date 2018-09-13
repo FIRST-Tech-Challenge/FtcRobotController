@@ -197,7 +197,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopMa
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#getNetworkConnection--">getNetworkConnection</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>NetworkConnection.Event</code></td>
+<td class="colFirst"><code>NetworkConnection.NetworkEvent</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#getNetworkConnectionStatus--">getNetworkConnectionStatus</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
@@ -226,7 +226,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopMa
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>CallbackResult</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onNetworkConnectionEvent-NetworkConnection.Event-">onNetworkConnectionEvent</a></span>(NetworkConnection.Event&nbsp;event)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#onNetworkConnectionEvent-NetworkConnection.NetworkEvent-">onNetworkConnectionEvent</a></span>(NetworkConnection.NetworkEvent&nbsp;event)</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -249,8 +249,9 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopMa
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#setupRobot-com.qualcomm.robotcore.eventloop.EventLoop-com.qualcomm.robotcore.eventloop.EventLoop-">setupRobot</a></span>(<a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;eventLoop,
-          <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;idleEventLoop)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcRobotControllerService.html#setupRobot-com.qualcomm.robotcore.eventloop.EventLoop-com.qualcomm.robotcore.eventloop.EventLoop-java.lang.Runnable-">setupRobot</a></span>(<a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;eventLoop,
+          <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;idleEventLoop,
+          java.lang.Runnable&nbsp;runOnComplete)</code>&nbsp;</td>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -349,7 +350,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopMa
 <ul class="blockList">
 <li class="blockList">
 <h4>getNetworkConnectionStatus</h4>
-<pre>public&nbsp;NetworkConnection.Event&nbsp;getNetworkConnectionStatus()</pre>
+<pre>public&nbsp;NetworkConnection.NetworkEvent&nbsp;getNetworkConnectionStatus()</pre>
 </li>
 </ul>
 <a name="getRobotStatus--">
@@ -457,14 +458,15 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopMa
 <pre>public&nbsp;void&nbsp;setCallback(<a href="../../../com/qualcomm/ftccommon/UpdateUI.Callback.html" title="class in com.qualcomm.ftccommon">UpdateUI.Callback</a>&nbsp;callback)</pre>
 </li>
 </ul>
-<a name="setupRobot-com.qualcomm.robotcore.eventloop.EventLoop-com.qualcomm.robotcore.eventloop.EventLoop-">
+<a name="setupRobot-com.qualcomm.robotcore.eventloop.EventLoop-com.qualcomm.robotcore.eventloop.EventLoop-java.lang.Runnable-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>setupRobot</h4>
 <pre>public&nbsp;void&nbsp;setupRobot(<a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;eventLoop,
-                       <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;idleEventLoop)</pre>
+                       <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;idleEventLoop,
+                       java.lang.Runnable&nbsp;runOnComplete)</pre>
 </li>
 </ul>
 <a name="shutdownRobot--">
@@ -476,13 +478,13 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopMa
 <pre>public&nbsp;void&nbsp;shutdownRobot()</pre>
 </li>
 </ul>
-<a name="onNetworkConnectionEvent-NetworkConnection.Event-">
+<a name="onNetworkConnectionEvent-NetworkConnection.NetworkEvent-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>onNetworkConnectionEvent</h4>
-<pre>public&nbsp;CallbackResult&nbsp;onNetworkConnectionEvent(NetworkConnection.Event&nbsp;event)</pre>
+<pre>public&nbsp;CallbackResult&nbsp;onNetworkConnectionEvent(NetworkConnection.NetworkEvent&nbsp;event)</pre>
 </li>
 </ul>
 </li>

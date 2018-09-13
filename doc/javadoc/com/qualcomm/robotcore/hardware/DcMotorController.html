@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -195,33 +195,39 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorController.html#resetDeviceConfigurationForOpMode-int-">resetDeviceConfigurationForOpMode</a></span>(int&nbsp;motor)</code>
+<div class="block">Reset the state we hold for the given motor so that it's clean at the start of an opmode</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorController.html#setMotorMode-int-com.qualcomm.robotcore.hardware.DcMotor.RunMode-">setMotorMode</a></span>(int&nbsp;motor,
             <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a>&nbsp;mode)</code>
 <div class="block">Set the current motor mode.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorController.html#setMotorPower-int-double-">setMotorPower</a></span>(int&nbsp;motor,
              double&nbsp;power)</code>
 <div class="block">Set the current motor power</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorController.html#setMotorTargetPosition-int-int-">setMotorTargetPosition</a></span>(int&nbsp;motor,
                       int&nbsp;position)</code>
 <div class="block">Set the motor target position.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorController.html#setMotorType-int-MotorConfigurationType-">setMotorType</a></span>(int&nbsp;motor,
             MotorConfigurationType&nbsp;motorType)</code>
 <div class="block">Informs the motor controller of the type of a particular motor.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorController.html#setMotorZeroPowerBehavior-int-com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior-">setMotorZeroPowerBehavior</a></span>(int&nbsp;motor,
                          <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.ZeroPowerBehavior.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.ZeroPowerBehavior</a>&nbsp;zeroPowerBehavior)</code>
@@ -446,7 +452,7 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html
 <a name="getMotorCurrentPosition-int-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getMotorCurrentPosition</h4>
 <pre>int&nbsp;getMotorCurrentPosition(int&nbsp;motor)</pre>
@@ -456,6 +462,20 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/HardwareDevice.html
 <dd><code>motor</code> - port of motor</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>integer, unscaled</dd>
+</dl>
+</li>
+</ul>
+<a name="resetDeviceConfigurationForOpMode-int-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>resetDeviceConfigurationForOpMode</h4>
+<pre>void&nbsp;resetDeviceConfigurationForOpMode(int&nbsp;motor)</pre>
+<div class="block">Reset the state we hold for the given motor so that it's clean at the start of an opmode</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>motor</code> - </dd>
 </dl>
 </li>
 </ul>

@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":10,"i1":9,"i2":10,"i3":9,"i4":9,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -132,21 +132,33 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#callback">callback</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#DEBUG">DEBUG</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html" title="class in com.qualcomm.robotcore.eventloop">EventLoopManager</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#eventLoopManager">eventLoopManager</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected HardwareFactory</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#hardwareFactory">hardwareFactory</a></span></code>&nbsp;</td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#hardwareMap">hardwareMap</a></span></code>
+<div class="block">the actual hardware map seen by the user</div>
+</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#hardwareMap">hardwareMap</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#hardwareMapExtra">hardwareMapExtra</a></span></code>
+<div class="block">the hardware map in which we keep any extra devices (ones not used by the user) we need to instantiate</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#NO_VOLTAGE_SENSOR">NO_VOLTAGE_SENSOR</a></span></code>
-<div class="block">This string is sent in the robot battery telemetry payload to indicate
+<div class="block">This string is sent in the robot battery telemetry payload to identify
   that no voltage sensor is available on the robot.</div>
 </td>
 </tr>
@@ -235,7 +247,7 @@ extends java.lang.Object</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -245,50 +257,63 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#close--">close</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeAutoCloseOnTeardown--">closeAutoCloseOnTeardown</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>protected static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeAutoCloseOnTeardown-com.qualcomm.robotcore.hardware.HardwareMap-">closeAutoCloseOnTeardown</a></span>(<a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a>&nbsp;hardwareMap)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeBatteryMonitoring--">closeBatteryMonitoring</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeMotorControllers--">closeMotorControllers</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>protected static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeHardwareMap-com.qualcomm.robotcore.hardware.HardwareMap-">closeHardwareMap</a></span>(<a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a>&nbsp;hardwareMap)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeServoControllers--">closeServoControllers</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>protected static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeMotorControllers-com.qualcomm.robotcore.hardware.HardwareMap-">closeMotorControllers</a></span>(<a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a>&nbsp;hardwareMap)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>protected static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#closeServoControllers-com.qualcomm.robotcore.hardware.HardwareMap-">closeServoControllers</a></span>(<a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a>&nbsp;hardwareMap)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#displayGamePadInfo-java.lang.String-">displayGamePadInfo</a></span>(java.lang.String&nbsp;activeOpModeName)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html" title="class in com.qualcomm.robotcore.eventloop">EventLoopManager</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#getEventLoopManager--">getEventLoopManager</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;LynxUsbDeviceImpl&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#getExtantLynxDeviceImpls--">getExtantLynxDeviceImpls</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../../com/qualcomm/robotcore/hardware/Gamepad.html" title="class in com.qualcomm.robotcore.hardware">Gamepad</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#getGamepads--">getGamepads</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#getHardwareDevice-java.lang.Class-com.qualcomm.robotcore.util.SerialNumber--">getHardwareDevice</a></span>(java.lang.Class&lt;? extends T&gt;&nbsp;classOrInterface,
+                 <a href="../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+                 &lt;any&gt;&nbsp;usbScanManagerSupplier)</code>
+<div class="block">Returns the device whose serial number is the one indicated, from the hardware map if possible
+ but instantiating / opening it if necessary.</div>
+</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#getHardwareMap--">getHardwareMap</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#getOpMode-java.lang.String-">getOpMode</a></span>(java.lang.String&nbsp;extra)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#init-com.qualcomm.robotcore.eventloop.EventLoopManager-">init</a></span>(<a href="../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html" title="class in com.qualcomm.robotcore.eventloop">EventLoopManager</a>&nbsp;eventLoopManager)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#refreshUserTelemetry-TelemetryMessage-double-">refreshUserTelemetry</a></span>(TelemetryMessage&nbsp;telemetry,
                     double&nbsp;requestedInterval)</code>
@@ -296,22 +321,22 @@ extends java.lang.Object</pre>
  interval has passed since the last transmission.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#restartRobot--">restartRobot</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#sendBatteryInfo--">sendBatteryInfo</a></span>()</code>
 <div class="block">Send robot phone power % and robot battery voltage level to Driver station</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#sendTelemetry-java.lang.String-java.lang.String-">sendTelemetry</a></span>(java.lang.String&nbsp;tag,
              java.lang.String&nbsp;msg)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopHandler.html#updateBatteryStatus-BatteryChecker.BatteryStatus-">updateBatteryStatus</a></span>(BatteryChecker.BatteryStatus&nbsp;status)</code>&nbsp;</td>
 </tr>
@@ -357,11 +382,24 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>NO_VOLTAGE_SENSOR</h4>
 <pre>public static final&nbsp;java.lang.String NO_VOLTAGE_SENSOR</pre>
-<div class="block">This string is sent in the robot battery telemetry payload to indicate
+<div class="block">This string is sent in the robot battery telemetry payload to identify
   that no voltage sensor is available on the robot.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../constant-values.html#com.qualcomm.ftccommon.FtcEventLoopHandler.NO_VOLTAGE_SENSOR">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="DEBUG">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DEBUG</h4>
+<pre>protected static final&nbsp;boolean DEBUG</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../constant-values.html#com.qualcomm.ftccommon.FtcEventLoopHandler.DEBUG">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -512,10 +550,21 @@ extends java.lang.Object</pre>
 <a name="hardwareMap">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>hardwareMap</h4>
 <pre>protected&nbsp;<a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a> hardwareMap</pre>
+<div class="block">the actual hardware map seen by the user</div>
+</li>
+</ul>
+<a name="hardwareMapExtra">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>hardwareMapExtra</h4>
+<pre>protected&nbsp;<a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a> hardwareMapExtra</pre>
+<div class="block">the hardware map in which we keep any extra devices (ones not used by the user) we need to instantiate</div>
 </li>
 </ul>
 </li>
@@ -563,6 +612,15 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;close()</pre>
 </li>
 </ul>
+<a name="closeHardwareMap-com.qualcomm.robotcore.hardware.HardwareMap-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>closeHardwareMap</h4>
+<pre>protected static&nbsp;void&nbsp;closeHardwareMap(<a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a>&nbsp;hardwareMap)</pre>
+</li>
+</ul>
 <a name="getEventLoopManager--">
 <!--   -->
 </a>
@@ -595,6 +653,26 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getExtantLynxDeviceImpls</h4>
 <pre>public&nbsp;java.util.List&lt;LynxUsbDeviceImpl&gt;&nbsp;getExtantLynxDeviceImpls()</pre>
+</li>
+</ul>
+<a name="getHardwareDevice-java.lang.Class-com.qualcomm.robotcore.util.SerialNumber--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getHardwareDevice</h4>
+<pre>public&nbsp;&lt;T&gt;&nbsp;T&nbsp;getHardwareDevice(java.lang.Class&lt;? extends T&gt;&nbsp;classOrInterface,
+                               <a href="../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
+                               &lt;any&gt;&nbsp;usbScanManagerSupplier)</pre>
+<div class="block">Returns the device whose serial number is the one indicated, from the hardware map if possible
+ but instantiating / opening it if necessary. null is returned if the object cannot be
+ accessed.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>classOrInterface</code> - the interface to retrieve on the returned object</dd>
+<dd><code>serialNumber</code> - the serial number of the object to retrieve</dd>
+<dd><code>usbScanManagerSupplier</code> - how to get a <code>USBScanManager</code> if it ends up we need one</dd>
+</dl>
 </li>
 </ul>
 <a name="displayGamePadInfo-java.lang.String-">
@@ -657,31 +735,31 @@ extends java.lang.Object</pre>
                           java.lang.String&nbsp;msg)</pre>
 </li>
 </ul>
-<a name="closeMotorControllers--">
+<a name="closeMotorControllers-com.qualcomm.robotcore.hardware.HardwareMap-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>closeMotorControllers</h4>
-<pre>protected&nbsp;void&nbsp;closeMotorControllers()</pre>
+<pre>protected static&nbsp;void&nbsp;closeMotorControllers(<a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a>&nbsp;hardwareMap)</pre>
 </li>
 </ul>
-<a name="closeServoControllers--">
+<a name="closeServoControllers-com.qualcomm.robotcore.hardware.HardwareMap-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>closeServoControllers</h4>
-<pre>protected&nbsp;void&nbsp;closeServoControllers()</pre>
+<pre>protected static&nbsp;void&nbsp;closeServoControllers(<a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a>&nbsp;hardwareMap)</pre>
 </li>
 </ul>
-<a name="closeAutoCloseOnTeardown--">
+<a name="closeAutoCloseOnTeardown-com.qualcomm.robotcore.hardware.HardwareMap-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>closeAutoCloseOnTeardown</h4>
-<pre>protected&nbsp;void&nbsp;closeAutoCloseOnTeardown()</pre>
+<pre>protected static&nbsp;void&nbsp;closeAutoCloseOnTeardown(<a href="../../../com/qualcomm/robotcore/hardware/HardwareMap.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap</a>&nbsp;hardwareMap)</pre>
 </li>
 </ul>
 <a name="closeBatteryMonitoring--">
