@@ -11,7 +11,7 @@ dependencies {
 
     implementation 'com.acmerobotics.roadrunner:core:0.2.0'
 
-    implementation 'com.acmerobotics.dashboard:dashboard:0.1.1'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.2.0'
 
     implementation 'com.android.support:multidex:1.0.3'
 }
