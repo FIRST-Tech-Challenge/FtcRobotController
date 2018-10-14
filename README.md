@@ -16,7 +16,7 @@ For maximal flexibility, Road Runner has no dependencies on Android or the [FTC 
 
 ### Drive Classes
 
-As of now, only tank/differential and mecanum drives are supported (more to come in the future) by Road Runner. To use the path and trajectory followers as well as the drive characterization routines, you must create your own drive class.
+As of now, only tank/differential, mecanum, and swerve drives are supported (more to come in the future) by Road Runner. To use the path and trajectory followers as well as the drive characterization routines, you must create your own drive class.
 
 The process is relatively similar for tank and mecanum drives. Simply extend `TankDrive` or `MecanumDrive`, create a constructor that initializes the appropriate `DcMotor` instances and use them to implement `getWheelPositions()`/`setMotorPowers()`.
 
@@ -24,7 +24,7 @@ The process is relatively similar for tank and mecanum drives. Simply extend `Ta
 
 Although the track width of a robot (distance between a pair of wheels on opposite sides) can be determined physically, that number doesn't always match up with the drive's behavior due to friction and other factors. Instead, it's better to empirically calculate the track width by turning the robot in place a fixed angle and measuring the change in drive encoder positions.
 
-This routine is implemented in `TrackWidthCalibrationOpMode`. Before running the op mode, make sure the drive's track width is set to 1.
+This routine is implemented in `TrackWidthCalibrationOpMode`. Before running the op mode, **make sure the drive's track width is set to 1 and all TODOs have been addressed**. Note that these examples use inches as the base distance unit (if yours differs, adjust accordingly).
 
 ### Drive Characterization
 
@@ -36,8 +36,8 @@ This routine is implemented in `FeedforwardTuningOpMode`. Like the last op mode,
 
 ### Following a Trajectory
 
-Now your tuned drive class can be used to follow trajectories/paths. Begin by instantiating your follower with the necessary arguments and calling `followPath()`/`followTrajectory()`. Then poll `update()` with the current pose estimate until it's finished (pose estimates can be computed with `Drive.updatePoseEstimate()` or another external mechanism).
+Now your tuned drive class can be used to follow trajectories/paths. Begin by instantiating your follower with the necessary arguments and calling `followPath()`/`followTrajectory()`. Then poll `update()` with the current pose estimate until it's finished (pose estimates can be computed with `Drive.updatePoseEstimate()` or another external mechanism). This is demonstrated in `TrajectoryTestOpMode`. The routine consists of two 180deg point turns, a 40in line straight ahead, and a spline. Test first with no feedback to ensure there are no dimensional mismatches (feedforward should get within 90-95% accuracy). If not, make the proper adjustments and re-tune. Once you've convinced yourself that pure open loop control is working, slowly add feedback control until the desired accuracy is achieved.
 
 ## Dashboard
 
-This project also contains some code for interfacing Road Runner with [FTC Dashboard](https://github.com/acmerobotics/ftc-dashboard).
+This project also contains some code for interfacing Road Runner with [FTC Dashboard](https://github.com/acmerobotics/ftc-dashboard). To open the dashboard, connect to the phone's WiFi network and navigate to `192.168.49.1:8080/dash`.
