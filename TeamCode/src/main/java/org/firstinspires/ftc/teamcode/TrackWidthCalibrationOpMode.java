@@ -1,33 +1,26 @@
-package com.acmerobotics.roadrunner.drive;
+package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-/**
- * Op mode for measuring the empirical track width of a robot drive.
+/*
+ * This routine measures the effective track width of the drivetrain (i.e., the distance between a
+ * pair of wheels on opposite sides of the robot). This is required for the robot turn properly
+ * during open-loop control.
  */
+@Config
+@Autonomous
 public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
-    private int totalRevolutions;
-    private double power;
-
-    /**
-     * @param totalRevolutions number of revolutions
-     * @param power angular power
-     */
-    public TrackWidthCalibrationOpMode(int totalRevolutions, double power) {
-        this.totalRevolutions = totalRevolutions;
-        this.power = power;
-    }
-
-    public TrackWidthCalibrationOpMode() {
-        this(4, 0.3);
-    }
+    public static int TOTAL_REVOLUTIONS = 4;
+    public static double POWER = 0.3;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Drive drive = initDrive();
-        BNO055IMU imu = initIMU();
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        BNO055IMU imu = drive.getIMU();
 
         telemetry.log().add("Press play to begin the track width calibration routine");
         telemetry.log().add("Make sure your robot has enough clearance to turn smoothly");
@@ -45,8 +38,8 @@ public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
         double lastHeading = 0;
 
         drive.setPoseEstimate(new Pose2d());
-        drive.setVelocity(new Pose2d(0.0, 0.0,  power));
-        while (opModeIsActive() && (!startedMoving || revolutions <= totalRevolutions)) {
+        drive.setVelocity(new Pose2d(0.0, 0.0,  POWER));
+        while (opModeIsActive() && (!startedMoving || revolutions <= TOTAL_REVOLUTIONS)) {
             double heading = imu.getAngularOrientation().firstAngle;
             if (imu.getParameters().angleUnit == BNO055IMU.AngleUnit.DEGREES) {
                 heading = Math.toRadians(heading);
@@ -61,7 +54,7 @@ public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
             lastHeading = heading;
         }
         drive.setVelocity(new Pose2d(0.0, 0.0, 0.0));
-        double effectiveTrackWidth = drive.getPoseEstimate().getHeading() / (4.0 * Math.PI * totalRevolutions);
+        double effectiveTrackWidth = drive.getPoseEstimate().getHeading() / (4.0 * Math.PI * TOTAL_REVOLUTIONS);
 
         telemetry.log().clear();
         telemetry.log().add("Calibration complete");
@@ -72,7 +65,4 @@ public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
             idle();
         }
     }
-
-    protected abstract Drive initDrive();
-    protected abstract BNO055IMU initIMU();
 }

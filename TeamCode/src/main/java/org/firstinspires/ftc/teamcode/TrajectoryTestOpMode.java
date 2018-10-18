@@ -5,19 +5,18 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.drive.Drive;
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
-import com.acmerobotics.roadrunner.followers.MecanumPIDVAFollower;
-import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
-import com.acmerobotics.roadrunner.trajectory.DashboardUtil;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
-import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+/*
+ * This is a simple routine to test trajectory following capabilities. It consists of two 180deg
+ * turns, one straight line, and a spline. It is highly recommended to try this **without feedback**
+ * to ensure that all of the other drive constants are configured properly. If there are issues,
+ * please debug them and retune instead of relying on feedback. The entire goal of feedforward is to
+ * minimize the need for feedback. Once the feedforward is working, begin adding feedback control
+ * (tune velocity first).
+ */
 @Autonomous
 public class TrajectoryTestOpMode extends LinearOpMode {
     @Override
@@ -26,9 +25,7 @@ public class TrajectoryTestOpMode extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         // change these constraints to something reasonable for your drive
-        DriveConstraints baseConstraints = new DriveConstraints(20.0, 30.0, Math.PI / 2, Math.PI / 2);
-        MecanumConstraints constraints = new MecanumConstraints(baseConstraints, drive.getTrackWidth(), drive.getWheelBase());
-        Trajectory trajectory = new TrajectoryBuilder(new Pose2d(0, 0, 0), constraints)
+        Trajectory trajectory = drive.trajectoryBuilder()
                 .turnTo(Math.PI)
                 .waitFor(2)
                 .turnTo(0)
@@ -38,20 +35,10 @@ public class TrajectoryTestOpMode extends LinearOpMode {
                 .splineTo(new Pose2d(0, 40, 0))
                 .build();
 
-        // TODO: tune kV, kA, and kStatic in the following follower
-        // then tune the PID coefficients after you verify the open loop response is roughly correct
-        MecanumPIDVAFollower follower = new MecanumPIDVAFollower(
-                drive,
-                new PIDCoefficients(0, 0, 0),
-                new PIDCoefficients(0, 0, 0),
-                0,
-                0,
-                0);
-
         waitForStart();
 
-        follower.followTrajectory(trajectory);
-        while (opModeIsActive() && follower.isFollowing()) {
+        drive.followTrajectory(trajectory);
+        while (opModeIsActive() && drive.isFollowingTrajectory()) {
             Pose2d currentPose = drive.getPoseEstimate();
 
             TelemetryPacket packet = new TelemetryPacket();
@@ -69,8 +56,7 @@ public class TrajectoryTestOpMode extends LinearOpMode {
 
             dashboard.sendTelemetryPacket(packet);
 
-            follower.update(currentPose);
-            drive.updatePoseEstimate();
+            drive.update();
         }
     }
 }
