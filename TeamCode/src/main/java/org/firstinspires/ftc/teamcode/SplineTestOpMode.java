@@ -4,35 +4,24 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /*
- * This is a simple routine to test trajectory following capabilities. It consists of two 180deg
- * turns, one straight line, and a spline. It is highly recommended to try this **without feedback**
- * to ensure that all of the other drive constants are configured properly. If there are issues,
- * please debug them and retune instead of relying on feedback. The entire goal of feedforward is to
- * minimize the need for feedback. Once the feedforward is working, begin adding feedback control
- * (tune velocity first).
+ * This is an example of a more complex path to really test the tuning.
  */
 @Autonomous
-public class TrajectoryTestOpMode extends LinearOpMode {
+public class SplineTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        // change these constraints to something reasonable for your drive
         Trajectory trajectory = drive.trajectoryBuilder()
-                .turnTo(Math.PI)
-                .waitFor(2)
-                .turnTo(0)
-                .waitFor(2)
-                .lineTo(new Vector2d(60, 0))
-                .waitFor(2)
-                .splineTo(new Pose2d(0, 40, 0))
+                .splineTo(new Pose2d(30, 30, 0))
+                .waitFor(1)
+                .splineTo(new Pose2d(0, 0, 0))
                 .build();
 
         waitForStart();
