@@ -19,7 +19,7 @@ public abstract class TrackWidthCalibrationOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
         BNO055IMU imu = drive.getIMU();
 
         telemetry.log().add("Press play to begin the track width calibration routine");

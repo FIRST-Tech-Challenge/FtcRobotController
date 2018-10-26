@@ -40,7 +40,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
 
         PIDFCoefficients currentCoeffs = drive.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
         MOTOR_PIDF = pidfCopy(currentCoeffs);
@@ -85,18 +85,18 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                 activeProfile = MotionProfileGenerator.generateMotionProfile(start, goal, new MotionConstraints() {
                     @Override
                     public double maximumVelocity(double v) {
-                        return SampleMecanumDrive.BASE_CONSTRAINTS.maximumVelocity;
+                        return SampleMecanumDriveBase.BASE_CONSTRAINTS.maximumVelocity;
                     }
 
                     @Override
                     public double maximumAcceleration(double v) {
-                        return SampleMecanumDrive.BASE_CONSTRAINTS.maximumAcceleration;
+                        return SampleMecanumDriveBase.BASE_CONSTRAINTS.maximumAcceleration;
                     }
                 });
                 profileStartTimestamp = clock.seconds();
             }
             MotionState motionState = activeProfile.get(profileTime);
-            double targetPower = SampleMecanumDrive.kV * motionState.getV();
+            double targetPower = SampleMecanumDriveBase.kV * motionState.getV();
             drive.setVelocity(new Pose2d(targetPower, 0, 0));
 
             List<Double> wheelPositions = drive.getWheelPositions();

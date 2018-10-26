@@ -43,7 +43,7 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Drive drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
 
         NanoClock clock = NanoClock.system();
 
@@ -90,8 +90,8 @@ public abstract class FeedforwardTuningOpMode extends LinearOpMode {
         telemetry.log().add("Running...");
         telemetry.update();
 
-        double maxVel = SampleMecanumDrive.MOTOR_CONFIG.getMaxRPM() * SampleMecanumDrive.GEAR_RATIO
-                * 2 * Math.PI * SampleMecanumDrive.WHEEL_RADIUS / 60.0;
+        double maxVel = SampleMecanumDriveBase.MOTOR_CONFIG.getMaxRPM() * SampleMecanumDriveBase.GEAR_RATIO
+                * 2 * Math.PI * SampleMecanumDriveBase.WHEEL_RADIUS / 60.0;
         double finalVel = MAX_POWER * maxVel;
         double accel = (finalVel * finalVel) / (2.0 * DISTANCE);
         double rampTime = Math.sqrt(2.0 * DISTANCE / accel);
