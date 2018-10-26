@@ -1,32 +1,31 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.drive;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.teamcode.util.LynxOptimizedI2cFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
-import org.openftc.revextensions2.RevExtensions2;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SampleMecanumDriveOptimized extends SampleMecanumDriveBase {
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
+
+public class SampleTankDriveOptimized extends SampleTankDriveBase {
     private ExpansionHubEx hub;
-    private ExpansionHubMotor leftFront, leftRear, rightRear, rightFront;
-    private List<ExpansionHubMotor> motors;
+    private List<ExpansionHubMotor> motors, leftMotors, rightMotors;
     private BNO055IMU imu;
 
-    public SampleMecanumDriveOptimized(HardwareMap hardwareMap) {
+    public SampleTankDriveOptimized(HardwareMap hardwareMap) {
         super();
-
-        RevExtensions2.init();
 
         // TODO: adjust the names of the following hardware devices to match your configuration
         // for simplicity, we assume that the desired IMU and drive motors are on the same hub
@@ -38,12 +37,15 @@ public class SampleMecanumDriveOptimized extends SampleMecanumDriveBase {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(ExpansionHubMotor.class, "leftFront");
-        leftRear = hardwareMap.get(ExpansionHubMotor.class, "leftRear");
-        rightRear = hardwareMap.get(ExpansionHubMotor.class, "rightRear");
-        rightFront = hardwareMap.get(ExpansionHubMotor.class, "rightFront");
+        // add/remove motors depending on your robot (e.g., 6WD)
+        ExpansionHubMotor leftFront = hardwareMap.get(ExpansionHubMotor.class, "leftFront");
+        ExpansionHubMotor leftRear = hardwareMap.get(ExpansionHubMotor.class, "leftRear");
+        ExpansionHubMotor rightRear = hardwareMap.get(ExpansionHubMotor.class, "rightRear");
+        ExpansionHubMotor rightFront = hardwareMap.get(ExpansionHubMotor.class, "rightFront");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+        leftMotors = Arrays.asList(leftFront, leftRear);
+        rightMotors = Arrays.asList(rightFront, rightRear);
 
         for (ExpansionHubMotor motor : motors) {
             // TODO: decide whether or not to use the built-in velocity PID
@@ -70,7 +72,7 @@ public class SampleMecanumDriveOptimized extends SampleMecanumDriveBase {
     }
 
     public PIDFCoefficients getPIDFCoefficients(DcMotor.RunMode runMode) {
-        return leftFront.getPIDFCoefficients(runMode);
+        return motors.get(0).getPIDFCoefficients(runMode);
     }
 
     public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
@@ -82,21 +84,24 @@ public class SampleMecanumDriveOptimized extends SampleMecanumDriveBase {
     @NotNull
     @Override
     public List<Double> getWheelPositions() {
+        double leftSum = 0, rightSum = 0;
         RevBulkData bulkData = hub.getBulkInputData();
-        List<Double> wheelPositions = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            wheelPositions.add(encoderTicksToInches(
-                    bulkData.getMotorCurrentPosition(motors.get(i))
-            ));
+        for (DcMotorEx leftMotor : leftMotors) {
+            leftSum += encoderTicksToInches(bulkData.getMotorCurrentPosition(leftMotor));
         }
-        return wheelPositions;
+        for (DcMotorEx rightMotor : rightMotors) {
+            rightSum += encoderTicksToInches(bulkData.getMotorCurrentPosition(rightMotor));
+        }
+        return Arrays.asList(leftSum / leftMotors.size(), rightSum / rightMotors.size());
     }
 
     @Override
-    public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+    public void setMotorPowers(double v, double v1) {
+        for (ExpansionHubMotor leftMotor : leftMotors) {
+            leftMotor.setPower(v);
+        }
+        for (ExpansionHubMotor rightMotor : rightMotors) {
+            rightMotor.setPower(v1);
+        }
     }
 }

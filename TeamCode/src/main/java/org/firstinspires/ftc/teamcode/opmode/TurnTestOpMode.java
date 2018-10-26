@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -7,6 +7,9 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
+import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 /*
  * This is a simple routine to test turning capabilities. If this is consistently overshooting or

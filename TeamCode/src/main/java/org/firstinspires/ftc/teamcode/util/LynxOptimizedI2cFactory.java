@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
 import com.qualcomm.hardware.lynx.LynxModule;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -8,19 +8,23 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
+import org.firstinspires.ftc.teamcode.util.DashboardUtil;
+
 /*
- * This is a simple routine to test translational drive capabilities. If this is *consistently*
- * overshooting or undershooting by a significant amount, check the constants in the drive class.
+ * This is an example of a more complex path to really test the tuning.
  */
 @Autonomous
-public class StraightTestOpMode extends LinearOpMode {
+public class SplineTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder()
-                .turnTo(Math.PI / 2)
+                .splineTo(new Pose2d(30, 30, 0))
+                .waitFor(1)
+                .splineTo(new Pose2d(0, 0, 0))
                 .build();
 
         waitForStart();
