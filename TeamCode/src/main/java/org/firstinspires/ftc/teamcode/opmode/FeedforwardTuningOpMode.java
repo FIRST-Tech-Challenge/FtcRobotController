@@ -7,14 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.GEAR_RATIO;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_CONFIG;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.WHEEL_RADIUS;
 
 /*
  * Op mode for computing kV, kStatic, and kA from various drive routines. Note: for those using the
@@ -94,7 +91,8 @@ public class FeedforwardTuningOpMode extends LinearOpMode {
         telemetry.log().add("Running...");
         telemetry.update();
 
-        double maxVel = MOTOR_CONFIG.getMaxRPM() * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
+        double maxRpm = DriveConstants.MOTOR_CONFIG.getMaxRPM();
+        double maxVel = maxRpm * DriveConstants.GEAR_RATIO * 2 * Math.PI * DriveConstants.WHEEL_RADIUS / 60.0;
         double finalVel = MAX_POWER * maxVel;
         double accel = (finalVel * finalVel) / (2.0 * DISTANCE);
         double rampTime = Math.sqrt(2.0 * DISTANCE / accel);

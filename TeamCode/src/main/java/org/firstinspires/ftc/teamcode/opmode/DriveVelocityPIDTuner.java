@@ -15,13 +15,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
 /*
  * This routine is designed to tune the PIDF coefficients used by the REV Expansion Hubs for closed-
@@ -90,18 +88,18 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                 activeProfile = MotionProfileGenerator.generateMotionProfile(start, goal, new MotionConstraints() {
                     @Override
                     public double maximumVelocity(double v) {
-                        return BASE_CONSTRAINTS.maximumVelocity;
+                        return DriveConstants.BASE_CONSTRAINTS.maximumVelocity;
                     }
 
                     @Override
                     public double maximumAcceleration(double v) {
-                        return BASE_CONSTRAINTS.maximumAcceleration;
+                        return DriveConstants.BASE_CONSTRAINTS.maximumAcceleration;
                     }
                 });
                 profileStartTimestamp = clock.seconds();
             }
             MotionState motionState = activeProfile.get(profileTime);
-            double targetPower = kV * motionState.getV();
+            double targetPower = DriveConstants.kV * motionState.getV();
             drive.setVelocity(new Pose2d(targetPower, 0, 0));
 
             List<Double> wheelPositions = drive.getWheelPositions();

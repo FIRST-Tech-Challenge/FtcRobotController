@@ -9,12 +9,6 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
-
 public abstract class SampleMecanumDriveBase extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
@@ -24,10 +18,11 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
     private TrajectoryFollower follower;
 
     public SampleMecanumDriveBase() {
-        super(TRACK_WIDTH);
+        super(DriveConstants.TRACK_WIDTH);
 
-        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
-        follower = new MecanumPIDVAFollower(this, TRANSLATIONAL_PID, HEADING_PID, kV, kA, kStatic);
+        constraints = new MecanumConstraints(DriveConstants.BASE_CONSTRAINTS, DriveConstants.TRACK_WIDTH);
+        follower = new MecanumPIDVAFollower(this, TRANSLATIONAL_PID, HEADING_PID,
+                DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic);
     }
 
     public TrajectoryBuilder trajectoryBuilder() {

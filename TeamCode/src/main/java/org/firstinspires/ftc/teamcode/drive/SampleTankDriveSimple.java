@@ -13,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-
 public class SampleTankDriveSimple extends SampleTankDriveBase {
     private List<DcMotorEx> motors, leftMotors, rightMotors;
     private BNO055IMU imu;
@@ -77,10 +75,10 @@ public class SampleTankDriveSimple extends SampleTankDriveBase {
     public List<Double> getWheelPositions() {
         double leftSum = 0, rightSum = 0;
         for (DcMotorEx leftMotor : leftMotors) {
-            leftSum += encoderTicksToInches(leftMotor.getCurrentPosition());
+            leftSum += DriveConstants.encoderTicksToInches(leftMotor.getCurrentPosition());
         }
         for (DcMotorEx rightMotor : rightMotors) {
-            rightSum += encoderTicksToInches(rightMotor.getCurrentPosition());
+            rightSum += DriveConstants.encoderTicksToInches(rightMotor.getCurrentPosition());
         }
         return Arrays.asList(leftSum / leftMotors.size(), rightSum / rightMotors.size());
     }

@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-
 public class SampleMecanumDriveSimple extends SampleMecanumDriveBase {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
@@ -76,7 +74,7 @@ public class SampleMecanumDriveSimple extends SampleMecanumDriveBase {
     public List<Double> getWheelPositions() {
         List<Double> wheelPositions = new ArrayList<>();
         for (DcMotorEx motor : motors) {
-            wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
+            wheelPositions.add(DriveConstants.encoderTicksToInches(motor.getCurrentPosition()));
         }
         return wheelPositions;
     }

@@ -17,8 +17,6 @@ import org.openftc.revextensions2.RevBulkData;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-
 public class SampleTankDriveOptimized extends SampleTankDriveBase {
     private ExpansionHubEx hub;
     private List<ExpansionHubMotor> motors, leftMotors, rightMotors;
@@ -87,10 +85,10 @@ public class SampleTankDriveOptimized extends SampleTankDriveBase {
         double leftSum = 0, rightSum = 0;
         RevBulkData bulkData = hub.getBulkInputData();
         for (DcMotorEx leftMotor : leftMotors) {
-            leftSum += encoderTicksToInches(bulkData.getMotorCurrentPosition(leftMotor));
+            leftSum += DriveConstants.encoderTicksToInches(bulkData.getMotorCurrentPosition(leftMotor));
         }
         for (DcMotorEx rightMotor : rightMotors) {
-            rightSum += encoderTicksToInches(bulkData.getMotorCurrentPosition(rightMotor));
+            rightSum += DriveConstants.encoderTicksToInches(bulkData.getMotorCurrentPosition(rightMotor));
         }
         return Arrays.asList(leftSum / leftMotors.size(), rightSum / rightMotors.size());
     }

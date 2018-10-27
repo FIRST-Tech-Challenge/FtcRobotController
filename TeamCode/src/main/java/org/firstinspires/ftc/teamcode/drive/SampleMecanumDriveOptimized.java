@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-
 public class SampleMecanumDriveOptimized extends SampleMecanumDriveBase {
     private ExpansionHubEx hub;
     private ExpansionHubMotor leftFront, leftRear, rightRear, rightFront;
@@ -88,7 +86,7 @@ public class SampleMecanumDriveOptimized extends SampleMecanumDriveBase {
         RevBulkData bulkData = hub.getBulkInputData();
         List<Double> wheelPositions = new ArrayList<>();
         for (ExpansionHubMotor motor : motors) {
-            wheelPositions.add(encoderTicksToInches(bulkData.getMotorCurrentPosition(motor)));
+            wheelPositions.add(DriveConstants.encoderTicksToInches(bulkData.getMotorCurrentPosition(motor)));
         }
         return wheelPositions;
     }

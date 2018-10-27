@@ -10,12 +10,6 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.TankConstraints;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
-
 @Config
 public abstract class SampleTankDriveBase extends TankDrive {
     public static PIDCoefficients DISPLACEMENT_PID = new PIDCoefficients(0, 0, 0);
@@ -26,10 +20,11 @@ public abstract class SampleTankDriveBase extends TankDrive {
     private TrajectoryFollower follower;
 
     public SampleTankDriveBase() {
-        super(TRACK_WIDTH);
+        super(DriveConstants.TRACK_WIDTH);
 
-        constraints = new TankConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
-        follower = new TankPIDVAFollower(this, DISPLACEMENT_PID, CROSS_TRACK_PID, kV, kA, kStatic);
+        constraints = new TankConstraints(DriveConstants.BASE_CONSTRAINTS, DriveConstants.TRACK_WIDTH);
+        follower = new TankPIDVAFollower(this, DISPLACEMENT_PID, CROSS_TRACK_PID,
+                DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic);
     }
 
     public TrajectoryBuilder trajectoryBuilder() {
