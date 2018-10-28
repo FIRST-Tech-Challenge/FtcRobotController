@@ -29,8 +29,10 @@ public class SplineTestOpMode extends LinearOpMode {
 
         waitForStart();
 
+        if (isStopRequested()) return;
+
         drive.followTrajectory(trajectory);
-        while (opModeIsActive() && drive.isFollowingTrajectory()) {
+        while (!isStopRequested() && drive.isFollowingTrajectory()) {
             Pose2d currentPose = drive.getPoseEstimate();
 
             TelemetryPacket packet = new TelemetryPacket();

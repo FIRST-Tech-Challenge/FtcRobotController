@@ -47,7 +47,7 @@ public class TrackWidthCalibrationOpMode extends LinearOpMode {
 
         drive.setPoseEstimate(new Pose2d());
         drive.setVelocity(new Pose2d(0.0, 0.0,  POWER));
-        while (opModeIsActive() && (!startedMoving || revolutions <= TOTAL_REVOLUTIONS)) {
+        while (!isStopRequested() && (!startedMoving || revolutions <= TOTAL_REVOLUTIONS)) {
             double heading = drive.getExternalHeading();
             if (heading >= Math.PI / 2.0) {
                 startedMoving = true;
@@ -66,7 +66,7 @@ public class TrackWidthCalibrationOpMode extends LinearOpMode {
         telemetry.log().add(Misc.formatInvariant("Effective track width = %.2f", effectiveTrackWidth));
         telemetry.update();
 
-        while (opModeIsActive()) {
+        while (!isStopRequested()) {
             idle();
         }
     }

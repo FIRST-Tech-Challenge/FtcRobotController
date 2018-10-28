@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.MecanumPIDVAFollower;
@@ -44,5 +45,9 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
 
     public boolean isFollowingTrajectory() {
         return follower.isFollowing();
+    }
+
+    public Pose2d getFollowingError() {
+        return follower.getLastError();
     }
 }

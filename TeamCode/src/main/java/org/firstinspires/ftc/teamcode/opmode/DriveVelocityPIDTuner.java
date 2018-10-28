@@ -68,7 +68,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         double lastTimestamp = 0;
         double profileStartTimestamp = clock.seconds();
 
-        while (opModeIsActive()) {
+        while (!isStopRequested()) {
             // update the coefficients if necessary
             if (!pidfEquals(currentCoeffs, MOTOR_PIDF)) {
                 RobotLog.i("Updated motor PIDF coefficients: " + MOTOR_PIDF);

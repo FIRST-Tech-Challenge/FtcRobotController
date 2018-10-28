@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.TankDrive;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
@@ -46,5 +47,9 @@ public abstract class SampleTankDriveBase extends TankDrive {
 
     public boolean isFollowingTrajectory() {
         return follower.isFollowing();
+    }
+
+    public Pose2d getFollowingError() {
+        return follower.getLastError();
     }
 }

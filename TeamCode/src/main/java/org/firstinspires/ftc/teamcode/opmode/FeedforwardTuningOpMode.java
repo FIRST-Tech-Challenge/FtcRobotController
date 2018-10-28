@@ -54,21 +54,23 @@ public class FeedforwardTuningOpMode extends LinearOpMode {
 
         waitForStart();
 
+        if (isStopRequested()) return;
+
         telemetry.log().clear();
         telemetry.log().add("Would you like to fit kStatic?");
         telemetry.log().add("Press (A) for yes, (B) for no");
         telemetry.update();
 
         boolean fitIntercept = false;
-        while (opModeIsActive()) {
+        while (!isStopRequested()) {
             if (gamepad1.a) {
                 fitIntercept = true;
-                while (opModeIsActive() && gamepad1.a) {
+                while (!isStopRequested() && gamepad1.a) {
                     idle();
                 }
                 break;
             } else if (gamepad1.b) {
-                while (opModeIsActive() && gamepad1.b) {
+                while (!isStopRequested() && gamepad1.b) {
                     idle();
                 }
                 break;
@@ -82,10 +84,10 @@ public class FeedforwardTuningOpMode extends LinearOpMode {
         telemetry.log().add("Press (A) to begin");
         telemetry.update();
 
-        while (opModeIsActive() && !gamepad1.a) {
+        while (!isStopRequested() && !gamepad1.a) {
             idle();
         }
-        while (opModeIsActive() && gamepad1.a) {
+        while (!isStopRequested() && gamepad1.a) {
             idle();
         }
 
@@ -105,7 +107,7 @@ public class FeedforwardTuningOpMode extends LinearOpMode {
         List<Double> positionSamples = new ArrayList<>();
 
         drive.setPoseEstimate(new Pose2d());
-        while (opModeIsActive()) {
+        while (!isStopRequested()) {
             double elapsedTime = clock.seconds() - startTime;
             if (elapsedTime > rampTime) {
                 break;
@@ -144,15 +146,15 @@ public class FeedforwardTuningOpMode extends LinearOpMode {
         telemetry.update();
 
         boolean fitAccelFF = false;
-        while (opModeIsActive()) {
+        while (!isStopRequested()) {
             if (gamepad1.a) {
                 fitAccelFF = true;
-                while (opModeIsActive() && gamepad1.a) {
+                while (!isStopRequested() && gamepad1.a) {
                     idle();
                 }
                 break;
             } else if (gamepad1.b) {
-                while (opModeIsActive() && gamepad1.b) {
+                while (!isStopRequested() && gamepad1.b) {
                     idle();
                 }
                 break;
@@ -166,10 +168,10 @@ public class FeedforwardTuningOpMode extends LinearOpMode {
             telemetry.log().add("Press (A) to continue");
             telemetry.update();
 
-            while (opModeIsActive() && !gamepad1.a) {
+            while (!isStopRequested() && !gamepad1.a) {
                 idle();
             }
-            while (opModeIsActive() && gamepad1.a) {
+            while (!isStopRequested() && gamepad1.a) {
                 idle();
             }
 
@@ -185,7 +187,7 @@ public class FeedforwardTuningOpMode extends LinearOpMode {
 
             drive.setPoseEstimate(new Pose2d());
             drive.setVelocity(new Pose2d(MAX_POWER, 0.0, 0.0));
-            while (opModeIsActive()) {
+            while (!isStopRequested()) {
                 double elapsedTime = clock.seconds() - startTime;
                 if (elapsedTime > maxPowerTime) {
                     break;
@@ -220,7 +222,7 @@ public class FeedforwardTuningOpMode extends LinearOpMode {
             telemetry.update();
         }
 
-        while (opModeIsActive()) {
+        while (!isStopRequested()) {
             idle();
         }
     }

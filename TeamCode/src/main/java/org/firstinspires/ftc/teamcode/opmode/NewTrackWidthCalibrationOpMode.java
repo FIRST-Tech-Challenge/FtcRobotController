@@ -95,7 +95,7 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
                 trackWidthStats.getMean(), trackWidthStats.getStandardDeviation() / Math.sqrt(NUM_TRIALS)));
         telemetry.update();
 
-        while (opModeIsActive()) {
+        while (!isStopRequested()) {
             idle();
         }
     }
