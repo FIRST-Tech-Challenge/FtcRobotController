@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
 
 /*
@@ -62,7 +63,7 @@ public class TrackWidthCalibrationOpMode extends LinearOpMode {
 
         telemetry.log().clear();
         telemetry.log().add("Calibration complete");
-        telemetry.log().add(String.format("Effective track width = %.2f", effectiveTrackWidth));
+        telemetry.log().add(Misc.formatInvariant("Effective track width = %.2f", effectiveTrackWidth));
         telemetry.update();
 
         while (opModeIsActive()) {

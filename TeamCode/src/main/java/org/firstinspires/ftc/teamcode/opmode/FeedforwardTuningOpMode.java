@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.apache.commons.math3.stat.regression.SimpleRegression;
+import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
 
@@ -76,7 +77,8 @@ public class FeedforwardTuningOpMode extends LinearOpMode {
         }
 
         telemetry.log().clear();
-        telemetry.log().add(String.format("Place your robot on the field with at least %.2f in of room in front", DISTANCE));
+        telemetry.log().add(Misc.formatInvariant(
+                "Place your robot on the field with at least %.2f in of room in front", DISTANCE));
         telemetry.log().add("Press (A) to begin");
         telemetry.update();
 
@@ -131,9 +133,11 @@ public class FeedforwardTuningOpMode extends LinearOpMode {
         telemetry.log().clear();
         telemetry.log().add("Quasi-static ramp up test complete");
         if (fitIntercept) {
-            telemetry.log().add(String.format("kV = %.5f, kStatic = %.5f (R^2 = %.2f)", kV, kStatic, rampRegression.getRSquare()));
+            telemetry.log().add(Misc.formatInvariant(
+                    "kV = %.5f, kStatic = %.5f (R^2 = %.2f)", kV, kStatic, rampRegression.getRSquare()));
         } else {
-            telemetry.log().add(String.format("kV = %.5f (R^2 = %.2f)", kV, rampRegression.getRSquare()));
+            telemetry.log().add(Misc.formatInvariant(
+                    "kV = %.5f (R^2 = %.2f)", kV, rampRegression.getRSquare()));
         }
         telemetry.log().add("Would you like to fit kA?");
         telemetry.log().add("Press (A) for yes, (B) for no");
@@ -212,7 +216,7 @@ public class FeedforwardTuningOpMode extends LinearOpMode {
 
             telemetry.log().clear();
             telemetry.log().add("Max power test complete");
-            telemetry.log().add(String.format("kA = %.5f (R^2 = %.2f)", kA, maxPowerRegression.getRSquare()));
+            telemetry.log().add(Misc.formatInvariant("kA = %.5f (R^2 = %.2f)", kA, maxPowerRegression.getRSquare()));
             telemetry.update();
         }
 

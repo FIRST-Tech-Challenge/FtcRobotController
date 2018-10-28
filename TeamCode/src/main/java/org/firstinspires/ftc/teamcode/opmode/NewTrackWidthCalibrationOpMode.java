@@ -16,6 +16,8 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
 
+import java.util.Locale;
+
 @Config
 @Autonomous
 public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
@@ -89,7 +91,7 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
 
         telemetry.log().clear();
         telemetry.log().add("Calibration complete");
-        telemetry.log().add(String.format("Effective track width = %.2f (SE = %.3f)",
+        telemetry.log().add(String.format(Locale.ROOT, "Effective track width = %.2f (SE = %.3f)",
                 trackWidthStats.getMean(), trackWidthStats.getStandardDeviation() / Math.sqrt(NUM_TRIALS)));
         telemetry.update();
 
