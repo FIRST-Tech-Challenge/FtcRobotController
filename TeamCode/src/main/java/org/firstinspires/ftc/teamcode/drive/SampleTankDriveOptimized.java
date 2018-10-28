@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.teamcode.util.LynxOptimizedI2cFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
@@ -58,17 +57,6 @@ public class SampleTankDriveOptimized extends SampleTankDriveBase {
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public BNO055IMU getIMU() {
-        return imu;
-    }
-
-    // TODO: if you don't want to use the IMU for localization, remove this method
-    @Nullable
-    @Override
-    public Double getHeading() {
-        return (double) imu.getAngularOrientation().firstAngle;
-    }
-
     public PIDFCoefficients getPIDFCoefficients(DcMotor.RunMode runMode) {
         return motors.get(0).getPIDFCoefficients(runMode);
     }
@@ -101,5 +89,10 @@ public class SampleTankDriveOptimized extends SampleTankDriveBase {
         for (ExpansionHubMotor rightMotor : rightMotors) {
             rightMotor.setPower(v1);
         }
+    }
+
+    @Override
+    public double getExternalHeading() {
+        return imu.getAngularOrientation().firstAngle;
     }
 }
