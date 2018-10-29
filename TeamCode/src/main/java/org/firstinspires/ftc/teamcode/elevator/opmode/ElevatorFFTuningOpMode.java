@@ -5,10 +5,10 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.apache.commons.math3.stat.regression.SimpleRegression;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.elevator.Elevator;
+import org.firstinspires.ftc.teamcode.util.TuningUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
  *   1. Slowly ramp the motor power and record encoder values along the way.
  *   2. Run a linear regression on the encoder velocity vs. motor power plot to obtain a slope (kV)
  *      and an optional intercept (kStatic).
- *   3. Accelerate the robot (apply max power) and record the encoder counts.
+ *   3. Accelerate the robot (apply constant power) and record the encoder counts.
  *   4. Adjust the encoder data based on the velocity tuning data and find kA with another linear
  *      regression.
  */
@@ -31,16 +31,6 @@ public class ElevatorFFTuningOpMode extends LinearOpMode {
 
     public static final double MAX_POWER = 0.7;
     public static final double DISTANCE = 0.75 * Elevator.MAX_HEIGHT;
-
-    private static List<Double> numericalDerivative(List<Double> x, List<Double> y) {
-        List<Double> deriv = new ArrayList<>();
-        for (int i = 2; i < x.size(); i++) {
-            deriv.add((y.get(i) - y.get(i-2)) / (x.get(i) - x.get(i-2)));
-        }
-        deriv.add(0, deriv.get(0));
-        deriv.add(deriv.get(deriv.size() - 1));
-        return deriv;
-    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -119,22 +109,16 @@ public class ElevatorFFTuningOpMode extends LinearOpMode {
         }
         elevator.setPower(0);
 
-        List<Double> velocitySamples = numericalDerivative(timeSamples, positionSamples);
-        SimpleRegression rampRegression = new SimpleRegression(fitIntercept);
-        for (int i = 0; i < velocitySamples.size(); i++) {
-            rampRegression.addData(velocitySamples.get(i), powerSamples.get(i));
-        }
-        double kV = rampRegression.getSlope();
-        double kStatic = rampRegression.getIntercept();
+        TuningUtil.RampFFResult rampResult = TuningUtil.fitRampData(timeSamples, positionSamples, powerSamples, fitIntercept);
 
         telemetry.log().clear();
         telemetry.log().add("Quasi-static ramp up test complete");
         if (fitIntercept) {
             telemetry.log().add(Misc.formatInvariant(
-                    "kV = %.5f, kStatic = %.5f (R^2 = %.2f)", kV, kStatic, rampRegression.getRSquare()));
+                    "kV = %.5f, kStatic = %.5f (R^2 = %.2f)", rampResult.kV, rampResult.kStatic, rampResult.rSquared));
         } else {
             telemetry.log().add(Misc.formatInvariant(
-                    "kV = %.5f (R^2 = %.2f)", kV, rampRegression.getRSquare()));
+                    "kV = %.5f (R^2 = %.2f)", rampResult.kV, rampResult.rSquared));
         }
         telemetry.log().add("Would you like to fit kA?");
         telemetry.log().add("Press (A) for yes, (B) for no");
@@ -192,25 +176,12 @@ public class ElevatorFFTuningOpMode extends LinearOpMode {
             }
             elevator.setPower(0);
 
-            velocitySamples = numericalDerivative(timeSamples, positionSamples);
-            List<Double> accelerationSamples = numericalDerivative(timeSamples, velocitySamples);
-
-            SimpleRegression maxPowerRegression = new SimpleRegression(false);
-            for (int i = 0; i < accelerationSamples.size(); i++) {
-                double velocityPower = kV * velocitySamples.get(i);
-                if (Math.abs(velocityPower) > EPSILON) {
-                    velocityPower += Math.signum(velocityPower) * kStatic;
-                } else {
-                    velocityPower = 0;
-                }
-                double accelerationPower = -MAX_POWER + velocityPower;
-                maxPowerRegression.addData(accelerationSamples.get(i), accelerationPower);
-            }
-            double kA = -maxPowerRegression.getSlope();
+            TuningUtil.AccelFFResult accelResult = TuningUtil.fitConstantPowerData(timeSamples, positionSamples,
+                    -MAX_POWER, rampResult.kV, rampResult.kStatic);
 
             telemetry.log().clear();
-            telemetry.log().add("Max power test complete");
-            telemetry.log().add(Misc.formatInvariant("kA = %.5f (R^2 = %.2f)", kA, maxPowerRegression.getRSquare()));
+            telemetry.log().add("Constant power test complete");
+            telemetry.log().add(Misc.formatInvariant("kA = %.5f (R^2 = %.2f)", accelResult.kA, accelResult.rSquared));
             telemetry.update();
         }
 

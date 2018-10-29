@@ -6,6 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.elevator.Elevator;
 
+/*
+ * Simple test of motion-profiled elevator autonomous operation. The elevator should move *smoothly*
+ * between random heights.
+ */
 @Autonomous
 public class ElevatorTestOpMode extends LinearOpMode {
     @Override

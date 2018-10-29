@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.drive;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -12,6 +11,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
+/*
+ * Simple tank drive hardware implementation. If your hardware configuration satisfies the
+ * requirements, SampleTankDriveOptimized is highly recommended.
+ */
 public class SampleTankDriveSimple extends SampleTankDriveBase {
     private List<DcMotorEx> motors, leftMotors, rightMotors;
     private BNO055IMU imu;
@@ -43,9 +46,7 @@ public class SampleTankDriveSimple extends SampleTankDriveBase {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        // TODO: if the robot moves backward in the tuning routine, change these to left
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        // TODO: reverse any motors using DcMotor.setDirection()
     }
 
     public PIDFCoefficients getPIDFCoefficients(DcMotor.RunMode runMode) {

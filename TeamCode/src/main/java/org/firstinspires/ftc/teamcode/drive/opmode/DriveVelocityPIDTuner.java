@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.profile.MotionConstraints;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -85,17 +84,8 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                 movingForwards = !movingForwards;
                 MotionState start = new MotionState(movingForwards ? 0 : DISTANCE, 0, 0, 0);
                 MotionState goal = new MotionState(movingForwards ? DISTANCE : 0, 0, 0, 0);
-                activeProfile = MotionProfileGenerator.generateMotionProfile(start, goal, new MotionConstraints() {
-                    @Override
-                    public double maximumVelocity(double v) {
-                        return DriveConstants.BASE_CONSTRAINTS.maximumVelocity;
-                    }
-
-                    @Override
-                    public double maximumAcceleration(double v) {
-                        return DriveConstants.BASE_CONSTRAINTS.maximumAcceleration;
-                    }
-                });
+                activeProfile = MotionProfileGenerator.generateSimpleMotionProfile(start, goal,
+                        DriveConstants.BASE_CONSTRAINTS.maximumVelocity, DriveConstants.BASE_CONSTRAINTS.maximumAcceleration);
                 profileStartTimestamp = clock.seconds();
             }
             MotionState motionState = activeProfile.get(profileTime);

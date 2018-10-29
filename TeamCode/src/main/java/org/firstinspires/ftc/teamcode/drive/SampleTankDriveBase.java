@@ -11,6 +11,10 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.TankConstraints;
 
+/*
+ * Base class with shared functionality for sample tank drives. All hardware-specific details are
+ * handled in subclasses.
+ */
 @Config
 public abstract class SampleTankDriveBase extends TankDrive {
     public static PIDCoefficients DISPLACEMENT_PID = new PIDCoefficients(0, 0, 0);

@@ -11,6 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
+/*
+ * Op mode for tuning follower PID coefficients. This is the final step in the tuning process.
+ */
 @Autonomous
 public class FollowerPIDTuner extends LinearOpMode {
     @Override
@@ -38,11 +41,11 @@ public class FollowerPIDTuner extends LinearOpMode {
 
             while (!isStopRequested() && drive.isFollowingTrajectory()) {
                 Pose2d currentPose = drive.getPoseEstimate();
+                Pose2d error = drive.getFollowingError();
 
                 TelemetryPacket packet = new TelemetryPacket();
                 Canvas fieldOverlay = packet.fieldOverlay();
 
-                Pose2d error = drive.getFollowingError();
                 packet.put("xError", error.getX());
                 packet.put("yError", error.getY());
                 packet.put("headingError", error.getHeading());
