@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Config
 @Autonomous
-public class FeedforwardTuningOpMode extends LinearOpMode {
+public class DriveFFTuningOpMode extends LinearOpMode {
     private static final double EPSILON = 1e-2;
 
     public static final double MAX_POWER = 0.7;

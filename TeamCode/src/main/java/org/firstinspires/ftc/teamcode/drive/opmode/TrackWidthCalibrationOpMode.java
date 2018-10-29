@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -27,6 +28,8 @@ public class TrackWidthCalibrationOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
+        // it's important that the IMU/gyro/heading sensor is not part of the localization
+        drive.setLocalizer(new MecanumDrive.MecanumLocalizer(drive, false));
 
         telemetry.log().add("Press play to begin the track width calibration routine");
         telemetry.log().add("Make sure your robot has enough clearance to turn smoothly");
