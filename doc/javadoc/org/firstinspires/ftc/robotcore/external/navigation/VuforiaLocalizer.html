@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -174,57 +174,63 @@ var activeTableTab = "activeTableTab";
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>boolean[]</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#enableConvertFrameToFormat-int...-">enableConvertFrameToFormat</a></span>(int...&nbsp;pixelFormats)</code>
+<div class="block">(Advanced) Ask Vuforia to convert frames to the given requested formats.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>Camera</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#getCamera--">getCamera</a></span>()</code>
 <div class="block">Provides access to the <code>Camera</code> used by Vuforia.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>CameraCalibration</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#getCameraCalibration--">getCameraCalibration</a></span>()</code>
 <div class="block">(Advanced) Returns information about Vuforia's knowledge of the camera that it is using.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>CameraName</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#getCameraName--">getCameraName</a></span>()</code>
 <div class="block">Provides access to the name of the camera used by Vuforia.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#getFrameOnce--">getFrameOnce</a></span>(&lt;any&gt;&nbsp;frameConsumer)</code>
 <div class="block">(Advanced) Calls the indicated code with a frame from the video stream, exactly once.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.concurrent.BlockingQueue&lt;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.CloseableFrame.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaLocalizer.CloseableFrame</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#getFrameQueue--">getFrameQueue</a></span>()</code>
 <div class="block">(Advanced) Returns a queue into which, if requested, Vuforia <code>Frame</code>s are placed
  as they become available.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#getFrameQueueCapacity--">getFrameQueueCapacity</a></span>()</code>
 <div class="block">(Advanced) Returns the current capacity of the frame queue.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackables.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation">VuforiaTrackables</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#loadTrackablesFromAsset-java.lang.String-">loadTrackablesFromAsset</a></span>(java.lang.String&nbsp;assetName)</code>
 <div class="block">Loads a Vuforia dataset from the indicated application asset, which must be of
  type .XML.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackables.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation">VuforiaTrackables</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#loadTrackablesFromFile-java.lang.String-">loadTrackablesFromFile</a></span>(java.lang.String&nbsp;absoluteFileName)</code>
 <div class="block">Loads a Vuforia dataset from the indicated file, which must be a .XML file
  and contain the full file path.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#setFrameQueueCapacity-int-">setFrameQueueCapacity</a></span>(int&nbsp;capacity)</code>
 <div class="block">(Advanced) Sets the maximum number of <code>Frame</code>s that will simultaneously be stored in the
@@ -428,6 +434,21 @@ var activeTableTab = "activeTableTab";
 <pre>void&nbsp;enableConvertFrameToBitmap()</pre>
 <div class="block">(Advanced) Ensures that Vuforia exposes necessary data formats in <code>Frame</code>s that allows
  <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#convertFrameToBitmap-Frame-"><code>convertFrameToBitmap(Frame)</code></a> to function</div>
+</li>
+</ul>
+<a name="enableConvertFrameToFormat-int...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>enableConvertFrameToFormat</h4>
+<pre>boolean[]&nbsp;enableConvertFrameToFormat(int...&nbsp;pixelFormats)</pre>
+<div class="block">(Advanced) Ask Vuforia to convert frames to the given requested formats. Returns
+ success/failure result for each format.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>pixelFormats</code> - Formats to request Vuforia to convert to.</dd>
+</dl>
 </li>
 </ul>
 <a name="convertFrameToBitmap-Frame-">

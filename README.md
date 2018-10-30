@@ -45,6 +45,34 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 # Release Information
 **************************************************************************************
 
+Version 4.2 (built on 18.10.30)
+ * Includes fix to avoid deadlock situation with WatchdogMonitor which could result in USB communication errors.
+     - Comm error appeared to require that user disconnect USB cable and restart the Robot Controller app to recover.
+     - robotControllerLog.txt would have error messages that included the words "E RobotCore: lynx xmit lock: #### abandoning lock:"
+ * Includes fix to correctly list the parent module address for a REV Robotics Expansion Hub in a configuration (.xml) file.
+     - Bug in versions 4.0 and 4.1 would incorrect list the address module for a parent REV Robotics device as "1".
+     - If the parent module had a higher address value than the daisy-chained module, then this bug would prevent the Robot Controller from communicating with the downstream Expansion Hub.
+ * Added requirement for ACCESS_COARSE_LOCATION to allow a Driver Station running Android Oreo to scan for Wi-Fi Direct devices.
+ * Added google() repo to build.gradle because aapt2 must be downloaded from the google() repository beginning with version 3.2 of the Android Gradle Plugin.
+     - Important Note: Android Studio users will need to be connected to the Internet the first time build the ftc_app project.
+     - Internet connectivity is required for the first build so the appropriate files can be downloaded from the Google repository.
+     - Users should not need to be connected to the Internet for subsequent builds.
+     - This should also fix buid issue where Android Studio would complain that it "Could not find com.android.tools.lint:lint-gradle:26.1.4" (or similar).
+ * Added support for REV Spark Mini motor controller as part of the configuration menu for a servo/PWM port on the REV Expansion Hub.
+ * Provide definition for TorqueNado motor type.
+ * Provide examples for playing audio files in an Op Mode.
+ * Block Development Tool Changes
+     - Includes a fix for a problem with the Velocity blocks that were reported in the FTC Technology forum (Blocks Programming subforum).
+     - Change the "Save completed successfully." message to a white color so it will contrast with a green background.
+     - Fixed the "Download image" feature so it will work if there are text blocks in the op mode.    
+ * Introduce support for Google's TensorFlow Lite technology for object detetion for 2018-2019 game.
+     - TensorFlow lite can recognize Gold Mineral and Silver Mineral from 2018-2019 game.
+     - Example Java and Block op modes are included to show how to determine the relative position of the gold block (left, center, right).
+
+**************************************************************************************
+# Release Information
+**************************************************************************************
+
 Version 4.1 (released on 18.09.24)
 
 Changes include:
