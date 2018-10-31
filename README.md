@@ -45,6 +45,13 @@ For technical questions regarding the SDK, please visit the FTC Technology forum
 # Release Information
 **************************************************************************************
 
+Version 4.3 (built on 18.10.31)
+ * Includes missing TensorFlow-related libraries and files.
+
+**************************************************************************************
+# Release Information
+**************************************************************************************
+
 Version 4.2 (built on 18.10.30)
  * Includes fix to avoid deadlock situation with WatchdogMonitor which could result in USB communication errors.
      - Comm error appeared to require that user disconnect USB cable and restart the Robot Controller app to recover.
