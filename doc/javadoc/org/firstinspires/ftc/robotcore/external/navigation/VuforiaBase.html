@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -226,6 +226,10 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.html#getListener-java.lang.String-">getListener</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation">VuforiaLocalizer</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.html#getVuforiaLocalizer--">getVuforiaLocalizer</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.html#initialize-java.lang.String-CameraName-java.lang.String-boolean-boolean-org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Parameters.CameraMonitorFeedback-float-float-float-float-float-float-boolean-">initialize</a></span>(java.lang.String&nbsp;vuforiaLicenseKey,
           CameraName&nbsp;cameraName,
@@ -243,7 +247,7 @@ extends java.lang.Object</pre>
 <div class="block">Initializes Vuforia, with a CameraName.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.html#initialize-java.lang.String-org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection-boolean-boolean-org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Parameters.CameraMonitorFeedback-float-float-float-float-float-float-boolean-">initialize</a></span>(java.lang.String&nbsp;vuforiaLicenseKey,
           <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.CameraDirection.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">VuforiaLocalizer.CameraDirection</a>&nbsp;cameraDirection,
@@ -260,17 +264,17 @@ extends java.lang.Object</pre>
 <div class="block">Initializes Vuforia, with a CameraDirection.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.html#printTrackableNames--">printTrackableNames</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.TrackingResults.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaBase.TrackingResults</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.html#track-java.lang.String-">track</a></span>(java.lang.String&nbsp;name)</code>
 <div class="block">Returns the TrackingResults of the trackable with the given name.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.TrackingResults.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaBase.TrackingResults</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.html#trackPose-java.lang.String-">trackPose</a></span>(java.lang.String&nbsp;name)</code>
 <div class="block">Returns the TrackingResults of the pose of the trackable with the given name.</div>
@@ -401,6 +405,15 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>createParameters</h4>
 <pre>public static&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.Parameters.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaLocalizer.Parameters</a>&nbsp;createParameters()</pre>
+</li>
+</ul>
+<a name="getVuforiaLocalizer--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVuforiaLocalizer</h4>
+<pre>public&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation">VuforiaLocalizer</a>&nbsp;getVuforiaLocalizer()</pre>
 </li>
 </ul>
 <a name="activate--">

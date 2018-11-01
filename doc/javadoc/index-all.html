@@ -615,6 +615,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html#cancelUpdate">cancelUpdate</a></span> - Variable in class com.qualcomm.ftccommon.<a href="com/qualcomm/ftccommon/FtcLynxFirmwareUpdateActivity.html" title="class in com.qualcomm.ftccommon">FtcLynxFirmwareUpdateActivity</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="org/firstinspires/ftc/robotcore/external/ClassFactory.html#canCreateTFObjectDetector--">canCreateTFObjectDetector()</a></span> - Method in class org.firstinspires.ftc.robotcore.external.<a href="org/firstinspires/ftc/robotcore/external/ClassFactory.html" title="class in org.firstinspires.ftc.robotcore.external">ClassFactory</a></dt>
+<dd>
+<div class="block">Return true if this device is compatible with Tensor Flow Object Detection, false otherwise.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html#cast-java.lang.Object-">cast(Object)</a></span> - Method in class com.qualcomm.robotcore.hardware.<a href="com/qualcomm/robotcore/hardware/HardwareMap.DeviceMapping.html" title="class in com.qualcomm.robotcore.hardware">HardwareMap.DeviceMapping</a></dt>
 <dd>
 <div class="block">A small utility that assists in keeping the Java generics type system happy</div>
@@ -1201,6 +1205,11 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/qualcomm/robotcore/hardware/DeviceManager.html#createServoEx-com.qualcomm.robotcore.hardware.ServoControllerEx-int-java.lang.String-ServoConfigurationType-">createServoEx(ServoControllerEx, int, String, ServoConfigurationType)</a></span> - Method in interface com.qualcomm.robotcore.hardware.<a href="com/qualcomm/robotcore/hardware/DeviceManager.html" title="interface in com.qualcomm.robotcore.hardware">DeviceManager</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="org/firstinspires/ftc/robotcore/external/ClassFactory.html#createTFObjectDetector-TFObjectDetector.Parameters-org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer-">createTFObjectDetector(TFObjectDetector.Parameters, VuforiaLocalizer)</a></span> - Method in class org.firstinspires.ftc.robotcore.external.<a href="org/firstinspires/ftc/robotcore/external/ClassFactory.html" title="class in org.firstinspires.ftc.robotcore.external">ClassFactory</a></dt>
+<dd>
+<div class="block"><code>createTFObjectDetector</code> returns
+ an instance of the Tensor Flow object detector engine configured with the indicated set of parameters.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/qualcomm/robotcore/hardware/DeviceManager.html#createUsbDcMotorController-com.qualcomm.robotcore.util.SerialNumber-java.lang.String-">createUsbDcMotorController(SerialNumber, String)</a></span> - Method in interface com.qualcomm.robotcore.hardware.<a href="com/qualcomm/robotcore/hardware/DeviceManager.html" title="interface in com.qualcomm.robotcore.hardware">DeviceManager</a></dt>
 <dd>
 <div class="block">Create an instance of a DcMotorController</div>
@@ -1702,6 +1711,10 @@
 <dd>
 <div class="block">(Advanced) Ensures that Vuforia exposes necessary data formats in <code>Frame</code>s that allows
  <a href="org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#convertFrameToBitmap-Frame-"><code>VuforiaLocalizer.convertFrameToBitmap(Frame)</code></a> to function</div>
+</dd>
+<dt><span class="memberNameLink"><a href="org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#enableConvertFrameToFormat-int...-">enableConvertFrameToFormat(int...)</a></span> - Method in interface org.firstinspires.ftc.robotcore.external.navigation.<a href="org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation">VuforiaLocalizer</a></dt>
+<dd>
+<div class="block">(Advanced) Ask Vuforia to convert frames to the given requested formats.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/qualcomm/robotcore/hardware/LightMultiplexor.html#enableCount">enableCount</a></span> - Variable in class com.qualcomm.robotcore.hardware.<a href="com/qualcomm/robotcore/hardware/LightMultiplexor.html" title="class in com.qualcomm.robotcore.hardware">LightMultiplexor</a></dt>
 <dd>&nbsp;</dd>
@@ -3570,6 +3583,8 @@
 <dd>
 <div class="block">Returns the raw pose of the trackable as reported by Vuforia.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.html#getVuforiaLocalizer--">getVuforiaLocalizer()</a></span> - Method in class org.firstinspires.ftc.robotcore.external.navigation.<a href="org/firstinspires/ftc/robotcore/external/navigation/VuforiaBase.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaBase</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackableDefaultListener.html#getVuMarkInstanceId--">getVuMarkInstanceId()</a></span> - Method in class org.firstinspires.ftc.robotcore.external.navigation.<a href="org/firstinspires/ftc/robotcore/external/navigation/VuforiaTrackableDefaultListener.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">VuforiaTrackableDefaultListener</a></dt>
 <dd>
 <div class="block">Returns the instance id of the currently visible VuMark associated with this
@@ -4922,6 +4937,8 @@
  that the mean of the accelerations has been acting the entire interval.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="org/firstinspires/ftc/robotcore/external/JavaUtil.html#medianOfList-java.util.List-">medianOfList(List)</a></span> - Static method in class org.firstinspires.ftc.robotcore.external.<a href="org/firstinspires/ftc/robotcore/external/JavaUtil.html" title="class in org.firstinspires.ftc.robotcore.external">JavaUtil</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/qualcomm/ftccommon/SoundPlayer.html#mediaSizer">mediaSizer</a></span> - Variable in class com.qualcomm.ftccommon.<a href="com/qualcomm/ftccommon/SoundPlayer.html" title="class in com.qualcomm.ftccommon">SoundPlayer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/qualcomm/robotcore/hardware/DcMotor.RunMode.html#migrate--">migrate()</a></span> - Method in enum com.qualcomm.robotcore.hardware.<a href="com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a></dt>
 <dd>
