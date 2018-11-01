@@ -23,7 +23,7 @@ public class StraightTestOpMode extends LinearOpMode {
         SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder()
-                .turnTo(Math.PI / 2)
+                .forward(60)
                 .build();
 
         waitForStart();
