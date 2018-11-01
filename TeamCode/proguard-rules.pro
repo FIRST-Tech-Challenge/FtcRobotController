@@ -1,14 +1,16 @@
 # Avoid touching the FTC SDK
 -keep class com.qualcomm.** {*;}
 -keep class org.firstinspires.** {*;}
--keep class com.google.blocks.** {*;}
+-keep class com.google.** {*;}
 -keep class com.vuforia.** {*;}
--keep class javax.** {*;}
+-keep class org.tensorflow.** {*;}
+-keep class javax.** {*;} # this is apparently required
 
 -dontwarn com.qualcomm.**
 -dontwarn org.firstinspires.**
 -dontwarn com.vuforia.**
 -dontwarn com.sun.**
+-dontwarn org.tensorflow.**
 
 # Op modes
 -keep public class * extends com.qualcomm.robotcore.eventloop.opmode.OpMode
