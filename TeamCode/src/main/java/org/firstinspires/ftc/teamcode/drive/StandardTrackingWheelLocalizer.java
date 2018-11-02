@@ -37,8 +37,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
-                new Vector2d(0, LATERAL_DISTANCE), // left
-                new Vector2d(0, -LATERAL_DISTANCE), // right
+                new Vector2d(0, LATERAL_DISTANCE / 2), // left
+                new Vector2d(0, -LATERAL_DISTANCE / 2), // right
                 new Vector2d(FORWARD_OFFSET, 0) // front
         ), Arrays.asList(0.0, 0.0, Math.PI / 2));
 
