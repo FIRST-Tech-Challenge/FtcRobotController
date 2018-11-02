@@ -15,7 +15,8 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
 
 /*
  * Similar to the deprecated TrackWidthCalibrationOpMode, this routine attempts to automagically
@@ -32,7 +33,7 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
+        SampleMecanumDriveBase drive = new SampleMecanumDriveREV(hardwareMap);
         // it's important that the IMU/gyro/heading sensor is not part of the localization
         drive.setLocalizer(new MecanumDrive.MecanumLocalizer(drive, false));
 

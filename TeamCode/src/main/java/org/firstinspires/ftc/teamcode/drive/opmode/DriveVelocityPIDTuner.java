@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -11,30 +12,30 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveSimple;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /*
- * This routine is designed to tune the PIDF coefficients used by the REV Expansion Hubs for closed-
+ * This routine is designed to tune the PID coefficients used by the REV Expansion Hubs for closed-
  * loop velocity control. Although it may seem unnecessary, tuning these coefficients is just as
  * important as the positional parameters. Like the other manual tuning routines, this op mode
  * relies heavily upon the dashboard. To access the dashboard, connect your computer to the RC's
  * WiFi network and navigate to https://192.168.49.1:8080/dash in your browser. Once you've
  * successfully connected, start the program, and your robot will begin moving forward and backward
  * according to a motion profile. Your job is to graph the velocity errors over time and adjust the
- * PIDF coefficients (it's highly suggested to leave F at its default value) like any normal PID
+ * PID coefficients (it's highly suggested to leave F at its default value) like any normal PID
  * controller. Once you've found a satisfactory set of gains, add them to your drive class init.
  */
 @Config
 @Autonomous
 public class DriveVelocityPIDTuner extends LinearOpMode {
-    public static PIDFCoefficients MOTOR_PIDF = new PIDFCoefficients();
+    public static PIDCoefficients MOTOR_PID = new PIDCoefficients();
     public static double DISTANCE = 72;
 
     @Override
@@ -42,13 +43,13 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
-        SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
+        SampleMecanumDriveBase drive = new SampleMecanumDriveREV(hardwareMap);
 
-        PIDFCoefficients currentCoeffs = drive.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        MOTOR_PIDF = pidfCopy(currentCoeffs);
+        PIDCoefficients currentCoeffs = drive.getPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+        MOTOR_PID = pidCopy(currentCoeffs);
         dashboard.updateConfig();
 
-        RobotLog.i("Initial motor PIDF coefficients: " + MOTOR_PIDF);
+        RobotLog.i("Initial motor PID coefficients: " + MOTOR_PID);
 
         NanoClock clock = NanoClock.system();
 
@@ -69,10 +70,10 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         while (!isStopRequested()) {
             // update the coefficients if necessary
-            if (!pidfEquals(currentCoeffs, MOTOR_PIDF)) {
-                RobotLog.i("Updated motor PIDF coefficients: " + MOTOR_PIDF);
-                currentCoeffs = pidfCopy(MOTOR_PIDF);
-                drive.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_PIDF);
+            if (!pidEquals(currentCoeffs, MOTOR_PID)) {
+                RobotLog.i("Updated motor PID coefficients: " + MOTOR_PID);
+                currentCoeffs = pidCopy(MOTOR_PID);
+                drive.setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_PID);
             }
 
             // calculate and set the motor power
@@ -112,12 +113,12 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         }
     }
 
-    private static boolean pidfEquals(PIDFCoefficients coeff1, PIDFCoefficients coeff2) {
-        return coeff1.p == coeff2.p && coeff1.i == coeff1.i && coeff1.d == coeff2.d &&
-                coeff1.f == coeff2.f && coeff1.algorithm == coeff2.algorithm;
+    // TODO: integrate these methods directly into the next Road Runner release
+    private static boolean pidEquals(PIDCoefficients coeff1, PIDCoefficients coeff2) {
+        return coeff1.kP == coeff2.kP && coeff1.kI == coeff1.kI && coeff1.kD == coeff2.kD;
     }
 
-    private static PIDFCoefficients pidfCopy(PIDFCoefficients coeff) {
-        return new PIDFCoefficients(coeff.p, coeff.i, coeff.d, coeff.f, coeff.algorithm);
+    private static PIDCoefficients pidCopy(PIDCoefficients coeff) {
+        return new PIDCoefficients(coeff.kP, coeff.kI, coeff.kD);
     }
 }

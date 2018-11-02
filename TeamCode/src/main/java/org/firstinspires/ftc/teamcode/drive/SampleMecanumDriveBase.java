@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 /*
  * Base class with shared functionality for sample mecanum drives. All hardware-specific details are
@@ -56,4 +57,8 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
     public Pose2d getFollowingError() {
         return follower.getLastError();
     }
+
+    public abstract PIDCoefficients getPIDCoefficients(DcMotor.RunMode runMode);
+
+    public abstract void setPIDCoefficients(DcMotor.RunMode runMode, PIDCoefficients coefficients);
 }

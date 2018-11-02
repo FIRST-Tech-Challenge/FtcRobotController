@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -12,14 +13,14 @@ import java.util.Arrays;
 import java.util.List;
 
 /*
- * Simple tank drive hardware implementation. If your hardware configuration satisfies the
- * requirements, SampleTankDriveOptimized is highly recommended.
+ * Simple tank drive hardware implementation for REV hardware. If your hardware configuration
+ * satisfies the requirements, SampleTankDriveREVOptimized is highly recommended.
  */
-public class SampleTankDriveSimple extends SampleTankDriveBase {
+public class SampleTankDriveREV extends SampleTankDriveBase {
     private List<DcMotorEx> motors, leftMotors, rightMotors;
     private BNO055IMU imu;
 
-    public SampleTankDriveSimple(HardwareMap hardwareMap) {
+    public SampleTankDriveREV(HardwareMap hardwareMap) {
         super();
 
         // TODO: adjust the names of the following hardware devices to match your configuration
@@ -49,13 +50,18 @@ public class SampleTankDriveSimple extends SampleTankDriveBase {
         // TODO: reverse any motors using DcMotor.setDirection()
     }
 
-    public PIDFCoefficients getPIDFCoefficients(DcMotor.RunMode runMode) {
-        return motors.get(0).getPIDFCoefficients(runMode);
+    @Override
+    public PIDCoefficients getPIDCoefficients(DcMotor.RunMode runMode) {
+        PIDFCoefficients coefficients = leftMotors.get(0).getPIDFCoefficients(runMode);
+        return new PIDCoefficients(coefficients.p, coefficients.i, coefficients.d);
     }
 
-    public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
+    @Override
+    public void setPIDCoefficients(DcMotor.RunMode runMode, PIDCoefficients coefficients) {
         for (DcMotorEx motor : motors) {
-            motor.setPIDFCoefficients(runMode, coefficients);
+            motor.setPIDFCoefficients(runMode, new PIDFCoefficients(
+                    coefficients.kP, coefficients.kI, coefficients.kD, 1
+            ));
         }
     }
 

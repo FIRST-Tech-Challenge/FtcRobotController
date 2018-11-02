@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -20,13 +21,13 @@ import java.util.List;
  * Optimized mecanum drive implementation for REV ExHs. The time savings here are enough to cut loop
  * iteration times in half which may significantly improve trajectory following performance.
  */
-public class SampleMecanumDriveOptimized extends SampleMecanumDriveBase {
+public class SampleMecanumDriveREVOptimized extends SampleMecanumDriveBase {
     private ExpansionHubEx hub;
     private ExpansionHubMotor leftFront, leftRear, rightRear, rightFront;
     private List<ExpansionHubMotor> motors;
     private BNO055IMU imu;
 
-    public SampleMecanumDriveOptimized(HardwareMap hardwareMap) {
+    public SampleMecanumDriveREVOptimized(HardwareMap hardwareMap) {
         super();
 
         RevExtensions2.init();
@@ -57,15 +58,23 @@ public class SampleMecanumDriveOptimized extends SampleMecanumDriveBase {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+
+        // TODO: set the tuned coefficients from DriveVelocityPIDTuner if using RUN_USING_ENCODER
+        // setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ...);
     }
 
-    public PIDFCoefficients getPIDFCoefficients(DcMotor.RunMode runMode) {
-        return leftFront.getPIDFCoefficients(runMode);
+    @Override
+    public PIDCoefficients getPIDCoefficients(DcMotor.RunMode runMode) {
+        PIDFCoefficients coefficients = leftFront.getPIDFCoefficients(runMode);
+        return new PIDCoefficients(coefficients.p, coefficients.i, coefficients.d);
     }
 
-    public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
+    @Override
+    public void setPIDCoefficients(DcMotor.RunMode runMode, PIDCoefficients coefficients) {
         for (ExpansionHubMotor motor : motors) {
-            motor.setPIDFCoefficients(runMode, coefficients);
+            motor.setPIDFCoefficients(runMode, new PIDFCoefficients(
+                    coefficients.kP, coefficients.kI, coefficients.kD, 1
+            ));
         }
     }
 
