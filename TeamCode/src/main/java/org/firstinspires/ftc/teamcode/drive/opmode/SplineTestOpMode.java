@@ -42,6 +42,7 @@ public class SplineTestOpMode extends LinearOpMode {
             packet.put("y", currentPose.getY());
             packet.put("heading", currentPose.getHeading());
 
+            fieldOverlay.setStrokeWidth(4);
             fieldOverlay.setStroke("green");
             DashboardUtil.drawSampledTrajectory(fieldOverlay, trajectory);
 

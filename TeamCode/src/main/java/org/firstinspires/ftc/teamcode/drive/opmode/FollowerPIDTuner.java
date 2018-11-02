@@ -21,6 +21,7 @@ public class FollowerPIDTuner extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         SampleMecanumDriveSimple drive = new SampleMecanumDriveSimple(hardwareMap);
 
+        drive.setPoseEstimate(new Pose2d(-24, -24, 0));
         Trajectory trajectory = drive.trajectoryBuilder()
                 .forward(48)
                 .turn(Math.toRadians(90))
@@ -50,6 +51,7 @@ public class FollowerPIDTuner extends LinearOpMode {
                 packet.put("yError", error.getY());
                 packet.put("headingError", error.getHeading());
 
+                fieldOverlay.setStrokeWidth(4);
                 fieldOverlay.setStroke("green");
                 DashboardUtil.drawSampledTrajectory(fieldOverlay, trajectory);
 
