@@ -59,12 +59,12 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
             MotionProfile profile = MotionProfileGenerator.generateSimpleMotionProfile(
                     new MotionState(0, 0, 0, 0),
                     new MotionState(CIRCUMFERENTIAL_DISTANCE, 0, 0, 0),
-                    0.5 * DriveConstants.BASE_CONSTRAINTS.maximumVelocity,
-                    0.5 * DriveConstants.BASE_CONSTRAINTS.maximumAcceleration
+                    DriveConstants.BASE_CONSTRAINTS.maximumVelocity,
+                    DriveConstants.BASE_CONSTRAINTS.maximumAcceleration
             );
 
             double startTime = clock.seconds();
-            while (!this.isStopRequested() && this.isStarted()) {
+            while (!isStopRequested()) {
                 double elapsedTime = clock.seconds() - startTime;
                 if (elapsedTime > profile.duration()) {
                     drive.setVelocity(new Pose2d(0, 0, 0));
@@ -74,12 +74,13 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
                 double heading = drive.getExternalHeading();
                 // accumulator is an unwrapped version of the heading
                 headingAccumulator += Angle.norm(heading - lastHeading);
+                lastHeading = heading;
 
                 MotionState state = profile.get(elapsedTime);
                 drive.setVelocity(new Pose2d(0, 0,
                         Kinematics.calculateMotorFeedforward(
                                 state.getV(),
-                                0.0,
+                                state.getA(),
                                 DriveConstants.kV,
                                 DriveConstants.kA,
                                 DriveConstants.kStatic
