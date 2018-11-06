@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
+import org.openftc.revextensions2.RevExtensions2;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +28,8 @@ public class SampleTankDriveREVOptimized extends SampleTankDriveBase {
 
     public SampleTankDriveREVOptimized(HardwareMap hardwareMap) {
         super();
+
+        RevExtensions2.init();
 
         // TODO: adjust the names of the following hardware devices to match your configuration
         // for simplicity, we assume that the desired IMU and drive motors are on the same hub
