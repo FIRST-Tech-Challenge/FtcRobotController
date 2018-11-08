@@ -24,6 +24,10 @@ For maximal flexibility, Road Runner has no dependencies on Android or the [FTC 
 
 The process is pretty much the same for all drives. Simply extend `TankDrive`, `MecanumDrive`, or `SwerveDrive`, create a constructor that initializes the appropriate `DcMotor` instances, and use them to implement `getWheelPositions()`/`setMotorPowers()`. Often, it's also a good idea to put follower-related logic into the drive classes (this is the approach taken in the quickstart). If you decide to use one of the prebuilt drive classes (e.g., `SampleMecanumDriveOptimzed`), **make sure you update `DriveConstants` to reflect your robot**.
 
+### Drive Velocity PID Tuning (optional)
+
+If you plan on using the built-in velocity PID (i.e., `RUN_USING_ENCODER`), it's important to tune the coefficients for your robot (it is recommended you use the built-in velocity PID). Run `DriveVelocityPIDTuner` and adjust the PID gains to minimize the error as best you can. Finally, uncomment the `setPIDCoefficients()` stub at the bottom of your drive constructor and fill in the new coefficients.
+
 ### Drive Characterization
 
 To determine the proper open loop powers, it's necessary to determine the relationship between robot velocity/acceleration and motor voltage. That is, we want to find kV, kStatic, and kA in the following relation: power = kV * v + kA * a + kStatic (there are some subtleties here; for more details see [this paper](https://www.chiefdelphi.com/media/papers/3402)). In theory, kV = 1 / max velocity and kA = 1 / max acceleration.
@@ -44,7 +48,7 @@ Now your tuned drive class can be used to follow trajectories/paths. The logic f
 
 ### Next steps
 
-Once the open loop response is good, you may begin adding feedback control. It is recommended you start tuning the drive velocity PID coefficients (`RUN_USING_ENCODER`) using `DriveVelocityPIDTuner` (if applicable). Then move on to the follower tunables with `FollowerPIDTuner`.
+Once the open loop response is good, you may begin adding positional feedback control using `FollowerPIDTuner`.
 
 ## Elevator Getting Started
 

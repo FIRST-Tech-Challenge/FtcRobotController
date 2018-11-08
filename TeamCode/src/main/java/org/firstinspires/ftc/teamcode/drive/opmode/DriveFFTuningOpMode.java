@@ -29,8 +29,6 @@ import java.util.List;
 @Config
 @Autonomous
 public class DriveFFTuningOpMode extends LinearOpMode {
-    private static final double EPSILON = 1e-2;
-
     public static final double MAX_POWER = 0.7;
     public static final double DISTANCE = 100;
 
@@ -86,8 +84,7 @@ public class DriveFFTuningOpMode extends LinearOpMode {
         telemetry.log().add("Running...");
         telemetry.update();
 
-        double maxRpm = DriveConstants.MOTOR_CONFIG.getMaxRPM();
-        double maxVel = maxRpm * DriveConstants.GEAR_RATIO * 2 * Math.PI * DriveConstants.WHEEL_RADIUS / 60.0;
+        double maxVel = DriveConstants.rpmToVelocity(DriveConstants.MOTOR_CONFIG.getMaxRPM());
         double finalVel = MAX_POWER * maxVel;
         double accel = (finalVel * finalVel) / (2.0 * DISTANCE);
         double rampTime = Math.sqrt(2.0 * DISTANCE / accel);

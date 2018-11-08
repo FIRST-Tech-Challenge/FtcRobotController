@@ -38,6 +38,12 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
     public static PIDCoefficients MOTOR_PID = new PIDCoefficients();
     public static double DISTANCE = 72;
 
+    /*
+     * If true, the kV value is computed from the free speed determined by the manufacturer (likely
+     * an overestimate of the actual value. If false, the value from DriveConstants.kV is used.
+     */
+    public static boolean USE_THEORETICAL_KV = true;
+
     @Override
     public void runOpMode() {
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -68,6 +74,9 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         double lastTimestamp = 0;
         double profileStartTimestamp = clock.seconds();
 
+        double maxVel = DriveConstants.rpmToVelocity(DriveConstants.MOTOR_CONFIG.getMaxRPM());
+        double kV = USE_THEORETICAL_KV ? (1.0 / maxVel) : DriveConstants.kV;
+
         while (!isStopRequested()) {
             // update the coefficients if necessary
             if (!pidEquals(currentCoeffs, MOTOR_PID)) {
@@ -90,7 +99,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                 profileStartTimestamp = clock.seconds();
             }
             MotionState motionState = activeProfile.get(profileTime);
-            double targetPower = DriveConstants.kV * motionState.getV();
+            double targetPower = kV * motionState.getV();
             drive.setVelocity(new Pose2d(targetPower, 0, 0));
 
             List<Double> wheelPositions = drive.getWheelPositions();

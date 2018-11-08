@@ -48,6 +48,9 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+
+        // TODO: set the tuned coefficients from DriveVelocityPIDTuner if using RUN_USING_ENCODER
+        // setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ...);
     }
 
     @Override
