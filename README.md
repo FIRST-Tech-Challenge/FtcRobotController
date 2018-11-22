@@ -4,7 +4,7 @@ An example FTC project using [Road Runner](https://github.com/acmerobotics/road-
 
 ## Acknowledgements
 
-The quickstart uses the fantastic [RevExtension2 library](https://github.com/OpenFTC/RevExtensions2) to take advantage of REV Expansion Hub bulk reads (thanks @FROGbots-4634!).
+The quickstart uses the fantastic [RevExtensions2 library](https://github.com/OpenFTC/RevExtensions2) to take advantage of REV Expansion Hub bulk reads (thanks @FROGbots-4634!).
 
 ## Installation
 
