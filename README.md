@@ -10,7 +10,7 @@ The quickstart uses the fantastic [RevExtensions2 library](https://github.com/Op
 
 For more detailed instructions on getting Road Runner setup in your own project, see the [Road Runner README](https://github.com/acmerobotics/road-runner#core).
 
-1. Download or clone this repo with `git clone --recurse-submodules https://github.com/acmerobotics/road-runner-quickstart`.
+1. Download or clone this repo with `git clone https://github.com/acmerobotics/road-runner-quickstart`.
 
 1. Open the project in Android Studio and build `TeamCode` like any other `ftc_app` project.
 
@@ -30,11 +30,11 @@ If you plan on using the built-in velocity PID (i.e., `RUN_USING_ENCODER`), it's
 
 ### Drive Characterization
 
-To determine the proper open loop powers, it's necessary to determine the relationship between robot velocity/acceleration and motor voltage. That is, we want to find kV, kStatic, and kA in the following relation: power = kV * v + kA * a + kStatic (there are some subtleties here; for more details see [this paper](https://www.chiefdelphi.com/media/papers/3402)). In theory, kV = 1 / max velocity and kA = 1 / max acceleration.
+To determine the proper open loop powers, it's necessary to determine the relationship between robot velocity/acceleration and motor voltage. That is, we want to find `kV`, `kStatic`, and `kA` in the following relation: `power = kV * v + kA * a + kStatic` (there are some subtleties here; for more details see [this paper](https://www.chiefdelphi.com/media/papers/3402)). In theory, `kV = 1 / max velocity` and `kA = 1 / max acceleration`.
 
-**Note**: In FTC, the easiest way to achieve good performance is to use the built-in velocity PID modes of the motor controllers (i.e., `RUN_USING_ENCODER`). This effectively removes the acceleration and static terms from the previous equation (power is now proportional to velocity, not voltage). Additionally, FTC users are cautioned against relying on kA as FTC batteries are far from ideal voltage sources.
+**Note**: In FTC, the easiest way to achieve good performance is to use the built-in velocity PID modes of the motor controllers (i.e., `RUN_USING_ENCODER`). This effectively removes the acceleration and static terms from the previous equation (power is now proportional to velocity, not voltage). Additionally, FTC users are cautioned against relying on `kA` as FTC batteries are far from ideal voltage sources.
 
-An automated tuning routine is implemented in `DriveFFTuningOpMode`. Simply run it and follow the telemetry prompts. Again, from a practical standpoint in FTC, kV alone without kStatic and kA paired with motor velocity PID is the best configuration for beginners.
+An automated tuning routine is implemented in `DriveFFTuningOpMode`. Simply run it and follow the telemetry prompts. Again, from a practical standpoint in FTC, `kV` alone without `kStatic` and `kA` paired with motor velocity PID is the best configuration for beginners.
 
 ### Drive Track Width
 
@@ -64,4 +64,4 @@ The basic approach to using Road Runner with elevators is quite similar to drive
 
 ## FTC Dashboard
 
-This project also contains some code for interfacing Road Runner with [FTC Dashboard](https://github.com/acmerobotics/ftc-dashboard). In fact, some tuning op modes require the dashboard. See [this page](https://acmerobotics.github.io/ftc-dashboard/gettingstarted#usage) for instructions for using the dashboard.
+This project also contains some code for interfacing Road Runner with [FTC Dashboard](https://github.com/acmerobotics/ftc-dashboard). In fact, some tuning op modes require the dashboard. See [this page](https://acmerobotics.github.io/ftc-dashboard/gettingstarted#usage) for instructions on using the dashboard.
