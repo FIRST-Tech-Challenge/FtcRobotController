@@ -1,20 +1,20 @@
-package org.firstinspires.ftc.teamcode.elevator.opmode;
+package org.firstinspires.ftc.teamcode.arm.opmode;
 
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.elevator.Elevator;
+import org.firstinspires.ftc.teamcode.arm.Arm;
 
 /*
- * Simple test of motion-profiled elevator autonomous operation. The elevator should move *smoothly*
- * between random heights.
+ * Simple test of motion-profiled arm autonomous operation. The arm should move *smoothly*
+ * between random angles.
  */
 @Autonomous
-public class ElevatorTestOpMode extends LinearOpMode {
+public class ArmTestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Elevator elevator = new Elevator(hardwareMap);
+        Arm arm = new Arm(hardwareMap);
         NanoClock clock = NanoClock.system();
 
         waitForStart();
@@ -22,11 +22,11 @@ public class ElevatorTestOpMode extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (!isStopRequested()) {
-            elevator.setHeight(Elevator.MAX_HEIGHT * Math.random());
+            arm.setAngle(Arm.MAX_ANGLE * Math.random());
 
             double startTime = clock.seconds();
             while (!isStopRequested() && (clock.seconds() - startTime) < 5) {
-                elevator.update();
+                arm.update();
             }
         }
     }
