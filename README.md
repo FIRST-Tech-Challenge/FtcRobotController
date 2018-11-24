@@ -50,15 +50,15 @@ Now your tuned drive class can be used to follow trajectories/paths. The logic f
 
 Once the open loop response is good, you may begin adding positional feedback control using `FollowerPIDTuner`.
 
-## Elevator Getting Started
+## Elevator and Arm Getting Started
 
-The basic approach to using Road Runner with elevators is quite similar to drives:
+The basic approach to using Road Runner with elevators (and arms) is quite similar to drives:
 
-1. Fill in the constants in `Elevator`.
+1. Fill in the constants in `Elevator` (`Arm`).
 
-1. Run `ElevatorFFTuningOpMode`.
+1. Run `ElevatorFFTuningOpMode` (`ArmFFTuningOpMode`).
 
-1. Verify proper operation with `ElevatorTestOpMode`.
+1. Verify proper operation with `ElevatorTestOpMode` (`ArmTestOpMode`).
 
 1. Tune the PID coefficients.
 
