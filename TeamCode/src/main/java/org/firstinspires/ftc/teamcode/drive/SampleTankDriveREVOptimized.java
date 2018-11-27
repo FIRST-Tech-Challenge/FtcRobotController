@@ -85,6 +85,11 @@ public class SampleTankDriveREVOptimized extends SampleTankDriveBase {
     public List<Double> getWheelPositions() {
         double leftSum = 0, rightSum = 0;
         RevBulkData bulkData = hub.getBulkInputData();
+
+        if (bulkData == null) {
+            return Arrays.asList(0.0, 0.0);
+        }
+
         for (DcMotorEx leftMotor : leftMotors) {
             leftSum += DriveConstants.encoderTicksToInches(bulkData.getMotorCurrentPosition(leftMotor));
         }
