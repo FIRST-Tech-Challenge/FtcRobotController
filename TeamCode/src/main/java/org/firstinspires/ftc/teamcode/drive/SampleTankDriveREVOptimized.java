@@ -41,6 +41,10 @@ public class SampleTankDriveREVOptimized extends SampleTankDriveBase {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
+        // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
+        // upward (normal to the floor) using a command like the following:
+        // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
+
         // add/remove motors depending on your robot (e.g., 6WD)
         ExpansionHubMotor leftFront = hardwareMap.get(ExpansionHubMotor.class, "leftFront");
         ExpansionHubMotor leftRear = hardwareMap.get(ExpansionHubMotor.class, "leftRear");

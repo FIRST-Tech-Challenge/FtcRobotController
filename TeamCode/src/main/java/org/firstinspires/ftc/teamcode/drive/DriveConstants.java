@@ -11,10 +11,6 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 @Config
 public class DriveConstants {
 
-    private DriveConstants() {
-
-    }
-
     /*
      * TODO: Tune or adjust the following constants to fit your robot. Note that the non-final
      * fields may also be edited through the dashboard (connect to the robot's WiFi network and

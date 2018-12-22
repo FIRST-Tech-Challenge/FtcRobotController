@@ -20,6 +20,10 @@ For more detailed instructions on getting Road Runner setup in your own project,
 
 For maximal flexibility, Road Runner has no dependencies on Android or the [FTC SDK](https://github.com/ftctechnh/ftc_app). Consequently, there is some code required to bridge the two. This project is intended to demonstrate a typical example of this integration. It also presents common routines for tuning/determining the various parameters required for proper operation.
 
+### Upgrade Firmware (recommended)
+
+If you're using REV Expansion Hubs, upgrade the firmware to version 1.8.2. It contains numerous improvements including better DC motor output linearity, closed-loop control, and I2C speeds. The firmware and instructions for flashing can be found [here](http://www.revrobotics.com/software/#ExpansionHubFirmware).
+
 ### Drive Classes
 
 The process is pretty much the same for all drives. Simply extend `TankDrive`, `MecanumDrive`, or `SwerveDrive`, create a constructor that initializes the appropriate `DcMotor` instances, and use them to implement `getWheelPositions()`/`setMotorPowers()`. Often, it's also a good idea to put follower-related logic into the drive classes (this is the approach taken in the quickstart). If you decide to use one of the prebuilt drive classes (e.g., `SampleMecanumDriveOptimzed`), **make sure you update `DriveConstants` to reflect your robot**.
