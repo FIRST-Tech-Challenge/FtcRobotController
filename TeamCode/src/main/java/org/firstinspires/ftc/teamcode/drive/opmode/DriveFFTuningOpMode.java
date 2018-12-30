@@ -84,7 +84,7 @@ public class DriveFFTuningOpMode extends LinearOpMode {
         telemetry.log().add("Running...");
         telemetry.update();
 
-        double maxVel = DriveConstants.rpmToVelocity(DriveConstants.MOTOR_CONFIG.getMaxRPM());
+        double maxVel = DriveConstants.rpmToVelocity(DriveConstants.getMaxRpm());
         double finalVel = MAX_POWER * maxVel;
         double accel = (finalVel * finalVel) / (2.0 * DISTANCE);
         double rampTime = Math.sqrt(2.0 * DISTANCE / accel);

@@ -74,7 +74,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         double lastTimestamp = 0;
         double profileStartTimestamp = clock.seconds();
 
-        double maxVel = DriveConstants.rpmToVelocity(DriveConstants.MOTOR_CONFIG.getMaxRPM());
+        double maxVel = DriveConstants.rpmToVelocity(DriveConstants.getMaxRpm());
         double kV = USE_THEORETICAL_KV ? (1.0 / maxVel) : DriveConstants.kV;
 
         while (!isStopRequested()) {

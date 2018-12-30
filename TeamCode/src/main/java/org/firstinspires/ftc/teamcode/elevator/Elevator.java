@@ -23,7 +23,7 @@ public class Elevator {
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
     public static double SPOOL_RADIUS = 1; // in
-    public static double GEAR_RATIO = 1; // output/input
+    public static double GEAR_RATIO = 1; // output (spool) speed / input (motor) speed
 
     // the operating range of the elevator is restricted to [0, MAX_HEIGHT]
     public static double MAX_HEIGHT = 10; // in
