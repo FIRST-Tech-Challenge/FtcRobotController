@@ -19,15 +19,13 @@ import java.util.List;
  *   1. Slowly ramp the motor power and record encoder values along the way.
  *   2. Run a linear regression on the encoder velocity vs. motor power plot to obtain a slope (kV)
  *      and an optional intercept (kStatic).
- *   3. Accelerate the robot (apply constant power) and record the encoder counts.
+ *   3. Accelerate the arm (apply constant power) and record the encoder counts.
  *   4. Adjust the encoder data based on the velocity tuning data and find kA with another linear
  *      regression.
  */
 @Config
 @Autonomous
 public class ArmFFTuningOpMode extends LinearOpMode {
-    private static final double EPSILON = 1e-2;
-
     public static final double MAX_POWER = 0.7;
     public static final double ANGLE = 0.75 * Arm.MAX_ANGLE;
 
@@ -81,8 +79,7 @@ public class ArmFFTuningOpMode extends LinearOpMode {
         telemetry.log().add("Running...");
         telemetry.update();
 
-        double maxRpm = Arm.MOTOR_CONFIG.getMaxRPM();
-        double maxVel = maxRpm * Arm.GEAR_RATIO * 2 * Math.PI / 60.0;
+        double maxVel = Arm.rpmToVelocity(Arm.getMaxRpm());
         double finalVel = MAX_POWER * maxVel;
         double accel = (finalVel * finalVel) / (2.0 * ANGLE);
         double rampTime = Math.sqrt(2.0 * ANGLE / accel);
@@ -142,7 +139,6 @@ public class ArmFFTuningOpMode extends LinearOpMode {
 
         if (fitAccelFF) {
             telemetry.log().clear();
-            telemetry.log().add("Place the robot back in its starting position");
             telemetry.log().add("Press (A) to continue");
             telemetry.update();
 

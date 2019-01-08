@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
  */
 @Config
 public class Arm {
-    public static final MotorConfigurationType MOTOR_CONFIG =
+    private static final MotorConfigurationType MOTOR_CONFIG =
             MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
 
@@ -48,6 +48,14 @@ public class Arm {
 
     private static double encoderTicksToRadians(int ticks) {
         return 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+    }
+
+    public static double rpmToVelocity(double rpm) {
+        return rpm * GEAR_RATIO * 2 * Math.PI / 60.0;
+    }
+
+    public static double getMaxRpm() {
+        return MOTOR_CONFIG.getMaxRPM();
     }
 
     public Arm(HardwareMap hardwareMap) {
