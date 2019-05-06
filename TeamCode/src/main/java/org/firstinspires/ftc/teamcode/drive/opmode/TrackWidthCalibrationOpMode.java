@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -50,7 +51,7 @@ public class TrackWidthCalibrationOpMode extends LinearOpMode {
         double lastHeading = 0;
 
         drive.setPoseEstimate(new Pose2d());
-        drive.setVelocity(new Pose2d(0.0, 0.0,  POWER));
+        drive.setDrivePower(new Pose2d(0.0, 0.0,  POWER));
         while (!isStopRequested() && (!startedMoving || revolutions <= TOTAL_REVOLUTIONS)) {
             double heading = drive.getExternalHeading();
             if (heading >= Math.PI / 2.0) {
@@ -62,7 +63,7 @@ public class TrackWidthCalibrationOpMode extends LinearOpMode {
             drive.updatePoseEstimate();
             lastHeading = heading;
         }
-        drive.setVelocity(new Pose2d(0.0, 0.0, 0.0));
+        drive.setDriveSignal(new DriveSignal());
         double effectiveTrackWidth = drive.getPoseEstimate().getHeading() / (2.0 * Math.PI * TOTAL_REVOLUTIONS);
 
         telemetry.log().clear();

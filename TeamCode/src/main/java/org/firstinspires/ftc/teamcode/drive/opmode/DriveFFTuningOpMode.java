@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
 import org.firstinspires.ftc.teamcode.util.TuningUtil;
+
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,7 @@ public class DriveFFTuningOpMode extends LinearOpMode {
         telemetry.log().add("Running...");
         telemetry.update();
 
-        double maxVel = DriveConstants.rpmToVelocity(DriveConstants.getMaxRpm());
+        double maxVel = rpmToVelocity(getMaxRpm());
         double finalVel = MAX_POWER * maxVel;
         double accel = (finalVel * finalVel) / (2.0 * DISTANCE);
         double rampTime = Math.sqrt(2.0 * DISTANCE / accel);
@@ -107,10 +108,10 @@ public class DriveFFTuningOpMode extends LinearOpMode {
             powerSamples.add(power);
             positionSamples.add(drive.getPoseEstimate().getX());
 
-            drive.setVelocity(new Pose2d(power, 0.0, 0.0));
+            drive.setDrivePower(new Pose2d(power, 0.0, 0.0));
             drive.updatePoseEstimate();
         }
-        drive.setVelocity(new Pose2d(0.0, 0.0, 0.0));
+        drive.setDrivePower(new Pose2d(0.0, 0.0, 0.0));
 
         TuningUtil.RampFFResult rampResult = TuningUtil.fitRampData(timeSamples, positionSamples, powerSamples, fitIntercept);
 
@@ -168,7 +169,7 @@ public class DriveFFTuningOpMode extends LinearOpMode {
             positionSamples.clear();
 
             drive.setPoseEstimate(new Pose2d());
-            drive.setVelocity(new Pose2d(MAX_POWER, 0.0, 0.0));
+            drive.setDrivePower(new Pose2d(MAX_POWER, 0.0, 0.0));
             while (!isStopRequested()) {
                 double elapsedTime = clock.seconds() - startTime;
                 if (elapsedTime > maxPowerTime) {
@@ -180,7 +181,7 @@ public class DriveFFTuningOpMode extends LinearOpMode {
 
                 drive.updatePoseEstimate();
             }
-            drive.setVelocity(new Pose2d(0.0, 0.0, 0.0));
+            drive.setDrivePower(new Pose2d(0.0, 0.0, 0.0));
 
             TuningUtil.AccelFFResult accelResult = TuningUtil.fitConstantPowerData(timeSamples, positionSamples,
                     MAX_POWER, rampResult.kV, rampResult.kStatic);

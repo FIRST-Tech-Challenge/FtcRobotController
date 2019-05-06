@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.DifferentialControlLoopCoefficients;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.*;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -87,7 +89,7 @@ public class SampleMecanumDriveMR extends SampleMecanumDriveBase {
     public List<Double> getWheelPositions() {
         List<Double> wheelPositions = new ArrayList<>();
         for (DcMotor motor : motors) {
-            wheelPositions.add(DriveConstants.encoderTicksToInches(motor.getCurrentPosition()));
+            wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
         }
         return wheelPositions;
     }
@@ -107,7 +109,7 @@ public class SampleMecanumDriveMR extends SampleMecanumDriveBase {
     }
 
     @Override
-    public double getExternalHeading() {
+    public double getRawExternalHeading() {
         return imu.getAngularOrientation().firstAngle;
     }
 }

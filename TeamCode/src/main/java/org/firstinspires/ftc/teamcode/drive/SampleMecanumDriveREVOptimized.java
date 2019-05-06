@@ -13,6 +13,8 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 import org.openftc.revextensions2.RevExtensions2;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.*;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,7 +95,7 @@ public class SampleMecanumDriveREVOptimized extends SampleMecanumDriveBase {
 
         List<Double> wheelPositions = new ArrayList<>();
         for (ExpansionHubMotor motor : motors) {
-            wheelPositions.add(DriveConstants.encoderTicksToInches(bulkData.getMotorCurrentPosition(motor)));
+            wheelPositions.add(encoderTicksToInches(bulkData.getMotorCurrentPosition(motor)));
         }
         return wheelPositions;
     }
@@ -107,7 +109,7 @@ public class SampleMecanumDriveREVOptimized extends SampleMecanumDriveBase {
     }
 
     @Override
-    public double getExternalHeading() {
+    public double getRawExternalHeading() {
         return imu.getAngularOrientation().firstAngle;
     }
 }

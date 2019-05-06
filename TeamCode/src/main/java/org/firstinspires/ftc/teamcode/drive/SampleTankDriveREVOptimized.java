@@ -14,6 +14,8 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 import org.openftc.revextensions2.RevExtensions2;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.*;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -95,10 +97,10 @@ public class SampleTankDriveREVOptimized extends SampleTankDriveBase {
         }
 
         for (DcMotorEx leftMotor : leftMotors) {
-            leftSum += DriveConstants.encoderTicksToInches(bulkData.getMotorCurrentPosition(leftMotor));
+            leftSum += encoderTicksToInches(bulkData.getMotorCurrentPosition(leftMotor));
         }
         for (DcMotorEx rightMotor : rightMotors) {
-            rightSum += DriveConstants.encoderTicksToInches(bulkData.getMotorCurrentPosition(rightMotor));
+            rightSum += encoderTicksToInches(bulkData.getMotorCurrentPosition(rightMotor));
         }
         return Arrays.asList(leftSum / leftMotors.size(), rightSum / rightMotors.size());
     }
@@ -114,7 +116,7 @@ public class SampleTankDriveREVOptimized extends SampleTankDriveBase {
     }
 
     @Override
-    public double getExternalHeading() {
+    public double getRawExternalHeading() {
         return imu.getAngularOrientation().firstAngle;
     }
 }

@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -95,12 +95,12 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                 MotionState start = new MotionState(movingForwards ? 0 : DISTANCE, 0, 0, 0);
                 MotionState goal = new MotionState(movingForwards ? DISTANCE : 0, 0, 0, 0);
                 activeProfile = MotionProfileGenerator.generateSimpleMotionProfile(start, goal,
-                        DriveConstants.BASE_CONSTRAINTS.maximumVelocity, DriveConstants.BASE_CONSTRAINTS.maximumAcceleration);
+                        DriveConstants.BASE_CONSTRAINTS.maxVel, DriveConstants.BASE_CONSTRAINTS.maxAccel);
                 profileStartTimestamp = clock.seconds();
             }
             MotionState motionState = activeProfile.get(profileTime);
             double targetPower = kV * motionState.getV();
-            drive.setVelocity(new Pose2d(targetPower, 0, 0));
+            drive.setDrivePower(new Pose2d(targetPower, 0, 0));
 
             List<Double> wheelPositions = drive.getWheelPositions();
             if (lastWheelPositions != null) {

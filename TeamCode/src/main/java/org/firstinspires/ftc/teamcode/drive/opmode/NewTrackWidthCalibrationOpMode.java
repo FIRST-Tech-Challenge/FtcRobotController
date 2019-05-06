@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.drive.Kinematics;
+import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.kinematics.Kinematics;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -14,10 +15,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.*;
 /*
  * Similar to the deprecated TrackWidthCalibrationOpMode, this routine attempts to automagically
  * determine the drive track width. The basic idea is to use a motion profile to rotate the robot
@@ -60,15 +61,15 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
             MotionProfile profile = MotionProfileGenerator.generateSimpleMotionProfile(
                     new MotionState(0, 0, 0, 0),
                     new MotionState(CIRCUMFERENTIAL_DISTANCE, 0, 0, 0),
-                    DriveConstants.BASE_CONSTRAINTS.maximumVelocity,
-                    DriveConstants.BASE_CONSTRAINTS.maximumAcceleration
+                    BASE_CONSTRAINTS.maxVel,
+                    BASE_CONSTRAINTS.maxAccel
             );
 
             double startTime = clock.seconds();
             while (!isStopRequested()) {
                 double elapsedTime = clock.seconds() - startTime;
                 if (elapsedTime > profile.duration()) {
-                    drive.setVelocity(new Pose2d(0, 0, 0));
+                    drive.setDriveSignal(new DriveSignal());
                     break;
                 }
 
@@ -78,14 +79,9 @@ public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
                 lastHeading = heading;
 
                 MotionState state = profile.get(elapsedTime);
-                drive.setVelocity(new Pose2d(0, 0,
-                        Kinematics.calculateMotorFeedforward(
-                                state.getV(),
-                                state.getA(),
-                                DriveConstants.kV,
-                                DriveConstants.kA,
-                                DriveConstants.kStatic
-                        )
+                drive.setDriveSignal(new DriveSignal(
+                        new Pose2d(0, 0, state.getV()),
+                        new Pose2d(0, 0, state.getA())
                 ));
 
                 drive.updatePoseEstimate();

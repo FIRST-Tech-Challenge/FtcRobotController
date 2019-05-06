@@ -26,7 +26,10 @@ public class DriveConstants {
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 1; // in
 
-    public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(30.0, 30.0, Math.PI / 2, Math.PI / 2);
+    public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
+            30.0, 30.0, Double.NaN,
+            Math.PI / 2, Math.PI / 2, Double.NaN
+    );
 
     public static double kV = 0;
     public static double kA = 0;
