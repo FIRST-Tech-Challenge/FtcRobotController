@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.arm.Arm;
  * Simple test of motion-profiled arm autonomous operation. The arm should move *smoothly*
  * between random angles.
  */
-@Autonomous
-public class ArmTestOpMode extends LinearOpMode {
+@Autonomous(group = "arm")
+public class ArmTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Arm arm = new Arm(hardwareMap);

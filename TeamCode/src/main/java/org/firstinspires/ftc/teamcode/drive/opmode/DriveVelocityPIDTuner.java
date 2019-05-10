@@ -33,7 +33,7 @@ import java.util.List;
  * controller. Once you've found a satisfactory set of gains, add them to your drive class init.
  */
 @Config
-@Autonomous
+@Autonomous(group = "drive")
 public class DriveVelocityPIDTuner extends LinearOpMode {
     public static PIDCoefficients MOTOR_PID = new PIDCoefficients();
     public static double DISTANCE = 72;

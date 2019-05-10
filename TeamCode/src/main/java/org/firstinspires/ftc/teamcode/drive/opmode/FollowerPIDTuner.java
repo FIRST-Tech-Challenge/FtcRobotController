@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 /*
  * Op mode for tuning follower PID coefficients. This is the final step in the tuning process.
  */
-@Autonomous
+@Autonomous(group = "drive")
 public class FollowerPIDTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

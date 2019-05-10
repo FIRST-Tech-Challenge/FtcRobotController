@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.kinematics.Kinematics;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -18,17 +17,17 @@ import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.*;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.BASE_CONSTRAINTS;
 /*
- * Similar to the deprecated TrackWidthCalibrationOpMode, this routine attempts to automagically
+ * Similar to the deprecated OldTrackWidthTuner, this routine attempts to automagically
  * determine the drive track width. The basic idea is to use a motion profile to rotate the robot
  * a certain circumferential distance and compare it to the angle swept out (as measured by the
  * IMU). For robustness, this procedure is repeated a few times, and the final track width is
  * averaged over those runs.
  */
 @Config
-@Autonomous
-public class NewTrackWidthCalibrationOpMode extends LinearOpMode {
+@Autonomous(group = "drive")
+public class NewTrackWidthTuner extends LinearOpMode {
     public static int CIRCUMFERENTIAL_DISTANCE = 500;
     public static int NUM_TRIALS = 5;
 

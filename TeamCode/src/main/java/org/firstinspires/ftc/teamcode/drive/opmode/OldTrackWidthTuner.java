@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
@@ -16,14 +15,10 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
  * This routine measures the effective track width of the drive (i.e., the distance between a
  * pair of wheels on opposite sides of the robot). This is required for the robot turn properly
  * during open-loop control.
- *
- * Note: this routine is *deprecated*; NewTrackWidthCalibrationOpMode is recommended instead.
  */
 @Config
-@Deprecated
-@Disabled
-@Autonomous
-public class TrackWidthCalibrationOpMode extends LinearOpMode {
+@Autonomous(group = "drive")
+public class OldTrackWidthTuner extends LinearOpMode {
     public static int TOTAL_REVOLUTIONS = 10;
     public static double POWER = 0.3;
 

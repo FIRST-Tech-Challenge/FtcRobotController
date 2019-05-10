@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.elevator.Elevator;
  * Simple test of motion-profiled elevator autonomous operation. The elevator should move *smoothly*
  * between random heights.
  */
-@Autonomous
-public class ElevatorTestOpMode extends LinearOpMode {
+@Autonomous(group = "elevator")
+public class ElevatorTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Elevator elevator = new Elevator(hardwareMap);

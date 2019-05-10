@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.util.LoggingUtil;
  *      regression.
  */
 @Config
-@Autonomous
-public class ElevatorFFTuningOpMode extends LinearOpMode {
+@Autonomous(group = "elevator")
+public class ElevatorFeedforwardTuner extends LinearOpMode {
     public static final double MAX_POWER = 0.7;
     public static final double DISTANCE = 0.75 * Elevator.MAX_HEIGHT;
 

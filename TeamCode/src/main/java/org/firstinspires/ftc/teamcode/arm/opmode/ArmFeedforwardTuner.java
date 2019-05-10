@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.util.LoggingUtil;
  *      regression.
  */
 @Config
-@Autonomous
-public class ArmFFTuningOpMode extends LinearOpMode {
+@Autonomous(group = "arm")
+public class ArmFeedforwardTuner extends LinearOpMode {
     public static final double MAX_POWER = 0.7;
     public static final double ANGLE = 0.75 * Arm.MAX_ANGLE;
 

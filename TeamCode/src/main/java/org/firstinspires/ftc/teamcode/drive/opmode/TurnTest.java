@@ -14,10 +14,10 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 /*
  * This is a simple routine to test turning capabilities. If this is consistently overshooting or
- * undershooting by a significant amount, re-run TrackWidthCalibrationOpMode.
+ * undershooting by a significant amount, re-run OldTrackWidthTuner.
  */
-@Autonomous
-public class TurnTestOpMode extends LinearOpMode {
+@Autonomous(group = "drive")
+public class TurnTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();

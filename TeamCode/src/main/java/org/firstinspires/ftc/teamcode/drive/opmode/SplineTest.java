@@ -13,18 +13,20 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 /*
- * This is a simple routine to test translational drive capabilities. If this is *consistently*
- * overshooting or undershooting by a significant amount, check the constants in the drive class.
+ * This is an example of a more complex path to really test the tuning.
  */
-@Autonomous
-public class StraightTestOpMode extends LinearOpMode {
+@Autonomous(group = "drive")
+public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         SampleMecanumDriveBase drive = new SampleMecanumDriveREV(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder()
-                .forward(60)
+                .splineTo(new Pose2d(30, 30, 0))
+                .waitFor(1)
+                .reverse()
+                .splineTo(new Pose2d(0, 0, 0))
                 .build();
 
         waitForStart();
