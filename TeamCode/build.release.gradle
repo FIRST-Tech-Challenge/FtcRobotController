@@ -1,7 +1,3 @@
-repositories {
-    mavenLocal()
-}
-
 dependencies {
     implementation project(':FtcRobotController')
     implementation (name: 'RobotCore-release', ext: 'aar')
@@ -11,7 +7,7 @@ dependencies {
     implementation (name: 'tfod-release', ext: 'aar')
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext: 'aar')
 
-    implementation 'com.acmerobotics.roadrunner:core:0.3.0-SNAPSHOT'
+    implementation 'com.acmerobotics.roadrunner:core:0.3.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.2.4'
 
     implementation 'org.openftc:rev-extensions-2:1.1'
