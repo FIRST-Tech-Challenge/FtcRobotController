@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.config.ValueProvider;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -12,7 +13,6 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
@@ -35,7 +35,6 @@ import java.util.List;
 @Config
 @Autonomous(group = "drive")
 public class DriveVelocityPIDTuner extends LinearOpMode {
-    public static PIDCoefficients MOTOR_PID = new PIDCoefficients();
     public static double DISTANCE = 72;
 
     /*
@@ -51,11 +50,18 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         SampleMecanumDriveBase drive = new SampleMecanumDriveREV(hardwareMap);
 
-        PIDCoefficients currentCoeffs = drive.getPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        pidCopy(currentCoeffs, MOTOR_PID);
-        dashboard.updateConfig();
+        dashboard.addConfigVariable("DriveVelocityPIDTuner", "VELO_PID",
+                new ValueProvider<PIDCoefficients>() {
+                    @Override
+                    public PIDCoefficients get() {
+                        return drive.getPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+                    }
 
-        RobotLog.i("Initial motor PID coefficients: " + MOTOR_PID);
+                    @Override
+                    public void set(PIDCoefficients value) {
+                        drive.setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, value);
+                    }
+                });
 
         NanoClock clock = NanoClock.system();
 
@@ -78,13 +84,6 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         double kV = USE_THEORETICAL_KV ? (1.0 / maxVel) : DriveConstants.kV;
 
         while (!isStopRequested()) {
-            // update the coefficients if necessary
-            if (!pidEquals(currentCoeffs, MOTOR_PID)) {
-                RobotLog.i("Updated motor PID coefficients: " + MOTOR_PID);
-                pidCopy(MOTOR_PID, currentCoeffs);
-                drive.setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_PID);
-            }
-
             // calculate and set the motor power
             double profileTime = clock.seconds() - profileStartTimestamp;
             double dt = profileTime - lastTimestamp;
@@ -120,16 +119,5 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
             }
             lastWheelPositions = wheelPositions;
         }
-    }
-
-    // TODO: integrate these methods directly into the next Road Runner release
-    private static boolean pidEquals(PIDCoefficients coeff1, PIDCoefficients coeff2) {
-        return coeff1.kP == coeff2.kP && coeff1.kI == coeff2.kI && coeff1.kD == coeff2.kD;
-    }
-
-    private static void pidCopy(PIDCoefficients source, PIDCoefficients dest) {
-        dest.kP = source.kP;
-        dest.kI = source.kI;
-        dest.kD = source.kD;
     }
 }
