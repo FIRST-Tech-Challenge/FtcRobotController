@@ -18,7 +18,7 @@ public class AssetsTrajectoryLoader {
     private static final ObjectMapper MAPPER = new ObjectMapper(new YAMLFactory());
 
     static {
-        MAPPER.registerModule(new KotlinModule((512)));
+        MAPPER.registerModule(new KotlinModule(512));
     }
 
     /**

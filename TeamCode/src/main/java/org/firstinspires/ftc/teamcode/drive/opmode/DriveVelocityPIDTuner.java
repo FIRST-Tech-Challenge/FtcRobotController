@@ -43,6 +43,13 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
      */
     public static boolean USE_THEORETICAL_KV = true;
 
+    private static MotionProfile generateProfile(boolean movingForward) {
+        MotionState start = new MotionState(movingForward ? 0 : DISTANCE, 0, 0, 0);
+        MotionState goal = new MotionState(movingForward ? DISTANCE : 0, 0, 0, 0);
+        return MotionProfileGenerator.generateSimpleMotionProfile(start, goal,
+                DriveConstants.BASE_CONSTRAINTS.maxVel, DriveConstants.BASE_CONSTRAINTS.maxAccel);
+    }
+
     @Override
     public void runOpMode() {
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -73,12 +80,12 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        MotionProfile activeProfile = new MotionProfile();
-        boolean movingForwards = false;
+        boolean movingForwards = true;
+        MotionProfile activeProfile = generateProfile(true);
+        double profileStartTimestamp = clock.seconds();
 
         List<Double> lastWheelPositions = null;
         double lastTimestamp = 0;
-        double profileStartTimestamp = clock.seconds();
 
         double maxVel = DriveConstants.rpmToVelocity(DriveConstants.getMaxRpm());
         double kV = USE_THEORETICAL_KV ? (1.0 / maxVel) : DriveConstants.kV;
@@ -91,10 +98,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
             if (profileTime > activeProfile.duration()) {
                 // generate a new profile
                 movingForwards = !movingForwards;
-                MotionState start = new MotionState(movingForwards ? 0 : DISTANCE, 0, 0, 0);
-                MotionState goal = new MotionState(movingForwards ? DISTANCE : 0, 0, 0, 0);
-                activeProfile = MotionProfileGenerator.generateSimpleMotionProfile(start, goal,
-                        DriveConstants.BASE_CONSTRAINTS.maxVel, DriveConstants.BASE_CONSTRAINTS.maxAccel);
+                activeProfile = generateProfile(movingForwards);
                 profileStartTimestamp = clock.seconds();
             }
             MotionState motionState = activeProfile.get(profileTime);
