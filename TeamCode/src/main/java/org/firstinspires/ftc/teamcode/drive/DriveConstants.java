@@ -27,8 +27,8 @@ public class DriveConstants {
     public static double TRACK_WIDTH = 1; // in
 
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            30.0, 30.0, Double.NaN,
-            Math.PI / 2, Math.PI / 2, Double.NaN
+            30.0, 30.0, 0.0,
+            Math.PI / 2, Math.PI / 2, 0.0
     );
 
     public static double kV = 0;
