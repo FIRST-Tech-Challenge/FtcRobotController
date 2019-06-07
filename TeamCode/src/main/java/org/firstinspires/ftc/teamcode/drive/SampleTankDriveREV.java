@@ -57,6 +57,9 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
 
         // TODO: set the tuned coefficients from DriveVelocityPIDTuner if using RUN_USING_ENCODER
         // setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ...);
+
+        // TODO: if desired, use setLocalizer() to change the localization method
+        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
     }
 
     @Override

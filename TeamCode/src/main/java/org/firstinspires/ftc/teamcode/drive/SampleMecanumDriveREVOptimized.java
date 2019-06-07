@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /*
- * Optimized mecanum drive implementation for REV ExHs. The time savings here are enough to cut loop
- * iteration times in half which may significantly improve trajectory following performance.
+ * Optimized mecanum drive implementation for REV ExHs. The time savings may significantly improve
+ * trajectory following performance with moderate additional complexity.
  */
 public class SampleMecanumDriveREVOptimized extends SampleMecanumDriveBase {
     private ExpansionHubEx hub;
@@ -36,7 +36,7 @@ public class SampleMecanumDriveREVOptimized extends SampleMecanumDriveBase {
 
         // TODO: adjust the names of the following hardware devices to match your configuration
         // for simplicity, we assume that the desired IMU and drive motors are on the same hub
-        // note: this strategy is still applicable even if the drive motors are split between hubs
+        // if your motors are split between hubs, **you will need to add another bulk read**
         hub = hardwareMap.get(ExpansionHubEx.class, "hub");
 
         imu = LynxOptimizedI2cFactory.createLynxEmbeddedImu(hub.getStandardModule(), 0);
@@ -67,6 +67,9 @@ public class SampleMecanumDriveREVOptimized extends SampleMecanumDriveBase {
 
         // TODO: set the tuned coefficients from DriveVelocityPIDTuner if using RUN_USING_ENCODER
         // setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ...);
+
+        // TODO: if desired, use setLocalizer() to change the localization method
+        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
     }
 
     @Override

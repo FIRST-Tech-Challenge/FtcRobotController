@@ -61,6 +61,7 @@ public class Arm {
     public Arm(HardwareMap hardwareMap) {
         motor = hardwareMap.get(DcMotorEx.class, "armMotor");
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // if necessary, reverse the motor so CCW is positive
         // motor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -68,9 +69,7 @@ public class Arm {
 
         // note: if the arm is affected by a non-negligible constant force along the direction
         // of motion (e.g., gravity, kinetic friction, or a combination thereof), it may be
-        // beneficial to compensate for it here (assuming no velocity PID) like so:
-        // e.g., controller = new PIDFController(PID, kV, kA, kStatic,
-        //                                       angle -> kA * 9.81 * Math.sin(angle - VERT_ANGLE));
+        // beneficial to compensate for it with gravity feedforward
         controller = new PIDFController(PID, kV, kA, kStatic);
         offset = motor.getCurrentPosition();
     }

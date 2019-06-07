@@ -69,8 +69,7 @@ public class Elevator {
 
         // note: if the elevator is affected by a non-negligible constant force along the direction
         // of motion (e.g., gravity, kinetic friction, or a combination thereof), it may be
-        // beneficial to compensate for it here (assuming no velocity PID) like so:
-        // e.g., controller = new PIDFController(PID, kV, kA, kStatic, x -> kA * 9.81);
+        // beneficial to compensate for it with a gravity feedforward
         controller = new PIDFController(PID, kV, kA, kStatic);
         offset = motor.getCurrentPosition();
     }
