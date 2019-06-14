@@ -58,7 +58,13 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
     }
 
     private void addPidVariable() {
-        catVar = (CustomVariable) dashboard.getConfigRoot().getVariable("DriveVelocityPIDTuner");
+        String catName = getClass().getSimpleName();
+        catVar = (CustomVariable) dashboard.getConfigRoot().getVariable(catName);
+        if (catVar == null) {
+            // this should never happen...
+            catVar = new CustomVariable();
+            dashboard.getConfigRoot().putVariable(catName, catVar);
+        }
         CustomVariable pidVar = new CustomVariable();
         pidVar.putVariable("kP", new BasicVariable<>(new ValueProvider<Double>() {
             @Override
@@ -86,7 +92,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                         new PIDCoefficients(coeffs.kP, value, coeffs.kD));
             }
         }));
-        pidVar.putVariable("kP", new BasicVariable<>(new ValueProvider<Double>() {
+        pidVar.putVariable("kD", new BasicVariable<>(new ValueProvider<Double>() {
             @Override
             public Double get() {
                 return drive.getPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).kD;
