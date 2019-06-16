@@ -7,12 +7,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.*;
-
+import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
 
 /*
  * Simple tank drive hardware implementation for REV hardware. If your hardware configuration
@@ -24,6 +25,8 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
 
     public SampleTankDriveREV(HardwareMap hardwareMap) {
         super();
+
+        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
         // TODO: adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(BNO055IMU.class, "imu");

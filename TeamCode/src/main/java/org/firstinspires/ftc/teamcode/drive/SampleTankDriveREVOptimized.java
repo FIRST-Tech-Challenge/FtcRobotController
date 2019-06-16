@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.LynxOptimizedI2cFactory;
 import org.jetbrains.annotations.NotNull;
 import org.openftc.revextensions2.ExpansionHubEx;
@@ -14,10 +15,10 @@ import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 import org.openftc.revextensions2.RevExtensions2;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.*;
-
 import java.util.Arrays;
 import java.util.List;
+
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
 
 /*
  * Optimized tank drive implementation for REV ExHs. The time savings may significantly improve
@@ -30,6 +31,8 @@ public class SampleTankDriveREVOptimized extends SampleTankDriveBase {
 
     public SampleTankDriveREVOptimized(HardwareMap hardwareMap) {
         super();
+
+        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
         RevExtensions2.init();
 
