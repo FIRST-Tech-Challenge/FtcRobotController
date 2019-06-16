@@ -41,7 +41,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 new Vector2d(0, LATERAL_DISTANCE / 2), // left
                 new Vector2d(0, -LATERAL_DISTANCE / 2), // right
                 new Vector2d(FORWARD_OFFSET, 0) // front
-        ), Arrays.asList(0.0, 0.0, Math.PI / 2));
+        ), Arrays.asList(0.0, 0.0, Math.toRadians(90.0)));
 
         leftEncoder = hardwareMap.dcMotor.get("leftEncoder");
         rightEncoder = hardwareMap.dcMotor.get("rightEncoder");

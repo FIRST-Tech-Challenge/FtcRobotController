@@ -29,9 +29,9 @@ public class Arm {
 
     public static PIDCoefficients PID = new PIDCoefficients(0, 0, 0);
 
-    public static double MAX_VEL = Math.PI / 8; // rad/s
-    public static double MAX_ACCEL = Math.PI / 8; // rad/s^2
-    public static double MAX_JERK = Math.PI / 8; // rad/s^3
+    public static double MAX_VEL = Math.toRadians(22.5); // rad/s
+    public static double MAX_ACCEL = Math.toRadians(22.5); // rad/s^2
+    public static double MAX_JERK = Math.toRadians(22.5); // rad/s^3
 
     public static double kV = 0;
     public static double kA = 0;
