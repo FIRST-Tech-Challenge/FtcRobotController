@@ -119,17 +119,25 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
         switch (mode) {
             case IDLE:
                 // do nothing
+                setDriveSignal(new DriveSignal());
                 break;
             case TURN: {
                 double t = clock.seconds() - turnStart;
-                double targetOmega = turnProfile.get(t).getV();
+
+                MotionState targetState = turnProfile.get(t);
+                double targetOmega = targetState.getV();
+                double targetAlpha = targetState.getA();
                 double correction = turnController.update(currentPose.getHeading(), targetOmega);
+
                 setDriveSignal(new DriveSignal(new Pose2d(
                         0, 0, targetOmega + correction
+                ), new Pose2d(
+                        0, 0, targetAlpha
                 )));
 
                 if (t >= turnProfile.duration()) {
                     mode = Mode.IDLE;
+                    setDriveSignal(new DriveSignal());
                 }
 
                 break;
@@ -146,6 +154,7 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
 
                 if (!follower.isFollowing()) {
                     mode = Mode.IDLE;
+                    setDriveSignal(new DriveSignal());
                 }
 
                 break;
