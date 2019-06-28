@@ -2,7 +2,10 @@ dependencies {
     implementation (name:'Inspection-release', ext: 'aar')
     implementation (name:'Blocks-release', ext: 'aar')
     implementation (name:'RobotCore-release', ext: 'aar')
+    implementation (name:'RobotServer-release', ext: 'aar')
+    implementation (name:'OnBotJava-release', ext: 'aar')
     implementation (name:'Hardware-release', ext: 'aar')
     implementation (name:'FtcCommon-release', ext: 'aar')
     implementation (name:'WirelessP2p-release', ext:'aar')
+    implementation 'com.android.support:support-compat:28.0.0'
 }

@@ -72,7 +72,7 @@ var activeTableTab = "activeTableTab";
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.android.preference.PreferenceFragment">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
@@ -98,10 +98,15 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>PreferenceFragment</li>
+<li>android.app.Fragment</li>
+<li>
+<ul class="inheritance">
+<li>android.preference.PreferenceFragment</li>
 <li>
 <ul class="inheritance">
 <li>com.qualcomm.ftccommon.FtcAboutActivity.AboutFragment</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -111,19 +116,45 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>android.content.ComponentCallbacks, android.content.ComponentCallbacks2, android.view.View.OnCreateContextMenuListener</dd>
+</dl>
+<dl>
 <dt>Enclosing class:</dt>
 <dd><a href="../../../com/qualcomm/ftccommon/FtcAboutActivity.html" title="class in com.qualcomm.ftccommon">FtcAboutActivity</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public static class <span class="typeNameLabel">FtcAboutActivity.AboutFragment</span>
-extends PreferenceFragment</pre>
+extends android.preference.PreferenceFragment</pre>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.android.preference.PreferenceFragment">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;android.preference.PreferenceFragment</h3>
+<code>android.preference.PreferenceFragment.OnPreferenceStartFragmentCallback</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.android.app.Fragment">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from class&nbsp;android.app.Fragment</h3>
+<code>android.app.Fragment.InstantiationException, android.app.Fragment.SavedState</code></li>
+</ul>
+</li>
+</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
@@ -141,6 +172,13 @@ extends PreferenceFragment</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcAboutActivity.AboutFragment.html#remoteConfigure">remoteConfigure</a></span></code>&nbsp;</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.android.content.ComponentCallbacks2">
+<!--   -->
+</a>
+<h3>Fields inherited from interface&nbsp;android.content.ComponentCallbacks2</h3>
+<code>TRIM_MEMORY_BACKGROUND, TRIM_MEMORY_COMPLETE, TRIM_MEMORY_MODERATE, TRIM_MEMORY_RUNNING_CRITICAL, TRIM_MEMORY_RUNNING_LOW, TRIM_MEMORY_RUNNING_MODERATE, TRIM_MEMORY_UI_HIDDEN</code></li>
+</ul>
 </li>
 </ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -174,7 +212,7 @@ extends PreferenceFragment</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcAboutActivity.AboutFragment.html#onCreate-Bundle-">onCreate</a></span>(Bundle&nbsp;savedInstanceState)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcAboutActivity.AboutFragment.html#onCreate-android.os.Bundle-">onCreate</a></span>(android.os.Bundle&nbsp;savedInstanceState)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -200,11 +238,25 @@ extends PreferenceFragment</pre>
 </tr>
 </table>
 <ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.android.preference.PreferenceFragment">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;android.preference.PreferenceFragment</h3>
+<code>addPreferencesFromIntent, addPreferencesFromResource, findPreference, getPreferenceManager, getPreferenceScreen, onActivityCreated, onActivityResult, onCreateView, onDestroy, onDestroyView, onPreferenceTreeClick, onSaveInstanceState, onStart, onStop, setPreferenceScreen</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.android.app.Fragment">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;android.app.Fragment</h3>
+<code>dump, equals, getActivity, getAllowEnterTransitionOverlap, getAllowReturnTransitionOverlap, getArguments, getChildFragmentManager, getContext, getEnterTransition, getExitTransition, getFragmentManager, getHost, getId, getLoaderManager, getParentFragment, getReenterTransition, getResources, getRetainInstance, getReturnTransition, getSharedElementEnterTransition, getSharedElementReturnTransition, getString, getString, getTag, getTargetFragment, getTargetRequestCode, getText, getUserVisibleHint, getView, hashCode, instantiate, instantiate, isAdded, isDetached, isHidden, isInLayout, isRemoving, isResumed, isVisible, onAttach, onAttach, onConfigurationChanged, onContextItemSelected, onCreateAnimator, onCreateContextMenu, onCreateOptionsMenu, onDestroyOptionsMenu, onDetach, onHiddenChanged, onInflate, onInflate, onInflate, onLowMemory, onOptionsItemSelected, onOptionsMenuClosed, onPause, onPrepareOptionsMenu, onRequestPermissionsResult, onResume, onTrimMemory, onViewCreated, onViewStateRestored, registerForContextMenu, requestPermissions, setAllowEnterTransitionOverlap, setAllowReturnTransitionOverlap, setArguments, setEnterSharedElementCallback, setEnterTransition, setExitSharedElementCallback, setExitTransition, setHasOptionsMenu, setInitialSavedState, setMenuVisibility, setReenterTransition, setRetainInstance, setReturnTransition, setSharedElementEnterTransition, setSharedElementReturnTransition, setTargetFragment, setUserVisibleHint, shouldShowRequestPermissionRationale, startActivity, startActivity, startActivityForResult, startActivityForResult, toString, unregisterForContextMenu</code></li>
+</ul>
+<ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -281,13 +333,17 @@ extends PreferenceFragment</pre>
 <pre>public&nbsp;void&nbsp;refreshAllUnavailable()</pre>
 </li>
 </ul>
-<a name="onCreate-Bundle-">
+<a name="onCreate-android.os.Bundle-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onCreate</h4>
-<pre>public&nbsp;void&nbsp;onCreate(Bundle&nbsp;savedInstanceState)</pre>
+<pre>public&nbsp;void&nbsp;onCreate(android.os.Bundle&nbsp;savedInstanceState)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>onCreate</code>&nbsp;in class&nbsp;<code>android.preference.PreferenceFragment</code></dd>
+</dl>
 </li>
 </ul>
 <a name="setPreferenceSummary-int-java.lang.String-">
@@ -362,7 +418,7 @@ extends PreferenceFragment</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.classes.inherited.from.class.android.preference.PreferenceFragment">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>

@@ -158,34 +158,30 @@ implements <a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Man
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#isPeerConnected">isPeerConnected</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#RC_BATTERY_STATUS_KEY">RC_BATTERY_STATUS_KEY</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#ROBOT_BATTERY_LEVEL_KEY">ROBOT_BATTERY_LEVEL_KEY</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>RobotState</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#state">state</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#SYSTEM_ERROR_KEY">SYSTEM_ERROR_KEY</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#SYSTEM_NONE_KEY">SYSTEM_NONE_KEY</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#SYSTEM_WARNING_KEY">SYSTEM_WARNING_KEY</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#TAG">TAG</a></span></code>&nbsp;</td>
 </tr>
@@ -204,7 +200,7 @@ implements <a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Man
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#EventLoopManager-Context-com.qualcomm.robotcore.eventloop.opmode.EventLoopManagerClient-com.qualcomm.robotcore.eventloop.EventLoop-">EventLoopManager</a></span>(Context&nbsp;context,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#EventLoopManager-android.content.Context-com.qualcomm.robotcore.eventloop.opmode.EventLoopManagerClient-com.qualcomm.robotcore.eventloop.EventLoop-">EventLoopManager</a></span>(android.content.Context&nbsp;context,
                 <a href="../../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopManagerClient.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">EventLoopManagerClient</a>&nbsp;eventLoopManagerClient,
                 <a href="../../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;idleEventLoop)</code>
 <div class="block">Constructor</div>
@@ -290,16 +286,16 @@ implements <a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Man
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#onNetworkConnectionEvent-NetworkConnection.NetworkEvent-">onNetworkConnectionEvent</a></span>(NetworkConnection.NetworkEvent&nbsp;event)</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
-<td class="colFirst"><code>CallbackResult</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#packetReceived-RobocolDatagram-">packetReceived</a></span>(RobocolDatagram&nbsp;packet)</code>&nbsp;</td>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#onPeerConnected--">onPeerConnected</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#peerConnected-boolean-">peerConnected</a></span>(boolean&nbsp;peerLikelyChanged)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#onPeerDisconnected--">onPeerDisconnected</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i15" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#peerDisconnected--">peerDisconnected</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>CallbackResult</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#packetReceived-RobocolDatagram-">packetReceived</a></span>(RobocolDatagram&nbsp;packet)</code>&nbsp;</td>
 </tr>
 <tr id="i16" class="altColor">
 <td class="colFirst"><code>CallbackResult</code></td>
@@ -344,7 +340,8 @@ implements <a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Man
 <tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html#setMonitor-com.qualcomm.robotcore.eventloop.EventLoopManager.EventLoopMonitor-">setMonitor</a></span>(<a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.EventLoopMonitor.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoopManager.EventLoopMonitor</a>&nbsp;monitor)</code>
-<div class="block">Set a monitor for this event loop</div>
+<div class="block">Set a monitor for this event loop, which will immediately have the appropriate method called to
+ indicate the current peer status.</div>
 </td>
 </tr>
 <tr id="i24" class="altColor">
@@ -472,19 +469,10 @@ implements <a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Man
 <a name="state">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>state</h4>
 <pre>public&nbsp;RobotState state</pre>
-</li>
-</ul>
-<a name="isPeerConnected">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>isPeerConnected</h4>
-<pre>protected&nbsp;boolean isPeerConnected</pre>
 </li>
 </ul>
 </li>
@@ -495,13 +483,13 @@ implements <a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Man
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="EventLoopManager-Context-com.qualcomm.robotcore.eventloop.opmode.EventLoopManagerClient-com.qualcomm.robotcore.eventloop.EventLoop-">
+<a name="EventLoopManager-android.content.Context-com.qualcomm.robotcore.eventloop.opmode.EventLoopManagerClient-com.qualcomm.robotcore.eventloop.EventLoop-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>EventLoopManager</h4>
-<pre>public&nbsp;EventLoopManager(Context&nbsp;context,
+<pre>public&nbsp;EventLoopManager(android.content.Context&nbsp;context,
                         <a href="../../../../com/qualcomm/robotcore/eventloop/opmode/EventLoopManagerClient.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">EventLoopManagerClient</a>&nbsp;eventLoopManagerClient,
                         <a href="../../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a>&nbsp;idleEventLoop)</pre>
 <div class="block">Constructor</div>
@@ -531,7 +519,8 @@ implements <a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Man
 <li class="blockList">
 <h4>setMonitor</h4>
 <pre>public&nbsp;void&nbsp;setMonitor(<a href="../../../../com/qualcomm/robotcore/eventloop/EventLoopManager.EventLoopMonitor.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoopManager.EventLoopMonitor</a>&nbsp;monitor)</pre>
-<div class="block">Set a monitor for this event loop</div>
+<div class="block">Set a monitor for this event loop, which will immediately have the appropriate method called to
+ indicate the current peer status.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>monitor</code> - event loop monitor</dd>
@@ -811,22 +800,22 @@ implements <a href="../../../../com/qualcomm/robotcore/eventloop/SyncdDevice.Man
 </dl>
 </li>
 </ul>
-<a name="peerConnected-boolean-">
+<a name="onPeerConnected--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>peerConnected</h4>
-<pre>public&nbsp;void&nbsp;peerConnected(boolean&nbsp;peerLikelyChanged)</pre>
+<h4>onPeerConnected</h4>
+<pre>public&nbsp;void&nbsp;onPeerConnected()</pre>
 </li>
 </ul>
-<a name="peerDisconnected--">
+<a name="onPeerDisconnected--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>peerDisconnected</h4>
-<pre>public&nbsp;void&nbsp;peerDisconnected()</pre>
+<h4>onPeerDisconnected</h4>
+<pre>public&nbsp;void&nbsp;onPeerDisconnected()</pre>
 </li>
 </ul>
 <a name="peerDiscoveryEvent-RobocolDatagram-">

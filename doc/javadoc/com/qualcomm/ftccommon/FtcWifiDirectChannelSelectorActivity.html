@@ -110,10 +110,15 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>android.widget.AdapterView.OnItemClickListener</dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">FtcWifiDirectChannelSelectorActivity</span>
-extends ThemedActivity</pre>
+extends ThemedActivity
+implements android.widget.AdapterView.OnItemClickListener</pre>
 </li>
 </ul>
 </div>
@@ -188,8 +193,8 @@ extends ThemedActivity</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>protected &lt;any&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcWifiDirectChannelSelectorActivity.html#getAdapter--">getAdapter</a></span>(&lt;any&gt;&nbsp;av)</code>&nbsp;</td>
+<td class="colFirst"><code>protected android.widget.ArrayAdapter&lt;WifiDirectChannelAndDescription&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcWifiDirectChannelSelectorActivity.html#getAdapter-android.widget.AdapterView-">getAdapter</a></span>(android.widget.AdapterView&lt;?&gt;&nbsp;av)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
@@ -197,11 +202,11 @@ extends ThemedActivity</pre>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcWifiDirectChannelSelectorActivity.html#loadAdapter-ListView-">loadAdapter</a></span>(ListView&nbsp;itemsListView)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcWifiDirectChannelSelectorActivity.html#loadAdapter-android.widget.ListView-">loadAdapter</a></span>(android.widget.ListView&nbsp;itemsListView)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcWifiDirectChannelSelectorActivity.html#onCreate-Bundle-">onCreate</a></span>(Bundle&nbsp;savedInstanceState)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcWifiDirectChannelSelectorActivity.html#onCreate-android.os.Bundle-">onCreate</a></span>(android.os.Bundle&nbsp;savedInstanceState)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
@@ -209,8 +214,8 @@ extends ThemedActivity</pre>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcWifiDirectChannelSelectorActivity.html#onItemClick--View-int-long-">onItemClick</a></span>(&lt;any&gt;&nbsp;parent,
-           View&nbsp;view,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcWifiDirectChannelSelectorActivity.html#onItemClick-android.widget.AdapterView-android.view.View-int-long-">onItemClick</a></span>(android.widget.AdapterView&lt;?&gt;&nbsp;parent,
+           android.view.View&nbsp;view,
            int&nbsp;position,
            long&nbsp;id)</code>&nbsp;</td>
 </tr>
@@ -220,7 +225,7 @@ extends ThemedActivity</pre>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcWifiDirectChannelSelectorActivity.html#onWifiSettingsClicked-View-">onWifiSettingsClicked</a></span>(View&nbsp;view)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcWifiDirectChannelSelectorActivity.html#onWifiSettingsClicked-android.view.View-">onWifiSettingsClicked</a></span>(android.view.View&nbsp;view)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -291,13 +296,13 @@ extends ThemedActivity</pre>
 <pre>public&nbsp;java.lang.String&nbsp;getTag()</pre>
 </li>
 </ul>
-<a name="onCreate-Bundle-">
+<a name="onCreate-android.os.Bundle-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onCreate</h4>
-<pre>protected&nbsp;void&nbsp;onCreate(Bundle&nbsp;savedInstanceState)</pre>
+<pre>protected&nbsp;void&nbsp;onCreate(android.os.Bundle&nbsp;savedInstanceState)</pre>
 </li>
 </ul>
 <a name="onStart--">
@@ -318,43 +323,47 @@ extends ThemedActivity</pre>
 <pre>protected&nbsp;void&nbsp;onDestroy()</pre>
 </li>
 </ul>
-<a name="getAdapter--">
+<a name="getAdapter-android.widget.AdapterView-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getAdapter</h4>
-<pre>protected&nbsp;&lt;any&gt;&nbsp;getAdapter(&lt;any&gt;&nbsp;av)</pre>
+<pre>protected&nbsp;android.widget.ArrayAdapter&lt;WifiDirectChannelAndDescription&gt;&nbsp;getAdapter(android.widget.AdapterView&lt;?&gt;&nbsp;av)</pre>
 </li>
 </ul>
-<a name="loadAdapter-ListView-">
+<a name="loadAdapter-android.widget.ListView-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>loadAdapter</h4>
-<pre>protected&nbsp;void&nbsp;loadAdapter(ListView&nbsp;itemsListView)</pre>
+<pre>protected&nbsp;void&nbsp;loadAdapter(android.widget.ListView&nbsp;itemsListView)</pre>
 </li>
 </ul>
-<a name="onItemClick--View-int-long-">
+<a name="onItemClick-android.widget.AdapterView-android.view.View-int-long-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onItemClick</h4>
-<pre>public&nbsp;void&nbsp;onItemClick(&lt;any&gt;&nbsp;parent,
-                        View&nbsp;view,
+<pre>public&nbsp;void&nbsp;onItemClick(android.widget.AdapterView&lt;?&gt;&nbsp;parent,
+                        android.view.View&nbsp;view,
                         int&nbsp;position,
                         long&nbsp;id)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>onItemClick</code>&nbsp;in interface&nbsp;<code>android.widget.AdapterView.OnItemClickListener</code></dd>
+</dl>
 </li>
 </ul>
-<a name="onWifiSettingsClicked-View-">
+<a name="onWifiSettingsClicked-android.view.View-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>onWifiSettingsClicked</h4>
-<pre>public&nbsp;void&nbsp;onWifiSettingsClicked(View&nbsp;view)</pre>
+<pre>public&nbsp;void&nbsp;onWifiSettingsClicked(android.view.View&nbsp;view)</pre>
 </li>
 </ul>
 </li>

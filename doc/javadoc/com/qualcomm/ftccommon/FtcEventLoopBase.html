@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -160,7 +160,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected Activity</code></td>
+<td class="colFirst"><code>protected android.app.Activity</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#activityContext">activityContext</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
@@ -223,10 +223,10 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected </code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#FtcEventLoopBase-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-Activity-com.qualcomm.ftccommon.ProgrammingModeController-">FtcEventLoopBase</a></span>(HardwareFactory&nbsp;hardwareFactory,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#FtcEventLoopBase-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-android.app.Activity-com.qualcomm.ftccommon.ProgrammingModeController-">FtcEventLoopBase</a></span>(HardwareFactory&nbsp;hardwareFactory,
                 <a href="../../../com/qualcomm/robotcore/eventloop/opmode/OpModeRegister.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">OpModeRegister</a>&nbsp;userOpmodeRegister,
                 <a href="../../../com/qualcomm/ftccommon/UpdateUI.Callback.html" title="class in com.qualcomm.ftccommon">UpdateUI.Callback</a>&nbsp;callback,
-                Activity&nbsp;activityContext,
+                android.app.Activity&nbsp;activityContext,
                 <a href="../../../com/qualcomm/ftccommon/ProgrammingModeController.html" title="interface in com.qualcomm.ftccommon">ProgrammingModeController</a>&nbsp;programmingModeController)</code>&nbsp;</td>
 </tr>
 </table>
@@ -378,50 +378,54 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 </tr>
 <tr id="i29" class="rowColor">
 <td class="colFirst"><code>protected CallbackResult</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandVisuallyIdentify-Command-">handleCommandVisuallyIdentify</a></span>(Command&nbsp;command)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandVisuallyConfirmWifiReset--">handleCommandVisuallyConfirmWifiReset</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i30" class="altColor">
+<td class="colFirst"><code>protected CallbackResult</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#handleCommandVisuallyIdentify-Command-">handleCommandVisuallyIdentify</a></span>(Command&nbsp;command)</code>&nbsp;</td>
+</tr>
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#init-com.qualcomm.robotcore.eventloop.EventLoopManager-">init</a></span>(<a href="../../../com/qualcomm/robotcore/eventloop/EventLoopManager.html" title="class in com.qualcomm.robotcore.eventloop">EventLoopManager</a>&nbsp;eventLoopManager)</code>
 <div class="block">Init method, this will be called before the first call to loop.</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>CallbackResult</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#processCommand-Command-">processCommand</a></span>(Command&nbsp;command)</code>
 <div class="block">Process command method, this will be called if the event loop manager receives a user defined
  command.</div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#sendUIState--">sendUIState</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>protected USBScanManager</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#startUsbScanMangerIfNecessary--">startUsbScanMangerIfNecessary</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#talkToParentLynxModule-com.qualcomm.robotcore.hardware.DeviceManager-LynxUsbDevice-int-org.firstinspires.ftc.robotcore.external.Consumer-">talkToParentLynxModule</a></span>(<a href="../../../com/qualcomm/robotcore/hardware/DeviceManager.html" title="interface in com.qualcomm.robotcore.hardware">DeviceManager</a>&nbsp;deviceManager,
                       LynxUsbDevice&nbsp;lynxUsbDevice,
                       int&nbsp;moduleAddress,
                       <a href="../../../org/firstinspires/ftc/robotcore/external/Consumer.html" title="interface in org.firstinspires.ftc.robotcore.external">Consumer</a>&lt;LynxModule&gt;&nbsp;consumer)</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#teardown--">teardown</a></span>()</code>
 <div class="block">Teardown method, this will be called after the last call to loop.</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#updateFirmwareOnce-com.qualcomm.ftccommon.FtcEventLoopBase.LynxUsbDeviceContainer-java.lang.String-byte:A-com.qualcomm.robotcore.util.SerialNumber-">updateFirmwareOnce</a></span>(<a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.LynxUsbDeviceContainer.html" title="class in com.qualcomm.ftccommon">FtcEventLoopBase.LynxUsbDeviceContainer</a>&nbsp;lynxUsbDevice,
                   java.lang.String&nbsp;imageFileName,
                   byte[]&nbsp;firmwareImage,
                   <a href="../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber)</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/FtcEventLoopBase.html#updateLynxFirmware-com.qualcomm.robotcore.util.SerialNumber-com.qualcomm.ftccommon.CommandList.FWImage-">updateLynxFirmware</a></span>(<a href="../../../com/qualcomm/robotcore/util/SerialNumber.html" title="class in com.qualcomm.robotcore.util">SerialNumber</a>&nbsp;serialNumber,
                   com.qualcomm.ftccommon.CommandList.FWImage&nbsp;imageFileName)</code>
@@ -442,7 +446,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;com.qualcomm.robotcore.eventloop.<a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" title="interface in com.qualcomm.robotcore.eventloop">EventLoop</a></h3>
-<code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#getOpModeManager--">getOpModeManager</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#handleUsbModuleAttach-RobotUsbModule-">handleUsbModuleAttach</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#handleUsbModuleDetach-RobotUsbModule-">handleUsbModuleDetach</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#loop--">loop</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-UsbDevice-">onUsbDeviceAttached</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#pendUsbDeviceAttachment-com.qualcomm.robotcore.util.SerialNumber-long-java.util.concurrent.TimeUnit-">pendUsbDeviceAttachment</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#processedRecentlyAttachedUsbDevices--">processedRecentlyAttachedUsbDevices</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#refreshUserTelemetry-TelemetryMessage-double-">refreshUserTelemetry</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#requestOpModeStop-com.qualcomm.robotcore.eventloop.opmode.OpMode-">requestOpModeStop</a></code></li>
+<code><a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#getOpModeManager--">getOpModeManager</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#handleUsbModuleAttach-RobotUsbModule-">handleUsbModuleAttach</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#handleUsbModuleDetach-RobotUsbModule-">handleUsbModuleDetach</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#loop--">loop</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#onUsbDeviceAttached-android.hardware.usb.UsbDevice-">onUsbDeviceAttached</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#pendUsbDeviceAttachment-com.qualcomm.robotcore.util.SerialNumber-long-java.util.concurrent.TimeUnit-">pendUsbDeviceAttachment</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#processedRecentlyAttachedUsbDevices--">processedRecentlyAttachedUsbDevices</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#refreshUserTelemetry-TelemetryMessage-double-">refreshUserTelemetry</a>, <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html#requestOpModeStop-com.qualcomm.robotcore.eventloop.opmode.OpMode-">requestOpModeStop</a></code></li>
 </ul>
 </li>
 </ul>
@@ -486,7 +490,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 <ul class="blockList">
 <li class="blockList">
 <h4>activityContext</h4>
-<pre>protected&nbsp;Activity activityContext</pre>
+<pre>protected&nbsp;android.app.Activity activityContext</pre>
 </li>
 </ul>
 <a name="robotCfgFileMgr">
@@ -560,7 +564,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="FtcEventLoopBase-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-Activity-com.qualcomm.ftccommon.ProgrammingModeController-">
+<a name="FtcEventLoopBase-HardwareFactory-com.qualcomm.robotcore.eventloop.opmode.OpModeRegister-com.qualcomm.ftccommon.UpdateUI.Callback-android.app.Activity-com.qualcomm.ftccommon.ProgrammingModeController-">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -569,7 +573,7 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 <pre>protected&nbsp;FtcEventLoopBase(HardwareFactory&nbsp;hardwareFactory,
                            <a href="../../../com/qualcomm/robotcore/eventloop/opmode/OpModeRegister.html" title="interface in com.qualcomm.robotcore.eventloop.opmode">OpModeRegister</a>&nbsp;userOpmodeRegister,
                            <a href="../../../com/qualcomm/ftccommon/UpdateUI.Callback.html" title="class in com.qualcomm.ftccommon">UpdateUI.Callback</a>&nbsp;callback,
-                           Activity&nbsp;activityContext,
+                           android.app.Activity&nbsp;activityContext,
                            <a href="../../../com/qualcomm/ftccommon/ProgrammingModeController.html" title="interface in com.qualcomm.ftccommon">ProgrammingModeController</a>&nbsp;programmingModeController)</pre>
 </li>
 </ul>
@@ -1008,10 +1012,19 @@ implements <a href="../../../com/qualcomm/robotcore/eventloop/EventLoop.html" ti
 <a name="handleCommandVisuallyIdentify-Command-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>handleCommandVisuallyIdentify</h4>
 <pre>protected&nbsp;CallbackResult&nbsp;handleCommandVisuallyIdentify(Command&nbsp;command)</pre>
+</li>
+</ul>
+<a name="handleCommandVisuallyConfirmWifiReset--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>handleCommandVisuallyConfirmWifiReset</h4>
+<pre>protected&nbsp;CallbackResult&nbsp;handleCommandVisuallyConfirmWifiReset()</pre>
 </li>
 </ul>
 </li>

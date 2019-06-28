@@ -128,6 +128,11 @@ extends RobocolParsableBase</pre>
  Buttons are boolean values. They will be true if the button is pressed, otherwise they will be
  false.
  <p>
+ The codes KEYCODE_BUTTON_SELECT and KEYCODE_BACK are both be handled as a "back" button event.
+ Older Android devices (Kit Kat) map a Logitech F310 "back" button press to a KEYCODE_BUTTON_SELECT event.
+ Newer Android devices (Marshmallow or greater) map this "back" button press to a KEYCODE_BACK event.
+ Also, the REV Robotics Gamepad (REV-31-1159) has a "select" button instead of a "back" button on the gamepad.
+ <p>
  The dpad is represented as 4 buttons, dpad_up, dpad_down, dpad_left, and dpad_right</div>
 </li>
 </ul>
@@ -452,7 +457,7 @@ extends RobocolParsableBase</pre>
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/Gamepad.html#setTimestamp-long-">setTimestamp</a></span>(long&nbsp;timestamp)</code>
 <div class="block">Sets the time at which this Gamepad last changed its state,
- in the <code>android.os.SystemClock#uptimeMillis</code> time base.</div>
+ in the <code>SystemClock.uptimeMillis()</code> time base.</div>
 </td>
 </tr>
 <tr id="i17" class="rowColor">
@@ -869,7 +874,7 @@ extends RobocolParsableBase</pre>
 <h4>setTimestamp</h4>
 <pre>public&nbsp;void&nbsp;setTimestamp(long&nbsp;timestamp)</pre>
 <div class="block">Sets the time at which this Gamepad last changed its state,
- in the <code>android.os.SystemClock#uptimeMillis</code> time base.</div>
+ in the <code>SystemClock.uptimeMillis()</code> time base.</div>
 </li>
 </ul>
 <a name="refreshTimestamp--">

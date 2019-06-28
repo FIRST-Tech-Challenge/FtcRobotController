@@ -1,3 +1,11 @@
+## NOTICE
+
+This repository contains v5.0 of the FTC SDK.  No further versions will pushed to https://github.com/ftctechnh/ftc_app.
+
+v5.0 has also been posted to https://github.com/FIRST-Tech-Challenge/SkyStone where all further releases will be posted for the 2019/20 season.
+
+Why are we doing this?  Git/GitHub is not designed to store large binary blobs.  As such the ftc_app repository has grown to over 1GB.  Not only does this violate GitHub's usage policies, but puts an undue burden on users of the repository when they download it.  For the foreseeable future a season specific version of the repository will be hosted at the url above.  Different approaches to prevent the size problem from recurring are being evaluated by the FTC Technology Team.  We realize that this creates a problem with teams that have maintained a history of software within the ftc_app workspace.  We appreciate your patience and understanding as work to migrate to a permanent solution.
+
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 
@@ -40,6 +48,24 @@ Documentation for the FTC SDK is also included with this repository.  There is a
 For technical questions regarding the SDK, please visit the FTC Technology forum:
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
+
+**************************************************************************************
+# Release Information
+**************************************************************************************
+
+Version 5.0 (built on 19.06.14)
+
+ * Support for the REV Robotics Control Hub.
+ * Adds a Java preview pane to the Blocks editor.
+ * Adds a new offline export feature to the Blocks editor.
+ * Display wifi channel in Network circle on Driver Station.
+ * Adds calibration for Logitech C270
+ * Updates build tooling and target SDK.
+ * Compliance with Google's permissions infrastructure (Required after build tooling update).
+ * Keep Alives to mitigate the Motorola wifi scanning problem.  Telemetry substitute no longer necessary.
+ * Improves Vuforia error reporting.
+ * Fixes ftctechnh/ftc_app issues 621, 713.
+ * Miscellaneous bug fixes and improvements.
 
 **************************************************************************************
 # Release Information

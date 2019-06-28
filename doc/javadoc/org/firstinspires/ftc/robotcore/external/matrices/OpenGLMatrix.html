@@ -131,7 +131,7 @@ extends <a href="../../../../../../org/firstinspires/ftc/robotcore/external/matr
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="https://en.wikipedia.org/wiki/Homogeneous_coordinates">Homogenous coordinates</a>, 
 <a href="https://en.wikipedia.org/wiki/Transformation_matrix">Transformation Matrix</a>, 
-<code>android.opengl.Matrix</code>, 
+<code>Matrix</code>, 
 <code>Matrix</code></dd>
 </dl>
 </li>
@@ -512,8 +512,8 @@ extends <a href="../../../../../../org/firstinspires/ftc/robotcore/external/matr
 <h4>scale</h4>
 <pre><a href="../../../../../../org/firstinspires/ftc/robotcore/external/NonConst.html" title="annotation in org.firstinspires.ftc.robotcore.external">@NonConst</a>
 public&nbsp;void&nbsp;scale(float&nbsp;scaleX,
-                            float&nbsp;scaleY,
-                            float&nbsp;scaleZ)</pre>
+                             float&nbsp;scaleY,
+                             float&nbsp;scaleZ)</pre>
 </li>
 </ul>
 <a name="scale-float-">
@@ -534,8 +534,8 @@ public&nbsp;void&nbsp;scale(float&nbsp;scale)</pre>
 <h4>translate</h4>
 <pre><a href="../../../../../../org/firstinspires/ftc/robotcore/external/NonConst.html" title="annotation in org.firstinspires.ftc.robotcore.external">@NonConst</a>
 public&nbsp;void&nbsp;translate(float&nbsp;dx,
-                                float&nbsp;dy,
-                                float&nbsp;dz)</pre>
+                                 float&nbsp;dy,
+                                 float&nbsp;dz)</pre>
 </li>
 </ul>
 <a name="rotate-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-float-float-float-float-">
@@ -546,10 +546,10 @@ public&nbsp;void&nbsp;translate(float&nbsp;dx,
 <h4>rotate</h4>
 <pre><a href="../../../../../../org/firstinspires/ftc/robotcore/external/NonConst.html" title="annotation in org.firstinspires.ftc.robotcore.external">@NonConst</a>
 public&nbsp;void&nbsp;rotate(<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;angleUnit,
-                             float&nbsp;angle,
-                             float&nbsp;dx,
-                             float&nbsp;dy,
-                             float&nbsp;dz)</pre>
+                              float&nbsp;angle,
+                              float&nbsp;dx,
+                              float&nbsp;dy,
+                              float&nbsp;dz)</pre>
 </li>
 </ul>
 <a name="rotate-org.firstinspires.ftc.robotcore.external.navigation.AxesReference-org.firstinspires.ftc.robotcore.external.navigation.AxesOrder-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-float-float-float-">
@@ -560,11 +560,11 @@ public&nbsp;void&nbsp;rotate(<a href="../../../../../../org/firstinspires/ftc/ro
 <h4>rotate</h4>
 <pre><a href="../../../../../../org/firstinspires/ftc/robotcore/external/NonConst.html" title="annotation in org.firstinspires.ftc.robotcore.external">@NonConst</a>
 public&nbsp;void&nbsp;rotate(<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AxesReference.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AxesReference</a>&nbsp;axesReference,
-                             <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AxesOrder</a>&nbsp;axesOrder,
-                             <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;angleUnit,
-                             float&nbsp;first,
-                             float&nbsp;second,
-                             float&nbsp;third)</pre>
+                              <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AxesOrder</a>&nbsp;axesOrder,
+                              <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;angleUnit,
+                              float&nbsp;first,
+                              float&nbsp;second,
+                              float&nbsp;third)</pre>
 </li>
 </ul>
 <a name="scaled-float-float-float-">
@@ -575,8 +575,8 @@ public&nbsp;void&nbsp;rotate(<a href="../../../../../../org/firstinspires/ftc/ro
 <h4>scaled</h4>
 <pre><a href="../../../../../../org/firstinspires/ftc/robotcore/external/Const.html" title="annotation in org.firstinspires.ftc.robotcore.external">@Const</a>
 public&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/matrices/OpenGLMatrix.html" title="class in org.firstinspires.ftc.robotcore.external.matrices">OpenGLMatrix</a>&nbsp;scaled(float&nbsp;scaleX,
-                                  float&nbsp;scaleY,
-                                  float&nbsp;scaleZ)</pre>
+                                   float&nbsp;scaleY,
+                                   float&nbsp;scaleZ)</pre>
 </li>
 </ul>
 <a name="scaled-float-">
@@ -597,8 +597,8 @@ public&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/
 <h4>translated</h4>
 <pre><a href="../../../../../../org/firstinspires/ftc/robotcore/external/Const.html" title="annotation in org.firstinspires.ftc.robotcore.external">@Const</a>
 public&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/matrices/OpenGLMatrix.html" title="class in org.firstinspires.ftc.robotcore.external.matrices">OpenGLMatrix</a>&nbsp;translated(float&nbsp;dx,
-                                      float&nbsp;dy,
-                                      float&nbsp;dz)</pre>
+                                       float&nbsp;dy,
+                                       float&nbsp;dz)</pre>
 </li>
 </ul>
 <a name="rotated-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-float-float-float-float-">
@@ -609,10 +609,10 @@ public&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/
 <h4>rotated</h4>
 <pre><a href="../../../../../../org/firstinspires/ftc/robotcore/external/Const.html" title="annotation in org.firstinspires.ftc.robotcore.external">@Const</a>
 public&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/matrices/OpenGLMatrix.html" title="class in org.firstinspires.ftc.robotcore.external.matrices">OpenGLMatrix</a>&nbsp;rotated(<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;angleUnit,
-                                   float&nbsp;angle,
-                                   float&nbsp;dx,
-                                   float&nbsp;dy,
-                                   float&nbsp;dz)</pre>
+                                    float&nbsp;angle,
+                                    float&nbsp;dx,
+                                    float&nbsp;dy,
+                                    float&nbsp;dz)</pre>
 </li>
 </ul>
 <a name="rotated-org.firstinspires.ftc.robotcore.external.navigation.AxesReference-org.firstinspires.ftc.robotcore.external.navigation.AxesOrder-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-float-float-float-">
@@ -623,11 +623,11 @@ public&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/
 <h4>rotated</h4>
 <pre><a href="../../../../../../org/firstinspires/ftc/robotcore/external/Const.html" title="annotation in org.firstinspires.ftc.robotcore.external">@Const</a>
 public&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/matrices/OpenGLMatrix.html" title="class in org.firstinspires.ftc.robotcore.external.matrices">OpenGLMatrix</a>&nbsp;rotated(<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AxesReference.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AxesReference</a>&nbsp;axesReference,
-                                   <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AxesOrder</a>&nbsp;axesOrder,
-                                   <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;angleUnit,
-                                   float&nbsp;first,
-                                   float&nbsp;second,
-                                   float&nbsp;third)</pre>
+                                    <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AxesOrder.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AxesOrder</a>&nbsp;axesOrder,
+                                    <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;angleUnit,
+                                    float&nbsp;first,
+                                    float&nbsp;second,
+                                    float&nbsp;third)</pre>
 </li>
 </ul>
 <a name="inverted--">

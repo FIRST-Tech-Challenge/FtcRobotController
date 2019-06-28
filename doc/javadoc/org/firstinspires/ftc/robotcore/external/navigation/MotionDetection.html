@@ -105,10 +105,15 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>android.hardware.SensorEventListener</dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">MotionDetection</span>
-extends java.lang.Object</pre>
+extends java.lang.Object
+implements android.hardware.SensorEventListener</pre>
 <div class="block">A class that will notify listeners when a phone is in motion.</div>
 </li>
 </ul>
@@ -193,7 +198,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MotionDetection.Vector.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">MotionDetection.Vector</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MotionDetection.html#filter-SensorEvent-">filter</a></span>(SensorEvent&nbsp;sensorEvent)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MotionDetection.html#filter-android.hardware.SensorEvent-">filter</a></span>(android.hardware.SensorEvent&nbsp;sensorEvent)</code>
 <div class="block">filter
 
  Taken straight from the google documentation for implementing a low pass
@@ -212,12 +217,12 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MotionDetection.html#onAccuracyChanged-Sensor-int-">onAccuracyChanged</a></span>(Sensor&nbsp;sensor,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MotionDetection.html#onAccuracyChanged-android.hardware.Sensor-int-">onAccuracyChanged</a></span>(android.hardware.Sensor&nbsp;sensor,
                  int&nbsp;i)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MotionDetection.html#onSensorChanged-SensorEvent-">onSensorChanged</a></span>(SensorEvent&nbsp;sensorEvent)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MotionDetection.html#onSensorChanged-android.hardware.SensorEvent-">onSensorChanged</a></span>(android.hardware.SensorEvent&nbsp;sensorEvent)</code>
 <div class="block">Internal implementations of the SensorEventListener interface.</div>
 </td>
 </tr>
@@ -311,13 +316,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="filter-SensorEvent-">
+<a name="filter-android.hardware.SensorEvent-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>filter</h4>
-<pre>protected&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MotionDetection.Vector.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">MotionDetection.Vector</a>&nbsp;filter(SensorEvent&nbsp;sensorEvent)</pre>
+<pre>protected&nbsp;<a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/MotionDetection.Vector.html" title="class in org.firstinspires.ftc.robotcore.external.navigation">MotionDetection.Vector</a>&nbsp;filter(android.hardware.SensorEvent&nbsp;sensorEvent)</pre>
 <div class="block">filter
 
  Taken straight from the google documentation for implementing a low pass
@@ -391,24 +396,32 @@ extends java.lang.Object</pre>
 <pre>protected&nbsp;void&nbsp;notifyListeners(double&nbsp;vector)</pre>
 </li>
 </ul>
-<a name="onSensorChanged-SensorEvent-">
+<a name="onSensorChanged-android.hardware.SensorEvent-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>onSensorChanged</h4>
-<pre>public&nbsp;void&nbsp;onSensorChanged(SensorEvent&nbsp;sensorEvent)</pre>
+<pre>public&nbsp;void&nbsp;onSensorChanged(android.hardware.SensorEvent&nbsp;sensorEvent)</pre>
 <div class="block">Internal implementations of the SensorEventListener interface.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>onSensorChanged</code>&nbsp;in interface&nbsp;<code>android.hardware.SensorEventListener</code></dd>
+</dl>
 </li>
 </ul>
-<a name="onAccuracyChanged-Sensor-int-">
+<a name="onAccuracyChanged-android.hardware.Sensor-int-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>onAccuracyChanged</h4>
-<pre>public&nbsp;void&nbsp;onAccuracyChanged(Sensor&nbsp;sensor,
+<pre>public&nbsp;void&nbsp;onAccuracyChanged(android.hardware.Sensor&nbsp;sensor,
                               int&nbsp;i)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>onAccuracyChanged</code>&nbsp;in interface&nbsp;<code>android.hardware.SensorEventListener</code></dd>
+</dl>
 </li>
 </ul>
 </li>
