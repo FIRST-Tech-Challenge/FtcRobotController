@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.localizer;
 
+import android.support.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
@@ -11,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,14 +96,14 @@ public class ComplementaryVuforiaLocalizer implements Localizer {
         targetsRoverRuckus.activate();
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Pose2d getPoseEstimate() {
         return poseEstimate;
     }
 
     @Override
-    public void setPoseEstimate(@NotNull Pose2d pose2d) {
+    public void setPoseEstimate(@NonNull Pose2d pose2d) {
         this.poseEstimate = pose2d;
     }
 

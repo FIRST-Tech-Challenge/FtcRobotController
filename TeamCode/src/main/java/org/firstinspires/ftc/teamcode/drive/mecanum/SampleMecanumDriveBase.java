@@ -145,7 +145,7 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
             case FOLLOW_TRAJECTORY: {
                 setDriveSignal(follower.update(currentPose));
 
-                fieldOverlay.setStrokeWidth(4);
+                fieldOverlay.setStrokeWidth(1);
                 fieldOverlay.setStroke("green");
                 DashboardUtil.drawSampledTrajectory(fieldOverlay, follower.getTrajectory());
 

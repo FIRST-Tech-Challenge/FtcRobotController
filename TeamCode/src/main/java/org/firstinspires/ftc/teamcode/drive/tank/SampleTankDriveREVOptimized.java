@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.tank;
 
+import android.support.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,7 +11,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.LynxOptimizedI2cFactory;
-import org.jetbrains.annotations.NotNull;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
@@ -92,7 +93,7 @@ public class SampleTankDriveREVOptimized extends SampleTankDriveBase {
         }
     }
 
-    @NotNull
+    @NonNull
     @Override
     public List<Double> getWheelPositions() {
         double leftSum = 0, rightSum = 0;

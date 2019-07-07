@@ -6,9 +6,10 @@ dependencies {
     implementation (name: 'WirelessP2p-release', ext: 'aar')
     implementation (name: 'tfod-release', ext: 'aar')
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext: 'aar')
+    implementation 'com.android.support:support-compat:28.0.0'
 
     implementation 'com.acmerobotics.roadrunner:core:0.4.2'
-    implementation 'com.acmerobotics.dashboard:dashboard:0.3.0'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.3.1'
 
     implementation 'org.openftc:rev-extensions-2:1.1'
 }
