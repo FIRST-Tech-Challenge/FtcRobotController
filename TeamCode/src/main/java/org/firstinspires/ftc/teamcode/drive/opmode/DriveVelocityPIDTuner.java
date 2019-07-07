@@ -18,11 +18,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveBase;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveREV;
+import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveBase;
+import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveREV;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
 /*
  * This routine is designed to tune the PID coefficients used by the REV Expansion Hubs for closed-
@@ -39,12 +41,6 @@ import java.util.List;
 @Autonomous(group = "drive")
 public class DriveVelocityPIDTuner extends LinearOpMode {
     public static double DISTANCE = 72;
-
-    /*
-     * If true, the kV value is computed from the free speed determined by the manufacturer (likely
-     * an overestimate of the actual value. If false, the value from DriveConstants.kV is used.
-     */
-    public static boolean USE_THEORETICAL_KV = true;
 
     private static final String PID_VAR_NAME = "VELO_PID";
 
@@ -152,9 +148,6 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         List<Double> lastWheelPositions = null;
         double lastTimestamp = 0;
-
-        double maxVel = DriveConstants.rpmToVelocity(DriveConstants.getMaxRpm());
-        double kV = USE_THEORETICAL_KV ? (1.0 / maxVel) : DriveConstants.kV;
 
         while (!isStopRequested()) {
             // calculate and set the motor power
