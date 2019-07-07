@@ -8,6 +8,10 @@ dependencies {
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext: 'aar')
     implementation 'com.android.support:support-compat:28.0.0'
 
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.9'
+
     implementation 'com.acmerobotics.roadrunner:core:0.4.2'
     implementation 'com.acmerobotics.dashboard:dashboard:0.3.1'
 
