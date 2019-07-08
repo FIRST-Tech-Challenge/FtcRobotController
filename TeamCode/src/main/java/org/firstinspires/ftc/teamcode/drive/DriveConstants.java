@@ -17,12 +17,6 @@ public class DriveConstants {
      * navigate to https://192.168.49.1:8080/dash). Make sure to save the values here after you
      * adjust them in the dashboard; **config variable changes don't persist between app restarts**.
      */
-
-    /*
-     * Warning: The ticks per revolution in RevRobotics20HdHexMotor and RevRobotics40HdHexMotor are
-     * double the actual values (see https://github.com/ftctechnh/ftc_app/issues/713). For now, if
-     * you use these motors, divide the TICKS_PER_REV value by 2.
-     */
     private static final MotorConfigurationType MOTOR_CONFIG =
             MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
     private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
