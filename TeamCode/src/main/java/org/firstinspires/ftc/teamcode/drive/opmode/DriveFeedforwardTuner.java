@@ -17,9 +17,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.getMaxRpm;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rpmToVelocity;
 
 /*
- * Op mode for computing kV, kStatic, and kA from various drive routines. Note: for those using the
- * built-in PID, **kStatic and kA should not be tuned**. For the curious, here's an outline of the
- * basic procedure:
+ * Op mode for computing kV, kStatic, and kA from various drive routines. For the curious, here's an
+ * outline of the procedure:
  *   1. Slowly ramp the motor power and record encoder values along the way.
  *   2. Run a linear regression on the encoder velocity vs. motor power plot to obtain a slope (kV)
  *      and an optional intercept (kStatic).
