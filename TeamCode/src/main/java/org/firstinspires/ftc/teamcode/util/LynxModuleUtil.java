@@ -78,7 +78,7 @@ public class LynxModuleUtil {
             return null;
         }
 
-        String[] parts = versionString.split(" ");
+        String[] parts = versionString.split("[ :,]+");
         try {
             // note: for now, we ignore the hardware entry
             return new LynxFirmwareVersion(
@@ -121,7 +121,8 @@ public class LynxModuleUtil {
                     MIN_VERSION.toString()));
             for (Map.Entry<String, LynxFirmwareVersion> entry : outdatedModules.entrySet()) {
                 msgBuilder.append(Misc.formatInvariant(
-                        "\t%s: %s\n", entry.getKey(), entry.getValue().toString()));
+                        "\t%s: %s\n", entry.getKey(),
+                        entry.getValue() == null ? "Unknown" : entry.getValue().toString()));
             }
             throw new LynxFirmwareVersionException(msgBuilder.toString());
         }
