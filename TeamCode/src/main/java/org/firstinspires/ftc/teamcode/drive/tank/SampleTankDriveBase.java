@@ -67,6 +67,7 @@ public abstract class SampleTankDriveBase extends TankDrive {
         mode = Mode.IDLE;
 
         turnController = new PIDFController(HEADING_PID);
+        turnController.setInputBounds(0, 2 * Math.PI);
 
         constraints = new TankConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
         follower = new TankPIDVAFollower(AXIAL_PID, CROSS_TRACK_PID);
