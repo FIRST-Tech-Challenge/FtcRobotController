@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.util.LynxOptimizedI2cFactory;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
-import org.openftc.revextensions2.RevExtensions2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,8 +34,6 @@ public class SampleMecanumDriveREVOptimized extends SampleMecanumDriveBase {
         super();
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
-
-        RevExtensions2.init();
 
         // TODO: adjust the names of the following hardware devices to match your configuration
         // for simplicity, we assume that the desired IMU and drive motors are on the same hub

@@ -104,18 +104,36 @@ public abstract class SampleTankDriveBase extends TankDrive {
         waitForIdle();
     }
 
+    public Pose2d getLastError() {
+        switch (mode) {
+            case FOLLOW_TRAJECTORY:
+                return follower.getLastError();
+            case TURN:
+                return new Pose2d(0, 0, turnController.getLastError());
+            case IDLE:
+                return new Pose2d();
+        }
+        throw new AssertionError();
+    }
+
     public void update() {
         updatePoseEstimate();
 
         Pose2d currentPose = getPoseEstimate();
+        Pose2d lastError = getLastError();
 
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
 
         packet.put("mode", mode);
+
         packet.put("x", currentPose.getX());
         packet.put("y", currentPose.getY());
         packet.put("heading", currentPose.getHeading());
+
+        packet.put("xError", lastError.getX());
+        packet.put("yError", lastError.getY());
+        packet.put("headingError", lastError.getHeading());
 
         switch (mode) {
             case IDLE:
