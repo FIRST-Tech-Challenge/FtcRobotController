@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":42,"i23":42,"i24":10,"i25":10,"i26":10,"i27":9,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10};
+var methods = {"i0":9,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":42,"i23":42,"i24":10,"i25":10,"i26":10,"i27":10,"i28":9,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -431,44 +431,52 @@ implements android.media.SoundPool.OnLoadCompleteListener</pre>
 </tr>
 <tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#play-android.content.Context-int-float-int-float-">play</a></span>(android.content.Context&nbsp;context,
+    int&nbsp;resourceId,
+    float&nbsp;volume,
+    int&nbsp;loop,
+    float&nbsp;rate)</code>&nbsp;</td>
+</tr>
+<tr id="i25" class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#prefillSoundCache-int...-">prefillSoundCache</a></span>(int...&nbsp;resourceIds)</code>
 <div class="block">Ensures that these local sounds are also in the local cache</div>
 </td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#preload-android.content.Context-java.io.File-">preload</a></span>(android.content.Context&nbsp;context,
        java.io.File&nbsp;file)</code>
 <div class="block">Preloads the sound so as to to reduce delays if the sound is subsequently played.</div>
 </td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#preload-android.content.Context-int-">preload</a></span>(android.content.Context&nbsp;context,
        int&nbsp;resourceId)</code>
 <div class="block">Preloads the sound so as to to reduce delays if the sound is subsequently played.</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#releaseRef-com.qualcomm.ftccommon.SoundPlayer.SoundInfo-">releaseRef</a></span>(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;soundInfo)</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#safeClose-java.lang.Object-">safeClose</a></span>(java.lang.Object&nbsp;closeable)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#setMasterVolume-float-">setMasterVolume</a></span>(float&nbsp;masterVolume)</code>
 <div class="block">Sets the master volume control that is applied to all played sounds</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlaying-android.content.Context-java.io.File-">startPlaying</a></span>(android.content.Context&nbsp;context,
             java.io.File&nbsp;file)</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlaying-android.content.Context-java.io.File-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">startPlaying</a></span>(android.content.Context&nbsp;context,
             java.io.File&nbsp;file,
@@ -476,7 +484,7 @@ implements android.media.SoundPool.OnLoadCompleteListener</pre>
             &lt;any&gt;&nbsp;runWhenStarted,
             java.lang.Runnable&nbsp;runWhenFinished)</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlaying-android.content.Context-int-">startPlaying</a></span>(android.content.Context&nbsp;context,
             int&nbsp;resId)</code>
@@ -484,7 +492,7 @@ implements android.media.SoundPool.OnLoadCompleteListener</pre>
  initiates its play once any current non-looping sound is finished playing.</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlaying-android.content.Context-int-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">startPlaying</a></span>(android.content.Context&nbsp;context,
             int&nbsp;resId,
@@ -495,26 +503,26 @@ implements android.media.SoundPool.OnLoadCompleteListener</pre>
  initiates its play, optionally waiting for any currently non-looping playing sounds to finish first.</div>
 </td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#startPlayingLoadedSound-com.qualcomm.ftccommon.SoundPlayer.SoundInfo-com.qualcomm.ftccommon.SoundPlayer.PlaySoundParams--java.lang.Runnable-">startPlayingLoadedSound</a></span>(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;soundInfo,
                        <a href="../../../com/qualcomm/ftccommon/SoundPlayer.PlaySoundParams.html" title="class in com.qualcomm.ftccommon">SoundPlayer.PlaySoundParams</a>&nbsp;paramsIn,
                        &lt;any&gt;&nbsp;runWhenStarted,
                        java.lang.Runnable&nbsp;runWhenFinished)</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#stopPlayingAll--">stopPlayingAll</a></span>()</code>
 <div class="block">Stops playing all sounds that are currently playing</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#stopPlayingLoops--">stopPlayingLoops</a></span>()</code>
 <div class="block">Stops playing all sounds that are currently playing in a loop</div>
 </td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../com/qualcomm/ftccommon/SoundPlayer.html#waitForLoadCompletion--">waitForLoadCompletion</a></span>()</code>&nbsp;</td>
 </tr>
@@ -1160,6 +1168,19 @@ public&nbsp;void&nbsp;play(android.content.Context&nbsp;context,
 <li class="blockList">
 <h4>releaseRef</h4>
 <pre>public static&nbsp;void&nbsp;releaseRef(<a href="../../../com/qualcomm/ftccommon/SoundPlayer.SoundInfo.html" title="class in com.qualcomm.ftccommon">SoundPlayer.SoundInfo</a>&nbsp;soundInfo)</pre>
+</li>
+</ul>
+<a name="play-android.content.Context-int-float-int-float-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>play</h4>
+<pre>public&nbsp;void&nbsp;play(android.content.Context&nbsp;context,
+                 int&nbsp;resourceId,
+                 float&nbsp;volume,
+                 int&nbsp;loop,
+                 float&nbsp;rate)</pre>
 </li>
 </ul>
 <a name="play-android.content.Context-java.io.File-float-int-float-">

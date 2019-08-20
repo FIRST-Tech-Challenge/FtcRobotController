@@ -1,43 +1,44 @@
 ## NOTICE
 
-This repository contains v5.0 of the FTC SDK.  No further versions will pushed to https://github.com/ftctechnh/ftc_app.
+This repository contains the public FTC SDK for the SKYSTONE (2019-2020) competition season.  
 
-v5.0 has also been posted to https://github.com/FIRST-Tech-Challenge/SkyStone where all further releases will be posted for the 2019/20 season.
-
-Why are we doing this?  Git/GitHub is not designed to store large binary blobs.  As such the ftc_app repository has grown to over 1GB.  Not only does this violate GitHub's usage policies, but puts an undue burden on users of the repository when they download it.  For the foreseeable future a season specific version of the repository will be hosted at the url above.  Different approaches to prevent the size problem from recurring are being evaluated by the FTC Technology Team.  We realize that this creates a problem with teams that have maintained a history of software within the ftc_app workspace.  We appreciate your patience and understanding as work to migrate to a permanent solution.
+Formerly this software project was hosted [here](https://github.com/ftctechnh/ftc_app).  Teams who are competing in the SKYSTONE Challenge should use this [new SKYSTONE repository](https://github.com/FIRST-Tech-Challenge/SKYSTONE) instead of the older (and no longer updated) ftc_app repository.
 
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 
-If you are new to the *FIRST* Tech Challenge software and control system, you should visit the online wiki to learn how to install, configure, and use the software and control system:
+## Getting Started
+If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://github.com/FIRST-Tech-Challenge/SKYSTONE/wiki/Blocks-Tutorial) to get familiar with how to use the control system:  
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/ftctechnh/ftc_app/wiki
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Blocks Online Tutorial](https://github.com/FIRST-Tech-Challenge/SKYSTONE/wiki/Blocks-Tutorial)
 
-Note that the wiki is an "evergreen" document that is constantly being updated and edited.  It contains the most current information about the *FIRST* Tech Challenge software and control system.
+Even if you are an advanced Java programmer, it is helpful to start with the [FTC Blocks tutorial](https://github.com/FIRST-Tech-Challenge/SKYSTONE/wiki/Blocks-Tutorial), and then migrate to the [OnBot Java Tool](https://github.com/FIRST-Tech-Challenge/SKYSTONE/wiki/OnBot-Java-Tutorial) or to [Android Studio](https://github.com/FIRST-Tech-Challenge/SKYSTONE/wiki/Android-Studio-Tutorial) afterwards.
 
 ## Downloading the Project
-It is important to note that this repository is large and can take a long time and use a lot of space to download. If you would like to save time and space, there are some options that you can choose to download only the most current version of the Android project folder:
+If you are an Android Studio programmer, there are several ways to download this repo.  Note that if you use the Blocks or OnBot Java Tool to program your robot, then you do not need to download this repository.
 
-* If you are a git user, *FIRST* recommends that you use the --depth command line argument to only clone the most current version of the repository:
+* If you are a git user, you can clone the most current version of the repository:
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git clone --depth=1 https://github.com/ftctechnh/ftc_app.git</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git clone https://github.com/FIRST-Tech-Challenge/SKYSTONE.git</p>
 
 * Or, if you prefer, you can use the "Download Zip" button available through the main repository page.  Downloading the project as a .ZIP file will keep the size of the download manageable.
 
-* You can also download the project folder (as a .zip or .tar.gz archive file) from the Downloads subsection of the Releases page for this repository.
+* You can also download the project folder (as a .zip or .tar.gz archive file) from the Downloads subsection of the [Releases](https://github.com/FIRST-Tech-Challenge/SKYSTONE/releases) page for this repository.
 
 Once you have downloaded and uncompressed (if needed) your folder, you can use Android Studio to import the folder  ("Import project (Eclipse ADT, Gradle, etc.)").
 
 ## Getting Help
 ### User Documentation and Tutorials
-*FIRST* maintains an online wiki with information and tutorials on how to use the *FIRST* Tech Challenge software and robot control system.  You can access the wiki at the following address:
+*FIRST* maintains online documentation with information and tutorials on how to use the *FIRST* Tech Challenge software and robot control system.  You can access this documentation using the following link:
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://github.com/ftctechnh/ftc_app/wiki
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[SKYSTONE Online Documentation](https://github.com/FIRST-Tech-Challenge/SKYSTONE/wiki)
+
+Note that the online documentation is an "evergreen" document that is constantly being updated and edited.  It contains the most current information about the *FIRST* Tech Challenge software and control system.
 
 ### Javadoc Reference Material
-The Javadoc reference documentation for the FTC SDK is now available online.  Visit the following URL to view the FTC SDK documentation as a live website:
+The Javadoc reference documentation for the FTC SDK is now available online.  Click on the following link to view the FTC SDK Javadoc documentation as a live website:
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://ftctechnh.github.io/ftc_app/doc/javadoc/index.html    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Javadoc Documentation](https://first-tech-challenge.github.io/SkyStone/doc/javadoc/index.html)    
 
 Documentation for the FTC SDK is also included with this repository.  There is a subfolder called "doc" which contains several subfolders:
 
@@ -45,9 +46,45 @@ Documentation for the FTC SDK is also included with this repository.  There is a
  * The folder "javadoc" contains the JavaDoc user documentation for the FTC SDK.
 
 ### Online User Forum
-For technical questions regarding the SDK, please visit the FTC Technology forum:
+For technical questions regarding the Control System or the FTC SDK, please visit the FTC Technology forum:
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Technology Forum](https://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology)
+
+**************************************************************************************
+# Release Information
+**************************************************************************************
+
+Version 5.1 (20190820-222104)
+
+* Defines default PIDF parameters for the following motors:
+    * REV Core Hex Motor
+    * REV 20:1 HD Hex Motor
+    * REV 40:1 HD Hex Motor
+* Adds back button when running on a device without a system back button (such as a Control Hub) 
+* Allows a REV Control Hub to update the firmware on a REV Expansion Hub via USB
+* Fixes [SkyStone issue #9](https://github.com/FIRST-Tech-Challenge/SkyStone/issues/9)
+* Fixes [ftc_app issue #715](https://github.com/ftctechnh/ftc_app/issues/715)
+* Prevents extra DS User clicks by filtering based on current state.
+* Prevents incorrect DS UI state changes when receiving new OpMode list from RC
+* Adds support for REV Color Sensor V3
+* Adds a manual-refresh DS Camera Stream for remotely viewing RC camera frames.
+    * To show the stream on the DS, initialize **but do not run** a stream-enabled opmode, select the Camera Stream option in the DS menu, and tap the image to refresh. This feature is automatically enabled when using Vuforia or TFOD—no additional RC configuration is required for typical use cases. To hide the stream, select the same menu item again.
+    * Note that gamepads are disabled and the selected opmode cannot be started while the stream is open as a safety precaution. 
+    * To use custom streams, consult the API docs for `CameraStreamServer#setSource` and `CameraStreamSource`.
+* Adds many Star Wars sounds to RobotController resources.
+* Added SKYSTONE Sounds Chooser Sample Program.
+* Switches out startup, connect chimes, and error/warning sounds for Star Wars sounds
+* Updates OnBot Java to use a WebSocket for communication with the robot
+    * The OnBot Java page no longer has to do a full refresh when a user switches from editing one file to another
+ 
+Known issues:
+* Camera Stream
+    * The Vuforia camera stream inherits the issues present in the phone preview (namely [ftc_app issue #574](https://github.com/ftctechnh/ftc_app/issues/574)). This problem does not affect the TFOD camera stream even though it receives frames from Vuforia.
+    * The orientation of the stream frames may not always match the phone preview. For now, these frames may be rotated manually via a custom `CameraStreamSource` if desired.
+* OnBotJava
+    * Browser back button may not always work correctly
+    * It's possible for a build to be queued, but not started. The OnBot Java build console will display a warning if this occurs.
+    * A user might not realize they are editing a different file if the user inadvertently switches from one file to another since this switch is now seamless. The name of the currently open file is displayed in the browser tab.
 
 **************************************************************************************
 # Release Information
