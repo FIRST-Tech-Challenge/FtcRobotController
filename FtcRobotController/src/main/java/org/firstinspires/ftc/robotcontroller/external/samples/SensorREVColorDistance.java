@@ -58,9 +58,21 @@ public class SensorREVColorDistance extends LinearOpMode {
 
     /**
      * Note that the REV Robotics Color-Distance incorporates two sensors into one device.
-     * It has a light/distance (range) sensor.  It also has an RGB color sensor.
-     * The light/distance sensor saturates at around 2" (5cm).  This means that targets that are 2"
+     * It has an IR proximity sensor which is used to calculate distance and an RGB color sensor.
+     * 
+     * There will be some variation in the values measured depending on whether you are using a
+     * V3 color sensor versus the older V2 and V1 sensors, as the V3 is based around a different chip.
+     *
+     * For V1/V2, the light/distance sensor saturates at around 2" (5cm).  This means that targets that are 2"
      * or closer will display the same value for distance/light detected.
+     *
+     * For V3, the distance sensor as configured can handle distances between 0.25" (~0.6cm) and 6" (~15cm).
+     * Any target closer than 0.25" will dislay as 0.25" and any target farther than 6" will display as 6".
+     *
+     * Note that the distance sensor function of both chips is built around an IR proximity sensor, which is
+     * sensitive to ambient light and the reflectivity of the surface against which you are measuring. If
+     * very accurate distance is required you should consider calibrating the raw optical values read from the
+     * chip to your exact situation.
      *
      * Although you configure a single REV Robotics Color-Distance sensor in your configuration file,
      * you can treat the sensor as two separate sensors that share the same name in your op mode.
@@ -70,7 +82,7 @@ public class SensorREVColorDistance extends LinearOpMode {
      * color of the screen to match the detected color.
      *
      * In this example, we  also use the distance sensor to display the distance
-     * to the target object.  Note that the distance sensor saturates at around 2" (5 cm).
+     * to the target object.
      *
      */
     ColorSensor sensorColor;

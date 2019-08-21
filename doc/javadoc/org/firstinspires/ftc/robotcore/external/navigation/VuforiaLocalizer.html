@@ -97,9 +97,14 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Superinterfaces:</dt>
+<dd><a href="../../../../../../org/firstinspires/ftc/robotcore/external/stream/CameraStreamSource.html" title="interface in org.firstinspires.ftc.robotcore.external.stream">CameraStreamSource</a></dd>
+</dl>
 <hr>
 <br>
-<pre>public interface <span class="typeNameLabel">VuforiaLocalizer</span></pre>
+<pre>public interface <span class="typeNameLabel">VuforiaLocalizer</span>
+extends <a href="../../../../../../org/firstinspires/ftc/robotcore/external/stream/CameraStreamSource.html" title="interface in org.firstinspires.ftc.robotcore.external.stream">CameraStreamSource</a></pre>
 <div class="block">Robot "localization" denotes a robot's ability to establish its own position and
  orientation within its frame of reference. The <a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html" title="interface in org.firstinspires.ftc.robotcore.external.navigation"><code>VuforiaLocalizer</code></a> interface provides
  an interface for interacting with subsystems that can help support localization through
@@ -180,9 +185,9 @@ var activeTableTab = "activeTableTab";
 </td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>Camera</code></td>
+<td class="colFirst"><code><a href="../../../../../../org/firstinspires/ftc/robotcore/external/hardware/camera/Camera.html" title="interface in org.firstinspires.ftc.robotcore.external.hardware.camera">Camera</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#getCamera--">getCamera</a></span>()</code>
-<div class="block">Provides access to the <code>Camera</code> used by Vuforia.</div>
+<div class="block">Provides access to the <a href="../../../../../../org/firstinspires/ftc/robotcore/external/hardware/camera/Camera.html" title="interface in org.firstinspires.ftc.robotcore.external.hardware.camera"><code>Camera</code></a> used by Vuforia.</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
@@ -192,7 +197,7 @@ var activeTableTab = "activeTableTab";
 </td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code>CameraName</code></td>
+<td class="colFirst"><code><a href="../../../../../../org/firstinspires/ftc/robotcore/external/hardware/camera/CameraName.html" title="interface in org.firstinspires.ftc.robotcore.external.hardware.camera">CameraName</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/navigation/VuforiaLocalizer.html#getCameraName--">getCameraName</a></span>()</code>
 <div class="block">Provides access to the name of the camera used by Vuforia.</div>
 </td>
@@ -238,6 +243,13 @@ var activeTableTab = "activeTableTab";
 </td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;org.firstinspires.ftc.robotcore.external.stream.<a href="../../../../../../org/firstinspires/ftc/robotcore/external/stream/CameraStreamSource.html" title="interface in org.firstinspires.ftc.robotcore.external.stream">CameraStreamSource</a></h3>
+<code><a href="../../../../../../org/firstinspires/ftc/robotcore/external/stream/CameraStreamSource.html#getFrameBitmap--">getFrameBitmap</a></code></li>
+</ul>
 </li>
 </ul>
 </li>
@@ -305,9 +317,9 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>getCamera</h4>
-<pre>Camera&nbsp;getCamera()</pre>
-<div class="block">Provides access to the <code>Camera</code> used by Vuforia. Will be null if a built-in camera
- is in use. Note that Vuforia is usually actively interacting with this <code>Camera</code>; users
+<pre><a href="../../../../../../org/firstinspires/ftc/robotcore/external/hardware/camera/Camera.html" title="interface in org.firstinspires.ftc.robotcore.external.hardware.camera">Camera</a>&nbsp;getCamera()</pre>
+<div class="block">Provides access to the <a href="../../../../../../org/firstinspires/ftc/robotcore/external/hardware/camera/Camera.html" title="interface in org.firstinspires.ftc.robotcore.external.hardware.camera"><code>Camera</code></a> used by Vuforia. Will be null if a built-in camera
+ is in use. Note that Vuforia is usually actively interacting with this <a href="../../../../../../org/firstinspires/ftc/robotcore/external/hardware/camera/Camera.html" title="interface in org.firstinspires.ftc.robotcore.external.hardware.camera"><code>Camera</code></a>; users
  should on their own not initiate streaming, close the camera, or the like.</div>
 </li>
 </ul>
@@ -317,7 +329,7 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>getCameraName</h4>
-<pre>CameraName&nbsp;getCameraName()</pre>
+<pre><a href="../../../../../../org/firstinspires/ftc/robotcore/external/hardware/camera/CameraName.html" title="interface in org.firstinspires.ftc.robotcore.external.hardware.camera">CameraName</a>&nbsp;getCameraName()</pre>
 <div class="block">Provides access to the name of the camera used by Vuforia.</div>
 </li>
 </ul>
