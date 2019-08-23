@@ -146,4 +146,16 @@
 
     <!-- ======================================================================================= -->
 
+    <!-- Logitech HD Webcam C270, Calibrated by Noah Andrews, 2019.03.13 using 3DF Zephyr -->
+    <!--<Camera vid="Logitech" pid="0x0825">
+        <Calibration
+            size="640 480"
+            focalLength="822.317f, 822.317f"
+            principalPoint="319.495f, 242.502f"
+            distortionCoefficients="-0.0449369, 1.17277, 0, 0, -3.63244, 0, 0, 0"
+            />
+    </Camera> -->
+
+    <!-- ======================================================================================= -->
+
 </Calibrations>
