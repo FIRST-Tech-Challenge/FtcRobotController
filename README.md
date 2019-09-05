@@ -50,6 +50,28 @@ For technical questions regarding the Control System or the FTC SDK, please visi
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Technology Forum](https://ftcforum.usfirst.org/forumdisplay.php?156-FTC-Technology)
 
+
+**************************************************************************************
+# Release Information
+**************************************************************************************
+
+Version 5.2 (20190905-083227)
+
+* Fixes extra-wide margins on settings activities, and placement of the new configuration button
+* Adds Skystone Vuforia image target data.
+   * Includes sample Skystone Vuforia Navigation op modes (Java).
+   * Includes sample Skystone Vuforia Navigation op modes (Blocks).
+* Adds TensorFlow inference model (.tflite) for Skystone game elements.
+   * Includes sample Skystone TensorFlow op modes (Java).
+   * Includes sample Skystone TensorFlow op modes (Blocks).
+* Removes older (season-specific) sample op modes.
+* Includes 64-bit support (to comply with [Google Play requirements](https://android-developers.googleblog.com/2019/01/get-your-apps-ready-for-64-bit.html)).
+* Protects against Stuck OpModes when a Restart Robot is requested. (Thanks to FROGbots-4634) ([ftc_app issue #709](https://github.com/ftctechnh/ftc_app/issues/709))
+* Blocks related changes:
+   * Fixes bug with blocks generated code when hardware device name is a java or javascript reserved word.
+   * Shows generated java code for blocks, even when hardware items are missing from the active configuration.
+   * Displays warning icon when outdated Vuforia and TensorFlow blocks are used ([SkyStone issue #27](https://github.com/FIRST-Tech-Challenge/SkyStone/issues/27))
+
 **************************************************************************************
 # Release Information
 **************************************************************************************
