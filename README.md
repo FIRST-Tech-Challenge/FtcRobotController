@@ -55,6 +55,38 @@ For technical questions regarding the Control System or the FTC SDK, please visi
 # Release Information
 **************************************************************************************
 
+Version 5.3 (20191004-112306)
+
+* Fixes external USB/UVC webcam support
+* Makes various bugfixes and improvements to Blocks page, including but not limited to:
+    * Many visual tweaks
+    * Browser zoom and window resize behave better
+    * Resizing the Java preview pane works better and more consistently across browsers
+    * The Java preview pane consistently gets scrollbars when needed
+    * The Java preview pane is hidden by default on phones
+    * Internet Explorer 11 should work
+    * Large dropdown lists display properly on lower res screens
+    * Disabled buttons are now visually identifiable as disabled
+    * A warning is shown if a user selects a TFOD sample, but their device is not compatible
+    * Warning messages in a Blocks op mode are now visible by default.
+* Adds goBILDA 5201 and 5202 motors to Robot Configurator
+* Adds PIDF Annotation values to AndyMark, goBILDA and TETRIX motor configurations.
+    This has the effect of causing the RUN_USING_ENCODERS and RUN_TO_POSITION modes to use 
+    PIDF vs PID closed loop control on these motors.  This should provide more responsive, yet stable, speed control.  
+    PIDF adds Feedforward control to the basic PID control loop.
+    Feedforward is useful when controlling a motor's speed because it "anticipates" how much the control voltage 
+    must change to achieve a new speed set-point, rather than requiring the integrated error to change sufficiently. 
+    The PIDF values were chosen to provide responsive, yet stable, speed control on a lightly loaded motor.
+    The more heavily a motor is loaded (drag or friction), the more noticable the PIDF improvement will be.
+* Fixes startup crash on Android 10
+* Fixes [ftc_app issue #712](https://github.com/ftctechnh/ftc_app/issues/712) (thanks to FROGbots-4634)
+* Fixes [ftc_app issue #542](https://github.com/ftctechnh/ftc_app/issues/542)
+* Allows "A" and lowercase letters when naming device through RC and DS apps.
+    
+**************************************************************************************
+# Release Information
+**************************************************************************************
+
 Version 5.2 (20190905-083227)
 
 * Fixes extra-wide margins on settings activities, and placement of the new configuration button
