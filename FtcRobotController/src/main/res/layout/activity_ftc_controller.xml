@@ -180,19 +180,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       android:visibility="invisible"
       android:text="" />
 
-    <!-- invisible except when programming mode is activated from the DS -->
-    <TextView
-      android:id="@+id/textRemoteProgrammingMode"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:background="?attr/backgroundLight"
-      android:gravity="center"
-      android:textColor="?attr/textWhite"
-      android:textSize="40sp"
-      android:textStyle="bold"
-      android:visibility="invisible"
-      android:text="" />
-
   </RelativeLayout>
 
   <WebView

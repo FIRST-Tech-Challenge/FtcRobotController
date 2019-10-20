@@ -42,7 +42,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <!-- Menu -->
   <string name="inspection_mode_menu_item">Self Inspect</string>
-  <string name="programming_mode_menu_item">Programming Mode</string>
   <string name="program_and_manage_menu_item">Program &amp; Manage</string>
   <string name="blocks_menu_item">Blocks</string>
   <string name="settings_menu_item">Settings</string>
@@ -54,8 +53,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <!-- Toast messages -->
   <string name="toastWifiConfigurationComplete">Configuration Complete</string>
   <string name="toastRestartingRobot">Restarting Robot</string>
-  <string name="toastConfigureRobotBeforeProgrammingMode">You must Configure Robot before starting Programming Mode.</string>
-  <string name="toastWifiUpBeforeProgrammingMode">The Robot Controller must be fully up and running before starting Programming Mode.  Is Wifi turned on in settings?</string>
+  <string name="toastWifiUpBeforeProgrammingMode">The Robot Controller must be fully up and running before entering Program and Manage Mode.</string>
 
   <!-- for interpreting pref_app_theme contents. may be override in merged resources -->
   <integer-array name="app_theme_ids">
