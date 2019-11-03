@@ -106,6 +106,24 @@ public class SampleTankDriveREVOptimized extends SampleTankDriveBase {
     }
 
     @Override
+    public List<Double> getWheelVelocities() {
+        double leftSum = 0, rightSum = 0;
+        RevBulkData bulkData = hub.getBulkInputData();
+
+        if (bulkData == null) {
+            return Arrays.asList(0.0, 0.0);
+        }
+
+        for (DcMotorEx leftMotor : leftMotors) {
+            leftSum += encoderTicksToInches(bulkData.getMotorVelocity(leftMotor));
+        }
+        for (DcMotorEx rightMotor : rightMotors) {
+            rightSum += encoderTicksToInches(bulkData.getMotorVelocity(rightMotor));
+        }
+        return Arrays.asList(leftSum / leftMotors.size(), rightSum / rightMotors.size());
+    }
+
+    @Override
     public void setMotorPowers(double v, double v1) {
         for (ExpansionHubMotor leftMotor : leftMotors) {
             leftMotor.setPower(v);

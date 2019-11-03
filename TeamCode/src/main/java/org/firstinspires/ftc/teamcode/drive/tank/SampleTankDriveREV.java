@@ -95,6 +95,18 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
     }
 
     @Override
+    public List<Double> getWheelVelocities() {
+        double leftSum = 0, rightSum = 0;
+        for (DcMotorEx leftMotor : leftMotors) {
+            leftSum += encoderTicksToInches(leftMotor.getVelocity());
+        }
+        for (DcMotorEx rightMotor : rightMotors) {
+            rightSum += encoderTicksToInches(rightMotor.getVelocity());
+        }
+        return Arrays.asList(leftSum / leftMotors.size(), rightSum / rightMotors.size());
+    }
+
+    @Override
     public void setMotorPowers(double v, double v1) {
         for (DcMotorEx leftMotor : leftMotors) {
             leftMotor.setPower(v);

@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveBase;
 import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveREV;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
@@ -146,14 +145,10 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         MotionProfile activeProfile = generateProfile(true);
         double profileStart = clock.seconds();
 
-        List<Double> lastWheelPositions = null;
-        double lastTimestamp = 0;
 
         while (!isStopRequested()) {
             // calculate and set the motor power
             double profileTime = clock.seconds() - profileStart;
-            double dt = profileTime - lastTimestamp;
-            lastTimestamp = profileTime;
 
             if (profileTime > activeProfile.duration()) {
                 // generate a new profile
@@ -166,23 +161,15 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
             double targetPower = kV * motionState.getV();
             drive.setDrivePower(new Pose2d(targetPower, 0, 0));
 
-            List<Double> wheelPositions = drive.getWheelPositions();
-            if (lastWheelPositions != null) {
-                // compute velocities
-                List<Double> syntheticVelocities = new ArrayList<>();
-                for (int i = 0; i < wheelPositions.size(); i++) {
-                    syntheticVelocities.add((wheelPositions.get(i) - lastWheelPositions.get(i)) / dt);
-                }
+            List<Double> velocities = drive.getWheelVelocities();
 
-                // update telemetry
-                telemetry.addData("targetVelocity", motionState.getV());
-                for (int i = 0; i < syntheticVelocities.size(); i++) {
-                    telemetry.addData("velocity" + i, syntheticVelocities.get(i));
-                    telemetry.addData("error" + i, motionState.getV() - syntheticVelocities.get(i));
-                }
-                telemetry.update();
+            // update telemetry
+            telemetry.addData("targetVelocity", motionState.getV());
+            for (int i = 0; i < velocities.size(); i++) {
+                telemetry.addData("velocity" + i, velocities.get(i));
+                telemetry.addData("error" + i, motionState.getV() - velocities.get(i));
             }
-            lastWheelPositions = wheelPositions;
+            telemetry.update();
         }
 
         removePidVariable();

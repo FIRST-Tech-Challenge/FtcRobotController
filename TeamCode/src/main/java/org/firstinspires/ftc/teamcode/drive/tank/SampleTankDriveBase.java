@@ -28,6 +28,9 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  * Base class with shared functionality for sample tank drives. All hardware-specific details are
  * handled in subclasses.
@@ -56,6 +59,9 @@ public abstract class SampleTankDriveBase extends TankDrive {
 
     private DriveConstraints constraints;
     private TrajectoryFollower follower;
+
+    private List<Double> lastWheelPositions;
+    private double lastTimestamp;
 
     public SampleTankDriveBase() {
         super(kV, kA, kStatic, TRACK_WIDTH);
@@ -196,6 +202,28 @@ public abstract class SampleTankDriveBase extends TankDrive {
 
     public boolean isBusy() {
         return mode != Mode.IDLE;
+    }
+
+    public List<Double> getWheelVelocities() {
+        List<Double> positions = getWheelPositions();
+        double currentTimestamp = clock.seconds();
+
+        List<Double> velocities = new ArrayList<>(positions.size());;
+        if (lastWheelPositions != null) {
+            double dt = currentTimestamp - lastTimestamp;
+            for (int i = 0; i < positions.size(); i++) {
+                velocities.add((positions.get(i) - lastWheelPositions.get(i)) / dt);
+            }
+        } else {
+            for (int i = 0; i < positions.size(); i++) {
+                velocities.add(0.0);
+            }
+        }
+
+        lastTimestamp = currentTimestamp;
+        lastWheelPositions = positions;
+
+        return velocities;
     }
 
     public abstract PIDCoefficients getPIDCoefficients(DcMotor.RunMode runMode);
