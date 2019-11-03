@@ -137,7 +137,6 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
         switch (mode) {
             case IDLE:
                 // do nothing
-                setDriveSignal(new DriveSignal());
                 break;
             case TURN: {
                 double t = clock.seconds() - turnStart;
