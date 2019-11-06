@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveREV;
 
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
 /*
@@ -125,6 +126,11 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        if (!RUN_USING_ENCODER) {
+            RobotLog.setGlobalErrorMsg("%s does not need to be run if the built-in motor velocity" +
+                    "PID is not in use", getClass().getSimpleName());
+        }
+
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         drive = new SampleMecanumDriveREV(hardwareMap);

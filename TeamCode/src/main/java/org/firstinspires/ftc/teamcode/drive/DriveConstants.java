@@ -1,25 +1,40 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 /*
  * Constants shared between multiple drive types.
+ *
+ * TODO: Tune or adjust the following constants to fit your robot. Note that the non-final
+ * fields may also be edited through the dashboard (connect to the robot's WiFi network and
+ * navigate to https://192.168.49.1:8080/dash). Make sure to save the values here after you
+ * adjust them in the dashboard; **config variable changes don't persist between app restarts**.
+ *
+ * These are not the only parameters; some are located in the localizer classes, drive base classes,
+ * and op modes themselves.
  */
 @Config
 public class DriveConstants {
 
     /*
-     * TODO: Tune or adjust the following constants to fit your robot. Note that the non-final
-     * fields may also be edited through the dashboard (connect to the robot's WiFi network and
-     * navigate to https://192.168.49.1:8080/dash). Make sure to save the values here after you
-     * adjust them in the dashboard; **config variable changes don't persist between app restarts**.
+     * The type of motor used on the drivetrain. While the SDK has definitions for many common
+     * motors, there may be slight gear ratio inaccuracies for planetary gearboxes and other
+     * discrepancies. Additional motor types can be defined via an interface with the
+     * @DeviceProperties and @MotorType annotations.
      */
     private static final MotorConfigurationType MOTOR_CONFIG =
             MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
-    private static final double TICKS_PER_REV = MOTOR_CONFIG.getTicksPerRev();
+
+    /*
+     * Set the first flag appropriately. If using the built-in motor velocity PID, update
+     * MOTOR_VELO_PID with the tuned coefficients from DriveVelocityPIDTuner.
+     */
+    public static final boolean RUN_USING_ENCODER = true;
+    public static final PIDCoefficients MOTOR_VELO_PID = null;
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -27,7 +42,7 @@ public class DriveConstants {
      * free to chose whichever linear distance unit they would like so long as it is consistently
      * used. The default values were selected with inches in mind. Road runner uses radians for
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
-     * convenience.
+     * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 2;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
@@ -58,7 +73,7 @@ public class DriveConstants {
 
 
     public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / MOTOR_CONFIG.getTicksPerRev();
     }
 
     public static double rpmToVelocity(double rpm) {
@@ -66,6 +81,7 @@ public class DriveConstants {
     }
 
     public static double getMaxRpm() {
-        return MOTOR_CONFIG.getMaxRPM();
+        return MOTOR_CONFIG.getMaxRPM() *
+                (RUN_USING_ENCODER ? MOTOR_CONFIG.getAchieveableMaxRPMFraction() : 1.0);
     }
 }
