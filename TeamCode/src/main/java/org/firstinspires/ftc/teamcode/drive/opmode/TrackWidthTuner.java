@@ -38,16 +38,16 @@ public class TrackWidthTuner extends LinearOpMode {
         // TODO: if you haven't already, set the localizer to something that doesn't depend on
         // drive encoders for computing the heading
 
-        telemetry.log().add("Press play to begin the track width tuner routine");
-        telemetry.log().add("Make sure your robot has enough clearance to turn smoothly");
+        telemetry.addLine("Press play to begin the track width tuner routine");
+        telemetry.addLine("Make sure your robot has enough clearance to turn smoothly");
         telemetry.update();
 
         waitForStart();
 
         if (isStopRequested()) return;
 
-        telemetry.log().clear();
-        telemetry.log().add("Running...");
+        telemetry.clearAll();
+        telemetry.addLine("Running...");
         telemetry.update();
 
         MovingStatistics trackWidthStats = new MovingStatistics(NUM_TRIALS);
@@ -74,9 +74,9 @@ public class TrackWidthTuner extends LinearOpMode {
             sleep(DELAY);
         }
 
-        telemetry.log().clear();
-        telemetry.log().add("Tuning complete");
-        telemetry.log().add(Misc.formatInvariant("Effective track width = %.2f (SE = %.3f)",
+        telemetry.clearAll();
+        telemetry.addLine("Tuning complete");
+        telemetry.addLine(Misc.formatInvariant("Effective track width = %.2f (SE = %.3f)",
                 trackWidthStats.getMean(),
                 trackWidthStats.getStandardDeviation() / Math.sqrt(NUM_TRIALS)));
         telemetry.update();

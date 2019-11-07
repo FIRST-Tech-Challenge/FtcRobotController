@@ -49,16 +49,16 @@ public class DriveFeedforwardTuner extends LinearOpMode {
 
         NanoClock clock = NanoClock.system();
 
-        telemetry.log().add("Press play to begin the feedforward tuning routine");
+        telemetry.addLine("Press play to begin the feedforward tuning routine");
         telemetry.update();
 
         waitForStart();
 
         if (isStopRequested()) return;
 
-        telemetry.log().clear();
-        telemetry.log().add("Would you like to fit kStatic?");
-        telemetry.log().add("Press (A) for yes, (B) for no");
+        telemetry.clearAll();
+        telemetry.addLine("Would you like to fit kStatic?");
+        telemetry.addLine("Press (A) for yes, (B) for no");
         telemetry.update();
 
         boolean fitIntercept = false;
@@ -78,10 +78,10 @@ public class DriveFeedforwardTuner extends LinearOpMode {
             idle();
         }
 
-        telemetry.log().clear();
-        telemetry.log().add(Misc.formatInvariant(
+        telemetry.clearAll();
+        telemetry.addLine(Misc.formatInvariant(
                 "Place your robot on the field with at least %.2f in of room in front", DISTANCE));
-        telemetry.log().add("Press (A) to begin");
+        telemetry.addLine("Press (A) to begin");
         telemetry.update();
 
         while (!isStopRequested() && !gamepad1.a) {
@@ -91,8 +91,8 @@ public class DriveFeedforwardTuner extends LinearOpMode {
             idle();
         }
 
-        telemetry.log().clear();
-        telemetry.log().add("Running...");
+        telemetry.clearAll();
+        telemetry.addLine("Running...");
         telemetry.update();
 
         double maxVel = rpmToVelocity(getMaxRpm());
@@ -124,17 +124,17 @@ public class DriveFeedforwardTuner extends LinearOpMode {
         rampRegression.save(LoggingUtil.getLogFile(Misc.formatInvariant(
                 "DriveRampRegression-%d.csv", System.currentTimeMillis())));
 
-        telemetry.log().clear();
-        telemetry.log().add("Quasi-static ramp up test complete");
+        telemetry.clearAll();
+        telemetry.addLine("Quasi-static ramp up test complete");
         if (fitIntercept) {
-            telemetry.log().add(Misc.formatInvariant("kV = %.5f, kStatic = %.5f (R^2 = %.2f)",
+            telemetry.addLine(Misc.formatInvariant("kV = %.5f, kStatic = %.5f (R^2 = %.2f)",
                     rampResult.kV, rampResult.kStatic, rampResult.rSquare));
         } else {
-            telemetry.log().add(Misc.formatInvariant("kV = %.5f (R^2 = %.2f)",
+            telemetry.addLine(Misc.formatInvariant("kV = %.5f (R^2 = %.2f)",
                     rampResult.kStatic, rampResult.rSquare));
         }
-        telemetry.log().add("Would you like to fit kA?");
-        telemetry.log().add("Press (A) for yes, (B) for no");
+        telemetry.addLine("Would you like to fit kA?");
+        telemetry.addLine("Press (A) for yes, (B) for no");
         telemetry.update();
 
         boolean fitAccelFF = false;
@@ -155,9 +155,9 @@ public class DriveFeedforwardTuner extends LinearOpMode {
         }
 
         if (fitAccelFF) {
-            telemetry.log().clear();
-            telemetry.log().add("Place the robot back in its starting position");
-            telemetry.log().add("Press (A) to continue");
+            telemetry.clearAll();
+            telemetry.addLine("Place the robot back in its starting position");
+            telemetry.addLine("Press (A) to continue");
             telemetry.update();
 
             while (!isStopRequested() && !gamepad1.a) {
@@ -167,8 +167,8 @@ public class DriveFeedforwardTuner extends LinearOpMode {
                 idle();
             }
 
-            telemetry.log().clear();
-            telemetry.log().add("Running...");
+            telemetry.clearAll();
+            telemetry.addLine("Running...");
             telemetry.update();
 
             double maxPowerTime = DISTANCE / maxVel;
@@ -196,9 +196,9 @@ public class DriveFeedforwardTuner extends LinearOpMode {
             accelRegression.save(LoggingUtil.getLogFile(Misc.formatInvariant(
                     "DriveAccelRegression-%d.csv", System.currentTimeMillis())));
 
-            telemetry.log().clear();
-            telemetry.log().add("Constant power test complete");
-            telemetry.log().add(Misc.formatInvariant("kA = %.5f (R^2 = %.2f)",
+            telemetry.clearAll();
+            telemetry.addLine("Constant power test complete");
+            telemetry.addLine(Misc.formatInvariant("kA = %.5f (R^2 = %.2f)",
                     accelResult.kA, accelResult.rSquare));
             telemetry.update();
         }
