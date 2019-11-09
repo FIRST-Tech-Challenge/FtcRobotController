@@ -150,6 +150,9 @@ public abstract class SampleMecanumDriveBase extends MecanumDrive {
                 double t = clock.seconds() - turnStart;
 
                 MotionState targetState = turnProfile.get(t);
+
+                turnController.setTargetPosition(targetState.getX());
+
                 double targetOmega = targetState.getV();
                 double targetAlpha = targetState.getA();
                 double correction = turnController.update(currentPose.getHeading(), targetOmega);
