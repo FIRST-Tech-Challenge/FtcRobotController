@@ -12,7 +12,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.9'
 
     implementation 'com.acmerobotics.roadrunner:core:0.4.6'
-    implementation 'com.acmerobotics.dashboard:dashboard:0.3.4'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.3.6'
 
     implementation 'org.openftc:rev-extensions-2:1.2'
 }
