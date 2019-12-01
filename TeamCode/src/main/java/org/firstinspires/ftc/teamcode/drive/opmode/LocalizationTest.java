@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -16,8 +17,13 @@ import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveREV;
  * exercise is to ascertain whether the localizer has been configured properly (note: the pure
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
+@Config
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
+    public static double VX_WEIGHT = 1;
+    public static double VY_WEIGHT = 1;
+    public static double OMEGA_WEIGHT = 1;
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -27,11 +33,28 @@ public class LocalizationTest extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-            drive.setDrivePower(new Pose2d(
+            Pose2d baseVel = new Pose2d(
                     -gamepad1.left_stick_y,
                     -gamepad1.left_stick_x,
                     -gamepad1.right_stick_x
-            ));
+            );
+
+            Pose2d vel;
+            if (Math.abs(baseVel.getX()) + Math.abs(baseVel.getY()) + Math.abs(baseVel.getHeading()) > 1) {
+                // re-normalize the powers according to the weights
+                double denom = VX_WEIGHT * Math.abs(baseVel.getX())
+                    + VY_WEIGHT * Math.abs(baseVel.getY())
+                    + OMEGA_WEIGHT * Math.abs(baseVel.getHeading());
+                vel = new Pose2d(
+                    VX_WEIGHT * baseVel.getX(),
+                    VY_WEIGHT * baseVel.getY(),
+                    OMEGA_WEIGHT * baseVel.getHeading()
+                ).div(denom);
+            } else {
+                vel = baseVel;
+            }
+
+            drive.setDrivePower(vel);
 
             drive.update();
 
