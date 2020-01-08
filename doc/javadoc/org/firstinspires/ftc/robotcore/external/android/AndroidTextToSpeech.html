@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -190,39 +190,51 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/android/AndroidTextToSpeech.html#isLocaleAvailable-java.util.Locale-">isLocaleAvailable</a></span>(java.util.Locale&nbsp;locale)</code>
+<div class="block">Returns true if the given locale is supported.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/android/AndroidTextToSpeech.html#isSpeaking--">isSpeaking</a></span>()</code>
 <div class="block">Returns true if the TextToSpeech engine is busy speaking.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/android/AndroidTextToSpeech.html#setLanguage-java.lang.String-">setLanguage</a></span>(java.lang.String&nbsp;languageCode)</code>
 <div class="block">Sets the language.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/android/AndroidTextToSpeech.html#setLanguageAndCountry-java.lang.String-java.lang.String-">setLanguageAndCountry</a></span>(java.lang.String&nbsp;languageCode,
                      java.lang.String&nbsp;countryCode)</code>
 <div class="block">Sets the language and country.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/android/AndroidTextToSpeech.html#setPitch-float-">setPitch</a></span>(float&nbsp;pitch)</code>
 <div class="block">Sets the speech pitch.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/android/AndroidTextToSpeech.html#setSpeechRate-float-">setSpeechRate</a></span>(float&nbsp;speechRate)</code>
 <div class="block">Sets the speech rate.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/android/AndroidTextToSpeech.html#speak-java.lang.String-">speak</a></span>(java.lang.String&nbsp;text)</code>
 <div class="block">Speaks the given text.</div>
+</td>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/firstinspires/ftc/robotcore/external/android/AndroidTextToSpeech.html#stop--">stop</a></span>()</code>
+<div class="block">Stop speaking, if necessary.</div>
 </td>
 </tr>
 </table>
@@ -294,7 +306,7 @@ extends java.lang.Object</pre>
 <div class="block">Returns the current language code.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalStateException</code> - if initialized has not been called yet.</dd>
+<dd><code>java.lang.IllegalStateException</code> - if initialize has not been called yet.</dd>
 </dl>
 </li>
 </ul>
@@ -308,7 +320,7 @@ extends java.lang.Object</pre>
 <div class="block">Returns the current country code.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalStateException</code> - if initialized has not been called yet.</dd>
+<dd><code>java.lang.IllegalStateException</code> - if initialize has not been called yet.</dd>
 </dl>
 </li>
 </ul>
@@ -322,8 +334,18 @@ extends java.lang.Object</pre>
 <div class="block">Returns true if the TextToSpeech engine is busy speaking.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalStateException</code> - if initialized has not been called yet.</dd>
+<dd><code>java.lang.IllegalStateException</code> - if initialize has not been called yet.</dd>
 </dl>
+</li>
+</ul>
+<a name="stop--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>stop</h4>
+<pre>public&nbsp;void&nbsp;stop()</pre>
+<div class="block">Stop speaking, if necessary.</div>
 </li>
 </ul>
 <a name="setPitch-float-">
@@ -337,7 +359,7 @@ extends java.lang.Object</pre>
  synthesized voice. Greater values will increase the tone of the synthesized voice.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalStateException</code> - if initialized has not been called yet.</dd>
+<dd><code>java.lang.IllegalStateException</code> - if initialize has not been called yet.</dd>
 </dl>
 </li>
 </ul>
@@ -353,7 +375,7 @@ extends java.lang.Object</pre>
  the normal speech rate).</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalStateException</code> - if initialized has not been called yet.</dd>
+<dd><code>java.lang.IllegalStateException</code> - if initialize has not been called yet.</dd>
 </dl>
 </li>
 </ul>
@@ -368,7 +390,7 @@ extends java.lang.Object</pre>
  or alpha-3 language code, or a language subtag up to 8 characters in length.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalStateException</code> - if initialized has not been called yet.</dd>
+<dd><code>java.lang.IllegalStateException</code> - if initialize has not been called yet.</dd>
 </dl>
 </li>
 </ul>
@@ -385,7 +407,21 @@ extends java.lang.Object</pre>
  must be an ISO 3166 alpha-2 country code or a UN M.49 numeric-3 area code.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalStateException</code> - if initialized has not been called yet.</dd>
+<dd><code>java.lang.IllegalStateException</code> - if initialize has not been called yet.</dd>
+</dl>
+</li>
+</ul>
+<a name="isLocaleAvailable-java.util.Locale-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isLocaleAvailable</h4>
+<pre>public&nbsp;boolean&nbsp;isLocaleAvailable(java.util.Locale&nbsp;locale)</pre>
+<div class="block">Returns true if the given locale is supported.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.IllegalStateException</code> - if initialize has not been called yet.</dd>
 </dl>
 </li>
 </ul>
@@ -400,7 +436,7 @@ extends java.lang.Object</pre>
  language subtag up to 8 characters in length.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalStateException</code> - if initialized has not been called yet.</dd>
+<dd><code>java.lang.IllegalStateException</code> - if initialize has not been called yet.</dd>
 </dl>
 </li>
 </ul>
@@ -417,7 +453,7 @@ extends java.lang.Object</pre>
  alpha-2 country code or a UN M.49 numeric-3 area code.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalStateException</code> - if initialized has not been called yet.</dd>
+<dd><code>java.lang.IllegalStateException</code> - if initialize has not been called yet.</dd>
 </dl>
 </li>
 </ul>
@@ -431,7 +467,7 @@ extends java.lang.Object</pre>
 <div class="block">Speaks the given text.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.IllegalStateException</code> - if initialized has not been called yet.</dd>
+<dd><code>java.lang.IllegalStateException</code> - if initialize has not been called yet.</dd>
 </dl>
 </li>
 </ul>
