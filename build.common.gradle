@@ -39,9 +39,10 @@ android {
     }
 
     defaultConfig {
+        signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'
         minSdkVersion 19
-        targetSdkVersion 26
+        targetSdkVersion 28
         multiDexEnabled !useProguard
 
         /**
@@ -80,7 +81,7 @@ android {
             // Disable debugging for release versions so it can be uploaded to Google Play.
             //debuggable true
             ndk {
-                abiFilters "armeabi-v7a"
+                abiFilters "armeabi-v7a", "arm64-v8a"
             }
 
             if (useProguard) {
@@ -95,7 +96,7 @@ android {
             jniDebuggable true
             renderscriptDebuggable true
             ndk {
-                abiFilters "armeabi-v7a"
+                abiFilters "armeabi-v7a", "arm64-v8a"
             }
 
             if (useProguard) {

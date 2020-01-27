@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":38,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":38,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6};
+var methods = {"i0":6,"i1":6,"i2":38,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":38,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -166,6 +166,18 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.html" title
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getCurrent-org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit-">getCurrent</a></span>(<a href="../../../../org/firstinspires/ftc/robotcore/external/navigation/CurrentUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">CurrentUnit</a>&nbsp;unit)</code>
+<div class="block">Returns the current consumed by this motor.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>double</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getCurrentAlert-org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit-">getCurrentAlert</a></span>(<a href="../../../../org/firstinspires/ftc/robotcore/external/navigation/CurrentUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">CurrentUnit</a>&nbsp;unit)</code>
+<div class="block">Returns the current alert for this motor.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/PIDCoefficients.html" title="class in com.qualcomm.robotcore.hardware">PIDCoefficients</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getPIDCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-">getPIDCoefficients</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a>&nbsp;mode)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
@@ -173,50 +185,63 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.html" title
 </div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/qualcomm/robotcore/hardware/PIDFCoefficients.html" title="class in com.qualcomm.robotcore.hardware">PIDFCoefficients</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-">getPIDFCoefficients</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a>&nbsp;mode)</code>
 <div class="block">Returns the PIDF control coefficients used when running in the indicated mode
  on this motor.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getTargetPositionTolerance--">getTargetPositionTolerance</a></span>()</code>
 <div class="block">Returns the current target positioning tolerance of this motor</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getVelocity--">getVelocity</a></span>()</code>
 <div class="block">Returns the current velocity of the motor, in ticks per second</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#getVelocity-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-">getVelocity</a></span>(<a href="../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;unit)</code>
 <div class="block">Returns the current velocity of the motor, in angular units per second</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#isMotorEnabled--">isMotorEnabled</a></span>()</code>
 <div class="block">Returns whether this motor is energized</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#isOverCurrent--">isOverCurrent</a></span>()</code>
+<div class="block">Returns whether the current consumption of this motor exceeds the alert threshold.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setCurrentAlert-double-org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit-">setCurrentAlert</a></span>(double&nbsp;current,
+               <a href="../../../../org/firstinspires/ftc/robotcore/external/navigation/CurrentUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">CurrentUnit</a>&nbsp;unit)</code>
+<div class="block">Sets the current alert for this motor</div>
+</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setMotorDisable--">setMotorDisable</a></span>()</code>
 <div class="block">Individually de-energizes this particular motor</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setMotorEnable--">setMotorEnable</a></span>()</code>
 <div class="block">Individually energizes this particular motor</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPIDCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDCoefficients-">setPIDCoefficients</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a>&nbsp;mode,
                   <a href="../../../../com/qualcomm/robotcore/hardware/PIDCoefficients.html" title="class in com.qualcomm.robotcore.hardware">PIDCoefficients</a>&nbsp;pidCoefficients)</code>
@@ -225,40 +250,40 @@ extends <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.html" title
 </div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDFCoefficients-">setPIDFCoefficients</a></span>(<a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html" title="enum in com.qualcomm.robotcore.hardware">DcMotor.RunMode</a>&nbsp;mode,
                    <a href="../../../../com/qualcomm/robotcore/hardware/PIDFCoefficients.html" title="class in com.qualcomm.robotcore.hardware">PIDFCoefficients</a>&nbsp;pidfCoefficients)</code>
 <div class="block"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPIDFCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDFCoefficients-"><code>setPIDFCoefficients(com.qualcomm.robotcore.hardware.DcMotor.RunMode, com.qualcomm.robotcore.hardware.PIDFCoefficients)</code></a> is a superset enhancement to <a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPIDCoefficients-com.qualcomm.robotcore.hardware.DcMotor.RunMode-com.qualcomm.robotcore.hardware.PIDCoefficients-"><code>setPIDCoefficients(com.qualcomm.robotcore.hardware.DcMotor.RunMode, com.qualcomm.robotcore.hardware.PIDCoefficients)</code></a>.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setPositionPIDFCoefficients-double-">setPositionPIDFCoefficients</a></span>(double&nbsp;p)</code>
 <div class="block">A shorthand for setting the PIDF coefficients for the <a href="../../../../com/qualcomm/robotcore/hardware/DcMotor.RunMode.html#RUN_TO_POSITION"><code>DcMotor.RunMode.RUN_TO_POSITION</code></a>
  mode.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setTargetPositionTolerance-int-">setTargetPositionTolerance</a></span>(int&nbsp;tolerance)</code>
 <div class="block">Sets the target positioning tolerance of this motor</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setVelocity-double-">setVelocity</a></span>(double&nbsp;angularRate)</code>
 <div class="block">Sets the velocity of the motor</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setVelocity-double-org.firstinspires.ftc.robotcore.external.navigation.AngleUnit-">setVelocity</a></span>(double&nbsp;angularRate,
            <a href="../../../../org/firstinspires/ftc/robotcore/external/navigation/AngleUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">AngleUnit</a>&nbsp;unit)</code>
 <div class="block">Sets the velocity of the motor</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/qualcomm/robotcore/hardware/DcMotorEx.html#setVelocityPIDFCoefficients-double-double-double-double-">setVelocityPIDFCoefficients</a></span>(double&nbsp;p,
                            double&nbsp;i,
@@ -570,7 +595,7 @@ void&nbsp;setPIDCoefficients(<a href="../../../../com/qualcomm/robotcore/hardwar
 <a name="getTargetPositionTolerance--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getTargetPositionTolerance</h4>
 <pre>int&nbsp;getTargetPositionTolerance()</pre>
@@ -578,6 +603,68 @@ void&nbsp;setPIDCoefficients(<a href="../../../../com/qualcomm/robotcore/hardwar
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the current target positioning tolerance of this motor</dd>
+</dl>
+</li>
+</ul>
+<a name="getCurrent-org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCurrent</h4>
+<pre>double&nbsp;getCurrent(<a href="../../../../org/firstinspires/ftc/robotcore/external/navigation/CurrentUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">CurrentUnit</a>&nbsp;unit)</pre>
+<div class="block">Returns the current consumed by this motor.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>unit</code> - current units</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the current consumed by this motor.</dd>
+</dl>
+</li>
+</ul>
+<a name="getCurrentAlert-org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCurrentAlert</h4>
+<pre>double&nbsp;getCurrentAlert(<a href="../../../../org/firstinspires/ftc/robotcore/external/navigation/CurrentUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">CurrentUnit</a>&nbsp;unit)</pre>
+<div class="block">Returns the current alert for this motor.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>unit</code> - current units</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the current alert for this motor</dd>
+</dl>
+</li>
+</ul>
+<a name="setCurrentAlert-double-org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setCurrentAlert</h4>
+<pre>void&nbsp;setCurrentAlert(double&nbsp;current,
+                     <a href="../../../../org/firstinspires/ftc/robotcore/external/navigation/CurrentUnit.html" title="enum in org.firstinspires.ftc.robotcore.external.navigation">CurrentUnit</a>&nbsp;unit)</pre>
+<div class="block">Sets the current alert for this motor</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>current</code> - current alert</dd>
+<dd><code>unit</code> - current units</dd>
+</dl>
+</li>
+</ul>
+<a name="isOverCurrent--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isOverCurrent</h4>
+<pre>boolean&nbsp;isOverCurrent()</pre>
+<div class="block">Returns whether the current consumption of this motor exceeds the alert threshold.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>whether the current consumption of this motor exceeds the alert threshold.</dd>
 </dl>
 </li>
 </ul>

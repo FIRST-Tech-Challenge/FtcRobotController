@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -389,6 +389,23 @@ var activeTableTab = "activeTableTab";
 </td>
 </tr>
 <tr id="i21" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../org/firstinspires/ftc/robotcore/external/Telemetry.html#speak-java.lang.String-">speak</a></span>(java.lang.String&nbsp;text)</code>
+<div class="block">Directs the Driver Station device to speak the given text using TextToSpeech functionality,
+ with the same language and country codes that were previously used, or the default language
+ and country.</div>
+</td>
+</tr>
+<tr id="i22" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../org/firstinspires/ftc/robotcore/external/Telemetry.html#speak-java.lang.String-java.lang.String-java.lang.String-">speak</a></span>(java.lang.String&nbsp;text,
+     java.lang.String&nbsp;languageCode,
+     java.lang.String&nbsp;countryCode)</code>
+<div class="block">Directs the Driver Station device to speak the given text using TextToSpeech functionality,
+ with the given language and country codes.</div>
+</td>
+</tr>
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../org/firstinspires/ftc/robotcore/external/Telemetry.html#update--">update</a></span>()</code>
 <div class="block">Sends the receiver <a href="../../../../../org/firstinspires/ftc/robotcore/external/Telemetry.html" title="interface in org.firstinspires.ftc.robotcore.external"><code>Telemetry</code></a> to the driver station if more than the <a href="../../../../../org/firstinspires/ftc/robotcore/external/Telemetry.html#getMsTransmissionInterval--"><code>transmission interval</code></a> has elapsed since the last transmission, or schedules the transmission
@@ -615,6 +632,42 @@ var activeTableTab = "activeTableTab";
 <dd><code>token</code> - the token previously returned from <a href="../../../../../org/firstinspires/ftc/robotcore/external/Telemetry.html#addAction-java.lang.Runnable-"><code>addAction()</code></a>.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>whether any change was made to the receiver</dd>
+</dl>
+</li>
+</ul>
+<a name="speak-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>speak</h4>
+<pre>void&nbsp;speak(java.lang.String&nbsp;text)</pre>
+<div class="block">Directs the Driver Station device to speak the given text using TextToSpeech functionality,
+ with the same language and country codes that were previously used, or the default language
+ and country.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>text</code> - the text to be spoken</dd>
+</dl>
+</li>
+</ul>
+<a name="speak-java.lang.String-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>speak</h4>
+<pre>void&nbsp;speak(java.lang.String&nbsp;text,
+           java.lang.String&nbsp;languageCode,
+           java.lang.String&nbsp;countryCode)</pre>
+<div class="block">Directs the Driver Station device to speak the given text using TextToSpeech functionality,
+ with the given language and country codes.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>text</code> - the text to be spoken</dd>
+<dd><code>languageCode</code> - an ISO 639 alpha-2 or alpha-3 language code, or a language subtag up to
+                      8 characters in length</dd>
+<dd><code>countryCode</code> - an ISO 3166 alpha-2 country code, or a UN M.49 numeric-3 area code</dd>
 </dl>
 </li>
 </ul>
