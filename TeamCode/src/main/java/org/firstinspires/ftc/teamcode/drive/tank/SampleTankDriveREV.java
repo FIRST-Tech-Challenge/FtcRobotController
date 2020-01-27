@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
@@ -116,6 +117,12 @@ public class SampleTankDriveREV extends TankDrive {
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
         leftMotors = Arrays.asList(leftFront, leftRear);
         rightMotors = Arrays.asList(rightFront, rightRear);
+
+        for (DcMotorEx motor : motors) {
+            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+            motor.setMotorType(motorConfigurationType);
+        }
 
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);

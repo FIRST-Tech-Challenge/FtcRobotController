@@ -15,8 +15,8 @@ import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveREV;
 import org.firstinspires.ftc.teamcode.util.LoggingUtil;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_RPM;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.getMaxRpm;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rpmToVelocity;
 
 /*
@@ -94,7 +94,7 @@ public class DriveFeedforwardTuner extends LinearOpMode {
         telemetry.addLine("Running...");
         telemetry.update();
 
-        double maxVel = rpmToVelocity(getMaxRpm());
+        double maxVel = rpmToVelocity(MAX_RPM);
         double finalVel = MAX_POWER * maxVel;
         double accel = (finalVel * finalVel) / (2.0 * DISTANCE);
         double rampTime = Math.sqrt(2.0 * DISTANCE / accel);
