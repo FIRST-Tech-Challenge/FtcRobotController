@@ -23,7 +23,6 @@ import java.util.List;
  *    |              |
  *    \--------------/
  *
- * Note: this could be optimized significantly with REV bulk reads
  */
 @Config
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {

@@ -4,12 +4,12 @@ import android.support.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
 import java.util.ArrayList;
@@ -22,8 +22,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksTo
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.getMotorVelocityF;
 
 /*
- * Simple mecanum drive hardware implementation for REV hardware. If your hardware configuration
- * satisfies the requirements, SampleMecanumDriveREVOptimized is highly recommended.
+ * Simple mecanum drive hardware implementation for REV hardware.
  */
 public class SampleMecanumDriveREV extends SampleMecanumDriveBase {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
@@ -34,6 +33,10 @@ public class SampleMecanumDriveREV extends SampleMecanumDriveBase {
         super();
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
+
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(BNO055IMU.class, "imu");

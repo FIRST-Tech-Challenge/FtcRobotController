@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -20,8 +21,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksTo
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.getMotorVelocityF;
 
 /*
- * Simple tank drive hardware implementation for REV hardware. If your hardware configuration
- * satisfies the requirements, SampleTankDriveREVOptimized is highly recommended.
+ * Simple tank drive hardware implementation for REV hardware.
  */
 public class SampleTankDriveREV extends SampleTankDriveBase {
     private List<DcMotorEx> motors, leftMotors, rightMotors;
@@ -31,6 +31,10 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
         super();
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
+
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(BNO055IMU.class, "imu");

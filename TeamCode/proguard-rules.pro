@@ -23,10 +23,6 @@
 -keep class com.acmerobotics.** {*;}
 -dontwarn com.acmerobotics.**
 
-# RE2
--keep class org.openftc.** {*;}
--dontwarn org.openftc.**
-
 # Other deps
 -dontwarn com.fasterxml.**
 -dontwarn org.yaml.**

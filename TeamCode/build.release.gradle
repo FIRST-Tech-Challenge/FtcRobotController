@@ -13,6 +13,4 @@ dependencies {
 
     implementation 'com.acmerobotics.roadrunner:core:0.4.7'
     implementation 'com.acmerobotics.dashboard:dashboard:0.3.6'
-
-    implementation 'org.openftc:rev-extensions-2:1.2'
 }
