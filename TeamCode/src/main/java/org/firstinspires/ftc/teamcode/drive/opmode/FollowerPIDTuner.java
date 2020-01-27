@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveBase;
 import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveREV;
 
 /*
@@ -19,21 +20,24 @@ public class FollowerPIDTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDriveBase drive = new SampleMecanumDriveREV(hardwareMap);
+        SampleMecanumDriveREV drive = new SampleMecanumDriveREV(hardwareMap);
 
-        drive.setPoseEstimate(new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0));
+        Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
+
+        drive.setPoseEstimate(startPose);
 
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (!isStopRequested()) {
-            drive.followTrajectorySync(
-                    drive.trajectoryBuilder()
-                            .forward(DISTANCE)
-                            .build()
-            );
+            Trajectory traj = drive.trajectoryBuilder(startPose)
+                    .forward(DISTANCE)
+                    .build();
+            drive.followTrajectorySync(traj);
             drive.turnSync(Math.toRadians(90));
+
+            startPose = traj.end().plus(new Pose2d(0, 0, Math.toRadians(90)));
         }
     }
 }
