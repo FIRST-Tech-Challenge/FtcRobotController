@@ -117,12 +117,11 @@ public class SampleTankDriveREV extends TankDrive {
         leftMotors = Arrays.asList(leftFront, leftRear);
         rightMotors = Arrays.asList(rightFront, rightRear);
 
-        for (DcMotorEx motor : motors) {
-            if (RUN_USING_ENCODER) {
-                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        if (RUN_USING_ENCODER) {
+            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
@@ -265,6 +264,18 @@ public class SampleTankDriveREV extends TankDrive {
 
     public boolean isBusy() {
         return mode != Mode.IDLE;
+    }
+
+    public void setMode(DcMotor.RunMode runMode) {
+        for (DcMotorEx motor : motors) {
+            motor.setMode(runMode);
+        }
+    }
+
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+        for (DcMotorEx motor : motors) {
+            motor.setZeroPowerBehavior(zeroPowerBehavior);
+        }
     }
 
     public PIDCoefficients getPIDCoefficients(DcMotor.RunMode runMode) {
