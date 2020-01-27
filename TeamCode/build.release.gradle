@@ -1,3 +1,7 @@
+repositories {
+    mavenLocal()
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     implementation (name: 'RobotCore-release', ext: 'aar')
@@ -7,10 +11,6 @@ dependencies {
     implementation (name: 'tfod-release', ext: 'aar')
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext: 'aar')
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.9'
-
-    implementation 'com.acmerobotics.roadrunner:core:0.4.7'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.0-SNAPSHOT'
     implementation 'com.acmerobotics.dashboard:dashboard:0.3.6'
 }

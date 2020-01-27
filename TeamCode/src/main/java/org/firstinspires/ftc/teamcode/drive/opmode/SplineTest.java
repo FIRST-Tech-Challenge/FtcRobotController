@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -29,8 +30,7 @@ public class SplineTest extends LinearOpMode {
         sleep(2000);
 
         drive.followTrajectorySync(
-                drive.trajectoryBuilder(traj.end())
-                        .reverse()
+                drive.trajectoryBuilder(traj.end(), Angle.norm(traj.end().getHeading() + Math.PI))
                         .splineTo(new Pose2d(0, 0, 0))
                         .build()
         );
