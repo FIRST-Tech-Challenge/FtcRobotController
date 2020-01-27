@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -34,8 +33,8 @@ public class FollowerPIDTuner extends LinearOpMode {
             Trajectory traj = drive.trajectoryBuilder(startPose)
                     .forward(DISTANCE)
                     .build();
-            drive.followTrajectorySync(traj);
-            drive.turnSync(Math.toRadians(90));
+            drive.followTrajectory(traj);
+            drive.turn(Math.toRadians(90));
 
             startPose = traj.end().plus(new Pose2d(0, 0, Math.toRadians(90)));
         }

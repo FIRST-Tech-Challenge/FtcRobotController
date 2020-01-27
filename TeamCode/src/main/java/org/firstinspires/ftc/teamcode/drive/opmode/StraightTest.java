@@ -28,6 +28,6 @@ public class StraightTest extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        drive.followTrajectorySync(trajectory);
+        drive.followTrajectory(trajectory);
     }
 }

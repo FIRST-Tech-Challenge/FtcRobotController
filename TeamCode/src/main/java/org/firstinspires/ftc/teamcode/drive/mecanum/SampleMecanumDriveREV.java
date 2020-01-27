@@ -140,7 +140,7 @@ public class SampleMecanumDriveREV extends MecanumDrive {
         return new TrajectoryBuilder(startPose, startHeading, constraints);
     }
 
-    public void turn(double angle) {
+    public void turnAsync(double angle) {
         double heading = getPoseEstimate().getHeading();
         turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(heading, 0, 0, 0),
@@ -153,18 +153,18 @@ public class SampleMecanumDriveREV extends MecanumDrive {
         mode = Mode.TURN;
     }
 
-    public void turnSync(double angle) {
-        turn(angle);
+    public void turn(double angle) {
+        turnAsync(angle);
         waitForIdle();
     }
 
-    public void followTrajectory(Trajectory trajectory) {
+    public void followTrajectoryAsync(Trajectory trajectory) {
         follower.followTrajectory(trajectory);
         mode = Mode.FOLLOW_TRAJECTORY;
     }
 
-    public void followTrajectorySync(Trajectory trajectory) {
-        followTrajectory(trajectory);
+    public void followTrajectory(Trajectory trajectory) {
+        followTrajectoryAsync(trajectory);
         waitForIdle();
     }
 
