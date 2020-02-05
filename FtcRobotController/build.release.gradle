@@ -9,5 +9,5 @@ dependencies {
     implementation (name:'WirelessP2p-release', ext:'aar')
     implementation 'com.android.support:support-compat:28.0.0'
 
-    implementation 'com.acmerobotics.dashboard:dashboard:0.3.7'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.3.8'
 }
