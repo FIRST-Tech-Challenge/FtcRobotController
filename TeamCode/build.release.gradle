@@ -1,7 +1,3 @@
-repositories {
-    mavenLocal()
-}
-
 dependencies {
     implementation project(':FtcRobotController')
     implementation (name: 'RobotCore-release', ext: 'aar')
