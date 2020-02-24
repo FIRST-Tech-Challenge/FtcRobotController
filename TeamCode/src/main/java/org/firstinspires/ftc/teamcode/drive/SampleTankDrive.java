@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.tank;
+package org.firstinspires.ftc.teamcode.drive;
 
 import android.support.annotation.NonNull;
 
@@ -50,7 +50,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * Simple tank drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleTankDriveREV extends TankDrive {
+public class SampleTankDrive extends TankDrive {
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
@@ -79,7 +79,7 @@ public class SampleTankDriveREV extends TankDrive {
     private List<DcMotorEx> motors, leftMotors, rightMotors;
     private BNO055IMU imu;
 
-    public SampleTankDriveREV(HardwareMap hardwareMap) {
+    public SampleTankDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH);
 
         dashboard = FtcDashboard.getInstance();

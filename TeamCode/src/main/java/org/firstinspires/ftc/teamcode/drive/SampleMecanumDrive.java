@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.mecanum;
+package org.firstinspires.ftc.teamcode.drive;
 
 import android.support.annotation.NonNull;
 
@@ -50,7 +50,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDriveREV extends MecanumDrive {
+public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
@@ -79,7 +79,7 @@ public class SampleMecanumDriveREV extends MecanumDrive {
     private List<DcMotorEx> motors;
     private BNO055IMU imu;
 
-    public SampleMecanumDriveREV(HardwareMap hardwareMap) {
+    public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH);
 
         dashboard = FtcDashboard.getInstance();
