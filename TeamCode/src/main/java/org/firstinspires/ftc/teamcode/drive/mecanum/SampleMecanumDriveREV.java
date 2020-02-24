@@ -73,6 +73,8 @@ public class SampleMecanumDriveREV extends MecanumDrive {
     private DriveConstraints constraints;
     private TrajectoryFollower follower;
 
+    private List<Pose2d> poseHistory;
+
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
     private BNO055IMU imu;
@@ -93,6 +95,8 @@ public class SampleMecanumDriveREV extends MecanumDrive {
         constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+
+        poseHistory = new ArrayList<>();
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -193,6 +197,8 @@ public class SampleMecanumDriveREV extends MecanumDrive {
         Pose2d currentPose = getPoseEstimate();
         Pose2d lastError = getLastError();
 
+        poseHistory.add(currentPose);
+
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
 
@@ -242,13 +248,12 @@ public class SampleMecanumDriveREV extends MecanumDrive {
                 fieldOverlay.setStrokeWidth(1);
                 fieldOverlay.setStroke("4CAF50");
                 DashboardUtil.drawSampledPath(fieldOverlay, trajectory.getPath());
-
-                fieldOverlay.setStroke("#F44336");
                 double t = follower.elapsedTime();
                 DashboardUtil.drawRobot(fieldOverlay, trajectory.get(t));
 
                 fieldOverlay.setStroke("#3F51B5");
-                fieldOverlay.fillCircle(currentPose.getX(), currentPose.getY(), 3);
+                DashboardUtil.drawPoseHistory(fieldOverlay, poseHistory);
+                DashboardUtil.drawRobot(fieldOverlay, currentPose);
 
                 if (!follower.isFollowing()) {
                     mode = Mode.IDLE;

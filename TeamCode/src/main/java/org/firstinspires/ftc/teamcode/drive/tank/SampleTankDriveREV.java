@@ -32,6 +32,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -73,6 +74,8 @@ public class SampleTankDriveREV extends TankDrive {
     private DriveConstraints constraints;
     private TrajectoryFollower follower;
 
+    private List<Pose2d> poseHistory;
+
     private List<DcMotorEx> motors, leftMotors, rightMotors;
     private BNO055IMU imu;
 
@@ -92,6 +95,8 @@ public class SampleTankDriveREV extends TankDrive {
         constraints = new TankConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
         follower = new TankPIDVAFollower(AXIAL_PID, CROSS_TRACK_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+
+        poseHistory = new ArrayList<>();
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -168,6 +173,7 @@ public class SampleTankDriveREV extends TankDrive {
     }
 
     public void followTrajectoryAsync(Trajectory trajectory) {
+        poseHistory.clear();
         follower.followTrajectory(trajectory);
         mode = Mode.FOLLOW_TRAJECTORY;
     }
@@ -194,6 +200,8 @@ public class SampleTankDriveREV extends TankDrive {
 
         Pose2d currentPose = getPoseEstimate();
         Pose2d lastError = getLastError();
+
+        poseHistory.add(currentPose);
 
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
@@ -244,13 +252,12 @@ public class SampleTankDriveREV extends TankDrive {
                 fieldOverlay.setStrokeWidth(1);
                 fieldOverlay.setStroke("4CAF50");
                 DashboardUtil.drawSampledPath(fieldOverlay, trajectory.getPath());
-
-                fieldOverlay.setStroke("#F44336");
                 double t = follower.elapsedTime();
                 DashboardUtil.drawRobot(fieldOverlay, trajectory.get(t));
 
                 fieldOverlay.setStroke("#3F51B5");
-                fieldOverlay.fillCircle(currentPose.getX(), currentPose.getY(), 3);
+                DashboardUtil.drawPoseHistory(fieldOverlay, poseHistory);
+                DashboardUtil.drawRobot(fieldOverlay, currentPose);
 
                 if (!follower.isFollowing()) {
                     mode = Mode.IDLE;

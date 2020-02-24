@@ -5,6 +5,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.Path;
 
+import java.util.List;
+
 /**
  * Set of helper functions for drawing Road Runner paths and trajectories on dashboard canvases.
  */
@@ -12,6 +14,17 @@ public class DashboardUtil {
     private static final double DEFAULT_RESOLUTION = 2.0; // distance units; presumed inches
     private static final double ROBOT_RADIUS = 9; // in
 
+
+    public static void drawPoseHistory(Canvas canvas, List<Pose2d> poseHistory) {
+        double[] xPoints = new double[poseHistory.size()];
+        double[] yPoints = new double[poseHistory.size()];
+        for (int i = 0; i < poseHistory.size(); i++) {
+            Pose2d pose = poseHistory.get(i);
+            xPoints[i] = pose.getX();
+            yPoints[i] = pose.getY();
+        }
+        canvas.strokePolyline(xPoints, yPoints);
+    }
 
     public static void drawSampledPath(Canvas canvas, Path path, double resolution) {
         int samples = (int) Math.ceil(path.length() / resolution);
