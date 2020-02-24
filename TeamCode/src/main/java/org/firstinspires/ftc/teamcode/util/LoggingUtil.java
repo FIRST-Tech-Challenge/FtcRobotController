@@ -27,19 +27,20 @@ public class LoggingUtil {
     }
 
     private static void pruneLogsIfNecessary() {
-        long totalSpace = ROAD_RUNNER_FOLDER.getTotalSpace();
-        List<File> logFiles = null;
-        while (totalSpace > LOG_QUOTA) {
-            if (logFiles == null) {
-                logFiles = new ArrayList<>();
-                buildLogList(logFiles, ROAD_RUNNER_FOLDER);
-                Collections.sort(logFiles, (lhs, rhs) ->
-                        Long.compare(lhs.lastModified(), rhs.lastModified()));
-            }
+        List<File> logFiles = new ArrayList<>();
+        buildLogList(logFiles, ROAD_RUNNER_FOLDER);
+        Collections.sort(logFiles, (lhs, rhs) ->
+                Long.compare(lhs.lastModified(), rhs.lastModified()));
 
+        long dirSize = 0;
+        for (File file: logFiles) {
+            dirSize += file.length();
+        }
+
+        while (dirSize > LOG_QUOTA) {
             if (logFiles.size() == 0) break;
             File fileToRemove = logFiles.remove(0);
-            totalSpace -= fileToRemove.getTotalSpace();
+            dirSize -= fileToRemove.length();
             //noinspection ResultOfMethodCallIgnored
             fileToRemove.delete();
         }
