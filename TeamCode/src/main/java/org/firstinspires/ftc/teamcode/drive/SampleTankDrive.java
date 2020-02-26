@@ -227,10 +227,10 @@ public class SampleTankDrive extends TankDrive {
 
                 turnController.setTargetPosition(targetState.getX());
 
+                double correction = turnController.update(currentPose.getHeading());
+
                 double targetOmega = targetState.getV();
                 double targetAlpha = targetState.getA();
-                double correction = turnController.update(currentPose.getHeading(), targetOmega);
-
                 setDriveSignal(new DriveSignal(new Pose2d(
                         0, 0, targetOmega + correction
                 ), new Pose2d(
