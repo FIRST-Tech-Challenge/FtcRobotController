@@ -4,8 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.tuning.AccelRegression;
-import com.acmerobotics.roadrunner.tuning.RampRegression;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -14,6 +12,10 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.LoggingUtil;
+import org.firstinspires.ftc.teamcode.util.RegressionUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_RPM;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
@@ -99,10 +101,13 @@ public class DriveFeedforwardTuner extends LinearOpMode {
         double accel = (finalVel * finalVel) / (2.0 * DISTANCE);
         double rampTime = Math.sqrt(2.0 * DISTANCE / accel);
 
-        double startTime = clock.seconds();
-        RampRegression rampRegression = new RampRegression();
+        List<Double> timeSamples = new ArrayList<>();
+        List<Double> positionSamples = new ArrayList<>();
+        List<Double> powerSamples = new ArrayList<>();
 
         drive.setPoseEstimate(new Pose2d());
+
+        double startTime = clock.seconds();
         while (!isStopRequested()) {
             double elapsedTime = clock.seconds() - startTime;
             if (elapsedTime > rampTime) {
@@ -111,17 +116,19 @@ public class DriveFeedforwardTuner extends LinearOpMode {
             double vel = accel * elapsedTime;
             double power = vel / maxVel;
 
-            rampRegression.add(elapsedTime, drive.getPoseEstimate().getX(), power);
+            timeSamples.add(elapsedTime);
+            positionSamples.add(drive.getPoseEstimate().getX());
+            powerSamples.add(power);
 
             drive.setDrivePower(new Pose2d(power, 0.0, 0.0));
             drive.updatePoseEstimate();
         }
         drive.setDrivePower(new Pose2d(0.0, 0.0, 0.0));
 
-        RampRegression.RampResult rampResult = rampRegression.fit(fitIntercept);
-
-        rampRegression.save(LoggingUtil.getLogFile(Misc.formatInvariant(
-                "DriveRampRegression-%d.csv", System.currentTimeMillis())));
+        RegressionUtil.RampResult rampResult = RegressionUtil.fitRampData(
+                timeSamples, positionSamples, powerSamples, fitIntercept,
+                LoggingUtil.getLogFile(Misc.formatInvariant(
+                        "DriveRampRegression-%d.csv", System.currentTimeMillis())));
 
         telemetry.clearAll();
         telemetry.addLine("Quasi-static ramp up test complete");
@@ -172,28 +179,32 @@ public class DriveFeedforwardTuner extends LinearOpMode {
 
             double maxPowerTime = DISTANCE / maxVel;
 
-            startTime = clock.seconds();
-            AccelRegression accelRegression = new AccelRegression();
+            timeSamples.clear();
+            positionSamples.clear();
+            powerSamples.clear();
 
             drive.setPoseEstimate(new Pose2d());
             drive.setDrivePower(new Pose2d(MAX_POWER, 0.0, 0.0));
+
+            startTime = clock.seconds();
             while (!isStopRequested()) {
                 double elapsedTime = clock.seconds() - startTime;
                 if (elapsedTime > maxPowerTime) {
                     break;
                 }
 
-                accelRegression.add(elapsedTime, drive.getPoseEstimate().getX(), MAX_POWER);
+                timeSamples.add(elapsedTime);
+                positionSamples.add(drive.getPoseEstimate().getX());
+                powerSamples.add(MAX_POWER);
 
                 drive.updatePoseEstimate();
             }
             drive.setDrivePower(new Pose2d(0.0, 0.0, 0.0));
 
-            AccelRegression.AccelResult accelResult = accelRegression.fit(
-                    rampResult.kV, rampResult.kStatic);
-
-            accelRegression.save(LoggingUtil.getLogFile(Misc.formatInvariant(
-                    "DriveAccelRegression-%d.csv", System.currentTimeMillis())));
+            RegressionUtil.AccelResult accelResult = RegressionUtil.fitAccelData(
+                    timeSamples, positionSamples, powerSamples, rampResult,
+                    LoggingUtil.getLogFile(Misc.formatInvariant(
+                            "DriveAccelRegression-%d.csv", System.currentTimeMillis())));
 
             telemetry.clearAll();
             telemetry.addLine("Constant power test complete");
