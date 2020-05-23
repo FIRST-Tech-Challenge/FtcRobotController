@@ -14,4 +14,4 @@ For more detailed instructions on getting Road Runner setup in your own project,
 
 ## Documentation
 
-Check out the new [online quickstart documentation](https://acme-robotics.gitbook.io/road-runner/quickstart).
+Check out the new [online quickstart documentation](https://acme-robotics.gitbook.io/road-runner/quickstart/introduction).
