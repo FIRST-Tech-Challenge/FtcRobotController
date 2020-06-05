@@ -52,11 +52,14 @@ public class RegressionUtil {
      */
     private static List<Double> numericalDerivative(List<Double> x, List<Double> y) {
         List<Double> deriv = new ArrayList<>(x.size());
-        deriv.add(0.0);
-        for (int i = 0; i < x.size(); i++) {
-            deriv.add((y.get(i + 1) - y.get(i - 1)) / (x.get(i + 1) - x.get(i - 1)));
+        for (int i = 1; i < x.size() - 1; i++) {
+            deriv.add(
+                    (y.get(i + 1) - y.get(i - 1)) /
+                    (x.get(i + 1) - x.get(i - 1))
+            );
         }
-        deriv.set(0, deriv.get(1));
+        // copy endpoints to pad output
+        deriv.add(0, deriv.get(0));
         deriv.add(deriv.get(deriv.size() - 1));
         return deriv;
     }
