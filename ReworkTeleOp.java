@@ -11,15 +11,15 @@ public class ReworkTeleOp extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            drive();
+            updateDrivetrain();
         }
     }
 
     private void initRobot() {
-        robot = new ReworkRobot(hardwareMap);
+        robot = new ReworkRobot(hardwareMap, telemetry,this);
     }
 
-    private void drive() {
+    private void updateDrivetrain() {
         robot.drivetrain.setStates(gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
     }
 }
