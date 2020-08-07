@@ -20,6 +20,6 @@ public class ReworkTeleOp extends LinearOpMode {
     }
 
     private void drive() {
-        robot.drivetrain.drive(gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
+        robot.drivetrain.setStates(gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
     }
 }

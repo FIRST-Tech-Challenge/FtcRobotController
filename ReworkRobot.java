@@ -11,7 +11,7 @@ public class ReworkRobot {
     private Telemetry telemetry;
     private LinearOpMode linearOpMode;
 
-    // Modules on the robot
+    // All modules in the robot (remember to init and update)
     protected ReworkDrivetrain drivetrain;
 
     public ReworkRobot(HardwareMap hardwareMap) {
@@ -20,7 +20,17 @@ public class ReworkRobot {
         initModules();
     }
 
-    private void initModules() {
+    /**
+     * Updates all modules in robot.
+     */
+    public void updateModules() {
+        drivetrain.update();
+    }
+
+    /**
+     * Initializes all modules in robot.
+     */
+    public void initModules() {
         drivetrain = new ReworkDrivetrain(hardwareMap);
     }
 }

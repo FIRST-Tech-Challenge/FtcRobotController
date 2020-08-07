@@ -4,20 +4,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class ReworkDrivetrain extends Module {
-    // STATES
+    // States
     private double yMovement;
     private double mecanumMovement;
     private double turnMovement;
     private boolean isSlowMode;
 
+    // Constants
+    private final static double POWER_SCALE_FACTOR = 0.9;
+    private final static double MECANUM_POWER_SCALE_FACTOR = 1.4;
+    private final static double SLOW_POWER_SCALE_FACTOR = 0.3;
+
+    // Motors
     private DcMotor fLeft;
     private DcMotor fRight;
     private DcMotor bLeft;
     private DcMotor bRight;
-
-    private final static double POWER_SCALE_FACTOR = 0.9;
-    private final static double MECANUM_POWER_SCALE_FACTOR = 1.4;
-    private final static double SLOW_POWER_SCALE_FACTOR = 0.3;
 
     public ReworkDrivetrain(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -34,10 +36,20 @@ public class ReworkDrivetrain extends Module {
         setDrivetrainZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
+    /**
+     * Drives robot (moves drivetrain) using states.
+     */
     public void update() {
         drive();
     }
 
+    /**
+     * Sets the states of this module. Use update() to execute.
+     *
+     * @param yMovement Forward/backward movement of robot
+     * @param mecanumMovement Sideways movement of robot
+     * @param turnMovement Turn movement of robot
+     */
     public void setStates(double yMovement, double mecanumMovement, double turnMovement) {
         this.yMovement = yMovement;
         this.mecanumMovement = mecanumMovement;
@@ -48,6 +60,10 @@ public class ReworkDrivetrain extends Module {
         this.isSlowMode = slowMode;
     }
 
+    /**
+     * Calculates and applies powers to the drivetrain motors using the states (movement params)
+     * in the module.
+     */
     private void drive() {
         double fLPower = ((yMovement * MECANUM_POWER_SCALE_FACTOR) - turnMovement + mecanumMovement) * POWER_SCALE_FACTOR;
         double fRPower = ((yMovement * MECANUM_POWER_SCALE_FACTOR) + turnMovement + mecanumMovement) * POWER_SCALE_FACTOR;
