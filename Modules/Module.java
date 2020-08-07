@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.rework.Modules;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Module {
+public abstract class Module {
     HardwareMap hardwareMap;
 
     public Module() {
@@ -13,6 +13,10 @@ public class Module {
     public Module(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
     }
+
+    abstract public void init();
+
+    abstract public void update();
 
     protected DcMotor getDcMotor(String name) {
         try {
