@@ -18,11 +18,8 @@ public class ModuleExecutor extends Thread {
      */
     public void run() {
         while (robot.isOpModeActive()) {
-            Module[] robotModules = robot.getModules();
-
-            for (int i = 0; i < robotModules.length; i++) {
-                robotModules[i].update();
-            }
+            robot.updateModules();
+            robot.getBulkData();
 
             // TODO: Get data
         }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.rework;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -13,38 +14,76 @@ public class ReworkRobot {
     private Telemetry telemetry;
     private LinearOpMode linearOpMode;
 
-    // All modules in the robot (remember to update init and get)
-    protected ReworkDrivetrain drivetrain;
+    ModuleExecutor moduleExecutor;
+
+    // All modules in the robot (remember to update initModules() and updateModules() when adding)
+    public ReworkDrivetrain drivetrain;
+
+    // REV Hubs
+    private LynxModule revHub1;
+    private LynxModule revHub2;
+
+    // Data
+    private LynxModule.BulkData revHub1Data;
+    private LynxModule.BulkData revHub2Data;
 
     public ReworkRobot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode linearOpMode) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         this.linearOpMode = linearOpMode;
 
+        initHubs();
+
         initModules();
     }
 
     /**
-     * Starts new thread that will execute modules. Run after starting the program.
+     * Updates all the modules in robot.
      */
-    public void startExecutingModules() {
+    public void updateModules() {
+        drivetrain.update();
+    }
+
+    /**
+     * Initializes all modules in robot, starting another thread that will be used to execute
+     * the modules.
+     *
+     * Note that starting the thread also executes run(). However, the isOpModeActive() will return
+     * zero, resulting in the modules to not be physically updated.
+     */
+    public void initModules() {
+        drivetrain = new ReworkDrivetrain(hardwareMap);
+
         // Start the thread for executing modules.
-        ModuleExecutor moduleExecutor = new ModuleExecutor(this);
+        moduleExecutor = new ModuleExecutor(this);
         moduleExecutor.start();
     }
 
     /**
-     * Returns all modules in robot, in the form of an array.
+     * Runs the loop that updates modules in the separate thread. This loop continues running while
+     * isOpModeActive() returns true.
      */
-    public Module[] getModules() {
-        return new Module[] {drivetrain};
+    public void startModules() {
+        moduleExecutor.run();
     }
 
     /**
-     * Initializes all modules in robot.
+     * Gets all sensor data from the hubs.
+     *
+     * Data can be accessed with revHub1.
      */
-    public void initModules() {
-        drivetrain = new ReworkDrivetrain(hardwareMap);
+    public void getBulkData() {
+        revHub1Data = revHub1.getBulkData();
+        revHub2Data = revHub2.getBulkData();
+    }
+
+    private void initHubs() {
+        try {
+            revHub1 = hardwareMap.get(LynxModule.class, "Control Hub 1"); // TODO: Determine actual name of new control hub
+            revHub2 = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
+        } catch (Exception e) {
+            throw new Error("One or more of the REV hubs could not be found. More info: " + e);
+        }
     }
 
     /**
@@ -54,5 +93,12 @@ public class ReworkRobot {
      */
     public boolean isOpModeActive() {
         return linearOpMode.opModeIsActive();
+    }
+
+    public LynxModule.BulkData getRevHub1Data() {
+        return revHub1Data;
+    }
+    public LynxModule.BulkData getRevHub2Data() {
+        return revHub2Data;
     }
 }

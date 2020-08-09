@@ -10,7 +10,11 @@ public class ReworkTeleOp extends LinearOpMode {
 
         waitForStart();
 
+        robot.startModules();
+
         while (opModeIsActive()) {
+            robot.getBulkData();
+
             updateDrivetrain();
         }
     }
