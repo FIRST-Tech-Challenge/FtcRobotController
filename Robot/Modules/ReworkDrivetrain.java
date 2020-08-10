@@ -39,7 +39,7 @@ public class ReworkDrivetrain extends Module {
     /**
      * Drives robot (moves drivetrain) using states.
      */
-    public void update() {
+    public synchronized void update() {
         drive();
     }
 
@@ -50,7 +50,7 @@ public class ReworkDrivetrain extends Module {
      * @param mecanumMovement Sideways movement of robot
      * @param turnMovement Turn movement of robot
      */
-    public void setStates(double yMovement, double mecanumMovement, double turnMovement) {
+    public synchronized void setStates(double yMovement, double mecanumMovement, double turnMovement) {
         this.yMovement = yMovement;
         this.mecanumMovement = mecanumMovement;
         this.turnMovement = turnMovement;

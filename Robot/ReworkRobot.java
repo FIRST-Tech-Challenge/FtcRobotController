@@ -32,7 +32,6 @@ public class ReworkRobot {
         this.linearOpMode = linearOpMode;
 
         initHubs();
-
         initModules();
     }
 
@@ -46,7 +45,7 @@ public class ReworkRobot {
     /**
      * Initializes all modules in robot, starting another thread that will be used to execute
      * the modules.
-     *
+     * <p>
      * Note that starting the thread also executes run(). However, the isOpModeActive() will return
      * zero, resulting in the modules to not be physically updated.
      */
@@ -61,19 +60,11 @@ public class ReworkRobot {
     /**
      * Runs the loop that updates modules in the separate thread. This loop continues running while
      * isOpModeActive() returns true.
+     *
+     * @see #isOpModeActive()
      */
     public void startModules() {
         moduleExecutor.run();
-    }
-
-    /**
-     * Gets all sensor data from the hubs.
-     *
-     * Data can be accessed with revHub1.
-     */
-    public void getBulkData() {
-        revHub1Data = revHub1.getBulkData();
-        revHub2Data = revHub2.getBulkData();
     }
 
     private void initHubs() {
@@ -86,18 +77,27 @@ public class ReworkRobot {
     }
 
     /**
+     * Gets all sensor data from the hubs.
+     */
+    public synchronized void getBulkData() {
+        revHub1Data = revHub1.getBulkData();
+        revHub2Data = revHub2.getBulkData();
+    }
+
+    public synchronized LynxModule.BulkData getRevHub1Data() {
+        return revHub1Data;
+    }
+
+    public synchronized LynxModule.BulkData getRevHub2Data() {
+        return revHub2Data;
+    }
+
+    /**
      * Returns if the robot's op mode is active.
      *
      * @return boolean representing whether or not the op mode is active.
      */
     public boolean isOpModeActive() {
         return linearOpMode.opModeIsActive();
-    }
-
-    public LynxModule.BulkData getRevHub1Data() {
-        return revHub1Data;
-    }
-    public LynxModule.BulkData getRevHub2Data() {
-        return revHub2Data;
     }
 }
