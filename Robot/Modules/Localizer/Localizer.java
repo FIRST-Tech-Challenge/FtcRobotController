@@ -15,7 +15,7 @@ public class Localizer extends Module {
     private Point robotLocation;
 
     /**
-     * Angle the robot is facing, starting with 0 degrees straight forward and increasing clockwise.
+     * Angle the robot is facing, starting with 0 radians straight forward and increasing clockwise.
      */
     private double robotHeading;
 
