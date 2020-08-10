@@ -1,13 +1,12 @@
-package org.firstinspires.ftc.teamcode.rework;
+package org.firstinspires.ftc.teamcode.rework.Robot;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.rework.Modules.Module;
-import org.firstinspires.ftc.teamcode.rework.Modules.ModuleExecutor;
-import org.firstinspires.ftc.teamcode.rework.Modules.ReworkDrivetrain;
+import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ModuleExecutor;
+import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ReworkDrivetrain;
 
 public class ReworkRobot {
     private HardwareMap hardwareMap;

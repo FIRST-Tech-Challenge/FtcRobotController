@@ -1,6 +1,6 @@
-package org.firstinspires.ftc.teamcode.rework.Modules;
+package org.firstinspires.ftc.teamcode.rework.Robot.Modules;
 
-import org.firstinspires.ftc.teamcode.rework.ReworkRobot;
+import org.firstinspires.ftc.teamcode.rework.Robot.ReworkRobot;
 
 /**
  * ModuleExecutor creates a new thread where modules will be executed and data will be retrieved
