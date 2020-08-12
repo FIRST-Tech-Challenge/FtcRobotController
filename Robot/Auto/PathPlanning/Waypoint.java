@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.rework.Robot.Auto.PathPlanning;
 
 public class Waypoint extends Point {
-    boolean actionable;
-    Actions action;
+    Actions[] actions;
 
     public Waypoint(double x, double y){
         super(x,y);
-        actionable = false;
     }
 
-    public Waypoint(double x, double y, Actions action) {
+    public Waypoint(double x, double y, Actions[] actions) {
         super(x,y);
-        actionable = true;
-        this.action = action;
+        this.actions = actions;
     }
 }
