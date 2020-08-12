@@ -9,15 +9,7 @@ import org.firstinspires.ftc.teamcode.rework.Robot.ReworkRobot;
  * TeleOp or Autonomous.
  */
 public class Localizer extends Module {
-    /**
-     * Location of the robot.
-     */
-    private Point robotLocation;
-
-    /**
-     * Angle the robot is facing, starting with 0 radians straight forward and increasing clockwise.
-     */
-    private double robotHeading;
+    RobotPosition robotPosition;
 
     ReworkRobot robot;
 
@@ -37,12 +29,8 @@ public class Localizer extends Module {
         calculateRobotPosition();
     }
 
-    public Point getRobotLocation() {
-        return robotLocation;
-    }
-
-    public double getRobotHeading() {
-        return robotHeading;
+    public RobotPosition getRobotPosition() {
+        return robotPosition;
     }
 
     double leftPodOldPosition = 0;
