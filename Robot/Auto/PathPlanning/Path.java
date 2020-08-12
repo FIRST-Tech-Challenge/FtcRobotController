@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.rework.Robot.Auto.PathPlanning;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Path {
-    HashMap<Point, Actions> path;
+    ArrayList<Waypoint> path;
 
-    Path(HashMap<Point, Actions> path) {
+    public Path(ArrayList<Waypoint> path) {
         this.path = path;
     }
 }
