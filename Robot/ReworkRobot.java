@@ -43,11 +43,11 @@ public class ReworkRobot {
     }
 
     /**
-     * Initializes all modules in robot, starting another thread that will be used to execute
-     * the modules.
-     * <p>
-     * Note that starting the thread also executes run(). However, the isOpModeActive() will return
-     * zero, resulting in the modules to not be physically updated.
+     * Initializes all modules in robot. Starts another thread on which execution of the modules
+     * will happen in the form of updates.
+     *
+     * Note that starting the thread also executes run(). However, note that run() will not update
+     * the modules if the opMode is not active yet.
      */
     public void initModules() {
         drivetrain = new ReworkDrivetrain(hardwareMap);

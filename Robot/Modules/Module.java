@@ -34,7 +34,7 @@ public abstract class Module {
         try {
             return hardwareMap.dcMotor.get(name);
         } catch (IllegalArgumentException exception) {
-            throw new Error("Motor could not be found. Exception: " + exception);
+            throw new Error("Motor with name " + name + " could not be found. Exception: " + exception);
         }
     }
 }
