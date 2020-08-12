@@ -6,28 +6,28 @@ public class RobotPosition {
     /**
      * Location of the robot.
      */
-    private Point robotLocation;
+    private Point location;
 
     /**
      * Angle the robot is facing, starting with 0 radians straight forward and increasing clockwise.
      */
-    private double robotHeading;
+    private double heading;
 
-    public RobotPosition(Point robotLocation, double robotHeading) {
-        this.robotLocation = robotLocation;
-        this.robotHeading = robotHeading;
+    public RobotPosition(Point location, double heading) {
+        this.location = location;
+        this.heading = heading;
     }
 
     public void updatePosition(Point robotLocation, double robotHeading) {
-        this.robotLocation = robotLocation;
-        this.robotHeading = robotHeading;
+        this.location = robotLocation;
+        this.heading = robotHeading;
     }
 
-    public Point getRobotLocation() {
-        return robotLocation;
+    public Point getLocation() {
+        return location;
     }
 
-    public double getRobotHeading() {
-        return robotHeading;
+    public double getHeading() {
+        return heading;
     }
 }
