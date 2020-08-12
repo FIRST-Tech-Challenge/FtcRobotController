@@ -27,11 +27,11 @@ public class Localizer extends Module {
 
     public void init() {}
 
-    public void update() {
+    public synchronized void update() {
         calculateRobotPosition();
     }
 
-    public RobotPosition getRobotPosition() {
+    public synchronized RobotPosition getRobotPosition() {
         return robotPosition;
     }
 
