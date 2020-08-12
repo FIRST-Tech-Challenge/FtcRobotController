@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.rework.Robot.ReworkRobot;
  * Localizer includes all everything required to calculate the robot's position throughout
  * TeleOp or Autonomous.
  */
-public class Localizer extends Module {
+public class Localizer implements Module {
     RobotPosition robotPosition;
 
     ReworkRobot robot;

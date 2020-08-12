@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.rework.Robot.Modules;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class ReworkDrivetrain extends Module {
+import static org.firstinspires.ftc.teamcode.rework.Robot.HardwareGlobals.getDcMotor;
+
+public class ReworkDrivetrain implements Module {
     // States
     private double yMovement;
     private double mecanumMovement;
@@ -21,8 +23,7 @@ public class ReworkDrivetrain extends Module {
     private DcMotor bLeft;
     private DcMotor bRight;
 
-    public ReworkDrivetrain(HardwareMap hardwareMap) {
-        this.hardwareMap = hardwareMap;
+    public ReworkDrivetrain() {
         init();
     }
 

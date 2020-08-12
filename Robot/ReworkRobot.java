@@ -5,8 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.rework.Robot.Modules.Module;
 import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ModuleExecutor;
 import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ReworkDrivetrain;
+
+import java.util.ArrayList;
 
 public class ReworkRobot {
     private HardwareMap hardwareMap;
@@ -16,6 +19,8 @@ public class ReworkRobot {
     ModuleExecutor moduleExecutor;
 
     // All modules in the robot (remember to update initModules() and updateModules() when adding)
+    private ArrayList<Module> modules = new ArrayList<Module>();
+
     public ReworkDrivetrain drivetrain;
 
     // REV Hubs
@@ -39,7 +44,18 @@ public class ReworkRobot {
      * Updates all the modules in robot.
      */
     public void updateModules() {
-        drivetrain.update();
+        for(Module module : modules) {
+            module.update();
+        }
+    }
+
+    /**
+     * Adds hooks to a Module such that its update() function is called on each update.
+     * @see Module
+     * @param module
+     */
+    private void registerModule(Module module) {
+        this.registerModule(module);
     }
 
     /**
@@ -50,7 +66,14 @@ public class ReworkRobot {
      * the modules if the opMode is not active yet.
      */
     public void initModules() {
-        drivetrain = new ReworkDrivetrain(hardwareMap);
+        HardwareGlobals.hardwareMap = hardwareMap;
+
+        // Hook modules here
+        drivetrain = new ReworkDrivetrain();
+        registerModule(this.drivetrain);
+
+        for(Module module : modules)
+            module.init();
 
         // Start the thread for executing modules.
         moduleExecutor = new ModuleExecutor(this);
