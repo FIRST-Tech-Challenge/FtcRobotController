@@ -21,6 +21,8 @@ public class Localizer extends Module {
     public Localizer(ReworkRobot robot) {
         this.robot = robot; // Localizer needs robot in order to be able to get data from robot
         // Localizer is the only module that won't need the hardwareMap, as it doesn't move anything
+
+        init();
     }
 
     public void init() {}
