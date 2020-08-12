@@ -1,14 +1,13 @@
-package org.firstinspires.ftc.teamcode.rework.Robot.Modules.Localizer;
+package org.firstinspires.ftc.teamcode.rework.Robot.Modules.Odometry;
 
-import org.firstinspires.ftc.teamcode.rework.Robot.Auto.PathPlanning.Point;
 import org.firstinspires.ftc.teamcode.rework.Robot.Modules.Module;
 import org.firstinspires.ftc.teamcode.rework.Robot.ReworkRobot;
 
 /**
- * Localizer includes all everything required to calculate the robot's position throughout
+ * Odometry includes all everything required to calculate the robot's position throughout
  * TeleOp or Autonomous.
  */
-public class Localizer extends Module {
+public class Odometry extends Module {
     RobotPosition robotPosition;
 
     ReworkRobot robot;
@@ -18,9 +17,9 @@ public class Localizer extends Module {
     private static final int RIGHT_POD_ENCODER_PORT = 1;
     private static final int MECANUM_POD_ENCODER_PORT = 2;
 
-    public Localizer(ReworkRobot robot) {
-        this.robot = robot; // Localizer needs robot in order to be able to get data from robot
-        // Localizer is the only module that won't need the hardwareMap, as it doesn't move anything
+    public Odometry(ReworkRobot robot) {
+        this.robot = robot; // Odometry needs robot in order to be able to get data from robot
+        // Odometry is the only module that won't need the hardwareMap, as it doesn't move anything
 
         init();
     }
