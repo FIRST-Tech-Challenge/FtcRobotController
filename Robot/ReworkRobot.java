@@ -54,8 +54,8 @@ public class ReworkRobot {
      * @see Module
      * @param module
      */
-    private void registerModule(Module module) {
-        this.registerModule(module);
+    private void registerModule(Module module){
+        modules.add(module);
     }
 
     /**
