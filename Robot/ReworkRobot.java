@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ModuleExecutor;
 import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ReworkDrivetrain;
 
 public class ReworkRobot {
+    // All modules in the robot (remember to update initModules() and updateModules() when adding)
+
     public ReworkDrivetrain drivetrain;
 
     private HardwareMap hardwareMap;
@@ -19,14 +21,14 @@ public class ReworkRobot {
 
     ModuleExecutor moduleExecutor;
 
-    // All modules in the robot (remember to update initModules() and updateModules() when adding)
+    // Array that all modules will be loaded into for easier access
     private Module[] modules;
 
     // REV Hubs
     private LynxModule revHub1;
     private LynxModule revHub2;
 
-    // Data
+    // Data holders
     private LynxModule.BulkData revHub1Data;
     private LynxModule.BulkData revHub2Data;
 
