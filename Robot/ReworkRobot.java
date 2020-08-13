@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.rework.Robot;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -12,6 +13,8 @@ import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ReworkDrivetrain;
 import java.util.ArrayList;
 
 public class ReworkRobot {
+    public ReworkDrivetrain drivetrain;
+
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
     private LinearOpMode linearOpMode;
@@ -19,9 +22,7 @@ public class ReworkRobot {
     ModuleExecutor moduleExecutor;
 
     // All modules in the robot (remember to update initModules() and updateModules() when adding)
-    private ArrayList<Module> modules = new ArrayList<Module>();
-
-    public ReworkDrivetrain drivetrain;
+    private Module[] modules;
 
     // REV Hubs
     private LynxModule revHub1;
@@ -41,21 +42,27 @@ public class ReworkRobot {
     }
 
     /**
+     * Gets a DcMotor from the hardwareMap given the name of the motor, returning null if the
+     * motor does not exist.
+     *
+     * @param name of the DcMotor to return.
+     * @return DcMotor from hardwareMap, or null if the motor does not exist.
+     */
+    public DcMotor getDcMotor(String name) {
+        try {
+            return hardwareMap.dcMotor.get(name);
+        } catch (IllegalArgumentException exception) {
+            throw new Error("Motor with name " + name + " could not be found. Exception: " + exception);
+        }
+    }
+
+    /**
      * Updates all the modules in robot.
      */
     public void updateModules() {
         for(Module module : modules) {
             module.update();
         }
-    }
-
-    /**
-     * Adds hooks to a Module such that its update() function is called on each update.
-     * @see Module
-     * @param module
-     */
-    private void registerModule(Module module){
-        modules.add(module);
     }
 
     /**
@@ -66,11 +73,12 @@ public class ReworkRobot {
      * the modules if the opMode is not active yet.
      */
     public void initModules() {
-        HardwareGlobals.hardwareMap = hardwareMap;
 
         // Hook modules here
-        drivetrain = new ReworkDrivetrain();
-        registerModule(this.drivetrain);
+        this.drivetrain = new ReworkDrivetrain();
+        this.modules = new Module[] {
+            this.drivetrain
+        };
 
         for(Module module : modules)
             module.init();

@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.rework.Robot.Modules;
 
 
+import org.firstinspires.ftc.teamcode.rework.Robot.ReworkRobot;
+
 public interface Module {
 
     /**
      * Initializes the module. This includes setting up all motors/servos
      * */
-    public void init();
+    public void init(ReworkRobot robot);
 
     /**
      * Updates the module, executing all the tasks it should complete on every iteration,
