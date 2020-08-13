@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.rework.Robot.ReworkRobot;
 
 
-public class ReworkDrivetrain implements Module { // TODO: possibly make this a subclass of ReworkRobot, or dissolve it entirely into Robot?
+public class ReworkDrivetrain implements Module {
     private ReworkRobot robot;
 
     // States
@@ -27,12 +27,10 @@ public class ReworkDrivetrain implements Module { // TODO: possibly make this a 
     private DcMotor bRight;
 
     public ReworkDrivetrain(ReworkRobot robot) {
-        init(robot);
+        this.robot = robot;
     }
 
-    public void init(ReworkRobot robot) {
-        this.robot = robot;
-
+    public void init() {
         fLeft = robot.getDcMotor("fLeft");
         fRight = robot.getDcMotor("fRight");
         bLeft = robot.getDcMotor("bLeft");

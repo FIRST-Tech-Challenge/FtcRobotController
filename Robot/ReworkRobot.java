@@ -10,8 +10,6 @@ import org.firstinspires.ftc.teamcode.rework.Robot.Modules.Module;
 import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ModuleExecutor;
 import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ReworkDrivetrain;
 
-import java.util.ArrayList;
-
 public class ReworkRobot {
     public ReworkDrivetrain drivetrain;
 
@@ -42,21 +40,6 @@ public class ReworkRobot {
     }
 
     /**
-     * Gets a DcMotor from the hardwareMap given the name of the motor, returning null if the
-     * motor does not exist.
-     *
-     * @param name of the DcMotor to return.
-     * @return DcMotor from hardwareMap, or null if the motor does not exist.
-     */
-    public DcMotor getDcMotor(String name) {
-        try {
-            return hardwareMap.dcMotor.get(name);
-        } catch (IllegalArgumentException exception) {
-            throw new Error("Motor with name " + name + " could not be found. Exception: " + exception);
-        }
-    }
-
-    /**
      * Updates all the modules in robot.
      */
     public void updateModules() {
@@ -73,15 +56,17 @@ public class ReworkRobot {
      * the modules if the opMode is not active yet.
      */
     public void initModules() {
+        // Add individual modules into the array here
+        this.drivetrain = new ReworkDrivetrain(this);
 
-        // Hook modules here
-        this.drivetrain = new ReworkDrivetrain();
         this.modules = new Module[] {
             this.drivetrain
         };
 
-        for(Module module : modules)
+        // Initialize modules
+        for(Module module : modules) {
             module.init();
+        }
 
         // Start the thread for executing modules.
         moduleExecutor = new ModuleExecutor(this);
@@ -121,6 +106,21 @@ public class ReworkRobot {
 
     public synchronized LynxModule.BulkData getRevHub2Data() {
         return revHub2Data;
+    }
+
+    /**
+     * Gets a DcMotor from the hardwareMap given the name of the motor, returning null if the
+     * motor does not exist.
+     *
+     * @param name of the DcMotor to return.
+     * @return DcMotor from hardwareMap, or null if the motor does not exist.
+     */
+    public DcMotor getDcMotor(String name) {
+        try {
+            return hardwareMap.dcMotor.get(name);
+        } catch (IllegalArgumentException exception) {
+            throw new Error("Motor with name " + name + " could not be found. Exception: " + exception);
+        }
     }
 
     /**
