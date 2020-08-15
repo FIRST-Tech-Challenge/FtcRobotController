@@ -30,4 +30,9 @@ public class RobotPosition {
     public double getHeading() {
         return heading;
     }
+
+
+    public void setHeading(double heading) {
+        this.heading = heading;
+    }
 }

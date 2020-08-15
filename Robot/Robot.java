@@ -8,12 +8,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.rework.Robot.Modules.Module;
 import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ModuleExecutor;
-import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ReworkDrivetrain;
+import org.firstinspires.ftc.teamcode.rework.Robot.Modules.Odometry.Odometry;
+import org.firstinspires.ftc.teamcode.rework.Robot.Modules.DrivetrainModule;
 
-public class ReworkRobot {
+public class Robot {
     // All modules in the robot (remember to update initModules() and updateModules() when adding)
 
-    public ReworkDrivetrain drivetrain;
+    public DrivetrainModule drivetrain;
+    public Odometry odometry;
 
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
@@ -32,7 +34,7 @@ public class ReworkRobot {
     private LynxModule.BulkData revHub1Data;
     private LynxModule.BulkData revHub2Data;
 
-    public ReworkRobot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode linearOpMode) {
+    public Robot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode linearOpMode) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         this.linearOpMode = linearOpMode;
@@ -59,10 +61,11 @@ public class ReworkRobot {
      */
     public void initModules() {
         // Add individual modules into the array here
-        this.drivetrain = new ReworkDrivetrain(this);
+        this.drivetrain = new DrivetrainModule(this);
+        this.odometry = new Odometry(this);
 
         this.modules = new Module[] {
-            this.drivetrain
+            this.drivetrain, this.odometry
         };
 
         // Initialize modules
@@ -82,12 +85,12 @@ public class ReworkRobot {
      * @see #isOpModeActive()
      */
     public void startModules() {
-        moduleExecutor.run();
+        moduleExecutor.start();
     }
 
     private void initHubs() {
         try {
-            revHub1 = hardwareMap.get(LynxModule.class, "Control Hub 1"); // TODO: Determine actual name of new control hub
+            revHub1 = hardwareMap.get(LynxModule.class, "Expansion Hub 3"); // TODO: Determine actual name of new control hub
             revHub2 = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
         } catch (Exception e) {
             throw new Error("One or more of the REV hubs could not be found. More info: " + e);
@@ -132,5 +135,9 @@ public class ReworkRobot {
      */
     public boolean isOpModeActive() {
         return linearOpMode.opModeIsActive();
+    }
+
+    public Telemetry getTelemetry(){
+        return telemetry;
     }
 }

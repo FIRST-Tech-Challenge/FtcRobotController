@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.rework.Robot.Modules;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.rework.Robot.ReworkRobot;
+import org.firstinspires.ftc.teamcode.rework.Robot.Robot;
 
 
-public class ReworkDrivetrain implements Module {
-    private ReworkRobot robot;
+public class DrivetrainModule implements Module {
+    private Robot robot;
 
     // States
     private double yMovement;
@@ -16,7 +16,7 @@ public class ReworkDrivetrain implements Module {
     private boolean isSlowMode;
 
     // Constants
-    private final static double POWER_SCALE_FACTOR = 0.9;
+    private final static double POWER_SCALE_FACTOR = 0.6;
     private final static double MECANUM_POWER_SCALE_FACTOR = 1.4;
     private final static double SLOW_POWER_SCALE_FACTOR = 0.3;
 
@@ -26,7 +26,7 @@ public class ReworkDrivetrain implements Module {
     private DcMotor bLeft;
     private DcMotor bRight;
 
-    public ReworkDrivetrain(ReworkRobot robot) {
+    public DrivetrainModule(Robot robot) {
         this.robot = robot;
     }
 
@@ -36,7 +36,7 @@ public class ReworkDrivetrain implements Module {
         bLeft = robot.getDcMotor("bLeft");
         bRight = robot.getDcMotor("bRight");
 
-        setDrivetrainDirection(DcMotor.Direction.REVERSE);
+        setDrivetrainDirection();
         setDrivetrainZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -69,10 +69,10 @@ public class ReworkDrivetrain implements Module {
      * in the module.
      */
     private void drive() {
-        double fLPower = ((yMovement * MECANUM_POWER_SCALE_FACTOR) - turnMovement + mecanumMovement) * POWER_SCALE_FACTOR;
-        double fRPower = ((yMovement * MECANUM_POWER_SCALE_FACTOR) + turnMovement + mecanumMovement) * POWER_SCALE_FACTOR;
-        double bLPower = ((yMovement * MECANUM_POWER_SCALE_FACTOR) - turnMovement + mecanumMovement) * POWER_SCALE_FACTOR;
-        double bRPower = ((yMovement * MECANUM_POWER_SCALE_FACTOR) + turnMovement - mecanumMovement) * POWER_SCALE_FACTOR;
+        double fLPower = ((yMovement) - turnMovement - mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
+        double fRPower = ((yMovement) + turnMovement + mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
+        double bLPower = ((yMovement) - turnMovement + mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
+        double bRPower = ((yMovement) + turnMovement - mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
 
         double maxPower = Math.abs(fLPower);
         if (Math.abs(fRPower) > maxPower) {
@@ -84,16 +84,19 @@ public class ReworkDrivetrain implements Module {
         if (Math.abs(bRPower) > maxPower) {
             maxPower = Math.abs(bRPower);
         }
-
         double scaleDown = 1.0;
         if (maxPower > 1.0) {
             scaleDown = 1.0 / maxPower;
         }
-
         fLPower *= scaleDown;
         fRPower *= scaleDown;
         bLPower *= scaleDown;
         bRPower *= scaleDown;
+
+        fLPower *= POWER_SCALE_FACTOR;
+        fRPower *= POWER_SCALE_FACTOR;
+        bLPower *= POWER_SCALE_FACTOR;
+        bRPower *= POWER_SCALE_FACTOR;
 
         if (isSlowMode) {
             fLPower *= SLOW_POWER_SCALE_FACTOR;
@@ -119,10 +122,10 @@ public class ReworkDrivetrain implements Module {
         bRight.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
-    private void setDrivetrainDirection(DcMotor.Direction direction) {
-        fLeft.setDirection(direction);
-        fRight.setDirection(direction);
-        bLeft.setDirection(direction);
-        bRight.setDirection(direction);
+    private void setDrivetrainDirection() {
+        fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        fRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        bRight.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 }

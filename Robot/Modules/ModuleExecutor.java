@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.rework.Robot.Modules;
 import android.os.SystemClock;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.rework.Robot.ReworkRobot;
+import org.firstinspires.ftc.teamcode.rework.Robot.Robot;
 
 /**
  * ModuleExecutor creates a new thread where modules will be executed and data will be retrieved
@@ -15,10 +15,10 @@ public class ModuleExecutor extends Thread {
      */
     final boolean SHOW_UPDATE_SPEED = true;
 
-    ReworkRobot robot;
+    Robot robot;
     Telemetry telemetry;
 
-    public ModuleExecutor(ReworkRobot robot, Telemetry telemetry) {
+    public ModuleExecutor(Robot robot, Telemetry telemetry) {
         this.robot = robot;
         this.telemetry = telemetry;
     }
@@ -40,8 +40,6 @@ public class ModuleExecutor extends Thread {
                 telemetry.addData("Module Executor thread loop time: ", currentTime - lastUpdateTime);
 
                 lastUpdateTime = currentTime;
-
-                telemetry.update();
             }
         }
         System.out.println("Module executor thread exited due to opMode no longer being active.");

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.rework.Robot.Auto.ReworkAutoBase;
 
 @Autonomous
-public class ReworkBlueLeftAuto extends ReworkAutoBase {
+public class BlueLeftAuto extends ReworkAutoBase {
     public void runOpMode() {
         initRobot();
 

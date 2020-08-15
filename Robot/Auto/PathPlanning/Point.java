@@ -16,7 +16,7 @@ public class Point {
     /**
      * Creates a point with value (0,0)
      */
-    Point() {
+    public Point() {
         this.x = 0;
         this.y = 0;
     }

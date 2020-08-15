@@ -5,11 +5,11 @@ import android.os.SystemClock;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.rework.Robot.ReworkRobot;
+import org.firstinspires.ftc.teamcode.rework.Robot.Robot;
 
 @TeleOp
-public class ReworkTeleOp extends LinearOpMode {
-    ReworkRobot robot;
+public class MainTeleop extends LinearOpMode {
+    Robot robot;
 
     public void runOpMode() {
         initRobot();
@@ -18,23 +18,29 @@ public class ReworkTeleOp extends LinearOpMode {
 
         robot.startModules();
 
+
         while (opModeIsActive()) {
             robot.getBulkData();
-
             updateDrivetrainStates();
-
             displayUpdateTime();
+            telemetry.addLine("stick values " + gamepad1.left_stick_y);
+            telemetry.addLine("x: " + robot.odometry.getRobotPosition().getLocation().x);
+            telemetry.addLine("y: " + robot.odometry.getRobotPosition().getLocation().y);
+            telemetry.addLine("heading: " + Math.toDegrees(robot.odometry.getRobotPosition().getHeading()));
+            telemetry.addLine("yLeft encoder: " + robot.odometry.yLeft.getCurrentPosition()*-1);
+            telemetry.addLine("yRight encoder: " + robot.odometry.yRight.getCurrentPosition());
+            telemetry.addLine("mecanum encoder: " + robot.odometry.mecanum.getCurrentPosition());
+
         }
     }
 
     private void initRobot() {
-        robot = new ReworkRobot(hardwareMap, telemetry,this);
-
+        robot = new Robot(hardwareMap, telemetry,this);
         robot.initModules();
     }
 
     private void updateDrivetrainStates() {
-        robot.drivetrain.setStates(gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
+        robot.drivetrain.setStates(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
     }
 
 

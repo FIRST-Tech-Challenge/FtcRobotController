@@ -1,15 +1,14 @@
 package org.firstinspires.ftc.teamcode.rework.Robot.Auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.rework.Robot.ReworkRobot;
+import org.firstinspires.ftc.teamcode.rework.Robot.Robot;
 
 public abstract class ReworkAutoBase extends LinearOpMode {
-    protected ReworkRobot robot;
+    protected Robot robot;
 
     protected void initRobot() {
-        robot = new ReworkRobot(hardwareMap, telemetry, this);
+        robot = new Robot(hardwareMap, telemetry, this);
 
         robot.initModules();
     }
