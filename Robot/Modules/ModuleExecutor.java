@@ -10,13 +10,13 @@ import org.firstinspires.ftc.teamcode.rework.Robot.ReworkRobot;
  * from the hubs.
  */
 public class ModuleExecutor extends Thread {
-    ReworkRobot robot;
-    Telemetry telemetry;
-
     /**
      * Whether or not to telemetry data on update speed, for debugging.
      */
-    boolean showUpdateSpeed = true;
+    final boolean SHOW_UPDATE_SPEED = true;
+
+    ReworkRobot robot;
+    Telemetry telemetry;
 
     public ModuleExecutor(ReworkRobot robot, Telemetry telemetry) {
         this.robot = robot;
@@ -34,7 +34,7 @@ public class ModuleExecutor extends Thread {
             robot.updateModules();
             robot.getBulkData();
 
-            if (showUpdateSpeed) {
+            if (SHOW_UPDATE_SPEED) {
                 currentTime = SystemClock.elapsedRealtime();
 
                 telemetry.addData("Module Executor thread loop time: ", currentTime - lastUpdateTime);
