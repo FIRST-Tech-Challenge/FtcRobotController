@@ -71,7 +71,7 @@ public class ReworkRobot {
         }
 
         // Start the thread for executing modules.
-        moduleExecutor = new ModuleExecutor(this);
+        moduleExecutor = new ModuleExecutor(this, telemetry);
         moduleExecutor.start();
     }
 

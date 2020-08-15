@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.rework;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -20,6 +22,8 @@ public class ReworkTeleOp extends LinearOpMode {
             robot.getBulkData();
 
             updateDrivetrainStates();
+
+            displayUpdateTime();
         }
     }
 
@@ -31,5 +35,22 @@ public class ReworkTeleOp extends LinearOpMode {
 
     private void updateDrivetrainStates() {
         robot.drivetrain.setStates(gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
+    }
+
+
+    long lastUpdateTime = SystemClock.elapsedRealtime();
+    long currentTime;
+
+    /**
+     * Calculates and displays (in telemetry) the loop time of the while(isOpModeActive) loop.
+     */
+    private void displayUpdateTime() {
+        currentTime = SystemClock.elapsedRealtime();
+
+        telemetry.addData("TeleOp while loop update time: ", currentTime - lastUpdateTime);
+
+        lastUpdateTime = currentTime;
+
+        telemetry.update();
     }
 }
