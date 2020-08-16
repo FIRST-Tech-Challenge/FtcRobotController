@@ -19,7 +19,6 @@ public class MainTeleop extends LinearOpMode {
             updateDrivetrainStates();
 
             telemetryUpdateTime();
-            telemetry.addLine("stick values " + gamepad1.left_stick_y);
             telemetry.addLine("x: " + robot.odometryModule.robotPosition.getLocation().x);
             telemetry.addLine("y: " + robot.odometryModule.robotPosition.getLocation().y);
             telemetry.addLine("heading: " + Math.toDegrees(robot.odometryModule.robotPosition.getHeading()));
