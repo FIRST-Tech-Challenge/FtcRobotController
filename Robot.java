@@ -1,21 +1,22 @@
-package org.firstinspires.ftc.teamcode.rework.Robot;
+package org.firstinspires.ftc.teamcode.rework;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.rework.Robot.Modules.Module;
-import org.firstinspires.ftc.teamcode.rework.Robot.Modules.ModuleExecutor;
-import org.firstinspires.ftc.teamcode.rework.Robot.Modules.Odometry.Odometry;
-import org.firstinspires.ftc.teamcode.rework.Robot.Modules.DrivetrainModule;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.ModuleExecutor;
+import org.firstinspires.ftc.teamcode.rework.Modules.OdometryModule;
+import org.firstinspires.ftc.teamcode.rework.Modules.DrivetrainModule;
 
 public class Robot {
     // All modules in the robot (remember to update initModules() and updateModules() when adding)
 
-    public DrivetrainModule drivetrain;
-    public Odometry odometry;
+    public DrivetrainModule drivetrainModule;
+    public OdometryModule odometryModule;
 
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
@@ -39,10 +40,8 @@ public class Robot {
         initModules();
     }
 
-    /**
-     * Updates all the modules in robot.
-     */
-    public void updateModules() {
+    public void update() {
+        refreshData2();
         for(Module module : modules) {
             module.update();
         }
@@ -57,11 +56,11 @@ public class Robot {
      */
     public void initModules() {
         // Add individual modules into the array here
-        this.drivetrain = new DrivetrainModule(this);
-        this.odometry = new Odometry(this);
+        this.drivetrainModule = new DrivetrainModule(this);
+        this.odometryModule = new OdometryModule(this);
 
         this.modules = new Module[] {
-            this.drivetrain, this.odometry
+            this.drivetrainModule, this.odometryModule
         };
 
         // Initialize modules
@@ -75,10 +74,7 @@ public class Robot {
     }
 
     /**
-     * Runs the loop that updates modules in the separate thread. This loop continues running while
-     * isOpModeActive() returns true.
-     *
-     * @see #isOpModeActive()
+     * Starts running the loop that updates modules
      */
     public void startModules() {
         moduleExecutor.start();
@@ -86,30 +82,23 @@ public class Robot {
 
     private void initHubs() {
         try {
-            revHub1 = hardwareMap.get(LynxModule.class, "Expansion Hub 3"); // TODO: Determine actual name of new control hub
-            revHub2 = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
+            revHub1 = hardwareMap.get(LynxModule.class, "Expansion Hub 3");
             revHub1.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            revHub2 = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
             revHub2.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         } catch (Exception e) {
             throw new Error("One or more of the REV hubs could not be found. More info: " + e);
         }
     }
 
-    /**
-     * Gets all sensor data from the hubs.
-     */
-    public void getBulkData() {
-        //revHub1Data = revHub1.getBulkData();
+    public void refreshData1() {
+        revHub1.getBulkData();
+    }
+
+    public void refreshData2() {
         revHub2.getBulkData();
     }
 
-    /**
-     * Gets a DcMotor from the hardwareMap given the name of the motor, returning null if the
-     * motor does not exist.
-     *
-     * @param name of the DcMotor to return.
-     * @return DcMotor from hardwareMap, or null if the motor does not exist.
-     */
     public DcMotor getDcMotor(String name) {
         try {
             return hardwareMap.dcMotor.get(name);
@@ -118,16 +107,15 @@ public class Robot {
         }
     }
 
-    /**
-     * Returns if the robot's op mode is active.
-     *
-     * @return boolean representing whether or not the op mode is active.
-     */
-    public boolean isOpModeActive() {
-        return linearOpMode.opModeIsActive();
+    public Servo getServo(String name) {
+        try {
+            return hardwareMap.servo.get(name);
+        } catch (IllegalArgumentException exception) {
+            throw new Error("Servo with name " + name + " could not be found. Exception: " + exception);
+        }
     }
 
-    public Telemetry getTelemetry(){
-        return telemetry;
+    public boolean isOpModeActive() {
+        return linearOpMode.opModeIsActive();
     }
 }

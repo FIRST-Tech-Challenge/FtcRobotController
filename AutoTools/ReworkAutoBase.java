@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.rework.Robot.Auto;
+package org.firstinspires.ftc.teamcode.rework.AutoTools;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.rework.Robot.Robot;
+import org.firstinspires.ftc.teamcode.rework.Robot;
 
 public abstract class ReworkAutoBase extends LinearOpMode {
     protected Robot robot;

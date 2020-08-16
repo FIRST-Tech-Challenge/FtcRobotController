@@ -1,33 +1,31 @@
-package org.firstinspires.ftc.teamcode.rework.Robot.Modules.Odometry;
+package org.firstinspires.ftc.teamcode.rework.Modules;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.rework.Robot.Auto.PathPlanning.Point;
-import org.firstinspires.ftc.teamcode.rework.Robot.Modules.Module;
-import org.firstinspires.ftc.teamcode.rework.Robot.Robot;
+import org.firstinspires.ftc.teamcode.rework.AutoTools.RobotPosition;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
+import org.firstinspires.ftc.teamcode.rework.Robot;
 
-/**
- * Odometry includes all everything required to calculate the robot's position throughout
- * TeleOp or Autonomous.
- */
-public class Odometry implements Module {
+public class OdometryModule implements Module {
 
     RobotPosition robotPosition;
     Robot robot;
 
-    public DcMotor yLeft;
-    public DcMotor yRight;
-    public DcMotor mecanum;
+    private DcMotor yLeft;
+    private DcMotor yRight;
+    private DcMotor mecanum;
 
     private final double INCHES_PER_ENCODER_TICK = 0.0007284406721;
     private final double LR_ENCODER_DIST_FROM_CENTER = 6.89512052;
     private final double M_ENCODER_DIST_FROM_CENTER = 4.5;
 
-    public Odometry(Robot robot) {
-        this.robot = robot; // Odometry needs robot in order to be able to get data from robot
-        robotPosition = new RobotPosition(new Point(),0);
+    private double leftPodOldPosition = 0;
+    private double rightPodOldPosition = 0;
+    private double mecanumPodOldPosition = 0;
 
-        // Odometry is the only module that won't need the hardwareMap, as it doesn't move anything
+    public OdometryModule(Robot robot) {
+        this.robot = robot;
+        robotPosition = new RobotPosition();
     }
 
     public void init() {
@@ -48,13 +46,6 @@ public class Odometry implements Module {
         calculateRobotPosition();
     }
 
-    public synchronized RobotPosition getRobotPosition() {
-        return robotPosition;
-    }
-
-    double leftPodOldPosition = 0;
-    double rightPodOldPosition = 0;
-    double mecanumPodOldPosition = 0;
     /**
      * Calculates the robot's position.
      */
@@ -92,12 +83,11 @@ public class Odometry implements Module {
         double dRobotX = M * sinXOverX(dTheta) + Q * Math.sin(dTheta) - L * cosXMinusOneOverX(dTheta) + P * (Math.cos(dTheta) - 1);
         double dRobotY = L * sinXOverX(dTheta) - P * Math.sin(dTheta) + M * cosXMinusOneOverX(dTheta) + Q * (Math.cos(dTheta) - 1);
 
-        // find global deltas by rotating robot relative deltas by the old heading, then add the delta to the sum
-        robotPosition.getLocation().x += dRobotX * Math.cos(robotPosition.getHeading()) + dRobotY * Math.sin(robotPosition.getHeading());
-        robotPosition.getLocation().y += dRobotY * Math.cos(robotPosition.getHeading()) - dRobotX * Math.sin(robotPosition.getHeading());
+        double newWorldX = robotPosition.getLocation().x + dRobotX * Math.cos(robotPosition.getHeading()) + dRobotY * Math.sin(robotPosition.getHeading());
+        double newWorldY = robotPosition.getLocation().y + dRobotY * Math.cos(robotPosition.getHeading()) - dRobotX * Math.sin(robotPosition.getHeading());
+        double newHeading = ((dLeftPod + leftPodOldPosition) - (dRightPod + rightPodOldPosition)) * INCHES_PER_ENCODER_TICK / (2 * P);
 
-        // update heading
-        robotPosition.setHeading(((dLeftPod + leftPodOldPosition) - (dRightPod + rightPodOldPosition)) * INCHES_PER_ENCODER_TICK / (2 * P));
+        robotPosition.updatePosition(newWorldX, newWorldY, newHeading);
     }
 
     /*
@@ -136,5 +126,21 @@ public class Odometry implements Module {
         } else {
             return (Math.cos(x)-1)/x;
         }
+    }
+
+    public synchronized RobotPosition getRobotPosition() {
+        return robotPosition;
+    }
+
+    public DcMotor getyLeft() {
+        return yLeft;
+    }
+
+    public DcMotor getyRight() {
+        return yRight;
+    }
+
+    public DcMotor getMecanum() {
+        return mecanum;
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.rework.Robot.Auto.PathPlanning;
+package org.firstinspires.ftc.teamcode.rework.AutoTools;
 
 public class Waypoint extends Point {
     Actions[] actions;

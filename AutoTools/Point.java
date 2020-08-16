@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.rework.Robot.Auto.PathPlanning;
+package org.firstinspires.ftc.teamcode.rework.AutoTools;
 
 /**
  * Used to define a point in space. Has two field variables, x and y to define a point (x,y)

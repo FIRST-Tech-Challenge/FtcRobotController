@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.rework.Robot.Modules;
+package org.firstinspires.ftc.teamcode.rework.ModuleTools;
 
 import android.os.SystemClock;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.rework.Robot.Robot;
+import org.firstinspires.ftc.teamcode.rework.Robot;
 
 /**
  * ModuleExecutor creates a new thread where modules will be executed and data will be retrieved
@@ -31,16 +31,12 @@ public class ModuleExecutor extends Thread {
         long currentTime;
 
         while (robot.isOpModeActive()) {
-            robot.getBulkData();
 
-            robot.updateModules();
-
+            robot.update();
 
             if (SHOW_UPDATE_SPEED) {
                 currentTime = SystemClock.elapsedRealtime();
-
                 telemetry.addData("Module Executor thread loop time: ", currentTime - lastUpdateTime);
-
                 lastUpdateTime = currentTime;
             }
         }

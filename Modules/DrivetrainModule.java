@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.rework.Robot.Modules;
+package org.firstinspires.ftc.teamcode.rework.Modules;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.rework.Robot.Robot;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
+import org.firstinspires.ftc.teamcode.rework.Robot;
 
 
 public class DrivetrainModule implements Module {
@@ -18,7 +19,7 @@ public class DrivetrainModule implements Module {
     // Constants
     private final static double POWER_SCALE_FACTOR = 0.6;
     private final static double MECANUM_POWER_SCALE_FACTOR = 1.4;
-    private final static double SLOW_POWER_SCALE_FACTOR = 0.3;
+    private final static double SLOW_POWER_SCALE_FACTOR = 0.2;
 
     // Motors
     private DcMotor fLeft;
@@ -36,25 +37,20 @@ public class DrivetrainModule implements Module {
         bLeft = robot.getDcMotor("bLeft");
         bRight = robot.getDcMotor("bRight");
 
-        setDrivetrainDirection();
+        fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        fRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        bRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
         setDrivetrainZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    /**
-     * Drives robot (moves drivetrain) using states.
-     */
+
     public synchronized void update() {
-        drive();
+        applyMotorPowers();
     }
 
-    /**
-     * Sets the states of this module. Use update() to execute.
-     *
-     * @param yMovement Forward/backward movement of robot
-     * @param mecanumMovement Sideways movement of robot
-     * @param turnMovement Turn movement of robot
-     */
-    public synchronized void setStates(double yMovement, double mecanumMovement, double turnMovement) {
+    public synchronized void setAllStates(double yMovement, double mecanumMovement, double turnMovement) {
         this.yMovement = yMovement;
         this.mecanumMovement = mecanumMovement;
         this.turnMovement = turnMovement;
@@ -68,7 +64,7 @@ public class DrivetrainModule implements Module {
      * Calculates and applies powers to the drivetrain motors using the states (movement params)
      * in the module.
      */
-    private void drive() {
+    private void applyMotorPowers() {
         double fLPower = ((yMovement) - turnMovement - mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
         double fRPower = ((yMovement) + turnMovement + mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
         double bLPower = ((yMovement) - turnMovement + mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
@@ -93,12 +89,12 @@ public class DrivetrainModule implements Module {
         bLPower *= scaleDown;
         bRPower *= scaleDown;
 
-        fLPower *= POWER_SCALE_FACTOR;
-        fRPower *= POWER_SCALE_FACTOR;
-        bLPower *= POWER_SCALE_FACTOR;
-        bRPower *= POWER_SCALE_FACTOR;
-
-        if (isSlowMode) {
+        if (!isSlowMode) {
+            fLPower *= POWER_SCALE_FACTOR;
+            fRPower *= POWER_SCALE_FACTOR;
+            bLPower *= POWER_SCALE_FACTOR;
+            bRPower *= POWER_SCALE_FACTOR;
+        } else {
             fLPower *= SLOW_POWER_SCALE_FACTOR;
             fRPower *= SLOW_POWER_SCALE_FACTOR;
             bLPower *= SLOW_POWER_SCALE_FACTOR;
@@ -122,10 +118,19 @@ public class DrivetrainModule implements Module {
         bRight.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
-    private void setDrivetrainDirection() {
-        fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        fRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        bRight.setDirection(DcMotorSimple.Direction.FORWARD);
+    public DcMotor getfLeft() {
+        return fLeft;
+    }
+
+    public DcMotor getfRight() {
+        return fRight;
+    }
+
+    public DcMotor getbLeft() {
+        return bLeft;
+    }
+
+    public DcMotor getbRight() {
+        return bRight;
     }
 }
