@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.rework;
 
+import android.os.SystemClock;
+
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,6 +19,7 @@ public class Robot {
 
     public DrivetrainModule drivetrainModule;
     public OdometryModule odometryModule;
+    public long currentTimeMilli;
 
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
@@ -42,6 +45,9 @@ public class Robot {
 
     public void update() {
         refreshData2();
+
+        currentTimeMilli = SystemClock.elapsedRealtime();
+
         for(Module module : modules) {
             module.update();
         }
@@ -70,7 +76,6 @@ public class Robot {
 
         // Start the thread for executing modules.
         moduleExecutor = new ModuleExecutor(this, telemetry);
-        moduleExecutor.start();
     }
 
     /**

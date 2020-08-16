@@ -10,9 +10,7 @@ import org.firstinspires.ftc.teamcode.rework.Robot;
  * from the hubs.
  */
 public class ModuleExecutor extends Thread {
-    /**
-     * Whether or not to telemetry data on update speed, for debugging.
-     */
+
     final boolean SHOW_UPDATE_SPEED = true;
 
     Robot robot;
