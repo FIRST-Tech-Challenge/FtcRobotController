@@ -31,8 +31,10 @@ public class ModuleExecutor extends Thread {
         long currentTime;
 
         while (robot.isOpModeActive()) {
-            robot.updateModules();
             robot.getBulkData();
+
+            robot.updateModules();
+
 
             if (SHOW_UPDATE_SPEED) {
                 currentTime = SystemClock.elapsedRealtime();

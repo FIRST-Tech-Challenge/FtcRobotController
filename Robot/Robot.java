@@ -30,10 +30,6 @@ public class Robot {
     private LynxModule revHub1;
     private LynxModule revHub2;
 
-    // Data holders
-    private LynxModule.BulkData revHub1Data;
-    private LynxModule.BulkData revHub2Data;
-
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode linearOpMode) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
@@ -92,6 +88,8 @@ public class Robot {
         try {
             revHub1 = hardwareMap.get(LynxModule.class, "Expansion Hub 3"); // TODO: Determine actual name of new control hub
             revHub2 = hardwareMap.get(LynxModule.class, "Expansion Hub 2");
+            revHub1.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            revHub2.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         } catch (Exception e) {
             throw new Error("One or more of the REV hubs could not be found. More info: " + e);
         }
@@ -100,17 +98,9 @@ public class Robot {
     /**
      * Gets all sensor data from the hubs.
      */
-    public synchronized void getBulkData() {
-        revHub1Data = revHub1.getBulkData();
-        revHub2Data = revHub2.getBulkData();
-    }
-
-    public synchronized LynxModule.BulkData getRevHub1Data() {
-        return revHub1Data;
-    }
-
-    public synchronized LynxModule.BulkData getRevHub2Data() {
-        return revHub2Data;
+    public void getBulkData() {
+        //revHub1Data = revHub1.getBulkData();
+        revHub2.getBulkData();
     }
 
     /**

@@ -65,9 +65,9 @@ public class Odometry implements Module {
      * Calculates the robot's position.
      */
     private void calculateRobotPosition() {
-        double leftPodNewPosition = robot.getRevHub2Data().getMotorCurrentPosition(LEFT_POD_ENCODER_PORT) * -1;
-        double rightPodNewPosition = robot.getRevHub2Data().getMotorCurrentPosition(RIGHT_POD_ENCODER_PORT);
-        double mecanumPodNewPosition = robot.getRevHub2Data().getMotorCurrentPosition(MECANUM_POD_ENCODER_PORT);
+        double leftPodNewPosition = yLeft.getCurrentPosition() * -1;
+        double rightPodNewPosition = yRight.getCurrentPosition();
+        double mecanumPodNewPosition = mecanum.getCurrentPosition();
 
         double leftPodDelta = leftPodNewPosition - leftPodOldPosition;
         double rightPodDelta = rightPodNewPosition - rightPodOldPosition;
