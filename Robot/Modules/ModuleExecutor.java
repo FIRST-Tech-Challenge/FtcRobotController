@@ -13,7 +13,7 @@ public class ModuleExecutor extends Thread {
     /**
      * Whether or not to telemetry data on update speed, for debugging.
      */
-    final boolean SHOW_UPDATE_SPEED = true;
+    final static boolean SHOW_UPDATE_SPEED = true;
 
     Robot robot;
     Telemetry telemetry;
@@ -34,7 +34,6 @@ public class ModuleExecutor extends Thread {
             robot.getBulkData();
 
             robot.updateModules();
-
 
             if (SHOW_UPDATE_SPEED) {
                 currentTime = SystemClock.elapsedRealtime();

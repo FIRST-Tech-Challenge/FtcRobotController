@@ -36,7 +36,6 @@ public class Odometry implements Module {
     }
 
     public void init() {
-
         yLeft = robot.getDcMotor("yLeft");
         yRight = robot.getDcMotor("yRight");
         mecanum = robot.getDcMotor("mecanum");
@@ -128,11 +127,10 @@ public class Odometry implements Module {
     }
 
     private double circularOdometrySinXOverX(double x) {
-        if (Math.abs(x) < .00005) { // If the ratio is close enough to the limit, make it the limit
+        if (Math.abs(x) < .00005) { // If the ratio is close enough to the limit, make it the limit TODO: Adjust or eliminate this limit
             return 1;
         } else {
             return Math.sin(x) / x;
         }
     }
-
 }

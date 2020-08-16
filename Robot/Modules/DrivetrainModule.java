@@ -36,7 +36,7 @@ public class DrivetrainModule implements Module {
         bLeft = robot.getDcMotor("bLeft");
         bRight = robot.getDcMotor("bRight");
 
-        setDrivetrainDirection();
+        initDrivetrainDirection();
         setDrivetrainZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -69,11 +69,15 @@ public class DrivetrainModule implements Module {
      * in the module.
      */
     private void drive() {
-        double fLPower = ((yMovement) - turnMovement - mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
-        double fRPower = ((yMovement) + turnMovement + mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
-        double bLPower = ((yMovement) - turnMovement + mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
-        double bRPower = ((yMovement) + turnMovement - mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
+        double fLPower = (yMovement - turnMovement - (mecanumMovement * MECANUM_POWER_SCALE_FACTOR));
+        double fRPower = (yMovement + turnMovement + (mecanumMovement * MECANUM_POWER_SCALE_FACTOR));
+        double bLPower = (yMovement - turnMovement + (mecanumMovement * MECANUM_POWER_SCALE_FACTOR));
+        double bRPower = (yMovement + turnMovement - (mecanumMovement * MECANUM_POWER_SCALE_FACTOR));
 
+        /**
+         * Find the max power, and then scale that max power to be 1 (so that one motor is always
+         * running at max power)
+         */
         double maxPower = Math.abs(fLPower);
         if (Math.abs(fRPower) > maxPower) {
             maxPower = Math.abs(fRPower);
@@ -93,11 +97,17 @@ public class DrivetrainModule implements Module {
         bLPower *= scaleDown;
         bRPower *= scaleDown;
 
+        /**
+         * Apply the power scale factor, if any (to prevent the robot from going too fast)
+         */
         fLPower *= POWER_SCALE_FACTOR;
         fRPower *= POWER_SCALE_FACTOR;
         bLPower *= POWER_SCALE_FACTOR;
         bRPower *= POWER_SCALE_FACTOR;
 
+        /**
+         * Apply slowmode scaling if slowMode is active.
+         */
         if (isSlowMode) {
             fLPower *= SLOW_POWER_SCALE_FACTOR;
             fRPower *= SLOW_POWER_SCALE_FACTOR;
@@ -122,7 +132,7 @@ public class DrivetrainModule implements Module {
         bRight.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
-    private void setDrivetrainDirection() {
+    private void initDrivetrainDirection() {
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         fRight.setDirection(DcMotorSimple.Direction.FORWARD);
         bLeft.setDirection(DcMotorSimple.Direction.REVERSE);

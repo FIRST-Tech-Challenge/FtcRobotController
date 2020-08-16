@@ -31,7 +31,6 @@ public class RobotPosition {
         return heading;
     }
 
-
     public void setHeading(double heading) {
         this.heading = heading;
     }

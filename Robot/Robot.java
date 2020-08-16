@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.rework.Robot.Modules.DrivetrainModule;
 
 public class Robot {
     // All modules in the robot (remember to update initModules() and updateModules() when adding)
-
     public DrivetrainModule drivetrain;
     public Odometry odometry;
 
@@ -21,6 +20,7 @@ public class Robot {
     private Telemetry telemetry;
     private LinearOpMode linearOpMode;
 
+    // New thread that updates modules
     ModuleExecutor moduleExecutor;
 
     // Array that all modules will be loaded into for easier access
@@ -99,7 +99,7 @@ public class Robot {
      * Gets all sensor data from the hubs.
      */
     public void getBulkData() {
-        //revHub1Data = revHub1.getBulkData();
+        // revHub1.getBulkData(); // No need for data from Hub 1 as of right now
         revHub2.getBulkData();
     }
 

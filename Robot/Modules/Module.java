@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.rework.Robot.Modules;
 
 
 public interface Module {
-
     /**
      * Initializes the module. This includes setting up all motors/servos
      * */
@@ -14,6 +13,4 @@ public interface Module {
      * on a different thread from where the states are set.
      */
     public void update();
-
-
 }

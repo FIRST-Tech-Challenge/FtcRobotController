@@ -18,19 +18,14 @@ public class MainTeleop extends LinearOpMode {
 
         robot.startModules();
 
-
         while (opModeIsActive()) {
             robot.getBulkData();
-            updateDrivetrainStates();
-            displayUpdateTime();
-            telemetry.addLine("stick values " + gamepad1.left_stick_y);
-            telemetry.addLine("x: " + robot.odometry.getRobotPosition().getLocation().x);
-            telemetry.addLine("y: " + robot.odometry.getRobotPosition().getLocation().y);
-            telemetry.addLine("heading: " + Math.toDegrees(robot.odometry.getRobotPosition().getHeading()));
-            telemetry.addLine("yLeft encoder: " + robot.odometry.yLeft.getCurrentPosition()*-1);
-            telemetry.addLine("yRight encoder: " + robot.odometry.yRight.getCurrentPosition());
-            telemetry.addLine("mecanum encoder: " + robot.odometry.mecanum.getCurrentPosition());
 
+            updateDrivetrainStates();
+
+            displayUpdateTime();
+
+            telemetryData();
         }
     }
 
@@ -43,6 +38,15 @@ public class MainTeleop extends LinearOpMode {
         robot.drivetrain.setStates(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
     }
 
+    private void telemetryData() {
+        telemetry.addLine("stick values " + gamepad1.left_stick_y);
+        telemetry.addLine("x: " + robot.odometry.getRobotPosition().getLocation().x);
+        telemetry.addLine("y: " + robot.odometry.getRobotPosition().getLocation().y);
+        telemetry.addLine("heading: " + Math.toDegrees(robot.odometry.getRobotPosition().getHeading()));
+        telemetry.addLine("yLeft encoder: " + robot.odometry.yLeft.getCurrentPosition()*-1);
+        telemetry.addLine("yRight encoder: " + robot.odometry.yRight.getCurrentPosition());
+        telemetry.addLine("mecanum encoder: " + robot.odometry.mecanum.getCurrentPosition());
+    }
 
     long lastUpdateTime = SystemClock.elapsedRealtime();
     long currentTime;
