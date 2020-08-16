@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.rework.Robot;
 
 public class OdometryModule implements Module {
 
-    RobotPosition robotPosition;
-    Robot robot;
+    public RobotPosition robotPosition;
+    private Robot robot;
 
     private DcMotor yLeft;
     private DcMotor yRight;
@@ -126,10 +126,6 @@ public class OdometryModule implements Module {
         } else {
             return (Math.cos(x)-1)/x;
         }
-    }
-
-    public synchronized RobotPosition getRobotPosition() {
-        return robotPosition;
     }
 
     public DcMotor getyLeft() {

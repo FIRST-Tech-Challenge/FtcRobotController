@@ -10,7 +10,6 @@ public class RobotPosition {
     public RobotPosition(){
         this.location = new Point();
         this.heading = 0;
-
     }
 
     public RobotPosition(Point location, double heading) {

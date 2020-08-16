@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.rework;
 
 import android.os.SystemClock;
 
+import com.google.gson.internal.$Gson$Preconditions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -16,15 +17,17 @@ public class MainTeleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             updateDrivetrainStates();
-            displayUpdateTime();
+
+            telemetryUpdateTime();
             telemetry.addLine("stick values " + gamepad1.left_stick_y);
-            telemetry.addLine("x: " + robot.odometryModule.getRobotPosition().getLocation().x);
-            telemetry.addLine("y: " + robot.odometryModule.getRobotPosition().getLocation().y);
-            telemetry.addLine("heading: " + Math.toDegrees(robot.odometryModule.getRobotPosition().getHeading()));
+            telemetry.addLine("x: " + robot.odometryModule.robotPosition.getLocation().x);
+            telemetry.addLine("y: " + robot.odometryModule.robotPosition.getLocation().y);
+            telemetry.addLine("heading: " + Math.toDegrees(robot.odometryModule.robotPosition.getHeading()));
             telemetry.addLine("yLeft encoder: " + robot.odometryModule.getyLeft().getCurrentPosition()*-1);
             telemetry.addLine("yRight encoder: " + robot.odometryModule.getyRight().getCurrentPosition());
             telemetry.addLine("mecanum encoder: " + robot.odometryModule.getMecanum().getCurrentPosition());
 
+            telemetry.update();
         }
     }
 
@@ -34,9 +37,16 @@ public class MainTeleop extends LinearOpMode {
     }
 
     private void updateDrivetrainStates() {
-        robot.drivetrainModule.setAllStates(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-    }
+        robot.drivetrainModule.yMovement = gamepad1.left_stick_y;
+        robot.drivetrainModule.xMovement = gamepad1.left_stick_x;
+        robot.drivetrainModule.turnMovement = gamepad1.right_stick_x;
 
+        if (gamepad1.right_bumper){
+            robot.drivetrainModule.isSlowMode = true;
+        } else {
+            robot.drivetrainModule.isSlowMode = false;
+        }
+    }
 
     long lastUpdateTime = SystemClock.elapsedRealtime();
     long currentTime;
@@ -44,13 +54,11 @@ public class MainTeleop extends LinearOpMode {
     /**
      * Calculates and displays (in telemetry) the loop time of the while(isOpModeActive) loop.
      */
-    private void displayUpdateTime() {
+    private void telemetryUpdateTime() {
         currentTime = SystemClock.elapsedRealtime();
 
         telemetry.addData("TeleOp while loop update time: ", currentTime - lastUpdateTime);
 
         lastUpdateTime = currentTime;
-
-        telemetry.update();
     }
 }

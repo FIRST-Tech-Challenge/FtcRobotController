@@ -11,10 +11,10 @@ public class DrivetrainModule implements Module {
     private Robot robot;
 
     // States
-    private double yMovement;
-    private double mecanumMovement;
-    private double turnMovement;
-    private boolean isSlowMode;
+    public double yMovement;
+    public double xMovement;
+    public double turnMovement;
+    public boolean isSlowMode;
 
     // Constants
     private final static double POWER_SCALE_FACTOR = 0.6;
@@ -46,29 +46,12 @@ public class DrivetrainModule implements Module {
     }
 
 
+    // drivetrain update method applies the powers based on y x and turn movements
     public synchronized void update() {
-        applyMotorPowers();
-    }
-
-    public synchronized void setAllStates(double yMovement, double mecanumMovement, double turnMovement) {
-        this.yMovement = yMovement;
-        this.mecanumMovement = mecanumMovement;
-        this.turnMovement = turnMovement;
-    }
-
-    public void slowMode(boolean slowMode) {
-        this.isSlowMode = slowMode;
-    }
-
-    /**
-     * Calculates and applies powers to the drivetrain motors using the states (movement params)
-     * in the module.
-     */
-    private void applyMotorPowers() {
-        double fLPower = ((yMovement) - turnMovement - mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
-        double fRPower = ((yMovement) + turnMovement + mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
-        double bLPower = ((yMovement) - turnMovement + mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
-        double bRPower = ((yMovement) + turnMovement - mecanumMovement * MECANUM_POWER_SCALE_FACTOR);
+        double fLPower = ((yMovement) - turnMovement - xMovement * MECANUM_POWER_SCALE_FACTOR);
+        double fRPower = ((yMovement) + turnMovement + xMovement * MECANUM_POWER_SCALE_FACTOR);
+        double bLPower = ((yMovement) - turnMovement + xMovement * MECANUM_POWER_SCALE_FACTOR);
+        double bRPower = ((yMovement) + turnMovement - xMovement * MECANUM_POWER_SCALE_FACTOR);
 
         double maxPower = Math.abs(fLPower);
         if (Math.abs(fRPower) > maxPower) {
