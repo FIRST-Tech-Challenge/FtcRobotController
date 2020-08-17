@@ -11,4 +11,8 @@ public class Waypoint extends Point {
         super(x,y);
         this.actions = actions;
     }
+
+    public Point toPoint(){
+        return new Point(x,y);
+    }
 }

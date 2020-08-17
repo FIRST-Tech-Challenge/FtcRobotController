@@ -25,6 +25,9 @@ public class MainTeleop extends LinearOpMode {
             robot.telemetryDump.addData("yLeft encoder: ", robot.odometryModule.leftPodNewPosition);
             robot.telemetryDump.addData("yRight encoder: ", robot.odometryModule.rightPodNewPosition);
             robot.telemetryDump.addData("mecanum encoder: ", robot.odometryModule.mecanumPodNewPosition);
+            robot.telemetryDump.addData("xVel: ", robot.velocityModule.xVel);
+            robot.telemetryDump.addData("yVel: ", robot.velocityModule.yVel);
+            robot.telemetryDump.addData("angleVel: ", robot.velocityModule.angleVel);
         }
     }
 
@@ -37,18 +40,6 @@ public class MainTeleop extends LinearOpMode {
         robot.drivetrainModule.yMovement = -gamepad1.left_stick_y;
         robot.drivetrainModule.xMovement = gamepad1.left_stick_x;
         robot.drivetrainModule.turnMovement = gamepad1.right_stick_x;
-
-        if (gamepad1.right_bumper){
-            robot.drivetrainModule.isSlowMode = true;
-        } else {
-            robot.drivetrainModule.isSlowMode = false;
-        }
-
-        if (gamepad1.left_bumper){
-            robot.drivetrainModule.isFastMode = true;
-        } else {
-            robot.drivetrainModule.isFastMode = false;
-        }
     }
 
     long lastUpdateTime = SystemClock.elapsedRealtime();

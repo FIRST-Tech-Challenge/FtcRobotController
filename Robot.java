@@ -13,12 +13,19 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.ModuleExecutor;
 import org.firstinspires.ftc.teamcode.rework.Modules.OdometryModule;
 import org.firstinspires.ftc.teamcode.rework.Modules.DrivetrainModule;
+import org.firstinspires.ftc.teamcode.rework.Modules.PathModule;
+import org.firstinspires.ftc.teamcode.rework.Modules.TargetModule;
+import org.firstinspires.ftc.teamcode.rework.Modules.VelocityModule;
 
 public class Robot {
     // All modules in the robot (remember to update initModules() and updateModules() when adding)
 
     public DrivetrainModule drivetrainModule;
     public OdometryModule odometryModule;
+    public VelocityModule velocityModule;
+    public TargetModule targetModule;
+    public PathModule pathModule;
+
     public long currentTimeMilli;
 
     public HardwareMap hardwareMap;
@@ -65,9 +72,12 @@ public class Robot {
         // Add individual modules into the array here
         this.drivetrainModule = new DrivetrainModule(this);
         this.odometryModule = new OdometryModule(this);
+        this.velocityModule = new VelocityModule(this);
+        this.targetModule = new TargetModule(this);
+        this.pathModule = new PathModule(this);
 
         this.modules = new Module[] {
-            this.drivetrainModule, this.odometryModule
+            this.drivetrainModule, this.odometryModule, this.velocityModule, this.pathModule, this.targetModule
         };
 
         // Initialize modules

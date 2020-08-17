@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.teamcode.rework.Modules;
 
-import android.os.SystemClock;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.rework.AutoTools.RobotPosition;
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 
 public class OdometryModule implements Module {
-    public RobotPosition robotPosition;
 
     public double worldX;
     public double worldY;
@@ -35,7 +31,6 @@ public class OdometryModule implements Module {
 
     public OdometryModule(Robot robot) {
         this.robot = robot;
-        robotPosition = new RobotPosition();
     }
 
     public void init() {

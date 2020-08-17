@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.rework;
+package org.firstinspires.ftc.teamcode.rework.Tests;
 
 import android.os.SystemClock;
 
@@ -7,24 +7,44 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.rework.AutoTools.PIDController;
 import org.firstinspires.ftc.teamcode.rework.AutoTools.Point;
+import org.firstinspires.ftc.teamcode.rework.AutoTools.Waypoint;
+import org.firstinspires.ftc.teamcode.rework.Robot;
+
+import java.util.ArrayList;
 
 @TeleOp
-public class PIDTest extends LinearOpMode {
+public class PathTest extends LinearOpMode {
     Robot robot;
 
     public void runOpMode() {
         initRobot();
-        PIDController pidController = new PIDController(0.05,0.0000001,0,robot);
+
+        ArrayList<Waypoint> path = new ArrayList<Waypoint>();
+
+        path.add(new Waypoint(0,0));
+        path.add(new Waypoint(0,60));
+        path.add(new Waypoint(-60,60));
+        path.add(new Waypoint(-60,0));
+
+        robot.pathModule.path = path;
+
         waitForStart();
         robot.startModules();
 
         while (opModeIsActive()) {
             telemetryUpdateTime();
-            pidController.PID(robot.odometryModule.worldY,56);
-            robot.drivetrainModule.yMovement = pidController.scale;
+
             robot.telemetryDump.addData("x: ", robot.odometryModule.worldX);
             robot.telemetryDump.addData("y: ", robot.odometryModule.worldY);
             robot.telemetryDump.addData("heading: ", Math.toDegrees(robot.odometryModule.worldAngleRad));
+
+            robot.telemetryDump.addData("xMovement: ", robot.drivetrainModule.xMovement);
+            robot.telemetryDump.addData("yMovement: ", robot.drivetrainModule.yMovement);
+            robot.telemetryDump.addData("turnMovement: ", robot.drivetrainModule.turnMovement);
+
+            robot.telemetryDump.addData("xVel: ", robot.velocityModule.xVel);
+            robot.telemetryDump.addData("yVel: ", robot.velocityModule.yVel);
+            robot.telemetryDump.addData("angleVel: ", robot.velocityModule.angleVel);
         }
     }
 
@@ -32,25 +52,6 @@ public class PIDTest extends LinearOpMode {
         robot = new Robot(hardwareMap, telemetry,this);
         robot.initModules();
     }
-
-    private void updateDrivetrainStates() {
-        robot.drivetrainModule.yMovement = gamepad1.left_stick_y;
-        robot.drivetrainModule.xMovement = gamepad1.left_stick_x;
-        robot.drivetrainModule.turnMovement = gamepad1.right_stick_x;
-
-        if (gamepad1.right_bumper){
-            robot.drivetrainModule.isSlowMode = true;
-        } else {
-            robot.drivetrainModule.isSlowMode = false;
-        }
-
-        if (gamepad1.left_bumper){
-            robot.drivetrainModule.isFastMode = true;
-        } else {
-            robot.drivetrainModule.isFastMode = false;
-        }
-    }
-
     long lastUpdateTime = SystemClock.elapsedRealtime();
     long currentTime;
 
