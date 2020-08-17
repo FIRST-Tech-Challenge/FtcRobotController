@@ -19,14 +19,12 @@ public class MainTeleop extends LinearOpMode {
             updateDrivetrainStates();
 
             telemetryUpdateTime();
-            telemetry.addLine("x: " + robot.odometryModule.robotPosition.getLocation().x);
-            telemetry.addLine("y: " + robot.odometryModule.robotPosition.getLocation().y);
-            telemetry.addLine("heading: " + Math.toDegrees(robot.odometryModule.robotPosition.getHeading()));
-            telemetry.addLine("yLeft encoder: " + robot.odometryModule.getyLeft().getCurrentPosition()*-1);
-            telemetry.addLine("yRight encoder: " + robot.odometryModule.getyRight().getCurrentPosition());
-            telemetry.addLine("mecanum encoder: " + robot.odometryModule.getMecanum().getCurrentPosition());
-
-            telemetry.update();
+            robot.telemetryDump.addData("x: ", robot.odometryModule.worldX);
+            robot.telemetryDump.addData("y: ", robot.odometryModule.worldY);
+            robot.telemetryDump.addData("heading: ", Math.toDegrees(robot.odometryModule.worldAngleRad));
+            robot.telemetryDump.addData("yLeft encoder: ", robot.odometryModule.leftPodNewPosition);
+            robot.telemetryDump.addData("yRight encoder: ", robot.odometryModule.rightPodNewPosition);
+            robot.telemetryDump.addData("mecanum encoder: ", robot.odometryModule.mecanumPodNewPosition);
         }
     }
 
@@ -36,7 +34,7 @@ public class MainTeleop extends LinearOpMode {
     }
 
     private void updateDrivetrainStates() {
-        robot.drivetrainModule.yMovement = gamepad1.left_stick_y;
+        robot.drivetrainModule.yMovement = -gamepad1.left_stick_y;
         robot.drivetrainModule.xMovement = gamepad1.left_stick_x;
         robot.drivetrainModule.turnMovement = gamepad1.right_stick_x;
 
@@ -45,18 +43,24 @@ public class MainTeleop extends LinearOpMode {
         } else {
             robot.drivetrainModule.isSlowMode = false;
         }
+
+        if (gamepad1.left_bumper){
+            robot.drivetrainModule.isFastMode = true;
+        } else {
+            robot.drivetrainModule.isFastMode = false;
+        }
     }
 
     long lastUpdateTime = SystemClock.elapsedRealtime();
     long currentTime;
 
     /**
-     * Calculates and displays (in telemetry) the loop time of the while(isOpModeActive) loop.
+     * Calculates and displays (in robot.telemetryDump) the loop time of the while(isOpModeActive) loop.
      */
     private void telemetryUpdateTime() {
         currentTime = SystemClock.elapsedRealtime();
 
-        telemetry.addData("TeleOp while loop update time: ", currentTime - lastUpdateTime);
+        robot.telemetryDump.addData("TeleOp while loop update time: ", (currentTime - lastUpdateTime));
 
         lastUpdateTime = currentTime;
     }

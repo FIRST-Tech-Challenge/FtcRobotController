@@ -29,14 +29,14 @@ public class ModuleExecutor extends Thread {
         long currentTime;
 
         while (robot.isOpModeActive()) {
-
             robot.update();
 
             if (SHOW_UPDATE_SPEED) {
                 currentTime = SystemClock.elapsedRealtime();
-                telemetry.addData("Module Executor thread loop time: ", currentTime - lastUpdateTime);
+                robot.telemetryDump.addData("Module Executor thread loop time: ", (currentTime - lastUpdateTime));
                 lastUpdateTime = currentTime;
             }
+            robot.telemetryDump.update();
         }
         System.out.println("Module executor thread exited due to opMode no longer being active.");
     }

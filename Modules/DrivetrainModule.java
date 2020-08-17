@@ -15,11 +15,13 @@ public class DrivetrainModule implements Module {
     public double xMovement;
     public double turnMovement;
     public boolean isSlowMode;
+    public boolean isFastMode;
 
     // Constants
     private final static double POWER_SCALE_FACTOR = 0.6;
     private final static double MECANUM_POWER_SCALE_FACTOR = 1.4;
     private final static double SLOW_POWER_SCALE_FACTOR = 0.2;
+    private final static double FAST_POWER_SCALE_FACTOR = 0.95;
 
     // Motors
     private DcMotor fLeft;
@@ -48,10 +50,10 @@ public class DrivetrainModule implements Module {
 
     // drivetrain update method applies the powers based on y x and turn movements
     public synchronized void update() {
-        double fLPower = ((yMovement) - turnMovement - xMovement * MECANUM_POWER_SCALE_FACTOR);
-        double fRPower = ((yMovement) + turnMovement + xMovement * MECANUM_POWER_SCALE_FACTOR);
-        double bLPower = ((yMovement) - turnMovement + xMovement * MECANUM_POWER_SCALE_FACTOR);
-        double bRPower = ((yMovement) + turnMovement - xMovement * MECANUM_POWER_SCALE_FACTOR);
+        double fLPower = ((-yMovement) - turnMovement - xMovement * MECANUM_POWER_SCALE_FACTOR);
+        double fRPower = ((-yMovement) + turnMovement + xMovement * MECANUM_POWER_SCALE_FACTOR);
+        double bLPower = ((-yMovement) - turnMovement + xMovement * MECANUM_POWER_SCALE_FACTOR);
+        double bRPower = ((-yMovement) + turnMovement - xMovement * MECANUM_POWER_SCALE_FACTOR);
 
         double maxPower = Math.abs(fLPower);
         if (Math.abs(fRPower) > maxPower) {
@@ -72,16 +74,21 @@ public class DrivetrainModule implements Module {
         bLPower *= scaleDown;
         bRPower *= scaleDown;
 
-        if (!isSlowMode) {
+        if (!isSlowMode && !isFastMode) {
             fLPower *= POWER_SCALE_FACTOR;
             fRPower *= POWER_SCALE_FACTOR;
             bLPower *= POWER_SCALE_FACTOR;
             bRPower *= POWER_SCALE_FACTOR;
-        } else {
+        } else if (!isFastMode) {
             fLPower *= SLOW_POWER_SCALE_FACTOR;
             fRPower *= SLOW_POWER_SCALE_FACTOR;
             bLPower *= SLOW_POWER_SCALE_FACTOR;
             bRPower *= SLOW_POWER_SCALE_FACTOR;
+        } else {
+            fLPower *= FAST_POWER_SCALE_FACTOR;
+            fRPower *= FAST_POWER_SCALE_FACTOR;
+            bLPower *= FAST_POWER_SCALE_FACTOR;
+            bRPower *= FAST_POWER_SCALE_FACTOR;
         }
 
         setMotorPowers(fLPower, fRPower, bLPower, bRPower);

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.rework.Modules;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.rework.AutoTools.RobotPosition;
@@ -7,21 +9,29 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 
 public class OdometryModule implements Module {
-
     public RobotPosition robotPosition;
+
+    public double worldX;
+    public double worldY;
+    public double worldAngleRad;
+
     private Robot robot;
 
     private DcMotor yLeft;
     private DcMotor yRight;
     private DcMotor mecanum;
 
-    private final double INCHES_PER_ENCODER_TICK = 0.0007284406721;
-    private final double LR_ENCODER_DIST_FROM_CENTER = 6.89512052;
+    private final double INCHES_PER_ENCODER_TICK = 0.0007284406721 * 100.0/101.9889;
+    private final double LR_ENCODER_DIST_FROM_CENTER = 6.942654509 * 3589.8638/3600.0 * 3531.4628211/3600.0;
     private final double M_ENCODER_DIST_FROM_CENTER = 4.5;
 
     private double leftPodOldPosition = 0;
     private double rightPodOldPosition = 0;
     private double mecanumPodOldPosition = 0;
+
+    public double leftPodNewPosition;
+    public double rightPodNewPosition;
+    public double mecanumPodNewPosition;
 
     public OdometryModule(Robot robot) {
         this.robot = robot;
@@ -42,6 +52,7 @@ public class OdometryModule implements Module {
         mecanum.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+
     public synchronized void update() {
         calculateRobotPosition();
     }
@@ -50,9 +61,9 @@ public class OdometryModule implements Module {
      * Calculates the robot's position.
      */
     private void calculateRobotPosition() {
-        double leftPodNewPosition = yLeft.getCurrentPosition() * -1;
-        double rightPodNewPosition = yRight.getCurrentPosition();
-        double mecanumPodNewPosition = mecanum.getCurrentPosition();
+        leftPodNewPosition = yLeft.getCurrentPosition() * -1;
+        rightPodNewPosition = yRight.getCurrentPosition();
+        mecanumPodNewPosition = mecanum.getCurrentPosition();
 
         double leftPodDelta = leftPodNewPosition - leftPodOldPosition;
         double rightPodDelta = rightPodNewPosition - rightPodOldPosition;
@@ -83,11 +94,10 @@ public class OdometryModule implements Module {
         double dRobotX = M * sinXOverX(dTheta) + Q * Math.sin(dTheta) - L * cosXMinusOneOverX(dTheta) + P * (Math.cos(dTheta) - 1);
         double dRobotY = L * sinXOverX(dTheta) - P * Math.sin(dTheta) + M * cosXMinusOneOverX(dTheta) + Q * (Math.cos(dTheta) - 1);
 
-        double newWorldX = robotPosition.getLocation().x + dRobotX * Math.cos(robotPosition.getHeading()) + dRobotY * Math.sin(robotPosition.getHeading());
-        double newWorldY = robotPosition.getLocation().y + dRobotY * Math.cos(robotPosition.getHeading()) - dRobotX * Math.sin(robotPosition.getHeading());
-        double newHeading = ((dLeftPod + leftPodOldPosition) - (dRightPod + rightPodOldPosition)) * INCHES_PER_ENCODER_TICK / (2 * P);
-
-        robotPosition.updatePosition(newWorldX, newWorldY, newHeading);
+        worldX += dRobotX * Math.cos(worldAngleRad) + dRobotY * Math.sin(worldAngleRad);
+        worldY += dRobotY * Math.cos(worldAngleRad) - dRobotX * Math.sin(worldAngleRad);
+        //worldAngleRad =  (leftPodNewPosition - rightPodNewPosition) * INCHES_PER_ENCODER_TICK / (2 * P);
+        worldAngleRad += dTheta;
     }
 
     /*
@@ -128,15 +138,15 @@ public class OdometryModule implements Module {
         }
     }
 
-    public DcMotor getyLeft() {
+    public synchronized DcMotor getyLeft() {
         return yLeft;
     }
 
-    public DcMotor getyRight() {
+    public synchronized DcMotor getyRight() {
         return yRight;
     }
 
-    public DcMotor getMecanum() {
+    public synchronized DcMotor getMecanum() {
         return mecanum;
     }
 }
