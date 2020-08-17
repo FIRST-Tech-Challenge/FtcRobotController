@@ -77,6 +77,15 @@ public class DrivetrainModule implements Module {
         bRPower *= POWER_SCALE_FACTOR;
 
         setMotorPowers(fLPower, fRPower, bLPower, bRPower);
+
+        tellEm();
+    }
+
+    public void tellEm() {
+        robot.telemetryDump.addData("---DRIVETRAIN---", null);
+        robot.telemetryDump.addData("xMovement: ", xMovement);
+        robot.telemetryDump.addData("yMovement: ", yMovement);
+        robot.telemetryDump.addData("turnMovement: ", turnMovement);
     }
 
     private void setMotorPowers(double fLPower, double fRPower, double bLPower, double bRPower) {

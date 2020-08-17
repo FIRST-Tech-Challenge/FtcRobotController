@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.rework.AutoTools.PIDController;
-import org.firstinspires.ftc.teamcode.rework.AutoTools.Point;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 
 @TeleOp

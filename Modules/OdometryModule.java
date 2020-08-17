@@ -50,6 +50,14 @@ public class OdometryModule implements Module {
 
     public synchronized void update() {
         calculateRobotPosition();
+        tellEm();
+    }
+
+    public void tellEm() {
+        robot.telemetryDump.addData("---ODOMETRY---", null);
+        robot.telemetryDump.addData("x: ", worldX);
+        robot.telemetryDump.addData("y: ", worldY);
+        robot.telemetryDump.addData("heading: ", Math.toDegrees(worldAngleRad));
     }
 
     /**

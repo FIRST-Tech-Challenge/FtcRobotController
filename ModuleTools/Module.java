@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.rework.ModuleTools;
 
 public interface Module {
     //TODO implement boolean flag for turning module on and off
+
     /**
      * Initializes the module. This includes setting up all motors/servos
      * */
@@ -15,5 +16,5 @@ public interface Module {
      */
     public void update();
 
-
+    public void tellEm();
 }

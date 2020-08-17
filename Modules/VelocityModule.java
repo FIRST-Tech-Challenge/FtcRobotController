@@ -41,5 +41,14 @@ public class VelocityModule implements Module {
         oldWorldY = robot.odometryModule.worldY;
         oldWorldAngle = robot.odometryModule.worldAngleRad;
         oldUpdateTime = currentUpdateTime;
+
+        tellEm();
+    }
+
+    public void tellEm() {
+        robot.telemetryDump.addData("---VELOCITY---", null);
+        robot.telemetryDump.addData("xVel: ", xVel);
+        robot.telemetryDump.addData("yVel: ", yVel);
+        robot.telemetryDump.addData("angleVel: ", angleVel);
     }
 }

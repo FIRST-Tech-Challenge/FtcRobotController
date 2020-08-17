@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.rework;
 
 import android.os.SystemClock;
 
-import com.google.gson.internal.$Gson$Preconditions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 

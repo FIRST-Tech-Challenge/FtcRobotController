@@ -13,8 +13,6 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.ModuleExecutor;
 import org.firstinspires.ftc.teamcode.rework.Modules.OdometryModule;
 import org.firstinspires.ftc.teamcode.rework.Modules.DrivetrainModule;
-import org.firstinspires.ftc.teamcode.rework.Modules.PathModule;
-import org.firstinspires.ftc.teamcode.rework.Modules.TargetModule;
 import org.firstinspires.ftc.teamcode.rework.Modules.VelocityModule;
 
 public class Robot {
@@ -23,8 +21,8 @@ public class Robot {
     public DrivetrainModule drivetrainModule;
     public OdometryModule odometryModule;
     public VelocityModule velocityModule;
-    public TargetModule targetModule;
-    public PathModule pathModule;
+
+    public Movements movements;
 
     public long currentTimeMilli;
 
@@ -47,6 +45,9 @@ public class Robot {
         this.telemetry = telemetry;
         this.linearOpMode = linearOpMode;
         this.telemetryDump = new TelemetryDump(telemetry);
+
+        movements = new Movements(this);
+
         initHubs();
         initModules();
     }
@@ -61,23 +62,14 @@ public class Robot {
         }
     }
 
-    /**
-     * Initializes all modules in robot. Starts another thread on which execution of the modules
-     * will happen in the form of updates.
-     *
-     * Note that starting the thread also executes run(). However, note that run() will not update
-     * the modules if the opMode is not active yet.
-     */
     public void initModules() {
         // Add individual modules into the array here
         this.drivetrainModule = new DrivetrainModule(this);
         this.odometryModule = new OdometryModule(this);
         this.velocityModule = new VelocityModule(this);
-        this.targetModule = new TargetModule(this);
-        this.pathModule = new PathModule(this);
 
         this.modules = new Module[] {
-            this.drivetrainModule, this.odometryModule, this.velocityModule, this.pathModule, this.targetModule
+                this.drivetrainModule, this.odometryModule, this.velocityModule
         };
 
         // Initialize modules
