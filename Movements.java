@@ -13,15 +13,20 @@ import static org.firstinspires.ftc.teamcode.rework.MathFunctions.lineCircleInte
 public class Movements {
 
     Robot robot;
+    private double endTreshold = 0.125;
+    private double followRadius = 15;
 
     public Movements(Robot robot){
         this.robot = robot;
     }
 
-    public void pathFollow(ArrayList<Waypoint> path, double followRadius, double moveSpeed, double turnSpeed){
+    public void pathFollow(ArrayList<Waypoint> path, double moveSpeed, double turnSpeed){
         while (robot.isOpModeActive()){
             Point followPoint = findTarget(path, followRadius, new Point(robot.odometryModule.worldX, robot.odometryModule.worldY), robot.odometryModule.worldAngleRad);
-            setMovementsToTarget(followPoint, moveSpeed, turnSpeed);
+
+            if (setMovementsToTarget(followPoint, moveSpeed, turnSpeed)){
+                break;
+            }
         }
     }
 
@@ -48,10 +53,15 @@ public class Movements {
             }
         }
 
+        if (Math.hypot(center.x - path.get(path.size() - 1).x, center.y - path.get(path.size() - 1).y) < followRadius * 1.5){
+            followPoint = path.get(path.size()-1).toPoint();
+        }
+
         return followPoint;
     }
 
-    private void setMovementsToTarget(Point targetPoint, double moveSpeed, double turnSpeed){
+    // true if close to target
+    private boolean setMovementsToTarget(Point targetPoint, double moveSpeed, double turnSpeed){
         double distanceToTarget = Math.hypot(targetPoint.x - robot.odometryModule.worldX, targetPoint.y - robot.odometryModule.worldY);
         double absoluteAngleToTarget = Math.atan2(targetPoint.x - robot.odometryModule.worldX, targetPoint.y - robot.odometryModule.worldY);
 
@@ -61,14 +71,22 @@ public class Movements {
         double relativeTurnAngle = angleWrap2(relativeAngleToPoint);
 
         // adjust vector based on current velocity
-        relativeXToPoint -= 0.1 * robot.velocityModule.xVel;
-        relativeYToPoint -= 0.1 * robot.velocityModule.yVel;
+        relativeXToPoint -= 0.2 * robot.velocityModule.xVel;
+        relativeYToPoint -= 0.2 * robot.velocityModule.yVel;
 
         double xPower = relativeXToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
         double yPower = relativeYToPoint / (Math.abs(relativeYToPoint) + Math.abs(relativeXToPoint));
 
-        robot.drivetrainModule.xMovement = xPower * moveSpeed;
-        robot.drivetrainModule.yMovement = yPower * moveSpeed;
-        robot.drivetrainModule.turnMovement = Range.clip(relativeTurnAngle / Math.toRadians(30), -1, 1) * turnSpeed;
+        if (distanceToTarget < endTreshold){
+            robot.drivetrainModule.xMovement = 0;
+            robot.drivetrainModule.yMovement = 0;
+            robot.drivetrainModule.turnMovement = 0;
+        } else {
+            robot.drivetrainModule.xMovement = xPower * moveSpeed;
+            robot.drivetrainModule.yMovement = yPower * moveSpeed;
+            robot.drivetrainModule.turnMovement = Range.clip(relativeTurnAngle / Math.toRadians(30), -1, 1) * turnSpeed;
+        }
+
+        return distanceToTarget < endTreshold;
     }
 }
