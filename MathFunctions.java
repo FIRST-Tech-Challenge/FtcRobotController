@@ -26,6 +26,35 @@ public class MathFunctions {
         return angle;
     }
 
+    public static double linePointDistance(Point point, Point linePoint1, Point linePoint2){
+        double top = Math.abs((linePoint2.y - linePoint1.y) * point.x - (linePoint2.x - linePoint1.x) * point.y + linePoint2.x * linePoint1.y - linePoint2.y * linePoint1.x);
+        double bottom = Math.hypot(linePoint2.y - linePoint1.y, linePoint2.x - linePoint1.x);
+
+        return top/bottom;
+    }
+
+    public static Point closestPointOnLineToPoint(Point point, Point linePoint1, Point linePoint2){
+
+        double m;
+
+        if (linePoint2.x == linePoint1.x){
+            return new Point(linePoint1.x, point.y);
+        } else if (linePoint2.y == linePoint1.y){
+            return new Point(point.x, linePoint1.y);
+        } else {
+            m = (linePoint2.y - linePoint1.y) / (linePoint2.x - linePoint1.x);
+        }
+
+        return twoLineIntersectionPoint(linePoint1, m, point, -1/m);
+    }
+
+    public static Point twoLineIntersectionPoint(Point firstLinePoint, double firstLineM, Point secondLinePoint, double secondLineM){
+        double x = (firstLineM * firstLinePoint.x - firstLinePoint.y - secondLineM * secondLinePoint.x + secondLinePoint.y) / (firstLineM - secondLineM);
+        double y = firstLineM * (x - firstLinePoint.x) + secondLinePoint.y;
+
+        return new Point(x,y);
+    }
+
     public static ArrayList<Point> lineCircleIntersection(Point circleCenter, double radius, Point linePoint1, Point linePoint2) {
         //make sure the points don't exactly line up so the slopes work
         if (Math.abs(linePoint1.y - linePoint2.y) < 0.003) {

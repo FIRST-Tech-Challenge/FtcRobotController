@@ -22,6 +22,10 @@ public class AutoPathTest extends LinearOpMode {
         path.add(new Waypoint(0,60));
         path.add(new Waypoint(-60,60));
         path.add(new Waypoint(-60,0));
+        path.add(new Waypoint(-80,0));
+        path.add(new Waypoint(-80,60));
+        path.add(new Waypoint(0,60));
+        path.add(new Waypoint(0,0));
 
         waitForStart();
         robot.startModules();
@@ -29,7 +33,6 @@ public class AutoPathTest extends LinearOpMode {
         while (opModeIsActive()) {
 
             robot.movements.pathFollow(path,0.8,0.8);
-            sleep(5000);
 
             break;
         }

@@ -8,33 +8,76 @@ import org.firstinspires.ftc.teamcode.rework.AutoTools.Waypoint;
 import java.util.ArrayList;
 
 import static org.firstinspires.ftc.teamcode.rework.MathFunctions.angleWrap2;
-import static org.firstinspires.ftc.teamcode.rework.MathFunctions.lineCircleIntersection;
+import static org.firstinspires.ftc.teamcode.rework.MathFunctions.*;
 
 public class Movements {
 
     Robot robot;
-    private double endTreshold = 0.125;
+    private double endTreshold = 0.25;
     private double followRadius = 15;
 
     public Movements(Robot robot){
         this.robot = robot;
     }
 
-    public void pathFollow(ArrayList<Waypoint> path, double moveSpeed, double turnSpeed){
-        while (robot.isOpModeActive()){
-            Point followPoint = findTarget(path, followRadius, new Point(robot.odometryModule.worldX, robot.odometryModule.worldY), robot.odometryModule.worldAngleRad);
+    private int index = 0;
 
-            if (setMovementsToTarget(followPoint, moveSpeed, turnSpeed)){
-                break;
+    public void pathFollow(ArrayList<Waypoint> path, double moveSpeed, double turnSpeed){
+
+        while (robot.isOpModeActive()){
+
+            Point robotPoint = new Point(robot.odometryModule.worldX, robot.odometryModule.worldY);
+
+            Point clippedPoint = clipToLine(path, robotPoint);
+
+            Point targetPoint = findTarget(path, clippedPoint, followRadius, robot.odometryModule.worldAngleRad);
+
+            setMovementsToTarget(targetPoint, moveSpeed, turnSpeed);
+
+            robot.telemetryDump.addData("index " , index);
+
+            if (isDone(path, robotPoint)){
+                robot.drivetrainModule.xMovement = 0;
+                robot.drivetrainModule.yMovement = 0;
+                robot.drivetrainModule.turnMovement = 0;
+                return;
             }
+
         }
     }
 
-    private Point findTarget(ArrayList<Waypoint> path, double followRadius, Point center, double heading){
+    private Point clipToLine(ArrayList<Waypoint> path, Point center){
+        Point clipped = new Point();
+
+        double nearestClipDist = Double.MAX_VALUE;
+        int clippedIndex = index;
+
+        // only checks the current line and the next line (no skipping)
+        for (int i = index; i < Math.min(path.size() - 1, index + 2); i++){
+            Point start = path.get(i).toPoint();
+            Point end = path.get(i+1).toPoint();
+
+            double thisClipDist = linePointDistance(center, start, end);
+
+            // if this clip distance is record low set the clip point to the clip point set the clippedIndex to index so later we can update the index we are at
+            if (thisClipDist < nearestClipDist){
+                nearestClipDist = thisClipDist;
+                clipped = closestPointOnLineToPoint(center, start, end);
+                clippedIndex = i;
+            }
+        }
+
+        index = clippedIndex;
+
+        return clipped;
+    }
+
+    private Point findTarget(ArrayList<Waypoint> path, Point center, double followRadius, double heading){
 
         Point followPoint = new Point();
 
-        for (int i = 0; i < path.size() - 1; i++) {
+        // only look at lines on current index or next index
+        for (int i = index; i < Math.min(path.size() - 1, index + 2); i++) {
             Point start = path.get(i).toPoint();
             Point end = path.get(i + 1).toPoint();
 
@@ -53,15 +96,14 @@ public class Movements {
             }
         }
 
-        if (Math.hypot(center.x - path.get(path.size() - 1).x, center.y - path.get(path.size() - 1).y) < followRadius * 1.5){
+        if (Math.hypot(center.x - path.get(path.size() - 1).x, center.y - path.get(path.size() - 1).y) < followRadius * 1.5 && index==path.size()-2){
             followPoint = path.get(path.size()-1).toPoint();
         }
 
         return followPoint;
     }
 
-    // true if close to target
-    private boolean setMovementsToTarget(Point targetPoint, double moveSpeed, double turnSpeed){
+    private void setMovementsToTarget(Point targetPoint, double moveSpeed, double turnSpeed){
         double distanceToTarget = Math.hypot(targetPoint.x - robot.odometryModule.worldX, targetPoint.y - robot.odometryModule.worldY);
         double absoluteAngleToTarget = Math.atan2(targetPoint.x - robot.odometryModule.worldX, targetPoint.y - robot.odometryModule.worldY);
 
@@ -77,16 +119,14 @@ public class Movements {
         double xPower = relativeXToPoint / (Math.abs(relativeXToPoint) + Math.abs(relativeYToPoint));
         double yPower = relativeYToPoint / (Math.abs(relativeYToPoint) + Math.abs(relativeXToPoint));
 
-        if (distanceToTarget < endTreshold){
-            robot.drivetrainModule.xMovement = 0;
-            robot.drivetrainModule.yMovement = 0;
-            robot.drivetrainModule.turnMovement = 0;
-        } else {
-            robot.drivetrainModule.xMovement = xPower * moveSpeed;
-            robot.drivetrainModule.yMovement = yPower * moveSpeed;
-            robot.drivetrainModule.turnMovement = Range.clip(relativeTurnAngle / Math.toRadians(30), -1, 1) * turnSpeed;
-        }
+        robot.drivetrainModule.xMovement = xPower * moveSpeed;
+        robot.drivetrainModule.yMovement = yPower * moveSpeed;
+        robot.drivetrainModule.turnMovement = Range.clip(relativeTurnAngle / Math.toRadians(30), -1, 1) * turnSpeed;
+    }
 
-        return distanceToTarget < endTreshold;
+    private boolean isDone(ArrayList<Waypoint> path, Point center){
+        Point endPoint = path.get(path.size()-1).toPoint();
+
+        return (Math.hypot(center.x - endPoint.x, center.y - endPoint.y) < endTreshold) && index==path.size()-2;
     }
 }
