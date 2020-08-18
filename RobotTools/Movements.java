@@ -24,6 +24,9 @@ public class Movements {
     private int index = 0;
 
     public void pathFollow(ArrayList<Waypoint> path, double moveSpeed, double turnSpeed) {
+
+        index = 0;
+
         while (robot.isOpModeActive()) {
             Point robotPoint = new Point(robot.odometryModule.worldX, robot.odometryModule.worldY);
 
