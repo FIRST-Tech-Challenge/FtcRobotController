@@ -28,7 +28,7 @@ public class Movements {
 
             Point robotPoint = new Point(robot.odometryModule.worldX, robot.odometryModule.worldY);
 
-            Point clippedPoint = clipToLine(path, robotPoint);
+            Point clippedPoint = clipToPath(path, robotPoint);
 
             Point targetPoint = findTarget(path, clippedPoint, followRadius, robot.odometryModule.worldAngleRad);
 
@@ -46,7 +46,7 @@ public class Movements {
         }
     }
 
-    private Point clipToLine(ArrayList<Waypoint> path, Point center){
+    private Point clipToPath(ArrayList<Waypoint> path, Point center){
         Point clipped = new Point();
 
         double nearestClipDist = Double.MAX_VALUE;
