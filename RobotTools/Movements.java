@@ -1,14 +1,15 @@
-package org.firstinspires.ftc.teamcode.rework;
+package org.firstinspires.ftc.teamcode.rework.RobotTools;
 
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.rework.AutoTools.Point;
 import org.firstinspires.ftc.teamcode.rework.AutoTools.Waypoint;
+import org.firstinspires.ftc.teamcode.rework.Robot;
 
 import java.util.ArrayList;
 
-import static org.firstinspires.ftc.teamcode.rework.MathFunctions.angleWrap2;
-import static org.firstinspires.ftc.teamcode.rework.MathFunctions.*;
+import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.angleWrap2;
+import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.*;
 
 public class Movements {
 
