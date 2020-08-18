@@ -15,6 +15,7 @@ public class MainTeleop extends LinearOpMode {
         robot.startModules();
 
         while (opModeIsActive()) {
+<<<<<<< HEAD
             updateDrivetrainStates();
 
             telemetryUpdateTime();
@@ -27,6 +28,15 @@ public class MainTeleop extends LinearOpMode {
             robot.telemetryDump.addData("xVel: ", robot.velocityModule.xVel);
             robot.telemetryDump.addData("yVel: ", robot.velocityModule.yVel);
             robot.telemetryDump.addData("angleVel: ", robot.velocityModule.angleVel);
+=======
+            robot.getBulkData();
+
+            updateDrivetrainStates();
+
+            displayUpdateTime();
+
+            telemetryData();
+>>>>>>> 661b8a8450127843346bf11f914073b604a851b6
         }
     }
 
@@ -41,6 +51,19 @@ public class MainTeleop extends LinearOpMode {
         robot.drivetrainModule.turnMovement = gamepad1.right_stick_x;
     }
 
+<<<<<<< HEAD
+=======
+    private void telemetryData() {
+        telemetry.addLine("stick values " + gamepad1.left_stick_y);
+        telemetry.addLine("x: " + robot.odometry.getRobotPosition().getLocation().x);
+        telemetry.addLine("y: " + robot.odometry.getRobotPosition().getLocation().y);
+        telemetry.addLine("heading: " + Math.toDegrees(robot.odometry.getRobotPosition().getHeading()));
+        telemetry.addLine("yLeft encoder: " + robot.odometry.yLeft.getCurrentPosition()*-1);
+        telemetry.addLine("yRight encoder: " + robot.odometry.yRight.getCurrentPosition());
+        telemetry.addLine("mecanum encoder: " + robot.odometry.mecanum.getCurrentPosition());
+    }
+
+>>>>>>> 661b8a8450127843346bf11f914073b604a851b6
     long lastUpdateTime = SystemClock.elapsedRealtime();
     long currentTime;
 
