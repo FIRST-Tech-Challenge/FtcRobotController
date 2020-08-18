@@ -54,7 +54,7 @@ public class OdometryModule implements Module {
     }
 
     public void tellEm() {
-        robot.telemetryDump.addData("---ODOMETRY---", null);
+        robot.telemetryDump.addHeader("---ODOMETRY---");
         robot.telemetryDump.addData("x: ", worldX);
         robot.telemetryDump.addData("y: ", worldY);
         robot.telemetryDump.addData("heading: ", Math.toDegrees(worldAngleRad));

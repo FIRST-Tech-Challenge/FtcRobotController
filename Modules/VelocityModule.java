@@ -46,7 +46,7 @@ public class VelocityModule implements Module {
     }
 
     public void tellEm() {
-        robot.telemetryDump.addData("---VELOCITY---", null);
+        robot.telemetryDump.addHeader("---VELOCITY---");
         robot.telemetryDump.addData("xVel: ", xVel);
         robot.telemetryDump.addData("yVel: ", yVel);
         robot.telemetryDump.addData("angleVel: ", angleVel);

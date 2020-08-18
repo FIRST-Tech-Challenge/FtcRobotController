@@ -82,7 +82,7 @@ public class DrivetrainModule implements Module {
     }
 
     public void tellEm() {
-        robot.telemetryDump.addData("---DRIVETRAIN---", null);
+        robot.telemetryDump.addHeader("---DRIVETRAIN---");
         robot.telemetryDump.addData("xMovement: ", xMovement);
         robot.telemetryDump.addData("yMovement: ", yMovement);
         robot.telemetryDump.addData("turnMovement: ", turnMovement);

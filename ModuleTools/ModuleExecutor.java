@@ -19,6 +19,7 @@ public class ModuleExecutor extends Thread {
     public ModuleExecutor(Robot robot, Telemetry telemetry) {
         this.robot = robot;
         this.telemetry = telemetry;
+        setName("module executor");
     }
 
     /**
