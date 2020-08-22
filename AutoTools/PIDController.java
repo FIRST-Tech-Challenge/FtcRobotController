@@ -18,7 +18,7 @@ public class PIDController {
     }
     public void PID(double distance, double targetDistance){
         double error = targetDistance-distance;
-        integral += error*0.04;
+        integral += error*0.004;
         double derivative = (error - prevError) / 0.004;
         scale = P*error + I*integral + D*derivative;
         robot.telemetryDump.addData("power: ", scale);
@@ -26,7 +26,7 @@ public class PIDController {
 
     public void PID(Point current, Point target){
         double error = Math.hypot(current.x-target.x,current.y-target.y);
-        integral += error*0.04;
+        integral += error*0.004;
         double derivative = (error - prevError) / 0.004;
         scale = P*error + I*integral + D*derivative;
         robot.telemetryDump.addData("power: ", scale);

@@ -16,5 +16,7 @@ public interface Module {
      */
     public void update();
 
-    public void tellEm();
+    public void telemetry();
+
+    public boolean isOn();
 }

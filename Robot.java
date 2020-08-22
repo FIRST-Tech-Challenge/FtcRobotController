@@ -58,15 +58,18 @@ public class Robot {
         currentTimeMilli = SystemClock.elapsedRealtime();
 
         for(Module module : modules) {
-            module.update();
+            if(module.isOn()) {
+                module.update();
+                module.telemetry();
+            }
         }
     }
 
     public void initModules() {
         // Add individual modules into the array here
-        this.drivetrainModule = new DrivetrainModule(this);
-        this.odometryModule = new OdometryModule(this);
-        this.velocityModule = new VelocityModule(this);
+        this.drivetrainModule = new DrivetrainModule(this,true);
+        this.odometryModule = new OdometryModule(this,true);
+        this.velocityModule = new VelocityModule(this,true);
 
         this.modules = new Module[] {
                 this.drivetrainModule, this.odometryModule, this.velocityModule

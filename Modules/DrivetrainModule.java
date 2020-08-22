@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.rework.Robot;
 
 public class DrivetrainModule implements Module {
     private Robot robot;
+    private boolean isOn;
 
     // States
     public double yMovement;
@@ -25,8 +26,9 @@ public class DrivetrainModule implements Module {
     private DcMotor bLeft;
     private DcMotor bRight;
 
-    public DrivetrainModule(Robot robot) {
+    public DrivetrainModule(Robot robot, boolean isOn) {
         this.robot = robot;
+        this.isOn = isOn;
     }
 
     public void init() {
@@ -77,11 +79,9 @@ public class DrivetrainModule implements Module {
         bRPower *= POWER_SCALE_FACTOR;
 
         setMotorPowers(fLPower, fRPower, bLPower, bRPower);
-
-        tellEm();
     }
 
-    public void tellEm() {
+    public void telemetry() {
         robot.telemetryDump.addHeader("---DRIVETRAIN---");
         robot.telemetryDump.addData("xMovement: ", xMovement);
         robot.telemetryDump.addData("yMovement: ", yMovement);
@@ -116,5 +116,9 @@ public class DrivetrainModule implements Module {
 
     public DcMotor getbRight() {
         return bRight;
+    }
+
+    public boolean isOn(){
+        return isOn;
     }
 }
