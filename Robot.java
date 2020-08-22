@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.ModuleExecutor;
 import org.firstinspires.ftc.teamcode.rework.Modules.OdometryModule;
 import org.firstinspires.ftc.teamcode.rework.Modules.DrivetrainModule;
 import org.firstinspires.ftc.teamcode.rework.Modules.VelocityModule;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.Movements;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
 public class Robot {
     // All modules in the robot (remember to update initModules() and updateModules() when adding)

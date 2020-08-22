@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.rework.Robot;
 import java.util.ArrayList;
 
 @Autonomous
-public class AutoPathTest extends LinearOpMode {
+public class PathPIDTest extends LinearOpMode {
 
     Robot robot;
 
@@ -19,13 +19,7 @@ public class AutoPathTest extends LinearOpMode {
 
         ArrayList<Waypoint> path = new ArrayList<Waypoint>();
         path.add(new Waypoint(0, 0));
-        path.add(new Waypoint(0, 60));
-        path.add(new Waypoint(-60, 60));
-        path.add(new Waypoint(-60, 0));
-        path.add(new Waypoint(-80, 0));
-        path.add(new Waypoint(-80, 60));
-        path.add(new Waypoint(0, 60));
-        path.add(new Waypoint(0, 0));
+        path.add(new Waypoint(0, 30));
 
         waitForStart();
         robot.startModules();
