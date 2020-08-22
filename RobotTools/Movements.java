@@ -89,7 +89,7 @@ public class Movements {
             double nearestAngle = Double.MAX_VALUE;
             for (Point thisIntersection : intersections) {
                 double angle = Math.atan2(thisIntersection.x - center.x, thisIntersection.y - center.y);
-                double deltaAngle = Math.abs(MathFunctions.angleWrap(angle - heading));
+                double deltaAngle = Math.abs(MathFunctions.angleWrap(angle - heading,0.0));
 
                 if (deltaAngle < nearestAngle) {
                     nearestAngle = deltaAngle;
@@ -113,7 +113,7 @@ public class Movements {
         double relativeAngleToPoint = absoluteAngleToTarget - robot.odometryModule.worldAngleRad;
         double relativeXToPoint = Math.sin(relativeAngleToPoint) * distanceToTarget;
         double relativeYToPoint = Math.cos(relativeAngleToPoint) * distanceToTarget;
-        double relativeTurnAngle = MathFunctions.angleWrap(relativeAngleToPoint);
+        double relativeTurnAngle = angleWrap(relativeAngleToPoint,0.0);
 
         // adjust vector based on current velocity
         relativeXToPoint -= 0.2 * robot.velocityModule.xVel;
