@@ -9,21 +9,31 @@ import static java.lang.Math.pow;
 
 public class MathFunctions {
 
-    // ends between 0 and 2pi
+    /**
+     * Wraps angle (in radians) to a value from 0 to 2*pi
+     *
+     * @param angle Angle to be wrapped
+     * @return The wrapped angle
+     */
     public static double angleWrap(double angle) {
         return angle % (2 * Math.PI);
     }
 
-    // ends between -pi and pi
-    public static double angleWrap2(double angle) {
-        while (Math.abs(angle) >= Math.PI) {
-            if (angle > 0) {
-                angle -= 2 * Math.PI;
-            } else {
-                angle += 2 * Math.PI;
-            }
-        }
-        return angle;
+    /**
+     * Wraps an angle (in radians) to a value within pi of centerOfWrap.
+     *
+     * @param angle The angle to be wrapped
+     * @param centerOfWrap The center of the boundary in which the angle can be wrapped to.
+     * @return The wrapped angle, which will lie within pi of the centerOfWrap.
+     */
+    public static double angleWrap(double angle, double centerOfWrap) {
+       if (Math.abs(angle) > centerOfWrap + Math.PI) {
+           return angleWrap(angle - (2 * Math.PI), centerOfWrap);
+       } else if (Math.abs(angle) < centerOfWrap - Math.PI) {
+           return angleWrap(angle + (2 * Math.PI), centerOfWrap);
+       } else {
+           return angle;
+       }
     }
 
     public static double linePointDistance(Point point, Point linePoint1, Point linePoint2) {

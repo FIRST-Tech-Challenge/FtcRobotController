@@ -2,13 +2,14 @@ package org.firstinspires.ftc.teamcode.rework.RobotTools;
 
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions;
 import org.firstinspires.ftc.teamcode.rework.AutoTools.Point;
 import org.firstinspires.ftc.teamcode.rework.AutoTools.Waypoint;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 
 import java.util.ArrayList;
 
-import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.angleWrap2;
+import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.angleWrap;
 import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.*;
 
 public class Movements {
@@ -21,11 +22,13 @@ public class Movements {
         this.robot = robot;
     }
 
-    private int index = 0;
+    /**
+     * The index of the point that the robot is currently following in the path.
+     */
+    private int pathIndex = 0;
 
     public void pathFollow(ArrayList<Waypoint> path, double moveSpeed, double turnSpeed) {
-
-        index = 0;
+        pathIndex = 0; // Reset pathIndex
 
         while (robot.isOpModeActive()) {
             Point robotPoint = new Point(robot.odometryModule.worldX, robot.odometryModule.worldY);
@@ -36,7 +39,7 @@ public class Movements {
 
             setMovementsToTarget(targetPoint, moveSpeed, turnSpeed);
 
-            robot.telemetryDump.addData("index ", index);
+            robot.telemetryDump.addData("index ", pathIndex);
 
             if (isDone(path, robotPoint)) {
                 robot.drivetrainModule.xMovement = 0;
@@ -51,10 +54,10 @@ public class Movements {
         Point clipped = new Point();
 
         double nearestClipDist = Double.MAX_VALUE;
-        int clippedIndex = index;
+        int clippedIndex = pathIndex;
 
         // only checks the current line and the next line (no skipping)
-        for (int i = index; i < Math.min(path.size() - 1, index + 2); i++) {
+        for (int i = pathIndex; i < Math.min(path.size() - 1, pathIndex + 2); i++) {
             Point start = path.get(i).toPoint();
             Point end = path.get(i + 1).toPoint();
 
@@ -68,7 +71,7 @@ public class Movements {
             }
         }
 
-        index = clippedIndex;
+        pathIndex = clippedIndex;
 
         return clipped;
     }
@@ -77,7 +80,7 @@ public class Movements {
         Point followPoint = new Point();
 
         // only look at lines on current index or next index
-        for (int i = index; i < Math.min(path.size() - 1, index + 2); i++) {
+        for (int i = pathIndex; i < Math.min(path.size() - 1, pathIndex + 2); i++) {
             Point start = path.get(i).toPoint();
             Point end = path.get(i + 1).toPoint();
 
@@ -86,7 +89,7 @@ public class Movements {
             double nearestAngle = Double.MAX_VALUE;
             for (Point thisIntersection : intersections) {
                 double angle = Math.atan2(thisIntersection.x - center.x, thisIntersection.y - center.y);
-                double deltaAngle = Math.abs(angleWrap2(angle - heading));
+                double deltaAngle = Math.abs(MathFunctions.angleWrap(angle - heading));
 
                 if (deltaAngle < nearestAngle) {
                     nearestAngle = deltaAngle;
@@ -96,7 +99,7 @@ public class Movements {
             }
         }
 
-        if (Math.hypot(center.x - path.get(path.size() - 1).x, center.y - path.get(path.size() - 1).y) < followRadius * 1.5 && index == path.size() - 2) {
+        if (Math.hypot(center.x - path.get(path.size() - 1).x, center.y - path.get(path.size() - 1).y) < followRadius * 1.5 && pathIndex == path.size() - 2) {
             followPoint = path.get(path.size() - 1).toPoint();
         }
 
@@ -110,7 +113,7 @@ public class Movements {
         double relativeAngleToPoint = absoluteAngleToTarget - robot.odometryModule.worldAngleRad;
         double relativeXToPoint = Math.sin(relativeAngleToPoint) * distanceToTarget;
         double relativeYToPoint = Math.cos(relativeAngleToPoint) * distanceToTarget;
-        double relativeTurnAngle = angleWrap2(relativeAngleToPoint);
+        double relativeTurnAngle = MathFunctions.angleWrap(relativeAngleToPoint);
 
         // adjust vector based on current velocity
         relativeXToPoint -= 0.2 * robot.velocityModule.xVel;
@@ -127,6 +130,6 @@ public class Movements {
     private boolean isDone(ArrayList<Waypoint> path, Point center) {
         Point endPoint = path.get(path.size() - 1).toPoint();
 
-        return (Math.hypot(center.x - endPoint.x, center.y - endPoint.y) < endTreshold) && index == path.size() - 2;
+        return (Math.hypot(center.x - endPoint.x, center.y - endPoint.y) < endTreshold) && pathIndex == path.size() - 2;
     }
 }
