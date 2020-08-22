@@ -19,18 +19,11 @@ public class MathFunctions {
         return angle % (2 * Math.PI);
     }
 
-    /**
-     * Wraps an angle (in radians) to a value within pi of centerOfWrap.
-     *
-     * @param angle The angle to be wrapped
-     * @param centerOfWrap The center of the boundary in which the angle can be wrapped to.
-     * @return The wrapped angle, which will lie within pi of the centerOfWrap.
-     */
-    public static double angleWrap(double angle, double centerOfWrap) {
-       if (Math.abs(angle) > centerOfWrap + Math.PI) {
-           return angleWrap(angle - (2 * Math.PI), centerOfWrap);
-       } else if (Math.abs(angle) < centerOfWrap - Math.PI) {
-           return angleWrap(angle + (2 * Math.PI), centerOfWrap);
+    public static double angleWrap2(double angle) {
+       if (angle > Math.PI) {
+           return angleWrap2(angle - (2 * Math.PI));
+       } else if (angle < - Math.PI) {
+           return angleWrap2(angle + (2 * Math.PI));
        } else {
            return angle;
        }
@@ -60,7 +53,7 @@ public class MathFunctions {
 
     public static Point twoLineIntersectionPoint(Point firstLinePoint, double firstLineM, Point secondLinePoint, double secondLineM) {
         double x = (firstLineM * firstLinePoint.x - firstLinePoint.y - secondLineM * secondLinePoint.x + secondLinePoint.y) / (firstLineM - secondLineM);
-        double y = firstLineM * (x - firstLinePoint.x) + secondLinePoint.y;
+        double y = firstLineM * (x - firstLinePoint.x) + firstLinePoint.y;
 
         return new Point(x, y);
     }

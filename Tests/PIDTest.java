@@ -14,7 +14,7 @@ public class PIDTest extends LinearOpMode {
 
     public void runOpMode() {
         initRobot();
-        PIDController pidController = new PIDController(0.05,0.0000001,0,robot);
+        PIDController pidController = new PIDController(0.05,0.00000001,0,robot);
         waitForStart();
         robot.startModules();
 
