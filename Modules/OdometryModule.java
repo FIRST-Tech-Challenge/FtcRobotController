@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.rework.Robot;
 
 public class OdometryModule implements Module {
     private boolean isOn;
-    private boolean isFileDump;
 
     public double worldX;
     public double worldY;
@@ -31,10 +30,9 @@ public class OdometryModule implements Module {
     public double rightPodNewPosition;
     public double mecanumPodNewPosition;
 
-    public OdometryModule(Robot robot, boolean isOn, boolean isFileDump) {
+    public OdometryModule(Robot robot, boolean isOn) {
         this.robot = robot;
         this.isOn = isOn;
-        this.isFileDump = isFileDump;
     }
 
     public void init() {
@@ -64,7 +62,7 @@ public class OdometryModule implements Module {
     }
 
     public void fileDump(){
-        robot.fileDump.addData("odometry.txt", new StringBuilder().append(worldX).append(" ").append(worldY).toString());
+        robot.fileDump.addData(new StringBuilder().append(robot.movements.currentTrip).append("_odometry.txt").toString(), new StringBuilder().append(worldX).append(" ").append(worldY).toString());
     }
 
     /**
@@ -162,9 +160,5 @@ public class OdometryModule implements Module {
 
     public boolean isOn(){
         return isOn;
-    }
-
-    public boolean isFileDump() {
-        return isFileDump;
     }
 }

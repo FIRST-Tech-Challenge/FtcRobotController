@@ -15,10 +15,10 @@ import java.util.HashMap;
 
 public class FileDump {
     HashMap<String,StringBuilder> files;
-    long starTime;
+    long startTime;
 
     public FileDump(){
-        starTime = SystemClock.elapsedRealtime();
+        startTime = SystemClock.elapsedRealtime();
         files = new HashMap<>();
     }
 
@@ -33,7 +33,7 @@ public class FileDump {
     public synchronized void writeFilesToDevice(){
         for(String key : files.keySet()){
             files.get(key).insert(0,"x y\n");
-            writeToFile(Long.toString(starTime),key,files.get(key).toString());
+            writeToFile(Long.toString(startTime),key,files.get(key).toString());
         }
     }
 

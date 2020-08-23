@@ -39,9 +39,10 @@ public class ModuleExecutor extends Thread {
                 lastUpdateTime = currentTime;
             }
 
-            if(robot.isStopRequested()){
+            if(robot.isStopRequested() && robot.isFileDump){
                 robot.fileDump.writeFilesToDevice();
             }
+
             robot.telemetryDump.update();
         }
         System.out.println("Module executor thread exited due to opMode no longer being active.");

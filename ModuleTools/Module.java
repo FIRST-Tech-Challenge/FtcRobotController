@@ -20,7 +20,5 @@ public interface Module {
 
     public boolean isOn();
 
-    public boolean isFileDump();
-
     public void fileDump();
 }

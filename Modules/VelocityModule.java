@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.rework.Robot;
 
 public class VelocityModule implements Module {
     private boolean isOn;
-    private boolean isFileDump;
 
     // in/s and rad/s
     public double xVel;
@@ -24,10 +23,9 @@ public class VelocityModule implements Module {
 
     private Robot robot;
 
-    public VelocityModule(Robot robot, boolean isOn, boolean isFileDump) {
+    public VelocityModule(Robot robot, boolean isOn) {
         this.robot = robot;
         this.isOn = isOn;
-        this.isFileDump = isFileDump;
     }
 
     public void init() {
@@ -60,9 +58,5 @@ public class VelocityModule implements Module {
 
     public boolean isOn(){
         return isOn;
-    }
-
-    public boolean isFileDump() {
-        return isFileDump;
     }
 }

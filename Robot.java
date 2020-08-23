@@ -52,6 +52,8 @@ public class Robot {
     private LynxModule revHub1;
     private LynxModule revHub2;
 
+    public final boolean isFileDump = true;
+
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode linearOpMode) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
@@ -59,8 +61,6 @@ public class Robot {
 
         this.telemetryDump = new TelemetryDump(telemetry);
         fileDump = new FileDump();
-
-        movements = new Movements(this);
 
         initHubs();
         initModules();
@@ -75,16 +75,19 @@ public class Robot {
             if(module.isOn()) {
                 module.update();
                 module.telemetry();
-                module.fileDump();
+                if(isFileDump) {
+                    module.fileDump();
+                }
             }
         }
     }
 
     public void initModules() {
         // Add individual modules into the array here
-        this.drivetrainModule = new DrivetrainModule(this,true,false);
-        this.odometryModule = new OdometryModule(this,true,true);
-        this.velocityModule = new VelocityModule(this,true,false);
+        this.drivetrainModule = new DrivetrainModule(this,true);
+        this.odometryModule = new OdometryModule(this,true);
+        this.velocityModule = new VelocityModule(this,true);
+        movements = new Movements(this, true);
 
         this.modules = new Module[] {
                 this.drivetrainModule, this.odometryModule, this.velocityModule
