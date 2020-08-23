@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.rework.Robot;
 
 public class DrivetrainModule implements Module {
     private Robot robot;
+    private boolean isOn;
 
     // States
     public double yMovement;
@@ -25,8 +26,9 @@ public class DrivetrainModule implements Module {
     private DcMotor bLeft;
     private DcMotor bRight;
 
-    public DrivetrainModule(Robot robot) {
+    public DrivetrainModule(Robot robot, boolean isOn) {
         this.robot = robot;
+        this.isOn = isOn;
     }
 
     public void init() {
@@ -126,12 +128,10 @@ public class DrivetrainModule implements Module {
 
 >>>>>>> 661b8a8450127843346bf11f914073b604a851b6:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/Robot/Modules/DrivetrainModule.java
         setMotorPowers(fLPower, fRPower, bLPower, bRPower);
-
-        tellEm();
     }
 
-    public void tellEm() {
-        robot.telemetryDump.addData("---DRIVETRAIN---", null);
+    public void telemetry() {
+        robot.telemetryDump.addHeader("---DRIVETRAIN---");
         robot.telemetryDump.addData("xMovement: ", xMovement);
         robot.telemetryDump.addData("yMovement: ", yMovement);
         robot.telemetryDump.addData("turnMovement: ", turnMovement);
@@ -173,5 +173,9 @@ public class DrivetrainModule implements Module {
         bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bRight.setDirection(DcMotorSimple.Direction.FORWARD);
 >>>>>>> 661b8a8450127843346bf11f914073b604a851b6:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/Robot/Modules/DrivetrainModule.java
+    }
+
+    public boolean isOn(){
+        return isOn;
     }
 }

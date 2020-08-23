@@ -1,19 +1,29 @@
 package org.firstinspires.ftc.teamcode.rework;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.ModuleExecutor;
 import org.firstinspires.ftc.teamcode.rework.Modules.OdometryModule;
 import org.firstinspires.ftc.teamcode.rework.Modules.DrivetrainModule;
 import org.firstinspires.ftc.teamcode.rework.Modules.VelocityModule;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.Movements;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class Robot {
     // All modules in the robot (remember to update initModules() and updateModules() when adding)
@@ -64,15 +74,18 @@ public class Robot {
         currentTimeMilli = SystemClock.elapsedRealtime();
 
         for(Module module : modules) {
-            module.update();
+            if(module.isOn()) {
+                module.update();
+                module.telemetry();
+            }
         }
     }
 
     public void initModules() {
         // Add individual modules into the array here
-        this.drivetrainModule = new DrivetrainModule(this);
-        this.odometryModule = new OdometryModule(this);
-        this.velocityModule = new VelocityModule(this);
+        this.drivetrainModule = new DrivetrainModule(this,true);
+        this.odometryModule = new OdometryModule(this,true);
+        this.velocityModule = new VelocityModule(this,true);
 
         this.modules = new Module[] {
                 this.drivetrainModule, this.odometryModule, this.velocityModule
@@ -139,5 +152,29 @@ public class Robot {
 
     public boolean isOpModeActive() {
         return linearOpMode.opModeIsActive();
+    }
+
+    public static void writeToFile(String directoryName, String fileName, String data) {
+        File captureDirectory = new File(AppUtil.ROBOT_DATA_DIR, "/" + directoryName + "/");
+        if (!captureDirectory.exists()) {
+            boolean isFileCreated = captureDirectory.mkdirs();
+            Log.d("DumpToFile", " " + isFileCreated);
+        }
+        Log.d("DumpToFile", " hey ");
+        File file = new File(captureDirectory, fileName);
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file);
+            OutputStreamWriter writer = new OutputStreamWriter(outputStream);
+            try {
+                writer.write(data);
+                writer.flush();
+                Log.d("DumpToFile", data);
+            } finally {
+                outputStream.close();
+                Log.d("DumpToFile", file.getAbsolutePath());
+            }
+        } catch (IOException e) {
+            RobotLog.ee("TAG", e, "exception in captureFrameToFile()");
+        }
     }
 }

@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 
 public class OdometryModule implements Module {
+    private boolean isOn;
 
     public double worldX;
     public double worldY;
@@ -29,8 +30,9 @@ public class OdometryModule implements Module {
     public double rightPodNewPosition;
     public double mecanumPodNewPosition;
 
-    public OdometryModule(Robot robot) {
+    public OdometryModule(Robot robot, boolean isOn) {
         this.robot = robot;
+        this.isOn = isOn;
     }
 
     public void init() {
@@ -50,11 +52,11 @@ public class OdometryModule implements Module {
 
     public synchronized void update() {
         calculateRobotPosition();
-        tellEm();
+
     }
 
-    public void tellEm() {
-        robot.telemetryDump.addData("---ODOMETRY---", null);
+    public void telemetry() {
+        robot.telemetryDump.addHeader("---ODOMETRY---");
         robot.telemetryDump.addData("x: ", worldX);
         robot.telemetryDump.addData("y: ", worldY);
         robot.telemetryDump.addData("heading: ", Math.toDegrees(worldAngleRad));
@@ -151,5 +153,9 @@ public class OdometryModule implements Module {
 
     public synchronized DcMotor getMecanum() {
         return mecanum;
+    }
+
+    public boolean isOn(){
+        return isOn;
     }
 }

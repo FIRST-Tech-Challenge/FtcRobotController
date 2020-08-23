@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 
 public class VelocityModule implements Module {
+    private boolean isOn;
 
     // in/s and rad/s
     public double xVel;
@@ -22,8 +23,9 @@ public class VelocityModule implements Module {
 
     private Robot robot;
 
-    public VelocityModule(Robot robot) {
+    public VelocityModule(Robot robot, boolean isOn) {
         this.robot = robot;
+        this.isOn = isOn;
     }
 
     public void init() {
@@ -41,14 +43,16 @@ public class VelocityModule implements Module {
         oldWorldY = robot.odometryModule.worldY;
         oldWorldAngle = robot.odometryModule.worldAngleRad;
         oldUpdateTime = currentUpdateTime;
-
-        tellEm();
     }
 
-    public void tellEm() {
-        robot.telemetryDump.addData("---VELOCITY---", null);
+    public void telemetry() {
+        robot.telemetryDump.addHeader("---VELOCITY---");
         robot.telemetryDump.addData("xVel: ", xVel);
         robot.telemetryDump.addData("yVel: ", yVel);
         robot.telemetryDump.addData("angleVel: ", angleVel);
+    }
+
+    public boolean isOn(){
+        return isOn;
     }
 }

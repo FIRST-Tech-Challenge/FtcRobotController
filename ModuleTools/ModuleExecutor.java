@@ -26,6 +26,7 @@ public class ModuleExecutor extends Thread {
     public ModuleExecutor(Robot robot, Telemetry telemetry) {
         this.robot = robot;
         this.telemetry = telemetry;
+        setName("module executor");
     }
 
     /**
@@ -46,6 +47,7 @@ public class ModuleExecutor extends Thread {
 
             if (SHOW_UPDATE_SPEED) {
                 currentTime = SystemClock.elapsedRealtime();
+                robot.telemetryDump.addHeader("---ModuleExector Update Speed---");
                 robot.telemetryDump.addData("Module Executor thread loop time: ", (currentTime - lastUpdateTime));
                 lastUpdateTime = currentTime;
             }
