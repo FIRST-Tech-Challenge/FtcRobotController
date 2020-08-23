@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.rework.AutoTools;
 
 import java.util.ArrayList;
+
 import static java.lang.Math.pow;
 
 public class MathFunctions {
