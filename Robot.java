@@ -41,6 +41,7 @@ public class Robot {
     private LinearOpMode linearOpMode;
     public TelemetryDump telemetryDump;
 
+    // New thread that updates modules
     ModuleExecutor moduleExecutor;
 
     // Array that all modules will be loaded into for easier access
