@@ -34,6 +34,7 @@ public class ModuleExecutor extends Thread {
 
             if (SHOW_UPDATE_SPEED) {
                 currentTime = SystemClock.elapsedRealtime();
+                robot.telemetryDump.addHeader("---ModuleExector Update Speed---");
                 robot.telemetryDump.addData("Module Executor thread loop time: ", (currentTime - lastUpdateTime));
                 lastUpdateTime = currentTime;
             }

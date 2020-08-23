@@ -18,15 +18,6 @@ public class MainTeleop extends LinearOpMode {
             updateDrivetrainStates();
 
             telemetryUpdateTime();
-            robot.telemetryDump.addData("x: ", robot.odometryModule.worldX);
-            robot.telemetryDump.addData("y: ", robot.odometryModule.worldY);
-            robot.telemetryDump.addData("heading: ", Math.toDegrees(robot.odometryModule.worldAngleRad));
-            robot.telemetryDump.addData("yLeft encoder: ", robot.odometryModule.leftPodNewPosition);
-            robot.telemetryDump.addData("yRight encoder: ", robot.odometryModule.rightPodNewPosition);
-            robot.telemetryDump.addData("mecanum encoder: ", robot.odometryModule.mecanumPodNewPosition);
-            robot.telemetryDump.addData("xVel: ", robot.velocityModule.xVel);
-            robot.telemetryDump.addData("yVel: ", robot.velocityModule.yVel);
-            robot.telemetryDump.addData("angleVel: ", robot.velocityModule.angleVel);
         }
     }
 
@@ -50,6 +41,7 @@ public class MainTeleop extends LinearOpMode {
     private void telemetryUpdateTime() {
         currentTime = SystemClock.elapsedRealtime();
 
+        robot.telemetryDump.addHeader("---TeleOp Update Speed---");
         robot.telemetryDump.addData("TeleOp while loop update time: ", (currentTime - lastUpdateTime));
 
         lastUpdateTime = currentTime;

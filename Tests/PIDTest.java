@@ -14,7 +14,7 @@ public class PIDTest extends LinearOpMode {
 
     public void runOpMode() {
         initRobot();
-        PIDController pidController = new PIDController(0.05,0.00000001,0,robot);
+        PIDController pidController = new PIDController(0.01,0.0000001,0,robot);
         waitForStart();
         robot.startModules();
 
@@ -22,9 +22,6 @@ public class PIDTest extends LinearOpMode {
             telemetryUpdateTime();
             pidController.PID(robot.odometryModule.worldY,56);
             robot.drivetrainModule.yMovement = pidController.scale;
-            robot.telemetryDump.addData("x: ", robot.odometryModule.worldX);
-            robot.telemetryDump.addData("y: ", robot.odometryModule.worldY);
-            robot.telemetryDump.addData("heading: ", Math.toDegrees(robot.odometryModule.worldAngleRad));
         }
     }
 
