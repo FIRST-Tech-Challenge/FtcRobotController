@@ -27,17 +27,12 @@ import java.io.OutputStreamWriter;
 
 public class Robot {
     // All modules in the robot (remember to update initModules() and updateModules() when adding)
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/Robot.java
 
     public DrivetrainModule drivetrainModule;
     public OdometryModule odometryModule;
     public VelocityModule velocityModule;
 
     public Movements movements;
-=======
-    public DrivetrainModule drivetrain;
-    public Odometry odometry;
->>>>>>> 661b8a8450127843346bf11f914073b604a851b6:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/Robot/Robot.java
 
     public long currentTimeMilli;
 
@@ -46,7 +41,6 @@ public class Robot {
     private LinearOpMode linearOpMode;
     public TelemetryDump telemetryDump;
 
-    // New thread that updates modules
     ModuleExecutor moduleExecutor;
 
     // Array that all modules will be loaded into for easier access
@@ -118,19 +112,11 @@ public class Robot {
         }
     }
 
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/Robot.java
     public void refreshData1() {
         revHub1.getBulkData();
     }
 
     public void refreshData2() {
-=======
-    /**
-     * Gets all sensor data from the hubs.
-     */
-    public void getBulkData() {
-        // revHub1.getBulkData(); // No need for data from Hub 1 as of right now
->>>>>>> 661b8a8450127843346bf11f914073b604a851b6:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/Robot/Robot.java
         revHub2.getBulkData();
     }
 
