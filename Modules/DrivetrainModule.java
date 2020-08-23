@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.rework.Robot;
 public class DrivetrainModule implements Module {
     private Robot robot;
     private boolean isOn;
+    private boolean isFileDump;
 
     // States
     public double yMovement;
@@ -26,9 +27,10 @@ public class DrivetrainModule implements Module {
     private DcMotor bLeft;
     private DcMotor bRight;
 
-    public DrivetrainModule(Robot robot, boolean isOn) {
+    public DrivetrainModule(Robot robot, boolean isOn, boolean isFileDump) {
         this.robot = robot;
         this.isOn = isOn;
+        this.isFileDump = isFileDump;
     }
 
     public void init() {
@@ -88,6 +90,10 @@ public class DrivetrainModule implements Module {
         robot.telemetryDump.addData("turnMovement: ", turnMovement);
     }
 
+    public void fileDump(){
+
+    }
+
     private void setMotorPowers(double fLPower, double fRPower, double bLPower, double bRPower) {
         fLeft.setPower(fLPower);
         fRight.setPower(fRPower);
@@ -120,5 +126,9 @@ public class DrivetrainModule implements Module {
 
     public boolean isOn(){
         return isOn;
+    }
+
+    public boolean isFileDump() {
+        return isFileDump;
     }
 }

@@ -19,4 +19,8 @@ public interface Module {
     public void telemetry();
 
     public boolean isOn();
+
+    public boolean isFileDump();
+
+    public void fileDump();
 }

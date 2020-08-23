@@ -19,6 +19,7 @@ public class MainTeleop extends LinearOpMode {
 
             telemetryUpdateTime();
         }
+        robot.fileDump.writeFilesToDevice();
     }
 
     private void initRobot() {

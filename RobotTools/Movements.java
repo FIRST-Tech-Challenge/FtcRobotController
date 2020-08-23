@@ -45,6 +45,8 @@ public class Movements {
         this.angleLockHeading = angleLockHeading;
         isTargetingLastPoint = false;
 
+        fileDump(path);
+
         while (robot.isOpModeActive()) {
             Point robotPoint = new Point(robot.odometryModule.worldX, robot.odometryModule.worldY);
             double robotHeading = robot.odometryModule.worldAngleRad;
@@ -62,6 +64,14 @@ public class Movements {
                 robot.drivetrainModule.yMovement = 0;
                 robot.drivetrainModule.turnMovement = 0;
                 return;
+            }
+        }
+    }
+
+    private void fileDump(ArrayList<Waypoint> path){
+        if(robot.odometryModule.isFileDump()){
+            for(int i = 0;i<path.size();i++){
+                robot.fileDump.addData("path.txt", new StringBuilder().append(path.get(i).x).append(" ").append(path.get(i).y).toString());
             }
         }
     }
