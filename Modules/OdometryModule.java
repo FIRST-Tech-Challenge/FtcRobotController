@@ -52,6 +52,7 @@ public class OdometryModule implements Module {
 
     public synchronized void update() {
         calculateRobotPosition();
+
     }
 
     public void telemetry() {
