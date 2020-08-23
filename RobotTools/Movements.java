@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.rework.RobotTools;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions;
-import org.firstinspires.ftc.teamcode.rework.AutoTools.PIDController;
 import org.firstinspires.ftc.teamcode.rework.AutoTools.Point;
 import org.firstinspires.ftc.teamcode.rework.AutoTools.Waypoint;
 import org.firstinspires.ftc.teamcode.rework.Robot;
@@ -17,13 +16,12 @@ public class Movements {
     Robot robot;
 
     // constants
-    private final double distanceThreshold = 0.25;
+    private final double distanceThreshold = 0.5;
     private final double angleThreshold = Math.toRadians(2);
     private final double followRadius = 15;
 
     // states
     private boolean isTargetingLastPoint = false;
-    private PIDController pidController;
 
     // settings
     private double direction = 0;
@@ -32,7 +30,6 @@ public class Movements {
 
     public Movements(Robot robot) {
         this.robot = robot;
-        pidController = new PIDController(0.05,0.00000001,0,robot);
     }
 
     /**
@@ -56,13 +53,14 @@ public class Movements {
 
             Point targetPoint = findTarget(path, clippedPoint, robotHeading);
 
-            setMovementsToTarget(targetPoint, moveSpeed, turnSpeed);
+            Point adjustedTargetPoint = adjustTargetPoint(targetPoint);
+
+            setMovementsToTarget(adjustedTargetPoint, moveSpeed, turnSpeed);
 
             if (isDone(path, robotPoint, robotHeading)) {
                 robot.drivetrainModule.xMovement = 0;
                 robot.drivetrainModule.yMovement = 0;
                 robot.drivetrainModule.turnMovement = 0;
-                robot.telemetryDump.addData("DEFNLIALG",0);
                 return;
             }
         }
@@ -90,7 +88,6 @@ public class Movements {
         }
 
         pathIndex = clippedIndex;
-        robot.telemetryDump.addData("pathIndex", pathIndex);
 
         return clipped;
     }
@@ -132,6 +129,16 @@ public class Movements {
         return followPoint;
     }
 
+    private Point adjustTargetPoint(Point targetPoint){
+        double robotSlipX = 0.1 * robot.velocityModule.xVel;
+        double robotSlipY = 0.1 * robot.velocityModule.yVel;
+
+        double slipX = robotSlipX * Math.cos(robot.odometryModule.worldAngleRad) + robotSlipY * Math.sin(robot.odometryModule.worldAngleRad);
+        double slipY = robotSlipY * Math.cos(robot.odometryModule.worldAngleRad) - robotSlipX * Math.sin(robot.odometryModule.worldAngleRad);
+
+        return new Point(targetPoint.x - slipX, targetPoint.y - slipY);
+    }
+
     private void setMovementsToTarget(Point targetPoint, double moveSpeed, double turnSpeed) {
         double distanceToTarget = Math.hypot(targetPoint.x - robot.odometryModule.worldX, targetPoint.y - robot.odometryModule.worldY);
         double absoluteAngleToTarget = Math.atan2(targetPoint.x - robot.odometryModule.worldX, targetPoint.y - robot.odometryModule.worldY);
@@ -145,10 +152,6 @@ public class Movements {
             relativeTurnAngle = angleWrap2(angleLockHeading - robot.odometryModule.worldAngleRad);
         }
 
-        // adjust vector based on current velocity
-        relativeXToPoint -= 0.2 * robot.velocityModule.xVel;
-        relativeYToPoint -= 0.2 * robot.velocityModule.yVel;
-
         double xPower = relativeXToPoint / Math.hypot(relativeYToPoint, relativeXToPoint);
         double yPower = relativeYToPoint / Math.hypot(relativeYToPoint, relativeXToPoint);
 
@@ -158,15 +161,14 @@ public class Movements {
         robot.drivetrainModule.turnMovement = Range.clip(relativeTurnAngle / Math.toRadians(30), -1, 1) * turnSpeed;
 
         if (isTargetingLastPoint){
-            pidController.PID(new Point(robot.odometryModule.worldX, robot.odometryModule.worldY), targetPoint);
-            double scale = pidController.scale;
-            robot.drivetrainModule.xMovement *= scale;
-            robot.drivetrainModule.yMovement *= scale;
+            robot.drivetrainModule.xMovement *= Range.clip(distanceToTarget / followRadius, 0.1, 1);
+            robot.drivetrainModule.yMovement *= Range.clip(distanceToTarget / followRadius, 0.1, 1);
         }
     }
 
     private boolean isDone(ArrayList<Waypoint> path, Point center, double heading) {
         Point endPoint = path.get(path.size() - 1).toPoint();
-        return (Math.hypot(center.x - endPoint.x, center.y - endPoint.y) < distanceThreshold) && (!willAngleLock || Math.abs(angleLockHeading - heading) < angleThreshold) && pathIndex == path.size() - 2;
+
+        return (Math.hypot(center.x - endPoint.x, center.y - endPoint.y) < distanceThreshold) && (!willAngleLock || Math.abs(angleWrap2(angleLockHeading - heading)) < angleThreshold) && pathIndex == path.size() - 2;
     }
 }
