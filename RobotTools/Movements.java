@@ -17,10 +17,14 @@ public class Movements {
 
     private boolean isFileDump;
 
+    Point clippedPoint;
+    Point targetPoint;
+    Point adjustedTargetPoint;
+
     // constants
     private final double distanceThreshold = 0.5;
     private final double angleThreshold = Math.toRadians(2);
-    private final double followRadius = 10;
+    private final double followRadius = 15;
 
     public int currentTrip;
 
@@ -51,20 +55,22 @@ public class Movements {
         this.angleLockHeading = angleLockHeading;
         isTargetingLastPoint = false;
 
-        fileDump(path);
+        pathFileDump(path);
 
         while (robot.isOpModeActive()) {
             Point robotPoint = new Point(robot.odometryModule.worldX, robot.odometryModule.worldY);
 
             double robotHeading = robot.odometryModule.worldAngleRad;
 
-            Point clippedPoint = clipToPath(path, robotPoint);
+            clippedPoint = clipToPath(path, robotPoint);
 
-            Point targetPoint = findTarget(path, clippedPoint, robotHeading);
+            targetPoint = findTarget(path, clippedPoint, robotHeading);
 
-            Point adjustedTargetPoint = adjustTargetPoint(targetPoint);
+            adjustedTargetPoint = adjustTargetPoint(targetPoint);
 
             setMovementsToTarget(adjustedTargetPoint, moveSpeed, turnSpeed);
+
+            fileDump();
 
             if (isDone(path, robotPoint, robotHeading)) {
                 robot.drivetrainModule.xMovement = 0;
@@ -76,13 +82,20 @@ public class Movements {
         }
     }
 
-    private void fileDump(ArrayList<Waypoint> path){
+    private void pathFileDump(ArrayList<Waypoint> path){
         if(robot.isFileDump){
             for(int i = 0;i<path.size();i++){
                 robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_path.txt").toString(), new StringBuilder().append(path.get(i).x).append(" ").append(path.get(i).y).toString());
             }
         }
     }
+
+    private void fileDump(){
+        if(robot.isFileDump){
+            robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_adjusted.txt").toString(), new StringBuilder().append(adjustedTargetPoint.x).append(" ").append(adjustedTargetPoint.y).toString());
+        }
+    }
+
     private Point clipToPath(ArrayList<Waypoint> path, Point center) {
         Point clipped = new Point();
 
@@ -147,8 +160,8 @@ public class Movements {
     }
 
     private Point adjustTargetPoint(Point targetPoint){
-        double robotSlipX = 0.1 * robot.velocityModule.xVel;
-        double robotSlipY = 0.1 * robot.velocityModule.yVel;
+        double robotSlipX = 0.2 * robot.velocityModule.xVel;
+        double robotSlipY = 0.2 * robot.velocityModule.yVel;
 
         double slipX = robotSlipX * Math.cos(robot.odometryModule.worldAngleRad) + robotSlipY * Math.sin(robot.odometryModule.worldAngleRad);
         double slipY = robotSlipY * Math.cos(robot.odometryModule.worldAngleRad) - robotSlipX * Math.sin(robot.odometryModule.worldAngleRad);
@@ -178,8 +191,8 @@ public class Movements {
         robot.drivetrainModule.turnMovement = Range.clip(relativeTurnAngle / Math.toRadians(30), -1, 1) * turnSpeed;
 
         if (isTargetingLastPoint){
-            robot.drivetrainModule.xMovement *= Range.clip(distanceToTarget / followRadius, 0.1, 1);
-            robot.drivetrainModule.yMovement *= Range.clip(distanceToTarget / followRadius, 0.1, 1);
+            robot.drivetrainModule.xMovement *= Range.clip(distanceToTarget / followRadius, 0.2, 1);
+            robot.drivetrainModule.yMovement *= Range.clip(distanceToTarget / followRadius, 0.2, 1);
         }
     }
 
