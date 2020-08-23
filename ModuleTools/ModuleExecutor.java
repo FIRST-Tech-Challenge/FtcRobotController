@@ -10,15 +10,8 @@ import org.firstinspires.ftc.teamcode.rework.Robot;
  * from the hubs.
  */
 public class ModuleExecutor extends Thread {
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/ModuleTools/ModuleExecutor.java
 
     final boolean SHOW_UPDATE_SPEED = true;
-=======
-    /**
-     * Whether or not to telemetry data on update speed, for debugging.
-     */
-    final static boolean SHOW_UPDATE_SPEED = true;
->>>>>>> 661b8a8450127843346bf11f914073b604a851b6:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/Robot/Modules/ModuleExecutor.java
 
     Robot robot;
     Telemetry telemetry;
@@ -37,13 +30,7 @@ public class ModuleExecutor extends Thread {
         long currentTime;
 
         while (robot.isOpModeActive()) {
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/ModuleTools/ModuleExecutor.java
             robot.update();
-=======
-            robot.getBulkData();
-
-            robot.updateModules();
->>>>>>> 661b8a8450127843346bf11f914073b604a851b6:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/Robot/Modules/ModuleExecutor.java
 
             if (SHOW_UPDATE_SPEED) {
                 currentTime = SystemClock.elapsedRealtime();
