@@ -79,6 +79,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<DcMotorEx> motors;
     private BNO055IMU imu;
 
+    private Pose2d lastPoseOnTurn;
+
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH);
 
@@ -157,6 +159,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void turnAsync(double angle) {
         double heading = getPoseEstimate().getHeading();
+
+        lastPoseOnTurn = getPoseEstimate();
+
         turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(heading, 0, 0, 0),
                 new MotionState(heading + angle, 0, 0, 0),
@@ -164,6 +169,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 constraints.maxAngAccel,
                 constraints.maxAngJerk
         );
+
         turnStart = clock.seconds();
         mode = Mode.TURN;
     }
@@ -237,6 +243,11 @@ public class SampleMecanumDrive extends MecanumDrive {
                         0, 0, targetAlpha
                 )));
 
+                Pose2d newPose = lastPoseOnTurn.copy(lastPoseOnTurn.getX(), lastPoseOnTurn.getY(), targetState.getX());
+
+                fieldOverlay.setStroke("#4CAF50");
+                DashboardUtil.drawRobot(fieldOverlay, newPose);
+
                 if (t >= turnProfile.duration()) {
                     mode = Mode.IDLE;
                     setDriveSignal(new DriveSignal());
@@ -250,14 +261,13 @@ public class SampleMecanumDrive extends MecanumDrive {
                 Trajectory trajectory = follower.getTrajectory();
 
                 fieldOverlay.setStrokeWidth(1);
-                fieldOverlay.setStroke("4CAF50");
+                fieldOverlay.setStroke("#4CAF50");
                 DashboardUtil.drawSampledPath(fieldOverlay, trajectory.getPath());
                 double t = follower.elapsedTime();
                 DashboardUtil.drawRobot(fieldOverlay, trajectory.get(t));
 
                 fieldOverlay.setStroke("#3F51B5");
                 DashboardUtil.drawPoseHistory(fieldOverlay, poseHistory);
-                DashboardUtil.drawRobot(fieldOverlay, currentPose);
 
                 if (!follower.isFollowing()) {
                     mode = Mode.IDLE;
@@ -267,6 +277,9 @@ public class SampleMecanumDrive extends MecanumDrive {
                 break;
             }
         }
+
+        fieldOverlay.setStroke("#3F51B5");
+        DashboardUtil.drawRobot(fieldOverlay, currentPose);
 
         dashboard.sendTelemetryPacket(packet);
     }
