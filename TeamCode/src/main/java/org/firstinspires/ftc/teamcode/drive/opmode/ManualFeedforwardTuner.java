@@ -88,18 +88,16 @@ public class ManualFeedforwardTuner extends LinearOpMode {
             drive.setDrivePower(new Pose2d(targetPower, 0, 0));
             drive.updatePoseEstimate();
 
-            TelemetryPacket packet = new TelemetryPacket();
-
             // update telemetry
-            packet.put("targetVelocity", motionState.getV());
+            telemetry.addData("targetVelocity", motionState.getV());
 
             Pose2d poseVelo = Objects.requireNonNull(drive.getPoseVelocity(), "poseVelocity() must not be null. Ensure that the getWheelVelocities() method has been overridden in your localizer.");
             double currentVelo = poseVelo.getX();
 
-            packet.put("poseVelocity", currentVelo);
-            packet.put("error", currentVelo - motionState.getV());
+            telemetry.addData("poseVelocity", currentVelo);
+            telemetry.addData("error", currentVelo - motionState.getV());
 
-            dashboard.sendTelemetryPacket(packet);
+            telemetry.update();
         }
     }
 }
