@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.rework;
 
 import android.os.SystemClock;
-import android.util.Log;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.ModuleExecutor;
 import org.firstinspires.ftc.teamcode.rework.Modules.OdometryModule;
@@ -19,11 +16,6 @@ import org.firstinspires.ftc.teamcode.rework.Modules.DrivetrainModule;
 import org.firstinspires.ftc.teamcode.rework.Modules.VelocityModule;
 import org.firstinspires.ftc.teamcode.rework.RobotTools.Movements;
 import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 public class Robot {
     // All modules in the robot (remember to update initModules() and updateModules() when adding)
@@ -53,7 +45,7 @@ public class Robot {
     private LynxModule revHub1;
     private LynxModule revHub2;
 
-    public final boolean isFileDump = true;
+    public final boolean WILL_FILE_DUMP = true;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode linearOpMode) {
         this.hardwareMap = hardwareMap;
@@ -76,7 +68,7 @@ public class Robot {
             if(module.isOn()) {
                 module.update();
                 module.telemetry();
-                if(isFileDump) {
+                if(WILL_FILE_DUMP) {
                     module.fileDump();
                 }
             }
