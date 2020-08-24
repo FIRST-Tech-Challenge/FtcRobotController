@@ -125,5 +125,4 @@ public class DrivetrainModule implements Module {
     public boolean isOn(){
         return isOn;
     }
-
 }
