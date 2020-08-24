@@ -43,6 +43,7 @@ public class Robot {
     public TelemetryDump telemetryDump;
     public FileDump fileDump;
 
+    // New thread that updates modules
     ModuleExecutor moduleExecutor;
 
     // Array that all modules will be loaded into for easier access
