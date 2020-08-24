@@ -25,6 +25,7 @@ public class Movements {
     private final double distanceThreshold = 0.5;
     private final double angleThreshold = Math.toRadians(2);
     private final double followRadius = 15;
+    private final double slipFactor = 0;
 
     public int currentTrip;
 
@@ -83,7 +84,7 @@ public class Movements {
     }
 
     private void pathFileDump(ArrayList<Waypoint> path){
-        if(robot.isFileDump){
+        if(robot.WILL_FILE_DUMP){
             for(int i = 0;i<path.size();i++){
                 robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_path.txt").toString(), new StringBuilder().append(path.get(i).x).append(" ").append(path.get(i).y).toString());
             }
@@ -91,8 +92,8 @@ public class Movements {
     }
 
     private void fileDump(){
-        if(robot.isFileDump){
-            robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_adjusted.txt").toString(), new StringBuilder().append(adjustedTargetPoint.x).append(" ").append(adjustedTargetPoint.y).toString());
+        if(robot.WILL_FILE_DUMP){
+            robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_target.txt").toString(), new StringBuilder().append(adjustedTargetPoint.x).append(" ").append(adjustedTargetPoint.y).toString());
         }
     }
 
@@ -160,8 +161,8 @@ public class Movements {
     }
 
     private Point adjustTargetPoint(Point targetPoint){
-        double robotSlipX = 0.2 * robot.velocityModule.xVel;
-        double robotSlipY = 0.2 * robot.velocityModule.yVel;
+        double robotSlipX = slipFactor * robot.velocityModule.xVel;
+        double robotSlipY = slipFactor * robot.velocityModule.yVel;
 
         double slipX = robotSlipX * Math.cos(robot.odometryModule.worldAngleRad) + robotSlipY * Math.sin(robot.odometryModule.worldAngleRad);
         double slipY = robotSlipY * Math.cos(robot.odometryModule.worldAngleRad) - robotSlipX * Math.sin(robot.odometryModule.worldAngleRad);
@@ -177,13 +178,18 @@ public class Movements {
         double relativeXToPoint = Math.sin(relativeAngleToPoint) * distanceToTarget;
         double relativeYToPoint = Math.cos(relativeAngleToPoint) * distanceToTarget;
 
+        robot.telemetryDump.addHeader("--- movements to target ---");
+        robot.telemetryDump.addData("relativeXToPoint ", relativeXToPoint);
+        robot.telemetryDump.addData("relativeYToPoint ", relativeYToPoint);
+        robot.telemetryDump.addData("relativeAngleToPoint ", relativeAngleToPoint);
+
         double relativeTurnAngle = angleWrap2(relativeAngleToPoint + direction);
         if (willAngleLock && isTargetingLastPoint){
             relativeTurnAngle = angleWrap2(angleLockHeading - robot.odometryModule.worldAngleRad);
         }
 
-        double xPower = relativeXToPoint / Math.hypot(relativeYToPoint, relativeXToPoint);
-        double yPower = relativeYToPoint / Math.hypot(relativeYToPoint, relativeXToPoint);
+        double xPower = relativeXToPoint / (Math.abs(relativeYToPoint) + Math.abs(relativeXToPoint));
+        double yPower = relativeYToPoint / (Math.abs(relativeYToPoint) + Math.abs(relativeXToPoint));
 
         // lol p
         robot.drivetrainModule.xMovement = xPower * moveSpeed;

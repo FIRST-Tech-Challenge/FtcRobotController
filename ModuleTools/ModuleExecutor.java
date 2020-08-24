@@ -39,7 +39,7 @@ public class ModuleExecutor extends Thread {
                 lastUpdateTime = currentTime;
             }
 
-            if(robot.isStopRequested() && robot.isFileDump){
+            if(robot.isStopRequested() && robot.WILL_FILE_DUMP){
                 robot.fileDump.writeFilesToDevice();
             }
 

@@ -32,7 +32,7 @@ public class AutoPathTest extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            robot.movements.pathFollow(path, 0, 0.8, 1, true, -Math.PI/2);
+            robot.movements.pathFollow(path, 0, 0.8, 0.8, true, -Math.PI/2);
             sleep(10000);
             break;
         }
