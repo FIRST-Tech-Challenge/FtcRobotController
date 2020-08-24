@@ -85,6 +85,7 @@ public class Movements {
 
     private void pathFileDump(ArrayList<Waypoint> path){
         if(robot.WILL_FILE_DUMP){
+            robot.fileDump.setHeader(new StringBuilder().append(currentTrip).append("_path.txt").toString(),"x y");
             for(int i = 0;i<path.size();i++){
                 robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_path.txt").toString(), new StringBuilder().append(path.get(i).x).append(" ").append(path.get(i).y).toString());
             }
@@ -93,6 +94,7 @@ public class Movements {
 
     private void fileDump(){
         if(robot.WILL_FILE_DUMP){
+            robot.fileDump.setHeader(new StringBuilder().append(currentTrip).append("_target.txt").toString(),"x y");
             robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_target.txt").toString(), new StringBuilder().append(adjustedTargetPoint.x).append(" ").append(adjustedTargetPoint.y).toString());
         }
     }

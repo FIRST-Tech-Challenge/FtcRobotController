@@ -62,7 +62,8 @@ public class OdometryModule implements Module {
     }
 
     public void fileDump(){
-        robot.fileDump.addData(new StringBuilder().append(robot.movements.currentTrip).append("_odometry.txt").toString(), new StringBuilder().append(worldX).append(" ").append(worldY).toString());
+        robot.fileDump.setHeader(new StringBuilder().append(robot.movements.currentTrip).append("_odometry.txt").toString(),"x y h");
+        robot.fileDump.addData(new StringBuilder().append(robot.movements.currentTrip).append("_odometry.txt").toString(), new StringBuilder().append(worldX).append(" ").append(worldY).append(" ").append(Math.toDegrees(worldAngleRad)).toString());
     }
 
     /**

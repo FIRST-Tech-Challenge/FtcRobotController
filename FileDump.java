@@ -14,7 +14,7 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
 public class FileDump {
-    HashMap<String,StringBuilder> files;
+    HashMap<String,FileData> files;
     long startTime;
 
     public FileDump(){
@@ -24,16 +24,24 @@ public class FileDump {
 
     public synchronized void addData(String fileName, String data){
         if(files.containsKey(fileName)) {
-            files.put(fileName, files.get(fileName).append(data).append("\n"));
+            files.get(fileName).text.append(data).append("\n");
         }else{
-            files.put(fileName,new StringBuilder(data).append("\n"));
+            files.put(fileName,new FileData("",new StringBuilder(data).append("\n")));
         }
     }
 
     public synchronized void writeFilesToDevice(){
         for(String key : files.keySet()){
-            files.get(key).insert(0,"x y\n");
-            writeToFile(Long.toString(startTime),key,files.get(key).toString());
+            writeToFile(Long.toString(startTime),key,files.get(key).getEntireFile());
+        }
+    }
+
+    public synchronized void setHeader(String fileName, String s){
+        if(!files.containsKey(fileName)){
+            files.put(fileName,new FileData(s + "\n",new StringBuilder()));
+        }
+        if(files.get(fileName).header.equals("")){
+            files.get(fileName).header = s + "\n";
         }
     }
 
@@ -59,5 +67,19 @@ public class FileDump {
         } catch (IOException e) {
             RobotLog.ee("TAG", e, "exception in captureFrameToFile()");
         }
+    }
+}
+
+class FileData{
+    public StringBuilder text;
+    public String header;
+
+    public FileData(String header, StringBuilder text){
+        this.header = header;
+        this.text = text;
+    }
+
+    public String getEntireFile(){
+        return text.insert(0,header).toString();
     }
 }
