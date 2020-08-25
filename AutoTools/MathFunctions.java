@@ -112,16 +112,35 @@ public class MathFunctions {
     }
 
     /**
-     * Returns all the intersections between a line and a circle.
+     * Solves for the real roots of a quadratic equation
+     * @param a
+     * @param b
+     * @param c
+     * @return a double[2] with the roots of the quadratic
+     */
+    public static double[] solveQuadratic(double a, double b, double c) {
+        /* The equation for the roots of a quadratic equation is: (-b +/- sqrt(b^2-4ac)) / 2a
+         */
+        double[] roots = new double[2];
+        double discriminant = (b * b) - (4 * a * c);
+
+        roots[0] = (-b + Math.sqrt(discriminant)) / (2*a);
+        roots[1] = (-b - Math.sqrt(discriminant)) / (2*a);
+
+        return roots;
+    }
+
+    /**
+     * Returns all the intersections between a line segment and a circle.
      *
      * @param circleCenter The center of the circle.
      * @param radius The radius of the circle.
-     * @param linePoint1 A point on the line.
-     * @param linePoint2 A different point on the line.
-     * @return An ArrayList of points representing the intersection between the circle and the line.
+     * @param linePoint1 A point on the segment.
+     * @param linePoint2 A different point on the segment.
+     * @return An ArrayList of points representing the intersection between the circle and the line segment.
      */
     public static ArrayList<Point> lineCircleIntersection(Point circleCenter, double radius, Point linePoint1, Point linePoint2) {
-        // make sure the points don't exactly line up so the slopes work
+        // make sure the points don't exactly line up so the slopes work. this is to avoid dividing by zero
         if (Math.abs(linePoint1.y - linePoint2.y) < 0.003) {
             linePoint1.y = linePoint2.y + 0.003;
         }
@@ -143,24 +162,21 @@ public class MathFunctions {
 
         ArrayList<Point> allPoints = new ArrayList<>();
         try {
-            // solve roots
-            double xRoot1 = (-quadraticB + Math.sqrt(pow(quadraticB, 2) - (4.0 * quadraticA * quadraticC))) / (2.0 * quadraticA);
+            double[] roots = solveQuadratic(quadraticA, quadraticB, quadraticC);
+            double xRoot1 = roots[0];
             double yRoot1 = lineSlope * (xRoot1 - x1) + y1;
 
-            //add back in translations
             xRoot1 += circleCenter.x;
             yRoot1 += circleCenter.y;
 
-            //within range
-            double minX = linePoint1.x < linePoint2.x ? linePoint1.x : linePoint2.x;
-            double maxX = linePoint1.x > linePoint2.x ? linePoint1.x : linePoint2.x;
+            double minX = Math.min(linePoint1.x, linePoint2.x);
+            double maxX = Math.max(linePoint1.x, linePoint2.x);
 
             if (xRoot1 > minX && xRoot1 < maxX) {
                 allPoints.add(new Point(xRoot1, yRoot1));
             }
 
-            //do the same for the other root
-            double xRoot2 = (-quadraticB - Math.sqrt(pow(quadraticB, 2) - (4.0 * quadraticA * quadraticC))) / (2.0 * quadraticA);
+            double xRoot2 = roots[1];
             double yRoot2 = lineSlope * (xRoot2 - x1) + y1;
 
             xRoot2 += circleCenter.x;
@@ -170,7 +186,7 @@ public class MathFunctions {
                 allPoints.add(new Point(xRoot2, yRoot2));
             }
         } catch (Exception e) {
-            //if there are no roots
+            e.printStackTrace();
         }
 
         return allPoints;

@@ -20,4 +20,14 @@ public class Point {
         this.x = 0;
         this.y = 0;
     }
+
+    @Override
+    public String toString() {
+        return x + ", " + y;
+    }
+
+    @Override
+    public boolean equals(Object point) {
+        return ((Point)point).x == x && ((Point)point).y == y;
+    }
 }
