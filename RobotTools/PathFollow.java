@@ -129,7 +129,7 @@ public class PathFollow implements TelemetryProvider {
             for (Point thisIntersection : intersections) {
 
                 double angle = Math.atan2(thisIntersection.x - center.x, thisIntersection.y - center.y) + direction;
-                double deltaAngle = Math.abs(MathFunctions.angleWrap2(angle - heading));
+                double deltaAngle = Math.abs(MathFunctions.angleWrap(angle - heading));
                 double thisDistToFirst = Math.hypot(thisIntersection.x - lineStartPoint.x, thisIntersection.y - lineStartPoint.y);
 
                 if (deltaAngle < nearestAngle && thisDistToFirst > distToFirst) {
@@ -166,9 +166,9 @@ public class PathFollow implements TelemetryProvider {
         double relativeXToPoint = Math.sin(relativeAngleToPoint) * distanceToTarget;
         double relativeYToPoint = Math.cos(relativeAngleToPoint) * distanceToTarget;
 
-        double relativeTurnAngle = angleWrap2(relativeAngleToPoint + direction);
+        double relativeTurnAngle = angleWrap(relativeAngleToPoint + direction);
         if (willAngleLock && isTargetingLastPoint){
-            relativeTurnAngle = angleWrap2(angleLockHeading - robot.odometryModule.worldAngleRad);
+            relativeTurnAngle = angleWrap(angleLockHeading - robot.odometryModule.worldAngleRad, 0);
         }
 
         double xPower = relativeXToPoint / (Math.abs(relativeYToPoint) + Math.abs(relativeXToPoint));
@@ -188,7 +188,7 @@ public class PathFollow implements TelemetryProvider {
     private boolean isDone(Waypoint[] path, Point center, double heading) {
         Point endPoint = path[path.length - 1].toPoint();
 
-        return (Math.hypot(center.x - endPoint.x, center.y - endPoint.y) < distanceThreshold) && (!willAngleLock || Math.abs(angleWrap2(angleLockHeading - heading)) < angleThreshold) && pathIndex == path.length - 2;
+        return (Math.hypot(center.x - endPoint.x, center.y - endPoint.y) < distanceThreshold) && (!willAngleLock || Math.abs(angleWrap(angleLockHeading - heading)) < angleThreshold) && pathIndex == path.length - 2;
     }
 
     public boolean isFileDump() {

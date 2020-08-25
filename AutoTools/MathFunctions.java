@@ -19,14 +19,21 @@ public class MathFunctions {
         return angle % (2 * Math.PI);
     }
 
-    public static double angleWrap2(double angle) {
-       if (angle > Math.PI) {
-           return angleWrap2(angle - (2 * Math.PI));
-       } else if (angle < - Math.PI) {
-           return angleWrap2(angle + (2 * Math.PI));
-       } else {
-           return angle;
-       }
+    /**
+     * Wraps an angle (in radians) to a value within pi of centerOfWrap.
+     *
+     * @param angle The angle to be wrapped
+     * @param centerOfWrap The center of the boundary in which the angle can be wrapped to.
+     * @return The wrapped angle, which will lie within pi of the centerOfWrap.
+     */
+    public static double angleWrap(double angle, double centerOfWrap) {
+        if (angle > centerOfWrap + Math.PI) {
+            return angleWrap(angle - (2 * Math.PI), centerOfWrap);
+        } else if (angle < centerOfWrap - Math.PI) {
+            return angleWrap(angle + (2 * Math.PI), centerOfWrap);
+        } else {
+            return angle;
+        }
     }
 
     /**
@@ -112,10 +119,11 @@ public class MathFunctions {
     }
 
     /**
-     * Solves for the real roots of a quadratic equation
-     * @param a
-     * @param b
-     * @param c
+     * Solves for the real roots of a quadratic equation in the form of ax^2 + bx + c.
+     *
+     * @param a coefficient of squared term
+     * @param b coefficient of linear term
+     * @param c constant
      * @return a double[2] with the roots of the quadratic
      */
     public static double[] solveQuadratic(double a, double b, double c) {
