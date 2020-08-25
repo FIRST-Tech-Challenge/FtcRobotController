@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.rework.RobotTools;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
-
 /**
  * A class that contains all the logic needed for a button to be a toggle, meaning it can be held
  * and will not return true continuously. (it will only return true once per press)
