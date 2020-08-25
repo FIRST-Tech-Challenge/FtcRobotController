@@ -27,4 +27,14 @@ public class Point {
     public boolean equals(Object point) {
         return ((Point)point).x == x && ((Point)point).y == y;
     }
+
+    @Override
+    public String toString() {
+        return x + ", " + y;
+    }
+
+    @Override
+    public boolean equals(Object point) {
+        return ((Point)point).x == x && ((Point)point).y == y;
+    }
 }
