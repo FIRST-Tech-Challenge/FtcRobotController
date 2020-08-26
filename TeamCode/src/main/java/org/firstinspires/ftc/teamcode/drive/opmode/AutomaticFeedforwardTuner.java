@@ -33,7 +33,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.rpmToVelocity;
  */
 @Config
 @Autonomous(group = "drive")
-public class DriveFeedforwardTuner extends LinearOpMode {
+public class AutomaticFeedforwardTuner extends LinearOpMode {
     public static final double MAX_POWER = 0.7;
     public static final double DISTANCE = 100; // in
 
