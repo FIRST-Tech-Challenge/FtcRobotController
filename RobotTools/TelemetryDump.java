@@ -10,10 +10,11 @@ import java.util.Map;
 
 public class TelemetryDump {
     Telemetry telemetry;
-    private static List<TelemetryProvider> providers = new ArrayList<>();
+    private static ArrayList<TelemetryProvider> providers;
 
     public TelemetryDump(Telemetry telemetry) {
         this.telemetry = telemetry;
+        this.providers = new ArrayList<>();
     }
 
     public static void registerProvider(TelemetryProvider provider) {
