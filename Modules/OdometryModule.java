@@ -3,9 +3,13 @@ package org.firstinspires.ftc.teamcode.rework.Modules;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
-public class OdometryModule implements Module {
+import java.util.HashMap;
+
+public class OdometryModule implements Module, TelemetryProvider {
     private boolean isOn;
 
     public double worldX;
@@ -31,6 +35,7 @@ public class OdometryModule implements Module {
     public double mecanumPodNewPosition;
 
     public OdometryModule(Robot robot, boolean isOn) {
+        TelemetryDump.registerProvider(this);
         this.robot = robot;
         this.isOn = isOn;
     }
@@ -54,11 +59,13 @@ public class OdometryModule implements Module {
         calculateRobotPosition();
     }
 
-    public void telemetry() {
-        robot.telemetryDump.addHeader("---ODOMETRY---");
-        robot.telemetryDump.addData("x: ", worldX);
-        robot.telemetryDump.addData("y: ", worldY);
-        robot.telemetryDump.addData("heading: ", Math.toDegrees(worldAngleRad));
+    public HashMap<String, String> getTelemetryData() {
+        HashMap<String, String> data = new HashMap<>();
+        data.put("---ODOMETRY---", "");
+        data.put("worldX: ", String.valueOf(worldX));
+        data.put("worldY: ", String.valueOf(worldY));
+        data.put("heading: ", String.valueOf(worldAngleRad));
+        return data;
     }
 
     public void fileDump(){

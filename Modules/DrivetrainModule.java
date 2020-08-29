@@ -4,10 +4,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class DrivetrainModule implements Module {
+public class DrivetrainModule implements Module, TelemetryProvider {
     private Robot robot;
     private boolean isOn;
 
@@ -27,6 +32,7 @@ public class DrivetrainModule implements Module {
     private DcMotor bRight;
 
     public DrivetrainModule(Robot robot, boolean isOn) {
+        TelemetryDump.registerProvider(this);
         this.robot = robot;
         this.isOn = isOn;
     }
@@ -82,10 +88,7 @@ public class DrivetrainModule implements Module {
     }
 
     public void telemetry() {
-        robot.telemetryDump.addHeader("---DRIVETRAIN---");
-        robot.telemetryDump.addData("xMovement: ", xMovement);
-        robot.telemetryDump.addData("yMovement: ", yMovement);
-        robot.telemetryDump.addData("turnMovement: ", turnMovement);
+
     }
 
     public void fileDump(){
@@ -124,5 +127,15 @@ public class DrivetrainModule implements Module {
 
     public boolean isOn(){
         return isOn;
+    }
+
+    @Override
+    public Map<String, String> getTelemetryData() {
+        HashMap<String, String> data = new HashMap<>();
+        data.put("---DRIVETRAIN---", "");
+        data.put("xMovement: ", String.valueOf(xMovement));
+        data.put("yMovement: ", String.valueOf(yMovement));
+        data.put("turnMovement: ", String.valueOf(turnMovement));
+        return data;
     }
 }

@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.rework.RobotTools;
 
 import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions;
 import org.firstinspires.ftc.teamcode.rework.AutoTools.Point;
 import org.firstinspires.ftc.teamcode.rework.AutoTools.Waypoint;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.*;
 
-public class Movements {
+public class Movements implements TelemetryProvider {
 
     Robot robot;
 
@@ -20,6 +22,7 @@ public class Movements {
     Point clippedPoint;
     Point targetPoint;
     Point adjustedTargetPoint;
+
 
     // constants
     private final double distanceThreshold = 0.5;
@@ -37,7 +40,10 @@ public class Movements {
     private double angleLockHeading = 0;
     private boolean willAngleLock = false;
 
+    double relativeAngleToPoint, relativeXToPoint, relativeYToPoint;
+
     public Movements(Robot robot, boolean isFileDump) {
+        TelemetryDump.registerProvider(this);
         this.robot = robot;
         currentTrip = 1;
         this.isFileDump = isFileDump;
@@ -83,16 +89,16 @@ public class Movements {
         }
     }
 
-    private void pathFileDump(ArrayList<Waypoint> path){
-        if(robot.WILL_FILE_DUMP){
-            for(int i = 0;i<path.size();i++){
+    private void pathFileDump(ArrayList<Waypoint> path) {
+        if (robot.WILL_FILE_DUMP) {
+            for (int i = 0; i < path.size(); i++) {
                 robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_path.txt").toString(), new StringBuilder().append(path.get(i).x).append(" ").append(path.get(i).y).toString());
             }
         }
     }
 
-    private void fileDump(){
-        if(robot.WILL_FILE_DUMP){
+    private void fileDump() {
+        if (robot.WILL_FILE_DUMP) {
             robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_target.txt").toString(), new StringBuilder().append(adjustedTargetPoint.x).append(" ").append(adjustedTargetPoint.y).toString());
         }
     }
@@ -160,7 +166,7 @@ public class Movements {
         return followPoint;
     }
 
-    private Point adjustTargetPoint(Point targetPoint){
+    private Point adjustTargetPoint(Point targetPoint) {
         double robotSlipX = slipFactor * robot.velocityModule.xVel;
         double robotSlipY = slipFactor * robot.velocityModule.yVel;
 
@@ -174,17 +180,12 @@ public class Movements {
         double distanceToTarget = Math.hypot(targetPoint.x - robot.odometryModule.worldX, targetPoint.y - robot.odometryModule.worldY);
         double absoluteAngleToTarget = Math.atan2(targetPoint.x - robot.odometryModule.worldX, targetPoint.y - robot.odometryModule.worldY);
 
-        double relativeAngleToPoint = absoluteAngleToTarget - robot.odometryModule.worldAngleRad;
-        double relativeXToPoint = Math.sin(relativeAngleToPoint) * distanceToTarget;
-        double relativeYToPoint = Math.cos(relativeAngleToPoint) * distanceToTarget;
-
-        robot.telemetryDump.addHeader("--- movements to target ---");
-        robot.telemetryDump.addData("relativeXToPoint ", relativeXToPoint);
-        robot.telemetryDump.addData("relativeYToPoint ", relativeYToPoint);
-        robot.telemetryDump.addData("relativeAngleToPoint ", relativeAngleToPoint);
+        relativeAngleToPoint = absoluteAngleToTarget - robot.odometryModule.worldAngleRad;
+        relativeXToPoint = Math.sin(relativeAngleToPoint) * distanceToTarget;
+        relativeYToPoint = Math.cos(relativeAngleToPoint) * distanceToTarget;
 
         double relativeTurnAngle = angleWrap2(relativeAngleToPoint + direction);
-        if (willAngleLock && isTargetingLastPoint){
+        if (willAngleLock && isTargetingLastPoint) {
             relativeTurnAngle = angleWrap2(angleLockHeading - robot.odometryModule.worldAngleRad);
         }
 
@@ -196,7 +197,7 @@ public class Movements {
         robot.drivetrainModule.yMovement = yPower * moveSpeed;
         robot.drivetrainModule.turnMovement = Range.clip(relativeTurnAngle / Math.toRadians(30), -1, 1) * turnSpeed;
 
-        if (isTargetingLastPoint){
+        if (isTargetingLastPoint) {
             robot.drivetrainModule.xMovement *= Range.clip(distanceToTarget / followRadius, 0.2, 1);
             robot.drivetrainModule.yMovement *= Range.clip(distanceToTarget / followRadius, 0.2, 1);
         }
@@ -208,7 +209,17 @@ public class Movements {
         return (Math.hypot(center.x - endPoint.x, center.y - endPoint.y) < distanceThreshold) && (!willAngleLock || Math.abs(angleWrap2(angleLockHeading - heading)) < angleThreshold) && pathIndex == path.size() - 2;
     }
 
-    public boolean isFileDump(){
+    public boolean isFileDump() {
         return isFileDump;
+    }
+
+    @Override
+    public Map<String, String> getTelemetryData() {
+        HashMap<String, String> data = new HashMap<>();
+        data.put("--- movements to target ---", "");
+        data.put("relativeXToPoint: ", String.valueOf(relativeXToPoint));
+        data.put("relativeYToPoint: ", String.valueOf(relativeYToPoint));
+        data.put("relativeAngleToPoint: ", String.valueOf(relativeAngleToPoint));
+        return data;
     }
 }

@@ -4,19 +4,26 @@ import android.os.SystemClock;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.rework.Robot;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ModuleExecutor creates a new thread where modules will be executed and data will be retrieved
  * from the hubs.
  */
-public class ModuleExecutor extends Thread {
+public class ModuleExecutor extends Thread implements TelemetryProvider {
 
     final boolean SHOW_UPDATE_SPEED = true;
 
     Robot robot;
     Telemetry telemetry;
 
+    long lastUpdateTime = 0;
+
     public ModuleExecutor(Robot robot, Telemetry telemetry) {
+        TelemetryDump.registerProvider(this);
         this.robot = robot;
         this.telemetry = telemetry;
         setName("module executor");
@@ -26,17 +33,14 @@ public class ModuleExecutor extends Thread {
      * Gets all modules from robot, then runs update on them.
      */
     public void run() {
-        long lastUpdateTime = SystemClock.elapsedRealtime();
-        long currentTime;
 
         while (robot.isOpModeActive()) {
+            long startTime = SystemClock.elapsedRealtime();
+
             robot.update();
 
             if (SHOW_UPDATE_SPEED) {
-                currentTime = SystemClock.elapsedRealtime();
-                robot.telemetryDump.addHeader("---ModuleExector Update Speed---");
-                robot.telemetryDump.addData("Module Executor thread loop time: ", (currentTime - lastUpdateTime));
-                lastUpdateTime = currentTime;
+                lastUpdateTime = SystemClock.elapsedRealtime() - startTime;
             }
 
             if(robot.isStopRequested() && robot.WILL_FILE_DUMP){
@@ -46,5 +50,13 @@ public class ModuleExecutor extends Thread {
             robot.telemetryDump.update();
         }
         System.out.println("Module executor thread exited due to opMode no longer being active.");
+    }
+
+    @Override
+    public Map<String, String> getTelemetryData() {
+        HashMap<String, String> data = new HashMap<>();
+        data.put("---ModuleExecutor Update Speed---", "");
+        data.put("Module Executor thread loop time: ", String.valueOf(lastUpdateTime));
+        return data;
     }
 }

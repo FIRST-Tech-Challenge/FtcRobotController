@@ -1,48 +1,34 @@
 package org.firstinspires.ftc.teamcode.rework.RobotTools;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TelemetryDump {
     Telemetry telemetry;
-
-    LinkedHashMap<String,String> opModeData;
-    LinkedHashMap<String,String> executorModuleData;
+    private static List<TelemetryProvider> providers = new ArrayList<>();
 
     public TelemetryDump(Telemetry telemetry) {
         this.telemetry = telemetry;
-        opModeData = new LinkedHashMap<>();
-        executorModuleData = new LinkedHashMap<>();
     }
 
-    public void addData(String s, String val){
-        if(Thread.currentThread().getName().equals("module executor")){
-            executorModuleData.put(s,val);
-        }else {
-            opModeData.put(s, val);
-        }
+    public static void registerProvider(TelemetryProvider provider) {
+        providers.add(provider);
     }
-
-    public void addHeader(String s){
-        addData(s,"");
-    }
-
-    public void addData(String s, double val) {
-        if (Thread.currentThread().getName().equals("module executor")) {
-            executorModuleData.put(s, Double.toString(val));
-        } else {
-            opModeData.put(s, Double.toString(val));
-        }
+    public static void removeProvider(TelemetryProvider provider) {
+        providers.remove(provider);
     }
 
     public void update() {
         StringBuilder out = new StringBuilder();
-        for(String key : executorModuleData.keySet()){
-            out.append(key).append(executorModuleData.get(key)).append("\n");
-        }
-        for(String key : opModeData.keySet()) {
-            out.append(key).append(opModeData.get(key)).append("\n");
+        for(TelemetryProvider provider : providers) {
+            for(Map.Entry<String, String> entry : provider.getTelemetryData().entrySet()) {
+                out.append(entry.getKey() + entry.getValue() + "\n");
+            }
         }
         telemetry.addLine(out.toString());
         telemetry.update();

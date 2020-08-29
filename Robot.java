@@ -67,7 +67,6 @@ public class Robot {
         for(Module module : modules) {
             if(module.isOn()) {
                 module.update();
-                module.telemetry();
                 if(WILL_FILE_DUMP) {
                     module.fileDump();
                 }
