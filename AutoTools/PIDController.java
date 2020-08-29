@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,10 +39,10 @@ public class PIDController implements TelemetryProvider {
     }
 
     @Override
-    public Map<String, String> getTelemetryData() {
-        HashMap<String, String> data = new HashMap<>();
-        data.put("PID", "");
-        data.put("Scale: ", String.valueOf(this.scale));
+    public ArrayList<String> getTelemetryData() {
+        ArrayList<String> data = new ArrayList<>();
+        data.add("PID");
+        data.add("Scale: " + String.valueOf(this.scale));
         return data;
     }
 }

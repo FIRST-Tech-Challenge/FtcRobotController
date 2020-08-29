@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class VelocityModule implements Module, TelemetryProvider {
@@ -50,12 +51,12 @@ public class VelocityModule implements Module, TelemetryProvider {
         oldUpdateTime = currentUpdateTime;
     }
 
-    public HashMap<String, String> getTelemetryData() {
-        HashMap<String, String> data = new HashMap<>();
-        data.put("---VELOCITY---", "");
-        data.put("xVel: ", String.valueOf(xVel));
-        data.put("yVel: ", String.valueOf(yVel));
-        data.put("angleVel: ", String.valueOf(angleVel));
+    public ArrayList<String> getTelemetryData() {
+        ArrayList<String> data = new ArrayList<>();
+        data.add("---VELOCITY---");
+        data.add("xVel: " + String.valueOf(xVel));
+        data.add("yVel: " + String.valueOf(yVel));
+        data.add("angleVel: "+ String.valueOf(angleVel));
         return data;
     }
 

@@ -214,12 +214,12 @@ public class Movements implements TelemetryProvider {
     }
 
     @Override
-    public Map<String, String> getTelemetryData() {
-        HashMap<String, String> data = new HashMap<>();
-        data.put("--- movements to target ---", "");
-        data.put("relativeXToPoint: ", String.valueOf(relativeXToPoint));
-        data.put("relativeYToPoint: ", String.valueOf(relativeYToPoint));
-        data.put("relativeAngleToPoint: ", String.valueOf(relativeAngleToPoint));
+    public ArrayList<String> getTelemetryData() {
+        ArrayList<String> data = new ArrayList<>();
+        data.add("--- movements to target ---" + "");
+        data.add("relativeXToPoint: " + String.valueOf(relativeXToPoint));
+        data.add("relativeYToPoint: " + String.valueOf(relativeYToPoint));
+        data.add("relativeAngleToPoint: " + String.valueOf(relativeAngleToPoint));
         return data;
     }
 }

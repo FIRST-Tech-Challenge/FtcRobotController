@@ -26,8 +26,8 @@ public class TelemetryDump {
     public void update() {
         StringBuilder out = new StringBuilder();
         for(TelemetryProvider provider : providers) {
-            for(Map.Entry<String, String> entry : provider.getTelemetryData().entrySet()) {
-                out.append(entry.getKey() + entry.getValue() + "\n");
+            for(String entry : provider.getTelemetryData()) {
+                out.append(entry + "\n");
             }
         }
         telemetry.addLine(out.toString());

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,12 +40,12 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
     }
 
     @Override
-    public Map<String, String> getTelemetryData() {
+    public ArrayList<String> getTelemetryData() {
         long currentTime = SystemClock.elapsedRealtime();
 
-        HashMap<String, String> data = new HashMap<>();
-        data.put("---TeleOp Update Speed---", "");
-        data.put("TeleOp while loop update time: ", String.valueOf(currentTime - lastUpdateTime));
+        ArrayList<String> data = new ArrayList<>();
+        data.add("---TeleOp Update Speed---");
+        data.add("TeleOp while loop update time: " + String.valueOf(currentTime - lastUpdateTime));
         lastUpdateTime = currentTime;
 
         return data;

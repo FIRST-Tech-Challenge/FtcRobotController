@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class OdometryModule implements Module, TelemetryProvider {
@@ -59,12 +60,12 @@ public class OdometryModule implements Module, TelemetryProvider {
         calculateRobotPosition();
     }
 
-    public HashMap<String, String> getTelemetryData() {
-        HashMap<String, String> data = new HashMap<>();
-        data.put("---ODOMETRY---", "");
-        data.put("worldX: ", String.valueOf(worldX));
-        data.put("worldY: ", String.valueOf(worldY));
-        data.put("heading: ", String.valueOf(worldAngleRad));
+    public ArrayList<String> getTelemetryData() {
+        ArrayList<String> data = new ArrayList<>();
+        data.add("---ODOMETRY---");
+        data.add("worldX: " + String.valueOf(worldX));
+        data.add("worldY: " + String.valueOf(worldY));
+        data.add("heading: " + String.valueOf(worldAngleRad));
         return data;
     }
 

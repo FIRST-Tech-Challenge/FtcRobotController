@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -130,12 +131,12 @@ public class DrivetrainModule implements Module, TelemetryProvider {
     }
 
     @Override
-    public Map<String, String> getTelemetryData() {
-        HashMap<String, String> data = new HashMap<>();
-        data.put("---DRIVETRAIN---", "");
-        data.put("xMovement: ", String.valueOf(xMovement));
-        data.put("yMovement: ", String.valueOf(yMovement));
-        data.put("turnMovement: ", String.valueOf(turnMovement));
+    public ArrayList<String> getTelemetryData() {
+        ArrayList<String> data = new ArrayList<>();
+        data.add("---DRIVETRAIN---");
+        data.add("xMovement: " + String.valueOf(xMovement));
+        data.add("yMovement: " + String.valueOf(yMovement));
+        data.add("turnMovement: " + String.valueOf(turnMovement));
         return data;
     }
 }

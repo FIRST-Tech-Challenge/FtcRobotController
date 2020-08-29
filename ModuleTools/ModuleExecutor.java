@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,10 +54,10 @@ public class ModuleExecutor extends Thread implements TelemetryProvider {
     }
 
     @Override
-    public Map<String, String> getTelemetryData() {
-        HashMap<String, String> data = new HashMap<>();
-        data.put("---ModuleExecutor Update Speed---", "");
-        data.put("Module Executor thread loop time: ", String.valueOf(lastUpdateTime));
+    public ArrayList<String> getTelemetryData() {
+        ArrayList<String> data = new ArrayList<>();
+        data.add("---ModuleExecutor Update Speed---");
+        data.add("Module Executor thread loop time: " + String.valueOf(lastUpdateTime));
         return data;
     }
 }
