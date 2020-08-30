@@ -10,13 +10,13 @@ import static java.lang.Math.pow;
 public class MathFunctions {
 
     /**
-     * Wraps angle (in radians) to a value from 0 to 2*pi
+     * Wraps angle (in radians) to a value from -pi to pi
      *
      * @param angle Angle to be wrapped
-     * @return The wrapped angle
+     * @return The wrapped angle, between -pi and pi
      */
     public static double angleWrap(double angle) {
-        return angle % (2 * Math.PI);
+        return angleWrap(angle,0);
     }
 
     /**

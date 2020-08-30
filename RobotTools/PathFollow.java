@@ -168,7 +168,7 @@ public class PathFollow implements TelemetryProvider {
 
         double relativeTurnAngle = angleWrap(relativeAngleToPoint + direction);
         if (willAngleLock && isTargetingLastPoint){
-            relativeTurnAngle = angleWrap(angleLockHeading - robot.odometryModule.worldAngleRad, 0);
+            relativeTurnAngle = angleWrap(angleLockHeading - robot.odometryModule.worldAngleRad);
         }
 
         double xPower = relativeXToPoint / (Math.abs(relativeYToPoint) + Math.abs(relativeXToPoint));
