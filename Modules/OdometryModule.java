@@ -62,7 +62,6 @@ public class OdometryModule implements Module, TelemetryProvider {
 
     public ArrayList<String> getTelemetryData() {
         ArrayList<String> data = new ArrayList<>();
-        data.add("---ODOMETRY---");
         data.add("worldX: " + String.valueOf(worldX));
         data.add("worldY: " + String.valueOf(worldY));
         data.add("heading: " + String.valueOf(worldAngleRad));

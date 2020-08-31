@@ -41,7 +41,6 @@ public class PIDController implements TelemetryProvider {
     @Override
     public ArrayList<String> getTelemetryData() {
         ArrayList<String> data = new ArrayList<>();
-        data.add("PID");
         data.add("Scale: " + String.valueOf(this.scale));
         return data;
     }

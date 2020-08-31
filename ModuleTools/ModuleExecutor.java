@@ -56,7 +56,6 @@ public class ModuleExecutor extends Thread implements TelemetryProvider {
     @Override
     public ArrayList<String> getTelemetryData() {
         ArrayList<String> data = new ArrayList<>();
-        data.add("---ModuleExecutor Update Speed---");
         data.add("Module Executor thread loop time: " + String.valueOf(lastUpdateTime));
         return data;
     }

@@ -216,7 +216,6 @@ public class Movements implements TelemetryProvider {
     @Override
     public ArrayList<String> getTelemetryData() {
         ArrayList<String> data = new ArrayList<>();
-        data.add("--- movements to target ---" + "");
         data.add("relativeXToPoint: " + String.valueOf(relativeXToPoint));
         data.add("relativeYToPoint: " + String.valueOf(relativeYToPoint));
         data.add("relativeAngleToPoint: " + String.valueOf(relativeAngleToPoint));

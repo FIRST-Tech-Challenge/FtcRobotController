@@ -44,7 +44,6 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
         long currentTime = SystemClock.elapsedRealtime();
 
         ArrayList<String> data = new ArrayList<>();
-        data.add("---TeleOp Update Speed---");
         data.add("TeleOp while loop update time: " + String.valueOf(currentTime - lastUpdateTime));
         lastUpdateTime = currentTime;
 
