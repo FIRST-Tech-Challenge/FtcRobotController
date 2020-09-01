@@ -87,10 +87,7 @@ public class DrivetrainModule implements Module, TelemetryProvider {
 
         setMotorPowers(fLPower, fRPower, bLPower, bRPower);
     }
-
-    public void telemetry() {
-
-    }
+    
 
     public void fileDump(){
 
