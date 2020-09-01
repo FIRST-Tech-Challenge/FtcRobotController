@@ -14,12 +14,9 @@ public class Point {
     }
 
     /**
-     * Creates a point with value (0,0)
+     * Creates a point with null x and y
      */
-    public Point() {
-        this.x = 0;
-        this.y = 0;
-    }
+    public Point() {}
 
     @Override
     public String toString() {

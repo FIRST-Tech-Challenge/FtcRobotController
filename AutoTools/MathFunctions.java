@@ -111,6 +111,10 @@ public class MathFunctions {
             into the generalized intersection equation to get the lines below.
          */
 
+        if (firstLineSlope == secondLineSlope) {
+            return new Point(); // If the slopes are parallel, return an empty point.
+        }
+
         double x = ((secondLinePoint.y - (secondLineSlope * secondLinePoint.x)) - (firstLinePoint.y - (firstLineSlope * firstLinePoint.x))) // numerator
                 / (firstLineSlope - secondLineSlope); // denominator
         double y = (firstLineSlope * (x)) + (firstLinePoint.y - (firstLineSlope * firstLinePoint.x)); // Using y = mx + b
@@ -124,7 +128,8 @@ public class MathFunctions {
      * @param a coefficient of squared term
      * @param b coefficient of linear term
      * @param c constant
-     * @return a double[2] with the roots of the quadratic
+     * @return a double[2] with the roots of the quadratic. Will return null values if there
+     * is no real solution, or 1 value followed by null if there is only one real solution.
      */
     public static double[] solveQuadratic(double a, double b, double c) {
         /* The equation for the roots of a quadratic equation is: (-b +/- sqrt(b^2-4ac)) / 2a
@@ -132,8 +137,12 @@ public class MathFunctions {
         double[] roots = new double[2];
         double discriminant = (b * b) - (4 * a * c);
 
+        if (discriminant < 0) {
+            return roots;
+        } else if (discriminant != 0) {
+            roots[1] = (-b - Math.sqrt(discriminant)) / (2*a);
+        }
         roots[0] = (-b + Math.sqrt(discriminant)) / (2*a);
-        roots[1] = (-b - Math.sqrt(discriminant)) / (2*a);
 
         return roots;
     }
