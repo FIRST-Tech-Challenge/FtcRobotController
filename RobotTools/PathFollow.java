@@ -122,7 +122,7 @@ public class PathFollow implements TelemetryProvider {
             Point start = path[i].toPoint();
             Point end = path[i + 1].toPoint();
 
-            ArrayList<Point> intersections = lineCircleIntersection(center, followRadius, start, end);
+            ArrayList<Point> intersections = lineSegmentCircleIntersection(center, followRadius, start, end);
 
             double nearestAngle = Double.MAX_VALUE;
 

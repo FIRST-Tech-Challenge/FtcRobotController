@@ -148,21 +148,23 @@ public class MathFunctions {
     }
 
     /**
-     * Returns all the intersections between a line segment and a circle.
+     * Returns all the intersections between a segment of a line and a circle.
      *
      * @param circleCenter The center of the circle.
      * @param radius The radius of the circle.
-     * @param linePoint1 A point on the segment.
-     * @param linePoint2 A different point on the segment.
+     * @param linePoint1 An end point of the segment.
+     * @param linePoint2 The other end point of the segment.
      * @return An ArrayList of points representing the intersection between the circle and the line segment.
      */
-    public static ArrayList<Point> lineCircleIntersection(Point circleCenter, double radius, Point linePoint1, Point linePoint2) {
-        // make sure the points don't exactly line up so the slopes work. this is to avoid dividing by zero
-        if (Math.abs(linePoint1.y - linePoint2.y) < 0.003) {
-            linePoint1.y = linePoint2.y + 0.003;
-        }
-        if (Math.abs(linePoint1.x - linePoint2.x) < 0.003) {
-            linePoint1.x = linePoint2.x + 0.003;
+    public static ArrayList<Point> lineSegmentCircleIntersection(Point circleCenter, double radius, Point linePoint1, Point linePoint2) {
+        ArrayList<Point> solutions = new ArrayList<>();
+
+        // If the points are on top of each other, evaluate if the point is on the circle
+        if (linePoint1.y == linePoint2.y && linePoint1.x == linePoint2.x) {
+            if (Math.hypot(circleCenter.x - linePoint1.x, circleCenter.y - linePoint1.y) == radius) { // Test if point is on the circle
+                solutions.add(linePoint1);
+            }
+            return solutions;
         }
 
         // calculate the slope of the line
@@ -176,9 +178,8 @@ public class MathFunctions {
 
         double quadraticB = (2.0 * lineSlope * y1) - (2.0 * pow(lineSlope, 2) * x1);
         double quadraticC = ((pow(lineSlope, 2) * pow(x1, 2)) - (2.0 * y1 * lineSlope * x1) + pow(y1, 2) - pow(radius, 2));
-
-        ArrayList<Point> allPoints = new ArrayList<>();
         try {
+            System.out.println(quadraticA + " " + quadraticB + " " + quadraticC);
             double[] roots = solveQuadratic(quadraticA, quadraticB, quadraticC);
             double xRoot1 = roots[0];
             double yRoot1 = lineSlope * (xRoot1 - x1) + y1;
@@ -190,7 +191,7 @@ public class MathFunctions {
             double maxX = Math.max(linePoint1.x, linePoint2.x);
 
             if (xRoot1 > minX && xRoot1 < maxX) {
-                allPoints.add(new Point(xRoot1, yRoot1));
+                solutions.add(new Point(xRoot1, yRoot1));
             }
 
             double xRoot2 = roots[1];
@@ -200,12 +201,12 @@ public class MathFunctions {
             yRoot2 += circleCenter.y;
 
             if (xRoot2 > minX && xRoot2 < maxX) {
-                allPoints.add(new Point(xRoot2, yRoot2));
+                solutions.add(new Point(xRoot2, yRoot2));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return allPoints;
+        return solutions;
     }
 }
