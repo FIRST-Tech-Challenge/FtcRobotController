@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.rework.AutoTools;
 
-import org.firstinspires.ftc.teamcode.rework.AutoTools.Point;
-
 import java.util.ArrayList;
-import java.util.Vector;
-
 import static java.lang.Math.pow;
 
 public class MathFunctions {
