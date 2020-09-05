@@ -17,7 +17,7 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
     long lastUpdateTime;
 
     public void runOpMode() {
-        TelemetryDump.registerProvider(this);
+        robot.telemetryDump.registerProvider(this);
         initRobot();
         waitForStart();
         robot.startModules();

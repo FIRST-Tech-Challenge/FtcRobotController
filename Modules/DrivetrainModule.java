@@ -33,7 +33,7 @@ public class DrivetrainModule implements Module, TelemetryProvider {
     private DcMotor bRight;
 
     public DrivetrainModule(Robot robot, boolean isOn) {
-        TelemetryDump.registerProvider(this);
+        robot.telemetryDump.registerProvider(this);
         this.robot = robot;
         this.isOn = isOn;
     }

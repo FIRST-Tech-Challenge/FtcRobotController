@@ -24,7 +24,7 @@ public class ModuleExecutor extends Thread implements TelemetryProvider {
     long lastUpdateTime = 0;
 
     public ModuleExecutor(Robot robot, Telemetry telemetry) {
-        TelemetryDump.registerProvider(this);
+        robot.telemetryDump.registerProvider(this);
         this.robot = robot;
         this.telemetry = telemetry;
         setName("module executor");

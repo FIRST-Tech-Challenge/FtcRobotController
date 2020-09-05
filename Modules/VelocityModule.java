@@ -29,7 +29,7 @@ public class VelocityModule implements Module, TelemetryProvider {
     private Robot robot;
 
     public VelocityModule(Robot robot, boolean isOn) {
-        TelemetryDump.registerProvider(this);
+        robot.telemetryDump.registerProvider(this);
         this.robot = robot;
         this.isOn = isOn;
     }

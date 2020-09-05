@@ -17,7 +17,7 @@ public class PIDController implements TelemetryProvider {
     public double scale;
 
     public PIDController(double P, double I, double D, Robot robot){
-        TelemetryDump.registerProvider(this);
+        robot.telemetryDump.registerProvider(this);
         this.P = P;
         this.I = I;
         this.D = D;

@@ -36,7 +36,7 @@ public class OdometryModule implements Module, TelemetryProvider {
     public double mecanumPodNewPosition;
 
     public OdometryModule(Robot robot, boolean isOn) {
-        TelemetryDump.registerProvider(this);
+        robot.telemetryDump.registerProvider(this);
         this.robot = robot;
         this.isOn = isOn;
     }

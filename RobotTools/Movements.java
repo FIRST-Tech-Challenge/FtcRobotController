@@ -43,7 +43,7 @@ public class Movements implements TelemetryProvider {
     double relativeAngleToPoint, relativeXToPoint, relativeYToPoint;
 
     public Movements(Robot robot, boolean isFileDump) {
-        TelemetryDump.registerProvider(this);
+        robot.telemetryDump.registerProvider(this);
         this.robot = robot;
         currentTrip = 1;
         this.isFileDump = isFileDump;
