@@ -2,13 +2,10 @@ package org.firstinspires.ftc.teamcode.rework.Modules;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
-import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static org.firstinspires.ftc.teamcode.rework.RobotTools.StringHelper.concat;
 

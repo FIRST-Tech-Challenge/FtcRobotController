@@ -1,14 +1,12 @@
-package org.firstinspires.ftc.teamcode.rework.ModuleTools;
+package org.firstinspires.ftc.teamcode.rework.RobotTools;
 
 import android.os.SystemClock;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
-import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * ModuleExecutor creates a new thread where modules will be executed and data will be retrieved

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.rework.Tests;
+package org.firstinspires.ftc.teamcode.rework.TestOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -14,7 +14,6 @@ public class PathPIDTest extends LinearOpMode {
     Robot robot;
 
     public void runOpMode() {
-
         initRobot();
 
         ArrayList<Waypoint> path = new ArrayList<Waypoint>();

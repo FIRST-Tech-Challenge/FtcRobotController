@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.rework.Tests;
+package org.firstinspires.ftc.teamcode.rework.TestOpModes;
 
 import android.os.SystemClock;
 
