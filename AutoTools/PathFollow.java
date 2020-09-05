@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.rework.RobotTools;
+package org.firstinspires.ftc.teamcode.rework.AutoTools;
 
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions;

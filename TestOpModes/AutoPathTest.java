@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.rework.AutoTools.Waypoint;
 import org.firstinspires.ftc.teamcode.rework.Robot;
-import org.firstinspires.ftc.teamcode.rework.RobotTools.PathFollow;
-
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.rework.AutoTools.PathFollow;
 
 @Autonomous
 public class AutoPathTest extends LinearOpMode {
