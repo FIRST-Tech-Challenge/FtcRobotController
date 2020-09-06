@@ -14,8 +14,6 @@ public interface Module {
      */
     public void update();
 
-    public void telemetry();
-
     public boolean isOn();
 
     public void fileDump();

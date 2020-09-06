@@ -1,8 +1,14 @@
 package org.firstinspires.ftc.teamcode.rework.AutoTools;
 
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
-public class PIDController {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+public class PIDController implements TelemetryProvider {
     public double P;
     public double I;
     public double D;
@@ -11,6 +17,7 @@ public class PIDController {
     public double scale;
 
     public PIDController(double P, double I, double D, Robot robot){
+        robot.telemetryDump.registerProvider(this);
         this.P = P;
         this.I = I;
         this.D = D;
@@ -22,8 +29,6 @@ public class PIDController {
         integral += error*0.004;
         double derivative = (error - prevError) / 0.004;
         scale = P*error + I*integral + D*derivative;
-        robot.telemetryDump.addHeader("PID");
-        robot.telemetryDump.addData("scale: ", scale);
     }
 
     public void PID(Point current, Point target){
@@ -31,7 +36,12 @@ public class PIDController {
         integral += error*0.004;
         double derivative = (error - prevError) / 0.004;
         scale = P*error + I*integral + D*derivative;
-        robot.telemetryDump.addHeader("PID");
-        robot.telemetryDump.addData("scale: ", scale);
+    }
+
+    @Override
+    public ArrayList<String> getTelemetryData() {
+        ArrayList<String> data = new ArrayList<>();
+        data.add("Scale: " + String.valueOf(this.scale));
+        return data;
     }
 }

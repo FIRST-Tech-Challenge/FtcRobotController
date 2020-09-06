@@ -4,10 +4,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class DrivetrainModule implements Module {
+public class DrivetrainModule implements Module, TelemetryProvider {
     private Robot robot;
     private boolean isOn;
 
@@ -27,6 +33,7 @@ public class DrivetrainModule implements Module {
     private DcMotor bRight;
 
     public DrivetrainModule(Robot robot, boolean isOn) {
+        robot.telemetryDump.registerProvider(this);
         this.robot = robot;
         this.isOn = isOn;
     }
@@ -80,13 +87,7 @@ public class DrivetrainModule implements Module {
 
         setMotorPowers(fLPower, fRPower, bLPower, bRPower);
     }
-
-    public void telemetry() {
-        robot.telemetryDump.addHeader("---DRIVETRAIN---");
-        robot.telemetryDump.addData("xMovement: ", xMovement);
-        robot.telemetryDump.addData("yMovement: ", yMovement);
-        robot.telemetryDump.addData("turnMovement: ", turnMovement);
-    }
+    
 
     public void fileDump(){
 
@@ -124,5 +125,14 @@ public class DrivetrainModule implements Module {
 
     public boolean isOn(){
         return isOn;
+    }
+
+    @Override
+    public ArrayList<String> getTelemetryData() {
+        ArrayList<String> data = new ArrayList<>();
+        data.add("xMovement: " + String.valueOf(xMovement));
+        data.add("yMovement: " + String.valueOf(yMovement));
+        data.add("turnMovement: " + String.valueOf(turnMovement));
+        return data;
     }
 }

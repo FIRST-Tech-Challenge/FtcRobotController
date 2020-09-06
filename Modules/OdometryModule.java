@@ -3,9 +3,14 @@ package org.firstinspires.ftc.teamcode.rework.Modules;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
-public class OdometryModule implements Module {
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class OdometryModule implements Module, TelemetryProvider {
     private boolean isOn;
 
     public double worldX;
@@ -31,6 +36,7 @@ public class OdometryModule implements Module {
     public double mecanumPodNewPosition;
 
     public OdometryModule(Robot robot, boolean isOn) {
+        robot.telemetryDump.registerProvider(this);
         this.robot = robot;
         this.isOn = isOn;
     }
@@ -54,16 +60,16 @@ public class OdometryModule implements Module {
         calculateRobotPosition();
     }
 
-    public void telemetry() {
-        robot.telemetryDump.addHeader("---ODOMETRY---");
-        robot.telemetryDump.addData("x: ", worldX);
-        robot.telemetryDump.addData("y: ", worldY);
-        robot.telemetryDump.addData("heading: ", Math.toDegrees(worldAngleRad));
+    public ArrayList<String> getTelemetryData() {
+        ArrayList<String> data = new ArrayList<>();
+        data.add("worldX: " + String.valueOf(worldX));
+        data.add("worldY: " + String.valueOf(worldY));
+        data.add("heading: " + String.valueOf(worldAngleRad));
+        return data;
     }
 
     public void fileDump(){
-        robot.fileDump.setHeader(new StringBuilder().append(robot.movements.currentTrip).append("_odometry.txt").toString(),"x y h");
-        robot.fileDump.addData(new StringBuilder().append(robot.movements.currentTrip).append("_odometry.txt").toString(), new StringBuilder().append(worldX).append(" ").append(worldY).append(" ").append(Math.toDegrees(worldAngleRad)).toString());
+        robot.fileDump.addData(new StringBuilder().append("1").append("_odometry.txt").toString(), new StringBuilder().append(worldX).append(" ").append(worldY).toString());
     }
 
     /**

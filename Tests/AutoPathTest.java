@@ -5,42 +5,43 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.rework.AutoTools.Waypoint;
 import org.firstinspires.ftc.teamcode.rework.Robot;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.PathFollow;
 
 import java.util.ArrayList;
 
 @Autonomous
 public class AutoPathTest extends LinearOpMode {
 
-    Robot robot;
+    public Robot robot;
+
+    PathFollow pf1;
+    PathFollow pf2;
 
     public void runOpMode() {
 
-        initRobot();
-
-        ArrayList<Waypoint> path = new ArrayList<Waypoint>();
-        path.add(new Waypoint(0, 0));
-        path.add(new Waypoint(0, 60));
-        path.add(new Waypoint(-60, 60));
-        path.add(new Waypoint(-60, 0));
-        path.add(new Waypoint(-80, 0));
-        path.add(new Waypoint(-80, 60));
-        path.add(new Waypoint(0, 60));
-        path.add(new Waypoint(0, 0));
-
-        waitForStart();
-        robot.startModules();
-
-        while (opModeIsActive()) {
-
-            robot.movements.pathFollow(path, 0, 0.8, 0.8, true, -Math.PI/2);
-            sleep(10000);
-            break;
-        }
-    }
-
-    private void initRobot() {
         robot = new Robot(hardwareMap, telemetry, this);
         robot.initModules();
+
+        pf1 = new PathFollow( new Waypoint[]{
+                        new Waypoint(0,0),
+                        new Waypoint(24,24),
+                        new Waypoint(24,48)
+                }, robot, "test1"
+        );
+
+        pf2 = new PathFollow( new Waypoint[]{
+                        new Waypoint(24,48),
+                        new Waypoint(24,24),
+                        new Waypoint(0,0)
+                }, robot, "test2"
+        );
+
+        waitForStart();
+
+        robot.startModules();
+
+        pf1.pathFollow(0, 0.8, 0.8, true, 0);
+        pf2.pathFollow(Math.PI, 0.8, 0.8, true, 0);
     }
 }
 

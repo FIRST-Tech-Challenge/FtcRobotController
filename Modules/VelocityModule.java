@@ -3,9 +3,14 @@ package org.firstinspires.ftc.teamcode.rework.Modules;
 import android.os.SystemClock;
 
 import org.firstinspires.ftc.teamcode.rework.ModuleTools.Module;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
-public class VelocityModule implements Module {
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class VelocityModule implements Module, TelemetryProvider {
     private boolean isOn;
 
     // in/s and rad/s
@@ -24,6 +29,7 @@ public class VelocityModule implements Module {
     private Robot robot;
 
     public VelocityModule(Robot robot, boolean isOn) {
+        robot.telemetryDump.registerProvider(this);
         this.robot = robot;
         this.isOn = isOn;
     }
@@ -45,11 +51,12 @@ public class VelocityModule implements Module {
         oldUpdateTime = currentUpdateTime;
     }
 
-    public void telemetry() {
-        robot.telemetryDump.addHeader("---VELOCITY---");
-        robot.telemetryDump.addData("xVel: ", xVel);
-        robot.telemetryDump.addData("yVel: ", yVel);
-        robot.telemetryDump.addData("angleVel: ", angleVel);
+    public ArrayList<String> getTelemetryData() {
+        ArrayList<String> data = new ArrayList<>();
+        data.add("xVel: " + String.valueOf(xVel));
+        data.add("yVel: " + String.valueOf(yVel));
+        data.add("angleVel: "+ String.valueOf(angleVel));
+        return data;
     }
 
     public void fileDump(){
