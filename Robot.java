@@ -42,7 +42,7 @@ public class Robot {
     private LynxModule revHub1;
     private LynxModule revHub2;
 
-    public final boolean WILL_FILE_DUMP = true;
+    public final boolean WILL_FILE_DUMP = false;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode linearOpMode) {
         this.hardwareMap = hardwareMap;
