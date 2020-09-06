@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.ModuleExecutor;
 import org.firstinspires.ftc.teamcode.rework.Modules.OdometryModule;
 import org.firstinspires.ftc.teamcode.rework.Modules.DrivetrainModule;
 import org.firstinspires.ftc.teamcode.rework.Modules.VelocityModule;
-import org.firstinspires.ftc.teamcode.rework.RobotTools.Movements;
 import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
 public class Robot {
@@ -23,8 +22,6 @@ public class Robot {
     public DrivetrainModule drivetrainModule;
     public OdometryModule odometryModule;
     public VelocityModule velocityModule;
-
-    public Movements movements;
 
     public long currentTimeMilli;
 
@@ -79,7 +76,6 @@ public class Robot {
         this.drivetrainModule = new DrivetrainModule(this,true);
         this.odometryModule = new OdometryModule(this,true);
         this.velocityModule = new VelocityModule(this,true);
-        movements = new Movements(this, true);
 
         this.modules = new Module[] {
                 this.drivetrainModule, this.odometryModule, this.velocityModule

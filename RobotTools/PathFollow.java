@@ -13,16 +13,15 @@ import java.util.Map;
 
 import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.*;
 
-public class Movements implements TelemetryProvider {
+public class PathFollow implements TelemetryProvider {
 
     Robot robot;
 
-    private boolean isFileDump;
+    private boolean isFileDump = false;
 
-    Point clippedPoint;
-    Point targetPoint;
+    Point clippedPoint = new Point(0,0);
+    Point targetPoint = new Point(0,0);
     Point adjustedTargetPoint;
-
 
     // constants
     private final double distanceThreshold = 0.5;
@@ -30,31 +29,24 @@ public class Movements implements TelemetryProvider {
     private final double followRadius = 15;
     private final double slipFactor = 0;
 
-    public int currentTrip;
-
     // states
     private boolean isTargetingLastPoint = false;
+    private String description;
+    private Waypoint[] path;
+    private int pathIndex = 0;
 
     // settings
     private double direction = 0;
     private double angleLockHeading = 0;
     private boolean willAngleLock = false;
 
-    double relativeAngleToPoint, relativeXToPoint, relativeYToPoint;
-
-    public Movements(Robot robot, boolean isFileDump) {
-        robot.telemetryDump.registerProvider(this);
+    public PathFollow(Waypoint[] path, Robot robot, String description) {
+        this.path = path;
         this.robot = robot;
-        currentTrip = 1;
-        this.isFileDump = isFileDump;
+        this.description = description;
     }
 
-    /**
-     * The index of the point that the robot is currently following in the path.
-     */
-    private int pathIndex = 0;
-
-    public void pathFollow(ArrayList<Waypoint> path, double direction, double moveSpeed, double turnSpeed, boolean willAngleLock, double angleLockHeading) {
+    public void pathFollow(double direction, double moveSpeed, double turnSpeed, boolean willAngleLock, double angleLockHeading) {
 
         pathIndex = 0; // Reset pathIndex
         this.direction = direction;
@@ -62,28 +54,23 @@ public class Movements implements TelemetryProvider {
         this.angleLockHeading = angleLockHeading;
         isTargetingLastPoint = false;
 
-        pathFileDump(path);
-
-        while (robot.isOpModeActive()) {
+        while (true) {
             Point robotPoint = new Point(robot.odometryModule.worldX, robot.odometryModule.worldY);
 
             double robotHeading = robot.odometryModule.worldAngleRad;
 
-            clippedPoint = clipToPath(path, robotPoint);
+            this.clippedPoint = clipToPath(path, robotPoint);
 
-            targetPoint = findTarget(path, clippedPoint, robotHeading);
+            this.targetPoint = findTarget(path, clippedPoint, robotHeading);
 
             adjustedTargetPoint = adjustTargetPoint(targetPoint);
 
             setMovementsToTarget(adjustedTargetPoint, moveSpeed, turnSpeed);
 
-            fileDump();
-
             if (isDone(path, robotPoint, robotHeading)) {
                 robot.drivetrainModule.xMovement = 0;
                 robot.drivetrainModule.yMovement = 0;
                 robot.drivetrainModule.turnMovement = 0;
-                currentTrip++;
                 return;
             }
         }
@@ -92,27 +79,27 @@ public class Movements implements TelemetryProvider {
     private void pathFileDump(ArrayList<Waypoint> path) {
         if (robot.WILL_FILE_DUMP) {
             for (int i = 0; i < path.size(); i++) {
-                robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_path.txt").toString(), new StringBuilder().append(path.get(i).x).append(" ").append(path.get(i).y).toString());
+                robot.fileDump.addData(new StringBuilder().append(description).append("_path.txt").toString(), new StringBuilder().append(path.get(i).x).append(" ").append(path.get(i).y).toString());
             }
         }
     }
 
     private void fileDump() {
         if (robot.WILL_FILE_DUMP) {
-            robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_target.txt").toString(), new StringBuilder().append(adjustedTargetPoint.x).append(" ").append(adjustedTargetPoint.y).toString());
+            robot.fileDump.addData(new StringBuilder().append(description).append("_target.txt").toString(), new StringBuilder().append(adjustedTargetPoint.x).append(" ").append(adjustedTargetPoint.y).toString());
         }
     }
 
-    private Point clipToPath(ArrayList<Waypoint> path, Point center) {
+    private Point clipToPath(Waypoint[] path, Point center) {
         Point clipped = new Point();
 
         double nearestClipDist = Double.MAX_VALUE;
         int clippedIndex = pathIndex;
 
         // only checks the current line and the next line (no skipping)
-        for (int i = pathIndex; i < Math.min(path.size() - 1, pathIndex + 2); i++) {
-            Point start = path.get(i).toPoint();
-            Point end = path.get(i + 1).toPoint();
+        for (int i = pathIndex; i < Math.min(path.length - 1, pathIndex + 2); i++) {
+            Point start = path[i].toPoint();
+            Point end = path[i + 1].toPoint();
 
             double thisClipDist = linePointDistance(center, start, end);
 
@@ -129,16 +116,16 @@ public class Movements implements TelemetryProvider {
         return clipped;
     }
 
-    private Point findTarget(ArrayList<Waypoint> path, Point center, double heading) {
+    private Point findTarget(Waypoint[] path, Point center, double heading) {
         Point followPoint = new Point();
 
-        Point lineStartPoint = path.get(pathIndex).toPoint();
+        Point lineStartPoint = path[pathIndex].toPoint();
         double distToFirst = Math.hypot(center.x - lineStartPoint.x, center.y - lineStartPoint.y);
 
         // only look at lines on current index or next index
-        for (int i = pathIndex; i < Math.min(path.size() - 1, pathIndex + 2); i++) {
-            Point start = path.get(i).toPoint();
-            Point end = path.get(i + 1).toPoint();
+        for (int i = pathIndex; i < Math.min(path.length - 1, pathIndex + 2); i++) {
+            Point start = path[i].toPoint();
+            Point end = path[i + 1].toPoint();
 
             ArrayList<Point> intersections = lineCircleIntersection(center, followRadius, start, end);
 
@@ -158,15 +145,15 @@ public class Movements implements TelemetryProvider {
             }
         }
 
-        if (Math.hypot(center.x - path.get(path.size() - 1).x, center.y - path.get(path.size() - 1).y) < followRadius * 1.5 && pathIndex == path.size() - 2) {
-            followPoint = path.get(path.size() - 1).toPoint();
+        if (Math.hypot(center.x - path[path.length - 1].x, center.y - path[path.length - 1].y) < followRadius * 1.5 && pathIndex == path.length - 2) {
+            followPoint = path[path.length - 1].toPoint();
             isTargetingLastPoint = true;
         }
 
         return followPoint;
     }
 
-    private Point adjustTargetPoint(Point targetPoint) {
+    private Point adjustTargetPoint(Point targetPoint){
         double robotSlipX = slipFactor * robot.velocityModule.xVel;
         double robotSlipY = slipFactor * robot.velocityModule.yVel;
 
@@ -180,12 +167,12 @@ public class Movements implements TelemetryProvider {
         double distanceToTarget = Math.hypot(targetPoint.x - robot.odometryModule.worldX, targetPoint.y - robot.odometryModule.worldY);
         double absoluteAngleToTarget = Math.atan2(targetPoint.x - robot.odometryModule.worldX, targetPoint.y - robot.odometryModule.worldY);
 
-        relativeAngleToPoint = absoluteAngleToTarget - robot.odometryModule.worldAngleRad;
-        relativeXToPoint = Math.sin(relativeAngleToPoint) * distanceToTarget;
-        relativeYToPoint = Math.cos(relativeAngleToPoint) * distanceToTarget;
+        double relativeAngleToPoint = absoluteAngleToTarget - robot.odometryModule.worldAngleRad;
+        double relativeXToPoint = Math.sin(relativeAngleToPoint) * distanceToTarget;
+        double relativeYToPoint = Math.cos(relativeAngleToPoint) * distanceToTarget;
 
         double relativeTurnAngle = angleWrap2(relativeAngleToPoint + direction);
-        if (willAngleLock && isTargetingLastPoint) {
+        if (willAngleLock && isTargetingLastPoint){
             relativeTurnAngle = angleWrap2(angleLockHeading - robot.odometryModule.worldAngleRad);
         }
 
@@ -197,16 +184,16 @@ public class Movements implements TelemetryProvider {
         robot.drivetrainModule.yMovement = yPower * moveSpeed;
         robot.drivetrainModule.turnMovement = Range.clip(relativeTurnAngle / Math.toRadians(30), -1, 1) * turnSpeed;
 
-        if (isTargetingLastPoint) {
+        if (isTargetingLastPoint){
             robot.drivetrainModule.xMovement *= Range.clip(distanceToTarget / followRadius, 0.2, 1);
             robot.drivetrainModule.yMovement *= Range.clip(distanceToTarget / followRadius, 0.2, 1);
         }
     }
 
-    private boolean isDone(ArrayList<Waypoint> path, Point center, double heading) {
-        Point endPoint = path.get(path.size() - 1).toPoint();
+    private boolean isDone(Waypoint[] path, Point center, double heading) {
+        Point endPoint = path[path.length - 1].toPoint();
 
-        return (Math.hypot(center.x - endPoint.x, center.y - endPoint.y) < distanceThreshold) && (!willAngleLock || Math.abs(angleWrap2(angleLockHeading - heading)) < angleThreshold) && pathIndex == path.size() - 2;
+        return (Math.hypot(center.x - endPoint.x, center.y - endPoint.y) < distanceThreshold) && (!willAngleLock || Math.abs(angleWrap2(angleLockHeading - heading)) < angleThreshold) && pathIndex == path.length - 2;
     }
 
     public boolean isFileDump() {
@@ -216,9 +203,12 @@ public class Movements implements TelemetryProvider {
     @Override
     public ArrayList<String> getTelemetryData() {
         ArrayList<String> data = new ArrayList<>();
-        data.add("relativeXToPoint: " + String.valueOf(relativeXToPoint));
-        data.add("relativeYToPoint: " + String.valueOf(relativeYToPoint));
-        data.add("relativeAngleToPoint: " + String.valueOf(relativeAngleToPoint));
+        data.add("path: " + description);
+        data.add("clippedX: " + String.valueOf(clippedPoint.x));
+        data.add("clippedY: " + String.valueOf(clippedPoint.y));
+        data.add("targetX: " + String.valueOf(targetPoint.x));
+        data.add("targetY: " + String.valueOf(targetPoint.y));
+        data.add("pathIndex: " + String.valueOf(pathIndex));
         return data;
     }
 }
