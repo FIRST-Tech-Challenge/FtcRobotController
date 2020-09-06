@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.rework;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -63,7 +64,11 @@ public class Robot {
 
         for(Module module : modules) {
             if(module.isOn()) {
-                module.update();
+                try {
+                    module.update();
+                }catch (Exception e){
+                    Log.d("Module", "Module couldn't update");
+                }
                 if(WILL_FILE_DUMP) {
                     module.fileDump();
                 }
