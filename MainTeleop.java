@@ -18,8 +18,8 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
 
     private double SLOW_MODE_SCALE_FACTOR = 0.3;
 
-    private boolean lastGlobalMoveState = false;
-    private double globalMoveAngle = 0;
+    private boolean lastArrowMoveState = false;
+    private double arrowMoveAngle = 0;
 
     public void runOpMode() {
         initRobot();
@@ -60,15 +60,15 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
             }
         }
 
-        if (usingGlobalMove()){
-            if (!lastGlobalMoveState){
-                globalMoveAngle = robot.odometryModule.worldAngleRad;
-                lastGlobalMoveState = true;
+        if (usingArrowMove()){
+            if (!lastArrowMoveState){
+                arrowMoveAngle = robot.odometryModule.worldAngleRad;
+                lastArrowMoveState = true;
             }
 
             double r = Math.hypot(yMovement, xMovement);
             double aT = Math.atan2(yMovement, xMovement);
-            double t = aT + robot.odometryModule.worldAngleRad - globalMoveAngle;
+            double t = aT + robot.odometryModule.worldAngleRad - arrowMoveAngle;
 
             double nXMovement = r * Math.cos(t);
             double nYMovement = r * Math.sin(t);
@@ -76,7 +76,7 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
             xMovement = nXMovement;
             yMovement = nYMovement;
         } else {
-            lastGlobalMoveState = false;
+            lastArrowMoveState = false;
         }
 
         if(usingSlowMode()){
@@ -99,7 +99,7 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
         return gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right;
     }
 
-    private boolean usingGlobalMove(){
+    private boolean usingArrowMove(){
         return gamepad1.left_bumper;
     }
 
