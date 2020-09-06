@@ -52,15 +52,12 @@ public class PathFollow implements TelemetryProvider {
         this.angleLockHeading = angleLockHeading;
         isTargetingLastPoint = false;
 
-        while (true) {
+        while (robot.isOpModeActive()) {
             Point robotPoint = new Point(robot.odometryModule.worldX, robot.odometryModule.worldY);
-
             double robotHeading = robot.odometryModule.worldAngleRad;
 
-            this.clippedPoint = clipToPath(path, robotPoint);
-
-            this.targetPoint = findTarget(path, clippedPoint, robotHeading);
-
+            clippedPoint = clipToPath(path, robotPoint);
+            targetPoint = findTarget(path, clippedPoint, robotHeading);
             adjustedTargetPoint = adjustTargetPoint(targetPoint);
 
             setMovementsToTarget(adjustedTargetPoint, moveSpeed, turnSpeed);
@@ -183,8 +180,8 @@ public class PathFollow implements TelemetryProvider {
         robot.drivetrainModule.turnMovement = Range.clip(relativeTurnAngle / Math.toRadians(30), -1, 1) * turnSpeed;
 
         if (isTargetingLastPoint){
-            robot.drivetrainModule.xMovement *= Range.clip(distanceToTarget / followRadius, 0.2, 1);
-            robot.drivetrainModule.yMovement *= Range.clip(distanceToTarget / followRadius, 0.2, 1);
+            robot.drivetrainModule.xMovement *= Range.clip(distanceToTarget / followRadius, 0.25, 1);
+            robot.drivetrainModule.yMovement *= Range.clip(distanceToTarget / followRadius, 0.25, 1);
         }
     }
 

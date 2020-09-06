@@ -69,6 +69,7 @@ public class OdometryModule implements Module, TelemetryProvider {
     }
 
     public void fileDump(){
+        //TODO: we don't use trips no more so
         robot.fileDump.addData(new StringBuilder().append("1").append("_odometry.txt").toString(), new StringBuilder().append(worldX).append(" ").append(worldY).toString());
     }
 
