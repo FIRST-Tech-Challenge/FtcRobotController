@@ -71,32 +71,17 @@ public class PathFollow implements TelemetryProvider {
         }
     }
 
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/RobotTools/Movements.java
-    private void pathFileDump(ArrayList<Waypoint> path){
-        if(robot.WILL_FILE_DUMP){
-            robot.fileDump.setHeader(new StringBuilder().append(currentTrip).append("_path.txt").toString(),"x y");
-            for(int i = 0;i<path.size();i++){
-                robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_path.txt").toString(), new StringBuilder().append(path.get(i).x).append(" ").append(path.get(i).y).toString());
-=======
     private void pathFileDump(ArrayList<Waypoint> path) {
         if (robot.WILL_FILE_DUMP) {
             for (int i = 0; i < path.size(); i++) {
                 robot.fileDump.addData(new StringBuilder().append(description).append("_path.txt").toString(), new StringBuilder().append(path.get(i).x).append(" ").append(path.get(i).y).toString());
->>>>>>> 9baff48678ab6e7f6d5bc6a81409812031654384:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/RobotTools/PathFollow.java
             }
         }
     }
 
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/RobotTools/Movements.java
-    private void fileDump(){
-        if(robot.WILL_FILE_DUMP){
-            robot.fileDump.setHeader(new StringBuilder().append(currentTrip).append("_target.txt").toString(),"x y");
-            robot.fileDump.addData(new StringBuilder().append(currentTrip).append("_target.txt").toString(), new StringBuilder().append(adjustedTargetPoint.x).append(" ").append(adjustedTargetPoint.y).toString());
-=======
     private void fileDump() {
         if (robot.WILL_FILE_DUMP) {
             robot.fileDump.addData(new StringBuilder().append(description).append("_target.txt").toString(), new StringBuilder().append(adjustedTargetPoint.x).append(" ").append(adjustedTargetPoint.y).toString());
->>>>>>> 9baff48678ab6e7f6d5bc6a81409812031654384:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/rework/RobotTools/PathFollow.java
         }
     }
 
