@@ -8,8 +8,6 @@ import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.*;
 

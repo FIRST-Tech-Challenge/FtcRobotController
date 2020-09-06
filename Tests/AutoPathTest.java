@@ -17,25 +17,24 @@ public class AutoPathTest extends LinearOpMode {
     PathFollow pf1;
     PathFollow pf2;
 
-    Waypoint[] p1 = {
-            new Waypoint(0,0),
-            new Waypoint(24,24),
-            new Waypoint(24,48)
-    };
-
-    Waypoint[] p2 = {
-            new Waypoint(24,48),
-            new Waypoint(24,24),
-            new Waypoint(0,0)
-    };
-
     public void runOpMode() {
 
         robot = new Robot(hardwareMap, telemetry, this);
         robot.initModules();
 
-        pf1 = new PathFollow(p1, robot, "test1");
-        pf2 = new PathFollow(p2, robot, "test2");
+        pf1 = new PathFollow( new Waypoint[]{
+                        new Waypoint(0,0),
+                        new Waypoint(24,24),
+                        new Waypoint(24,48)
+                }, robot, "test1"
+        );
+
+        pf2 = new PathFollow( new Waypoint[]{
+                        new Waypoint(24,48),
+                        new Waypoint(24,24),
+                        new Waypoint(0,0)
+                }, robot, "test2"
+        );
 
         waitForStart();
 
