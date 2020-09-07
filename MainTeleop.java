@@ -60,7 +60,7 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
             }
         }
 
-        if (usingArrowMove()){
+        if (gamepad1.left_bumper){
             if (!lastArrowMoveState){
                 arrowMoveAngle = robot.odometryModule.worldAngleRad;
                 lastArrowMoveState = true;
@@ -79,7 +79,7 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
             lastArrowMoveState = false;
         }
 
-        if(usingSlowMode()){
+        if(gamepad1.right_bumper){
             xMovement *= SLOW_MODE_SCALE_FACTOR;
             yMovement *= SLOW_MODE_SCALE_FACTOR;
             turnMovement *= SLOW_MODE_SCALE_FACTOR;
@@ -97,14 +97,6 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
 
     private boolean usingDPad(){
         return gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right;
-    }
-
-    private boolean usingArrowMove(){
-        return gamepad1.left_bumper;
-    }
-
-    private boolean usingSlowMode(){
-        return gamepad1.right_bumper;
     }
 
     @Override
