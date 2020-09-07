@@ -53,9 +53,9 @@ public class VelocityModule implements Module, TelemetryProvider {
 
     public ArrayList<String> getTelemetryData() {
         ArrayList<String> data = new ArrayList<>();
-        data.add("xVel: " + String.valueOf(xVel));
-        data.add("yVel: " + String.valueOf(yVel));
-        data.add("angleVel: "+ String.valueOf(angleVel));
+        data.add("xVel: " + xVel);
+        data.add("yVel: " + yVel);
+        data.add("angleVel: "+ angleVel);
         return data;
     }
 

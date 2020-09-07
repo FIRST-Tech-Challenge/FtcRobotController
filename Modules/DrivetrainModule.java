@@ -130,9 +130,9 @@ public class DrivetrainModule implements Module, TelemetryProvider {
     @Override
     public ArrayList<String> getTelemetryData() {
         ArrayList<String> data = new ArrayList<>();
-        data.add("xMovement: " + String.valueOf(xMovement));
-        data.add("yMovement: " + String.valueOf(yMovement));
-        data.add("turnMovement: " + String.valueOf(turnMovement));
+        data.add("xMovement: " + xMovement);
+        data.add("yMovement: " + yMovement);
+        data.add("turnMovement: " + turnMovement);
         return data;
     }
 }
