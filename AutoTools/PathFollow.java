@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.rework.AutoTools;
 
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions;
-import org.firstinspires.ftc.teamcode.rework.AutoTools.Point;
-import org.firstinspires.ftc.teamcode.rework.AutoTools.Waypoint;
-import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
+import org.firstinspires.ftc.teamcode.rework.RobotTools.Telemetry.TelemetryProvider;
 
 import java.util.ArrayList;
 
