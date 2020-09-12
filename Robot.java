@@ -75,6 +75,7 @@ public class Robot {
                 }
             }
         }
+        telemetryDump.update();
     }
 
     public void initModules() {
