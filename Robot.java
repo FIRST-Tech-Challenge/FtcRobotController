@@ -20,7 +20,6 @@ import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
 public class Robot {
     // All modules in the robot (remember to update initModules() and updateModules() when adding)
-
     public DrivetrainModule drivetrainModule;
     public OdometryModule odometryModule;
     public VelocityModule velocityModule;
@@ -68,14 +67,13 @@ public class Robot {
                 try {
                     module.update();
                 }catch (Exception e){
-                    Log.d("Module", "Module couldn't update");
+                    Log.d("Module", "Module couldn't update: " + module.getClass().getSimpleName());
                 }
-                if(WILL_FILE_DUMP) {
+                if (WILL_FILE_DUMP) {
                     module.fileDump();
                 }
             }
         }
-        telemetryDump.update();
     }
 
     public void initModules() {
@@ -94,7 +92,7 @@ public class Robot {
         }
 
         // Start the thread for executing modules.
-        moduleExecutor = new ModuleExecutor(this, telemetry);
+        moduleExecutor = new ModuleExecutor(this);
     }
 
     /**

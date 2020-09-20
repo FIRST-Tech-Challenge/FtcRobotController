@@ -17,14 +17,12 @@ public class ModuleExecutor extends Thread implements TelemetryProvider {
     final boolean SHOW_UPDATE_SPEED = true;
 
     Robot robot;
-    Telemetry telemetry;
 
     long lastUpdateTime = 0;
 
-    public ModuleExecutor(Robot robot, Telemetry telemetry) {
+    public ModuleExecutor(Robot robot) {
         robot.telemetryDump.registerProvider(this);
         this.robot = robot;
-        this.telemetry = telemetry;
         setName("module executor");
     }
 
@@ -32,7 +30,6 @@ public class ModuleExecutor extends Thread implements TelemetryProvider {
      * Gets all modules from robot, then runs update on them.
      */
     public void run() {
-
         while (robot.isOpModeActive()) {
             long startTime = SystemClock.elapsedRealtime();
 
