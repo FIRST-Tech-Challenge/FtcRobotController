@@ -10,14 +10,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
-import org.firstinspires.ftc.teamcode.rework.Modules.DrivetrainModule;
-import org.firstinspires.ftc.teamcode.rework.Modules.Module;
-import org.firstinspires.ftc.teamcode.rework.Modules.OdometryModule;
-import org.firstinspires.ftc.teamcode.rework.Modules.VelocityModule;
-import org.firstinspires.ftc.teamcode.rework.RobotTools.FileDump;
-import org.firstinspires.ftc.teamcode.rework.RobotTools.ModuleExecutor;
-import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
+
+import org.firstinspires.ftc.teamcode.rework.modules.DrivetrainModule;
+import org.firstinspires.ftc.teamcode.rework.modules.Module;
+import org.firstinspires.ftc.teamcode.rework.modules.OdometryModule;
+import org.firstinspires.ftc.teamcode.rework.modules.VelocityModule;
+import org.firstinspires.ftc.teamcode.rework.util.FileDump;
+import org.firstinspires.ftc.teamcode.rework.util.ModuleExecutor;
+import org.firstinspires.ftc.teamcode.rework.util.TelemetryDump;
 
 public class Robot {
     // All modules in the robot (remember to update initModules() and updateModules() when adding)
@@ -63,11 +63,11 @@ public class Robot {
 
         currentTimeMilli = SystemClock.elapsedRealtime();
 
-        for(Module module : modules) {
-            if(module.isOn()) {
+        for (Module module : modules) {
+            if (module.isOn()) {
                 try {
                     module.update();
-                }catch (Exception e) {
+                } catch (Exception e) {
                     Log.d("Module", "Module couldn't update: " + module.getName());
                 }
                 if (WILL_FILE_DUMP) {
@@ -80,16 +80,16 @@ public class Robot {
 
     public void initModules() {
         // Add individual modules into the array here
-        this.drivetrainModule = new DrivetrainModule(this,true);
-        this.odometryModule = new OdometryModule(this,true);
-        this.velocityModule = new VelocityModule(this,true);
+        this.drivetrainModule = new DrivetrainModule(this, true);
+        this.odometryModule = new OdometryModule(this, true);
+        this.velocityModule = new VelocityModule(this, true);
 
-        this.modules = new Module[] {
+        this.modules = new Module[]{
                 this.drivetrainModule, this.odometryModule, this.velocityModule
         };
 
         // Initialize modules
-        for(Module module : modules) {
+        for (Module module : modules) {
             module.init();
         }
 
@@ -143,7 +143,7 @@ public class Robot {
         return linearOpMode.opModeIsActive();
     }
 
-    public boolean isStopRequested(){
+    public boolean isStopRequested() {
         return linearOpMode.isStopRequested();
     }
 }

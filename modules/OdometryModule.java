@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.rework.Modules;
+package org.firstinspires.ftc.teamcode.rework.modules;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.rework.util.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 
 import java.util.ArrayList;
 
-import static org.firstinspires.ftc.teamcode.rework.RobotTools.StringHelper.concat;
+import static org.firstinspires.ftc.teamcode.rework.util.StringHelper.concat;
 
 public class OdometryModule implements Module, TelemetryProvider {
     private boolean isOn;

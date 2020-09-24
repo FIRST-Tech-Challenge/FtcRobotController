@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.rework.AutoTools;
+package org.firstinspires.ftc.teamcode.rework.util.auto;
 
 public class Waypoint extends Point {
     Actions[] actions;

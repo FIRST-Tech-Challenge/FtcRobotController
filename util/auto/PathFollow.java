@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode.rework.AutoTools;
+package org.firstinspires.ftc.teamcode.rework.util.auto;
 
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.rework.util.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 
 import java.util.ArrayList;
 
-import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.angleWrap;
-import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.closestPointOnLineToPoint;
-import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.lineSegmentPointDistance;
-import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.lineSegmentCircleIntersection;
+import static org.firstinspires.ftc.teamcode.rework.util.auto.MathFunctions.angleWrap;
+import static org.firstinspires.ftc.teamcode.rework.util.auto.MathFunctions.closestPointOnLineToPoint;
+import static org.firstinspires.ftc.teamcode.rework.util.auto.MathFunctions.lineSegmentPointDistance;
+import static org.firstinspires.ftc.teamcode.rework.util.auto.MathFunctions.lineSegmentCircleIntersection;
 
 public class PathFollow implements TelemetryProvider {
     Robot robot;

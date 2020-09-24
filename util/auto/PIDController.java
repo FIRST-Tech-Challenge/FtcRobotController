@@ -1,12 +1,9 @@
-package org.firstinspires.ftc.teamcode.rework.AutoTools;
+package org.firstinspires.ftc.teamcode.rework.util.auto;
 
-import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.rework.util.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
-import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class PIDController implements TelemetryProvider {
     public double P;

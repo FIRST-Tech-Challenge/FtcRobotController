@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.rework.RobotTools;
+package org.firstinspires.ftc.teamcode.rework.util;
 
 /**
  * A class that contains all the logic needed for a button to be a toggle, meaning it can be held

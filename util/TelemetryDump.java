@@ -1,12 +1,8 @@
-package org.firstinspires.ftc.teamcode.rework.RobotTools;
+package org.firstinspires.ftc.teamcode.rework.util;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 public class TelemetryDump {
     Telemetry telemetry;

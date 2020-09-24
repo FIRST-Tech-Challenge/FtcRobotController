@@ -1,18 +1,15 @@
-package org.firstinspires.ftc.teamcode.rework.TestOpModes;
+package org.firstinspires.ftc.teamcode.rework.opmodes;
 
 import android.os.SystemClock;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.rework.AutoTools.PIDController;
-import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.rework.util.auto.PIDController;
+import org.firstinspires.ftc.teamcode.rework.util.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
-import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 @TeleOp
 public class PIDTest extends LinearOpMode implements TelemetryProvider {

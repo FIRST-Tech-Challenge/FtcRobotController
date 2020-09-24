@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.rework.Modules;
+package org.firstinspires.ftc.teamcode.rework.modules;
 
 import android.os.SystemClock;
 
-import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.rework.util.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Robot;
 
 import java.util.ArrayList;

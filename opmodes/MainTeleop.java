@@ -1,15 +1,14 @@
-package org.firstinspires.ftc.teamcode.rework;
+package org.firstinspires.ftc.teamcode.rework.opmodes;
 
 import android.os.SystemClock;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
-import org.firstinspires.ftc.teamcode.rework.RobotTools.TelemetryDump;
+
+import org.firstinspires.ftc.teamcode.rework.Robot;
+import org.firstinspires.ftc.teamcode.rework.util.TelemetryProvider;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 @TeleOp
 public class MainTeleop extends LinearOpMode implements TelemetryProvider {
@@ -34,7 +33,7 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
     }
 
     private void initRobot() {
-        robot = new Robot(hardwareMap, telemetry,this);
+        robot = new Robot(hardwareMap, telemetry, this);
         robot.initModules();
     }
 
@@ -44,24 +43,24 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
         double xMovement = 0;
         double turnMovement = 0;
 
-        if (usingJoysticks()){
+        if (usingJoysticks()) {
             yMovement = -gamepad1.left_stick_y;
             xMovement = gamepad1.left_stick_x;
             turnMovement = gamepad1.right_stick_x;
-        } else if(usingDPad()){
-            if (gamepad1.dpad_up){
+        } else if (usingDPad()) {
+            if (gamepad1.dpad_up) {
                 yMovement = 1;
-            } else if (gamepad1.dpad_down){
+            } else if (gamepad1.dpad_down) {
                 yMovement = -1;
-            } else if (gamepad1.dpad_left){
+            } else if (gamepad1.dpad_left) {
                 turnMovement = -1;
-            } else if (gamepad1.dpad_right){
+            } else if (gamepad1.dpad_right) {
                 turnMovement = 1;
             }
         }
 
-        if (gamepad1.left_bumper){
-            if (!lastArrowMoveState){
+        if (gamepad1.left_bumper) {
+            if (!lastArrowMoveState) {
                 arrowMoveAngle = robot.odometryModule.worldAngleRad;
                 lastArrowMoveState = true;
             }
@@ -79,7 +78,7 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
             lastArrowMoveState = false;
         }
 
-        if(gamepad1.right_bumper){
+        if (gamepad1.right_bumper) {
             xMovement *= SLOW_MODE_SCALE_FACTOR;
             yMovement *= SLOW_MODE_SCALE_FACTOR;
             turnMovement *= SLOW_MODE_SCALE_FACTOR;
@@ -91,11 +90,11 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
 
     }
 
-    private boolean usingJoysticks(){
+    private boolean usingJoysticks() {
         return gamepad1.left_stick_y != 0 || gamepad1.left_stick_x != 0 || gamepad1.right_stick_x != 0;
     }
 
-    private boolean usingDPad(){
+    private boolean usingDPad() {
         return gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right;
     }
 

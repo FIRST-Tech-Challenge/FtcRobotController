@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.rework.Modules;
+package org.firstinspires.ftc.teamcode.rework.modules;
 
 
 public interface Module {
