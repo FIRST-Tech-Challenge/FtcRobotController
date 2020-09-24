@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<!-- Hardware Map for the Sensor Test Bench/Demo -->
+<Robot type="FirstInspires-FTC">
+    <DeviceInterfaceModule name="Device Interface Module 1" serialNumber="AL00VEZR">
+        <ColorSensor name="Fred" port="4" />
+        <Gyro name="Jerry" port="5" />
+        <OpticalDistanceSensor name="Angie" port="0" />
+        <ModernRoboticsAnalogTouchSensor name="Sarah" port="1" />
+    </DeviceInterfaceModule>
+</Robot>

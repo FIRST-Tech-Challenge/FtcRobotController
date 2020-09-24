@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<!--
+Copyright (c) 2017 HF Robotics (http://www.hfrobots.com)
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<Robot type="FirstInspires-FTC">
+    <!-- This is the container for one or two REV expansion hubs. The easiest way to get these
+         values is to plug the hub into your controller phone, use the configure robot
+         menu item, scan, and then save the configuration. Then use Android File Transfer
+         to copy the file to your development workstation and inspect the values for "serialNumber"
+         "parentModuleAddress", and the "port" for LynxModule -->
+
+    <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ1476N4" parentModuleAddress="2">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <!-- DC Motors - Port numbers range from 0 to 3. Allowed motor types are:
+                Motor (does not setup any of the parameters used
+                NeveRest3.7v1Gearmotor
+                NeveRest20Gearmotor
+                NeveRest40Gearmotor
+                NeveRest60Gearmotor
+                Matrix12vMotor
+                TetrixMotor
+            -->
+            <NeveRest20Gearmotor name="nr20" port="0" />
+            <NeveRest40Gearmotor name="nr40" port="1" />
+            <RevRoboticsCoreHexMotor name="core hex" port="2" />
+            <RevRoboticsHDHexMotor name="hd hex" port="3" />
+
+            <!-- Servos - Port numbers range from 0 to 5 -->
+            <ContinuousRotationServo name="cr Servo" port="0" />
+            <Servo name="Servo" port="1" />
+
+            <!-- Analog devices - port numbers run from 0 to 3 -->
+            <ModernRoboticsAnalogTouchSensor name="Mrtouch" port="0" />
+            <AnalogInput name="potentiometer" port="1" />
+
+            <!-- Digital devices - port numbers run from 0 to 7 -->
+            <DigitalDevice name="" port="0" />
+
+            <!-- I2C devices - we only use one device per bus, so port stays "0"
+                 bus numbers (sockets on the hub) run from 0 to 3 -->
+            <!-- This is the built-in IMU - always on bus 0 - use the LynxEmbeddedIMU class in your code -->
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+
+            <!-- This is a REV color sensor - use the LynxI2cColorRangeSensor class in your code-->
+            <LynxColorSensor name="rev color range" port="0" bus="1" />
+
+            <ModernRoboticsI2cRangeSensor name="range sensor" port="0" bus="2" />
+
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
