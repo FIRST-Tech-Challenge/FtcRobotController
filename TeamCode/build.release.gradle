@@ -5,4 +5,12 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:6.0.1'
     implementation (name: 'tfod-release', ext:'aar')
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext:'aar')
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.9'
+    implementation 'com.acmerobotics.roadrunner:core:0.2.0'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.3.4'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.github.dogecv:dogecv:2020.4-alpha'
 }

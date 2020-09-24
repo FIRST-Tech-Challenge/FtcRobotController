@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<!--
+Copyright (c) 2016 HF Robotics (http://www.hfrobots.com)
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<Robot type="FirstInspires-FTC" name="Skittlebot">
+    <MotorController name="Motor Controller 1" serialNumber="AL00XQ8O">
+        <Motor name="y1MotorDrive" port="1" />
+        <Motor name="y2MotorDrive" port="2" />
+    </MotorController>
+    <MotorController name="Motor Controller 2" serialNumber="AL00XSTZ">
+        <Motor name="x1MotorDrive" port="1" />
+        <Motor name="x2MotorDrive" port="2" />
+    </MotorController>
+    <!-- Not enabled at the moment
+    <MotorController name="Motor Controller 3" serialNumber="AL00UVE0">
+        <Motor name="winchDrive" port="1" />
+    </MotorController>
+    <DeviceInterfaceModule name="dim" serialNumber="AL00VCWV">
+        <ColorSensor name="mr" port="5" />
+        <TouchSensor name="frontTouchSensor" port="0" />
+    </DeviceInterfaceModule>
+    <ServoController name="Servo Controller 1" serialNumber="AI02QU05">
+        <Servo name="climberDumpServo" port="1" />
+        <Servo name="winchAimServo" port="2" />
+    </ServoController>
+    -->
+</Robot>

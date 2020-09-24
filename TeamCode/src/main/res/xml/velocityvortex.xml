@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<!--
+Copyright (c) 2016 HF Robotics (http://www.hfrobots.com)
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<Robot type="FirstInspires-FTC" name="Velocity Vortex Bot">
+    <MotorController name="Particle Shooter Controller" serialNumber="A104OPV1">
+        <Motor name="topParticleShooter" port="1" />
+        <Motor name="bottomParticleShooter" port="2" />
+    </MotorController>
+    <MotorController name="Drive Motor Controller 1" serialNumber="A104OPQN">
+        <Motor name="leftDrive1" port="1" />
+        <Motor name="leftDrive2" port="2" />
+    </MotorController>
+    <MotorController name="Drive Motor Controller 2" serialNumber="AL00UVE0">
+        <Motor name="rightDrive1" port="1" />
+        <Motor name="rightDrive2" port="2" />
+    </MotorController>
+    <MotorController name="Collector and Lift Motor Controller" serialNumber="AL00VW88">
+        <Motor name="collectorMotor" port="1" />
+        <Motor name="liftMotor" port="2" />
+    </MotorController>
+    <DeviceInterfaceModule name="Device Interface Module 1" serialNumber="AL00VEZR">
+        <!-- I2C Devices NOTE! Even though they don't use ports, they must have unique ones here! -->
+        <Gyro name="gyro" port="0"/>
+        <ColorSensor name="beaconColorSensor" port="1"/>
+
+        <!-- Not in Use ATM
+        <ModernRoboticsI2cRangeSensor name="redAllianceWallRangeSensor" port="2" />
+        <ModernRoboticsI2cRangeSensor name="blueAllianceWallRangeSensor" port="3" />
+        -->
+
+        <!-- Analog Devices -->
+        <OpticalDistanceSensor name="inboardLineSensor" port="1"/>
+        <OpticalDistanceSensor name="outboardLineSensor" port="2"/>
+
+    </DeviceInterfaceModule>
+    <ServoController name="Servo Controller 1" serialNumber="AL00XOIU">
+        <Servo name="liftLockServo" port="1"/>
+        <Servo name="forkTiltServo" port="2"/>
+        <Servo name="beaconPusherNoColorSensor" port="5"/>
+        <Servo name="beaconPusherUnderColorSensor" port="6"/>
+    </ServoController>
+</Robot>
