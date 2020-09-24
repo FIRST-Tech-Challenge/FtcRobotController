@@ -15,6 +15,12 @@ public class RingStackLocator {
     static final Scalar GREEN = new Scalar(0, 255, 0);
     static final Scalar BLUE = new Scalar(255, 0, 0);
 
+    public enum TARGET_ZONE {
+            TARGET_ZONE_A,
+        TARGET_ZONE_B,
+        TARGET_ZONE_C
+    }
+
 
     private static double[] roots(double a, double b, double c) {
         double[] roots = new double[2]; //This is now a double, too.
@@ -118,7 +124,7 @@ public class RingStackLocator {
      * @param input
      * @return an int which represents the calculated number of rings
      */
-    public static int processFrame(final Mat input) {
+    public static TARGET_ZONE processFrame(final Mat input) {
         return processFrame(input, false);
     }
 
@@ -129,7 +135,7 @@ public class RingStackLocator {
      * @param input
      * @return an int which represents the calculated number of rings
      */
-    public static int processFrame(final Mat input, boolean shouldWriteToImage) {
+    public static TARGET_ZONE processFrame(final Mat input, boolean shouldWriteToImage) {
         Imgproc.resize(input, input, new Size(480, 270));
 
         final int IMAGE_WIDTH = input.width();
@@ -172,7 +178,15 @@ public class RingStackLocator {
         hierarchy.release();
         mask.release();
 
-        //  HighGui.waitKey();
-        return numRings;
+        switch (numRings) {
+            case 0:
+                return TARGET_ZONE.TARGET_ZONE_A;
+            case 1:
+                return TARGET_ZONE.TARGET_ZONE_B;
+            case 4:
+                return TARGET_ZONE.TARGET_ZONE_C;
+        }
+
+        return TARGET_ZONE.TARGET_ZONE_A;
     }
 }

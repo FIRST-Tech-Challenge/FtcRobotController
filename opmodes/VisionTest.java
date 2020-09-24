@@ -57,7 +57,7 @@ public class VisionTest extends LinearOpMode {
 
     class VisionTestPipeline extends OpenCvPipeline
     {
-        public int numRings = 0;
+        public RingStackLocator.TARGET_ZONE numRings = RingStackLocator.TARGET_ZONE.TARGET_ZONE_A;
         boolean viewportPaused;
 
         @Override
