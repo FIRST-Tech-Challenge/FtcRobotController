@@ -24,17 +24,13 @@ public class RobotDrive {
     private final double TURN_P = 0.005;
     private final double GYRO_P = 0.01;
     private final double wheelDiameter = 3.93701;
-    public double foundThreshold = 215;
-    public double floorThreshold = 200;
-    final double tickThreshold = 50;
+
 
     //Hardware
     private DcMotorEx leftfront, leftrear, rightfront, rightrear = null;
     private BNO055IMU imu = null;
     public DistanceSensor dist = null;
     public ColorSensor colorSensor = null;
-    public Servo BlockGrips, TopServo, MatServos, SideArm = null;
-    public CRServo armLift = null;
 
     //Default motor power levels for wheels and arm
     public double motorPower = 0.5;
@@ -62,7 +58,6 @@ public class RobotDrive {
         rightfront = (DcMotorEx)hardwareMap.dcMotor.get("front_right_motor");
         leftrear = (DcMotorEx)hardwareMap.dcMotor.get("back_left_motor");
         rightrear = (DcMotorEx)hardwareMap.dcMotor.get("back_right_motor");
-        armLift = hardwareMap.crservo.get("arm_lift");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         leftfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -70,10 +65,6 @@ public class RobotDrive {
         leftrear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightrear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         dist = hardwareMap.get(DistanceSensor.class, "distance");
-        BlockGrips = hardwareMap.servo.get("claw_servos");
-        TopServo = hardwareMap.servo.get("top_servo");
-        MatServos = hardwareMap.servo.get("mat_servos");
-        SideArm = hardwareMap.servo.get("side_arm");
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSense");
 
         //Sensor Initialization
@@ -84,9 +75,6 @@ public class RobotDrive {
         //Motor initialization
         rightfront.setDirection(DcMotor.Direction.REVERSE);
         rightrear.setDirection(DcMotor.Direction.REVERSE);
-        MatServos.setDirection(Servo.Direction.REVERSE);
-        BlockGrips.setDirection(Servo.Direction.REVERSE);
-        armLift.setDirection(CRServo.Direction.REVERSE);
 
         rightfront.setPositionPIDFCoefficients(5);
         rightrear.setPositionPIDFCoefficients(5);
@@ -101,10 +89,6 @@ public class RobotDrive {
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         imu.initialize(parameters);
 
-        SideArm.setPosition(0);
-        MatServos.setPosition(0);
-        TopServo.setPosition(0);
-        BlockGrips.setPosition(0);
     }
 
 
@@ -294,18 +278,12 @@ public class RobotDrive {
         rightrear.setPower(0);
     }
 
-    //Returns the current heading of the robot when it is called, takes reading from the IMU gyroscope
-    float getHeading() {
-        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-    }
 
 
     /*********************************************SERVOS*********************************************/
 
-    //Sets the angle of the servo on the side arm. Give value in degrees as well as the maximum turning degrees of the servo. Converts to a fraction usable by the servo
-   void SetSideArm(float desiredRotation, int maxRotation) {
-       SideArm.setPosition(desiredRotation / maxRotation);
-   }
+    /** MOST OF THESE FUNCTIONS ARE FROM SKYSTONE AND NOW DEPRECATED, BUT LEFT AROUND FOR REFERENCE IN CONTROLLING SERVOS**/
+
    //Activates the back servos used to grab the mat, send angle of rotation in degrees as well as the max angle of the servo. Converts to a fraction usable by the servo
    void seekMat() throws InterruptedException {
        if (colorSensor instanceof SwitchableLight){
@@ -325,7 +303,7 @@ public class RobotDrive {
            grabMat(0);
            Thread.sleep(50);
            mixDrive(0, -0.3, 0);
-           SetSideArm(70,180);
+           //SetSideArm(70,180);
            Thread.sleep(1000);
            while (colorSensor.red() < 188);
            mixDrive(0,0,0);
@@ -345,7 +323,7 @@ public class RobotDrive {
            grabMat(0);
            Thread.sleep(50);
            mixDrive(0, 0.3, 0);
-           SetSideArm(70,180);
+           //SetSideArm(70,180);
            Thread.sleep(500);
            while (colorSensor.blue() < 190);
            mixDrive(0,0,0);
@@ -360,12 +338,12 @@ public class RobotDrive {
    }
 
     void grabMat(float desiredRotation) {
-    MatServos.setPosition(desiredRotation / 280);
+    //MatServos.setPosition(desiredRotation / 280);
    }
 
    void controlClaw(float desiredRotation) {
-       BlockGrips.setPosition(desiredRotation / 280);
-       TopServo.setPosition((desiredRotation + 15) / 180);
+       //BlockGrips.setPosition(desiredRotation / 280);
+       //TopServo.setPosition((desiredRotation + 15) / 180);
    }
 
     /*******************************************UTILITIES*******************************************/
@@ -374,8 +352,11 @@ public class RobotDrive {
         return Math.max(min, Math.min(max, val));
     }
 
-    public static double clamp(float val, float min, float max) {
+    public static float clamp(float val, float min, float max) {
         return Math.max(min, Math.min(max, val));
+    }
+
+    public static int clamp(int val, int min, int max) { return Math.max(min, Math.min(max, val));
     }
 
     //For debugging, displays current encoder values of each wheel
@@ -387,6 +368,12 @@ public class RobotDrive {
                 rightrear.getCurrentPosition());
         telemetry.update();
     }
+
+    //Returns the current heading of the robot when it is called, takes reading from the IMU gyroscope
+    float getHeading() {
+        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+    }
+
 
     void resetEncoders() {
         DcMotor motors[] = {leftfront, rightfront, leftrear, rightrear};
@@ -421,9 +408,9 @@ public class RobotDrive {
     }
 
     void LiftTime(long time) throws InterruptedException {
-        armLift.setPower(liftPower);
+        //armLift.setPower(liftPower);
         Thread.sleep(time);
-        armLift.setPower(0);
+        //armLift.setPower(0);
 
     }
 }
