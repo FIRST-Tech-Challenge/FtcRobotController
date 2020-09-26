@@ -89,7 +89,7 @@ public class MasterOdo extends LinearOpMode {
 
 
     private static final int[] modesTop = new int[]{0, 1, 2, 3};
-    private static final String[] modeNamesTop = new String[]{"Start Position", "Go To", "Routes", "Save"};
+    private static final String[] modeNamesTop = new String[]{"Start Position", "Go To", "Routes", "Save Route"};
 
     private static final int[] modesStep = new int[]{0, 1, 2, 3, 4, 5, 6};
     private static final String[] modeStepName = new String[]{"Destination", "Top Speed", "Strategy", "Wait", "Continue", "Heading", "Action"};
@@ -510,8 +510,8 @@ public class MasterOdo extends LinearOpMode {
                 goToInstructions.setWaitMS(waitMS);
             }
             else if(stopSettingMode){
-                boolean continous = goToInstructions.isContinuous();
-                goToInstructions.setContinuous(!continous);
+                boolean continuous = goToInstructions.isContinuous();
+                goToInstructions.setContinuous(!continuous);
             }
             else if (strategySettingMode){
                 int index = goToInstructions.getMoveStrategy().ordinal();
@@ -995,32 +995,39 @@ public class MasterOdo extends LinearOpMode {
     }
 
     private void deleteSelectedRoute(){
-        AutoRoute selected = null;
         String selectedName = "";
-        for(AutoRoute r : routes){
+        for (int i  = 0; i < routes.size(); i++){
+            AutoRoute r = routes.get(i);
             if (r.isSelected()){
                 selectedName = r.getRouteName();
-                selected = r;
+                try {
+                    File f = getRouteFile(selectedName);
+                    routes.remove(i);
+                    f.delete();
+
+                    int index = r.getNameIndex();
+                    if (r.getName().equals(NAME_BLUE) ){
+                        clearRouteCache(this.blueRoutes, index);
+                    }
+                    else if  (r.getName().equals(NAME_RED)){
+                        clearRouteCache(this.redRoutes, index);
+                    }
+
+                }
+                catch (Exception ex){
+                    telemetry.addData("Error", ex.getMessage());
+                    telemetry.update();
+                }
                 break;
             }
         }
-        if (selected != null){
-            try {
-                File f = getRouteFile(selectedName);
+    }
 
-                int index = selected.getNameIndex();
-                if (selected.getName().equals(NAME_BLUE) && blueRoutes.contains(index)){
-                    this.blueRoutes.remove(index);
-                }
-                else if  (selected.getName().equals(NAME_RED) && redRoutes.contains(index)){
-                    this.redRoutes.remove(index);
-                }
-                routes.remove(selected);
-                f.delete();
-            }
-            catch (Exception ex){
-                telemetry.addData("Error", ex.getMessage());
-                telemetry.update();
+    private static void clearRouteCache(ArrayList<Integer> cache, int indexValue){
+        for (int i = 0; i < cache.size(); i++){
+            if (cache.get(i).equals(indexValue)){
+                cache.remove(i);
+                break;
             }
         }
     }
