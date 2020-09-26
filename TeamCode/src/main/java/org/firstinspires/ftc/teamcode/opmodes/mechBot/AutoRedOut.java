@@ -58,7 +58,19 @@ public class AutoRedOut extends LinearOpMode {
             try {
                 // write the program here
                 //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive())
-
+                int startPos = 1; // 1 for out, 2 for in
+                // write the program here
+                //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive())
+                robot.detectPosition(ToboMech.Side.RED, startPos);
+                robot.deliverFirstWobbleGoal();
+                if ((robot.runtimeAuto.seconds() < 20) && opModeIsActive()) {
+                    robot.doPowerShots();
+                    if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+                        robot.getSecondWobbleGoal(startPos);
+                        robot.deliverSecondWobbleGoal();
+                    }
+                }
+                robot.park();
 
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());

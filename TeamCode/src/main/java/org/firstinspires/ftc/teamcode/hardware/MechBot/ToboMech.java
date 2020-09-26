@@ -26,6 +26,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public enum TargetZone {
         ZONE_A, ZONE_B, ZONE_C, UNKNOWN
     }
+    public enum Side{
+        BLUE, RED;
+    }
+    public TargetZone tZone;
+    public Side side;
 
     Thread positionThread;
     private Telemetry telemetry;
@@ -621,75 +626,78 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
     }
 
-
-    public void deliverFirstWobbleGoal(String targetZone, int startPosition,  String side) throws InterruptedException {
-
+    public void detectPosition(Side s, int startPos){//startPos = 1 = out, 2 = in
+        side = s;
+        // use camera to detect position
+        tZone = TargetZone.ZONE_A; // TensorFlow
+    }
+    public void deliverFirstWobbleGoal () throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
-
-
-        if (targetZone.equals("A")){//0
-            chassis.driveTo(.5,  side(45, side), 160, 0, false,  5);
-
-        } else if (targetZone.equals("B")){//1
-            chassis.driveTo(.5, side(75, side), 220, 0, false,  5);
-
-        } else if (targetZone.equals("C")){//4
-            chassis.driveTo(.5, side(45, side), 280, 0, false,  5);
-        } else{
+        if (tZone == TargetZone.ZONE_A) {//0
+            chassis.driveTo(.5, side(15), 200, 0, true, 5);
+        }
+        else if (tZone == TargetZone.ZONE_B) {//1
+            chassis.driveTo(.5, side(105), 260, 0, true, 5);
+        } else if (tZone == TargetZone.ZONE_C) {//4
+            chassis.driveTo(.5, side(15), 320, 0, true, 5);
+        } else {
             return;
         }
-        // put wobble goal down
-
-
     }
-    public void doPowerShots( String side) throws InterruptedException {
-        chassis.driveTo(.5, side(130, side), 180, 0, false,  5);
+
+
+        // put wobble goal down
+    public void doPowerShots() throws InterruptedException {
+        chassis.driveTo(.5, side(130), 180, 0, false,  5);
         //shoot
-        chassis.driveTo(.5, side(150, side), 180, 0, false,  2);
+        chassis.driveTo(.5, side(150), 180, 0, false,  2);
         //shoot
-        chassis.driveTo(.5, side(170, side), 180, 0, false,  2);
+        chassis.driveTo(.5, side(170), 180, 0, false,  2);
         //shoot
     }
     public void shootGoal(String side) throws InterruptedException {
-        chassis.driveTo(.5, side(90, side), 180, 0, false,  2);
+        chassis.driveTo(.5, side(90), 180, 0, false,  2);
         //shoot
 
     }
-    public void getSecondWobbleGoal(int startPos,  String side) throws InterruptedException { // probably have to change the positions depending on the side
+    public void getSecondWobbleGoal(int startPos) throws InterruptedException {
         if(startPos == 1){
-            chassis.driveTo(.5, side(120, side), 90, 180, true,  7);
+            chassis.driveTo(.5, side(60), 90, 180, true,  7);
         } else {
-            chassis.driveTo(.5, side(60, side), 90, 180, true,  7);
+            chassis.driveTo(.5, side(120), 90, 180, true,  7);
         }
         //grab the wobble goal
 
 
     }
-    public void deliverSecondWobbleGoal(String targetZone, String side) throws InterruptedException { // we may need to go around the other wobble goal
+    public void deliverSecondWobbleGoal() throws InterruptedException { // we may need to go around the other wobble goal
 
         // neede to change positions
-        if (targetZone.equals("A")){//0
-            chassis.driveTo(.5, side(15, side), 200, 0, true,  5);
 
-        } else if (targetZone.equals("B")){//1
-            chassis.driveTo(.5, side(105, side), 260, 0, true,  5);
+        if (tZone == TargetZone.ZONE_A) {//0
+            chassis.driveTo(.5, side(45), 160, 0, false, 5);
+        } else if (tZone == TargetZone.ZONE_B){//1
+            chassis.driveTo(.5, side(75), 220, 0, false,  5);
 
-        } else if (targetZone.equals("C")){//4
-            chassis.driveTo(.5, side(15, side), 320, 0, true,  5);
+        } else if (tZone == TargetZone.ZONE_C){//4
+            chassis.driveTo(.5, side(45), 280, 0, false,  5);
         } else{
             return;
         }
+
+
         // put the wobble goal down
     }
     public void park() throws InterruptedException {
-        chassis.driveTo(.5, chassis.odo_x_pos_cm(), 210, chassis.getCurHeading(), false,  2);
+        chassis.driveTo(.5, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 210, chassis.getCurHeading(), false,  2);
     }
-    public double side( double x, String side){
-        if ( side.equals("red")){
+    public double side( double x){
+        if (side == Side.RED){
             return 360 - x;
         }
         return x;
     }
+
 
 }
