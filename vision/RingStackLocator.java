@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.rework.vision;
 
-import static org.firstinspires.ftc.teamcode.rework.util.auto.MathFunctions.euclideanDist;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
@@ -62,7 +61,7 @@ public class RingStackLocator {
             Moments moments = Imgproc.moments(contour); // Calculate the "point of mass" of the enclosed area
             double avgX = moments.m10 / moments.m00;
             double avgY = moments.m01 / moments.m00;
-            double dist = euclideanDist(avgX, avgY, point.x, point.y);
+            double dist = Math.hypot(avgX - point.x, avgY - point.y);
             if(dist < closestDistToPoint && contourBoundingBox.area() > 0.0008 * area) {
                 closestIdx = currIdx;
                 closestDistToPoint = dist;
