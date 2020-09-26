@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.rework.TestOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.rework.AutoTools.PathFollow;
-import org.firstinspires.ftc.teamcode.rework.AutoTools.Waypoint;
 import org.firstinspires.ftc.teamcode.rework.Robot;
+import org.firstinspires.ftc.teamcode.rework.util.auto.PathFollow;
+import org.firstinspires.ftc.teamcode.rework.util.auto.Waypoint;
 
 @Autonomous
 public class SimpleStraightTest extends LinearOpMode {
