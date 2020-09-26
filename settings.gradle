@@ -1,2 +1,6 @@
 include ':FtcRobotController'
 include ':TeamCode'
+include ':Team417_2020'
+include ':Team6220_2020'
+include ':Team8923_2020'
+include ':TeamMentor'
