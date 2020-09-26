@@ -109,4 +109,8 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
 
         return data;
     }
+
+    public String getName() {
+        return "MainTeleOp";
+    }
 }

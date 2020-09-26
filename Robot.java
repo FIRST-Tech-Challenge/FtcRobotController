@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.rework.ModuleTools.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.rework.Modules.DrivetrainModule;
 import org.firstinspires.ftc.teamcode.rework.Modules.Module;
 import org.firstinspires.ftc.teamcode.rework.Modules.OdometryModule;
@@ -66,8 +67,8 @@ public class Robot {
             if(module.isOn()) {
                 try {
                     module.update();
-                }catch (Exception e){
-                    Log.d("Module", "Module couldn't update: " + module.getClass().getSimpleName());
+                }catch (Exception e) {
+                    Log.d("Module", "Module couldn't update: " + module.getName());
                 }
                 if (WILL_FILE_DUMP) {
                     module.fileDump();

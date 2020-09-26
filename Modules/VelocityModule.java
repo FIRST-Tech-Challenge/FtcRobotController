@@ -63,4 +63,8 @@ public class VelocityModule implements Module, TelemetryProvider {
     public boolean isOn(){
         return isOn;
     }
+
+    public String getName() {
+        return "VelocityModule";
+    }
 }

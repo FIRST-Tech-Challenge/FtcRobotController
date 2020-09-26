@@ -44,4 +44,8 @@ public class PIDController implements TelemetryProvider {
         data.add("Scale: " + String.valueOf(this.scale));
         return data;
     }
+
+    public String getName() {
+        return "PIDController";
+    }
 }

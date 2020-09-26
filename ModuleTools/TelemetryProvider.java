@@ -5,4 +5,5 @@ import java.util.Map;
 
 public interface TelemetryProvider {
     public ArrayList<String> getTelemetryData();
+    public String getName();
 }

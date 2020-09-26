@@ -13,7 +13,6 @@ import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.line
 import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.lineSegmentCircleIntersection;
 
 public class PathFollow implements TelemetryProvider {
-
     Robot robot;
 
     private boolean isFileDump = false;
@@ -206,5 +205,9 @@ public class PathFollow implements TelemetryProvider {
         data.add("targetY: " + String.valueOf(targetPoint.y));
         data.add("pathIndex: " + String.valueOf(pathIndex));
         return data;
+    }
+
+    public String getName() {
+        return "PathFollower";
     }
 }

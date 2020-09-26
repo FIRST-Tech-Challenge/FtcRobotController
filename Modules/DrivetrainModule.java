@@ -131,4 +131,8 @@ public class DrivetrainModule implements Module, TelemetryProvider {
         data.add("turnMovement: " + turnMovement);
         return data;
     }
+
+    public String getName() {
+        return "DrivetrainModule";
+    }
 }

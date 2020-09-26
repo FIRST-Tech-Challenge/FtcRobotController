@@ -52,5 +52,9 @@ public class PIDTest extends LinearOpMode implements TelemetryProvider {
         data.add("Module Executor thread loop time: " + String.valueOf(lastUpdateTime));
         return data;
     }
+
+    public String getName() {
+        return "PIDTest";
+    }
 }
 

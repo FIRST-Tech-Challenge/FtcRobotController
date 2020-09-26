@@ -167,4 +167,8 @@ public class OdometryModule implements Module, TelemetryProvider {
     public boolean isOn(){
         return isOn;
     }
+
+    public String getName() {
+        return "OdometryModule";
+    }
 }
