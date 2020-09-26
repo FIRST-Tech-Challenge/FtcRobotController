@@ -50,8 +50,8 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
 /**
- * This 2019-2020 OpMode illustrates the basics of using the Vuforia localizer to determine
- * positioning and orientation of robot on the SKYSTONE FTC field.
+ * This 2020-2021 OpMode illustrates the basics of using the Vuforia localizer to determine
+ * positioning and orientation of robot on the UltimateGoal FTC field.
  * The code is structured as a LinearOpMode
  *
  * When images are located, Vuforia is able to determine the position and orientation of the
@@ -70,7 +70,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
  *
  * @see VuforiaLocalizer
  * @see VuforiaTrackableDefaultListener
- * see  skystone/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
+ * see  ultimategoal/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
@@ -79,8 +79,8 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
  * is explained below.
  */
 
-@TeleOp(name="SKYSTONE Vuforia Nav Webcam", group ="MechBot")
-public class VuforiaSkyStoneNavigationWebcam extends LinearOpMode {
+@TeleOp(name="Vuforia Nav Webcam", group ="MechBot")
+public class VuforiaNavigationWebcam extends LinearOpMode {
 
     private boolean targetVisible = false;
     protected static int LOG_LEVEL = Log.INFO;

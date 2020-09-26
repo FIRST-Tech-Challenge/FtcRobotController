@@ -1118,7 +1118,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     public void rawRotateTo(double power, double finalHeading, boolean stopEarly, double timeout_sec) throws InterruptedException {
         if (Thread.interrupted()) return;
         if (simulation_mode) { // simulation mode
-            dumpEvent (String.format("rawRotateTo: %3.1f\n", finalHeading));
+            dumpEvent (String.format("rawRotateTo: %3.1f %3.1f %3.1f\n", odo_x_pos_cm(), odo_y_pos_cm(), finalHeading));
             return;
         }
 

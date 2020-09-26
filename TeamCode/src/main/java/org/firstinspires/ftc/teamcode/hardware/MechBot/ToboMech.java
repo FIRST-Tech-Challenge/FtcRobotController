@@ -39,7 +39,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public ElapsedTime runtime = new ElapsedTime();
     public ElapsedTime runtimeAuto = new ElapsedTime();
     public double rotateRatio = 0.7; // slow down ratio for rotation
-    public CameraStoneDetector cameraStoneDetector;
+    public CameraStackDetector cameraStackDetector;
     public CameraSystem cameraSystem;
     public File simEventFile;
     public BottomWobbleGoalGrabber bottomWobbleGoalGrabber;
@@ -85,6 +85,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // simFile = Paths.get("ToboMech_events.txt");
         this.core = new CoreSystem();
         info("RoboMech configure() after new CoreSystem()(run time = %.2f sec)", (runtime.seconds() - ini_time));
+
+        if (simulation_mode) return;
+
         chassis = new MechChassis(core).configureLogging("Mecanum", logLevel); // Log.DEBUG
         if (autoside== ToboMech.AutoTeamColor.DIAGNOSIS) {
             // enable imu for diagnosis
@@ -92,8 +95,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if(tensorTest)
         {
-            cameraStoneDetector = new CameraStoneDetector();
-            cameraStoneDetector.configure(configuration);
+            cameraStackDetector = new CameraStackDetector();
+            cameraStackDetector.configure(configuration);
         } else if (vuforiaTest) {
             cameraSystem = new CameraSystem();
             cameraSystem.init(configuration.getHardwareMap());
@@ -621,8 +624,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     @MenuEntry(label = "Tensorflow Test", group = "Test Chassis")
     public void testSkystoneDetection()//loc = 1 left, 2 center, 3 right
     {
-        if (cameraStoneDetector!=null) {
-            ToboSigma.SkystoneLocation location = cameraStoneDetector.getSkystonePositionTF(true);
+        if (cameraStackDetector !=null) {
+            ToboSigma.SkystoneLocation location = cameraStackDetector.getSkystonePositionTF(true);
         }
     }
 

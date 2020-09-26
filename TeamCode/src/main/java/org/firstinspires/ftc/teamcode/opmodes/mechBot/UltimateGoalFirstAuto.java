@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 /**
  * Created by 28761 on 6/29/2019.
  */
-@Disabled
+
 @Autonomous(name = "Ultimate Goal Auto", group = "MechBot")
 public class UltimateGoalFirstAuto extends LinearOpMode {
     private ToboSigma.SkystoneLocation StoneLoc;
@@ -33,6 +33,7 @@ public class UltimateGoalFirstAuto extends LinearOpMode {
         telemetry.update();
 
         ToboMech robot = new ToboMech();
+        robot.set_simulation_mode(true);
         robot.configureLogging("ToboMech", LOG_LEVEL);
         configuration = new Configuration(hardwareMap, robot.getName()).configureLogging("Config", LOG_LEVEL);
         log.info("RoboSigma Autonomous finished log configuration (CPU_time = %.2f sec)", getRuntime());
