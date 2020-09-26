@@ -240,4 +240,20 @@ public class MathFunctions {
         }
         return solutions;
     }
+
+    /**
+     * Takes two coordinates (x1, y1) and (x2, y2) and returns the euclidean distance between them, found using the pythagoras theorem:
+     * x^2+y^2=h^2 -> h=sqrt(x^2+y^2)
+     * Where x is the difference between x1 and x2, and y is the difference between y1 and y2.
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return The distance between the specified coordinates
+     */
+    public static double euclideanDist(double x1, double y1, double x2, double y2) {
+        double diffX = x1 - x2;
+        double diffY = y1 - y2;
+        return Math.sqrt (diffX*diffX + diffY*diffY);
+    }
 }

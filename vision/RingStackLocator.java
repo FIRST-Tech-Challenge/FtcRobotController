@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.rework.vision;
 
+import static org.firstinspires.ftc.teamcode.rework.util.auto.MathFunctions.euclideanDist;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
@@ -15,57 +16,18 @@ public class RingStackLocator {
     static final Scalar GREEN = new Scalar(0, 255, 0);
     static final Scalar BLUE = new Scalar(255, 0, 0);
 
-    public enum TARGET_ZONE {
-            TARGET_ZONE_A,
+    public enum TargetZone {
+        TARGET_ZONE_UNKNOWN,
+        TARGET_ZONE_A,
         TARGET_ZONE_B,
         TARGET_ZONE_C
-    }
-
-
-    private static double[] roots(double a, double b, double c) {
-        double[] roots = new double[2]; //This is now a double, too.
-        double discriminator = Math.sqrt(Math.pow(b, 2) - 4 * a * c);
-        roots[0] = (-b + discriminator) / (2 * a);
-        roots[1] = (-b - discriminator) / (2 * a);
-        return roots;
-    }
-    public static double find_ring_angle(double width, double height) {
-        double ratio, inches_per_pixel, ring_angle;
-        if (width > height) {
-            inches_per_pixel = 5.0 / width;
-            ratio = height / width;
-        } else {
-            inches_per_pixel = 5.0 / height;
-            ratio = width / height;
-        }
-
-        if (1.05 > ratio && ratio > 0.95) {
-            ring_angle = Math.PI / 2.0;
-        }
-        if (0.2 > ratio && ratio > 0.1) {
-            ring_angle = 0;
-        } else {
-            double ring_angle_sine;
-            double inches_height = height * inches_per_pixel;
-            double c_constant = 0.75 - inches_height;
-            double[] roots = roots(-0.75, 5, c_constant);
-            double sine_plus = roots[0], sine_minus = roots[1];
-            if (1 > sine_plus && sine_plus > -1) {
-                ring_angle_sine = sine_plus;
-            } else ;
-            {
-                ring_angle_sine = sine_minus;
-            }
-            ring_angle = Math.asin(ring_angle_sine);
-        }
-        return ring_angle;
     }
 
     /**
      * Finds the largest contour by enclosed area in a list
      *
      * @param contours
-     * @return the index of contours which the largest is located
+     * @return the index of the specified List which contains the largest contour
      */
     static int largestContour(final List<MatOfPoint> contours) {
         if (contours.size() == 0)
@@ -84,31 +46,31 @@ public class RingStackLocator {
         return maxValIdx;
     }
 
-    static int closestContour(final List<MatOfPoint> contours, Point centre, double area) {
-        double closestDistToCentre = 999999999;
+    /**
+     * Find the index of the countour of a list which is closest to the specified point. Contours which are smaller than 0.0008*area will be ignored, so we don't get any super tiny values caused by small imperfections
+     * @param contours
+     * @param point - The point we want to be close to
+     * @param area - the total area of the plane where the contours are located.
+     * @return an index of the specified List which contains the contour closest to the specified point
+     */
+    static int closestContour(final List<MatOfPoint> contours, Point point, double area) {
+        double closestDistToPoint = Double.MAX_VALUE;
         int closestIdx = -1;
         int currIdx = 0;
         for(MatOfPoint contour: contours) {
             Rect contourBoundingBox = Imgproc.boundingRect(contour);
-            Moments moments = Imgproc.moments(contour); // Calculate the average "centre of mass" of the enclosed area
+            Moments moments = Imgproc.moments(contour); // Calculate the "point of mass" of the enclosed area
             double avgX = moments.m10 / moments.m00;
             double avgY = moments.m01 / moments.m00;
-            Point loc = new Point(avgX, avgY);
-            double dist = euclideanDist(loc, centre);
-            if(dist < closestDistToCentre && contourBoundingBox.area() > 0.0008 * area) {
+            double dist = euclideanDist(avgX, avgY, point.x, point.y);
+            if(dist < closestDistToPoint && contourBoundingBox.area() > 0.0008 * area) {
                 closestIdx = currIdx;
-                closestDistToCentre = dist;
+                closestDistToPoint = dist;
             }
             currIdx++;
         };
 
         return closestIdx;
-    }
-
-    static double euclideanDist(Point p, Point q) {
-        double diffX = p.x - q.x;
-        double diffY = p.y - q.y;
-        return Math.sqrt (diffX*diffX + diffY*diffY);
     }
 
     private static double getClosestFromRange(final double input) {
@@ -124,18 +86,17 @@ public class RingStackLocator {
      * @param input
      * @return an int which represents the calculated number of rings
      */
-    public static TARGET_ZONE processFrame(final Mat input) {
+    public static TargetZone processFrame(final Mat input) {
         return processFrame(input, false);
     }
-
     /**
-     * This function takes an Image in the form of a Mat, and then will calculate how many rings are stacked in it
+     * This function takes an Image in the form of a Mat, and then will calculate how many rings are stacked in it, and use that to find the target zone
      * It also mutates the input image if shouldWriteToImage is true, and draws some text, a bounding box, and the border of the rings
      *
      * @param input
-     * @return an int which represents the calculated number of rings
+     * @return an enum representing the target zone
      */
-    public static TARGET_ZONE processFrame(final Mat input, boolean shouldWriteToImage) {
+    public static TargetZone processFrame(final Mat input, boolean shouldWriteToImage) {
         Imgproc.resize(input, input, new Size(480, 270));
 
         final int IMAGE_WIDTH = input.width();
@@ -156,17 +117,15 @@ public class RingStackLocator {
 
         List<MatOfPoint> contours = new ArrayList<MatOfPoint>(); // List for storing contours
         findContours(mask, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE); // Find all the contours (edges) on the mask
-        int closestContour = largestContour(contours); // Find the index of the contour closest to the centre
+        int closestContour = largestContour(contours); // Find the index of the largest contour
 
         if(closestContour >= 0 && contours.get(closestContour) != null) { // Do we even have contours?
             Rect contourBoundingBox = Imgproc.boundingRect(contours.get(closestContour)); // Draw a bounding box around the largest contour
             if (contourBoundingBox.area() > 0.0008 * input.size().area()) { // Min size of contour relative to area of image. Using area of BB because mat.size.area is slow
                 numRings = (int)getClosestFromRange((20d * contourBoundingBox.height) / (3d * contourBoundingBox.width)); // We're using the ratio between the height and width of the bounding box to determine how many there are. The 20 and 3 can be calculated from the actual dimensions of the rings. Also am keeping it as an int so it rounds automatically toward zero
-                System.out.print(find_ring_angle(contourBoundingBox.width, contourBoundingBox.height) + " ");
                 if (shouldWriteToImage) {
                     Imgproc.drawContours(input, contours, closestContour, GREEN, 1, LINE_8, hierarchy, 0);
                     Imgproc.rectangle(input, contourBoundingBox, BLUE, 1);
-
                 }
             }
         }
@@ -180,13 +139,13 @@ public class RingStackLocator {
 
         switch (numRings) {
             case 0:
-                return TARGET_ZONE.TARGET_ZONE_A;
+                return TargetZone.TARGET_ZONE_A;
             case 1:
-                return TARGET_ZONE.TARGET_ZONE_B;
+                return TargetZone.TARGET_ZONE_B;
             case 4:
-                return TARGET_ZONE.TARGET_ZONE_C;
+                return TargetZone.TARGET_ZONE_C;
+            default:
+                return TargetZone.TARGET_ZONE_UNKNOWN;
         }
-
-        return TARGET_ZONE.TARGET_ZONE_A;
     }
 }

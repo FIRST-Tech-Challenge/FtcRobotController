@@ -11,6 +11,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.Locale;
+
 @TeleOp
 public class VisionTest extends LinearOpMode {
     OpenCvWebcam webcam;
@@ -36,12 +38,12 @@ public class VisionTest extends LinearOpMode {
         while (opModeIsActive())
         {
             telemetry.addData("Frame Count", webcam.getFrameCount());
-            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
+            telemetry.addData("FPS", String.format(Locale.ENGLISH, "%.2f", webcam.getFps()));
             telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
             telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
             telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
             telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
-            telemetry.addData("Calculated number of rings in stack", pipeline.numRings);
+            telemetry.addData("Calculated number of rings in stack", pipeline.targetZone);
 
             telemetry.update();
 
@@ -57,13 +59,13 @@ public class VisionTest extends LinearOpMode {
 
     class VisionTestPipeline extends OpenCvPipeline
     {
-        public RingStackLocator.TARGET_ZONE numRings = RingStackLocator.TARGET_ZONE.TARGET_ZONE_A;
+        public RingStackLocator.TargetZone targetZone = RingStackLocator.TargetZone.TARGET_ZONE_UNKNOWN;
         boolean viewportPaused;
 
         @Override
         public Mat processFrame(Mat input)
         {
-            this.numRings = RingStackLocator.processFrame(input, true);
+            this.targetZone = RingStackLocator.processFrame(input, true);
             return input;
         }
 
