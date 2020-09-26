@@ -51,10 +51,10 @@ public class DrivetrainModule implements Module, TelemetryProvider {
 
     // drivetrain update method applies the powers based on y x and turn movements
     public synchronized void update() {
-        double fLPower = ((-yMovement) - turnMovement - xMovement * MECANUM_POWER_SCALE_FACTOR);
-        double fRPower = ((-yMovement) + turnMovement + xMovement * MECANUM_POWER_SCALE_FACTOR);
-        double bLPower = ((-yMovement) - turnMovement + xMovement * MECANUM_POWER_SCALE_FACTOR);
-        double bRPower = ((-yMovement) + turnMovement - xMovement * MECANUM_POWER_SCALE_FACTOR);
+        double fLPower = ((yMovement) - turnMovement + xMovement * MECANUM_POWER_SCALE_FACTOR);
+        double fRPower = ((yMovement) + turnMovement - xMovement * MECANUM_POWER_SCALE_FACTOR);
+        double bLPower = ((yMovement) - turnMovement - xMovement * MECANUM_POWER_SCALE_FACTOR);
+        double bRPower = ((yMovement) + turnMovement + xMovement * MECANUM_POWER_SCALE_FACTOR);
 
         double maxPower = Math.abs(fLPower);
         if (Math.abs(fRPower) > maxPower) {
