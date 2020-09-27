@@ -482,7 +482,7 @@ Changes include:
     - Added an external sample Op Mode that demonstrates localization using 2018-2019 (Rover Ruckus presented by QualComm) Vuforia targets.
     - Added an external sample Op Mode that demonstrates how to use the REV Robotics 2m Laser Distance Sensor.
     - Added an external sample Op Mode that demonstrates how to use the REV Robotics Blinkin LED Controller.
-    - Re-categorized external Java sample Op Modes to "TeleOp" instead of "Autonomous".
+    - Re-categorized external Java sample Op Modes to "TeleOp" instead of "org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous".
 
 Known issues:
  * Initial support for UVC compatible cameras
@@ -508,7 +508,7 @@ Changes include:
  * Blocks Changes
      - Uses updated Google Blockly software to allow users to edit their op modes on Apple iOS devices (including iPad and iPhone).
      - Improvement in Blocks tool to handle corrupt op mode files.
-     - Autonomous op modes should no longer get switched back to tele-op after re-opening them to be edited.
+     - org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous op modes should no longer get switched back to tele-op after re-opening them to be edited.
      - The system can now detect type mismatches during runtime and alert the user with a message on the Driver Station.
  * Updated javadoc documentation for setPower() method to reflect correct range of values (-1 to +1).
  * Modified VuforiaLocalizerImpl to allow for user rendering of frames
@@ -644,7 +644,7 @@ Please note, however, that version 3.00 is considered "alpha" code.  This code i
 
 Changes include:
  * Major rework of sensor-related infrastructure.  Includes rewriting sensor classes to implement synchronous I2C communication.
- * Fix to reset Autonomous timer back to 30 seconds.
+ * Fix to reset org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous timer back to 30 seconds.
  * Implementation of specific motor profiles for approved 12V motors (includes Tetrix, AndyMark, Matrix and REV models).
  * Modest improvements to enhance Wi-Fi P2P pairing.
  * Fixes telemetry log addition race.
@@ -753,7 +753,7 @@ Changes include:
      - Added logging when a blocks file is read/written.
      - Fixed bug to properly render blocks even if missing devices from configuration file.
      - Added support for additional characters (not just alphanumeric) for the block file names (for download and upload).
-     - Added support for OpMode flavor (“Autonomous” or “TeleOp”) and group.
+     - Added support for OpMode flavor (“org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous” or “TeleOp”) and group.
   * Changes to Samples to prevent tutorial issues.
   * Incorporated suggested changes from public pull 216 (“Replace .. paths”).
   * Remove Servo Glitches when robot stopped.
