@@ -40,6 +40,5 @@ public class MecanumTest extends OpMode {
         telemetry.addData("Left Back", -c);
         telemetry.addData("Right Back", d);
 
-        // test change
     }
 }
