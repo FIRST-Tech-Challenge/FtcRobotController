@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.playmaker;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.util.OmniDrive;
@@ -17,6 +19,8 @@ public abstract class RobotHardware extends OpMode {
     public static double COUNTS_PER_INCH;
     public static double COUNTS_PER_LAT_INCH;
     public static double COUNTS_PER_DEGREE;
+
+    public boolean initVuforia = true;
 
     /**
      * All hardware should initialize sensors and stuff here
@@ -36,9 +40,32 @@ public abstract class RobotHardware extends OpMode {
         }
     }
 
+    /**
+     * Initializes Vuforia. Largely copied from the the navigation example.
+     */
+    public void initializeVuforia() {
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = vuforiaKey;
+
+        /**
+         * We also indicate which camera on the RC we wish to use.
+         */
+        parameters.cameraName = webcamName;
+
+        // Make sure extended tracking is disabled for this example.
+        parameters.useExtendedTracking = false;
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+    }
+
     @Override
     public void init() {
         this.initializeHardware();
+        if (initVuforia) initializeVuforia();
     }
 
     public void hardware_loop() {}
