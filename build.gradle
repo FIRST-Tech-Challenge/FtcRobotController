@@ -20,4 +20,9 @@ allprojects {
         google()
         jcenter()
     }
+
+    // Avoid warning message from newer JDKs about Java 7 source/target being obsolete
+    tasks.withType(JavaCompile).whenTaskAdded { JavaCompile javaCompile ->
+        javaCompile.options.compilerArgs << '-Xlint:-options'
+    }
 }
