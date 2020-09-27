@@ -18,7 +18,6 @@ public class AutoPathTest extends LinearOpMode {
     public void runOpMode() {
 
         robot = new Robot(hardwareMap, telemetry, this);
-        robot.initModules();
 
         pf1 = new PathFollow( new Waypoint[]{
                         new Waypoint(0,0),

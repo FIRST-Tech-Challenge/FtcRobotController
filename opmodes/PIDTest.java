@@ -33,7 +33,6 @@ public class PIDTest extends LinearOpMode implements TelemetryProvider {
 
     private void initRobot() {
         robot = new Robot(hardwareMap, telemetry,this);
-        robot.initModules();
     }
 
     private void updateDrivetrainStates() {

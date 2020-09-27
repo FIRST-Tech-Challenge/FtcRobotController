@@ -33,8 +33,7 @@ public class MainTeleop extends LinearOpMode implements TelemetryProvider {
     }
 
     private void initRobot() {
-        robot = new Robot(hardwareMap, telemetry, this);
-        robot.initModules();
+        robot = new Robot(hardwareMap, telemetry,this);
     }
 
     private void updateDrivetrainStates() {

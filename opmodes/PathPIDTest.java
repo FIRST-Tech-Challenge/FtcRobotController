@@ -33,7 +33,6 @@ public class PathPIDTest extends LinearOpMode {
 
     private void initRobot() {
         robot = new Robot(hardwareMap, telemetry, this);
-        robot.initModules();
     }
 }
 

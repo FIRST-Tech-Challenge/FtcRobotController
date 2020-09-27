@@ -78,7 +78,7 @@ public class Robot {
         telemetryDump.update();
     }
 
-    public void initModules() {
+    private void initModules() {
         // Add individual modules into the array here
         this.drivetrainModule = new DrivetrainModule(this, true);
         this.odometryModule = new OdometryModule(this, true);
