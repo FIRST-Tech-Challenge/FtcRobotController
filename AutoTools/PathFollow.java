@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.angleWrap;
 import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.closestPointOnLineToPoint;
-import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.linePointDistance;
+import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.lineSegmentPointDistance;
 import static org.firstinspires.ftc.teamcode.rework.AutoTools.MathFunctions.lineSegmentCircleIntersection;
 
 public class PathFollow implements TelemetryProvider {
@@ -96,7 +96,7 @@ public class PathFollow implements TelemetryProvider {
             Point start = path[i].toPoint();
             Point end = path[i + 1].toPoint();
 
-            double thisClipDist = linePointDistance(center, start, end);
+            double thisClipDist = lineSegmentPointDistance(center, start, end);
 
             // if this clip distance is record low set the clip point to the clip point set the clippedIndex to index so later we can update the index we are at
             if (thisClipDist < nearestClipDist) {
