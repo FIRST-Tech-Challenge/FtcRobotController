@@ -32,7 +32,6 @@ public class HardwareUltimateGoal  {
 
 
     public ModernRoboticsI2cGyro realgyro;
-    public ModernRoboticsI2cGyro realgyro2;
 
 
     public static final String TeleOpRunMode = "no encoders";
@@ -64,22 +63,10 @@ public class HardwareUltimateGoal  {
         intake = hwMap.get(DcMotor.class, "succ");
         outtake = hwMap.get(DcMotor.class, "spit");
 
-
-
-
         if (!test) {
             //Define and Initialize Sensors
             realgyro = hwMap.get(ModernRoboticsI2cGyro.class, "gyro");
             realgyro.calibrate();
-
-
-//            realgyro2 = hwMap.get(ModernRoboticsI2cGyro.class, "gyro2");
-//            realgyro2.calibrate();
-
-
-
-
-
 
         }
 
@@ -96,8 +83,6 @@ public class HardwareUltimateGoal  {
 
         }
 
-
-
         // Set all motors to zero power
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -107,12 +92,8 @@ public class HardwareUltimateGoal  {
         outtake.setPower(0);
 
 
-
         if (!test) {
             realgyro.resetZAxisIntegrator();
-
-
-
         }
 
     }
@@ -128,7 +109,6 @@ public class HardwareUltimateGoal  {
 
             if (!test) {
 
-
             }
         }
         else {
@@ -143,7 +123,6 @@ public class HardwareUltimateGoal  {
 
             if (!test) {
 
-
             }
 
 
@@ -155,10 +134,7 @@ public class HardwareUltimateGoal  {
 
             if (!test) {
 
-
             }
-
-
         }
     }
 }
