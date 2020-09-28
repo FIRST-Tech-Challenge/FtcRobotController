@@ -43,6 +43,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public CameraSystem cameraSystem;
     public File simEventFile;
     public BottomWobbleGoalGrabber bottomWobbleGoalGrabber;
+    public Shooter shooter;
+    public Hopper hopper;
 
     public double auto_chassis_power = .6;
     public double auto_chassis_dist = 100;
@@ -57,6 +59,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean vuforiaTest = false;
     public boolean tensorTest = false;
     public boolean useBottomWobbleGoalGrabber = false;
+    public boolean useHopper = false;
+    public boolean useShooter = false;
 
     public void set_simulation_mode(boolean value) {
         simulation_mode = value;
@@ -110,6 +114,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if(useBottomWobbleGoalGrabber){
             bottomWobbleGoalGrabber = new BottomWobbleGoalGrabber(core);
             bottomWobbleGoalGrabber.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
+        }
+        if(useHopper){
+            hopper = new Hopper(core);
+            hopper.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
+        }
+        if(useShooter){
+            shooter = new Shooter(core);
+            shooter.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
         }
 
         info("ToboMech configure() after init Chassis (run time = %.2f sec)", (runtime.seconds() - ini_time));
@@ -280,6 +292,21 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 }
             }
         }, new Button[]{Button.Y});
+
+        em.onButtonDown(new Events.Listener() {
+            @Override
+            public void buttonDown(EventManager source, Button button) throws InterruptedException {
+             shooter.shootAutoFast();
+            }
+        }, new Button[]{Button.LEFT_BUMPER});
+
+        em.onButtonDown(new Events.Listener() {
+            @Override
+            public void buttonDown(EventManager source, Button button) throws InterruptedException {
+                shooter.shootAutoSlow();
+            }
+        }, new Button[]{Button.RIGHT_BUMPER});
+
     }
 
     public void setupTelemetryDiagnostics(Telemetry telemetry) {
