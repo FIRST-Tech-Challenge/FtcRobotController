@@ -76,6 +76,7 @@ public class AutoBlueOut extends LinearOpMode {
                 Thread.sleep(5000);
             }
         }
+        robot.end();
     }
 
     protected void handleException(Throwable T) {

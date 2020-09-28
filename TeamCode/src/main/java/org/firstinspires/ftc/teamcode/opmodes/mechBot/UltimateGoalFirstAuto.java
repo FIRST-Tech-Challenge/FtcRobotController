@@ -55,13 +55,19 @@ public class UltimateGoalFirstAuto extends LinearOpMode {
         robot.runtime.reset();
         robot.runtimeAuto.reset();
         // run until the end of the match (driver presses STOP or timeout)
-        if (opModeIsActive()) {
+        if(opModeIsActive()) {
             try {
 
-                if ((robot.runtimeAuto.seconds() < 19.5) && opModeIsActive()) {//may be too large - TYPICALLY AROUND 17-18
-
-
+                //if ((robot.runtimeAuto.seconds() < 19.5) && opModeIsActive()) {//may be too large - TYPICALLY AROUND 17-18
+                robot.chassis.set_init_pos(100,100,0);
+                robot.chassis.driveTo(0.6,100,1800,0,false, 3);
+                robot.chassis.rotateTo(0.6, 90, 3);
+                if (robot.isSimulationMode()) {
+                    telemetry.addData("Running simulation mode and dump events to file:","%s",robot.simEventFile.getName());
+                    telemetry.update();
+                    sleep(3000);
                 }
+                //}
 
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());
@@ -69,6 +75,7 @@ public class UltimateGoalFirstAuto extends LinearOpMode {
                 Thread.sleep(5000);
             }
         }
+        robot.end();
     }
 
     protected void handleException(Throwable T) {

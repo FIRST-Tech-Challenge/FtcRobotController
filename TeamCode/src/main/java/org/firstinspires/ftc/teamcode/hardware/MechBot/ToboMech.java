@@ -93,9 +93,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         this.core = new CoreSystem();
         info("RoboMech configure() after new CoreSystem()(run time = %.2f sec)", (runtime.seconds() - ini_time));
 
-        if (simulation_mode) return;
-
         chassis = new MechChassis(core).configureLogging("Mecanum", logLevel); // Log.DEBUG
+        chassis.set_simulation_mode(simulation_mode);
         if (autoside== ToboMech.AutoTeamColor.DIAGNOSIS) {
             // enable imu for diagnosis
             chassis.enableImuTelemetry(configuration);
@@ -137,6 +136,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     @Override
     public void reset(boolean auto) {
+        if (chassis==null || simulation_mode==true)
+            return;
         chassis.reset();
         if (auto) {
             chassis.setupTelemetry(telemetry);

@@ -78,6 +78,7 @@ public class AutoRedOut extends LinearOpMode {
                 Thread.sleep(5000);
             }
         }
+        robot.end();
     }
 
     protected void handleException(Throwable T) {
