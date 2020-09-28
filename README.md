@@ -1,5 +1,7 @@
 # This the MechanicalManiacs Skystone repo
 
+## !!!!!ALWAYS MAKE AN ISSUE BEFORE YOU DO SOMETHING!!!!!
+
 ## When making a branch please use the right format for naming
   git checkout -b "[type of branch]-[issue#]"
 
