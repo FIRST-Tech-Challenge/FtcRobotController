@@ -45,6 +45,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public BottomWobbleGoalGrabber bottomWobbleGoalGrabber;
     public Shooter shooter;
     public Hopper hopper;
+    public Intake intake;
+
 
     public double auto_chassis_power = .6;
     public double auto_chassis_dist = 100;
@@ -61,6 +63,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean useBottomWobbleGoalGrabber = false;
     public boolean useHopper = false;
     public boolean useShooter = false;
+    public boolean useIntake = false;
 
     public void set_simulation_mode(boolean value) {
         simulation_mode = value;
@@ -122,6 +125,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if(useShooter){
             shooter = new Shooter(core);
             shooter.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
+        }
+        if(useIntake){
+            intake = new Intake(core);
+            intake.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
         }
 
         info("ToboMech configure() after init Chassis (run time = %.2f sec)", (runtime.seconds() - ini_time));
@@ -239,7 +246,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 //                    sleep(10000);
 //                    chassis.stop();
                 } else {
-                    chassis.forward(0.3, 30, 3);
+                    intake.intakeInAuto();
                 }
             }
         }, new Button[]{Button.DPAD_UP});
@@ -251,7 +258,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (source.isPressed(Button.BACK)) {
                         chassis.chassis_test();
                     } else {
-                        chassis.forward(0.3, -30, 3);
+                        intake.intakeOutAuto();
                     }
                 }
             }
