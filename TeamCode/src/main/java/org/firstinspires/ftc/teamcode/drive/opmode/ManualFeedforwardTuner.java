@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.kinematics.Kinematics;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
@@ -26,11 +25,12 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * This routine is designed to tune the open-loop feedforward coefficients. Although it may seem unnecessary,
  * tuning these coefficients is just as important as the positional parameters. Like the other
  * manual tuning routines, this op mode relies heavily upon the dashboard. To access the dashboard,
- * connect your computer to the RC's WiFi network and navigate to https://192.168.49.1:8080/dash in
- * your browser. Once you've successfully connected, start the program, and your robot will begin
- * moving forward and backward according to a motion profile. Your job is to graph the velocity
- * errors over time and adjust the feedforward coefficients. Once you've found a satisfactory set
- * of gains, add them to your drive class.
+ * connect your computer to the RC's WiFi network. In your browser, navigate to
+ * https://192.168.49.1:8080/dash if you're using the RC phone or https://192.168.43.1:8080/dash if
+ * you are using the Control Hub. Once you've successfully connected, start the program, and your
+ * robot will begin moving forward and backward according to a motion profile. Your job is to graph
+ * the velocity errors over time and adjust the feedforward coefficients. Once you've found a
+ * satisfactory set of gains, add them to the appropriate fields in the DriveConstants.java file.
  */
 @Config
 @Autonomous(group = "drive")

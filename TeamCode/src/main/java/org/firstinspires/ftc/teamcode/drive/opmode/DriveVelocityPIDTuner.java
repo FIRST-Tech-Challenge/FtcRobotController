@@ -30,11 +30,20 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * loop velocity control. Although it may seem unnecessary, tuning these coefficients is just as
  * important as the positional parameters. Like the other manual tuning routines, this op mode
  * relies heavily upon the dashboard. To access the dashboard, connect your computer to the RC's
- * WiFi network and navigate to https://192.168.49.1:8080/dash in your browser. Once you've
- * successfully connected, start the program, and your robot will begin moving forward and backward
- * according to a motion profile. Your job is to graph the velocity errors over time and adjust the
- * PID coefficients. Once you've found a satisfactory set of gains, add them to your drive class
- * ctor.
+ * WiFi network. In your browser, navigate to https://192.168.49.1:8080/dash if you're using the RC
+ * phone or https://192.168.43.1:8080/dash if you are using the Control Hub. Once you've successfully
+ * connected, start the program, and your robot will begin moving forward and backward according to
+ * a motion profile. Your job is to graph the velocity errors over time and adjust the PID
+ * coefficients (note: the tuning variable will not appear until the op mode finishes initializing).
+ * Once you've found a satisfactory set of gains, add them to the DriveConstants.java file under the
+ * MOTOR_VELO_PID field.
+ *
+ * Recommended tuning process:
+ *
+ * 1. Increase kP until any phase lag is eliminated. Concurrently increase kD as necessary to
+ *    mitigate oscillations.
+ * 2. Add kI (or adjust kF) until the steady state/constant velocity plateaus are reached.
+ * 3. Back off kP and kD a little until the response is less oscillatory (but without lag).
  */
 @Config
 @Autonomous(group = "drive")
