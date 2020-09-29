@@ -28,17 +28,19 @@ public class RobotDrive {
 
 
     //Hardware
-    private DcMotorEx leftfront, leftrear, rightfront, rightrear = null;
+    private DcMotorEx leftFront, leftRear, rightFront, rightRear = null;
+    DcMotorEx[] motors = {leftFront, leftRear, rightFront, rightRear};
     private BNO055IMU imu = null;
     public DistanceSensor dist = null;
     public ColorSensor colorSensor = null;
 
-    //Default motor power levels for wheels and arm
+    //Default motor power levels for wheels
     public double motorPower = 0.5;
 
     //Debug the error angle in order to get this value
-    private double turningBuffer = 0;
+     private final double TURNING_BUFFER = 0;
 
+    //
     enum direction {
         left, right;
     }
@@ -50,23 +52,22 @@ public class RobotDrive {
     //Assigning software objects to hardware, receives hardwareMap and telemetry objects from the op mode which calls it
     void initializeRobot(HardwareMap hardwareMap, Telemetry telem, color clr) {
         telemetry = telem;
-        direction strafeDirection;
         teamColor = clr;
 
         //Initialize hardware from hardware map
-        leftfront = (DcMotorEx)hardwareMap.dcMotor.get("front_left_motor");
-        rightfront = (DcMotorEx)hardwareMap.dcMotor.get("front_right_motor");
-        leftrear = (DcMotorEx)hardwareMap.dcMotor.get("back_left_motor");
-        rightrear = (DcMotorEx)hardwareMap.dcMotor.get("back_right_motor");
+        leftFront = (DcMotorEx)hardwareMap.dcMotor.get("front_left_motor");
+        rightFront = (DcMotorEx)hardwareMap.dcMotor.get("front_right_motor");
+        leftRear = (DcMotorEx)hardwareMap.dcMotor.get("back_left_motor");
+        rightRear = (DcMotorEx)hardwareMap.dcMotor.get("back_right_motor");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         dist = hardwareMap.get(DistanceSensor.class, "distance");
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSense");
 
 
-        leftfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftrear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightrear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Sensor Initialization
         if (colorSensor instanceof SwitchableLight) {
@@ -74,13 +75,13 @@ public class RobotDrive {
         }
 
         //Motor initialization
-        rightfront.setDirection(DcMotor.Direction.REVERSE);
-        rightrear.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
 
-        rightfront.setPositionPIDFCoefficients(5);
-        rightrear.setPositionPIDFCoefficients(5);
-        leftfront.setPositionPIDFCoefficients(5);
-        leftrear.setPositionPIDFCoefficients(5);
+        rightFront.setPositionPIDFCoefficients(5);
+        rightRear.setPositionPIDFCoefficients(5);
+        leftFront.setPositionPIDFCoefficients(5);
+        leftRear.setPositionPIDFCoefficients(5);
 
 
         //Initialize IMU
@@ -96,20 +97,14 @@ public class RobotDrive {
     /***************************************FORWARD MOVEMENT***************************************/
     //Send this function a value of seconds to drive for and it will drive for that period
     void driveTime(long time) throws InterruptedException {
-        leftrear.setPower(motorPower);
-        leftfront.setPower(motorPower);
-        rightrear.setPower(motorPower);
-        rightfront.setPower(motorPower);
+        for (DcMotor motor: motors) motor.setPower(motorPower);
         Thread.sleep(time);
-        leftrear.setPower(0);
-        leftfront.setPower(0);
-        rightrear.setPower(0);
-        rightfront.setPower(0);
+        for (DcMotor motor: motors) motor.setPower(0);
 
-        telemetry.addData("Rear Left", leftrear.getCurrentPosition());
-        telemetry.addData("Front Left", leftfront.getCurrentPosition());
-        telemetry.addData("Front Right", rightfront.getCurrentPosition());
-        telemetry.addData("Rear Right", rightrear.getCurrentPosition());
+        telemetry.addData("Rear Left", leftRear.getCurrentPosition());
+        telemetry.addData("Front Left", leftFront.getCurrentPosition());
+        telemetry.addData("Front Right", rightFront.getCurrentPosition());
+        telemetry.addData("Rear Right", rightRear.getCurrentPosition());
         telemetry.update();
 
     }
@@ -118,7 +113,6 @@ public class RobotDrive {
     void driveEncoder(double Inches) {
         float initialHeading = getHeading();
         int encoderTicks = 0;
-        DcMotor motors[] = {leftfront, rightfront, leftrear, rightrear};
         if (Inches > 0) encoderTicks = (int)(480 * (float)((Inches - 1) / (wheelDiameter * Math.PI)));
         else if(Inches < 0) encoderTicks = (int)(480 * (float)((Inches + 1) / (wheelDiameter * Math.PI)));
          for (DcMotor motor: motors) {
@@ -131,20 +125,20 @@ public class RobotDrive {
              motor.setPower(motorPower);
          }
 
-        while (Math.abs(leftfront.getCurrentPosition() - leftfront.getTargetPosition()) > 30) {
+        while (Math.abs(leftFront.getCurrentPosition() - leftFront.getTargetPosition()) > 30) {
             //wait until the motors are done running
            if (Math.abs((initialHeading - getHeading()) % 360) > 1) {
                double degreesCorrect = (initialHeading - getHeading()) % 360;
                double motorCorrect = clamp(degreesCorrect * GYRO_P, -.4, .4);
-               leftfront.setPower(motorPower - motorCorrect);
-               leftrear.setPower(motorPower - motorCorrect);
-               rightfront.setPower(motorPower + motorCorrect);
-               rightrear.setPower(motorPower + motorCorrect);
+               leftFront.setPower(motorPower - motorCorrect);
+               leftRear.setPower(motorPower - motorCorrect);
+               rightFront.setPower(motorPower + motorCorrect);
+               rightRear.setPower(motorPower + motorCorrect);
            }
-                telemetry.addData("Rear Left", leftrear.getCurrentPosition());
-                telemetry.addData("Front Left", leftfront.getCurrentPosition());
-                telemetry.addData("Front Right", rightfront.getCurrentPosition());
-                telemetry.addData("Rear Right", rightrear.getCurrentPosition());
+                telemetry.addData("Rear Left", leftRear.getCurrentPosition());
+                telemetry.addData("Front Left", leftFront.getCurrentPosition());
+                telemetry.addData("Front Right", rightFront.getCurrentPosition());
+                telemetry.addData("Rear Right", rightRear.getCurrentPosition());
                 telemetry.update();
         }
         for (DcMotor motor : motors)
@@ -159,58 +153,57 @@ public class RobotDrive {
     //Send this function a time value as well as a direction (Ex: RobotDrive.direction.left) and it will strafe that direction for the specified amount of time
     void strafeTime(int time, direction strafeDirection) throws InterruptedException {
         if (strafeDirection == direction.left) {
-            leftfront.setPower(-1 * motorPower);
-            leftrear.setPower(motorPower);
-            rightrear.setPower(-1 * motorPower);
-            rightfront.setPower(motorPower);
+            leftFront.setPower(-1 * motorPower);
+            leftRear.setPower(motorPower);
+            rightRear.setPower(-1 * motorPower);
+            rightFront.setPower(motorPower);
         } else if (strafeDirection == direction.right) {
-            leftfront.setPower(motorPower);
-            leftrear.setPower(-1 * motorPower);
-            rightrear.setPower(motorPower);
-            rightfront.setPower(-1 * motorPower);
+            leftFront.setPower(motorPower);
+            leftRear.setPower(-1 * motorPower);
+            rightRear.setPower(motorPower);
+            rightFront.setPower(-1 * motorPower);
         }
         Thread.sleep(time);
-        leftfront.setPower(0);
-        leftrear.setPower(0);
-        rightfront.setPower(0);
-        rightrear.setPower(0);
+        leftFront.setPower(0);
+        leftRear.setPower(0);
+        rightFront.setPower(0);
+        rightRear.setPower(0);
     }
     //Send this function a distance in inches as well as a direction (Ex: RobotDrive.direction.right) and it will strafe that direction for the specified distance
     void strafeEncoder(double Inches, direction direction) {
         float initialHeading = getHeading();
-        DcMotor motors[] = {leftfront, rightfront, leftrear, rightrear};
 
         int encoderTicks = (int)(480 * (float)(Inches / (wheelDiameter * Math.PI)));
         if (direction == RobotDrive.direction.left) encoderTicks *= -1;
         for (DcMotor motor : motors) motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftfront.setTargetPosition(encoderTicks);
-        rightfront.setTargetPosition(-1 * encoderTicks);
-        rightrear.setTargetPosition(encoderTicks);
-        leftrear.setTargetPosition(-1 *encoderTicks);
+        leftFront.setTargetPosition(encoderTicks);
+        rightFront.setTargetPosition(-1 * encoderTicks);
+        rightRear.setTargetPosition(encoderTicks);
+        leftRear.setTargetPosition(-1 *encoderTicks);
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
-        leftfront.setPower(motorPower - 0.1);
-        rightfront.setPower(motorPower - 0.1);
-        leftrear.setPower(motorPower + 0.1);
-        rightrear.setPower(motorPower + 0.1);
+        leftFront.setPower(motorPower - 0.1);
+        rightFront.setPower(motorPower - 0.1);
+        leftRear.setPower(motorPower + 0.1);
+        rightRear.setPower(motorPower + 0.1);
 
-        while (Math.abs(leftfront.getCurrentPosition() - leftfront.getTargetPosition()) > 30) {
+        while (Math.abs(leftFront.getCurrentPosition() - leftFront.getTargetPosition()) > 30) {
             //wait until the motors are done running
 
 
             if (Math.abs((initialHeading - getHeading()) % 360) > 1) {
                 double degreesCorrect = (initialHeading - getHeading()) % 360;
                 double motorCorrect = clamp(degreesCorrect * GYRO_P, -.8, .8);
-                leftfront.setPower(motorPower - motorCorrect);
-                leftrear.setPower(motorPower - motorCorrect);
-                rightfront.setPower(motorPower + motorCorrect);
-                rightrear.setPower(motorPower + motorCorrect);
+                leftFront.setPower(motorPower - motorCorrect);
+                leftRear.setPower(motorPower - motorCorrect);
+                rightFront.setPower(motorPower + motorCorrect);
+                rightRear.setPower(motorPower + motorCorrect);
             }
-            telemetry.addData("Front Left: ", leftfront.getCurrentPosition());
-            telemetry.addData("Front Right: ", rightfront.getCurrentPosition());
-            telemetry.addData("Back Left: ", leftrear.getCurrentPosition());
-            telemetry.addData("Back Right: ", rightrear.getCurrentPosition());
+            telemetry.addData("Front Left: ", leftFront.getCurrentPosition());
+            telemetry.addData("Front Right: ", rightFront.getCurrentPosition());
+            telemetry.addData("Back Left: ", leftRear.getCurrentPosition());
+            telemetry.addData("Back Right: ", rightRear.getCurrentPosition());
             telemetry.update();
         }
         for (DcMotor motor : motors) {
@@ -228,55 +221,55 @@ public class RobotDrive {
     void gyroTurn(double degrees) {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double target_angle = getHeading() - degrees;
-        if (degrees < 0) {target_angle += turningBuffer;} else if (degrees > 0) {target_angle -= turningBuffer;}
+        if (degrees < 0) {target_angle += TURNING_BUFFER;} else if (degrees > 0) {target_angle -= TURNING_BUFFER;}
         while (Math.abs((target_angle - getHeading()) % 360) > 3) {
             double error_degrees = (target_angle - getHeading()) % 360; //Compute turning error
             double motor_output = clamp(error_degrees * TURN_P, -.9, .9); // Get Correction of error
             //Send corresponding value to motors
-            leftfront.setPower(-1 * motor_output);
-            leftrear.setPower(-1 * motor_output);
-            rightfront.setPower(motor_output);
-            rightrear.setPower(motor_output);
+            leftFront.setPower(-1 * motor_output);
+            leftRear.setPower(-1 * motor_output);
+            rightFront.setPower(motor_output);
+            rightRear.setPower(motor_output);
 
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            telemetry.addData("Target Angle : ", target_angle - turningBuffer);
+            telemetry.addData("Target Angle : ", target_angle - TURNING_BUFFER);
             telemetry.addData("Current Heading : ", String.format(Locale.getDefault(), "%.1f", angles.firstAngle * -1));
             telemetry.update();
         }
 
         telemetry.addData("Error Degrees: ", Math.abs(target_angle - angles.firstAngle) % 360);
         telemetry.update();
-        leftfront.setPower(0);
-        rightfront.setPower(0);
-        leftrear.setPower(0);
-        rightrear.setPower(0);
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftRear.setPower(0);
+        rightRear.setPower(0);
     }
 
     void gyroTurn(double degrees, double motorClamp) {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double target_angle = getHeading() - degrees;
-        if (degrees < 0) {target_angle += turningBuffer;} else if (degrees > 0) {target_angle -= turningBuffer;}
+        if (degrees < 0) {target_angle += TURNING_BUFFER;} else if (degrees > 0) {target_angle -= TURNING_BUFFER;}
         while (Math.abs((target_angle - getHeading()) % 360) > 3) {
             double error_degrees = (target_angle - getHeading()) % 360; //Compute turning error
             double motor_output = clamp(error_degrees * TURN_P, -motorClamp, motorClamp); // Get Correction of error
             //Send corresponding value to motors
-            leftfront.setPower(-1 * motor_output);
-            leftrear.setPower(-1 * motor_output);
-            rightfront.setPower(motor_output);
-            rightrear.setPower(motor_output);
+            leftFront.setPower(-1 * motor_output);
+            leftRear.setPower(-1 * motor_output);
+            rightFront.setPower(motor_output);
+            rightRear.setPower(motor_output);
 
             angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            telemetry.addData("Target Angle : ", target_angle - turningBuffer);
+            telemetry.addData("Target Angle : ", target_angle - TURNING_BUFFER);
             telemetry.addData("Current Heading : ", String.format(Locale.getDefault(), "%.1f", angles.firstAngle * -1));
             telemetry.update();
         }
 
         telemetry.addData("Error Degrees: ", Math.abs(target_angle - angles.firstAngle) % 360);
         telemetry.update();
-        leftfront.setPower(0);
-        rightfront.setPower(0);
-        leftrear.setPower(0);
-        rightrear.setPower(0);
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftRear.setPower(0);
+        rightRear.setPower(0);
     }
 
 
@@ -293,8 +286,7 @@ public class RobotDrive {
 
        mixDrive(0.2, 0, 0);
        if (teamColor == color.red) {
-           while (colorSensor.red() < 230){
-           }
+           while (colorSensor.red() < 230);
            mixDrive(0, 0, 0);
            grabMat(90);
            Thread.sleep(500);
@@ -313,8 +305,7 @@ public class RobotDrive {
            mixDrive(0,0,0);
        }
        else {
-           while (colorSensor.blue() < 205) {
-           }
+           while (colorSensor.blue() < 205);
            mixDrive(0, 0, 0);
            grabMat(90);
            Thread.sleep(500);
@@ -363,10 +354,10 @@ public class RobotDrive {
     //For debugging, displays current encoder values of each wheel
     void getEncoderVals() {
         telemetry.addData("Encoders (LF, RF, LR, RR)", "%d %d %d %d",
-                leftfront.getCurrentPosition(),
-                rightfront.getCurrentPosition(),
-                leftrear.getCurrentPosition(),
-                rightrear.getCurrentPosition());
+                leftFront.getCurrentPosition(),
+                rightFront.getCurrentPosition(),
+                leftRear.getCurrentPosition(),
+                rightRear.getCurrentPosition());
         telemetry.update();
     }
 
@@ -377,7 +368,6 @@ public class RobotDrive {
 
 
     void resetEncoders() {
-        DcMotor motors[] = {leftfront, rightfront, leftrear, rightrear};
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -393,10 +383,10 @@ public class RobotDrive {
         double backLeftSpeed = clamp((forward - strafe + rotate ), -motorPower, motorPower);
         double backRightSpeed = clamp((forward + strafe - rotate), -motorPower, motorPower);
 
-        leftfront.setPower(frontLeftSpeed);
-        rightfront.setPower(frontRightSpeed);
-        leftrear.setPower(backLeftSpeed);
-        rightrear.setPower(backRightSpeed);
+        leftFront.setPower(frontLeftSpeed);
+        rightFront.setPower(frontRightSpeed);
+        leftRear.setPower(backLeftSpeed);
+        rightRear.setPower(backRightSpeed);
     }
 
     //turning distance measurements into usable motor output via Proportional control)
