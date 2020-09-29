@@ -199,10 +199,10 @@ public class YellowBot implements OdoBot{
             this.backLeft.setPower(leftPower);
             this.backRight.setPower(rightPower);
 
-            telemetry.addData("Left Speed", leftPower);
-            telemetry.addData("Right Speed", rightPower);
-            telemetry.addData("Odo", "Left from %7d", frontLeft.getCurrentPosition());
-            telemetry.addData("Odo", "Right from %7d", frontRight.getCurrentPosition());
+//            telemetry.addData("Left Speed", leftPower);
+//            telemetry.addData("Right Speed", rightPower);
+//            telemetry.addData("Odo", "Left from %7d", frontLeft.getCurrentPosition());
+//            telemetry.addData("Odo", "Right from %7d", frontRight.getCurrentPosition());
         }
     }
 
