@@ -108,3 +108,7 @@ repositories {
     }
 }
 apply from: 'build.release.gradle'
+
+dependencies {
+    implementation 'org.openftc:easyopencv:1.4.1'
+}

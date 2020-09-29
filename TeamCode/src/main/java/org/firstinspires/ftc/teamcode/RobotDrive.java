@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.Locale;
 
 public class RobotDrive {
-    //Proportional Processing values for distance to drive
+    //Proportional Processing values for distance to drive function
     private final double P_Forward = 0.05;
     private final double P_Strafe = 0.025;
     private final double P_Turn = 0.005;
@@ -20,6 +20,7 @@ public class RobotDrive {
 
     Telemetry telemetry = null;
     color teamColor = null;
+
     //Proportional Value used in self-correcting gyro code for encoder driving
     private final double TURN_P = 0.005;
     private final double GYRO_P = 0.01;
@@ -34,7 +35,6 @@ public class RobotDrive {
 
     //Default motor power levels for wheels and arm
     public double motorPower = 0.5;
-    public double liftPower = 0.4;
 
     //Debug the error angle in order to get this value
     private double turningBuffer = 0;
@@ -47,25 +47,26 @@ public class RobotDrive {
         red, blue;
     }
 
-    //Assigning software objects to hardware, recieves hardwareMap and telemetry objects from the op mode
+    //Assigning software objects to hardware, receives hardwareMap and telemetry objects from the op mode which calls it
     void initializeRobot(HardwareMap hardwareMap, Telemetry telem, color clr) {
         telemetry = telem;
         direction strafeDirection;
         teamColor = clr;
 
-        //Initialize Hardware
+        //Initialize hardware from hardware map
         leftfront = (DcMotorEx)hardwareMap.dcMotor.get("front_left_motor");
         rightfront = (DcMotorEx)hardwareMap.dcMotor.get("front_right_motor");
         leftrear = (DcMotorEx)hardwareMap.dcMotor.get("back_left_motor");
         rightrear = (DcMotorEx)hardwareMap.dcMotor.get("back_right_motor");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        dist = hardwareMap.get(DistanceSensor.class, "distance");
+        colorSensor = hardwareMap.get(ColorSensor.class, "colorSense");
+
 
         leftfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightfront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftrear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightrear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        dist = hardwareMap.get(DistanceSensor.class, "distance");
-        colorSensor = hardwareMap.get(ColorSensor.class, "colorSense");
 
         //Sensor Initialization
         if (colorSensor instanceof SwitchableLight) {

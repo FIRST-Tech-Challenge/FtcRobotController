@@ -313,7 +313,7 @@ public class VuforiaClass {
                             targetReached = true;
                             robotDrive.mixDrive(0, 0, 0);
                             robotDrive.strafeEncoder(4, RobotDrive.direction.right);
-                            robotDrive.SetSideArm(130, 180);
+                            //robotDrive.SetSideArm(130, 180);
                             CameraDevice.getInstance().setFlashTorchMode(false);
                             return;
                         } else {
