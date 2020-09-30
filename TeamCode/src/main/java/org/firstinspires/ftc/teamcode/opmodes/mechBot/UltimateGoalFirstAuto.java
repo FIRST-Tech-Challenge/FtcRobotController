@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
+import java.io.IOException;
+
 /**
  * Created by 28761 on 6/29/2019.
  */
@@ -60,13 +62,9 @@ public class UltimateGoalFirstAuto extends LinearOpMode {
 
                 //if ((robot.runtimeAuto.seconds() < 19.5) && opModeIsActive()) {//may be too large - TYPICALLY AROUND 17-18
                 robot.chassis.set_init_pos(100,100,0);
-                robot.chassis.driveTo(0.6,100,1800,0,false, 3);
+                robot.chassis.driveTo(0.6,100,180,0,false, 3);
                 robot.chassis.rotateTo(0.6, 90, 3);
-                if (robot.isSimulationMode()) {
-                    telemetry.addData("Running simulation mode and dump events to file:","%s",robot.simEventFile.getName());
-                    telemetry.update();
-                    sleep(3000);
-                }
+
                 //}
 
             } catch (Exception E) {
@@ -75,7 +73,11 @@ public class UltimateGoalFirstAuto extends LinearOpMode {
                 Thread.sleep(5000);
             }
         }
-        robot.end();
+        try {
+            robot.end();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void handleException(Throwable T) {

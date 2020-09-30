@@ -45,6 +45,8 @@ import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
+import java.io.IOException;
+
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
@@ -88,7 +90,7 @@ public class VuforiaNavigationWebcam extends LinearOpMode {
     private Configuration configuration;
     private Logger<Logger> log = new Logger<Logger>().configureLogging(getClass().getSimpleName(), LOG_LEVEL);
 
-    @Override public void runOpMode() {
+    @Override public void runOpMode() throws InterruptedException {
 
         log.info("RoboMech TeleOp runOpMode() starts (CPU_time = %.2f sec)", getRuntime());
         telemetry.addData("Initializing Robot", "Please Wait ...");
@@ -165,7 +167,11 @@ public class VuforiaNavigationWebcam extends LinearOpMode {
         }
 
         // Disable robot;
-        robot.end();
+        try {
+            robot.end();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     protected void handleException(Throwable T) {
         log.error(T.getMessage(), T);

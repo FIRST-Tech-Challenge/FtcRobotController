@@ -20,6 +20,13 @@ import org.firstinspires.ftc.teamcode.support.events.Events;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import static com.qualcomm.hardware.lynx.commands.core.LynxInjectDataLogHintCommand.charset;
+import static java.lang.Thread.sleep;
 
 public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
@@ -84,17 +91,22 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     @Override
-    public void configure(Configuration configuration, Telemetry telemetry, ToboMech.AutoTeamColor autoside) {
+    public void configure(Configuration configuration, Telemetry telemetry, ToboMech.AutoTeamColor autoside) throws FileNotFoundException {
         runtime.reset();
         double ini_time = runtime.seconds();
         this.telemetry = telemetry;
         simEventFile = AppUtil.getInstance().getSettingsFile("ToboMech_events.txt"); // at First/settings directory
+
         // simFile = Paths.get("ToboMech_events.txt");
         this.core = new CoreSystem();
         info("RoboMech configure() after new CoreSystem()(run time = %.2f sec)", (runtime.seconds() - ini_time));
 
         chassis = new MechChassis(core).configureLogging("Mecanum", logLevel); // Log.DEBUG
         chassis.set_simulation_mode(simulation_mode);
+        if (chassis!=null) {
+            // chassis.simOS = new FileOutputStream(new File(simEventFile.getParentFile(), simEventFile.getName()));
+            chassis.simOS = new FileOutputStream(new File(simEventFile.getParent(), simEventFile.getName()));
+        }
         if (autoside== ToboMech.AutoTeamColor.DIAGNOSIS) {
             // enable imu for diagnosis
             chassis.enableImuTelemetry(configuration);
@@ -144,9 +156,20 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
     }
 
-    public void end() {
+    public void end() throws InterruptedException, IOException {
         if (simulation_mode) {
-            ReadWriteFile.writeFile(simEventFile, chassis.getSimEvents());
+            try {
+                chassis.simOS.flush();
+            } finally {
+                chassis.simOS.close();
+            }
+            // ReadWriteFile.writeFile(simEventFile, chassis.getSimEvents());
+            if (isSimulationMode()) {
+                telemetry.addData("Running simulation mode and dump events to file:","%s/%s",simEventFile.getParent(),simEventFile.getName());
+                telemetry.addData("Content:","%s",chassis.getSimEvents());
+                telemetry.update();
+                sleep(3000);
+            }
         }
         if (cameraSystem!=null) {
             cameraSystem.end();
