@@ -7,9 +7,9 @@ apply plugin: 'com.android.library'
 
 android {
 
-lintOptions {
-          abortOnError false
-      }
+    lintOptions {
+        abortOnError false
+    }
 
     defaultConfig {
         minSdkVersion 23
