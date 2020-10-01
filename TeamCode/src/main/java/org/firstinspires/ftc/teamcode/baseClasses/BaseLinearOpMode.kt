@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.baseClasses
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.robot.Robot
 import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix
 
 abstract class BaseLinearOpMode: LinearOpMode() {
     lateinit var hardware: RobotHardware
@@ -22,14 +25,15 @@ abstract class BaseLinearOpMode: LinearOpMode() {
      *
      * ```kotlin
      * logger { log ->
-     *     log("Hello, World!")
-     *     log("Label :: Value")
+     *     log.text("Hello, World!")
+     *     log.text("Label :: Value")
+     *     log.location(OpenGLMatrix())
      * }
      * ```
      */
-    fun logger(actions: (AddLog) -> Unit) {
+    fun logger(actions: (Logger) -> Unit) {
         val logger = Logger()
-        actions(logger::addLog)
+        actions(logger)
         logger.log(telemetry)
     }
 
@@ -52,25 +56,5 @@ abstract class BaseLinearOpMode: LinearOpMode() {
     override fun runOpMode() {
         hardware = RobotHardware(hardwareMap)
         runLoop()
-    }
-
-
-    private class Logger {
-        private var logs: MutableList<Pair<String, String>> = mutableListOf()
-
-        fun addLog(log: String) {
-            val split = log.split("::")
-            if (split.count() == 2) {
-                logs.add(Pair(split[0].trim(), split[1].trim()))
-            } else {
-                logs.add(Pair("", log))
-            }
-        }
-
-        fun log(telemetry: Telemetry) {
-            telemetry.clear()
-            logs.forEach { telemetry.addData(it.first, it.second) }
-            telemetry.update()
-        }
     }
 }

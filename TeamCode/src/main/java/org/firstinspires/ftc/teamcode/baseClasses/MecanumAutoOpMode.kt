@@ -26,6 +26,7 @@ abstract class MecanumAutoOpMode: BaseLinearOpMode() {
         // button to setup Vuforia in debug mode where it will log all values
         //FIXME: For now always logging since I don't have a gamepad, remove the `|| true` before competition
         navigation.init(hardwareMap, logging = gamepad1.right_bumper || gamepad1.left_bumper || true)
+        waitForStart()
 
         while (opModeIsActive()) {
             mecaLoop()

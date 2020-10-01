@@ -8,5 +8,5 @@ val Gamepad.right_trigger_pressed: Boolean
 val Gamepad.left_trigger_pressed: Boolean
     get() = left_trigger > 0.2f
 
-typealias AddLog = (String) -> Unit
-typealias LoggerFunction = ((AddLog) -> Unit) -> Unit
+typealias LoggerProvider = (Logger) -> Unit
+typealias LoggerFunction = (LoggerProvider) -> Unit

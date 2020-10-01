@@ -34,10 +34,10 @@ class MecaDriveTest: MecanumTeleOpMode() {
         }
 
         logger { log ->
-            log("Left Front  :: ${if (lbPressed) "REVERSE" else "FORWARD"}")
-            log("Right Front :: ${if (rbPressed) "REVERSE" else "FORWARD"}")
-            log("Left Back   :: ${if (ltPressed) "REVERSE" else "FORWARD"}")
-            log("Right Back  :: ${if (rtPressed) "REVERSE" else "FORWARD"}")
+            log.text("Left Front  :: ${if (lbPressed) "REVERSE" else "FORWARD"}")
+            log.text("Right Front :: ${if (rbPressed) "REVERSE" else "FORWARD"}")
+            log.text("Left Back   :: ${if (ltPressed) "REVERSE" else "FORWARD"}")
+            log.text("Right Back  :: ${if (rtPressed) "REVERSE" else "FORWARD"}")
         }
     }
 

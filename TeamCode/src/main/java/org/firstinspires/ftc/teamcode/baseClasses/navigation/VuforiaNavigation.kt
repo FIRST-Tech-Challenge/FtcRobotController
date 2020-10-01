@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.baseClasses.navigation
 
+import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.ClassFactory
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix
 import org.firstinspires.ftc.robotcore.external.navigation.*
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection
-import org.firstinspires.ftc.teamcode.baseClasses.AddLog
-import org.firstinspires.ftc.teamcode.baseClasses.LoggerFunction
-import org.firstinspires.ftc.teamcode.baseClasses.UnitDistance
+import org.firstinspires.ftc.teamcode.baseClasses.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 
@@ -58,8 +57,8 @@ class VuforiaNavigation(logger: LoggerFunction) {
         shouldLog = logging
 
         logger { log ->
-            log("Vuforia :: Initializing")
-            log("Vuforia Logging :: $logging")
+            log.text("Vuforia :: Initializing")
+            log.text("Vuforia Logging", logging.toString())
         }
 
         initVuforia()
@@ -83,6 +82,8 @@ class VuforiaNavigation(logger: LoggerFunction) {
         vuforia = ClassFactory.getInstance().createVuforia(parameters)
 
         vuforiaParams = parameters
+
+        FtcDashboard.getInstance().startCameraStream(vuforia, 0.0)
     }
 
 
@@ -172,16 +173,16 @@ class VuforiaNavigation(logger: LoggerFunction) {
                 }
             }
 
-            logger { log -> log("Vuforia :: Finished updating location") }
+            logger { log -> log.text("Vuforia :: Finished updating location") }
         }
     }
 
 
-    private fun getRobotPosition(log: AddLog) {
+    private fun getRobotPosition(log: Logger) {
         targetVisible = false
         targetsList.forEach { target ->
             if ((target.listener as VuforiaTrackableDefaultListener).isVisible) {
-                if (shouldLog) log("Visible Target :: ${target.name}")
+                if (shouldLog) log.text("Visible Target", target.name)
                 targetVisible = true
 
                 val robotLocationTransform = (target.listener as VuforiaTrackableDefaultListener).updatedRobotLocation
@@ -194,13 +195,19 @@ class VuforiaNavigation(logger: LoggerFunction) {
     }
 
 
-    private fun printRobotPosition(log: AddLog) {
+    private fun printRobotPosition(log: Logger) {
         lastLocation?.also { location ->
             val translation = location.translation
             val orientation = Orientation.getOrientation(location, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES)
 
-            log("Translation (mm) {x, y, z} :: ${translation[0]}, ${translation[1]}, ${translation[2]}")
-            log("Orientation (deg) {x, y, z} :: ${orientation.firstAngle}, ${orientation.secondAngle}, ${orientation.thirdAngle}")
+//            log("Translation (mm) {x, y, z} :: ${translation[0]}, ${translation[1]}, ${translation[2]}")
+//            log("Orientation (deg) {x, y, z} :: ${orientation.firstAngle}, ${orientation.secondAngle}, ${orientation.thirdAngle}")
+
+            log.text("Translation X", translation[0].toString())
+            log.text("Translation Y", translation[1].toString())
+            log.text("Translation Z", translation[2].toString())
+
+            log.location(location)
         }
     }
 
