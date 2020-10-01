@@ -18,18 +18,24 @@ class motorMode {
 
 public class HardwareMapV2 {
     DcMotor frontRight, frontLeft, backRight, backLeft, intake, outtake;
+    DcMotor leftVertical, rightVertical, horizontal;
     ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake, outtake));
+    ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(leftVertical, rightVertical, horizontal));
     ModernRoboticsI2cGyro realgyro1;
     HardwareMap hwMap;
 
 
     public void init () {
-        frontLeft = hwMap.get(DcMotor.class, "front_left");
-        frontRight = hwMap.get(DcMotor.class, "front_right");
-        backRight = hwMap.get(DcMotor.class, "back_right");
-        backLeft = hwMap.get(DcMotor.class, "back_left");
-        intake = hwMap.get(DcMotor.class, "succ");
-        outtake = hwMap.get(DcMotor.class, "spit");
+        frontLeft = hwMap.dcMotor.get("front_left");
+        frontRight = hwMap.dcMotor.get("front_right");
+        backRight = hwMap.dcMotor.get("back_right");
+        backLeft = hwMap.dcMotor.get("back_left");
+        intake = hwMap.dcMotor.get("succ");
+        outtake = hwMap.dcMotor.get("spit");
+        leftVertical = hwMap.dcMotor.get("left_vertical");
+        rightVertical = hwMap.dcMotor.get("right_vertical");
+        horizontal = hwMap.dcMotor.get("horizontal");
+
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         frontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
@@ -37,14 +43,24 @@ public class HardwareMapV2 {
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotor.Direction.FORWARD);
         outtake.setDirection(DcMotor.Direction.FORWARD);
+
+        leftVertical.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightVertical.setDirection(DcMotorSimple.Direction.FORWARD);
+        horizontal.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void setEncoders(DcMotor.RunMode mode){
+    public void setEncoders(ArrayList<DcMotor> motors, DcMotor.RunMode mode){
         for (DcMotor motor: motors){
             motor.setMode(mode);
         }
     }
-    public void setEncoders(DcMotor.RunMode mode, motorMode... mm){
+
+    public void setEncoders(DcMotor.RunMode mode){
+        setEncoders(motors, mode);
+        setEncoders(odomotors, mode);
+    }
+
+    public void setEncoders(ArrayList<DcMotor> motors, DcMotor.RunMode mode, motorMode... mm){
         for (DcMotor motor: motors){
             for (motorMode m : mm) {
                 if (m.equals(motor)) {
