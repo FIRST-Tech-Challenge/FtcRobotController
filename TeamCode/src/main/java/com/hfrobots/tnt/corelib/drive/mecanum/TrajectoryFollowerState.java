@@ -22,11 +22,11 @@ package com.hfrobots.tnt.corelib.drive.mecanum;
 import android.util.Log;
 
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.State;
+import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
 import com.google.common.base.Ticker;
 import com.hfrobots.tnt.corelib.Constants;
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.state.State;
-import com.hfrobots.tnt.corelib.state.StopwatchTimeoutSafetyState;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -79,7 +79,7 @@ public abstract class TrajectoryFollowerState extends StopwatchTimeoutSafetyStat
     }
 
     @Override
-    public void liveConfigure(DebouncedGamepadButtons buttons) {
+    public void liveConfigure(NinjaGamePad gamePad) {
 
     }
 

@@ -20,8 +20,8 @@
 // Inspired by, ported from FRC Team 254, "The Cheesy Poofs" Cheesy Drive
 package com.hfrobots.tnt.corelib.drive;
 
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.RangeInput;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.RangeInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;

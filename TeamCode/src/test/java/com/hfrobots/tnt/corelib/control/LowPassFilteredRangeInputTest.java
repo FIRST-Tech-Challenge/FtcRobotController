@@ -19,7 +19,8 @@
 
 package com.hfrobots.tnt.corelib.control;
 
-import com.hfrobots.tnt.fakes.control.FakeRangeInput;
+import com.ftc9929.corelib.control.LowPassFilteredRangeInput;
+import com.ftc9929.testing.fakes.control.FakeRangeInput;
 
 import junit.framework.TestCase;
 

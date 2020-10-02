@@ -21,12 +21,13 @@ package com.hfrobots.tnt.season1617;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.RangeInput;
-import com.hfrobots.tnt.corelib.control.RangeInputButton;
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.RangeInput;
+import com.ftc9929.corelib.control.RangeInputButton;
+import com.ftc9929.corelib.state.State;
+import com.ftc9929.corelib.state.StateMachine;
 import com.hfrobots.tnt.corelib.drive.DriveTrain;
 import com.hfrobots.tnt.corelib.drive.DualDcMotor;
 import com.hfrobots.tnt.corelib.drive.ExtendedDcMotor;
@@ -37,23 +38,14 @@ import com.hfrobots.tnt.corelib.drive.TankDrive;
 import com.hfrobots.tnt.corelib.drive.Turn;
 import com.hfrobots.tnt.corelib.drive.Wheel;
 import com.hfrobots.tnt.corelib.state.DelayState;
-import com.hfrobots.tnt.corelib.state.State;
-import com.hfrobots.tnt.corelib.state.StateMachine;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsAnalogOpticalDistanceSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
@@ -465,7 +457,7 @@ public abstract class VelocityVortexHardware extends OpMode {
             }
 
             @Override
-            public void liveConfigure(DebouncedGamepadButtons buttons) {
+            public void liveConfigure(NinjaGamePad gamePad) {
 
             }
         };
@@ -483,7 +475,7 @@ public abstract class VelocityVortexHardware extends OpMode {
             }
 
             @Override
-            public void liveConfigure(DebouncedGamepadButtons buttons) {
+            public void liveConfigure(NinjaGamePad gamePad) {
 
             }
 
@@ -531,7 +523,7 @@ public abstract class VelocityVortexHardware extends OpMode {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -560,7 +552,7 @@ public abstract class VelocityVortexHardware extends OpMode {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -583,7 +575,7 @@ public abstract class VelocityVortexHardware extends OpMode {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -606,7 +598,7 @@ public abstract class VelocityVortexHardware extends OpMode {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -629,7 +621,7 @@ public abstract class VelocityVortexHardware extends OpMode {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -652,7 +644,7 @@ public abstract class VelocityVortexHardware extends OpMode {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -675,7 +667,7 @@ public abstract class VelocityVortexHardware extends OpMode {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -697,7 +689,7 @@ public abstract class VelocityVortexHardware extends OpMode {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -725,7 +717,7 @@ public abstract class VelocityVortexHardware extends OpMode {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }

@@ -20,11 +20,8 @@
 package com.hfrobots.tnt.season1617;
 
 
-import com.hfrobots.tnt.corelib.state.State;
-import com.hfrobots.tnt.corelib.state.ToggleState;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 /**

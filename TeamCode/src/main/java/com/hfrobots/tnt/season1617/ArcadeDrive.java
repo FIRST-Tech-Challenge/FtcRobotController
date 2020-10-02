@@ -21,8 +21,8 @@ package com.hfrobots.tnt.season1617;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.RangeInput;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.RangeInput;
 import com.hfrobots.tnt.corelib.drive.TankDrive;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;

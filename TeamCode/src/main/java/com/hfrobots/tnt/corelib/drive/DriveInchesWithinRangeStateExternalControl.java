@@ -20,7 +20,7 @@ package com.hfrobots.tnt.corelib.drive;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
+import com.ftc9929.corelib.control.NinjaGamePad;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -97,16 +97,8 @@ public class DriveInchesWithinRangeStateExternalControl extends ProportionalDriv
     }
 
     @Override
-    public void liveConfigure(DebouncedGamepadButtons buttons) {
-        super.liveConfigure(buttons);
+    public void liveConfigure(NinjaGamePad gamePad) {
 
-        if (buttons.getLeftStickButton().getRise()) {
-            expectedRangeInches -= .25;
-        } else if (buttons.getRightStickButton().getRise()) {
-            expectedRangeInches += .25;
-        }
-
-        telemetry.addData("05", "expected range inches " + expectedRangeInches);
     }
 
     @Override

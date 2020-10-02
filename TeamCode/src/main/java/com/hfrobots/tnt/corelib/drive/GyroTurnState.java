@@ -21,8 +21,8 @@ package com.hfrobots.tnt.corelib.drive;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.state.State;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.State;
 import com.hfrobots.tnt.corelib.state.TimeoutSafetyState;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.util.Range;
@@ -88,7 +88,7 @@ public class GyroTurnState extends TimeoutSafetyState {
     }
 
     @Override
-    public void liveConfigure(DebouncedGamepadButtons buttons) {
+    public void liveConfigure(NinjaGamePad gamePad) {
 
     }
 

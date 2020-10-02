@@ -19,6 +19,8 @@
 
 package com.hfrobots.tnt.corelib.state;
 
+import com.ftc9929.corelib.state.State;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**

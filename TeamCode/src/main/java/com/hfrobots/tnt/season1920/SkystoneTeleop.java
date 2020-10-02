@@ -22,13 +22,13 @@ package com.hfrobots.tnt.season1920;
 import android.content.Context;
 import android.util.Log;
 
+import com.ftc9929.corelib.control.NinjaGamePad;
 import com.google.common.base.Ticker;
 import com.google.common.collect.ImmutableSet;
 import com.hfrobots.tnt.corelib.chaosninja.ChaosConfigSaver;
 import com.hfrobots.tnt.corelib.chaosninja.ChaosController;
 import com.hfrobots.tnt.corelib.control.ChaosNinjaLandingState;
 import com.hfrobots.tnt.corelib.control.KonamiCode;
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
 import com.hfrobots.tnt.corelib.drive.mecanum.RoadRunnerMecanumDriveREV;
 import com.hfrobots.tnt.corelib.metrics.StatsDMetricSampler;
 import com.hfrobots.tnt.corelib.util.RealSimplerHardwareMap;

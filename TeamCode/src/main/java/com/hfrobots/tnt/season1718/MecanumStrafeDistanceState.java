@@ -21,9 +21,9 @@ package com.hfrobots.tnt.season1718;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.State;
 import com.hfrobots.tnt.corelib.drive.PidController;
-import com.hfrobots.tnt.corelib.state.State;
 import com.hfrobots.tnt.corelib.state.TimeoutSafetyState;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -122,20 +122,7 @@ public class MecanumStrafeDistanceState extends TimeoutSafetyState {
     }
 
     @Override
-    public void liveConfigure(DebouncedGamepadButtons buttons) {
-        if (buttons.getLeftBumper().getRise()) {
-            inchesToDrive -= .25;
-        } else if (buttons.getRightBumper().getRise()) {
-            inchesToDrive += .25;
-        }
+    public void liveConfigure(NinjaGamePad gamePad) {
 
-        if (buttons.getaButton().getRise()) {
-            powerLevel -= .1;
-        } else if (buttons.getyButton().getRise()) {
-            powerLevel += .1;
-        }
-
-        telemetry.addData("03", "power level " + powerLevel);
-        telemetry.addData("04", "inches to drive " + inchesToDrive);
     }
 }

@@ -21,9 +21,9 @@ package com.hfrobots.tnt.season1819;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.State;
 import com.hfrobots.tnt.corelib.drive.PidController;
-import com.hfrobots.tnt.corelib.state.State;
 import com.hfrobots.tnt.corelib.state.TimeoutSafetyState;
 import com.hfrobots.tnt.season1718.RobotConstants;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -137,51 +137,7 @@ public class MecanumDriveDistanceState extends TimeoutSafetyState {
     }
 
     @Override
-    public void liveConfigure(DebouncedGamepadButtons buttons) {
-        if (buttons.getLeftBumper().getRise()) {
-            inchesToDrive -= .25;
-        } else if (buttons.getRightBumper().getRise()) {
-            inchesToDrive += .25;
-        }
+    public void liveConfigure(NinjaGamePad gamePad) {
 
-        if (buttons.getaButton().getRise()) {
-            powerLevel -= .025;
-        } else if (buttons.getyButton().getRise()) {
-            powerLevel += .025;
-        }
-
-        boolean pidChanged = false;
-
-        if (buttons.getDpadUp().getRise()) {
-            pidP += .01;
-            pidChanged = true;
-        } else if (buttons.getDpadDown().getRise()) {
-            pidP -= 01;
-            pidChanged = true;
-        }
-
-        if (buttons.getDpadLeft().getRise()) {
-            pidI -= .01;
-            pidChanged = true;
-        } else if (buttons.getDpadRight().getRise()) {
-            pidI += .01;
-            pidChanged = true;
-        }
-
-        if (buttons.getLeftStickButton().getRise()) {
-            pidD -= .01;
-            pidChanged = true;
-        } else if (buttons.getRightStickButton().getRise()) {
-            pidD += .01;
-            pidChanged = true;
-        }
-
-        if (pidChanged) {
-            setupPidController();
-        }
-
-        telemetry.addData("01", "PID %f/%f/%f", pidP, pidI, pidD);
-        telemetry.addData("03", "power level " + powerLevel);
-        telemetry.addData("04", "inches to drive " + inchesToDrive);
     }
 }

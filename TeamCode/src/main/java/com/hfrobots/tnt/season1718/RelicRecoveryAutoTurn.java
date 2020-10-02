@@ -22,8 +22,8 @@ package com.hfrobots.tnt.season1718;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.NinjaGamePad;
 import com.hfrobots.tnt.corelib.drive.Turn;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

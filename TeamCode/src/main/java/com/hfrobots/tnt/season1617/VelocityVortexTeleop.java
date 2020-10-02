@@ -22,13 +22,13 @@ package com.hfrobots.tnt.season1617;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.State;
+import com.ftc9929.corelib.state.StateMachine;
+import com.ftc9929.corelib.state.ToggleState;
 import com.hfrobots.tnt.corelib.drive.CheesyDrive;
 import com.hfrobots.tnt.corelib.state.DelayState;
-import com.hfrobots.tnt.corelib.state.State;
-import com.hfrobots.tnt.corelib.state.StateMachine;
 import com.hfrobots.tnt.corelib.state.TimeoutSafetyState;
-import com.hfrobots.tnt.corelib.state.ToggleState;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -291,7 +291,7 @@ public class VelocityVortexTeleop extends VelocityVortexHardware
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -306,7 +306,7 @@ public class VelocityVortexTeleop extends VelocityVortexHardware
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
 
@@ -379,7 +379,7 @@ public class VelocityVortexTeleop extends VelocityVortexHardware
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
 

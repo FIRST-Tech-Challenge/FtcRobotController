@@ -19,7 +19,7 @@
 
 package com.hfrobots.tnt.corelib.metrics.sources;
 
-import com.hfrobots.tnt.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.OnOffButton;
 import com.hfrobots.tnt.corelib.metrics.GaugeMetricSource;
 
 import lombok.EqualsAndHashCode;

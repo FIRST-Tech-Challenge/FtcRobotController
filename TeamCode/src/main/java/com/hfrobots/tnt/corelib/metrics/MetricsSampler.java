@@ -1,6 +1,6 @@
 package com.hfrobots.tnt.corelib.metrics;
 
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.NinjaGamePad;
 
 public interface MetricsSampler {
 

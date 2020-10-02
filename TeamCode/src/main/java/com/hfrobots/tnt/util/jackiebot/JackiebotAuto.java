@@ -26,19 +26,18 @@ import com.acmerobotics.roadrunner.path.heading.ConstantInterpolator;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.RangeInput;
+import com.ftc9929.corelib.state.State;
+import com.ftc9929.corelib.state.StateMachine;
 import com.google.common.base.Ticker;
 import com.hfrobots.tnt.corelib.Constants;
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
-import com.hfrobots.tnt.corelib.control.RangeInput;
 import com.hfrobots.tnt.corelib.drive.Turn;
 import com.hfrobots.tnt.corelib.drive.mecanum.DriveConstants;
 import com.hfrobots.tnt.corelib.drive.mecanum.RoadRunnerMecanumDriveREV;
 import com.hfrobots.tnt.corelib.drive.mecanum.TrajectoryFollowerState;
 import com.hfrobots.tnt.corelib.drive.mecanum.TurnState;
-import com.hfrobots.tnt.corelib.state.State;
-import com.hfrobots.tnt.corelib.state.StateMachine;
 import com.hfrobots.tnt.corelib.util.RealSimplerHardwareMap;
 import com.hfrobots.tnt.season1819.TntPose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -258,7 +257,7 @@ public class JackiebotAuto extends OpMode {
                 }
 
                 if (initialDelaySeconds != 0) {
-                    stateMachine.addStartDelay(initialDelaySeconds);
+                    stateMachine.addStartDelay(initialDelaySeconds, Ticker.systemTicker());
                 }
 
                 stateMachineSetup = true;
@@ -468,7 +467,7 @@ public class JackiebotAuto extends OpMode {
             }
 
             @Override
-            public void liveConfigure(DebouncedGamepadButtons buttons) {
+            public void liveConfigure(NinjaGamePad gamePad) {
 
             }
 
@@ -517,7 +516,7 @@ public class JackiebotAuto extends OpMode {
             }
 
             @Override
-            public void liveConfigure(DebouncedGamepadButtons buttons) {
+            public void liveConfigure(NinjaGamePad gamePad) {
 
             }
         };

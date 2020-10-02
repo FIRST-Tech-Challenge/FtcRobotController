@@ -22,18 +22,16 @@ package com.hfrobots.tnt.outreach.paradebot;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.LowPassFilteredRangeInput;
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
-import com.hfrobots.tnt.corelib.control.ParametricScaledRangeInput;
-import com.hfrobots.tnt.corelib.control.RangeInput;
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.LowPassFilteredRangeInput;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.ParametricScaledRangeInput;
+import com.ftc9929.corelib.control.RangeInput;
 import com.hfrobots.tnt.corelib.drive.NewCheesyDrive;
 import com.hfrobots.tnt.corelib.drive.NinjaMotor;
-import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.Range;

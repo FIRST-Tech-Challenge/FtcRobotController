@@ -20,11 +20,11 @@
 package com.hfrobots.tnt.season1920.util;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.RangeInput;
 import com.google.common.base.Ticker;
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.RangeInput;
 import com.hfrobots.tnt.corelib.util.RealSimplerHardwareMap;
 import com.hfrobots.tnt.season1920.CapstoneMechanism;
 import com.hfrobots.tnt.season1920.DeliveryMechanism;
@@ -302,6 +302,11 @@ public class SkystoneMechanismsSelfTest extends LinearOpMode {
         @Override
         public boolean isPressed() {
             return buttonOn;
+        }
+
+        @Override
+        public DebouncedButton debounced() {
+            return new DebouncedButton(this);
         }
     }
 

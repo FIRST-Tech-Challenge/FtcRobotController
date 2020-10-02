@@ -1,7 +1,8 @@
 package com.hfrobots.tnt.corelib.state;
 
 
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.State;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -27,7 +28,7 @@ public class DelayState extends State {
     }
 
     @Override
-    public void liveConfigure(DebouncedGamepadButtons buttons) {
+    public void liveConfigure(NinjaGamePad gamePad) {
 
     }
 

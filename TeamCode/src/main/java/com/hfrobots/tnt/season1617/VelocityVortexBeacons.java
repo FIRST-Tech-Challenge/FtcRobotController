@@ -22,14 +22,15 @@ package com.hfrobots.tnt.season1617;
 // import lombok.NonNull;
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.State;
+import com.ftc9929.corelib.state.StateMachine;
+import com.google.common.base.Ticker;
 import com.hfrobots.tnt.corelib.drive.DriveUntilLineState;
 import com.hfrobots.tnt.corelib.drive.GyroTurnState;
 import com.hfrobots.tnt.corelib.drive.ProportionalDriveInchesStateExternalControl;
 import com.hfrobots.tnt.corelib.drive.Turn;
 import com.hfrobots.tnt.corelib.state.DelayState;
-import com.hfrobots.tnt.corelib.state.State;
-import com.hfrobots.tnt.corelib.state.StateMachine;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -268,7 +269,7 @@ public class VelocityVortexBeacons extends VelocityVortexHardware {
         }
 
         if (initialDelaySeconds != 0) {
-            stateMachine.addStartDelay(initialDelaySeconds);
+            stateMachine.addStartDelay(initialDelaySeconds, Ticker.systemTicker());
         }
 
         if (debugging) {
@@ -914,7 +915,7 @@ public class VelocityVortexBeacons extends VelocityVortexHardware {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
 
@@ -997,7 +998,7 @@ public class VelocityVortexBeacons extends VelocityVortexHardware {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }

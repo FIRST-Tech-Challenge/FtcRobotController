@@ -19,13 +19,11 @@
 
 package com.hfrobots.tnt.season1920;
 
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.LowPassFilteredRangeInput;
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.ParametricScaledRangeInput;
-import com.hfrobots.tnt.corelib.control.RangeInput;
-import com.hfrobots.tnt.corelib.control.RangeInputButton;
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.RangeInput;
+import com.ftc9929.corelib.control.RangeInputButton;
 
 import lombok.Builder;
 

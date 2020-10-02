@@ -21,20 +21,20 @@ package com.hfrobots.tnt.season1920;
 
 import android.util.Log;
 
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.RangeInput;
+import com.ftc9929.corelib.state.State;
+import com.ftc9929.corelib.state.StopwatchDelayState;
+import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
 import com.google.common.base.Ticker;
 import com.google.common.collect.Lists;
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.RangeInput;
 import com.hfrobots.tnt.corelib.drive.ExtendedDcMotor;
 import com.hfrobots.tnt.corelib.drive.NinjaMotor;
 import com.hfrobots.tnt.corelib.drive.PidController;
 import com.hfrobots.tnt.corelib.drive.ServoUtil;
 import com.hfrobots.tnt.corelib.drive.StallDetector;
-import com.hfrobots.tnt.corelib.state.State;
-import com.hfrobots.tnt.corelib.state.StopwatchDelayState;
-import com.hfrobots.tnt.corelib.state.StopwatchTimeoutSafetyState;
 import com.hfrobots.tnt.corelib.util.SimplerHardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -368,7 +368,7 @@ public class DeliveryMechanism {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -1210,7 +1210,7 @@ public class DeliveryMechanism {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -1239,7 +1239,7 @@ public class DeliveryMechanism {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -1270,7 +1270,7 @@ public class DeliveryMechanism {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }

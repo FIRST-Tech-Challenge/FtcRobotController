@@ -1,9 +1,9 @@
 package com.hfrobots.tnt.season1819;
 
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.fakes.control.FakeOnOffButton;
-import com.hfrobots.tnt.fakes.drive.FakeExtendedDcMotor;
-import com.hfrobots.tnt.fakes.drive.FakeServo;
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.testing.fakes.control.FakeOnOffButton;
+import com.ftc9929.testing.fakes.drive.FakeDcMotorEx;
+import com.ftc9929.testing.fakes.drive.FakeServo;
 import com.hfrobots.tnt.fakes.FakeTelemetry;
 
 import junit.framework.Assert;
@@ -16,7 +16,7 @@ public class ParticleScoringMechanismTest {
 
     private FakeServo boxTipServo = new FakeServo();
 
-    private FakeExtendedDcMotor elevatorMotor = new FakeExtendedDcMotor();
+    private FakeDcMotorEx elevatorMotor = new FakeDcMotorEx();
 
     private FakeOnOffButton elevatorCommandDownButton = new FakeOnOffButton();
 

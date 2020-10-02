@@ -22,10 +22,10 @@ package com.hfrobots.tnt.season1920;
 
 import android.util.Log;
 
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.OnOffButton;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Ticker;
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
 import com.hfrobots.tnt.corelib.util.SimplerHardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 

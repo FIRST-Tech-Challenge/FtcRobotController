@@ -19,9 +19,11 @@
 
 package com.hfrobots.tnt.corelib.state;
 
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.state.State;
+import com.ftc9929.corelib.state.StateMachine;
 
 import junit.framework.TestCase;
 
@@ -137,7 +139,7 @@ public class StateMachineTest extends TestCase {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
             configuredCallCount++;
 
             //if (buttons.getaButton().getRise()) {
@@ -152,6 +154,11 @@ public class StateMachineTest extends TestCase {
         @Override
         public boolean isPressed() {
             return pressed;
+        }
+
+        @Override
+        public DebouncedButton debounced() {
+            return new DebouncedButton(this);
         }
     }
 
