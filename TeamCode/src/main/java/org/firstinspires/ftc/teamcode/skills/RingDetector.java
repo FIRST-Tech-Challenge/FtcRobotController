@@ -31,14 +31,11 @@ public class RingDetector {
     Telemetry telemetry;
     private TFObjectDetector tfod;
     private HardwareMap hardwareMap;
-    private String targetZone = " ";
-    private static final String LABEL_RING = "Ring";
-
-
-    private static final String TFOD_MODEL_ASSET = "block-test.tflite";
-    private static final String LABEL_A = "A";
-    private static final String LABEL_B = "B";
-    private static final String LABEL_C = "C";
+    private String targetZone = "";
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    private static final String LABEL_A = "None";
+    private static final String LABEL_B = "Single";
+    private static final String LABEL_C = "Quad";
 
     private static final String VUFORIA_KEY =
             "AZs0syj/////AAABmaxIME6H4k74lx12Yv3gnoYvtGHACOflWi3Ej36sE7Hn86xDafDA3vhzxSOgBtyNIQ1ua6KP2j3I2ScFedVw8n6MJ7PReZQP4sTdc8gHvoy17hD574exMmoUQ3rVUMkgU2fwN2enw2X+Ls2F3BLuCg/A4SBZjzG3cweO+owiKO/2iSIpeC4rBdUnPiTxqPHNa8UOxyncCGV0+ZFXresQm/rK7HbOKB9MEszi8eW2JNyfjTdKozwDxikeDRV7yPvoIhZ5A+mrrC1GgrEzYwNTVHeki2cg4Ea62pYwdscaJ+6IWHlBIDutqmgJu/Os3kAzZkOh0TJ8P3e29Ou4ZczTdDH0oqkPt78Nt4VdYbSbLRCw";
@@ -78,10 +75,15 @@ public class RingDetector {
                                 recognition.getLeft(), recognition.getTop());
                         telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                                 recognition.getRight(), recognition.getBottom());
-                        telemetry.addData(String.format("  Width/height (%d)", i), "%.03f , %.03f, %d , %d",
-                                recognition.getWidth(), recognition.getHeight(), recognition.getImageWidth(), recognition.getImageHeight());
-                        targetZone = recognition.getLabel();
-                        if (recognition.getLabel().contentEquals(LABEL_A)) {
+                        if ((recognition.getLabel().contentEquals(LABEL_B))) {
+                            targetZone = "B";
+                        } else if (recognition.getLabel().contentEquals(LABEL_C)) {
+                            targetZone = "C";
+                        } else {
+                            targetZone = "A";
+                        }
+
+                        if ((recognition.getLabel().contentEquals(LABEL_B)) || (recognition.getLabel().contentEquals(LABEL_C))) {
                             found = true;
                             telemetry.addData("Found", found);
                             break;
@@ -114,7 +116,7 @@ public class RingDetector {
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_A, LABEL_B, LABEL_C);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_C, LABEL_B);
     }
 
     protected void activateTfod(){
