@@ -19,11 +19,11 @@
 
 package com.hfrobots.tnt.season1920;
 
+import com.ftc9929.testing.fakes.control.FakeOnOffButton;
+import com.ftc9929.testing.fakes.control.FakeRangeInput;
+import com.ftc9929.testing.fakes.drive.FakeDcMotorEx;
+import com.ftc9929.testing.fakes.drive.FakeServo;
 import com.google.common.testing.FakeTicker;
-import com.hfrobots.tnt.fakes.control.FakeOnOffButton;
-import com.hfrobots.tnt.fakes.control.FakeRangeInput;
-import com.hfrobots.tnt.fakes.drive.FakeExtendedDcMotor;
-import com.hfrobots.tnt.fakes.drive.FakeServo;
 import com.hfrobots.tnt.fakes.sensors.FakeDigitalChannel;
 import com.hfrobots.tnt.fakes.FakeHardwareMap;
 import com.hfrobots.tnt.fakes.FakeNinjaGamePad;
@@ -38,11 +38,11 @@ import java.util.concurrent.TimeUnit;
 public class DeliveryMechanismTest {
     private FakeHardwareMap hardwareMap;
 
-    private FakeExtendedDcMotor liftMotor;
+    private FakeDcMotorEx liftMotor;
 
-    private FakeExtendedDcMotor leftIntakeMotor;
+    private FakeDcMotorEx leftIntakeMotor;
 
-    private FakeExtendedDcMotor rightIntakeMotor;
+    private FakeDcMotorEx rightIntakeMotor;
 
     private FakeServo fingerServo;
 
@@ -75,9 +75,9 @@ public class DeliveryMechanismTest {
 
         hardwareMap = new FakeHardwareMap();
 
-        liftMotor = new FakeExtendedDcMotor();
-        leftIntakeMotor = new FakeExtendedDcMotor();
-        rightIntakeMotor = new FakeExtendedDcMotor();
+        liftMotor = new FakeDcMotorEx();
+        leftIntakeMotor = new FakeDcMotorEx();
+        rightIntakeMotor = new FakeDcMotorEx();
 
         fingerServo = new FakeServo();
         wristServo = new FakeServo();

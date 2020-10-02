@@ -19,7 +19,8 @@
 
 package com.hfrobots.tnt.corelib.control;
 
-import com.hfrobots.tnt.fakes.control.FakeOnOffButton;
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.testing.fakes.control.FakeOnOffButton;
 
 import org.junit.Assert;
 import org.junit.Test;

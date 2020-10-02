@@ -21,21 +21,21 @@ package com.hfrobots.tnt.season1819;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.control.LowPassFilteredRangeInput;
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.ParametricScaledRangeInput;
-import com.hfrobots.tnt.corelib.control.RangeInput;
-import com.hfrobots.tnt.corelib.control.RangeInputButton;
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.LowPassFilteredRangeInput;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.ParametricScaledRangeInput;
+import com.ftc9929.corelib.control.RangeInput;
+import com.ftc9929.corelib.control.RangeInputButton;
+import com.ftc9929.corelib.state.State;
 import com.hfrobots.tnt.corelib.drive.ExtendedDcMotor;
 import com.hfrobots.tnt.corelib.drive.NinjaMotor;
-import com.hfrobots.tnt.corelib.state.State;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -170,7 +170,7 @@ public abstract class RoverRuckusHardware extends OpMode {
 
     protected OnOffButton boxTipButton;
 
-    protected ExtendedDcMotor particleScoreElevatorMotor;
+    protected DcMotorEx particleScoreElevatorMotor;
 
     protected Servo boxTipServo;
 
@@ -267,7 +267,7 @@ public abstract class RoverRuckusHardware extends OpMode {
 
     protected void setupParticleScoringMechanism() {
         try {
-            particleScoreElevatorMotor = NinjaMotor.asNeverest20Orbital(hardwareMap.dcMotor.get("particleScoreElevatorMotor"));
+            particleScoreElevatorMotor = hardwareMap.get(DcMotorEx.class, "particleScoreElevatorMotor");
             particleScoreElevatorMotor.setDirection(DcMotor.Direction.REVERSE);
 
             // Need to disable RUN_USING_ENCODER end ZPB.Brake to use a voltage feed forward for holding
@@ -503,7 +503,7 @@ public abstract class RoverRuckusHardware extends OpMode {
             }
 
             @Override
-            public void liveConfigure(DebouncedGamepadButtons buttons) {
+            public void liveConfigure(NinjaGamePad gamePad) {
 
             }
         };
@@ -521,7 +521,7 @@ public abstract class RoverRuckusHardware extends OpMode {
             }
 
             @Override
-            public void liveConfigure(DebouncedGamepadButtons buttons) {
+            public void liveConfigure(NinjaGamePad gamePad) {
 
             }
 

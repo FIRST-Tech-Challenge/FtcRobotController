@@ -23,10 +23,9 @@ package com.hfrobots.tnt.season1718;
 
 import android.util.Log;
 
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.State;
 import com.hfrobots.tnt.corelib.Constants;
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.drive.PidController;
-import com.hfrobots.tnt.corelib.state.State;
 import com.hfrobots.tnt.corelib.state.TimeoutSafetyState;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -53,7 +52,7 @@ public class StrafeVuMarkDistanceState extends TimeoutSafetyState {
     }
 
     @Override
-    public void liveConfigure(DebouncedGamepadButtons buttons) {
+    public void liveConfigure(NinjaGamePad gamePad) {
 
     }
 

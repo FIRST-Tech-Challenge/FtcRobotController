@@ -21,8 +21,8 @@ package com.hfrobots.tnt.corelib.drive;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.state.State;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.State;
 import com.hfrobots.tnt.corelib.state.TimeoutSafetyState;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -174,22 +174,8 @@ public class DriveInchesStateExternalControl extends TimeoutSafetyState {
     }
 
     @Override
-    public void liveConfigure(DebouncedGamepadButtons buttons) {
+    public void liveConfigure(NinjaGamePad gamePad) {
 
-        if (buttons.getLeftBumper().getRise()) {
-            inchesToDrive -= .25;
-        } else if (buttons.getRightBumper().getRise()) {
-            inchesToDrive += .25;
-        }
-
-        if (buttons.getaButton().getRise()) {
-            powerLevel -= .1;
-        } else if (buttons.getyButton().getRise()) {
-            powerLevel += .1;
-        }
-
-        telemetry.addData("03", "power level " + powerLevel);
-        telemetry.addData("04", "inches to drive " + inchesToDrive);
     }
 
     private void stopDriving() {

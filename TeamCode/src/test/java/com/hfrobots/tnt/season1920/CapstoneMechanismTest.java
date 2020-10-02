@@ -20,14 +20,12 @@
 
 package com.hfrobots.tnt.season1920;
 
-import android.graphics.Paint;
-
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.testing.fakes.control.FakeOnOffButton;
+import com.ftc9929.testing.fakes.drive.FakeServo;
 import com.google.common.testing.FakeTicker;
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
 import com.hfrobots.tnt.fakes.FakeHardwareMap;
 import com.hfrobots.tnt.fakes.FakeTelemetry;
-import com.hfrobots.tnt.fakes.control.FakeOnOffButton;
-import com.hfrobots.tnt.fakes.drive.FakeServo;
 
 import org.junit.Assert;
 import org.junit.Before;

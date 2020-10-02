@@ -19,11 +19,11 @@
 
 package com.hfrobots.tnt.season1920;
 
-import com.hfrobots.tnt.fakes.control.FakeOnOffButton;
-import com.hfrobots.tnt.fakes.control.FakeRangeInput;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.RangeInput;
-import com.hfrobots.tnt.fakes.drive.FakeExtendedDcMotor;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.RangeInput;
+import com.ftc9929.testing.fakes.control.FakeOnOffButton;
+import com.ftc9929.testing.fakes.control.FakeRangeInput;
+import com.ftc9929.testing.fakes.drive.FakeDcMotorEx;
 import com.hfrobots.tnt.corelib.drive.mecanum.RoadRunnerMecanumDriveREV;
 import com.hfrobots.tnt.fakes.sensors.FakeBNO055IMU;
 import com.hfrobots.tnt.fakes.FakeHardwareMap;
@@ -35,13 +35,13 @@ import org.junit.Test;
 public class OpenLoopDriveBaseControlTest {
     private FakeHardwareMap hardwareMap;
 
-    private FakeExtendedDcMotor leftFrontDriveMotor;
+    private FakeDcMotorEx leftFrontDriveMotor;
 
-    private FakeExtendedDcMotor leftRearDriveMotor;
+    private FakeDcMotorEx leftRearDriveMotor;
 
-    private FakeExtendedDcMotor rightFrontDriveMotor;
+    private FakeDcMotorEx rightFrontDriveMotor;
 
-    private FakeExtendedDcMotor rightRearDriveMotor;
+    private FakeDcMotorEx rightRearDriveMotor;
 
     private FakeBNO055IMU imu;
 
@@ -70,16 +70,16 @@ public class OpenLoopDriveBaseControlTest {
         imu = new FakeBNO055IMU();
         hardwareMap.addDevice("imu", imu);
 
-        leftFrontDriveMotor = new FakeExtendedDcMotor();
+        leftFrontDriveMotor = new FakeDcMotorEx();
         hardwareMap.addDevice("leftFrontDriveMotor", leftFrontDriveMotor);
 
-        leftRearDriveMotor = new FakeExtendedDcMotor();
+        leftRearDriveMotor = new FakeDcMotorEx();
         hardwareMap.addDevice("leftRearDriveMotor", leftRearDriveMotor);
 
-        rightFrontDriveMotor = new FakeExtendedDcMotor();
+        rightFrontDriveMotor = new FakeDcMotorEx();
         hardwareMap.addDevice("rightFrontDriveMotor", rightFrontDriveMotor);
 
-        rightRearDriveMotor = new FakeExtendedDcMotor();
+        rightRearDriveMotor = new FakeDcMotorEx();
         hardwareMap.addDevice("rightRearDriveMotor", rightRearDriveMotor);
 
         RoadRunnerMecanumDriveREV drivebase = new RoadRunnerMecanumDriveREV(new SkystoneDriveConstants(), hardwareMap, false);

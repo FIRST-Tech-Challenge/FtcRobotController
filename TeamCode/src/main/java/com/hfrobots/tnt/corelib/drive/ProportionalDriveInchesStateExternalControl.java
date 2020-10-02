@@ -20,7 +20,7 @@ package com.hfrobots.tnt.corelib.drive;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
+import com.ftc9929.corelib.control.NinjaGamePad;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -102,25 +102,8 @@ public class ProportionalDriveInchesStateExternalControl extends DriveInchesStat
     }
 
     @Override
-    public void liveConfigure(DebouncedGamepadButtons buttons) {
-        super.liveConfigure(buttons);
+    public void liveConfigure(NinjaGamePad gamePad) {
 
-        if (buttons.getDpadDown().getRise()) {
-            minimumPowerLevel -= 0.05;
-        } else if (buttons.getDpadUp().getRise()) {
-            minimumPowerLevel += 0.05;
-        }
-
-        if (buttons.getDpadRight().getRise()) {
-            inchesToSlowDown += 0.25;
-        } else if (buttons.getDpadLeft().getRise()) {
-            inchesToSlowDown -= 0.255;
-        }
-
-        calculateEncoderCountToSlowDown(drive);
-
-        telemetry.addData("03", "min pow " + minimumPowerLevel);
-        telemetry.addData("04", "inchesToSlowDown" + inchesToSlowDown);
     }
 
     @Override

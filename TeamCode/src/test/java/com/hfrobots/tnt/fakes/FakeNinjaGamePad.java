@@ -19,11 +19,12 @@
 
 package com.hfrobots.tnt.fakes;
 
-import com.hfrobots.tnt.fakes.control.FakeOnOffButton;
-import com.hfrobots.tnt.fakes.control.FakeRangeInput;
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.RangeInput;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.RangeInput;
+import com.ftc9929.testing.fakes.control.FakeOnOffButton;
+import com.ftc9929.testing.fakes.control.FakeRangeInput;
+
 
 public class FakeNinjaGamePad extends NinjaGamePad {
     private final FakeOnOffButton aButton = new FakeOnOffButton();

@@ -21,15 +21,16 @@ package com.hfrobots.tnt.season1819;
 
 import android.util.Log;
 
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.state.State;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.math.DoubleMath;
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
 import com.hfrobots.tnt.corelib.drive.ExtendedDcMotor;
 import com.hfrobots.tnt.corelib.drive.PidController;
-import com.hfrobots.tnt.corelib.state.State;
 import com.hfrobots.tnt.corelib.state.TimeoutSafetyState;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -69,7 +70,7 @@ public class ParticleScoringMechanism {
 
     private DebouncedButton elevatorEmergencyStopButton;
 
-    private ExtendedDcMotor elevatorMotor;
+    private DcMotorEx elevatorMotor;
 
     private DigitalChannel upperElevatorLimit;
 
@@ -102,7 +103,7 @@ public class ParticleScoringMechanism {
                                     final DebouncedButton elevatorUpperLimitButton,
                                     final DebouncedButton elevatorLowerLimitButton,
                                     final DebouncedButton elevatorEmergencyStopButton,
-                                    final ExtendedDcMotor elevatorMotor,
+                                    final DcMotorEx elevatorMotor,
                                     final DigitalChannel upperElevatorLimit,
                                     final DigitalChannel lowerElevatorLimit,
                                     final Telemetry telemetry,
@@ -485,7 +486,7 @@ public class ParticleScoringMechanism {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -572,7 +573,7 @@ public class ParticleScoringMechanism {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
 
@@ -637,7 +638,7 @@ public class ParticleScoringMechanism {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -680,7 +681,7 @@ public class ParticleScoringMechanism {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -716,7 +717,7 @@ public class ParticleScoringMechanism {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -758,7 +759,7 @@ public class ParticleScoringMechanism {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }
@@ -809,7 +810,7 @@ public class ParticleScoringMechanism {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }

@@ -19,8 +19,7 @@
 
 package com.hfrobots.tnt.corelib.sensors;
 
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.state.State;
+import com.ftc9929.corelib.state.State;
 import com.qualcomm.robotcore.hardware.I2cControllerPortDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 

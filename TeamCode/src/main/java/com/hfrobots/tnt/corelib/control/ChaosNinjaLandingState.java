@@ -20,7 +20,9 @@
 
 package com.hfrobots.tnt.corelib.control;
 
-import com.hfrobots.tnt.corelib.state.State;
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.State;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -82,16 +84,16 @@ public class ChaosNinjaLandingState extends State {
 
     }
 
+    @Override
+    public void liveConfigure(NinjaGamePad gamePad) {
+
+    }
+
     public ChaosNinjaLandingState(NinjaGamePad gamePad, Telemetry telemetry) {
         super("ninja has evolved into chaos ninja!", telemetry);
         this.gamePad = gamePad;
         this.leftBumper = new DebouncedButton(gamePad.getLeftBumper());
         this.dPadUp = new DebouncedButton(gamePad.getDpadUp());
         this.dPadDown = new DebouncedButton(gamePad.getDpadDown());
-    }
-
-    @Override
-    public void liveConfigure(DebouncedGamepadButtons buttons) {
-
     }
 }

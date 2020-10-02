@@ -21,9 +21,9 @@ package com.hfrobots.tnt.season1718;
 
 import android.util.Log;
 
+import com.ftc9929.corelib.state.State;
 import com.hfrobots.tnt.corelib.Constants;
 import com.hfrobots.tnt.corelib.drive.Turn;
-import com.hfrobots.tnt.corelib.state.State;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 

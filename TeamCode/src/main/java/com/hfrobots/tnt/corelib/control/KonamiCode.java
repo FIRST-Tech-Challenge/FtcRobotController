@@ -20,10 +20,12 @@
 
 package com.hfrobots.tnt.corelib.control;
 
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.ButtonPressWithTimeoutState;
+import com.ftc9929.corelib.state.State;
+import com.ftc9929.corelib.state.StateMachine;
 import com.google.common.base.Ticker;
-import com.hfrobots.tnt.corelib.state.ButtonPressWithTimeoutState;
-import com.hfrobots.tnt.corelib.state.State;
-import com.hfrobots.tnt.corelib.state.StateMachine;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 

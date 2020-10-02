@@ -20,12 +20,12 @@
 
 package com.hfrobots.tnt.corelib.control;
 
+import com.ftc9929.corelib.state.State;
+import com.ftc9929.testing.fakes.control.FakeOnOffButton;
 import com.google.common.testing.FakeTicker;
 import com.hfrobots.tnt.corelib.state.DelayState;
-import com.hfrobots.tnt.corelib.state.State;
 import com.hfrobots.tnt.fakes.FakeNinjaGamePad;
 import com.hfrobots.tnt.fakes.FakeTelemetry;
-import com.hfrobots.tnt.fakes.control.FakeOnOffButton;
 
 import org.junit.Assert;
 import org.junit.Before;

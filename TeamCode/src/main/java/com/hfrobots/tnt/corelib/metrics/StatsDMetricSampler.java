@@ -21,9 +21,9 @@ package com.hfrobots.tnt.corelib.metrics;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.RangeInput;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.RangeInput;
 import com.hfrobots.tnt.corelib.metrics.sources.DcMotorCurrentMetricSource;
 import com.hfrobots.tnt.corelib.metrics.sources.DcMotorPowerMetricSource;
 import com.hfrobots.tnt.corelib.metrics.sources.DigitalChannelMetricSource;

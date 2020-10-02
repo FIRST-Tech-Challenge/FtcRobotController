@@ -27,13 +27,10 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.ServoPositionState;
+import com.ftc9929.corelib.state.State;
 import com.hfrobots.tnt.corelib.Constants;
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
-import com.hfrobots.tnt.corelib.control.RangeInputButton;
-import com.hfrobots.tnt.corelib.state.ServoPositionState;
-import com.hfrobots.tnt.corelib.state.State;
 import com.hfrobots.tnt.corelib.state.TimeoutSafetyState;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -862,7 +859,7 @@ public class RoverRuckusAutonomous extends RoverRuckusHardware {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
             // do nothing
         }
     }
@@ -892,7 +889,7 @@ public class RoverRuckusAutonomous extends RoverRuckusHardware {
         }
 
         @Override
-        public void liveConfigure(DebouncedGamepadButtons buttons) {
+        public void liveConfigure(NinjaGamePad gamePad) {
 
         }
     }

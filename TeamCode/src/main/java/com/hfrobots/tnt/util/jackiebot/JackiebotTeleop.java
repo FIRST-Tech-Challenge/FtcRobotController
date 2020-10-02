@@ -22,8 +22,8 @@ package com.hfrobots.tnt.util.jackiebot;
 
 import android.util.Log;
 
-import com.hfrobots.tnt.corelib.control.LowPassFilteredRangeInput;
-import com.hfrobots.tnt.corelib.control.RangeInput;
+import com.ftc9929.corelib.control.LowPassFilteredRangeInput;
+import com.ftc9929.corelib.control.RangeInput;
 import com.hfrobots.tnt.corelib.metrics.StatsDMetricSampler;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

@@ -23,18 +23,17 @@ import android.util.Log;
 
 import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.LowPassFilteredRangeInput;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
+import com.ftc9929.corelib.control.ParametricScaledRangeInput;
+import com.ftc9929.corelib.control.RangeInput;
+import com.ftc9929.corelib.control.RangeInputButton;
+import com.ftc9929.corelib.state.State;
 import com.hfrobots.tnt.corelib.Constants;
-import com.hfrobots.tnt.corelib.control.DebouncedButton;
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.control.NinjaGamePad;
-import com.hfrobots.tnt.corelib.control.OnOffButton;
-import com.hfrobots.tnt.corelib.control.ParametricScaledRangeInput;
-import com.hfrobots.tnt.corelib.control.RangeInput;
-import com.hfrobots.tnt.corelib.control.RangeInputButton;
-import com.hfrobots.tnt.corelib.control.LowPassFilteredRangeInput;
 import com.hfrobots.tnt.corelib.drive.ExtendedDcMotor;
 import com.hfrobots.tnt.corelib.drive.NinjaMotor;
-import com.hfrobots.tnt.corelib.state.State;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
 import com.qualcomm.hardware.lynx.LynxI2cColorRangeSensor;
@@ -413,7 +412,7 @@ public abstract class RelicRecoveryHardware extends OpMode {
             }
 
             @Override
-            public void liveConfigure(DebouncedGamepadButtons buttons) {
+            public void liveConfigure(NinjaGamePad gamePad) {
 
             }
         };
@@ -431,7 +430,7 @@ public abstract class RelicRecoveryHardware extends OpMode {
             }
 
             @Override
-            public void liveConfigure(DebouncedGamepadButtons buttons) {
+            public void liveConfigure(NinjaGamePad gamePad) {
 
             }
 

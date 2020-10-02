@@ -20,20 +20,13 @@
 package com.hfrobots.tnt.season1718;
 
 
-import android.util.Log;
-
-import com.hfrobots.tnt.corelib.control.DebouncedGamepadButtons;
-import com.hfrobots.tnt.corelib.drive.Turn;
-import com.hfrobots.tnt.corelib.state.State;
+import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.state.State;
 import com.hfrobots.tnt.corelib.state.TimeoutSafetyState;
-import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
-
-import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 
 /**
  * Proof of concept of an time-based turn for the Mecanum drive
@@ -97,7 +90,7 @@ public class MecanumTimedTurnState extends TimeoutSafetyState
     }
 
     @Override
-    public void liveConfigure(DebouncedGamepadButtons buttons) {
+    public void liveConfigure(NinjaGamePad gamePad) {
 
     }
 
