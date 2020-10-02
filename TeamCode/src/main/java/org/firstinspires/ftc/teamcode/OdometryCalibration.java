@@ -48,15 +48,15 @@ public class OdometryCalibration extends LinearOpMode {
         while(getZAngle() < 90 && opModeIsActive()){
             drivetrain.forward(0.5);
             if(getZAngle() < 60) {
-                drivetrain.forward(0.5);
+                drivetrain.spin(true, 0.5);
             }else{
-                drivetrain.forward(0.3);
+                drivetrain.spin(true, 0.3);
             }
             telemetry.addData("IMU Angle", getZAngle());
             telemetry.update();
         }
         drivetrain.stop();
-        
+
         timer.reset();
         while(timer.milliseconds() < 1000 && opModeIsActive()){
             telemetry.addData("IMU Angle", getZAngle());

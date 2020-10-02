@@ -9,11 +9,14 @@ public class Drivetrain {
     public void stop(){
         forward(0);
     }
+    public void setMotorPowers(double lb, double rb, double lf, double rf){
+        robot.frontRight.setPower(rf);
+        robot.backRight.setPower(rb);
+        robot.frontLeft.setPower(lf);
+        robot.backLeft.setPower(lb);
+    }
     public void spin(boolean right, double power){
-
-        robot.frontLeft.setPower(power);
-        robot.backLeft.setPower(power);
-        robot.frontRight.setPower(-power);
-        robot.backRight.setPower(-power);
+        power = (right) ? power : -power;
+        setMotorPowers(power, -power, power, -power);
     }
 }
