@@ -45,13 +45,15 @@ import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
+import java.io.IOException;
+
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
 /**
- * This 2019-2020 OpMode illustrates the basics of using the Vuforia localizer to determine
- * positioning and orientation of robot on the SKYSTONE FTC field.
+ * This 2020-2021 OpMode illustrates the basics of using the Vuforia localizer to determine
+ * positioning and orientation of robot on the UltimateGoal FTC field.
  * The code is structured as a LinearOpMode
  *
  * When images are located, Vuforia is able to determine the position and orientation of the
@@ -70,7 +72,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
  *
  * @see VuforiaLocalizer
  * @see VuforiaTrackableDefaultListener
- * see  skystone/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
+ * see  ultimategoal/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
@@ -79,8 +81,8 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
  * is explained below.
  */
 
-@TeleOp(name="SKYSTONE Vuforia Nav Webcam", group ="MechBot")
-public class VuforiaSkyStoneNavigationWebcam extends LinearOpMode {
+@TeleOp(name="Vuforia Nav Webcam", group ="MechBot")
+public class VuforiaNavigationWebcam extends LinearOpMode {
 
     private boolean targetVisible = false;
     protected static int LOG_LEVEL = Log.INFO;
@@ -88,7 +90,7 @@ public class VuforiaSkyStoneNavigationWebcam extends LinearOpMode {
     private Configuration configuration;
     private Logger<Logger> log = new Logger<Logger>().configureLogging(getClass().getSimpleName(), LOG_LEVEL);
 
-    @Override public void runOpMode() {
+    @Override public void runOpMode() throws InterruptedException {
 
         log.info("RoboMech TeleOp runOpMode() starts (CPU_time = %.2f sec)", getRuntime());
         telemetry.addData("Initializing Robot", "Please Wait ...");
@@ -165,7 +167,11 @@ public class VuforiaSkyStoneNavigationWebcam extends LinearOpMode {
         }
 
         // Disable robot;
-        robot.end();
+        try {
+            robot.end();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     protected void handleException(Throwable T) {
         log.error(T.getMessage(), T);

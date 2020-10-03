@@ -20,6 +20,13 @@ import org.firstinspires.ftc.teamcode.support.events.Events;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import static com.qualcomm.hardware.lynx.commands.core.LynxInjectDataLogHintCommand.charset;
+import static java.lang.Thread.sleep;
 
 public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
@@ -39,10 +46,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public ElapsedTime runtime = new ElapsedTime();
     public ElapsedTime runtimeAuto = new ElapsedTime();
     public double rotateRatio = 0.7; // slow down ratio for rotation
-    public CameraStoneDetector cameraStoneDetector;
+    public CameraStackDetector cameraStackDetector;
     public CameraSystem cameraSystem;
     public File simEventFile;
     public BottomWobbleGoalGrabber bottomWobbleGoalGrabber;
+    public Shooter shooter;
+    public Hopper hopper;
+    public Intake intake;
+
 
     public double auto_chassis_power = .6;
     public double auto_chassis_dist = 100;
@@ -57,6 +68,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean vuforiaTest = false;
     public boolean tensorTest = false;
     public boolean useBottomWobbleGoalGrabber = false;
+    public boolean useHopper = false;
+    public boolean useShooter = false;
+    public boolean useIntake = false;
 
     public void set_simulation_mode(boolean value) {
         simulation_mode = value;
@@ -77,23 +91,30 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     @Override
-    public void configure(Configuration configuration, Telemetry telemetry, ToboMech.AutoTeamColor autoside) {
+    public void configure(Configuration configuration, Telemetry telemetry, ToboMech.AutoTeamColor autoside) throws FileNotFoundException {
         runtime.reset();
         double ini_time = runtime.seconds();
         this.telemetry = telemetry;
         simEventFile = AppUtil.getInstance().getSettingsFile("ToboMech_events.txt"); // at First/settings directory
+
         // simFile = Paths.get("ToboMech_events.txt");
         this.core = new CoreSystem();
         info("RoboMech configure() after new CoreSystem()(run time = %.2f sec)", (runtime.seconds() - ini_time));
+
         chassis = new MechChassis(core).configureLogging("Mecanum", logLevel); // Log.DEBUG
+        chassis.set_simulation_mode(simulation_mode);
+        if (chassis!=null) {
+            // chassis.simOS = new FileOutputStream(new File(simEventFile.getParentFile(), simEventFile.getName()));
+            chassis.simOS = new FileOutputStream(new File(simEventFile.getParent(), simEventFile.getName()));
+        }
         if (autoside== ToboMech.AutoTeamColor.DIAGNOSIS) {
             // enable imu for diagnosis
             chassis.enableImuTelemetry(configuration);
         }
         if(tensorTest)
         {
-            cameraStoneDetector = new CameraStoneDetector();
-            cameraStoneDetector.configure(configuration);
+            cameraStackDetector = new CameraStackDetector();
+            cameraStackDetector.configure(configuration);
         } else if (vuforiaTest) {
             cameraSystem = new CameraSystem();
             cameraSystem.init(configuration.getHardwareMap());
@@ -108,6 +129,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             bottomWobbleGoalGrabber = new BottomWobbleGoalGrabber(core);
             bottomWobbleGoalGrabber.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
         }
+        if(useHopper){
+            hopper = new Hopper(core);
+            hopper.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
+        }
+        if(useShooter){
+            shooter = new Shooter(core);
+            shooter.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
+        }
+        if(useIntake){
+            intake = new Intake(core);
+            intake.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
+        }
 
         info("ToboMech configure() after init Chassis (run time = %.2f sec)", (runtime.seconds() - ini_time));
     }
@@ -115,15 +148,28 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     @Override
     public void reset(boolean auto) {
+        if (chassis==null || simulation_mode==true)
+            return;
         chassis.reset();
         if (auto) {
             chassis.setupTelemetry(telemetry);
         }
     }
 
-    public void end() {
+    public void end() throws InterruptedException, IOException {
         if (simulation_mode) {
-            ReadWriteFile.writeFile(simEventFile, chassis.getSimEvents());
+            try {
+                chassis.simOS.flush();
+            } finally {
+                chassis.simOS.close();
+            }
+            // ReadWriteFile.writeFile(simEventFile, chassis.getSimEvents());
+            if (isSimulationMode()) {
+                telemetry.addData("Running simulation mode and dump events to file:","%s/%s",simEventFile.getParent(),simEventFile.getName());
+                telemetry.addData("Content:","%s",chassis.getSimEvents());
+                telemetry.update();
+                sleep(3000);
+            }
         }
         if (cameraSystem!=null) {
             cameraSystem.end();
@@ -224,7 +270,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 //                    sleep(10000);
 //                    chassis.stop();
                 } else {
-                    chassis.forward(0.3, 30, 3);
+                    intake.intakeInAuto();
                 }
             }
         }, new Button[]{Button.DPAD_UP});
@@ -236,7 +282,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (source.isPressed(Button.BACK)) {
                         chassis.chassis_test();
                     } else {
-                        chassis.forward(0.3, -30, 3);
+                        intake.intakeOutAuto();
                     }
                 }
             }
@@ -277,6 +323,21 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 }
             }
         }, new Button[]{Button.Y});
+
+        em.onButtonDown(new Events.Listener() {
+            @Override
+            public void buttonDown(EventManager source, Button button) throws InterruptedException {
+             shooter.shootAutoFast();
+            }
+        }, new Button[]{Button.LEFT_BUMPER});
+
+        em.onButtonDown(new Events.Listener() {
+            @Override
+            public void buttonDown(EventManager source, Button button) throws InterruptedException {
+                shooter.shootAutoSlow();
+            }
+        }, new Button[]{Button.RIGHT_BUMPER});
+
     }
 
     public void setupTelemetryDiagnostics(Telemetry telemetry) {
@@ -621,8 +682,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     @MenuEntry(label = "Tensorflow Test", group = "Test Chassis")
     public void testSkystoneDetection()//loc = 1 left, 2 center, 3 right
     {
-        if (cameraStoneDetector!=null) {
-            ToboSigma.SkystoneLocation location = cameraStoneDetector.getSkystonePositionTF(true);
+        if (cameraStackDetector !=null) {
+            ToboSigma.SkystoneLocation location = cameraStackDetector.getSkystonePositionTF(true);
         }
     }
 

@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
+import java.io.IOException;
+
 /**
  * Created by 28761 on 6/29/2019.
  */
@@ -77,7 +79,11 @@ public class AutoBlueOut extends LinearOpMode {
                 Thread.sleep(5000);
             }
         }
-        robot.end();
+        try {
+            robot.end();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void handleException(Throwable T) {

@@ -37,16 +37,16 @@ import java.util.List;
  * Motors: motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight.<br />
  * Orientation sensors (optional): imu, imu2
  */
-public class CameraStoneDetector extends Logger<CameraStoneDetector> implements Configurable {
-    static Logger<CameraStoneDetector> logger = new Logger<>();
+public class CameraStackDetector extends Logger<CameraStackDetector> implements Configurable {
+    static Logger<CameraStackDetector> logger = new Logger<>();
 
     static {
         logger.configureLogging("CameraStoneDetector", Log.VERBOSE);
     }
 
-    private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
-    private static final String LABEL_FIRST_ELEMENT = "Stone";
-    private static final String LABEL_SECOND_ELEMENT = "Skystone";
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Quad";
+    private static final String LABEL_SECOND_ELEMENT = "Single";
 
     private static final String VUFORIA_KEY = "AS0FKrL/////AAABmTcBCNs1gE8uh4tntGA7HSgXRT5npDQpV2pw5tlqbZCI6WJQRf0bKf458A218bGkQJCWkJzvJy6UtNnhziraRVDDZSnTSZGSD7s3WN9jNYqBiSoO3CVE6FU2dX1yuJNa1zfiEhcGT8ChTd+kucE/q3sXsy/nw1KqlW/7uEaEeRwaCPseqsbNrc1HZ1bi18PzwQpCaypDruqqVEyZ3dvTqDmjPg7WFBe2kStPR/qTtcLSXdE804RxxkgTGUtDMIG7TTbAdirInGVZw2p2APZKAQdYofYW2E0Ss5hZCeL55zflSuQK0QcW1sAyvaTUMd/fDse4FgqxhnfK0ip0Kc+ZqZ6XJpof/Nowwxv3IgDWZJzO";
     private VuforiaLocalizer vuforia;
@@ -64,7 +64,7 @@ public class CameraStoneDetector extends Logger<CameraStoneDetector> implements 
 
     @Override
     public String getUniqueName() {
-        return "CameraStoneDetector";
+        return "CameraStackDetector";
     }
 
     public TFObjectDetector getTfod() {
@@ -79,7 +79,7 @@ public class CameraStoneDetector extends Logger<CameraStoneDetector> implements 
     public void configure(Configuration configuration) {
         logger.verbose("Start Configuration");
         /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         * InitVuforia(): Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
@@ -90,17 +90,15 @@ public class CameraStoneDetector extends Logger<CameraStoneDetector> implements 
 
         // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
 
+        // initTfod()
         int tfodMonitorViewId = configuration.getHardwareMap().appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", configuration.getHardwareMap().appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.6;
+        tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
 
-        logger.verbose("CameraStoneDetector status: %s", tfod);
-
-        tfodParameters.minimumConfidence = 0.6;
-
+        logger.verbose("CameraStackDetector status: %s", tfod);
 
         /** Activate Tensor Flow Object Detection. */
         if (tfod != null) {

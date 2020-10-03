@@ -15,8 +15,12 @@ import org.firstinspires.ftc.teamcode.support.hardware.Configurable;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.List;
 
+import static com.qualcomm.hardware.lynx.commands.core.LynxInjectDataLogHintCommand.charset;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -60,7 +64,9 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         }
     }
 
-    void dumpEvent(String s) {
+    void dumpEvent(String s) throws IOException {
+        byte data[] = s.getBytes();
+        simOS.write(data);
         simEvents += s;
     }
 
@@ -139,6 +145,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private boolean normalizeMode = true;
 
     private String simEvents="";
+    public FileOutputStream simOS;
     private boolean simulation_mode = false;
 
     public void set_simulation_mode(boolean val) {
@@ -221,9 +228,19 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         GPS.reverseLeftEncoder();
     }
 
+    public void set_pos_for_simulation(double x, double y, double heading) {
+        init_x_cm = x;
+        init_y_cm = y;
+        init_heading = heading;
+    }
+
     public void set_init_pos(double x, double y, double heading) {
         if (simulation_mode) {
-            dumpEvent(String.format("set_init_pos: %3.1f, %3.1f, %3.1f\n", x, y, targetHeading));
+            try {
+                dumpEvent(String.format("set_init_pos: %3.0f, %3.0f, %3.0f\n", x, y, targetHeading));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         init_x_cm = x;
@@ -250,22 +267,22 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
 
     public double odo_x_pos_inches() {
-        if (GPS ==null) return 0;
+        if (GPS ==null) return init_x_cm/2.54;
         return GPS.returnXCoordinate()/odo_count_per_inch();
     }
 
     public double odo_x_pos_cm() {
-        if (GPS ==null) return 0;
+        if (GPS ==null) return init_x_cm;
         return GPS.returnXCoordinate()/odo_count_per_cm();
     }
 
     public double odo_y_pos_inches() {
-        if (GPS ==null) return 0;
+        if (GPS ==null) return init_y_cm/2.54;
         return GPS.returnYCoordinate()/odo_count_per_inch();
     }
 
     public double odo_y_pos_cm() {
-        if (GPS ==null) return 0;
+        if (GPS ==null) return init_y_cm;
         return GPS.returnYCoordinate()/odo_count_per_cm();
     }
 
@@ -390,6 +407,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
     public void configure(Configuration configuration, boolean auto) {
         // set up motors / sensors as wheel assemblies
+        if (simulation_mode) return;
 
         motorFL = configuration.getHardwareMap().tryGet(DcMotorEx.class, lfName);
         motorFR = configuration.getHardwareMap().tryGet(DcMotorEx.class, rfName);
@@ -482,7 +500,12 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
     public void driveTo(double power, double target_x, double target_y, double target_heading, boolean useRotateTo, double timeout_sec) throws InterruptedException {
         if (simulation_mode) { // simulation mode
-            dumpEvent (String.format("driveTo: %3.1f, %3.1f, %3.1f\n", target_x, target_y, target_heading));
+            try {
+                dumpEvent (String.format("driveTo: %3.0f, %3.0f, %3.0f\n", target_x, target_y, target_heading));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            set_pos_for_simulation(target_x,target_y,target_heading);
             return;
         }
         long iniTime = System.currentTimeMillis();
@@ -1118,7 +1141,12 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     public void rawRotateTo(double power, double finalHeading, boolean stopEarly, double timeout_sec) throws InterruptedException {
         if (Thread.interrupted()) return;
         if (simulation_mode) { // simulation mode
-            dumpEvent (String.format("rawRotateTo: %3.1f\n", finalHeading));
+            set_pos_for_simulation(odo_x_pos_cm(),odo_y_pos_cm(),finalHeading);
+            try {
+                dumpEvent (String.format("rawRotateTo: %3.0f %3.0f %3.0f\n", odo_x_pos_cm(), odo_y_pos_cm(), finalHeading));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return;
         }
 
@@ -1195,7 +1223,12 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
     public void rotateTo(double power, double finalHeading, double timeout_sec, boolean changePower, boolean finalCorrection) throws InterruptedException {
         if (simulation_mode) { // simulation mode
-            dumpEvent (String.format("RotateTo: %3.1f %3.1f %3.1f\n", odo_x_pos_cm(), odo_y_pos_cm(), finalHeading));
+            set_pos_for_simulation(odo_x_pos_cm(),odo_y_pos_cm(),finalHeading);
+            try {
+                dumpEvent (String.format("RotateTo: %3.0f %3.0f %3.0f\n", odo_x_pos_cm(), odo_y_pos_cm(), finalHeading));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return;
         }
 

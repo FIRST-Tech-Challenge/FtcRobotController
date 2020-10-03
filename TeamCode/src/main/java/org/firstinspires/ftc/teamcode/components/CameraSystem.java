@@ -49,7 +49,7 @@ public class CameraSystem {
     WebcamName webcamName;
 
     VuforiaLocalizer vuforia;
-    VuforiaTrackables targetsSkyStone;
+    VuforiaTrackables targetsUltimateGoal;
     public List<VuforiaTrackable> allTrackables;
     public OpenGLMatrix lastLocation;
 
@@ -97,42 +97,43 @@ public class CameraSystem {
             parameters.cameraName = webcamName;
             this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
             vuforia.enableConvertFrameToBitmap();
-            targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
-            // relicTemplate = targetsSkyStone.get(0);
-            // relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
-            VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
-            stoneTarget.setName("Stone Target");
-            VuforiaTrackable blueRearBridge = targetsSkyStone.get(1);
-            blueRearBridge.setName("Blue Rear Bridge");
-            VuforiaTrackable redRearBridge = targetsSkyStone.get(2);
-            redRearBridge.setName("Red Rear Bridge");
-            VuforiaTrackable redFrontBridge = targetsSkyStone.get(3);
-            redFrontBridge.setName("Red Front Bridge");
-            VuforiaTrackable blueFrontBridge = targetsSkyStone.get(4);
-            blueFrontBridge.setName("Blue Front Bridge");
-            VuforiaTrackable red1 = targetsSkyStone.get(5);
-            red1.setName("Red Perimeter 1");
-            VuforiaTrackable red2 = targetsSkyStone.get(6);
-            red2.setName("Red Perimeter 2");
-            VuforiaTrackable front1 = targetsSkyStone.get(7);
-            front1.setName("Front Perimeter 1");
-            VuforiaTrackable front2 = targetsSkyStone.get(8);
-            front2.setName("Front Perimeter 2");
-            VuforiaTrackable blue1 = targetsSkyStone.get(9);
-            blue1.setName("Blue Perimeter 1");
-            VuforiaTrackable blue2 = targetsSkyStone.get(10);
-            blue2.setName("Blue Perimeter 2");
-            VuforiaTrackable rear1 = targetsSkyStone.get(11);
-            rear1.setName("Rear Perimeter 1");
-            VuforiaTrackable rear2 = targetsSkyStone.get(12);
-            rear2.setName("Rear Perimeter 2");
+            targetsUltimateGoal = this.vuforia.loadTrackablesFromAsset("UltimateGoal");
+            VuforiaTrackable blueTowerGoalTarget = targetsUltimateGoal.get(0);
+            blueTowerGoalTarget.setName("Blue Tower Goal Target");
+            VuforiaTrackable redTowerGoalTarget = targetsUltimateGoal.get(1);
+            redTowerGoalTarget.setName("Red Tower Goal Target");
+            VuforiaTrackable redAllianceTarget = targetsUltimateGoal.get(2);
+            redAllianceTarget.setName("Red Alliance Target");
+            VuforiaTrackable blueAllianceTarget = targetsUltimateGoal.get(3);
+            blueAllianceTarget.setName("Blue Alliance Target");
+            VuforiaTrackable frontWallTarget = targetsUltimateGoal.get(4);
+            frontWallTarget.setName("Front Wall Target");
             // For convenience, gather together all the trackable objects in one easily-iterable collection */
             allTrackables = new ArrayList<VuforiaTrackable>();
-            allTrackables.addAll(targetsSkyStone);
-            blue1.setLocation(OpenGLMatrix
-                    //.translation(-quadField, halfField, mmTargetHeight)
-                    .translation(qField, fField, mmTargetHeight)
+            allTrackables.addAll(targetsUltimateGoal);
+
+            redAllianceTarget.setLocation(OpenGLMatrix
+                    .translation(0, -hField, mmTargetHeight)
+                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 180)));
+
+            blueAllianceTarget.setLocation(OpenGLMatrix
+                    .translation(0, hField, mmTargetHeight)
                     .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0)));
+            frontWallTarget.setLocation(OpenGLMatrix
+                    .translation(-hField, 0, mmTargetHeight)
+                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , 90)));
+
+            // The tower goal targets are located a quarter field length from the ends of the back perimeter wall.
+            blueTowerGoalTarget.setLocation(OpenGLMatrix
+                    .translation(hField, qField, mmTargetHeight)
+                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , -90)));
+            redTowerGoalTarget.setLocation(OpenGLMatrix
+                    .translation(hField, -qField, mmTargetHeight)
+                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
+//            blue1.setLocation(OpenGLMatrix
+//                    //.translation(-quadField, halfField, mmTargetHeight)
+//                    .translation(qField, fField, mmTargetHeight)
+//                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0)));
 
 
             // setup Camera rotation
@@ -156,7 +157,7 @@ public class CameraSystem {
                 ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
             }
         }
-        targetsSkyStone.activate();
+        targetsUltimateGoal.activate();
     }
 
 //    int getColumnIndex(RelicRecoveryVuMark vuMark) throws InterruptedException {
@@ -372,8 +373,8 @@ public class CameraSystem {
         this.vuforia.setFrameQueueCapacity(0);
     }
     public void end() {
-        if (targetsSkyStone!=null) {
-            targetsSkyStone.deactivate();
+        if (targetsUltimateGoal !=null) {
+            targetsUltimateGoal.deactivate();
         }
     }
 

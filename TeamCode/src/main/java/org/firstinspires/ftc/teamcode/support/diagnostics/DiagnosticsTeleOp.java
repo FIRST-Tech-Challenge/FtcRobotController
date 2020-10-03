@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.support.events.Events;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 
@@ -97,7 +98,11 @@ public abstract class DiagnosticsTeleOp extends LinearOpMode {
                 Thread.sleep(5000);
             }
         }
-        robot2.end();
+        try {
+            robot2.end();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
