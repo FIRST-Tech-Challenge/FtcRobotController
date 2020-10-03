@@ -39,8 +39,9 @@ android {
     defaultConfig {
         signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'
-        minSdkVersion 23
+        minSdkVersion 25
         targetSdkVersion 28
+        multiDexEnabled true
 
         /**
          * We keep the versionCode and versionName of robot controller applications in sync with
@@ -48,7 +49,7 @@ android {
          * module. This helps avoid confusion that might arise from having multiple versions of
          * a robot controller app simultaneously installed on a robot controller device.
          *
-         * We accomplish this with the help of a funky little Groovy script that maintains that
+         * We accomplish     this with the help of a funky little Groovy script that maintains that
          * correspondence automatically.
          *
          * @see <a href="http://developer.android.com/tools/building/configuring-gradle.html">Configure Your Build</a>
@@ -78,7 +79,7 @@ android {
             // Disable debugging for release versions so it can be uploaded to Google Play.
             //debuggable true
             ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a"
+                abiFilters "armeabi-v7a"
             }
         }
         debug {
@@ -86,14 +87,14 @@ android {
             jniDebuggable true
             renderscriptDebuggable true
             ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a"
+                abiFilters "armeabi-v7a"
             }
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     sourceSets.main {
@@ -106,5 +107,7 @@ repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
+
 }
+
 apply from: 'build.release.gradle'

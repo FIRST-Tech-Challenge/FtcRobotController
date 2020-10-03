@@ -16,8 +16,13 @@ apply from: '../build.common.gradle'
 
 repositories {
     maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
+    maven { url 'https://jitpack.io' }
+
 }
 
 dependencies {
-    annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'com.acmerobotics.roadrunner:core:0.5.2'
+    implementation 'com.github.technototes:TechnoLib:0.1.4'
+
+    //annotationProessor files('lib/OpModeAnnotationProcessor.jar')
 }
