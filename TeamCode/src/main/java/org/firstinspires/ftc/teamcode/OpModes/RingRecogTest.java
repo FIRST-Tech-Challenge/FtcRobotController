@@ -52,11 +52,6 @@ public class RingRecogTest extends LinearOpMode {
     // Declare OpMode members.
     YellowBot robot = new YellowBot();
     private ElapsedTime runtime = new ElapsedTime();
-
-    private static final String VUFORIA_KEY =
-            "AZs0syj/////AAABmaxIME6H4k74lx12Yv3gnoYvtGHACOflWi3Ej36sE7Hn86xDafDA3vhzxSOgBtyNIQ1ua6KP2j3I2ScFedVw8n6MJ7PReZQP4sTdc8gHvoy17hD574exMmoUQ3rVUMkgU2fwN2enw2X+Ls2F3BLuCg/A4SBZjzG3cweO+owiKO/2iSIpeC4rBdUnPiTxqPHNa8UOxyncCGV0+ZFXresQm/rK7HbOKB9MEszi8eW2JNyfjTdKozwDxikeDRV7yPvoIhZ5A+mrrC1GgrEzYwNTVHeki2cg4Ea62pYwdscaJ+6IWHlBIDutqmgJu/Os3kAzZkOh0TJ8P3e29Ou4ZczTdDH0oqkPt78Nt4VdYbSbLRCw";
-
-
     private boolean ringDetected = false;
     private RingDetector sf = null;
 
@@ -83,10 +78,11 @@ public class RingRecogTest extends LinearOpMode {
 
                 ringDetected = sf.detectRing(30, telemetry,this);
                 if(ringDetected) {
-
                     telemetry.addData("Rec", "Ring Zone: %s", sf.getTargetZone());
-                    telemetry.update();
+                } else {
+                    telemetry.addData("Rec", "Not Found");
                 }
+                telemetry.update();
             }
         }
         catch (Exception ex){
@@ -100,59 +96,4 @@ public class RingRecogTest extends LinearOpMode {
             }
         }
     }
-
-//    protected void initRec(){
-//        if (vuforia == null){
-//            telemetry.addData("Error", "Unable to start Vuforia");
-//        }
-//        else {
-//            telemetry.addData("Info", "Vuforia initialized");
-//
-//            try {
-//
-//                if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
-//                    initTfod();
-//                    telemetry.addData("Info", "TF initialized");
-//                } else {
-//                    telemetry.addData("Error", "This device is not compatible with TFOD");
-//                }
-//
-//                /**
-//                 * Activate TensorFlow Object Detection before we wait for the start command.
-//                 * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-//                 **/
-//                if (tfod != null) {
-//                    tfod.activate();
-//                }
-//                telemetry.addData("Info", "TF Activated");
-//            }
-//            catch (Exception ex){
-//                telemetry.addData("Error", "Unable to initialize Tensor Flow");
-//            }
-//        }
-//        telemetry.update();
-//    }
-
-//    private void initVuforia() {
-//        /*
-//         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-//         */
-//        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-//
-//        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-//        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-//
-//        //  Instantiate the Vuforia engine
-//        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-//    }
-
-//    private void initTfod() {
-//        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-//                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-//        tfodParameters.minimumConfidence = 0.8;
-//        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-//        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SKYSTONE);
-//    }
-
 }
