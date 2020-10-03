@@ -70,6 +70,7 @@ public class UltimateGoalTeleop extends OpMode{
 
         // initializing the variables
 
+
         vroom = new MecanumDriveTrain(robot, gamepad1,telemetry);
 
         // Send telemetry message to signify robot waiting;
@@ -99,6 +100,10 @@ public class UltimateGoalTeleop extends OpMode{
 
         //Mecanum Drivetrain function to set powers
         vroom.loop();
+
+        if (gamepad2.a) {
+            robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 1);
+        }
 
     }
 
