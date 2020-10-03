@@ -58,7 +58,7 @@ public class Angle {
     }
 
     public double getAngle (AngleType type) {
-        return this.convertAngle(type).getAngle();
+        return this.convertAngle(type).getAngle(type);
     }
 
     public AngleType getType () { return type; }
@@ -77,7 +77,7 @@ public class Angle {
     public double convertAngleDouble (AngleType outputType) {
         //handles case of same input and output type
         if (type == outputType) {
-            return wrapAngle(this.getAngle(), outputType); //was new Angle(angle, type)
+            return wrapAngle(this.getAngle(outputType), outputType); //was new Angle(angle, type)
         }
 
         if (sameNumericalSystem(type, outputType)) {
@@ -101,7 +101,7 @@ public class Angle {
         Angle otherConverted = other.convertAngle(AngleType.ZERO_TO_360_CARTESIAN);
         Angle thisConverted = this.convertAngle(AngleType.ZERO_TO_360_CARTESIAN);
 
-        double rawDiff = Math.abs(otherConverted.getAngle() - thisConverted.getAngle());
+        double rawDiff = Math.abs(otherConverted.getAngle(AngleType.ZERO_TO_360_CARTESIAN) - thisConverted.getAngle(AngleType.ZERO_TO_360_CARTESIAN));
         if (rawDiff > 180) {
             return 360 - rawDiff; //will be positive bc 360 is max rawDiff
         }
@@ -116,15 +116,15 @@ public class Angle {
         Angle otherConverted = other.convertAngle(AngleType.ZERO_TO_360_CARTESIAN);
         Angle thisConverted = this.convertAngle(AngleType.ZERO_TO_360_CARTESIAN);
 
-        double rawDiff = Math.abs(otherConverted.getAngle() - thisConverted.getAngle());
+        double rawDiff = Math.abs(otherConverted.getAngle(AngleType.ZERO_TO_360_CARTESIAN) - thisConverted.getAngle(AngleType.ZERO_TO_360_CARTESIAN));
         if (rawDiff > 180) {
-            if (otherConverted.getAngle() > thisConverted.getAngle()) {
+            if (otherConverted.getAngle(AngleType.ZERO_TO_360_CARTESIAN) > thisConverted.getAngle(AngleType.ZERO_TO_360_CARTESIAN)) {
                 return Direction.CLOCKWISE;
             } else {
                 return Direction.COUNTER_CLOCKWISE;
             }
         } else {
-            if (otherConverted.getAngle() > thisConverted.getAngle()) {
+            if (otherConverted.getAngle(AngleType.ZERO_TO_360_CARTESIAN) > thisConverted.getAngle(AngleType.ZERO_TO_360_CARTESIAN)) {
                 return Direction.COUNTER_CLOCKWISE;
             } else {
                 return Direction.CLOCKWISE;
@@ -138,9 +138,9 @@ public class Angle {
         Angle thisConverted = this.convertAngle(AngleType.ZERO_TO_360_HEADING);
         double newAngle;
         if (direction == Direction.CLOCKWISE) {
-            newAngle = thisConverted.getAngle() + degrees;
+            newAngle = thisConverted.getAngle(AngleType.ZERO_TO_360_HEADING) + degrees;
         } else {
-            newAngle = thisConverted.getAngle() - degrees;
+            newAngle = thisConverted.getAngle(AngleType.ZERO_TO_360_HEADING) - degrees;
         }
         return new Angle(newAngle, AngleType.ZERO_TO_360_HEADING).convertAngle(this.type);
     }
