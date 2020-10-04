@@ -104,6 +104,9 @@ public class UltimateGoalTeleop extends OpMode{
         if (gamepad2.a) {
             robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 1);
         }
+        if(gamepad2.b){
+            robot.outtake.setPower((robot.outtake.getPower() >= 0.1) ? 0 : 1);
+        }
 
     }
 
