@@ -11,14 +11,16 @@ import org.firstinspires.ftc.teamcode.util.OmniDrive;
 
 public abstract class RobotHardware extends OpMode {
 
-    public static final String vuforiaKey = "ATYXw6b/////AAAAGbsBoJKrv00tn+OIBZOySi93f157TAsX4H3f444TrvUXKWFiNjsiBUjhwGrShLYay8wFSrlf+nRtoS+xnZJ3IApbJe2W0NSLKz21/B3/IpstUZGH29ZD/ogg3ZixfNyUGyb+F5gy5LzvGTdRhGLwy0d4z2i6QauSDPYHU4bBnhmehHBFMPkA6aP94fqOfa4qJGKBCCrn1EcH+c5TXD2EP21vciteCYktsfBedAnveiDGR7yLbTPr5kdfLvem0iyH8ESxhOsr90wGnIGWOQJa83eilaVbmLHtWkQx/hT/CnNTglJXb6TGRuDEwv/Zs+zdswp9dvCHZL5Qq1pT4y+LNUZZfhtmLlYXNifiEn7HnM5f";
+    public static final String vuforiaKey = "ActI1F//////AAABmS42p5yOnkGis4OjI6bXOlAnHWRg28DHHDgR3ja8s8s9yCGhUmk3wfLPYxAOtfsiSVSi97uAosw46Pu3KQNf7fSqrMOT/PUcG2zW3Lq8tnJHTe/uwhwWgvnwOlrgEovZPA0uhwQ/uHH2zr/U2mFMYOQTTAk6ovbCjARxN+HfP6XWCDHDQ4dhOK+joRlA8u0HqXPzm6uBQWBgCyUno8aESPLQu3QGgEWUWm1tEhUny4rgQXC19nH160f7EGy+YoTR6YAD37xQQxnzP58wHmrX7+cBuiwkai9+g65R3pfBYprNpeRunzEml6m+a792ypI/niKew1VWPSgQSHaE1Ix8+c6uCvqySjcu5mZ1g3/pnU2j";
     public VuforiaLocalizer.Parameters vuforiaParameters;
     public VuforiaLocalizer vuforia;
+    public Localizer localizer;
     public TFObjectDetector tfod;
     public OmniDrive omniDrive;
     public static double COUNTS_PER_INCH;
     public static double COUNTS_PER_LAT_INCH;
     public static double COUNTS_PER_DEGREE;
+    public WebcamName webcamName;
 
     public boolean initVuforia = true;
 
@@ -44,7 +46,12 @@ public abstract class RobotHardware extends OpMode {
      * Initializes Vuforia. Largely copied from the the navigation example.
      */
     public void initializeVuforia() {
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+//        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        this.webcamName = this.initializeDevice(WebcamName.class,"Webcam 1");
+        if (this.webcamName == null) {
+            telemetry.addData("Robot Hardware", "VUFORIA INIT FAILED, WEBCAM NULL");
+            return;
+        }
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = vuforiaKey;
@@ -62,9 +69,20 @@ public abstract class RobotHardware extends OpMode {
 
     }
 
+    public void initializeLocalizer() {
+        this.localizer = new Localizer();
+    }
+
+    public void localize() {
+        if (localizer != null) {
+            this.localizer.updateLocationWithVuforia(this);
+        }
+    }
+
     @Override
     public void init() {
         this.initializeHardware();
+        this.initializeLocalizer();
         if (initVuforia) initializeVuforia();
     }
 
