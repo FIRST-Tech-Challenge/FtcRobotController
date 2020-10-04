@@ -174,6 +174,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (cameraSystem!=null) {
             cameraSystem.end();
         }
+        if (cameraStackDetector!=null) {
+            cameraStackDetector.end();
+        }
     }
 
     @MenuEntry(label = "TeleOp", group = "Test Chassis")

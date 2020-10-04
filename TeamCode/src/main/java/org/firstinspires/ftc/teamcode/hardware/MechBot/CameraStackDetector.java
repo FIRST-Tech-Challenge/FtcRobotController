@@ -94,7 +94,7 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         int tfodMonitorViewId = configuration.getHardwareMap().appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", configuration.getHardwareMap().appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.minResultConfidence = 0.6f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
 
@@ -489,6 +489,13 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
                 break;
         }
          */
+    }
+    public void end() {
+        if (tfod != null) {
+            tfod.deactivate();
+            tfod.shutdown();
+            logger.verbose("Tfod shutdown", tfod);
+        }
     }
 }
 
