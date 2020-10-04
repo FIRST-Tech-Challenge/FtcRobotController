@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * Created by 28761 on 6/29/2019.
  */
-@Disabled
+//@Disabled
 @Autonomous(name = "Blue Out", group = "MechBot")
 public class AutoBlueOut extends LinearOpMode {
     private ToboSigma.SkystoneLocation StoneLoc;
@@ -42,6 +42,7 @@ public class AutoBlueOut extends LinearOpMode {
 
         try {
             // configure robot and reset all hardware
+
             robot.configure(configuration, telemetry, ToboMech.AutoTeamColor.AUTO_BLUE);
             configuration.apply();
             robot.reset(true);
@@ -61,7 +62,7 @@ public class AutoBlueOut extends LinearOpMode {
             try {
                 int startPos = 1; // 1 for out, 2 for in
                 // write the program here
-                //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive())
+                //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive()
                 robot.detectPosition(ToboMech.Side.BLUE, startPos);
                 robot.deliverFirstWobbleGoal();
                 if ((robot.runtimeAuto.seconds() < 20) && opModeIsActive()) {

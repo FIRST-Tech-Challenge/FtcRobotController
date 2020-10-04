@@ -689,6 +689,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     public void detectPosition(Side s, int startPos){//startPos = 1 = out, 2 = in
         side = s;
+        chassis.set_init_pos(side(60), 23, 0);
         // use camera to detect position
         tZone = TargetZone.ZONE_A; // TensorFlow
     }
