@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import static org.firstinspires.ftc.teamcode.HardwareUltimateGoal.TeleOpRunMode;
 
@@ -52,7 +53,7 @@ public class UltimateGoalTeleop extends OpMode{
     MecanumDriveTrain vroom;
 
     /* Declare OpMode members. */
-    HardwareUltimateGoal robot       = new HardwareUltimateGoal(false); // use the class created to define a RoverRuckus's hardware
+    HardwareMapV2 robot; // use the class created to define a RoverRuckus's hardware
 
 
     /*
@@ -64,9 +65,8 @@ public class UltimateGoalTeleop extends OpMode{
          * The init() method of the hardware class does all the work here
          */
 
-
-        robot.init(hardwareMap);
-        robot.setMode(TeleOpRunMode);
+        robot.init();
+        robot.setEncoders(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // initializing the variables
 

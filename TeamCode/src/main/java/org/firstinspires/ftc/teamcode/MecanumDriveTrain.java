@@ -40,7 +40,7 @@ public class MecanumDriveTrain {
 
     // Constructors
 
-    MecanumDriveTrain(HardwareUltimateGoal robot, Gamepad gamepadinput, Telemetry telemetry) {
+    MecanumDriveTrain(HardwareMapV2 robot, Gamepad gamepadinput, Telemetry telemetry) {
         frontLeft = robot.frontLeft;
         frontRight = robot.frontRight;
         backLeft = robot.backLeft;
