@@ -11,10 +11,12 @@ import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
+import java.io.IOException;
+
 /**
  * Created by 28761 on 6/29/2019.
  */
-@Disabled
+
 @Autonomous(name = "Ultimate Goal Auto", group = "MechBot")
 public class UltimateGoalFirstAuto extends LinearOpMode {
     private ToboSigma.SkystoneLocation StoneLoc;
@@ -33,6 +35,7 @@ public class UltimateGoalFirstAuto extends LinearOpMode {
         telemetry.update();
 
         ToboMech robot = new ToboMech();
+        robot.set_simulation_mode(true);
         robot.configureLogging("ToboMech", LOG_LEVEL);
         configuration = new Configuration(hardwareMap, robot.getName()).configureLogging("Config", LOG_LEVEL);
         log.info("RoboSigma Autonomous finished log configuration (CPU_time = %.2f sec)", getRuntime());
@@ -54,19 +57,26 @@ public class UltimateGoalFirstAuto extends LinearOpMode {
         robot.runtime.reset();
         robot.runtimeAuto.reset();
         // run until the end of the match (driver presses STOP or timeout)
-        if (opModeIsActive()) {
+        if(opModeIsActive()) {
             try {
 
-                if ((robot.runtimeAuto.seconds() < 19.5) && opModeIsActive()) {//may be too large - TYPICALLY AROUND 17-18
+                //if ((robot.runtimeAuto.seconds() < 19.5) && opModeIsActive()) {//may be too large - TYPICALLY AROUND 17-18
+                robot.chassis.set_init_pos(100,100,0);
+                robot.chassis.driveTo(0.6,100,180,0,false, 3);
+                robot.chassis.rotateTo(0.6, 90, 3);
 
-
-                }
+                //}
 
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());
                 handleException(E);
                 Thread.sleep(5000);
             }
+        }
+        try {
+            robot.end();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

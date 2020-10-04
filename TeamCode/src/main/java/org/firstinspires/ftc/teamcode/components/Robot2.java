@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.components;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 /**
  * Core robot interface to be implemented by all robot classes
  */
@@ -26,11 +29,11 @@ public interface Robot2 {
      * @see Configuration
      * @see Telemetry
      */
-    void configure(Configuration configuration, Telemetry telemetry, AutoTeamColor autoColor);
+    void configure(Configuration configuration, Telemetry telemetry, AutoTeamColor autoColor) throws FileNotFoundException;
 
     /**
      * Reset robot. All applicable hardware devices should be reset to their initial state.
      */
     void reset(boolean auto);
-    void end();
+    void end() throws InterruptedException, IOException;
 }

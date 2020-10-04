@@ -11,10 +11,12 @@ import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
+import java.io.IOException;
+
 /**
  * Created by 28761 on 6/29/2019.
  */
-@Disabled
+//@Disabled
 @Autonomous(name = "Blue Out", group = "MechBot")
 public class AutoBlueOut extends LinearOpMode {
     private ToboSigma.SkystoneLocation StoneLoc;
@@ -33,12 +35,14 @@ public class AutoBlueOut extends LinearOpMode {
         telemetry.update();
 
         ToboMech robot = new ToboMech();
+        robot.set_simulation_mode(true);
         robot.configureLogging("ToboMech", LOG_LEVEL);
         configuration = new Configuration(hardwareMap, robot.getName()).configureLogging("Config", LOG_LEVEL);
         log.info("RoboSigma Autonomous finished log configuration (CPU_time = %.2f sec)", getRuntime());
 
         try {
             // configure robot and reset all hardware
+
             robot.configure(configuration, telemetry, ToboMech.AutoTeamColor.AUTO_BLUE);
             configuration.apply();
             robot.reset(true);
@@ -56,15 +60,30 @@ public class AutoBlueOut extends LinearOpMode {
         // run until the end of the match (driver presses STOP or timeout)
         if (opModeIsActive()) {
             try {
+                int startPos = 1; // 1 for out, 2 for in
                 // write the program here
-                //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive())
-
+                //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive()
+                robot.detectPosition(ToboMech.Side.BLUE, startPos);
+                robot.deliverFirstWobbleGoal();
+                if ((robot.runtimeAuto.seconds() < 20) && opModeIsActive()) {
+                    robot.doPowerShots();
+                    if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+                        robot.getSecondWobbleGoal(startPos);
+                        robot.deliverSecondWobbleGoal();
+                    }
+                }
+                robot.park();
 
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());
                 handleException(E);
                 Thread.sleep(5000);
             }
+        }
+        try {
+            robot.end();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

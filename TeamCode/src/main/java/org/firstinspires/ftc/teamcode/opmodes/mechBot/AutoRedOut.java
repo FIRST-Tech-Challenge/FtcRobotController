@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
+import java.io.IOException;
+
 /**
  * Created by 28761 on 6/29/2019.
  */
@@ -33,6 +35,7 @@ public class AutoRedOut extends LinearOpMode {
         telemetry.update();
 
         ToboMech robot = new ToboMech();
+        robot.set_simulation_mode(true);
         robot.configureLogging("ToboMech", LOG_LEVEL);
         configuration = new Configuration(hardwareMap, robot.getName()).configureLogging("Config", LOG_LEVEL);
         log.info("RoboSigma Autonomous finished log configuration (CPU_time = %.2f sec)", getRuntime());
@@ -58,13 +61,30 @@ public class AutoRedOut extends LinearOpMode {
             try {
                 // write the program here
                 //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive())
-
+                int startPos = 1; // 1 for out, 2 for in
+                // write the program here
+                //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive())
+                robot.detectPosition(ToboMech.Side.RED, startPos);
+                robot.deliverFirstWobbleGoal();
+                if ((robot.runtimeAuto.seconds() < 20) && opModeIsActive()) {
+                    robot.doPowerShots();
+                    if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+                        robot.getSecondWobbleGoal(startPos);
+                        robot.deliverSecondWobbleGoal();
+                    }
+                }
+                robot.park();
 
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());
                 handleException(E);
                 Thread.sleep(5000);
             }
+        }
+        try {
+            robot.end();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
