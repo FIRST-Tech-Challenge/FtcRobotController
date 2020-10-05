@@ -103,7 +103,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double minPowerHorizontal = 0.3;
 
     // maximum power that should be applied to the wheel motors
-    private double maxPower = 0.99;
+    private double maxPower = 0.999;
     private double maxRange = 127; // max range sensor detectable
     private double defaultScale = 1.0;
     private double mecanumForwardRatio = 0.8;

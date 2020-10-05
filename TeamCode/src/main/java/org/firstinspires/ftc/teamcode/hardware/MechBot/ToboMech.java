@@ -50,6 +50,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public CameraSystem cameraSystem;
     public File simEventFile;
     public BottomWobbleGoalGrabber bottomWobbleGoalGrabber;
+    public TopWobbleGoalGrabber topWobbleGoalGrabber;
     public Shooter shooter;
     public Hopper hopper;
     public Intake intake;
@@ -67,7 +68,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     private boolean simulation_mode = false;
     public boolean vuforiaTest = false;
     public boolean tensorTest = false;
-    public boolean useBottomWobbleGoalGrabber = false;
+    public boolean useBottomWobbleGoalGrabber = true;
+    public boolean useTopWobbleGoalGrabber = false;
     public boolean useHopper = false;
     public boolean useShooter = false;
     public boolean useIntake = false;
@@ -129,6 +131,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             bottomWobbleGoalGrabber = new BottomWobbleGoalGrabber(core);
             bottomWobbleGoalGrabber.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
         }
+
+        if(useTopWobbleGoalGrabber){
+            topWobbleGoalGrabber = new TopWobbleGoalGrabber(core);
+            topWobbleGoalGrabber.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
+        }
         if(useHopper){
             hopper = new Hopper(core);
             hopper.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
@@ -189,7 +196,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             if (positionThread!=null)
                 positionThread.start();
         }
-        chassis.setupTelemetry(telemetry);
+        if (bottomWobbleGoalGrabber!=null)
+            bottomWobbleGoalGrabber.setupTelemetry(telemetry);
+        // chassis.setupTelemetry(telemetry);
         em.onStick(new Events.Listener() { // Left-Joystick
             @Override
             public void stickMoved(EventManager source, Events.Side side, float currentX, float changeX, float currentY, float changeY) throws InterruptedException {
@@ -313,7 +322,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (source.isPressed(Button.BACK)) {
                     chassis.toggleNormalizeMode();
                 } else if(source.getTrigger(Events.Side.LEFT) > 0.3){
-                    bottomWobbleGoalGrabber.grabberAuto();
+                    if (source.isPressed(Button.LEFT_BUMPER))
+                        bottomWobbleGoalGrabber.pivotUpDec();
+                    else
+                        bottomWobbleGoalGrabber.grabberAuto();
+                } else if(source.isPressed(Button.LEFT_BUMPER)){
+                    topWobbleGoalGrabber.grabberAuto();
                 }
             }
         }, new Button[]{Button.A});
@@ -321,8 +335,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         em.onButtonDown(new Events.Listener() {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
+
                 if(source.getTrigger(Events.Side.LEFT) > 0.3){
-                    bottomWobbleGoalGrabber.pivotAuto();
+                    if (source.isPressed(Button.LEFT_BUMPER))
+                        bottomWobbleGoalGrabber.pivotUpInc();
+                    else
+                        bottomWobbleGoalGrabber.pivotAuto();
+                } else if(source.isPressed(Button.LEFT_BUMPER)){
+                    topWobbleGoalGrabber.armAuto();
                 }
             }
         }, new Button[]{Button.Y});

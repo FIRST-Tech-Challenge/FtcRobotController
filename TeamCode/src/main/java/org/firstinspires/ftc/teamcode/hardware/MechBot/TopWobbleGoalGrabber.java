@@ -16,28 +16,29 @@ import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 /**
  * FoundationHook spec:
  */
-public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> implements Configurable {
+public class TopWobbleGoalGrabber extends Logger<TopWobbleGoalGrabber> implements Configurable {
 
     final private CoreSystem core;
 
-    private AdjustableServo pivot;
+    private AdjustableServo arm;
     private AdjustableServo grabber;
 
-    private final double PIVOT_UP = 0.3;
-    private final double PIVOT_INIT = 0.02;
-    private final double PIVOT_DOWN = 0.65;
 
-    private final double GRABBER_OPEN = 0.9;
-    private final double GRABBER_INIT = 0.485;
-    private final double GRABBER_CLOSE = 0.485;
+    private final double ARM_UP = 0.9;
+    private final double ARM_INIT = ARM_UP;
+    private final double ARM_DOWN = 0.25;
 
-    private boolean pivotIsDown = false;
-    private boolean grabberIsClosed = true;
+    private final double GRABBER_OPEN = 0.6;
+    private final double GRABBER_INIT = GRABBER_OPEN;
+    private final double GRABBER_CLOSE = 0.4;
+
+    private boolean armIsDown = false;
+    private boolean grabberIsClosed = false;
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public String getUniqueName() {
-        return "bottomWobbleGoalGrabber";
+        return "topWobbleGoalGrabber";
     }
 
     @Override
@@ -49,7 +50,7 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
     /**
      * Hanging constructor
      */
-    public BottomWobbleGoalGrabber(CoreSystem core) {
+    public TopWobbleGoalGrabber(CoreSystem core) {
         this.core = core;
     }
 
@@ -60,57 +61,44 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
 
     public void configure(Configuration configuration, boolean auto) {
         grabber = new AdjustableServo(0, 1).configureLogging(
-                logTag + ":bottomWobbleGoalGrabber", logLevel
+                logTag + ":topWobbleGoalGrabber", logLevel
         );
-        grabber.configure(configuration.getHardwareMap(), "b_grabber");
+        grabber.configure(configuration.getHardwareMap(), "t_grabber");
         configuration.register(grabber);
 
-        pivot = new AdjustableServo(0, 1).configureLogging(
-                logTag + ":bottomWobbleGoalGrabber", logLevel
+        arm = new AdjustableServo(0, 1).configureLogging(
+                logTag + ":topWobbleGoalGrabber", logLevel
         );
-        pivot.configure(configuration.getHardwareMap(), "pivot");
-        configuration.register(pivot);
+        arm.configure(configuration.getHardwareMap(), "arm");
+        configuration.register(arm);
         configuration.register(this);
         servoInit();
     }
 
     public void servoInit() {
-        grabber.setPosition(GRABBER_INIT);
-        pivot.setPosition(PIVOT_INIT);
-        pivotIsDown = false;
+        grabber.setPosition(ARM_INIT);
+        arm.setPosition(GRABBER_INIT);
+        armIsDown = false;
         grabberIsClosed = false;
         //hookUp();
         // configuration.register(this);
     }
 
-    public void pivotUpInc() {
-        double pos = Math.min(pivot.getPosition()+0.01,0.999);
-        pivot.setPosition(pos);
-        if (pos>=PIVOT_UP)
-            pivotIsDown = false;
-    }
-    public void pivotUpDec() {
-        double pos = Math.max(pivot.getPosition()-0.01,0.001);
-        pivot.setPosition(pos);
-        if (pos<=PIVOT_DOWN)
-            pivotIsDown = true;
+    public void armUp() {
+        arm.setPosition(ARM_UP);
+        armIsDown = false;
     }
 
-    public void pivotUp() {
-        pivot.setPosition(PIVOT_UP);
-        pivotIsDown = false;
+    public void armDown() {
+        arm.setPosition(ARM_DOWN);
+        armIsDown = true;
     }
 
-    public void pivotDown() {
-        pivot.setPosition(PIVOT_DOWN);
-        pivotIsDown = true;
-    }
-
-    public void pivotAuto() {
-        if (pivotIsDown) {
-            pivotUp();
+    public void armAuto() {
+        if (armIsDown) {
+            armUp();
         } else {
-            pivotDown();
+            armDown();
         }
     }
 
@@ -151,11 +139,11 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
             });
         }
 
-        if (pivot != null) {
+        if (arm != null) {
             line.addData("Pivot", "pos=%.2f", new Func<Double>() {
                 @Override
                 public Double value() {
-                    return pivot.getPosition();
+                    return arm.getPosition();
                 }
             });
         }
