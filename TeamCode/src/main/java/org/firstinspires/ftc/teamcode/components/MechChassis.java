@@ -414,6 +414,9 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         motorBL = configuration.getHardwareMap().tryGet(DcMotorEx.class, lbName);
         motorBR = configuration.getHardwareMap().tryGet(DcMotorEx.class, rbName);
 
+        if (motorFL==null)
+            return;
+
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFL.setMode ( DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

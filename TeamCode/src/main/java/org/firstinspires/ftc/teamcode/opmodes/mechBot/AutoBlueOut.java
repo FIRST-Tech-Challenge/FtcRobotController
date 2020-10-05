@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.hardware.MechBot.CameraStackDetector;
 import org.firstinspires.ftc.teamcode.hardware.MechBot.ToboMech;
 import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
@@ -52,6 +53,11 @@ public class AutoBlueOut extends LinearOpMode {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);
         }
+
+        //setup WebCam servo position for autonomous during initialization
+        if (robot.cameraStackDetector!=null)
+            robot.cameraStackDetector.set_cam_pos(robot.cameraStackDetector.CAM_BLUE_OUT);
+
         log.info("RoboSigma Autonomous finished initialization (CPU_time = %.2f sec)", getRuntime());
 
         waitForStart();

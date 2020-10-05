@@ -29,6 +29,7 @@ public class MecTeleOp extends LinearOpMode {
         telemetry.update();
 
         ToboMech robot = new ToboMech();
+        robot.useTfod = true;
         robot.configureLogging(robot.getName(),LOG_LEVEL);
         configuration = new Configuration(hardwareMap, robot.getName()).configureLogging("Config", LOG_LEVEL);
 

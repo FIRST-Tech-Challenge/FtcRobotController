@@ -10,11 +10,13 @@ import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.components.AdjustableServo;
 import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configurable;
@@ -51,7 +53,20 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
     private static final String VUFORIA_KEY = "AS0FKrL/////AAABmTcBCNs1gE8uh4tntGA7HSgXRT5npDQpV2pw5tlqbZCI6WJQRf0bKf458A218bGkQJCWkJzvJy6UtNnhziraRVDDZSnTSZGSD7s3WN9jNYqBiSoO3CVE6FU2dX1yuJNa1zfiEhcGT8ChTd+kucE/q3sXsy/nw1KqlW/7uEaEeRwaCPseqsbNrc1HZ1bi18PzwQpCaypDruqqVEyZ3dvTqDmjPg7WFBe2kStPR/qTtcLSXdE804RxxkgTGUtDMIG7TTbAdirInGVZw2p2APZKAQdYofYW2E0Ss5hZCeL55zflSuQK0QcW1sAyvaTUMd/fDse4FgqxhnfK0ip0Kc+ZqZ6XJpof/Nowwxv3IgDWZJzO";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
+    private AdjustableServo camLR; // webcam left/right servo
+    private double camPos = 0;
+
     private double stoneYpos = 250;//390
+
+    public final double CAM_MIN = 0.01;
+    public final double CAM_MAX = 0.99;
+    public final double CAM_INIT = 0.5;
+    public final double CAM_BLUE_IN = 0.53;
+    public final double CAM_BLUE_OUT = 0.35;
+    public final double CAM_RED_IN = 0.35;
+    public final double CAM_RED_OUT = 0.53;
+
+
 
     //    private CameraSystem camSys;
     private String lastError;
@@ -75,12 +90,38 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         return stoneYpos;
     }
 
+    public void set_cam_pos(double pos) {
+        if (camLR==null) return;
+        camLR.setPosition(pos);
+        camPos = pos;
+    }
+
+    public double getCamPos() { return camPos; }
+    public void inc_cam_pos() {
+        if (camLR==null) return;
+        double pos = Math.min(camPos+0.01, CAM_MAX);
+        set_cam_pos(pos);
+    }
+
+    public void dec_cam_pos() {
+        if (camLR==null) return;
+        double pos = Math.max(camPos-0.01, CAM_MIN);
+        set_cam_pos(pos);
+    }
 
     public void configure(Configuration configuration) {
         logger.verbose("Start Configuration");
         /*
          * InitVuforia(): Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
+
+        camLR = new AdjustableServo(0, 1).configureLogging(
+                logTag + ":camLR", logLevel
+        );
+        camLR.configure(configuration.getHardwareMap(), "camLR");
+        configuration.register(camLR);
+        set_cam_pos(CAM_INIT);
+
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
@@ -94,7 +135,7 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         int tfodMonitorViewId = configuration.getHardwareMap().appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", configuration.getHardwareMap().appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.6f;
+        tfodParameters.minResultConfidence = 0.75f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
 
@@ -490,6 +531,25 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         }
          */
     }
+
+    /**
+     * Set up telemetry lines for chassis metrics
+     * Shows current motor power, orientation sensors,
+     * drive mode, heading deviation / servo adjustment (in <code>STRAIGHT</code> mode)
+     * and servo position for each wheel
+     */
+    public void setupTelemetry(Telemetry telemetry) {
+        Telemetry.Line line = telemetry.addLine();
+        if (camLR!=null) {
+            line.addData("WebCam", "pos=%.2f", new Func<Double>() {
+                @Override
+                public Double value() {
+                    return camPos;
+                }
+            });
+        }
+    }
+
     public void end() {
         if (tfod != null) {
             tfod.deactivate();
@@ -499,19 +559,4 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
     }
 }
 
-/**
- * Set up telemetry lines for chassis metrics
- * Shows current motor power, orientation sensors,
- * drive mode, heading deviation / servo adjustment (in <code>STRAIGHT</code> mode)
- * and servo position for each wheel
- */
-//    public void setupTelemetry(Telemetry telemetry) {
-//        Telemetry.Line line = telemetry.addLine();
-//        if ()
-//            line.addData("CameraStoneDetector", "Recog. Count= %d", new Func<Integer>() {
-//                @Override
-//                public Integer value() {
-//
-//                }
-//            });
-//    }
+

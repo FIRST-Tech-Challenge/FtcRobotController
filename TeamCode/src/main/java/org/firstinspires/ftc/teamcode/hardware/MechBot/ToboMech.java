@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.hardware.MechBot;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -23,9 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
-import static com.qualcomm.hardware.lynx.commands.core.LynxInjectDataLogHintCommand.charset;
 import static java.lang.Thread.sleep;
 
 public class ToboMech extends Logger<ToboMech> implements Robot2 {
@@ -66,8 +63,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double auto_rotate_degree = 0;
 
     private boolean simulation_mode = false;
-    public boolean vuforiaTest = false;
-    public boolean tensorTest = false;
+    public boolean useVuforia = false;
+    public boolean useTfod = true;
     public boolean useBottomWobbleGoalGrabber = true;
     public boolean useTopWobbleGoalGrabber = false;
     public boolean useHopper = false;
@@ -113,11 +110,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             // enable imu for diagnosis
             chassis.enableImuTelemetry(configuration);
         }
-        if(tensorTest)
-        {
+        if(useTfod || (autoside!=AutoTeamColor.NOT_AUTO && simulation_mode==false)) {
             cameraStackDetector = new CameraStackDetector();
             cameraStackDetector.configure(configuration);
-        } else if (vuforiaTest) {
+        } else if (useVuforia) {
             cameraSystem = new CameraSystem();
             cameraSystem.init(configuration.getHardwareMap());
         }
@@ -198,6 +194,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (bottomWobbleGoalGrabber!=null)
             bottomWobbleGoalGrabber.setupTelemetry(telemetry);
+        if (topWobbleGoalGrabber!=null)
+            topWobbleGoalGrabber.setupTelemetry(telemetry);
+        if (cameraStackDetector!=null)
+            cameraStackDetector.setupTelemetry(telemetry);
         // chassis.setupTelemetry(telemetry);
         em.onStick(new Events.Listener() { // Left-Joystick
             @Override
@@ -302,16 +302,24 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         em.onButtonDown(new Events.Listener() {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
-                if (chassis!=null) {
-                    chassis.crab(0.45, 30, 3);
+//                if (chassis!=null) {
+//                    chassis.crab(0.45, 30, 3);
+//                }
+                if (source.getTrigger(Events.Side.LEFT) > 0.3) {
+                    if (cameraStackDetector!=null)
+                        cameraStackDetector.dec_cam_pos();
                 }
             }
         }, new Button[]{Button.DPAD_RIGHT});
         em.onButtonDown(new Events.Listener() {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
-                if (chassis!=null) {
-                    chassis.crab(0.45, -30, 3);
+//                if (chassis!=null) {
+//                    chassis.crab(0.45, -30, 3);
+//                }
+                if (source.getTrigger(Events.Side.LEFT) > 0.3) {
+                    if (cameraStackDetector!=null)
+                        cameraStackDetector.inc_cam_pos();
                 }
             }
         }, new Button[]{Button.DPAD_LEFT});

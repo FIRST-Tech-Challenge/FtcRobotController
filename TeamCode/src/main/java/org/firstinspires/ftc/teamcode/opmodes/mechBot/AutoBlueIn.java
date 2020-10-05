@@ -50,6 +50,11 @@ public class AutoBlueIn extends LinearOpMode {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);
         }
+
+        //setup WebCam servo position for autonomous during initialization
+        if (robot.cameraStackDetector!=null)
+            robot.cameraStackDetector.set_cam_pos(robot.cameraStackDetector.CAM_BLUE_IN);
+
         log.info("RoboSigma Autonomous finished initialization (CPU_time = %.2f sec)", getRuntime());
 
         waitForStart();

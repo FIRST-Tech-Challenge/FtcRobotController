@@ -34,11 +34,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.hardware.MechBot.ToboMech;
@@ -48,10 +44,6 @@ import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
 import java.io.IOException;
 import java.util.List;
-
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
 /**
  * This 2020-2021 OpMode illustrates the basics of using the Vuforia localizer to determine
@@ -96,7 +88,7 @@ public class TfodStackDetection extends LinearOpMode {
         telemetry.update();
 
         ToboMech robot = new ToboMech();
-        robot.tensorTest = true;
+        robot.useTfod = true;
         robot.configureLogging(robot.getName(),LOG_LEVEL);
         configuration = new Configuration(hardwareMap, robot.getName()).configureLogging("Config", LOG_LEVEL);
 

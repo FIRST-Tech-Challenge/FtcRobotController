@@ -61,7 +61,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         transfer = configuration.getHardwareMap().get(CRServo.class, "hopper");
 
         feeder = new AdjustableServo(0, 1).configureLogging(
-                logTag + ":bottomWobbleGoalGrabber", logLevel
+                logTag + ":hopper", logLevel
         );
         feeder.configure(configuration.getHardwareMap(), "feeder");
         configuration.register(feeder);
