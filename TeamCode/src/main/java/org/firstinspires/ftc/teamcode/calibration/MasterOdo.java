@@ -38,6 +38,7 @@ public class MasterOdo extends LinearOpMode {
 
     protected YellowBot bot = new YellowBot();
     ElapsedTime timer = new ElapsedTime();
+    public static String COORDINATE = "Coordinate";
 
 
     public static final File ROUTES_FOLDER = new File(FIRST_FOLDER, "/routes/");
@@ -767,15 +768,22 @@ public class MasterOdo extends LinearOpMode {
 
     private void executeStep(AutoStep instruction,  MoveStrategy strategy, boolean dryRun){
         Point target = new Point(instruction.getTargetX(), instruction.getTargetY());
-        if (instruction.getTargetReference().equals("") == false){
-            target = coordinateFunctions.get(instruction.getTargetReference());
+        double desiredHead = instruction.getDesiredHead();
+        String targetReference = instruction.getTargetReference();
+        if (targetReference.equals("") == false){
+            target = coordinateFunctions.get(targetReference);
             if (target == null){
                 telemetry.addData("Warning", String.format("No data in target reference function %s", instruction.getTargetReference()));
                 return;
             }
+            //check if a coordinate is referenced find the AutoDot and use the heading from it
+            AutoDot coordinate = findCoordinate(targetReference);
+            if (coordinate != null){
+                desiredHead = coordinate.getHeading();
+            }
         }
         BotMoveProfile profile = BotMoveProfile.bestRoute(bot, (int)locator.getXInches(), (int)locator.getYInches(), target,
-                RobotDirection.Optimal, instruction.getTopSpeed(), strategy, instruction.getDesiredHead(), locator);
+                RobotDirection.Optimal, instruction.getTopSpeed(), strategy, desiredHead, locator);
         if (profile == null){
             return;
         }
@@ -1066,6 +1074,7 @@ public class MasterOdo extends LinearOpMode {
 
             newDot.setX((int) locator.getXInches());
             newDot.setY((int) locator.getYInches());
+            newDot.setHeading(locator.getOrientation());
 
             String jsonPath = newDot.serialize();
             ReadWriteFile.writeFile(configFile, jsonPath);
@@ -1228,7 +1237,24 @@ public class MasterOdo extends LinearOpMode {
 
     private void addNamedCoordinate(AutoDot dot){
         this.coordinates.add(dot);
-        this.coordinateFunctions.put(String.format("Coordinate %s", dot.getDotName()), dot.getPoint());
+        this.coordinateFunctions.put(String.format("%s %s", COORDINATE,  dot.getDotName()), dot.getPoint());
+    }
+
+    private AutoDot findCoordinate(String targetReference){
+        AutoDot dot = null;
+        if (targetReference.contains(COORDINATE)){
+            int i = targetReference.lastIndexOf(' ');
+            if (i > 0) {
+                String dotName = targetReference.substring(i+1);
+                for(AutoDot d : this.coordinates){
+                    if (d.getDotName().equals(dotName)){
+                        dot = d;
+                        break;
+                    }
+                }
+            }
+        }
+        return dot;
     }
 
 

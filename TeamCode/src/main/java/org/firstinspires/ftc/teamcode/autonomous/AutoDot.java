@@ -17,6 +17,7 @@ public class AutoDot implements Serializable {
     private boolean selected;
     private int x;
     private int y;
+    private double heading = 0;
 
 
     public String serialize() {
@@ -60,5 +61,13 @@ public class AutoDot implements Serializable {
 
     public Point getPoint(){
         return new Point(x, y);
+    }
+
+    public double getHeading() {
+        return heading;
+    }
+
+    public void setHeading(double heading) {
+        this.heading = heading;
     }
 }
