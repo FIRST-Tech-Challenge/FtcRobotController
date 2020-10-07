@@ -65,20 +65,20 @@ public class DummyMode extends LinearOpMode{
                 double drive1 = gamepad1.left_stick_y;
                 robot.moveMotor1(drive1);
 
-//                double drive2 = gamepad1.right_stick_y;
-//                robot.moveMotor2(drive2);
-//
-//                double drive3 = gamepad2.left_stick_y;
-//                robot.moveMotor3(drive3);
-//
-//                double drive4 = gamepad2.right_stick_y;
-//                robot.moveMotor4(drive4);
-//
-//                double claw = gamepad1.left_trigger;
-//                robot.moveWobbleClaw(claw);
-//
-//                double swing = gamepad1.right_trigger;
-//                robot.moveWobbleSwing(swing);
+                double drive2 = gamepad1.right_stick_y;
+                robot.moveMotor2(drive2);
+
+                double drive3 = gamepad2.left_stick_y;
+                robot.moveMotor3(drive3);
+
+                double drive4 = gamepad2.right_stick_y;
+                robot.moveMotor4(drive4);
+
+                double claw = gamepad1.left_trigger;
+                robot.moveWobbleClaw(claw);
+
+                double swing = gamepad1.right_trigger;
+                robot.moveWobbleSwing(swing);
 
             }
         }
