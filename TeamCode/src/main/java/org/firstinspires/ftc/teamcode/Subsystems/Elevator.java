@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import static android.icu.util.ULocale.getName;
 
 public class Elevator {
-
+    //
     //define hardware
     public DcMotor elevator = null;
     private DigitalChannel switch1 = null;
