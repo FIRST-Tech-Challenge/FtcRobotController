@@ -8,7 +8,7 @@ public class Intake {
 
 
     //contstants
-    public static final double intake_speed = .5
+    public static final double intake_speed = .5;
 
     public void init(HardwareMap hwMap)  {}
     //
