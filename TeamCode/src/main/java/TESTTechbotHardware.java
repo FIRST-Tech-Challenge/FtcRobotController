@@ -56,7 +56,7 @@ public class TESTTechbotHardware
     public DcMotor rightDrive  = null;
     public DcMotor leftBackDrive = null;
     public DcMotor rightBackDrive = null;
-
+    public NormalizedColorSensor colorSensor = null;
 
     //public DcMotor arm = null;
     public DcMotor lift = null;
@@ -115,6 +115,7 @@ public class TESTTechbotHardware
         rightBackDrive = hwMap.get(DcMotor.class, "Right back motor");
         //arm    = hwMap.get(DcMotor.class, "arm");
         servoHand = hwMap.get(Servo.class, "hand");
+        colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
         //lift = hwMap.get(DcMotor.class, "lift");
 
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
