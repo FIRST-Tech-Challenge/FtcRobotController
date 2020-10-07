@@ -45,7 +45,7 @@ import static org.firstinspires.ftc.teamcode.HardwareUltimateGoal.TeleOpRunMode;
  *
  */
 
-@TeleOp(name="Ultimate Goal Teleop", group="Skystone")
+@TeleOp(name="Ultimate Goal Teleop", group="UltimateGoal")
 public class UltimateGoalTeleop extends OpMode{
 
 
@@ -55,7 +55,7 @@ public class UltimateGoalTeleop extends OpMode{
     /* Declare OpMode members. */
     HardwareMapV2 robot; // use the class created to define a RoverRuckus's hardware
 
-
+    teleConfigTest t;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -101,12 +101,14 @@ public class UltimateGoalTeleop extends OpMode{
         //Mecanum Drivetrain function to set powers
         vroom.loop();
 
-        if (gamepad2.a) {
-            robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 1);
-        }
-        if(gamepad2.b){
-            robot.outtake.setPower((robot.outtake.getPower() >= 0.1) ? 0 : 1);
-        }
+        if (gamepad2.a){t.a();}
+        if(gamepad2.b){t.b();}
+        if (gamepad2.x){t.x();}
+        if (gamepad2.y){t.y();}
+
+        t.rjoy(gamepad2.right_stick_x, gamepad2.right_stick_y);
+        t.ljoy(gamepad2.left_stick_x, gamepad2.left_stick_y);
+
 
     }
 
