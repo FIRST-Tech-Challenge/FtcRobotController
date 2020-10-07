@@ -12,7 +12,7 @@ public class Shooter {
     public Servo moveforward=null;
     public Servo moveback=null;
 
-
+    //
     //Constants
     private static final double ShooterSpeedfastleft=.6;
     private static final double ShooterSpeedfastright=.8;
