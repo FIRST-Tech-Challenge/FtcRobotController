@@ -27,22 +27,9 @@ public class ClassifierFloatMobileNet extends Classifier {
      *
      * @param activity
      */
-    public ClassifierFloatMobileNet(Activity activity, Device device, int numThreads, Telemetry t)
+    public ClassifierFloatMobileNet(Activity activity, Device device, int numThreads, String modelFileName, String labelFileName, Telemetry t)
             throws Exception {
-        super(activity, device, numThreads, t);
-    }
-
-    @Override
-    protected String getModelPath() {
-        // you can download this file from
-        // see build.gradle for where to obtain this file. It should be auto
-        // downloaded into assets.
-        return "mobilenet_v1_1.0_224.tflite";
-    }
-
-    @Override
-    protected String getLabelPath() {
-        return "labels.txt";
+        super(activity, device, numThreads, modelFileName, labelFileName, t);
     }
 
     @Override

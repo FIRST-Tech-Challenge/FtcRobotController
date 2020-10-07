@@ -27,23 +27,11 @@ public class ClassifierQuantizedMobileNet extends Classifier {
      *
      * @param activity
      */
-    public ClassifierQuantizedMobileNet(Activity activity, Device device, int numThreads, Telemetry t)
+    public ClassifierQuantizedMobileNet(Activity activity, Device device, int numThreads, String modelFileName, String labelFileName, Telemetry t)
             throws Exception {
-        super(activity, device, numThreads, t);
+        super(activity, device, numThreads, modelFileName, labelFileName, t);
     }
 
-    @Override
-    protected String getModelPath() {
-        // you can download this file from
-        // see build.gradle for where to obtain this file. It should be auto
-        // downloaded into assets.
-        return "mobilenet_v1_1.0_224_quant.tflite";
-    }
-
-    @Override
-    protected String getLabelPath() {
-        return "labels.txt";
-    }
 
     @Override
     protected TensorOperator getPreprocessNormalizeOp() {

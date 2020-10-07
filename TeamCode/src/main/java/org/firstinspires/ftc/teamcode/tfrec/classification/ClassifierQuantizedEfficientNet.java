@@ -27,20 +27,11 @@ public class ClassifierQuantizedEfficientNet extends Classifier {
      *
      * @param activity
      */
-    public ClassifierQuantizedEfficientNet(Activity activity, Device device, int numThreads, Telemetry t)
+    public ClassifierQuantizedEfficientNet(Activity activity, Device device, int numThreads, String modelFileName, String labelFileName, Telemetry t)
             throws Exception {
-        super(activity, device, numThreads, t);
+        super(activity, device, numThreads, modelFileName, labelFileName, t);
     }
 
-    @Override
-    protected String getModelPath() {
-        return "block-test.tflite";
-    }
-
-    @Override
-    protected String getLabelPath() {
-        return "labels.txt";
-    }
 
     @Override
     protected TensorOperator getPreprocessNormalizeOp() {

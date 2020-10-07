@@ -14,14 +14,12 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.SystemClock;
 import android.os.Trace;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Surface;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
@@ -33,7 +31,6 @@ import org.firstinspires.ftc.teamcode.tfrec.utils.ImageUtils;
 import org.firstinspires.ftc.teamcode.tfrec.views.CameraConnectionFragment;
 import org.firstinspires.ftc.teamcode.tfrec.views.LegacyCameraConnectionFragment;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 
@@ -58,6 +55,8 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
     private Classifier classifier;
     private Model model = Model.QUANTIZED_EFFICIENTNET;
     private Device device = Device.CPU;
+    private String modelPath;
+    private String labelPath;
     private int numThreads = 1;
     private static final float TEXT_SIZE_DIP = 10;
     private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
@@ -69,6 +68,43 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
     private int imageSizeX;
     /** Input image size of the model along y axis. */
     private int imageSizeY;
+
+
+    public Detector(Model modelType, String modelPath, Context ctx, Telemetry t){
+        String modelFileName = modelPath.substring(0, modelPath.lastIndexOf('.'));
+        String labelFileName = String.format("%s_labels.txt", modelFileName);
+        modelFileName = String.format("%s.tflite", modelFileName);
+        init(modelType, modelFileName, labelFileName, ctx, t);
+    }
+
+    public Detector(Model modelType, String modelPath, String labelPath, Context ctx, Telemetry t){
+        init(modelType, modelPath, labelPath, ctx, t);
+    }
+
+    protected void init(Model modelType, String modelPath, String labelPath, Context ctx, Telemetry t){
+        appContext = ctx;
+        telemetry = t;
+        tfodMonitorViewId = appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", appContext.getPackageName());
+        try {
+            ((Activity)appContext).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //make visible
+                    FrameLayout fm = (FrameLayout)((Activity)appContext).findViewById(tfodMonitorViewId);
+                    if (fm != null){
+                        fm.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
+            setModelType(modelType);
+            setModelPath(modelPath);
+            setLabelPath(labelPath);
+        } catch (Exception e) {
+            telemetry.addData("Error","Make frame visible", e.getMessage());
+        }
+    }
 
     protected synchronized void startProcessing() {
         handlerThread = new HandlerThread("inference");
@@ -88,27 +124,6 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
 
         } catch (final InterruptedException e) {
             telemetry.addData("Error", e.getMessage());
-        }
-    }
-
-    public void init(Context ctx, Telemetry t){
-        appContext = ctx;
-        telemetry = t;
-        tfodMonitorViewId = appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", appContext.getPackageName());
-        try {
-            ((Activity)appContext).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //make visible
-                    FrameLayout fm = (FrameLayout)((Activity)appContext).findViewById(tfodMonitorViewId);
-                    if (fm != null){
-                        fm.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
-        } catch (Exception e) {
-            telemetry.addData("Error","Make frame visible", e.getMessage());
         }
     }
 
@@ -192,8 +207,6 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
     private boolean isHardwareLevelSupported(
             CameraCharacteristics characteristics, int requiredLevel) {
         int deviceLevel = characteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
-        telemetry.addData("deviceLevel", deviceLevel);
-        telemetry.addData("requiredLevel", requiredLevel);
         if (deviceLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY) {
             return requiredLevel == deviceLevel;
         }
@@ -301,7 +314,7 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
         borderedText = new BorderedText(textSizePx);
         borderedText.setTypeface(Typeface.MONOSPACE);
 
-        recreateClassifier(getModel(), getDevice(), getNumThreads());
+        recreateClassifier(getModelType(), getDevice(), getNumThreads());
         if (classifier == null) {
             telemetry.addData("Warning","No classifier on preview!");
             return;
@@ -401,7 +414,7 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
             return;
         }
         final Device device = getDevice();
-        final Model model = getModel();
+        final Model model = getModelType();
         final int numThreads = getNumThreads();
         runInBackground(new Runnable() {
             @Override
@@ -425,7 +438,7 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
         try {
             telemetry.addData("Info",
                     "Creating classifier (model=%s, device=%s, numThreads=%d)", model, device, numThreads);
-            classifier = Classifier.create((Activity)this.appContext, model, device, numThreads, telemetry);
+            classifier = Classifier.create((Activity)this.appContext, model, device, numThreads, this.getModelPath(), this.getLabelPath(), telemetry);
         }
         catch (Exception e) {
             telemetry.addData("Error", String.format("Failed to create classifier. %s", e.toString()));
@@ -438,15 +451,15 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
         }
     }
 
-    protected Model getModel() {
+    protected Model getModelType() {
         return model;
     }
 
-    public void setModel(Model model) {
+    public void setModelType(Model model) {
         if (this.model != model) {
             telemetry.addData("Info", "Updating  model: " + model);
             this.model = model;
-            onInferenceConfigurationChanged();
+//            onInferenceConfigurationChanged();
         }
     }
 
@@ -477,5 +490,21 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
 
     public List<Classifier.Recognition> getLastResults() {
         return lastResults;
+    }
+
+    public String getModelPath() {
+        return modelPath;
+    }
+
+    public void setModelPath(String modelPath) {
+        this.modelPath = modelPath;
+    }
+
+    public String getLabelPath() {
+        return labelPath;
+    }
+
+    public void setLabelPath(String labelPath) {
+        this.labelPath = labelPath;
     }
 }

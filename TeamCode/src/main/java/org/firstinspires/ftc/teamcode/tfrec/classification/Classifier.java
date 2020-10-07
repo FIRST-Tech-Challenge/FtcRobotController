@@ -36,6 +36,16 @@ import static java.lang.Math.min;
 public abstract class Classifier {
     private static final String TAG = "Classifier";
     private Telemetry telemetry;
+    private String modelPath;
+    private String labelPath;
+
+    public void setModelPath(String modelPath) {
+        this.modelPath = modelPath;
+    }
+
+    public void setLabelPath(String labelPath) {
+        this.labelPath = labelPath;
+    }
 
     /** The model type used for classification. */
     public enum Model {
@@ -96,16 +106,16 @@ public abstract class Classifier {
      * @param numThreads The number of threads to use for classification.
      * @return A classifier with the desired configuration.
      */
-    public static Classifier create(Activity activity, Model model, Device device, int numThreads, Telemetry t)
+    public static Classifier create(Activity activity, Model model, Device device, int numThreads, String modelFileName, String labelFileName, Telemetry t)
             throws Exception {
         if (model == Model.QUANTIZED_MOBILENET) {
-            return new ClassifierQuantizedMobileNet(activity, device, numThreads, t);
+            return new ClassifierQuantizedMobileNet(activity, device, numThreads, modelFileName, labelFileName, t);
         } else if (model == Model.FLOAT_MOBILENET) {
-            return new ClassifierFloatMobileNet(activity, device, numThreads, t);
+            return new ClassifierFloatMobileNet(activity, device, numThreads, modelFileName, labelFileName, t);
         } else if (model == Model.FLOAT_EFFICIENTNET) {
-            return new ClassifierFloatEfficientNet(activity, device, numThreads, t);
+            return new ClassifierFloatEfficientNet(activity, device, numThreads, modelFileName, labelFileName, t);
         } else if (model == Model.QUANTIZED_EFFICIENTNET) {
-            return new ClassifierQuantizedEfficientNet(activity, device, numThreads, t);
+            return new ClassifierQuantizedEfficientNet(activity, device, numThreads, modelFileName, labelFileName, t);
         } else {
             throw new UnsupportedOperationException();
         }
@@ -182,8 +192,10 @@ public abstract class Classifier {
     }
 
     /** Initializes a {@code Classifier}. */
-    protected Classifier(Activity activity, Device device, int numThreads, Telemetry t) throws Exception {
+    protected Classifier(Activity activity, Device device, int numThreads, String modelFileName, String labelFileName, Telemetry t) throws Exception {
         this.telemetry = t;
+        this.setModelPath(modelFileName);
+        this.setLabelPath(labelFileName);
         try {
             MappedByteBuffer tfliteModel = FileUtil.loadMappedFile(activity, getModelPath());
             switch (device) {
@@ -335,11 +347,15 @@ public abstract class Classifier {
         return recognitions;
     }
 
-    /** Gets the name of the model file stored in Assets. */
-    protected abstract String getModelPath();
 
-    /** Gets the name of the label file stored in Assets. */
-    protected abstract String getLabelPath();
+    protected  String getModelPath(){
+        return modelPath;
+    }
+
+
+    protected  String getLabelPath(){
+        return labelPath;
+    }
 
     /** Gets the TensorOperator to nomalize the input image in preprocessing. */
     protected abstract TensorOperator getPreprocessNormalizeOp();

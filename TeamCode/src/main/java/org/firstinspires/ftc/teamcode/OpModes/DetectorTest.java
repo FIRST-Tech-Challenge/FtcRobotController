@@ -47,18 +47,24 @@ import java.util.List;
 public class DetectorTest extends LinearOpMode{
 
     // Declare OpMode members.
-    private Detector tfDetector = new Detector();
+    private Detector tfDetector = null;
     private ElapsedTime runtime = new ElapsedTime();
+
+    private static String MODEL_FILE_NAME = "rings_float.tflite";
+    private static String LABEL_FILE_NAME = "labels.txt";
+    private static Classifier.Model MODEl_TYPE = Classifier.Model.FLOAT_EFFICIENTNET;
 
     @Override
     public void runOpMode() {
         try {
             try {
-                tfDetector.init(hardwareMap.appContext, telemetry);
+                tfDetector = new Detector(MODEl_TYPE, MODEL_FILE_NAME, LABEL_FILE_NAME, hardwareMap.appContext, telemetry);
                 tfDetector.activate();
             }
             catch (Exception ex){
-                telemetry.addData("Init", ex.getMessage());
+                telemetry.addData("Error", String.format("Unable to initialize Detector. %s", ex.getMessage()));
+                sleep(5000);
+                return;
             }
 
             telemetry.addData("Detector", "Ready");
