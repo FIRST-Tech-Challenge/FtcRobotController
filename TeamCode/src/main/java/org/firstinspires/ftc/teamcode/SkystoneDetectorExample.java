@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-
+/*
 import com.disnodeteam.dogecv.detectors.skystone.SkystoneDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,7 +18,7 @@ import java.util.Locale;
  * Original Work Copright(c) 2019 OpenFTC Team
  * Derived Work Copyright(c) 2019 DogeDevs
  */
-@TeleOp(name = "Skystone Detector OpMode", group="DogeCV")
+/*@TeleOp(name = "Skystone Detector OpMode", group="DogeCV")
 @Disabled
 public class SkystoneDetectorExample extends LinearOpMode {
     private OpenCvCamera phoneCam;
@@ -34,7 +34,7 @@ public class SkystoneDetectorExample extends LinearOpMode {
          * the RC phone). If no camera monitor is desired, use the alternate
          * single-parameter constructor instead (commented out below)
          */
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        /*int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
         // OR...  Do Not Activate the Camera Monitor View
@@ -43,14 +43,14 @@ public class SkystoneDetectorExample extends LinearOpMode {
         /*
          * Open the connection to the camera device
          */
-        phoneCam.openCameraDevice();
+        /*phoneCam.openCameraDevice();
 
         /*
          * Specify the image processing pipeline we wish to invoke upon receipt
          * of a frame from the camera. Note that switching pipelines on-the-fly
          * (while a streaming session is in flight) *IS* supported.
          */
-        skyStoneDetector = new SkystoneDetector();
+        /*skyStoneDetector = new SkystoneDetector();
         phoneCam.setPipeline(skyStoneDetector);
 
         /*
@@ -64,19 +64,19 @@ public class SkystoneDetectorExample extends LinearOpMode {
          * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
          * away from the user.
          */
-        phoneCam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+        /*phoneCam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
 
         /*
          * Wait for the user to press start on the Driver Station
          */
-        waitForStart();
+        /*waitForStart();
 
         while (opModeIsActive())
         {
             /*
              * Send some stats to the telemetry
              */
-            telemetry.addData("Stone Position X", skyStoneDetector.getScreenPosition().x);
+            /*telemetry.addData("Stone Position X", skyStoneDetector.getScreenPosition().x);
             telemetry.addData("Stone Position Y", skyStoneDetector.getScreenPosition().y);
             telemetry.addData("Frame Count", phoneCam.getFrameCount());
             telemetry.addData("FPS", String.format(Locale.US, "%.2f", phoneCam.getFps()));
@@ -92,7 +92,7 @@ public class SkystoneDetectorExample extends LinearOpMode {
              * when it will be automatically stopped for you) *IS* supported. The "if" statement
              * below will stop streaming from the camera when the "A" button on gamepad 1 is pressed.
              */
-            if(gamepad1.a)
+            /*if(gamepad1.a)
             {
                 /*
                  * IMPORTANT NOTE: calling stopStreaming() will indeed stop the stream of images
@@ -113,7 +113,7 @@ public class SkystoneDetectorExample extends LinearOpMode {
                  * time. Of course, this comment is irrelevant in light of the use case described in
                  * the above "important note".
                  */
-                phoneCam.stopStreaming();
+                /*phoneCam.stopStreaming();
                 //webcam.closeCameraDevice();
             }
             else if (gamepad1.b) {
@@ -132,7 +132,7 @@ public class SkystoneDetectorExample extends LinearOpMode {
              * The "if" statements below will pause the viewport if the "X" button on gamepad1 is pressed,
              * and resume the viewport if the "Y" button on gamepad1 is pressed.
              */
-            else if(gamepad1.x) {
+            /*else if(gamepad1.x) {
                 phoneCam.pauseViewport();
             }
             else if(gamepad1.y) {
@@ -141,3 +141,4 @@ public class SkystoneDetectorExample extends LinearOpMode {
         }
     }
 }
+*/
