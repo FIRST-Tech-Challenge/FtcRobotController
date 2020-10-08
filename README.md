@@ -1,4 +1,4 @@
-# This the MechanicalManiacs Skystone repo
+# This the MechanicalManiacs UltimateGoal repo
 
 ## !!!!!ALWAYS MAKE AN ISSUE BEFORE YOU DO SOMETHING!!!!!
 
