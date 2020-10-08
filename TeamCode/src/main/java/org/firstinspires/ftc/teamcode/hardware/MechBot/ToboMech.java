@@ -760,22 +760,26 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void deliverFirstWobbleGoal () throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
-        if (tZone == TargetZone.ZONE_A) {//0
-            chassis.driveTo(.5, side(25), 200, 0, true, 5);
-        }
-        else if (tZone == TargetZone.ZONE_B) {//1
-            chassis.driveTo(.5, side(105), 260, 0, true, 5);
-        } else if (tZone == TargetZone.ZONE_C) {//4
-            chassis.driveTo(.5, side(15), 320, 0, true, 5);
-        } else {
-            return;
+        if(side == Side.BLUE) {
+            if (tZone == TargetZone.ZONE_A) {//0
+                chassis.driveTo(.5, 30, 200, 45, true, 5);
+            } else if (tZone == TargetZone.ZONE_B) {//1
+                chassis.driveTo(.5, 75, 260, 0, true, 5);
+            } else if (tZone == TargetZone.ZONE_C) {//4
+                chassis.driveTo(.5, 30, 320, 45, true, 5);
+            } else {
+                return;
+            }
         }
     }
 
 
         // put wobble goal down
     public void doPowerShots() throws InterruptedException {
-        chassis.driveTo(.5, side(130), 180, 0, false,  5);
+        if(tZone == TargetZone.ZONE_A){
+            chassis.driveTo(.5, side(60), 170, 0, true,  5);
+        }
+        chassis.driveTo(.5, side(130), 180, 0, true,  5);
         //shoot
         chassis.driveTo(.5, side(150), 180, 0, false,  2);
         //shoot
@@ -783,16 +787,16 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shoot
     }
     public void shootGoal() throws InterruptedException {
-        chassis.driveTo(.5, side(90), 180, 0, false,  2);
+        chassis.driveTo(.5, side(90), 180, 0, false,  5);
         //shoot
 
     }
     public void getSecondWobbleGoal() throws InterruptedException {
-        chassis.driveTo(.5, side(170), 30, 0, false,  2);
+        chassis.driveTo(.5, side(170), 30, 0, false,  7);
         if(startPos == StartPosition.OUT){
-            chassis.driveTo(.5, side(120), 30, 0, true,  7);
+            chassis.driveTo(.5, side(120), 30, 0, true,  4);
         } else {
-            chassis.driveTo(.5, side(60), 30, 0, true,  7);
+            chassis.driveTo(.5, side(60), 30, 0, true,  4);
         }
         //grab the wobble goal
 
@@ -801,16 +805,17 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void deliverSecondWobbleGoal() throws InterruptedException { // we may need to go around the other wobble goal
 
         // neede to change positions
+        if (side == Side.BLUE) {
+            if (tZone == TargetZone.ZONE_A) {//0
+                chassis.driveTo(.5, side(55), 165, 0, false, 5);
+            } else if (tZone == TargetZone.ZONE_B) {//1
+                chassis.driveTo(.5, side(115), 225, 0, false, 5);
 
-        if (tZone == TargetZone.ZONE_A) {//0
-            chassis.driveTo(.5, side(45), 165, 0, false, 5);
-        } else if (tZone == TargetZone.ZONE_B){//1
-            chassis.driveTo(.5, side(75), 225, 0, false,  5);
-
-        } else if (tZone == TargetZone.ZONE_C){//4
-            chassis.driveTo(.5, side(45), 285, 0, false,  5);
-        } else{
-            return;
+            } else if (tZone == TargetZone.ZONE_C) {//4
+                chassis.driveTo(.5, side(55), 285, 0, false, 5);
+            } else {
+                return;
+            }
         }
 
 
