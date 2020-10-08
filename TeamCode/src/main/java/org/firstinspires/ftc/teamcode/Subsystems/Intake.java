@@ -8,6 +8,8 @@ public class Intake {
     public DcMotor intake_motor = null;
 
     
+    
+    
     //contstants
     public static final double intake_speed = .5;
 
