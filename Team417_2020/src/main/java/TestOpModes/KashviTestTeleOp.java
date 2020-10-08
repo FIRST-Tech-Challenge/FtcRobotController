@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.team417_2020;
+package TestOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import TestOpModes.KashviMasterOpMode;
 
 @TeleOp(name = "KashviTestTeleOp")
 
