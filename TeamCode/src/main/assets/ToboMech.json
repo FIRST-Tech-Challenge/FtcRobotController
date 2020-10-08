@@ -19,6 +19,11 @@
     "left": 0.01,
     "right": 0.99
   },
+  "camLR": {
+    "center": 0.5,
+    "left": 0.01,
+    "right": 0.99
+  },
   "chassis": {
     "track": 15.75,
     "wheelBase": 13,

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.support.CoreSystem;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configurable;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
+import org.firstinspires.ftc.teamcode.support.tasks.Progress;
 
 /**
  * FoundationHook spec:
@@ -25,11 +26,11 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
 
     private final double PIVOT_UP = 0.3;
     private final double PIVOT_INIT = 0.02;
-    private final double PIVOT_DOWN = 0.65;
+    private final double PIVOT_DOWN = 0.66;
 
     private final double GRABBER_OPEN = 0.9;
     private final double GRABBER_INIT = 0.485;
-    private final double GRABBER_CLOSE = 0.485;
+    private final double GRABBER_CLOSE = 0.458;
 
     private boolean pivotIsDown = false;
     private boolean grabberIsClosed = true;
@@ -78,7 +79,7 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
         grabber.setPosition(GRABBER_INIT);
         pivot.setPosition(PIVOT_INIT);
         pivotIsDown = false;
-        grabberIsClosed = false;
+        grabberIsClosed = true;
         //hookUp();
         // configuration.register(this);
     }
@@ -114,6 +115,24 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
         }
     }
 
+    private Progress movePivot(double position) {
+        double adjustment = Math.abs(position - pivot.getPosition());
+        pivot.setPosition(position);
+        if (position>= PIVOT_DOWN -0.1)
+            pivotIsDown=true;
+        else {
+            pivotIsDown = false;
+        }
+        // 600 ms per 180 degree
+        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 600);
+        return new Progress() {
+            @Override
+            public boolean isDone() {
+                return System.currentTimeMillis() >= doneBy;
+            }
+        };
+    }
+
     public void grabberOpen(){
         grabber.setPosition(GRABBER_OPEN);
         grabberIsClosed = false;
@@ -132,6 +151,23 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
         }
     }
 
+    private Progress moveGrabber(double position) {
+        double adjustment = Math.abs(position - grabber.getPosition());
+        grabber.setPosition(position);
+        if (position<= GRABBER_CLOSE + 0.1)
+            grabberIsClosed=true;
+        else {
+            grabberIsClosed = false;
+        }
+        // 600 ms per 180 degree
+        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 600);
+        return new Progress() {
+            @Override
+            public boolean isDone() {
+                return System.currentTimeMillis() >= doneBy;
+            }
+        };
+    }
 
     /**
      * Set up telemetry lines for chassis metrics
