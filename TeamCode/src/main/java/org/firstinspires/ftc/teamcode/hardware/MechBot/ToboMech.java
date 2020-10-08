@@ -33,8 +33,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public enum Side{
         BLUE, RED;
     }
+    public enum StartPosition{
+        IN, OUT;
+    }
     public TargetZone tZone;
     public Side side;
+    public StartPosition startPos; // in out
 
     Thread positionThread;
     private Telemetry telemetry;
@@ -744,10 +748,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             ToboSigma.SkystoneLocation location = cameraStackDetector.getSkystonePositionTF(true);
         }
     }
-
-    public void detectPosition(Side s, int startPos){//startPos = 1 = out, 2 = in
+    public void setInitPositions(Side s, StartPosition startP){
         side = s;
+        startPos = startP;
         chassis.set_init_pos(side(60), 23, 0);
+    }
+    public void detectPosition(){//startPos = 1 = out, 2 = in
         // use camera to detect position
         tZone = TargetZone.ZONE_A; // TensorFlow
     }
@@ -781,9 +787,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shoot
 
     }
-    public void getSecondWobbleGoal(int startPos) throws InterruptedException {
+    public void getSecondWobbleGoal() throws InterruptedException {
         chassis.driveTo(.5, side(170), 30, 0, false,  2);
-        if(startPos == 1){
+        if(startPos == StartPosition.OUT){
             chassis.driveTo(.5, side(120), 30, 0, true,  7);
         } else {
             chassis.driveTo(.5, side(60), 30, 0, true,  7);
