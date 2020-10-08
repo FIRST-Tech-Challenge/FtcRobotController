@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configurable;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 import org.firstinspires.ftc.teamcode.support.tasks.Progress;
+import org.firstinspires.ftc.teamcode.support.tasks.Task;
+import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
 
 /**
  * FoundationHook spec:
@@ -124,7 +126,7 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
             pivotIsDown = false;
         }
         // 600 ms per 180 degree
-        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 600);
+        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 900);
         return new Progress() {
             @Override
             public boolean isDone() {
@@ -151,6 +153,58 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
         }
     }
 
+    public void releaseWobbleGoalCombo() {
+        final String taskName = "release Wobble Goal Combo";
+        if (!TaskManager.isComplete(taskName)) return;
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return movePivot(PIVOT_DOWN);
+            }
+        }, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return moveGrabber(GRABBER_OPEN);
+            }
+        }, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return movePivot(PIVOT_UP);
+            }
+        }, taskName);
+    }
+
+    public void grabWobbleGoalCombo() {
+        final String taskName = "grab Wobble Goal Combo";
+        if (!TaskManager.isComplete(taskName)) return;
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return moveGrabber(GRABBER_OPEN);
+            }
+        }, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return movePivot(PIVOT_DOWN);
+            }
+        }, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return moveGrabber(GRABBER_CLOSE);
+            }
+        }, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return movePivot(PIVOT_UP);
+            }
+        }, taskName);
+    }
+
     private Progress moveGrabber(double position) {
         double adjustment = Math.abs(position - grabber.getPosition());
         grabber.setPosition(position);
@@ -160,7 +214,7 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
             grabberIsClosed = false;
         }
         // 600 ms per 180 degree
-        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 600);
+        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 900);
         return new Progress() {
             @Override
             public boolean isDone() {

@@ -358,6 +358,33 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         em.onButtonDown(new Events.Listener() {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
+
+                if(source.getTrigger(Events.Side.LEFT) > 0.3){
+                    bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
+                } else if(source.isPressed(Button.LEFT_BUMPER)){
+                    //top wobble goal combos functions go here
+                }
+            }
+        }, new Button[]{Button.X});
+
+        em.onButtonDown(new Events.Listener() {
+            @Override
+            public void buttonDown(EventManager source, Button button) throws InterruptedException {
+
+                if(source.getTrigger(Events.Side.LEFT) > 0.3){
+                    chassis.yMove(1, 0.4);
+                    sleep(350);
+                    bottomWobbleGoalGrabber.grabWobbleGoalCombo();
+                    chassis.stop();
+                } else if(source.isPressed(Button.LEFT_BUMPER)){
+                    //top wobble goal combos functions go here
+                }
+            }
+        }, new Button[]{Button.B});
+
+        em.onButtonDown(new Events.Listener() {
+            @Override
+            public void buttonDown(EventManager source, Button button) throws InterruptedException {
              shooter.shootAutoFast();
             }
         }, new Button[]{Button.LEFT_BUMPER});
