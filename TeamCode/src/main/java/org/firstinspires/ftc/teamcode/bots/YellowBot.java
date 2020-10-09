@@ -52,19 +52,6 @@ public class YellowBot implements OdoBot{
     public static final double ROBOT_CENTER_X = 8.25;
     public static final double ROBOT_CENTER_Y = 8.25;
 
-    public static final double ODO_WHEEL_DISTANCE = 12.25;
-
-    public static final double ROBOT_FRONT_X = 9;
-    public static final double ROBOT_FORNT_Y = 9;
-
-
-    //move to individual op mode
-    public static final double START_X = 48;
-    public static final double START_Y = 0;
-
-    private static double currentX = 0;
-    private static double currentY = 0;
-
 
     private BotCalibConfig botConfig;
 
