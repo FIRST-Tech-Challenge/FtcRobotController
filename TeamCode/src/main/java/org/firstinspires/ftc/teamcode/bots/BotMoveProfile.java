@@ -212,8 +212,8 @@ public class BotMoveProfile {
         double distance = Geometry.getDistance(currentX, currentY, target.x, target.y);
 
 
-        //do not move if within margin of error
-        if (Math.abs(distance) <= ERROR_MARGIN_INCHES){
+        //do not move if within margin of error, unless spinning
+        if (Math.abs(distance) <= ERROR_MARGIN_INCHES && preferredStrategy != MoveStrategy.Spin){
             return null;
         }
 
