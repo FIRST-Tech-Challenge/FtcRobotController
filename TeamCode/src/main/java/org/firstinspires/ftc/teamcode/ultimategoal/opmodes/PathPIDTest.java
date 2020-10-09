@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.ultimategoal.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.ultimategoal.util.auto.Waypoint;
+import org.firstinspires.ftc.teamcode.ultimategoal.util.auto.Point;
 import org.firstinspires.ftc.teamcode.ultimategoal.Robot;
 
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ public class PathPIDTest extends LinearOpMode {
     public void runOpMode() {
         initRobot();
 
-        ArrayList<Waypoint> path = new ArrayList<Waypoint>();
-        path.add(new Waypoint(0, 0));
-        path.add(new Waypoint(0, 30));
+        ArrayList<Point> path = new ArrayList<Point>();
+        path.add(new Point(0, 0));
+        path.add(new Point(0, 30));
 
         waitForStart();
         robot.startModules();

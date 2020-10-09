@@ -37,6 +37,8 @@ public class ModuleExecutor extends Thread implements TelemetryProvider {
                 lastUpdateTime = SystemClock.elapsedRealtime() - startTime;
             }
 
+            robot.fileDump.doTick();
+
             if (robot.isStopRequested() && robot.WILL_FILE_DUMP) {
                 robot.fileDump.writeFilesToDevice();
             }

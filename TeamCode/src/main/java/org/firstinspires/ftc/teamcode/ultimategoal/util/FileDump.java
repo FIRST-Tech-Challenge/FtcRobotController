@@ -11,41 +11,36 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FileDump {
-    HashMap<String,FileData> files;
+    private ArrayList<FileDumpProvider> providers;
+    HashMap<String, FileData> files;
     long startTime;
 
-    public FileDump(){
+    public FileDump() {
         startTime = SystemClock.elapsedRealtime();
         files = new HashMap<>();
     }
 
-    public synchronized void addData(String fileName, String data){
-        if(files.containsKey(fileName)) {
-            files.get(fileName).text.append(data).append("\n");
-        }else{
-            files.put(fileName,new FileData("",new StringBuilder(data).append("\n")));
+    public void doTick() {
+        providers.forEach(provider -> {
+            if (files.containsKey(provider.getFileName())) {
+                files.get(provider.getFileName()).text.append(provider.getFileData()).append("\n");
+            } else {
+                files.put(provider.getFileName(), new FileData("", new StringBuilder(provider.getFileData()).append("\n")));
+            }
+        });
+    }
+
+    public void writeFilesToDevice() {
+        for (String key : files.keySet()) {
+            writeToFile(Long.toString(startTime), key, files.get(key).toString());
         }
     }
 
-    public synchronized void writeFilesToDevice(){
-        for(String key : files.keySet()){
-            writeToFile(Long.toString(startTime),key,files.get(key).getEntireFile());
-        }
-    }
-
-    public synchronized void setHeader(String fileName, String s){
-        if(!files.containsKey(fileName)){
-            files.put(fileName,new FileData(s + "\n",new StringBuilder()));
-        }
-        if(files.get(fileName).header.equals("")){
-            files.get(fileName).header = s + "\n";
-        }
-    }
-
-    public void writeToFile(String directoryName, String fileName, String data) {
+    private void writeToFile(String directoryName, String fileName, String data) {
         File captureDirectory = new File(AppUtil.ROBOT_DATA_DIR, "/" + directoryName + "/");
         if (!captureDirectory.exists()) {
             boolean isFileCreated = captureDirectory.mkdirs();
@@ -70,16 +65,16 @@ public class FileDump {
     }
 }
 
-class FileData{
+class FileData {
     public StringBuilder text;
     public String header;
 
-    public FileData(String header, StringBuilder text){
+    public FileData(String header, StringBuilder text) {
         this.header = header;
         this.text = text;
     }
 
-    public String getEntireFile(){
-        return text.insert(0,header).toString();
+    public String toString() {
+        return text.insert(0, header).toString();
     }
 }
