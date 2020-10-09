@@ -45,6 +45,7 @@ public class AutoRedIn extends LinearOpMode {
             robot.configure(configuration, telemetry, ToboMech.AutoTeamColor.AUTO_BLUE);
             configuration.apply();
             robot.reset(true);
+            robot.setInitPositions(ToboMech.Side.BLUE, ToboMech.StartPosition.IN); // check
             telemetry.addData("Robot is ready", "Press Play");
             telemetry.update();
         } catch (Exception E) {
@@ -66,7 +67,16 @@ public class AutoRedIn extends LinearOpMode {
             try {
                 // write the program here
                 //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive())
-
+                robot.detectPosition();
+                robot.deliverFirstWobbleGoal();
+                if ((robot.runtimeAuto.seconds() < 20) && opModeIsActive()) {
+                    robot.doPowerShots();
+                    if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+                        robot.getSecondWobbleGoal();
+                        robot.deliverSecondWobbleGoal();
+                    }
+                }
+                robot.park();
 
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());

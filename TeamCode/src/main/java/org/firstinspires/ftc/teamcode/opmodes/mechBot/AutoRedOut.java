@@ -45,6 +45,7 @@ public class AutoRedOut extends LinearOpMode {
             robot.configure(configuration, telemetry, ToboMech.AutoTeamColor.AUTO_BLUE);
             configuration.apply();
             robot.reset(true);
+            robot.setInitPositions(ToboMech.Side.BLUE, ToboMech.StartPosition.OUT); // check
             telemetry.addData("Robot is ready", "Press Play");
             telemetry.update();
         } catch (Exception E) {
@@ -66,15 +67,12 @@ public class AutoRedOut extends LinearOpMode {
             try {
                 // write the program here
                 //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive())
-                int startPos = 1; // 1 for out, 2 for in
-                // write the program here
-                //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive())
-                robot.detectPosition(ToboMech.Side.RED, startPos);
+                robot.detectPosition();
                 robot.deliverFirstWobbleGoal();
                 if ((robot.runtimeAuto.seconds() < 20) && opModeIsActive()) {
                     robot.doPowerShots();
                     if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
-                        robot.getSecondWobbleGoal(startPos);
+                        robot.getSecondWobbleGoal();
                         robot.deliverSecondWobbleGoal();
                     }
                 }
