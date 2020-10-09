@@ -1,3 +1,24 @@
+## Darbots
+
+![4100Logo](https://github.com/DarlingtonProgramming/DarBots-Shared-Doc/blob/master/static/teamImage/4100Logo.png)
+![5100Logo](https://github.com/DarlingtonProgramming/DarBots-Shared-Doc/blob/master/static/teamImage/5100Logo.png)
+
+Darbots aims to build safer and more efficient robots by using software fallback mechanisms and hardware advancements.   
+This Github repository is the robot controller code developed by Darbots, and is forked from [FtcRobotController repository](https://github.com/FIRST-Tech-Challenge/FtcRobotController).   
+To use this code, download / clone the entire project to your local computer.   
+
+## Team Status
+
+|Team Number|Current Status|Is playing|
+|-|-|-|
+|5100|Not playing this year|No|
+|4100|-|Yes|
+
+## Library Status
+
+Current version: 4.5.1 Alpha   
+This library is currently the 4th iteration, and the documentations can be found in [docs.darbots.org](https://docs.darbots.org/) Repository of this organization    
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the Ultimate Goal (2020-2021) competition season.
