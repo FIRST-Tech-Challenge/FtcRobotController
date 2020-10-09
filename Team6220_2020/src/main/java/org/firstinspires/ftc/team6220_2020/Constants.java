@@ -68,43 +68,7 @@ public class Constants
     public static final double WEBCAM_2_OFFSET = 0;    // * 2nd webcam not currently in use.
     //---------------------------------------------------------------
 
-
-    // Servo positions-----------------------------------------------
-    // For the grabber, 0 is closed, 1 is open. todo adjust grabber constants
-    public static final double GRABBER_CLOSED = 0.4;
-    public static final double GRABBER_OPEN = 0.9;
-
-    public static final double GRABBER_ARM_SERVO_LEFT_EXTEND = 0.0;
-    public static final double GRABBER_ARM_SERVO_LEFT_RETRACT = 1.0;
-    public static final double GRABBER_ARM_SERVO_RIGHT_EXTEND = 1.0;
-    public static final double GRABBER_ARM_SERVO_RIGHT_RETRACT = 0.0;
-
-    // Up = stowed, down = grabbing foundation
-    public static final double FOUNDATION_SERVO_LEFT_UP = 0.8;
-    public static final double FOUNDATION_SERVO_LEFT_DOWN = 0.0;
-    public static final double FOUNDATION_SERVO_RIGHT_UP = 0.24 ;
-    public static final double FOUNDATION_SERVO_RIGHT_DOWN = 1.0;
-    //---------------------------------------------------------------
-
-
-    // Lift constants------------------------------------------------
-    public static final int LIFT_SCALE_HEIGHT = /*600*/1500;   // Scales power for runLiftToPosition()  // todo For testing auto positioning (in the air)
-    public static final int LIFT_MOTOR_MAX_HEIGHT = 7000;   // In encoder ticks for AndyMark 20
-    public static final int LIFT_MOTOR_PLACE_HEIGHT = 2000;   // todo Has not been adjusted!
-    public static final int LIFT_MOTOR_COLLECT_HEIGHT = 300;   // Height for collecting stones
-    public static final int LIFT_MOTOR_GRAB_HEIGHT = 100;   // Height for grabbing stones
-    public static final int LIFT_MOTOR_MIN_HEIGHT = 0;   // Acts as a software stop for lift
-
-    public static final double LIFT_POWER_FACTOR = 1.0;     // todo Too big?
-    //---------------------------------------------------------------
-
-
-    // Collector constants-------------------------------------------
-    public static final double COLLECTOR_POWER = 0.55;          // todo May need to adjust
-    public static final double COLLECTOR_ROTATE_POWER = 0.5;    // todo Adjust
-    //---------------------------------------------------------------
-
-
+    
     // Joystick and trigger dead zones to ensure that input isn't used when controller registers small perturbations.
     public static final double MINIMUM_JOYSTICK_POWER = 0.05;
     public static final double MINIMUM_TRIGGER_VALUE = 0.1;
