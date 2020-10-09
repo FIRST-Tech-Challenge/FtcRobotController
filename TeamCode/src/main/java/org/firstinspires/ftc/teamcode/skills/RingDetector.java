@@ -3,138 +3,102 @@ package org.firstinspires.ftc.teamcode.skills;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.tfrec.Detector;
+import org.firstinspires.ftc.teamcode.tfrec.classification.Classifier;
+import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RingDetector {
     Telemetry telemetry;
-    private TFObjectDetector tfod;
+    private Detector tfDetector = null;
     private HardwareMap hardwareMap;
-    private String targetZone = "";
-    // can try floating point model and see what happens
 
-    // with FIRST model
-//    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-//    private static final String LABEL_A = "None";
-//    private static final String LABEL_B = "Single";
-//    private static final String LABEL_C = "Quad";
-    // with custom
-    private static final String TFOD_MODEL_ASSET = "customUGFloat.tflite";
-    private static final String LABEL_A = "A";
-    private static final String LABEL_B = "B";
-    private static final String LABEL_C = "C";
+    private static String MODEL_FILE_NAME = "rings_float.tflite";
+    private static String LABEL_FILE_NAME = "labels.txt";
+    private static Classifier.Model MODEl_TYPE = Classifier.Model.FLOAT_EFFICIENTNET;
+    private static final String LABEL_A = "None";
+    private static final String LABEL_B = "Single";
+    private static final String LABEL_C = "Quad";
 
-    private static final String VUFORIA_KEY =
-            "AZs0syj/////AAABmaxIME6H4k74lx12Yv3gnoYvtGHACOflWi3Ej36sE7Hn86xDafDA3vhzxSOgBtyNIQ1ua6KP2j3I2ScFedVw8n6MJ7PReZQP4sTdc8gHvoy17hD574exMmoUQ3rVUMkgU2fwN2enw2X+Ls2F3BLuCg/A4SBZjzG3cweO+owiKO/2iSIpeC4rBdUnPiTxqPHNa8UOxyncCGV0+ZFXresQm/rK7HbOKB9MEszi8eW2JNyfjTdKozwDxikeDRV7yPvoIhZ5A+mrrC1GgrEzYwNTVHeki2cg4Ea62pYwdscaJ+6IWHlBIDutqmgJu/Os3kAzZkOh0TJ8P3e29Ou4ZczTdDH0oqkPt78Nt4VdYbSbLRCw";
+    public RingDetector(){
 
-    private VuforiaLocalizer vuforia;
-
-    public RingDetector(TFObjectDetector tf) {
-        tfod = tf;
     }
 
     public RingDetector(HardwareMap hMap, Telemetry t) {
         hardwareMap = hMap;
         telemetry = t;
-        initVuforia();
-        initTfod();
-        activateTfod();
+        initDetector();
+        activateDetector();
     }
 
-    public boolean detectRing(int timeout, Telemetry telemetry, LinearOpMode caller){
+    public AutoDot detectRing(int timeout, Telemetry telemetry, LinearOpMode caller){
+        AutoDot zone = new AutoDot();
+        zone.setX(90);
+        zone.setY(90);
+        zone.setHeading(45);
         boolean found = false;
 
         boolean stop = false;
         ElapsedTime runtime = new ElapsedTime();
         while (!stop && runtime.seconds() < timeout) {
-            if (tfod != null) {
-                // getUpdatedRecognitions() will return null if no new information is available since
-                // the last time that call was made.
-                List<Recognition> updatedRecognitions = tfod.getRecognitions();
-                if (updatedRecognitions != null) {
-                    telemetry.addData("# Object Detected", updatedRecognitions.size());
-                    // step through the list of recognitions and display boundary info.
-                    int i = 0;
-                    for (Recognition recognition : updatedRecognitions) {
-                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                recognition.getLeft(), recognition.getTop());
-                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                recognition.getRight(), recognition.getBottom());
-
-                        // calculate zone
-                        if ((recognition.getLabel().contentEquals(LABEL_B))) {
-                            targetZone = "B";
-                        } else if (recognition.getLabel().contentEquals(LABEL_C)) {
-                            targetZone = "C";
-                        } else {
-                            targetZone = "A";
-                        }
-                        found = true;
-                        telemetry.addData("Found", found);
-                    }
-                    telemetry.update();
+            if (tfDetector != null) {
+                List<Classifier.Recognition> results = tfDetector.getLastResults();
+                if (results == null || results.size() == 0){
+                    telemetry.addData("Info", "No results");
                 }
+                else {
+                    for (Classifier.Recognition r : results) {
+                        String item = String.format("%s: %.2f", r.getTitle(), r.getConfidence());
+                        telemetry.addData("Found", item);
+                        if(r.getConfidence() > 0.8) {
+                            if(r.getTitle().contentEquals(LABEL_C)){
+                                zone.setX(90);
+                                zone.setY(140);
+                                zone.setHeading(45);
+                                found = true;
+                            }
+                            if(r.getTitle().contentEquals(LABEL_B)){
+                                zone.setX(70);
+                                zone.setY(120);
+                                zone.setHeading(45);
+                                found = true;
+                            }
+                            if(r.getTitle().contentEquals(LABEL_A)){
+                                zone.setX(90);
+                                zone.setY(90);
+                                zone.setHeading(45);
+                                found = true;
+                            }
+                        }
+                    }
+                }
+                telemetry.update();
             }
             if (found || !caller.opModeIsActive()){
                 stop = true;
             }
         }
 
-        return found;
+        return zone;
     }
 
-    private void initVuforia() {
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "wcam");
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+    public void initDetector() {
+        tfDetector = new Detector(MODEl_TYPE, MODEL_FILE_NAME, LABEL_FILE_NAME, hardwareMap.appContext, telemetry);
     }
 
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        // comment out if using FIRST model
-        tfodParameters.isModelQuantized = false;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        // with FIRST model
-//        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_C, LABEL_B);
-        // with custom model
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_A, LABEL_B);
-    }
-
-    protected void activateTfod(){
-        if (tfod != null) {
-            tfod.activate();
+    protected void activateDetector(){
+        if (tfDetector != null) {
+            tfDetector.activate();
         }
         telemetry.addData("Info", "TF Activated");
     }
 
     public void stopDetection(){
-        if (tfod != null) {
-            tfod.shutdown();
+        if (tfDetector != null) {
+            tfDetector.stopProcessing();
         }
-    }
-
-    public String getTargetZone() {
-        return targetZone;
     }
 }
