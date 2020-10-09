@@ -18,8 +18,9 @@ public class Hardware extends HardwareBase implements Loggable {
     public Motor<DcMotor> rlMotor;
     @Log.Number(name = "rrmotor")
     public Motor<DcMotor> rrMotor;
+    // hellooooooo
     public IMU imu;
-//hi there
+
     public Hardware(HardwareMap hmap){
         flMotor = new Motor<DcMotor>("fl");
         frMotor = new Motor<DcMotor>("fr");
