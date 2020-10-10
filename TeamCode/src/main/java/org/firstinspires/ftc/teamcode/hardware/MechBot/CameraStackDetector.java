@@ -294,6 +294,58 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         }
     }
 
+    public ToboMech.TargetZone getTargetZone() {
+
+        ToboMech.TargetZone rings = ToboMech.TargetZone.UNKNOWN;
+
+        ElapsedTime elapsedTime = new ElapsedTime();
+        elapsedTime.startTime();
+
+        if (tfod == null)
+        {
+            return ToboMech.TargetZone.UNKNOWN;
+        }
+
+        int detectedRings = 0; //0 = none, 1 = single, 2 = quad
+
+        while (elapsedTime.seconds() < 0.3 && rings == ToboMech.TargetZone.UNKNOWN)
+        {
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if(updatedRecognitions == null || updatedRecognitions.size()<1)
+            {
+                continue;
+            }
+            for(Recognition recognition : updatedRecognitions)
+            {
+                if(detectedRings == 2 && updatedRecognitions.size()>1)
+                {
+                    break; //if we detect more than one and it's a quad already, most likely it's a quad
+                }
+
+                if(recognition.getLabel()=="Single")
+                {
+                    detectedRings = 1;
+                }
+                else
+                {
+                    detectedRings = 2;
+                }
+            }
+            switch(detectedRings)
+            {
+                case 1:
+                    rings = ToboMech.TargetZone.ZONE_B;
+                    break;
+                case 2:
+                    rings = ToboMech.TargetZone.ZONE_C;
+                    break;
+                default:
+                    rings = ToboMech.TargetZone.ZONE_A;
+            }
+        }
+        return rings;
+    }
+
     public ToboSigma.SkystoneLocation getSkystonePositionTF(boolean redSide) {
         return getSkystonePositionTF(redSide, true);
     }
