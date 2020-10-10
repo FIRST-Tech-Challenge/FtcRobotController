@@ -63,7 +63,7 @@ public class DetectorTest extends LinearOpMode{
             }
             catch (Exception ex){
                 telemetry.addData("Error", String.format("Unable to initialize Detector. %s", ex.getMessage()));
-                sleep(5000);
+                sleep(3000);
                 return;
             }
 

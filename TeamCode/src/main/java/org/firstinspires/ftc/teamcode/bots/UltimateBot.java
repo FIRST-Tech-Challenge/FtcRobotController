@@ -134,7 +134,7 @@ public class UltimateBot extends YellowBot
         while (!stop) {
             stop = wobbleSwing.isBusy() == false;
         }
-        wobbleSwing.setPower(-0.01);
+        wobbleSwing.setPower(0.01);
     }
 
     //actions

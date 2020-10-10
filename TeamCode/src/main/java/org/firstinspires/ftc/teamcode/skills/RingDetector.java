@@ -41,10 +41,11 @@ public class RingDetector {
         zone.setY(120);
         zone.setHeading(45);
         boolean found = false;
-
         boolean stop = false;
+
         ElapsedTime runtime = new ElapsedTime();
-        while (!stop && runtime.seconds() < timeout) {
+        runtime.reset();
+        while (!stop && runtime.seconds() <= timeout) {
             if (tfDetector != null) {
                 List<Classifier.Recognition> results = tfDetector.getLastResults();
                 if (results == null || results.size() == 0){
@@ -52,29 +53,30 @@ public class RingDetector {
                 }
                 else {
                     for (Classifier.Recognition r : results) {
-                        String item = String.format("%s: %.2f", r.getTitle(), r.getConfidence());
-                        telemetry.addData("Found", item);
-                        if(r.getConfidence() >= 0.6) {
-                            if(r.getTitle().contentEquals(LABEL_C)){
+//                        String item = String.format("%s: %.2f", r.getTitle(), r.getConfidence());
+//                        telemetry.addData("Found", item);
+                        if(r.getConfidence() >= 0.9) {
+//                            telemetry.addData("PrintZone", r.getTitle());
+                            if(r.getTitle().contains(LABEL_C)){
                                 zone.setX(70);
                                 zone.setY(120);
                                 zone.setHeading(45);
                                 found = true;
                                 targetZone = LABEL_C;
-                            }
-                            if(r.getTitle().contentEquals(LABEL_B)){
+                            } else if(r.getTitle().contains(LABEL_B)){
                                 zone.setX(50);
                                 zone.setY(100);
                                 zone.setHeading(45);
                                 found = true;
                                 targetZone = LABEL_B;
-                            }
-                            if(r.getTitle().contentEquals(LABEL_A)){
+                            } else if(r.getTitle().contains(LABEL_A)){
                                 zone.setX(70);
                                 zone.setY(70);
                                 zone.setHeading(45);
                                 found = true;
                                 targetZone = LABEL_A;
+                            } else {
+                                targetZone = "null";
                             }
                         }
                     }
