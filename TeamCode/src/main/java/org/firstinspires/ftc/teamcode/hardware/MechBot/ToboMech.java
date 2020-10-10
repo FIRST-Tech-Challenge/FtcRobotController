@@ -761,7 +761,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void detectPosition(){//startPos = 1 = out, 2 = in
         // use camera (Tensorflow) to detect position
         if (cameraStackDetector==null) {
-            tZone = TargetZone.ZONE_A; // assuming zone_A for simulation purpose
+            tZone = TargetZone.ZONE_B; // assuming zone_A for simulation purpose
             return;
         }
         tZone = cameraStackDetector.getTargetZone();
@@ -771,11 +771,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // still need to change positions to be far left for blue side
         if(side == Side.BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(.5, 30, 200, 45, true, 5);
+                chassis.driveTo(.5, 35, 200, -45, true, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(.5, 75, 260, 0, true, 5);
+                chassis.driveTo(.5, 60, 260, 0, true, 5);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(.5, 30, 320, 45, true, 5);
+                chassis.driveTo(.5, 35, 320, -45, true, 5);
             } else {
                 return;
             }
@@ -819,12 +819,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // neede to change positions
         if (side == Side.BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(.5, side(55), 165, 0, false, 5);
+                chassis.driveTo(.5, side(45), 165, 0, false, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(.5, side(115), 225, 0, false, 5);
+                chassis.driveTo(.5, side(95), 225, 0, false, 5);
 
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(.5, side(55), 285, 0, false, 5);
+                chassis.driveTo(.5, side(45), 285, 0, false, 5);
             } else {
                 return;
             }
