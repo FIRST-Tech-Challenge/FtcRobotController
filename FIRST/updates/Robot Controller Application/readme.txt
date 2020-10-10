@@ -1,0 +1,1 @@
+When running on a REV Control Hub (and only on a Control Hub, not merely a robot controller phone), any Android applications (APK files) found in this folder will be automatically installed when the system boots. Once successfully installed, each APK is deleted so as to not be reinstalled on subsequent boots.

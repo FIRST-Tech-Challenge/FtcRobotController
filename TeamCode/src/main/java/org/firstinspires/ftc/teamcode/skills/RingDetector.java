@@ -22,6 +22,7 @@ public class RingDetector {
     private static final String LABEL_A = "None";
     private static final String LABEL_B = "Single";
     private static final String LABEL_C = "Quad";
+    private String targetZone = LABEL_C;
 
     public RingDetector(){
 
@@ -36,8 +37,8 @@ public class RingDetector {
 
     public AutoDot detectRing(int timeout, Telemetry telemetry, LinearOpMode caller){
         AutoDot zone = new AutoDot();
-        zone.setX(90);
-        zone.setY(90);
+        zone.setX(70);
+        zone.setY(120);
         zone.setHeading(45);
         boolean found = false;
 
@@ -53,24 +54,27 @@ public class RingDetector {
                     for (Classifier.Recognition r : results) {
                         String item = String.format("%s: %.2f", r.getTitle(), r.getConfidence());
                         telemetry.addData("Found", item);
-                        if(r.getConfidence() > 0.8) {
+                        if(r.getConfidence() >= 0.6) {
                             if(r.getTitle().contentEquals(LABEL_C)){
-                                zone.setX(90);
-                                zone.setY(140);
-                                zone.setHeading(45);
-                                found = true;
-                            }
-                            if(r.getTitle().contentEquals(LABEL_B)){
                                 zone.setX(70);
                                 zone.setY(120);
                                 zone.setHeading(45);
                                 found = true;
+                                targetZone = LABEL_C;
                             }
-                            if(r.getTitle().contentEquals(LABEL_A)){
-                                zone.setX(90);
-                                zone.setY(90);
+                            if(r.getTitle().contentEquals(LABEL_B)){
+                                zone.setX(50);
+                                zone.setY(100);
                                 zone.setHeading(45);
                                 found = true;
+                                targetZone = LABEL_B;
+                            }
+                            if(r.getTitle().contentEquals(LABEL_A)){
+                                zone.setX(70);
+                                zone.setY(70);
+                                zone.setHeading(45);
+                                found = true;
+                                targetZone = LABEL_A;
                             }
                         }
                     }
@@ -94,6 +98,10 @@ public class RingDetector {
             tfDetector.activate();
         }
         telemetry.addData("Info", "TF Activated");
+    }
+
+    public String returnZone(){
+        return targetZone;
     }
 
     public void stopDetection(){

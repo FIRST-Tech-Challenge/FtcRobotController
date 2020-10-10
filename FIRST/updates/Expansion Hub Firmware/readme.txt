@@ -1,0 +1,1 @@
+Place any downloaded REV Hub firmware updates you wish to install in this folder. You can then install those updates using the Advanced Settings menu on the Driver Station or Robot Controller.

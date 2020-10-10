@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
+import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
 import java.util.Random;
 
@@ -158,29 +159,12 @@ public class UltimateBot extends YellowBot
 
     @BotAction(displayName = "detectStack")
     public AutoDot detectStack(){
-        Random r = new Random();
-        int upperbound = 3;
         AutoDot target = new AutoDot();
-        target.setDotName("A");
-        target.setX(75);
-        target.setY(80);
-        int zoneIndex = r.nextInt(upperbound);
-
-        switch (zoneIndex){
-            case 1:
-                target.setDotName("B");
-                target.setX(55);
-                target.setY(100);
-                break;
-            case 2:
-                target.setDotName("C");
-                target.setX(75);
-                target.setY(120);
-                break;
-
-        }
+        RingDetector rf = null;
+        rf = new RingDetector(this.hwMap, telemetry);
+        rf.initDetector();
+        target = rf.detectRing(2, telemetry, owner);
         signalOK();
-
         return target;
     }
 

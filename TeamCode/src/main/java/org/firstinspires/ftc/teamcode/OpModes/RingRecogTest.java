@@ -22,7 +22,7 @@ public class RingRecogTest extends LinearOpMode {
     // Declare OpMode members.
     private RingDetector rf = null;
     private ElapsedTime runtime = new ElapsedTime();
-    private AutoDot wobzone = new AutoDot();
+    private AutoDot wobdot = new AutoDot();
 
     @Override
     public void runOpMode() {
@@ -46,7 +46,10 @@ public class RingRecogTest extends LinearOpMode {
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
-                wobzone = rf.detectRing(10, telemetry, this);
+                wobdot = rf.detectRing(10, telemetry, this);
+                telemetry.addData("Zone", rf.returnZone());
+                telemetry.addData("X-Coord", wobdot.getX());
+                telemetry.addData("Y-Coord", wobdot.getY());
                 telemetry.update();
             }
         }
