@@ -686,6 +686,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
      * @param power must be in range [0,1]
      */
     public void yMove(int sgn, double power) {
+        if (simulation_mode) return;
         if (Math.abs(power)<minPower) power=minPower*Math.signum(power);
         motorFL.setPower(sgn * power * left_ratio * ratioFL);
         motorFR.setPower(sgn * power * right_ratio * ratioFR);
@@ -700,6 +701,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
      * @param power must be in range [0,1]
      */
     public void xMove(int sgn, double power) {
+        if (simulation_mode) return;
         if (Math.abs(power)<1.75*minPower) power=1.5*minPower*Math.signum(power);
         motorFL.setPower(sgn * power * front_ratio * ratioFL);
         motorFR.setPower(-sgn * power * front_ratio * ratioFR);
@@ -779,6 +781,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
 
     public void freeStyle(double fl, double fr, double bl, double br, boolean normalized) {
+        if (simulation_mode) return;
         if (normalized) {
             motorFL.setPower(fl * ratioFL);
             motorFR.setPower(fr * ratioFR);
@@ -796,6 +799,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         // power should always be positive
         // inches > 0 forward
         //        < 0 backward
+        if (simulation_mode) return;
 
         power = Math.abs(power);
         boolean count_up = (Math.signum(inches)>0);
@@ -820,6 +824,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         // power should always be positive
         // inches > 0, crab right 90 degree
         //        < 0, crab left 90 degree
+        if (simulation_mode) return;
         power = Math.abs(power);
         if (Math.abs(power)<minPower) power=minPower*Math.signum(power);
         boolean count_up = (Math.signum(inches)>0);
@@ -848,6 +853,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
      * @param power must be in range [0,1]
      */
     public void turn(int sgn, double power) {
+        if (simulation_mode) return;
         if (Math.abs(power)<minPower) power=minPower*Math.signum(power);
         motorFL.setPower(sgn * power);
         motorFR.setPower(-sgn * power);
@@ -856,6 +862,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
 
     public void chassis_test() throws InterruptedException {
+        if (simulation_mode) return;
         motorFR.setPower(0.1);
         sleep(1000);
         motorFR.setPower(0);
@@ -880,6 +887,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
      * @param turningFactor int range [-1,+1] (+1 for turning right, -1 for turning left)
      */
     public void carDrive(double power, double turningFactor) {
+        if (simulation_mode) return;
         if (Math.abs(power)<minPower) power=minPower*Math.signum(power);
         if (turningFactor > 0) {
             turningFactor = 1 - turningFactor;
@@ -912,6 +920,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
 
     public void setRunMode(DcMotor.RunMode rm) {
+        if (simulation_mode) return;
         motorFL.setMode(rm);
         motorFR.setMode(rm);
         motorBL.setMode(rm);
@@ -919,6 +928,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zpb) {
+        if (simulation_mode) return;
         motorFL.setZeroPowerBehavior(zpb);
         motorFR.setZeroPowerBehavior(zpb);
         motorBL.setZeroPowerBehavior(zpb);
@@ -926,12 +936,14 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
 
     public void stop() {
+        if (simulation_mode) return;
         motorFL.setPower(0);
         motorFR.setPower(0);
         motorBL.setPower(0);
         motorBR.setPower(0);
     }
     public void stopNeg(double[] motorPowers) throws InterruptedException {
+        if (simulation_mode) return;
         double speed = odo_speed_cm();
         motorFL.setPower(-Math.signum(motorPowers[0] * .01));
         motorFR.setPower(-Math.signum(motorPowers[1] * .01));
@@ -942,6 +954,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
 
     public void reset() {
+        if (simulation_mode) return;
         motorFL.setPower(0);
         motorFR.setPower(0);
         motorBL.setPower(0);

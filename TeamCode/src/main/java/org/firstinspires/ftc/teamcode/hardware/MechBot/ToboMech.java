@@ -36,9 +36,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public enum StartPosition{
         IN, OUT;
     }
-    public TargetZone tZone;
-    public Side side;
-    public StartPosition startPos; // in out
+    public TargetZone tZone = TargetZone.UNKNOWN;
+    public Side side = Side.BLUE; // default to blue
+    public StartPosition startPos = StartPosition.OUT; // default to OUT position
 
     Thread positionThread;
     private Telemetry telemetry;
@@ -128,28 +128,27 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (simulation_mode) { // need to call after chassis is initialized
             set_simulation_mode(true);
         }
-        if (!simulation_mode) {
-            if (useBottomWobbleGoalGrabber) {
-                bottomWobbleGoalGrabber = new BottomWobbleGoalGrabber(core);
-                bottomWobbleGoalGrabber.configure(configuration, (autoside != ToboMech.AutoTeamColor.NOT_AUTO));
-            }
 
-            if (useTopWobbleGoalGrabber) {
-                topWobbleGoalGrabber = new TopWobbleGoalGrabber(core);
-                topWobbleGoalGrabber.configure(configuration, (autoside != ToboMech.AutoTeamColor.NOT_AUTO));
-            }
-            if (useHopper) {
-                hopper = new Hopper(core);
-                hopper.configure(configuration, (autoside != AutoTeamColor.NOT_AUTO));
-            }
-            if (useShooter) {
-                shooter = new Shooter(core);
-                shooter.configure(configuration, (autoside != AutoTeamColor.NOT_AUTO));
-            }
-            if (useIntake) {
-                intake = new Intake(core);
-                intake.configure(configuration, (autoside != AutoTeamColor.NOT_AUTO));
-            }
+        if(useBottomWobbleGoalGrabber && !simulation_mode){
+            bottomWobbleGoalGrabber = new BottomWobbleGoalGrabber(core);
+            bottomWobbleGoalGrabber.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
+        }
+
+        if(useTopWobbleGoalGrabber && !simulation_mode){
+            topWobbleGoalGrabber = new TopWobbleGoalGrabber(core);
+            topWobbleGoalGrabber.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
+        }
+        if(useHopper && !simulation_mode){
+            hopper = new Hopper(core);
+            hopper.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
+        }
+        if(useShooter && !simulation_mode){
+            shooter = new Shooter(core);
+            shooter.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
+        }
+        if(useIntake && !simulation_mode){
+            intake = new Intake(core);
+            intake.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
         }
 
         info("ToboMech configure() after init Chassis (run time = %.2f sec)", (runtime.seconds() - ini_time));
@@ -455,6 +454,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         */
     }
     public void autoGrabBottomWobbleGoal() throws InterruptedException {
+        if (simulation_mode) return;
         chassis.yMove(1, 0.4);
         sleep(350);
         bottomWobbleGoalGrabber.grabWobbleGoalCombo();
@@ -759,12 +759,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.set_init_pos(side(60), 23, 0);
     }
     public void detectPosition(){//startPos = 1 = out, 2 = in
-        // use camera to detect position
-        if (!simulation_mode) {
-            tZone = cameraStackDetector.getTargetZone(); // TensorFlow
-        } else {
-            tZone = TargetZone.ZONE_A;
+        // use camera (Tensorflow) to detect position
+        if (cameraStackDetector==null) {
+            tZone = TargetZone.ZONE_A; // assuming zone_A for simulation purpose
+            return;
         }
+        tZone = cameraStackDetector.getTargetZone();
     }
     public void deliverFirstWobbleGoal () throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
@@ -780,9 +780,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 return;
             }
         }
-        if (!simulation_mode) {
+        if (bottomWobbleGoalGrabber!=null)
             bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
-        }
     }
 
 
@@ -829,9 +828,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else {
                 return;
             }
-            if (!simulation_mode) {
+            if (bottomWobbleGoalGrabber!=null)
                 bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
-            }
         }
 
 
