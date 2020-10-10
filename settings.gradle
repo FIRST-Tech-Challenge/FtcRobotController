@@ -1,2 +1,3 @@
+include ':OpenCVLibrary411'
 include ':FtcRobotController'
 include ':TeamCode'
