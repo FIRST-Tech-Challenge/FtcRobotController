@@ -78,7 +78,7 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
     }
 
     public void servoInit() {
-        grabber.setPosition(GRABBER_INIT);
+        grabber.setPosition(GRABBER_CLOSE);
         pivot.setPosition(PIVOT_INIT);
         pivotIsDown = false;
         grabberIsClosed = true;

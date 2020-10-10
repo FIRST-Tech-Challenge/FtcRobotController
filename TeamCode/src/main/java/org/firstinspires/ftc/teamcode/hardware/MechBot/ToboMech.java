@@ -773,6 +773,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 return;
             }
         }
+        bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
     }
 
 
@@ -801,8 +802,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(.5, side(60), 30, 0, true,  4);
         }
         //grab the wobble goal
-
-
+        autoGrabBottomWobbleGoal();
     }
     public void deliverSecondWobbleGoal() throws InterruptedException { // we may need to go around the other wobble goal
 
@@ -818,6 +818,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else {
                 return;
             }
+            bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
         }
 
 
