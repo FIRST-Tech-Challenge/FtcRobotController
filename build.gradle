@@ -21,7 +21,8 @@ allprojects {
     repositories {
         google()
         jcenter()
-
+        maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
+        maven { url 'https://jitpack.io' }
 
     }
 }

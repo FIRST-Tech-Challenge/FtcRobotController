@@ -6,8 +6,14 @@ dependencies {
     implementation (name: 'tfod-release', ext:'aar')
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext:'aar')
 
-    implementation 'com.github.technototes.TechnoLib:RobotLibrary:0.2.2'
-    implementation 'com.github.technototes.TechnoLog:Logger:0.1.0'
-    implementation 'com.github.technototes.TechnoControl:Control:0.1.1'
-    implementation 'com.github.technototes.TechnoSubsystem:Subsystem:0.1.0'
+//    implementation 'com.github.technototes.TechnoLib:RobotLibrary:0.2.2'
+//    implementation 'com.github.technototes.TechnoLog:Logger:0.1.0'
+//    implementation 'com.github.technototes.TechnoControl:Control:0.1.1'
+//    implementation 'com.github.technototes.TechnoSubsystem:Subsystem:0.1.0'
+
+    implementation project(':Control')
+    implementation project(':RobotLibrary')
+    implementation project(':Logger')
+    implementation project(':Subsystem')
+
 }

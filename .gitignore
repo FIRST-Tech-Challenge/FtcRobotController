@@ -23,10 +23,6 @@ out/
 .gradle/
 build/
 
-RobotLibrary/
-Control/
-Logger/
-Subsystem/
 # Local configuration file (sdk path, etc)
 local.properties
 

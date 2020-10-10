@@ -21,10 +21,8 @@ public class OI extends OIBase {
     }
 
     public void setDriverControls() {
-//        CommandScheduler.getRunInstance().schedule(new MecanumDriveCommand(
-//           robot.drivebaseSubsystem, driverGamepad.leftStick, driverGamepad.rightStick).setFieldCentric(robot.hardware.imu).addRequirements(robot.drivebaseSubsystem));
-//        driverGamepad.y.whenToggled(new InstantCommand(() -> robot.drivebaseSubsystem.setDriveSpeed(TURBO)))
-//                .whenInverseToggled(new InstantCommand(() -> robot.drivebaseSubsystem.setDriveSpeed(NORMAL)));
+        driverGamepad.y.whenToggled(new InstantCommand(() -> robot.drivebaseSubsystem.setDriveSpeed(TURBO)))
+                .whenInverseToggled(new InstantCommand(() -> robot.drivebaseSubsystem.setDriveSpeed(NORMAL)));
     }
 
 }
