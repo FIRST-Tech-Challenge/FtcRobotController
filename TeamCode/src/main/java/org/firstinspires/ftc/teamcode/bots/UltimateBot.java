@@ -165,7 +165,6 @@ public class UltimateBot extends YellowBot
         AutoDot target = new AutoDot();
         RingDetector rf = null;
         rf = new RingDetector(this.hwMap, telemetry);
-        rf.initDetector();
         target = rf.detectRing(2, telemetry, owner);
         signalOK();
         return target;
