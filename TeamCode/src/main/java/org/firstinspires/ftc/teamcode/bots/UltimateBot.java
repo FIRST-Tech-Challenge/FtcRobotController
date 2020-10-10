@@ -17,6 +17,7 @@ import java.util.Random;
 public class UltimateBot extends YellowBot
 {
     private static int SWINGVALUE = 280;
+    private static int MIDDLESWINGVALUE = 200;
     public DcMotor wobbleSwing = null;
 
     HardwareMap hwMap =  null;
@@ -53,7 +54,7 @@ public class UltimateBot extends YellowBot
         }
 
 
-        telemetry.addData("Init", "Dummy is ready");
+        telemetry.addData("Init", "Ultimate is ready");
     }
 
 
@@ -74,17 +75,25 @@ public class UltimateBot extends YellowBot
     }
 
 
+    @BotAction(displayName = "closeWobbleClaw")
     public void closeWobbleClaw () {
+
         wobbleClaw.setPosition(0);
     }
 
+    @BotAction(displayName = "openWobbleClaw")
     public void openWobbleClaw () {
+
         wobbleClaw.setPosition(1);
     }
 
+    @BotAction(displayName = "backWobbleSwing")
     public void backWobbleSwing (){
         int currentPosition = wobbleSwing.getCurrentPosition();
         int targetPosition = currentPosition - SWINGVALUE;
+        if (targetPosition <= -50) {
+            return;
+        }
         wobbleSwing.setTargetPosition(targetPosition);
         wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleSwing.setPower(0.3);
@@ -95,9 +104,13 @@ public class UltimateBot extends YellowBot
         wobbleSwing.setPower(0);
     }
 
+    @BotAction(displayName = "forwardWobbleSwing")
     public void forwardWobbleSwing () {
         int currentPosition = wobbleSwing.getCurrentPosition();
         int targetPosition = currentPosition + SWINGVALUE;
+        if (targetPosition >= SWINGVALUE + 50) {
+            return;
+        }
         wobbleSwing.setTargetPosition(targetPosition);
         wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleSwing.setPower(0.3);
@@ -108,6 +121,17 @@ public class UltimateBot extends YellowBot
         wobbleSwing.setPower(0);
     }
 
+    @BotAction(displayName = "middleWobbleSwing")
+    public void middleWobbleSwing() {
+        wobbleSwing.setTargetPosition(MIDDLESWINGVALUE);
+        wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleSwing.setPower(0.3);
+        boolean stop = false;
+        while (!stop) {
+            stop = wobbleSwing.isBusy() == false;
+        }
+        wobbleSwing.setPower(0);
+    }
 
     //actions
     @BotAction(displayName = "signalOK")

@@ -82,6 +82,9 @@ public class UltimateMode extends LinearOpMode{
                 else if (gamepad1.dpad_down) {
                     robot.backWobbleSwing();
                 }
+                else if (gamepad1.dpad_left) {
+                    robot.middleWobbleSwing();
+                }
             }
         }
 
