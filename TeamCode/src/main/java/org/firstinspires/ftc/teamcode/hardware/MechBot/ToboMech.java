@@ -128,27 +128,28 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (simulation_mode) { // need to call after chassis is initialized
             set_simulation_mode(true);
         }
+        if (!simulation_mode) {
+            if (useBottomWobbleGoalGrabber) {
+                bottomWobbleGoalGrabber = new BottomWobbleGoalGrabber(core);
+                bottomWobbleGoalGrabber.configure(configuration, (autoside != ToboMech.AutoTeamColor.NOT_AUTO));
+            }
 
-        if(useBottomWobbleGoalGrabber){
-            bottomWobbleGoalGrabber = new BottomWobbleGoalGrabber(core);
-            bottomWobbleGoalGrabber.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
-        }
-
-        if(useTopWobbleGoalGrabber){
-            topWobbleGoalGrabber = new TopWobbleGoalGrabber(core);
-            topWobbleGoalGrabber.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
-        }
-        if(useHopper){
-            hopper = new Hopper(core);
-            hopper.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
-        }
-        if(useShooter){
-            shooter = new Shooter(core);
-            shooter.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
-        }
-        if(useIntake){
-            intake = new Intake(core);
-            intake.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
+            if (useTopWobbleGoalGrabber) {
+                topWobbleGoalGrabber = new TopWobbleGoalGrabber(core);
+                topWobbleGoalGrabber.configure(configuration, (autoside != ToboMech.AutoTeamColor.NOT_AUTO));
+            }
+            if (useHopper) {
+                hopper = new Hopper(core);
+                hopper.configure(configuration, (autoside != AutoTeamColor.NOT_AUTO));
+            }
+            if (useShooter) {
+                shooter = new Shooter(core);
+                shooter.configure(configuration, (autoside != AutoTeamColor.NOT_AUTO));
+            }
+            if (useIntake) {
+                intake = new Intake(core);
+                intake.configure(configuration, (autoside != AutoTeamColor.NOT_AUTO));
+            }
         }
 
         info("ToboMech configure() after init Chassis (run time = %.2f sec)", (runtime.seconds() - ini_time));
@@ -759,7 +760,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
     public void detectPosition(){//startPos = 1 = out, 2 = in
         // use camera to detect position
-        tZone = cameraStackDetector.getTargetZone(); // TensorFlow
+        if (!simulation_mode) {
+            tZone = cameraStackDetector.getTargetZone(); // TensorFlow
+        } else {
+            tZone = TargetZone.ZONE_A;
+        }
     }
     public void deliverFirstWobbleGoal () throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
@@ -775,7 +780,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 return;
             }
         }
-        bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
+        if (!simulation_mode) {
+            bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
+        }
     }
 
 
@@ -804,7 +811,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(.5, side(60), 30, 0, true,  4);
         }
         //grab the wobble goal
-        autoGrabBottomWobbleGoal();
+        if (!simulation_mode) {
+            autoGrabBottomWobbleGoal();
+        }
     }
     public void deliverSecondWobbleGoal() throws InterruptedException { // we may need to go around the other wobble goal
 
@@ -820,7 +829,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else {
                 return;
             }
-            bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
+            if (!simulation_mode) {
+                bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
+            }
         }
 
 

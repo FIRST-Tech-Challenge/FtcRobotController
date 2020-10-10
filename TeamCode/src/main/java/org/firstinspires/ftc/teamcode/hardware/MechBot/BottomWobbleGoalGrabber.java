@@ -154,6 +154,7 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
     }
 
     public void releaseWobbleGoalCombo() {
+
         final String taskName = "release Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
         TaskManager.add(new Task() {
