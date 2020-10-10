@@ -67,23 +67,6 @@ public class DummyBot {
             throw new Exception("Issues with motor 4. Check the controller config", ex);
         }
 
-        try{
-            wobbleSwing = hwMap.get(Servo.class, "swing");
-            wobbleSwing.setPosition(0.5);
-        }
-        catch (Exception ex) {
-            throw new Exception("Issues with wobbleSwing. Check the controller config", ex);
-        }
-
-        try{
-            wobbleClaw = hwMap.get(Servo.class, "claw");
-            wobbleClaw.setPosition(0.5);
-        }
-        catch (Exception ex) {
-            throw new Exception("Issues with wobbleClaw. Check the controller config", ex);
-        }
-
-
         telemetry.addData("Init", "Dummy is ready");
     }
 

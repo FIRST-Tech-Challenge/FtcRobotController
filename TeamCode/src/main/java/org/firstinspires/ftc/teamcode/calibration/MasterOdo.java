@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.bots.BotAction;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
+import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 import org.firstinspires.ftc.teamcode.bots.YellowBot;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.Led;
@@ -36,7 +37,7 @@ import static org.firstinspires.ftc.teamcode.autonomous.AutoStep.NO_ACTION;
 @TeleOp(name="Master Odo", group="Robot15173")
 public class MasterOdo extends LinearOpMode {
 
-    protected YellowBot bot = new YellowBot();
+    protected UltimateBot bot = new UltimateBot();
     ElapsedTime timer = new ElapsedTime();
     public static String COORDINATE = "Coordinate";
 
@@ -48,7 +49,7 @@ public class MasterOdo extends LinearOpMode {
     private ArrayList<Integer> blueRoutes = new ArrayList<>();
     private ArrayList<Integer> redRoutes = new ArrayList<>();
     private List<Method> botActions = new ArrayList<Method>();
-    private HashMap<String, Point> coordinateFunctions = new HashMap<>();
+    private HashMap<String, AutoDot> coordinateFunctions = new HashMap<>();
 
     protected double right = 0;
     protected double left = 0;
@@ -750,7 +751,7 @@ public class MasterOdo extends LinearOpMode {
         Method action = findActionMethod(instruction.getAction());
         if (action != null){
             try {
-                Point result = (Point)action.invoke(this.bot);
+                AutoDot result = (AutoDot)action.invoke(this.bot);
                 if (coordinateFunctions.containsKey(action.getName())){
                     coordinateFunctions.put(action.getName(), result);
                 }
@@ -771,16 +772,13 @@ public class MasterOdo extends LinearOpMode {
         double desiredHead = instruction.getDesiredHead();
         String targetReference = instruction.getTargetReference();
         if (targetReference.equals("") == false){
-            target = coordinateFunctions.get(targetReference);
+            AutoDot dot = coordinateFunctions.get(targetReference);
+            target = dot.getPoint();
             if (target == null){
                 telemetry.addData("Warning", String.format("No data in target reference function %s", instruction.getTargetReference()));
                 return;
             }
-            //check if a coordinate is referenced find the AutoDot and use the heading from it
-            AutoDot coordinate = findCoordinate(targetReference);
-            if (coordinate != null){
-                desiredHead = coordinate.getHeading();
-            }
+            desiredHead = dot.getHeading();
         }
         BotMoveProfile profile = BotMoveProfile.bestRoute(bot, (int)locator.getXInches(), (int)locator.getYInches(), target,
                 RobotDirection.Optimal, instruction.getTopSpeed(), strategy, desiredHead, locator);
@@ -978,7 +976,7 @@ public class MasterOdo extends LinearOpMode {
                     selected = "";
                     String name = m.getName();
                     if(coordinateFunctions.containsKey(name)){
-                        Point val = coordinateFunctions.get(name);
+                        AutoDot val = coordinateFunctions.get(name);
                         if (val != null){
                             selected = val.toString();
                         }
@@ -1027,7 +1025,7 @@ public class MasterOdo extends LinearOpMode {
             String targetRef = goToInstructions.getTargetReference();
             String selected = targetRef.equals("") ? "*" : " ";
             telemetry.addData("None ", selected);
-            for (Map.Entry<String, Point> entry : coordinateFunctions.entrySet()) {
+            for (Map.Entry<String, AutoDot> entry : coordinateFunctions.entrySet()) {
                 selected = targetRef.equals(entry.getKey()) ? "*" : " ";
                 if (entry.getValue() != null){
                     selected = String.format("%s %s", entry.getValue().toString(), selected);
@@ -1153,7 +1151,7 @@ public class MasterOdo extends LinearOpMode {
                 if (method.isAnnotationPresent(BotAction.class)) {
                     botActions.add(method);
 
-                    if (Point.class.isAssignableFrom(method.getReturnType())){
+                    if (AutoDot.class.isAssignableFrom(method.getReturnType())){
                         coordinateFunctions.put(method.getName(), null);
                     }
                 }
@@ -1237,24 +1235,7 @@ public class MasterOdo extends LinearOpMode {
 
     private void addNamedCoordinate(AutoDot dot){
         this.coordinates.add(dot);
-        this.coordinateFunctions.put(String.format("%s %s", COORDINATE,  dot.getDotName()), dot.getPoint());
-    }
-
-    private AutoDot findCoordinate(String targetReference){
-        AutoDot dot = null;
-        if (targetReference.contains(COORDINATE)){
-            int i = targetReference.lastIndexOf(' ');
-            if (i > 0) {
-                String dotName = targetReference.substring(i+1);
-                for(AutoDot d : this.coordinates){
-                    if (d.getDotName().equals(dotName)){
-                        dot = d;
-                        break;
-                    }
-                }
-            }
-        }
-        return dot;
+        this.coordinateFunctions.put(dot.getDotName(), dot);
     }
 
 

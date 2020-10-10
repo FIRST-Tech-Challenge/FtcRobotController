@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import android.graphics.Point;
 
 import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
+import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 
 import java.io.Serializable;
 
@@ -17,7 +18,7 @@ public class AutoDot implements Serializable {
     private boolean selected;
     private int x;
     private int y;
-    private double heading = 0;
+    private double heading = BotMoveProfile.DEFAULT_HEADING;
 
 
     public String serialize() {
@@ -25,6 +26,11 @@ public class AutoDot implements Serializable {
     }
     public static AutoDot deserialize(String data) {
         return SimpleGson.getInstance().fromJson(data, AutoDot.class);
+    }
+
+    @Override
+    public String toString() {
+        return this.getPoint().toString();
     }
 
     public String getDotName() {

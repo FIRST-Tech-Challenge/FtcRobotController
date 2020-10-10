@@ -32,13 +32,13 @@ public class YellowBot implements OdoBot{
     private DcMotor backRight = null;
 
     HardwareMap hwMap  =  null;
-    private Telemetry telemetry;
+    protected Telemetry telemetry;
 
     private Gyroscope gyro = null;
 
     private Led led = null;
 
-    private LinearOpMode owner = null;
+    protected LinearOpMode owner = null;
 
     static final double     COUNTS_PER_MOTOR_HD    = 560 ;    // Rev HD motor
     static final double     REV_TBORE    = 8192 ;    // Rev HD motor
@@ -1453,52 +1453,5 @@ public class YellowBot implements OdoBot{
         }
         return led;
     }
-
-    //actions
-    @BotAction(displayName = "signalOK")
-    public void signalOK(){
-        getLights().OK();
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-        while (timer.seconds() < 1){
-
-        }
-        getLights().none();
-    }
-
-    @BotAction(displayName = "signalProblem")
-    public void signalProblem(){
-        getLights().problem();
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-        while (timer.seconds() < 1){
-
-        }
-        getLights().none();
-    }
-
-    @BotAction(displayName = "detectStack")
-    public Point detectStack(){
-        Random r = new Random();
-        int upperbound = 3;
-
-        Point destination = new Point(75, 80); //zone A
-
-        int zoneIndex = r.nextInt(upperbound);
-
-        switch (zoneIndex){
-            case 1:
-                destination = new Point(55, 100); //zone B
-                break;
-            case 2:
-                destination = new Point(75, 120); //zone B
-                break;
-
-        }
-        signalOK();
-
-        return destination;
-    }
-
 
 }

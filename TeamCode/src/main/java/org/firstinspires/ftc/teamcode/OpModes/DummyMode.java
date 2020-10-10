@@ -55,6 +55,8 @@ public class DummyMode extends LinearOpMode{
                 telemetry.addData("Init", ex.getMessage());
             }
 
+            telemetry.update();
+
 
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
@@ -73,12 +75,6 @@ public class DummyMode extends LinearOpMode{
 
                 double drive4 = gamepad2.right_stick_y;
                 robot.moveMotor4(drive4);
-
-                double claw = gamepad1.left_trigger;
-                robot.moveWobbleClaw(claw);
-
-                double swing = gamepad1.right_trigger;
-                robot.moveWobbleSwing(swing);
 
             }
         }

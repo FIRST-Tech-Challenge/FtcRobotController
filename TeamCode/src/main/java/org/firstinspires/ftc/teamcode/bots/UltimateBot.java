@@ -1,12 +1,18 @@
 package org.firstinspires.ftc.teamcode.bots;
 
+import android.graphics.Point;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
+
+import java.util.Random;
 
 public class UltimateBot extends YellowBot
 {
@@ -100,6 +106,58 @@ public class UltimateBot extends YellowBot
             stop = wobbleSwing.isBusy() == false;
         }
         wobbleSwing.setPower(0);
+    }
+
+
+    //actions
+    @BotAction(displayName = "signalOK")
+    public void signalOK(){
+        getLights().OK();
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while (timer.seconds() < 1){
+
+        }
+        getLights().none();
+    }
+
+    @BotAction(displayName = "signalProblem")
+    public void signalProblem(){
+        getLights().problem();
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while (timer.seconds() < 1){
+
+        }
+        getLights().none();
+    }
+
+    @BotAction(displayName = "detectStack")
+    public AutoDot detectStack(){
+        Random r = new Random();
+        int upperbound = 3;
+        AutoDot target = new AutoDot();
+        target.setDotName("A");
+        target.setX(75);
+        target.setY(80);
+        int zoneIndex = r.nextInt(upperbound);
+
+        switch (zoneIndex){
+            case 1:
+                target.setDotName("B");
+                target.setX(55);
+                target.setY(100);
+                break;
+            case 2:
+                target.setDotName("C");
+                target.setX(75);
+                target.setY(120);
+                break;
+
+        }
+        signalOK();
+
+        return target;
     }
 
 }
