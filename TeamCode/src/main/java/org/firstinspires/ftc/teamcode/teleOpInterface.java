@@ -19,4 +19,6 @@ public interface teleOpInterface {
 
     void rjoy(float x, float y);
     void ljoy(float x, float y);
+
+    void custom1();
 }

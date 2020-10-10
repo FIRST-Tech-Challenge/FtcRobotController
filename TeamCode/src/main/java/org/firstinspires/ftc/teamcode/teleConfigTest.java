@@ -2,17 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 public class teleConfigTest implements teleOpInterface {
     HardwareMapV2 robot;
+    Drivetrain drivetrain;
 
-    public void a() {
-        robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 1);
-    }
+    public void a() { robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 1); }
 
-    public void b() {
-        robot.outtake.setPower((robot.outtake.getPower() >= 0.1) ? 0 : 1);
-    }
+    public void b() { drivetrain.outtakeAll((robot.outtake.getPower() >= 0.1) ? 0 : 1); }
 
     public void x() {
-
+        
     }
 
     public void y() {
@@ -56,6 +53,10 @@ public class teleConfigTest implements teleOpInterface {
     }
 
     public void ljoy(float x, float y) {
+
+    }
+
+    public void custom1() {
 
     }
 }

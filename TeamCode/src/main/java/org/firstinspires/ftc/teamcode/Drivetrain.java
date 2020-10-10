@@ -19,6 +19,9 @@ public class Drivetrain {
         power = (right) ? power : -power;
         setMotorPowers(power, -power, power, -power);
     }
+    public void outtakeAll(double power){
+        outtakeAll(power, power);
+    }
     public void outtakeAll(double conveyor, double outtake){
         robot.conveyor.setPower(conveyor);
         robot.outtake.setPower(outtake);
