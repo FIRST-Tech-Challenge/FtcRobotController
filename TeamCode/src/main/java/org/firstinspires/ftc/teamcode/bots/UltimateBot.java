@@ -89,6 +89,7 @@ public class UltimateBot extends YellowBot
 
     @BotAction(displayName = "backWobbleSwing")
     public void backWobbleSwing (){
+        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         int currentPosition = wobbleSwing.getCurrentPosition();
         int targetPosition = currentPosition - SWINGVALUE;
         if (targetPosition <= -50) {
@@ -96,7 +97,7 @@ public class UltimateBot extends YellowBot
         }
         wobbleSwing.setTargetPosition(targetPosition);
         wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleSwing.setPower(0.3);
+        wobbleSwing.setPower(0.6);
         boolean stop = false;
         while (!stop) {
             stop = wobbleSwing.isBusy() == false;
@@ -106,6 +107,7 @@ public class UltimateBot extends YellowBot
 
     @BotAction(displayName = "forwardWobbleSwing")
     public void forwardWobbleSwing () {
+        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         int currentPosition = wobbleSwing.getCurrentPosition();
         int targetPosition = currentPosition + SWINGVALUE;
         if (targetPosition >= SWINGVALUE + 50) {
@@ -113,7 +115,7 @@ public class UltimateBot extends YellowBot
         }
         wobbleSwing.setTargetPosition(targetPosition);
         wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleSwing.setPower(0.3);
+        wobbleSwing.setPower(0.6);
         boolean stop = false;
         while (!stop) {
             stop = wobbleSwing.isBusy() == false;
@@ -123,6 +125,7 @@ public class UltimateBot extends YellowBot
 
     @BotAction(displayName = "middleWobbleSwing")
     public void middleWobbleSwing() {
+        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleSwing.setTargetPosition(MIDDLESWINGVALUE);
         wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleSwing.setPower(0.3);
@@ -130,7 +133,7 @@ public class UltimateBot extends YellowBot
         while (!stop) {
             stop = wobbleSwing.isBusy() == false;
         }
-        wobbleSwing.setPower(0);
+        wobbleSwing.setPower(-0.01);
     }
 
     //actions
