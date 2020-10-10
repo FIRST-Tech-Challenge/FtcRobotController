@@ -31,7 +31,7 @@ public class YellowBot implements OdoBot{
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
 
-    HardwareMap hwMap  =  null;
+    protected HardwareMap hwMap  =  null;
     protected Telemetry telemetry;
 
     private Gyroscope gyro = null;
