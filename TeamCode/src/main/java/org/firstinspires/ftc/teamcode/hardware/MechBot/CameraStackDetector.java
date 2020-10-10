@@ -114,7 +114,6 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         /*
          * InitVuforia(): Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
-
         camLR = new AdjustableServo(0, 1).configureLogging(
                 logTag + ":camLR", logLevel
         );

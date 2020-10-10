@@ -114,12 +114,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             // enable imu for diagnosis
             chassis.enableImuTelemetry(configuration);
         }
-        if(useTfod || (autoside!=AutoTeamColor.NOT_AUTO && simulation_mode==false)) {
-            cameraStackDetector = new CameraStackDetector();
-            cameraStackDetector.configure(configuration);
-        } else if (useVuforia) {
-            cameraSystem = new CameraSystem();
-            cameraSystem.init(configuration.getHardwareMap());
+        if (!simulation_mode) {
+            if (useTfod || (autoside != AutoTeamColor.NOT_AUTO)) {
+                cameraStackDetector = new CameraStackDetector();
+                cameraStackDetector.configure(configuration);
+            } else if (useVuforia) {
+                cameraSystem = new CameraSystem();
+                cameraSystem.init(configuration.getHardwareMap());
+            }
         }
         chassis.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
 
