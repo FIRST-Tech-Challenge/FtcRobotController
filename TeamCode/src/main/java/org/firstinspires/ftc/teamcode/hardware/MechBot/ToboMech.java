@@ -759,7 +759,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
     public void detectPosition(){//startPos = 1 = out, 2 = in
         // use camera to detect position
-        tZone = TargetZone.ZONE_A; // TensorFlow
+        tZone = cameraStackDetector.getTargetZone(); // TensorFlow
     }
     public void deliverFirstWobbleGoal () throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?

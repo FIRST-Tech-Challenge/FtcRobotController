@@ -130,7 +130,7 @@ public class TfodStackDetection extends LinearOpMode {
                     // step through the list of recognitions and display boundary info.
                     int i = 0;
                     for (Recognition recognition : updatedRecognitions) {
-                        telemetry.addData(String.format("label (%d) (%s)", i), recognition.getLabel(),
+                        telemetry.addData(String.format("label (%d)", i), "(%s)(%s)", recognition.getLabel(),
                                 robot.cameraStackDetector.getTargetZone().toString());
                         telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
                                 recognition.getLeft(), recognition.getTop());
