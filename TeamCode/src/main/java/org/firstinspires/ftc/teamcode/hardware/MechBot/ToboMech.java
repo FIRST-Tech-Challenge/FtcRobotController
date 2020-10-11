@@ -802,7 +802,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // put wobble goal down
     public void doPowerShots() throws InterruptedException {
         if(tZone == TargetZone.ZONE_A) {
-            chassis.driveTo(.5, side(60), 170, 0, true, 5);
+            chassis.driveTo(.5, side(60), 165, -60, true, 5);
         }
         chassis.driveTo(.5, side(130), 175, 0, true,  5);
         //shoot
@@ -822,9 +822,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void getSecondWobbleGoal() throws InterruptedException {
         chassis.driveTo(.5, side(170), 30, 0, false,  7);
         if(startPos == StartPosition.OUT){
-            chassis.driveTo(.5, side(120), 30, 0, true,  4);
+            chassis.driveTo(.5, side(108), 30, 0, true,  4);
         } else {
-            chassis.driveTo(.5, side(60), 30, 0, true,  4);
+            chassis.driveTo(.5, side(48), 30, 0, true,  4);
         }
         //grab the wobble goal
         sleep(1000);
