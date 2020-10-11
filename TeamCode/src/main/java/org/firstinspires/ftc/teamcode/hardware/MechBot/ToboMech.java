@@ -771,15 +771,16 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // still need to change positions to be far left for blue side
         if(side == Side.BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(.5, 35, 180, -50, true, 5);
+                chassis.driveTo(.5, 30, 170, -60, true, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(.5, 60, 260, 0, true, 5);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(.5, 35, 300, -50, true, 5);
+                chassis.driveTo(.5, 30, 290, -60, true, 5);
             } else {
                 return;
             }
         }
+        sleep(1000);
         if (bottomWobbleGoalGrabber!=null)
             bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
     }
@@ -787,15 +788,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
         // put wobble goal down
     public void doPowerShots() throws InterruptedException {
-        if(tZone == TargetZone.ZONE_A){
-            chassis.driveTo(.5, side(60), 170, 0, true,  5);
+        if(tZone == TargetZone.ZONE_A) {
+            chassis.driveTo(.5, side(60), 170, 0, true, 5);
         }
-        chassis.driveTo(.5, side(130), 180, 0, true,  5);
+        chassis.driveTo(.5, side(130), 175, 0, true,  5);
         //shoot
-        chassis.driveTo(.5, side(150), 180, 0, false,  2);
+        sleep(1000);
+        chassis.driveTo(.5, side(150), 175, 0, false,  2);
         //shoot
-        chassis.driveTo(.5, side(170), 180, 0, false,  2);
+        sleep(1000);
+        chassis.driveTo(.5, side(170), 175, 0, false,  2);
         //shoot
+        sleep(1000);
     }
     public void shootGoal() throws InterruptedException {
         chassis.driveTo(.5, side(90), 180, 0, false,  5);
@@ -810,6 +814,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(.5, side(60), 30, 0, true,  4);
         }
         //grab the wobble goal
+        sleep(1000);
         if (!simulation_mode) {
             autoGrabBottomWobbleGoal();
         }
@@ -828,6 +833,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else {
                 return;
             }
+            sleep(1000);
             if (bottomWobbleGoalGrabber!=null)
                 bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
         }
