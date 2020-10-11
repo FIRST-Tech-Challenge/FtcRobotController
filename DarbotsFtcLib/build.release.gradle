@@ -1,6 +1,4 @@
 dependencies {
-    implementation project(':FtcRobotController')
-    implementation project(':DarbotsFtcLib')
     implementation 'org.firstinspires.ftc:RobotCore:6.0.1'
     implementation 'org.firstinspires.ftc:Hardware:6.0.1'
     implementation 'org.firstinspires.ftc:FtcCommon:6.0.1'
@@ -15,4 +13,5 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.9'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.9'
+    implementation (name:'json-simple-1.1.1', ext:'jar')
 }
