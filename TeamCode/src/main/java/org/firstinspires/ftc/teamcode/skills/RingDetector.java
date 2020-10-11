@@ -24,10 +24,6 @@ public class RingDetector {
     private static final String LABEL_C = "Quad";
     private String targetZone = LABEL_C;
 
-    public RingDetector(){
-
-    }
-
     public RingDetector(HardwareMap hMap, Telemetry t) {
         hardwareMap = hMap;
         telemetry = t;
@@ -53,30 +49,28 @@ public class RingDetector {
                 }
                 else {
                     for (Classifier.Recognition r : results) {
-//                        String item = String.format("%s: %.2f", r.getTitle(), r.getConfidence());
-//                        telemetry.addData("Found", item);
-                        if(r.getConfidence() >= 0.9) {
-//                            telemetry.addData("PrintZone", r.getTitle());
+                        if(r.getConfidence() >= 0.8) {
+                            telemetry.addData("PrintZone", r.getTitle());
                             if(r.getTitle().contains(LABEL_C)){
                                 zone.setX(70);
-                                zone.setY(130);
+                                zone.setY(120);
                                 zone.setHeading(0);
                                 found = true;
                                 targetZone = LABEL_C;
-                            } else if(r.getTitle().contains(LABEL_B)){
+                            }
+                            if(r.getTitle().contains(LABEL_B)){
                                 zone.setX(50);
-                                zone.setY(100);
+                                zone.setY(90);
                                 zone.setHeading(0);
                                 found = true;
                                 targetZone = LABEL_B;
-                            } else if(r.getTitle().contains(LABEL_A)){
+                            }
+                            if(r.getTitle().contains(LABEL_A)){
                                 zone.setX(78);
                                 zone.setY(70);
                                 zone.setHeading(0);
                                 found = true;
                                 targetZone = LABEL_A;
-                            } else {
-                                targetZone = "null";
                             }
                         }
                     }
