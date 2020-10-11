@@ -121,10 +121,13 @@ public class OmniDrive {
 
         // Calculate unit vector and apply power magnitude
         double power_max = Math.max(Math.max(fl_power, fr_power), Math.max(bl_power, br_power));
-        double unit_fl_power = power * fl_power / power_max;
-        double unit_fr_power = power * fr_power / power_max;
-        double unit_bl_power = power * bl_power / power_max;
-        double unit_br_power = power * br_power / power_max;
+        double unit_power = Math.max(power, rotation);
+        unit_power = 1;
+        power_max = 1;
+        double unit_fl_power = unit_power * (fl_power / power_max);
+        double unit_fr_power = unit_power * (fr_power / power_max);
+        double unit_bl_power = unit_power * (bl_power / power_max);
+        double unit_br_power = unit_power * (br_power / power_max);
 
         // Set motor powers
         frontLeft.setPower(unit_fl_power);

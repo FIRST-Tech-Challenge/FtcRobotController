@@ -186,8 +186,12 @@ public class Localizer {
         return (start - end + 180) % 360 - 180;
     }
 
-    public static double headingWrap(double angle) {
+    public static double headingWrapDegrees(double angle) {
         return (angle + 180) % 360 - 180;
+    }
+
+    public static double headingWrapRadians(double angle) {
+        return (angle + Math.PI) % 2*Math.PI - Math.PI;
     }
 
     public static double atan2(Position a, Position b) {
