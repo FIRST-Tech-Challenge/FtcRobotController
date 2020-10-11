@@ -111,75 +111,26 @@ public class OmniDrive {
      * @param rotation How fast to rotate from -1 to 1 where 1 indicates CW rotation
      */
     public void move(double power, double angle, double rotation) {
-        double pi4 = Math.PI/4;
+        double pi4 = Math.PI / 4;
 
         // Get raw powers
-        double fl_power = power*Math.sin(angle + pi4) + rotation;
-        double fr_power = power*Math.cos(angle + pi4) - rotation;
-        double bl_power = power*Math.cos(angle + pi4) + rotation;
-        double br_power = power*Math.sin(angle + pi4) - rotation;
+        double fl_power = power * Math.sin(angle + pi4) + rotation;
+        double fr_power = power * Math.cos(angle + pi4) - rotation;
+        double bl_power = power * Math.cos(angle + pi4) + rotation;
+        double br_power = power * Math.sin(angle + pi4) - rotation;
 
         // Calculate unit vector and apply power magnitude
         double power_max = Math.max(Math.max(fl_power, fr_power), Math.max(bl_power, br_power));
-        double unit_fl_power = power*fl_power/power_max;
-        double unit_fr_power = power*fr_power/power_max;
-        double unit_bl_power = power*bl_power/power_max;
-        double unit_br_power = power*br_power/power_max;
+        double unit_fl_power = power * fl_power / power_max;
+        double unit_fr_power = power * fr_power / power_max;
+        double unit_bl_power = power * bl_power / power_max;
+        double unit_br_power = power * br_power / power_max;
 
         // Set motor powers
         frontLeft.setPower(unit_fl_power);
         frontRight.setPower(unit_fr_power);
         backLeft.setPower(unit_bl_power);
         backRight.setPower(unit_br_power);
-    }
-
-    public void circleMove(double x, double y) {
-        double power = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-        double degrees = Math.toDegrees(Math.atan(Math.abs(y)/Math.abs(x)));
-        double directionPower = (degrees - 45) / 45;
-        //double deadzone = 0;
-
-        if (power == 0) {
-            stopDrive();
-        } else {
-            if (x == 0) {
-                moveForward(-y);
-            } else if (y == 0) {
-                if (x > 0) {
-                    moveRight(x);
-                } else {
-                    moveLeft(x);
-                }
-            } else {
-                if (x > 0 && -y > 0) {
-                    // QUAD I
-                    frontLeft.setPower(power);
-                    frontRight.setPower(directionPower);
-                    backLeft.setPower(directionPower);
-                    backRight.setPower(power);
-                } else if (x < 0 && -y > 0) {
-                    // QUAD 2
-                    frontLeft.setPower(directionPower);
-                    frontRight.setPower(power);
-                    backLeft.setPower(power);
-                    backRight.setPower(directionPower);
-                } else if (x < 0 && -y < 0) {
-                    // QUAD 3
-                    frontLeft.setPower(-power);
-                    frontRight.setPower(-directionPower);
-                    backLeft.setPower(-directionPower);
-                    backRight.setPower(-power);
-
-                } else {
-                    // QUAD 4
-                    frontLeft.setPower(power);
-                    frontRight.setPower(directionPower);
-                    backLeft.setPower(directionPower);
-                    backRight.setPower(power);
-                }
-
-            }
-        }
     }
 
     public void stopDrive() {

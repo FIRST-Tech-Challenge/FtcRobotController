@@ -11,7 +11,8 @@ CONTROL_HUB_URL = "http://localhost:8080"
 CONTROL_HUB_WSURL = "ws://localhost:8081"
 CONTROL_HUB_REFERER = CONTROL_HUB_URL + "/java/editor.html"
 CONTROL_HUB_UPLOAD_URL = CONTROL_HUB_URL + "/java/file/upload"
-SRC_DIRECTORY = "C:\\Users\\lvern\\Documents\\GitHub\\UltimateGoal\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode"
+#SRC_DIRECTORY = "C:\\Users\\lvern\\Documents\\GitHub\\UltimateGoal\\TeamCode\\src\\main\\java\\org\\firstinspires\\ftc\\teamcode"
+SRC_DIRECTORY = "/Users/djfigs1/GitHub/UltimateGoal/TeamCode/src/main/java/org/firstinspires/ftc/teamcode"
 
 def uploadJavaFile(path: str):
     if path.endswith(".java"):

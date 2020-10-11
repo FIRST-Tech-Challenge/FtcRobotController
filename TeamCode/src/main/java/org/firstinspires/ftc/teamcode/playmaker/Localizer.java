@@ -178,15 +178,20 @@ public class Localizer {
 
     /**
      *
-     * @param a
-     * @param b
-     * @return An angle from -pi to pi
+     * @param start Starting angle
+     * @param end End angle
+     * @return An angle from -180 to 180, where positive angles indicate a rotation to the left and vice versa.
      */
-    public static double angularDifference(double a, double b) {
-        //return Math.abs((a+Math.PI) - (b+Math.PI) % 2*Math.PI - Math.PI);
-        double diff = a - b;
-        diff += (diff > 180) ? -360 : (diff < -180) ? 360 : 0;
-        return diff;
+    public static double angularDifference(double start, double end) {
+        return (start - end + 180) % 360 - 180;
+    }
+
+    public static double headingWrap(double angle) {
+        return (angle + 180) % 360 - 180;
+    }
+
+    public static double atan2(Position a, Position b) {
+        return Math.atan2(b.y-a.y,b.x-a.x);
     }
 
 }

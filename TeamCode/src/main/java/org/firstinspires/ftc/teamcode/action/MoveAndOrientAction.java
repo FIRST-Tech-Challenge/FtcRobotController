@@ -35,7 +35,12 @@ public class MoveAndOrientAction implements Action {
         Position currentPosition = hardware.localizer.estimatePosition();
         double currentHeading = hardware.localizer.estimateOrientation().thirdAngle;
         double currentDistanceToTarget = Localizer.distance(currentPosition, finalPosition);
+        double angleBetweenPosAndTarget = Localizer.headingWrap(Math.toDegrees(Localizer.atan2(currentPosition, finalPosition) + 90);
+        double angleDifferenceBetweenRobotAndTarget = Localizer.angularDifference(currentHeading, angleBetweenPosAndTarget);
+        
 
+
+        return true;
     }
 
     @Override
