@@ -56,14 +56,8 @@ public class MecTeleOp extends LinearOpMode {
         log.info("RoboRuck TeleOp finished initialization (CPU_time = %.2f sec)", getRuntime());
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        if (robot.chassis!=null) {
-            robot.chassis.configureOdometry();
-            robot.chassis.setupTelemetry(telemetry);
-        }
 
-        Thread positionThread = (robot.chassis.getGPS()==null? null: new Thread(robot.chassis.getGPS()));
-        if (positionThread!=null)
-           positionThread.start();
+        robot.initializeGPSThread();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {

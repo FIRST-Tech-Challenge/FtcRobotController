@@ -64,13 +64,7 @@ public class AutoBlueOut extends LinearOpMode {
 
         waitForStart();
 
-        if (robot.chassis!=null) {
-            robot.chassis.configureOdometry();
-            robot.chassis.setupTelemetry(telemetry);
-        }
-        Thread positionThread = (robot.chassis.getGPS()==null? null: new Thread(robot.chassis.getGPS()));
-        if (positionThread!=null)
-            positionThread.start();
+        robot.initializeGPSThread();
 
         robot.runtime.reset();
         robot.runtimeAuto.reset();
