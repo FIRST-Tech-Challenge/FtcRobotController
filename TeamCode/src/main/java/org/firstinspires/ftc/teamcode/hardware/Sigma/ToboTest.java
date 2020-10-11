@@ -38,7 +38,7 @@ public class ToboTest extends Logger<ToboTest> implements Robot2 {
     }
 
     @Override
-    public void configure(Configuration configuration, Telemetry telemetry, ToboSigma.AutoTeamColor autoColor) {
+    public void configure(Configuration configuration, Telemetry telemetry, ProgramType autoColor) {
         runtime.reset();
         double ini_time = runtime.seconds();
         this.telemetry = telemetry;
@@ -52,7 +52,7 @@ public class ToboTest extends Logger<ToboTest> implements Robot2 {
        chassis.enableRangeSensorTelemetry();
        chassis.enableShowColors();
        chassis.enableImuTelemetry();
-        chassis.configure(configuration, ((autoColor != ToboSigma.AutoTeamColor.NOT_AUTO)), true);
+        chassis.configure(configuration, ((autoColor != ProgramType.TELE_OP)), true);
         info("RoboSigma configure() after init Chassis (run time = %.2f sec)", (runtime.seconds() - ini_time));
 //        if (auto) {
 //            cameraStoneDetector = new CameraStoneDetector().configureLogging("CameraStoneDetector", logLevel);

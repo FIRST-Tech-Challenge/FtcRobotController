@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.components.Robot2;
 import org.firstinspires.ftc.teamcode.hardware.MechBot.ToboMech;
 import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
@@ -38,28 +39,26 @@ public class AutoRedOut extends LinearOpMode {
         robot.set_simulation_mode(true);
         robot.configureLogging("ToboMech", LOG_LEVEL);
         configuration = new Configuration(hardwareMap, robot.getName()).configureLogging("Config", LOG_LEVEL);
-        log.info("RoboSigma Autonomous finished log configuration (CPU_time = %.2f sec)", getRuntime());
+        log.info("RoboMech Autonomous finished log configuration (CPU_time = %.2f sec)", getRuntime());
 
         try {
             // configure robot and reset all hardware
-            robot.configure(configuration, telemetry, ToboMech.AutoTeamColor.AUTO_BLUE);
+            robot.configure(configuration, telemetry, Robot2.ProgramType.AUTO_BLUE);
             configuration.apply();
             robot.reset(true);
-            robot.setInitPositions(ToboMech.Side.BLUE, ToboMech.StartPosition.OUT); // check
-            telemetry.addData("Robot is ready", "Press Play");
+            robot.initSetup(Robot2.ProgramType.AUTO_BLUE, ToboMech.StartPosition.OUT, configuration); // check
+            telemetry.addData("Robot is ready", "Press Play (simulation=%s/%s/%s)",
+                    (robot.isSimulationMode()?"Y":"N"), robot.side.toString(),robot.startPos.toString());
             telemetry.update();
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);
         }
 
-        //setup WebCam servo position for autonomous during initialization
-        if (robot.cameraStackDetector!=null)
-            robot.cameraStackDetector.set_cam_pos(robot.cameraStackDetector.CAM_RED_OUT);
-
-        log.info("RoboSigma Autonomous finished initialization (CPU_time = %.2f sec)", getRuntime());
+        log.info("RoboMech Autonomous finished initialization (CPU_time = %.2f sec)", getRuntime());
 
         waitForStart();
+
         robot.runtime.reset();
         robot.runtimeAuto.reset();
         // run until the end of the match (driver presses STOP or timeout)

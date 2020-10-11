@@ -40,8 +40,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
+import org.firstinspires.ftc.teamcode.components.Robot2;
 import org.firstinspires.ftc.teamcode.hardware.MechBot.ToboMech;
-import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
@@ -105,7 +105,7 @@ public class VuforiaNavigationWebcam extends LinearOpMode {
 
         try {
             // configure robot and reset all hardware
-            robot.configure(configuration, telemetry, ToboSigma.AutoTeamColor.AUTO_BLUE);
+            robot.configure(configuration, telemetry, Robot2.ProgramType.AUTO_BLUE);
             robot.chassis.enableImuTelemetry(configuration);
             configuration.apply();
             robot.reset(false);
@@ -116,19 +116,11 @@ public class VuforiaNavigationWebcam extends LinearOpMode {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);
         }
-        log.info("RoboRuck TeleOp finished initialization (CPU_time = %.2f sec)", getRuntime());
+        log.info("RoboMech TeleOp finished initialization (CPU_time = %.2f sec)", getRuntime());
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        if (robot.chassis!=null) {
-            robot.chassis.configureOdometry();
-            robot.chassis.setupTelemetry(telemetry);
-        }
 
-
-        Thread positionThread = (robot.chassis.getGPS()==null? null: new Thread(robot.chassis.getGPS()));
-        if (positionThread!=null)
-            positionThread.start();
-
+        robot.initializeGPSThread();
 
         while (!isStopRequested()) {
 

@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.components.Robot2;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configurable;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
@@ -175,7 +176,7 @@ public class CameraStoneDetector extends Logger<CameraStoneDetector> implements 
         return bitmap;
     }
 
-    public ToboSigma.SkystoneLocation getSkystonePositionElementary(Telemetry tl, boolean debug, ToboSigma.AutoTeamColor teamColor) {
+    public ToboSigma.SkystoneLocation getSkystonePositionElementary(Telemetry tl, boolean debug, Robot2.ProgramType teamColor) {
         vuforia.setFrameQueueCapacity(1);
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);//used to be PIXEL_FORMAT.RGB565
         vuforia.enableConvertFrameToBitmap();

@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import static java.lang.Thread.interrupted;
 import static java.lang.Thread.sleep;
 
 public class ToboMech extends Logger<ToboMech> implements Robot2 {
@@ -32,14 +31,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public enum TargetZone {
         ZONE_A, ZONE_B, ZONE_C, UNKNOWN
     }
-    public enum Side{
-        BLUE, RED;
-    }
+
     public enum StartPosition{
-        IN, OUT;
+        IN, OUT, NA;
     }
     public TargetZone tZone = TargetZone.UNKNOWN;
-    public Side side = Side.BLUE; // default to blue
+    public ProgramType side = ProgramType.AUTO_BLUE; // default to blue
     public StartPosition startPos = StartPosition.OUT; // default to OUT position
 
     Thread positionThread;
@@ -89,13 +86,25 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         return simulation_mode;
     }
 
+    public void configureVisualTool(Configuration configuration) {
+        if (!simulation_mode) {
+            if (useTfod) {
+                cameraStackDetector = new CameraStackDetector();
+                cameraStackDetector.configure(configuration);
+            } else if (useVuforia) {
+                cameraSystem = new CameraSystem();
+                cameraSystem.init(configuration.getHardwareMap());
+            }
+        }
+    }
+
     @Override
     public String getName() {
         return getClass().getSimpleName();
     }
 
     @Override
-    public void configure(Configuration configuration, Telemetry telemetry, ToboMech.AutoTeamColor autoside) throws FileNotFoundException {
+    public void configure(Configuration configuration, Telemetry telemetry, ProgramType autoside) throws FileNotFoundException {
         runtime.reset();
         double ini_time = runtime.seconds();
         this.telemetry = telemetry;
@@ -111,20 +120,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             // chassis.simOS = new FileOutputStream(new File(simEventFile.getParentFile(), simEventFile.getName()));
             chassis.simOS = new FileOutputStream(new File(simEventFile.getParent(), simEventFile.getName()));
         }
-        if (autoside== ToboMech.AutoTeamColor.DIAGNOSIS) {
+        if (autoside== ProgramType.DIAGNOSIS) {
             // enable imu for diagnosis
             chassis.enableImuTelemetry(configuration);
         }
-        if (!simulation_mode) {
-            if (useTfod || (autoside != AutoTeamColor.NOT_AUTO)) {
-                cameraStackDetector = new CameraStackDetector();
-                cameraStackDetector.configure(configuration);
-            } else if (useVuforia) {
-                cameraSystem = new CameraSystem();
-                cameraSystem.init(configuration.getHardwareMap());
-            }
-        }
-        chassis.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
+        chassis.configure(configuration, (autoside!= ProgramType.TELE_OP));
 
         if (simulation_mode) { // need to call after chassis is initialized
             set_simulation_mode(true);
@@ -132,24 +132,24 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
         if(useBottomWobbleGoalGrabber && !simulation_mode){
             bottomWobbleGoalGrabber = new BottomWobbleGoalGrabber(core);
-            bottomWobbleGoalGrabber.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
+            bottomWobbleGoalGrabber.configure(configuration, (autoside!= ProgramType.TELE_OP));
         }
 
         if(useTopWobbleGoalGrabber && !simulation_mode){
             topWobbleGoalGrabber = new TopWobbleGoalGrabber(core);
-            topWobbleGoalGrabber.configure(configuration, (autoside!= ToboMech.AutoTeamColor.NOT_AUTO));
+            topWobbleGoalGrabber.configure(configuration, (autoside!= ProgramType.TELE_OP));
         }
         if(useHopper && !simulation_mode){
             hopper = new Hopper(core);
-            hopper.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
+            hopper.configure(configuration, (autoside!= ProgramType.TELE_OP));
         }
         if(useShooter && !simulation_mode){
             shooter = new Shooter(core);
-            shooter.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
+            shooter.configure(configuration, (autoside!= ProgramType.TELE_OP));
         }
         if(useIntake && !simulation_mode){
             intake = new Intake(core);
-            intake.configure(configuration, (autoside!= AutoTeamColor.NOT_AUTO));
+            intake.configure(configuration, (autoside!= ProgramType.TELE_OP));
         }
 
         info("ToboMech configure() after init Chassis (run time = %.2f sec)", (runtime.seconds() - ini_time));
@@ -777,24 +777,109 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             positionThread.start();
     }
 
-    public void setInitPositions(Side s, StartPosition startP){
+    public void initSetup(ProgramType type, StartPosition startP, Configuration configuration) {
+        // setup the parameters before the robot configuration
+        // 1. enable TFOD or not
+        // 2. enable Vuforia or not
+        // 3. Robot init position (for auto)
+        // 4. initialize TFOD/Vuforia
+        // 5. Camera servo position
+        side = type;
+        startPos = startP;
+        switch (type) {
+            case TELE_OP:
+                useVuforia = true;
+                if (cameraStackDetector!=null)
+                    cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_TELE_OP);
+                break;
+            case AUTO_RED:
+                if (startP == StartPosition.OUT) {
+                    if (chassis!=null)
+                        chassis.set_init_pos(side(300), 23, 0);
+                    useTfod = true;
+                    //setup WebCam servo position for autonomous during initialization
+                    if (cameraStackDetector!=null)
+                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_RED_OUT);
+                } else { // in position
+                    if (chassis!=null)
+                        chassis.set_init_pos(side(240), 23, 0);
+                    useTfod = true;
+                    //setup WebCam servo position for autonomous during initialization
+                    if (cameraStackDetector!=null)
+                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_RED_IN);
+                }
+                break;
+            case AUTO_BLUE:
+                if (startP == StartPosition.OUT) {
+                    if (chassis!=null)
+                        chassis.set_init_pos(side(60), 23, 0);
+                    useTfod = true;
+                    //setup WebCam servo position for autonomous during initialization
+                    if (cameraStackDetector!=null)
+                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_BLUE_OUT);
+                } else { // in position
+                    if (chassis!=null)
+                        chassis.set_init_pos(side(120), 23, 0);
+                    useTfod = true;
+                    //setup WebCam servo position for autonomous during initialization
+                    if (cameraStackDetector!=null)
+                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_BLUE_IN);
+                }
+                break;
+            case DIAGNOSIS:
+                break;
+        }
+
+        configureVisualTool(configuration);
+
+        //setup WebCam servo position for autonomous during initialization
+        switch (type) {
+            case TELE_OP:
+                if (cameraStackDetector!=null)
+                    cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_TELE_OP);
+                break;
+            case AUTO_RED:
+                if (startP == StartPosition.OUT) {
+                    if (cameraStackDetector!=null)
+                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_RED_OUT);
+                } else { // in position
+                    if (cameraStackDetector!=null)
+                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_RED_IN);
+                }
+                break;
+            case AUTO_BLUE:
+                if (startP == StartPosition.OUT) {
+                    if (cameraStackDetector!=null)
+                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_BLUE_OUT);
+                } else { // in position
+                    if (cameraStackDetector!=null)
+                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_BLUE_IN);
+                }
+                break;
+            case DIAGNOSIS:
+                break;
+        }
+    }
+
+    public void setInitPositions(ProgramType s, StartPosition startP){
         side = s;
         startPos = startP;
         chassis.set_init_pos(side(60), 23, 0);
     }
+
     public void detectPosition(){//startPos = 1 = out, 2 = in
         // use camera (Tensorflow) to detect position
         if (cameraStackDetector==null) {
             tZone = TargetZone.ZONE_B; // assuming zone_A for simulation purpose
             return;
         }
-        tZone = TargetZone.ZONE_A;
-        // tZone = cameraStackDetector.getTargetZone();
+        // tZone = TargetZone.ZONE_A;
+        tZone = cameraStackDetector.getTargetZone();
     }
     public void deliverFirstWobbleGoal () throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
-        if(side == Side.BLUE) {
+        if(side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 chassis.driveTo(.5, 25, 170, -60, true, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
@@ -851,7 +936,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void deliverSecondWobbleGoal() throws InterruptedException { // we may need to go around the other wobble goal
 
         // neede to change positions
-        if (side == Side.BLUE) {
+        if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 chassis.driveTo(.5, side(30), 165, 0, false, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
@@ -878,7 +963,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.driveTo(.5, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 180, chassis.getCurHeading(), false,  2);
     }
     public double side( double x){
-        if (side == Side.RED){
+        if (side == ProgramType.AUTO_RED){
             return 360 - x;
         }
         return x;

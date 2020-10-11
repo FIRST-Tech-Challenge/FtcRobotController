@@ -17,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.components.AdjustableServo;
+import org.firstinspires.ftc.teamcode.components.Robot2;
 import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configurable;
@@ -61,10 +62,11 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
     public final double CAM_MIN = 0.01;
     public final double CAM_MAX = 0.99;
     public final double CAM_INIT = 0.5;
-    public final double CAM_BLUE_IN = 0.53;
-    public final double CAM_BLUE_OUT = 0.35;
-    public final double CAM_RED_IN = 0.35;
-    public final double CAM_RED_OUT = 0.53;
+    public final double CAM_BLUE_IN = 0.56;
+    public final double CAM_BLUE_OUT = 0.27;
+    public final double CAM_RED_IN = 0.27;
+    public final double CAM_RED_OUT = 0.56;
+    public final double CAM_TELE_OP = 0.5;
 
 
 
@@ -202,7 +204,7 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         return bitmap;
     }
 
-    public ToboSigma.SkystoneLocation getSkystonePositionElementary(Telemetry tl, boolean debug, ToboSigma.AutoTeamColor teamColor) {
+    public ToboSigma.SkystoneLocation getSkystonePositionElementary(Telemetry tl, boolean debug, Robot2.ProgramType teamColor) {
         vuforia.setFrameQueueCapacity(1);
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);//used to be PIXEL_FORMAT.RGB565
         vuforia.enableConvertFrameToBitmap();

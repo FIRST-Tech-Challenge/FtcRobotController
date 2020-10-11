@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.opmodes.mechBot;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.components.Robot2;
 import org.firstinspires.ftc.teamcode.hardware.MechBot.ToboMech;
 import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.Logger;
@@ -42,7 +42,7 @@ public class UltimateGoalFirstAuto extends LinearOpMode {
 
         try {
             // configure robot and reset all hardware
-            robot.configure(configuration, telemetry, ToboMech.AutoTeamColor.AUTO_BLUE);
+            robot.configure(configuration, telemetry, Robot2.ProgramType.AUTO_BLUE);
             configuration.apply();
             robot.reset(true);
             telemetry.addData("Robot is ready", "Press Play");

@@ -123,7 +123,7 @@ public class ToboSigma extends Logger<ToboSigma> implements Robot2 {
     }
 
     @Override
-    public void configure(Configuration configuration, Telemetry telemetry, AutoTeamColor autoColor) {
+    public void configure(Configuration configuration, Telemetry telemetry, ProgramType autoColor) {
         runtime.reset();
         double ini_time = runtime.seconds();
         this.telemetry = telemetry;
@@ -134,31 +134,31 @@ public class ToboSigma extends Logger<ToboSigma> implements Robot2 {
         this.core = new CoreSystem();
         info("RoboSigma configure() after new CoreSystem()(run time = %.2f sec)", (runtime.seconds() - ini_time));
         chassis = new SwerveChassis(this.core).configureLogging("Swerve", logLevel); // Log.DEBUG
-        if (autoColor == AutoTeamColor.DIAGNOSIS) {
+        if (autoColor == ProgramType.DIAGNOSIS) {
             chassis.enableImuTelemetry();
             chassis.enableRangeSensorTelemetry();
         }
         // Warning: MUST disable the following line during competition
         // chassis.enableRangeSensorTelemetry();//Comment out later
 
-        chassis.configure(configuration, (autoColor != AutoTeamColor.NOT_AUTO), true);
+        chassis.configure(configuration, (autoColor != ProgramType.TELE_OP), true);
         info("RoboSigma configure() after init Chassis (run time = %.2f sec)", (runtime.seconds() - ini_time));
-        if (autoColor != AutoTeamColor.NOT_AUTO && autoColor != AutoTeamColor.DIAGNOSIS) {
+        if (autoColor != ProgramType.TELE_OP && autoColor != ProgramType.DIAGNOSIS) {
             cameraStoneDetector = new CameraStoneDetector().configureLogging("CameraStoneDetector", logLevel);
             // cameraStoneDetector.configure(configuration, CameraSource.INTERNAL);
             cameraStoneDetector.configure(configuration, CameraSource.WEBCAM_RIGHT);
             info("RoboSigma configure() after init cameraStoneDetector (run time = %.2f sec)", (runtime.seconds() - ini_time));
         }
         foundationHook = new FoundationHook(this.core).configureLogging("FoundationHook", logLevel);
-        foundationHook.configure(configuration, (autoColor != AutoTeamColor.NOT_AUTO));
-        if (autoColor == AutoTeamColor.DIAGNOSIS) {
+        foundationHook.configure(configuration, (autoColor != ProgramType.TELE_OP));
+        if (autoColor == ProgramType.DIAGNOSIS) {
             foundationHook.hookUp();
         }
 
         stoneGrabber = new StoneGrabberV2(this.core).configureLogging("StoneGrabber", logLevel);
-        stoneGrabber.configure(configuration, (autoColor != AutoTeamColor.NOT_AUTO));
+        stoneGrabber.configure(configuration, (autoColor != ProgramType.TELE_OP));
         intake = new IntakeV3(this.core).configureLogging("IntakeV3", logLevel);
-        intake.configure(configuration, (autoColor != AutoTeamColor.NOT_AUTO));
+        intake.configure(configuration, (autoColor != ProgramType.TELE_OP));
 
     }
 
@@ -1575,7 +1575,7 @@ public class ToboSigma extends Logger<ToboSigma> implements Robot2 {
 
     }
 
-    public void getOneStone(AutoTeamColor color) throws InterruptedException {
+    public void getOneStone(ProgramType color) throws InterruptedException {
         stoneGrabber.armOutCombo();
         while (!TaskManager.isComplete("Arm Out Combo") && !Thread.interrupted()) {
             TaskManager.processTasks();
@@ -1585,7 +1585,7 @@ public class ToboSigma extends Logger<ToboSigma> implements Robot2 {
 
         stoneGrabber.grabStoneComboAutoHigher();
 //        stoneGrabber.armInCombo(true, true);
-        chassis.driveAuto(0.6, color == AutoTeamColor.AUTO_BLUE ? -60 : -50, 0, 2000);
+        chassis.driveAuto(0.6, color == ProgramType.AUTO_BLUE ? -60 : -50, 0, 2000);
     }
 
     public int getFirstSkyStoneDefense(ToboSigma.SkystoneLocation skyStonePosition, boolean isBlue, boolean safe) throws InterruptedException {

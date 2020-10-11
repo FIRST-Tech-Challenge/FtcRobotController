@@ -3,11 +3,9 @@ package org.firstinspires.ftc.teamcode.opmodes.mechBot; //set your package
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.components.Robot2;
 import org.firstinspires.ftc.teamcode.hardware.MechBot.ToboMech;
-import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
-import org.firstinspires.ftc.teamcode.opmodes.mechBot.TeleDrive;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.events.EventManager;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
@@ -37,7 +35,7 @@ public class SampleTeleDriveOpMode extends TeleDrive {
 
         try {
             // configure robot and reset all hardware
-            robot.configure(configuration, telemetry, ToboSigma.AutoTeamColor.NOT_AUTO);
+            robot.configure(configuration, telemetry, Robot2.ProgramType.TELE_OP);
             robot.chassis.enableImuTelemetry(configuration);
             configuration.apply();
             robot.reset(false);

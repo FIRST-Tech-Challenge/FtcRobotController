@@ -10,8 +10,8 @@ import java.io.IOException;
  * Core robot interface to be implemented by all robot classes
  */
 public interface Robot2 {
-    public enum AutoTeamColor {
-        NOT_AUTO, AUTO_RED, AUTO_BLUE, DIAGNOSIS
+    public enum ProgramType {
+        TELE_OP, AUTO_RED, AUTO_BLUE, DIAGNOSIS
     }
 
     /**
@@ -29,7 +29,7 @@ public interface Robot2 {
      * @see Configuration
      * @see Telemetry
      */
-    void configure(Configuration configuration, Telemetry telemetry, AutoTeamColor autoColor) throws FileNotFoundException;
+    void configure(Configuration configuration, Telemetry telemetry, ProgramType autoColor) throws FileNotFoundException;
 
     /**
      * Reset robot. All applicable hardware devices should be reset to their initial state.
