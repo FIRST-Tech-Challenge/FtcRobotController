@@ -55,10 +55,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public Hopper hopper;
     public Intake intake;
 
-    public double auto_chassis_power = .6;
+    public double auto_chassis_power = .5;
     public double auto_chassis_dist = 100;
     public double auto_chassis_heading = -90;
-    public double auto_chassis_power_slow = .2;
+    public double auto_chassis_power_slow = .4;
     public double auto_chassis_align_power = .22;
 
 
@@ -882,11 +882,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // still need to change positions to be far left for blue side
         if(side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(.5, 25, 170, -60, true, 5);
+                chassis.driveTo(auto_chassis_power, 25, 170, -60, true, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(.5, 55, 260, 0, true, 5);
+                chassis.driveTo(auto_chassis_power, 55, 260, 0, true, 5);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(.5, 25, 290, -60, true, 5);
+                chassis.driveTo(auto_chassis_power, 25, 290, -60, true, 5);
             } else {
                 return;
             }
@@ -904,29 +904,29 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // put wobble goal down
     public void doPowerShots() throws InterruptedException {
         if(tZone == TargetZone.ZONE_A) {
-            chassis.driveTo(.5, side(60), 165, -60, true, 5);
+            chassis.driveTo(auto_chassis_power, side(60), 165, -60, true, 5);
         }
-        chassis.driveTo(.6, side(130), 175, 0, true,  5);
+        chassis.driveTo(.6, side(130), 175, 0, true,  5); // need to do something about this
         //shoot
         sleep(500);
-        chassis.driveTo(.5, side(150), 175, 0, false,  2);
+        chassis.driveTo(auto_chassis_power_slow, side(150), 175, 0, false,  2);
         //shoot
         sleep(500);
-        chassis.driveTo(.5, side(170), 175, 0, false,  2);
+        chassis.driveTo(auto_chassis_power_slow, side(170), 175, 0, false,  2);
         //shoot
         sleep(500);
     }
     public void shootGoal() throws InterruptedException {
-        chassis.driveTo(.5, side(90), 180, 0, false,  5);
+        chassis.driveTo(auto_chassis_power, side(90), 180, 0, false,  5);
         //shoot
 
     }
     public void getSecondWobbleGoal() throws InterruptedException {
-        chassis.driveTo(.5, side(170), 30, 0, false,  7);
+        chassis.driveTo(auto_chassis_power, side(170), 30, 0, false,  7);
         if(startPos == StartPosition.OUT){
-            chassis.driveTo(.5, side(105), 30, 0, true,  4);
+            chassis.driveTo(auto_chassis_power, side(105), 30, 0, true,  4);
         } else {
-            chassis.driveTo(.5, side(45), 30, 0, true,  4);
+            chassis.driveTo(auto_chassis_power, side(45), 30, 0, true,  4);
         }
         //grab the wobble goal
         if (!simulation_mode) {
@@ -939,12 +939,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // neede to change positions
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(.5, side(30), 165, 0, false, 5);
+                chassis.driveTo(auto_chassis_power, side(30), 165, 0, false, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(.5, side(80), 225, 0, false, 5);
+                chassis.driveTo(auto_chassis_power, side(80), 225, 0, false, 5);
 
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(.5, side(30), 285, 0, false, 5);
+                chassis.driveTo(auto_chassis_power, side(30), 285, 0, false, 5);
             } else {
                 return;
             }
@@ -959,9 +959,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
     public void park() throws InterruptedException {
         if (tZone==TargetZone.ZONE_A){
-            chassis.driveTo(.5, side(110), 165, 0, false, 5);
+            chassis.driveTo(auto_chassis_power, side(110), 165, 0, false, 5);
         }
-        chassis.driveTo(.5, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 180, chassis.getCurHeading(), false,  2);
+        chassis.driveTo(auto_chassis_power, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 180, chassis.getCurHeading(), false,  2);
     }
     public double side( double x){
         if (side == ProgramType.AUTO_RED){

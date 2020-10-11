@@ -43,8 +43,8 @@ public class AutoBlueIn extends LinearOpMode {
             // configure robot and reset all hardware
             robot.configure(configuration, telemetry, Robot2.ProgramType.AUTO_BLUE);
             configuration.apply();
+            robot.initSetup(Robot2.ProgramType.AUTO_BLUE, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(true);
-            robot.initSetup(Robot2.ProgramType.AUTO_BLUE, ToboMech.StartPosition.IN, configuration); // check
             telemetry.addData("Robot is ready", "Press Play (simulation=%s/%s/%s)",
                     (robot.isSimulationMode()?"Y":"N"), robot.side.toString(),robot.startPos.toString());
             telemetry.update();
@@ -56,6 +56,8 @@ public class AutoBlueIn extends LinearOpMode {
         log.info("RoboMech Autonomous finished initialization (CPU_time = %.2f sec)", getRuntime());
 
         waitForStart();
+        robot.initializeGPSThread();
+
         robot.runtime.reset();
         robot.runtimeAuto.reset();
         // run until the end of the match (driver presses STOP or timeout)
