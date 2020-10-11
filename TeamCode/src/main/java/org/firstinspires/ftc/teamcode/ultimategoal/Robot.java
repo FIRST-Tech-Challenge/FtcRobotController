@@ -70,10 +70,10 @@ public class Robot {
                 } catch (Exception e) {
                     Log.d("Module", "Module couldn't update: " + module.getName());
                 }
-                if (WILL_FILE_DUMP) {
-                    module.fileDump();
-                }
             }
+        }
+        if (WILL_FILE_DUMP) {
+            fileDump.doTick();
         }
         telemetryDump.update();
     }

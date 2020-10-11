@@ -14,6 +14,7 @@ import java.util.List;
 import static org.opencv.imgproc.Imgproc.*;
 
 public class GoalFinder {
+
     static final double[][] CAMERA_MATRIX = {
             {1468, 0, 0},
             {0, 1468, 0},
@@ -21,6 +22,7 @@ public class GoalFinder {
     };
 
     static final Scalar ORANGE = new Scalar(0, 165, 255);
+    static final Scalar BLACK = new Scalar(0, 0, 0);
 
     public static class GoalLocationData {
         double yaw;
@@ -139,13 +141,19 @@ public class GoalFinder {
                 double avgY = moments.m01 / moments.m00;
                 goalLocation = new Point(avgX, avgY);
 
-                double yaw = findAngle(centre, new Point(goalLocation.x, centre.y)) * (180/Math.PI); // Now isolate the two angles
-                double pitch = findAngle(centre, new Point(centre.x, goalLocation.y)) * (180/Math.PI);
+//                double yaw = findAngle(centre, new Point(goalLocation.x, centre.y)) * (180/Math.PI); // Now isolate the two angles
+//                double pitch = findAngle(centre, new Point(centre.x, goalLocation.y)) * (180/Math.PI);
+                double yaw = (70.42/input.width()) * (goalLocation.x - centre.x);
+                double pitch = (43.30/input.width()) * (goalLocation.y - centre.y);
+
 
                 loc = new GoalLocationData(yaw, pitch, goalLocation.x, goalLocation.y);
 
                 if (shouldWriteToImage) {
                     Imgproc.circle(input, goalLocation, 3, ORANGE);
+                    Imgproc.putText(input, String.valueOf((int)loc.yaw), centre, FONT_HERSHEY_TRIPLEX, 1, ORANGE);
+                    Imgproc.line(input, new Point(centre.x,centre.y*2), centre, ORANGE, 2);
+                    Imgproc.line(input, new Point(centre.x, centre.y*2), new Point(loc.x, centre.y), ORANGE, 2);
                     Imgproc.drawContours(input, contours, largestContourIndex, ORANGE, 1, LINE_8, hierarchy, 0);
                 }
             }
@@ -154,3 +162,4 @@ public class GoalFinder {
         return loc;
     }
 }
+

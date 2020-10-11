@@ -56,10 +56,6 @@ public class VelocityModule implements Module, TelemetryProvider {
         return data;
     }
 
-    public void fileDump(){
-
-    }
-
     public boolean isOn(){
         return isOn;
     }

@@ -16,7 +16,5 @@ public interface Module {
 
     public boolean isOn();
 
-    public void fileDump();
-
     public String getName();
 }

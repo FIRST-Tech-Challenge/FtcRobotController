@@ -84,11 +84,6 @@ public class DrivetrainModule implements Module, TelemetryProvider {
         setMotorPowers(fLPower, fRPower, bLPower, bRPower);
     }
 
-
-    public void fileDump(){
-
-    }
-
     private void setMotorPowers(double fLPower, double fRPower, double bLPower, double bRPower) {
         fLeft.setPower(fLPower);
         fRight.setPower(fRPower);
