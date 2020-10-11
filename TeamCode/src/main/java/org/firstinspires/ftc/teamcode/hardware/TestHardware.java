@@ -13,6 +13,9 @@ public abstract class TestHardware extends RobotHardware {
     public DcMotor backLeft;
     public DcMotor backRight;
 
+    public DcMotor spinnerLeft;
+    public DcMotor spinnerRight;
+
     @Override
     public void initializeHardware() {
         revIMU = this.hardwareMap.get(BNO055IMU.class, "imu");
@@ -20,6 +23,12 @@ public abstract class TestHardware extends RobotHardware {
         frontRight = this.initializeDevice(DcMotor.class, "frontRight");
         backLeft = this.initializeDevice(DcMotor.class, "backLeft");
         backRight = this.initializeDevice(DcMotor.class, "backRight");
+
+        spinnerLeft = this.initializeDevice(DcMotor.class, "spinnerLeft");
+        spinnerLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        spinnerRight= this.initializeDevice(DcMotor.class, "spinnerRight");
+        spinnerRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 }

@@ -9,6 +9,9 @@
         </value>
       </option>
     </JetCodeStyleSettings>
+    <MarkdownNavigatorCodeStyleSettings>
+      <option name="RIGHT_MARGIN" value="72" />
+    </MarkdownNavigatorCodeStyleSettings>
     <codeStyleSettings language="XML">
       <indentOptions>
         <option name="CONTINUATION_INDENT_SIZE" value="4" />
