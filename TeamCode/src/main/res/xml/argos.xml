@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ1NX5SV" parentModuleAddress="2">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <Motor name="motorFront" port="0" />
+            <Motor name="motorBack" port="1" />
+            <NeveRest60Gearmotor name="motorNeck" port="2" />
+            <Motor name="headLamp" port="3" />
+            <Servo name="servoPan" port="0" />
+            <Servo name="servoTilt" port="1" />
+            <Servo name="servoSteerFront" port="3" />
+            <Servo name="servoSteerBack" port="4" />
+            <OpticalDistanceSensor name="beaconPresentRear" port="0" />
+            <OpticalDistanceSensor name=" beaconPresentFore" port="1" />
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>

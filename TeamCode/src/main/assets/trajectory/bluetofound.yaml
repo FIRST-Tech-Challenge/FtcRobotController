@@ -1,0 +1,21 @@
+---
+startPose:
+  x: -36.0
+  y: 60.0
+  heading: 4.71238898038469
+startHeading: 4.71238898038469
+steps:
+- pose:
+    x: 40.0
+    y: 36.0
+    heading: 0.0
+  heading: 0.0
+  interpolationType: "TANGENT"
+- pose:
+    x: 50.0
+    y: 36.0
+    heading: 4.71238898038469
+  heading: 0.0
+  interpolationType: "TANGENT"
+resolution: 0.25
+version: 2

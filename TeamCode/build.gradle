@@ -20,4 +20,5 @@ repositories {
 
 dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation project(path: ':OpenCVLibrary411')
 }
