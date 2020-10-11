@@ -822,9 +822,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void getSecondWobbleGoal() throws InterruptedException {
         chassis.driveTo(.5, side(170), 30, 0, false,  7);
         if(startPos == StartPosition.OUT){
-            chassis.driveTo(.5, side(108), 30, 0, true,  4);
+            chassis.driveTo(.5, side(103), 30, 0, true,  4);
         } else {
-            chassis.driveTo(.5, side(48), 30, 0, true,  4);
+            chassis.driveTo(.5, side(43), 30, 0, true,  4);
         }
         //grab the wobble goal
         sleep(1000);
@@ -859,7 +859,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (tZone==TargetZone.ZONE_A){
             chassis.driveTo(.5, side(90), 165, 0, false, 5);
         }
-        chassis.driveTo(.5, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 210, chassis.getCurHeading(), false,  2);
+        chassis.driveTo(.5, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 180, chassis.getCurHeading(), false,  2);
     }
     public double side( double x){
         if (side == Side.RED){
