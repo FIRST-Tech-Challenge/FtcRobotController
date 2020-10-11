@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-public class teleConfigTest implements teleOpInterface {
+public class teleConfigEx implements teleOpInterface {
     HardwareMapV2 robot;
     Drivetrain drivetrain;
     static boolean wait = false;

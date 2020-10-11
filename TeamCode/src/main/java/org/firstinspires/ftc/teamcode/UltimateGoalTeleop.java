@@ -33,8 +33,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import static org.firstinspires.ftc.teamcode.HardwareUltimateGoal.TeleOpRunMode;
-
 
 /**
  * This file provides basic Telop driving for a RoverRuckus robot.
@@ -55,7 +53,7 @@ public class UltimateGoalTeleop extends OpMode{
     /* Declare OpMode members. */
     HardwareMapV2 robot; // use the class created to define a RoverRuckus's hardware
 
-    teleConfigTest t;
+    teleConfigEx t;
     /*
      * Code to run ONCE when the driver hits INIT
      */
