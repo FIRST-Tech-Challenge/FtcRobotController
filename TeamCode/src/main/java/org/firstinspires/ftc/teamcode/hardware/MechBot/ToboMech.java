@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.support.events.Button;
 import org.firstinspires.ftc.teamcode.support.events.EventManager;
 import org.firstinspires.ftc.teamcode.support.events.Events;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
+import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -197,6 +198,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             positionThread = (chassis.getGPS()==null? null: new Thread(chassis.getGPS()));
             if (positionThread!=null)
                 positionThread.start();
+
+            // chassis.set_init_pos(side(60), 23, 0);
         }
         if (bottomWobbleGoalGrabber!=null)
             bottomWobbleGoalGrabber.setupTelemetry(telemetry);
@@ -204,7 +207,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             topWobbleGoalGrabber.setupTelemetry(telemetry);
         if (cameraStackDetector!=null)
             cameraStackDetector.setupTelemetry(telemetry);
-        // chassis.setupTelemetry(telemetry);
+        chassis.setupTelemetry(telemetry);
         em.onStick(new Events.Listener() { // Left-Joystick
             @Override
             public void stickMoved(EventManager source, Events.Side side, float currentX, float changeX, float currentY, float changeY) throws InterruptedException {
@@ -458,6 +461,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.yMove(1, 0.4);
         sleep(350);
         bottomWobbleGoalGrabber.grabWobbleGoalCombo();
+        while (!TaskManager.isComplete("grab Wobble Goal Combo") && !Thread.interrupted()) {
+            TaskManager.processTasks();
+        }
+
         chassis.stop();
     }
 
@@ -569,15 +576,16 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     @MenuEntry(label = "driveTo/rotateTo", group = "Test Chassis")
-    public void testStraight(EventManager em) {
+    public void testStraight(EventManager em) throws InterruptedException {
         if (chassis!=null && chassis.getGPS()==null) {
+            chassis.set_init_pos(60,23 ,0);
             chassis.configureOdometry();
             chassis.setupTelemetry(telemetry);
             positionThread = (chassis.getGPS()==null? null: new Thread(chassis.getGPS()));
-            if (positionThread!=null)
+            if (positionThread!=null) {
                 positionThread.start();
+            }
         }
-        // chassis.set_init_pos(100,35 ,0);
         if (Thread.interrupted()) return;
         chassis.auto_target_y = chassis.getInit_y_cm();
         chassis.auto_target_x = chassis.getInit_x_cm();
@@ -602,7 +610,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.getTrigger(Events.Side.LEFT)>0.5) {
                     chassis.auto_target_y += 10;
                 } else if (!source.isPressed(Button.START)) {
-                    chassis.driveTo(auto_chassis_power, chassis.auto_target_x,  chassis.auto_target_y, 5);
+                    chassis.driveTo(auto_chassis_power, chassis.auto_target_x,  chassis.auto_target_y, auto_rotate_degree, true, 5);
                 }
             }
         }, new Button[]{Button.Y});
@@ -764,7 +772,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             tZone = TargetZone.ZONE_B; // assuming zone_A for simulation purpose
             return;
         }
-        tZone = cameraStackDetector.getTargetZone();
+        tZone = TargetZone.ZONE_A;
+        // tZone = cameraStackDetector.getTargetZone();
     }
     public void deliverFirstWobbleGoal () throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
@@ -780,10 +789,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 return;
             }
         }
-        sleep(1000);
-        if (bottomWobbleGoalGrabber!=null)
+        if (bottomWobbleGoalGrabber!=null) {
             bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
-    }
+            while (!TaskManager.isComplete("release Wobble Goal Combo") && !Thread.interrupted()) {
+                TaskManager.processTasks();
+            }
+        }
+        sleep(1000);
+}
 
 
         // put wobble goal down
@@ -833,13 +846,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else {
                 return;
             }
-            sleep(1000);
-            if (bottomWobbleGoalGrabber!=null)
-                bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
         }
-
-
-        // put the wobble goal down
+        if (bottomWobbleGoalGrabber!=null) {
+            bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
+            while (!TaskManager.isComplete("release Wobble Goal Combo") && !Thread.interrupted()) {
+                TaskManager.processTasks();
+            }
+        }
+        sleep(1000);
     }
     public void park() throws InterruptedException {
         if (tZone==TargetZone.ZONE_A){

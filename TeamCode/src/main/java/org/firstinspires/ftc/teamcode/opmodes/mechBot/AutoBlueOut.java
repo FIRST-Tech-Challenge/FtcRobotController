@@ -36,7 +36,7 @@ public class AutoBlueOut extends LinearOpMode {
         telemetry.update();
 
         ToboMech robot = new ToboMech();
-        robot.set_simulation_mode(true);
+        // robot.set_simulation_mode(true);
         robot.configureLogging("ToboMech", LOG_LEVEL);
         configuration = new Configuration(hardwareMap, robot.getName()).configureLogging("Config", LOG_LEVEL);
         log.info("RoboSigma Autonomous finished log configuration (CPU_time = %.2f sec)", getRuntime());
@@ -48,7 +48,8 @@ public class AutoBlueOut extends LinearOpMode {
             configuration.apply();
             robot.setInitPositions(ToboMech.Side.BLUE, ToboMech.StartPosition.OUT); // check
             robot.reset(true);
-            telemetry.addData("Robot is ready", "Press Play");
+            telemetry.addData("Robot is ready", "Press Play (simulation=%s)",
+                    (robot.isSimulationMode()?"yes":"no"));
             telemetry.update();
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
@@ -62,6 +63,15 @@ public class AutoBlueOut extends LinearOpMode {
         log.info("RoboSigma Autonomous finished initialization (CPU_time = %.2f sec)", getRuntime());
 
         waitForStart();
+
+        if (robot.chassis!=null) {
+            robot.chassis.configureOdometry();
+            robot.chassis.setupTelemetry(telemetry);
+        }
+        Thread positionThread = (robot.chassis.getGPS()==null? null: new Thread(robot.chassis.getGPS()));
+        if (positionThread!=null)
+            positionThread.start();
+
         robot.runtime.reset();
         robot.runtimeAuto.reset();
         // run until the end of the match (driver presses STOP or timeout)

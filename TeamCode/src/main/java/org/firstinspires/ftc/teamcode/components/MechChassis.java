@@ -497,7 +497,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         double cur_x = odo_x_pos_cm();
         double cur_y = odo_y_pos_cm();
         double desiredDegree = Math.toDegrees(Math.atan2(target_x - cur_x, target_y - cur_y));
-        driveTo(power, target_x, target_y, desiredDegree, false, timeout_sec);
+        driveTo(power, target_x, target_y, desiredDegree, true, timeout_sec);
         // auto_degree_err = desiredDegree;
     }
 
