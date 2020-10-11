@@ -182,9 +182,11 @@ public class Localizer {
      * @param b
      * @return An angle from -pi to pi
      */
-
     public static double angularDifference(double a, double b) {
-        return Math.abs((a+Math.PI) - (b+Math.PI) % 2*Math.PI - Math.PI);
+        //return Math.abs((a+Math.PI) - (b+Math.PI) % 2*Math.PI - Math.PI);
+        double diff = a - b;
+        diff += (diff > 180) ? -360 : (diff < -180) ? 360 : 0;
+        return diff;
     }
 
 }
