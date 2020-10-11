@@ -8,7 +8,7 @@
 //                new PathPoint(50, 50),
 //                new PathPoint(200, 200),
 //                new PathPoint(30, 250),
-//                new PathPoint(330, 250),
+//                new PathPoint(330, 250), //todo make this fixed, find the original display class
 //                new PathPoint(290, 400));
 //
 //        display.show(path);

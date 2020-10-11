@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.movement;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.utility.maximum;
 import org.firstinspires.ftc.teamcode.utility.point;
@@ -14,18 +15,22 @@ public class Mecanum {
     DcMotorEx backRight;
 
     private static final double maxTicksPerSec = 1024;
-    private static final double wheelToCenter = 13;
+    private static final double wheelToCenter = 21;
 
     //top l, top r, bottom l, bottom r
-    public Mecanum(DcMotorEx... motors){
+    public Mecanum(HardwareMap hardwareMap){  //todo index out of bounds error
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
 
-        frontLeft   = motors[0];
-        frontRight  = motors[1];
-        backLeft    = motors[2];
-        backRight   = motors[3];
+//        frontLeft   = motors[0];
+//        frontRight  = motors[1];
+//        backLeft    = motors[2];
+//        backRight   = motors[3];
 
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
     }
 
     //turn speed be in robot angle
