@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 public class Drivetrain {
     HardwareMapV2 robot;
+    enum tiltDirect{
+        UP, DOWN
+    }
+    static int pos = 0;
 
     public void forward(double power){
         robot.setPowerAll(power);
@@ -26,4 +30,17 @@ public class Drivetrain {
         robot.conveyor.setPower(conveyor);
         robot.outtake.setPower(outtake);
     }
+    public void tilt(double pos){
+        robot.leftTilt.setPosition(pos);
+        robot.rightTilt.setPosition(pos);
+    }
+    public void tiltpos(tiltDirect direct){
+        if (direct == tiltDirect.UP && pos != 2){
+           pos++;
+        }else if(direct == tiltDirect.DOWN && pos != 0){
+            pos--;
+        }
+        tilt((pos==0) ? 0.0 : (pos==1) ? 0.5 : 1.0);
+    }
+
 }
