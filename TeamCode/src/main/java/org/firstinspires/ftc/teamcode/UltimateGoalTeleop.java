@@ -107,7 +107,8 @@ public class UltimateGoalTeleop extends OpMode{
         t.rjoy(gamepad2.right_stick_x, gamepad2.right_stick_y);
         t.ljoy(gamepad2.left_stick_x, gamepad2.left_stick_y);
 
-
+        if (gamepad2.right_stick_button){t.rjoyb();}
+        if (gamepad2.left_stick_button){t.ljoyb();}
     }
 
     /*

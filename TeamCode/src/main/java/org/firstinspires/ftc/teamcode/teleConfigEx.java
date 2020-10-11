@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 public class teleConfigEx implements teleOpInterface {
     HardwareMapV2 robot;
     Drivetrain drivetrain;
-    static boolean wait = false;
-    static boolean up = false;
 
     public void a() { robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 1); }
 
@@ -38,7 +36,7 @@ public class teleConfigEx implements teleOpInterface {
 
     }
 
-    public void rs() {
+    public void rt() {
 
     }
 
@@ -46,16 +44,23 @@ public class teleConfigEx implements teleOpInterface {
 
     }
 
-    public void ls() {
+    public void lt() {
 
     }
 
     public void rjoy(float x, float y) {
-        if (Math.abs(y)>0.75){ wait = true; up = y > 0; }
-        if (y == 0 && wait){ drivetrain.tiltpos((up) ? Drivetrain.tiltDirect.UP : Drivetrain.tiltDirect.DOWN); wait = false;}
+
     }
 
     public void ljoy(float x, float y) {
+
+    }
+
+    public void rjoyb() {
+
+    }
+
+    public void ljoyb() {
 
     }
 

@@ -31,8 +31,10 @@ public class Drivetrain {
         robot.outtake.setPower(outtake);
     }
     public void tilt(double pos){
-        robot.leftTilt.setPosition(pos);
-        robot.rightTilt.setPosition(pos);
+        if (0.0 <= pos && pos <= 1.0) {
+            robot.leftTilt.setPosition(pos);
+            robot.rightTilt.setPosition(pos);
+        }
     }
     public void tiltpos(tiltDirect direct){
         if (direct == tiltDirect.UP && pos != 2){
