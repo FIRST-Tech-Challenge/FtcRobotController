@@ -11,13 +11,13 @@
   },
   "pivot": {
     "center": 0.5,
-    "left": 0.01,
-    "right": 0.99
+    "left": 0.001,
+    "right": 0.999
   },
   "b_grabber": {
     "center": 0.5,
-    "left": 0.01,
-    "right": 0.99
+    "left": 0.0001,
+    "right": 0.999
   },
   "camLR": {
     "center": 0.5,

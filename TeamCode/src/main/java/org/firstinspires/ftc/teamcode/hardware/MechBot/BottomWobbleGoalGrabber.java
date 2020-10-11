@@ -27,12 +27,12 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
     private AdjustableServo grabber;
 
     private final double PIVOT_UP = 0.3;
-    private final double PIVOT_INIT = 0.02;
+    private final double PIVOT_INIT = 0.29;
     private final double PIVOT_DOWN = 0.66;
 
-    private final double GRABBER_OPEN = 0.9;
-    private final double GRABBER_INIT = 0.485;
-    private final double GRABBER_CLOSE = 0.458;
+    private final double GRABBER_OPEN = 0.5;
+    private final double GRABBER_INIT = 0.825;
+    private final double GRABBER_CLOSE = 0.825;
 
     private boolean pivotIsDown = false;
     private boolean grabberIsClosed = true;
@@ -74,7 +74,7 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
         pivot.configure(configuration.getHardwareMap(), "pivot");
         configuration.register(pivot);
         configuration.register(this);
-        servoInit();
+        // servoInit();
     }
 
     public void servoInit() {
@@ -82,8 +82,6 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
         pivot.setPosition(PIVOT_INIT);
         pivotIsDown = false;
         grabberIsClosed = true;
-        //hookUp();
-        // configuration.register(this);
     }
 
     public void pivotUpInc() {

@@ -161,6 +161,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (chassis==null || simulation_mode==true)
             return;
         chassis.reset();
+        if (bottomWobbleGoalGrabber!=null)
+            bottomWobbleGoalGrabber.servoInit();
         if (auto) {
             chassis.setupTelemetry(telemetry);
         }
@@ -203,8 +205,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             positionThread = (chassis.getGPS()==null? null: new Thread(chassis.getGPS()));
             if (positionThread!=null)
                 positionThread.start();
+            chassis.setupTelemetry(telemetry);
 
-            // chassis.set_init_pos(side(60), 23, 0);
         }
         if (bottomWobbleGoalGrabber!=null)
             bottomWobbleGoalGrabber.setupTelemetry(telemetry);
@@ -212,7 +214,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             topWobbleGoalGrabber.setupTelemetry(telemetry);
         if (cameraStackDetector!=null)
             cameraStackDetector.setupTelemetry(telemetry);
-        // chassis.setupTelemetry(telemetry);
         em.onStick(new Events.Listener() { // Left-Joystick
             @Override
             public void stickMoved(EventManager source, Events.Side side, float currentX, float changeX, float currentY, float changeY) throws InterruptedException {
