@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.utility.maximum;
 import org.firstinspires.ftc.teamcode.utility.point;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 
 public class Mecanum {
     DcMotorEx frontLeft;
@@ -29,8 +31,8 @@ public class Mecanum {
 //        backLeft    = motors[2];
 //        backRight   = motors[3];
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
     }
 
     //turn speed be in robot angle
@@ -42,15 +44,28 @@ public class Mecanum {
         move.normalize();
 
         maximum max = new maximum(
-                move.y + move.x - turnSpeed,  //FL
-                move.y - move.x + turnSpeed,        //FR
-                move.y - move.x - turnSpeed,        //BL
-                move.y + move.x + turnSpeed);       //BR
+                move.y + move.x + turnSpeed,  //FL
+                move.y - move.x - turnSpeed,        //FR
+                move.y - move.x + turnSpeed,        //BL
+                move.y + move.x - turnSpeed);       //BR
         max.squishIntoRange(1.0);
+
+
 
         frontLeft.setVelocity(  (int)(maxTicksPerSec * max.nums[0]));
         frontRight.setVelocity( (int)(maxTicksPerSec * max.nums[1]));
         backLeft.setVelocity(   (int)(maxTicksPerSec * max.nums[2]));
         backRight.setVelocity(  (int)(maxTicksPerSec * max.nums[3]));
+
+        // Debugging
+//        double frontLeftVelocity = frontLeft.getVelocity();
+//        double frontRightVelocity = frontRight.getVelocity();
+//        double backLeftVelocity = backLeft.getVelocity();
+//        double backRightVelocity = backRight.getVelocity();
+//        telemetry.addData("Status", "frontLeft: " + Double.toString(frontLeftVelocity));
+//        telemetry.addData("Status", "frontRight: " + Double.toString(frontRightVelocity));
+//        telemetry.addData("Status", "backLeft: " + Double.toString(backLeftVelocity));
+//        telemetry.addData("Status", "backRight: " + Double.toString(backRightVelocity));
+
     }
 }
