@@ -48,9 +48,7 @@ public class AutoBlueOut extends LinearOpMode {
             configuration.apply();
             robot.initSetup(Robot2.ProgramType.AUTO_BLUE, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(true);
-            telemetry.addData("Robot is ready", "Press Play (simulation=%s/%s/%s)",
-                    (robot.isSimulationMode()?"Y":"N"), robot.side.toString(),robot.startPos.toString());
-            telemetry.update();
+            robot.showStatus();
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);

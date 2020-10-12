@@ -38,7 +38,8 @@ public class MecTeleOp extends LinearOpMode {
         try {
             // configure robot and reset all hardware
             robot.configure(configuration, telemetry, Robot2.ProgramType.TELE_OP);
-            robot.chassis.enableImuTelemetry(configuration);
+            if (robot.chassis!=null)
+                robot.chassis.enableImuTelemetry(configuration);
             configuration.apply();
             robot.reset(false);
 
@@ -47,8 +48,8 @@ public class MecTeleOp extends LinearOpMode {
 
             robot.mainTeleOp(eventManager1);
 
-            telemetry.addData("Robot is ready", "Press Play");
-            telemetry.update();
+            robot.showStatus();
+
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);
@@ -71,7 +72,7 @@ public class MecTeleOp extends LinearOpMode {
                 Thread.sleep(5000);
             }
         }
-        if (robot.chassis.getGPS()!=null)
+        if (robot.chassis!=null && robot.chassis.getGPS()!=null)
             robot.chassis.getGPS().stop();
     }
 

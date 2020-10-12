@@ -99,17 +99,14 @@ public class TfodStackDetection extends LinearOpMode {
             robot.configure(configuration, telemetry, Robot2.ProgramType.AUTO_BLUE);
             robot.chassis.enableImuTelemetry(configuration);
             configuration.apply();
+            robot.initSetup(Robot2.ProgramType.AUTO_BLUE, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(false);
-
-            telemetry.addData("Robot is ready", "Press Play");
-            telemetry.update();
+            robot.showStatus();
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);
         }
-        //setup WebCam servo position for autonomous during initialization
-        if (robot.cameraStackDetector!=null)
-            robot.cameraStackDetector.set_cam_pos(robot.cameraStackDetector.CAM_BLUE_OUT);
+
         log.info("RoboMech TeleOp finished initialization (CPU_time = %.2f sec)", getRuntime());
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
