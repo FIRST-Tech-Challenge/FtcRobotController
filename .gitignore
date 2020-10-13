@@ -85,3 +85,9 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+# Windows thumbnail db
+Thumbs.db
+
+# OSX files
+.DS_Store
