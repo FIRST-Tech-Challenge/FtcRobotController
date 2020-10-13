@@ -21,26 +21,34 @@ package com.hfrobots.tnt.season2021;
 
 import com.ftc9929.corelib.drive.OpenLoopMecanumKinematics;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import lombok.NonNull;
 
 public class Drivebase extends OpenLoopMecanumKinematics {
-    private final DcMotorEx frontRightDriveMotor;
-    private final DcMotorEx backRightDriveMotor;
-    private final DcMotorEx frontLeftDriveMotor;
-    private final DcMotorEx backLeftDriveMotor;
+    private final DcMotorEx rightFrontDriveMotor;
+    private final DcMotorEx rightRearDriveMotor;
+    private final DcMotorEx leftFrontDriveMotor;
+    private final DcMotorEx leftRearDriveMotor;
 
 
     public Drivebase(@NonNull HardwareMap hardwareMap) {
-        frontRightDriveMotor = hardwareMap.get(DcMotorEx.class, "frontRightDriveMotor");
-        backRightDriveMotor = hardwareMap.get(DcMotorEx.class, "backRightDriveMotor");
-        frontLeftDriveMotor = hardwareMap.get(DcMotorEx.class, "frontLeftDriveMotor");
-        backLeftDriveMotor = hardwareMap.get(DcMotorEx.class, "backLeftDriveMotor");
+        rightFrontDriveMotor = hardwareMap.get(DcMotorEx.class, "rightFrontDriveMotor");
+        rightRearDriveMotor = hardwareMap.get(DcMotorEx.class, "rightRearDriveMotor");
+        leftFrontDriveMotor = hardwareMap.get(DcMotorEx.class, "leftFrontDriveMotor");
+        leftRearDriveMotor = hardwareMap.get(DcMotorEx.class, "leftRearDriveMotor");
+
+        leftFrontDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRearDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
     }
 
     @Override
     protected void setMotorPowers(@NonNull WheelSpeeds wheelSpeeds) {
-        // FIXME
+        rightFrontDriveMotor.setPower(wheelSpeeds.getRightFront());
+        rightRearDriveMotor.setPower(wheelSpeeds.getRightRear());
+        leftFrontDriveMotor.setPower(wheelSpeeds.getLeftFront());
+        leftRearDriveMotor.setPower(wheelSpeeds.getLeftRear());
     }
 }
