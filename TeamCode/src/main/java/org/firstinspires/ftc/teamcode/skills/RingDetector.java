@@ -15,6 +15,7 @@ public class RingDetector {
     Telemetry telemetry;
     private Detector tfDetector = null;
     private HardwareMap hardwareMap;
+    private Led lights;
 
     private static String MODEL_FILE_NAME = "rings_float.tflite";
     private static String LABEL_FILE_NAME = "labels.txt";
@@ -24,13 +25,10 @@ public class RingDetector {
     private static final String LABEL_C = "Quad";
     private String targetZone = LABEL_C;
 
-    public RingDetector(){
-
-    }
-
-    public RingDetector(HardwareMap hMap, Telemetry t) {
+    public RingDetector(HardwareMap hMap, Led led, Telemetry t) {
         hardwareMap = hMap;
         telemetry = t;
+        lights = led;
         initDetector();
         activateDetector();
     }
@@ -38,13 +36,14 @@ public class RingDetector {
     public AutoDot detectRing(int timeout, Telemetry telemetry, LinearOpMode caller){
         AutoDot zone = new AutoDot();
         zone.setX(70);
-        zone.setY(120);
-        zone.setHeading(45);
+        zone.setY(130);
+        zone.setHeading(0);
         boolean found = false;
-
         boolean stop = false;
+
         ElapsedTime runtime = new ElapsedTime();
-        while (!stop && runtime.seconds() < timeout) {
+        runtime.reset();
+        while (!stop || runtime.seconds() <= timeout) {
             if (tfDetector != null) {
                 List<Classifier.Recognition> results = tfDetector.getLastResults();
                 if (results == null || results.size() == 0){
@@ -52,29 +51,31 @@ public class RingDetector {
                 }
                 else {
                     for (Classifier.Recognition r : results) {
-                        String item = String.format("%s: %.2f", r.getTitle(), r.getConfidence());
-                        telemetry.addData("Found", item);
-                        if(r.getConfidence() >= 0.6) {
-                            if(r.getTitle().contentEquals(LABEL_C)){
+                        if(r.getConfidence() >= 0.8) {
+                            telemetry.addData("PrintZone", r.getTitle());
+                            if(r.getTitle().contains(LABEL_C)){
                                 zone.setX(70);
                                 zone.setY(120);
-                                zone.setHeading(45);
+                                zone.setHeading(0);
                                 found = true;
                                 targetZone = LABEL_C;
+                                this.lights.recognitionSignal(4);
                             }
-                            if(r.getTitle().contentEquals(LABEL_B)){
+                            if(r.getTitle().contains(LABEL_B)){
                                 zone.setX(50);
-                                zone.setY(100);
-                                zone.setHeading(45);
+                                zone.setY(90);
+                                zone.setHeading(0);
                                 found = true;
                                 targetZone = LABEL_B;
+                                this.lights.recognitionSignal(1);
                             }
-                            if(r.getTitle().contentEquals(LABEL_A)){
-                                zone.setX(70);
+                            if(r.getTitle().contains(LABEL_A)){
+                                zone.setX(78);
                                 zone.setY(70);
-                                zone.setHeading(45);
+                                zone.setHeading(0);
                                 found = true;
                                 targetZone = LABEL_A;
+                                this.lights.recognitionSignal(0);
                             }
                         }
                     }

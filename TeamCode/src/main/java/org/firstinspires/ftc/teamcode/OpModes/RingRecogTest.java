@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.bots.DummyBot;
+import org.firstinspires.ftc.teamcode.skills.Led;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 import org.firstinspires.ftc.teamcode.tfrec.Detector;
 import org.firstinspires.ftc.teamcode.tfrec.classification.Classifier;
@@ -21,15 +22,15 @@ public class RingRecogTest extends LinearOpMode {
 
     // Declare OpMode members.
     private RingDetector rf = null;
-    private ElapsedTime runtime = new ElapsedTime();
     private AutoDot wobdot = new AutoDot();
 
     @Override
     public void runOpMode() {
         try {
             try {
-                rf = new RingDetector(this.hardwareMap, telemetry);
-                rf.initDetector();
+                Led lights = new Led();
+                lights.init(this.hardwareMap, telemetry);
+                rf = new RingDetector(this.hardwareMap, lights, telemetry);
             }
             catch (Exception ex){
                 telemetry.addData("Error", String.format("Unable to initialize Detector. %s", ex.getMessage()));
@@ -42,11 +43,12 @@ public class RingRecogTest extends LinearOpMode {
 
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
-            runtime.reset();
+
+            // detect ring stack
+            wobdot = rf.detectRing(1, telemetry, this);
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
-                wobdot = rf.detectRing(10, telemetry, this);
                 telemetry.addData("Zone", rf.returnZone());
                 telemetry.addData("X-Coord", wobdot.getX());
                 telemetry.addData("Y-Coord", wobdot.getY());

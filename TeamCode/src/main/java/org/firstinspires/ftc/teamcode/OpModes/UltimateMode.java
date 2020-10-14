@@ -67,8 +67,7 @@ public class UltimateMode extends LinearOpMode{
                 telemetry.update();
 
 
-                double power = gamepad1.left_stick_y;
-                robot.moveWobbleSwing(power);
+
 
                 if (gamepad1.left_bumper){
                     robot.closeWobbleClaw();
