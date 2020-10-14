@@ -1,0 +1,3 @@
+[submodule "TechnoLib"]
+	path = TechnoLib
+	url = https://github.com/technototes/TechnoLib
