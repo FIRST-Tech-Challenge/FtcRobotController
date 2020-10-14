@@ -14,8 +14,8 @@ public class HTMLTelemetryTest extends LinearOpMode {
             betterTelemetry.addLine("hello");
             betterTelemetry.addData("foo :", gamepad1.right_trigger);
             betterTelemetry.addLine();
-            betterTelemetry.addLine(new BetterTelemetry.Format().fontSize(7).bold(true), "big boi");
-            betterTelemetry.addData(new BetterTelemetry.Format().color(BetterTelemetry.Color.RED), "bar", 69);
+            betterTelemetry.addLine(BetterTelemetry.format().fontSize(7).bold(true), "big boi");
+            betterTelemetry.addData(BetterTelemetry.format().color(BetterTelemetry.Color.RED), "bar", 69);
             betterTelemetry.update();
 
         }

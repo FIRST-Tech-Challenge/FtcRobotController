@@ -30,7 +30,7 @@ public class BetterTelemetry extends TelemetryImpl {
         public String font = "none";
         public boolean bold, underline, italic, strikeThrough;
         private StringBuilder builder;
-        public Format(){
+        private Format(){
 
         }
         public Format makeDefault() {
@@ -115,6 +115,10 @@ public class BetterTelemetry extends TelemetryImpl {
         opMode.telemetry.setDisplayFormat(DisplayFormat.HTML);
         textFormat = format;
         return this;
+    }
+
+    public static Format format(){
+        return new Format();
     }
 
     @Override
