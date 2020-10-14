@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.playmaker;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -24,12 +25,23 @@ public class Localizer {
     private OpenGLMatrix cameraMatrix;
     private List<VuforiaTrackable> vuforiaTrackables = new ArrayList<VuforiaTrackable>();
     private VuforiaTransform lastVuforiaTransform;
+    private Orientation lastIMUOrientation;
+    private Orientation imuToWorld;
 
     // Vuforia Constants
     private static final float mmPerInch        = 25.4f;
     private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
     private static final float halfField = 72 * mmPerInch;
     private static final float quadField  = 36 * mmPerInch;
+
+
+    /**
+     * Return the robot's estimated location on the field.
+     * X: the axis running from the audience view (negative) to the goals (positive)
+     * Y: the axis running from red alliance (negative) to the blue alliance (positive)
+     * Z: height of the robot off ground, though not relevant for this game.
+     * @return the estimated Position
+     */
 
     public Position estimatePosition() {
         if (lastVuforiaTransform != null) {
@@ -155,12 +167,30 @@ public class Localizer {
         }
     }
 
+    /**
+     * This will attempt to find the differences of orientation between the field-centric system and
+     * the IMU reference system.
+     * @return Whether calibration was successful
+     */
+
+    public boolean attemptIMUToWorldCalibration() {
+
+    }
+
+    public void updateIMUOrientation(BNO055IMU imu) {
+        Orientation imuOrientation = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES);
+
+        // TODO: Appply IMU -> World transformation
+        this.lastIMUOrientation = imuOrientation;
+    }
+
+
     public class VuforiaTransform {
         public long acquisitionTime;
         public OpenGLMatrix transform;
 
         public VuforiaTransform(OpenGLMatrix transform) {
-            this.acquisitionTime = System.currentTimeMillis();
+            this.acquisitionTime = System.nanoTime();
             this.transform = transform;
 
         }

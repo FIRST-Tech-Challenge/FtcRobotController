@@ -21,23 +21,23 @@ public class WaitAction implements Action {
 
     @Override
     public void init(RobotHardware hardware) {
-        startTime = System.currentTimeMillis();
-        endTime = System.currentTimeMillis() + time;
+        startTime = System.nanoTime();
+        endTime = System.nanoTime() + time;
     }
 
     @Override
     public boolean doAction(RobotHardware hardware){
-        return (System.currentTimeMillis() >= endTime);
+        return (System.nanoTime() >= endTime);
     }
 
     @Override
     public Double progress() {
-        return (System.currentTimeMillis()-startTime)/time;
+        return (System.nanoTime()-startTime)/time;
     }
 
     @Override
     public String progressString() {
-        String elapsedTime = String.format("%.3f", (System.currentTimeMillis() - startTime)/1000.0);
+        String elapsedTime = String.format("%.3f", (System.nanoTime() - startTime)/1000.0);
         String totalTime = String.format("%.3f", time/1000.0);
         return String.format("%s/%ss", elapsedTime, totalTime);
     }

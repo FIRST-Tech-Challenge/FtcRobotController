@@ -35,6 +35,7 @@ public class MoveAndOrientAction implements Action {
         Position currentPosition = hardware.localizer.estimatePosition();
         double currentHeading = hardware.localizer.estimateOrientation().thirdAngle;
         double currentDistanceToTarget = Localizer.distance(currentPosition, finalPosition);
+
         return true;
     }
 

@@ -103,12 +103,11 @@ public class OmniDrive {
     }
 
     /**
-     * Move the robot in a direction with option for rotation
-     *
-     * @see how stupid we are
+     * Move and/or rotate the robot along an axis relative to the robot's center.
+
      * @param power The power to move everything
      * @param angle The heading to move the robot in, 0 is forward rotating clockwise.
-     * @param rotation How fast to rotate from -1 to 1 where 1 indicates CW rotation
+     * @param rotation How fast to rotate from -1 to 1 where 1 indicates CW rotation and full rotation w/ no movement.
      */
     public void move(double power, double angle, double rotation) {
         double pi4 = Math.PI / 4;
@@ -121,16 +120,20 @@ public class OmniDrive {
 
         // Calculate unit vector and apply power magnitude
         double power_max = Math.max(Math.max(fl_power, fr_power), Math.max(bl_power, br_power));
-        double unit_fl_power = power * fl_power / power_max;
-        double unit_fr_power = power * fr_power / power_max;
-        double unit_bl_power = power * bl_power / power_max;
-        double unit_br_power = power * br_power / power_max;
+
+        // Scale power if one motor exceeds 1
+        if (power_max > 1.0) {
+            fl_power = fl_power / power_max;
+            fr_power = fr_power / power_max;
+            bl_power = bl_power / power_max;
+            br_power = br_power / power_max;
+        }
 
         // Set motor powers
-        frontLeft.setPower(unit_fl_power);
-        frontRight.setPower(unit_fr_power);
-        backLeft.setPower(unit_bl_power);
-        backRight.setPower(unit_br_power);
+        frontLeft.setPower(fl_power);
+        frontRight.setPower(fr_power);
+        backLeft.setPower(bl_power);
+        backRight.setPower(br_power);
     }
 
     public void stopDrive() {
