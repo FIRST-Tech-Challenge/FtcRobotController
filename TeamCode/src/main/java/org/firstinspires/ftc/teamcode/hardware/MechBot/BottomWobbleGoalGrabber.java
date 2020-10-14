@@ -31,8 +31,8 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
     private final double PIVOT_DOWN = 0.66;
 
     private final double GRABBER_OPEN = 0.5;
-    private final double GRABBER_INIT = 0.825;
-    private final double GRABBER_CLOSE = 0.825;
+    private final double GRABBER_INIT = 0.78;
+    private final double GRABBER_CLOSE = 0.78;
 
     private boolean pivotIsDown = false;
     private boolean grabberIsClosed = true;

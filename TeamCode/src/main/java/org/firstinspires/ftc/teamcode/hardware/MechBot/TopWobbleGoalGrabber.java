@@ -37,7 +37,7 @@ public class TopWobbleGoalGrabber extends Logger<TopWobbleGoalGrabber> implement
 
     private final double ARM_POWER = 0.5;
     private final double ARM_SPEED = 1000;
-    private final int ARM_POS_UP = -450;
+    private final int ARM_POS_UP = -350;
     private final int ARM__POS_INIT = 0;
     private final int ARM_POS_DOWN = -936;
 
