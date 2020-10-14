@@ -128,7 +128,6 @@ public class OmniDrive {
             bl_power = bl_power / power_max;
             br_power = br_power / power_max;
         }
-
         // Set motor powers
         frontLeft.setPower(fl_power);
         frontRight.setPower(fr_power);
