@@ -62,6 +62,31 @@ public class UltimateMode extends LinearOpMode{
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
+                double drive = gamepad1.left_stick_y;
+                double turn = 0;
+                double ltrigger = gamepad1.left_trigger;
+                double rtrigger = gamepad1.right_trigger;
+                if (ltrigger > 0){
+                    turn = -ltrigger;
+                }
+                else if (rtrigger > 0){
+                    turn = rtrigger;
+                }
+
+                double strafe = gamepad1.right_stick_x;
+
+                if (Math.abs(strafe) > 0) {
+                    telemetry.addData("Strafing", "Left: %2f", strafe);
+                    telemetry.update();
+                    if (strafe < 0) {
+                        robot.strafeRight(Math.abs(strafe));
+                    } else {
+                        robot.strafeLeft(Math.abs(strafe));
+                    }
+                } else {
+                    robot.move(drive, turn);
+                }
+
                 if (gamepad1.left_bumper){
                     robot.closeWobbleClaw();
                 }
@@ -77,10 +102,12 @@ public class UltimateMode extends LinearOpMode{
                 else if (gamepad1.dpad_left) {
                     robot.liftAndHoldWobbleSwing();
                 }
-                else if (gamepad1.dpad_right) {
-                    robot.liftHighAndHoldWobble();
-                }
+//                else if (gamepad1.dpad_right) {
+//                    robot.liftHighAndHoldWobble();
+//                }
 
+                telemetry.addData("Heading", robot.getGyroHeading());
+                telemetry.addData("Horiz encoder", robot.getHorizontalOdometer());
                 telemetry.update();
             }
         }

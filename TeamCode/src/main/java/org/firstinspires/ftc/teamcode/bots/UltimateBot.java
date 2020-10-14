@@ -141,7 +141,7 @@ public class UltimateBot extends YellowBot
         wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleSwing.setPower(0);
         wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wobbleSwing.setPower(-0.01);
+        wobbleSwing.setPower(-0.005);
     }
 
 
