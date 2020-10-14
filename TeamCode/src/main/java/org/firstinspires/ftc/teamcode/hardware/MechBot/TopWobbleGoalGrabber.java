@@ -116,7 +116,7 @@ public class TopWobbleGoalGrabber extends Logger<TopWobbleGoalGrabber> implement
         armMotor.setVelocity(ARM_SPEED);
         return new Progress() {
             public boolean isDone() {
-                if (Math.abs(armMotor.getCurrentPosition() - armMotor.getTargetPositionTolerance()) < 20) {
+                if (Math.abs(armMotor.getCurrentPosition() - armMotor.getTargetPositionTolerance()) < 50) {
                     return true;
                 }
                 return !armMotor.isBusy();
@@ -234,6 +234,7 @@ public class TopWobbleGoalGrabber extends Logger<TopWobbleGoalGrabber> implement
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
+                armToPosition(ARM_POS_UP);
                 return moveGrabber(GRABBER_OPEN);
             }
         }, taskName);
