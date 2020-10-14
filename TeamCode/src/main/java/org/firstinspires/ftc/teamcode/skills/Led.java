@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.skills;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -53,5 +54,26 @@ public class Led {
 
     public void problem(){
         setPattern(RevBlinkinLedDriver.BlinkinPattern.FIRE_LARGE);
+    }
+
+    public void recognitionSignal(int numBlinks){
+        boolean none = numBlinks == 0;
+        if (none){
+            numBlinks = 1;
+        }
+        ElapsedTime timer = new ElapsedTime();
+        for (int i = 0; i < numBlinks; i++){
+            timer.reset();
+            if (none) {
+                problem();
+            }
+            else {
+                OK();
+            }
+            while (timer.milliseconds() < 100){
+
+            }
+            none();
+        }
     }
 }

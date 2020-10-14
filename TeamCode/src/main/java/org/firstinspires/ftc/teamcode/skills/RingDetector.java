@@ -15,6 +15,7 @@ public class RingDetector {
     Telemetry telemetry;
     private Detector tfDetector = null;
     private HardwareMap hardwareMap;
+    private Led lights;
 
     private static String MODEL_FILE_NAME = "rings_float.tflite";
     private static String LABEL_FILE_NAME = "labels.txt";
@@ -24,9 +25,10 @@ public class RingDetector {
     private static final String LABEL_C = "Quad";
     private String targetZone = LABEL_C;
 
-    public RingDetector(HardwareMap hMap, Telemetry t) {
+    public RingDetector(HardwareMap hMap, Led led, Telemetry t) {
         hardwareMap = hMap;
         telemetry = t;
+        lights = led;
         initDetector();
         activateDetector();
     }
@@ -41,7 +43,7 @@ public class RingDetector {
 
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        while (!stop && runtime.seconds() <= timeout) {
+        while (!stop || runtime.seconds() <= timeout) {
             if (tfDetector != null) {
                 List<Classifier.Recognition> results = tfDetector.getLastResults();
                 if (results == null || results.size() == 0){
@@ -57,6 +59,7 @@ public class RingDetector {
                                 zone.setHeading(0);
                                 found = true;
                                 targetZone = LABEL_C;
+                                this.lights.recognitionSignal(4);
                             }
                             if(r.getTitle().contains(LABEL_B)){
                                 zone.setX(50);
@@ -64,6 +67,7 @@ public class RingDetector {
                                 zone.setHeading(0);
                                 found = true;
                                 targetZone = LABEL_B;
+                                this.lights.recognitionSignal(1);
                             }
                             if(r.getTitle().contains(LABEL_A)){
                                 zone.setX(78);
@@ -71,6 +75,7 @@ public class RingDetector {
                                 zone.setHeading(0);
                                 found = true;
                                 targetZone = LABEL_A;
+                                this.lights.recognitionSignal(0);
                             }
                         }
                     }

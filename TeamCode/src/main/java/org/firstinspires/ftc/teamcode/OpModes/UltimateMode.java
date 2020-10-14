@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.bots.DummyBot;
+import org.firstinspires.ftc.teamcode.bots.SwingPosition;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 
 //Opmode for quick testing of motors
@@ -61,21 +62,12 @@ public class UltimateMode extends LinearOpMode{
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
-                double drive1 = gamepad1.left_stick_y;
-                int position = robot.moveWobbleSwing(drive1);
-                telemetry.addData("position", position);
-                telemetry.update();
-
-
-
-
                 if (gamepad1.left_bumper){
                     robot.closeWobbleClaw();
                 }
                 else if (gamepad1.right_bumper) {
                     robot.openWobbleClaw();
                 }
-
                 if (gamepad1.dpad_up) {
                     robot.forwardWobbleSwing();
                 }
@@ -83,8 +75,13 @@ public class UltimateMode extends LinearOpMode{
                     robot.backWobbleSwing();
                 }
                 else if (gamepad1.dpad_left) {
-                    robot.middleWobbleSwing();
+                    robot.liftAndHoldWobbleSwing();
                 }
+                else if (gamepad1.dpad_right) {
+                    robot.liftHighAndHoldWobble();
+                }
+
+                telemetry.update();
             }
         }
 

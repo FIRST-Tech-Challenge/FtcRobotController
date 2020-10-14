@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.bots.DummyBot;
+import org.firstinspires.ftc.teamcode.skills.Led;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 import org.firstinspires.ftc.teamcode.tfrec.Detector;
 import org.firstinspires.ftc.teamcode.tfrec.classification.Classifier;
@@ -27,7 +28,9 @@ public class RingRecogTest extends LinearOpMode {
     public void runOpMode() {
         try {
             try {
-                rf = new RingDetector(this.hardwareMap, telemetry);
+                Led lights = new Led();
+                lights.init(this.hardwareMap, telemetry);
+                rf = new RingDetector(this.hardwareMap, lights, telemetry);
             }
             catch (Exception ex){
                 telemetry.addData("Error", String.format("Unable to initialize Detector. %s", ex.getMessage()));
