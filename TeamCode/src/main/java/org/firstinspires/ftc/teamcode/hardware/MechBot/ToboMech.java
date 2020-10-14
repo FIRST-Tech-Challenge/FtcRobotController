@@ -409,6 +409,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if(source.getTrigger(Events.Side.LEFT) > 0.3){
                     bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
+                    topWobbleGoalGrabber.releaseWobbleGoalCombo();
                     //top wobble goal combos functions go here
                 }
             }
@@ -421,6 +422,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if(source.getTrigger(Events.Side.LEFT) > 0.3){
                     autoGrabBottomWobbleGoal();
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
+                    topWobbleGoalGrabber.grabWobbleGoalCombo();
                     //top wobble goal combos functions go here
                 }
             }
