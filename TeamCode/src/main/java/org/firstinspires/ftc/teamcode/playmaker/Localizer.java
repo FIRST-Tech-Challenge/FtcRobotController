@@ -55,10 +55,20 @@ public class Localizer {
         return null;
     }
 
+    /**
+     * Estimate the robot's orientation on the field.
+     * First Angle: Roll
+     * Second Angle: Pitch
+     * Third Angle: Heading, this is the only value you'll really care about
+     * @return
+     */
+
     public Orientation estimateOrientation() {
         if (lastVuforiaTransform != null) {
             Orientation rotation = Orientation.getOrientation(lastVuforiaTransform.transform, EXTRINSIC, XYZ, DEGREES);
             return rotation;
+        } else if (lastIMUOrientation != null) {
+            return lastIMUOrientation;
         }
         return null;
     }
@@ -153,6 +163,9 @@ public class Localizer {
     }
 
     public void updateLocationWithVuforia(RobotHardware hardware) {
+        // Clear the currently saved vuforia transform
+        lastVuforiaTransform = null;
+
         for (VuforiaTrackable trackable : vuforiaTrackables) {
             VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener) trackable.getListener();
             if (listener.isVisible()) {
@@ -180,7 +193,7 @@ public class Localizer {
     public void updateIMUOrientation(BNO055IMU imu) {
         Orientation imuOrientation = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES);
 
-        // TODO: Appply IMU -> World transformation
+        // TODO: Apply IMU -> World transformation
         this.lastIMUOrientation = imuOrientation;
     }
 
