@@ -33,6 +33,8 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
+
 /**
  * This is NOT an opmode.
  *
@@ -57,6 +59,7 @@ public class TESTTechbotHardware
     public DcMotor leftBackDrive = null;
     public DcMotor rightBackDrive = null;
     public NormalizedColorSensor colorSensor = null;
+    public CameraName cameraName = null;
 
     //public DcMotor arm = null;
     public DcMotor lift = null;
@@ -116,6 +119,8 @@ public class TESTTechbotHardware
         //arm    = hwMap.get(DcMotor.class, "arm");
         servoHand = hwMap.get(Servo.class, "hand");
         colorSensor = hwMap.get(NormalizedColorSensor.class, "colorSensor");
+        cameraName = hwMap.get(CameraName.class, "camera");
+
         //lift = hwMap.get(DcMotor.class, "lift");
 
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
