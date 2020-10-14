@@ -29,7 +29,6 @@ public class MecTeleOp extends LinearOpMode {
         telemetry.update();
 
         ToboMech robot = new ToboMech();
-        robot.useTfod = true;
         robot.configureLogging(robot.getName(),LOG_LEVEL);
         configuration = new Configuration(hardwareMap, robot.getName()).configureLogging("Config", LOG_LEVEL);
 
@@ -38,9 +37,8 @@ public class MecTeleOp extends LinearOpMode {
         try {
             // configure robot and reset all hardware
             robot.configure(configuration, telemetry, Robot2.ProgramType.TELE_OP);
-            if (robot.chassis!=null)
-                robot.chassis.enableImuTelemetry(configuration);
             configuration.apply();
+            robot.initSetup(Robot2.ProgramType.TELE_OP, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(false);
 
             eventManager1 = new EventManager(gamepad1, true);

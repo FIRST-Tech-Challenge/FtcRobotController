@@ -232,7 +232,7 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
         Telemetry.Line line = telemetry.addLine();
 
         if (grabber != null) {
-            line.addData("Grabber", "pos=%.2f", new Func<Double>() {
+            line.addData("B-Grabber", "pos=%.2f", new Func<Double>() {
                 @Override
                 public Double value() {
                     return grabber.getPosition();

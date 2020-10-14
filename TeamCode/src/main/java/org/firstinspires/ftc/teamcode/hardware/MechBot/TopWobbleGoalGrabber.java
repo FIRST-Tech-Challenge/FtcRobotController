@@ -302,11 +302,11 @@ public class TopWobbleGoalGrabber extends Logger<TopWobbleGoalGrabber> implement
         }
 
         if (armMotor != null) {
-            line.addData("Arm-Motor", "pos/pwd/speed =%s,", new Func<String>() {
+            line.addData("Arm", "%s", new Func<String>() {
                 @Override
                 public String value() {
-                    String s = armMotor.getCurrentPosition() + "/" + armMotor.getPower() + "/" +
-                            armMotor.getVelocity();
+                    String s = String.format("pos=%d, pw=%.1f, speed=%.1f", armMotor.getCurrentPosition(),armMotor.getPower(),
+                            armMotor.getVelocity());
                     return s;
                 }
             });
