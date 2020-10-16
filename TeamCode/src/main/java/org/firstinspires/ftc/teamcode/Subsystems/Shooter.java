@@ -31,8 +31,8 @@ public class Shooter {
         moveforward=hwMap.get(Servo.class,"ForwardMove");
         moveback=hwMap.get(Servo.class,"BackMove");
 
-        shooterleft.setDirection(DcMotor.Direction.FORWARD);
-        shooterright.setDirection(DcMotor.Direction.REVERSE);
+        shooterleft.setDirection(DcMotor.Direction.REVERSE);
+        shooterright.setDirection(DcMotor.Direction.FORWARD);
         shooterleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
