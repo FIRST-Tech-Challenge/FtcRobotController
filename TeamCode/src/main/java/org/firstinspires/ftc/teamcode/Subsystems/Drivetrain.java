@@ -25,8 +25,6 @@ public class Drivetrain  {
         private boolean inTeleOp;
         private ElapsedTime runtime = new ElapsedTime();
 
-        //HardwareMap hwMap = null;        // create a hardware map object here
-
         // Contructor for Drivetrain
         // Passing boolean to automatically config encoders for correct part of match.
         public Drivetrain(boolean inTeleOp) {
@@ -37,7 +35,8 @@ public class Drivetrain  {
         // and encoders if needed.
         public void init(HardwareMap hwMap) {
 
-            // initialize the imu first
+            // initialize the imu first.
+            // Note this in NOT IMU calibration...just initialization.
             imu = hwMap.get(BNO055IMU.class, "imu");
             // initialize al the drive motors
             leftFront = hwMap.get(DcMotor.class, "Left_front");
