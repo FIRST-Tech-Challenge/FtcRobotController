@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class teleConfigRohit implements teleOpInterface {
     HardwareMapV2 robot;
     Drivetrain drivetrain;
@@ -95,4 +97,14 @@ public class teleConfigRohit implements teleOpInterface {
     public void custom1() {
 
     }
+
+    public void updateTelemetryDM() {
+        telemetryDM.put("Intake Power: ", String.valueOf(inttakePower));
+        telemetryDM.put("Outtake Power: ", String.valueOf(outtakePower));
+        telemetryDM.put("Conveyor Power: ", String.valueOf(conveyorPower));
+        telemetryDM.put("Tilt Angle: ", String.valueOf(robot.leftTilt.getPosition()));
+        telemetryDM.put("Tilt mode: ", String.valueOf(tiltmode));
+    }
+
+
 }

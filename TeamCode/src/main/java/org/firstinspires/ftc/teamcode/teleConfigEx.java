@@ -67,4 +67,8 @@ public class teleConfigEx implements teleOpInterface {
     public void custom1() {
 
     }
+
+    public void updateTelemetryDM() {
+        telemetryDM.put("test","test");
+    }
 }

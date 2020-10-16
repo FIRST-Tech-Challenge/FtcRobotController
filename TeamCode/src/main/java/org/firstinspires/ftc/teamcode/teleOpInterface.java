@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import java.util.HashMap;
+
 public interface teleOpInterface {
+    HashMap<String, String> telemetryDM = new HashMap<>();
 
     //Four buttons
     void a();
@@ -29,4 +32,7 @@ public interface teleOpInterface {
     void ljoyb();
 
     void custom1();
+
+    void updateTelemetryDM();
+
 }
