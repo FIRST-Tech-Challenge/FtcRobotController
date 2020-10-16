@@ -4,7 +4,7 @@ public class teleConfigShrinidhi implements teleOpInterface {
     HardwareMapV2 robot;
     Drivetrain drivetrain;
     public void a() {
-        
+
     }
 
     public void b() {
