@@ -98,6 +98,10 @@ public class teleConfigRohit implements teleOpInterface {
 
     }
 
+    public void loop() {
+
+    }
+
     public void updateTelemetryDM() {
         telemetryDM.put("Intake Power: ", String.valueOf(inttakePower));
         telemetryDM.put("Outtake Power: ", String.valueOf(outtakePower));
