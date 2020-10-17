@@ -234,8 +234,8 @@ public class DriveModule {
         }
 
         if (debuggingMode) {
-            dataLogger.addField(robot.bulkData2.getMotorCurrentPosition(motor1));
-            dataLogger.addField(robot.bulkData2.getMotorCurrentPosition(motor2));
+            dataLogger.addField(robot.bulkData1.getMotorCurrentPosition(motor1));
+           dataLogger.addField(robot.bulkData1.getMotorCurrentPosition(motor2));
             dataLogger.newLine();
         }
     }
@@ -358,9 +358,9 @@ public class DriveModule {
 
     //returns module orientation relative to ROBOT (not field) in degrees and NEG_180_TO_180_HEADING type
     public Angle getCurrentOrientation() {
-        robot.telemetry.addData(moduleSide + "Motor 1 Encoder", robot.bulkData2.getMotorCurrentPosition(motor1));
-        robot.telemetry.addData(moduleSide + "Motor 2 Encoder", robot.bulkData2.getMotorCurrentPosition(motor2));
-        double rawAngle = (double)(robot.bulkData2.getMotorCurrentPosition(motor2) + robot.bulkData2.getMotorCurrentPosition(motor1))/2.0 * DEGREES_PER_TICK; //motor2-motor1 makes ccw positive (?)
+        robot.telemetry.addData(moduleSide + "Motor 1 Encoder", robot.bulkData1.getMotorCurrentPosition(motor1));
+        robot.telemetry.addData(moduleSide + "Motor 2 Encoder", robot.bulkData1.getMotorCurrentPosition(motor2));
+        double rawAngle = (double)(robot.bulkData1.getMotorCurrentPosition(motor2) + robot.bulkData1.getMotorCurrentPosition(motor1))/2.0 * DEGREES_PER_TICK; //motor2-motor1 makes ccw positive (?)
         return new Angle(rawAngle, Angle.AngleType.ZERO_TO_360_HEADING);
     }
 
@@ -370,8 +370,8 @@ public class DriveModule {
 
     //new position tracking
     public Vector2d updatePositionTracking (Telemetry telemetry) {
-        double newM1Encoder = robot.bulkData2.getMotorCurrentPosition(motor1);
-        double newM2Encoder = robot.bulkData2.getMotorCurrentPosition(motor2);
+        double newM1Encoder = robot.bulkData1.getMotorCurrentPosition(motor1);
+        double newM2Encoder = robot.bulkData1.getMotorCurrentPosition(motor2);
 
         //angles are in radians
         Angle startingAngleObj = new Angle((lastM1Encoder + lastM2Encoder)/2.0 * DEGREES_PER_TICK, Angle.AngleType.ZERO_TO_360_HEADING);
@@ -405,8 +405,8 @@ public class DriveModule {
     //NOTE: this is the old method (straight line tracking only)
     public void updateTracking () {
         //edit - not anymore : important to set these to a variable so getCurrentPosition() is not called multiple times in single cycle
-        double currentMotor1Encoder = robot.bulkData2.getMotorCurrentPosition(motor1);
-        double currentMotor2Encoder = robot.bulkData2.getMotorCurrentPosition(motor2);
+        double currentMotor1Encoder = robot.bulkData1.getMotorCurrentPosition(motor1);
+        double currentMotor2Encoder = robot.bulkData1.getMotorCurrentPosition(motor2);
 
         double motor1Change = currentMotor1Encoder - lastMotor1Encoder;
         double motor2Change = currentMotor2Encoder - lastMotor2Encoder;
@@ -429,8 +429,8 @@ public class DriveModule {
 
     public void resetDistanceTraveled () {
         distanceTraveled = 0;
-        lastMotor1Encoder = robot.bulkData2.getMotorCurrentPosition(motor1);
-        lastMotor2Encoder = robot.bulkData2.getMotorCurrentPosition(motor2);
+        lastMotor1Encoder = robot.bulkData1.getMotorCurrentPosition(motor1);
+        lastMotor2Encoder = robot.bulkData1.getMotorCurrentPosition(motor2);
     }
 
     //returns distance (in cm) traveled since distance was last reset

@@ -28,7 +28,6 @@ public class TestingTeleOp extends OpMode {
 
     public void init() {
         robot = new Robot(this, false, false);
-        robot.initializeCapstone();
     }
 
     public void init_loop() {
@@ -63,19 +62,6 @@ public class TestingTeleOp extends OpMode {
             joystick2 = joystick2.scale(0.4); //was 0.3
             slowModeDrive = true;
         }
-        else if (gamepad1.right_trigger > 0.1) {
-            if (robot.getRange(false) < 30) {
-                joystick1 = joystick1.scale(0.3);
-                joystick2 = joystick2.scale(0.4); //was 0.3
-                slowModeDrive = true;
-            }
-        }
-
-        if (gamepad1.y && gamepad1.b) {
-            robot.startTapeMeasure();
-        } else {
-            robot.stopTapeMeasure();
-        }
 
         robot.driveController.updateUsingJoysticks(
                 checkDeadband(joystick1, slowModeDrive).scale(Math.sqrt(2)),
@@ -88,87 +74,6 @@ public class TestingTeleOp extends OpMode {
             robot.driveController.setDrivingStyle(true);
         } else if (gamepad1.dpad_right) {
             robot.driveController.setDrivingStyle(false);
-        }
-
-        if ((gamepad2.x) && (gamepad2.right_trigger > 0.1)) {
-            robot.moveLiftToPosition(robot.encoderTicksAtLiftPositions[1] + 10);
-            robot.targetPosLift = robot.encoderTicksAtLiftPositions[1] + 10;
-            robot.moveGrabberToMid();
-        } else {
-            robot.moveLift(-gamepad2.left_stick_y);
-            if (gamepad2.x) {
-                robot.openGrabber();
-            } else if (gamepad2.b) {
-                robot.closeGrabber();
-            }
-        }
-
-
-        double currentTime = getRuntime();
-        if (gamepad2.a) {
-            robot.currentClawPosition.moveSequence(robot.controller.INSIDE_ROBOT_TO_DELIVERY, currentTime - lastTime);
-        }
-        if (gamepad2.y) {
-            robot.currentClawPosition.moveSequence(robot.controller.DELIVERY_TO_INSIDE_ROBOT, currentTime - lastTime);
-        }
-
-        double clawDeltaX = 0;
-        double clawDeltaY = 0;
-
-        if ((clawDeltaX != 0) || (clawDeltaY != 0)) {
-            robot.currentClawPosition.moveBy(clawDeltaX, clawDeltaY, currentTime - lastTime);
-        }
-
-        robot.outtake1.setPosition(robot.currentClawPosition.servoPositions.servo1);
-        robot.outtake2.setPosition(robot.currentClawPosition.servoPositions.servo2);
-
-        final double ROTATE_SPEED = 180.0/270;
-        robot.outatkeRotatePosition += gamepad2.right_stick_y * ROTATE_SPEED * (currentTime - lastTime);
-        if (robot.outatkeRotatePosition > 1) robot.outatkeRotatePosition = 1;
-        if (robot.outatkeRotatePosition < 0) robot.outatkeRotatePosition = 0;
-        robot.outtakeRot.setPosition(robot.outatkeRotatePosition);
-
-        lastTime = currentTime;
-
-        if (gamepad1.right_bumper) {
-            robot.hungryHippoExtend();
-        } else if (gamepad1.left_bumper) {
-            robot.hungryHippoRetract();
-        }
-
-        double intakePower = 0.3;
-
-        if (Math.abs(gamepad2.left_trigger) > 0.1) {
-            robot.intake1.setPower(intakePower);
-        } else if (gamepad2.left_bumper) {
-            robot.intake1.setPower(-intakePower);
-        } else {
-            robot.intake1.setPower(0);
-        }
-
-        if (Math.abs(gamepad2.right_trigger) > 0.1 && !gamepad2.x) {
-            robot.intake2.setPower(intakePower);
-        } else if (gamepad2.right_bumper) {
-            robot.intake2.setPower(-intakePower);
-        } else {
-            robot.intake2.setPower(0);
-        }
-
-        if (gamepad2.dpad_up) {
-            robot.hungryHippoExtend();
-        } if (gamepad2.dpad_down) {
-            robot.hungryHippoRetract();
-        }
-
-        //robot.setArmPower(-gamepad2.right_stick_y);
-        telemetry.addData("Arm power", -gamepad2.right_stick_x);
-        telemetry.addData("lift 1 position: ", robot.bulkData1.getMotorCurrentPosition(robot.lift1));
-        telemetry.addData("lift 2 position: ", robot.bulkData1.getMotorCurrentPosition(robot.lift2));
-
-        //SCARA arm back position centered on x: (-76, -185); out of robot: (-76, 150)
-
-        if (gamepad2.right_bumper && gamepad2.right_trigger > 0.6) {
-            robot.dropCapstone();
         }
 
         //todo: remove after done tuning

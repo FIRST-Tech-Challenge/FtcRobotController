@@ -85,10 +85,10 @@ public class SimpleTracking {
 
     // this is just for testing
     public void setModuleOrientation(Robot robot) {
-        leftTopMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleLeft.motor1);
-        leftBottomMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleLeft.motor2);
-        rightTopMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleRight.motor1);
-        rightBottomMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleRight.motor2);
+        leftTopMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleLeft.motor1);
+        leftBottomMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleLeft.motor2);
+        rightTopMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleRight.motor1);
+        rightBottomMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleRight.motor2);
 
         //calculate the current orientations of the wheel modules in degrees, 0 is forward, positive clockwise viewed from the top
         double leftOrientation = (((leftTopMotorPosition + leftBottomMotorPosition) / (2 * TICKS_PER_MODULE_REV))
@@ -108,10 +108,10 @@ public class SimpleTracking {
     public void updatePosition(Robot robot, boolean useIMU, boolean isBlue) {
 
         // collect the current motor encoder values
-        leftTopMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleLeft.motor1);
-        leftBottomMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleLeft.motor2);
-        rightTopMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleRight.motor1);
-        rightBottomMotorPosition = robot.bulkData2.getMotorCurrentPosition(robot.driveController.moduleRight.motor2);
+        leftTopMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleLeft.motor1);
+        leftBottomMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleLeft.motor2);
+        rightTopMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleRight.motor1);
+        rightBottomMotorPosition = robot.bulkData1.getMotorCurrentPosition(robot.driveController.moduleRight.motor2);
 
         //calculate the current orientations of the wheel modules in degrees, 0 is forward, positive clockwise viewed from the top
         double leftOrientation = (((leftTopMotorPosition + leftBottomMotorPosition) / (2 * TICKS_PER_MODULE_REV))

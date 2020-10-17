@@ -209,14 +209,10 @@ public class DriveController {
 
         do {
             //loop stop condition
-            if (forward) continueLoop = robot.getRange(frontSensor) > stopAtDistance;
-            else continueLoop = robot.getRange(frontSensor) < stopAtDistance;
+            if (forward) continueLoop = 0 > stopAtDistance;
+            else continueLoop = 1000000 < stopAtDistance;
 
             //slows down drive power in certain range
-            if (robot.getRange(frontSensor) - stopAtDistance < START_DRIVE_SLOWDOWN_AT_CM) {
-                speed = RobotUtil.scaleVal(robot.getRange(frontSensor) - stopAtDistance, 0, START_DRIVE_SLOWDOWN_AT_CM, MIN_DRIVE_POWER, initalSpeed);
-                linearOpMode.telemetry.addData("speed: ", speed);
-            }
             updateTracking();
             update(direction.normalize(Math.abs(speed)), 0); //added ABS for DEBUGGING
 
