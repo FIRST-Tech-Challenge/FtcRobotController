@@ -909,15 +909,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.driveTo(.6, side(130), 175, 0, true,  5); // need to do something about this
         //shoot
         sleep(500);
-        chassis.driveTo(auto_chassis_power_slow, side(150), 175, 0, false,  2);
+        chassis.driveTo(.55, side(150), 175, 0, false,  2);
         //shoot
         sleep(500);
-        chassis.driveTo(auto_chassis_power_slow, side(170), 175, 0, false,  2);
+        chassis.driveTo(.55, side(170), 175, 0, false,  2);
         //shoot
         sleep(500);
     }
     public void shootGoal() throws InterruptedException {
-        chassis.driveTo(auto_chassis_power, side(90), 180, 0, false,  5);
+        chassis.driveTo(.55, side(90), 180, 0, false,  5);
         //shoot
 
     }
