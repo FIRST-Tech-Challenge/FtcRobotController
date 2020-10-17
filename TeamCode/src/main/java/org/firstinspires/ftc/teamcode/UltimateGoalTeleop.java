@@ -117,6 +117,8 @@ public class UltimateGoalTeleop extends OpMode{
         for (String caption : t.telemetryDM.keySet()){
             telemetry.addData(caption, t.telemetryDM.get(caption));
         }
+
+        t.loop();
         telemetry.update();
         t.updateTelemetryDM();
 

@@ -33,6 +33,8 @@ public interface teleOpInterface {
 
     void custom1();
 
+    void loop();
+
     void updateTelemetryDM();
 
 }
