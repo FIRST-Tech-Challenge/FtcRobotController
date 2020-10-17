@@ -19,11 +19,11 @@ public interface teleOpInterface {
 
     //Right side bumper and trigger
     void rb();
-    void rt();
+    void rt(float pressure);
 
     //Left side bumper and trigger
     void lb();
-    void lt();
+    void lt(float pressure);
 
     //right and left joystick and button
     void rjoy(float x, float y);
@@ -32,8 +32,6 @@ public interface teleOpInterface {
     void ljoyb();
 
     void custom1();
-
-    void loop();
 
     void updateTelemetryDM();
 

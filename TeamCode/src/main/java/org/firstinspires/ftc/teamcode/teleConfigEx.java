@@ -36,7 +36,7 @@ public class teleConfigEx implements teleOpInterface {
 
     }
 
-    public void rt() {
+    public void rt(float pressure) {
 
     }
 
@@ -44,7 +44,7 @@ public class teleConfigEx implements teleOpInterface {
 
     }
 
-    public void lt() {
+    public void lt(float pressure) {
 
     }
 
@@ -65,10 +65,6 @@ public class teleConfigEx implements teleOpInterface {
     }
 
     public void custom1() {
-
-    }
-
-    public void loop() {
 
     }
 

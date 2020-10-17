@@ -51,7 +51,7 @@ public class teleConfigRohit implements teleOpInterface {
         drivetrain.outtakeAll(conveyorPower, outtakePower);
     }
 
-    public void rt() {
+    public void rt(float pressure) {
         drivetrain.outtakeAll(-conveyorPower, -outtakePower);
     }
 
@@ -59,7 +59,7 @@ public class teleConfigRohit implements teleOpInterface {
         robot.intake.setPower(inttakePower);
     }
 
-    public void lt() {
+    public void lt(float pressure) {
         robot.intake.setPower(-inttakePower);
     }
 
@@ -95,10 +95,6 @@ public class teleConfigRohit implements teleOpInterface {
     }
 
     public void custom1() {
-
-    }
-
-    public void loop() {
 
     }
 

@@ -6,10 +6,6 @@ public class teleConfigSamih implements teleOpInterface {
     double angle = 0;
     double outlimiter = 1f;
 
-    public void loop() {
-        outlimiter = 1;
-    }
-
     public void updateTelemetryDM() {
 
     }
@@ -54,7 +50,7 @@ public class teleConfigSamih implements teleOpInterface {
         outlimiter = 0.5;
     }
 
-    public void rt() {
+    public void rt(float pressure) {
 
     }
 
@@ -62,7 +58,7 @@ public class teleConfigSamih implements teleOpInterface {
         robot.intake.setPower(-0.7);
     }
 
-    public void lt() {
+    public void lt(float pressure) {
 
     }
 

@@ -109,6 +109,12 @@ public class UltimateGoalTeleop extends OpMode{
         if (gamepad2.dpad_left){t.dl();}
         if (gamepad2.dpad_up){t.dp();}
 
+        if (gamepad2.left_bumper){t.lb();}
+        if (gamepad2.right_bumper){t.rb();}
+
+        t.lt(gamepad2.left_trigger);
+        t.rt(gamepad2.right_trigger);
+
         t.rjoy(gamepad2.right_stick_x, gamepad2.right_stick_y);
         t.ljoy(gamepad2.left_stick_x, gamepad2.left_stick_y);
         if (gamepad2.right_stick_button){t.rjoyb();}
@@ -118,7 +124,6 @@ public class UltimateGoalTeleop extends OpMode{
             telemetry.addData(caption, t.telemetryDM.get(caption));
         }
 
-        t.loop();
         telemetry.update();
         t.updateTelemetryDM();
 
