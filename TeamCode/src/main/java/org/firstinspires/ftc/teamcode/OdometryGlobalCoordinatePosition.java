@@ -16,8 +16,8 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
         double distance = (leftEncoder-previousleftEncoder)+(rightEncoder-previousrightEncoder)/2;
         double Hdistance = horizontal-previousHorizontalEncoder;
 
-        changeinX = (Math.cos(Math.toRadians(robotOrientationDegrees))*distance) + Math.cos(Hdistance);
-        changeinY = (Math.sin(Math.toRadians(robotOrientationDegrees))*distance) + Math.sin(Hdistance);
+        changeinX = (Math.cos(Math.toRadians(robotOrientationDegrees))*distance) + Math.cos((Math.toRadians(robotOrientationDegrees-90))*Hdistance);
+        changeinY = (Math.sin(Math.toRadians(robotOrientationDegrees))*distance) + Math.sin((Math.toRadians(robotOrientationDegrees-90))*Hdistance);
 
         globalPositionX+=changeinX;
         globalPositionY+=changeinY;
