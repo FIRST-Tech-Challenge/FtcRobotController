@@ -31,6 +31,9 @@ public class TerraBot {
 
     public boolean intaking = false;
 
+    public double turnStart = 0.3;
+    public double grabStart = 0.7;
+
 
     public void init(HardwareMap hwMap) {
 
@@ -62,6 +65,14 @@ public class TerraBot {
         arm.setPower(0);
 
 
+        slr.setPosition(0);
+        sll.setPosition(0);
+        ssr.setPosition(0);
+        ssl.setPosition(0);
+        st.setPosition(turnStart);
+        sgr.setPosition(0.3);
+        sgl.setPosition(1-grabStart);
+
 
         l1.setDirection(DcMotorSimple.Direction.REVERSE);
         l2.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -81,13 +92,6 @@ public class TerraBot {
         sgl.setDirection(Servo.Direction.REVERSE);
 
 
-        slr.setPosition(0);
-        sll.setPosition(0);
-        ssr.setPosition(0);
-        ssl.setPosition(0);
-        st.setPosition(0.8);
-        sgr.setPosition(0.3);
-        sgl.setPosition(0.7);
 
         l1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         l2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

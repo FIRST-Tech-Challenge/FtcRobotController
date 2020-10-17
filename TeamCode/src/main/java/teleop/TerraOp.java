@@ -4,11 +4,15 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import global.TerraBot;
+import telefunctions.ServoController;
 
 @TeleOp(name = "TerraOp V1")
 public class TerraOp extends OpMode {
 
     TerraBot bot = new TerraBot();
+
+    ServoController turnControl = new ServoController(bot.turnStart, 0.3, 0.7);
+    ServoController grabControl = new ServoController(bot.grabStart, 0.3, 0.7);
 
     @Override
     public void init() {
@@ -42,22 +46,15 @@ public class TerraOp extends OpMode {
         }
 
         if(gamepad2.right_trigger > 0){
-            bot.lift(1);
+            bot.shoot(1);
         }else if(gamepad2.left_trigger > 0){
-            bot.lift(0);
+            bot.shoot(0);
         }
 
-        if(gamepad2.dpad_up){
-            bot.turnArm(0.4);
-        }else if(gamepad2.dpad_down){
-            bot.turnArm(0.8);
-        }
+        bot.turnArm(turnControl.update(gamepad2.dpad_right, gamepad2.dpad_left, 0.1));
 
-        if (gamepad2.dpad_right){
-            bot.grab(0.3);
-        }else if(gamepad2.dpad_left){
-            bot.grab(0.7);
-        }
+        bot.grab(grabControl.update(gamepad2.dpad_down, gamepad2.dpad_up, 0.1));
+
 
         bot.outtake(gamepad2.right_stick_y);
         bot.moveArm(gamepad2.left_stick_y);
