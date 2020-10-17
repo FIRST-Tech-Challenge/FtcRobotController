@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 //credit: this class is based on code from FRC 5818 (https://github.com/Team5818/DiffSwerve)
 
+import java.util.Vector;
+
 public class Vector2d {
 
     //Vector constants
@@ -9,7 +11,9 @@ public class Vector2d {
             BACKWARD = new Vector2d(0, -1),
             LEFT = new Vector2d(-1, 0),
             RIGHT = new Vector2d(1, 0),
-            ZERO = new Vector2d(0, 0);
+            ZERO = new Vector2d(0, 0),
+            UNIT_CIRCLE_60 = new Vector2d(.5, Math.sqrt(3)/2),
+            UNIT_CIRCLE_120 = new Vector2d(-0.5, Math.sqrt(3)/2);
 
     private double x;
     private double y;
@@ -17,12 +21,14 @@ public class Vector2d {
     public Vector2d(double x, double y) {
         this.x = x;
         this.y = y;
+        this.fixFloatingPointErrors();
     }
 
     //makes a unit vector with a certain angle
     public Vector2d(Angle angle) {
         this.x = Math.cos(Math.toRadians(angle.convertAngle(Angle.AngleType.NEG_180_TO_180_CARTESIAN).getAngle()));
         this.y = Math.sin(Math.toRadians(angle.convertAngle(Angle.AngleType.NEG_180_TO_180_CARTESIAN).getAngle()));
+        this.fixFloatingPointErrors();
     }
 
     public double getX() {
@@ -41,11 +47,54 @@ public class Vector2d {
         return Math.sqrt(x * x + y * y);
     }
 
+    public void fixFloatingPointErrors() {
+        if (Math.abs(this.x) < 1e-5) {
+            this.x = 0;
+        }
+        if (Math.abs(this.y) < 1e-5) {
+            this.y = 0;
+        }
+    }
+
+//    public Angle getAngle () {
+//        return new Angle(Math.toDegrees(Math.atan2(y, x)), Angle.AngleType.NEG_180_TO_180_CARTESIAN);
+//    }
+
+//    //returns in degrees, in NEG_180_TO_180_CARTESIAN type
+//    public double getAngle() {
+//        //don't know why all this is needed, but it works
+//        double angRad = Math.atan2(y, -x); //returns from -180 to 180 //-y for TESTING ONLY
+//        Angle angHeading = new Angle(Math.toDegrees(angRad), Angle.AngleType.NEG_180_TO_180_HEADING);
+//        return angHeading.convertAngle(Angle.AngleType.NEG_180_TO_180_CARTESIAN).getAngle();
+//
+//        //the thing that should work in theory but doesn't:
+//        //return Math.toDegrees(Math.atan2(y, x));
+//    }
+
     //returns Angle object
     public Angle getAngle() {
         double angRad = Math.atan2(y, x);
         return new Angle(Math.toDegrees(angRad), Angle.AngleType.NEG_180_TO_180_CARTESIAN);
     }
+
+    //returns value for angle in specified type
+    public double getAngleDouble(Angle.AngleType type) {
+        return getAngle().convertAngle(type).getAngle();
+    }
+
+//    //forgive this bad naming - returns Angle type instead of double of NEG_180_TO_180_CARTESIAN type
+//    public Angle getAngleAngle () {
+//        double angRad = Math.atan2(y, -x); //returns from -180 to 180 //-y for TESTING ONLY
+//        Angle angHeading = new Angle(Math.toDegrees(angRad), Angle.AngleType.NEG_180_TO_180_HEADING);
+//        return angHeading.convertAngle(Angle.AngleType.NEG_180_TO_180_CARTESIAN);
+//    }
+
+//    //terrible naming - means the way it should be, with atan2(y, x)
+//    public Angle getRealAngle () {
+//        double angRad = Math.atan2(y, x);
+//        return new Angle(Math.toDegrees(angRad), Angle.AngleType.NEG_180_TO_180_CARTESIAN);
+//    }
+
 
     public Vector2d add(Vector2d other) {
         return new Vector2d(x + other.getX(), y + other.getY());
@@ -61,6 +110,7 @@ public class Vector2d {
 
     //returns a Vector2d in the same direction with magnitude of "target"
     public Vector2d normalize(double target) {
+        if (getMagnitude() == 0) return ZERO; //avoid dividing by zero
         return scale(target / getMagnitude());
     }
 

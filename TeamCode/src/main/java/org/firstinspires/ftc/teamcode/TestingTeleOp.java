@@ -2,8 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Skystone TeleOp", group = "TeleOp")
-public class TeleOp extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TESTING TeleOp", group = "TeleOp")
+public class TestingTeleOp extends OpMode {
     Robot robot;
     public final double DEADBAND_MAG_NORMAL = 0.1;
     public final double DEADBAND_MAG_SLOW_MODE = 0.03;
@@ -77,33 +77,22 @@ public class TeleOp extends OpMode {
             robot.stopTapeMeasure();
         }
 
-        //ABSOLUTE HEADING MODE (option to toggle currently disabled)
-//        if (gamepad1.x) {
-//            if (!xWasPressed) {
-//                xWasPressed = true;
-//                absHeadingMode = !absHeadingMode;
-//            }
-//        } else {
-//            xWasPressed = false;
-//        }
-//        telemetry.addData("Absolute Heading Mode", absHeadingMode);
-
         robot.driveController.updateUsingJoysticks(
                 checkDeadband(joystick1, slowModeDrive).scale(Math.sqrt(2)),
                 checkDeadband(joystick2, slowModeDrive).scale(Math.sqrt(2)),
                 absHeadingMode
         );
 
-        if (gamepad1.dpad_up) {
-            robot.unlatch();
-        } else if (gamepad1.dpad_down) {
-            robot.latch();
+
+        if (gamepad1.dpad_left) {
+            robot.driveController.setDrivingStyle(true);
+        } else if (gamepad1.dpad_right) {
+            robot.driveController.setDrivingStyle(false);
         }
 
         if ((gamepad2.x) && (gamepad2.right_trigger > 0.1)) {
-            //robot.setPlacerUp();
-            robot.moveLiftToPosition(robot.encoderTicksAtLiftPositions[1] + 30); //10 -> 20 -> 30
-            robot.targetPosLift = robot.encoderTicksAtLiftPositions[1] + 20;
+            robot.moveLiftToPosition(robot.encoderTicksAtLiftPositions[1] + 10);
+            robot.targetPosLift = robot.encoderTicksAtLiftPositions[1] + 10;
             robot.moveGrabberToMid();
         } else {
             robot.moveLift(-gamepad2.left_stick_y);
@@ -125,15 +114,10 @@ public class TeleOp extends OpMode {
 
         double clawDeltaX = 0;
         double clawDeltaY = 0;
-        if (gamepad2.dpad_up)  clawDeltaY = 1;
-        if (gamepad2.dpad_down) clawDeltaY = -1;
-        if (gamepad2.dpad_left) clawDeltaX = -1;
-        if (gamepad2.dpad_right) clawDeltaX = 1;
 
         if ((clawDeltaX != 0) || (clawDeltaY != 0)) {
             robot.currentClawPosition.moveBy(clawDeltaX, clawDeltaY, currentTime - lastTime);
         }
-
 
         robot.outtake1.setPosition(robot.currentClawPosition.servoPositions.servo1);
         robot.outtake2.setPosition(robot.currentClawPosition.servoPositions.servo2);
@@ -146,22 +130,34 @@ public class TeleOp extends OpMode {
 
         lastTime = currentTime;
 
-        if (gamepad1.x) {
+        if (gamepad1.right_bumper) {
             robot.hungryHippoExtend();
-        } else if (gamepad1.b) {
+        } else if (gamepad1.left_bumper) {
             robot.hungryHippoRetract();
         }
 
+        double intakePower = 0.3;
+
         if (Math.abs(gamepad2.left_trigger) > 0.1) {
-            robot.moveIntake(Constants.IntakeState.OUTTAKE, Constants.IntakeSpeed.SLOW); //was fast
-        } else if (Math.abs(gamepad2.right_trigger) > 0.1 && !gamepad2.right_bumper) {
-            robot.moveIntake(Constants.IntakeState.INTAKE, Constants.IntakeSpeed.SLOW); //was fast
-        } else if (gamepad1.right_bumper) {
-            robot.moveIntake(Constants.IntakeState.INTAKE, Constants.IntakeSpeed.SLOW);
-        } else if (gamepad1.left_bumper) {
-            robot.moveIntake(Constants.IntakeState.OUTTAKE, Constants.IntakeSpeed.SLOW);
+            robot.intake1.setPower(intakePower);
+        } else if (gamepad2.left_bumper) {
+            robot.intake1.setPower(-intakePower);
         } else {
-            robot.moveIntake(Constants.IntakeState.STOP, Constants.IntakeSpeed.STOPPED);
+            robot.intake1.setPower(0);
+        }
+
+        if (Math.abs(gamepad2.right_trigger) > 0.1 && !gamepad2.x) {
+            robot.intake2.setPower(intakePower);
+        } else if (gamepad2.right_bumper) {
+            robot.intake2.setPower(-intakePower);
+        } else {
+            robot.intake2.setPower(0);
+        }
+
+        if (gamepad2.dpad_up) {
+            robot.hungryHippoExtend();
+        } if (gamepad2.dpad_down) {
+            robot.hungryHippoRetract();
         }
 
         //robot.setArmPower(-gamepad2.right_stick_y);
