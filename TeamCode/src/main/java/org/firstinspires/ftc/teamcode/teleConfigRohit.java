@@ -52,7 +52,7 @@ public class teleConfigRohit implements teleOpInterface {
     }
 
     public void rt(float pressure) {
-        drivetrain.outtakeAll(-conveyorPower, -outtakePower);
+        if (pressure>0) { drivetrain.outtakeAll(-conveyorPower, -outtakePower); }
     }
 
     public void lb() {
@@ -60,7 +60,7 @@ public class teleConfigRohit implements teleOpInterface {
     }
 
     public void lt(float pressure) {
-        robot.intake.setPower(-inttakePower);
+        if (pressure>0) { robot.intake.setPower(-inttakePower); }
     }
 
     public void rjoy(float x, float y) {
@@ -68,7 +68,7 @@ public class teleConfigRohit implements teleOpInterface {
         if (y==0 && wait) {
             switch (tiltmode) {
                 case POSITION:
-                        drivetrain.tiltpos((up) ? Drivetrain.tiltDirect.UP : Drivetrain.tiltDirect.DOWN);
+                    drivetrain.tiltpos((up) ? Drivetrain.tiltDirect.UP : Drivetrain.tiltDirect.DOWN);
                     break;
                 case INCREMENT:
                     drivetrain.tilt(robot.leftTilt.getPosition() + ((up) ? 0.1 : -0.1));
