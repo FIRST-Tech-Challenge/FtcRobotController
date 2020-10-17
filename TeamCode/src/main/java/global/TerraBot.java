@@ -70,7 +70,7 @@ public class TerraBot {
         ssr.setPosition(0);
         ssl.setPosition(0);
         st.setPosition(turnStart);
-        sgr.setPosition(0.3);
+        sgr.setPosition(grabStart);
         sgl.setPosition(1-grabStart);
 
 

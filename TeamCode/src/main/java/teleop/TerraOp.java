@@ -11,8 +11,8 @@ public class TerraOp extends OpMode {
 
     TerraBot bot = new TerraBot();
 
-    ServoController turnControl = new ServoController(bot.turnStart, 0.3, 0.7);
-    ServoController grabControl = new ServoController(bot.grabStart, 0.3, 0.7);
+    ServoController turnControl = new ServoController(bot.turnStart, 0.0, 0.7);
+    ServoController grabControl = new ServoController(bot.grabStart, 0.45, 0.7);
 
     @Override
     public void init() {
@@ -51,9 +51,9 @@ public class TerraOp extends OpMode {
             bot.shoot(0);
         }
 
-        bot.turnArm(turnControl.update(gamepad2.dpad_right, gamepad2.dpad_left, 0.1));
+        bot.turnArm(turnControl.update(gamepad2.dpad_right, gamepad2.dpad_left, 0.5));
 
-        bot.grab(grabControl.update(gamepad2.dpad_down, gamepad2.dpad_up, 0.1));
+        bot.grab(grabControl.update(gamepad2.dpad_down, gamepad2.dpad_up, 0.5));
 
 
         bot.outtake(gamepad2.right_stick_y);
