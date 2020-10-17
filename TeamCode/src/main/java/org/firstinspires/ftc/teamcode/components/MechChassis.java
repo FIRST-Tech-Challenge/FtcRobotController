@@ -24,6 +24,7 @@ import static com.qualcomm.hardware.lynx.commands.core.LynxInjectDataLogHintComm
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
+import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Thread.sleep;
 
@@ -99,15 +100,16 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     // wheel radius, inches
     private double wheelRadius = 2.0;
     // minimum power that should be applied to the wheel motors for robot to start moving
-    private double minPower = 0.2;
-    private double minPowerHorizontal = 0.3;
+    private double minPower = 0.25;
+    private double slowDownSpeed = 0.4;
+    private double minPowerHorizontal = 0.4;
 
     // maximum power that should be applied to the wheel motors
     private double maxPower = 0.999;
     private double maxRange = 127; // max range sensor detectable
     private double defaultScale = 1.0;
     private double mecanumForwardRatio = 0.8;
-    private double chassisAligmentPower = 0.2;
+    private double chassisAligmentPower = 0.22;
     private double init_x_cm = 0;
     private double init_y_cm = 0;
     private double init_heading = 0;
@@ -588,8 +590,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             //auto_max_xspeed = Math.max(odo_x_speed_cm(), auto_max_xspeed);
             //auto_max_yspeed = Math.max(odo_y_speed_cm(), auto_max_yspeed);
             if (autoDriveMode!= AutoDriveMode.CONTINUE_NO_CORRECTION) {
-                if (traveledPercent > slowDownPercent && cur_s > 30 && powerUsed > 0.35) {
-                    powerUsed = 0.35;
+                if (traveledPercent > slowDownPercent && cur_s > 30 && powerUsed > slowDownSpeed) {
+                    powerUsed = 0.4;
                 }
             }
             if (traveledPercent<0.9) {
@@ -720,20 +722,20 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         // to-do: need to handle gap from 179 to -179
         double cur_left_to_right_ratio = 1.0;
         boolean slow_down_left=false, slow_down_right=false;
-        if (headingCorrection && (degree_diff>1.0)) { // for Y axle correction
+        if (headingCorrection && (degree_diff>1.0) && power>slowDownSpeed) { // for Y axle correction
             slow_down_left = ((cur_heading-fixed_heading>0) && directionAngle>-65 && directionAngle<65) ||
                     (((cur_heading-fixed_heading<0) && directionAngle>115 && directionAngle<-115));
             slow_down_right = ((cur_heading-fixed_heading<0) && directionAngle>-65 && directionAngle<65) ||
                     (((cur_heading-fixed_heading>0) && directionAngle>115 && directionAngle<-115));
             if (slow_down_left||slow_down_right) {
                 cur_left_to_right_ratio = (1.0 - degree_diff * 0.05);
-                if (cur_left_to_right_ratio<0.01) cur_left_to_right_ratio=0.01;
+                if (cur_left_to_right_ratio<0.7) cur_left_to_right_ratio=0.7;
             }
         }
         // auto_dist_err = degree_diff;
         double cur_front_to_back_ratio = 1.0;
         boolean slow_down_front=false, slow_down_back=false;
-        if (headingCorrection && (degree_diff>1.0) && (cur_left_to_right_ratio>0.9)) {
+        if (headingCorrection && (degree_diff>1.0) && (cur_left_to_right_ratio>0.9) && power>slowDownSpeed) {
             // for Y axle correction
             slow_down_front = ((cur_heading-fixed_heading>0) && directionAngle>=45 && directionAngle<=135) ||
                     (((cur_heading-fixed_heading<0) && directionAngle>=-135 && directionAngle<=-45));
@@ -741,7 +743,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                     (((cur_heading-fixed_heading>0) && directionAngle>=-135 && directionAngle<=-45));
             if (slow_down_front||slow_down_back) {
                 cur_front_to_back_ratio = (1.0 - degree_diff * 0.05);
-                if (cur_front_to_back_ratio<0.01) cur_front_to_back_ratio=0.01;
+                if (cur_front_to_back_ratio<0.7) cur_front_to_back_ratio=0.7;
             }
         }
 

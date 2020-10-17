@@ -345,6 +345,8 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
                     rings = ToboMech.TargetZone.ZONE_A;
             }
         }
+        if (rings== ToboMech.TargetZone.UNKNOWN)
+            rings= ToboMech.TargetZone.ZONE_A;
         return rings;
     }
 
