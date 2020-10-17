@@ -65,10 +65,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double auto_rotate_degree = 0;
 
     private boolean simulation_mode = false;
+    private boolean useChassis = true;
     public boolean useVuforia = false;
     public boolean useTfod = true;
     public boolean useBottomWobbleGoalGrabber = true;
-    public boolean useTopWobbleGoalGrabber = false;
+    public boolean useTopWobbleGoalGrabber = true;
     public boolean useHopper = false;
     public boolean useShooter = false;
     public boolean useIntake = false;
@@ -114,18 +115,19 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         this.core = new CoreSystem();
         info("RoboMech configure() after new CoreSystem()(run time = %.2f sec)", (runtime.seconds() - ini_time));
 
-        chassis = new MechChassis(core).configureLogging("Mecanum", logLevel); // Log.DEBUG
-        chassis.set_simulation_mode(simulation_mode);
-        if (chassis!=null) {
-            // chassis.simOS = new FileOutputStream(new File(simEventFile.getParentFile(), simEventFile.getName()));
-            chassis.simOS = new FileOutputStream(new File(simEventFile.getParent(), simEventFile.getName()));
+        if (useChassis) {
+            chassis = new MechChassis(core).configureLogging("Mecanum", logLevel); // Log.DEBUG
+            chassis.set_simulation_mode(simulation_mode);
+            if (chassis != null) {
+                // chassis.simOS = new FileOutputStream(new File(simEventFile.getParentFile(), simEventFile.getName()));
+                chassis.simOS = new FileOutputStream(new File(simEventFile.getParent(), simEventFile.getName()));
+            }
+            if (autoside == ProgramType.DIAGNOSIS) {
+                // enable imu for diagnosis
+                chassis.enableImuTelemetry(configuration);
+            }
+            chassis.configure(configuration, (autoside != ProgramType.TELE_OP));
         }
-        if (autoside== ProgramType.DIAGNOSIS) {
-            // enable imu for diagnosis
-            chassis.enableImuTelemetry(configuration);
-        }
-        chassis.configure(configuration, (autoside!= ProgramType.TELE_OP));
-
         if (simulation_mode) { // need to call after chassis is initialized
             set_simulation_mode(true);
         }
@@ -158,18 +160,21 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     @Override
     public void reset(boolean auto) {
-        if (chassis==null || simulation_mode==true)
+        if (simulation_mode==true)
             return;
-        chassis.reset();
+        if (chassis!=null)
+            chassis.reset();
         if (bottomWobbleGoalGrabber!=null)
             bottomWobbleGoalGrabber.servoInit();
-        if (auto) {
+        if (topWobbleGoalGrabber!=null)
+            topWobbleGoalGrabber.servoInit();
+        if (!auto) {
             chassis.setupTelemetry(telemetry);
         }
     }
 
     public void end() throws InterruptedException, IOException {
-        if (simulation_mode) {
+        if (simulation_mode && (chassis!=null)) {
             try {
                 chassis.simOS.flush();
             } finally {
@@ -201,11 +206,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         setupTelemetry(telemetry);
         em.updateTelemetry(telemetry, 1000);
         if (chassis!=null && chassis.getGPS()==null) {
-            chassis.configureOdometry();
+            chassis.configureOdometry(telemetry);
             positionThread = (chassis.getGPS()==null? null: new Thread(chassis.getGPS()));
             if (positionThread!=null)
                 positionThread.start();
-            chassis.setupTelemetry(telemetry);
 
         }
         if (bottomWobbleGoalGrabber!=null)
@@ -219,6 +223,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             public void stickMoved(EventManager source, Events.Side side, float currentX, float changeX, float currentY, float changeY) throws InterruptedException {
                 if (Math.abs(source.getStick(Events.Side.RIGHT, Events.Axis.Y_ONLY))> 0.2 )
                     return; // avoid conflicting drives
+                if (chassis==null) return;
+
                 double right_x = source.getStick(Events.Side.RIGHT, Events.Axis.X_ONLY);
                 double normalizeRatio = chassis.getMecanumForwardRatio();
 
@@ -241,6 +247,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         em.onStick(new Events.Listener() { // Right-Joystick
             @Override
             public void stickMoved(EventManager source, Events.Side side, float currentX, float changeX, float currentY, float changeY) throws InterruptedException {
+                if (chassis==null) return;
                 double movingAngle = 0;
                 double normalizeRatio = chassis.getMecanumForwardRatio(); // minimum 0.5 when moving forward, and maximum 1.0 when crabbing 90 degree
 
@@ -342,16 +349,26 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         em.onButtonDown(new Events.Listener() {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
+
                 if (source.isPressed(Button.BACK)) {
-                    chassis.toggleNormalizeMode();
+                    if (chassis!=null) chassis.toggleNormalizeMode();
                 } else if(source.getTrigger(Events.Side.LEFT) > 0.3){
                     if (source.isPressed(Button.LEFT_BUMPER))
                         bottomWobbleGoalGrabber.pivotUpDec();
                     else
                         bottomWobbleGoalGrabber.grabberAuto();
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
-                    topWobbleGoalGrabber.grabberAuto();
+                    if (!source.isPressed(Button.Y))
+                        topWobbleGoalGrabber.grabberAuto();
+                } else if(source.isPressed(Button.RIGHT_BUMPER)){
+                    topWobbleGoalGrabber.armMotorDown();
                 }
+            }
+        }, new Button[]{Button.A});
+        em.onButtonUp(new Events.Listener() {
+            @Override
+            public void buttonUp(EventManager source, Button button) throws InterruptedException {
+                topWobbleGoalGrabber.armMotorStop();
             }
         }, new Button[]{Button.A});
 
@@ -365,7 +382,21 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     else
                         bottomWobbleGoalGrabber.pivotAuto();
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
-                    topWobbleGoalGrabber.armAuto();
+                    if (source.isPressed(Button.A)) // LB-A+Y
+                        topWobbleGoalGrabber.armPosInit();
+                    else
+                        topWobbleGoalGrabber.armPosAuto();
+                } else if(source.isPressed(Button.RIGHT_BUMPER)){
+                    topWobbleGoalGrabber.armMotorUp();
+                }
+            }
+        }, new Button[]{Button.Y});
+        em.onButtonUp(new Events.Listener() {
+            @Override
+            public void buttonUp(EventManager source, Button button) throws InterruptedException {
+
+                if(source.isPressed(Button.RIGHT_BUMPER)){
+                    topWobbleGoalGrabber.armMotorStop();
                 }
             }
         }, new Button[]{Button.Y});
@@ -377,6 +408,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if(source.getTrigger(Events.Side.LEFT) > 0.3){
                     bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
+                    topWobbleGoalGrabber.releaseWobbleGoalCombo();
                     //top wobble goal combos functions go here
                 }
             }
@@ -389,28 +421,65 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if(source.getTrigger(Events.Side.LEFT) > 0.3){
                     autoGrabBottomWobbleGoal();
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
+                    topWobbleGoalGrabber.grabWobbleGoalCombo();
                     //top wobble goal combos functions go here
                 }
             }
         }, new Button[]{Button.B});
 
-        em.onButtonDown(new Events.Listener() {
-            @Override
-            public void buttonDown(EventManager source, Button button) throws InterruptedException {
-             shooter.shootAutoFast();
-            }
-        }, new Button[]{Button.LEFT_BUMPER});
-
-        em.onButtonDown(new Events.Listener() {
-            @Override
-            public void buttonDown(EventManager source, Button button) throws InterruptedException {
-                shooter.shootAutoSlow();
-            }
-        }, new Button[]{Button.RIGHT_BUMPER});
+//        em.onButtonDown(new Events.Listener() {
+//            @Override
+//            public void buttonDown(EventManager source, Button button) throws InterruptedException {
+//             shooter.shootAutoFast();
+//            }
+//        }, new Button[]{Button.LEFT_BUMPER});
+//
+//        em.onButtonDown(new Events.Listener() {
+//            @Override
+//            public void buttonDown(EventManager source, Button button) throws InterruptedException {
+//                shooter.shootAutoSlow();
+//            }
+//        }, new Button[]{Button.RIGHT_BUMPER});
 
     }
 
+    public void showStatus() {
+        String mode = "";
+        if (side==ProgramType.TELE_OP) mode="TeleOp";
+        else if (side==ProgramType.DIAGNOSIS) mode="Diagnosis";
+        else if (side==ProgramType.AUTO_BLUE) {
+            if (startPos==StartPosition.IN)
+                mode="Blue-In";
+            else
+                mode="Blue-Out";
+        } else {
+            if (startPos==StartPosition.IN)
+                mode="Red-In";
+            else
+                mode="Red-Out";
+        }
+        telemetry.addData("Config._1", "%s | Simu.=%s | Chassis=%s",
+                mode, (simulation_mode?"Yes":"No"),(useChassis?"Yes":"No"));
+        telemetry.addData("Config._2", "Tensorflow=%s | Vuforia=%s",
+                (useTfod?"Yes":"No"),(useVuforia?"Yes":"No"));
+        telemetry.addData("Config._3", "Top_grab=%s | Bottom_grab=%s",
+                (useTopWobbleGoalGrabber?"Yes":"No"),(useBottomWobbleGoalGrabber?"Yes":"No"));
+        telemetry.addData("Config._4", "Shooter=%s | Intake=%s",
+                (useShooter?"Yes":"No"),(useIntake?"Yes":"No"));
+        if (chassis!=null) {
+            if (chassis.getGPS() == null) {
+                telemetry.addData("Warning", "GPS is not initialized.");
+            }
+            if (chassis.orientationSensor == null) {
+                telemetry.addData("Warning", "IMU is not initialized.");
+            }
+        }
+        telemetry.addData("Robot is ready", "Press Play");
+        telemetry.update();
+    }
+
     public void setupTelemetryDiagnostics(Telemetry telemetry) {
+        if (chassis==null) return;
         Telemetry.Line line = telemetry.addLine();
         line.addData("Auto ", new Func<String>() {
             @Override
@@ -437,9 +506,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     public void setupTelemetry(Telemetry telemetry) {
         if (Thread.currentThread().isInterrupted()) return;
-        Telemetry.Line line = telemetry.addLine();
         if (chassis==null) return;
-        /*
+        /* Telemetry.Line line = telemetry.addLine();
+
         line.addData(" | Odometry (vl,vr,h) =", new Func<String>() {
             @Override
             public String value() {
@@ -463,7 +532,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         */
     }
     public void autoGrabBottomWobbleGoal() throws InterruptedException {
-        if (simulation_mode) return;
+        if (simulation_mode || chassis==null) return;
         chassis.yMove(1, 0.35);
         //sleep(150);
         bottomWobbleGoalGrabber.grabWobbleGoalCombo();
@@ -560,6 +629,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
 
     public void driveAnotherCurve() throws InterruptedException {
+        if (chassis==null) return;
+
         MechChassis.Point[] points = {new MechChassis.Point(120, 35, 90),
                 new MechChassis.Point(180, 50, 90),
                 new MechChassis.Point(180, 50, 90),
@@ -582,10 +653,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     @MenuEntry(label = "driveTo/rotateTo", group = "Test Chassis")
     public void testStraight(EventManager em) throws InterruptedException {
+        if (chassis==null) return;
         if (chassis!=null && chassis.getGPS()==null) {
             chassis.set_init_pos(60,23 ,0);
-            chassis.configureOdometry();
-            chassis.setupTelemetry(telemetry);
+            chassis.configureOdometry(telemetry);
             positionThread = (chassis.getGPS()==null? null: new Thread(chassis.getGPS()));
             if (positionThread!=null) {
                 positionThread.start();
@@ -701,9 +772,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     @MenuEntry(label = "Auto Rotation", group = "Test Chassis")
     public void testRotationSkyStone(EventManager em) {
+        if (chassis==null) return;
         if (chassis!=null && chassis.getGPS()==null) {
-            chassis.configureOdometry();
-            chassis.setupTelemetry(telemetry);
+            chassis.configureOdometry(telemetry);
             positionThread = (chassis.getGPS()==null? null: new Thread(chassis.getGPS()));
             if (positionThread!=null)
                 positionThread.start();
@@ -768,10 +839,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public void initializeGPSThread() {
+        if (chassis==null) return;
         if (positionThread!=null) return;
-        if (chassis != null) {
-            chassis.configureOdometry();
-            chassis.setupTelemetry(telemetry);
+        if (chassis != null && chassis.getGPS()==null) {
+            chassis.configureOdometry(telemetry);
         }
         positionThread = (chassis.getGPS() == null ? null : new Thread(chassis.getGPS()));
         if (positionThread != null)
@@ -779,6 +850,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public void initSetup(ProgramType type, StartPosition startP, Configuration configuration) {
+        if (chassis==null) return;
         // setup the parameters before the robot configuration
         // 1. enable TFOD or not
         // 2. enable Vuforia or not
@@ -790,13 +862,20 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         switch (type) {
             case TELE_OP:
                 useVuforia = true;
+                useTfod = false;
                 if (cameraStackDetector!=null)
                     cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_TELE_OP);
+                if (chassis.orientationSensor==null) {
+                    chassis.enableImuTelemetry(configuration);
+                    // Enable the following line only for the debugging purpose
+                    // chassis.setupIMUTelemetry(telemetry);
+                }
                 break;
             case AUTO_RED:
                 if (startP == StartPosition.OUT) {
                     if (chassis!=null)
                         chassis.set_init_pos(side(300), 23, 0);
+                    useVuforia = false;
                     useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
                     if (cameraStackDetector!=null)
@@ -804,6 +883,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else { // in position
                     if (chassis!=null)
                         chassis.set_init_pos(side(240), 23, 0);
+                    useVuforia = false;
                     useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
                     if (cameraStackDetector!=null)
@@ -814,6 +894,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (startP == StartPosition.OUT) {
                     if (chassis!=null)
                         chassis.set_init_pos(side(60), 23, 0);
+                    useVuforia = false;
                     useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
                     if (cameraStackDetector!=null)
@@ -821,6 +902,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else { // in position
                     if (chassis!=null)
                         chassis.set_init_pos(side(120), 23, 0);
+                    useVuforia = false;
                     useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
                     if (cameraStackDetector!=null)
@@ -831,6 +913,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 break;
         }
 
+        if (chassis!=null && chassis.getGPS()==null) {
+            chassis.configureOdometry(telemetry);
+        }
         configureVisualTool(configuration);
 
         //setup WebCam servo position for autonomous during initialization
@@ -863,6 +948,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public void setInitPositions(ProgramType s, StartPosition startP){
+        if (chassis==null) return;
         side = s;
         startPos = startP;
         chassis.set_init_pos(side(60), 23, 0);

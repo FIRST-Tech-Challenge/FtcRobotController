@@ -31,8 +31,8 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
     private final double PIVOT_DOWN = 0.66;
 
     private final double GRABBER_OPEN = 0.5;
-    private final double GRABBER_INIT = 0.825;
-    private final double GRABBER_CLOSE = 0.825;
+    private final double GRABBER_INIT = 0.78;
+    private final double GRABBER_CLOSE = 0.78;
 
     private boolean pivotIsDown = false;
     private boolean grabberIsClosed = true;
@@ -232,7 +232,7 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
         Telemetry.Line line = telemetry.addLine();
 
         if (grabber != null) {
-            line.addData("Grabber", "pos=%.2f", new Func<Double>() {
+            line.addData("B-Grabber", "pos=%.2f", new Func<Double>() {
                 @Override
                 public Double value() {
                     return grabber.getPosition();

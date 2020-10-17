@@ -214,13 +214,14 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         return mecanumForwardRatio;
     }
 
-    public void configureOdometry() {
+    public void configureOdometry(Telemetry telemetry) {
         if (!useOdometry) return;
         GPS = new OdometryGlobalCoordinatePosition(verticalLeftEncoder(), verticalRightEncoder(), horizontalEncoder(), odo_count_per_inch(), 75);
         GPS.set_orientationSensor(orientationSensor);
         GPS.reverseRightEncoder();
         GPS.reverseLeftEncoder();
         GPS.set_init_pos(init_x_cm*odo_count_per_cm(), init_y_cm*odo_count_per_cm(), init_heading);
+        setupGPSTelemetry(telemetry);
     }
 
     public void updateConfigureForGG() {
@@ -332,6 +333,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         if (orientationSensor==null) {
             configure_IMUs(configuration);
         }
+
     }
 
     @Adjustable(min = 8.0, max = 18.0, step = 0.02)
@@ -995,7 +997,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         line.addData("Pwr/Scale/Mode", new Func<String>() {
             @Override
             public String value() {
-                return String.format("%.2f / %.1f / %s\n", motorFL.getPower(), getDefaultScale(),
+                return String.format("%.2f / %.1f / %s", motorFL.getPower(), getDefaultScale(),
                         (simulation_mode?"Simulation":(getNormalizeMode()?"Normalized":"Speedy")));
             }
         });
@@ -1058,31 +1060,33 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             });
         }
         */
+        // setupGPSTelemetry(telemetry);
+        // set up imu telemetry
 
-        if (GPS !=null) {
-            line.addData("Odo (x,ly,ry)", new Func<String>() {
-                @Override
-                public String value() {
-                    return String.format("(%5.0f,%5.0f,%5.0f)\n", GPS.XEncoder(),
-                            GPS.leftYEncoder(),
-                            GPS.rightYEncoder());
-                }
-            });
-            line.addData("driveTo (stop-sp,stop-cm,max-dod-sp,max-calc-sp)", new Func<String>() {
-                @Override
-                public String value() {
-                    return String.format("(%5.1f,%5.1f,%5.1f,%5.1f)\n", auto_exit_speed, auto_stop_early_dist, auto_max_speed, auto_max_calc_speed);
-                }
-            });
-            line.addData("Odo-pos (x,y,angle)", new Func<String>() {
-                @Override
-                public String value() {
-                    return String.format("(%2.0f, %2.0f, %2.2f)\n", odo_x_pos_cm(), odo_y_pos_cm(), odo_heading());
-                }
-            });
-        }
-        //set up imu telemetry
+
+//        telemetry.addLine().addData("M", new Func<String>() {
+//            @Override
+//            public String value() {
+//                return teleOpDriveMode.name();
+//            }
+//        }).addData("Head", new Func<String>() {
+//            @Override
+//            public String value() {
+//                if (teleOpDriveMode != TeleOpDriveMode.STRAIGHT) return "N/A";
+//                return String.format("%+.1f (%+.2f)", targetHeading, headingDeviation);
+//            }
+//        }).addData("Adj", new Func<String>() {
+//            @Override
+//            public String value() {
+//                if (teleOpDriveMode != TeleOpDriveMode.STRAIGHT) return "N/A";
+//                return String.format("%+.1f", servoCorrection);
+//            }
+//        });
+    }
+
+    public void setupIMUTelemetry(Telemetry telemetry) {
         if (orientationSensor != null && setImuTelemetry) {
+            Telemetry.Line line = telemetry.addLine();
             line.addData("imuC", "%.1f", new Func<Double>() {
                 @Override
                 public Double value() {
@@ -1092,25 +1096,35 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             orientationSensor.setupTelemetry(line);
         }
 
-        telemetry.addLine().addData("M", new Func<String>() {
-            @Override
-            public String value() {
-                return teleOpDriveMode.name();
-            }
-        }).addData("Head", new Func<String>() {
-            @Override
-            public String value() {
-                if (teleOpDriveMode != TeleOpDriveMode.STRAIGHT) return "N/A";
-                return String.format("%+.1f (%+.2f)", targetHeading, headingDeviation);
-            }
-        }).addData("Adj", new Func<String>() {
-            @Override
-            public String value() {
-                if (teleOpDriveMode != TeleOpDriveMode.STRAIGHT) return "N/A";
-                return String.format("%+.1f", servoCorrection);
-            }
-        });
     }
+
+    public void setupGPSTelemetry(Telemetry telemetry) {
+        if (GPS !=null) {
+            Telemetry.Line line = telemetry.addLine();
+
+//            line.addData("driveTo (stop-sp,stop-cm,max-dod-sp,max-calc-sp)", new Func<String>() {
+//                @Override
+//                public String value() {
+//                    return String.format("(%5.1f,%5.1f,%5.1f,%5.1f)\n", auto_exit_speed, auto_stop_early_dist, auto_max_speed, auto_max_calc_speed);
+//                }
+//            });
+            line.addData("Odo-pos (x,y,angle)", new Func<String>() {
+                @Override
+                public String value() {
+                    return String.format("(%2.0f, %2.0f, %2.2f)", odo_x_pos_cm(), odo_y_pos_cm(), odo_heading());
+                }
+            });
+            line.addData("Raw (x,ly,ry)", new Func<String>() {
+                @Override
+                public String value() {
+                    return String.format("(%2.0f,%2.0f,%2.0f)", GPS.XEncoder(),
+                            GPS.leftYEncoder(),
+                            GPS.rightYEncoder());
+                }
+            });
+        }
+    }
+
     public void setupEncoders(Telemetry telemetry) {
         Telemetry.Line line = telemetry.addLine();
         if (motorFL != null) {
@@ -1224,6 +1238,14 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         }
 
         useScalePower = true;
+    }
+
+    public void rotateDegrees(double power, double degree) throws InterruptedException {
+        double iniHeading = odo_heading();
+        double finalHeading = init_heading + degree;
+        if (finalHeading>180) finalHeading-=360;       //  190 become -170
+        else if (finalHeading<-180) finalHeading+=360; // -190 become  170
+        rotateTo(power, finalHeading, 3000);
     }
 
     static final double degreeToRad = PI / 180;

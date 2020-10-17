@@ -109,9 +109,7 @@ public class VuforiaNavigationWebcam extends LinearOpMode {
             robot.chassis.enableImuTelemetry(configuration);
             configuration.apply();
             robot.reset(false);
-
-            telemetry.addData("Robot is ready", "Press Play");
-            telemetry.update();
+            robot.showStatus();
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);

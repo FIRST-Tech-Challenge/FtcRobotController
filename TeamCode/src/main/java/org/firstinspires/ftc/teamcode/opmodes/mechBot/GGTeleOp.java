@@ -41,6 +41,7 @@ public class GGTeleOp extends LinearOpMode {
             robot.configure(configuration, telemetry, Robot2.ProgramType.TELE_OP);
             robot.chassis.enableImuTelemetry(configuration);
             configuration.apply();
+            robot.initSetup(Robot2.ProgramType.TELE_OP, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(false);
 
             eventManager1 = new EventManager(gamepad1, true);
@@ -48,8 +49,8 @@ public class GGTeleOp extends LinearOpMode {
 
             robot.mainTeleOp(eventManager1);
 
-            telemetry.addData("Robot is ready", "Press Play");
-            telemetry.update();
+            robot.showStatus();
+
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);
@@ -57,11 +58,8 @@ public class GGTeleOp extends LinearOpMode {
         log.info("RoboRuck TeleOp finished initialization (CPU_time = %.2f sec)", getRuntime());
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        if (robot.chassis!=null) {
-            robot.chassis.configureOdometry();
-            robot.chassis.updateConfigureForGG();
-            robot.chassis.setupTelemetry(telemetry);
-        }
+
+        robot.initializeGPSThread();
 
 
         Thread positionThread = (robot.chassis.getGPS()==null? null: new Thread(robot.chassis.getGPS()));
