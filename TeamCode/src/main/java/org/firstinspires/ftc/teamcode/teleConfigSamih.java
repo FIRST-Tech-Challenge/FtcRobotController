@@ -20,6 +20,7 @@ public class teleConfigSamih implements teleOpInterface {
 
     public void b() {
         drivetrain.outtakeAll((robot.conveyor.getPower() >= 0.1) ? 0 : 1 * outlimiter, (robot.outtake.getPower() >= 0.1) ? 0 : 1 * outlimiter);
+        outlimiter = 1;
     }
 
     public void x() {
