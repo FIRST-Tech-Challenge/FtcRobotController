@@ -5,10 +5,25 @@ public class teleConfigShrinidhi implements teleOpInterface {
     Drivetrain drivetrain;
     public void a() {
 
+        if(robot.intake.getPower() == 1.0){
+            robot.intake.setPower(0.0);
+        }else {
+            robot.intake.setPower(1.0);
+        }
+
     }
 
     public void b() {
-
+        if(robot.outtake.getPower() == 1.0) {
+            robot.outtake.setPower(0.0);
+        }else {
+            robot.outtake.setPower(1.0);
+        }
+        if(robot.conveyor.getPower() == 1.0){
+            robot.conveyor.setPower(0.0);
+        }else {
+            robot.conveyor.setPower(1.0); 
+        }
     }
 
     public void x() {
@@ -68,6 +83,14 @@ public class teleConfigShrinidhi implements teleOpInterface {
     }
 
     public void custom1() {
+
+    }
+
+    public void loop() {
+
+    }
+
+    public void updateTelemetryDM() {
 
     }
 }
