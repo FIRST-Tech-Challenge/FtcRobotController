@@ -1240,6 +1240,14 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         useScalePower = true;
     }
 
+    public void rotateDegrees(double power, double degree) throws InterruptedException {
+        double iniHeading = odo_heading();
+        double finalHeading = init_heading + degree;
+        if (finalHeading>180) finalHeading-=360;       //  190 become -170
+        else if (finalHeading<-180) finalHeading+=360; // -190 become  170
+        rotateTo(power, finalHeading, 3000);
+    }
+
     static final double degreeToRad = PI / 180;
     static final double radToDegree = 180 / PI;
 

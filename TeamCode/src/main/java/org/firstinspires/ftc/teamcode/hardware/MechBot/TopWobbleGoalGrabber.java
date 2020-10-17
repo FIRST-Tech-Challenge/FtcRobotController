@@ -205,27 +205,23 @@ public class TopWobbleGoalGrabber extends Logger<TopWobbleGoalGrabber> implement
         }
     }
     public void releaseWobbleGoalCombo() {
-
         final String taskName = "release Top Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
                 return armToPosition(ARM_POS_DOWN);
-            }
-        }, taskName);
+            }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
                 return moveGrabber(GRABBER_OPEN);
-            }
-        }, taskName);
+            }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
                 return armToPosition(ARM_POS_UP);
-            }
-        }, taskName);
+            }}, taskName);
     }
 
     public void grabWobbleGoalCombo() {
@@ -236,26 +232,22 @@ public class TopWobbleGoalGrabber extends Logger<TopWobbleGoalGrabber> implement
             public Progress start() {
                 armToPosition(ARM_POS_UP);
                 return moveGrabber(GRABBER_OPEN);
-            }
-        }, taskName);
+            }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
                 return armToPosition(ARM_POS_DOWN);
-            }
-        }, taskName);
+            }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
                 return moveGrabber(GRABBER_CLOSE);
-            }
-        }, taskName);
+            }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
                 return armToPosition(ARM_POS_UP);
-            }
-        }, taskName);
+            }}, taskName);
     }
     private Progress moveGrabber(double position) {
         double adjustment = Math.abs(position - grabber.getPosition());
