@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.opModes;
+
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -28,12 +29,10 @@ package org.firstinspires.ftc.teamcode.opModes;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
 
@@ -51,22 +50,21 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="BaseDrive", group="Iterative Opmode")
+@TeleOp(name="StrafeForwardDemo", group="Iterative Opmode")
 
-public class BaseDrive extends OpMode
+public class StrafeForwardDemo extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     Mecanum MecanumDrive;
-
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-
         MecanumDrive = new Mecanum(hardwareMap);
+
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -84,7 +82,6 @@ public class BaseDrive extends OpMode
      */
     @Override
     public void start() {
-
         runtime.reset();
     }
 
@@ -93,19 +90,10 @@ public class BaseDrive extends OpMode
      */
     @Override
     public void loop() {
-        // stop when no one is touching anything
-//        MecanumDrive.drive(0,0,0);
 
-        double y = gamepad1.right_stick_y;
-        double x = -gamepad1.right_stick_x;
-        double turn = gamepad1.left_stick_x;
-
-        MecanumDrive.driveTeleopPower(x,y,turn);
+        MecanumDrive.drive(1,1,0);
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "X: " + x);
-        telemetry.addData("Status", "Y: " + y);
-        telemetry.addData("Status", "Turn: " + turn);
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 
@@ -114,6 +102,7 @@ public class BaseDrive extends OpMode
      */
     @Override
     public void stop() {
+        telemetry.addData("Status", "done! Great job!");
     }
 
 }

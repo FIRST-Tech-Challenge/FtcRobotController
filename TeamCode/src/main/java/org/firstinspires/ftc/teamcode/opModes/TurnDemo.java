@@ -33,6 +33,8 @@ package org.firstinspires.ftc.teamcode.opModes;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
@@ -58,6 +60,7 @@ public class TurnDemo extends OpMode
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     Mecanum MecanumDrive;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -65,7 +68,6 @@ public class TurnDemo extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
         MecanumDrive = new Mecanum(hardwareMap);
-
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -92,9 +94,11 @@ public class TurnDemo extends OpMode
     @Override
     public void loop() {
 
-        MecanumDrive.drive(0,0,1);
+        MecanumDrive.drive(0,0,100);
+
 
         // Show the elapsed game time and wheel power.
+        telemetry.addData("MotorPower", "frontLeft ");
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 

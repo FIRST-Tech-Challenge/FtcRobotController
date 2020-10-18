@@ -14,7 +14,13 @@ public class Mecanum {
     DcMotorEx backLeft;
     DcMotorEx backRight;
 
-    private static final double maxTicksPerSec = 1024;
+    //for debugging
+    double frontLeftSpeed;
+    double frontRightSpeed;
+    double backLeftSpeed;
+    double backRightSpeed;
+
+    private static final double maxTicksPerSec = 2400;
     private static final double wheelToCenter = 21;
 
     //top l, top r, bottom l, bottom r
@@ -29,11 +35,32 @@ public class Mecanum {
 //        backLeft    = motors[2];
 //        backRight   = motors[3];
 
-        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
-        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
     }
+//    // for more debugging
+//    double getFrontLeftSpeed(){ return frontLeftSpeed; }
+//    double getBackLeftSpeed(){ return backLeftSpeed; }
+//    double getFrontRightSpeed(){ return frontRightSpeed; }
+//    double getBackRightSpeed(){ return backRightSpeed; }
 
     //turn speed be in robot angle
+
+    public void driveTeleopPower(double xSpeed, double ySpeed, double turnSpeed) {
+
+        double frontLeftSpeed = ySpeed + xSpeed + turnSpeed;
+        double frontRightSpeed = ySpeed - xSpeed - turnSpeed;
+        double backLeftSpeed = ySpeed - xSpeed + turnSpeed;
+        double backRightSpeed = ySpeed + xSpeed - turnSpeed;
+
+
+
+        frontLeft.setPower(frontLeftSpeed);
+        frontRight.setPower(frontRightSpeed);
+        backLeft.setPower(backLeftSpeed);;
+        backRight.setPower(backRightSpeed);
+    }
+
     public void drive(double xSpeed, double ySpeed, double turnSpeed){
         // radians = circumference / radius
         turnSpeed /= wheelToCenter;
@@ -44,7 +71,7 @@ public class Mecanum {
         maximum max = new maximum(
                 move.y + move.x + turnSpeed,  //FL
                 move.y - move.x - turnSpeed,        //FR
-                move.y - move.x + turnSpeed,        //BL
+                move.y - move.x +  turnSpeed,        //BL
                 move.y + move.x - turnSpeed);       //BR
         max.squishIntoRange(1.0);
 
@@ -55,5 +82,12 @@ public class Mecanum {
         backLeft.setVelocity(   (int)(maxTicksPerSec * max.nums[2]));
         backRight.setVelocity(  (int)(maxTicksPerSec * max.nums[3]));
 
+//        //for debugging
+//        frontLeftSpeed = frontLeft.getVelocity();
+//        frontRightSpeed = frontRight.getVelocity();
+//        backLeftSpeed = backLeft.getVelocity();
+//        backRightSpeed = backRight.getVelocity();
     }
+
+
 }
