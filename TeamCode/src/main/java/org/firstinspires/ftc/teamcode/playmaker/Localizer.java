@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.playmaker;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.vuforia.Vuforia;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -71,6 +72,22 @@ public class Localizer {
             return lastIMUOrientation;
         }
         return null;
+    } //meeep
+
+    public void telemetry(Telemetry telemetry) {
+        Position position = estimatePosition();
+        Orientation orientation = estimateOrientation();
+        if (position != null) {
+            telemetry.addData("Loc. Position", String.format("%.1f, %.1f, %.1f", position.x, position.y, position.z));
+        } else {
+            telemetry.addData("Loc. Position", "unknown");
+        }
+
+        if (orientation != null) {
+            telemetry.addData("Loc. Orientation", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", orientation.firstAngle, orientation.secondAngle, orientation.thirdAngle);
+        } else {
+            telemetry.addData("Loc. Orientation", "unknown");
+        }
     }
 
 
@@ -164,7 +181,6 @@ public class Localizer {
 
     public void updateLocationWithVuforia(RobotHardware hardware) {
         // Clear the currently saved vuforia transform
-        lastVuforiaTransform = null;
 
         for (VuforiaTrackable trackable : vuforiaTrackables) {
             VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener) trackable.getListener();

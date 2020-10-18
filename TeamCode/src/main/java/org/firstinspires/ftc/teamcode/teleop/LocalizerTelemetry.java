@@ -8,11 +8,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
-import org.firstinspires.ftc.teamcode.hardware.TestHardware;
+import org.firstinspires.ftc.teamcode.hardware.MovementHardware;
 
 @TeleOp(name="Localizer Telemetry")
-public class LocalizerTelemetry extends TestHardware {
+public class LocalizerTelemetry extends MovementHardware {
 
     @Override
     public void init() {

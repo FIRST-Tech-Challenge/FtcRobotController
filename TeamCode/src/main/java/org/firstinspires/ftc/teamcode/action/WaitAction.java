@@ -34,7 +34,7 @@ public class WaitAction implements Action {
     public Double progress() {
         return (System.nanoTime()-startTime)/time;
     }
-
+//wait here for ever or gay
     @Override
     public String progressString() {
         String elapsedTime = String.format("%.3f", (System.nanoTime() - startTime)/1000.0);

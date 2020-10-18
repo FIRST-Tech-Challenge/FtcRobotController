@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.action;
 import org.firstinspires.ftc.teamcode.playmaker.Action;
 import org.firstinspires.ftc.teamcode.playmaker.ActionSequence;
 import org.firstinspires.ftc.teamcode.playmaker.RobotHardware;
-
+//if tasty then eat
+//if not tasty then don't eat boom
 public class IfAction implements Action {
 
     Condition condition;

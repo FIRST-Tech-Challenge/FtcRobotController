@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.playmaker;
 
+@Deprecated
 public class GamepadListener {
 
     enum GamepadListenerType {
@@ -41,7 +42,7 @@ public class GamepadListener {
         return listener;
     }
 
-    public static GamepadListener createAutoTrigger(GamepadController.GamepadType gamepadType, GamepadController.GamepadButtons button, HybridOp hybridOp, ActionSequence sequence, boolean haltManual) {
+    public static GamepadListener createAutoTrigger(GamepadController.GamepadType gamepadType, GamepadController.GamepadButtons button, HybridOpController hybridOp, ActionSequence sequence, boolean haltManual) {
         /*GamepadListener listener = new GamepadListener(GamepadListenerType.AUTO_TRIGGER, gamepadType, button);
         listener.activateInterface = () -> {
             if (hybridOp.isAutonomous()) {
