@@ -187,7 +187,7 @@ public class Localizer {
      */
 
     public boolean attemptIMUToWorldCalibration() {
-
+        return false;
     }
 
     public void updateIMUOrientation(BNO055IMU imu) {
