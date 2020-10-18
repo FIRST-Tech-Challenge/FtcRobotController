@@ -10,6 +10,10 @@ public class teleConfigSamih implements teleOpInterface {
 
     }
 
+    public String getName() {
+        return "teleConfigSamih";
+    }
+
     public void a() {
         robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 1);
     }

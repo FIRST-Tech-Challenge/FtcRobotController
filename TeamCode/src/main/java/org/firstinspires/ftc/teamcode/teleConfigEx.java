@@ -71,4 +71,8 @@ public class teleConfigEx implements teleOpInterface {
     public void updateTelemetryDM() {
         telemetryDM.put("test","test");
     }
+
+    public String getName() {
+        return "teleConfigEx";
+    }
 }

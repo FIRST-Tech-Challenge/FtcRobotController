@@ -89,4 +89,8 @@ public class teleConfigShrinidhi implements teleOpInterface {
     public void updateTelemetryDM() {
 
     }
+
+    public String getName() {
+        return "teleConfigShrinidhi";
+    }
 }

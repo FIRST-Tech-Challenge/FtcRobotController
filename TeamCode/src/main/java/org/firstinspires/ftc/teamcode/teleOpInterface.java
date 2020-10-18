@@ -35,4 +35,6 @@ public interface teleOpInterface {
 
     void updateTelemetryDM();
 
+    String getName();
+
 }

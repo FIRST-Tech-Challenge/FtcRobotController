@@ -106,5 +106,9 @@ public class teleConfigRohit implements teleOpInterface {
         telemetryDM.put("Tilt mode: ", String.valueOf(tiltmode));
     }
 
+    public String getName() {
+        return "teleConfigRohit";
+    }
+
 
 }

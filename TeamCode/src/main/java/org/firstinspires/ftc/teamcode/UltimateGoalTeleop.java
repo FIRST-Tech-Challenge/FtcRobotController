@@ -33,6 +33,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import java.util.ArrayList;
+
 
 /**
  * This file provides basic Telop driving for a RoverRuckus robot.
@@ -53,7 +55,9 @@ public class UltimateGoalTeleop extends OpMode{
     /* Declare OpMode members. */
     HardwareMapV2 robot; // use the class created to define a RoverRuckus's hardware
 
-    teleConfigEx t;
+    teleOpInterface t = new teleConfigEx();
+    ArrayList<Class<? extends teleOpInterface>> configs = new ArrayList<>();
+    int index = 0;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -71,9 +75,17 @@ public class UltimateGoalTeleop extends OpMode{
 
         vroom = new MecanumDriveTrain(robot, gamepad1,telemetry);
 
+        configs.add(teleConfigEx.class);
+        configs.add(teleConfigRohit.class);
+        configs.add(teleConfigSamih.class);
+        configs.add(teleConfigShrinidhi.class);
+
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Haddi", "Haddi");
         telemetry.update();
+
+        changeConfig();
+
     }
 
     /*
@@ -127,6 +139,8 @@ public class UltimateGoalTeleop extends OpMode{
         telemetry.update();
         t.updateTelemetryDM();
 
+        if (gamepad2.start){ changeConfig(); }
+
     }
 
     /*
@@ -134,6 +148,26 @@ public class UltimateGoalTeleop extends OpMode{
      */
     @Override
     public void stop() {
+    }
+
+    public void changeConfig() {
+        while (!gamepad2.x) {
+            if (gamepad2.dpad_up && index==(configs.size()-1)){index++;}
+            if (gamepad2.dpad_down && index==0){index--;}
+            for (Class<? extends teleOpInterface> t : configs){
+                telemetry.addData(t.getName(), (index==configs.indexOf(t)) ? "<" : "");
+            }
+            telemetry.update();
+        }
+        if (configs.get(index).getName().equals(teleConfigEx.class.getName())){
+            t = new teleConfigEx();
+        }else if (configs.get(index).getName().equals(teleConfigRohit.class.getName())){
+            t = new teleConfigRohit();
+        }else if (configs.get(index).getName().equals(teleConfigSamih.class.getName())){
+            t = new teleConfigSamih();
+        }else if (configs.get(index).getName().equals(teleConfigShrinidhi.class.getName())){
+            t = new teleConfigShrinidhi();
+        }
     }
 
 }
