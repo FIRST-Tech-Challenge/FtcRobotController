@@ -152,8 +152,8 @@ public class UltimateGoalTeleop extends OpMode{
 
     public void changeConfig() {
         while (!gamepad2.x) {
-            if (gamepad2.dpad_up && index==(configs.size()-1)){index++;}
-            if (gamepad2.dpad_down && index==0){index--;}
+            if (gamepad2.dpad_down && index==(configs.size()-1)){index++;}
+            if (gamepad2.dpad_up && index==0){index--;}
             for (Class<? extends teleOpInterface> t : configs){
                 telemetry.addData(t.getName(), (index==configs.indexOf(t)) ? "<" : "");
             }
