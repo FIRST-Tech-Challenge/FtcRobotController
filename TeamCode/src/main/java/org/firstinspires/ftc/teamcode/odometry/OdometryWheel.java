@@ -12,7 +12,7 @@ public abstract class OdometryWheel {
     private double prevTicks = 0;
     protected double deltaTicks = 0;
 
-    abstract long getRaw();
+    abstract long getCurrentPosition();
 
     // Offset is x and y displacement from center of rotation
     // + angle that wheel is facing (in radians with 0 facing right).
@@ -23,13 +23,14 @@ public abstract class OdometryWheel {
         this.offset = offset;
     }
 
+
     /**
      * Request and calculate the change in ticks of this odo wheel
      */
     void updateDelta(){
         prevTicks += deltaTicks;
         //get ticks
-        double measurement = getRaw();
+        double measurement = getCurrentPosition();
         deltaTicks = RotationUtil.turnLeftOrRight(prevTicks, measurement, ticksPerRev);
     }
 

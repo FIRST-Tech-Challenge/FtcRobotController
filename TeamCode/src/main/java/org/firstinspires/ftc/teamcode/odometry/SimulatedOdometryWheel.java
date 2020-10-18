@@ -1,14 +1,21 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+
 import org.firstinspires.ftc.teamcode.utility.pose;
 
 public class SimulatedOdometryWheel extends OdometryWheel {
+
+    DcMotor physicalWheel;
+
     double speed = 0;
     public SimulatedOdometryWheel(pose offset) {
         super(offset);
-    }public SimulatedOdometryWheel(pose offset, double speed) {
+    }public SimulatedOdometryWheel(pose offset, double speed, DcMotor wheel) {
         super(offset);
         this.speed = speed;
+        physicalWheel = wheel;
     }
 
     public void setSpeed(double speed){
@@ -23,11 +30,14 @@ public class SimulatedOdometryWheel extends OdometryWheel {
     }
 
     @Override
-    long getRaw() {
+    long getCurrentPosition() {
         return 0;
     }
+
     @Override
-    void updateDelta(){}
+    void updateDelta(){
+
+   }
 
 
     public double robotAngleToOdoDelta(double angle, double xCenter, double yCenter){
