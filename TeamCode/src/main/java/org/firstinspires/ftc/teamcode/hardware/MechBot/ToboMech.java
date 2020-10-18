@@ -407,7 +407,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
 
                 if(source.getTrigger(Events.Side.LEFT) > 0.3){
-                    bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
+                    bottomWobbleGoalGrabber.releaseWobbleGoalCombo(true);
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
                     topWobbleGoalGrabber.releaseWobbleGoalCombo();
                     //top wobble goal combos functions go here
@@ -543,6 +543,25 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //sleep(150);
         bottomWobbleGoalGrabber.grabWobbleGoalCombo();
         while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
+            TaskManager.processTasks();
+        }
+        chassis.stop();
+    }
+
+    public void autoTransferWobbleGoal() throws InterruptedException {
+        if (simulation_mode || chassis==null) return;
+        bottomWobbleGoalGrabber.releaseWobbleGoalCombo(false);
+        while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
+            TaskManager.processTasks();
+        }
+        chassis.yMove(-1, 0.35);
+        sleep(150);
+        bottomWobbleGoalGrabber.pivotUp();
+        chassis.rotateDegrees(0.3, 30);
+        chassis.yMove(1, 0.3);
+        sleep(150);
+        topWobbleGoalGrabber.grabWobbleGoalCombo();
+        while (!TaskManager.isComplete("grab Top Wobble Goal Combo") && !interrupted()) {
             TaskManager.processTasks();
         }
         chassis.stop();
@@ -984,7 +1003,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }
         if (bottomWobbleGoalGrabber!=null) {
-            bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
+            bottomWobbleGoalGrabber.releaseWobbleGoalCombo(true);
             while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
                 TaskManager.processTasks();
             }
@@ -1044,7 +1063,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }
         if (bottomWobbleGoalGrabber!=null) {
-            bottomWobbleGoalGrabber.releaseWobbleGoalCombo();
+            bottomWobbleGoalGrabber.releaseWobbleGoalCombo(true);
             while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
                 TaskManager.processTasks();
             }

@@ -151,7 +151,7 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
         }
     }
 
-    public void releaseWobbleGoalCombo() {
+    public void releaseWobbleGoalCombo(boolean pivotIsUp) {
 
         final String taskName = "release Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
@@ -167,6 +167,8 @@ public class BottomWobbleGoalGrabber extends Logger<BottomWobbleGoalGrabber> imp
                 return moveGrabber(GRABBER_OPEN);
             }
         }, taskName);
+        if (!pivotIsUp)
+            return;
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
