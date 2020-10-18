@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Drivetrain_N_Stuff {
+public class Drivetrain_v3 {
         // Define hardware objects
         public DcMotor leftFront = null;
         public DcMotor rightFront = null;
@@ -29,7 +29,7 @@ public class Drivetrain_N_Stuff {
 
         // Contructor for Drivetrain
         // Passing boolean to automatically config encoders for auto or teleop.
-        public Drivetrain_N_Stuff(boolean inTeleOp) {
+        public Drivetrain_v3(boolean inTeleOp) {
 
         }
 
