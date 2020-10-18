@@ -557,10 +557,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.yMove(-1, 0.35);
         sleep(150);
         bottomWobbleGoalGrabber.pivotUp();
-        chassis.rotateDegrees(0.3, 30);
+        chassis.rotateDegrees(0.3, 45);
         chassis.yMove(1, 0.3);
         sleep(150);
         topWobbleGoalGrabber.grabWobbleGoalCombo();
+        chassis.stop();
         while (!TaskManager.isComplete("grab Top Wobble Goal Combo") && !interrupted()) {
             TaskManager.processTasks();
         }
