@@ -30,9 +30,15 @@ public class TerraBot {
     public Servo sgl;
 
     public boolean intaking = false;
+    public boolean outtaking = false;
 
     public double turnStart = 0.3;
     public double grabStart = 0.7;
+    public double liftStart = 0.0;
+    public double shootStart = 0.0;
+    public double intakeSpeed = 1;
+    public double outtakeSpeed = 0.2;
+
 
 
     public void init(HardwareMap hwMap) {
@@ -65,10 +71,10 @@ public class TerraBot {
         arm.setPower(0);
 
 
-        slr.setPosition(0);
-        sll.setPosition(0);
-        ssr.setPosition(0);
-        ssl.setPosition(0);
+        slr.setPosition(liftStart);
+        sll.setPosition(1-liftStart);
+        ssr.setPosition(shootStart);
+        ssl.setPosition(1-shootStart);
         st.setPosition(turnStart);
         sgr.setPosition(grabStart);
         sgl.setPosition(1-grabStart);
@@ -84,14 +90,12 @@ public class TerraBot {
         arm.setDirection(DcMotorSimple.Direction.FORWARD);
 
         slr.setDirection(Servo.Direction.FORWARD);
-        sll.setDirection(Servo.Direction.FORWARD);
+        sll.setDirection(Servo.Direction.REVERSE);
         ssr.setDirection(Servo.Direction.FORWARD);
-        ssl.setDirection(Servo.Direction.FORWARD);
+        ssl.setDirection(Servo.Direction.REVERSE);
         st.setDirection(Servo.Direction.FORWARD);
         sgr.setDirection(Servo.Direction.FORWARD);
         sgl.setDirection(Servo.Direction.REVERSE);
-
-
 
         l1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         l2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -134,7 +138,7 @@ public class TerraBot {
     }
 
     public void lift(double pos){
-        slr.setPosition(pos);
+        slr.setPosition(pos+0.05);
         sll.setPosition(pos);
     }
 
