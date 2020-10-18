@@ -444,7 +444,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     }
 
-    public void showStatus() {
+    public void showStatus() throws InterruptedException {
         String mode = "";
         if (side==ProgramType.TELE_OP) mode="TeleOp";
         else if (side==ProgramType.DIAGNOSIS) mode="Diagnosis";
@@ -459,8 +459,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             else
                 mode="Red-Out";
         }
-        if (cameraStackDetector!=null)
+        if (cameraStackDetector!=null) {
+            sleep(1000);
             tZone = cameraStackDetector.getTargetZone();
+        }
         telemetry.addData("Config._1", "%s | Simu.=%s | Chassis=%s",
                 mode, (simulation_mode?"Yes":"No"),(useChassis?"Yes":"No"));
         telemetry.addData("Config._2", "Tensorflow=%s(%s) | Vuforia=%s",
