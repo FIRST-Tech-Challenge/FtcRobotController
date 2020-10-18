@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Test;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,13 +11,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_N_Stuff;
+import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
 
 @Autonomous(name="DriveTrain_N_Stff_Test", group="Test")
 
-class Drivetrain_Test extends LinearOpMode {
+class BasicAutonomous extends LinearOpMode {
     /* Declare OpMode members. */
-    private Drivetrain_N_Stuff  drivetrain  = new Drivetrain_N_Stuff(true);   // Use subsystem Drivetrain
+    private Drivetrain_v3 drivetrain  = new Drivetrain_v3(true);   // Use subsystem Drivetrain
     private Orientation         lastAngles  = new Orientation();
     private ElapsedTime         PIDtimer    = new ElapsedTime(); // PID loop timer
     private ElapsedTime         runtime     = new ElapsedTime(); // timeout timer
@@ -37,9 +36,9 @@ class Drivetrain_Test extends LinearOpMode {
     static final double     Kd_DRIVE                = 0.0;   // Leave as 0 for now
 
 
-    double                  globalAngle; // not used currently
-    double                  lasterror;
-    double                  totalError;
+    private double                  globalAngle; // not used currently
+    private double                  lasterror;
+    private double                  totalError;
 
     @Override
     public void runOpMode() {
@@ -73,24 +72,12 @@ class Drivetrain_Test extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
-        gyroDrive(DRIVE_SPEED, 80.0, 0.0, 5);    // Drive FWD 110 inches
-        gyroDrive(DRIVE_SPEED, -80.0, 0.0, 5);    // Drive FWD 110 inches
-
-        gyroDrive(DRIVE_SPEED, 20.0, 0.0, 5);    // Drive FWD 110 inches
-        gyroTurn( TURN_SPEED, 90.0, 3);         // Turn  CCW to -45 Degrees
+        // This is currently set up or field coordinates NOT TELATIVE to the last move
+        //gyroDrive(DRIVE_SPEED, 80.0, 0.0, 5);    // Drive FWD 110 inches
+        //gyroTurn( TURN_SPEED, 90.0, 3);         // Turn  CCW to -45 Degrees
         //gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
-        gyroDrive(DRIVE_SPEED, 20.0, 90, 5);  // Drive FWD 12 inches at 45 degrees
-        gyroTurn( TURN_SPEED,  180.0,4);         // Turn  CW  to  45 Degrees
-        //gyroHold( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
-        //gyroTurn( TURN_SPEED,   0.0);         // Turn  CW  to   0 Degrees
-        //gyroHold( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for a 1 second
-        gyroDrive(DRIVE_SPEED,20.0, 180, 3);    // Drive REV 48 inches
-        gyroTurn( TURN_SPEED,  270.0,3);         // Turn  CW  to  45 Degrees
-
-        gyroDrive(DRIVE_SPEED,20.0, 270.0, 5);    // D rive REV 48 inches
-        gyroTurn( TURN_SPEED,  0,3);         // Turn  CW  to  45 Degrees
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+        //telemetry.addData("Path", "Complete");
+        //telemetry.update();
     }
 
 
@@ -123,26 +110,33 @@ class Drivetrain_Test extends LinearOpMode {
         lasterror = 0;
 
         // Ensure that the opmode is still active
+        // Use timeout in case robot gets stuck in mid path.
+        // Also a way to keep integral term from winding up to bad.
         if (opModeIsActive() & runtime.time() < timeout) {
 
-            // Determine new target position, and pass to motor controller
+            // Determine new target position in ticks/ counts then pass to motor controller
             moveCounts = (int)(distance * Drivetrain.COUNTS_PER_INCH);
             newLeftTarget = drivetrain.leftFront.getCurrentPosition() + moveCounts;
             newRightTarget = drivetrain.rightFront.getCurrentPosition() + moveCounts;
 
-            // Set Target and Turn On RUN_TO_POSITION
+            // Set Target using the calculated umber of ticks/counts
+
             drivetrain.leftFront.setTargetPosition(newLeftTarget);
             drivetrain.rightFront.setTargetPosition(newRightTarget);
+            // Tell motor control to use encoders to go to target tick count.
 
             drivetrain.leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             drivetrain.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // start motion.
+            // Up to now this is all the same as a drive by encoder opmode.
             speed = Range.clip(Math.abs(speed), 0.0, 1.0);
             drivetrain.leftFront.setPower(speed);
             drivetrain.rightFront.setPower(speed);
 
             // keep looping while we are still active, and BOTH motors are running.
+            // once one motor gets to the target number of ticks it is no longer "busy"
+            // and isbusy in false causing the loop to end.
             while (opModeIsActive() &&
                     (drivetrain.leftFront.isBusy() && drivetrain.rightFront.isBusy())) {
 
@@ -321,21 +315,21 @@ class Drivetrain_Test extends LinearOpMode {
      * @return
      */
     public double getSteer(double error, double PCoeff, double ICoef, double DCoef) {
-        double P; // combined proportional error Kp*error
-        double I; // combined integral error Ki * cumulative error
-        double D; // combined derivative error Kd*change in error
+        double errorP; // combined proportional error Kp*error
+        double errorI; // combined integral error Ki * cumulative error
+        double errorD; // combined derivative error Kd*change in error
         double changeInError;
 
-        changeInError = error - lasterror;
-        P = PCoeff * error;
+        changeInError = error - lasterror; // for the integral term only. Cumulative error tracking
+        errorP = PCoeff * error;
         totalError = totalError  + error * PIDtimer.time();
-        I = ICoef * totalError;
-        D = DCoef * (changeInError)/PIDtimer.time();
+        errorI = ICoef * totalError;
+        errorD = DCoef * (changeInError)/PIDtimer.time();
         lasterror = error;
         PIDtimer.reset();
 
         //return Range.clip(error *(PCoeff+ICoef+DCoef), -1, 1);
-        return Range.clip((P+I+D),-1,1);
+        return Range.clip((errorP + errorI + errorD),-1,1);
 
     }
 
