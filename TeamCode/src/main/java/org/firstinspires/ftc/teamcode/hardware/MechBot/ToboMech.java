@@ -383,7 +383,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     else
                         bottomWobbleGoalGrabber.pivotAuto();
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
-                    if (source.isPressed(Button.A)) // LB-A+Y
+                    if (source.isPressed(Button.BACK))
+                        autoTransferWobbleGoal();
+                    else if (source.isPressed(Button.A)) // LB-A+Y
                         topWobbleGoalGrabber.armPosInit();
                     else
                         topWobbleGoalGrabber.armPosAuto();
@@ -557,9 +559,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.yMove(-1, 0.35);
         sleep(150);
         bottomWobbleGoalGrabber.pivotUp();
-        chassis.rotateDegrees(0.3, 45);
+        chassis.rotateDegrees(0.4, 60);
         chassis.yMove(1, 0.3);
-        sleep(150);
+        sleep(200);
         topWobbleGoalGrabber.grabWobbleGoalCombo();
         chassis.stop();
         while (!TaskManager.isComplete("grab Top Wobble Goal Combo") && !interrupted()) {
