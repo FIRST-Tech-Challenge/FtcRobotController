@@ -72,7 +72,7 @@ public class ringObject {
     /* detectRings: Given an already-initialized TFObjectDetector tfod, this detects rings and returns
     an ArrayList with all of the different ring objects. Based off the example
      */
-    public ArrayList<ringObject> detectRings(TFObjectDetector tfod) {
+    public static ArrayList<ringObject> detectRings(TFObjectDetector tfod) {
         ArrayList<ringObject> objects = new ArrayList<>();
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since

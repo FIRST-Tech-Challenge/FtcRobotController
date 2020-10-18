@@ -24,22 +24,15 @@ public class testPlatformTeleop extends OpMode{
 
     @Override
     public void init() {
-        /* Initialize the hardware variables.
-         * The init() method of the hardware class does all the work here
-         */
+
         robot.init(hardwareMap);
-        //robot.sensorColor.enableLed(false);
         double time =  System.currentTimeMillis();
 
     }
 
     @Override
     public void loop() {
-//      MAIN DRIVING CONTROLS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-//        lPower = gamepad1.right_stick_y;
-//        rPower = gamepad1.right_stick_y;
-//        fPower = -gamepad1.right_stick_x;
-//        bPower = -gamepad1.right_stick_x;
+//
         if ((gamepad1.left_stick_y > 0.1 || gamepad1.left_stick_y < -0.1)||(gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1))
         {
             if(scalePower == true) {
@@ -78,33 +71,6 @@ public class testPlatformTeleop extends OpMode{
             frPower = 0;
             blPower = 0;
         }
-
-//        if (gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1)
-//        {
-//            flPower = gamepad1.left_stick_y * 2;
-//            brPower = gamepad1.left_stick_y *2;
-//            frPower = gamepad1.left_stick_y *2;
-//            blPower = gamepad1.left_stick_y* 2;
-//        }
-//
-//
-//        else if (gamepad2.left_stick_x < -0.2 || gamepad2.left_stick_x > .2)
-//        {
-//            frPower = gamepad1.left_stick_x * 2;
-//            blPower = gamepad1.left_stick_x * 2;
-//            flPower = -gamepad1.left_stick_x * 2;
-//            brPower = -gamepad1.left_stick_x * 2;
-//        }
-//        else
-//        {
-//            flPower = 0;
-//            brPower = 0;
-//            frPower = 0;
-//            blPower = 0;
-//        }
-
-        //rotate
-
 
         if (gamepad1.right_stick_x < -0.1 || gamepad2.right_stick_x < -0.1) {
             flPower = 0.5;
@@ -162,7 +128,7 @@ public class testPlatformTeleop extends OpMode{
         {
             scalePower = false;
         }
-        //BringDown hook = new BringDown();
+
 
 
 
@@ -185,20 +151,6 @@ public class testPlatformTeleop extends OpMode{
         robot.motorBackLeft.setPower(blPower);
 
 
-
-
-
-//      TELEMETRY
-//        telemetry.addData("Left Motor Power", gamepad1.left_stick_y);
-//        telemetry.addData("Right Motor Power", gamepad1.left_stick_y);
-//        telemetry.addData("Front Motor Power", gamepad1.left_stick_x);
-//        telemetry.addData("Back Motor Power", gamepad1.left_stick_x);
-//        telemetry.addData("Hook Motor Power", gamepad2.left_stick_y);
-//        telemetry.addData("Arm Tilt Motor Power", aPowerTIlt);
-//        telemetry.addData("Arm Ext Motor Power", aPowerExt);
-//        telemetry.addData("Box intake Power", boxPower);
-//        telemetry.addData("Right Distance", robot.sensorRangeR.getDistance(DistanceUnit.INCH));
-//        telemetry.addData("Left Distance", robot.sensorRangeL.getDistance(DistanceUnit.INCH));
 
     }
 
