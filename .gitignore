@@ -46,6 +46,9 @@ captures/
 .idea/assetWizardSettings.xml
 .idea/dictionaries
 .idea/libraries
+.idea/codeStyles/Project.xml
+.idea/jarRepositories.xml
+.idea/misc.xml
 # Android Studio 3 in .gitignore file.
 .idea/caches
 .idea/modules.xml
@@ -85,4 +88,3 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
-'.idea' 
