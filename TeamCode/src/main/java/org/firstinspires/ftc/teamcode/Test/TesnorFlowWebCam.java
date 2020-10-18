@@ -57,6 +57,7 @@ public class TesnorFlowWebCam extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
+    private String Target = null;
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -131,8 +132,12 @@ public class TesnorFlowWebCam extends LinearOpMode {
                                 recognition.getLeft(), recognition.getTop());
                         telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                                 recognition.getRight(), recognition.getBottom());
+                        //////
+                          Target = recognition.getLabel();
+                          telemetry.addData("Tsrget", "not null");
                       }
                       telemetry.update();
+
                     }
                 }
             }

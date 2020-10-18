@@ -15,6 +15,13 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
 
 @Autonomous(name="DriveTrain_N_Stff_Test", group="Test")
 
+//////////////////////////////////////////////////////////
+    // EXTEND this class to create multiple drive paths.
+    // use this for test but not competiton
+        ///////////////////////////////////////////////////
+
+
+
 class BasicAutonomous extends LinearOpMode {
     /* Declare OpMode members. */
     private Drivetrain_v3 drivetrain  = new Drivetrain_v3(true);   // Use subsystem Drivetrain
@@ -72,12 +79,12 @@ class BasicAutonomous extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
-        // This is currently set up or field coordinates NOT TELATIVE to the last move
-        //gyroDrive(DRIVE_SPEED, 80.0, 0.0, 5);    // Drive FWD 110 inches
-        //gyroTurn( TURN_SPEED, 90.0, 3);         // Turn  CCW to -45 Degrees
-        //gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
-        //telemetry.addData("Path", "Complete");
-        //telemetry.update();
+        // This is currently set up or field coordinates NOT RELATIVE to the last move
+        gyroDrive(DRIVE_SPEED, 80.0, 0.0, 5);    // Drive FWD 110 inches
+        gyroTurn( TURN_SPEED, 90.0, 3);         // Turn  CCW to -45 Degrees
+        gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
     }
 
 
