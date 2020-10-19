@@ -72,9 +72,9 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
 
     //multipliers for alternative detection
     double[][] relativePointsQuad = new double[][]{{0,-50}, {-50,-30}, {+50, -30}, {-50,20}, {+50,20}, {-50,-60}, {0, -67}, {+50,-60}, {-85, -60}, {+85, -60}, {-85, 0}, {+85, 0}, {-50,50}, {+50,50}, {0, -95}};
-    double[][] multipliersQuad = new double[][]{{-0.2, -0.2, -0.3},{0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2},};
+    double[][] multipliersQuad = new double[][]{{-0.2, -0.2, -0.1}, {0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {-0.2, -0.2, -0.1}, {-0.2, -0.2, -0.1}, {-0.2, -0.2, -0.1}, {-0.2, -0.2, -0.1}, {-0.2, -0.2, -0.1}, {-0.2, -0.2, -0.1}, {-0.2, -0.2, -0.1}};
     double[][] relativePointsSingle = new double[][]{{-40,-35}, {40,-35}, {-50, 10}, {+50, 10}, {-45,55}, {+45,55}, {-95, 5}, {95, 5}};
-    double[][] multipliersSingle = new double[][]{{-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}};
+    double[][] multipliersSingle = new double[][]{{-0.1, -0.1, -0.1}, {-0.1, -0.1, -0.1}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {-0.3, -0.3, -0.3}, {-0.3, -0.3, -0.3}, {-0.3, -0.3, -0.3}, {-0.1, -0.1, -0.1}};
     double filterRatio = 4.0/3.0;
 
     private class Filter //recognition class
@@ -342,24 +342,24 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
     }
 
     public ToboMech.TargetZone getTargetZoneAlternative() throws InterruptedException {
-        vuforia.setFrameQueueCapacity(1);
+        //vuforia.setFrameQueueCapacity(1);
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
         vuforia.enableConvertFrameToBitmap();
-
-        VuforiaLocalizer.CloseableFrame frm = null;
+        VuforiaLocalizer.CloseableFrame frm;
 
         frm = vuforia.getFrameQueue().take();
 
         long numImages = frm.getNumImages();
         Image img = null;
-        for (int i = 0; i < numImages; i++)
+        /*for (int i = 0; i < numImages; i++)
         {
             if (frm.getImage(i).getFormat() == PIXEL_FORMAT.RGB565)
             {
                 img = frm.getImage(i);
                 break;
             }
-        }
+        }*/
+        img = frm.getImage((int) (numImages-1));
 
         Bitmap bitmap = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.RGB_565);
         bitmap.copyPixelsFromBuffer(img.getPixels());
@@ -373,7 +373,7 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         double maxQuadScalar = -99999;
         int startX = 251; int startY = 270;
         int scanSpacing = 30;
-        int zeroValueQuad = -322; double percentValueQuad = 4.0; //maps values to 0-100
+        int zeroValueQuad =  -600; double percentValueQuad = 4.0; //maps values to 0-100
         //scans 15 points around the desired area
         for(int y = 0;y<3;y++)
         {
@@ -387,7 +387,7 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
             }
         }
         maxQuadScalar += zeroValueQuad;
-        maxQuadScalar /= percentValueQuad;
+        //maxQuadScalar /= percentValueQuad;
 
         double maxSingleScalar = -99999;
         int zeroValueSingle = 144; double percentValueSingle = 2.05;
@@ -402,15 +402,20 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
                 }
             }
         }
-        maxSingleScalar += zeroValueSingle;
-        maxSingleScalar /= percentValueSingle;
+        //maxSingleScalar += zeroValueSingle;
+        //maxSingleScalar /= percentValueSingle;
 
-        if(maxQuadScalar>=80)
+        if(maxQuadScalar<20)
+        {
+            return ToboMech.TargetZone.ZONE_A;
+        }
+        else
+        if(maxQuadScalar>maxSingleScalar)
         {
             return ToboMech.TargetZone.ZONE_C;
         }
         else
-        if(maxSingleScalar>=80)
+        if(maxSingleScalar>maxQuadScalar)
         {
             return ToboMech.TargetZone.ZONE_B;
         }
