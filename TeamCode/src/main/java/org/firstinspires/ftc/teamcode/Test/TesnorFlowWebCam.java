@@ -116,6 +116,7 @@ public class TesnorFlowWebCam extends LinearOpMode {
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
+        telemetry.addData("Target", Square);
         telemetry.update();
         waitForStart();
 
@@ -146,12 +147,18 @@ public class TesnorFlowWebCam extends LinearOpMode {
 
                           }
                           telemetry.addData("Target", Square);
+                          telemetry.update();
                       }
-                      //telemetry.update();
+
 
                     }
+                } else {
+                    Square = WobbleTargetZone.RED_A;
+                    telemetry.addData("Target", Square);
+                    telemetry.update();
                 }
-                telemetry.update();
+                // if nothing new is regognized code goes here
+
             }
         }
 
