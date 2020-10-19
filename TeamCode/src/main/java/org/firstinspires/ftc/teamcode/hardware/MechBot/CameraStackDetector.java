@@ -371,7 +371,7 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         {
             for(int x = 0;x<5;x++)
             {
-                double temp = quadStack.getScalar(bitmap, startX+(x+scanSpacing), startY + (y+scanSpacing));
+                double temp = quadStack.getScalar(bitmap, startX+(x*scanSpacing), startY + (y*scanSpacing));
                 if(temp>maxQuadScalar)
                 {
                     maxQuadScalar = temp;
@@ -387,7 +387,7 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         {
             for(int x = 0;x<5;x++)
             {
-                double temp = singleStack.getScalar(bitmap, startX+(x+scanSpacing), startY + (y+scanSpacing));
+                double temp = singleStack.getScalar(bitmap, startX+(x*scanSpacing), startY + (y*scanSpacing));
                 if(temp>maxSingleScalar)
                 {
                     maxSingleScalar = temp;
