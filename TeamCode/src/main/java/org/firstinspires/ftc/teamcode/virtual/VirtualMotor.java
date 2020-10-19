@@ -2,9 +2,16 @@ package org.firstinspires.ftc.teamcode.virtual;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-public class VirtualMotor implements DcMotor {
+public class VirtualMotor extends VirtualDevice implements DcMotor {
+
+    @Override
+    void updateDevice() {
+
+    }
+
     @Override
     public MotorConfigurationType getMotorType() {
         return null;

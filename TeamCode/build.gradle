@@ -20,4 +20,5 @@ repositories {
 
 dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'com.neovisionaries:nv-websocket-client:2.10'
 }
