@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware.MechBot;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Environment;
 import android.util.Log;
 
@@ -28,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+
 //import static org.firstinspires.ftc.robotcore.external.tfod.TfodRoverRuckus.LABEL_SILVER_MINERAL;
 //import static org.firstinspires.ftc.robotcore.external.tfod.TfodRoverRuckus.TFOD_MODEL_ASSET;
 
@@ -68,7 +70,46 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
     public final double CAM_RED_OUT = 0.56;
     public final double CAM_TELE_OP = 0.5;
 
+    double[][] relativePointsQuad = new double[][]{{0,-50}, {-50,-30}, {+50, -30}, {-50,20}, {+50,20}, {-50,-60}, {0, -67}, {+50,-60}, {-85, -60}, {+85, -60}, {-85, 0}, {+85, 0}, {-50,50}, {+50,50}, {0, -95}};
+    double[][] multipliersQuad = new double[][]{{-0.2, -0.2, -0.3},{0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2},};
+    double[][] relativePointsSingle = new double[][]{{-40,-35}, {40,-35}, {-50, 10}, {+50, 10}, {-45,55}, {+45,55}, {-95, 5}, {95, 5}};
+    double[][] multipliersSingle = new double[][]{{-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}};
+    double filterRatio = 4.0/3.0;
 
+    private class Filter
+    {
+        public double[][] pixelPos;
+        public double[][] multipliers;
+        public Filter(double[][] pixelPos_, double[][] multipliers_, double shrinkRatio)
+        {
+            pixelPos = pixelPos_;
+            for(int i = 0;i<pixelPos.length;i++)
+            {
+                pixelPos[i][0] /= shrinkRatio;
+                pixelPos[i][1] /= shrinkRatio;
+            }
+            multipliers = multipliers_;
+        }
+        public double getScalar(Bitmap img, int x, int y)
+        {
+            double scalar = 0;
+            for(int i = 0;i<pixelPos.length;i++)
+            {
+                int[] curr = getPixelValue(img,(int)(pixelPos[i][0]+x),(int)(pixelPos[i][1]+y));
+                double currPixelMultiplier = ((double)(curr[0])*multipliers[i][0])+((double)(curr[1])*multipliers[i][1])+((double)(curr[2])*multipliers[i][2]);
+                scalar += currPixelMultiplier;
+            }
+            return scalar;
+        }
+        public int[] getPixelValue(Bitmap img, int x, int y)
+        {
+            int color = img.getPixel(x,y);
+            int r = (color >> 16) & 0xff;
+            int g = (color >> 8) & 0xff;
+            int b = color & 0xff;
+            return new int[]{r, g, b};
+        }
+    }
 
     //    private CameraSystem camSys;
     private String lastError;
@@ -293,6 +334,81 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
             return ToboSigma.SkystoneLocation.RIGHT;
         } else {
             return ToboSigma.SkystoneLocation.CENTER;
+        }
+    }
+
+    public ToboMech.TargetZone getTargetZoneAlternative() throws InterruptedException {
+        vuforia.setFrameQueueCapacity(1);
+        Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
+        vuforia.enableConvertFrameToBitmap();
+
+        VuforiaLocalizer.CloseableFrame frm = null;
+
+        frm = vuforia.getFrameQueue().take();
+
+        long numImages = frm.getNumImages();
+        Image img = null;
+        for (int i = 0; i < numImages; i++)
+        {
+            if (frm.getImage(i).getFormat() == PIXEL_FORMAT.RGB565)
+            {
+                img = frm.getImage(i);
+                break;
+            }
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.RGB_565);
+        bitmap.copyPixelsFromBuffer(img.getPixels());
+
+        Filter quadStack = new Filter(relativePointsQuad, multipliersQuad, filterRatio);
+        Filter singleStack = new Filter(relativePointsSingle, multipliersSingle, filterRatio);
+
+        double maxQuadScalar = -99999;
+        int startX = (int) (364/filterRatio); int startY = (int) (340/filterRatio);
+        int scanSpacing = (int) (40/filterRatio);
+        int zeroValueQuad = -322; double percentValueQuad = 4.0;
+        for(int y = 0;y<3;y++)
+        {
+            for(int x = 0;x<5;x++)
+            {
+                double temp = quadStack.getScalar(bitmap, startX+(x+scanSpacing), startY + (y+scanSpacing));
+                if(temp>maxQuadScalar)
+                {
+                    maxQuadScalar = temp;
+                }
+            }
+        }
+        maxQuadScalar += zeroValueQuad;
+        maxQuadScalar /= percentValueQuad;
+
+        double maxSingleScalar = -99999;
+        int zeroValueSingle = 144; double percentValueSingle = 2.05;
+        for(int y = 0;y<3;y++)
+        {
+            for(int x = 0;x<5;x++)
+            {
+                double temp = singleStack.getScalar(bitmap, startX+(x+scanSpacing), startY + (y+scanSpacing));
+                if(temp>maxSingleScalar)
+                {
+                    maxSingleScalar = temp;
+                }
+            }
+        }
+        maxSingleScalar += zeroValueSingle;
+        maxSingleScalar /= percentValueSingle;
+
+        if(maxQuadScalar>=80)
+        {
+            return ToboMech.TargetZone.ZONE_C;
+        }
+        else
+        if(maxSingleScalar>=80)
+        {
+            return ToboMech.TargetZone.ZONE_B;
+        }
+        else
+        {
+            return ToboMech.TargetZone.ZONE_A;
         }
     }
 
