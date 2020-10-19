@@ -18,8 +18,8 @@ public class TerraOp extends OpMode {
 //    ServoController shootControl = new ServoController(bot.shootStart, bot.shootStart, 0.9);
 
     Cycle grabControl = new Cycle(bot.grabStart, 0.45);
-    Cycle liftControl = new Cycle(bot.liftStart, 0.4, 0.6);
-    Cycle shootControl = new Cycle(bot.shootStart, 0.2, 0.24);
+    Cycle liftControl = new Cycle(bot.liftStart, 0.33, 1);
+    Cycle shootControl = new Cycle(bot.shootStart, 0.2, 0.3);
 
 
     @Override

@@ -37,7 +37,7 @@ public class TerraBot {
     public double liftStart = 0.0;
     public double shootStart = 0.0;
     public double intakeSpeed = 1;
-    public double outtakeSpeed = 0.2;
+    public double outtakeSpeed = 0.35;
 
 
 
