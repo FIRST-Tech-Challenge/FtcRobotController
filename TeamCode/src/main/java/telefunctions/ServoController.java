@@ -11,29 +11,19 @@ public class ServoController {
         upp = upper;
     }
 
-    public double update(double val, double speed){
-        speed*=0.1;
-        if(val > 0){
-            if(cur+speed < upp){
-                cur += speed;
-            }
-        }else if(val < 0){
-            if(cur-speed > low){
-                cur -= speed;
-            }
+    public double update(double val1, double val2, double speed){
+        double val =  val1 - val2;
+        speed *= Math.signum(val) * 0.01;
+        if (cur+speed < upp && cur+speed > low) {
+            cur += speed;
         }
         return cur;
     }
-    public double update(boolean buton1, boolean buton2, double speed){
-        speed*=0.1;
-        if(buton1){
-            if(cur+speed < upp){
-                cur += speed;
-            }
-        }else if(buton2){
-            if(cur-speed > low){
-                cur -= speed;
-            }
+
+    public double update(boolean button1, boolean button2, double speed){
+        speed *= 0.01 * (((button1) ? 1 : 0) - ((button2) ? 1 : 0));
+        if (cur+speed < upp && cur+speed > low) {
+            cur += speed;
         }
         return cur;
     }
