@@ -120,10 +120,7 @@ public class DriverControls {
                            RangeInput leftTrigger,
                            RangeInput rightTrigger,
                            NinjaGamePad driversGamepad,
-                           OpenLoopMecanumKinematics kinematics,
-                           FoundationGripMechanism foundationGripMechanism,
-                           StationKeeping stationKeeping,
-                           ParkingSticks parkingSticks) {
+                           OpenLoopMecanumKinematics kinematics) {
         if (driversGamepad != null) {
             this.driversGamepad = driversGamepad;
             setupFromGamepad();
