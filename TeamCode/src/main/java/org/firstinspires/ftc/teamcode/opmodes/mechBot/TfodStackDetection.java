@@ -112,6 +112,7 @@ public class TfodStackDetection extends LinearOpMode {
         waitForStart();
 
         robot.initializeGPSThread();
+        robot.cameraStackDetector.setupTelemetry(telemetry);
 
         while (opModeIsActive()) {
             if (robot.cameraStackDetector!=null && robot.cameraStackDetector.getTfod()!=null) {
@@ -123,16 +124,19 @@ public class TfodStackDetection extends LinearOpMode {
                     // step through the list of recognitions and display boundary info.
                     int i = 0;
                     for (Recognition recognition : updatedRecognitions) {
-                        telemetry.addData(String.format("label (%d)", i), "(%s)(%s)", recognition.getLabel(),
-                                robot.cameraStackDetector.getTargetZone().toString());
+                        telemetry.addData(String.format("label (%d)", i), "(%s)", recognition.getLabel());
+
                         telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
                                 recognition.getLeft(), recognition.getTop());
                         telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                                 recognition.getRight(), recognition.getBottom());
                     }
-                    telemetry.update();
                 }
             }
+            telemetry.addData(String.format("Zone"), "(tfod=%s)(alt=%s)",
+                    robot.cameraStackDetector.getTargetZone().toString(),robot.cameraStackDetector.getTargetZoneAlternative().toString());
+            telemetry.update();
+
         }
 
         // Disable robot;

@@ -57,6 +57,7 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
     private AdjustableServo camLR; // webcam left/right servo
+    private Telemetry tl;
     private double camPos = 0;
 
     private double stoneYpos = 250;//390
@@ -191,7 +192,7 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         /** Activate Tensor Flow Object Detection. */
         if (tfod != null) {
             logger.verbose("Start tfod Activation");
-            tfod.activate();
+            // tfod.activate();
             logger.verbose("tfod activate: ", tfod);
         }
 
@@ -342,24 +343,19 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
     }
 
     public ToboMech.TargetZone getTargetZoneAlternative() throws InterruptedException {
-        //vuforia.setFrameQueueCapacity(1);
+        // vuforia.setFrameQueueCapacity(1);
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
         vuforia.enableConvertFrameToBitmap();
         VuforiaLocalizer.CloseableFrame frm;
 
         frm = vuforia.getFrameQueue().take();
 
-        long numImages = frm.getNumImages();
+        int numImages = (int) frm.getNumImages();
         Image img = null;
-        /*for (int i = 0; i < numImages; i++)
-        {
-            if (frm.getImage(i).getFormat() == PIXEL_FORMAT.RGB565)
-            {
-                img = frm.getImage(i);
-                break;
-            }
-        }*/
+
         img = frm.getImage((int) (numImages-1));
+
+        if (img==null) return ToboMech.TargetZone.UNKNOWN;
 
         Bitmap bitmap = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.RGB_565);
         bitmap.copyPixelsFromBuffer(img.getPixels());
@@ -402,8 +398,14 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
                 }
             }
         }
-        //maxSingleScalar += zeroValueSingle;
-        //maxSingleScalar /= percentValueSingle;
+
+        maxSingleScalar += zeroValueSingle;
+        maxSingleScalar /= percentValueSingle;
+        if (tl!=null) {
+            tl.addData("maxSingleScalar", "%5.0f (#-img=%2d)", maxSingleScalar,numImages);
+            tl.addData("maxQuadScalar  ", "%5.0f", maxQuadScalar);
+            // tl.update();
+        }
 
         if(maxQuadScalar<20)
         {
@@ -448,18 +450,20 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
             }
             for(Recognition recognition : updatedRecognitions)
             {
-                if(detectedRings == 2 && updatedRecognitions.size()>1)
+                if(detectedRings == 4 && updatedRecognitions.size()>1)
                 {
                     break; //if we detect more than one and it's a quad already, most likely it's a quad
                 }
 
-                if(recognition.getLabel()=="Single")
-                {
-                    detectedRings = 1;
+                if(recognition.getLabel()=="Single") {
+                    // sometime the quad-stack is retuned as single-stack. Use the height to decide if it is single (height<80) or quad-stack
+                    if (Math.abs(recognition.getBottom()-recognition.getTop())<80)
+                        detectedRings = 1;
+                    else
+                        detectedRings = 4;
                 }
-                else
-                {
-                    detectedRings = 2;
+                else {
+                    detectedRings = 4;
                 }
             }
             switch(detectedRings)
@@ -467,7 +471,7 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
                 case 1:
                     rings = ToboMech.TargetZone.ZONE_B;
                     break;
-                case 2:
+                case 4:
                     rings = ToboMech.TargetZone.ZONE_C;
                     break;
                 default:
@@ -724,6 +728,7 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
      * and servo position for each wheel
      */
     public void setupTelemetry(Telemetry telemetry) {
+        tl = telemetry;
         Telemetry.Line line = telemetry.addLine();
         if (camLR!=null) {
             line.addData("WebCam", "pos=%.2f", new Func<Double>() {
