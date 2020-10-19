@@ -6,14 +6,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
 
-@Autonomous(name="Sample Opmode from Basic", group="Test")
+@Autonomous(name="Auto Opmode #1", group="Test")
 
-class Opmode_Test_ext_DriveTest extends BasicAutonomous {
-    /* Declare OpMode members. */
-    private Drivetrain_v3       drivetrain  = new Drivetrain_v3(true);   // Use subsystem Drivetrain
-    private Orientation         lastAngles  = new Orientation();
-    private ElapsedTime         PIDtimer    = new ElapsedTime(); // PID loop timer
-    private ElapsedTime         runtime     = new ElapsedTime(); // timeout timer
+public class Opmode_1 extends BasicAutonomous {
+
+    //Note: Subsystems are instantiated in the BasicAutonomous Class
 
     @Override
     public void runOpMode() {

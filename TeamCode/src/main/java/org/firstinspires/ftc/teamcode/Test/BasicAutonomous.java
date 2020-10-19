@@ -13,7 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
 
-@Autonomous(name="DriveTrain_N_Stff_Test", group="Test")
+@Autonomous(name="Basic Autonomous for Test", group="Test")
 
 //////////////////////////////////////////////////////////
     // EXTEND this class to create multiple drive paths.
@@ -22,9 +22,9 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
 
 
 
-class BasicAutonomous extends LinearOpMode {
+public class BasicAutonomous extends LinearOpMode {
     /* Declare OpMode members. */
-    private Drivetrain_v3 drivetrain  = new Drivetrain_v3(true);   // Use subsystem Drivetrain
+    public Drivetrain_v3 drivetrain  = new Drivetrain_v3(true);   // Use subsystem Drivetrain
     private Orientation         lastAngles  = new Orientation();
     private ElapsedTime         PIDtimer    = new ElapsedTime(); // PID loop timer
     private ElapsedTime         runtime     = new ElapsedTime(); // timeout timer
