@@ -70,13 +70,14 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
     public final double CAM_RED_OUT = 0.56;
     public final double CAM_TELE_OP = 0.5;
 
+    //multipliers for alternative detection
     double[][] relativePointsQuad = new double[][]{{0,-50}, {-50,-30}, {+50, -30}, {-50,20}, {+50,20}, {-50,-60}, {0, -67}, {+50,-60}, {-85, -60}, {+85, -60}, {-85, 0}, {+85, 0}, {-50,50}, {+50,50}, {0, -95}};
     double[][] multipliersQuad = new double[][]{{-0.2, -0.2, -0.3},{0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.7, 0.5, -0.5}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2},};
     double[][] relativePointsSingle = new double[][]{{-40,-35}, {40,-35}, {-50, 10}, {+50, 10}, {-45,55}, {+45,55}, {-95, 5}, {95, 5}};
     double[][] multipliersSingle = new double[][]{{-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {0.8, 0.6, -0.2}, {0.8, 0.6, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}, {-0.2, -0.2, -0.2}};
     double filterRatio = 4.0/3.0;
 
-    private class Filter
+    private class Filter //recognition class
     {
         public double[][] pixelPos;
         public double[][] multipliers;
@@ -90,18 +91,21 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
             }
             multipliers = multipliers_;
         }
-        public double getScalar(Bitmap img, int x, int y)
+        public double getScalar(Bitmap img, int x, int y) //filter score
         {
             double scalar = 0;
             for(int i = 0;i<pixelPos.length;i++)
             {
-                int[] curr = getPixelValue(img,(int)(pixelPos[i][0]+x),(int)(pixelPos[i][1]+y));
-                double currPixelMultiplier = ((double)(curr[0])*multipliers[i][0])+((double)(curr[1])*multipliers[i][1])+((double)(curr[2])*multipliers[i][2]);
-                scalar += currPixelMultiplier;
+                int[] curr = getPixelValue(img,(int)(pixelPos[i][0]+x),(int)(pixelPos[i][1]+y)); //get pixel value
+                double currPixelMultiplier = //do multipliers
+                        ((double)(curr[0])*multipliers[i][0])
+                        +((double)(curr[1])*multipliers[i][1])
+                        +((double)(curr[2])*multipliers[i][2]);
+                scalar += currPixelMultiplier; //add
             }
             return scalar;
         }
-        public int[] getPixelValue(Bitmap img, int x, int y)
+        public int[] getPixelValue(Bitmap img, int x, int y) //tbh this is just stackoverflow code because there isn't java.awt.Color
         {
             int color = img.getPixel(x,y);
             int r = (color >> 16) & 0xff;
@@ -360,13 +364,17 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         Bitmap bitmap = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.RGB_565);
         bitmap.copyPixelsFromBuffer(img.getPixels());
 
+        //vuforia stuff ^
+
+        //init filters
         Filter quadStack = new Filter(relativePointsQuad, multipliersQuad, filterRatio);
         Filter singleStack = new Filter(relativePointsSingle, multipliersSingle, filterRatio);
 
         double maxQuadScalar = -99999;
-        int startX = (int) (364/filterRatio); int startY = (int) (340/filterRatio);
-        int scanSpacing = (int) (40/filterRatio);
-        int zeroValueQuad = -322; double percentValueQuad = 4.0;
+        int startX = 251; int startY = 270;
+        int scanSpacing = 30;
+        int zeroValueQuad = -322; double percentValueQuad = 4.0; //maps values to 0-100
+        //scans 15 points around the desired area
         for(int y = 0;y<3;y++)
         {
             for(int x = 0;x<5;x++)
