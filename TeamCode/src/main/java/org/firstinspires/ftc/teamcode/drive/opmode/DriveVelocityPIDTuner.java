@@ -64,9 +64,10 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
     private Mode mode;
 
-    private double lastKp = MOTOR_VELO_PID.kP;
-    private double lastKi = MOTOR_VELO_PID.kI;
-    private double lastKd = MOTOR_VELO_PID.kD;
+    private double lastKp = MOTOR_VELO_PID.p;
+    private double lastKi = MOTOR_VELO_PID.i;
+    private double lastKd = MOTOR_VELO_PID.d;
+    private double lastKf = MOTOR_VELO_PID.f;
 
     private static MotionProfile generateProfile(boolean movingForward) {
         MotionState start = new MotionState(movingForward ? 0 : DISTANCE, 0, 0, 0);
@@ -90,7 +91,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         mode = Mode.TUNING_MODE;
 
-        drive.setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
+        drive.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
 
         NanoClock clock = NanoClock.system();
 
@@ -163,13 +164,14 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                     break;
             }
 
-            if (lastKp != MOTOR_VELO_PID.kP || lastKd != MOTOR_VELO_PID.kD
-                    || lastKi != MOTOR_VELO_PID.kI) {
-                drive.setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
+            if (lastKp != MOTOR_VELO_PID.p || lastKd != MOTOR_VELO_PID.d
+                    || lastKi != MOTOR_VELO_PID.i || lastKf != MOTOR_VELO_PID.f) {
+                drive.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
 
-                lastKp = MOTOR_VELO_PID.kP;
-                lastKi = MOTOR_VELO_PID.kI;
-                lastKd = MOTOR_VELO_PID.kD;
+                lastKp = MOTOR_VELO_PID.p;
+                lastKi = MOTOR_VELO_PID.i;
+                lastKd = MOTOR_VELO_PID.d;
+                lastKf = MOTOR_VELO_PID.f;
             }
 
             telemetry.update();
