@@ -15,9 +15,6 @@ public class Robot {
     Gamepad gamepad2 = new Gamepad();
     HardwareInnov8Robot hwmap;
 
-    double startPosition = 0;
-    double endPosition = 0;
-
     public Robot(Telemetry telemetry, HardwareMap hwmap, LinearOpMode opMode) {
         this.opMode = opMode;
         this.hwmap = new HardwareInnov8Robot(hwmap);
@@ -51,21 +48,12 @@ public class Robot {
 
     public void forwardTwelveInches() {
         
-        driveTrain.goForward(12); // assuming robot is 18" long
+        driveTrain.goForward(12);
     }
-    
-    
+
     public void straightRight(){
         driveTrain.goForward(15);
         driveTrain.turn(-90);
         driveTrain.goForward((30));
     }
-    
-
-    public void useVuforia() {
-        while (this.opMode.opModeIsActive()) {
-            telemetry.update();
-        }
-    }
-
 }

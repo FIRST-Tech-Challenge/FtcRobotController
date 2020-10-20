@@ -12,7 +12,13 @@ public class Shooter {
     HardwareInnov8Robot robot;
     LinearOpMode opMode;
 
+    public Shooter(Telemetry telemetry, HardwareInnov8Robot robot, LinearOpMode opMode) {
 
+        this.opMode = opMode;
+        this.robot = robot;
+        this.telemetry = telemetry;
+    }
+    
     public void teleop(Gamepad gamepad1, Gamepad gamepad2) {
 
 

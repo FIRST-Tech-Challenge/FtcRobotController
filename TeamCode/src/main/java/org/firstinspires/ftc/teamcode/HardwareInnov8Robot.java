@@ -34,14 +34,8 @@ public class HardwareInnov8Robot {
     public DcMotor motorFour = null; // Back right wheel
 
 
-    // Example for servos
-
-    //    public Servo
-
-
     public BNO055IMU imu;
-//
-    // Examples for servos
+
 
     public static final double MID_SERVO = 0.5;
     public static final double START_SERVO = 0; // all the way down
@@ -55,23 +49,21 @@ public class HardwareInnov8Robot {
     public HardwareInnov8Robot(HardwareMap ahwMap) {
         this.hwMap = ahwMap;
         this.init(ahwMap);
-
     }
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
-        // Save reference to Hardware map
-
 
         // Define and Initialize Motors
         motorOne = this.hwMap.get(DcMotor.class, "motorOne");
         motorTwo = this.hwMap.get(DcMotor.class, "motorTwo");
         motorThree = this.hwMap.get(DcMotor.class, "motorThree");
-        motorFour = this.hwMap.get(DcMotor.class, "motorFour");
-        motorOne.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        motorTwo.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        motorThree.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        motorFour.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+
+        // Using REV (I think) motors
+        motorOne.setDirection(DcMotor.Direction.FORWARD);
+        motorTwo.setDirection(DcMotor.Direction.REVERSE);
+        motorThree.setDirection(DcMotor.Direction.FORWARD);
+        motorFour.setDirection(DcMotor.Direction.REVERSE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -88,40 +80,11 @@ public class HardwareInnov8Robot {
         motorFour.setPower(0);
 
 
-
-        // Set all motors to run without encoders.
-
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         motorOne.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorTwo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorThree.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFour.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        // Define and initialize ALL installed servos.
-
-
-
     }
 
-    /***
-     *
-     * waitForTick implements a periodic delay. However, this acts like a metronome with a regular
-     * periodic tick.  This is used to compensate for varying processing times for each cycle.
-     * The function looks at the elapsed cycle time, and sleeps for the remaining time interval.
-     *
-     * @param periodMs  Length of wait cycle in mSec.
-     * @throws InterruptedException
-     */
-    public void waitForTick(long periodMs) throws InterruptedException {
-
-        long remaining = periodMs - (long) period.milliseconds();
-
-        // sleep for the remaining portion of the regular cycle period.
-        if (remaining > 0)
-            Thread.sleep(remaining);
-
-        // Reset the cycle clock for the next pass.
-        period.reset();
-    }
 }
