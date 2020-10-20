@@ -49,9 +49,9 @@ public class testRingAuton extends LinearOpMode {
     testPlatformHardware    robot   = new testPlatformHardware();
     private ElapsedTime     runtime = new ElapsedTime();
 
-    static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 3.25 ;     // For figuring circumference
+    static final double     COUNTS_PER_MOTOR_REV    = testPlatformHardware.COUNTS_PER_MOTOR_REV ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = testPlatformHardware.DRIVE_GEAR_REDUCTION ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = testPlatformHardware.WHEEL_DIAMETER_INCHES ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_INCHES * Math.PI);
     static final double     DRIVE_SPEED             = 0.5;

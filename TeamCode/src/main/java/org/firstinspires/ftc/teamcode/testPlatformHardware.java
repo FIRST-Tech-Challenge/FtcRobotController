@@ -59,6 +59,11 @@ public class testPlatformHardware
     public DcMotor  motorFrontRight  = null;
     public DcMotor  motorBackRight  = null;
 
+    public static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder
+    public static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    public static final double     WHEEL_DIAMETER_INCHES   = 3.25 ;     // For figuring circumference
+
+
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
