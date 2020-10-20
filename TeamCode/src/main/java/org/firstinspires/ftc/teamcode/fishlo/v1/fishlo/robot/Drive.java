@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.fishlo.robot;
+package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.SubSystem;
