@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.fishlo.program;
+package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.program;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.fishlo.robot.Fishlo;
+import org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot.Fishlo;
 import org.firstinspires.ftc.teamcode.opMode.DriverControlledProgram;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
