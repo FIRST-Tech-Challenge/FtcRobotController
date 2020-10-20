@@ -123,13 +123,6 @@ public class Drive extends SubSystem {
         right(right);
     }
 
-    public void drive(double speed, DriveDir driveDir) {
-        if(reverse) {
-            drive(driveDir.getLeft(reverse) * speed, driveDir.getRight(reverse) * speed);
-        } else {
-            drive(driveDir.getRight(reverse) * speed, driveDir.getLeft(reverse) * speed);
-        }
-    }
 
     public void stop() {
         drive(0, 0);
