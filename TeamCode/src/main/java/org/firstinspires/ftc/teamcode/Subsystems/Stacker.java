@@ -16,8 +16,8 @@ public class Stacker {
     private static final double rightBack = .6;
 
     public void init(HardwareMap hwMap) {
-        leftFliper = hwMap.get(Servo.class, "ForwardMove");
-        rightFliper = hwMap.get(Servo.class, "BackMove");
+        leftFliper = hwMap.get(Servo.class, "Left_Flipper");
+        rightFliper = hwMap.get(Servo.class, "Right_Flipper");
     }
 
     public void loadShooter() {
