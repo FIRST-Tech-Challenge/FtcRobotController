@@ -53,8 +53,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Stacker;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Linear OpMode", group="Linear Opmode")
-@Disabled
+@TeleOp(name="Stacker Test", group="Linear Opmode")
+//@Disabled
 public class Stacker_Test extends LinearOpMode {
 
     // Declare OpMode members.
@@ -93,7 +93,10 @@ public class Stacker_Test extends LinearOpMode {
                 stacker.resetShooter();
                 telemetry.addData("Stacker Reset", "Complete ");
             }
-
+            if (gamepad2.b) {
+                stacker.flipperCalibrateinCenter(); 
+                telemetry.addData("Flipper in Centers", "Complete ");
+            }
 
         }
     }
