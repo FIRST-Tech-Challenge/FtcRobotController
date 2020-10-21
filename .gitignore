@@ -40,6 +40,7 @@ captures/
 
 # IntelliJ
 *.iml
+.idea/misc.xml
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/gradle.xml
@@ -85,6 +86,3 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
-
-# Idea
-.idea/
