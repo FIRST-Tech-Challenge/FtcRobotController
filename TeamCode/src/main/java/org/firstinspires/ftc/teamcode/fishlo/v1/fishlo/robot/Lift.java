@@ -26,6 +26,15 @@ public class Lift extends SubSystem {
         lift.setPower(0);
     }
 
+    public void lift_up(double power) {
+        lift.setPower(power);
+    }
+
+    public void reset_encoder() {
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+
     public Lift(Robot robot) { super(robot); };
 
 
