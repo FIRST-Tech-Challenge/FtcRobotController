@@ -7,12 +7,14 @@ import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class AutoRoute implements Serializable {
+public class AutoRoute implements Serializable, Cloneable {
     public static String NAME_BLUE = "Blue";
     public static String NAME_RED = "Red";
+    public static String NAME_NEW = "New";
     private int nameIndex = 0;
     private String name = NAME_BLUE;
     private boolean selected;
+    private boolean temp;
     private ArrayList<AutoStep> steps = new ArrayList<>();
     private int startX;
     private int startY;
@@ -24,8 +26,25 @@ public class AutoRoute implements Serializable {
         return SimpleGson.getInstance().fromJson(data, AutoRoute.class);
     }
 
+    public AutoRoute clone(){
+        AutoRoute cloned = new AutoRoute();
+        cloned.setName(this.getName());
+        cloned.setNameIndex(this.getNameIndex());
+        cloned.setStartX(this.getStartX());
+        cloned.setStartY(this.getStartY());
+        cloned.setSelected(this.isSelected());
+        cloned.setTemp(this.isTemp());
+        for(int i = 0; i < steps.size(); i++){
+            cloned.steps.add(this.steps.get(i));
+        }
+        return cloned;
+    }
+
     public String getRouteName()
     {
+        if (this.isTemp()){
+            return  String.format("%s-%d-%s", name, nameIndex, NAME_NEW);
+        }
         return  String.format("%s-%d", name, nameIndex);
     }
 
@@ -80,6 +99,14 @@ public class AutoRoute implements Serializable {
 
     public Point getStart(){
         return new Point(startX, startY);
+    }
+
+    public boolean isTemp() {
+        return temp;
+    }
+
+    public void setTemp(boolean temp) {
+        this.temp = temp;
     }
 }
 
