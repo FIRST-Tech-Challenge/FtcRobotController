@@ -32,7 +32,7 @@ public class Drive extends SubSystem {
         double speed = robot.gamepad1.right_trigger - robot.gamepad1.left_trigger;
         double direction = -robot.gamepad1.left_stick_x;
 
-        if(robot.gamepad1.x) {
+        if(robot.gamepad1.a) {
             reverse = false;
         } else if(robot.gamepad1.y) {
             reverse = true;
