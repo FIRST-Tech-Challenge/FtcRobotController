@@ -16,8 +16,7 @@ public abstract class SpinnerHardware extends RobotHardware {
     public void initializeHardware() {
         spinnerLeft = this.initializeDevice(DcMotor.class, "spinnerLeft");
         spinnerLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        spinnerRight= this.initializeDevice(DcMotor.class, "spinnerRight");
+        spinnerRight = this.initializeDevice(DcMotor.class, "spinnerRight");
         spinnerRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 

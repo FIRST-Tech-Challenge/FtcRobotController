@@ -40,8 +40,10 @@ public class VirtualHardwareManager implements WebSocketListener {
 
     static WebSocketFactory webSocketFactory = new WebSocketFactory();
     WebSocket ws;
+
     HashMap<String, VirtualHardwareType> availableHardware = new HashMap<>();
     ArrayList<VirtualDevice> virtualDevices = new ArrayList<>();
+    HashMap<String, JSONObject> deviceUpdates = new HashMap<>();
 
     public void setRobotHardware(RobotHardware hardware) {
         robotHardware = hardware;
@@ -76,8 +78,18 @@ public class VirtualHardwareManager implements WebSocketListener {
             ws.sendText(jo.toString());
         }
     }
-    public void sendReceiveDevices() {
+    public void updateDevices() throws JSONException {
+        // Transmit new information
+        JSONObject payload = new JSONObject();
+        JSONObject devicePayload = new JSONObject();
+        for (VirtualDevice device : this.virtualDevices) {
+            JSONObject deviceData = device.getDataToTransmit();
+            if (deviceData != null) {
+                devicePayload.put(device.deviceName, deviceData);
+            }
+        }
 
+        deviceUpdates.clear();
     }
 
 

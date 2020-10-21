@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.teamcode.virtual;
 
+import org.json.JSONObject;
+
 public abstract class VirtualDevice {
 
     VirtualHardwareManager parentConnectionManager;
     String deviceName;
-    boolean dataReadyToSend;
 
     public void setParentConnectionManager(VirtualHardwareManager parentConnectionManager) {
         this.parentConnectionManager = parentConnectionManager;
     }
 
-    abstract void updateDevice();
+    /**
+     *
+     * @return A JSONObject to send, but if no new data needs to be sent, send null.
+     */
+    abstract JSONObject getDataToTransmit();
+    abstract void updateDevice(JSONObject newData);
 }
