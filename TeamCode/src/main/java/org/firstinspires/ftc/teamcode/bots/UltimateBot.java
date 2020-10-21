@@ -20,6 +20,7 @@ public class UltimateBot extends YellowBot
     private static int MIDDLESWINGVALUE = 260;
     public DcMotor wobbleSwing = null;
     private Servo wobbleClaw = null;
+    public DcMotor intake = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
     private static int SWING_LIFTUP = 50;
@@ -42,6 +43,10 @@ public class UltimateBot extends YellowBot
             wobbleSwing.setDirection(DcMotor.Direction.FORWARD);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             wobbleSwing.setPower(0);
+            intake = hwMap.get(DcMotor.class, "intake");
+            intake.setDirection(DcMotor.Direction.FORWARD);
+            intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            intake.setPower(0);
         } catch (Exception ex) {
             throw new Exception("Issues wobbleSwing. Check the controller config", ex);
         }
@@ -79,6 +84,15 @@ public class UltimateBot extends YellowBot
         wobbleClaw.setPosition(p);
     }
 
+    @BotAction(displayName = "Move Intake")
+    public void intake() {
+        intake.setPower(0.7);
+    }
+
+    @BotAction(displayName = "Stop Intake")
+    public void stopintake() {
+        intake.setPower(0);
+    }
 
     @BotAction(displayName = "Close Claw")
     public void closeWobbleClaw () {
@@ -143,7 +157,6 @@ public class UltimateBot extends YellowBot
         wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wobbleSwing.setPower(-0.005);
     }
-
 
     public void liftHighAndHoldWobble(){
         wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

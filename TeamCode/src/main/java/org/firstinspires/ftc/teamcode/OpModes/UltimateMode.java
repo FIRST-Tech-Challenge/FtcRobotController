@@ -44,6 +44,9 @@ public class UltimateMode extends LinearOpMode{
     // Declare OpMode members.
     UltimateBot robot = new UltimateBot();
     private ElapsedTime runtime = new ElapsedTime();
+    private boolean intakeon = false;
+    boolean changedclaw = false;
+    boolean changedintake = false;
 
     @Override
     public void runOpMode() {
@@ -87,12 +90,28 @@ public class UltimateMode extends LinearOpMode{
                     robot.move(drive, turn);
                 }
 
-                if (gamepad1.left_bumper){
-                    robot.closeWobbleClaw();
+                // move claw
+                if(!changedclaw){
+                    if(gamepad1.dpad_right){
+                        changedclaw = true;
+
+                        robot.openWobbleClaw();
+                    }
+                }else {
+                    if(gamepad1.dpad_right){
+                        changedclaw = false;
+
+                        robot.closeWobbleClaw();
+                    }
                 }
-                else if (gamepad1.right_bumper) {
-                    robot.openWobbleClaw();
-                }
+
+//                if (gamepad1.left_bumper){
+//                    robot.closeWobbleClaw();
+//                }
+//                else if (gamepad1.right_bumper) {
+//                    robot.openWobbleClaw();
+//                }
+
                 if (gamepad1.dpad_up) {
                     robot.forwardWobbleSwing();
                 }
@@ -102,9 +121,19 @@ public class UltimateMode extends LinearOpMode{
                 else if (gamepad1.dpad_left) {
                     robot.liftAndHoldWobbleSwing();
                 }
-//                else if (gamepad1.dpad_right) {
-//                    robot.liftHighAndHoldWobble();
-//                }
+
+                // move intake
+                if(!changedintake){
+                    if(gamepad1.a){
+                        changedintake = true;
+                        robot.intake();
+                    }
+                }else {
+                    if(gamepad1.a){
+                        changedintake = false;
+                        robot.stopintake();
+                    }
+                }
 
                 telemetry.addData("Heading", robot.getGyroHeading());
                 telemetry.addData("Horiz encoder", robot.getHorizontalOdometer());
