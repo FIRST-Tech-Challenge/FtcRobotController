@@ -12,6 +12,7 @@ CONTROL_HUB_WSURL = "ws://localhost:8081"
 CONTROL_HUB_REFERER = CONTROL_HUB_URL + "/java/editor.html"
 CONTROL_HUB_UPLOAD_URL = CONTROL_HUB_URL + "/java/file/upload"
 SRC_DIRECTORY = pathlib.Path("TeamCode/src/main/java/org/firstinspires/ftc/teamcode")
+VIRUTAL_DIRECTORY = pathlib.Path("TeamCode/src/main/java/org/firstinspires/ftc/teamcode/virtual")
 
 def uploadJavaFile(path: str):
     if path.endswith(".java"):
@@ -36,7 +37,7 @@ async def build():
             print (f"Build Status: {status}")
         
 for path, subdirs, files in os.walk(SRC_DIRECTORY):
-    if (not "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/virtual" in path):
+    if (not str(VIRUTAL_DIRECTORY) in path):
         for name in files:
             file_path = os.path.join(path, name)
             r = uploadJavaFile(file_path)
