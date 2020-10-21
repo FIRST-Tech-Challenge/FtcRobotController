@@ -1,8 +1,6 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.virtual;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.teamcode.hardware.VirtualHardware;
 
 @TeleOp(name="Virtual Hardware")
 public class VirtualHardwareTest extends VirtualHardware {
