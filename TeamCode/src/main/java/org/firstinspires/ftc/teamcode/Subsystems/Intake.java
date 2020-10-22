@@ -11,8 +11,10 @@ public class Intake {
     public static final double intake_speed = .5;
     public static final double Intakeoff = 0;
     public static final double Intakeon = 0.9;
+
+    // initialize intake
     public void init(HardwareMap hwMap){
-        intake_motor =hwMap.get(DcMotor.class,"Elevator");
+        intake_motor =hwMap.get(DcMotor.class,"Intake");
         intake_motor.setDirection(DcMotor.Direction.REVERSE);
         intake_motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
