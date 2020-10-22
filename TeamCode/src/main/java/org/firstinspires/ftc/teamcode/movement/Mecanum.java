@@ -53,8 +53,6 @@ public class Mecanum {
         double backLeftSpeed = ySpeed - xSpeed + turnSpeed;
         double backRightSpeed = ySpeed + xSpeed - turnSpeed;
 
-
-
         frontLeft.setPower(frontLeftSpeed);
         frontRight.setPower(frontRightSpeed);
         backLeft.setPower(backLeftSpeed);;
