@@ -15,7 +15,12 @@ public class DriveTrain extends OpMode
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
     boolean isTurning;
-    double globalAngle, horizontal, vertical, joystickDistanceFromOrigin, angle, pwr, pwr2, target, turning, correction;
+    double globalAngle, horizontal, vertical, joystickDistanceFromOrigin, angle, pwr, pwr2, target, turning, correction, x, y, rotation;
+    double distancePerTick = (2 * Math.PI * 48) / 537.6;
+    public double leftFrontMotorPos, leftFrontDistanceTraveled = 0, deltaLeftFrontMotorPos = 0, previousLeftFrontMotorPos;
+    public double rightFrontMotorPos, rightFrontDistanceTraveled = 0, deltaRightFrontMotorPos = 0, previousRightFrontMotorPos;
+    public double leftBackMotorPos, leftBackDistanceTraveled = 0, deltaLeftBackMotorPos = 0, previousLeftBackMotorPos;
+    public double rightBackMotorPos, rightBackDistanceTraveled = 0, deltaRightBackMotorPos = 0, previousRightBackMotorPos;
 
     public void init()
     {
@@ -47,8 +52,13 @@ public class DriveTrain extends OpMode
     public void loop()
     {
         correction = checkDirection();
-        vertical = gamepad1.left_stick_y;
-        turning = gamepad1.right_stick_x;
+        if (x == 0) {
+            horizontal = 0.00000000000001;
+        } else {
+            horizontal = x;
+        }
+        vertical = y;
+        turning = rotation;
 
         // Calculate distance between the current joystick position and the idle position
         joystickDistanceFromOrigin = Math.sqrt(Math.pow(horizontal, 2) + Math.pow(vertical, 2));
@@ -59,6 +69,13 @@ public class DriveTrain extends OpMode
         checkIfTurning();
 
         getAngle();
+    }
+
+    void setControlVariables(double xController, double yController, double rotationController)
+    {
+        x = xController;
+        y = yController;
+        rotation = rotationController;
     }
 
     void turn()
@@ -125,11 +142,6 @@ public class DriveTrain extends OpMode
             angle = (Math.atan(-vertical / horizontal) + Math.PI - Math.PI / 4);
             angle = angle - ((lastAngles.firstAngle) / 57.29577951);
         }
-        if (gamepad1.left_stick_x == 0) {
-            horizontal = 0.00000000000001;
-        } else {
-            horizontal = gamepad1.left_stick_x;
-        }
     }
 
     public void checkIfTurning() {
@@ -150,5 +162,36 @@ public class DriveTrain extends OpMode
             pwr = 0.8 * (joystickDistanceFromOrigin * Math.cos(angle));
             pwr2 = 0.8 * (joystickDistanceFromOrigin * Math.sin(angle));
         }
+    }
+
+    public void getDistanceTraveled()
+    {
+        leftFrontMotorPos = leftFrontMotor.getCurrentPosition();
+        deltaLeftFrontMotorPos = distancePerTick * (leftFrontMotorPos - previousLeftFrontMotorPos);
+        leftFrontDistanceTraveled += deltaLeftFrontMotorPos;
+        previousLeftFrontMotorPos = leftFrontMotorPos;
+
+        rightFrontMotorPos = rightFrontMotor.getCurrentPosition();
+        deltaRightFrontMotorPos = distancePerTick * (rightFrontMotorPos - previousRightFrontMotorPos);
+        rightFrontDistanceTraveled += deltaRightFrontMotorPos;
+        previousRightFrontMotorPos = rightFrontMotorPos;
+
+        leftBackMotorPos = leftBackMotor.getCurrentPosition();
+        deltaLeftBackMotorPos = distancePerTick * (leftBackMotorPos - previousLeftBackMotorPos);
+        leftBackDistanceTraveled += deltaLeftBackMotorPos;
+        previousLeftBackMotorPos = leftBackMotorPos;
+
+        rightBackMotorPos = rightBackMotor.getCurrentPosition();
+        deltaRightBackMotorPos = distancePerTick * (rightBackMotorPos - previousRightBackMotorPos);
+        rightBackDistanceTraveled += deltaRightBackMotorPos;
+        previousRightBackMotorPos = rightBackMotorPos;
+    }
+
+    public void stop()
+    {
+        leftFrontMotor.setPower(0);
+        leftBackMotor.setPower(0);
+        rightFrontMotor.setPower(0);
+        rightBackMotor.setPower(0);
     }
 }
