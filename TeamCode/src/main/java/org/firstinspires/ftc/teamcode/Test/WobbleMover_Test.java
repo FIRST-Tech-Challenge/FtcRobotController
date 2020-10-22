@@ -79,14 +79,12 @@ public class WobbleMover_Test extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             //========================================
-            // GAME PAD 2 Only for this test opMode
+            // GAME PAD 2
             //========================================
 
-            // gripper assignment to X and Y buttons on implement gamepad
-            // does not work 5/28. wires are in correct port too
             if (gamepad2.x) {
                 wobble.resetWobble();
-                sleep(500);
+                sleep(500); // pause for servos to move
                 telemetry.addData("Stowing Wobble Mover", "Complete ");
             }
 
