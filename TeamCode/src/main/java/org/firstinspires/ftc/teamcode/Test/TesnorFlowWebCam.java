@@ -38,6 +38,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
+
 
 import java.util.List;
 
@@ -57,6 +59,8 @@ public class TesnorFlowWebCam extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
+    private String Target = null;
+    WobbleTargetZone Square = WobbleTargetZone.RED_A; // Default
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -112,6 +116,7 @@ public class TesnorFlowWebCam extends LinearOpMode {
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
+        telemetry.addData("Target", Square);
         telemetry.update();
         waitForStart();
 
@@ -131,10 +136,29 @@ public class TesnorFlowWebCam extends LinearOpMode {
                                 recognition.getLeft(), recognition.getTop());
                         telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                                 recognition.getRight(), recognition.getBottom());
+                        //////
+                          Target = recognition.getLabel();
+                          telemetry.addData("Target", Target);
+                          if (Target == "Quad"){
+                              Square = WobbleTargetZone.RED_C;
+
+                          } else if (Target == "Single"){
+                              Square = WobbleTargetZone.RED_B;
+
+                          }
+                          telemetry.addData("Target", Square);
+                          telemetry.update();
                       }
-                      telemetry.update();
+
+
                     }
+                } else {
+                    Square = WobbleTargetZone.RED_A;
+                    telemetry.addData("Target", Square);
+                    telemetry.update();
                 }
+                // if nothing new is regognized code goes here
+
             }
         }
 

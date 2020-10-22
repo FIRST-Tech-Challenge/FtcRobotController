@@ -2,11 +2,14 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Drivetrain  {
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+public class Drivetrain_v3 {
         // Define hardware objects
         public DcMotor leftFront = null;
         public DcMotor rightFront = null;
@@ -23,19 +26,31 @@ public class Drivetrain  {
         private boolean inTeleOp;
         private ElapsedTime runtime = new ElapsedTime();
 
+
         // Contructor for Drivetrain
         // Passing boolean to automatically config encoders for auto or teleop.
-        public Drivetrain(boolean inTeleOp) {
+        public Drivetrain_v3(boolean inTeleOp) {
 
         }
 
         // initialize drivetrain components, assign names for driver station config, set directions
         // and encoders if needed.
-        public void init(HardwareMap hwMap) {
+        public void init(HardwareMap hwMap, Telemetry telemetry) {
 
             // initialize the imu first.
             // Note this in NOT IMU calibration.
             imu = hwMap.get(BNO055IMU.class, "imu");
+
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+            parameters.mode                = BNO055IMU.SensorMode.IMU;
+            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.loggingEnabled      = false;
+
+            // Initialize here calibrate in Opmode
+            imu.initialize(parameters);
+
 
             // initialize al the drive motors
             leftFront = hwMap.get(DcMotor.class, "Left_front");
@@ -70,6 +85,7 @@ public class Drivetrain  {
         }
 
 
-    }
+
+}
 
 
