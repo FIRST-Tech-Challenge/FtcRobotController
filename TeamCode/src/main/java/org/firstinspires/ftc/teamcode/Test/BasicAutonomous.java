@@ -25,27 +25,27 @@ import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
 public class BasicAutonomous extends LinearOpMode {
     /* Declare OpMode members. */
     public Drivetrain_v3 drivetrain  = new Drivetrain_v3(true);   // Use subsystem Drivetrain
-    private Orientation         lastAngles  = new Orientation();
-    private ElapsedTime         PIDtimer    = new ElapsedTime(); // PID loop timer
-    private ElapsedTime         runtime     = new ElapsedTime(); // timeout timer
+    public Orientation         lastAngles  = new Orientation();
+    public ElapsedTime         PIDtimer    = new ElapsedTime(); // PID loop timer
+    public ElapsedTime         runtime     = new ElapsedTime(); // timeout timer
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.6;     // Nominal speed for better accuracy.
-    static final double     TURN_SPEED              = 0.50;    // 0.4 for berber carpet. Check on mat too
+    public static final double     DRIVE_SPEED             = 0.6;     // Nominal speed for better accuracy.
+    public static final double     TURN_SPEED              = 0.50;    // 0.4 for berber carpet. Check on mat too
 
-    static final double     HEADING_THRESHOLD       = 2;      // As tight as we can make it with an integer gyro
-    static final double     Kp_TURN                 = 0.0275;   //0.025 to 0.0275 on mat seems to work
-    static final double     Ki_TURN                 = 0.003;   //0.0025 to 0.004 on a mat works. Battery voltage matters
-    static final double     Kd_TURN                 = 0.0;   //leave as 0
-    static final double     Kp_DRIVE                = 0.05;   //0.05 Larger is more responsive, but also less stable
-    static final double     Ki_DRIVE                = 0.005;   // 0.005 Larger is more responsive, but also less stable
-    static final double     Kd_DRIVE                = 0.0;   // Leave as 0 for now
+    public static final double     HEADING_THRESHOLD       = 2;      // As tight as we can make it with an integer gyro
+    public static final double     Kp_TURN                 = 0.0275;   //0.025 to 0.0275 on mat seems to work
+    public static final double     Ki_TURN                 = 0.003;   //0.0025 to 0.004 on a mat works. Battery voltage matters
+    public static final double     Kd_TURN                 = 0.0;   //leave as 0
+    public static final double     Kp_DRIVE                = 0.05;   //0.05 Larger is more responsive, but also less stable
+    public static final double     Ki_DRIVE                = 0.005;   // 0.005 Larger is more responsive, but also less stable
+    public static final double     Kd_DRIVE                = 0.0;   // Leave as 0 for now
 
 
     private double                  globalAngle; // not used currently
-    private double                  lasterror;
-    private double                  totalError;
+    public double                  lasterror;
+    public  double                  totalError;
 
     @Override
     public void runOpMode() {

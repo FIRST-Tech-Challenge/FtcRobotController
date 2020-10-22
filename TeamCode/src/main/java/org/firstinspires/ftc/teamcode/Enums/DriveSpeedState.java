@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Enums;
 
-enum DriveSpeedState {
+public enum DriveSpeedState {
     DRIVE_SLOW,
     DRIVE_FAST,
 
