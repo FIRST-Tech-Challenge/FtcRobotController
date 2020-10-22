@@ -94,7 +94,7 @@ public class Stacker_Test extends LinearOpMode {
                 telemetry.addData("Stacker Reset", "Complete ");
             }
             if (gamepad2.b) {
-                stacker.flipperCalibrateinCenter(); 
+                stacker.flipperCalibrateinCenter();
                 telemetry.addData("Flipper in Centers", "Complete ");
             }
 
