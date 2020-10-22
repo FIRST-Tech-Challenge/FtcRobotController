@@ -92,6 +92,7 @@ public class DriverControl extends LinearOpMode {
             // Call necessary methods
             calcPower();
             checkIfTurning();
+
             getAngle();
 
             if (isTurning) {
