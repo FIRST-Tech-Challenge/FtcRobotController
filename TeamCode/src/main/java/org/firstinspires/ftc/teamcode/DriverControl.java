@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.controllers;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,7 +15,12 @@ public class DriverControl extends LinearOpMode {
     DcMotor leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
-    double globalAngle, correction, horizontal, vertical, dist, angle, pwr, pwr2, target;
+    double globalAngle, correction, horizontal, vertical, joystickDistanceFromOrigin, angle, pwr, pwr2, target, leftFrontMotorPos;
+    // Circumference of the wheels divided by ticks per revolution
+    double distancePerTick = (2 * Math.PI * 48) / 537.6;
+    double previousLeftFrontMotorPos = 0;
+    double deltaLeftFrontMotorPos = 0;
+    double leftFrontDistanceTraveled = 0;
     boolean isTurning;
 
     @Override
@@ -72,17 +77,16 @@ public class DriverControl extends LinearOpMode {
             telemetry.addData("4 angle", angle);
             telemetry.addData("5 x", horizontal);
             telemetry.addData("6 y", vertical);
+            telemetry.addData("7 ticks per cycle", leftFrontMotorPos);
+            telemetry.addData("8 distance traveled per cycle", deltaLeftFrontMotorPos);
+            telemetry.addData("9 total distance traveled", leftFrontDistanceTraveled);
             telemetry.update();
-
-            // We record the sensor values because we will test them in more than
-            // one place with time passing between those places. See the lesson on
-            // Timing Considerations to know why.
 
             vertical = gamepad1.left_stick_y;
             double turning = gamepad1.right_stick_x;
 
             // Calculate distance between the current joystick position and the idle position
-            dist = Math.sqrt(Math.pow(horizontal, 2) + Math.pow(vertical, 2));
+            joystickDistanceFromOrigin = Math.sqrt(Math.pow(horizontal, 2) + Math.pow(vertical, 2));
             //position = Math.abs((Math.sqrt(2)) * (leftFrontMotor.getCurrentPosition()) / (537.6) * 96 * Math.PI);
 
             // Call necessary methods
@@ -107,11 +111,16 @@ public class DriverControl extends LinearOpMode {
 
             // Give calculated power to the motors
             if (!isTurning) {
-                leftFrontMotor.setPower(-0.75 * pwr+correction);
-                rightFrontMotor.setPower(0.75 * pwr2+correction);
-                leftBackMotor.setPower(-0.75 * pwr2+correction);
-                rightBackMotor.setPower(0.75 * pwr+correction);
+                leftFrontMotor.setPower(-0.75 * pwr + correction);
+                rightFrontMotor.setPower(0.75 * pwr2 + correction);
+                leftBackMotor.setPower(-0.75 * pwr2 + correction);
+                rightBackMotor.setPower(0.75 * pwr + correction);
             }
+
+            leftFrontMotorPos = leftFrontMotor.getCurrentPosition();
+            deltaLeftFrontMotorPos = distancePerTick * (leftFrontMotorPos - previousLeftFrontMotorPos);
+            leftFrontDistanceTraveled += deltaLeftFrontMotorPos;
+            previousLeftFrontMotorPos = leftFrontMotorPos;
         }
 
         // turn the motors off.
@@ -157,6 +166,8 @@ public class DriverControl extends LinearOpMode {
     public void getAngle() {
         if (horizontal > 0) {
             angle = (Math.atan(-vertical / horizontal) - Math.PI / 4);
+
+            // FOR FUTURE REFERENCE this ridiculous number is literally just degrees per radian.
             angle = angle - ((lastAngles.firstAngle) / 57.29577951);
         }
         if (horizontal < 0) {
@@ -169,26 +180,24 @@ public class DriverControl extends LinearOpMode {
             horizontal = gamepad1.left_stick_x;
         }
     }
-    public void checkIfTurning()
-    {
-        if (gamepad1.right_stick_x != 0)
-        {
+
+    public void checkIfTurning() {
+        if (gamepad1.right_stick_x != 0) {
             isTurning = true;
         }
-        if ((gamepad1.left_stick_y != 0) || (gamepad1.left_stick_x != 0))
-        {
+        if ((gamepad1.left_stick_y != 0) || (gamepad1.left_stick_x != 0)) {
             isTurning = false;
         }
     }
+
     public void calcPower() {
         // Calculate motor power
-        if (angle == 0)
-        {
-            pwr2 = 0.8 * (dist * Math.sin(angle));
+        if (angle == 0) {
+            pwr2 = 0.8 * (joystickDistanceFromOrigin * Math.sin(angle));
             pwr = pwr2;
         } else {
-            pwr = 0.8 * (dist * Math.cos(angle));
-            pwr2 = 0.8 * (dist * Math.sin(angle));
+            pwr = 0.8 * (joystickDistanceFromOrigin * Math.cos(angle));
+            pwr2 = 0.8 * (joystickDistanceFromOrigin * Math.sin(angle));
         }
     }
 }
