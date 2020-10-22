@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import static java.lang.Thread.sleep;
+
 public class Wobblegoal {
     //Define Hardware Objects
     public DcMotor WobbleLift=null;
@@ -38,17 +40,53 @@ private static final double ARMCONTRACT=0.8;
         WobbleLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         WobbleLift.setPower(LIFTSPEED);
     }
-    public void GripperOpen() {
+    public void GripperOpen()  {
         WobbleGrip.setPosition(GRIPPEROPEN);
+
+
     }
     public void GripperClose() {
+
         WobbleGrip.setPosition(GRIPPERCLOSE);
     }
     public void ArmExtend() {
+
         WobbleExtend.setPosition(ARMEXTEND);
     }
     public void ArmContract() {
+
         WobbleExtend.setPosition(ARMCONTRACT);
     }
+
+    ///// Multi Function methods to use with gamepad
+
+
+
+    public void resetWobble() {
+        GripperClose();
+        ArmContract();
+        LiftLower();
+
     }
+    public void readyToGrabGoal() {
+        LiftRise();
+        ArmExtend();
+        GripperOpen();
+        LiftLower();
+
+
+    }
+
+    public void grabAndLift() {
+        GripperClose();
+        LiftRise();
+
+    }
+
+    public void lowerAndRelease() {
+        LiftLower();
+        GripperOpen();
+
+    }
+}
 
