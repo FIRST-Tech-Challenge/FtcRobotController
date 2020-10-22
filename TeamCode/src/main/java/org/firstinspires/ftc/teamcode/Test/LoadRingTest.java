@@ -1,29 +1,27 @@
 package org.firstinspires.ftc.teamcode.Test;
-
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Elevator;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad2;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-public class LoadRingTest {
 
 @TeleOp(name="LoadRing Test ", group="Teleop")
+
 //@Disabled
+public class LoadRingTest extends OpMode {
+
+    // Declare Opmode members by instantiating subsystems
+
+    Elevator elevator = new Elevator();
+    Intake intake = new Intake();
 
 
-    // Create instance of the lift subsystem. This opmode tests the lift motor and the limit switch
-
-    //private ElapsedTime     runtime         =       new ElapsedTime();
-Elevator elevator = new Elevator();
-Intake intake = new Intake();
     @Override
     public void init() {
-        // Call init methods for all implements needed in this opmode. Usually it will be all
+
+    // Call init methods for all implements needed in this opmode. Usually it will be all
         elevator.init(hardwareMap);
+        intake.init(hardwareMap);
         telemetry.addData("Hardware is Initialized ", "Complete ");
 
     }
