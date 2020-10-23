@@ -15,48 +15,48 @@ public class teleConfigRohit implements teleOpInterface {
     static double outtakePower = 1.0;
     static double conveyorPower = 1.0;
 
-    public void a() {
-        conveyorPower-=0.1;
+    public void a(boolean pressed) {
+        if (pressed) {conveyorPower-=0.1;}
     }
 
-    public void b() {
-
-    }
-
-    public void x() {
-        conveyorPower+=0.1;
-    }
-
-    public void y() {
+    public void b(boolean pressed) {
 
     }
 
-    public void dd() {
+    public void x(boolean pressed) {
+        if (pressed) {conveyorPower+=0.1;}
+    }
+
+    public void y(boolean pressed) {
 
     }
 
-    public void dp() {
+    public void dd(boolean pressed) {
 
     }
 
-    public void dl() {
+    public void dp(boolean pressed) {
 
     }
 
-    public void dr() {
+    public void dl(boolean pressed) {
 
     }
 
-    public void rb() {
-        drivetrain.outtakeAll(conveyorPower, outtakePower);
+    public void dr(boolean pressed) {
+
+    }
+
+    public void rb(boolean pressed) {
+        if (pressed) {drivetrain.outtakeAll(conveyorPower, outtakePower);}
     }
 
     public void rt(float pressure) {
         if (pressure>0) { drivetrain.outtakeAll(-conveyorPower, -outtakePower); }
     }
 
-    public void lb() {
-        robot.intake.setPower(inttakePower);
+    public void lb(boolean pressed) {
+        if (pressed) {robot.intake.setPower(inttakePower);}
     }
 
     public void lt(float pressure) {
@@ -86,12 +86,12 @@ public class teleConfigRohit implements teleOpInterface {
         wait = false;
     }
 
-    public void rjoyb() {
-        tiltmode = (tiltmode==mode.POSITION) ? mode.INCREMENT : mode.POSITION;
+    public void rjoyb(boolean pressed) {
+        if (pressed) {tiltmode = (tiltmode==mode.POSITION) ? mode.INCREMENT : mode.POSITION;}
     }
 
-    public void ljoyb() {
-        inttakePower = 1.0;
+    public void ljoyb(boolean pressed) {
+        if (pressed) {inttakePower = 1.0;}
     }
 
     public void custom1() {
@@ -104,6 +104,11 @@ public class teleConfigRohit implements teleOpInterface {
         telemetryDM.put("Conveyor Power: ", String.valueOf(conveyorPower));
         telemetryDM.put("Tilt Angle: ", String.valueOf(robot.leftTilt.getPosition()));
         telemetryDM.put("Tilt mode: ", String.valueOf(tiltmode));
+    }
+
+    @Override
+    public void loop() {
+
     }
 
     public String getName() {

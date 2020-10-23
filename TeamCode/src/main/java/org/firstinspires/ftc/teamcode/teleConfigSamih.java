@@ -10,47 +10,51 @@ public class teleConfigSamih implements teleOpInterface {
 
     }
 
+    public void loop() {
+
+    }
+
     public String getName() {
         return "teleConfigSamih";
     }
 
-    public void a() {
+    public void a(boolean pressed) {
         robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 1);
     }
 
-    public void b() {
+    public void b(boolean pressed) {
         drivetrain.outtakeAll((robot.conveyor.getPower() >= 0.1) ? 0 : 1 * outlimiter, (robot.outtake.getPower() >= 0.1) ? 0 : 1 * outlimiter);
         outlimiter = 1;
     }
 
-    public void x() {
+    public void x(boolean pressed) {
         robot.intake.setPower(0);
         drivetrain.outtakeAll(0,0);
     }
 
-    public void y() {
+    public void y(boolean pressed) {
         angle = (angle >= 1) ? 0 : angle + 0.5;
         drivetrain.tilt(angle);
 
     }
 
-    public void dd() {
+    public void dd(boolean pressed) {
 
     }
 
-    public void dp() {
+    public void dp(boolean pressed) {
 
     }
 
-    public void dl() {
+    public void dl(boolean pressed) {
 
     }
 
-    public void dr() {
+    public void dr(boolean pressed) {
 
     }
 
-    public void rb() {
+    public void rb(boolean pressed) {
         outlimiter = 0.5;
     }
 
@@ -58,7 +62,7 @@ public class teleConfigSamih implements teleOpInterface {
 
     }
 
-    public void lb() {
+    public void lb(boolean pressed) {
         robot.intake.setPower(-0.7);
     }
 
@@ -74,11 +78,11 @@ public class teleConfigSamih implements teleOpInterface {
 
     }
 
-    public void rjoyb() {
+    public void rjoyb(boolean pressed) {
 
     }
 
-    public void ljoyb() {
+    public void ljoyb(boolean pressed) {
 
     }
 

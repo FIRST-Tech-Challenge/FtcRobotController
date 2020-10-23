@@ -84,7 +84,11 @@ public class UltimateGoalTeleop extends OpMode{
         telemetry.addData("Haddi", "Haddi");
         telemetry.update();
 
-        changeConfig();
+        try {
+            changeConfig();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -111,26 +115,26 @@ public class UltimateGoalTeleop extends OpMode{
         //Mecanum Drivetrain function to set powers
         vroom.loop();
 
-        if (gamepad2.a){t.a();}
-        if (gamepad2.b){t.b();}
-        if (gamepad2.x){t.x();}
-        if (gamepad2.y){t.y();}
+        t.a(gamepad2.a);
+        t.b(gamepad2.b);
+        t.x(gamepad2.x);
+        t.y(gamepad2.y);
 
-        if (gamepad2.dpad_down){t.dd();}
-        if (gamepad2.dpad_right){t.dr();}
-        if (gamepad2.dpad_left){t.dl();}
-        if (gamepad2.dpad_up){t.dp();}
+        t.dd(gamepad2.dpad_down);
+        t.dp(gamepad2.dpad_up);
+        t.dr(gamepad2.dpad_right);
+        t.dl(gamepad2.dpad_left);
 
-        if (gamepad2.left_bumper){t.lb();}
-        if (gamepad2.right_bumper){t.rb();}
+        t.rb(gamepad2.right_bumper);
+        t.lb(gamepad2.left_bumper);
 
         t.lt(gamepad2.left_trigger);
         t.rt(gamepad2.right_trigger);
 
         t.rjoy(gamepad2.right_stick_x, gamepad2.right_stick_y);
         t.ljoy(gamepad2.left_stick_x, gamepad2.left_stick_y);
-        if (gamepad2.right_stick_button){t.rjoyb();}
-        if (gamepad2.left_stick_button){t.ljoyb();}
+        t.rjoyb(gamepad2.right_stick_button);
+        t.ljoyb(gamepad2.left_stick_button);
 
         for (String caption : t.telemetryDM.keySet()){
             telemetry.addData(caption, t.telemetryDM.get(caption));
@@ -139,7 +143,15 @@ public class UltimateGoalTeleop extends OpMode{
         telemetry.update();
         t.updateTelemetryDM();
 
-        if (gamepad2.start){ changeConfig(); }
+        t.loop();
+
+        if (gamepad2.start){
+            try {
+                changeConfig();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
@@ -150,8 +162,9 @@ public class UltimateGoalTeleop extends OpMode{
     public void stop() {
     }
 
-    public void changeConfig() {
+    public void changeConfig() throws InterruptedException {
         while (!gamepad2.x) {
+            Thread.sleep(100);
             if (gamepad2.dpad_down && index==(configs.size()-1)){index++;}
             if (gamepad2.dpad_up && index==0){index--;}
             for (Class<? extends teleOpInterface> t : configs){
