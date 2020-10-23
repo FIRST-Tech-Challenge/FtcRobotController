@@ -21,6 +21,9 @@ public class Cycle {
         poses.add(p2);
         poses.add(p3);
     }
+    public double getPos(int index){
+        return poses.get(index);
+    }
     public void addPos(double pos){
         poses.add(pos);
     }

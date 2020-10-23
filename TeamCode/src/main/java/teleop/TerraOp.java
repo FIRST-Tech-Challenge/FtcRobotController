@@ -12,14 +12,11 @@ public class TerraOp extends OpMode {
 
     TerraBot bot = new TerraBot();
 
-    ServoController turnControl = new ServoController(bot.turnStart, 0.0, 0.7);
 //    ServoController grabControl = new ServoController(bot.grabStart, 0.45, 0.7);
 //    ServoController liftControl = new ServoController(bot.liftStart, bot.liftStart, 0.9);
 //    ServoController shootControl = new ServoController(bot.shootStart, bot.shootStart, 0.9);
 
-    Cycle grabControl = new Cycle(bot.grabStart, 0.45);
-    Cycle liftControl = new Cycle(bot.liftStart, 0.33, 1);
-    Cycle shootControl = new Cycle(bot.shootStart, 0.2, 0.3);
+
 
 
     @Override
@@ -46,37 +43,48 @@ public class TerraOp extends OpMode {
         }else{
             bot.intake(0);
         }
+        if(!bot.autoModulesRunning()){
 
-        if(gamepad2.right_stick_y < 0){
-            bot.outtaking = true;
-            bot.outtake(bot.outtakeSpeed);
-        }else if(gamepad2.right_stick_y > 0){
-            bot.outtaking = false;
-            bot.outtake(-bot.outtakeSpeed);
-        }else if(bot.outtaking){
-            bot.outtake(bot.outtakeSpeed);
-        }else{
-            bot.outtake(0);
+            if(gamepad2.right_stick_y < 0){
+                bot.outtaking = true;
+                bot.outtake(bot.outtakeSpeed);
+            }else if(gamepad2.right_stick_y > 0){
+                bot.outtaking = false;
+                bot.outtake(-bot.outtakeSpeed);
+            }else if(bot.outtaking){
+                bot.outtake(bot.outtakeSpeed);
+            }else{
+                bot.outtake(0);
+            }
+
+            bot.lift(bot.liftControl.update(gamepad2.right_trigger, gamepad2.left_trigger));
+
+            double pr = bot.shootControlR.update(gamepad2.left_bumper, gamepad2.right_bumper);
+            double pl = bot.shootControlL.update(gamepad2.left_bumper, gamepad2.right_bumper);
+
+            bot.shoot(pr,pl);
+            bot.turnArm(bot.turnControl.update(gamepad2.dpad_down, gamepad2.dpad_up, 0.5));
+            bot.grab(bot.grabControl.update(gamepad2.dpad_left, gamepad2.dpad_right));
+
+            bot.moveArm(gamepad2.left_stick_y);
+
+            if(gamepad2.y){
+                bot.shooter.start();
+            }
+
+            if(gamepad2.x){
+                bot.wobbleGoal.start();
+            }
         }
 
 
+
+
+
         //bot.lift(liftControl.update(gamepad2.right_trigger, gamepad2.left_trigger, 0.5));
-
-        bot.lift(liftControl.update(gamepad2.right_trigger, gamepad2.left_trigger));
-
-        bot.shoot(shootControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
-
-
-
         //bot.shoot(shootControl.update(gamepad2.right_bumper, gamepad2.left_bumper, 0.4));
+        //bot.grab(grabControl.update(gamepad2.dpad_right, gamepad2.dpad_left, 0.5));
 
-        bot.turnArm(turnControl.update(gamepad2.dpad_down, gamepad2.dpad_up, 0.5));
-
-    //    bot.grab(grabControl.update(gamepad2.dpad_right, gamepad2.dpad_left, 0.5));
-
-        bot.grab(grabControl.update(gamepad2.dpad_left, gamepad2.dpad_right));
-
-        bot.moveArm(gamepad2.left_stick_y);
 
         double forward = -gamepad1.right_stick_y;
         double strafe = gamepad1.right_stick_x;
@@ -85,8 +93,11 @@ public class TerraOp extends OpMode {
         bot.move(forward, strafe, turn);
 
 
-        telemetry.addData("pos", bot.ssr.getPosition());
+        telemetry.addData("time", bot.st.getPosition());
         telemetry.update();
+
+        bot.update();
+
 
 
     }

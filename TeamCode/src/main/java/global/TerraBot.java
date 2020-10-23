@@ -7,6 +7,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.concurrent.ForkJoinPool;
 
+import telefunctions.AutoModule;
+import telefunctions.Cycle;
+import telefunctions.ServoController;
+
 
 public class TerraBot {
 
@@ -34,10 +38,22 @@ public class TerraBot {
 
     public double turnStart = 0.3;
     public double grabStart = 0.7;
-    public double liftStart = 0.0;
-    public double shootStart = 0.0;
+    public double liftStart = 0.12;
+    public double liftSecond = 0.27;
+    public double shootStartR = 0.05;
+    public double shootStartL = 0.1;
     public double intakeSpeed = 1;
-    public double outtakeSpeed = 0.35;
+    public double outtakeSpeed = 0.4;
+
+    public Cycle grabControl = new Cycle(grabStart, 0.45);
+    public Cycle liftControl = new Cycle(liftStart, liftSecond, 1);
+    public Cycle shootControlR = new Cycle(shootStartR, 0.24, 0.25);
+    public Cycle shootControlL = new Cycle(shootStartL, 0.15, 0.33);
+
+    public ServoController turnControl = new ServoController(turnStart, 0.0, 0.7);
+
+    public AutoModule shooter = new AutoModule();
+    public AutoModule wobbleGoal = new AutoModule();
 
 
 
@@ -73,8 +89,8 @@ public class TerraBot {
 
         slr.setPosition(liftStart);
         sll.setPosition(1-liftStart);
-        ssr.setPosition(shootStart);
-        ssl.setPosition(1-shootStart);
+        ssr.setPosition(shootStartR);
+        ssl.setPosition(1-shootStartL);
         st.setPosition(turnStart);
         sgr.setPosition(grabStart);
         sgl.setPosition(1-grabStart);
@@ -115,6 +131,12 @@ public class TerraBot {
         outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        defineShooter();
+        defineWobbleGoal();
+
+
+
+
     }
 
     public void move(double f, double s, double t){
@@ -138,13 +160,13 @@ public class TerraBot {
     }
 
     public void lift(double pos){
-        slr.setPosition(pos+0.05);
+        slr.setPosition(pos+0.07);
         sll.setPosition(pos);
     }
 
-    public void shoot(double pos){
-        ssr.setPosition(pos);
-        ssl.setPosition(pos);
+    public void shoot(double pr, double pl){
+        ssr.setPosition(pr);
+        ssl.setPosition(pl);
     }
 
     public void turnArm(double pos){
@@ -154,6 +176,34 @@ public class TerraBot {
     public void grab(double pos){
         sgr.setPosition(pos);
         sgl.setPosition(pos);
+    }
+
+    public void defineShooter(){
+        shooter.addStage(outl, outtakeSpeed, 0.01);
+        shooter.addStage(outr, outtakeSpeed, 0.01);
+        shooter.addStage(slr, liftSecond+0.07, 0.01);
+        shooter.addStage(sll, liftSecond, 0.7);
+        for(int i = 0; i < 3;i++) {
+            shooter.addStage(ssr, shootControlR.getPos(1), 0.01);
+            shooter.addStage(ssl, shootControlL.getPos(1), 0.4);
+            shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
+            shooter.addStage(ssl, shootControlL.getPos(2), 0.4);
+        }
+    }
+    public void defineWobbleGoal(){
+        wobbleGoal.addStage(st, 0.7, 0.7);
+        wobbleGoal.addStage(sgl, grabControl.getPos(1), 0.01);
+        wobbleGoal.addStage(sgr, grabControl.getPos(1), 0.7);
+        wobbleGoal.addStage(st, 0.2, 0.5);
+    }
+
+    public void update(){
+        shooter.update();
+        wobbleGoal.update();
+    }
+
+    public boolean autoModulesRunning(){
+        return shooter.executing || wobbleGoal.executing;
     }
 
 
