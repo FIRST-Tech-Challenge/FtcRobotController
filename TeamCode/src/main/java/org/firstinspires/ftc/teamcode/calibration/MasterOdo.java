@@ -943,10 +943,14 @@ public class MasterOdo extends LinearOpMode {
                 telemetry.addData("B", "to clone");
                 telemetry.addData(" ", " ");
                 for (AutoRoute r : routes) {
+                    String routeVal = r.getRouteName();
+                    if (r.getLastRunTime() > 0){
+                        routeVal = String.format("%s (%d ms)", routeVal, r.getLastRunTime());
+                    }
                     if (r.isSelected()) {
-                        telemetry.addData(r.getRouteName(), "*");
+                        telemetry.addData(routeVal, "*");
                     } else {
-                        telemetry.addData(r.getRouteName(), " ");
+                        telemetry.addData(routeVal, " ");
                     }
                 }
             }
@@ -1131,6 +1135,14 @@ public class MasterOdo extends LinearOpMode {
         }
     }
 
+    private void saveRouteFile(AutoRoute route){
+        String name = route.getRouteName();
+        File configFile = getRouteFile(name);
+
+        String jsonPath = route.serialize();
+        ReadWriteFile.writeFile(configFile, jsonPath);
+    }
+
     private void saveCoordinate(){
         try {
             String name = newDot.getDotName();
@@ -1155,18 +1167,27 @@ public class MasterOdo extends LinearOpMode {
 
 
     private void runSelectedRoute(){
-        AutoRoute selected = null;
-        for(AutoRoute r : routes){
-            if (r.isSelected()){
-                selected = r;
-                break;
+        try {
+            AutoRoute selected = null;
+            for (AutoRoute r : routes) {
+                if (r.isSelected()) {
+                    selected = r;
+                    break;
+                }
+            }
+            if (selected != null) {
+                locator.init(selected.getStart(), desiredHead);
+                long startTime = System.currentTimeMillis();
+                for (AutoStep s : selected.getSteps()) {
+                    this.goTo(s, false);
+                }
+                long endTime = System.currentTimeMillis();
+                selected.setLastRunTime(endTime - startTime);
+                saveRouteFile(selected);
             }
         }
-        if (selected != null){
-            locator.init(selected.getStart(), desiredHead);
-            for(AutoStep s : selected.getSteps()){
-                this.goTo(s, false);
-            }
+        catch (Exception ex){
+            telemetry.addData("Error", "Run selected route. %s", ex.getMessage());
         }
     }
 
