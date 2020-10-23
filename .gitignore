@@ -91,3 +91,6 @@ Thumbs.db
 
 # OSX files
 .DS_Store
+
+# Project Specific
+TeamCode/src/main/java/org/firstinspires/ftc/teamcode/robot_common/Robot4100Common.java
