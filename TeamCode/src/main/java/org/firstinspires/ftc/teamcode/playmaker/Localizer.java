@@ -26,8 +26,9 @@ public class Localizer {
     private OpenGLMatrix cameraMatrix;
     private List<VuforiaTrackable> vuforiaTrackables = new ArrayList<VuforiaTrackable>();
     private VuforiaTransform lastVuforiaTransform;
+    private Orientation lastRawIMUOrientation;
     private Orientation lastIMUOrientation;
-    private Orientation imuToWorld;
+    private Double imuToWorldRotation;
 
     // Vuforia Constants
     private static final float mmPerInch        = 25.4f;
@@ -64,19 +65,34 @@ public class Localizer {
      * @return
      */
 
-    public Orientation estimateOrientation() {
+    enum OrientationSource {
+        VUFORIA,
+        IMU,
+        OTHER
+    }
+
+    public class EstimatedOrientation {
+        public OrientationSource source;
+        public Orientation orientation;
+        public EstimatedOrientation(OrientationSource source, Orientation orientation) {
+            this.source = source;
+            this.orientation = orientation;
+        }
+    }
+
+    public EstimatedOrientation estimateOrientation() {
         if (lastVuforiaTransform != null) {
             Orientation rotation = Orientation.getOrientation(lastVuforiaTransform.transform, EXTRINSIC, XYZ, DEGREES);
-            return rotation;
+            return new EstimatedOrientation(OrientationSource.VUFORIA, rotation);
         } else if (lastIMUOrientation != null) {
-            return lastIMUOrientation;
+            return new EstimatedOrientation(OrientationSource.IMU, lastIMUOrientation);
         }
         return null;
     } //meeep
 
     public void telemetry(Telemetry telemetry) {
         Position position = estimatePosition();
-        Orientation orientation = estimateOrientation();
+        EstimatedOrientation orientation = estimateOrientation();
         if (position != null) {
             telemetry.addData("Loc. Position", String.format("%.1f, %.1f, %.1f", position.x, position.y, position.z));
         } else {
@@ -84,10 +100,20 @@ public class Localizer {
         }
 
         if (orientation != null) {
-            telemetry.addData("Loc. Orientation", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", orientation.firstAngle, orientation.secondAngle, orientation.thirdAngle);
+            telemetry.addData("Loc. Orientation Source", orientation.source.toString());
+            Orientation rotation = orientation.orientation;
+            telemetry.addData("Loc. Orientation", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
         } else {
             telemetry.addData("Loc. Orientation", "unknown");
         }
+
+        if (lastRawIMUOrientation != null) {
+            Orientation rotation = lastRawIMUOrientation;
+            telemetry.addData("Raw IMU. Orientation", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+        } else {
+            telemetry.addData("Raw IMU. Orientation", "unknown");
+        }
+
     }
 
 
@@ -181,14 +207,15 @@ public class Localizer {
 
     public void updateLocationWithVuforia(RobotHardware hardware) {
         // Clear the currently saved vuforia transform
+        lastVuforiaTransform = null;
 
         for (VuforiaTrackable trackable : vuforiaTrackables) {
             VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener) trackable.getListener();
             if (listener.isVisible()) {
                 VectorF translation = listener.getVuforiaCameraFromTarget().getTranslation();
-                hardware.telemetry.addData("Localizer Visible Target:", trackable.getName());
-                hardware.telemetry.addData("Localizer Visible Target Rel Camera", String.format("%.1f, %.1f, %.1f", translation.get(0), translation.get(1), translation.get(2)));
-                OpenGLMatrix robotTransform = listener.getUpdatedRobotLocation();
+                //hardware.telemetry.addData("Localizer Visible Target:", trackable.getName());
+                //hardware.telemetry.addData("Localizer Visible Target Rel Camera", String.format("%.1f, %.1f, %.1f", translation.get(0), translation.get(1), translation.get(2)));
+                OpenGLMatrix robotTransform = listener.getRobotLocation();
                 if (robotTransform != null) {
                     lastVuforiaTransform = new VuforiaTransform(robotTransform);
                 }
@@ -202,15 +229,28 @@ public class Localizer {
      * @return Whether calibration was successful
      */
 
-    public boolean attemptIMUToWorldCalibration() {
+    public boolean attemptIMUToWorldCalibration(BNO055IMU imu) {
+        if (lastVuforiaTransform != null && imu.isGyroCalibrated()) {
+            Orientation vuforiaRotation = Orientation.getOrientation(lastVuforiaTransform.transform, EXTRINSIC, XYZ, DEGREES);
+            Orientation imuRotation = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES);
+            imuToWorldRotation = Localizer.angularDifference(vuforiaRotation.thirdAngle, imuRotation.thirdAngle);
+            return true;
+        }
         return false;
+    }
+
+    public Double getImuToWorldRotation() {
+        return this.imuToWorldRotation;
     }
 
     public void updateIMUOrientation(BNO055IMU imu) {
         Orientation imuOrientation = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES);
-
-        // TODO: Apply IMU -> World transformation
-        this.lastIMUOrientation = imuOrientation;
+        this.lastRawIMUOrientation = imuOrientation;
+        if (this.imuToWorldRotation != null) {
+            double imuHeading = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES).thirdAngle;
+            double worldHeading = Localizer.headingWrapDegrees(imuHeading + this.imuToWorldRotation);
+            this.lastIMUOrientation = new Orientation(EXTRINSIC, XYZ, DEGREES, imuOrientation.firstAngle, imuOrientation.secondAngle, (float) worldHeading, System.nanoTime());
+        }
     }
 
 
@@ -231,8 +271,10 @@ public class Localizer {
      * @param b Position 2
      * @return XY Distance
      */
-    public static double distance(Position a, Position b) {
-        return Math.hypot(b.x - a.x, b.y - a.y);
+    public static double distance(Position a, Position b, DistanceUnit unit) {
+        Position unit_a = a.toUnit(unit);
+        Position unit_b = b.toUnit(unit);
+        return Math.hypot(unit_b.x - unit_a.x, unit_b.y - unit_a.y);
     }
 
     /**
@@ -254,7 +296,9 @@ public class Localizer {
     }
 
     public static double atan2(Position a, Position b) {
-        return Math.atan2(b.y-a.y,b.x-a.x);
+        Position unit_a = a.toUnit(DistanceUnit.CM);
+        Position unit_b = b.toUnit(DistanceUnit.CM);
+        return Math.toDegrees(Math.atan2((unit_b.x-unit_a.x),-(unit_b.y-unit_a.y)));
     }
 
 }

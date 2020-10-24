@@ -29,7 +29,7 @@ public class LocalizerTelemetry extends MovementHardware {
         this.localize();
 
         Position position = localizer.estimatePosition();
-        Orientation orientation = localizer.estimateOrientation();
+        Orientation orientation = localizer.estimateOrientation().orientation;
         if (position != null) {
             telemetry.addData("Localizer Position", String.format("%.1f, %.1f, %.1f", position.x, position.y, position.z));
             telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", orientation.firstAngle, orientation.secondAngle, orientation.thirdAngle);
