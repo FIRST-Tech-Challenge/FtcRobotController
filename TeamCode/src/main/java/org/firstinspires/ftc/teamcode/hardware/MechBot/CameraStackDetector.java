@@ -187,14 +187,19 @@ public class CameraStackDetector extends Logger<CameraStackDetector> implements 
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
 
+
         logger.verbose("CameraStackDetector status: %s", tfod);
 
         /** Activate Tensor Flow Object Detection. */
         if (tfod != null) {
             logger.verbose("Start tfod Activation");
-            // tfod.activate();
+            tfod.activate();
             logger.verbose("tfod activate: ", tfod);
+
+            tfod.setZoom(2.0,(16.0/9.0));
         }
+
+
 
         // register CameraStoneDetector as a configurable component
         configuration.register(this);
