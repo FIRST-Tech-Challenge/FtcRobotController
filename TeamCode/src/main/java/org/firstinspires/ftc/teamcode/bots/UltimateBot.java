@@ -48,22 +48,12 @@ public class UltimateBot extends YellowBot
             intake.setDirection(DcMotor.Direction.FORWARD);
             intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             intake.setPower(0);
-        } catch (Exception ex) {
-            throw new Exception("Issues with intake. Check the controller config", ex);
-        }
-
-        try {
-            wobbleSwing = hwMap.get(DcMotor.class, "swing");
-            wobbleSwing.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            wobbleSwing.setDirection(DcMotor.Direction.FORWARD);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            wobbleSwing.setPower(0);
             shooter = hwMap.get(DcMotor.class, "shooter");
             shooter.setDirection(DcMotor.Direction.FORWARD);
             shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             shooter.setPower(0);
         } catch (Exception ex) {
-            throw new Exception("Issues with shooter. Check the controller config", ex);
+            throw new Exception("Issues with intake. Check the controller config", ex);
         }
 
 
@@ -110,7 +100,7 @@ public class UltimateBot extends YellowBot
     }
 
     @BotAction(displayName = "Move Shooter")
-    public void shooter() { shooter.setPower(0.7); }
+    public void shooter() { shooter.setPower(0.9); }
 
     @BotAction(displayName = "Stop Shooter")
     public void stopshooter() {

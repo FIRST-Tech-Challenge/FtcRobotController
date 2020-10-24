@@ -46,6 +46,7 @@ public class UltimateMode extends LinearOpMode{
     private ElapsedTime runtime = new ElapsedTime();
     boolean changedclaw = false;
     boolean changedintake = false;
+    boolean changedshooter = false;
     boolean buttonpressable = true;
     double delaytime = 300;
     double startdelay = 0;
@@ -127,6 +128,18 @@ public class UltimateMode extends LinearOpMode{
                } else {
                    robot.stopintake();
                }
+
+               // move shooter
+                if (gamepad1.b && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    changedshooter = !changedshooter;
+                }
+
+                if(changedshooter){
+                    robot.shooter();
+                } else {
+                    robot.stopshooter();
+                }
 
                 telemetry.addData("Heading", robot.getGyroHeading());
                 telemetry.addData("Horiz encoder", robot.getHorizontalOdometer());
