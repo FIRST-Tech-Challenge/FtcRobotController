@@ -46,6 +46,9 @@ public class UltimateMode extends LinearOpMode{
     private ElapsedTime runtime = new ElapsedTime();
     boolean changedclaw = false;
     boolean changedintake = false;
+    boolean buttonpressable = true;
+    double delaytime = 300;
+    double startdelay = 0;
 
     @Override
     public void runOpMode() {
@@ -77,6 +80,8 @@ public class UltimateMode extends LinearOpMode{
 
                 double strafe = gamepad1.right_stick_x;
 
+                buttonpressable = ((runtime.milliseconds() - startdelay) >= delaytime);
+
                 if (Math.abs(strafe) > 0) {
                     telemetry.addData("Strafing", "Left: %2f", strafe);
                     telemetry.update();
@@ -90,14 +95,15 @@ public class UltimateMode extends LinearOpMode{
                 }
 
                 // move claw
-                if(gamepad1.dpad_right){
+                if(gamepad1.dpad_right && buttonpressable){
+                    startdelay = runtime.milliseconds();
                     changedclaw = !changedclaw;
                 }
 
                 if(changedclaw){
-                    robot.openWobbleClaw();
-                } else {
                     robot.closeWobbleClaw();
+                } else {
+                    robot.openWobbleClaw();
                 }
 
                 if (gamepad1.dpad_up) {
@@ -111,8 +117,9 @@ public class UltimateMode extends LinearOpMode{
                 }
 
                 // move intake
-               if(gamepad1.a){
-                        changedintake = !changedintake;
+               if(gamepad1.a && buttonpressable){
+                   startdelay = runtime.milliseconds();
+                   changedintake = !changedintake;
                }
 
                if(changedintake){
