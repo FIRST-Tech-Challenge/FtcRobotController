@@ -52,6 +52,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public File simEventFile;
     public BottomWobbleGoalGrabber bottomWobbleGoalGrabber;
     public TopWobbleGoalGrabber topWobbleGoalGrabber;
+    public ComboGrabber comboGrabber;
     public Shooter shooter;
     public Hopper hopper;
     public Intake intake;
@@ -71,6 +72,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean useTfod = true;
     public boolean useBottomWobbleGoalGrabber = true;
     public boolean useTopWobbleGoalGrabber = true;
+    public boolean useComboGrabber = false;
     public boolean useHopper = false;
     public boolean useShooter = false;
     public boolean useIntake = false;
@@ -133,12 +135,17 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             set_simulation_mode(true);
         }
 
-        if(useBottomWobbleGoalGrabber && !simulation_mode){
+        if(useComboGrabber && !simulation_mode){
+            comboGrabber = new ComboGrabber(core);
+            comboGrabber.configure(configuration, (autoside!= ProgramType.TELE_OP));
+        }
+
+        if(!useComboGrabber && useBottomWobbleGoalGrabber && !simulation_mode){
             bottomWobbleGoalGrabber = new BottomWobbleGoalGrabber(core);
             bottomWobbleGoalGrabber.configure(configuration, (autoside!= ProgramType.TELE_OP));
         }
 
-        if(useTopWobbleGoalGrabber && !simulation_mode){
+        if(!useComboGrabber && useTopWobbleGoalGrabber && !simulation_mode){
             topWobbleGoalGrabber = new TopWobbleGoalGrabber(core);
             topWobbleGoalGrabber.configure(configuration, (autoside!= ProgramType.TELE_OP));
         }
@@ -213,6 +220,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 positionThread.start();
 
         }
+        if (comboGrabber!=null)
+            comboGrabber.setupTelemetry(telemetry);
         if (bottomWobbleGoalGrabber!=null)
             bottomWobbleGoalGrabber.setupTelemetry(telemetry);
         if (topWobbleGoalGrabber!=null)
@@ -304,6 +313,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 //                    chassis.freeStyle(1.0, 1.0, 1.0, 1.0, true);
 //                    sleep(10000);
 //                    chassis.stop();
+                } if (source.isPressed(Button.LEFT_BUMPER)) {
+                    if (comboGrabber!=null)
+                        comboGrabber.sliderUp();
                 } else {
                     intake.intakeInAuto();
                 }
@@ -313,11 +325,16 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         em.onButtonDown(new Events.Listener() {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
-                if (chassis!=null) {
-                    if (source.isPressed(Button.BACK)) {
-                        chassis.chassis_test();
-                    } else {
-                        intake.intakeOutAuto();
+                if (source.isPressed(Button.LEFT_BUMPER)) {
+                    if (comboGrabber!=null)
+                        comboGrabber.sliderDown();
+                } else {
+                    if (chassis != null) {
+                        if (source.isPressed(Button.BACK)) {
+                            chassis.chassis_test();
+                        } else {
+                            intake.intakeOutAuto();
+                        }
                     }
                 }
             }
@@ -354,10 +371,17 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (source.isPressed(Button.BACK)) {
                     if (chassis!=null) chassis.toggleNormalizeMode();
                 } else if(source.getTrigger(Events.Side.LEFT) > 0.3){
-                    if (source.isPressed(Button.LEFT_BUMPER))
-                        bottomWobbleGoalGrabber.pivotUpDec();
-                    else
-                        bottomWobbleGoalGrabber.grabberAuto();
+                    if (source.isPressed(Button.LEFT_BUMPER)) {
+                        if (comboGrabber!=null)
+                            comboGrabber.armDown();
+                        else if (bottomWobbleGoalGrabber!=null)
+                            bottomWobbleGoalGrabber.pivotUpDec();
+                    } else {
+                        if (comboGrabber!=null)
+                            comboGrabber.grabberAuto();
+                        else if (bottomWobbleGoalGrabber!=null)
+                            bottomWobbleGoalGrabber.grabberAuto();
+                    }
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
                     if (!source.isPressed(Button.Y))
                         topWobbleGoalGrabber.grabberAuto();
@@ -378,10 +402,17 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
 
                 if(source.getTrigger(Events.Side.LEFT) > 0.3){
-                    if (source.isPressed(Button.LEFT_BUMPER))
-                        bottomWobbleGoalGrabber.pivotUpInc();
-                    else
-                        bottomWobbleGoalGrabber.pivotAuto();
+                    if (source.isPressed(Button.LEFT_BUMPER)) {
+                        if (comboGrabber!=null)
+                            comboGrabber.armUp();
+                        else if (bottomWobbleGoalGrabber!=null)
+                            bottomWobbleGoalGrabber.pivotUpInc();
+                    } else {
+                        if (comboGrabber!=null)
+                            comboGrabber.armAuto();
+                        else if (bottomWobbleGoalGrabber!= null)
+                            bottomWobbleGoalGrabber.pivotAuto();
+                    }
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
                     if (source.isPressed(Button.BACK))
                         autoTransferWobbleGoal();
