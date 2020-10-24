@@ -8,6 +8,16 @@ import org.firstinspires.ftc.teamcode.robot.SubSystem;
 public class Drive extends SubSystem {
     private DcMotor frontLeft, backLeft, frontRight, backRight;
 
+    int cpr = 28;
+    int gearRatio = 19;
+    double diameter = 3.780;
+    double cpi = (cpr * gearRatio)/(Math.PI * diameter);
+    double bias = 0.8;
+    double strafeBias = 0.9;
+
+    double conversion = cpi * bias;
+    boolean exit = false;
+
     public Drive(Robot robot) {
         super(robot);
     }
@@ -32,7 +42,7 @@ public class Drive extends SubSystem {
         double speed = robot.gamepad1.right_trigger - robot.gamepad1.left_trigger;
         double direction = -robot.gamepad1.left_stick_x;
 
-        if(robot.gamepad1.x) {
+        if(robot.gamepad1.a) {
             reverse = false;
         } else if(robot.gamepad1.y) {
             reverse = true;
@@ -122,6 +132,50 @@ public class Drive extends SubSystem {
         right(right);
     }
 
+    public void moveToPosition(double inches, double speed) {
+        int move = (int)(Math.round(inches*conversion));
+
+        frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + move);
+        backLeft.setTargetPosition(backLeft.getCurrentPosition() + move);
+        frontRight.setTargetPosition(frontRight.getCurrentPosition() + move);
+        backRight.setTargetPosition(backRight.getCurrentPosition() + move);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        drive(speed, speed);
+
+        while (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
+            if (exit) {
+                stop();
+                return;
+            }
+        }
+        stop();
+        return;
+    }
+
+    public void strafeToPosition(double inches, double speed) {
+        int move = (int)(Math.round(inches * cpi * strafeBias));
+
+        frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + move);
+        backLeft.setTargetPosition(backLeft.getCurrentPosition() - move);
+        frontRight.setTargetPosition(frontRight.getCurrentPosition() - move);
+        backRight.setTargetPosition(backRight.getCurrentPosition() + move);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        drive(speed, speed);
+
+        while (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {}
+        stop();
+        return;
+    }
 
     public void stop() {
         drive(0, 0);
