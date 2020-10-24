@@ -493,7 +493,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 mode="Red-Out";
         }
         if (cameraStackDetector!=null) {
-            sleep(1000);
+            sleep(2000);
             tZone = cameraStackDetector.getTargetZone();
         }
         telemetry.addData("Config._1", "%s | Simu.=%s | Chassis=%s",
