@@ -20,7 +20,8 @@ public class UltimateBot extends YellowBot
     private static int MIDDLESWINGVALUE = 260;
     public DcMotor wobbleSwing = null;
     private Servo wobbleClaw = null;
-    public DcMotor intake = null;
+    private DcMotor intake = null;
+    private DcMotor shooter = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
     private static int SWING_LIFTUP = 50;
@@ -48,9 +49,22 @@ public class UltimateBot extends YellowBot
             intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             intake.setPower(0);
         } catch (Exception ex) {
-            throw new Exception("Issues wobbleSwing. Check the controller config", ex);
+            throw new Exception("Issues with intake. Check the controller config", ex);
         }
 
+        try {
+            wobbleSwing = hwMap.get(DcMotor.class, "swing");
+            wobbleSwing.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            wobbleSwing.setDirection(DcMotor.Direction.FORWARD);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            wobbleSwing.setPower(0);
+            shooter = hwMap.get(DcMotor.class, "shooter");
+            shooter.setDirection(DcMotor.Direction.FORWARD);
+            shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            shooter.setPower(0);
+        } catch (Exception ex) {
+            throw new Exception("Issues with shooter. Check the controller config", ex);
+        }
 
 
         try{
@@ -74,6 +88,7 @@ public class UltimateBot extends YellowBot
         return position;
     }
 
+
     public double getClawPosition(){
         return wobbleClaw.getPosition();
     }
@@ -92,6 +107,14 @@ public class UltimateBot extends YellowBot
     @BotAction(displayName = "Stop Intake")
     public void stopintake() {
         intake.setPower(0);
+    }
+
+    @BotAction(displayName = "Move Shooter")
+    public void shooter() { shooter.setPower(0.7); }
+
+    @BotAction(displayName = "Stop Shooter")
+    public void stopshooter() {
+        shooter.setPower(0);
     }
 
     @BotAction(displayName = "Close Claw")
@@ -172,6 +195,7 @@ public class UltimateBot extends YellowBot
         wobbleSwing.setPower(0);
         wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
 
 
     @BotAction(displayName = "Green Light")
