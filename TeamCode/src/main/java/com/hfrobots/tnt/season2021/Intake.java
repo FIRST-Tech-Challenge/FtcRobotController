@@ -34,11 +34,15 @@ public class Intake {
 
     }
 
-    public void intake(){
-        intakeMotor.setPower(INTAKE_POWER);
+    public void intake(float speed){
+        intakeMotor.setPower(INTAKE_POWER*Math.abs(speed));
     }
 
-    public void outtake(){
-        intakeMotor.setPower(OUTTAKE_POWER);
+    public void outtake(float speed){
+        intakeMotor.setPower(OUTTAKE_POWER*Math.abs(speed));
+    }
+
+    public void stop() {
+        intakeMotor.setPower(0);
     }
 }

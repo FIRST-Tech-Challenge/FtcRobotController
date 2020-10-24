@@ -19,5 +19,18 @@
 
 package com.hfrobots.tnt.season2021;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import lombok.NonNull;
+
 public class Launcher {
+
+    public Launcher(@NonNull HardwareMap hardwareMap){
+        throw new RuntimeException("not implemted yet");
+    }
+
+    public void stop() {
+    }
 }
+
+
