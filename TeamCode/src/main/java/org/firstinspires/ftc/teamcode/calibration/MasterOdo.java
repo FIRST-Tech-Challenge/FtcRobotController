@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
-import org.firstinspires.ftc.teamcode.bots.YellowBot;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.Led;
 
@@ -93,6 +92,7 @@ public class MasterOdo extends LinearOpMode {
 
 
     private AutoStep goToInstructions = new AutoStep();
+    private AutoRoute selectedRoute = new AutoRoute();
     private AutoRoute newRoute = new AutoRoute();
     private BotMoveProfile profileCurve = null;
 
@@ -133,8 +133,6 @@ public class MasterOdo extends LinearOpMode {
 
             loadBotActions();
 
-            initRoute();
-
             waitForStart();
 
 
@@ -158,8 +156,8 @@ public class MasterOdo extends LinearOpMode {
             if (locator != null){
                 locator.stop();
             }
-            newRoute.getSteps().clear();
-            newRoute = null;
+            selectedRoute.getSteps().clear();
+            selectedRoute = null;
         }
     }
 
@@ -224,6 +222,13 @@ public class MasterOdo extends LinearOpMode {
     private void processCommands(){
         if (!gamepadRateLimit.hasExpired()) {
             return;
+        }
+
+        if (gamepad1.b && routeListMode){
+            //clone selected Route
+            cloneSelectedRoute();
+            showConfig();
+            gamepadRateLimit.reset();
         }
 
         if (gamepad1.a && (XSettingMode || YSettingMode)){
@@ -338,6 +343,8 @@ public class MasterOdo extends LinearOpMode {
                     y -= 5;
                 }
                 locator.init(new Point(x, y), locator.getInitialOrientation());
+                goToInstructions.setTargetX(x);
+                goToInstructions.setTargetY(y);
             }
             else if (speedSettingMode){
                 double speed = goToInstructions.getTopSpeed();
@@ -352,12 +359,16 @@ public class MasterOdo extends LinearOpMode {
                     AutoRoute r = routes.get(i);
                     if (r.isSelected()){
                         r.setSelected(false);
+                        AutoRoute selected = null;
                         if (i + 1 >= routes.size()){
-                            routes.get(0).setSelected(true);
+                            selected = routes.get(0);
+                            selected.setSelected(true);
                         }
                         else{
-                            routes.get(i+1).setSelected(true);
+                            selected = routes.get(i+1);
+                            selected.setSelected(true);
                         }
+                        selectedRoute = selected;
                         break;
                     }
                 }
@@ -427,9 +438,9 @@ public class MasterOdo extends LinearOpMode {
             }
             else if (routeSavingMode) {
                 if (routeIndexSettingMode){
-                    int i = newRoute.getNameIndex();
+                    int i = selectedRoute.getNameIndex();
                     ArrayList<Integer> list = blueRoutes;
-                    if (newRoute.getName() == NAME_RED){
+                    if (selectedRoute.getName() == NAME_RED){
                         list = redRoutes;
                     }
                     i--;
@@ -437,23 +448,23 @@ public class MasterOdo extends LinearOpMode {
                         i--;
                     }
                     if (i > 0) {
-                        newRoute.setNameIndex(i);
+                        selectedRoute.setNameIndex(i);
                     }
                 }
                 else if (routeNameSettingMode){
-                    String name = newRoute.getName();
+                    String name = selectedRoute.getName();
                     if (name.equals(NAME_BLUE)){
-                        if (newRoute.getNameIndex() == 0){
-                            newRoute.setNameIndex(getMinAvailableIndex(redRoutes));
+                        if (selectedRoute.getNameIndex() == 0){
+                            selectedRoute.setNameIndex(getMinAvailableIndex(redRoutes));
                         }
                         name = NAME_RED;
                     }
                     else{
-                        if (newRoute.getNameIndex() == 0){
-                            newRoute.setNameIndex(getMinAvailableIndex(blueRoutes));
+                        if (selectedRoute.getNameIndex() == 0){
+                            selectedRoute.setNameIndex(getMinAvailableIndex(blueRoutes));
                         }
                     }
-                newRoute.setName(name);
+                selectedRoute.setName(name);
                 }
             }
             else{
@@ -519,6 +530,8 @@ public class MasterOdo extends LinearOpMode {
                     y += 5;
                 }
                 locator.init(new Point(x, y), locator.getInitialOrientation());
+                goToInstructions.setTargetX(x);
+                goToInstructions.setTargetY(y);
             }
             else if (speedSettingMode){
                 double speed = goToInstructions.getTopSpeed();
@@ -533,12 +546,16 @@ public class MasterOdo extends LinearOpMode {
                     AutoRoute r = routes.get(i);
                     if (r.isSelected()){
                         r.setSelected(false);
+                        AutoRoute selected = null;
                         if (i <= 0){
-                            routes.get(routes.size() -1 ).setSelected(true);
+                            selected = routes.get(routes.size() -1 );
+                            selected.setSelected(true);
                         }
                         else{
-                            routes.get(i -i).setSelected(true);
+                            selected = routes.get(i -i);
+                            selected.setSelected(true);
                         }
+                        selectedRoute = selected;
                         break;
                     }
                 }
@@ -602,31 +619,31 @@ public class MasterOdo extends LinearOpMode {
             }
             else if (routeSavingMode) {
                 if (routeIndexSettingMode){
-                    int i = newRoute.getNameIndex();
+                    int i = selectedRoute.getNameIndex();
                     ArrayList<Integer> list = blueRoutes;
-                    if (newRoute.getName() == NAME_RED){
+                    if (selectedRoute.getName() == NAME_RED){
                         list = redRoutes;
                     }
                     i++;
                     while(list.contains(i)) {
                         i++;
                     }
-                    newRoute.setNameIndex(i);
+                    selectedRoute.setNameIndex(i);
                 }
                 else if (routeNameSettingMode){
-                    String name = newRoute.getName();
+                    String name = selectedRoute.getName();
                     if (name.equals(NAME_RED)){
-                        if (newRoute.getNameIndex() == 0){
-                            newRoute.setNameIndex(getMinAvailableIndex(blueRoutes));
+                        if (selectedRoute.getNameIndex() == 0){
+                            selectedRoute.setNameIndex(getMinAvailableIndex(blueRoutes));
                         }
                         name = NAME_BLUE;
                     }
                     else{
-                        if (newRoute.getNameIndex() == 0){
-                            newRoute.setNameIndex(getMinAvailableIndex(redRoutes));
+                        if (selectedRoute.getNameIndex() == 0){
+                            selectedRoute.setNameIndex(getMinAvailableIndex(redRoutes));
                         }
                     }
-                    newRoute.setName(name);
+                    selectedRoute.setName(name);
                     //set minimal index
                 }
             }
@@ -741,9 +758,9 @@ public class MasterOdo extends LinearOpMode {
 
 
     private void goTo(AutoStep instruction, boolean dryRun){
-        if (dryRun && newRoute.getSteps().size() == 0){
-            newRoute.setStartX((int)locator.getXInches());
-            newRoute.setStartY((int)locator.getYInches());
+        if (dryRun && selectedRoute.getSteps().size() == 0){
+            selectedRoute.setStartX((int)locator.getXInches());
+            selectedRoute.setStartY((int)locator.getYInches());
         }
         waitToStartStep(instruction.getWaitMS());
         MoveStrategy strategy = instruction.getMoveStrategy();
@@ -762,7 +779,7 @@ public class MasterOdo extends LinearOpMode {
             }
         }
         if (dryRun) {
-            newRoute.getSteps().add(instruction.clone());
+            selectedRoute.getSteps().add(instruction.clone());
         }
 
     }
@@ -922,17 +939,19 @@ public class MasterOdo extends LinearOpMode {
                 telemetry.addData("Desired Head", "%.2f", goToInstructions.getDesiredHead());
             }
             else if (routeListMode){
-                if (routes.size() > 0) {
-                    for (AutoRoute r : routes) {
-                        if (r.isSelected()) {
-                            telemetry.addData(r.getRouteName(), "*");
-                        } else {
-                            telemetry.addData(r.getRouteName(), " ");
-                        }
+                telemetry.addData("Play", "to run selected route");
+                telemetry.addData("B", "to clone");
+                telemetry.addData(" ", " ");
+                for (AutoRoute r : routes) {
+                    String routeVal = r.getRouteName();
+                    if (r.getLastRunTime() > 0){
+                        routeVal = String.format("%s (%d ms)", routeVal, r.getLastRunTime());
                     }
-                }
-                else{
-                    telemetry.addData("No Routes", " ");
+                    if (r.isSelected()) {
+                        telemetry.addData(routeVal, "*");
+                    } else {
+                        telemetry.addData(routeVal, " ");
+                    }
                 }
             }
             else if (strategySettingMode) {
@@ -946,10 +965,10 @@ public class MasterOdo extends LinearOpMode {
             }
             else if (routeSavingMode){
                 if (routeIndexSettingMode) {
-                    telemetry.addData(newRoute.getName(), String.format("-%d*", newRoute.getNameIndex()));
+                    telemetry.addData(selectedRoute.getName(), String.format("-%d*", selectedRoute.getNameIndex()));
                 }
                 else if(routeNameSettingMode){
-                    telemetry.addData(String.format("%s*", newRoute.getName()), String.format("-%d", newRoute.getNameIndex()));
+                    telemetry.addData(String.format("%s*", selectedRoute.getName()), String.format("-%d", selectedRoute.getNameIndex()));
                 }
             }
             else if (manualDriveMode){
@@ -975,6 +994,11 @@ public class MasterOdo extends LinearOpMode {
                 for(Method m : this.botActions){
                     selected = "";
                     String name = m.getName();
+                    String displayName = name;
+                    BotAction annotation = m.getAnnotation(BotAction.class);
+                    if (annotation != null){
+                        displayName = annotation.displayName();
+                    }
                     if(coordinateFunctions.containsKey(name)){
                         AutoDot val = coordinateFunctions.get(name);
                         if (val != null){
@@ -984,7 +1008,7 @@ public class MasterOdo extends LinearOpMode {
                     if (goToInstructions.getAction().equals(name)){
                         selected = String.format("%s *", selected);
                     }
-                    telemetry.addData(m.getName(), selected);
+                    telemetry.addData(displayName, selected);
                 }
             }
             else if (stopSettingMode){
@@ -1049,20 +1073,74 @@ public class MasterOdo extends LinearOpMode {
 
     private void saveRoute(){
         try{
-            if (newRoute.getSteps().size() > 0) {
-                String name = newRoute.getRouteName();
+            if (selectedRoute.getSteps().size() > 0) {
+                boolean newRoute = selectedRoute.isTemp();
+                selectedRoute.setTemp(false);
+
+                String name = selectedRoute.getRouteName();
                 File configFile = getRouteFile(name);
 
-                String jsonPath = newRoute.serialize();
+                String jsonPath = selectedRoute.serialize();
                 ReadWriteFile.writeFile(configFile, jsonPath);
-                addRoute(newRoute);
-                initRoute();
+
+                if (newRoute){
+                    initRoute();
+                    addRoute(this.newRoute);
+                }
+                selectedTopMode = 2;
+                routeListMode = true;
+                routeSavingMode = false;
+                topMode = true;
             }
         }
         catch (Exception e) {
             telemetry.addData("Error", "Route cannot be saved. %s", e.getMessage());
             telemetry.update();
         }
+    }
+
+    private void cloneSelectedRoute(){
+        try{
+            if (selectedRoute.getSteps().size() > 0) {
+                boolean newRoute = selectedRoute.isTemp();
+                if (newRoute){
+                    return;
+                }
+                AutoRoute cloned = selectedRoute.clone();
+                cloned.setSelected(false);
+                if (cloned.getName().equals(NAME_BLUE)){
+                    cloned.setNameIndex(getMinAvailableIndex(blueRoutes));
+                }
+                else{
+                    cloned.setNameIndex(getMinAvailableIndex(redRoutes));
+                }
+
+                String name = cloned.getRouteName();
+                File configFile = getRouteFile(name);
+
+                String jsonPath = cloned.serialize();
+                ReadWriteFile.writeFile(configFile, jsonPath);
+
+                addRoute(cloned);
+
+                selectedTopMode = 2;
+                routeListMode = true;
+                routeSavingMode = false;
+                topMode = true;
+            }
+        }
+        catch (Exception e) {
+            telemetry.addData("Error", "Route cannot be cloned. %s", e.getMessage());
+            telemetry.update();
+        }
+    }
+
+    private void saveRouteFile(AutoRoute route){
+        String name = route.getRouteName();
+        File configFile = getRouteFile(name);
+
+        String jsonPath = route.serialize();
+        ReadWriteFile.writeFile(configFile, jsonPath);
     }
 
     private void saveCoordinate(){
@@ -1089,18 +1167,27 @@ public class MasterOdo extends LinearOpMode {
 
 
     private void runSelectedRoute(){
-        AutoRoute selected = null;
-        for(AutoRoute r : routes){
-            if (r.isSelected()){
-                selected = r;
-                break;
+        try {
+            AutoRoute selected = null;
+            for (AutoRoute r : routes) {
+                if (r.isSelected()) {
+                    selected = r;
+                    break;
+                }
+            }
+            if (selected != null) {
+                locator.init(selected.getStart(), desiredHead);
+                long startTime = System.currentTimeMillis();
+                for (AutoStep s : selected.getSteps()) {
+                    this.goTo(s, false);
+                }
+                long endTime = System.currentTimeMillis();
+                selected.setLastRunTime(endTime - startTime);
+                saveRouteFile(selected);
             }
         }
-        if (selected != null){
-            locator.init(selected.getStart(), desiredHead);
-            for(AutoStep s : selected.getSteps()){
-                this.goTo(s, false);
-            }
+        catch (Exception ex){
+            telemetry.addData("Error", "Run selected route. %s", ex.getMessage());
         }
     }
 
@@ -1108,6 +1195,9 @@ public class MasterOdo extends LinearOpMode {
         String selectedName = "";
         for (int i  = 0; i < routes.size(); i++){
             AutoRoute r = routes.get(i);
+            if (r.isTemp()){
+                continue;
+            }
             if (r.isSelected()){
                 selectedName = r.getRouteName();
                 try {
@@ -1121,6 +1211,10 @@ public class MasterOdo extends LinearOpMode {
                     }
                     else if  (r.getName().equals(NAME_RED)){
                         clearRouteCache(this.redRoutes, index);
+                    }
+                    if (routes.size() > 0){
+                        routes.get(0).setSelected(true);
+                        selectedRoute = routes.get(0);
                     }
 
                 }
@@ -1200,12 +1294,15 @@ public class MasterOdo extends LinearOpMode {
             newRoute = null;
         }
         newRoute = new AutoRoute();
+        newRoute.setTemp(true);
         if (newRoute.getName().equals(NAME_BLUE)){
             newRoute.setNameIndex(getMinAvailableIndex(blueRoutes));
         }
         else{
             newRoute.setNameIndex(getMinAvailableIndex(redRoutes));
         }
+        goToInstructions.setTargetX(startX);
+        goToInstructions.setTargetY(startY);
     }
 
     private void listCoordinates(){
@@ -1250,6 +1347,7 @@ public class MasterOdo extends LinearOpMode {
                     AutoRoute route = AutoRoute.deserialize(jsonData);
                     if (count == 0) {
                         route.setSelected(true);
+                        selectedRoute = route;
                     } else {
                         route.setSelected(false);
                     }
@@ -1257,6 +1355,10 @@ public class MasterOdo extends LinearOpMode {
                     count++;
                 }
             }
+            //add New Route
+            initRoute();
+            addRoute(newRoute);
+            selectedRoute = this.routes.get(0);
         }
         catch (Exception ex){
             telemetry.addData("Error listRoutes", ex.getMessage());

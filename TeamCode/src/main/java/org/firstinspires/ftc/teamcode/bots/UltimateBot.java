@@ -11,19 +11,23 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
+import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
-
-import java.util.Random;
 
 public class UltimateBot extends YellowBot
 {
     private static int SWINGVALUE = 280;
-    private static int MIDDLESWINGVALUE = 200;
+    private static int MIDDLESWINGVALUE = 260;
     public DcMotor wobbleSwing = null;
-
-    HardwareMap hwMap =  null;
-
     private Servo wobbleClaw = null;
+    public DcMotor intake = null;
+
+    private SwingPosition swingPosition = SwingPosition.Init;
+    private static int SWING_LIFTUP = 50;
+    private static int SWING_GROUND_POS = 280;
+    private static int SWING_LIFT_UP_POS = 230;
+    private static int SWING_LIFT_HIGH_POS = 130;
+
 
     /* Constructor */
     public UltimateBot(){
@@ -32,7 +36,6 @@ public class UltimateBot extends YellowBot
     @Override
     public void init(LinearOpMode owner, HardwareMap ahwMap, Telemetry telemetry) throws Exception {
         super.init(owner, ahwMap, telemetry);
-        hwMap = ahwMap;
 
         try {
             wobbleSwing = hwMap.get(DcMotor.class, "swing");
@@ -40,6 +43,10 @@ public class UltimateBot extends YellowBot
             wobbleSwing.setDirection(DcMotor.Direction.FORWARD);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             wobbleSwing.setPower(0);
+            intake = hwMap.get(DcMotor.class, "intake");
+            intake.setDirection(DcMotor.Direction.FORWARD);
+            intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            intake.setPower(0);
         } catch (Exception ex) {
             throw new Exception("Issues wobbleSwing. Check the controller config", ex);
         }
@@ -67,78 +74,107 @@ public class UltimateBot extends YellowBot
         return position;
     }
 
+    public double getClawPosition(){
+        return wobbleClaw.getPosition();
+    }
+
 
     public void moveWobbleClaw (double position) {
         double p = Range.clip(position, -1.0, 1.0);
-
         wobbleClaw.setPosition(p);
-
     }
 
+    @BotAction(displayName = "Move Intake")
+    public void intake() {
+        intake.setPower(0.7);
+    }
 
-    @BotAction(displayName = "closeWobbleClaw")
+    @BotAction(displayName = "Stop Intake")
+    public void stopintake() {
+        intake.setPower(0);
+    }
+
+    @BotAction(displayName = "Close Claw")
     public void closeWobbleClaw () {
-
         wobbleClaw.setPosition(0);
     }
 
-    @BotAction(displayName = "openWobbleClaw")
+    @BotAction(displayName = "Open Claw")
     public void openWobbleClaw () {
-
         wobbleClaw.setPosition(1);
     }
 
-    @BotAction(displayName = "backWobbleSwing")
+    @BotAction(displayName = "Init WobbleSwing")
     public void backWobbleSwing (){
-        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        int currentPosition = wobbleSwing.getCurrentPosition();
-        int targetPosition = currentPosition - SWINGVALUE;
-        if (targetPosition <= -50) {
+        if (this.getSwingPosition() == SwingPosition.Init){
             return;
         }
-        wobbleSwing.setTargetPosition(targetPosition);
+        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wobbleSwing.setTargetPosition(0);
         wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleSwing.setPower(0.6);
         boolean stop = false;
         while (!stop) {
             stop = wobbleSwing.isBusy() == false;
         }
+        this.swingPosition = SwingPosition.Init;
         wobbleSwing.setPower(0);
+        wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    @BotAction(displayName = "forwardWobbleSwing")
+    @BotAction(displayName = "Place Wobble")
     public void forwardWobbleSwing () {
-        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        int currentPosition = wobbleSwing.getCurrentPosition();
-        int targetPosition = currentPosition + SWINGVALUE;
-        if (targetPosition >= SWINGVALUE + 50) {
+
+        if (this.getSwingPosition() == SwingPosition.Ground){
             return;
         }
-        wobbleSwing.setTargetPosition(targetPosition);
+        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wobbleSwing.setTargetPosition(SWING_GROUND_POS);
         wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleSwing.setPower(0.6);
         boolean stop = false;
         while (!stop) {
             stop = wobbleSwing.isBusy() == false;
         }
+        this.swingPosition = SwingPosition.Ground;
         wobbleSwing.setPower(0);
+        wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    @BotAction(displayName = "middleWobbleSwing")
-    public void middleWobbleSwing() {
+    @BotAction(displayName = "Lift Wobble Up")
+    public void liftAndHoldWobbleSwing() {
         wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleSwing.setTargetPosition(MIDDLESWINGVALUE);
+        wobbleSwing.setTargetPosition(SWING_LIFT_UP_POS);
         wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleSwing.setPower(0.3);
+        wobbleSwing.setPower(0.7);
         boolean stop = false;
         while (!stop) {
             stop = wobbleSwing.isBusy() == false;
         }
-        wobbleSwing.setPower(-0.01);
+        this.swingPosition = SwingPosition.LiftUp;
+        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wobbleSwing.setPower(0);
+        wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wobbleSwing.setPower(-0.005);
     }
 
-    //actions
-    @BotAction(displayName = "signalOK")
+    public void liftHighAndHoldWobble(){
+        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wobbleSwing.setTargetPosition(SWING_LIFT_HIGH_POS);
+        wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleSwing.setPower(0.7);
+        boolean stop = false;
+        while (!stop) {
+            stop = wobbleSwing.isBusy() == false;
+        }
+        this.swingPosition = SwingPosition.LiftUp;
+        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wobbleSwing.setPower(0);
+        wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+
+    @BotAction(displayName = "Green Light")
     public void signalOK(){
         getLights().OK();
         ElapsedTime timer = new ElapsedTime();
@@ -150,7 +186,7 @@ public class UltimateBot extends YellowBot
     }
 
     @BotAction(displayName = "signalProblem")
-    public void signalProblem(){
+    public void shoot(){
         getLights().problem();
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
@@ -162,13 +198,21 @@ public class UltimateBot extends YellowBot
 
     @BotAction(displayName = "detectStack")
     public AutoDot detectStack(){
-        AutoDot target = new AutoDot();
+        AutoDot target = null;
         RingDetector rf = null;
-        rf = new RingDetector(this.hwMap, telemetry);
-        rf.initDetector();
-        target = rf.detectRing(2, telemetry, owner);
-        signalOK();
+        try {
+            rf = new RingDetector(this.hwMap, this.getLights(), telemetry);
+            target = rf.detectRing(2, telemetry, owner);
+        }
+        finally {
+            if (rf != null) {
+                rf.stopDetection();
+            }
+        }
         return target;
     }
 
+    public SwingPosition getSwingPosition() {
+        return swingPosition;
+    }
 }
