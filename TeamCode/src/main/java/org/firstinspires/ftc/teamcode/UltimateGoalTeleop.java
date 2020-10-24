@@ -79,6 +79,8 @@ public class UltimateGoalTeleop extends OpMode{
         configs.add(teleConfigRohit.class);
         configs.add(teleConfigSamih.class);
         configs.add(teleConfigShrinidhi.class);
+        configs.add(teleConfigRohit2.class);
+
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Haddi", "Haddi");
@@ -180,6 +182,8 @@ public class UltimateGoalTeleop extends OpMode{
             t = new teleConfigSamih();
         }else if (configs.get(index).getName().equals(teleConfigShrinidhi.class.getName())){
             t = new teleConfigShrinidhi();
+        }else if (configs.get(index).getName().equals(teleConfigRohit2.class.getName())){
+            t = new teleConfigRohit2();
         }
     }
 
