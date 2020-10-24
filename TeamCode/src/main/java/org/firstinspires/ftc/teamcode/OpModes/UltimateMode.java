@@ -44,7 +44,6 @@ public class UltimateMode extends LinearOpMode{
     // Declare OpMode members.
     UltimateBot robot = new UltimateBot();
     private ElapsedTime runtime = new ElapsedTime();
-    private boolean intakeon = false;
     boolean changedclaw = false;
     boolean changedintake = false;
 
@@ -91,26 +90,15 @@ public class UltimateMode extends LinearOpMode{
                 }
 
                 // move claw
-                if(!changedclaw){
-                    if(gamepad1.dpad_right){
-                        changedclaw = true;
-
-                        robot.openWobbleClaw();
-                    }
-                }else {
-                    if(gamepad1.dpad_right){
-                        changedclaw = false;
-
-                        robot.closeWobbleClaw();
-                    }
+                if(gamepad1.dpad_right){
+                    changedclaw = !changedclaw;
                 }
 
-//                if (gamepad1.left_bumper){
-//                    robot.closeWobbleClaw();
-//                }
-//                else if (gamepad1.right_bumper) {
-//                    robot.openWobbleClaw();
-//                }
+                if(changedclaw){
+                    robot.openWobbleClaw();
+                } else {
+                    robot.closeWobbleClaw();
+                }
 
                 if (gamepad1.dpad_up) {
                     robot.forwardWobbleSwing();
@@ -123,17 +111,15 @@ public class UltimateMode extends LinearOpMode{
                 }
 
                 // move intake
-                if(!changedintake){
-                    if(gamepad1.a){
-                        changedintake = true;
+               if(gamepad1.a){
+                        changedintake = !changedintake;
+               }
+
+               if(changedintake){
                         robot.intake();
-                    }
-                }else {
-                    if(gamepad1.a){
-                        changedintake = false;
-                        robot.stopintake();
-                    }
-                }
+               } else {
+                   robot.stopintake();
+               }
 
                 telemetry.addData("Heading", robot.getGyroHeading());
                 telemetry.addData("Horiz encoder", robot.getHorizontalOdometer());
