@@ -9,11 +9,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class MecanumControlV2 extends OpMode {
 
-    MecanumDrive robot  = new MecanumDrive();
+    MecanumDrive robot = new MecanumDrive();
+    Shooter shooter    = new Shooter();
 
     double driveSpeed;
     double turnSpeed;
     double direction;
+
+    boolean isShooterOn = false;
 
     private ElapsedTime period  = new ElapsedTime();
     private double runtime = 0;
@@ -21,6 +24,7 @@ public class MecanumControlV2 extends OpMode {
     @Override
     public void init() {
         robot.init(hardwareMap);
+        shooter.init(hardwareMap);
 
         msStuckDetectInit = 18000;
         msStuckDetectLoop = 18000;
@@ -41,11 +45,11 @@ public class MecanumControlV2 extends OpMode {
         telemetry.update();
 
         //Speed control (turbo/slow mode) and direction of stick calculation
-        if (gamepad1.left_bumper){
+        if (gamepad1.left_bumper) {
             driveSpeed = Math.hypot(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
             direction = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
             turnSpeed = gamepad1.right_stick_x;
-        }else if (gamepad1.right_bumper){
+        }else if (gamepad1.right_bumper) {
             driveSpeed = Math.hypot(-gamepad1.left_stick_x, -gamepad1.left_stick_y)*.4;
             direction = Math.atan2(gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
             turnSpeed = gamepad1.right_stick_x*.4;
@@ -55,15 +59,27 @@ public class MecanumControlV2 extends OpMode {
             turnSpeed = gamepad1.right_stick_x*.7;
         }
         //set power and direction of drive motors
-        if (turnSpeed == 0){
+        if (turnSpeed == 0) {
             robot.MecanumController(driveSpeed,direction,0);
         }
         //control of turning
-        if (gamepad1.right_stick_x != 0 && driveSpeed == 0){
+        if (gamepad1.right_stick_x != 0 && driveSpeed == 0) {
             robot.leftFront.setPower(turnSpeed);
             robot.leftBack.setPower(turnSpeed);
             robot.rightFront.setPower(-turnSpeed);
             robot.rightBack.setPower(-turnSpeed);
+        }
+        //Turn shooter on
+        if (gamepad1.a && !isShooterOn) {
+            isShooterOn = true;
+        }else if (!gamepad1.a && isShooterOn) {
+            shooter.shooterPower(1);
+        }
+        //Turn shooter off
+        if (gamepad1.a & isShooterOn) {
+            isShooterOn = false;
+        }else if (!gamepad1.a && !isShooterOn) {
+            shooter.shooterPower(0);
         }
     }
 }
