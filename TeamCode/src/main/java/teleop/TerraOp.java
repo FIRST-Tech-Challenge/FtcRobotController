@@ -63,10 +63,16 @@ public class TerraOp extends OpMode {
             double pl = bot.shootControlL.update(gamepad2.left_bumper, gamepad2.right_bumper);
 
             bot.shoot(pr,pl);
-            bot.turnArm(bot.turnControl.update(gamepad2.dpad_down, gamepad2.dpad_up, 0.5));
-            bot.grab(bot.grabControl.update(gamepad2.dpad_left, gamepad2.dpad_right));
 
-            bot.moveArm(gamepad2.left_stick_y);
+            if(!bot.autoModulesPaused()) {
+                bot.turnWobbleArm(bot.turnControl.update(gamepad2.dpad_down, gamepad2.dpad_up, 0.5));
+                bot.grab(bot.grabControl.update(gamepad2.dpad_left, gamepad2.dpad_right));
+            }
+            if(bot.isArmInLimts(gamepad2.left_stick_y)) {
+                bot.turnArm(gamepad2.left_stick_y);
+            }else{
+                bot.turnArm(0);
+            }
 
             if(gamepad2.y){
                 bot.shooter.start();
@@ -93,7 +99,8 @@ public class TerraOp extends OpMode {
         bot.move(forward, strafe, turn);
 
 
-        telemetry.addData("time", bot.st.getPosition());
+        telemetry.addData("angle", bot.getArmPos());
+        telemetry.addData("wobblePos", bot.st.getPosition());
         telemetry.update();
 
         bot.update();

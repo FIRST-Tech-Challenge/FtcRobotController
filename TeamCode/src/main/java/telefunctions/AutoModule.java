@@ -10,15 +10,19 @@ public class AutoModule {
     public boolean executing = false;
     public int stageNum = 0;
     public ArrayList<Stage> stages = new ArrayList();
-    public ArrayList<Double> dynamics = new ArrayList();
 
     public ElapsedTime timer = new ElapsedTime();
 
     public double lastTime = 0;
 
+    public boolean pausing = false;
+
+
     public void start() {
         executing = true;
         timer.reset();
+        lastTime = 0;
+        pausing = false;
     }
 
     public void update() {
@@ -33,13 +37,58 @@ public class AutoModule {
             }
         }
     }
-    public void addStage(final DcMotor mot, final double pos, double t) {
+
+    public void addWaitUntil(){
+        lastTime = 0;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                executing = false;
+                pausing = true;
+                return true;
+            }
+        });
+    }
+
+    public void addStage(final DcMotor mot, final double pow, final int pos) {
+        lastTime = 0;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                mot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                mot.setTargetPosition(pos);
+                mot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                mot.setPower(pow);
+                return true;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+               return !mot.isBusy();
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                mot.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                mot.setPower(0);
+                timer.reset();
+                lastTime = 0;
+                return true;
+            }
+        });
+
+    }
+
+
+    public void addStage(final DcMotor mot, final double pow, double t) {
         lastTime += t;
         final double time = lastTime;
         stages.add(new Stage() {
             @Override
             public boolean run(double in) {
-                mot.setPower(pos);
+                mot.setPower(pow);
                 return in > time;
             }
         });

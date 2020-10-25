@@ -2,6 +2,7 @@ package global;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -9,6 +10,7 @@ import java.util.concurrent.ForkJoinPool;
 
 import telefunctions.AutoModule;
 import telefunctions.Cycle;
+import telefunctions.Limits;
 import telefunctions.ServoController;
 
 
@@ -44,6 +46,10 @@ public class TerraBot {
     public double shootStartL = 0.1;
     public double intakeSpeed = 1;
     public double outtakeSpeed = 0.4;
+    public double maxArmPos = 225;
+
+    public final double NEVEREST256_TICKS = 7168;
+    public final double DEGREES_TO_TICKS = NEVEREST256_TICKS/360;
 
     public Cycle grabControl = new Cycle(grabStart, 0.45);
     public Cycle liftControl = new Cycle(liftStart, liftSecond, 1);
@@ -54,6 +60,10 @@ public class TerraBot {
 
     public AutoModule shooter = new AutoModule();
     public AutoModule wobbleGoal = new AutoModule();
+
+    public Limits limits = new Limits();
+
+
 
 
 
@@ -129,10 +139,14 @@ public class TerraBot {
         in.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        resetEncoders();
 
         defineShooter();
         defineWobbleGoal();
+
+
+        limits.addLimit(arm, 0, maxArmPos);
 
 
 
@@ -146,6 +160,7 @@ public class TerraBot {
         r2.setPower(-f+s-t);
     }
 
+
     public void intake(double p){
         in.setPower(p);
     }
@@ -155,7 +170,7 @@ public class TerraBot {
         outl.setPower(p);
     }
 
-    public void moveArm(double p){
+    public void turnArm(double p){
         arm.setPower(p);
     }
 
@@ -169,7 +184,7 @@ public class TerraBot {
         ssl.setPosition(pl);
     }
 
-    public void turnArm(double pos){
+    public void turnWobbleArm(double pos){
         st.setPosition(pos);
     }
 
@@ -191,10 +206,12 @@ public class TerraBot {
         }
     }
     public void defineWobbleGoal(){
-        wobbleGoal.addStage(st, 0.7, 0.7);
+        wobbleGoal.addStage(arm,  0.5, degreesToTicks(210));
+        wobbleGoal.addStage(st, 0.6, 0.7);
+        wobbleGoal.addWaitUntil();
         wobbleGoal.addStage(sgl, grabControl.getPos(1), 0.01);
         wobbleGoal.addStage(sgr, grabControl.getPos(1), 0.7);
-        wobbleGoal.addStage(st, 0.2, 0.5);
+        wobbleGoal.addStage(st, 0.16, 0.7);
     }
 
     public void update(){
@@ -206,6 +223,23 @@ public class TerraBot {
         return shooter.executing || wobbleGoal.executing;
     }
 
+    public boolean autoModulesPaused(){return  wobbleGoal.pausing;}
 
 
+    public double getArmPos(){
+        return arm.getCurrentPosition()/DEGREES_TO_TICKS;
+    }
+
+    public int degreesToTicks(double deg){
+        return (int) (deg*DEGREES_TO_TICKS);
+    }
+
+    public boolean isArmInLimts(double dir){
+        return limits.isInLimits(arm, dir, getArmPos());
+    }
+
+    public void resetEncoders(){
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 }
