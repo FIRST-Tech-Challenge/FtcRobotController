@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Chassis2Test")
+@Autonomous(name = "newChassis2Test")
 public class NewTest_Sai extends LinearOpMode {
 
     Robot robot = new Robot();
