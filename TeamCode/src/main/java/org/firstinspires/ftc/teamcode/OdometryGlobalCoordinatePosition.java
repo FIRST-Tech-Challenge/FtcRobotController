@@ -4,6 +4,7 @@ import android.net.MacAddress;
 
 public class OdometryGlobalCoordinatePosition implements Runnable {
     HardwareMapV2 robot;
+    boolean isRunning = true;
 
     double globalPositionX, globalPositionY, robotOrientationDegrees, previousOrientationDegrees, previousleftEncoder, previousrightEncoder, previousHorizontalEncoder, changeinrobotorientationDegrees, changeinX, changeinY;
     double ENCODERS_PER_DEGREE; //Get during calibration
@@ -36,8 +37,17 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
         return globalPositionY;
     }
 
+    public void stop() {isRunning = false;}
+
     @Override
     public void run() {
-        updatePositions(robot.leftVertical.getCurrentPosition(), robot.rightVertical.getCurrentPosition(), robot.horizontal.getCurrentPosition());
+        while (isRunning) {
+            updatePositions(robot.leftVertical.getCurrentPosition(), robot.rightVertical.getCurrentPosition(), robot.horizontal.getCurrentPosition());
+            try {
+                Thread.sleep(75);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
