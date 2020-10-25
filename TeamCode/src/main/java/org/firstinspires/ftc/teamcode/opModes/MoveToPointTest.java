@@ -1,5 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.extraDrivetrainTests;
-
+package org.firstinspires.ftc.teamcode.opModes;
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,12 +28,13 @@ package org.firstinspires.ftc.teamcode.opModes.extraDrivetrainTests;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
+import org.firstinspires.ftc.teamcode.pathFollow.Follower;
+import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -50,22 +50,25 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="StrafeForwardDemo", group="Iterative Opmode")
+@TeleOp(name="MoveToPointTest", group="Iterative Opmode")
 
-public class StrafeForwardDemo extends OpMode
+public class MoveToPointTest extends OpMode
 {
     // Declare OpMode members.
+
     private ElapsedTime runtime = new ElapsedTime();
-    Mecanum MecanumDrive;
+    String pathString = "src/main/java/org/firstinspires/ftc/teamcode/pathFollow/PathTXTs/testPath.txt";
+    VuMarkNav vumark;
+    Mecanum drivetrain;
+    Follower pathFollower;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        MecanumDrive = new Mecanum(hardwareMap);
-
-
+        vumark = new VuMarkNav(hardwareMap, telemetry);
+        drivetrain = new Mecanum(hardwareMap);
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -82,7 +85,9 @@ public class StrafeForwardDemo extends OpMode
      */
     @Override
     public void start() {
+        vumark.activate();
         runtime.reset();
+        pathFollower = new Follower(drivetrain, vumark, pathString);
     }
 
     /*
@@ -90,10 +95,8 @@ public class StrafeForwardDemo extends OpMode
      */
     @Override
     public void loop() {
-
-        MecanumDrive.drive(1,1,0);
-
-        // Show the elapsed game time and wheel power.
+        telemetry.addData("Destination: ", )
+        telemetry.addData("Current Position: ", vumark.getLastPosition());
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 
@@ -102,7 +105,7 @@ public class StrafeForwardDemo extends OpMode
      */
     @Override
     public void stop() {
-        telemetry.addData("Status", "done! Great job!");
+        vumark.deactivate();
     }
 
 }

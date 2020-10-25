@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.extraDrivetrainTests;
+package org.firstinspires.ftc.teamcode.opModes.unitOpModeTests;
 
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
@@ -50,13 +50,14 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="StrafeDemo", group="Iterative Opmode")
+@TeleOp(name="TurnDemo", group="Iterative Opmode")
 
-public class StrafeDemo extends OpMode
+public class TurnDemo extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     Mecanum MecanumDrive;
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -64,7 +65,6 @@ public class StrafeDemo extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
         MecanumDrive = new Mecanum(hardwareMap);
-
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -91,9 +91,11 @@ public class StrafeDemo extends OpMode
     @Override
     public void loop() {
 
-        MecanumDrive.drive(1,0,0);
+        MecanumDrive.drive(0,0,100);
+
 
         // Show the elapsed game time and wheel power.
+        telemetry.addData("MotorPower", "frontLeft ");
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 

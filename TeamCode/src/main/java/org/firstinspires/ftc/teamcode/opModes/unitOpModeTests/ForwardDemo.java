@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.opModes.unitOpModeTests;
 
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode.opModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
@@ -51,20 +50,21 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="OdoSingleTest", group="Iterative Opmode")
+@TeleOp(name="ForwardDemo", group="Iterative Opmode")
 
-public class OdoSingleWheelTest extends OpMode
+public class ForwardDemo extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    DcMotor wheel;
+    Mecanum MecanumDrive;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        wheel = hardwareMap.get(DcMotor.class, "wheel");
+        MecanumDrive = new Mecanum(hardwareMap);
+
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -91,10 +91,9 @@ public class OdoSingleWheelTest extends OpMode
     @Override
     public void loop() {
 
-        double position = wheel.getCurrentPosition();
+        MecanumDrive.drive(0,1,0);
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Wheel Position: " + position);
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 

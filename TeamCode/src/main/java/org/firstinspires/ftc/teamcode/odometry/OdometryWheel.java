@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.utility.pose;
 
 
 public abstract class OdometryWheel {
-    int ticksPerRev = 1024;
+    double ticksPerRev = 383.6;
     double radius = 5.08; //Centimeters
     pose offset;
 

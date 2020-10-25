@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.pathgen.PathPoint;
 import org.firstinspires.ftc.teamcode.utility.RotationUtil;
 import org.firstinspires.ftc.teamcode.utility.point;
 import org.firstinspires.ftc.teamcode.utility.pose;
+import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
 
 public class Follower {
     double closeEnoughDistance = 10;
@@ -48,6 +49,35 @@ public class Follower {
             point transDiffIntrinsic = transDiff.rotate(-position.r);
             drivetrain.drive(transDiffIntrinsic.x, transDiffIntrinsic.y, rotDiff);
         }
+    }
+
+    // this constructor uses vuforia instead of odometry
+    public Follower(Mecanum drivetrain, VuMarkNav vuMarkNav, String pathFile){
+        Path path = ImportPath.getPath(pathFile);
+
+        //index of current target point
+        int i = 0;
+
+        assert path != null;
+        while(i < path.size()){
+            pose position = vuMarkNav.getLastPosition();
+            //if close enough advance
+            for(int j = i; j < path.size(); j++) {
+                if (path.get(j).distTo(new point(position.x, position.y)) < closeEnoughDistance) {
+                    i = j;
+                    break;
+                }
+            }
+
+            //move robot towards i
+            PathPoint target = path.get(i);
+            double rotDiff = RotationUtil.turnLeftOrRight(position.r, target.dir, Math.PI * 2);
+            point transDiff = new point(target.x - position.x, target.y - position.y);
+            transDiff.scale(target.speed);
+            point transDiffIntrinsic = transDiff.rotate(-position.r);
+            drivetrain.drive(transDiffIntrinsic.x, transDiffIntrinsic.y, rotDiff);
+        }
+
     }
 
 }

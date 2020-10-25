@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.opModes.unitOpModeTests;
+
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -28,14 +29,13 @@ package org.firstinspires.ftc.teamcode.opModes;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
-import org.firstinspires.ftc.teamcode.utility.pose;
-import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -51,22 +51,21 @@ import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="VuTest", group="Iterative Opmode")
+@TeleOp(name="OdoSingleTest", group="Iterative Opmode")
 
-public class VuTest extends OpMode
+public class OdoSingleWheelTest extends OpMode
 {
     // Declare OpMode members.
-
     private ElapsedTime runtime = new ElapsedTime();
-    VuMarkNav vumark;
-
+    DcMotor wheel;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        vumark = new VuMarkNav(hardwareMap, telemetry);
+        wheel = hardwareMap.get(DcMotor.class, "wheel");
+
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -83,7 +82,6 @@ public class VuTest extends OpMode
      */
     @Override
     public void start() {
-        vumark.activate();
         runtime.reset();
     }
 
@@ -93,6 +91,10 @@ public class VuTest extends OpMode
     @Override
     public void loop() {
 
+        double position = wheel.getCurrentPosition();
+
+        // Show the elapsed game time and wheel power.
+        telemetry.addData("Status", "Wheel Position: " + position);
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 
@@ -101,7 +103,7 @@ public class VuTest extends OpMode
      */
     @Override
     public void stop() {
-        vumark.deactivate();
+        telemetry.addData("Status", "done! Great job!");
     }
 
 }

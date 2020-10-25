@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.extraDrivetrainTests;
+package org.firstinspires.ftc.teamcode.opModes.unitOpModeTests;
 
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
@@ -32,9 +32,8 @@ package org.firstinspires.ftc.teamcode.opModes.extraDrivetrainTests;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.movement.Mecanum;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -50,22 +49,37 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="ForwardDemo", group="Iterative Opmode")
+@TeleOp(name="TurnDemoBasic", group="Iterative Opmode")
 
-public class ForwardDemo extends OpMode
+public class TurnDemo_Basic extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    Mecanum MecanumDrive;
+//    Mecanum MecanumDrive;
+    DcMotorEx frontLeft;
+    DcMotorEx frontRight;
+    DcMotorEx backLeft;
+    DcMotorEx backRight;
+
+    //for debugging
+    double frontLeftSpeed;
+    double frontRightSpeed;
+    double backLeftSpeed;
+    double backRightSpeed;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        MecanumDrive = new Mecanum(hardwareMap);
+//        MecanumDrive = new Mecanum(hardwareMap);
+        frontLeft = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotorEx.class, "frontRight");
+        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
+        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
 
-
+        frontLeft.setDirection(DcMotorEx.Direction.REVERSE);
+        backLeft.setDirection(DcMotorEx.Direction.REVERSE);
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -91,10 +105,25 @@ public class ForwardDemo extends OpMode
     @Override
     public void loop() {
 
-        MecanumDrive.drive(0,1,0);
+//        MecanumDrive.drive(0,0,1);
 
+        frontLeft.setVelocity(100000);
+        frontRight.setVelocity(-100000);
+        backRight.setVelocity(-100000);
+        backLeft.setVelocity(100000);
+
+        frontLeftSpeed = frontLeft.getVelocity();
+        frontRightSpeed = frontRight.getVelocity();
+        backLeftSpeed = backLeft.getVelocity();
+        backRightSpeed = backRight.getVelocity();
         // Show the elapsed game time and wheel power.
+
+        telemetry.addData("FrontLeftSpeed",  + frontLeftSpeed);
+        telemetry.addData("FrontRightSpeed",  + frontRightSpeed);
+        telemetry.addData("BackLeftSpeed",  + backLeftSpeed);
+        telemetry.addData("backRightSpeed",  + backRightSpeed);
         telemetry.addData("Status", "Run Time: " + runtime.toString());
+
     }
 
     /*

@@ -1,10 +1,5 @@
 package org.firstinspires.ftc.teamcode.vuforia;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -18,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.firstinspires.ftc.teamcode.utility.pose;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
@@ -56,12 +52,17 @@ public class VuMarkNav{
     private static final float quadField  = 36 * mmPerInch;
 
     // Class Members
-    private OpenGLMatrix lastLocation = null;
+    public OpenGLMatrix lastLocation = null;
     private VuforiaLocalizer vuforia = null;
     private boolean targetVisible = false;
     private float phoneXRotate    = 0;
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
+
+    // just getting the bare bones stuff for the auto to work
+    pose vu_XYZ = new pose(0,0,0);
+
+    VectorF translation;
 
     VuforiaTrackables targetsUltimateGoal;
     List<VuforiaTrackable> allTrackables;
@@ -224,7 +225,7 @@ public class VuMarkNav{
             // Provide feedback as to where the robot is located (if we know).
             if (targetVisible) {
                 // express position (translation) of robot in inches.
-                VectorF translation = lastLocation.getTranslation();
+                translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
 
@@ -235,7 +236,16 @@ public class VuMarkNav{
                 telemetry.addData("Visible Target", "none");
             }
             telemetry.update();
+
+            vu_XYZ.x = translation.get(0) / mmPerInch;
+            vu_XYZ.y = translation.get(1) / mmPerInch;
+            vu_XYZ.r = translation.get(2) / mmPerInch;
+
+
         }
     });
 
+    public pose getLastPosition(){
+        return vu_XYZ;
+    }
 }
