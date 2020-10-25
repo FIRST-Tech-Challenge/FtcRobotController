@@ -1,10 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+
+import static java.lang.Math.PI;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.tan;
 
 public class Robot {
     private LinearOpMode op = null;
@@ -155,4 +163,39 @@ public class Robot {
     public void stopVuforia() {
         vuforiaWebcam.interrupt();
     }
+    public void turnOdometry(double target, double power) {
+        drivetrain.turnOdometry(target,power);
+    }
+
+    public void moveForwardOdometry(double distance, double power) {
+        drivetrain.moveForwardOdometry(distance,power);
+    }
+
+    public void moveSideOdometry(double distance, double power) {//right is positive use distance to change direction
+        drivetrain.moveSideOdometry(distance,power);
+    }
+
+
+    public void xyPath(double x, double y, double power) {
+        drivetrain.xyPath(x,y,power);
+    }
+
+    public void StraightxyPath(double x, double y, double power) {
+        drivetrain.StraightxyPath(x,y,power);
+    }
+
+    public void StraightPointPath(double x, double y, double power) {
+        drivetrain.StraightPointPath(x,y,power);
+    }
+
+    public void DirectPointPath(double x, double y, double power) {
+        drivetrain.DirectPointPath(x,y,power);
+    }
+
+    public void DirectxyPath(double x, double y, double power) {
+        drivetrain.DirectxyPath(x,y,power);
+    }
+
+
+
 }
