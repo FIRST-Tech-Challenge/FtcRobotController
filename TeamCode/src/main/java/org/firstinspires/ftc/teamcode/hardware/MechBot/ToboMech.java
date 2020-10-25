@@ -1010,7 +1010,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (chassis==null) return;
         side = s;
         startPos = startP;
-        chassis.set_init_pos(side(60), 23, 0);
+        chassis.set_init_pos(side(55), 23, 0);
     }
 
     public void detectPosition(){//startPos = 1 = out, 2 = in
@@ -1029,7 +1029,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             if (tZone == TargetZone.ZONE_A) {//0
                 chassis.driveTo(auto_chassis_power, 25, 170, -60, true, 3);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 55, 260, 0, true, 4);
+                chassis.driveTo(auto_chassis_power, 55, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(auto_chassis_power, 25, 290, -60, true, 5);
             } else {
@@ -1051,13 +1051,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if(tZone == TargetZone.ZONE_A) {
             chassis.driveTo(auto_chassis_power, side(60), 165, -60, true, 5);
         }
-        chassis.driveTo(.6, side(130), 175, 0, true,  2); // need to do something about this
+        chassis.driveTo(.6, side(130), 170, 0, true,  2); // need to do something about this
         //shoot
         sleep(500);
-        chassis.driveTo(.55, side(150), 175, 0, false,  2);
+        chassis.driveTo(.55, side(150), 170, 0, false,  2);
         //shoot
         sleep(500);
-        chassis.driveTo(.55, side(170), 175, 0, false,  2);
+        chassis.driveTo(.55, side(170), 170, 0, false,  2);
         //shoot
         sleep(500);
     }
@@ -1108,7 +1108,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (tZone==TargetZone.ZONE_A){
             chassis.driveTo(auto_chassis_power+0.2, side(110), 165, 0, false, 2);
         }
-        chassis.driveTo(auto_chassis_power, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 190, chassis.getCurHeading(), false,  2);
+        chassis.driveTo(auto_chassis_power, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 210, chassis.getCurHeading(), false,  2);
     }
     public double side( double x){
         if (side == ProgramType.AUTO_RED){
