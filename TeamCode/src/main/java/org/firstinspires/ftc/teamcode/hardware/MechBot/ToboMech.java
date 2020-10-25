@@ -1069,9 +1069,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void getSecondWobbleGoal() throws InterruptedException {
         chassis.driveTo(auto_chassis_power, side(170), 35, 0, true,  5);
         if(startPos == StartPosition.OUT){
-            chassis.driveTo(auto_chassis_power, side(105), 30, 0, true,  3);
+            chassis.driveTo(auto_chassis_power, side(110), 30, 0, true,  3);
         } else {
-            chassis.driveTo(auto_chassis_power, side(45), 30, 0, true,  3);
+            chassis.driveTo(auto_chassis_power, side(50), 30, 0, true,  3);
         }
         //grab the wobble goal
         if (!simulation_mode) {
