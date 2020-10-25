@@ -32,7 +32,7 @@ public class DriveTrain {
 // and named "imu".
 
         this.opMode = opMode;
-        hera= hera;
+        this.hera = hera;
         this.telemetry = telemetry;
         this.telemetry.addData(DRIVE_TRAIN_CAPTION, "Drive train initialized");
         this.telemetry.update();

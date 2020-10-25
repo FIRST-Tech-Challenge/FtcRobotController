@@ -57,6 +57,7 @@ public class HardwareInnov8Hera {
         motorOne = this.hwMap.get(DcMotor.class, "motorOne");
         motorTwo = this.hwMap.get(DcMotor.class, "motorTwo");
         motorThree = this.hwMap.get(DcMotor.class, "motorThree");
+        motorFour = this.hwMap.get(DcMotor.class, "motorFour");
 
         // Using REV (I think) motors
         motorOne.setDirection(DcMotor.Direction.FORWARD);
