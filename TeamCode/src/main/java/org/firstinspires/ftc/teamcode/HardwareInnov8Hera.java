@@ -26,13 +26,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Motor channel:  Left  drive motor:        "left_drive"
  * Motor channel:  Right drive motor:        "right_drive"
  */
-public class HardwareInnov8Robot {
+public class HardwareInnov8Hera {
     /* Public OpMode members. */
     public DcMotor motorOne = null; // Front left wheel
     public DcMotor motorTwo = null; // Back left  wheel
     public DcMotor motorThree = null; // Front right wheel
     public DcMotor motorFour = null; // Back right wheel
-
 
     public BNO055IMU imu;
 
@@ -46,7 +45,7 @@ public class HardwareInnov8Robot {
     private ElapsedTime period = new ElapsedTime();
 
     /* Constructor */
-    public HardwareInnov8Robot(HardwareMap ahwMap) {
+    public HardwareInnov8Hera(HardwareMap ahwMap) {
         this.hwMap = ahwMap;
         this.init(ahwMap);
     }
@@ -88,3 +87,4 @@ public class HardwareInnov8Robot {
     }
 
 }
+

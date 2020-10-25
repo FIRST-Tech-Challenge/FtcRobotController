@@ -8,8 +8,8 @@ public class Innov8Teleop_Robot extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(telemetry, hardwareMap, this);
+        Hera hera = new Hera(telemetry, hardwareMap, this);
         waitForStart();
-        robot.teleop(gamepad1, gamepad2);
+        hera.teleop(gamepad1, gamepad2);
     }
 }

@@ -8,9 +8,9 @@ public class forwardTwelveInches extends LinearOpMode
 {
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(telemetry, hardwareMap, this);
+        Hera hera = new Hera(telemetry, hardwareMap, this);
         waitForStart();
-        robot.forwardTwelveInches();
+        hera.forwardTwelveInches();
 
     }
 }
