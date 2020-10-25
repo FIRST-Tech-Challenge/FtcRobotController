@@ -1,4 +1,4 @@
-package autofunctions;
+package util;
 
 public class PID {
     public double Kp = 0;
@@ -13,8 +13,9 @@ public class PID {
     }
 
     public double getPower(double ce, double cv, double ci){
-        return (Kp*abs(ce) - Kd*abs(cv) + Ki * abs(ci));
+        return (Kp*abs(ce) - Kd*abs(cv) + Ki*abs(ci));
     }
+
     public double abs(double in){
         return Math.abs(in);
     }

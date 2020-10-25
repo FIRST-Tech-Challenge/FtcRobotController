@@ -45,16 +45,21 @@ public class TerraOp extends OpMode {
         }
         if(!bot.autoModulesRunning()){
 
+//            if(gamepad2.right_stick_y < 0){
+//                bot.outtaking = true;
+//                bot.outtake(bot.outtakeSpeed);
+//            }else if(gamepad2.right_stick_y > 0){
+//                bot.outtaking = false;
+//                bot.outtake(-bot.outtakeSpeed);
+//            }else if(bot.outtaking){
+//                bot.outtake(bot.outtakeSpeed);
+//            }else{
+//                bot.outtake(0);
+//            }
             if(gamepad2.right_stick_y < 0){
-                bot.outtaking = true;
-                bot.outtake(bot.outtakeSpeed);
-            }else if(gamepad2.right_stick_y > 0){
-                bot.outtaking = false;
-                bot.outtake(-bot.outtakeSpeed);
-            }else if(bot.outtaking){
-                bot.outtake(bot.outtakeSpeed);
+                bot.outtakeWithEncoders(bot.outtakeSpeed);
             }else{
-                bot.outtake(0);
+                bot.outrController.reset();
             }
 
             bot.lift(bot.liftControl.update(gamepad2.right_trigger, gamepad2.left_trigger));
@@ -99,9 +104,15 @@ public class TerraOp extends OpMode {
         bot.move(forward, strafe, turn);
 
 
-        telemetry.addData("angle", bot.getArmPos());
-        telemetry.addData("wobblePos", bot.st.getPosition());
-        telemetry.update();
+//        telemetry.addData("RightPos", bot.getOutrPos());
+//        telemetry.addData("LeftPos", bot.getOutlPos());
+//        telemetry.addData("RightSpeed", bot.outrController.lastSpeed);
+//        telemetry.addData("LeftSpeed", bot.outlController.lastSpeed);
+//        telemetry.addData("ErrorR", bot.outrController.currError);
+//        telemetry.addData("ErrorL", bot.outlController.currError);
+//        telemetry.addData("RightPow", bot.outrController.pow);
+//        telemetry.addData("RightPow", bot.outrController.pow);
+//        telemetry.update();
 
         bot.update();
 
