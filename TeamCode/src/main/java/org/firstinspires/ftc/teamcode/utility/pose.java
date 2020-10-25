@@ -20,6 +20,6 @@ public class pose {
     }
 
     public String toString(){
-        return String.format("pose %.4f %.4f %.4f", x, y, r);
+        return String.format("pose %.3f %.3f %.3f", x, y, r);
     }
 }

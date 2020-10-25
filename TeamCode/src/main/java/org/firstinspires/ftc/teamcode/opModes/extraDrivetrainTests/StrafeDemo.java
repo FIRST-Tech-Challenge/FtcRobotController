@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.opModes.extraDrivetrainTests;
+
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -28,24 +29,12 @@ package org.firstinspires.ftc.teamcode.opModes;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
-import org.firstinspires.ftc.teamcode.odometry.Odometry;
-import org.firstinspires.ftc.teamcode.odometry.OdometryWheel;
-import org.firstinspires.ftc.teamcode.odometry.PhysicalOdoWheel;
-import org.firstinspires.ftc.teamcode.utility.pose;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -61,52 +50,21 @@ import java.util.ListIterator;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="OdoTest", group="Iterative Opmode")
+@TeleOp(name="StrafeDemo", group="Iterative Opmode")
 
-public class OdoTest extends OpMode {
+public class StrafeDemo extends OpMode
+{
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    Odometry odometry;
-
-    DcMotor frontRight;
-    DcMotor frontLeft;
-    DcMotor backRight;
-    DcMotor backLeft;
-
-    PhysicalOdoWheel frontRightOdo;
-    PhysicalOdoWheel frontLeftOdo;
-    PhysicalOdoWheel backRightOdo;
-    PhysicalOdoWheel backLeftOdo;
-//    pose deltaPose;
-    pose globalPosition;
+    Mecanum MecanumDrive;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        telemetry.addData("Status", "Initializing...");
+        telemetry.addData("Status", "Initialized");
+        MecanumDrive = new Mecanum(hardwareMap);
 
-        //physical wheels
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-
-        //odometry wheels //todo put the correct offsets
-        frontRightOdo = new PhysicalOdoWheel(new pose(178.5,168,Math.PI/2), frontRight);
-        frontLeftOdo = new PhysicalOdoWheel(new pose(-178.5,168,Math.PI/2), frontLeft);
-        backRightOdo = new PhysicalOdoWheel(new pose(178.5,-168,Math.PI/2), backRight);
-        backLeftOdo = new PhysicalOdoWheel(new pose(-178.5,-168,Math.PI/2), backLeft);
-
-        List<OdometryWheel> odometryWheels = new ArrayList<>();
-        odometryWheels.add(frontLeftOdo);
-        odometryWheels.add(frontRightOdo);
-        odometryWheels.add(backLeftOdo);
-        odometryWheels.add(backRightOdo);
-
-        // odometry system
-        pose initial = new pose(0,0,0);
-        odometry = new Odometry(initial, odometryWheels);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -117,7 +75,6 @@ public class OdoTest extends OpMode {
      */
     @Override
     public void init_loop() {
-
     }
 
     /*
@@ -125,8 +82,6 @@ public class OdoTest extends OpMode {
      */
     @Override
     public void start() {
-        odometry.start();
-
         runtime.reset();
     }
 
@@ -136,23 +91,9 @@ public class OdoTest extends OpMode {
     @Override
     public void loop() {
 
-        globalPosition = odometry.getPosition();
+        MecanumDrive.drive(1,0,0);
 
-        // output current delta
-//        telemetry.addData("Delta", "Delta X: " + deltaPose.x
-//                + "Delta Y: " + deltaPose.y + "Delta R: " + deltaPose.r);
-
-        // output current pose
-
-        telemetry.addData("Position", globalPosition.toString());
-        telemetry.addData("Detla front Right: ", frontRightOdo.getDeltaPosition());
-        telemetry.addData("Detla front Left: ", frontLeftOdo.getDeltaPosition());
-        telemetry.addData("Detla back Right: ", backRightOdo.getDeltaPosition());
-        telemetry.addData("Detla back Left: ", backLeftOdo.getDeltaPosition());
-//        telemetry.addData("Position", "Current X: " +  globalPosition.x);
-//        telemetry.addData(  "Position","Current Y:" +  globalPosition.y );
-//        telemetry.addData("Position", "Current R:" + globalPosition.r);
-
+        // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 
@@ -161,7 +102,7 @@ public class OdoTest extends OpMode {
      */
     @Override
     public void stop() {
-        odometry.end();
+        telemetry.addData("Status", "done! Great job!");
     }
 
 }

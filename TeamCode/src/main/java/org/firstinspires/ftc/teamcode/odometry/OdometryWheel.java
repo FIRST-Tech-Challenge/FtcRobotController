@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.utility.pose;
 
 public abstract class OdometryWheel {
     int ticksPerRev = 1024;
-    double radius = 3; //Centimeters
+    double radius = 5.08; //Centimeters
     pose offset;
 
     private double prevTicks = 0;
@@ -31,7 +31,8 @@ public abstract class OdometryWheel {
         prevTicks += deltaTicks;
         //get ticks
         double measurement = getCurrentPosition();
-        deltaTicks = RotationUtil.turnLeftOrRight(prevTicks, measurement, ticksPerRev);
+//        deltaTicks = RotationUtil.turnLeftOrRight(prevTicks, measurement, ticksPerRev);
+        deltaTicks = measurement - prevTicks; //ticks per rev doesn't matter because the encoders don't roll over
     }
 
     /**
@@ -42,7 +43,7 @@ public abstract class OdometryWheel {
         return deltaTicks;
     }
 
-    double getDeltaPosition(){
+    public double getDeltaPosition(){
         // theta * radians = arc length
         //return -1;
         return (getDeltaTicks() / ticksPerRev) * radius;

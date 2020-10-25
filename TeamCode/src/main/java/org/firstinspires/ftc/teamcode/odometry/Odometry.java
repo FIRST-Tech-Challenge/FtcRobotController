@@ -34,6 +34,8 @@ public class Odometry {
 
     public pose getPosition(){ return position;}
 
+    public void resetPosition(){ position = new pose(0,0,0);}
+
     private final Thread loop = new Thread(() -> {
         while(running){
             wheels.forEach(OdometryWheel::updateDelta);

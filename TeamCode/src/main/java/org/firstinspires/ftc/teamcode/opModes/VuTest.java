@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.opModes;
-
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,15 +28,12 @@ package org.firstinspires.ftc.teamcode.opModes;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
+import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -53,13 +49,14 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TurnDemo", group="Iterative Opmode")
+@TeleOp(name="VuTest", group="Iterative Opmode")
 
-public class TurnDemo extends OpMode
+public class VuTest extends OpMode
 {
     // Declare OpMode members.
+
     private ElapsedTime runtime = new ElapsedTime();
-    Mecanum MecanumDrive;
+    VuMarkNav mark;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -67,8 +64,7 @@ public class TurnDemo extends OpMode
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        MecanumDrive = new Mecanum(hardwareMap);
-
+        mark = new VuMarkNav(hardwareMap, telemetry);
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
     }
@@ -85,6 +81,7 @@ public class TurnDemo extends OpMode
      */
     @Override
     public void start() {
+
         runtime.reset();
     }
 
@@ -93,12 +90,10 @@ public class TurnDemo extends OpMode
      */
     @Override
     public void loop() {
+        // stop when no one is touching anything
+        mark.activate();
 
-        MecanumDrive.drive(0,0,100);
 
-
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("MotorPower", "frontLeft ");
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 
@@ -107,7 +102,7 @@ public class TurnDemo extends OpMode
      */
     @Override
     public void stop() {
-        telemetry.addData("Status", "done! Great job!");
+        mark.deactivate();
     }
 
 }
