@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Ring Prototype Test
@@ -16,8 +18,16 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class RingPrototypeTest extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
-    private CRServo conveyor;
+    private CRServo conveyor, elevator;
     private DcMotor intake, outtakeRight, outtakeLeft;
+    private Servo flipper;
+
+    //Figures for ring elevator calculations
+    private static final double PINION_CIRCUMFERENCE = 2.57;
+    private static final double ELEVATOR_HEIGHT = 5.0;
+    private static final double PINION_REVOLUTIONS = ELEVATOR_HEIGHT/PINION_CIRCUMFERENCE;
+    private static final double SERVO_RPM = 50.0;
+    private static final double ELEVATOR_TIME = PINION_REVOLUTIONS/SERVO_RPM * 60;
 
     //Figures for telemetry calculations
     private static final int OUTTAKE_MOTOR_RPM = 1100;
@@ -35,6 +45,10 @@ public class RingPrototypeTest extends LinearOpMode{
         //intake and conveyor
         intake = hardwareMap.dcMotor.get("intake");
         conveyor = hardwareMap.crservo.get("conveyor");
+
+        //elevator and flipper
+        elevator = hardwareMap.crservo.get("elevator");
+        flipper = hardwareMap.servo.get("flipper");
 
         //launcher
         outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
@@ -85,6 +99,30 @@ public class RingPrototypeTest extends LinearOpMode{
             intake.setPower(intakeSpeed);
             conveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
 
+            //Ring elevator
+            //Run by a continuous servo; run continuous servo for some amount of time
+            if(gamepad2.x){
+                raiseElevator();
+            }
+
+            if(gamepad2.y){
+                lowerElevator();
+            }
+
+            //Ring flipper
+            //Run by a servo, 1 is fully "flipped" position, 0 is fully "retracted" position
+            //Hold down b button to flip ring out
+            while(gamepad2.b && flipper.getPosition() <= 1){
+                flipper.setPosition(flipper.getPosition() + 0.01);
+            }
+
+            while(!gamepad2.b && flipper.getPosition() >= 0){
+                flipper.setPosition(flipper.getPosition() - 0.01);
+            }
+
+            telemetry.addData("flipper position", flipper.getPosition());
+
+
             //everything outtake/launch
             //do we want this on gamepad 1 or 2?
             //I'm putting it on 2 for now...
@@ -109,18 +147,6 @@ public class RingPrototypeTest extends LinearOpMode{
             double outtakeRPM = outtakePower * OUTTAKE_MOTOR_RPM * OUTTAKE_GEAR_RATIO;
             double outtakeWheelVelocity = (outtakeRPM * 2 * Math.PI * OUTTAKE_WHEEL_RADIUS_M)/60;
 
-            //elevator here
-            if(gamepad2.y){
-                //set elevator up position. IDK if we're using a CR servo or a regular one
-            }
-            if(gamepad2.x){//
-                //set elevator down position
-            }
-
-            //bumper for launch servo??
-            if(gamepad2.left_bumper){
-                //move the servo forward then back
-            }
 
             //wobble stuff??
 
@@ -147,5 +173,27 @@ public class RingPrototypeTest extends LinearOpMode{
             telemetry.update();
             idle();
         }
-    }    
+    }
+
+    private void raiseElevator(){
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+
+        while(timer.seconds() < ELEVATOR_TIME){
+            elevator.setPower(1);
+        }
+
+        elevator.setPower(0);
+    }
+
+    private void lowerElevator(){
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+
+        while(timer.seconds() < ELEVATOR_TIME){
+            elevator.setPower(-1);
+        }
+
+        elevator.setPower(0);
+    }
 }
