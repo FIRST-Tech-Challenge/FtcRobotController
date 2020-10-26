@@ -54,7 +54,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Stacker Test", group="Linear Opmode")
+@TeleOp(name="Wobble Mover Test", group="Linear Opmode")
 //@Disabled
 public class WobbleMover_Test extends LinearOpMode {
 
@@ -83,25 +83,31 @@ public class WobbleMover_Test extends LinearOpMode {
             //========================================
 
             if (gamepad2.x) {
-                wobble.resetWobble();
+                wobble.GripperOpen();
+               // wobble.resetWobble();
                 sleep(500); // pause for servos to move
                 telemetry.addData("Stowing Wobble Mover", "Complete ");
             }
 
             if (gamepad2.y) {
-                wobble.readyToGrabGoal();
+                wobble.GripperClose();
+                //wobble.readyToGrabGoal();
                 sleep(500);
-                telemetry.addData("Stacker Reset", "Complete ");
+                telemetry.addData("Gripper Close", "Complete ");
+            }
+            if (gamepad2.a) {
+                wobble.ArmExtend();
+                sleep(500);
+                telemetry.addData("Arm Extend", "Complete ");
             }
             if (gamepad2.b) {
-                wobble.grabAndLift();
+                wobble.ArmCarryWobble();
                 sleep(500);
-                telemetry.addData("Flipper in Centers", "Complete ");
+                telemetry.addData("Carry Wobble", "Complete ");
             }
-            if (gamepad2.b) {
-                wobble.lowerAndRelease();
-                sleep(500);
-                telemetry.addData("Flipper in Centers", "Complete ");
+            if (gamepad2.left_bumper) {
+                wobble.ArmContract();
+                telemetry.addData("Reset Arm", "Complete ");
             }
 
         }

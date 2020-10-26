@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Stacker;
+import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
 
 
 /**
@@ -59,6 +60,7 @@ public class Stacker_Test extends LinearOpMode {
 
     // Declare OpMode members.
     private Stacker stacker = new Stacker();
+    private Wobblegoal wobble = new Wobblegoal();
 
 
 
@@ -94,6 +96,14 @@ public class Stacker_Test extends LinearOpMode {
                 telemetry.addData("Stacker Reset", "Complete ");
             }
             if (gamepad2.b) {
+                stacker.flipperCalibrateinCenter();
+                telemetry.addData("Flipper in Centers", "Complete ");
+            }
+            if (gamepad2.right_bumper) {
+                stacker.resetShooter();
+                telemetry.addData("Stacker Reset", "Complete ");
+            }
+            if (gamepad2.left_bumper) {
                 stacker.flipperCalibrateinCenter();
                 telemetry.addData("Flipper in Centers", "Complete ");
             }
