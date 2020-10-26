@@ -23,6 +23,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 
 public class Localizer {
 
+    private long latestAcquisitionTime = 0;
     private OpenGLMatrix cameraMatrix;
     private List<VuforiaTrackable> vuforiaTrackables = new ArrayList<VuforiaTrackable>();
     private VuforiaTransform lastVuforiaTransform;
@@ -35,6 +36,10 @@ public class Localizer {
     private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
     private static final float halfField = 72 * mmPerInch;
     private static final float quadField  = 36 * mmPerInch;
+
+    public void setLatestAcquisitionTime() {
+        this.latestAcquisitionTime = System.nanoTime();
+    }
 
 
     /**
@@ -69,6 +74,22 @@ public class Localizer {
         VUFORIA,
         IMU,
         OTHER
+    }
+
+    enum PositionSource {
+        VUFORIA,
+        ENCODERS,
+        OTHER
+    }
+
+    public class EstimatedPosition {
+        public PositionSource source;
+        public Position position;
+        public EstimatedPosition(PositionSource soruce, Position position) {
+            this.source = source;
+            this.position = position;
+
+        }
     }
 
     public class EstimatedOrientation {
@@ -205,6 +226,14 @@ public class Localizer {
         targetsUltimateGoal.activate();
     }
 
+    public void updateRobotTransform(RobotHardware hardware, BNO055IMU imu) {
+        this.setLatestAcquisitionTime();
+        this.updateLocationWithVuforia(hardware);
+        if (imu != null) {
+            this.updateIMUOrientation(imu);
+        }
+
+    }
     public void updateLocationWithVuforia(RobotHardware hardware) {
         // Clear the currently saved vuforia transform
         lastVuforiaTransform = null;
@@ -287,12 +316,28 @@ public class Localizer {
         return (start - end + 180) % 360 - 180;
     }
 
+    public static int mod(int x, int n) {
+        return (x % n) - (x < 0 ? n : 0);
+    }
+
+    public static double mod(double x, double n) {
+        return (x % n) - (x < 0 ? n : 0);
+    }
+
+    public static float mod(float x, float n) {
+        return (x % n) - (x < 0 ? n : 0);
+    }
+
+    public static long mod(long x, long n) {
+        return (x % n) - (x < 0 ? n : 0);
+    }
+
     public static double headingWrapDegrees(double angle) {
-        return (angle + 180) % 360 - 180;
+        return Localizer.mod(angle + 180, 360) - 180;
     }
 
     public static double headingWrapRadians(double angle) {
-        return (angle + Math.PI) % 2*Math.PI - Math.PI;
+        return Localizer.mod(angle + Math.PI, 2*Math.PI) - Math.PI;
     }
 
     public static double atan2(Position a, Position b) {

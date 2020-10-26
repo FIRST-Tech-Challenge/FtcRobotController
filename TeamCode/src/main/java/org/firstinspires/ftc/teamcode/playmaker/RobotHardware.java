@@ -78,11 +78,7 @@ public abstract class RobotHardware extends OpMode {
 
     public void localize() {
         if (localizer != null) {
-            this.localizer.updateLocationWithVuforia(this);
-            if (revIMU != null) {
-                this.localizer.updateIMUOrientation(revIMU);
-                this.localizer.attemptIMUToWorldCalibration(revIMU);
-            }
+            this.localizer.updateRobotTransform(this, revIMU);
         }
     }
 
