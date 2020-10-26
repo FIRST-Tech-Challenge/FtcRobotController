@@ -2,15 +2,19 @@ package org.firstinspires.ftc.teamcode.hybridop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.autonomous.sequences.MovementActionSequence;
 import org.firstinspires.ftc.teamcode.hardware.MovementHardware;
+import org.firstinspires.ftc.teamcode.playmaker.ActionSequence;
 import org.firstinspires.ftc.teamcode.playmaker.HybridOp;
 import org.firstinspires.ftc.teamcode.playmaker.HybridOpController;
 
 @TeleOp(name="Movement HyOp")
 public class MovementHybridOp extends MovementHardware implements HybridOp {
 
-    final double POWER_SCALE_FACTOR = 0.5;
-    final double ROTATE_SCALE_FACTOR = 0.25;
+    final double POWER_SCALE_FACTOR = 1;
+    final double ROTATE_SCALE_FACTOR = 0.75;
+    boolean a_press = false;
+    private ActionSequence movementActionSequence = new MovementActionSequence();
 
     @Override
     public void init() {
@@ -27,6 +31,19 @@ public class MovementHybridOp extends MovementHardware implements HybridOp {
     @Override
     public void hybrid_loop() {
         this.localizer.telemetry(telemetry);
+        if (gamepad1.a) {
+            if (!a_press) {
+                if (this.hybridOpController.isAutonomous()) {
+                    this.hybridOpController.stopAutonomous();
+                } else {
+                    this.hybridOpController.executeActionSequence(movementActionSequence, true);
+                }
+                a_press = true;
+            }
+        } else {
+            a_press = false;
+        }
+
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.playmaker;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 
@@ -18,8 +19,9 @@ public abstract class RobotHardware extends OpMode {
     public WebcamName webcamName;
     public boolean initVuforia = true;
 
+    public BNO055IMU revIMU;
     public OmniDrive omniDrive;
-    public Localizer localizer;
+    public Localizer  localizer;
     public HybridOpController hybridOpController;
 
     public static double COUNTS_PER_INCH;
@@ -53,20 +55,20 @@ public abstract class RobotHardware extends OpMode {
             telemetry.addData("Robot Hardware", "VUFORIA INIT FAILED, WEBCAM NULL");
             return;
         }
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        vuforiaParameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = vuforiaKey;
+        vuforiaParameters.vuforiaLicenseKey = vuforiaKey;
 
         /**
          * We also indicate which camera on the RC we wish to use.
          */
-        parameters.cameraName = webcamName;
+        vuforiaParameters.cameraName = webcamName;
 
         // Make sure extended tracking is disabled for this example.
-        parameters.useExtendedTracking = false;
+        vuforiaParameters.useExtendedTracking = false;
 
         //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        vuforia = ClassFactory.getInstance().createVuforia(vuforiaParameters);
 
     }
 
@@ -77,6 +79,10 @@ public abstract class RobotHardware extends OpMode {
     public void localize() {
         if (localizer != null) {
             this.localizer.updateLocationWithVuforia(this);
+            if (revIMU != null) {
+                this.localizer.updateIMUOrientation(revIMU);
+                this.localizer.attemptIMUToWorldCalibration(revIMU);
+            }
         }
     }
 
