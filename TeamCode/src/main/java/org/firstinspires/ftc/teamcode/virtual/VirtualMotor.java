@@ -5,10 +5,27 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class VirtualMotor extends VirtualDevice implements DcMotor {
 
+    private double power = 0;
+    private boolean readyToTransmit = false;
+
     @Override
-    void updateDevice() {
+    JSONObject getDataToTransmit() throws JSONException {
+        if (readyToTransmit) {
+            JSONObject payload = new JSONObject();
+            payload.put("power", power);
+            readyToTransmit = false;
+            return payload;
+        }
+        return null;
+    }
+
+    @Override
+    void updateDevice(JSONObject newData) {
 
     }
 
@@ -94,12 +111,15 @@ public class VirtualMotor extends VirtualDevice implements DcMotor {
 
     @Override
     public void setPower(double power) {
-
+        if (this.power != power) {
+            this.power = power;
+            readyToTransmit = true;
+        }
     }
 
     @Override
     public double getPower() {
-        return 0;
+        return power;
     }
 
     @Override

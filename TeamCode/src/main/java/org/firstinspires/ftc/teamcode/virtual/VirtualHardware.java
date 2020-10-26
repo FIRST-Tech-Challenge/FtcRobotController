@@ -12,11 +12,14 @@ public abstract class VirtualHardware extends RobotHardware {
     VirtualMotor backLeft;
     VirtualMotor backRight;
 
+    VirtualMotor testMotor;
+
     @Override
     public void initializeHardware() {
         try {
             vhManager.connect("192.168.1.22", 37564);
             vhManager.setRobotHardware(this);
+            testMotor = vhManager.initializeVirtualDevice(VirtualMotor.class, "testMotor");
         } catch (Exception e) {
             telemetry.addData("error initializing virtual hardware", e.getLocalizedMessage());
         }

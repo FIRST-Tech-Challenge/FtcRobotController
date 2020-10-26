@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.virtual;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.json.JSONException;
+
 @TeleOp(name="Virtual Hardware")
 public class VirtualHardwareTest extends VirtualHardware {
 
@@ -16,6 +18,12 @@ public class VirtualHardwareTest extends VirtualHardware {
 
     @Override
     public void loop() {
+        this.testMotor.setPower(gamepad1.left_stick_y);
 
+        try {
+            vhManager.updateDevices();
+        } catch (JSONException e) {
+                telemetry.addData("err", "can't update devices");
+        }
     }
 }

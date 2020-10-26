@@ -82,13 +82,19 @@ public class VirtualHardwareManager implements WebSocketListener {
         // Transmit new information
         JSONObject payload = new JSONObject();
         JSONObject devicePayload = new JSONObject();
+        boolean dataToTransmit = false;
         for (VirtualDevice device : this.virtualDevices) {
             JSONObject deviceData = device.getDataToTransmit();
             if (deviceData != null) {
+                dataToTransmit = true;
                 devicePayload.put(device.deviceName, deviceData);
             }
         }
-
+        if (dataToTransmit) {
+            payload.put("cmd", "update");
+            payload.put("devices", devicePayload);
+            ws.sendText(payload.toString());
+        }
         deviceUpdates.clear();
     }
 
@@ -103,6 +109,7 @@ public class VirtualHardwareManager implements WebSocketListener {
         T device;
         try {
             device = deviceClass.newInstance();
+            device.deviceName = name;
             device.setParentConnectionManager(this);
             virtualDevices.add(device);
         } catch (Exception e) {
