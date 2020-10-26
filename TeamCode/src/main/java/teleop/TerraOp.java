@@ -43,52 +43,56 @@ public class TerraOp extends OpMode {
         }else{
             bot.intake(0);
         }
+
         if(!bot.autoModulesRunning()){
-
-//            if(gamepad2.right_stick_y < 0){
-//                bot.outtaking = true;
-//                bot.outtake(bot.outtakeSpeed);
-//            }else if(gamepad2.right_stick_y > 0){
-//                bot.outtaking = false;
-//                bot.outtake(-bot.outtakeSpeed);
-//            }else if(bot.outtaking){
-//                bot.outtake(bot.outtakeSpeed);
-//            }else{
-//                bot.outtake(0);
-//            }
-            if(gamepad2.right_stick_y < 0){
-                bot.outtakeWithEncoders(bot.outtakeSpeed);
-            }else{
-                bot.outrController.reset();
-            }
-
-            bot.lift(bot.liftControl.update(gamepad2.right_trigger, gamepad2.left_trigger));
-
-            double pr = bot.shootControlR.update(gamepad2.left_bumper, gamepad2.right_bumper);
-            double pl = bot.shootControlL.update(gamepad2.left_bumper, gamepad2.right_bumper);
-
-            bot.shoot(pr,pl);
-
             if(!bot.autoModulesPaused()) {
+                if (gamepad2.right_stick_y < 0) {
+                    bot.outtaking = true;
+                    bot.outtake(bot.outtakeSpeed);
+                } else if (gamepad2.right_stick_y > 0) {
+                    bot.outtaking = false;
+                    bot.outtake(-bot.outtakeSpeed);
+                } else if (bot.outtaking) {
+                    bot.outtake(bot.outtakeSpeed);
+                } else {
+                    bot.outtake(0);
+                }
+
+                double pr = bot.shootControlR.update(gamepad2.left_bumper, gamepad2.right_bumper);
+                double pl = bot.shootControlL.update(gamepad2.left_bumper, gamepad2.right_bumper);
+
+                bot.shoot(pr, pl);
+
+                bot.lift(bot.liftControl.update(gamepad2.left_trigger, gamepad2.right_trigger));
                 bot.turnWobbleArm(bot.turnControl.update(gamepad2.dpad_down, gamepad2.dpad_up, 0.5));
                 bot.grab(bot.grabControl.update(gamepad2.dpad_left, gamepad2.dpad_right));
-            }
-            if(bot.isArmInLimts(gamepad2.left_stick_y)) {
-                bot.turnArm(gamepad2.left_stick_y);
-            }else{
-                bot.turnArm(0);
+
+                if (bot.isArmInLimts(gamepad2.left_stick_y)) {
+                    bot.turnArm(gamepad2.left_stick_y);
+                } else {
+                    bot.turnArm(0);
+                }
+                bot.resetShooterIs();
             }
 
-            if(gamepad2.y){
+
+            if(gamepad1.y){
                 bot.shooter.start();
             }
-
             if(gamepad2.x){
                 bot.wobbleGoal.start();
             }
+            if(gamepad2.a){
+                bot.wobbleGoal2.start();
+            }
+
+            if(bot.shooter.pausing){
+                bot.outtakeWithEncoders(bot.outtakeSpeed);
+            }
+            
+        }else if(bot.shooter.executing){
+            bot.outtakeWithEncoders(bot.outtakeSpeed);
         }
-
-
 
 
 
@@ -108,8 +112,8 @@ public class TerraOp extends OpMode {
 //        telemetry.addData("LeftPos", bot.getOutlPos());
 //        telemetry.addData("RightSpeed", bot.outrController.lastSpeed);
 //        telemetry.addData("LeftSpeed", bot.outlController.lastSpeed);
-//        telemetry.addData("ErrorR", bot.outrController.currError);
-//        telemetry.addData("ErrorL", bot.outlController.currError);
+        telemetry.addData("ErrorR", bot.outrController.getPercentageError());
+        telemetry.addData("ErrorL", bot.outlController.getPercentageError());
 //        telemetry.addData("RightPow", bot.outrController.pow);
 //        telemetry.addData("RightPow", bot.outrController.pow);
 //        telemetry.update();

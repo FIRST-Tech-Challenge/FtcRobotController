@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.concurrent.ForkJoinPool;
@@ -37,6 +38,8 @@ public class TerraBot {
     public Servo sgr;
     public Servo sgl;
 
+    public TouchSensor tse;
+
     public boolean intaking = false;
     public boolean outtaking = false;
 
@@ -44,7 +47,7 @@ public class TerraBot {
     public double grabStart = 0.7;
     public double liftStart = 0.12;
     public double liftSecond = 0.27;
-    public double shootStartR = 0.05;
+    public double shootStartR = 0.13;
     public double shootStartL = 0.1;
     public double intakeSpeed = 1;
     public double outtakeSpeed = 0.4;
@@ -57,20 +60,21 @@ public class TerraBot {
     public final double MAX_OUTTAKE_SPEED = 32400;
 
     public Cycle grabControl = new Cycle(grabStart, 0.45);
-    public Cycle liftControl = new Cycle(liftStart, liftSecond, 0.5);
-    public Cycle shootControlR = new Cycle(shootStartR, 0.24, 0.25);
-    public Cycle shootControlL = new Cycle(shootStartL, 0.15, 0.33);
+    public Cycle liftControl = new Cycle(liftStart, liftSecond, 0.53);
+    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.24, 0.25);
+    public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.15, 0.33);
 
     public ServoController turnControl = new ServoController(turnStart, 0.0, 0.7);
 
     public AutoModule shooter = new AutoModule();
     public AutoModule wobbleGoal = new AutoModule();
+    public AutoModule wobbleGoal2 = new AutoModule();
 
     public Limits limits = new Limits();
 
 
-    public SpeedController outrController = new SpeedController(0.5, 0.01, 0.05);
-    public SpeedController outlController = new SpeedController(0.5, 0.01, 0.05);
+    public SpeedController outrController = new SpeedController(0.7, 0.005, 0.1);
+    public SpeedController outlController = new SpeedController(0.7, 0.005, 0.1);
 
 
 
@@ -96,6 +100,10 @@ public class TerraBot {
         st = hwMap.get(Servo.class, "st");
         sgr = hwMap.get(Servo.class, "sgr");
         sgl = hwMap.get(Servo.class, "sgl");
+
+        tse = hwMap.get(TouchSensor.class, "tse");
+
+
 
 
         l1.setPower(0);
@@ -151,13 +159,18 @@ public class TerraBot {
         outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        shootControlL.changeCurr(1);
+        shootControlR.changeCurr(1);
+
         resetEncoders();
 
         defineShooter();
         defineWobbleGoal();
+        defineWobbleGoal2();
 
 
         limits.addLimit(arm, 0, maxArmPos);
+
 
 
 
@@ -206,43 +219,70 @@ public class TerraBot {
     }
 
     public void defineShooter(){
-        shooter.addStage(outl, outtakeSpeed, 0.01);
-        shooter.addStage(outr, outtakeSpeed, 0.01);
+//        shooter.addStage(outl, outtakeSpeed, 0.01);
+//        shooter.addStage(outr, outtakeSpeed, 0.01);
         shooter.addStage(slr, liftSecond+0.07, 0.01);
         shooter.addStage(sll, liftSecond, 0.7);
+        shooter.addWaitUntil();
         for(int i = 0; i < 3;i++) {
-            shooter.addStage(ssr, shootControlR.getPos(1), 0.01);
-            shooter.addStage(ssl, shootControlL.getPos(1), 0.4);
             shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
             shooter.addStage(ssl, shootControlL.getPos(2), 0.4);
+            shooter.addStage(ssr, shootControlR.getPos(3), 0.01);
+            shooter.addStage(ssl, shootControlL.getPos(3), 0.4);
         }
     }
     public void defineWobbleGoal(){
-        wobbleGoal.addStage(arm,  0.5, degreesToTicks(200));
-        wobbleGoal.addStage(st, 0.65, 0.7);
+        shooter.addStage(ssr, shootControlR.getPos(0), 0.01);
+        shooter.addStage(ssl, shootControlL.getPos(0), 0.01);
+        wobbleGoal.addStage(st, 0.65, 0.1);
+        wobbleGoal.addStage(arm,  1, degreesToTicks(210));
         wobbleGoal.addWaitUntil();
         wobbleGoal.addStage(sgl, grabControl.getPos(1), 0.01);
-        wobbleGoal.addStage(sgr, grabControl.getPos(1), 0.7);
-        wobbleGoal.addStage(arm,  0.5, degreesToTicks(225));
-        wobbleGoal.addStage(st, 0.16, 0.7);
-        wobbleGoal.addWaitUntil();
+        wobbleGoal.addStage(sgr, grabControl.getPos(1), 0.5);
+        wobbleGoal.addStage(st, 0.18, 0.01);
+        wobbleGoal.addStage(arm,  1, degreesToTicks(225));
+        wobbleGoal.addStage(slr, liftControl.getPos(1)+0.07, 0.01);
+        wobbleGoal.addStage(sll, liftControl.getPos(1), 0.5);
         wobbleGoal.addStage(slr, liftControl.getPos(2)+0.07, 0.01);
-        wobbleGoal.addStage(sll, liftControl.getPos(2), 0.7);
+        wobbleGoal.addStage(sll, liftControl.getPos(2), 0.5);
+        wobbleGoal.addDelay(0.25);
+        wobbleGoal.addStage(st, 0.65, 0.05);
+        wobbleGoal.addStage(slr, liftControl.getPos(0)+0.07, 0.01);
+        wobbleGoal.addStage(sll, liftControl.getPos(0), 0.01);
+        wobbleGoal.addDelay(0.7);
+        wobbleGoal.addStage(arm, 1, degreesToTicks(210));
+        wobbleGoal.addSave(grabControl, 0);
+        wobbleGoal.addSave(turnControl, 0.65);
 
+    }
+    public void defineWobbleGoal2(){
+        wobbleGoal2.addStage(st, 0.68, 0.1);
+        wobbleGoal2.addStage(arm,  1, degreesToTicks(200));
+        wobbleGoal2.addWaitUntil();
+        wobbleGoal2.addStage(sgl, grabControl.getPos(1), 0.01);
+        wobbleGoal2.addStage(sgr, grabControl.getPos(1), 0.5);
+        wobbleGoal2.addStage(st, 1, 0.01);
+        wobbleGoal2.addStage(arm, 1, degreesToTicks(100));
+        wobbleGoal2.addWaitUntil();
+        wobbleGoal2.addStage(arm, 1, degreesToTicks(180));
+        wobbleGoal2.addStage(sgl, grabControl.getPos(0), 0.01);
+        wobbleGoal2.addStage(sgr, grabControl.getPos(0), 0.5);
+        wobbleGoal2.addStage(arm, 1, degreesToTicks(160));
     }
 
     public void update(){
         shooter.update();
         wobbleGoal.update();
+        wobbleGoal2.update();
         outlController.updateMotorValues(getOutlPos());
         outrController.updateMotorValues(getOutrPos());
     }
 
     public boolean autoModulesRunning(){
-        return shooter.executing || wobbleGoal.executing;
+        return (shooter.executing || wobbleGoal.executing || wobbleGoal2.executing);
     }
 
-    public boolean autoModulesPaused(){return  wobbleGoal.pausing;}
+    public boolean autoModulesPaused(){return  wobbleGoal.pausing || shooter.pausing || wobbleGoal2.pausing;}
 
 
     public double getArmPos(){
@@ -274,6 +314,10 @@ public class TerraBot {
         outl.setPower(outlPow);
     }
 
+    public void resetShooterIs(){
+        outrController.reset();
+        outlController.reset();
+    }
     public void resetEncoders(){
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -281,5 +325,9 @@ public class TerraBot {
         outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public boolean isTouchSensorPressed(){
+        return tse.isPressed();
     }
 }

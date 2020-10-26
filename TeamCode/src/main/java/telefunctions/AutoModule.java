@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
+import global.TerraBot;
+
 public class AutoModule {
     public boolean executing = false;
     public int stageNum = 0;
@@ -49,6 +51,16 @@ public class AutoModule {
             }
         });
     }
+    public void addDelay(final double secs){
+        lastTime += secs;
+        final double time = lastTime;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                return in > time;
+            }
+        });
+    }
 
     public void addStage(final DcMotor mot, final double pow, final int pos) {
         lastTime = 0;
@@ -80,6 +92,30 @@ public class AutoModule {
         });
 
     }
+
+    public void addSave(final Cycle c, final int idx){
+        lastTime = 0;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                timer.reset();
+                c.curr = idx;
+                return true;
+            }
+        });
+    }
+    public void addSave(final ServoController c, final double pos){
+        lastTime = 0;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                timer.reset();
+                c.cur = pos;
+                return true;
+            }
+        });
+    }
+
 
 
     public void addStage(final DcMotor mot, final double pow, double t) {

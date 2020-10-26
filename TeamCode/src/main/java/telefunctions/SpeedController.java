@@ -18,7 +18,7 @@ public class SpeedController {
     public double currAccel = 0;
     public double integralOfError = 0;
 
-    double targetSpeed = 0;
+    public double targetSpeed = 0;
 
     double changeTime = 0;
 
@@ -55,10 +55,14 @@ public class SpeedController {
 
     public void updateMotorValues(double currPos){
         double currSpeed = getMotorSpeed(currPos);
-        currError = -(currSpeed-targetSpeed);
+        currError = targetSpeed-currSpeed;
         currAccel = currError/changeTime;
         lastSpeed = currSpeed;
         integralOfError += currError*changeTime;
+    }
+
+    public double getPercentageError(){
+        return ((currError/targetSpeed))*100;
     }
 
     public double getPow(){

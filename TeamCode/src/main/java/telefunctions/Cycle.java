@@ -9,24 +9,21 @@ public class Cycle {
     ElapsedTime delay = new ElapsedTime();
     ArrayList<Double> poses = new ArrayList<>();
     public int curr = 0;
-    public Cycle(double p1){
-        poses.add(p1);
+
+    public Cycle(double ...p){
+        for(double i:p){
+            poses.add(i);
+        }
     }
-    public Cycle(double p1, double p2){
-        poses.add(p1);
-        poses.add(p2);
+    public void changeCurr(int cur){
+        curr = cur;
     }
-    public Cycle(double p1, double p2, double p3){
-        poses.add(p1);
-        poses.add(p2);
-        poses.add(p3);
-    }
+
     public double getPos(int index){
         return poses.get(index);
     }
-    public void addPos(double pos){
-        poses.add(pos);
-    }
+
+
     public double update(double down, double up){
         if(down > 0){
             if(curr > 0 && delay.seconds() > 0.3){

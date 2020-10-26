@@ -1,7 +1,7 @@
 package telefunctions;
 
 public class ServoController {
-    double cur;
+    public double cur;
     double low;
     double upp;
 
