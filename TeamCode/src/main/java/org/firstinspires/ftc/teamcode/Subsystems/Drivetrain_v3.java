@@ -70,15 +70,15 @@ public class Drivetrain_v3 {
                 rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 // FLOAT allows motors to coast when count is reached. Change to BRAKE
                 // if necessary
-                leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                //leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                //rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
             } else {
                 // for InTeleop we don't need encoders because driver controls
                 leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                //leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                //rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
             }
 
