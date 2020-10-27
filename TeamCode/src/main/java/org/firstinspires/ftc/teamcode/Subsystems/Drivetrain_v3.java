@@ -18,9 +18,9 @@ public class Drivetrain_v3 {
 
         // List constants
         public static final double COUNTS_PER_DRIVE_MOTOR_REV = 28;         // HD Hex encoder counts at the motor (28)
-        public static final double DRIVE_GEAR_REDUCTION = 18.9;       // 4:1 and 5:1 Planetary "20:1" nominal reduction
+        public static final double ULTRAPLANETARY_REDUCTION = 18.9;       // 4:1 and 5:1 Planetary "20:1" nominal reduction
         public static final double WHEEL_DIAMETER_INCHES = 3.54;      // 90mm wheels. For figuring circumference its a 90 millimeter wheel
-        public static final double COUNTS_PER_INCH = (COUNTS_PER_DRIVE_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+        public static final double COUNTS_PER_INCH = (COUNTS_PER_DRIVE_MOTOR_REV * ULTRAPLANETARY_REDUCTION) /
                 (WHEEL_DIAMETER_INCHES * 3.1415);
         public static final double DRIVE_SPEED = 1;
         private static final double TURN_SPEED = 0.5;
@@ -31,26 +31,17 @@ public class Drivetrain_v3 {
         // Contructor for Drivetrain
         // Passing boolean to automatically config encoders for auto or teleop.
         public Drivetrain_v3(boolean inTeleOp) {
-
+        this.inTeleOp = inTeleOp;
         }
 
         // initialize drivetrain components, assign names for driver station config, set directions
         // and encoders if needed.
-        public void init(HardwareMap hwMap, Telemetry telemetry) {
+        public void init(HardwareMap hwMap) {
 
             // initialize the imu first.
             // Note this in NOT IMU calibration.
             imu = hwMap.get(BNO055IMU.class, "imu");
 
-            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-            parameters.mode                = BNO055IMU.SensorMode.IMU;
-            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.loggingEnabled      = false;
-
-            // Initialize here calibrate in Opmode
-            imu.initialize(parameters);
 
 
             // initialize al the drive motors
@@ -58,12 +49,27 @@ public class Drivetrain_v3 {
             rightFront = hwMap.get(DcMotor.class, "Right_front");
 
             // For HD Planetary Forward yields CCW rotation when shaft is facing you.
-            leftFront.setDirection(DcMotor.Direction.REVERSE);
-            rightFront.setDirection(DcMotor.Direction.FORWARD);
+            leftFront.setDirection(DcMotor.Direction.FORWARD);
+            rightFront.setDirection(DcMotor.Direction.REVERSE);
+            leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
             // not in teleop means autonomous so encoders are needed
+            // IMU us also needed
             if (!inTeleOp) {
+               // BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+                //parameters.mode                = BNO055IMU.SensorMode.IMU;
+                //parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+                //parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+                //parameters.loggingEnabled      = false;
+
+                // Initialize here calibrate in Opmode
+                //imu.initialize(parameters);
+
+
+
                 leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
