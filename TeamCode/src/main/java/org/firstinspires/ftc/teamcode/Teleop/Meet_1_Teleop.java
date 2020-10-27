@@ -26,7 +26,7 @@ public class Meet_1_Teleop extends OpMode {
 
     private ElapsedTime runtime     = new ElapsedTime();
     Drivetrain_v3 drivetrain        = new Drivetrain_v3(false);
-    Shooter shooter                 = new Shooter();
+    //Shooter shooter                 = new Shooter();
     Intake intake                   = new Intake();
     Wobblegoal wobble               = new Wobblegoal();
 
@@ -44,7 +44,7 @@ public class Meet_1_Teleop extends OpMode {
          * The init() method of the hardware class does all the work here
          */
         drivetrain.init(hardwareMap,telemetry);
-        shooter.init(hardwareMap);
+        //shooter.init(hardwareMap);
         intake.init(hardwareMap);
         wobble.init(hardwareMap);
 
