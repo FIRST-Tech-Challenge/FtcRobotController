@@ -33,7 +33,7 @@ import java.util.List;
 
 public class BasicAutonomous_Simple extends LinearOpMode {
     /* Declare OpMode members. */
-    public Drivetrain_v3 drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
+    public Drivetrain_v3       drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
     public Orientation         lastAngles  = new Orientation();
     public ElapsedTime         PIDtimer    = new ElapsedTime(); // PID loop timer
     public ElapsedTime         runtime     = new ElapsedTime(); // timeout timer
@@ -58,7 +58,7 @@ public class BasicAutonomous_Simple extends LinearOpMode {
     public  double                  totalError;
 
 
-    
+
 
 
 
