@@ -25,7 +25,7 @@ public class Meet_1_Teleop extends OpMode {
     /* Declare OpMode members. */
 
     private ElapsedTime runtime     = new ElapsedTime();
-    Drivetrain_v3 drivetrain        = new Drivetrain_v3(false);
+    Drivetrain_v3 drivetrain        = new Drivetrain_v3(true);
     //Shooter shooter                 = new Shooter();
     Intake intake                   = new Intake();
     Wobblegoal wobble               = new Wobblegoal();
@@ -211,6 +211,7 @@ public class Meet_1_Teleop extends OpMode {
                 break;
 
             case DRIVE_SLOW:
+                telemetry.addData("Drive Speed",currDriveState);
                 drivetrain.leftFront.setPower(left*speedfactor);
                 drivetrain.rightFront.setPower(right*speedfactor);
 
