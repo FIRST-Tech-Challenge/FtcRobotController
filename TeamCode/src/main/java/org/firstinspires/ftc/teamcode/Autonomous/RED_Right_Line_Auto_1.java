@@ -50,9 +50,9 @@ public class RED_Right_Line_Auto_1 extends BasicAutonomous {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
         // This is currently set up or field coordinates NOT RELATIVE to the last move
-        gyroDrive(DRIVE_SPEED, 28.0, 0.0, 5);    // Drive FWD 110 inches
-        gyroTurn( TURN_SPEED, 90.0, 3);         // Turn  CCW to -45 Degrees
-        gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
+        gyroDrive(DRIVE_SPEED, 60.0, 0.0, 5);    // Drive FWD 110 inches
+        //gyroTurn( TURN_SPEED, 90.0, 3);         // Turn  CCW to -45 Degrees
+        //gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
