@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -57,17 +58,16 @@ public class Drivetrain_v3 {
             rightFront = hwMap.get(DcMotor.class, "Right_front");
 
             // For HD Planetary Forward yields CCW rotation when shaft is facing you.
-            leftFront.setDirection(DcMotor.Direction.FORWARD);
-            rightFront.setDirection(DcMotor.Direction.REVERSE);
+            leftFront.setDirection(DcMotor.Direction.REVERSE);
+            rightFront.setDirection(DcMotor.Direction.FORWARD);
 
-            // reset the encoders
-            leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             // not in teleop means autonomous so encoders are needed
             if (!inTeleOp) {
                 leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 // FLOAT allows motors to coast when count is reached. Change to BRAKE
                 // if necessary
                 leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
