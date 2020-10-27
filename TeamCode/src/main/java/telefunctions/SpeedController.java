@@ -32,7 +32,7 @@ public class SpeedController {
         i *=  0.00001;
         timer.reset();
         lastPos = 0;
-        lastTime = 0;
+        lastTime = -0.1;
         lastSpeed = 0;
         oldPos = 0;
         pid.setCoeffecients(k,d,i);

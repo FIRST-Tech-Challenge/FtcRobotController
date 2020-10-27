@@ -1,5 +1,7 @@
 package global;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsTouchSensor;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -38,12 +40,14 @@ public class TerraBot {
     public Servo sgr;
     public Servo sgl;
 
-    public TouchSensor tse;
+    public ModernRoboticsTouchSensor tse;
 
     public boolean intaking = false;
     public boolean outtaking = false;
 
-    public double turnStart = 0.3;
+    public int resetingArm = 0;
+
+    public double turnStart = 0.4;
     public double grabStart = 0.7;
     public double liftStart = 0.12;
     public double liftSecond = 0.27;
@@ -51,13 +55,15 @@ public class TerraBot {
     public double shootStartL = 0.1;
     public double intakeSpeed = 1;
     public double outtakeSpeed = 0.4;
-    public double maxArmPos = 225;
+    public double maxArmPos = 215;
 
     public final double NEVEREST256_TICKS = 7168;
     public final double NEV_DEGREES_TO_TICKS = NEVEREST256_TICKS/360;
     public final double GOBUILDA1_Ticks = 28;
     public final double GO_DEGREES_TO_TICKS = GOBUILDA1_Ticks/360;
     public final double MAX_OUTTAKE_SPEED = 32400;
+
+    public ElapsedTime timer = new ElapsedTime();
 
     public Cycle grabControl = new Cycle(grabStart, 0.45);
     public Cycle liftControl = new Cycle(liftStart, liftSecond, 0.53);
@@ -72,9 +78,9 @@ public class TerraBot {
 
     public Limits limits = new Limits();
 
-
-    public SpeedController outrController = new SpeedController(0.7, 0.005, 0.1);
-    public SpeedController outlController = new SpeedController(0.7, 0.005, 0.1);
+    //d = 0.00024
+    public SpeedController outrController = new SpeedController(0.2, 0.0, 0.00375);
+    public SpeedController outlController = new SpeedController(0.2, 0.0, 0.00375);
 
 
 
@@ -101,7 +107,8 @@ public class TerraBot {
         sgr = hwMap.get(Servo.class, "sgr");
         sgl = hwMap.get(Servo.class, "sgl");
 
-        tse = hwMap.get(TouchSensor.class, "tse");
+        tse = hwMap.get(ModernRoboticsTouchSensor.class, "tse");
+        
 
 
 
@@ -213,6 +220,16 @@ public class TerraBot {
         st.setPosition(pos);
     }
 
+    public void turnArmWithEnc(double deg, double pow){
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        arm.setTargetPosition(degreesToTicks(deg));
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(pow);
+        while (arm.isBusy()){}
+        arm.setPower(0);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
     public void grab(double pos){
         sgr.setPosition(pos);
         sgl.setPosition(pos);
@@ -235,12 +252,12 @@ public class TerraBot {
         shooter.addStage(ssr, shootControlR.getPos(0), 0.01);
         shooter.addStage(ssl, shootControlL.getPos(0), 0.01);
         wobbleGoal.addStage(st, 0.65, 0.1);
-        wobbleGoal.addStage(arm,  1, degreesToTicks(210));
+        wobbleGoal.addStage(arm,  1, degreesToTicks(205));
         wobbleGoal.addWaitUntil();
         wobbleGoal.addStage(sgl, grabControl.getPos(1), 0.01);
         wobbleGoal.addStage(sgr, grabControl.getPos(1), 0.5);
         wobbleGoal.addStage(st, 0.18, 0.01);
-        wobbleGoal.addStage(arm,  1, degreesToTicks(225));
+        wobbleGoal.addStage(arm,  1, degreesToTicks(215));
         wobbleGoal.addStage(slr, liftControl.getPos(1)+0.07, 0.01);
         wobbleGoal.addStage(sll, liftControl.getPos(1), 0.5);
         wobbleGoal.addStage(slr, liftControl.getPos(2)+0.07, 0.01);
@@ -264,6 +281,7 @@ public class TerraBot {
         wobbleGoal2.addStage(st, 1, 0.01);
         wobbleGoal2.addStage(arm, 1, degreesToTicks(100));
         wobbleGoal2.addWaitUntil();
+        wobbleGoal2.addStage(st, 0.8, 0.01);
         wobbleGoal2.addStage(arm, 1, degreesToTicks(180));
         wobbleGoal2.addStage(sgl, grabControl.getPos(0), 0.01);
         wobbleGoal2.addStage(sgr, grabControl.getPos(0), 0.5);
@@ -325,9 +343,51 @@ public class TerraBot {
         outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        l1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        l1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        l2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        l2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        r1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        r1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public boolean isTouchSensorPressed(){
         return tse.isPressed();
+    }
+
+
+    public void resetArm(){
+        if(resetingArm == 0) {
+            arm.setPower(-1);
+            if (isTouchSensorPressed()) {
+                arm.setPower(0.5);
+                timer.reset();
+                resetingArm++;
+            }
+        }else if(resetingArm == 1){
+            if(timer.seconds() > 0.3){
+                arm.setPower(-0.1);
+                resetingArm++;
+            }
+        }else if(resetingArm == 2){
+            if(isTouchSensorPressed()) {
+                arm.setPower(0);
+                arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                resetingArm++;
+            }
+        }
+    }
+
+
+    public double getLeftOdo(){
+        return l1.getCurrentPosition();
+    }
+    public double getRightOdo(){
+        return l2.getCurrentPosition();
+    }
+    public double getMiddleOdo(){
+        return r1.getCurrentPosition();
     }
 }

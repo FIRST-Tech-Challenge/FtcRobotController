@@ -4,6 +4,7 @@ public class Vector {
     public double x;
     public double y;
     public double theta;
+
     public Vector(double x1, double y1){
         x = x1;
         y = y1;

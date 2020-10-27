@@ -2,6 +2,7 @@ package teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import global.TerraBot;
 import telefunctions.Cycle;
@@ -12,9 +13,7 @@ public class TerraOp extends OpMode {
 
     TerraBot bot = new TerraBot();
 
-//    ServoController grabControl = new ServoController(bot.grabStart, 0.45, 0.7);
-//    ServoController liftControl = new ServoController(bot.liftStart, bot.liftStart, 0.9);
-//    ServoController shootControl = new ServoController(bot.shootStart, bot.shootStart, 0.9);
+    ElapsedTime debug = new ElapsedTime();
 
 
 
@@ -28,6 +27,19 @@ public class TerraOp extends OpMode {
 
         telemetry.addData("Status: ","Ready");
         telemetry.update();
+
+    }
+
+    @Override
+    public void init_loop() {
+        //bot.resetArm();
+    }
+
+    @Override
+    public void start() {
+//        bot.turnArmWithEnc(50, 1);
+//        bot.turnWobbleArm(0.1);
+//        bot.turnControl.cur = 0.1;
     }
 
     @Override
@@ -78,6 +90,7 @@ public class TerraOp extends OpMode {
 
             if(gamepad1.y){
                 bot.shooter.start();
+                debug.reset();
             }
             if(gamepad2.x){
                 bot.wobbleGoal.start();
@@ -108,15 +121,10 @@ public class TerraOp extends OpMode {
         bot.move(forward, strafe, turn);
 
 
-//        telemetry.addData("RightPos", bot.getOutrPos());
-//        telemetry.addData("LeftPos", bot.getOutlPos());
-//        telemetry.addData("RightSpeed", bot.outrController.lastSpeed);
-//        telemetry.addData("LeftSpeed", bot.outlController.lastSpeed);
         telemetry.addData("ErrorR", bot.outrController.getPercentageError());
         telemetry.addData("ErrorL", bot.outlController.getPercentageError());
-//        telemetry.addData("RightPow", bot.outrController.pow);
-//        telemetry.addData("RightPow", bot.outrController.pow);
-//        telemetry.update();
+        telemetry.addData("Time", debug.seconds());
+        telemetry.update();
 
         bot.update();
 
