@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -9,26 +10,35 @@ import static java.lang.Thread.sleep;
 public class Wobblegoal {
     //Define Hardware Objects
     public DcMotor WobbleLift=null;
-    public Servo WobbleExtend=null;
+    //public Servo WobbleExtend=null;
+    public DcMotor WobbleExtend = null;
     public Servo WobbleGrip=null;
 
     //Constants
     private static final double     LIFTSPEED   =   0.5;
     private static final int        LIFTUP      =   50; //Number is in Ticks
     private static final int        LIFTDOWN    =   0;
-    private static final double     GRIPPEROPEN =   0.2;
-    private static final double     GRIPPERCLOSE=   0.7;
-    private static final double     ARMEXTEND   =   0.3;
-    private static final double     ARMCONTRACT =   0.8;
+    private static final double     GRIPPEROPEN =   0.6;
+    private static final double     GRIPPERCLOSE=   0.2;
+    private static final int        ARMEXTEND   =   45; //ticks
+    private static final int        ARMCONTRACT =   0; // ticks
+    private static final int        ARMCARRY    =   60;
+    private static final double     EXTENDSPEED =   .5;
 
     public void init(HardwareMap hwMap)  {
         WobbleLift=hwMap.get(DcMotor.class,"LiftWobble");
-        WobbleExtend=hwMap.get(Servo.class,"ArmExtend");
+        WobbleExtend=hwMap.get(DcMotor.class,"ArmExtend");
         WobbleGrip=hwMap.get(Servo.class,"Gripper");
         //Positive=up and Negative=down
         WobbleLift.setDirection(DcMotor.Direction.REVERSE);
+        WobbleExtend.setDirection(DcMotorSimple.Direction.REVERSE);
         WobbleLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        WobbleExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         WobbleLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        WobbleExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        WobbleGrip.setPosition(GRIPPEROPEN);
+
     }
 
     //// Single operation methods - see below for methods to be called in Opmodes
@@ -52,11 +62,22 @@ public class Wobblegoal {
     }
     public void ArmExtend() {
 
-        WobbleExtend.setPosition(ARMEXTEND);
+        WobbleExtend.setTargetPosition(ARMEXTEND);
+        WobbleExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        WobbleExtend.setPower(EXTENDSPEED);
+
     }
     public void ArmContract() {
 
-        WobbleExtend.setPosition(ARMCONTRACT);
+        WobbleExtend.setTargetPosition(ARMCONTRACT);
+        WobbleExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        WobbleExtend.setPower(EXTENDSPEED);
+    }
+    public void ArmCarryWobble() {
+
+        WobbleExtend.setTargetPosition(ARMCARRY);
+        WobbleExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        WobbleExtend.setPower(EXTENDSPEED);
     }
 
     ///// Multi Function methods to be called by the Opmodes

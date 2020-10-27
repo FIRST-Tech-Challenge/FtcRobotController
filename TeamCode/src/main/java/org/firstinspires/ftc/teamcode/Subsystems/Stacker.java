@@ -8,6 +8,7 @@ public class Stacker {
 
     public Servo leftFliper = null;
     public Servo rightFliper = null;
+    public Servo stacker = null;
 
     // Constants
     private static final double leftUp = 0.75; // .75 a little shy but ok due to hitting bolt
@@ -19,6 +20,7 @@ public class Stacker {
     public void init(HardwareMap hwMap) {
         leftFliper = hwMap.get(Servo.class, "Left_Flipper");
         rightFliper = hwMap.get(Servo.class, "Right_Flipper");
+        stacker =  hwMap.get(Servo.class, "Stacker");
     }
         //x button
     public void loadShooter() {
