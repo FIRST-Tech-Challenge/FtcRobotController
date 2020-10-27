@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
@@ -15,45 +17,43 @@ import org.firstinspires.ftc.teamcode.Enums.DriveSpeedState;
 public class Meet_1_Teleop extends OpMode {
 
 
-    //set up states to change how the arm operates. Pre-sets or variable.
-    public enum State {
-        STATE_DISCRETE,
-        STATE_CONTINUOUS,
-
-    }
-
     /* Declare OpMode members. */
 
     private ElapsedTime runtime     = new ElapsedTime();
-    Drivetrain_v3 drivetrain        = new Drivetrain_v3(true);
+    Drivetrain_v3       drivetrain        = new Drivetrain_v3(true);
     //Shooter shooter                 = new Shooter();
     Intake intake                   = new Intake();
     Wobblegoal wobble               = new Wobblegoal();
 
 
-    private State                   currentState;
-    private DriveSpeedState currDriveState;
+    private DriveSpeedState  currDriveState;
+
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
-    public void init() {
+   public void init() {
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
-        drivetrain.init(hardwareMap,telemetry);
+        drivetrain.init(hardwareMap);
+        //leftFront = hardwareMap.get(DcMotor.class, "Left_front");
+        //rightFront = hardwareMap.get(DcMotor.class, "Right_front");
+
+        // For HD Planetary Forward yields CCW rotation when shaft is facing you.
+
         //shooter.init(hardwareMap);
         intake.init(hardwareMap);
         wobble.init(hardwareMap);
 
-        newState(State.STATE_DISCRETE);
+        //newState(currDriveState);
         currDriveState = DriveSpeedState.DRIVE_FAST; // initialize robot to FAST
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");
-        telemetry.addData("CONTINUOUS","Mode");//
+
         telemetry.addData("FAST DRIVE","Mode");//
         //telemetry.update();
     }
@@ -86,6 +86,7 @@ public class Meet_1_Teleop extends OpMode {
         double turn;
         double max;
         double speedfactor = 0.5;
+
 
         // Ultimate Goal
         //Gamepad 1
@@ -172,30 +173,6 @@ public class Meet_1_Teleop extends OpMode {
        // switch case to determine what mode the arm needs to operate in.
 
 
-        switch (currentState)
-        {
-            case STATE_DISCRETE: // push button
-                telemetry.addData("Arm Mode",currentState);
-                if (gamepad2.a) {
-
-                    telemetry.addData("Arm Target", "Ready to get stone");
-
-                }
-                if (gamepad2.b) {
-                    //robot.arm.setTargetPosition(ARM_STONE_CARRY);
-
-                }
-
-                break;
-            case STATE_CONTINUOUS:
-                //telemetry.addData("Drive Speed",currDriveState);
-                //robot.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                //robot.arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-                //lift = (-gamepad2.left_stick_y)/2; //divides the power by 2 to reduce power
-
-                break;
-        }
         // switch case for the drive speed state
 
         switch(currDriveState) {
@@ -204,6 +181,8 @@ public class Meet_1_Teleop extends OpMode {
                 telemetry.addData("Drive Speed",currDriveState);
                 drivetrain.leftFront.setPower(left);
                 drivetrain.rightFront.setPower(right);
+                //leftFront.setPower(left);
+                //rightFront.setPower(right);
 
                 // Send telemetry message to signify robot running;
                 telemetry.addData("left",  "%.2f", left);
@@ -214,6 +193,8 @@ public class Meet_1_Teleop extends OpMode {
                 telemetry.addData("Drive Speed",currDriveState);
                 drivetrain.leftFront.setPower(left*speedfactor);
                 drivetrain.rightFront.setPower(right*speedfactor);
+                //leftFront.setPower(left*speedfactor);
+                //rightFront.setPower(right*speedfactor);
 
                 // Send telemetry message to signify robot running;
                 telemetry.addData("left",  "%.2f", left);
@@ -232,8 +213,5 @@ public class Meet_1_Teleop extends OpMode {
     //===================================================================
     // Helper Methods
     //==================================================================
-    private void newState(State newState) // method to change states probably not necessary
-    {
-        currentState = newState;
-    }
+
 }
