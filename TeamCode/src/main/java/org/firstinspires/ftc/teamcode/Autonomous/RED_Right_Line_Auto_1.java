@@ -20,7 +20,7 @@ public class RED_Right_Line_Auto_1 extends BasicAutonomous {
     @Override
     public void runOpMode() {
 
-        drivetrain.init(hardwareMap, telemetry);
+        drivetrain.init(hardwareMap);
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
         // Encoder rest is handled in the Drivetrain init in Drivetrain class
