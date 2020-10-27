@@ -17,11 +17,6 @@ public class DriveTrain {
     HardwareInnov8Hera hera;
     LinearOpMode opMode;
 
-
-    double wheelOnePower = 0.0;
-    double wheelTwoPower = 0.0;
-    double wheelThreePower = 0.0;
-    double wheelFourPower = 0.0;
     public static double INCH_TO_TICK = (360/6); // The number of encoder ticks per inch for our wheels
     public static double SIDE_INCH_TO_TICK = (360/6); // The number of encoder ticks for one inch while travelling sideways, change later
 
@@ -39,6 +34,7 @@ public class DriveTrain {
     }
 
     public void goForward(double inches) {
+        double wheelPower = .75;
         double startPosition = 0;
         double endPosition = 0;
         showData("DRIVE_TRAIN_CAPTION", "Robot is moving forward");
@@ -50,10 +46,10 @@ public class DriveTrain {
             this.telemetry.addData("StartPosition", startPosition);
             this.telemetry.addData("EndPosition", endPosition);
             this.telemetry.addData("CurrentPosition", hera.motorOne.getCurrentPosition());
-            hera.motorOne.setPower(wheelOnePower);
-            hera.motorTwo.setPower(wheelTwoPower);
-            hera.motorThree.setPower((wheelThreePower));
-            hera.motorFour.setPower(wheelFourPower);
+            hera.motorOne.setPower(wheelPower);
+            hera.motorTwo.setPower(wheelPower);
+            hera.motorThree.setPower((wheelPower));
+            hera.motorFour.setPower(wheelPower);
             showData("wheel one power", "" + hera.motorOne.getPower());
             showData("wheel two power", "" + hera.motorTwo.getPower());
             showData("wheel three power", "" + hera.motorThree.getPower());
@@ -68,16 +64,17 @@ public class DriveTrain {
 
 
     public void goBackward(double inches) {
+        double wheelPower = .75;
         double startPosition = 0;
         double endPosition = 0;
         showData("DRIVE_TRAIN_CAPTION", "Robot is moving backwards");
         startPosition = hera.motorOne.getCurrentPosition();
         endPosition = startPosition - (inches * INCH_TO_TICK); // How far you need to travel
         while (hera.motorOne.getCurrentPosition() > endPosition && this.opMode.opModeIsActive()) {
-            hera.motorOne.setPower(-wheelOnePower);
-            hera.motorTwo.setPower(-wheelTwoPower);
-            hera.motorThree.setPower(-wheelThreePower);
-            hera.motorFour.setPower(-wheelFourPower);
+            hera.motorOne.setPower(-wheelPower);
+            hera.motorTwo.setPower(-wheelPower);
+            hera.motorThree.setPower(-wheelPower);
+            hera.motorFour.setPower(-wheelPower);
             showData("wheel one power", "" + hera.motorOne.getPower());
             showData("wheel two power", "" + hera.motorTwo.getPower());
             showData("wheel three power", "" + hera.motorThree.getPower());
@@ -91,6 +88,7 @@ public class DriveTrain {
      * @param degreesToTurn Number of degrees to turn. If negative, turns right. If positive, turns left.
      */
     public void turn(double degreesToTurn) {
+        double wheelPower = .75;
         double turnCorrector = 1;
         degreesToTurn = degreesToTurn * turnCorrector;
         Orientation angles;
@@ -98,10 +96,10 @@ public class DriveTrain {
         if (degreesToTurn < 0) {
             while ((angles.firstAngle > degreesToTurn) && this.opMode.opModeIsActive()) {
                 double generalPower = (degreesToTurn - angles.firstAngle)/degreesToTurn;
-                hera.motorOne.setPower(generalPower * wheelOnePower);
-                hera.motorTwo.setPower(generalPower * wheelTwoPower);
-                hera.motorThree.setPower(-generalPower * wheelThreePower);
-                hera.motorFour.setPower(-generalPower * wheelFourPower);
+                hera.motorOne.setPower(generalPower * wheelPower);
+                hera.motorTwo.setPower(generalPower * wheelPower);
+                hera.motorThree.setPower(-generalPower * wheelPower);
+                hera.motorFour.setPower(-generalPower * wheelPower);
                 angles = hera.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 telemetry.addData("degreesToTurn", degreesToTurn);
                 telemetry.update();
@@ -111,10 +109,10 @@ public class DriveTrain {
         } else {
             while ((angles.firstAngle < degreesToTurn) && this.opMode.opModeIsActive()) {
                 double generalPower = (degreesToTurn - angles.firstAngle)/degreesToTurn;
-                hera.motorOne.setPower(-generalPower * wheelOnePower);
-                hera.motorTwo.setPower(-generalPower * wheelTwoPower);
-                hera.motorThree.setPower(generalPower * wheelThreePower);
-                hera.motorFour.setPower(generalPower * wheelFourPower);
+                hera.motorOne.setPower(-generalPower * wheelPower);
+                hera.motorTwo.setPower(-generalPower * wheelPower);
+                hera.motorThree.setPower(generalPower * wheelPower);
+                hera.motorFour.setPower(generalPower * wheelPower);
                 angles = hera.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 telemetry.addData("degreesToTurn", degreesToTurn);
                 telemetry.update();
@@ -126,6 +124,7 @@ public class DriveTrain {
     }
 
     public void goLeft(double inches) {
+        double wheelPower = .75;
         double startPosition = 0;
         double endPosition = 0;
         showData("DRIVE_TRAIN_CAPTION", "Robot is moving left");
@@ -136,15 +135,16 @@ public class DriveTrain {
             showData("going Left", "Start Pos: " + startPosition);
             showData("going Left", "Current Pos: " + hera.motorOne.getCurrentPosition());
 
-            hera.motorOne.setPower(-wheelOnePower);
-            hera.motorTwo.setPower(wheelTwoPower);
-            hera.motorThree.setPower(wheelThreePower);
-            hera.motorFour.setPower(-wheelFourPower);
+            hera.motorOne.setPower(-wheelPower);
+            hera.motorTwo.setPower(wheelPower);
+            hera.motorThree.setPower(wheelPower);
+            hera.motorFour.setPower(-wheelPower);
         }
         this.stop();
     }
 
     public void goRight(double inches) {
+        double wheelPower = .75;
         double startPosition = 0;
         double endPosition = 0;
         showData("DRIVE_TRAIN_CAPTION", "Robot is moving right");
@@ -154,10 +154,10 @@ public class DriveTrain {
             showData("goRight", "start position is " + startPosition);
             showData("goRight", "end position is " + endPosition);
             showData("goRight", "current position is " + hera.motorFour.getCurrentPosition());
-            hera.motorOne.setPower(wheelOnePower);
-            hera.motorTwo.setPower(-wheelTwoPower);
-            hera.motorThree.setPower(-wheelThreePower);
-            hera.motorFour.setPower(wheelFourPower);
+            hera.motorOne.setPower(wheelPower);
+            hera.motorTwo.setPower(-wheelPower);
+            hera.motorThree.setPower(-wheelPower);
+            hera.motorFour.setPower(wheelPower);
         }
         this.stop();
     }
@@ -198,21 +198,22 @@ public class DriveTrain {
     // Put powers in the range of -1 to 1 only if they aren't already (not
     // checking would cause us to always drive at full speed)
     public void balancePower() {
+        double wheelPower = .75;
         showData("DRIVE_TRAIN_CAPTION", "Balancing power");
-        if (Math.abs(wheelOnePower) > 1 || Math.abs(wheelTwoPower) > 1 ||
-                Math.abs(wheelThreePower) > 1 || Math.abs(wheelFourPower) > 1) {
+        if (Math.abs(wheelPower) > 1 || Math.abs(wheelPower) > 1 ||
+                Math.abs(wheelPower) > 1 || Math.abs(wheelPower) > 1) {
             // Find the largest power
             double max = 0;
-            max = Math.max(Math.abs(wheelOnePower), Math.abs(wheelTwoPower));
-            max = Math.max(Math.abs(wheelThreePower), max);
-            max = Math.max(Math.abs(wheelFourPower), max);
+            max = Math.max(Math.abs(wheelPower), Math.abs(wheelPower));
+            max = Math.max(Math.abs(wheelPower), max);
+            max = Math.max(Math.abs(wheelPower), max);
 
             // Divide everything by max (it's positive so we don't need to worry
             // about signs)
-            wheelOnePower /= max;
-            wheelTwoPower /= max;
-            wheelThreePower /= max;
-            wheelFourPower /= max;
+            wheelPower /= max;
+            wheelPower /= max;
+            wheelPower /= max;
+            wheelPower /= max;
             telemetry.addData("max", max);
         }
 
