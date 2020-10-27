@@ -53,13 +53,13 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
+@TeleOp(name = "TensorFlow Webcam II", group = "Concept")
 //@Disabled
-public class TesnorFlowWebCam extends LinearOpMode {
+public class TensorFlowWebcam_II extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
-    private String Target = null;
+    private String StackSize = "None";
     WobbleTargetZone Square = WobbleTargetZone.RED_A; // Default
 
     /*
@@ -111,12 +111,12 @@ public class TesnorFlowWebCam extends LinearOpMode {
             // (typically 1.78 or 16/9).
 
             // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
-            tfod.setZoom(1.5, 1.78);
+            tfod.setZoom(2.5, 1.78);
         }
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
-        telemetry.addData("Target", Square);
+        telemetry.addData("Square", Square);
         telemetry.update();
         waitForStart();
 
@@ -125,7 +125,7 @@ public class TesnorFlowWebCam extends LinearOpMode {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                    List<Recognition> updatedRecognitions = tfod .getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
                       telemetry.addData("# Object Detected", updatedRecognitions.size());
                       // step through the list of recognitions and display boundary info.
@@ -136,28 +136,22 @@ public class TesnorFlowWebCam extends LinearOpMode {
                                 recognition.getLeft(), recognition.getTop());
                         telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
                                 recognition.getRight(), recognition.getBottom());
-                        //////
-                          Target = recognition.getLabel();
-                          telemetry.addData("Target", Target);
-                          if (Target == "Quad"){
+                        ///
+                          StackSize = recognition.getLabel();
+                          //telemetry.addData("Target", Target);
+                          if (StackSize == "Quad"){
                               Square = WobbleTargetZone.RED_C;
-                              telemetry.addData("Target", Square);
-                          } else if (Target == "Single"){
+                              telemetry.addData("Square", Square);
+                          } else if (StackSize == "Single"){
                               Square = WobbleTargetZone.RED_B;
+                              telemetry.addData("Square", Square);
 
                           }
-                          telemetry.addData("Target", Square);
-                          telemetry.update();
+
                       }
-
-
+                      telemetry.update();
                     }
-                } else {
-                    Square = WobbleTargetZone.RED_A;
-                    telemetry.addData("Target", Square);
-                    telemetry.update();
                 }
-                // if nothing new is regognized code goes here
 
             }
         }
