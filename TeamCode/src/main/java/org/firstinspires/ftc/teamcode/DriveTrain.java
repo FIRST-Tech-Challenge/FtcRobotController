@@ -92,6 +92,7 @@ public class DriveTrain {
         double turnCorrector = 1;
         degreesToTurn = degreesToTurn * turnCorrector;
         Orientation angles;
+        //test what difference between INTRINSIC and EXTRINSIC is
         angles = hera.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         if (degreesToTurn < 0) {
             while ((angles.firstAngle > degreesToTurn) && this.opMode.opModeIsActive()) {

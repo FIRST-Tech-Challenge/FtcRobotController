@@ -40,8 +40,9 @@ public class Hera {
     }
     
 
-    public void forwardTwelveInches() {
-        
+    public void forwardTurn() {
+        driveTrain.goForward(12);
+        driveTrain.turn(-90);
         driveTrain.goForward(12);
     }
 
