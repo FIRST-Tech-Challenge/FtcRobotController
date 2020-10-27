@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,17 +10,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="Autonomous based on DC", group="XDrive")
-public class DriverControl extends LinearOpMode {
+@TeleOp(name="Driver Control", group="XDrive")
+public class AutoTest extends LinearOpMode {
     DcMotor leftFrontMotor, leftBackMotor, rightFrontMotor, rightBackMotor;
     BNO055IMU imu;
     Orientation lastAngles = new Orientation();
-    double globalAngle, correction, horizontal, vertical, joystickDistanceFromOrigin, angle, pwr, pwr2, target, leftFrontMotorPos;
+    double globalAngle, correction, horizontal, vertical, horizontalError, verticalError, turningError, magnitude, angle, pwr, pwr2, target, xTarget, yTarget, headingTarget;
+    public double leftFrontMotorPos, leftFrontDistanceTraveled = 0, deltaLeftFrontMotorPos = 0, previousLeftFrontMotorPos;
+    public double rightFrontMotorPos, rightFrontDistanceTraveled = 0, deltaRightFrontMotorPos = 0, previousRightFrontMotorPos;
+    public double leftBackMotorPos, leftBackDistanceTraveled = 0, deltaLeftBackMotorPos = 0, previousLeftBackMotorPos;
+    public double rightBackMotorPos, rightBackDistanceTraveled = 0, deltaRightBackMotorPos = 0, previousRightBackMotorPos;
     // Circumference of the wheels divided by ticks per revolution
     double distancePerTick = (2 * Math.PI * 48) / 537.6;
-    double previousLeftFrontMotorPos = 0;
-    double deltaLeftFrontMotorPos = 0;
-    double leftFrontDistanceTraveled = 0;
     boolean isTurning;
 
     @Override
@@ -62,6 +62,8 @@ public class DriverControl extends LinearOpMode {
 
         // wait for start button.
 
+        setTarget(-300, 300, 0);
+
         waitForStart();
 
         telemetry.addData("Mode", "running");
@@ -72,22 +74,20 @@ public class DriverControl extends LinearOpMode {
         while (opModeIsActive()) {
             correction = checkDirection();
 
-            telemetry.addData("1 imu heading", lastAngles.firstAngle);
-            telemetry.addData("2 global heading", globalAngle);
-            telemetry.addData("3 correction", correction);
-            telemetry.addData("4 angle", angle);
-            telemetry.addData("5 x", horizontal);
-            telemetry.addData("6 y", vertical);
-            telemetry.addData("7 ticks per cycle", leftFrontMotorPos);
-            telemetry.addData("8 distance traveled per cycle", deltaLeftFrontMotorPos);
-            telemetry.addData("9 total distance traveled", leftFrontDistanceTraveled);
+            telemetry.addData("1 global heading", globalAngle);
+            telemetry.addData("2 correction", correction);
+            telemetry.addData("3 angle", angle);
+            telemetry.addData("4 x", horizontal);
+            telemetry.addData("5 y", vertical);
             telemetry.update();
 
-            vertical = gamepad1.left_stick_y;
-            double turning = gamepad1.right_stick_x;
+            getError();
+
+            vertical = 0.035 * verticalError;
+            double turning = 0.035 * turningError;
 
             // Calculate distance between the current joystick position and the idle position
-            joystickDistanceFromOrigin = Math.sqrt(Math.pow(horizontal, 2) + Math.pow(vertical, 2));
+            magnitude = Math.sqrt(Math.pow(horizontal, 2) + Math.pow(vertical, 2));
             //position = Math.abs((Math.sqrt(2)) * (leftFrontMotor.getCurrentPosition()) / (537.6) * 96 * Math.PI);
 
             // Call necessary methods
@@ -117,11 +117,7 @@ public class DriverControl extends LinearOpMode {
                 leftBackMotor.setPower(-0.75 * pwr2 + correction);
                 rightBackMotor.setPower(0.75 * pwr + correction);
             }
-
-            leftFrontMotorPos = leftFrontMotor.getCurrentPosition();
-            deltaLeftFrontMotorPos = distancePerTick * (leftFrontMotorPos - previousLeftFrontMotorPos);
-            leftFrontDistanceTraveled += deltaLeftFrontMotorPos;
-            previousLeftFrontMotorPos = leftFrontMotorPos;
+            getWheelPositions();
         }
 
         // turn the motors off.
@@ -175,18 +171,18 @@ public class DriverControl extends LinearOpMode {
             angle = (Math.atan(-vertical / horizontal) + Math.PI - Math.PI / 4);
             angle = angle - ((lastAngles.firstAngle) / 57.29577951);
         }
-        if (gamepad1.left_stick_x == 0) {
-            horizontal = 0.00000000000001;
+        if (horizontalError == 0) {
+            horizontal = 0.1;
         } else {
-            horizontal = gamepad1.left_stick_x;
+            horizontal = horizontalError;
         }
     }
 
     public void checkIfTurning() {
-        if (gamepad1.right_stick_x != 0) {
+        if (turningError != 0) {
             isTurning = true;
         }
-        if ((gamepad1.left_stick_y != 0) || (gamepad1.left_stick_x != 0)) {
+        if ((verticalError != 0) || (horizontalError != 0)) {
             isTurning = false;
         }
     }
@@ -194,11 +190,48 @@ public class DriverControl extends LinearOpMode {
     public void calcPower() {
         // Calculate motor power
         if (angle == 0) {
-            pwr2 = 0.8 * (joystickDistanceFromOrigin * Math.sin(angle));
+            pwr2 = 0.8 * (magnitude * Math.sin(angle));
             pwr = pwr2;
         } else {
-            pwr = 0.8 * (joystickDistanceFromOrigin * Math.cos(angle));
-            pwr2 = 0.8 * (joystickDistanceFromOrigin * Math.sin(angle));
+            pwr = 0.8 * (magnitude * Math.cos(angle));
+            pwr2 = 0.8 * (magnitude * Math.sin(angle));
         }
+    }
+
+    public void getWheelPositions()
+    {
+        leftFrontMotorPos = leftFrontMotor.getCurrentPosition();
+        deltaLeftFrontMotorPos = distancePerTick * (leftFrontMotorPos - previousLeftFrontMotorPos);
+        leftFrontDistanceTraveled += deltaLeftFrontMotorPos;
+        previousLeftFrontMotorPos = leftFrontMotorPos;
+
+        rightFrontMotorPos = rightFrontMotor.getCurrentPosition();
+        deltaRightFrontMotorPos = distancePerTick * (rightFrontMotorPos - previousRightFrontMotorPos);
+        rightFrontDistanceTraveled += deltaRightFrontMotorPos;
+        previousRightFrontMotorPos = rightFrontMotorPos;
+
+        leftBackMotorPos = leftBackMotor.getCurrentPosition();
+        deltaLeftBackMotorPos = distancePerTick * (leftBackMotorPos - previousLeftBackMotorPos);
+        leftBackDistanceTraveled += deltaLeftBackMotorPos;
+        previousLeftBackMotorPos = leftBackMotorPos;
+
+        rightBackMotorPos = rightBackMotor.getCurrentPosition();
+        deltaRightBackMotorPos = distancePerTick * (rightBackMotorPos - previousRightBackMotorPos);
+        rightBackDistanceTraveled += deltaRightBackMotorPos;
+        previousRightBackMotorPos = rightBackMotorPos;
+    }
+
+    public void setTarget(double x, double y, double heading)
+    {
+        xTarget = x;
+        yTarget = y;
+        headingTarget = heading;
+    }
+
+    void getError()
+    {
+        verticalError = yTarget - rightFrontDistanceTraveled;
+        horizontalError = xTarget - leftFrontDistanceTraveled;
+        turningError = headingTarget - globalAngle;
     }
 }
