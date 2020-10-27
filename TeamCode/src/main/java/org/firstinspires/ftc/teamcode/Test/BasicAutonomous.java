@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Test;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,8 +17,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
-//import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
 
 import java.util.List;
@@ -33,11 +32,11 @@ import java.util.List;
 
 public class BasicAutonomous extends LinearOpMode {
     /* Declare OpMode members. */
-    public Drivetrain_v3 drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
-    public Orientation         lastAngles  = new Orientation();
-    public ElapsedTime         PIDtimer    = new ElapsedTime(); // PID loop timer
-    public ElapsedTime         runtime     = new ElapsedTime(); // timeout timer
-    public ElapsedTime         tfTime     = new ElapsedTime(); // timeout timer
+    public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
+    public Orientation          lastAngles  = new Orientation();
+    public ElapsedTime          PIDtimer    = new ElapsedTime(); // PID loop timer
+    public ElapsedTime          drivetime     = new ElapsedTime(); // timeout timer
+    public ElapsedTime          tfTime     = new ElapsedTime(); // timeout timer
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suit the specific robot drive train.
@@ -63,7 +62,7 @@ public class BasicAutonomous extends LinearOpMode {
     private static final String LABEL_SECOND_ELEMENT = "Single";
     private String StackSize = "None";
     WobbleTargetZone Square = WobbleTargetZone.RED_A; // Default
-    private static double tfSenseTime = 3;
+    private static double tfSenseTime = 2; // needs a couple seconds to process the imagee an ID the target
 
     private static final String VUFORIA_KEY =
             "AQXVmfz/////AAABmXaLleqhDEfavwYMzTtToIEdemv1X+0FZP6tlJRbxB40Cu6uDRNRyMR8yfBOmNoCPxVsl1mBgl7GKQppEQbdNI4tZLCARFsacECZkqph4VD5nho2qFN/DmvLA0e1xwz1oHBOYOyYzc14tKxatkLD0yFP7/3/s/XobsQ+3gknx1UIZO7YXHxGwSDgoU96VAhGGx+00A2wMn2UY6SGPl+oYgsE0avmlG4A4gOsc+lck55eAKZ2PwH7DyxYAtbRf5i4Hb12s7ypFoBxfyS400tDSNOUBg393Njakzcr4YqL6PYe760ZKmu78+8X4xTAYSrqFJQHaCiHt8HcTVLNl2fPQxh0wBmLvQJ/mvVfG495ER1A";
@@ -99,7 +98,16 @@ public class BasicAutonomous extends LinearOpMode {
             tfod.setZoom(2.5, 1.78);
         }
 
-        drivetrain.init(hardwareMap, telemetry);
+        drivetrain.init(hardwareMap);
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.mode                = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled      = false;
+
+        // Calibrate
+        drivetrain.imu.initialize(parameters);
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
         // Encoder rest is handled in the Drivetrain init in Drivetrain class
@@ -167,7 +175,23 @@ public class BasicAutonomous extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
         // This is currently set up or field coordinates NOT RELATIVE to the last move
-        gyroDrive(DRIVE_SPEED, 20.0, 0.0, 5);    // Drive FWD 110 inches
+        drivetime.reset(); // reset becase time starts when TF starts and time is up before we can call gyroDrive
+
+        switch(Square){
+            case RED_A: // This is the basic op mode. Put real paths in designated opmodes
+                telemetry.addData("Going to RED A", "Target Zone");
+                gyroDrive(DRIVE_SPEED, 60.0, 0.0, 5);    // Drive FWD 110 inches
+                break;
+            case RED_B:
+                gyroDrive(DRIVE_SPEED, 40.0, 0.0, 5);    // Drive FWD 110 inches
+                break;
+            case RED_C:
+                gyroDrive(DRIVE_SPEED, 20.0, 0.0, 5);    // Drive FWD 110 inches
+                break;
+        }
+
+
+
         //gyroTurn( TURN_SPEED, 90.0, 3);         // Turn  CCW to -45 Degrees
        //gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
         telemetry.addData("Path", "Complete");
@@ -202,11 +226,11 @@ public class BasicAutonomous extends LinearOpMode {
         double  rightSpeed;
         totalError = 0;
         lasterror = 0;
-
+        telemetry.addData("gyroDrive Activated", "Complete");
         // Ensure that the opmode is still active
         // Use timeout in case robot gets stuck in mid path.
         // Also a way to keep integral term from winding up to bad.
-        if (opModeIsActive() & runtime.time() < timeout) {
+        if (opModeIsActive() & drivetime.time() < timeout) {
 
             // Determine new target position in ticks/ counts then pass to motor controller
             moveCounts = (int)(distance * Drivetrain_v3.COUNTS_PER_INCH);
@@ -277,7 +301,7 @@ public class BasicAutonomous extends LinearOpMode {
             drivetrain.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             drivetrain.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        runtime.reset(); // reset the timer for the next function call
+        drivetime.reset(); // reset the timer for the next function call
     }
 
     /**
@@ -297,12 +321,12 @@ public class BasicAutonomous extends LinearOpMode {
         totalError = 0;
         lasterror = 0;
         // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, Kp_TURN, Ki_TURN, Kd_TURN) && runtime.time() < timeout) {
+        while (opModeIsActive() && !onHeading(speed, angle, Kp_TURN, Ki_TURN, Kd_TURN) && drivetime.time() < timeout) {
             // Update telemetry & Allow time for other processes to run.
             //onHeading(speed, angle, P_TURN_COEFF);
             telemetry.update();
         }
-        runtime.reset(); // reset after we are done with the while loop
+       drivetime.reset(); // reset after we are done with the while loop
     }
 
     /**

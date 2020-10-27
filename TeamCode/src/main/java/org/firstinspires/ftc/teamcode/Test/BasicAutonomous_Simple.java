@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Test;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -64,11 +65,17 @@ public class BasicAutonomous_Simple extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        drivetrain.init(hardwareMap);
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
+        parameters.mode                = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled      = false;
 
-
-        drivetrain.init(hardwareMap, telemetry);
+        // Calibrate
+        drivetrain.imu.initialize(parameters);
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
         // Encoder rest is handled in the Drivetrain init in Drivetrain class
@@ -100,7 +107,7 @@ public class BasicAutonomous_Simple extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
         // This is currently set up or field coordinates NOT RELATIVE to the last move
-        gyroDrive(DRIVE_SPEED, 20.0, 0.0, 5);    // Drive FWD 110 inches
+        gyroDrive(DRIVE_SPEED, 60.0, 0.0, 5);    // Drive FWD 110 inches
         //gyroTurn( TURN_SPEED, 90.0, 3);         // Turn  CCW to -45 Degrees
        //gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
         telemetry.addData("Path", "Complete");
@@ -145,6 +152,7 @@ public class BasicAutonomous_Simple extends LinearOpMode {
             moveCounts = (int)(distance * Drivetrain_v3.COUNTS_PER_INCH);
             newLeftTarget = drivetrain.leftFront.getCurrentPosition() + moveCounts;
             newRightTarget = drivetrain.rightFront.getCurrentPosition() + moveCounts;
+
 
             // Set Target using the calculated umber of ticks/counts
 
