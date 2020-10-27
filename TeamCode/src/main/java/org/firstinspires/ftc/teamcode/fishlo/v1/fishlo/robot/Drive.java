@@ -214,7 +214,7 @@ public class Drive extends SubSystem {
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        imu = opmode.hardwareMap.get(BNO055IMU.class, "imu");
+        imu = robot.hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
     }
 
@@ -256,8 +256,8 @@ public class Drive extends SubSystem {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
-                opmode.telemetry.addData("Position", yaw);
-                opmode.telemetry.update();
+                robot.telemetry.addData("Position", yaw);
+                robot.telemetry.update();
             }
         }
         else {
@@ -265,8 +265,8 @@ public class Drive extends SubSystem {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
-                opmode.telemetry.addData("Position", yaw);
-                opmode.telemetry.update();
+                robot.telemetry.addData("Position", yaw);
+                robot.telemetry.update();
             }
         }
 
@@ -280,15 +280,15 @@ public class Drive extends SubSystem {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
-                opmode.telemetry.addData("Position", yaw);
-                opmode.telemetry.update();
+                robot.telemetry.addData("Position", yaw);
+                robot.telemetry.update();
             }
             while (!((seconda < yaw && yaw < 180) || (-180 < yaw && yaw < secondb)) &&  opmode.opModeIsActive()) {
                 angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 gravity = imu.getGravity();
                 yaw = -angles.firstAngle;
-                opmode.telemetry.addData("Position", yaw);
-                opmode.telemetry.update();
+                robot.telemetry.addData("Position", yaw);
+                robot.telemetry.update();
             }
             stop();
         }
