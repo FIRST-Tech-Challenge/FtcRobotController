@@ -6,11 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name="Move 10 centimeters", group="Auton Test Suite")
-@Disabled
 public class TravelXDistance extends LinearOpMode
 {
-    DcMotor leftFrontMotor = hardwareMap.dcMotor.get("leftFrontMotor");
-    DcMotor rightBackMotor = hardwareMap.dcMotor.get("rightBackMotor");
+    DcMotor leftFrontMotor;
+    DcMotor rightBackMotor;
     double leftFrontMotorPos, rightBackMotorPos;
     double deltaLeftFrontMotorPos = 0;
     double previousLeftFrontMotorPos = 0;
@@ -26,6 +25,9 @@ public class TravelXDistance extends LinearOpMode
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        leftFrontMotor = hardwareMap.dcMotor.get("leftFrontMotor");
+        rightBackMotor = hardwareMap.dcMotor.get("rightBackMotor");
+
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -37,11 +39,11 @@ public class TravelXDistance extends LinearOpMode
             telemetry.addData("2 distance traveled per cycle", deltaLeftFrontMotorPos);
             telemetry.addData("3 total distance traveled", leftFrontDistanceTraveled);
             telemetry.update();
-            move();
+            move(100);
         }
     }
 
-    void move() {
+    void move(double target) {
         leftFrontMotorPos = leftFrontMotor.getCurrentPosition();
         deltaLeftFrontMotorPos = distancePerTick * (leftFrontMotorPos - previousLeftFrontMotorPos);
         leftFrontDistanceTraveled += deltaLeftFrontMotorPos;
@@ -52,10 +54,10 @@ public class TravelXDistance extends LinearOpMode
         rightBackDistanceTraveled += deltaRightBackMotorPos;
         previousRightBackMotorPos = rightBackMotorPos;
 
-        if (leftFrontDistanceTraveled < 100) {
+        if (leftFrontDistanceTraveled < target) {
             leftFrontMotor.setPower(0.2);
-            rightBackMotor.setPower(0.2);
-        } else if (leftFrontDistanceTraveled >= 100) {
+            rightBackMotor.setPower(-0.2);
+        } else if (leftFrontDistanceTraveled >= target) {
             leftFrontMotor.setPower(0);
             rightBackMotor.setPower(0);
         }

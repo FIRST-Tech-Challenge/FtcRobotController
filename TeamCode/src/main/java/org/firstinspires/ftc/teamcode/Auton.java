@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name="Driver Control", group="XDrive")
+@Autonomous(name="Autonomous", group="XDrive")
 public class Auton extends LinearOpMode {
     DriveTrain bot;
     PID positive, negative, heading;

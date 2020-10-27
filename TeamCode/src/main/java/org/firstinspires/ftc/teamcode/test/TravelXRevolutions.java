@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name="Move 5 revolutions", group="Auton Test Suite")
-@Disabled
 public class TravelXRevolutions extends LinearOpMode
 {
     DcMotor leftFrontMotor;
