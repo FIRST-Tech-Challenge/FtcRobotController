@@ -9,8 +9,9 @@ public class Shooter {
     // Define hardware objects
     public DcMotor shooterleft=null;
     public DcMotor shooterright=null;
-    public Servo moveforward=null;
-    public Servo moveback=null;
+    public Servo leftFlipper=null;
+    public Servo rightFlipper=null;
+    public Servo stacker=null;
 
     //
     //Constants
@@ -19,17 +20,20 @@ public class Shooter {
     private static final double shooterSpeedslowleft=.55;
     private static final double shooterSpeedslowright=.75;
     private static final double jamClear=-.35;
-    private static final double servoforwardreturn=0;
-    private static final double servoforwardlaunch=1;
-    private static final double servobackreturn=0;
-    private static final double servobacklaunch=0;
+    private static final double leftUp = 0.75; // .75 a little shy but ok due to hitting bolt
+    private static final double leftBack = .4; //good at 0.4;
+    private static final double rightUp = (1-leftUp);
+    private static final double rightBack = (1-leftBack);
+    private static final double flippercenter = 0.5;
+
 
 
     public void init(HardwareMap hwMap)  {
         shooterleft=hwMap.get(DcMotor.class,"LeftShooter");
         shooterright=hwMap.get(DcMotor.class,"RightShooter");
-        moveforward=hwMap.get(Servo.class,"ForwardMove");
-        moveback=hwMap.get(Servo.class,"BackMove");
+        leftFlipper = hwMap.get(Servo.class, "Left_Flipper");
+        rightFlipper = hwMap.get(Servo.class, "Right_Flipper");
+        stacker =  hwMap.get(Servo.class, "Stacker");
 
         shooterleft.setDirection(DcMotor.Direction.REVERSE);
         shooterright.setDirection(DcMotor.Direction.FORWARD);
@@ -48,6 +52,39 @@ public class Shooter {
             shooterleft.setPower(0);
             shooterright.setPower(0);
         }
+    public void stackermovetoShoot() {
+        leftFlipper.setPosition(leftUp);
+        rightFlipper.setPosition(rightUp);
+    }
+    public void stackermovetoReload() {
+        leftFlipper.setPosition(leftBack);
+        rightFlipper.setPosition(rightBack);
+    }
+    public void flipperCalibrateinCenter() {
+        leftFlipper.setPosition(flippercenter);
+        rightFlipper.setPosition(flippercenter);
+    }
+    public void flipperForward() {
+        leftFlipper.setPosition(leftUp);
+        rightFlipper.setPosition(rightUp);
+    }
+    public void flipperBackward() {
+        leftFlipper.setPosition(leftBack);
+        rightFlipper.setPosition(rightBack);
+    }
+    public void shootoneRing() {
+        shootHighGoal();
+        stackermovetoShoot();
+        flipperForward();
+        flipperBackward();
+    }
+    public void shooterReload() {
+        stackermovetoReload();
+        flipperBackward();
+        shooterOff();
+
+        }
+
     public void jamClear() {
         shooterleft.setPower(jamClear);
         shooterright.setPower(jamClear);
