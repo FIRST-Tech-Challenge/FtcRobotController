@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories;
+package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
 
 
 /**
