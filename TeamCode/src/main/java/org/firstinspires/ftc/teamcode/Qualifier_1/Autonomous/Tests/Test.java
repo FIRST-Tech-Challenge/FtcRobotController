@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Chassis2Test")
+import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
+
+@Autonomous(name = "ChassisTest")
 public class Test extends LinearOpMode {
 
     Robot robot = new Robot();
@@ -24,14 +26,14 @@ public class Test extends LinearOpMode {
 //        robot.moveMotorLeftBack(-10);
 //        sleep(1000);
 //
-//        robot.moveForward(30,0.8);
-//        sleep(1000);
-//        robot.moveBackward(30,0.8);
-//        sleep(3000);
-//        robot.moveForwardIMU(50,0.8);
-//        sleep(1000);
-//        robot.moveBackwardIMU(50,0.8);
-//        sleep(3000);
+        robot.moveForward(30,0.8);
+        sleep(1000);
+        robot.moveBackward(30,0.8);
+        sleep(3000);
+        robot.moveForwardIMU(50,0.8);
+        sleep(1000);
+        robot.moveBackwardIMU(50,0.8);
+        sleep(3000);
 //
 //        robot.moveLeft(50,0.8);
 //        sleep(1000);
@@ -138,7 +140,7 @@ public class Test extends LinearOpMode {
         //robot.moveAngle2(24,0,90);
 //        sleep(5000);
 //        robot.moveVuforiaWebcam(-30,30,90);
-        robot.moveVuforiaWebcam(-20,0,0);
-        robot.stopVuforia();
+//        robot.moveVuforiaWebcam(-20,0,0);
+//        robot.stopVuforia();
     }
 }

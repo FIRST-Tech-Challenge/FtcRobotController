@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Qualifier_1.Accesories;
+package org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

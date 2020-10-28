@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -20,7 +20,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.FRONT;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public class Vuforia extends Thread{
     private OpMode op;
@@ -36,7 +35,7 @@ public class Vuforia extends Thread{
 
     private final float mmPerInch = 25.4f;
 
-    private VuforiaLocalizer vuforia;
+    private VuforiaLocalizer vuforia = null;
 
     public Vuforia(OpMode opMode, VuforiaLocalizer.CameraDirection camera_direction) {
         op = opMode;
@@ -52,8 +51,8 @@ public class Vuforia extends Thread{
         //OpenGLMatrix lastLocation = null;
         boolean targetVisible = false;
         //final float mmPerInch = 25.4f;
-        final float mmFieldHalfWidth = 72 * mmPerInch;
-        final float mmFieldQuarterWidth = 36 * mmPerInch;
+        final float halfField = 72 * mmPerInch;
+        final float quarterField = 36 * mmPerInch;
         final float mmTargetHeight = 5.75f * mmPerInch;
 
         // Use back camera
@@ -73,62 +72,41 @@ public class Vuforia extends Thread{
         // Start Vuforia
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
-        // Set Field Images as Vuforia Trackables
-        targetsSkystone = vuforia.loadTrackablesFromAsset("Skystone");
-        VuforiaTrackable RedPerimeterTgt1 = targetsSkystone.get(5);
-        RedPerimeterTgt1.setName("RedPerimeterTgt1");
-        VuforiaTrackable RedPerimeterTgt2 = targetsSkystone.get(6);
-        RedPerimeterTgt2.setName("RedPerimeterTgt2");
-        VuforiaTrackable FrontPerimeterTgt1 = targetsSkystone.get(7);
-        FrontPerimeterTgt1.setName("FrontPerimeterTgt1");
-        VuforiaTrackable FrontPerimeterTgt2 = targetsSkystone.get(8);
-        FrontPerimeterTgt2.setName("FrontPerimeterTgt2");
-        VuforiaTrackable BluePerimeterTgt1 = targetsSkystone.get(9);
-        BluePerimeterTgt1.setName("BluePerimeterTgt1");
-        VuforiaTrackable BluePerimeterTgt2 = targetsSkystone.get(10);
-        BluePerimeterTgt2.setName("BluePerimeterTgt2");
-        VuforiaTrackable RearPerimeterTgt1 = targetsSkystone.get(11);
-        RearPerimeterTgt1.setName("RearPerimeterTgt1");
-        VuforiaTrackable RearPerimeterTgt2 = targetsSkystone.get(12);
-        RearPerimeterTgt2.setName("RearPerimeterTgt2");
-        allTrackables = new ArrayList<>(targetsSkystone);
+        // Load the data sets for the trackable objects. These particular data
+        // sets are stored in the 'assets' part of our application.
+        VuforiaTrackables targetsUltimateGoal = this.vuforia.loadTrackablesFromAsset("UltimateGoal");
+        VuforiaTrackable blueTowerGoalTarget = targetsUltimateGoal.get(0);
+        blueTowerGoalTarget.setName("Blue Tower Goal Target");
+        VuforiaTrackable redTowerGoalTarget = targetsUltimateGoal.get(1);
+        redTowerGoalTarget.setName("Red Tower Goal Target");
+        VuforiaTrackable redAllianceTarget = targetsUltimateGoal.get(2);
+        redAllianceTarget.setName("Red Alliance Target");
+        VuforiaTrackable blueAllianceTarget = targetsUltimateGoal.get(3);
+        blueAllianceTarget.setName("Blue Alliance Target");
+        VuforiaTrackable frontWallTarget = targetsUltimateGoal.get(4);
+        frontWallTarget.setName("Front Wall Target");
+        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+        allTrackables.addAll(targetsUltimateGoal);
 
-        // Set Vuforia Trackable Locations
-        /*****Red******/
-        OpenGLMatrix redTarget1LocationOnField = OpenGLMatrix.translation(mmFieldQuarterWidth, -mmFieldHalfWidth, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 180));
-        RedPerimeterTgt1.setLocation(redTarget1LocationOnField);
+        // Set the position of the perimeter targets with relation to origin (center of field)
+        redAllianceTarget.setLocation(OpenGLMatrix
+                .translation(0, -halfField, mmTargetHeight)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 180)));
 
-        OpenGLMatrix redTarget2LocationOnField = OpenGLMatrix.translation(-mmFieldQuarterWidth, -mmFieldHalfWidth, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 180));
-        RedPerimeterTgt2.setLocation(redTarget2LocationOnField);
+        blueAllianceTarget.setLocation(OpenGLMatrix
+                .translation(0, halfField, mmTargetHeight)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0)));
+        frontWallTarget.setLocation(OpenGLMatrix
+                .translation(-halfField, 0, mmTargetHeight)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , 90)));
 
-        /*****Front******/
-        OpenGLMatrix frontCTarget1LocationOnField = OpenGLMatrix.translation(-mmFieldHalfWidth, -mmFieldQuarterWidth, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , 90));
-        FrontPerimeterTgt1.setLocation(frontCTarget1LocationOnField);
-
-        OpenGLMatrix frontCTarget2LocationOnField = OpenGLMatrix.translation(-mmFieldHalfWidth, mmFieldQuarterWidth, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , 90));
-        FrontPerimeterTgt2.setLocation(frontCTarget2LocationOnField);
-
-        /*****Blue******/
-        OpenGLMatrix blueTarget1LocationOnField = OpenGLMatrix.translation(-mmFieldQuarterWidth, mmFieldHalfWidth, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0));
-        BluePerimeterTgt1.setLocation(blueTarget1LocationOnField);
-
-        OpenGLMatrix blueTarget2LocationOnField = OpenGLMatrix.translation(mmFieldQuarterWidth, mmFieldHalfWidth, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0));
-        BluePerimeterTgt2.setLocation(blueTarget2LocationOnField);
-
-        /*****Rear******/
-        OpenGLMatrix rearTarget1LocationOnField = OpenGLMatrix.translation(mmFieldHalfWidth, mmFieldQuarterWidth, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90));
-        RearPerimeterTgt1.setLocation(rearTarget1LocationOnField);
-
-        OpenGLMatrix rearTarget2LocationOnField = OpenGLMatrix.translation(mmFieldHalfWidth, -mmFieldQuarterWidth, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90));
-        RearPerimeterTgt2.setLocation(rearTarget2LocationOnField);
+        // The tower goal targets are located a quarter field length from the ends of the back perimeter wall.
+        blueTowerGoalTarget.setLocation(OpenGLMatrix
+                .translation(halfField, quarterField, mmTargetHeight)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , -90)));
+        redTowerGoalTarget.setLocation(OpenGLMatrix
+                .translation(halfField, -quarterField, mmTargetHeight)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
 
         // Set Phone Location
         final int CAMERA_FORWARD_DISPLACEMENT = 0;
@@ -156,8 +134,8 @@ public class Vuforia extends Thread{
             // Look for Trackable, Update Robot Location if Possible
             for (VuforiaTrackable trackable : allTrackables) {
                 if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+                    op.telemetry.addData("Visible Target ", trackable.getName());
                     targetVisible = true;
-                    this.trackable = trackable.getName();
 
                     OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
                     if (robotLocationTransform != null) {lastLocation = robotLocationTransform;}
@@ -168,11 +146,17 @@ public class Vuforia extends Thread{
             // Return Location Data (Last Known Location)
             if (targetVisible) {
                 VectorF translation = lastLocation.getTranslation();
+                op.telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
                 xpos = translation.get(0) / mmPerInch;
                 ypos = translation.get(1) / mmPerInch;
                 angle = rotation.thirdAngle;
             }
+            else {
+                op.telemetry.addData("Visible Target", "none");
+            }
+            op.telemetry.update();
         }
     }
 
