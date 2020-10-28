@@ -27,6 +27,7 @@ public class TeleThread implements Runnable{
         if(!once) {
             while (isExecuting()) {
                 cs.run();
+                try {Thread.sleep(10); } catch (InterruptedException e) {}
             }
         }else{
             cs.run();

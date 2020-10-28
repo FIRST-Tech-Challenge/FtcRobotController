@@ -11,17 +11,76 @@ public class Vector {
         theta = Math.atan2(y, x);
     }
 
-//    public double[] getPos(){
-//        double[] out = new double[2];
-//        out[0] = x;
-//        out[1] = y;
-//        return out;
-//    }
-//
-    public Vector getRotatedVector(double deg){
-        double ang  = theta + Math.toRadians(deg);
-        double radius = Math.sqrt(x*x + y*y);
-        return new Vector(Math.cos(ang)*radius, Math.sin(ang)*radius);
+    public Vector(double angle, double len, angle unit) {
+        if (unit == Vector.angle.DEGREES) {
+            angle *= Math.PI/180;
+        }
+        this.x = len * Math.cos(angle);
+        this.y = len * Math.sin(angle);
+    }
+
+    public Vector(double angle, double nx, double ny, angle unit) {
+        double len = Math.sqrt(Math.pow(nx, 2) + Math.pow(ny, 2));
+        double extraAng = Math.atan2(ny, nx);
+        Vector thisVec = new Vector(extraAng, len, Vector.angle.RADIANS);
+        thisVec = thisVec.getRotatedVec(angle, unit);
+        this.x = thisVec.getX();
+        this.y = thisVec.getY();
+    }
+
+    public Vector getRotatedVec(double angle, angle type) {
+        if (type == Vector.angle.DEGREES) {
+            angle *= Math.PI/180;
+        }
+        Vector x = new Vector(this.getX() * Math.cos(angle), this.getX() * Math.sin(angle));
+        Vector y = new Vector(this.getY() * Math.sin(angle), this.getY() * Math.cos(angle));
+        return x.addVector(y);
+    }
+
+    public Vector reverse() {
+        return new Vector(-this.x, -this.y);
+    }
+
+    public Vector addVector(Vector vec) {
+        return new Vector(this.x+vec.getX(), this.y+vec.getY());
+    }
+
+    public Vector subtractVector(Vector vec) {
+        return this.addVector(vec.reverse());
+    }
+
+
+    public double dotProduct(Vector vec) {
+        return this.x * vec.getX() + this.y * vec.getY();
+    }
+
+    public double getX() {
+        return this.x;
+    }
+
+    public double getY() {
+        return this.y;
+    }
+
+    public double getLen() {
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    }
+
+    public double getAngle(angle type) {
+        if (type == angle.RADIANS) {
+            return Math.atan2(y,x);
+        } else {
+            return Math.atan2(y,x) * 180/Math.PI;
+        }
+    }
+
+    public String toString() {
+        return "x: " + this.getX() + ", y: " + this.getY() + ", angle: " + this.getAngle(Vector.angle.DEGREES) + ", length: " + this.getLen();
+    }
+
+    public enum angle {
+        DEGREES,
+        RADIANS
     }
 
 }

@@ -4,16 +4,16 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import autofunctions.Odometry;
 import global.TerraBot;
 import telefunctions.Cycle;
 import telefunctions.ServoController;
+import telefunctions.TeleThread;
 
 @TeleOp(name = "TerraOp V1")
 public class TerraOp extends OpMode {
 
     TerraBot bot = new TerraBot();
-
-    ElapsedTime debug = new ElapsedTime();
 
 
 
@@ -40,6 +40,7 @@ public class TerraOp extends OpMode {
 //        bot.turnArmWithEnc(50, 1);
 //        bot.turnWobbleArm(0.1);
 //        bot.turnControl.cur = 0.1;
+        bot.startOdoThread();
     }
 
     @Override
@@ -90,7 +91,6 @@ public class TerraOp extends OpMode {
 
             if(gamepad1.y){
                 bot.shooter.start();
-                debug.reset();
             }
             if(gamepad2.x){
                 bot.wobbleGoal.start();
@@ -109,11 +109,6 @@ public class TerraOp extends OpMode {
 
 
 
-        //bot.lift(liftControl.update(gamepad2.right_trigger, gamepad2.left_trigger, 0.5));
-        //bot.shoot(shootControl.update(gamepad2.right_bumper, gamepad2.left_bumper, 0.4));
-        //bot.grab(grabControl.update(gamepad2.dpad_right, gamepad2.dpad_left, 0.5));
-
-
         double forward = -gamepad1.right_stick_y;
         double strafe = gamepad1.right_stick_x;
         double turn = -gamepad1.left_stick_x;
@@ -121,14 +116,19 @@ public class TerraOp extends OpMode {
         bot.move(forward, strafe, turn);
 
 
-        telemetry.addData("ErrorR", bot.outrController.getPercentageError());
-        telemetry.addData("ErrorL", bot.outlController.getPercentageError());
-        telemetry.addData("Time", debug.seconds());
+        telemetry.addData("Heading", bot.getHeading());
+        telemetry.addData("OdometryX", bot.odometry.getX());
+        telemetry.addData("OdometryY", bot.odometry.getY());
         telemetry.update();
 
         bot.update();
 
 
 
+    }
+
+    @Override
+    public void stop() {
+        bot.stopOdoThread();
     }
 }

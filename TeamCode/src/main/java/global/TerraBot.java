@@ -1,5 +1,6 @@
 package global;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsTouchSensor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,13 +11,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+
 import java.util.concurrent.ForkJoinPool;
 
+import autofunctions.Odometry;
 import telefunctions.AutoModule;
 import telefunctions.Cycle;
 import telefunctions.Limits;
 import telefunctions.ServoController;
 import telefunctions.SpeedController;
+import util.CodeSeg;
+import util.ThreadHandler;
 
 
 public class TerraBot {
@@ -40,6 +48,7 @@ public class TerraBot {
     public Servo sgr;
     public Servo sgl;
 
+    public BNO055IMU gyro;
     public ModernRoboticsTouchSensor tse;
 
     public boolean intaking = false;
@@ -56,6 +65,8 @@ public class TerraBot {
     public double intakeSpeed = 1;
     public double outtakeSpeed = 0.4;
     public double maxArmPos = 215;
+    public double heading = 0;
+    public double lastAngle = 0;
 
     public final double NEVEREST256_TICKS = 7168;
     public final double NEV_DEGREES_TO_TICKS = NEVEREST256_TICKS/360;
@@ -81,6 +92,10 @@ public class TerraBot {
     //d = 0.00024
     public SpeedController outrController = new SpeedController(0.2, 0.0, 0.00375);
     public SpeedController outlController = new SpeedController(0.2, 0.0, 0.00375);
+
+    public Odometry odometry = new Odometry();
+
+    public ThreadHandler threadHandler = new ThreadHandler();
 
 
 
@@ -108,6 +123,7 @@ public class TerraBot {
         sgl = hwMap.get(Servo.class, "sgl");
 
         tse = hwMap.get(ModernRoboticsTouchSensor.class, "tse");
+        gyro = hwMap.get(BNO055IMU.class, "gyro");
         
 
 
@@ -178,9 +194,11 @@ public class TerraBot {
 
         limits.addLimit(arm, 0, maxArmPos);
 
+        initGyro();
 
+        odometry.init(getLeftOdo(), getMiddleOdo(), getRightOdo());
 
-
+        resetGyro();
 
 
     }
@@ -294,6 +312,7 @@ public class TerraBot {
         wobbleGoal2.update();
         outlController.updateMotorValues(getOutlPos());
         outrController.updateMotorValues(getOutrPos());
+//        odometry.updateGlobalPosition(getLeftOdo(), getMiddleOdo(), getRightOdo(), getHeading());
     }
 
     public boolean autoModulesRunning(){
@@ -344,8 +363,8 @@ public class TerraBot {
         outl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        l1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        l1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        in.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        in.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         l2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         l2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         r1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -382,12 +401,49 @@ public class TerraBot {
 
 
     public double getLeftOdo(){
-        return l1.getCurrentPosition();
+        return -in.getCurrentPosition();
     }
     public double getRightOdo(){
         return l2.getCurrentPosition();
     }
     public double getMiddleOdo(){
-        return r1.getCurrentPosition();
+        return -r1.getCurrentPosition();
+    }
+
+    public void initGyro(){
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
+        gyro.initialize(parameters);
+    }
+
+    public void resetGyro() {
+        lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        heading = 0;
+    }
+
+    public double getHeading() {
+        double ca = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        double da = ca - lastAngle;
+        if (da < -180)
+            da += 360;
+        else if (da > 180)
+            da -= 360;
+        heading += da;
+        lastAngle = ca;
+        return heading;
+    }
+
+    public void startOdoThread(){
+        threadHandler.startTeleThread(new CodeSeg() {
+            @Override
+            public void run() {
+                odometry.updateGlobalPosition(getLeftOdo(), getMiddleOdo(), getRightOdo(), getHeading());
+            }
+        });
+    }
+    public void stopOdoThread() {
+        threadHandler.stopTeleThread();
     }
 }
