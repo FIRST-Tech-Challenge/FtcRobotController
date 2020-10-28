@@ -178,13 +178,13 @@ public class RED_Left_Line_Auto extends BasicAutonomous {
         switch(Square){
             case RED_A: // This is the basic op mode. Put real paths in designated opmodes
                 telemetry.addData("Going to RED A", "Target Zone");
-                gyroDrive(DRIVE_SPEED, 60.0, 0.0, 5);    // Drive FWD 110 inches
+                gyroDrive(DRIVE_SPEED, 20.0, 0.0, 5);    // Drive FWD 110 inches
                 break;
             case RED_B:
                 gyroDrive(DRIVE_SPEED, 40.0, 0.0, 5);    // Drive FWD 110 inches
                 break;
             case RED_C:
-                gyroDrive(DRIVE_SPEED, 20.0, 0.0, 5);    // Drive FWD 110 inches
+                gyroDrive(DRIVE_SPEED, 60.0, 0.0, 5);    // Drive FWD 110 inches
                 break;
         }
 
@@ -197,110 +197,7 @@ public class RED_Left_Line_Auto extends BasicAutonomous {
     }
 
 
-    /**
-     *  Method to drive on a fixed compass bearing (angle), based on encoder counts.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Driver stops the opmode running.
-     *  3) Timeout time is reached - prevents robot from getting stuck
-     *
-     * @param speed      Target speed for forward motion.  Should allow for _/- variance for adjusting heading
-     * @param distance   Distance (in inches) to move from current position.  Negative distance means move backwards.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     */
-    public void gyroDrive ( double speed,
-                            double distance,
-                            double angle, double timeout) {
 
-        int     newLeftTarget;
-        int     newRightTarget;
-        int     moveCounts;
-        double  max;
-        double  error;
-        double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
-        totalError = 0;
-        lasterror = 0;
-        telemetry.addData("gyroDrive Activated", "Complete");
-        // Ensure that the opmode is still active
-        // Use timeout in case robot gets stuck in mid path.
-        // Also a way to keep integral term from winding up to bad.
-        if (opModeIsActive() & drivetime.time() < timeout) {
-
-            // Determine new target position in ticks/ counts then pass to motor controller
-            moveCounts = (int)(distance * Drivetrain_v3.COUNTS_PER_INCH);
-            newLeftTarget = drivetrain.leftFront.getCurrentPosition() + moveCounts;
-            newRightTarget = drivetrain.rightFront.getCurrentPosition() + moveCounts;
-
-            // Set Target using the calculated umber of ticks/counts
-
-            drivetrain.leftFront.setTargetPosition(newLeftTarget);
-            drivetrain.rightFront.setTargetPosition(newRightTarget);
-            // Tell motor control to use encoders to go to target tick count.
-
-            drivetrain.leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            drivetrain.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // start motion.
-            // Up to now this is all the same as a drive by encoder opmode.
-            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            drivetrain.leftFront.setPower(speed);
-            drivetrain.rightFront.setPower(speed);
-
-            // keep looping while we are still active, and BOTH motors are running.
-            // once one motor gets to the target number of ticks it is no longer "busy"
-            // and isbusy in false causing the loop to end.
-            while (opModeIsActive() &&
-                    (drivetrain.leftFront.isBusy() && drivetrain.rightFront.isBusy())) {
-
-                // adjust relative speed based on heading error.
-                // Positive angle means drifting to the left so need to steer to the
-                // right to get back on track.
-                error = getError(angle);
-                steer = getSteer(error, Kp_DRIVE, Ki_DRIVE, Kd_DRIVE);
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    steer *= -1.0;
-
-                leftSpeed = speed + steer;
-                rightSpeed = speed - steer;
-
-                // Normalize speeds if either one exceeds +/- 1.0;
-                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0)
-                {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
-                }
-
-                drivetrain.leftFront.setPower(leftSpeed);
-                drivetrain.rightFront.setPower(rightSpeed);
-
-                // Display drive status for the driver.
-                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "%7d:%7d",      newLeftTarget,  newRightTarget);
-                telemetry.addData("Actual",  "%7d:%7d",      drivetrain.leftFront.getCurrentPosition(),
-                        drivetrain.rightFront.getCurrentPosition());
-                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                telemetry.update();
-
-
-            }
-
-            // Stop all motion;
-            drivetrain.leftFront.setPower(0);
-            drivetrain.rightFront.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            drivetrain.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            drivetrain.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        drivetime.reset(); // reset the timer for the next function call
-    }
 
     private void initVuforia() {
         /*
