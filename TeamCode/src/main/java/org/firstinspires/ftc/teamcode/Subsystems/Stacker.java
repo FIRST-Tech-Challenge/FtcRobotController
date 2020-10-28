@@ -12,7 +12,7 @@ public class Stacker {
 
     // Constants
     private static final double leftUp = 0.75; // .75 a little shy but ok due to hitting bolt
-    private static final double leftBack = .4; //good at 0.4;
+    private static final double leftBack = 0.4; //good at 0.4;
     private static final double rightUp = (1-leftUp);
     private static final double rightBack = (1-leftBack);
     private static final double flippercenter = 0.5;

@@ -26,8 +26,8 @@ public class Shooter {
     private static final double rightUp = (1-leftUp);
     private static final double rightBack = (1-leftBack);
     private static final double flippercenter = 0.5;
-    private static final double stackerReload = 0.5;
-    private static final double stackerShoot = 0.55;
+    private static final double stackerReload = 0.42; // 0.42
+    private static final double stackerShoot = 0.55; // 0.55
 
 
 
@@ -43,6 +43,9 @@ public class Shooter {
         shooterright.setDirection(DcMotor.Direction.FORWARD);
         shooterleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // make sure flippers are back and stacker it ready to load
+        shooterReload();
     }
     public void shootMiddleGoal() {
         shooterleft.setPower(shooterSpeedslowleft);
@@ -57,7 +60,7 @@ public class Shooter {
             shooterright.setPower(0);
         }
     public void stackerMoveToShoot() {
-        leftFlipper.setPosition(stackerShoot);
+        stacker.setPosition(stackerShoot);
 
     }
     public void stackerMoveToReload() {
