@@ -15,10 +15,10 @@ public class Shooter {
 
     //
     //Constants for shooter motors
-    private static final double ShooterSpeedfastleft=.6;
-    private static final double ShooterSpeedfastright=.8;
-    private static final double shooterSpeedslowleft=.55;
-    private static final double shooterSpeedslowright=.75;
+    private static final double ShooterSpeedfastleft=.4;
+    private static final double ShooterSpeedfastright=.55 ;
+    private static final double shooterSpeedslowleft=.4;
+    private static final double shooterSpeedslowright=.6;
     private static final double jamClear=-.35;
     //Constants for stacker servos
     private static final double leftUp = 0.75; // .75 a little shy but ok due to hitting bolt
