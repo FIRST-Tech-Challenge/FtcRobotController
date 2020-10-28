@@ -6,15 +6,15 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
 
 
 /**
- * Shooter Testing for high goal
+ * Shooter Testing for low goal
  *
  * @author  Nikhil
  * @version 1.0
  * @since   2020-October-26
  *
  */
-@Autonomous(name= "Shooter Test High Goal")
-public class ShooterTest extends LinearOpMode{
+@Autonomous(name= "Shooter Test Low Goal")
+public class ShooterTestLowGoal extends LinearOpMode{
     Shooter robot=new Shooter();
 
     @Override
@@ -25,7 +25,7 @@ public class ShooterTest extends LinearOpMode{
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
         waitForStart();
-        robot.shootHighGoal(200000);
+        robot.shootLowGoal(200000);
 
     }
 
