@@ -15,8 +15,12 @@ public class MecanumControlV2 extends OpMode {
     double driveSpeed;
     double turnSpeed;
     double direction;
+    double shooterPower = -1;
 
-    boolean isShooterOn = false;
+    boolean isShooterOn  = false;
+    boolean isShooterOff = true;
+    boolean wasPowerIncreased;
+    boolean wasPowerDecreased;
 
     private ElapsedTime period  = new ElapsedTime();
     private double runtime = 0;
@@ -35,6 +39,9 @@ public class MecanumControlV2 extends OpMode {
     }
     @Override
     public void loop() {
+        telemetry.addData("isShooterOn", isShooterOn);
+        telemetry.addData("isShooterOff", isShooterOff);
+        telemetry.addData("Shooter Power", shooterPower);
         //telemetry.addData("Drive Speed",driveSpeed);
         //telemetry.addData("Direction",direction);
         //telemetry.addData("Turn Speed", turnSpeed);
@@ -73,13 +80,34 @@ public class MecanumControlV2 extends OpMode {
         if (gamepad1.a && !isShooterOn) {
             isShooterOn = true;
         }else if (!gamepad1.a && isShooterOn) {
-            shooter.shooterPower(1);
+            isShooterOff = false;
+            shooter.shooterPower(shooterPower);
         }
         //Turn shooter off
-        if (gamepad1.a & isShooterOn) {
+        if (gamepad1.a && !isShooterOff) {
             isShooterOn = false;
         }else if (!gamepad1.a && !isShooterOn) {
+            isShooterOff = true;
             shooter.shooterPower(0);
+        }
+        //Change shooter power
+        if (gamepad1.dpad_up){
+            wasPowerIncreased = true;
+        }else if (!gamepad1.dpad_up && wasPowerIncreased){
+            shooterPower -= .2;
+            if (shooterPower <= -1.1){
+                shooterPower = -.2;
+            }
+            wasPowerIncreased = false;
+        }
+        if (gamepad1.dpad_down){
+            wasPowerDecreased = true;
+        }else if (!gamepad1.dpad_down && wasPowerDecreased){
+            shooterPower += .2;
+            if (shooterPower >= -.1){
+                shooterPower = -1;
+            }
+            wasPowerDecreased = false;
         }
     }
 }
