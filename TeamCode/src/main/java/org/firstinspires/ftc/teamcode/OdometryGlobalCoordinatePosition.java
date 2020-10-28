@@ -37,6 +37,8 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
         return globalPositionY;
     }
 
+    public double theta() { return robotOrientationDegrees; }
+
     public void stop() {isRunning = false;}
 
     @Override

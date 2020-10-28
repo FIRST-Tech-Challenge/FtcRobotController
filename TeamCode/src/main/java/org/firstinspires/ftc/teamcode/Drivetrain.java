@@ -5,6 +5,9 @@ public class Drivetrain {
     enum tiltDirect{
         UP, DOWN
     }
+    enum moveDirection {
+        FORWARD, BACKWARD, LEFT, RIGHT
+    }
     static int pos = 0;
 
     public void forward(double power){
@@ -18,6 +21,22 @@ public class Drivetrain {
         robot.backRight.setPower(rb);
         robot.frontLeft.setPower(lf);
         robot.backLeft.setPower(lb);
+    }
+    public void moveDirect(moveDirection direction, double power){
+        switch (direction) {
+            case FORWARD:
+                setMotorPowers(power, power, power, power);
+                break;
+            case BACKWARD:
+                setMotorPowers(-power, -power, -power, -power);
+                break;
+            case LEFT:
+                setMotorPowers(power, -power, -power, power);
+                break;
+            case RIGHT:
+                setMotorPowers(-power, power, power, -power);
+                break;
+        }
     }
     public void spin(boolean right, double power){
         power = (right) ? power : -power;
