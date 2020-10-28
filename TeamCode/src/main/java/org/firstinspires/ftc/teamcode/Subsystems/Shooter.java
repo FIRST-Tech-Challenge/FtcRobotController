@@ -74,6 +74,7 @@ public class Shooter {
     public void flipperForward() {
         leftFlipper.setPosition(leftUp);
         rightFlipper.setPosition(rightUp);
+
     }
     public void flipperBackward() {
         leftFlipper.setPosition(leftBack);
