@@ -10,7 +10,7 @@ import telefunctions.Cycle;
 import telefunctions.ServoController;
 import telefunctions.TeleThread;
 
-@TeleOp(name = "TerraOp V1")
+@TeleOp(name = "TerraOp V5")
 public class TerraOp extends OpMode {
 
     TerraBot bot = new TerraBot();

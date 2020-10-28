@@ -7,31 +7,26 @@ public class Odometry {
 
     public double tx = 0; //total x
     public double ty = 0; //total y
-    double rp = 0; //right pos
-    double lp = 0; //left pos
-    double cp = 0; //center pos
-    double deltaRP = 0; //change in right pos
-    double deltaLP = 0; //change in left pos
-    double deltaCP = 0; //change in center pos
+    public double rp = 0; //right pos
+    public double lp = 0; //left pos
+    public double cp = 0; //center pos
+    public double deltaRP = 0; //change in right pos
+    public double deltaLP = 0; //change in left pos
+    public double deltaCP = 0; //change in center pos
+    public  double deltaTheta = 0;
 
     public double forward = 0;
-    public double turn = 0;
     public double strafe = 0;
     public double theta = 0;
-    public double sr = 0;
-    public double sl = 0;
-    public double sc = 0;
-    public double cr = 0;
-    public double cl = 0;
-    public double cc = 0;
 
-    public double vx = 0;
+    double forcor = 0;
+    double strcor = 0;
 
 
     public final double TICKS_FOR_ODOMETRY =  8192;
     public final double ENCODER_WHEEL_RADIUS = 1.75; // in cm
 
-    public final double LEFT_OVER_RIGHT = 1.070175;
+    public final double LEFT_OVER_RIGHT = 1.0; //1.070175
     public final double LEFT_OVER_TOTAL = LEFT_OVER_RIGHT/(LEFT_OVER_RIGHT+1);
 
     public void init(double l, double c , double r){
@@ -49,16 +44,26 @@ public class Odometry {
         deltaRP = r-rp;
         deltaLP = l-lp;
         deltaCP = c-cp;
+        deltaTheta = heading-theta;
+        deltaTheta = Math.toRadians(deltaTheta);
 
         updateEncoderPositions(l, c, r);
-
         theta = heading;
 
 
-        forward = deltaLP+((deltaRP-deltaLP)*LEFT_OVER_TOTAL);
+        forward = (deltaLP+deltaRP)/2;
         strafe = deltaCP;
 
-        Vector cur = new Vector(strafe, forward);
+        if(deltaTheta != 0.0) {
+            forcor = forward * (Math.sin(deltaTheta) / deltaTheta);
+            strcor = strafe + forward * ((1 - Math.cos(deltaTheta)) / deltaTheta);
+        }else{
+            forcor = forward;
+            strcor = strafe;
+        }
+
+
+        Vector cur = new Vector(strcor, forcor);
 
         Vector globalCur = cur.getRotatedVec(-theta, Vector.angle.DEGREES);
 

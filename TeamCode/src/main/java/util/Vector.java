@@ -30,11 +30,11 @@ public class Vector {
 
     public Vector getRotatedVec(double angle, angle type) {
         if (type == Vector.angle.DEGREES) {
-            angle *= Math.PI/180;
+            angle = Math.toRadians(angle);
         }
-        Vector x = new Vector(this.getX() * Math.cos(angle), this.getX() * Math.sin(angle));
-        Vector y = new Vector(this.getY() * Math.sin(angle), this.getY() * Math.cos(angle));
-        return x.addVector(y);
+        double ang  = theta + angle;
+        double radius = Math.sqrt(x*x + y*y);
+        return new Vector(Math.cos(ang)*radius, Math.sin(ang)*radius);
     }
 
     public Vector reverse() {
