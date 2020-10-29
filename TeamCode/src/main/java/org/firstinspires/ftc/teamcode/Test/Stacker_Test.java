@@ -29,15 +29,10 @@
 
 package org.firstinspires.ftc.teamcode.Test;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Subsystems.Stacker;
+import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
 
 
@@ -59,8 +54,9 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
 public class Stacker_Test extends LinearOpMode {
 
     // Declare OpMode members.
-    private Stacker stacker = new Stacker();
+    //private Stacker stacker = new Stacker();
     private Wobblegoal wobble = new Wobblegoal();
+    private Shooter shooter = new Shooter();
 
 
 
@@ -68,7 +64,7 @@ public class Stacker_Test extends LinearOpMode {
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        stacker.init(hardwareMap);
+        shooter.init(hardwareMap);
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
@@ -85,27 +81,30 @@ public class Stacker_Test extends LinearOpMode {
 
             // gripper assignment to X and Y buttons on implement gamepad
             // does not work 5/28. wires are in correct port too
-            if (gamepad2.x) {
-                stacker.loadShooter();
-                telemetry.addData("Shooter Loaded", "Complete ");
-
+            if (gamepad2.y) {
+                shooter.shootHighGoal();
+                telemetry.addData("Shooter High", "Complete ");
+            }
+            if (gamepad2.a) {
+                shooter.shooterOff();
+                telemetry.addData("Shooter High", "Complete ");
             }
 
-            if (gamepad2.y) {
-                stacker.resetShooter();
+            if (gamepad2.x) {
+                shooter.stackerMoveToReload();
                 telemetry.addData("Stacker Reset", "Complete ");
             }
             if (gamepad2.b) {
-                stacker.flipperCalibrateinCenter();
-                telemetry.addData("Flipper in Centers", "Complete ");
-            }
-            if (gamepad2.right_bumper) {
-                stacker.resetShooter();
-                telemetry.addData("Stacker Reset", "Complete ");
+                shooter.stackerMoveToShoot();
+                telemetry.addData("Stacker Ready to Shoot", "Complete ");
             }
             if (gamepad2.left_bumper) {
-                stacker.flipperCalibrateinCenter();
-                telemetry.addData("Flipper in Centers", "Complete ");
+                shooter.flipperForward();
+                telemetry.addData("Flipper Fwd", "Complete ");
+            }
+            if (gamepad2.right_bumper) {
+                shooter.flipperBackward();
+                telemetry.addData("Flipper Back", "Complete ");
             }
 
         }

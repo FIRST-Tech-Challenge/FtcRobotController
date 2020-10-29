@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
+import org.firstinspires.ftc.teamcode.Subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
@@ -20,10 +21,11 @@ public class Meet_1_Teleop extends OpMode {
     /* Declare OpMode members. */
 
     private ElapsedTime runtime     = new ElapsedTime();
-    Drivetrain_v3       drivetrain        = new Drivetrain_v3(true);
-    //Shooter shooter                 = new Shooter();
-    Intake intake                   = new Intake();
-    Wobblegoal wobble               = new Wobblegoal();
+    public Drivetrain_v3        drivetrain  = new Drivetrain_v3(true);   // Use subsystem Drivetrain
+    public Shooter              shooter     = new Shooter();
+    public Intake               intake      = new Intake();
+    public Wobblegoal           wobble  = new Wobblegoal();
+    public Elevator elevator    = new Elevator();
 
 
     private DriveSpeedState  currDriveState;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Test;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -18,6 +18,10 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
+import org.firstinspires.ftc.teamcode.Subsystems.Elevator;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
 
 import java.util.List;
 
@@ -33,6 +37,11 @@ import java.util.List;
 public class BasicAutonomous extends LinearOpMode {
     /* Declare OpMode members. */
     public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
+    public Shooter              shooter     = new Shooter();
+    public Intake               intake      = new Intake();
+    public Wobblegoal           wobble  = new Wobblegoal();
+    public Elevator             elevator    = new Elevator();
+
     public Orientation          lastAngles  = new Orientation();
     public ElapsedTime          PIDtimer    = new ElapsedTime(); // PID loop timer
     public ElapsedTime          drivetime     = new ElapsedTime(); // timeout timer
@@ -135,7 +144,8 @@ public class BasicAutonomous extends LinearOpMode {
 
         /////////////////////////////////////////////////////////////////////////////////////////////
         waitForStart();
-        tfTime.reset();
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        tfTime.reset(); //  reset the TF timer
         while (tfTime.time() < tfSenseTime) {
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
@@ -175,7 +185,7 @@ public class BasicAutonomous extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
         // This is currently set up or field coordinates NOT RELATIVE to the last move
-        drivetime.reset(); // reset becase time starts when TF starts and time is up before we can call gyroDrive
+        drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
 
         switch(Square){
             case RED_A: // This is the basic op mode. Put real paths in designated opmodes
