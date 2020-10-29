@@ -15,6 +15,8 @@ public class ThreadHandler {
         t.start();
     }
     public void stopTeleThread(){
-        teleThread.stop();
+        if(teleThread!= null) {
+            teleThread.stop();
+        }
     }
 }

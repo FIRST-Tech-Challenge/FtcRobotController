@@ -22,12 +22,14 @@ public class Odometry {
     double forcor = 0;
     double strcor = 0;
 
+    public double testx = 0;
+    public double testy = 0;
+
 
     public final double TICKS_FOR_ODOMETRY =  8192;
     public final double ENCODER_WHEEL_RADIUS = 1.75; // in cm
 
-    public final double LEFT_OVER_RIGHT = 1.0; //1.070175
-    public final double LEFT_OVER_TOTAL = LEFT_OVER_RIGHT/(LEFT_OVER_RIGHT+1);
+    public final double RADIUS_CENTER_TO_ENC = 2.5; // in cm
 
     public void init(double l, double c , double r){
         updateEncoderPositions(l, c, r);
@@ -44,7 +46,7 @@ public class Odometry {
         deltaRP = r-rp;
         deltaLP = l-lp;
         deltaCP = c-cp;
-        deltaTheta = heading-theta;
+        deltaTheta = theta - heading;
         deltaTheta = Math.toRadians(deltaTheta);
 
         updateEncoderPositions(l, c, r);
@@ -55,8 +57,8 @@ public class Odometry {
         strafe = deltaCP;
 
         if(deltaTheta != 0.0) {
-            forcor = forward * (Math.sin(deltaTheta) / deltaTheta);
-            strcor = strafe + forward * ((1 - Math.cos(deltaTheta)) / deltaTheta);
+            forcor = forward; //* (Math.sin(deltaTheta) / deltaTheta);
+            strcor = strafe  -  (deltaTheta*cmToTicks(RADIUS_CENTER_TO_ENC)) ;//+ (forward * ((1 - Math.cos(deltaTheta)) / deltaTheta));
         }else{
             forcor = forward;
             strcor = strafe;
@@ -70,10 +72,17 @@ public class Odometry {
         tx += globalCur.x;
         ty += globalCur.y;
 
+        testx += strcor;
+        testy += forcor;
+
     }
 
     public double ticksToCm(double ticks){
         return (ticks/TICKS_FOR_ODOMETRY)*(2*Math.PI*ENCODER_WHEEL_RADIUS);
+    }
+
+    public double cmToTicks(double cm){
+        return (cm*TICKS_FOR_ODOMETRY)/(2*Math.PI*ENCODER_WHEEL_RADIUS);
     }
 
 
@@ -93,6 +102,10 @@ public class Odometry {
 
     public double getTheta(){
         return theta;
+    }
+
+    public double[] getPos(){
+        return new double[]{getX(), getY(), getTheta()};
     }
 
 }

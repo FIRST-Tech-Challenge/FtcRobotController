@@ -29,10 +29,7 @@ public class Vector {
     }
 
     public Vector getRotatedVec(double angle, angle type) {
-        if (type == Vector.angle.DEGREES) {
-            angle = Math.toRadians(angle);
-        }
-        double ang  = theta + angle;
+        double ang  = theta + Math.toRadians(angle);
         double radius = Math.sqrt(x*x + y*y);
         return new Vector(Math.cos(ang)*radius, Math.sin(ang)*radius);
     }

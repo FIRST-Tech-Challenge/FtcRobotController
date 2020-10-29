@@ -444,8 +444,6 @@ public class TerraBot {
         });
     }
     public void stopOdoThread() {
-        if(threadHandler != null) {
-            threadHandler.stopTeleThread();
-        }
+        threadHandler.stopTeleThread();
     }
 }

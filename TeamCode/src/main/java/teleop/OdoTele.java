@@ -47,8 +47,8 @@ public class OdoTele extends OpMode {
 
 
         telemetry.addData("Heading", bot.getHeading());
-        telemetry.addData("deltaL", bot.odometry.lp);
-        telemetry.addData("deltaR", bot.odometry.rp);
+        telemetry.addData("deltaX", bot.odometry.testx);
+        telemetry.addData("deltaY", bot.odometry.testy);
         telemetry.addData("OdometryX", bot.odometry.getX());
         telemetry.addData("OdometryY", bot.odometry.getY());
         telemetry.update();

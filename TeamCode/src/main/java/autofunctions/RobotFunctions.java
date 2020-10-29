@@ -1,4 +1,4 @@
-package autoFunctions;
+package autofunctions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -7,6 +7,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Currency;
 
+import autofunctions.Path;
 import global.TerraBot;
 import util.CodeSeg;
 import util.Rect;
@@ -15,10 +16,9 @@ import java.util.Random;
 
 
 public class RobotFunctions {
-//
-//    TerraBot bot = null;
-//    public LinearOpMode op = null;
-//    public Odometry odometry = new Odometry();
+
+    TerraBot bot = null;
+    public LinearOpMode op = null;
 //
 //    ElapsedTime timer = new ElapsedTime();
 //
@@ -27,63 +27,62 @@ public class RobotFunctions {
 //    public AutoThread odoThread = new AutoThread();
 //    public Thread thread;
 //
-//    //Inspirational Messages
-//    public ArrayList<String> ims = new ArrayList<>();
-//
-//    public void init(TerraBot t, LinearOpMode o) {
-//        bot = t;
-//        op = o;
-//        odometry.init(bot);
-//        initIMs();
-//    }
-//
-//    public void initIMs(){
-//        ims.add("NitDaWit Just a Piece of ...");
-//        ims.add("The red is blood the person is you Im done with this so f u.");
-//        ims.add("No Excuses");
-//        ims.add("The tape is stuck!");
-//        ims.add("I can't do relic!");
-//        ims.add("Is Shuhul hurt");
-//        ims.add("Jeff is watching");
-//        ims.add("Bob Smith");
-//        ims.add("Robo Avatars crying");
-//        ims.add("Shuhuls computer");
-//        ims.add("Big Boy Roy");
-//        ims.add("Less Friction");
-//        ims.add("Your PC ran into fatal errors");
-//        ims.add("For testing purposes only");
-//        ims.add("My hands I messed up");
-//        ims.add("I made a mistake");
-//        ims.add("Flow Chart");
-//        ims.add("Ayush Servo");
-//        ims.add("Titanium dik");
-//        ims.add("Roy 'I need you for support' Help me up");
-//        ims.add("Peter and Steven have blessed you");
-//        ims.add("SEVEN STONE AUTO INIT");
-//        ims.add("Mogli");
-//        ims.add("Chipmunk");
-//        ims.add("FLippin leave");
-//        ims.add("UWU");
-//        ims.add("Jeff stop looking at this or Ill personally disqualify");
-//        ims.add("Safety glasses in the pits or GTFO");
-//        ims.add("Panda Chicken");
-//        ims.add("Bracket Sources");
-//        ims.add("'My Heart... its beating too fast I cant stop'");
-//        ims.add("14 volt big boy");
-//        ims.add("rolling sky grind");
-//        ims.add("this was supposed to be MY day");
-//        ims.add("1115, 8802, 14525, world record no penalties");
-//        ims.add("Higuchi nada nada bada enchilada na ana na...");
-//
-//    }
-//
-//    public void generateRandomIM(){
-//        Random rand = new Random();
-//        int index = rand.nextInt(ims.size());
-//        String out = ims.get(index+1);
-//        telemetryText(out);
-//    }
-//
+    //Inspirational Messages
+    public ArrayList<String> ims = new ArrayList<>();
+
+    public void init(TerraBot t, LinearOpMode o) {
+        bot = t;
+        op = o;
+        initIMs();
+    }
+
+    public void initIMs(){
+        ims.add("NitDaWit Just a Piece of ...");
+        ims.add("The red is blood the person is you Im done with this so f u.");
+        ims.add("No Excuses");
+        ims.add("The tape is stuck!");
+        ims.add("I can't do relic!");
+        ims.add("Is Shuhul hurt");
+        ims.add("Jeff is watching");
+        ims.add("Bob Smith");
+        ims.add("Robo Avatars crying");
+        ims.add("Shuhuls computer");
+        ims.add("Big Boy Roy");
+        ims.add("Less Friction");
+        ims.add("Your PC ran into fatal errors");
+        ims.add("For testing purposes only");
+        ims.add("My hands I messed up");
+        ims.add("I made a mistake");
+        ims.add("Flow Chart");
+        ims.add("Ayush Servo");
+        ims.add("Titanium dik");
+        ims.add("Roy 'I need you for support' Help me up");
+        ims.add("Peter and Steven have blessed you");
+        ims.add("SEVEN STONE AUTO INIT");
+        ims.add("Mogli");
+        ims.add("Chipmunk");
+        ims.add("FLippin leave");
+        ims.add("UWU");
+        ims.add("Jeff stop looking at this or Ill personally disqualify");
+        ims.add("Safety glasses in the pits or GTFO");
+        ims.add("Panda Chicken");
+        ims.add("Bracket Sources");
+        ims.add("'My Heart... its beating too fast I cant stop'");
+        ims.add("14 volt big boy");
+        ims.add("rolling sky grind");
+        ims.add("this was supposed to be MY day");
+        ims.add("1115, 8802, 14525, world record no penalties");
+        ims.add("Higuchi nada nada bada enchilada na ana na...");
+
+    }
+
+    public void generateRandomIM(){
+        Random rand = new Random();
+        int index = rand.nextInt(ims.size());
+        String out = ims.get(index+1);
+        telemetryText(out);
+    }
+
 //    public void startOdoThread(){
 //        CodeSeg code  = new CodeSeg() {
 //            @Override
@@ -98,25 +97,8 @@ public class RobotFunctions {
 //
 //    }
 //
-//
-//    public void start(Path path, LinearOpMode o){
-//        //odometry.updateGlobalPosition();
-//        while (o.opModeIsActive() && path.isExecuting()){
-//            odometry.updateGlobalPosition();
-//            double[] pows = path.update(odometry);
-//            if(pows!= null) {
-//                bot.move(pows[1], pows[0], pows[2]);
-//            }
-//
-////            o.telemetry.addData("x", odometry.getGlobalPose()[0]);
-////            o.telemetry.addData("y", odometry.getGlobalPose()[1]);
-////            o.telemetry.addData("h", odometry.getGlobalPose()[2]);
-////            o.telemetry.addData("vx", path.XVelocity);
-////            o.telemetry.addData("vy", path.YVelocity);
-////            o.telemetry.addData("vh", path.HVelocity);
-////            o.telemetry.update();
-//        }
-//    }
+
+
 //    public void scanStonesBeforeInit(TerraCV cv){
 //        while (!op.isStarted()){
 //            cv.takePictureBeforeInit();
@@ -262,12 +244,12 @@ public class RobotFunctions {
 //            }
 //        });
 //    }
-//
-//    public void telemetryText(final String text) {
-//        op.telemetry.addData(":", text);
-//        op.telemetry.update();
-//    }
-//
+
+    public void telemetryText(final String text) {
+        op.telemetry.addData(":", text);
+        op.telemetry.update();
+    }
+
 //    public void telemetryValue(Path p, final String cap, final double d) {
 //        p.addCustom(new CodeSeg() {
 //            @Override
@@ -277,10 +259,16 @@ public class RobotFunctions {
 //            }
 //        });
 //    }
-//    public void pauseBeforeInit(double secs){
-//        ElapsedTime time = new ElapsedTime();
-//        time.reset();
-//        while (!op.isStarted() && time.seconds() < secs){}
-//    }
+
+    public void pauseBeforeInit(double secs){
+        ElapsedTime time = new ElapsedTime();
+        time.reset();
+        while (!op.isStarted() && time.seconds() < secs){}
+    }
+    public void pause(double secs){
+        ElapsedTime time = new ElapsedTime();
+        time.reset();
+        while (op.opModeIsActive() && time.seconds() < secs){}
+    }
 
 }
