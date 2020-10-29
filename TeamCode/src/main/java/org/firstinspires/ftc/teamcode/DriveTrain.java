@@ -22,7 +22,9 @@ public class DriveTrain extends OpMode
     public double leftBackMotorPos, leftBackDistanceTraveled = 0, deltaLeftBackMotorPos = 0, previousLeftBackMotorPos;
     public double rightBackMotorPos, rightBackDistanceTraveled = 0, deltaRightBackMotorPos = 0, previousRightBackMotorPos;
 
-    public void init()
+    public void init(){}
+
+    public void initialize()
     {
         leftFrontMotor = hardwareMap.dcMotor.get("leftFrontMotor");
         leftBackMotor = hardwareMap.dcMotor.get("leftBackMotor");
@@ -98,8 +100,8 @@ public class DriveTrain extends OpMode
         rightBackMotor.setPower(0.75 * pwr + correction);
     }
 
-    private double getOrient() {
-
+    private double getOrient()
+    {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
