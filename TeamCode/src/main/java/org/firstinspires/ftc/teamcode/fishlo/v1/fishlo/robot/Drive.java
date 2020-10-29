@@ -334,7 +334,7 @@ public class Drive extends SubSystem {
 
     public double getHeading() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        yaw = angles.firstAngle;
+        yaw = -angles.firstAngle;
 
         return (convert(yaw - gyroOffset));
     }
