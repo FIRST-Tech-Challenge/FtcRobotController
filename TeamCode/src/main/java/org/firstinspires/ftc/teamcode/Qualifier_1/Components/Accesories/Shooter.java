@@ -33,6 +33,8 @@ public class Shooter {
         hardwareMap = op.hardwareMap;
 
         shooterMotor = hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
+        shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int Gobilda_Ticks_Per_Rev=28;
     }
 
     public void moveServo(boolean direction){
@@ -48,15 +50,21 @@ public class Shooter {
     public void shootHighGoal(double distance){
         this.distance=distance;
         double sleepTime = (distance / speedTopGoal * 1000);
+        shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+
+        shooterMotor.setTargetPosition(20000);
+
+        shooterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         shooterMotor.setPower(speedTopGoal);
-        while (distance>0){
+
+        while (shooterMotor.isBusy()) {
             moveServo(true);
             moveServo(false);
             moveServo(true);
             moveServo(false);
             moveServo(true);
         }
-        op.sleep((long) sleepTime);
         shooterMotor.setPower(0);
 
     }
@@ -64,30 +72,42 @@ public class Shooter {
     public void shootMidGoal(double distance){
         this.distance=distance;
         double sleepTime = (distance / speedMediumGoal * 1000);
+        shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+
+        shooterMotor.setTargetPosition(20000);
+
+        shooterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         shooterMotor.setPower(speedMediumGoal);
-        while (distance>0){
+
+        while (shooterMotor.isBusy()) {
             moveServo(true);
             moveServo(false);
             moveServo(true);
             moveServo(false);
             moveServo(true);
         }
-        op.sleep((long) sleepTime);
         shooterMotor.setPower(0);
     }
 
     public void shootLowGoal(double distance){
         this.distance=distance;
         double sleepTime = (distance / speedLowGoal * 1000);
+        shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+
+        shooterMotor.setTargetPosition(20000);
+
+        shooterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         shooterMotor.setPower(speedLowGoal);
-        while (distance>0){
+
+        while (shooterMotor.isBusy()) {
             moveServo(true);
             moveServo(false);
             moveServo(true);
             moveServo(false);
             moveServo(true);
         }
-        op.sleep((long) sleepTime);
         shooterMotor.setPower(0);
     }
 
