@@ -21,7 +21,7 @@ public class Elevator {
     private static final double Elevatoroff=0;
     public void init(HardwareMap hwMap){
     elevator =hwMap.get(DcMotor.class,"Elevator");
-    elevator.setDirection(DcMotor.Direction.REVERSE);
+    elevator.setDirection(DcMotor.Direction.FORWARD);
     elevator.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
