@@ -63,11 +63,11 @@ public class TravelXDistance extends LinearOpMode
             // Fill this section with variables when your shit doesn't work
             telemetry.addData("1 runtime", runtime.milliseconds());
             telemetry.addData("2 distance traveled per cycle", deltaLeftFrontMotorPos);
-            telemetry.addData("3 orientation", globalAngle);
+            telemetry.addData("3 left front position", leftFrontDistanceTraveled);
             telemetry.update();
 
             // Call functions to actually move the thing
-            turn(90);
+            move(300, 300);
         }
     }
 
@@ -101,16 +101,16 @@ public class TravelXDistance extends LinearOpMode
         double rightBackError = posTarget - rightBackDistanceTraveled;
 
         // Calculate the motor powers
-        if (positiveDistanceTraveled < (posTarget + 20)) {
-            leftFrontPower = Math.pow(leftFrontError, 2);
-            rightBackPower = (Math.pow(rightBackError, 2));
+        if (positiveDistanceTraveled <= (posTarget + 15) || positiveDistanceTraveled >= (posTarget + 25)) {
+            leftFrontPower = 0.034 * leftFrontError;
+            rightBackPower = 0.034 * rightBackError;
         }
-        if (negativeDistanceTraveled < (negTarget + 20)) {
-            rightFrontPower = (Math.pow(rightFrontError, 2));
-            leftBackPower = (Math.pow(leftBackError, 2));
+        if (negativeDistanceTraveled <= (negTarget + 15) || negativeDistanceTraveled >= (negTarget + 25)) {
+            rightFrontPower = 0.034 * rightFrontError;
+            leftBackPower = 0.034 * leftBackError;
         }
         // Stop if we reach the target position
-        if ((leftFrontDistanceTraveled + rightBackDistanceTraveled) / 2 >= (posTarget + 20) && (rightFrontDistanceTraveled + leftBackDistanceTraveled) / 2 >= (negTarget + 20))
+        else
         {
             leftFrontPower = 0;
             rightFrontPower = 0;
@@ -137,12 +137,14 @@ public class TravelXDistance extends LinearOpMode
         // Get the current orientation of the bot
         double angle = getOrientation();
 
+        degrees -= 13;
+
         // Make sure we're not at the target. If not, move. If so, stop.
         if (angle < degrees) {
-            leftFrontPower = (Math.pow(degrees - angle, 2));
-            rightFrontPower = -(Math.pow(degrees - angle, 2));
-            leftBackPower = (Math.pow(degrees - angle, 2));
-            rightBackPower = -(Math.pow(degrees - angle, 2));
+            leftFrontPower = (degrees - angle);
+            rightFrontPower = -(degrees - angle);
+            leftBackPower = (degrees - angle);
+            rightBackPower = -(degrees - angle);
         } else
         {
             leftFrontPower = 0;
