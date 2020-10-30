@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,8 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@TeleOp(name="Move 10 centimeters", group="Auton Test Suite")
-public class TravelXDistance extends LinearOpMode
+@Autonomous(name="Proportional based tester", group="Auton Test Suite")
+public class ProportionalAuton extends LinearOpMode
 {
     DcMotor leftFrontMotor, rightFrontMotor, leftBackMotor, rightBackMotor;
     BNO055IMU imu;
@@ -41,6 +41,8 @@ public class TravelXDistance extends LinearOpMode
         rightBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -61,13 +63,14 @@ public class TravelXDistance extends LinearOpMode
         while (opModeIsActive())
         {
             // Fill this section with variables when your shit doesn't work
-            telemetry.addData("1 runtime", runtime.milliseconds());
-            telemetry.addData("2 distance traveled per cycle", deltaLeftFrontMotorPos);
-            telemetry.addData("3 left front position", leftFrontDistanceTraveled);
+            telemetry.addData("1 positiveDistanceTraveled", positiveDistanceTraveled);
+            telemetry.addData("2 negativeDistanceTraveled", negativeDistanceTraveled);
+            telemetry.addData("3 leftFrontPower", leftFrontPower);
+            telemetry.addData("4 rightFrontPower", rightFrontPower);
             telemetry.update();
 
             // Call functions to actually move the thing
-            move(300, 300);
+            move(220/Math.sqrt(2), 220/Math.sqrt(2));
         }
     }
 
@@ -94,36 +97,44 @@ public class TravelXDistance extends LinearOpMode
         rightBackDistanceTraveled += deltaRightBackMotorPos;
         previousRightBackMotorPos = rightBackMotorPos;
 
-        // Get the distance between the target and the position
-        double leftFrontError = posTarget - leftFrontDistanceTraveled;
-        double rightFrontError = negTarget - rightFrontDistanceTraveled;
-        double leftBackError = negTarget - leftBackDistanceTraveled;
-        double rightBackError = posTarget - rightBackDistanceTraveled;
+        positiveDistanceTraveled = (leftFrontDistanceTraveled + rightBackDistanceTraveled) / 2;
+        negativeDistanceTraveled = (leftBackDistanceTraveled + rightFrontDistanceTraveled) / 2;
+
+        double positiveError = posTarget - positiveDistanceTraveled;
+        double negativeError = negTarget - negativeDistanceTraveled;
 
         // Calculate the motor powers
-        if (positiveDistanceTraveled <= (posTarget + 15) || positiveDistanceTraveled >= (posTarget + 25)) {
-            leftFrontPower = 0.034 * leftFrontError;
-            rightBackPower = 0.034 * rightBackError;
-        }
-        if (negativeDistanceTraveled <= (negTarget + 15) || negativeDistanceTraveled >= (negTarget + 25)) {
-            rightFrontPower = 0.034 * rightFrontError;
-            leftBackPower = 0.034 * leftBackError;
-        }
-        // Stop if we reach the target position
-        else
+        if (runtime.milliseconds() < 1000)
         {
-            leftFrontPower = 0;
-            rightFrontPower = 0;
-            leftBackPower = 0;
-            rightBackPower = 0;
-            instruction++;
+            leftFrontPower = Math.pow(runtime.milliseconds() / 1000, 2);
+            rightFrontPower = Math.pow(runtime.milliseconds() / 1000, 2);
+            leftBackPower = Math.pow(runtime.milliseconds() / 1000, 2);
+            rightBackPower = Math.pow(runtime.milliseconds() / 1000, 2);
+        } else
+        {
+            leftFrontPower = 0.034 * positiveError;
+            rightFrontPower = 0.034 * negativeError;
+            leftBackPower = 0.034 * negativeError;
+            rightBackPower = 0.034 * positiveError;
         }
 
-        // Limit motor power so we don't lose accuracy
-        if (leftFrontPower > 0.35) { leftFrontPower = 0.35; }
-        if (rightFrontPower > 0.35) { rightFrontPower = 0.35; }
-        if (leftBackPower > 0.35) { leftBackPower = 0.35; }
-        if (rightBackPower > 0.35) { rightBackPower = 0.35; }
+        // Stop if we reach the target position
+        if (positiveError > -10 && positiveError < 10)
+        {
+            leftFrontPower = 0;
+            rightBackPower = 0;
+        }
+
+        if (negativeError > -10 && negativeError < 10)
+        {
+            rightFrontPower = 0;
+            leftBackPower = 0;
+        }
+
+        if (leftFrontPower > 0.25) { leftFrontPower = 0.25; }
+        if (rightFrontPower > 0.25) { rightFrontPower = 0.25; }
+        if (leftBackPower > 0.25) { leftBackPower = 0.25; }
+        if (rightBackPower > 0.25) { rightBackPower = 0.25; }
 
         // Apply motor power
         leftFrontMotor.setPower(leftFrontPower);
