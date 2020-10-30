@@ -20,9 +20,13 @@ public class Path {
     public double herr = 0;
 
 
-    public double radius = 10;
-
+    public double radius = 20;
+    public double t = 0;
+    public double ans = 0;
+    public double ans2 = 0;
     public int curIndex = 0;
+
+    public double[] targetPos = {0,0};
 
     public ArrayList<double[]> poses = new ArrayList<>();
     public ArrayList<Line> lines = new ArrayList<>();
@@ -31,8 +35,8 @@ public class Path {
 
     public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
-        xControl.setCoeffecients(0.025, 0.0, 0.0);
-        yControl.setCoeffecients(0.03, 0.0, 0.0);
+        xControl.setCoeffecients(0.05, 0.0, 0.0);
+        yControl.setCoeffecients(0.05, 0.0, 0.0);
         hControl.setCoeffecients(0.03, 0.0, 0.0);
     }
 
@@ -54,7 +58,6 @@ public class Path {
     }
 
     public double solve(double[] currentPose){
-        double ans = 0;
         double x1 = lines.get(curIndex).x1;
         double y1 = lines.get(curIndex).y1;
         double mx = lines.get(curIndex).mx;
@@ -66,7 +69,9 @@ public class Path {
         double a = (mx*mx)+(my*my);
         double b = 2*((dx*mx)+(dy*my));
         double c = (dx*dx)+(dy*dy)-(radius*radius);
-        ans = (-1)*((b - Math.sqrt((b * b) - (4 * a * c))) / (2 * a));
+        double disc = (b * b) - (4 * a * c);
+        ans = (-1)*((b - Math.sqrt(disc)) / (2 * a));
+        ans2 = (-1)*((b + Math.sqrt(disc)) / (2 * a));
 
         if(!Double.isNaN(ans)) {
             if(ans > 1){
@@ -80,12 +85,13 @@ public class Path {
 
 
     public double[] getTargetPos(double[] currentPose){
-        double t = solve(currentPose);
+        t = solve(currentPose);
         if(curIndex >= lines.size()){
             isExecuting = false;
             curIndex--;
         }
-        return lines.get(curIndex).getAt(t);
+        targetPos = lines.get(curIndex).getAt(t);
+        return targetPos;
     }
 
     public double[] update(double[] currentPos){
@@ -124,6 +130,16 @@ public class Path {
             op.telemetry.addData("xpow",  pows[0]);
             op.telemetry.addData("ypow",  pows[1]);
             op.telemetry.addData("hpow",  pows[2]);
+            op.telemetry.addData("targetx", targetPos[0]);
+            op.telemetry.addData("targety", targetPos[1]);
+            op.telemetry.addData("t", t);
+            op.telemetry.addData("curInd", curIndex);
+            op.telemetry.addData("y1", lines.get(0).y1);
+            op.telemetry.addData("y2", lines.get(0).y2);
+            op.telemetry.addData("ans1", ans);
+            op.telemetry.addData("ans2", ans2);
+            op.telemetry.addData("x", bot.odometry.getX());
+            op.telemetry.addData("x", bot.odometry.getY());
             op.telemetry.update();
 
 //            double[] pows = path.update(bot.odometry.getPos());

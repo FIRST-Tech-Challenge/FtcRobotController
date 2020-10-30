@@ -19,6 +19,10 @@ public class Odometry {
     public double strafe = 0;
     public double theta = 0;
 
+    public double thetaSketch = 0;
+    public double deltaThetaSketch = 0;
+
+
     double forcor = 0;
     double strcor = 0;
 
@@ -30,6 +34,7 @@ public class Odometry {
     public final double ENCODER_WHEEL_RADIUS = 1.75; // in cm
 
     public final double RADIUS_CENTER_TO_ENC = 2.5; // in cm
+    public final double DIS_BEWTEEN_ENCS = 37.46; //in cm
 
     public void init(double l, double c , double r){
         updateEncoderPositions(l, c, r);
@@ -39,6 +44,7 @@ public class Odometry {
         tx = 0;
         ty = 0;
         theta = 0;
+        thetaSketch = 0;
         updateEncoderPositions(l, c, r);
     }
 
@@ -52,22 +58,29 @@ public class Odometry {
         updateEncoderPositions(l, c, r);
         theta = heading;
 
-
         forward = (deltaLP+deltaRP)/2;
         strafe = deltaCP;
 
-        if(deltaTheta != 0.0) {
-            forcor = forward; //* (Math.sin(deltaTheta) / deltaTheta);
-            strcor = strafe  -  (deltaTheta*cmToTicks(RADIUS_CENTER_TO_ENC)) ;//+ (forward * ((1 - Math.cos(deltaTheta)) / deltaTheta));
-        }else{
-            forcor = forward;
-            strcor = strafe;
-        }
+        deltaThetaSketch = (deltaRP - deltaLP) / cmToTicks(DIS_BEWTEEN_ENCS);
+        thetaSketch += Math.toDegrees(deltaThetaSketch);
 
+        if(deltaTheta == 0) {
+            if(deltaThetaSketch != 0.0) {
+                forcor = forward * (Math.sin(deltaThetaSketch) / deltaThetaSketch);
+                strcor = strafe -  (deltaThetaSketch*cmToTicks(RADIUS_CENTER_TO_ENC)) + (forward * ((1 - Math.cos(deltaThetaSketch)) / deltaThetaSketch));
+            }else{
+                forcor = forward;
+                strcor = strafe;
+            }
+        }else{
+            forcor = forward * (Math.sin(deltaTheta) / deltaTheta);
+            strcor = strafe -  (deltaTheta*cmToTicks(RADIUS_CENTER_TO_ENC)) + (forward * ((1 - Math.cos(deltaTheta)) / deltaTheta));
+            thetaSketch = heading;
+        }
 
         Vector cur = new Vector(strcor, forcor);
 
-        Vector globalCur = cur.getRotatedVec(-theta, Vector.angle.DEGREES);
+        Vector globalCur = cur.getRotatedVec(theta, Vector.angle.DEGREES);
 
         tx += globalCur.x;
         ty += globalCur.y;
