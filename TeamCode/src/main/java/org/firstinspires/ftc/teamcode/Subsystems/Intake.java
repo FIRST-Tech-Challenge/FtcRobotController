@@ -34,6 +34,9 @@ public class Intake {
         intake_motor.setPower(-Intakeon);
     }
 
+    public void IntakeReverse() {
+        intake_motor.setPower(-Intakeon);
+    }
 }
 
 
