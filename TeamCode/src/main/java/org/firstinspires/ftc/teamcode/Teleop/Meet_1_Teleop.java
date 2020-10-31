@@ -136,6 +136,19 @@ public class Meet_1_Teleop extends OpMode {
         }
         if (gamepad1.y) {
         }
+        if (gamepad1.left_stick_button) {
+        intake.Intakeoff();
+        elevator.Elevatoroff();
+        }
+        if (gamepad1.left_trigger>.25){
+            intake.Intakeon();
+            elevator.ElevatorSpeedfast();
+
+        }
+        if (gamepad1.right_trigger >0.25){
+            intake.IntakeReverse();
+            elevator.Elevatorbackup();
+        }
         // Gamepad 1 Bumpers - for Speed Control
         // set-up drive speed states on bumpers
         if (gamepad1.left_bumper)
