@@ -91,20 +91,20 @@ public class MecanumControlV2 extends OpMode {
             shooter.shooterPower(0);
         }
         //Change shooter power
-        if (gamepad1.dpad_up){
+        if (gamepad1.dpad_up) {
             wasPowerIncreased = true;
-        }else if (!gamepad1.dpad_up && wasPowerIncreased){
-            shooterPower -= .2;
-            if (shooterPower <= -1.1){
-                shooterPower = -.2;
+        }else if (!gamepad1.dpad_up && wasPowerIncreased) {
+            shooterPower -= .05;
+            if (shooterPower <= -1.04) {
+                shooterPower = -.7;
             }
             wasPowerIncreased = false;
         }
-        if (gamepad1.dpad_down){
+        if (gamepad1.dpad_down) {
             wasPowerDecreased = true;
-        }else if (!gamepad1.dpad_down && wasPowerDecreased){
-            shooterPower += .2;
-            if (shooterPower >= -.1){
+        }else if (!gamepad1.dpad_down && wasPowerDecreased) {
+            shooterPower += .05;
+            if (shooterPower >= -.66) {
                 shooterPower = -1;
             }
             wasPowerDecreased = false;
