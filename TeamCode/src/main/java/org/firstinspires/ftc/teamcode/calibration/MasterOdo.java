@@ -7,12 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.autonomous.AutoStep;
 import org.firstinspires.ftc.teamcode.bots.BotAction;
+import org.firstinspires.ftc.teamcode.bots.BotActionObj;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
@@ -43,6 +45,7 @@ public class MasterOdo extends LinearOpMode {
 
     public static final File ROUTES_FOLDER = new File(FIRST_FOLDER, "/routes/");
     public static final File DOTS_FOLDER = new File(FIRST_FOLDER, "/dots/");
+    public static String BOT_ACTIONS = "bot-actions.json";
     private ArrayList<AutoRoute> routes = new ArrayList<>();
     private ArrayList<AutoDot> coordinates = new ArrayList<>();
     private ArrayList<Integer> blueRoutes = new ArrayList<>();
@@ -1239,21 +1242,54 @@ public class MasterOdo extends LinearOpMode {
 
     public  void loadBotActions() {
         Class<?> klass = this.bot.getClass();
-        while (klass != Object.class) { // need to iterated thought hierarchy in order to retrieve methods from above the current instance
-            // iterate though the list of methods declared in the class represented by klass variable, and add those annotated with the specified annotation
+        ArrayList<BotActionObj> botActionList = new ArrayList<>();
+        while (klass != Object.class) {
             for (final Method method : klass.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(BotAction.class)) {
                     botActions.add(method);
+                    BotAction annotation = method.getAnnotation(BotAction.class);
+                    BotActionObj obj = new BotActionObj();
+                    obj.setMethodName(method.getName());
+                    if (annotation != null){
+                        obj.setDescription(annotation.displayName());
+                    }
+                    else{
+                        obj.setDescription(method.getName());
+                    }
 
                     if (AutoDot.class.isAssignableFrom(method.getReturnType())){
                         coordinateFunctions.put(method.getName(), null);
+                        obj.setGeo(true);
+                        String namedDot = annotation.defaultReturn();
+                        if (!namedDot.isEmpty()){
+                            obj.setReturnRef(namedDot);
+                        }
                     }
+                    botActionList.add(obj);
                 }
             }
-            // move to the upper class in the hierarchy in search for more methods
             klass = klass.getSuperclass();
         }
+        try {
+            File actionsFile = getActionsFile();
+            String jsonPath = SimpleGson.getInstance().toJson(botActionList);
+            ReadWriteFile.writeFile(actionsFile, jsonPath);
+        }
+        catch (Exception ex){
+            telemetry.addData("Error", "Unable to save Bot Actions. %s", ex.getMessage());
+        }
+
     }
+
+    private AutoDot findNamedCoordinate(String name){
+        for(AutoDot d : coordinates){
+            if(d.getDotName().equals(name)){
+                return d;
+            }
+        }
+        return null;
+    }
+
 
     public Method findActionMethod(String actionName){
         Method selected = null;
@@ -1268,24 +1304,31 @@ public class MasterOdo extends LinearOpMode {
 
     private File getRouteFile(String filename)
     {
-        File file = new File(filename);
+        String fullName = String.format("%s.json", filename);
+        File file = new File(fullName);
         if (!file.isAbsolute())
         {
             AppUtil.getInstance().ensureDirectoryExists(ROUTES_FOLDER);
-            file = new File(ROUTES_FOLDER, filename);
+            file = new File(ROUTES_FOLDER, fullName);
         }
         return file;
     }
 
     private File getCoordinateFile(String filename)
     {
-        File file = new File(filename);
+        String fullName = String.format("%s.json", filename);
+        File file = new File(fullName);
         if (!file.isAbsolute())
         {
             AppUtil.getInstance().ensureDirectoryExists(DOTS_FOLDER);
-            file = new File(DOTS_FOLDER, filename);
+            file = new File(DOTS_FOLDER, fullName);
         }
         return file;
+    }
+
+    private File getActionsFile()
+    {
+        return AppUtil.getInstance().getSettingsFile(BOT_ACTIONS);
     }
 
     private void initRoute(){

@@ -89,35 +89,35 @@ public class UltimateBot extends YellowBot
         wobbleClaw.setPosition(p);
     }
 
-    @BotAction(displayName = "Move Intake")
+    @BotAction(displayName = "Move Intake", defaultReturn="")
     public void intake() {
         intake.setPower(0.7);
     }
 
-    @BotAction(displayName = "Stop Intake")
+    @BotAction(displayName = "Stop Intake", defaultReturn="")
     public void stopintake() {
         intake.setPower(0);
     }
 
-    @BotAction(displayName = "Move Shooter")
+    @BotAction(displayName = "Move Shooter", defaultReturn="")
     public void shooter() { shooter.setPower(0.9); }
 
-    @BotAction(displayName = "Stop Shooter")
+    @BotAction(displayName = "Stop Shooter", defaultReturn="")
     public void stopshooter() {
         shooter.setPower(0);
     }
 
-    @BotAction(displayName = "Close Claw")
+    @BotAction(displayName = "Close Claw", defaultReturn="")
     public void closeWobbleClaw () {
         wobbleClaw.setPosition(0);
     }
 
-    @BotAction(displayName = "Open Claw")
+    @BotAction(displayName = "Open Claw", defaultReturn="")
     public void openWobbleClaw () {
         wobbleClaw.setPosition(1);
     }
 
-    @BotAction(displayName = "Init WobbleSwing")
+    @BotAction(displayName = "Init WobbleSwing", defaultReturn="")
     public void backWobbleSwing (){
         if (this.getSwingPosition() == SwingPosition.Init){
             return;
@@ -135,7 +135,7 @@ public class UltimateBot extends YellowBot
         wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    @BotAction(displayName = "Place Wobble")
+    @BotAction(displayName = "Place Wobble", defaultReturn="")
     public void forwardWobbleSwing () {
 
         if (this.getSwingPosition() == SwingPosition.Ground){
@@ -154,7 +154,7 @@ public class UltimateBot extends YellowBot
         wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    @BotAction(displayName = "Lift Wobble Up")
+    @BotAction(displayName = "Lift Wobble Up", defaultReturn="")
     public void liftAndHoldWobbleSwing() {
         wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleSwing.setTargetPosition(SWING_LIFT_UP_POS);
@@ -188,7 +188,7 @@ public class UltimateBot extends YellowBot
 
 
 
-    @BotAction(displayName = "Green Light")
+    @BotAction(displayName = "Green Light", defaultReturn="")
     public void signalOK(){
         getLights().OK();
         ElapsedTime timer = new ElapsedTime();
@@ -199,7 +199,7 @@ public class UltimateBot extends YellowBot
         getLights().none();
     }
 
-    @BotAction(displayName = "signalProblem")
+    @BotAction(displayName = "signalProblem", defaultReturn="")
     public void shoot(){
         getLights().problem();
         ElapsedTime timer = new ElapsedTime();
@@ -210,7 +210,7 @@ public class UltimateBot extends YellowBot
         getLights().none();
     }
 
-    @BotAction(displayName = "detectStack")
+    @BotAction(displayName = "Detect Stack", defaultReturn = "B")
     public AutoDot detectStack(){
         AutoDot target = null;
         RingDetector rf = null;
