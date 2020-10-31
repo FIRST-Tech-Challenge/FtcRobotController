@@ -12,7 +12,7 @@ public class Vector {
     }
 
     public Vector(double angle, double len, angle unit) {
-        if (unit == Vector.angle.DEGREES) {
+        if (unit.equals(Vector.angle.DEGREES)) {
             angle *= Math.PI/180;
         }
         this.x = len * Math.cos(angle);
