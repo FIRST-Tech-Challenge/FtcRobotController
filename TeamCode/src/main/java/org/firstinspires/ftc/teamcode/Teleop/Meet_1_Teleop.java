@@ -49,6 +49,7 @@ public class Meet_1_Teleop extends OpMode {
         //shooter.init(hardwareMap);
         intake.init(hardwareMap);
         wobble.init(hardwareMap);
+        elevator.init(hardwareMap);
 
         //newState(currDriveState);
         currDriveState = DriveSpeedState.DRIVE_FAST; // initialize robot to FAST
@@ -129,8 +130,12 @@ public class Meet_1_Teleop extends OpMode {
 
        // Gamepad 1 Buttons
         if (gamepad1.a) {
+            intake.Intakeon();
+            elevator.ElevatorSpeedfast();
         }
         if (gamepad1.b) {
+            intake.IntakeReverse();
+            elevator.Elevatorbackup();
         }
         if (gamepad1.x) {
         }
@@ -140,15 +145,8 @@ public class Meet_1_Teleop extends OpMode {
         intake.Intakeoff();
         elevator.Elevatoroff();
         }
-        if (gamepad1.left_trigger>.25){
-            intake.Intakeon();
-            elevator.ElevatorSpeedfast();
 
-        }
-        if (gamepad1.right_trigger >0.25){
-            intake.IntakeReverse();
-            elevator.Elevatorbackup();
-        }
+
         // Gamepad 1 Bumpers - for Speed Control
         // set-up drive speed states on bumpers
         if (gamepad1.left_bumper)
