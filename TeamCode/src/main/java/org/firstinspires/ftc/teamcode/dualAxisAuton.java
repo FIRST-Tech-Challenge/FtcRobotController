@@ -78,6 +78,7 @@ public class dualAxisAuton extends LinearOpMode {
         int FRTarget = 0;
         int BLTarget = 0;
         int BRTarget = 0;
+        
         /*telemetry.addData("currentposL: ", robot.motorLeft.getTargetPosition());
         telemetry.addData("currentposR: ", robot.motorRight.getTargetPosition());
         telemetry.update();*/
@@ -164,6 +165,10 @@ public class dualAxisAuton extends LinearOpMode {
 
             //  sleep(250);   // optional pause after each move
         }
+    }
+
+    public void trueDualEncoderDrive(double direction, double inches) {
+
     }
 
     public void normalDrive(double lpower, double rpower) {

@@ -115,7 +115,7 @@ public class testRingAuton extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         say("1");
-        encoderDrive(DRIVE_SPEED,  -12);
+        encoderDrive(DRIVE_SPEED,  -7);
         say("Done");
 
         sleep(3000);

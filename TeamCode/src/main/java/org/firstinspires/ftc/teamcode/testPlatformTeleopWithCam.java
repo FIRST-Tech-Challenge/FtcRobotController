@@ -30,13 +30,7 @@ public class testPlatformTeleopWithCam extends OpMode{
     testPlatformHardware robot  = new testPlatformHardware();
 
     // Create variables for motor power
-    private double flPower = 0; //left wheel
-    private double frPower = 0; //right wheel
-    private double blPower = 0; //front power
-    private double brPower = 0; //back power
-    private double liftPower = 0; // lift power
-
-    private boolean scalePower = false;
+    private double[] powers = new double[4]; // front left, front right, back left, back right
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
@@ -191,26 +185,7 @@ public class testPlatformTeleopWithCam extends OpMode{
 
     @Override
     public void loop() {
-
-
-        /**
-         * In order for localization to work, we need to tell the system where each target is on the field, and
-         * where the phone resides on the robot.  These specifications are in the form of <em>transformation matrices.</em>
-         * Transformation matrices are a central, important concept in the math here involved in localization.
-         * See <a href="https://en.wikipedia.org/wiki/Transformation_matrix">Transformation Matrix</a>
-         * for detailed information. Commonly, you'll encounter transformation matrices as instances
-         * of the {@link OpenGLMatrix} class.
-         *
-         * If you are standing in the Red Alliance Station looking towards the center of the field,
-         *     - The X axis runs from your left to the right. (positive from the center to the right)
-         *     - The Y axis runs from the Red Alliance Station towards the other side of the field
-         *       where the Blue Alliance Station is. (Positive is from the center, towards the BlueAlliance station)
-         *     - The Z axis runs from the floor, upwards towards the ceiling.  (Positive is above the floor)
-         *
-         * Before being transformed, each target image is conceptually located at the origin of the field's
-         *  coordinate system (the center of the field), facing up.
-         */
-        setPowers();
+        move();
 
 
         // check all the trackable targets to see which one (if any) is visible.
@@ -249,136 +224,33 @@ public class testPlatformTeleopWithCam extends OpMode{
     }
 
 //--------------------------------- FUNCTIONS ----------------------------------------------------
-
-    public double scalePower(double power1)
-    {
-        double power2;
-        if(power1 > 0){
-            power2 = Math.pow(Math.abs(power1), 0.6);
-        } else if(power1 < 0){
-            power2 = -Math.pow(Math.abs(power1), 0.6);
-        } else{
-            power2 = 0;
+    private void move() {
+        if(testPlatformTeleopV2.notInDeadzone(gamepad1, "left") || testPlatformTeleopV2.notInDeadzone(gamepad1, "right")) {
+            // Algorithm taken from https://ftcforum.firstinspires.org/forum/ftc-technology/android-studio/6361-mecanum-wheels-drive-code-example, quote to dmssargent
+            double[] gamepadState = testPlatformTeleopV2.getGamepadState(gamepad1);
+            double r = Math.hypot(gamepadState[0], gamepadState[1]);
+            double robotAngle = Math.atan2(gamepadState[1], gamepadState[0]) - Math.PI / 4;
+            double rightX = gamepadState[2];
+            testPlatformTeleopV2.setPower(powers,r * Math.cos(robotAngle) + rightX, r * Math.sin(robotAngle) - rightX,
+                    r * Math.sin(robotAngle) + rightX, r * Math.cos(robotAngle) - rightX);
         }
-
-        return power2;
+        else {
+            testPlatformTeleopV2.setPower(powers,0,0,0,0);
+        }
+        pushPower();
     }
-    public void setPowers() {
-        if ((gamepad1.left_stick_y > 0.1 || gamepad1.left_stick_y < -0.1)||(gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1))
-        {
-            if(scalePower == true) {
-                flPower = gamepad1.left_stick_y * 0.5;
-                brPower = gamepad1.left_stick_y * 0.5;
-                frPower = gamepad1.left_stick_y * 0.5;
-                blPower = gamepad1.left_stick_y * 0.5;
+    public void pushPower() {
+        for (int i = 0; i < powers.length; i++) {
+            if(powers[i] > 1) {
+                powers[i] = 1;
             }
-            else{
-                flPower = gamepad1.left_stick_y * 2;
-                brPower = gamepad1.left_stick_y * 2;
-                frPower = gamepad1.left_stick_y * 2;
-                blPower = gamepad1.left_stick_y * 2;
+            else if(powers[i] < -1) {
+                powers[i] = -1;
             }
         }
-        else if ((gamepad1.left_stick_x < -0.2 || gamepad1.left_stick_x > .2) || (gamepad2.left_stick_x <-.02 || gamepad2.left_stick_x > .2))
-        {
-            if(scalePower == true) {
-                frPower = gamepad1.left_stick_x * 0.5;
-                blPower = gamepad1.left_stick_x * 0.5;
-                flPower = -gamepad1.left_stick_x * 0.5;
-                brPower = -gamepad1.left_stick_x * 0.5;
-            }
-            else{
-                frPower = gamepad1.left_stick_x * 2;
-                blPower = gamepad1.left_stick_x * 2;
-                flPower = -gamepad1.left_stick_x * 2;
-                brPower = -gamepad1.left_stick_x * 2;
-            }
-
-        }
-        else
-        {
-            flPower = 0;
-            brPower = 0;
-            frPower = 0;
-            blPower = 0;
-        }
-
-        if (gamepad1.right_stick_x < -0.1 || gamepad2.right_stick_x < -0.1) {
-            flPower = 0.5;
-            brPower = -0.5;
-            frPower = -0.5;
-            blPower = 0.5;
-        } else if (gamepad1.right_stick_x > 0.1 || gamepad2.right_stick_x> 0.1) {
-            flPower = -0.5;
-            brPower = 0.5;
-            frPower = 0.5;
-            blPower = -0.5;
-        }
-
-
-        if(frPower > 1)
-        {
-            frPower = 1;
-        }
-        else if (frPower < -1)
-        {
-            frPower = -1;
-        }
-
-        if(flPower > 1)
-        {
-            flPower = 1;
-        }
-        else if (flPower < -1)
-        {
-            flPower = -1;
-        }
-
-        if(blPower > 1)
-        {
-            blPower = 1;
-        }
-        else if (blPower < -1)
-        {
-            blPower = -1;
-        }
-        if(brPower > 1)
-        {
-            brPower = 1;
-        }
-        else if (brPower < -1)
-        {
-            brPower = -1;
-        }
-//
-        if (gamepad1.right_trigger > 0)
-        {
-            scalePower = true;
-        }
-        else
-        {
-            scalePower = false;
-        }
-
-
-
-
-
-//      SCALING POWERS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-        if(scalePower)
-        {
-            flPower *= .7;
-            brPower *= .7;
-            frPower *= .7;
-            blPower *= .7;
-        }
-
-//      SETTING POWERS AND POSITIONS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-        robot.motorFrontLeft.setPower(flPower);
-        robot.motorBackRight.setPower(brPower);
-        robot.motorFrontRight.setPower(frPower);
-        robot.motorBackLeft.setPower(blPower);
+        robot.motorFrontLeft.setPower(powers[0]);
+        robot.motorFrontRight.setPower(powers[1]);
+        robot.motorBackLeft.setPower(powers[2]);
+        robot.motorBackRight.setPower(powers[3]);
     }
 }
