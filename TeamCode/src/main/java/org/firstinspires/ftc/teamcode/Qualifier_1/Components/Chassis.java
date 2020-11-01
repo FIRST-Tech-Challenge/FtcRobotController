@@ -650,10 +650,10 @@ public class Chassis {
                     power=0.2;
                 }
             }
-            motorRightBack.setPower(+power * direction - correction+anglecorrection);
-            motorRightFront.setPower(-power * direction - correction+anglecorrection);
-            motorLeftBack.setPower(-power * direction - correction-anglecorrection);
-            motorLeftFront.setPower(+power * direction - correction-anglecorrection);
+            motorRightBack.setPower(+power * direction - correction-anglecorrection);
+            motorRightFront.setPower(-power * direction - correction-anglecorrection);
+            motorLeftBack.setPower(-power * direction - correction+anglecorrection);
+            motorLeftFront.setPower(+power * direction - correction+anglecorrection);
             op.telemetry.addData("current xpos", currentPosition[0] + "current ypos", currentPosition[1]);
             op.telemetry.update();
             op.idle();
