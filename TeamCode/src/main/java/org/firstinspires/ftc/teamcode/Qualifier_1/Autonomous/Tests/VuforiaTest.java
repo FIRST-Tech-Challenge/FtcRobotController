@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Webcam_1;
 
 @Autonomous(name = "VuforiaTest")
 public class VuforiaTest extends LinearOpMode {
@@ -16,26 +17,26 @@ public class VuforiaTest extends LinearOpMode {
     public void runOpMode() {
         //AamodVuforia vuforiaB = new AamodVuforia(this, VuforiaLocalizer.CameraDirection.BACK);
         //AamodVuforia vuforiaF = new AamodVuforia(this, VuforiaLocalizer.CameraDirection.FRONT);
-        VuforiaWebcam vuforiaWebcam = new VuforiaWebcam(this, VuforiaLocalizer.CameraDirection.BACK);
+        Webcam_1 vuforiaWebcam = new Webcam_1();
 
-        vuforiaWebcam.init(this);
+        vuforiaWebcam.init();
 
         waitForStart();
         vuforiaWebcam.start();
 
         while (opModeIsActive()) {
 
-            //Webcam
-
-            double x = vuforiaWebcam.getVuforiaX();
-            double y = vuforiaWebcam.getVuforiaY();
-            double angle = vuforiaWebcam.getVuforiaAngle();
-
-            telemetry.addData("Back X", x);
-            telemetry.addData("Back Y", y);
-            telemetry.addData("Back Angle", "%.2f, %.2f", angle, angle+90);
-            telemetry.addData("Back Target", vuforiaWebcam.getVuforiaTrackable());
-            telemetry.update();
+//            //Webcam
+//
+//            double x = vuforiaWebcam.getVuforiaX();
+//            double y = vuforiaWebcam.getVuforiaY();
+//            double angle = vuforiaWebcam.getVuforiaAngle();
+//
+//            telemetry.addData("Back X", x);
+//            telemetry.addData("Back Y", y);
+//            telemetry.addData("Back Angle", "%.2f, %.2f", angle, angle+90);
+//            telemetry.addData("Back Target", vuforiaWebcam.getVuforiaTrackable());
+//            telemetry.update();
 
 //            //Back
 //            telemetry.addData("Back X", vuforiaB.getVuforiaX());
@@ -50,6 +51,6 @@ public class VuforiaTest extends LinearOpMode {
 //            telemetry.addData("Front Target", vuforiaF.getVuforiaTrackable());
 //            telemetry.update();
         }
-        vuforiaWebcam.interrupt();
+//        vuforiaWebcam.interrupt();
     }
 }
