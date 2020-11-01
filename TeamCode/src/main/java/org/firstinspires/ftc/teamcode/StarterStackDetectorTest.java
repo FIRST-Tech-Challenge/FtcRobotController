@@ -46,6 +46,9 @@ public class StarterStackDetectorTest extends LinearOpMode
     private Servo rightIntakeServo;
     private Servo flimsy;
 
+    //Odometry encoder wheels
+    DcMotor verticalRight, verticalLeft, horizontal;
+
     //Declare imu
     private BNO055IMU imu;
 
@@ -62,6 +65,10 @@ public class StarterStackDetectorTest extends LinearOpMode
         rightIntakeServo = hardwareMap.servo.get("RIrelease");
         flimsy = hardwareMap.servo.get("flimsy");
 
+        verticalLeft = hardwareMap.dcMotor.get("VLE");
+        verticalRight = hardwareMap.dcMotor.get("VRE");
+        horizontal = hardwareMap.dcMotor.get("HE");
+
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         //Reverse requred motors
@@ -73,7 +80,9 @@ public class StarterStackDetectorTest extends LinearOpMode
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Create an IMURobot object that we will use to run the robot
-        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, imu, leftIntake, rightIntake, leftIntakeServo, rightIntakeServo, flimsy, this);
+        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, verticalRight, verticalLeft, horizontal,
+                imu, leftIntake, rightIntake, leftIntakeServo,
+                rightIntakeServo, flimsy, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
         /*

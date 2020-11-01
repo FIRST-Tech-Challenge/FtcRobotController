@@ -22,6 +22,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import org.firstinspires.ftc.teamcode.OdometryGlobalCoordinatePosition;
+
+
 public class IMURobot {
 
     //Declare motors that will be used
@@ -57,6 +60,14 @@ public class IMURobot {
     private final double SECONDS_PER_CM = 0.012345;
     private final double TICKS_PER_CM =34.225;
 
+    //Odometry encoder wheels
+    DcMotor verticalRight, verticalLeft, horizontal;
+
+    //The amount of encoder ticks for each inch the robot moves. This will change for each robot and needs to be changed here
+    final double COUNTS_PER_INCH = 307.699557;
+
+    //Hardware map names for the encoder wheels. Again, these will change for each robot and need to be updated below
+
     /**
      *
      * @param motorFrontRight
@@ -70,13 +81,19 @@ public class IMURobot {
      * @param opMode The Op Mode using the IMURobot object;
      *                for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
      */
-    public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
+
+    OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
+
+    public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft, DcMotor verticalRight, DcMotor verticalLeft, DcMotor horizontal,
                     BNO055IMU imu, CRServo leftIntake, CRServo rightIntake, Servo leftIntakeServo,
                     Servo rightIntakeServo, Servo flimsy, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
         this.motorBackLeft = motorBackLeft;
+        this.verticalLeft = verticalLeft;
+        this.verticalRight = verticalRight;
+        this.horizontal = horizontal;
         this.imu = imu;
         this.leftIntake = leftIntake;
         this.rightIntake = rightIntake;
@@ -100,6 +117,7 @@ public class IMURobot {
      * @param opMode The Op Mode using the IMURobot object;
      *                for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
      */
+
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
                     BNO055IMU imu, CRServo leftIntake, CRServo rightIntake, Servo leftIntakeServo,
                     Servo rightIntakeServo, Servo flimsy, Servo capRelease, LinearOpMode opMode){
@@ -610,4 +628,23 @@ public class IMURobot {
     public void holdCap(){
         capRelease.setPosition(0.3);
     }
+
+    public void odometryNormalizeAngle(){
+        while (globalPositionUpdate.returnOrientation() > 0){
+            turnCounterClockwise(1);
+        }
+
+        while (globalPositionUpdate.returnOrientation() < 0){
+            turnClockwise(1);
+        }
+
+        if (globalPositionUpdate.returnOrientation() == 0){
+            completeStop();
+        }
+    }
+
+    public void driveToPos (double xPos, double yPos){
+
+    }
+
 }
