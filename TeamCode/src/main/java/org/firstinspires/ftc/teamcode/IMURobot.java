@@ -629,6 +629,24 @@ public class IMURobot {
         capRelease.setPosition(0.3);
     }
 
+    public void robotStrafe (double power, double angle){
+        //restart angle tracking
+        resetAngle();
+
+        //convert direction (degrees) into radians
+        double newDirection = angle * Math.PI/180 + Math.PI/4;
+        //calculate powers needed using direction
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
+
+        //while(opMode.opModeIsActive()){
+        //Get a correction
+        double correction = getCorrection();
+        //Use the correction to adjust robot power so robot faces straight
+        correctedTankStrafe(leftPower, rightPower, correction);
+        //}
+    }
+
     public void odometryNormalizeAngle(){
         while (globalPositionUpdate.returnOrientation() > 0){
             turnCounterClockwise(1);
@@ -643,7 +661,35 @@ public class IMURobot {
         }
     }
 
-    public void driveToPos (double xPos, double yPos){
+    public void odometryDriveToPos (double xPos, double yPos){
+        double C = 0;
+        while (globalPositionUpdate.returnXCoordinate() > xPos){
+            robotStrafe(1,-90);
+        }
+        while (globalPositionUpdate.returnXCoordinate() < xPos){
+            robotStrafe(1,90);
+        }
+        if (globalPositionUpdate.returnXCoordinate() == xPos){
+            completeStop();
+            odometryNormalizeAngle();
+            C = 1;
+        }
+
+        
+        while (globalPositionUpdate.returnXCoordinate() > yPos && C == 1){
+            robotStrafe(-1,0);
+        }
+        while (globalPositionUpdate.returnXCoordinate() < yPos && C ==1){
+            robotStrafe(1,0);
+        }
+        if (globalPositionUpdate.returnXCoordinate() < yPos && C ==1){
+            completeStop();
+            odometryNormalizeAngle();
+            C = 2;
+        }
+
+
+
 
     }
 

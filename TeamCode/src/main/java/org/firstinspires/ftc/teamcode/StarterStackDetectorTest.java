@@ -134,17 +134,16 @@ public class StarterStackDetectorTest extends LinearOpMode
 
         telemetry.addData("tz", targetZone);
         telemetry.update();
-        sleep(500);
 
         switch(targetZone){
             case 1:
-
+                robot.odometryDriveToPos(100,100);
                 break;
             case 2:
-
+                robot.odometryDriveToPos(100,100);
                 break;
             case 3:
-
+                robot.odometryDriveToPos(100,100);
                 break;
             default:
                 break;
