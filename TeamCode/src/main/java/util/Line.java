@@ -23,4 +23,10 @@ public class Line {
         return new double[]{(x1)+(mx*t),(y1)+(my*t) };
     }
 
+    public double getDis(){
+        double x = x2-x1;
+        double y = y2-y1;
+        return Math.sqrt(x*x+y*y);
+    }
+
 }

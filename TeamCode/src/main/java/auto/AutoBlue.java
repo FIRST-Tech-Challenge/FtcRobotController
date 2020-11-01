@@ -23,20 +23,20 @@ public class AutoBlue extends LinearOpMode {
     public void runOpMode() {
         initialize();
         rf.telemetryText("done initing");
-        rf.generateRandomIM();
+        //rf.generateRandomIM();
         bot.startOdoThread();
 
         waitForStart();
 
-        path.addPose(0,30,0);
-        path.addPose(30,30,0);
+        path.addPose(0,10,45);
+        path.addPose(10,10,-45);
+        path.addPose(-10,10,10);
         path.start(bot, this);
 
         bot.move(0,0,0);
         bot.stopOdoThread();
 
     }
-
     private void initialize(){
         bot.init(hardwareMap);
         rf.init(bot, this);

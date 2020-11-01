@@ -20,7 +20,7 @@ public class Path {
     public double herr = 0;
 
 
-    public double radius = 20;
+    public double radius = 5;
     public double t = 0;
     public double ans = 0;
     public double ans2 = 0;
@@ -33,11 +33,23 @@ public class Path {
 
     public boolean isExecuting = true;
 
+    final public double scale = 0.3;
+    final public double xK = 0.05;
+    final public double yK = 0.05;
+    final public double hK = 0.1;
+
     public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
-        xControl.setCoeffecients(0.05, 0.0, 0.0);
-        yControl.setCoeffecients(0.05, 0.0, 0.0);
-        hControl.setCoeffecients(0.03, 0.0, 0.0);
+        xControl.setCoeffecients(xK, 0.0, 0.0);
+        yControl.setCoeffecients(yK, 0.0, 0.0);
+        hControl.setCoeffecients(hK, 0.0, 0.0);
+    }
+
+    public void updateScale(double dis, double deg){
+        radius = dis*scale;
+        deg = Math.abs(deg);
+        hControl.setCoeffecients(hK - (deg/100), hControl.Kd, hControl.Ki);
+
     }
 
 
@@ -100,6 +112,9 @@ public class Path {
             xerr = currentPos[0]-target[0];
             yerr = currentPos[1]-target[1];
             herr = currentPos[2]-poses.get(curIndex+1)[2];
+
+            updateScale(lines.get(curIndex).getDis(), poses.get(curIndex+1)[2]-poses.get(curIndex)[2]);
+
             return calcPows(currentPos);
         }else{
             return new double[]{0,0,0};
@@ -141,9 +156,6 @@ public class Path {
             op.telemetry.addData("x", bot.odometry.getX());
             op.telemetry.addData("x", bot.odometry.getY());
             op.telemetry.update();
-
-//            double[] pows = path.update(bot.odometry.getPos());
-//            bot.move(pows[1], pows[0], pows[2]);
         }
         bot.move(0,0,0);
     }
