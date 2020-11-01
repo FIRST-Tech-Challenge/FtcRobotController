@@ -562,11 +562,14 @@ public class Chassis {
             difference = target - currentAngle;
             if (difference * direction < 25) {
                 power *= difference / 25;
+                if(power<0.2){
+                    power=0.2;
+                }
             }
-            motorRightBack.setPower(power * direction);
-            motorRightFront.setPower(power * direction);
-            motorLeftBack.setPower(-power * direction);
-            motorLeftFront.setPower(-power * direction);
+            motorRightBack.setPower(-power*0.9 * direction);
+            motorRightFront.setPower(-power*0.9 * direction);
+            motorLeftBack.setPower(power * direction);
+            motorLeftFront.setPower(power * direction);
             op.telemetry.addData("current angle", currentAngle);
             op.telemetry.update();
             op.idle();
@@ -601,9 +604,12 @@ public class Chassis {
             anglecorrection = (currentPosition[2]-target_position[2])*.05;
             if (difference * direction < 5) {
                 power *= difference / 5;
+                if(power<0.2){
+                    power=0.2;
+                }
             }
-            motorRightBack.setPower(power * direction + correction+anglecorrection);
-            motorRightFront.setPower(power * direction - correction+anglecorrection);
+            motorRightBack.setPower(power * direction - correction+anglecorrection);
+            motorRightFront.setPower(power * direction + correction+anglecorrection);
             motorLeftBack.setPower(power * direction + correction-anglecorrection);
             motorLeftFront.setPower(power * direction - correction-anglecorrection);
             op.telemetry.addData("current xpos", currentPosition[0] + "current ypos", currentPosition[1]);
@@ -640,6 +646,9 @@ public class Chassis {
             anglecorrection = (currentPosition[2]-target_position[2])*0.05;
             if (difference * direction < 5) {
                 power *= difference / 5;
+                if(power<0.2){
+                    power=0.2;
+                }
             }
             motorRightBack.setPower(+power * direction - correction+anglecorrection);
             motorRightFront.setPower(-power * direction - correction+anglecorrection);
@@ -664,7 +673,6 @@ public class Chassis {
     }
 
     public void StraightxyPath(double x, double y, double power) {
-        double[] start_data = odom.track();
         double target_angle = atan2(y, x) * 180 / PI;
         turnOdometry(target_angle, power);
         moveForwardOdometry(sqrt(x * x + y * y), power);
@@ -694,13 +702,14 @@ public class Chassis {
     public void moveAngleOdometry(double angleInRadians, double x, double y, double power) {
         double[] currentPosition = odom.track();
         double[] startPosition = currentPosition;
-        double[] target_position = {0, 0};
+        double[] target_position = {0, 0,0};
         int direction = 1;
         double[] misdirection = {0, 0};
         double[] gain = {0, 0};
         double anglecorrection;
         target_position[0] = currentPosition[0] + x;
         target_position[1] = currentPosition[1] + y;
+        target_position[2] = currentPosition[2];
         double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
         if (difference < 0) {
             direction = -1;
