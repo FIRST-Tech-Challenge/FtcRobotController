@@ -23,9 +23,16 @@ import com.ftc9929.corelib.control.NinjaGamePad;
 import com.ftc9929.corelib.control.OnOffButton;
 import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.state.State;
+import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
+import com.google.common.base.Stopwatch;
+import com.google.common.base.Ticker;
+import com.hfrobots.tnt.corelib.drive.ExtendedDcMotor;
+import com.hfrobots.tnt.corelib.drive.PidController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.concurrent.TimeUnit;
 
 import lombok.NonNull;
 import lombok.Setter;
@@ -118,14 +125,95 @@ public class ScoringMechanism {
         }
     }
 
-    class LauncherToSpeed {
+    class LauncherToSpeed extends StopwatchTimeoutSafetyState {
         // Intake:Not Moving 
         // Launcher: Moving - accelerate to target velocity, PID (velocity)
 
         // Transitions - operator stops requesting launch of rings, launcher is at speed
+
+        private PidController pid;
+        private double kP;
+        private double kI;
+        private double kF;
+        private double encoderClicksPerSec;
+
+        private int lastEncoderCount = 0;
+
+        private Stopwatch stopwatch = Stopwatch.createUnstarted();
+
+        @Setter
+        private LauncherReady launcherReady;
+
+        protected ExtendedDcMotor motor;
+
+        public LauncherToSpeed(Telemetry telemetry, Ticker ticker){
+            super("Launcher to Speed",telemetry, ticker, TimeUnit.SECONDS.toMillis(2));
+
+            pid = PidController.builder().setKp(kP).setkI(kI).setkF(kF).setAllowOscillation(true)
+                    .setTolerance(encoderClicksPerSec*.03).build();
+            pid.setAbsoluteSetPoint(true);
+            pid.setTarget(encoderClicksPerSec, 0);
+        }
+
+        @Override
+        public State doStuffAndGetNextState() {
+
+            // FIXME: Transition for operator stops asking for ring launch
+            
+            if (isTimedOut()){
+                resetTimer();
+                return launcherReady;
+            }
+
+            if(pid.isOnTarget()){
+                return launcherReady;
+            }
+
+            if (!stopwatch.isRunning()) {
+                stopwatch.start();
+                lastEncoderCount = motor.getCurrentPosition();
+
+                motor.setPower(pid.getOutput(0));
+
+                return this;
+            }
+
+            long elapsedMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+            if (elapsedMs > 100) {
+                stopwatch.reset();
+                stopwatch.start();
+
+                int deltaEncoderCount = motor.getCurrentPosition() - lastEncoderCount;
+
+
+                double currEncoderPerSec = (double)deltaEncoderCount / elapsedMs * TimeUnit.SECONDS.toMillis(1);
+
+                double motorPower = pid.getOutput(currEncoderPerSec);
+
+                motor.setPower(motorPower);
+            }
+
+            return this;
+        }
+
+        @Override
+        public void liveConfigure(NinjaGamePad gamePad) {
+
+        }
     }
 
-    class LauncherReady {
+    class LauncherReady extends NotDebuggableState{
+        //FIX ME
+
+        protected LauncherReady(@NonNull String name, Telemetry telemetry) {
+            super(name, telemetry);
+        }
+
+        @Override
+        public State doStuffAndGetNextState() {
+            return null;
+        }
         // Intake:Not Moving 
         // Launcher: Moving - hold voltage
 
