@@ -159,7 +159,7 @@ public class ScoringMechanism {
         public State doStuffAndGetNextState() {
 
             // FIXME: Transition for operator stops asking for ring launch
-            
+
             if (isTimedOut()){
                 resetTimer();
                 return launcherReady;
