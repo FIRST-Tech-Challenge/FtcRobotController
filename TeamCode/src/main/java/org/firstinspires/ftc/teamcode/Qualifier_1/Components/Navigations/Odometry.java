@@ -19,8 +19,9 @@ public class Odometry {
     DcMotor odom1;
     DcMotor odom2;
     DcMotor odom3;
-    double ticks_per_inch = 1440 / 2.8;
-    double robot_diameter = 17;
+    double ticks_per_inch = 1440 / 4.7;
+    double robot_diameter = 15;
+    ;
     double[] odom = new double[3];
     double xpos = 0;
     double ypos = 0;
