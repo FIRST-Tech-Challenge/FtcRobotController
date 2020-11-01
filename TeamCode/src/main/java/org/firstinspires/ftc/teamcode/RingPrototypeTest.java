@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -10,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Ring Prototype Test
- * 
+ *
  * 3 October 2020
  */
 
@@ -21,6 +22,14 @@ public class RingPrototypeTest extends LinearOpMode{
     private CRServo conveyor, elevator;
     private DcMotor intake, outtakeRight, outtakeLeft;
     private Servo flipper;
+
+    private CRServo leftIntake;
+    private CRServo rightIntake;
+    private Servo leftIntakeServo;
+    private Servo rightIntakeServo;
+    private Servo flimsy;
+
+    private BNO055IMU imu;
 
     //Figures for ring elevator calculations
     private static final double PINION_CIRCUMFERENCE = 2.57;
@@ -34,6 +43,17 @@ public class RingPrototypeTest extends LinearOpMode{
     private static final double OUTTAKE_GEAR_RATIO = 3.0;
     private static final double OUTTAKE_WHEEL_RADIUS_IN = 2;
     private static final double OUTTAKE_WHEEL_RADIUS_M = OUTTAKE_WHEEL_RADIUS_IN*0.0254;
+
+    final double COUNTS_PER_INCH = 307.699557;
+
+    //Odometry encoder wheels
+    DcMotor verticalRight, verticalLeft, horizontal;
+
+    OdometryGlobalCoordinatePosition globalPositionUpdate;
+
+    IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
+            imu, leftIntake, rightIntake, leftIntakeServo,
+            rightIntakeServo, flimsy, this);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -54,6 +74,20 @@ public class RingPrototypeTest extends LinearOpMode{
         outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
         outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
 
+        leftIntakeServo = hardwareMap.servo.get("LIrelease");
+        rightIntakeServo = hardwareMap.servo.get("RIrelease");
+        flimsy = hardwareMap.servo.get("flimsy");
+
+        verticalLeft = hardwareMap.dcMotor.get("VLE");
+        verticalRight = hardwareMap.dcMotor.get("VRE");
+        horizontal = hardwareMap.dcMotor.get("HE");
+
+        //Initialize imu
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        robot.setupRobot();//calibrate IMU, set any required parameters
+
+
         //reverse the needed motors
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -71,6 +105,10 @@ public class RingPrototypeTest extends LinearOpMode{
         double outtakeMod = 1.0;
 
         waitForStart();
+
+        globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
+        Thread positionThread = new Thread(globalPositionUpdate);
+        positionThread.start();
 
         while(opModeIsActive()){
             /*
@@ -171,9 +209,22 @@ public class RingPrototypeTest extends LinearOpMode{
             telemetry.addData("Outtake RPM", outtakeRPM);
             telemetry.addData("Outtake Wheel Velocity (m/s)", outtakeWheelVelocity);
 
+            telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
+            telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
+            telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
+
+            telemetry.addData("Vertical left encoder position", verticalLeft.getCurrentPosition());
+            telemetry.addData("Vertical right encoder position", verticalRight.getCurrentPosition());
+            telemetry.addData("horizontal encoder position", horizontal.getCurrentPosition());
+
+            telemetry.addData("Thread Active", positionThread.isAlive());
+            telemetry.update();
+
             telemetry.update();
             idle();
         }
+        globalPositionUpdate.stop();
+
     }
 
     private void raiseElevator(){
@@ -196,5 +247,64 @@ public class RingPrototypeTest extends LinearOpMode{
         }
 
         elevator.setPower(0);
+    }
+
+    public void odometryNormalizeAngle(){
+        while (globalPositionUpdate.returnOrientation() > 0){
+            robot.turnCounterClockwise(1);
+        }
+
+        while (globalPositionUpdate.returnOrientation() < 0){
+            robot.turnClockwise(1);
+        }
+
+        if (globalPositionUpdate.returnOrientation() == 0){
+            robot.completeStop();
+        }
+    }
+
+    public void odometryDriveToPos (double xPos, double yPos) {
+        double C = 0;
+        while (globalPositionUpdate.returnXCoordinate() > xPos) {
+            robotStrafe(1, -90);
+        }
+        while (globalPositionUpdate.returnXCoordinate() < xPos) {
+            robotStrafe(1, 90);
+        }
+        if (globalPositionUpdate.returnXCoordinate() == xPos) {
+            robot.completeStop();
+            odometryNormalizeAngle();
+            C = 1;
+        }
+
+
+        while (globalPositionUpdate.returnXCoordinate() > yPos && C == 1) {
+            robotStrafe(-1, 0);
+        }
+        while (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
+            robotStrafe(1, 0);
+        }
+        if (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
+            robot.completeStop();
+            odometryNormalizeAngle();
+            C = 2;
+        }
+    }
+    public void robotStrafe (double power, double angle){
+        //restart angle tracking
+        robot.resetAngle();
+
+        //convert direction (degrees) into radians
+        double newDirection = angle * Math.PI/180 + Math.PI/4;
+        //calculate powers needed using direction
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
+
+        //while(opMode.opModeIsActive()){
+        //Get a correction
+        double correction = robot.getCorrection();
+        //Use the correction to adjust robot power so robot faces straight
+        robot.correctedTankStrafe(leftPower, rightPower, correction);
+        //}
     }
 }

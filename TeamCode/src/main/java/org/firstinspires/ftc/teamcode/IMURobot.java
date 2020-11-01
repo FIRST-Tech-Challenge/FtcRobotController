@@ -22,9 +22,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-import org.firstinspires.ftc.teamcode.OdometryGlobalCoordinatePosition;
-
-
 public class IMURobot {
 
     //Declare motors that will be used
@@ -84,16 +81,13 @@ public class IMURobot {
 
     OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
 
-    public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft, DcMotor verticalRight, DcMotor verticalLeft, DcMotor horizontal,
+    public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
                     BNO055IMU imu, CRServo leftIntake, CRServo rightIntake, Servo leftIntakeServo,
                     Servo rightIntakeServo, Servo flimsy, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
         this.motorBackLeft = motorBackLeft;
-        this.verticalLeft = verticalLeft;
-        this.verticalRight = verticalRight;
-        this.horizontal = horizontal;
         this.imu = imu;
         this.leftIntake = leftIntake;
         this.rightIntake = rightIntake;
@@ -629,68 +623,5 @@ public class IMURobot {
         capRelease.setPosition(0.3);
     }
 
-    public void robotStrafe (double power, double angle){
-        //restart angle tracking
-        resetAngle();
-
-        //convert direction (degrees) into radians
-        double newDirection = angle * Math.PI/180 + Math.PI/4;
-        //calculate powers needed using direction
-        double leftPower = Math.cos(newDirection) * power;
-        double rightPower = Math.sin(newDirection) * power;
-
-        //while(opMode.opModeIsActive()){
-        //Get a correction
-        double correction = getCorrection();
-        //Use the correction to adjust robot power so robot faces straight
-        correctedTankStrafe(leftPower, rightPower, correction);
-        //}
-    }
-
-    public void odometryNormalizeAngle(){
-        while (globalPositionUpdate.returnOrientation() > 0){
-            turnCounterClockwise(1);
-        }
-
-        while (globalPositionUpdate.returnOrientation() < 0){
-            turnClockwise(1);
-        }
-
-        if (globalPositionUpdate.returnOrientation() == 0){
-            completeStop();
-        }
-    }
-
-    public void odometryDriveToPos (double xPos, double yPos){
-        double C = 0;
-        while (globalPositionUpdate.returnXCoordinate() > xPos){
-            robotStrafe(1,-90);
-        }
-        while (globalPositionUpdate.returnXCoordinate() < xPos){
-            robotStrafe(1,90);
-        }
-        if (globalPositionUpdate.returnXCoordinate() == xPos){
-            completeStop();
-            odometryNormalizeAngle();
-            C = 1;
-        }
-
-        
-        while (globalPositionUpdate.returnXCoordinate() > yPos && C == 1){
-            robotStrafe(-1,0);
-        }
-        while (globalPositionUpdate.returnXCoordinate() < yPos && C ==1){
-            robotStrafe(1,0);
-        }
-        if (globalPositionUpdate.returnXCoordinate() < yPos && C ==1){
-            completeStop();
-            odometryNormalizeAngle();
-            C = 2;
-        }
-
-
-
-
-    }
 
 }

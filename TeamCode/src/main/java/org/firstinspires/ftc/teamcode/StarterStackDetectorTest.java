@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -46,11 +49,20 @@ public class StarterStackDetectorTest extends LinearOpMode
     private Servo rightIntakeServo;
     private Servo flimsy;
 
+    final double COUNTS_PER_INCH = 307.699557;
+
     //Odometry encoder wheels
     DcMotor verticalRight, verticalLeft, horizontal;
 
+    OdometryGlobalCoordinatePosition globalPositionUpdate;
+
+
     //Declare imu
     private BNO055IMU imu;
+
+    IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
+            imu, leftIntake, rightIntake, leftIntakeServo,
+            rightIntakeServo, flimsy, this);
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -80,9 +92,7 @@ public class StarterStackDetectorTest extends LinearOpMode
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Create an IMURobot object that we will use to run the robot
-        IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft, verticalRight, verticalLeft, horizontal,
-                imu, leftIntake, rightIntake, leftIntakeServo,
-                rightIntakeServo, flimsy, this);
+
         robot.setupRobot();//calibrate IMU, set any required parameters
 
         /*
@@ -115,6 +125,11 @@ public class StarterStackDetectorTest extends LinearOpMode
         //Input Sideways Mid Point: 320,240
 
         waitForStart();
+
+        globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
+        Thread positionThread = new Thread(globalPositionUpdate);
+        positionThread.start();
+
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
         int stackThreshold = 300;
@@ -138,17 +153,19 @@ public class StarterStackDetectorTest extends LinearOpMode
 
         switch(targetZone){
             case 1:
-                robot.odometryDriveToPos(100,100);
+                odometryDriveToPos(100,100);
                 break;
             case 2:
-                robot.odometryDriveToPos(100,100);
+                odometryDriveToPos(100,100);
                 break;
             case 3:
-                robot.odometryDriveToPos(100,100);
+                odometryDriveToPos(100,100);
                 break;
             default:
                 break;
         }
+        globalPositionUpdate.stop();
+
 
     }
 
@@ -211,4 +228,64 @@ public class StarterStackDetectorTest extends LinearOpMode
         }
 
     }
+
+    public void odometryNormalizeAngle(){
+        while (globalPositionUpdate.returnOrientation() > 0){
+            robot.turnCounterClockwise(1);
+        }
+
+        while (globalPositionUpdate.returnOrientation() < 0){
+            robot.turnClockwise(1);
+        }
+
+        if (globalPositionUpdate.returnOrientation() == 0){
+            robot.completeStop();
+        }
+    }
+
+    public void odometryDriveToPos (double xPos, double yPos) {
+        double C = 0;
+        while (globalPositionUpdate.returnXCoordinate() > xPos) {
+            robotStrafe(1, -90);
+        }
+        while (globalPositionUpdate.returnXCoordinate() < xPos) {
+            robotStrafe(1, 90);
+        }
+        if (globalPositionUpdate.returnXCoordinate() == xPos) {
+            robot.completeStop();
+            odometryNormalizeAngle();
+            C = 1;
+        }
+
+
+        while (globalPositionUpdate.returnXCoordinate() > yPos && C == 1) {
+            robotStrafe(-1, 0);
+        }
+        while (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
+            robotStrafe(1, 0);
+        }
+        if (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
+            robot.completeStop();
+            odometryNormalizeAngle();
+            C = 2;
+        }
+    }
+    public void robotStrafe (double power, double angle){
+        //restart angle tracking
+        robot.resetAngle();
+
+        //convert direction (degrees) into radians
+        double newDirection = angle * Math.PI/180 + Math.PI/4;
+        //calculate powers needed using direction
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
+
+        //while(opMode.opModeIsActive()){
+        //Get a correction
+        double correction = robot.getCorrection();
+        //Use the correction to adjust robot power so robot faces straight
+        robot.correctedTankStrafe(leftPower, rightPower, correction);
+        //}
+    }
+
 }
