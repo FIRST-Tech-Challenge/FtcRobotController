@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -31,6 +33,7 @@ public class DriveTrain {
         this.telemetry = telemetry;
         this.telemetry.addData(DRIVE_TRAIN_CAPTION, "Drive train initialized");
         this.telemetry.update();
+
     }
 
     public void goForward(double inches) {
@@ -89,21 +92,19 @@ public class DriveTrain {
      */
     public void turn(double degreesToTurn) {
         double wheelPower = .75;
-        double turnCorrector = 1;
-        degreesToTurn = degreesToTurn * turnCorrector;
+        telemetry.addData("Degrees to Turn: ", degreesToTurn);
         Orientation angles;
         //test what difference between INTRINSIC and EXTRINSIC is
         angles = hera.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        degreesToTurn = angles.firstAngle + degreesToTurn;
         if (degreesToTurn < 0) {
             while ((angles.firstAngle > degreesToTurn) && this.opMode.opModeIsActive()) {
-                double generalPower = (degreesToTurn - angles.firstAngle)/degreesToTurn;
+                double generalPower = (degreesToTurn - angles.firstAngle)/(degreesToTurn);
                 hera.motorOne.setPower(generalPower * wheelPower);
                 hera.motorTwo.setPower(generalPower * wheelPower);
                 hera.motorThree.setPower(-generalPower * wheelPower);
                 hera.motorFour.setPower(-generalPower * wheelPower);
                 angles = hera.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                telemetry.addData("degreesToTurn", degreesToTurn);
-                telemetry.update();
                 String turnInfo = "angles: " + angles.firstAngle + ", " + angles.secondAngle + ", " + angles.thirdAngle;
                 showData("Turning", turnInfo);
             }
