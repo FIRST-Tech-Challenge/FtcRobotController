@@ -43,11 +43,11 @@ public class IntakeTest {
     @Test
     public void testIntake() {
         Intake intakeToTest = new Intake(hwMap);
-        intakeToTest.intake();
+        intakeToTest.intake(Intake.INTAKE_POWER);
 
         Assert.assertEquals(Intake.INTAKE_POWER, intakeMotor.getPower(), 0.01);
 
-        intakeToTest.outtake();
+        intakeToTest.outtake(Intake.INTAKE_POWER);
 
         Assert.assertEquals(Intake.OUTTAKE_POWER, intakeMotor.getPower(), 0.01);
     }
