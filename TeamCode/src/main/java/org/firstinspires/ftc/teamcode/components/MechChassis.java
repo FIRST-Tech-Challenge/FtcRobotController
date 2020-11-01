@@ -100,16 +100,16 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     // wheel radius, inches
     private double wheelRadius = 2.0;
     // minimum power that should be applied to the wheel motors for robot to start moving
-    private double minPower = 0.25;
-    private double slowDownSpeed = 0.4;
-    private double minPowerHorizontal = 0.4;
+    private double minPower = 0.1;
+    private double slowDownSpeed = 0.25;
+    private double minPowerHorizontal = 0.3;
 
     // maximum power that should be applied to the wheel motors
     private double maxPower = 0.999;
     private double maxRange = 127; // max range sensor detectable
     private double defaultScale = 1.0;
     private double mecanumForwardRatio = 0.8;
-    private double chassisAligmentPower = 0.22;
+    private double chassisAligmentPower = 0.17;
     private double init_x_cm = 0;
     private double init_y_cm = 0;
     private double init_heading = 0;

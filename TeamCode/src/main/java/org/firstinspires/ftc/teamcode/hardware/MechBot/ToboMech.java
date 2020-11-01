@@ -128,7 +128,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
             if (autoside == ProgramType.DIAGNOSIS) {
                 // enable imu for diagnosis
-                chassis.enableImuTelemetry(configuration);
+                // chassis.enableImuTelemetry(configuration);
             }
             chassis.configure(configuration, (autoside != ProgramType.TELE_OP));
         }
