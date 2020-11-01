@@ -58,7 +58,7 @@ public class AutoBlueOut extends LinearOpMode {
         waitForStart();
 
         if (!robot.isSimulationMode())
-            robot.initializeGPSThread();
+            robot.initAfterStart();
 
         robot.runtime.reset();
         robot.runtimeAuto.reset();

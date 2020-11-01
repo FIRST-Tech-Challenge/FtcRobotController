@@ -56,7 +56,7 @@ public class MecTeleOp extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        robot.initializeGPSThread();
+        robot.initAfterStart();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {

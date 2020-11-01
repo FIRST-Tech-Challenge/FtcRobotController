@@ -220,8 +220,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         if (!useOdometry) return;
         GPS = new OdometryGlobalCoordinatePosition(verticalLeftEncoder(), verticalRightEncoder(), horizontalEncoder(), odo_count_per_inch(), 75);
         GPS.set_orientationSensor(orientationSensor);
-        GPS.reverseRightEncoder();
-        GPS.reverseLeftEncoder();
+        // GPS.reverseRightEncoder();
+        // GPS.reverseLeftEncoder();
         GPS.set_init_pos(init_x_cm*odo_count_per_cm(), init_y_cm*odo_count_per_cm(), init_heading);
         setupGPSTelemetry(telemetry);
     }
@@ -1063,7 +1063,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         }
         */
         // setupGPSTelemetry(telemetry);
-        // set up imu telemetry
+        setupIMUTelemetry(telemetry);
 
 
 //        telemetry.addLine().addData("M", new Func<String>() {

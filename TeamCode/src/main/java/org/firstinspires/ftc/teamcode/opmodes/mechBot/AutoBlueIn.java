@@ -55,7 +55,9 @@ public class AutoBlueIn extends LinearOpMode {
         log.info("RoboMech Autonomous finished initialization (CPU_time = %.2f sec)", getRuntime());
 
         waitForStart();
-        robot.initializeGPSThread();
+
+        if (!robot.isSimulationMode())
+            robot.initAfterStart();
 
         robot.runtime.reset();
         robot.runtimeAuto.reset();

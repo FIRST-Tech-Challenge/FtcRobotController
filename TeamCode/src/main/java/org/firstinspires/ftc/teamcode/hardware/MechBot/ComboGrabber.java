@@ -27,10 +27,6 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private AdjustableServo grabber;
 
 
-    private final double ARM_UP = 0.9;
-    private final double ARM_INIT = ARM_UP;
-    private final double ARM_DOWN = 0.25;
-
     private final double SLIDER_POWER = 0.5;
     private final double SLIDER_SPEED = 1000;
     private final int SLIDER_POS_HIGH = 500;
@@ -38,11 +34,16 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private final int SLIDER_POS_LOW = 50;
     private final int SLIDER_POS_MAX = 1000;
 
-    private final double GRABBER_OPEN = 0.8;
-    private final double GRABBER_CLOSE = 0.47;
+    private final double ARM_UP = 0.48;
+    private final double ARM_INIT = 0.38;
+    private final double ARM_DOWN = 0.825;
+
+    private final double GRABBER_OPEN = 0.55;
+    private final double GRABBER_CLOSE = 0.845;
     private final double GRABBER_INIT = GRABBER_CLOSE;
 
     private boolean sliderIsLow = true;
+    private boolean armIsLow = false;
     private boolean grabberIsClosed = false;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -65,15 +66,14 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     }
 
     public void reset(boolean Auto) {
-        if (grabber != null)
-            servoInit();
+        servoInit();
     }
 
     public void configure(Configuration configuration, boolean auto) {
         grabber = new AdjustableServo(0, 1).configureLogging(
                 logTag + ":topWobbleGoalGrabber", logLevel
         );
-        grabber.configure(configuration.getHardwareMap(), "t_grabber");
+        grabber.configure(configuration.getHardwareMap(), "grabber");
         configuration.register(grabber);
 
         slider = configuration.getHardwareMap().get(DcMotorEx.class, "slider");
@@ -83,17 +83,18 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             // armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         }
-//        arm = new AdjustableServo(0, 1).configureLogging(
-//                logTag + ":topWobbleGoalGrabber", logLevel
-//        );
-//        arm.configure(configuration.getHardwareMap(), "arm");
-//        configuration.register(arm);
+        arm = new AdjustableServo(0, 1).configureLogging(
+                logTag + ":topWobbleGoalGrabber", logLevel
+        );
+        arm.configure(configuration.getHardwareMap(), "arm");
+        configuration.register(arm);
         configuration.register(this);
-        // servoInit();
+        servoInit();
     }
 
     public void servoInit() {
-        grabber.setPosition(GRABBER_INIT);
+        if (grabber!=null)
+            grabber.setPosition(GRABBER_INIT);
         if (arm!=null)
             arm.setPosition(ARM_INIT);
         sliderIsLow = false;
@@ -102,6 +103,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     }
 
     public void sliderStop() {
+        if (slider==null) return;
         slider.setPower(0);
     }
 
@@ -122,36 +124,42 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     }
 
     public void slideToPos(int pos) {
+        if (slider==null) return;
         slider.setTargetPosition(pos);
         slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slider.setVelocity(SLIDER_SPEED);
     }
 
     public void sliderPosHigh() {
+        if (slider==null) return;
         slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideToPos(SLIDER_POS_HIGH);
         sliderIsLow = false;
     }
 
     public void slidePosLow() {
+        if (slider==null) return;
         slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideToPos(SLIDER_POS_LOW);
         sliderIsLow = true;
     }
 
     public void sliderPosInit() {
+        if (slider==null) return;
         slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideToPos(SLIDER_POS_INIT);
         sliderIsLow = false;
     }
 
     public void sliderPosMax() {
+        if (slider==null) return;
         slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideToPos(SLIDER_POS_MAX);
         sliderIsLow = false;
     }
 
     public void sliderPosAuto() {
+        if (slider==null) return;
         if (sliderIsLow)
             sliderPosHigh();
         else
@@ -159,12 +167,14 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     }
 
     public void sliderUp() {
+        if (slider==null) return;
         slider.setVelocity(SLIDER_SPEED);
         // armMotor.setPower(ARM_POWER);
         // armIsDown = false;
     }
 
     public void sliderDown() {
+        if (slider==null) return;
         slider.setVelocity(-SLIDER_SPEED);
         // armMotor.setPower(-ARM_POWER);
         // armIsDown = true;
@@ -173,17 +183,17 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     public void armUp() {
         if (arm==null) return;
         arm.setPosition(ARM_UP);
-        sliderIsLow = false;
+        armIsLow = false;
     }
 
     public void armDown() {
         if (arm==null) return;
         arm.setPosition(ARM_DOWN);
-        sliderIsLow = true;
+        armIsLow = true;
     }
 
     public void armAuto() {
-        if (sliderIsLow) {
+        if (armIsLow) {
             armUp();
         } else {
             armDown();
