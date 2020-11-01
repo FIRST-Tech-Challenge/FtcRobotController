@@ -32,15 +32,17 @@ public class TerraOp extends OpMode {
 
     @Override
     public void init_loop() {
-        //bot.resetArm();
+        bot.resetArm();
+        telemetry.addData("vel", bot.getArmVel());
+        telemetry.update();
     }
 
     @Override
     public void start() {
-//        bot.turnArmWithEnc(50, 1);
-//        bot.turnWobbleArm(0.1);
-//        bot.turnControl.cur = 0.1;
-        bot.startOdoThread();
+        bot.turnArmWithEnc(50, 1);
+        bot.turnWobbleArm(0.1);
+        bot.turnControl.cur = 0.1;
+        //bot.startOdoThread();
     }
 
     @Override
@@ -89,7 +91,7 @@ public class TerraOp extends OpMode {
             }
 
 
-            if(gamepad1.y){
+            if(gamepad2.y){
                 bot.shooter.start();
             }
             if(gamepad2.x){
@@ -115,10 +117,15 @@ public class TerraOp extends OpMode {
 
         bot.move(forward, strafe, turn);
 
+//
+//        telemetry.addData("Heading", bot.getHeading());
+//        telemetry.addData("OdometryX", bot.odometry.getX());
+//        telemetry.addData("OdometryY", bot.odometry.getY());
+//        telemetry.update();
+//        telemetry.addData("touch", bot.isTouchSensorPressed());
+//        telemetry.update();
 
-        telemetry.addData("Heading", bot.getHeading());
-        telemetry.addData("OdometryX", bot.odometry.getX());
-        telemetry.addData("OdometryY", bot.odometry.getY());
+        telemetry.addData("pos", bot.arm.getCurrentPosition());
         telemetry.update();
 
         bot.update();
@@ -129,6 +136,6 @@ public class TerraOp extends OpMode {
 
     @Override
     public void stop() {
-        bot.stopOdoThread();
+        //bot.stopOdoThread();
     }
 }

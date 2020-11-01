@@ -49,14 +49,14 @@ public class TerraBot {
     public Servo sgl;
 
     public BNO055IMU gyro;
-    public ModernRoboticsTouchSensor tse;
 
     public boolean intaking = false;
     public boolean outtaking = false;
+    boolean isResettingArm = false;
 
-    public int resetingArm = 0;
+    public int resettingArm = 0;
 
-    public double turnStart = 0.4;
+    public double turnStart = 0.3;
     public double grabStart = 0.7;
     public double liftStart = 0.12;
     public double liftSecond = 0.27;
@@ -67,6 +67,7 @@ public class TerraBot {
     public double maxArmPos = 215;
     public double heading = 0;
     public double lastAngle = 0;
+    public double lastArmAngle = 0;
 
     public final double NEVEREST256_TICKS = 7168;
     public final double NEV_DEGREES_TO_TICKS = NEVEREST256_TICKS/360;
@@ -122,7 +123,6 @@ public class TerraBot {
         sgr = hwMap.get(Servo.class, "sgr");
         sgl = hwMap.get(Servo.class, "sgl");
 
-        tse = hwMap.get(ModernRoboticsTouchSensor.class, "tse");
         gyro = hwMap.get(BNO055IMU.class, "gyro");
         
 
@@ -325,6 +325,11 @@ public class TerraBot {
     public double getArmPos(){
         return arm.getCurrentPosition()/NEV_DEGREES_TO_TICKS;
     }
+    public double getArmVel(){
+        double vel =  (getArmPos()-lastArmAngle);
+        lastArmAngle = getArmPos();
+        return vel;
+    }
 
     public int degreesToTicks(double deg){
         return (int) (deg*NEV_DEGREES_TO_TICKS);
@@ -371,30 +376,26 @@ public class TerraBot {
         r1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public boolean isTouchSensorPressed(){
-        return tse.isPressed();
-    }
 
 
     public void resetArm(){
-        if(resetingArm == 0) {
-            arm.setPower(-1);
-            if (isTouchSensorPressed()) {
-                arm.setPower(0.5);
+
+        if(resettingArm == 0){
+            arm.setPower(-0.15);
+            resettingArm++;
+        }else if(resettingArm == 1) {
+            if(getArmVel() == 0 && !isResettingArm){
                 timer.reset();
-                resetingArm++;
-            }
-        }else if(resetingArm == 1){
-            if(timer.seconds() > 0.3){
-                arm.setPower(-0.1);
-                resetingArm++;
-            }
-        }else if(resetingArm == 2){
-            if(isTouchSensorPressed()) {
+                isResettingArm = true;
+            }else if(getArmVel() == 0 && timer.seconds() > 0.3){
                 arm.setPower(0);
                 arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                resetingArm++;
+                resettingArm++;
+            }
+            if(getArmVel() != 0){
+                timer.reset();
+                isResettingArm = false;
             }
         }
     }
