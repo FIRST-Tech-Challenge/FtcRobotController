@@ -71,7 +71,7 @@ public class Odometry {
             odom[1] = odom2.getCurrentPosition() * -1;
             odom[2] = odom3.getCurrentPosition();
             xpos += sin(getAngle() * Math.PI / 180) * ydiff + cos(Math.PI / 2 - (getAngle() * Math.PI / 180)) * xdiff;
-            ypos += cos(getAngle() * Math.PI / 180) * ydiff - sin(Math.PI / 2 - (getAngle() * Math.PI / 180)) * xdiff;
+            ypos += cos(getAngle() * Math.PI / 180 ) * ydiff - sin(Math.PI / 2 - (getAngle() * Math.PI / 180)) * xdiff;
             data[0] = xpos;
             data[1] = ypos;
             data[2] = getAngle();
