@@ -132,7 +132,8 @@ public class StarterStackDetectorTest extends LinearOpMode
 
         }
 
-        telemetry.addData("tz", targetZone);
+        telemetry.addData("Stack Height: ", mainPipeline.stackHeight);
+        telemetry.addData("tz: ", targetZone);
         telemetry.update();
 
         switch(targetZone){
