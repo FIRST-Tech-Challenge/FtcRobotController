@@ -90,6 +90,7 @@ public class RingPrototypeTest extends LinearOpMode{
             /*
             Change direction of intake
             */
+            //jolie test
             if(gamepad2.a){//press and hold a while running intake
                 intakeMod = -1.0;
             }else{
