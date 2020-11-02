@@ -1,29 +1,8 @@
-/*
- * Copyright (c) 2020 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot;
 
-package org.firstinspires.ftc.teamcode;
-
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+import org.firstinspires.ftc.teamcode.EasyOpenCVExample;
+import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.SubSystem;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -36,19 +15,20 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@TeleOp
-public class EasyOpenCVExample extends LinearOpMode
-{
+public class Vision extends SubSystem {
+
     OpenCvInternalCamera phoneCam;
-    SkystoneDeterminationPipeline pipeline;
+    EasyOpenCVExample.SkystoneDeterminationPipeline pipeline;
+
+    public Vision(Robot robot) {
+        super(robot);
+    }
 
     @Override
-    public void runOpMode()
-    {
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+    public void init() {
+        int cameraMonitorViewId = robot.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", robot.hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipeline();
+        pipeline = new EasyOpenCVExample.SkystoneDeterminationPipeline();
         phoneCam.setPipeline(pipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
@@ -56,27 +36,19 @@ public class EasyOpenCVExample extends LinearOpMode
         // landscape orientation, though.
         phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
 
-        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+            public void onOpened() {
+                phoneCam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
             }
         });
-
-        waitForStart();
-
-        while (opModeIsActive())
-        {
-            telemetry.addData("Analysis", pipeline.getAnalysis());
-            telemetry.addData("Position", pipeline.position);
-            telemetry.update();
-
-            // Don't burn CPU cycles busy-looping in this sample
-            sleep(50);
-        }
     }
+
+    @Override
+    public void handle() {}
+
+    @Override
+    public void stop() {}
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
@@ -123,7 +95,7 @@ public class EasyOpenCVExample extends LinearOpMode
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile RingPosition position = RingPosition.FOUR;
+        public volatile EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -157,13 +129,13 @@ public class EasyOpenCVExample extends LinearOpMode
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = RingPosition.FOUR; // Record our analysis
+            position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD){
-                position = RingPosition.FOUR;
+                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR;
             }else if (avg1 > ONE_RING_THRESHOLD){
-                position = RingPosition.ONE;
+                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.ONE;
             }else{
-                position = RingPosition.NONE;
+                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.NONE;
             }
 
             Imgproc.rectangle(
@@ -181,4 +153,20 @@ public class EasyOpenCVExample extends LinearOpMode
             return avg1;
         }
     }
+
+    public char getTargetZone() {
+        char targetZone = 'a';
+
+        if (pipeline.position == EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.NONE) {
+            targetZone = 'A';
+        }
+        else if (pipeline.position == EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.ONE) {
+            targetZone = 'B';
+        }
+        else if (pipeline.position == EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR) {
+            targetZone = 'C';
+        }
+        return targetZone;
+    }
 }
+
