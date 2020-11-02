@@ -35,10 +35,10 @@ public class Drive extends SubSystem {
 
     @Override
     public void init() {
-        frontLeft = robot.hardwareMap.dcMotor.get("front_left");
-        frontRight = robot.hardwareMap.dcMotor.get("front_right");
-        backLeft = robot.hardwareMap.dcMotor.get("back_left");
-        backRight = robot.hardwareMap.dcMotor.get("back_right");
+        frontLeft = robot.hardwareMap.dcMotor.get("frontLeft");
+        frontRight = robot.hardwareMap.dcMotor.get("frontRight");
+        backLeft = robot.hardwareMap.dcMotor.get("backLeft");
+        backRight = robot.hardwareMap.dcMotor.get("backRight");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
