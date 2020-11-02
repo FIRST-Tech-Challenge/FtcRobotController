@@ -9,12 +9,23 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGo
 public class WobbleGoalAutonomousTest extends LinearOpMode {
 
     public void runOpMode(){
-
         DcMotorEx motor = (DcMotorEx) hardwareMap.dcMotor.get ("wobbleGoalMotor");
-        WobbleGoal wobbleGoal = new WobbleGoal(motor);
+        WobbleGoal wobbleGoal = new WobbleGoal(motor, this);
+
+        telemetry.addData("Robot status: ", "about to call wait for start");
+        telemetry.update();
+        waitForStart();
+
+        telemetry.addData("Robot status: ", "about to move motor");
+        telemetry.update();
 
 
-        wobbleGoal.position1();
+
+
+        wobbleGoal.droppingPosition();
+
+        telemetry.addData("Robot status: ", "moved motor");
+        telemetry.update();
 
     }
 }
