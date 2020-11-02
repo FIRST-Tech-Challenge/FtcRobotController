@@ -29,7 +29,6 @@ public class Drive extends SubSystem {
     boolean exit = false;
     
     public Drive(Robot robot) {
-    public Drive(Robot robot, LinearOpMode opmode) {
 
         super(robot);
     }
