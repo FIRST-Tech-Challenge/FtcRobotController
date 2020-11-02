@@ -27,9 +27,10 @@ public class Drive extends SubSystem {
 
     double conversion = cpi * bias;
     boolean exit = false;
-
     
     public Drive(Robot robot) {
+    public Drive(Robot robot, LinearOpMode opmode) {
+
         super(robot);
     }
 
@@ -201,7 +202,6 @@ public class Drive extends SubSystem {
     public int getEncoder() {
         return backRight.getCurrentPosition() - base;
     }
-
 
 
 
