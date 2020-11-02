@@ -110,8 +110,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double defaultScale = 1.0;
     private double mecanumForwardRatio = 0.8;
     private double chassisAligmentPower = 0.17;
-    private double init_x_cm = 0;
-    private double init_y_cm = 0;
+    private double init_x_cm = 0.0;
+    private double init_y_cm = 0.0;
     private double init_heading = 0;
 
     private DcMotorEx motorFL;
@@ -175,7 +175,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     public AutoDriveMode getAutoDriveMode() { return autoDriveMode;}
     public void setAutoDriveMode(AutoDriveMode mode) { autoDriveMode = mode;}
 
-    private void configure_IMUs(Configuration configuration) {
+    public void configure_IMUs(Configuration configuration) {
         orientationSensor = new CombinedOrientationSensor().configureLogging(logTag + "-sensor", logLevel);
         orientationSensor.configure(configuration.getHardwareMap(), "imu", "imu2");
     }
@@ -191,7 +191,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     DcMotorEx verticalRightEncoder;
     DcMotorEx horizontalEncoder;
     OdometryGlobalCoordinatePosition GPS;
-    final double ODO_COUNTS_PER_INCH = 307.699557;
+    final double ODO_COUNTS_PER_INCH = 303.7;
     final double ODO_COUNTS_PER_CM = ODO_COUNTS_PER_INCH / 2.54;
 
     String rfName = "motorFR" , lfName = "motorFL";
@@ -1099,7 +1099,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
 
     public void setupIMUTelemetry(Telemetry telemetry) {
-        if (orientationSensor != null && setImuTelemetry) {
+        if ((orientationSensor!=null) && setImuTelemetry) {
             Telemetry.Line line = telemetry.addLine();
             line.addData("imuC", "%.1f", new Func<Double>() {
                 @Override

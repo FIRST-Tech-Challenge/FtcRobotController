@@ -28,14 +28,14 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private double ySpeedLogs[] = {0,0,0,0,0};
     private int count=0;
     private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
-    final double DEFAULT_COUNTS_PER_INCH = 307.699557;
+    final double DEFAULT_COUNTS_PER_INCH = 303.7; //307.699557;
 
     //Algorithm constants
     //private double robotEncoderWheelDistance = 15.20435 * DEFAULT_COUNTS_PER_INCH;
     // private double robotEncoderWheelDistance = 15.4317822 * DEFAULT_COUNTS_PER_INCH;
     // private double horizontalEncoderTickPerDegreeOffset = -86.84834;
-    private double robotEncoderWheelDistance = 14.2506 * DEFAULT_COUNTS_PER_INCH;
-    private double horizontalEncoderTickPerDegreeOffset = -300.3539;
+    private double robotEncoderWheelDistance = 14.466 * DEFAULT_COUNTS_PER_INCH;
+    private double horizontalEncoderTickPerDegreeOffset = -127.967;
 
     //Sleep time interval (milliseconds) for the position update thread
     private int sleepTime;

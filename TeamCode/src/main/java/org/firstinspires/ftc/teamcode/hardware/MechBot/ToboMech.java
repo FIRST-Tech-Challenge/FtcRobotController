@@ -544,10 +544,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         telemetry.addData("Config._2", "Tensorflow=%s(%s) | Vuforia=%s",
                 (useTfod?"Yes":"No"), tZone, (useVuforia?"Yes":"No"));
 
-        telemetry.addData("Config._3", "Top_grab=%s | Bottom_grab=%s",
-                (useTopWobbleGoalGrabber?"Yes":"No"),(useBottomWobbleGoalGrabber?"Yes":"No"));
-        telemetry.addData("Config._4", "Shooter=%s | Intake=%s",
-                (useShooter?"Yes":"No"),(useIntake?"Yes":"No"));
+        // telemetry.addData("Config._3", "Top_grab=%s | Bottom_grab=%s",
+        //        (useTopWobbleGoalGrabber?"Yes":"No"),(useBottomWobbleGoalGrabber?"Yes":"No"));
+        telemetry.addData("Config._3", "Grabber=%s | Shooter=%s | Intake=%s",
+                (useComboGrabber?"Yes":"No"), (useShooter?"Yes":"No"),(useIntake?"Yes":"No"));
         if (chassis!=null) {
             if (chassis.getGPS() == null) {
                 telemetry.addData("Warning", "GPS is not initialized.");
@@ -974,7 +974,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (cameraStackDetector!=null)
                     cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_TELE_OP);
                 if (chassis.orientationSensor==null) {
-                    chassis.enableImuTelemetry(configuration);
+                    // chassis.enableImuTelemetry(configuration);
+                    chassis.configure_IMUs(configuration);
                     // Enable the following line only for the debugging purpose
                     // chassis.setupIMUTelemetry(telemetry);
                 }
