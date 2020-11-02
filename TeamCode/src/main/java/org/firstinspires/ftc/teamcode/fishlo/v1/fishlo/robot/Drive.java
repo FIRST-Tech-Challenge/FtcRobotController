@@ -28,6 +28,9 @@ public class Drive extends SubSystem {
     double conversion = cpi * bias;
     boolean exit = false;
 
+    double yaw = 0;
+    double gyroOffset = 0;
+
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
@@ -219,8 +222,8 @@ public class Drive extends SubSystem {
     }
 
     public void turnWithGyro (double degrees, double speedDir) {
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        double yaw = -angles.firstAngle;
+        getHeading();
+        resetGyro();
 
         double first;
         double second;
@@ -253,18 +256,16 @@ public class Drive extends SubSystem {
 
         if (Math.abs(firsta - firstb) < 11) {
             while (!(firsta < yaw && yaw < firstb) && opmode.opModeIsActive()) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                getHeading();
                 gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
                 robot.telemetry.addData("Position", yaw);
                 robot.telemetry.update();
             }
         }
         else {
             while (!((firsta < yaw && yaw < 180) || (-180 < yaw && yaw < firstb)) && opmode.opModeIsActive()) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                getHeading();
                 gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
                 robot.telemetry.addData("Position", yaw);
                 robot.telemetry.update();
             }
@@ -277,16 +278,14 @@ public class Drive extends SubSystem {
 
         if (Math.abs(seconda - secondb) < 11) {
             while (!(seconda < yaw && yaw < secondb) && opmode.opModeIsActive()) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                getHeading();
                 gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
                 robot.telemetry.addData("Position", yaw);
                 robot.telemetry.update();
             }
             while (!((seconda < yaw && yaw < 180) || (-180 < yaw && yaw < secondb)) &&  opmode.opModeIsActive()) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                getHeading();
                 gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
                 robot.telemetry.addData("Position", yaw);
                 robot.telemetry.update();
             }
@@ -331,5 +330,16 @@ public class Drive extends SubSystem {
 
         left(input);
         right(-input);
+    }
+
+    public double getHeading() {
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        yaw = -angles.firstAngle;
+
+        return (convert(yaw - gyroOffset));
+    }
+
+    public void resetGyro() {
+        gyroOffset = yaw;
     }
 }
