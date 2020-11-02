@@ -5,33 +5,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
 
-
-/**
- * Shooter Testing for high goal
- *
- * @author  Nikhil
- * @version 1.0
- * @since   2020-October-26
- *
- */
-@Autonomous(name= "Shooter Test High Goal")
-public class ShooterTest extends LinearOpMode{
+@Autonomous(name= "ServoTest")
+public class ShooterServoTest extends LinearOpMode{
     Shooter robot=new Shooter();
 
     @Override
-    public void runOpMode(){
+    public void runOpMode() {
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
         robot.initChassis(this);
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
-        robot.shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         waitForStart();
-        robot.shootHighGoal(200000);
-
+        robot.moveServoPosition(1.0);
     }
-
-
-
 }
