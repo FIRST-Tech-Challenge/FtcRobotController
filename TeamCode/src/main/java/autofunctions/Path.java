@@ -1,6 +1,8 @@
 package autofunctions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
@@ -15,9 +17,26 @@ public class Path {
     PID yControl = new PID();
     PID hControl = new PID();
 
+    ElapsedTime timer = new ElapsedTime();
+
+    public double lastTime = 0;
+
     public double xerr = 0;
     public double yerr = 0;
     public double herr = 0;
+
+    public double lxerr = 0;
+    public double lyerr = 0;
+    public double lherr = 0;
+
+    public double xder = 0;
+    public double yder = 0;
+    public double hder = 0;
+
+    public double xint = 0;
+    public double yint = 0;
+    public double hint = 0;
+
 
 
     public double radius = 5;
@@ -30,31 +49,43 @@ public class Path {
 
     public ArrayList<double[]> poses = new ArrayList<>();
     public ArrayList<Line> lines = new ArrayList<>();
+    public ArrayList<Posetype> posetypes = new ArrayList<>();
+
 
     public boolean isExecuting = true;
 
     final public double scale = 0.3;
-    final public double xK = 0.05;
-    final public double yK = 0.05;
-    final public double hK = 0.1;
+    final public double[] ks = {0.05,0.05,0.01};
+    final public double[] ds = {0.005, 0.005, 0.001};
+    final public double[] is = {0.01,0.01,0.03};
+    final public double XAcc = 1;
+    final public double YAcc = 1;
+    final public double HAcc = 2;
+    final public double derWait = 0.5;
+
 
     public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
-        xControl.setCoeffecients(xK, 0.0, 0.0);
-        yControl.setCoeffecients(yK, 0.0, 0.0);
-        hControl.setCoeffecients(hK, 0.0, 0.0);
+        posetypes.add(Posetype.SETPOINT);
+        xControl.setCoeffecients(ks[0], ds[0], is[0]);
+        yControl.setCoeffecients(ks[1], ds[1], is[1]);
+        hControl.setCoeffecients(ks[2], ds[2], is[2]);
+        timer.reset();
     }
 
-    public void updateScale(double dis, double deg){
+    public void updateScale(double dis){
         radius = dis*scale;
-        deg = Math.abs(deg);
-        hControl.setCoeffecients(hK - (deg/100), hControl.Kd, hControl.Ki);
+    }
 
+    public void resetIs(){
+        xint = 0;
+        yint = 0;
+        hint = 0;
     }
 
 
 
-    public void addPose(double x, double y, double h){
+    public void addWaypoint(double x, double y, double h){
         double[] lastPose = poses.get(poses.size()-1);
         poses.add(new double[]{lastPose[0]+x, lastPose[1]+y, lastPose[2]+h});
         double[] currPose = poses.get(poses.size()-1);
@@ -63,10 +94,29 @@ public class Path {
         double x2 = currPose[0];
         double y2 = currPose[1];
         lines.add(new Line(x1, y1, x2, y2));
+        posetypes.add(Posetype.WAYPOINT);
     }
 
-    public ArrayList<double[]> getAllPoses(){
-        return poses;
+    public void addSetpoint(double x, double y, double h){
+        double[] lastPose = poses.get(poses.size()-1);
+        poses.add(new double[]{lastPose[0]+x, lastPose[1]+y, lastPose[2]+h});
+        double[] currPose = poses.get(poses.size()-1);
+        double x1 = lastPose[0];
+        double y1 = lastPose[1];
+        double x2 = currPose[0];
+        double y2 = currPose[1];
+        lines.add(new Line(x1, y1, x2, y2));
+        posetypes.add(Posetype.SETPOINT);
+    }
+    public void next(){
+        resetIs();
+        timer.reset();
+        lastTime = 0;
+        curIndex++;
+        if(curIndex >= lines.size()){
+            isExecuting = false;
+            curIndex--;
+        }
     }
 
     public double solve(double[] currentPose){
@@ -87,7 +137,11 @@ public class Path {
 
         if(!Double.isNaN(ans)) {
             if(ans > 1){
-                curIndex++;
+                if(herr < (HAcc*6)) {
+                    next();
+                }else{
+                    ans = 1;
+                }
             }
             return ans;
         }else{
@@ -95,29 +149,57 @@ public class Path {
         }
     }
 
-
     public double[] getTargetPos(double[] currentPose){
         t = solve(currentPose);
-        if(curIndex >= lines.size()){
-            isExecuting = false;
-            curIndex--;
-        }
         targetPos = lines.get(curIndex).getAt(t);
         return targetPos;
     }
 
+    public void updateDIs(){
+        double changeT = timer.seconds() - lastTime;
+        lastTime = timer.seconds();
+
+        if(timer.seconds() > derWait) {
+            xder = (xerr - lxerr) / changeT;
+            yder = (yerr - lyerr) / changeT;
+            hder = (herr - lherr) / changeT;
+        }else {
+            xder = (timer.seconds()/derWait) * (xerr - lxerr) / changeT;
+            yder =  (timer.seconds()/derWait) * (yerr - lyerr) / changeT;
+            hder =  (timer.seconds()/derWait) * (herr - lherr) / changeT;
+        }
+        lxerr = xerr;
+        lyerr = yerr;
+        lherr = herr;
+        xint += xerr * changeT;
+        yint += yerr * changeT;
+        hint += herr * changeT;
+    }
+
     public double[] update(double[] currentPos){
-        if(curIndex < (poses.size())){
+        if(posetypes.get(curIndex+1).equals(Posetype.WAYPOINT)) {
             double[] target = getTargetPos(currentPos);
-            xerr = currentPos[0]-target[0];
-            yerr = currentPos[1]-target[1];
-            herr = currentPos[2]-poses.get(curIndex+1)[2];
-
-            updateScale(lines.get(curIndex).getDis(), poses.get(curIndex+1)[2]-poses.get(curIndex)[2]);
-
-            return calcPows(currentPos);
+            xerr = currentPos[0] - target[0];
+            yerr = currentPos[1] - target[1];
+            herr = currentPos[2] - poses.get(curIndex + 1)[2];
+            updateDIs();
+            updateScale(lines.get(curIndex).getDis());
         }else{
-            return new double[]{0,0,0};
+            double[] target = poses.get(curIndex+1);
+            xerr = currentPos[0] - target[0];
+            yerr = currentPos[1] - target[1];
+            herr = currentPos[2] - target[2];
+            updateDIs();
+            hasReachedSetpoint();
+        }
+        return calcPows(currentPos);
+    }
+    public void hasReachedSetpoint(){
+        boolean xIn = (Math.abs(xerr)) < XAcc;
+        boolean yIn = (Math.abs(yerr)) < YAcc;
+        boolean hIn = (Math.abs(herr)) < HAcc;
+        if(xIn && yIn && hIn){
+            next();
         }
     }
 
@@ -125,39 +207,55 @@ public class Path {
         double robotTheta = currentPos[2];
 
         Vector mv = new Vector(xerr, yerr);
-        mv = mv.getRotatedVec(robotTheta, Vector.angle.DEGREES);
+        mv = mv.getRotatedVec(-robotTheta, Vector.angle.DEGREES);
 
         double[] out = new double[3];
 
-        out[0] = -Math.signum(mv.x)* xControl.getPower(mv.x, 0,0);
-        out[1] = -Math.signum(mv.y)* yControl.getPower(mv.y, 0,0);
-        out[2] = -Math.signum(herr)*hControl.getPower(herr, 0,0);
+        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, xder, xint);
+        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, yder, yint);
+        out[2] = -Math.signum(herr) * hControl.getPower(herr, hder, hint);
 
+        return normalize(out);
+    }
 
-        //for now fix later
-        return out;
+    public double[] normalize(double[] in){
+        double sum = in[0]+in[1]+in[2];
+        if(sum > 1){
+            return new double[]{in[0]/sum, in[1]/sum, in[2]/sum};
+        }else{
+            return in;
+        }
+
     }
 
     public void start(TerraBot bot, LinearOpMode op){
+        timer.reset();
         while (op.opModeIsActive() && isExecuting){
             double[] pows = update(bot.odometry.getPos());
             bot.move(pows[1], pows[0], pows[2]);
-            op.telemetry.addData("xpow",  pows[0]);
-            op.telemetry.addData("ypow",  pows[1]);
-            op.telemetry.addData("hpow",  pows[2]);
-            op.telemetry.addData("targetx", targetPos[0]);
-            op.telemetry.addData("targety", targetPos[1]);
-            op.telemetry.addData("t", t);
-            op.telemetry.addData("curInd", curIndex);
-            op.telemetry.addData("y1", lines.get(0).y1);
-            op.telemetry.addData("y2", lines.get(0).y2);
-            op.telemetry.addData("ans1", ans);
-            op.telemetry.addData("ans2", ans2);
-            op.telemetry.addData("x", bot.odometry.getX());
-            op.telemetry.addData("x", bot.odometry.getY());
+//            op.telemetry.addData("xpow",  pows[0]);
+//            op.telemetry.addData("ypow",  pows[1]);
+//            op.telemetry.addData("hpow",  pows[2]);
+//            op.telemetry.addData("targetx", targetPos[0]);
+//            op.telemetry.addData("targety", targetPos[1]);
+//            op.telemetry.addData("t", t);
+//            op.telemetry.addData("curInd", curIndex);
+//            op.telemetry.addData("y1", lines.get(0).y1);
+//            op.telemetry.addData("y2", lines.get(0).y2);
+//            op.telemetry.addData("ans1", ans);
+//            op.telemetry.addData("ans2", ans2);
+//            op.telemetry.addData("x", bot.odometry.getX());
+//            op.telemetry.addData("y", bot.odometry.getY());
+//            op.telemetry.addData("herr", herr);
+            op.telemetry.addData("y", yint);
             op.telemetry.update();
         }
         bot.move(0,0,0);
+    }
+
+    public enum Posetype{
+        WAYPOINT,
+        SETPOINT;
     }
 
 

@@ -53,10 +53,12 @@ public class SpeedController {
         integralOfError = 0;
     }
 
+    //add Pause when starting
     public void updateMotorValues(double currPos){
         double currSpeed = getMotorSpeed(currPos);
         currError = targetSpeed-currSpeed;
-        currAccel = currError/changeTime;
+
+        currAccel = (currError-lastSpeed)/changeTime;
         lastSpeed = currSpeed;
         integralOfError += currError*changeTime;
     }

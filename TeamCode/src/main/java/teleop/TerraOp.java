@@ -2,13 +2,8 @@ package teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import autofunctions.Odometry;
 import global.TerraBot;
-import telefunctions.Cycle;
-import telefunctions.ServoController;
-import telefunctions.TeleThread;
 
 @TeleOp(name = "TerraOp V5")
 public class TerraOp extends OpMode {
@@ -42,7 +37,7 @@ public class TerraOp extends OpMode {
         bot.turnArmWithEnc(50, 1);
         bot.turnWobbleArm(0.1);
         bot.turnControl.cur = 0.1;
-        //bot.startOdoThread();
+       // bot.startOdoThreadTele();
     }
 
     @Override
@@ -136,6 +131,6 @@ public class TerraOp extends OpMode {
 
     @Override
     public void stop() {
-        //bot.stopOdoThread();
+        //bot.stopOdoThreadTele();
     }
 }

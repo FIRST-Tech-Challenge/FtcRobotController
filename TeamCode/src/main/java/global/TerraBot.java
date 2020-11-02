@@ -2,6 +2,7 @@ package global;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsTouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -52,7 +53,6 @@ public class TerraBot {
 
     public boolean intaking = false;
     public boolean outtaking = false;
-    boolean isResettingArm = false;
 
     public int resettingArm = 0;
 
@@ -379,23 +379,19 @@ public class TerraBot {
 
 
     public void resetArm(){
-
         if(resettingArm == 0){
             arm.setPower(-0.15);
             resettingArm++;
         }else if(resettingArm == 1) {
-            if(getArmVel() == 0 && !isResettingArm){
+            if(getArmVel() == 0){
+                if(timer.seconds() > 0.3){
+                    arm.setPower(0);
+                    arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    resettingArm++;
+                }
+            }else{
                 timer.reset();
-                isResettingArm = true;
-            }else if(getArmVel() == 0 && timer.seconds() > 0.3){
-                arm.setPower(0);
-                arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                resettingArm++;
-            }
-            if(getArmVel() != 0){
-                timer.reset();
-                isResettingArm = false;
             }
         }
     }
@@ -436,7 +432,7 @@ public class TerraBot {
         return heading;
     }
 
-    public void startOdoThread(){
+    public void startOdoThreadTele(){
         threadHandler.startTeleThread(new CodeSeg() {
             @Override
             public void run() {
@@ -444,7 +440,18 @@ public class TerraBot {
             }
         });
     }
-    public void stopOdoThread() {
+    public void stopOdoThreadTele() {
         threadHandler.stopTeleThread();
+    }
+    public void startOdoThreadAuto(LinearOpMode op){
+        threadHandler.startAutoThread(new CodeSeg() {
+            @Override
+            public void run() {
+                odometry.updateGlobalPosition(getLeftOdo(), getMiddleOdo(), getRightOdo(), getHeading());
+            }
+        }, op);
+    }
+    public void stopOdoThreadAuto() {
+        threadHandler.stopAutoThread();
     }
 }

@@ -1,18 +1,23 @@
-package telefunctions;
+package util;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import util.CodeSeg;
 
 
-public class TeleThread implements Runnable{
+public class TerraThread implements Runnable{
     private boolean executing = false;
-    private boolean once = false;
+    private boolean auton = false;
     CodeSeg cs;
+    LinearOpMode op;
 
-    public void init(CodeSeg cs){
+    public TerraThread(CodeSeg cs){
         this.cs = cs;
     }
-    public void changeToOnce(){
-        once = true;
+
+    public void changeToAuton(LinearOpMode o) {
+        auton = true;
+        op = o;
     }
     public synchronized void stop() {
         this.executing = true;
@@ -24,13 +29,16 @@ public class TeleThread implements Runnable{
 
     @Override
     public void run() {
-        if(!once) {
+        if(!auton) {
             while (isExecuting()) {
                 cs.run();
                 try {Thread.sleep(10); } catch (InterruptedException e) {}
             }
         }else{
-            cs.run();
+            while (isExecuting() && op.opModeIsActive()) {
+                cs.run();
+                try {Thread.sleep(10); } catch (InterruptedException e) {}
+            }
         }
     }
 }

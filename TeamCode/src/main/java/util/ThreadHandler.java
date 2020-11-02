@@ -1,22 +1,30 @@
 package util;
 
-import java.util.ArrayList;
-
-import telefunctions.TeleThread;
-import util.CodeSeg;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public class ThreadHandler {
-    TeleThread teleThread;
+    TerraThread teleThread;
+    TerraThread autoThread;
 
     public void startTeleThread(CodeSeg cs){
-        teleThread = new TeleThread();
-        teleThread.init(cs);
+        teleThread = new TerraThread(cs);
         Thread t = new Thread(teleThread);
+        t.start();
+    }
+    public void startAutoThread(CodeSeg cs, LinearOpMode op){
+        autoThread = new TerraThread(cs);
+        autoThread.changeToAuton(op);
+        Thread t = new Thread(autoThread);
         t.start();
     }
     public void stopTeleThread(){
         if(teleThread!= null) {
             teleThread.stop();
+        }
+    }
+    public void stopAutoThread(){
+        if(autoThread != null) {
+            autoThread.stop();
         }
     }
 }
