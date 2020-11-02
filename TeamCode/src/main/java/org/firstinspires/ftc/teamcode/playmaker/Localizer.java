@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.playmaker;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -15,7 +14,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
@@ -51,6 +49,7 @@ public class Localizer {
      */
 
     public Position estimatePosition() {
+
         if (lastVuforiaTransform != null) {
             VectorF translation = lastVuforiaTransform.transform.getTranslation();
             float x = translation.get(0);
