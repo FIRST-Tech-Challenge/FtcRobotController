@@ -74,7 +74,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean useTopWobbleGoalGrabber = false;
     public boolean useComboGrabber = true;
     public boolean useHopper = false;
-    public boolean useShooter = false;
+    public boolean useShooter = true;
     public boolean useIntake = false;
 
     public void set_simulation_mode(boolean value) {
@@ -757,7 +757,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void testStraight(EventManager em) throws InterruptedException {
         if (chassis==null) return;
         if (chassis!=null && chassis.getGPS()==null) {
-            chassis.set_init_pos(60,23 ,0);
+            // chassis.set_init_pos(60,23 ,0);
             chassis.configureOdometry(telemetry);
             positionThread = (chassis.getGPS()==null? null: new Thread(chassis.getGPS()));
             if (positionThread!=null) {

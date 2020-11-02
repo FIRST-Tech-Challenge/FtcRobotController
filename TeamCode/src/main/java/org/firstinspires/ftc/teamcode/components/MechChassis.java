@@ -80,10 +80,10 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double ratioBR = 0.9315;
     */
     /* for GoBilda 1125 motor set: */
-    private double ratioFL = 0.9890;
-    private double ratioFR = 0.9890;
-    private double ratioBL = 1.0;
-    private double ratioBR = 0.9941;
+    private double ratioFL = 14460.0/14503.0;
+    private double ratioFR = 14460.0/14710.0;
+    private double ratioBL = 14460.0/14756.0;
+    private double ratioBR = 1.0;
 
     private double left_ratio = 1.0; // slow down ratio for left wheels to go straight
     private double right_ratio = 1.0; // slow down ratio for right wheels to go straight
@@ -145,6 +145,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private boolean setRangeSensorTelemetry = false;//unless debugging, don't set telemetry for range sensor
     private boolean useOdometry = true;
     private boolean normalizeMode = true;
+    private boolean showEncoderDetail = false; // enable the chassis encoders
 
     private String simEvents="";
     public FileOutputStream simOS;
@@ -222,6 +223,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         GPS.set_orientationSensor(orientationSensor);
         // GPS.reverseRightEncoder();
         // GPS.reverseLeftEncoder();
+        GPS.reverseNormalEncoder();
         GPS.set_init_pos(init_x_cm*odo_count_per_cm(), init_y_cm*odo_count_per_cm(), init_heading);
         setupGPSTelemetry(telemetry);
     }
@@ -867,21 +869,29 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
     public void chassis_test() throws InterruptedException {
         if (simulation_mode) return;
-        motorFR.setPower(0.1);
-        sleep(1000);
-        motorFR.setPower(0);
 
-        motorBR.setPower(0.1);
-        sleep(1000);
-        motorBR.setPower(0);
+        motorFR.setPower(1*ratioFR);
+        motorFL.setPower(1*ratioFL);
+        motorBR.setPower(1*ratioBR);
+        motorBL.setPower(1*ratioBL);
+        sleep(5000);
+        stop();
 
-        motorFL.setPower(0.1);
-        sleep(1000);
-        motorFL.setPower(0);
-
-        motorBL.setPower(0.1);
-        sleep(1000);
-        motorBL.setPower(0);
+//        motorFR.setPower(0.1);
+//        sleep(1000);
+//        motorFR.setPower(0);
+//
+//        motorBR.setPower(0.1);
+//        sleep(1000);
+//        motorBR.setPower(0);
+//
+//        motorFL.setPower(0.1);
+//        sleep(1000);
+//        motorFL.setPower(0);
+//
+//        motorBL.setPower(0.1);
+//        sleep(1000);
+//        motorBL.setPower(0);
     }
 
     /**
@@ -953,7 +963,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         motorFR.setPower(-Math.signum(motorPowers[1] * .01));
         motorBL.setPower(-Math.signum(motorPowers[2] * .01));
         motorBR.setPower(-Math.signum(motorPowers[3] * .01));
-        sleep((int)(200*speed/150));
+        sleep((int)(100*speed/150));
         stop();
     }
 
@@ -1003,65 +1013,67 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                         (simulation_mode?"Simulation":(getNormalizeMode()?"Normalized":"Speedy")));
             }
         });
-        /*
-        if (motorFL != null) {
-            line.addData("FL", "%d", new Func<Integer>() {
-                @Override
-                public Integer value() {
-                    return motorFL.getCurrentPosition();
-                }
-            });
-        }
-        if (motorFR != null) {
-            line.addData("FR", "%d", new Func<Integer>() {
-                @Override
-                public Integer value() {
-                    return motorFR.getCurrentPosition();
-                }
-            });
-        }
-        if (motorBL != null) {
-            line.addData("BL", "%d", new Func<Integer>() {
-                @Override
-                public Integer value() {
-                    return motorBL.getCurrentPosition();
-                }
-            });
-        }
-        if (motorBR != null) {
-            line.addData("BR", "%d", new Func<Integer>() {
-                @Override
-                public Integer value() {
-                    return motorBR.getCurrentPosition();
-                }
-            });
+
+        if (showEncoderDetail) {
+            if (motorFL != null) {
+                line.addData("FL", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return motorFL.getCurrentPosition();
+                    }
+                });
+            }
+            if (motorFR != null) {
+                line.addData("FR", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return motorFR.getCurrentPosition();
+                    }
+                });
+            }
+            if (motorBL != null) {
+                line.addData("BL", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return motorBL.getCurrentPosition();
+                    }
+                });
+            }
+            if (motorBR != null) {
+                line.addData("BR", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return motorBR.getCurrentPosition();
+                    }
+                });
+            }
+
+            if (horizontalEncoder != null) {
+                line.addData("row X", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return horizontalEncoder.getCurrentPosition();
+                    }
+                });
+            }
+            if (verticalLeftEncoder != null) {
+                line.addData("row Y-Left", "%d", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return verticalLeftEncoder.getCurrentPosition();
+                    }
+                });
+            }
+            if (verticalRightEncoder != null) {
+                line.addData("row Y-Right", "%d\n", new Func<Integer>() {
+                    @Override
+                    public Integer value() {
+                        return verticalRightEncoder.getCurrentPosition();
+                    }
+                });
+            }
         }
 
-        if (horizontalEncoder != null) {
-            line.addData("row X", "%d", new Func<Integer>() {
-                @Override
-                public Integer value() {
-                    return horizontalEncoder.getCurrentPosition();
-                }
-            });
-        }
-        if (verticalLeftEncoder != null) {
-            line.addData("row Y-Left", "%d", new Func<Integer>() {
-                @Override
-                public Integer value() {
-                    return verticalLeftEncoder.getCurrentPosition();
-                }
-            });
-        }
-        if (verticalRightEncoder != null) {
-            line.addData("row Y-Right", "%d\n", new Func<Integer>() {
-                @Override
-                public Integer value() {
-                    return verticalRightEncoder.getCurrentPosition();
-                }
-            });
-        }
-        */
         // setupGPSTelemetry(telemetry);
         setupIMUTelemetry(telemetry);
 
