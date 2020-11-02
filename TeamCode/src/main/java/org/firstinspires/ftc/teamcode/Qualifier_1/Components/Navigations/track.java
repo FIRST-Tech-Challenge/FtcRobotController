@@ -7,14 +7,6 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 
-/**
- * Shooter Testing for low goal
- *
- * @author  Nikhil
- * @version 1.0
- * @since   2020-October-26
- *
- */
 @Autonomous(name= "track")
 public class track extends LinearOpMode{
     Robot robot=new Robot();
@@ -25,6 +17,7 @@ public class track extends LinearOpMode{
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
         robot.initChassis(this);
+        odom.init(this);
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
         waitForStart();

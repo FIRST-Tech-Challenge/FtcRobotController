@@ -35,14 +35,14 @@ public class Robot {
         op = opMode;
         hardwareMap = op.hardwareMap;
 
-        vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
+        //vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
 
         drivetrain.init(opMode);
-        vuforiaWebcam.init(opMode);
+        //vuforiaWebcam.init(opMode);
 
-        vuforiaWebcam.start();
+        //vuforiaWebcam.start();
 
-        getVuforiaPosition();
+        //getVuforiaPosition();
         op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
         op.telemetry.update();
         op.sleep(1000);

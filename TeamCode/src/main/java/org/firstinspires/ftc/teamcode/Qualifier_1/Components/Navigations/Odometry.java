@@ -16,12 +16,11 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
 public class Odometry {
-    DcMotor odom1;
-    DcMotor odom2;
-    DcMotor odom3;
+    DcMotorEx odom1;
+    DcMotorEx odom2;
+    DcMotorEx odom3;
     double ticks_per_inch = 1440 / 4.7;
-    double robot_diameter = 15;
-    ;
+    double robot_diameter = 17*4.7/2.8;
     double[] odom = new double[3];
     double xpos = 0;
     double ypos = 0;
@@ -34,9 +33,9 @@ public class Odometry {
         hardwareMap = op.hardwareMap;
 
         // Chassis encoders
-        odom1 = (DcMotor) hardwareMap.dcMotor.get("motorRightFront");
-        odom2 = (DcMotor) hardwareMap.dcMotor.get("motorLeftBack");
-        odom3 = (DcMotor) hardwareMap.dcMotor.get("motorRightBack");
+        odom1 = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
+        odom3 = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
+        odom2 = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
         // reset encoder count.
         odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
