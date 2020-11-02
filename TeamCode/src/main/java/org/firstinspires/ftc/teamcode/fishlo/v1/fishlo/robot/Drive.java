@@ -28,13 +28,9 @@ public class Drive extends SubSystem {
     double conversion = cpi * bias;
     boolean exit = false;
 
-    BNO055IMU imu;
-    Orientation angles;
-    Acceleration gravity;
-
-    public Drive(Robot robot, LinearOpMode opmode) {
+    
+    public Drive(Robot robot) {
         super(robot);
-        this.opmode = opmode;
     }
 
     @Override
@@ -206,130 +202,8 @@ public class Drive extends SubSystem {
         return backRight.getCurrentPosition() - base;
     }
 
-    public void initGyro() {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
-        imu = robot.hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-    }
 
-    public void turnWithGyro (double degrees, double speedDir) {
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        double yaw = -angles.firstAngle;
 
-        double first;
-        double second;
 
-        if (speedDir > 0) {
-            if (degrees > 10) {
-                first = (degrees - 10) + devert(yaw);
-                second = degrees + devert(yaw);
-            }
-            else {
-                first = devert(yaw);
-                second = degrees + devert(yaw);
-            }
-        }
-        else {
-            if (degrees > 10) {
-                first = devert(-(degrees - 10) + devert(yaw));
-                second = devert(-degrees + devert(yaw));
-            }
-            else {
-                first = devert(yaw);
-                second = devert(-degrees + devert(yaw));
-            }
-        }
-
-        double firsta = convert(first - 5);
-        double firstb = convert(first + 5);
-
-        turnWithEncoder(speedDir);
-
-        if (Math.abs(firsta - firstb) < 11) {
-            while (!(firsta < yaw && yaw < firstb) && opmode.opModeIsActive()) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
-                robot.telemetry.addData("Position", yaw);
-                robot.telemetry.update();
-            }
-        }
-        else {
-            while (!((firsta < yaw && yaw < 180) || (-180 < yaw && yaw < firstb)) && opmode.opModeIsActive()) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
-                robot.telemetry.addData("Position", yaw);
-                robot.telemetry.update();
-            }
-        }
-
-        double seconda = convert(second - 5);
-        double secondb = convert(second + 5);
-
-        turnWithEncoder(speedDir / 3);
-
-        if (Math.abs(seconda - secondb) < 11) {
-            while (!(seconda < yaw && yaw < secondb) && opmode.opModeIsActive()) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
-                robot.telemetry.addData("Position", yaw);
-                robot.telemetry.update();
-            }
-            while (!((seconda < yaw && yaw < 180) || (-180 < yaw && yaw < secondb)) &&  opmode.opModeIsActive()) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
-                robot.telemetry.addData("Position", yaw);
-                robot.telemetry.update();
-            }
-            stop();
-        }
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    public double devert (double degrees) {
-        if (degrees < 0) {
-            degrees += 360;
-        }
-        return degrees;
-    }
-
-    public double convert (double degrees) {
-        if (degrees > 179) {
-            degrees = -(360-degrees);
-        }
-        else if (degrees < -180) {
-            degrees = 360 + degrees;
-        }
-        else if (degrees > 360) {
-            degrees = degrees - 360;
-        }
-        return degrees;
-    }
-
-    public void turnWithEncoder (double input) {
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        left(input);
-        right(-input);
-    }
 }
