@@ -6,12 +6,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Enums.RingCollectionState;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
 import org.firstinspires.ftc.teamcode.Subsystems.Elevator;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
 import org.firstinspires.ftc.teamcode.Enums.DriveSpeedState;
+
+import static java.lang.Thread.sleep;
 
 @TeleOp(name="Meet 1 Teleop", group="Teleop")
 //@Disabled
@@ -29,6 +32,7 @@ public class Meet_1_Teleop extends OpMode {
 
 
     private DriveSpeedState  currDriveState;
+    private RingCollectionState ringCollectorState;
 
 
     /*
@@ -38,21 +42,17 @@ public class Meet_1_Teleop extends OpMode {
    public void init() {
 
         /* Initialize the hardware variables.
-         * The init() method of the hardware class does all the work here
-         */
+        * The init() method of the hardware class does all the work here
+        */
         drivetrain.init(hardwareMap);
-        //leftFront = hardwareMap.get(DcMotor.class, "Left_front");
-        //rightFront = hardwareMap.get(DcMotor.class, "Right_front");
-
-        // For HD Planetary Forward yields CCW rotation when shaft is facing you.
-
-        //shooter.init(hardwareMap);
         intake.init(hardwareMap);
         wobble.init(hardwareMap);
         elevator.init(hardwareMap);
+        shooter.init(hardwareMap);
 
         //newState(currDriveState);
         currDriveState = DriveSpeedState.DRIVE_FAST; // initialize robot to FAST
+        ringCollectorState = RingCollectionState.OFF;
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Driver");
@@ -129,31 +129,61 @@ public class Meet_1_Teleop extends OpMode {
         }
 
        // Gamepad 1 Buttons
+        if (gamepad1.y) {
+            shooter.shootHighGoal();
+            ringCollectorState = RingCollectionState.OFF;
+
+            telemetry.addData("Shooter High", "Complete ");
+        }
         if (gamepad1.a) {
-            intake.Intakeon();
-            elevator.ElevatorSpeedfast();
+            shooter.shooterOff();
+            telemetry.addData("Shooter High", "Complete ");
+        }
+        if (gamepad1.left_bumper) {
+            shooter.flipperBackward();
+            shooter.stackerMoveToReload();
+            ringCollectorState = RingCollectionState.COLLECT;
+
+        }
+        if (gamepad1.right_bumper) {
+            shooter.flipperBackward();
+            shooter.stackerMoveToReload();
+            ringCollectorState = RingCollectionState.OFF;
+
+        }
+        if (gamepad1.x) {
+            shooter.stackerMoveToReload();
+            telemetry.addData("Stacker Reset", "Complete ");
         }
         if (gamepad1.b) {
-            intake.IntakeReverse();
-            elevator.Elevatorbackup();
+            shooter.stackerMoveToShoot();
+            ringCollectorState = RingCollectionState.OFF;
+            telemetry.addData("Stacker Ready to Shoot", "Complete ");
         }
+        if (gamepad1.left_trigger > 0.25) {
+            shooter.flipperForward();
+            telemetry.addData("Flipper Fwd", "Complete ");
+        }
+        if (gamepad1.right_trigger > 0.25) {
+            shooter.flipperBackward();
+            telemetry.addData("Flipper Back", "Complete ");
+        }
+
+
+
+
         if (gamepad1.x) {
         }
         if (gamepad1.y) {
         }
-        if (gamepad1.left_stick_button) {
-        intake.Intakeoff();
-        elevator.Elevatoroff();
-        }
-
 
         // Gamepad 1 Bumpers - for Speed Control
         // set-up drive speed states on bumpers
-        if (gamepad1.left_bumper)
+        if (gamepad1.left_stick_button)
         {
             currDriveState = DriveSpeedState.DRIVE_FAST;
         }
-        if (gamepad1.right_bumper)
+        if (gamepad1.right_stick_button)
         {
             currDriveState =  DriveSpeedState.DRIVE_SLOW;
         }
@@ -163,24 +193,33 @@ public class Meet_1_Teleop extends OpMode {
         // GAME PAD 2
         //========================================
 
-        if (gamepad2.a) {
-        }
-        if (gamepad2.b) {
-        }
-        if (gamepad2.x) {
-        }
-        if (gamepad2.y) {
-        }
-        // Gamepad 2 Bumpers
+        if (gamepad1.dpad_left) {
+            wobble.GripperOpen();
+            wobble.ArmExtend();
+            // wobble.resetWobble();
 
-        if (gamepad2.left_bumper)
-        {
-
+            telemetry.addData("Ready to rab Wobble", "Complete ");
         }
-        if (gamepad2.right_bumper)
-        {
 
+        if (gamepad1.dpad_up){
+            wobble.GripperClose();
+            wobble.ArmCarryWobble();
+            //wobble.readyToGrabGoal();
+           telemetry.addData("Carrying Wobble", "Complete ");
         }
+        if (gamepad1.dpad_right) {
+            wobble.GripperOpen();
+            wobble.ArmExtend();
+
+            telemetry.addData("Dropping Wobble", "Complete ");
+        }
+        if (gamepad1.dpad_down) {
+            wobble.ArmContract();
+            wobble.GripperOpen();
+
+            telemetry.addData("Reset Wobble", "Complete ");
+        }
+
 
 
        // switch case to determine what mode the arm needs to operate in.
@@ -213,6 +252,29 @@ public class Meet_1_Teleop extends OpMode {
                 telemetry.addData("left",  "%.2f", left);
                 telemetry.addData("right", "%.2f", right);
                 break;
+        }
+
+        switch(ringCollectorState) {
+
+            case OFF:
+                telemetry.addData("Collector State",ringCollectorState);
+                intake.Intakeoff();;
+                elevator.Elevatoroff();
+
+                break;
+
+            case COLLECT:
+                telemetry.addData("Collector State",ringCollectorState);
+                intake.Intakeon();;
+                elevator.ElevatorSpeedfast();
+                break;
+
+            case EJECT:
+                telemetry.addData("Collector State",ringCollectorState);
+                intake.IntakeReverse();;
+                elevator.Elevatorbackup();
+                break;
+
         }
 
 
