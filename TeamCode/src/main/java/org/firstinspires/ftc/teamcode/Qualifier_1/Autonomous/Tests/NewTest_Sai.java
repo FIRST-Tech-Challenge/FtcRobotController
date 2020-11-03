@@ -1,3 +1,18 @@
+/*
+ * This is a silly testing program for making sure ethe
+ * robot will self distruct after running for 5 sec.
+ *
+ * Everyone should run it when you arrive in the garage
+ * to make sure the robot is working.
+ *
+ * Everyone should run it before you leavet he garage
+ * to make sure you did not break the robot.
+ *
+ * @author  Sai
+ * @version 1.0
+ * @since   2020-11-02
+ */
+
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
