@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
-import org.firstinspires.ftc.teamcode.utility.RotationUtil;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
 
@@ -12,7 +11,7 @@ public abstract class OdometryWheel {
     private double prevTicks = 0;
     protected double deltaTicks = 0;
 
-    abstract long getCurrentPosition();
+    abstract long getWheelPosition();
 
     // Offset is x and y displacement from center of rotation
     // + angle that wheel is facing (in radians with 0 facing right).
@@ -30,7 +29,7 @@ public abstract class OdometryWheel {
     void updateDelta(){
         prevTicks += deltaTicks;
         //get ticks
-        double measurement = getCurrentPosition();
+        double measurement = getWheelPosition();
 //        deltaTicks = RotationUtil.turnLeftOrRight(prevTicks, measurement, ticksPerRev);
         deltaTicks = measurement - prevTicks; //ticks per rev doesn't matter because the encoders don't roll over
     }

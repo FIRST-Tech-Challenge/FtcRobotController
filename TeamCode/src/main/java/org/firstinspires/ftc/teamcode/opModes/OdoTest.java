@@ -31,21 +31,15 @@ package org.firstinspires.ftc.teamcode.opModes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.movement.Mecanum;
 import org.firstinspires.ftc.teamcode.odometry.Odometry;
 import org.firstinspires.ftc.teamcode.odometry.OdometryWheel;
 import org.firstinspires.ftc.teamcode.odometry.PhysicalOdoWheel;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -145,6 +139,10 @@ public class OdoTest extends OpMode {
         // output current pose
 
         telemetry.addData("Position", globalPosition.toString());
+        telemetry.addData("front Right.GetCurPos ", frontRightOdo.getWheelPosition());
+        telemetry.addData("front Left.GetCurPos", frontLeftOdo.getWheelPosition());
+        telemetry.addData("back Right.GetCurPos ", backRightOdo.getWheelPosition());
+        telemetry.addData("back Left.GetCurPos", backLeftOdo.getWheelPosition());
         telemetry.addData("Detla front Right: ", frontRightOdo.getDeltaPosition());
         telemetry.addData("Detla front Left: ", frontLeftOdo.getDeltaPosition());
         telemetry.addData("Detla back Right: ", backRightOdo.getDeltaPosition());

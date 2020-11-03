@@ -13,7 +13,7 @@ public class PhysicalOdoWheel extends OdometryWheel{
     }
 
     @Override
-    long getCurrentPosition() {
+    public long getWheelPosition() {
         return wheel.getCurrentPosition();
     }
 }
