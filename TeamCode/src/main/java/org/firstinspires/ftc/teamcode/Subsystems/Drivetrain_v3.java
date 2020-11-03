@@ -18,7 +18,7 @@ public class Drivetrain_v3 {
 
         // List constants
         public static final double COUNTS_PER_DRIVE_MOTOR_REV = 28;         // HD Hex encoder counts at the motor (28)
-        public static final double ULTRAPLANETARY_REDUCTION = 18.9;       // 4:1 and 5:1 Planetary "20:1" nominal reduction
+        public static final double ULTRAPLANETARY_REDUCTION = 27.4;       // 5:1 and 5:1 Planetary "25:1" nominal reduction
         public static final double WHEEL_DIAMETER_INCHES = 3.54;      // 90mm wheels. For figuring circumference its a 90 millimeter wheel
         public static final double COUNTS_PER_INCH = (COUNTS_PER_DRIVE_MOTOR_REV * ULTRAPLANETARY_REDUCTION) /
                 (WHEEL_DIAMETER_INCHES * 3.1415);
