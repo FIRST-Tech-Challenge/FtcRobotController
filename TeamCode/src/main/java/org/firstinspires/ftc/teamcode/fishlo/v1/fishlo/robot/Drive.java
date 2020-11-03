@@ -59,6 +59,16 @@ public class Drive extends SubSystem {
             reverse = true;
         }
 
+        if(robot.gamepad1.right_bumper) {
+            strafe(speed, "right");
+        }
+        else if(robot.gamepad1.left_bumper) {
+            strafe(speed, "left");;
+        }
+
+
+
+
         DriveDir driveDir = getDir(direction);
 
         if(Math.abs(speed) < 5 && driveDir != DriveDir.STRAIGHT) {
@@ -141,6 +151,21 @@ public class Drive extends SubSystem {
     public void drive(double left, double right) {
         left(left);
         right(right);
+    }
+
+    public void strafe(double power, String direction) {
+        if (direction == "left") {
+            frontLeft.setPower(power);
+            backRight.setPower(power);
+            frontRight.setPower(-power);
+            backRight.setPower(-power);
+        }
+        if (direction == "right") {
+            frontLeft.setPower(-power);
+            backRight.setPower(-power);
+            frontRight.setPower(power);
+            backRight.setPower(power);
+        }
     }
 
     public void moveToPosition(double inches, double speed) {
