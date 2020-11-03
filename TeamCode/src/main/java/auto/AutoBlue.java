@@ -27,10 +27,11 @@ public class AutoBlue extends LinearOpMode {
         waitForStart();
         bot.startOdoThreadAuto(this);
 
-
+        //path.addRF(rf.intake(1));
         path.addWaypoint(10,10,0);
+        path.addRF(rf.wobbleArm(50,0.3));
         path.addWaypoint(-10,10,0);
-        path.addSetpoint(-10,-10,0);
+        path.addWaypoint(-10,-10,0);
         path.addSetpoint(10,-10,0);
         path.start(bot, this);
 

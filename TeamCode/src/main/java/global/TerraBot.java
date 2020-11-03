@@ -438,7 +438,7 @@ public class TerraBot {
             public void run() {
                 odometry.updateGlobalPosition(getLeftOdo(), getMiddleOdo(), getRightOdo(), getHeading());
             }
-        });
+        }, 10);
     }
     public void stopOdoThreadTele() {
         threadHandler.stopTeleThread();
@@ -449,7 +449,7 @@ public class TerraBot {
             public void run() {
                 odometry.updateGlobalPosition(getLeftOdo(), getMiddleOdo(), getRightOdo(), getHeading());
             }
-        }, op);
+        }, op, 10);
     }
     public void stopOdoThreadAuto() {
         threadHandler.stopAutoThread();

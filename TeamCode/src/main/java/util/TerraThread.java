@@ -11,6 +11,8 @@ public class TerraThread implements Runnable{
     CodeSeg cs;
     LinearOpMode op;
 
+    public int updateMs = 10;
+
     public TerraThread(CodeSeg cs){
         this.cs = cs;
     }
@@ -18,6 +20,9 @@ public class TerraThread implements Runnable{
     public void changeToAuton(LinearOpMode o) {
         auton = true;
         op = o;
+    }
+    public void changeMs(int ms){
+        updateMs = ms;
     }
     public synchronized void stop() {
         this.executing = true;
@@ -32,12 +37,12 @@ public class TerraThread implements Runnable{
         if(!auton) {
             while (isExecuting()) {
                 cs.run();
-                try {Thread.sleep(10); } catch (InterruptedException e) {}
+                try {Thread.sleep(updateMs); } catch (InterruptedException e) {}
             }
         }else{
             while (isExecuting() && op.opModeIsActive()) {
                 cs.run();
-                try {Thread.sleep(10); } catch (InterruptedException e) {}
+                try {Thread.sleep(updateMs); } catch (InterruptedException e) {}
             }
         }
     }

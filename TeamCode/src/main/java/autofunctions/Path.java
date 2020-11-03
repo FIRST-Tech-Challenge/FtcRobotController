@@ -4,11 +4,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.internal.android.dex.Code;
+
 import java.util.ArrayList;
 
 import global.TerraBot;
+import util.CodeSeg;
 import util.Line;
 import util.PID;
+import util.ThreadHandler;
 import util.Vector;
 
 public class Path {
@@ -45,23 +49,30 @@ public class Path {
     public double ans2 = 0;
     public int curIndex = 0;
 
+    public int rfsIndex = 0;
+
     public double[] targetPos = {0,0};
 
     public ArrayList<double[]> poses = new ArrayList<>();
     public ArrayList<Line> lines = new ArrayList<>();
     public ArrayList<Posetype> posetypes = new ArrayList<>();
+    public ArrayList<CodeSeg> rfs = new ArrayList<>();
+
+    public ThreadHandler threadHandler = new ThreadHandler();
 
 
     public boolean isExecuting = true;
+    public boolean runningRFs = true;
 
     final public double scale = 0.3;
     final public double[] ks = {0.05,0.05,0.01};
     final public double[] ds = {0.005, 0.005, 0.001};
-    final public double[] is = {0.01,0.01,0.03};
+    final public double[] is = {0.01,0.01,0.08};
     final public double XAcc = 1;
     final public double YAcc = 1;
     final public double HAcc = 2;
     final public double derWait = 0.5;
+
 
 
     public Path(double sx, double sy, double sh){
@@ -95,6 +106,7 @@ public class Path {
         double y2 = currPose[1];
         lines.add(new Line(x1, y1, x2, y2));
         posetypes.add(Posetype.WAYPOINT);
+        rfs.add(null);
     }
 
     public void addSetpoint(double x, double y, double h){
@@ -107,12 +119,39 @@ public class Path {
         double y2 = currPose[1];
         lines.add(new Line(x1, y1, x2, y2));
         posetypes.add(Posetype.SETPOINT);
+        rfs.add(null);
     }
+
+    public void addRF(CodeSeg seg){
+        rfs.add(seg);
+    }
+
+    public void startRFThread(LinearOpMode op){
+        threadHandler.startAutoThread(new CodeSeg() {
+            @Override
+            public void run() {
+                if(rfsIndex < rfs.size()) {
+                    if (rfs.get(rfsIndex) != null && runningRFs) {
+                        rfs.get(rfsIndex).run();
+                        rfsIndex++;
+                    } else {
+                        runningRFs = false;
+                    }
+                }
+            }
+        }, op, 100);
+    }
+    public void stopRFThread(){
+        threadHandler.stopAutoThread();
+    }
+
     public void next(){
         resetIs();
         timer.reset();
         lastTime = 0;
         curIndex++;
+        rfsIndex++;
+        runningRFs = true;
         if(curIndex >= lines.size()){
             isExecuting = false;
             curIndex--;
@@ -208,11 +247,15 @@ public class Path {
 
         Vector mv = new Vector(xerr, yerr);
         mv = mv.getRotatedVec(-robotTheta, Vector.angle.DEGREES);
+        Vector dv = new Vector(xder, yder);
+        dv = dv.getRotatedVec(-robotTheta, Vector.angle.DEGREES);
+        Vector iv = new Vector(xint, yint);
+        iv = iv.getRotatedVec(-robotTheta, Vector.angle.DEGREES);
 
         double[] out = new double[3];
 
-        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, xder, xint);
-        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, yder, yint);
+        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, dv.x, iv.x);
+        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, dv.y, iv.y);
         out[2] = -Math.signum(herr) * hControl.getPower(herr, hder, hint);
 
         return normalize(out);
@@ -230,6 +273,7 @@ public class Path {
 
     public void start(TerraBot bot, LinearOpMode op){
         timer.reset();
+        startRFThread(op);
         while (op.opModeIsActive() && isExecuting){
             double[] pows = update(bot.odometry.getPos());
             bot.move(pows[1], pows[0], pows[2]);
@@ -251,6 +295,7 @@ public class Path {
             op.telemetry.update();
         }
         bot.move(0,0,0);
+        stopRFThread();
     }
 
     public enum Posetype{

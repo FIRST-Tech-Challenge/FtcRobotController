@@ -1,6 +1,7 @@
 package autofunctions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.lang.reflect.ParameterizedType;
@@ -83,22 +84,29 @@ public class RobotFunctions {
         telemetryText(out);
     }
 
-//    public void startOdoThread(){
-//        CodeSeg code  = new CodeSeg() {
-//            @Override
-//            public void run() {
-//                odometry.updateGlobalPosition();
-//            }
-//        };
-//        odoThread.init(code);
-//        thread = new Thread(odoThread);
-//        thread.start();
-//
-//
-//    }
-//
+    public CodeSeg intake(final double pow){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.intake(pow);
+            }
+        };
+    }
 
-
+    public CodeSeg wobbleArm(final double deg, final double pow){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                bot.arm.setTargetPosition(bot.degreesToTicks(deg));
+                bot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.arm.setPower(pow);
+                while (op.opModeIsActive() && bot.arm.isBusy()){ }
+                bot.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                bot.arm.setPower(0);
+            }
+        };
+    }
 //    public void scanStonesBeforeInit(TerraCV cv){
 //        while (!op.isStarted()){
 //            cv.takePictureBeforeInit();
@@ -133,14 +141,7 @@ public class RobotFunctions {
 //        });
 //    }
 //
-//    public void intake(Path p, final double pow){
-//        p.addCustom(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                bot.intake(pow);
-//            }
-//        });
-//    }
+
 //
 //    public void grabFoundation(Path p, final double pos){
 //        p.addCustom(new CodeSeg() {
