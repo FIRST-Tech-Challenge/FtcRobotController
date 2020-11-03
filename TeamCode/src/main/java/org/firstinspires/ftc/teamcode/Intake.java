@@ -1,46 +1,66 @@
 package org.firstinspires.ftc.teamcode;
-/*
-import com.qualcomm.robotcore.hardware.CRServo;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 public class Intake {
+    //This class is for the intake and will contain two motors
+    //This class will include methods to turn the intake on and off and lower the intake system to hit a touch sensor
 
-    //This class will contain the 2 motors that drive the intake system
-    //sensors include a touch sensor to stop system when sensor is hit by block (grab block when hit)
-    //Methods will include an in/off/reverse
+    /*Public OpMode Members.*/
+    public DcMotor intake  = null;
+    public DcMotor intakeWrist = null;
 
-    public CRServo leftIntake  = null;
-    public CRServo rightIntake = null;
+    HardwareMap hwMap = null;
 
-    HardwareMap hwMap          = null;
+    DigitalChannel REVTouchBottom;
 
-    public Intake(){
+    /* Constructor */
+    public Intake() {
+
     }
-
+    /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        leftIntake  = hwMap.get(CRServo.class, "left_intake");
-        rightIntake = hwMap.get(CRServo.class,"right_intake");
+        intake = hwMap.get(DcMotor.class, "left_shooter");
+        intakeWrist = hwMap.get(DcMotor.class, "right_shooter");
+        //define motor direction
+        intake.setDirection(DcMotor.Direction.REVERSE);
+        intakeWrist.setDirection(DcMotor.Direction.REVERSE);
+
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeWrist.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Set all motors to zero power
+        intake.setPower(0);
+        intakeWrist.setPower(0);
+
+        // Set all motors to run without encoders.
+        // May want to use RUN_USING_ENCODERS if encoders are installed.
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeWrist.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // Define and initialize ALL installed sensors
+        REVTouchBottom = hwMap.get(DigitalChannel.class, "Bottom_Touch");
+
+        // set the digital channel to input.
+        REVTouchBottom.setMode(DigitalChannel.Mode.INPUT);
     }
 
-    //Power directions subject to change depending on how servos move when giving positive or negative powers
-    public void intakeControl(IntakeDirection direction){
-        if (direction == IntakeDirection.IN){
-            leftIntake.setPower(1d);
-            rightIntake.setPower(1d);
-        }if (direction == IntakeDirection.OUT){
-            leftIntake.setPower(-1d);
-            rightIntake.setPower(-1d);
-        }if (direction == IntakeDirection.OFF){
-            leftIntake.setPower(0d);
-            rightIntake.setPower(0d);
+    public void intakePower(double power) {
+        intake.setPower(power);
+    }
+    public void lowerIntake(double power) {
+        // if the digital channel returns true it's HIGH and the button is unpressed.
+        if (REVTouchBottom.getState()) {
+            intakeWrist.setPower(power);//May need to be fixed for direction
+            while (REVTouchBottom.getState());
+            intakeWrist.setPower(0);
         }
     }
+
 }
-*/
