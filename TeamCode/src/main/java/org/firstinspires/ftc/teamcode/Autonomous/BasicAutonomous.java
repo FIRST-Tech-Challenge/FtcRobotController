@@ -71,7 +71,7 @@ public class BasicAutonomous extends LinearOpMode {
     private static final String LABEL_SECOND_ELEMENT = "Single";
     private String StackSize = "None";
     WobbleTargetZone Square = WobbleTargetZone.RED_A; // Default
-    private static double tfSenseTime = 2; // needs a couple seconds to process the imagee an ID the target
+    private static double tfSenseTime = 4; // needs a couple seconds to process the imagee an ID the target
 
     private static final String VUFORIA_KEY =
             "AQXVmfz/////AAABmXaLleqhDEfavwYMzTtToIEdemv1X+0FZP6tlJRbxB40Cu6uDRNRyMR8yfBOmNoCPxVsl1mBgl7GKQppEQbdNI4tZLCARFsacECZkqph4VD5nho2qFN/DmvLA0e1xwz1oHBOYOyYzc14tKxatkLD0yFP7/3/s/XobsQ+3gknx1UIZO7YXHxGwSDgoU96VAhGGx+00A2wMn2UY6SGPl+oYgsE0avmlG4A4gOsc+lck55eAKZ2PwH7DyxYAtbRf5i4Hb12s7ypFoBxfyS400tDSNOUBg393Njakzcr4YqL6PYe760ZKmu78+8X4xTAYSrqFJQHaCiHt8HcTVLNl2fPQxh0wBmLvQJ/mvVfG495ER1A";
@@ -108,6 +108,8 @@ public class BasicAutonomous extends LinearOpMode {
         }
 
         drivetrain.init(hardwareMap);
+        wobble.init(hardwareMap);
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.mode                = BNO055IMU.SensorMode.IMU;
@@ -165,10 +167,10 @@ public class BasicAutonomous extends LinearOpMode {
                         StackSize = recognition.getLabel();
                         //telemetry.addData("Target", Target);
                         if (StackSize == "Quad") {
-                            Square = WobbleTargetZone.RED_C;
+                            Square = WobbleTargetZone.BLUE_C;
                             telemetry.addData("Square", Square);
                         } else if (StackSize == "Single") {
-                            Square = WobbleTargetZone.RED_B;
+                            Square = WobbleTargetZone.BLUE_B;
                             telemetry.addData("Square", Square);
 
                         }
@@ -181,6 +183,15 @@ public class BasicAutonomous extends LinearOpMode {
                 tfod.shutdown();
             }
         }
+
+        wobble.GripperOpen();
+        wobble.ArmExtend();
+        sleep(1000);
+        wobble.GripperClose();
+        sleep(500);
+        wobble.ArmCarryWobble();
+       sleep(500);
+
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
@@ -188,15 +199,30 @@ public class BasicAutonomous extends LinearOpMode {
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
 
         switch(Square){
-            case RED_A: // This is the basic op mode. Put real paths in designated opmodes
+            case BLUE_A: // This is the basic op mode. Put real paths in designated opmodes
                 telemetry.addData("Going to RED A", "Target Zone");
-                gyroDrive(DRIVE_SPEED, 60.0, 0.0, 5);    // Drive FWD 110 inches
+                gyroDrive(DRIVE_SPEED, 65.0, 0.0, 10);    // Drive FWD 110 inches
+
+                wobble.GripperOpen();
+                wobble.ArmExtend();
                 break;
-            case RED_B:
-                gyroDrive(DRIVE_SPEED, 40.0, 0.0, 5);    // Drive FWD 110 inches
+            case BLUE_B:
+                telemetry.addData("Going to RED B", "Target Zone");
+                gyroDrive(DRIVE_SPEED, 70.0, 0.0, 5);    // Drive FWD 110 inches
+                gyroTurn(TURN_SPEED,-45,3);
+                gyroDrive(DRIVE_SPEED,15,-45,2);
+                sleep(1000);
+                wobble.GripperOpen();
+                sleep(1000);
+                wobble.ArmExtend();
+                sleep(500);
+                gyroDrive(DRIVE_SPEED,-12,-45,2);
                 break;
-            case RED_C:
-                gyroDrive(DRIVE_SPEED, 20.0, 0.0, 5);    // Drive FWD 110 inches
+            case BLUE_C:
+                telemetry.addData("Going to RED C", "Target Zone");
+                gyroDrive(DRIVE_SPEED, 115.0, 0.0, 5);    // Drive FWD 110 inches
+                wobble.GripperOpen();
+                wobble.ArmExtend();
                 break;
         }
 
