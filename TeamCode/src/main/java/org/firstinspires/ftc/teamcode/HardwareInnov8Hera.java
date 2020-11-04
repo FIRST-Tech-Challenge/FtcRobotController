@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -44,9 +45,10 @@ public class HardwareInnov8Hera {
     /* local OpMode members. */
     HardwareMap hwMap = null;
     private ElapsedTime period = new ElapsedTime();
-
+    private LinearOpMode opMode;
     /* Constructor */
-    public HardwareInnov8Hera(HardwareMap ahwMap) {
+    public HardwareInnov8Hera(HardwareMap ahwMap, LinearOpMode opMode) {
+        this.opMode = opMode;
         this.hwMap = ahwMap;
         this.init(ahwMap);
     }
@@ -92,6 +94,10 @@ public class HardwareInnov8Hera {
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         this.imu.initialize(parameters);
+        while(!this.opMode.isStopRequested() && imu.isGyroCalibrated()) {
+            this.opMode.sleep(50);
+            this.opMode.idle();
+        }
     }
 
 }

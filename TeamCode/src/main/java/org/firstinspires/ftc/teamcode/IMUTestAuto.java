@@ -31,20 +31,26 @@ public class IMUTestAuto extends LinearOpMode
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         this.imu.initialize(parameters);
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        while(!isStopRequested() && imu.isGyroCalibrated()) {
+            sleep(50);
+            idle();
+        }
+        angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         this.telemetry.addData("first", angles.firstAngle);
         this.telemetry.addData("second", angles.secondAngle);
         this.telemetry.addData("third", angles.thirdAngle);
         this.telemetry.update();
         waitForStart();
         while(opModeIsActive()){
-            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            angles = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             this.telemetry.addData("first", angles.firstAngle);
             Log.d("first angle: ", "" + angles.firstAngle);
             this.telemetry.addData("second", angles.secondAngle);
             Log.d("second angle: ", "" + angles.secondAngle);
             this.telemetry.addData("third", angles.thirdAngle);
             Log.d("third angle: ", "" + angles.thirdAngle);
+            this.telemetry.addData("Is gyro calibrated? ", imu.isGyroCalibrated());
+            Thread.sleep(1000);
             this.telemetry.update();
         }
 

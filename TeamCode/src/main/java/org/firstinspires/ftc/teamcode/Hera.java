@@ -23,7 +23,7 @@ public class Hera {
 
     public Hera(Telemetry telemetry, HardwareMap hwmap, LinearOpMode opMode) {
         this.opMode = opMode;
-        this.hwmap = new HardwareInnov8Hera(hwmap);
+        this.hwmap = new HardwareInnov8Hera(hwmap, opMode);
         this.telemetry = telemetry;
         driveTrain = new DriveTrain(this.telemetry, this.hwmap, this.opMode   );
         this.telemetry.addData(HERA_CAPTION, "ready to go");
