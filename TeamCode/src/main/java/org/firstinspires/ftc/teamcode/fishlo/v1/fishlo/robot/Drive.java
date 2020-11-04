@@ -154,13 +154,13 @@ public class Drive extends SubSystem {
     }
 
     public void strafe(double power, String direction) {
-        if (direction == "left") {
+        if (direction.equals("left")) {
             frontLeft.setPower(power);
             backRight.setPower(power);
             frontRight.setPower(-power);
             backRight.setPower(-power);
         }
-        if (direction == "right") {
+        if (direction.equals("right")) {
             frontLeft.setPower(-power);
             backRight.setPower(-power);
             frontRight.setPower(power);
