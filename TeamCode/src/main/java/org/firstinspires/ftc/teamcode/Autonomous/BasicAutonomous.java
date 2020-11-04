@@ -70,7 +70,7 @@ public class BasicAutonomous extends LinearOpMode {
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
     private String StackSize = "None";
-    WobbleTargetZone Square = WobbleTargetZone.RED_A; // Default
+    WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default
     private static double tfSenseTime = 4; // needs a couple seconds to process the imagee an ID the target
 
     private static final String VUFORIA_KEY =
