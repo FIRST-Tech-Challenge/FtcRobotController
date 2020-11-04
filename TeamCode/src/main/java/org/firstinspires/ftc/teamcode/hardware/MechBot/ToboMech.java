@@ -477,8 +477,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
 
                 if(source.getTrigger(Events.Side.LEFT) > 0.3){
-                    if (bottomWobbleGoalGrabber!=null)
-                        bottomWobbleGoalGrabber.releaseWobbleGoalCombo(true);
+                    if (comboGrabber!=null)
+                        comboGrabber.releaseWobbleGoalCombo();
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
                     if (topWobbleGoalGrabber!=null)
                         topWobbleGoalGrabber.releaseWobbleGoalCombo();
@@ -492,7 +492,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
 
                 if(source.getTrigger(Events.Side.LEFT) > 0.3){
-                    // autoGrabBottomWobbleGoal();
+                   if (comboGrabber != null)
+                       comboGrabber.grabWobbleGoalCombo();
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
                     if (topWobbleGoalGrabber!=null)
                         topWobbleGoalGrabber.grabWobbleGoalCombo();

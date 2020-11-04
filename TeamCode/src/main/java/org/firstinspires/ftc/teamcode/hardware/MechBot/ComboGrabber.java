@@ -218,12 +218,12 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         }
     }
     public void releaseWobbleGoalCombo() {
-        final String taskName = "release Top Wobble Goal Combo";
+        final String taskName = "release Low Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return slideToPosition(SLIDER_POS_LOW);
+                return moveArm(ARM_DOWN);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override
@@ -233,23 +233,27 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return slideToPosition(SLIDER_POS_HIGH);
+                return moveArm(ARM_UP);
+            }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return moveGrabber(GRABBER_CLOSE);
             }}, taskName);
     }
 
     public void grabWobbleGoalCombo() {
-        final String taskName = "grab Top Wobble Goal Combo";
+        final String taskName = "grab Low Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                slideToPosition(SLIDER_POS_HIGH);
                 return moveGrabber(GRABBER_OPEN);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return slideToPosition(SLIDER_POS_LOW);
+                return moveArm(ARM_DOWN);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override
@@ -259,9 +263,28 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return slideToPosition(SLIDER_POS_HIGH);
+                return moveArm(ARM_UP);
             }}, taskName);
     }
+
+    private Progress moveArm(double position) {
+        double adjustment = Math.abs(position - arm.getPosition());
+        arm.setPosition(position);
+        if (position<= ARM_DOWN + 0.1)
+            armIsLow=true;
+        else {
+            armIsLow = false;
+        }
+        // 600 ms per 180 degree
+        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 900);
+        return new Progress() {
+            @Override
+            public boolean isDone() {
+                return System.currentTimeMillis() >= doneBy;
+            }
+        };
+    }
+
     private Progress moveGrabber(double position) {
         double adjustment = Math.abs(position - grabber.getPosition());
         grabber.setPosition(position);
