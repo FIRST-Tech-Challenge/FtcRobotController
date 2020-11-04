@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.barebones;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 /**
  */
@@ -23,8 +24,8 @@ public class BareBones_Tank extends OpMode {
             // Initialize Motors, finding them through the hardware map.
             leftDrive = hardwareMap.get(DcMotor.class, "motorLeft");
             rightDrive = hardwareMap.get(DcMotor.class, "motorRight");
-            leftDrive.setDirection(DcMotor.Direction.FORWARD);
-            rightDrive.setDirection(DcMotor.Direction.REVERSE);
+            leftDrive.setDirection(DcMotor.Direction.REVERSE);
+            rightDrive.setDirection(DcMotor.Direction.FORWARD);
 
             // Set all motors to zero power.
             leftDrive.setPower(0);
