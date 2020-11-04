@@ -18,7 +18,7 @@ public class Shooter {
     private static final double ShooterSpeedfastleft=.4;
     private static final double ShooterSpeedfastright=.55 ;
     private static final double shooterSpeedslowleft=.4;
-    private static final double shooterSpeedslowright=.6;
+    private static final double shooterSpeedslowright=.45;
     private static final double jamClear=-.35;
     //Constants for stacker servos
     private static final double leftUp = 0.75; // .75 a little shy but ok due to hitting bolt
@@ -26,8 +26,9 @@ public class Shooter {
     private static final double rightUp = (1-leftUp);
     private static final double rightBack = (1-leftBack);
     private static final double flippercenter = 0.5;
-    private static final double stackerReload = 0.42; // 0.42
+    private static final double stackerReload = 0.43; // 0.42 causes rings to slide forward too much
     private static final double stackerShoot = 0.55; // 0.55
+    private static final double stacketMidLoad = .46; // tips stacker back so it loads better
 
 
 
@@ -63,10 +64,16 @@ public class Shooter {
         stacker.setPosition(stackerShoot);
 
     }
+
     public void stackerMoveToReload() {
         stacker.setPosition(stackerReload);
+    }
+
+    public void stackerMoveToMidLoad() {
+        stacker.setPosition(stacketMidLoad);
 
     }
+
     public void flipperCalibrateinCenter() {
         leftFlipper.setPosition(flippercenter);
         rightFlipper.setPosition(flippercenter);
@@ -80,16 +87,15 @@ public class Shooter {
         leftFlipper.setPosition(leftBack);
         rightFlipper.setPosition(rightBack);
     }
-    public void shootoneRing() {
+    public void shootoneRingHigh() {
         shootHighGoal();
         stackerMoveToShoot();
-        flipperForward();
         flipperBackward();
     }
     public void shooterReload() {
-        stackerMoveToReload();
-        flipperBackward();
-        shooterOff();
+        stackerMoveToMidLoad(); //
+        flipperBackward(); // move flippers back
+        shooterOff(); // turn off shooters
 
         }
 
