@@ -130,7 +130,8 @@ public class Meet_1_Teleop extends OpMode {
 
        // Gamepad 1 Buttons
         if (gamepad1.y) {
-            shooter.shootHighGoal();
+            shooter.shootoneRingHigh();
+            //shooter.shootMiddleGoal();
             ringCollectorState = RingCollectionState.OFF;
 
             telemetry.addData("Shooter High", "Complete ");
@@ -141,7 +142,7 @@ public class Meet_1_Teleop extends OpMode {
         }
         if (gamepad1.left_bumper) {
             shooter.flipperBackward();
-            shooter.stackerMoveToReload();
+            shooter.stackerMoveToMidLoad();
             ringCollectorState = RingCollectionState.COLLECT;
 
         }
