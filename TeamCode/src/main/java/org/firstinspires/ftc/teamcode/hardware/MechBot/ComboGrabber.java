@@ -29,16 +29,17 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
 
     private final double SLIDER_POWER = 0.5;
     private final double SLIDER_SPEED = 1000;
-    private final int SLIDER_POS_HIGH = 500;
+    private final int SLIDER_POS_HIGH = 920;
+    private final int SLIDER_POS_HIGHER = 1500;
     private final int SLIDER_POS_INIT = 0;
     private final int SLIDER_POS_LOW = 50;
-    private final int SLIDER_POS_MAX = 1000;
+    private final int SLIDER_POS_MAX = 1733;
 
     private final double ARM_UP = 0.48;
     private final double ARM_INIT = 0.38;
-    private final double ARM_DOWN = 0.825;
+    private final double ARM_DOWN = 0.84;
 
-    private final double GRABBER_OPEN = 0.55;
+    private final double GRABBER_OPEN = 0.58;
     private final double GRABBER_CLOSE = 0.845;
     private final double GRABBER_INIT = GRABBER_CLOSE;
 
@@ -103,13 +104,13 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     }
 
     public void sliderStop() {
+        slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         if (slider==null) return;
         slider.setPower(0);
     }
 
-    public Progress slideToPosition(int pos) {
-        if (slider == null) return null;
-        slider.setPower(0);
+    public Progress slideToPos(int pos) {
+        if (slider==null) return null;
         slider.setTargetPosition(pos);
         slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slider.setVelocity(SLIDER_SPEED);
@@ -121,13 +122,6 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
                 return !slider.isBusy();
             }
         };
-    }
-
-    public void slideToPos(int pos) {
-        if (slider==null) return;
-        slider.setTargetPosition(pos);
-        slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slider.setVelocity(SLIDER_SPEED);
     }
 
     public void sliderPosHigh() {
@@ -166,18 +160,48 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             slidePosLow();
     }
 
-    public void sliderUp() {
+    public void sliderUp(boolean forced) {
         if (slider==null) return;
+        slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int pos = slider.getCurrentPosition();
+        if (pos>=SLIDER_POS_MAX && !forced) {
+            sliderStop();
+            return;
+        }
         slider.setVelocity(SLIDER_SPEED);
         // armMotor.setPower(ARM_POWER);
         // armIsDown = false;
     }
 
-    public void sliderDown() {
+    public void sliderDown(boolean forced) {
         if (slider==null) return;
+        slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        int pos = slider.getCurrentPosition();
+        if (pos<=SLIDER_POS_INIT && !forced) {
+            sliderStop();
+            return;
+        }
         slider.setVelocity(-SLIDER_SPEED);
         // armMotor.setPower(-ARM_POWER);
         // armIsDown = true;
+    }
+
+    public void armUpInc() {
+        if (arm==null) return;
+        double pos=arm.getPosition()-0.05;
+        if (pos<0) pos=0;
+        arm.setPosition(pos);
+        if (pos<ARM_UP+0.1)
+            armIsLow=false;
+    }
+
+    public void armDownInc() {
+        if (arm==null) return;
+        double pos=arm.getPosition()+0.05;
+        if (pos>1) pos=1.0;
+        arm.setPosition(pos);
+        if (pos>ARM_DOWN-0.1)
+            armIsLow=true;
     }
 
     public void armUp() {
@@ -218,8 +242,15 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         }
     }
     public void releaseWobbleGoalCombo() {
-        final String taskName = "release Low Wobble Goal Combo";
+        final String taskName = "release Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
+        if (slider.getCurrentPosition()>SLIDER_POS_HIGH) {
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    return slideToPos(SLIDER_POS_HIGH);
+                }}, taskName);
+        }
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
@@ -242,14 +273,27 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             }}, taskName);
     }
 
-    public void grabWobbleGoalCombo() {
-        final String taskName = "grab Low Wobble Goal Combo";
+    public void grabWobbleGoalCombo(boolean isHigh) {
+        final String taskName = "grab Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
                 return moveGrabber(GRABBER_OPEN);
             }}, taskName);
+        if (isHigh) {
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    return slideToPos(SLIDER_POS_HIGH);
+                }}, taskName);
+        } else {
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    return slideToPos(SLIDER_POS_LOW);
+                }}, taskName);
+        }
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
@@ -265,18 +309,25 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             public Progress start() {
                 return moveArm(ARM_UP);
             }}, taskName);
+        if (isHigh) {
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    return slideToPos(SLIDER_POS_HIGHER);
+                }}, taskName);
+        }
     }
 
     private Progress moveArm(double position) {
         double adjustment = Math.abs(position - arm.getPosition());
         arm.setPosition(position);
-        if (position<= ARM_DOWN + 0.1)
+        if (position>= ARM_DOWN - 0.1)
             armIsLow=true;
         else {
             armIsLow = false;
         }
-        // 600 ms per 180 degree
-        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 900);
+        // 1200 ms per 180 degree
+        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 1200);
         return new Progress() {
             @Override
             public boolean isDone() {
@@ -293,8 +344,8 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         else {
             grabberIsClosed = false;
         }
-        // 600 ms per 180 degree
-        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 900);
+        // 1200 ms per 180 degree
+        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 1200);
         return new Progress() {
             @Override
             public boolean isDone() {
