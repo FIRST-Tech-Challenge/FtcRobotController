@@ -26,8 +26,8 @@ public class Intake {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        intake = hwMap.get(DcMotor.class, "left_shooter");
-        intakeWrist = hwMap.get(DcMotor.class, "right_shooter");
+        intake = hwMap.get(DcMotor.class, "intake");
+        intakeWrist = hwMap.get(DcMotor.class, "intake_wrist");
         //define motor direction
         intake.setDirection(DcMotor.Direction.REVERSE);
         intakeWrist.setDirection(DcMotor.Direction.REVERSE);
