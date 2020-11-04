@@ -52,10 +52,12 @@ public class Drive extends SubSystem {
     public void handle() {
         double speed = robot.gamepad1.right_trigger - robot.gamepad1.left_trigger;
         double direction = -robot.gamepad1.left_stick_x;
+        DriveDir driveDir = getDir(direction);
 
         if(robot.gamepad1.a) {
             reverse = false;
-        } else if(robot.gamepad1.y) {
+        }
+        else if(robot.gamepad1.y) {
             reverse = true;
         }
 
@@ -65,19 +67,15 @@ public class Drive extends SubSystem {
         else if(robot.gamepad1.left_bumper) {
             strafe(speed, "left");;
         }
-
-
-
-
-        DriveDir driveDir = getDir(direction);
-
-        if(Math.abs(speed) < 5 && driveDir != DriveDir.STRAIGHT) {
-            drive(-direction, direction);
-        } else {
-            if (reverse) {
-                drive(driveDir.getLeft(reverse) * speed, driveDir.getRight(reverse) * speed);
+        else {
+            if(Math.abs(speed) < 5 && driveDir != DriveDir.STRAIGHT) {
+                drive(-direction, direction);
             } else {
-                drive(driveDir.getRight(reverse) * speed, driveDir.getLeft(reverse) * speed);
+                if (reverse) {
+                    drive(driveDir.getLeft(reverse) * speed, driveDir.getRight(reverse) * speed);
+                } else {
+                    drive(driveDir.getRight(reverse) * speed, driveDir.getLeft(reverse) * speed);
+                }
             }
         }
 
@@ -91,7 +89,7 @@ public class Drive extends SubSystem {
         robot.telemetry.addData("Drive - Enc - Right", frontRight.getCurrentPosition());
     }
 
-    private DriveDir getDir(double dir) {
+    public DriveDir getDir(double dir) {
         if(dir <= -0.7) {
             return DriveDir.HARD_LEFT;
         } else if(dir <= -0.4) {
@@ -154,13 +152,17 @@ public class Drive extends SubSystem {
     }
 
     public void strafe(double power, String direction) {
-        if (direction == "left") {
+
+        boolean strafeLeft = direction.equals("left");
+        boolean strafeRight = direction.equals("right");
+
+        if (strafeLeft) {
             frontLeft.setPower(power);
             backRight.setPower(power);
             frontRight.setPower(-power);
             backRight.setPower(-power);
         }
-        if (direction == "right") {
+        if (strafeRight) {
             frontLeft.setPower(-power);
             backRight.setPower(-power);
             frontRight.setPower(power);
