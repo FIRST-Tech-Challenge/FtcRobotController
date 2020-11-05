@@ -23,7 +23,6 @@ public class Shooter {
     private float speedLowGoal=50;//will get changed when testing
     private double distance;
 
-
     public Shooter(){
 
     }
@@ -33,19 +32,31 @@ public class Shooter {
         hardwareMap = op.hardwareMap;
 
         shooterMotor = hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
+        shooter_Servo=hardwareMap.servo.get("ShooterServo");
         shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter_Servo.setPosition(1.0);
         int Gobilda_Ticks_Per_Rev=28;
     }
 
-    public void moveServo(boolean direction){
-        if (direction == true){
+    public void moveServo(boolean direction) {
+        if (direction == true) {
             shooter_Servo.setPosition(1.0);
-        }
-
-        else{
+        } else {
             shooter_Servo.setPosition(0.0);
         }
+        op.telemetry.addData("claw position :", direction);
+        op.telemetry.update();
+        op.sleep(2000);
     }
+
+    //0.0 is clamped, 1.0 is unclamped
+    public void moveServoPosition(double pushPosition) {
+        op.telemetry.addData("claw position :", pushPosition);
+        op.telemetry.update();
+        shooter_Servo.setPosition(pushPosition);
+        op.sleep(2000);
+    }
+
 
     public void shootHighGoal(double distance){
         this.distance=distance;
