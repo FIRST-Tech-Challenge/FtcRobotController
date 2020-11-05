@@ -239,12 +239,12 @@ public class UltimateBot extends YellowBot
     }
 
     @BotAction(displayName = "Detect Stack", defaultReturn = "B")
-    public AutoDot detectStack(){
+    public AutoDot detectStack(String side){
         AutoDot target = null;
         RingDetector rf = null;
         try {
             rf = new RingDetector(this.hwMap, this.getLights(), telemetry);
-            target = rf.detectRing(2, telemetry, owner);
+            target = rf.detectRing(2, side, telemetry, owner);
         }
         finally {
             if (rf != null) {
