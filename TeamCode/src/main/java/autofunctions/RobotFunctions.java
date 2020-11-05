@@ -2,7 +2,10 @@ package autofunctions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.internal.android.dex.Code;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -93,6 +96,21 @@ public class RobotFunctions {
         };
     }
 
+    public CodeSeg outtake(final double speed){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                double sp = speed*bot.MAX_OUTTAKE_SPEED;
+                bot.outrController.setTargetSpeed(sp);
+                bot.outlController.setTargetSpeed(sp);
+                double outrPow = bot.outrController.getPow();
+                double outlPow = bot.outlController.getPow();
+                bot.outr.setPower(outrPow);
+                bot.outl.setPower(outlPow);
+            }
+        };
+    }
+
     public CodeSeg wobbleArm(final double deg, final double pow){
         return new CodeSeg() {
             @Override
@@ -107,6 +125,34 @@ public class RobotFunctions {
             }
         };
     }
+
+    public CodeSeg turnArm(final double pos){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.turnArm(pos);
+            }
+        };
+    }
+    public CodeSeg lift(final int index){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.lift(bot.liftControl.getPos(index));
+            }
+        };
+    }
+    public CodeSeg grab(final int index){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.grab(bot.grabControl.getPos(index));
+            }
+        };
+    }
+
+
+
 //    public void scanStonesBeforeInit(TerraCV cv){
 //        while (!op.isStarted()){
 //            cv.takePictureBeforeInit();

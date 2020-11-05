@@ -56,7 +56,7 @@ public class TerraBot {
 
     public int resettingArm = 0;
 
-    public double turnStart = 0.3;
+    public double turnStart = 0.25;
     public double grabStart = 0.7;
     public double liftStart = 0.12;
     public double liftSecond = 0.27;
