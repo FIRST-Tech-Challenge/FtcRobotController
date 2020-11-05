@@ -141,6 +141,12 @@ public class UltimateMode extends LinearOpMode{
                     robot.stopshooter();
                 }
 
+                // shoot with servo
+                if(gamepad1.right_bumper && buttonpressable){
+                    startdelay = runtime.milliseconds();
+                    robot.shootServo();
+                }
+
                 telemetry.addData("Heading", robot.getGyroHeading());
                 telemetry.addData("Horiz encoder", robot.getHorizontalOdometer());
                 telemetry.update();
