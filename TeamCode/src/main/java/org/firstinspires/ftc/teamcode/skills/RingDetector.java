@@ -33,7 +33,7 @@ public class RingDetector {
         activateDetector();
     }
 
-    public AutoDot detectRing(int timeout, Telemetry telemetry, LinearOpMode caller){
+    public AutoDot detectRing(int timeout, String side, Telemetry telemetry, LinearOpMode caller){
         AutoDot zone = new AutoDot();
         zone.setX(70);
         zone.setY(130);
@@ -54,25 +54,43 @@ public class RingDetector {
                         if(r.getConfidence() >= 0.8) {
                             telemetry.addData("PrintZone", r.getTitle());
                             if(r.getTitle().contains(LABEL_C)){
-                                zone.setX(70);
-                                zone.setY(120);
-                                zone.setHeading(0);
+                                if(side.contains("r")) {
+                                    zone.setX(70);
+                                    zone.setY(120);
+                                    zone.setHeading(45);
+                                } else {
+                                    zone.setX(30);
+                                    zone.setY(12);
+                                    zone.setHeading(45);
+                                }
                                 found = true;
                                 targetZone = LABEL_C;
                                 this.lights.recognitionSignal(4);
                             }
                             if(r.getTitle().contains(LABEL_B)){
-                                zone.setX(50);
-                                zone.setY(90);
-                                zone.setHeading(0);
+                                if(side.contains("r")) {
+                                    zone.setX(50);
+                                    zone.setY(90);
+                                    zone.setHeading(45);
+                                } else {
+                                    zone.setX(30);
+                                    zone.setY(12);
+                                    zone.setHeading(45);
+                                }
                                 found = true;
                                 targetZone = LABEL_B;
                                 this.lights.recognitionSignal(1);
                             }
                             if(r.getTitle().contains(LABEL_A)){
-                                zone.setX(78);
-                                zone.setY(70);
-                                zone.setHeading(0);
+                                if(side.contains("r")) {
+                                    zone.setX(78);
+                                    zone.setY(70);
+                                    zone.setHeading(0);
+                                } else {
+                                    zone.setX(30);
+                                    zone.setY(12);
+                                    zone.setHeading(45);
+                                }
                                 found = true;
                                 targetZone = LABEL_A;
                                 this.lights.recognitionSignal(0);

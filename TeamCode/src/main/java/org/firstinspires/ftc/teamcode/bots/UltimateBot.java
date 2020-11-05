@@ -20,6 +20,7 @@ public class UltimateBot extends YellowBot
     private static int MIDDLESWINGVALUE = 260;
     public DcMotor wobbleSwing = null;
     private Servo wobbleClaw = null;
+    private Servo ringCamera = null;
     private DcMotor intake = null;
     private DcMotor shooter = null;
 
@@ -65,6 +66,15 @@ public class UltimateBot extends YellowBot
             throw new Exception("Issues with wobbleClaw. Check the controller config", ex);
         }
 
+        try{
+            ringCamera = hwMap.get(Servo.class, "camera");
+            ringCamera.setPosition(1);
+        }
+        catch (Exception ex) {
+            throw new Exception("Issues with ringCamera. Check the controller config", ex);
+        }
+
+
 
         telemetry.addData("Init", "Ultimate is ready");
     }
@@ -83,10 +93,19 @@ public class UltimateBot extends YellowBot
         return wobbleClaw.getPosition();
     }
 
+    public double getCameraPosition(){
+        return ringCamera.getPosition();
+    }
+
 
     public void moveWobbleClaw (double position) {
         double p = Range.clip(position, -1.0, 1.0);
         wobbleClaw.setPosition(p);
+    }
+
+    public void moveRingCamera (double position) {
+        double p = Range.clip(position, -1.0, 1.0);
+        ringCamera.setPosition(p);
     }
 
     @BotAction(displayName = "Move Intake", defaultReturn="")
@@ -115,6 +134,15 @@ public class UltimateBot extends YellowBot
     @BotAction(displayName = "Open Claw", defaultReturn="")
     public void openWobbleClaw () {
         wobbleClaw.setPosition(1);
+    }
+
+    @BotAction(displayName = "Close Claw", defaultReturn="")
+    public void leftRingCamera () { ringCamera.setPosition(0);
+    }
+
+    @BotAction(displayName = "Open Claw", defaultReturn="")
+    public void rightRingCamera () {
+        ringCamera.setPosition(1);
     }
 
     @BotAction(displayName = "Init WobbleSwing", defaultReturn="")
@@ -211,12 +239,12 @@ public class UltimateBot extends YellowBot
     }
 
     @BotAction(displayName = "Detect Stack", defaultReturn = "B")
-    public AutoDot detectStack(){
+    public AutoDot detectStack(String side){
         AutoDot target = null;
         RingDetector rf = null;
         try {
             rf = new RingDetector(this.hwMap, this.getLights(), telemetry);
-            target = rf.detectRing(2, telemetry, owner);
+            target = rf.detectRing(2, side, telemetry, owner);
         }
         finally {
             if (rf != null) {
