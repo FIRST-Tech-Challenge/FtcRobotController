@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "Teleop ")
 public class Teleop extends LinearOpMode {
-    //private Robot robot = new Robot();
+    private Robot robot = new Robot();
     private DcMotor motorLeftFront;
     private DcMotor motorLeftBack;
     private DcMotor motorRightFront;
@@ -29,7 +29,7 @@ public class Teleop extends LinearOpMode {
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
-        //robot.initChassis(this);
+        robot.initChassis(this);
 
         //Aiden - during competition day robot disconnected so we are trying this code
         while (!opModeIsActive() && !isStopRequested()) {
@@ -97,5 +97,3 @@ public class Teleop extends LinearOpMode {
     }
 
 }
-
-

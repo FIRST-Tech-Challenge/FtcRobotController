@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
+//import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
@@ -22,7 +22,7 @@ public class Robot {
     private ElapsedTime runtime = new ElapsedTime();
     Chassis drivetrain = new Chassis();
 
-    private VuforiaWebcam vuforiaWebcam = null;
+//    private VuforiaWebcam vuforiaWebcam = null;
     private double vuforiaX = 0;
     private double vuforiaY = 0;
     private double vuforiaAngle = 0;
@@ -35,21 +35,21 @@ public class Robot {
         op = opMode;
         hardwareMap = op.hardwareMap;
 
-        vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
+//        vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
 
         drivetrain.init(opMode);
-        vuforiaWebcam.init(opMode);
+//        vuforiaWebcam.init(opMode);
 
-        vuforiaWebcam.start();
+//        vuforiaWebcam.start();
 
-        getVuforiaPosition();
+//        getVuforiaPosition();
         op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
         op.telemetry.update();
         op.sleep(1000);
     }
 
     public void moveVuforiaWebcam(double x, double y, double endAngle) {
-        getVuforiaPosition();
+//        getVuforiaPosition();
 
         double xdifference = x - vuforiaX;
         double ydifference = y - vuforiaY;
@@ -66,7 +66,7 @@ public class Robot {
         op.sleep(5000);
         drivetrain.moveAngle2(magnitude, mAngle, turn);
 
-        getVuforiaPosition();
+//        getVuforiaPosition();
 
         op.telemetry.addData("VuforiaX","%.2f %.2f %.2f %.3f %.3f %.3f", vuforiaX, x, xdifference, robotAngle, vuforiaAngle, endAngle );
         op.telemetry.addData("VuforiaY","%.2f %.2f %.2f %.2f %.3f %.3f", vuforiaY, y, ydifference, magnitude, turn, mAngle);
@@ -151,20 +151,20 @@ public class Robot {
 
     /**Vuforia**/
 
-    public double getVuforiaAngle() {
-        return vuforiaWebcam.getVuforiaAngle();
-    }
-
-    public void getVuforiaPosition() {
-        vuforiaX = vuforiaWebcam.getVuforiaX();
-        vuforiaY = vuforiaWebcam.getVuforiaY();
-        vuforiaAngle = vuforiaWebcam.getVuforiaAngle();
-        robotAngle = vuforiaAngle + 90;
-        robotAngle = (robotAngle>180?robotAngle-360:robotAngle);
-    }
-    public void stopVuforia() {
-        vuforiaWebcam.interrupt();
-    }
+//    public double getVuforiaAngle() {
+//        return vuforiaWebcam.getVuforiaAngle();
+//    }
+//
+//    public void getVuforiaPosition() {
+//        vuforiaX = vuforiaWebcam.getVuforiaX();
+//        vuforiaY = vuforiaWebcam.getVuforiaY();
+//        vuforiaAngle = vuforiaWebcam.getVuforiaAngle();
+//        robotAngle = vuforiaAngle + 90;
+//        robotAngle = (robotAngle>180?robotAngle-360:robotAngle);
+//    }
+//    public void stopVuforia() {
+//        vuforiaWebcam.interrupt();
+//    }
     public void turnOdometry(double target, double power) {
         drivetrain.turnOdometry(target,power);
     }
