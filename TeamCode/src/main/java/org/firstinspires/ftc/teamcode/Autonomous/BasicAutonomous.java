@@ -552,7 +552,7 @@ public class BasicAutonomous extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
-    private void shoot3Rings(){
+    public void shoot3Rings(){
         autoShootTimer.reset();
         while (opModeIsActive() && autoShootTimer.time()  <= autoShootTimeAllowed)  {
             if (mShooterState == ShooterState.STATE_SHOOTER_ACTIVE) {

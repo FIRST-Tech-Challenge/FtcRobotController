@@ -2,22 +2,31 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.Enums.ShooterState;
 import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
+import org.firstinspires.ftc.teamcode.Subsystems.Elevator;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
 
 import java.util.List;
 
-@Autonomous(name="Red Left Line Auto #2", group="Test")
+@Autonomous(name="BLUE - Left Line Wobble and Shoot 3", group="Autonomous")
 
 //////////////////////////////////////////////////////////
     // EXTEND this class to create multiple drive paths.
@@ -26,21 +35,29 @@ import java.util.List;
 
 
 
-public class RED_Left_Line_Auto extends BasicAutonomous {
+public class Auto_BLUE_Left_Line extends BasicAutonomous {
     /* Declare OpMode members. */
-    //public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
-
+    public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
+    public Shooter              shooter     = new Shooter();
+    public Intake               intake      = new Intake();
+    public Wobblegoal           wobble      = new Wobblegoal();
+    public Elevator             elevator    = new Elevator();
     public Orientation          lastAngles  = new Orientation();
+
+    // Timers and time limits for each timer
     public ElapsedTime          PIDtimer    = new ElapsedTime(); // PID loop timer
-    //public ElapsedTime          drivetime     = new ElapsedTime(); // timeout timer
-    public ElapsedTime          tfTime     = new ElapsedTime(); // timeout timer
+    public ElapsedTime          drivetime   = new ElapsedTime(); // timeout timer for driving
+    public ElapsedTime          tfTime      = new ElapsedTime(); // timer for tensor flow
+    public ElapsedTime          autoShootTimer  = new ElapsedTime(); //auto shooter timer (4 rings)
+    private static double       autoShootTimeAllowed = 7; //  seconds allows 4 shoot cycles in case one messes up
+    private static double       tfSenseTime          = 4; // needs a couple seconds to process the image and ID the target
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suit the specific robot drive train.
     public static final double     DRIVE_SPEED             = 0.6;     // Nominal speed for better accuracy.
     public static final double     TURN_SPEED              = 0.50;    // 0.4 for berber carpet. Check on mat too
 
-    public static final double     HEADING_THRESHOLD       = 2;      // As tight as we can make it with an integer gyro
+    public static final double     HEADING_THRESHOLD       = 1.5;      // As tight as we can make it with an integer gyro
     public static final double     Kp_TURN                 = 0.0275;   //0.025 to 0.0275 on mat seems to work
     public static final double     Ki_TURN                 = 0.003;   //0.0025 to 0.004 on a mat works. Battery voltage matters
     public static final double     Kd_TURN                 = 0.0;   //leave as 0
@@ -49,17 +66,22 @@ public class RED_Left_Line_Auto extends BasicAutonomous {
     public static final double     Kd_DRIVE                = 0.0;   // Leave as 0 for now
 
 
-    private double                  globalAngle; // not used currently
+    private double                 globalAngle; // not used currently
+    // PID values for gyroDrive in order to reach target heading
     public double                  lasterror;
-    public  double                  totalError;
+    public  double                 totalError;
+
+    // STATE Definitions from the ENUM package
+
+    ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition
+    WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default // default target zone
 
     //// Vuforia Content
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
     private String StackSize = "None";
-    WobbleTargetZone Square = WobbleTargetZone.RED_A; // Default
-    private static double tfSenseTime = 2; // needs a couple seconds to process the imagee an ID the target
+
 
     private static final String VUFORIA_KEY =
             "AQXVmfz/////AAABmXaLleqhDEfavwYMzTtToIEdemv1X+0FZP6tlJRbxB40Cu6uDRNRyMR8yfBOmNoCPxVsl1mBgl7GKQppEQbdNI4tZLCARFsacECZkqph4VD5nho2qFN/DmvLA0e1xwz1oHBOYOyYzc14tKxatkLD0yFP7/3/s/XobsQ+3gknx1UIZO7YXHxGwSDgoU96VAhGGx+00A2wMn2UY6SGPl+oYgsE0avmlG4A4gOsc+lck55eAKZ2PwH7DyxYAtbRf5i4Hb12s7ypFoBxfyS400tDSNOUBg393Njakzcr4YqL6PYe760ZKmu78+8X4xTAYSrqFJQHaCiHt8HcTVLNl2fPQxh0wBmLvQJ/mvVfG495ER1A";
@@ -95,7 +117,23 @@ public class RED_Left_Line_Auto extends BasicAutonomous {
             tfod.setZoom(2.5, 1.78);
         }
 
+        // Call init methods in the various subsystems
+        // if "null exception" occurs it is probably because the hardware init is not called below.
         drivetrain.init(hardwareMap);
+        wobble.init(hardwareMap);
+        shooter.init(hardwareMap);
+        // intake.init(hardwareMap); not necessary in Auto at this time
+        // elevator .....also not necessary
+
+        // move implements to start position. Note, 18x18x18 inch cube has to be maintained
+        // until start is pressed. Position servos and motors here so human error and set-up is not
+        // as critical. Team needs to focus on robot alignment to the field.
+
+        shooter.shooterReload(); // reload = flipper back, stacker mostly down, shooter off
+        // nothing here for wobble goal yet. Gravity will take care of most of it.
+        // the wobble gripper is automatically opened during the wobble init.
+
+        // Gyro set-up
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.mode                = BNO055IMU.SensorMode.IMU;
@@ -103,7 +141,7 @@ public class RED_Left_Line_Auto extends BasicAutonomous {
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled      = false;
 
-        // Calibrate
+        // Init gyro parameters then calibrate
         drivetrain.imu.initialize(parameters);
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
@@ -134,7 +172,7 @@ public class RED_Left_Line_Auto extends BasicAutonomous {
         waitForStart();
         ////////////////////////////////////////////////////////////////////////////////////////////
         tfTime.reset(); //  reset the TF timer
-        while (tfTime.time() < tfSenseTime) {
+        while (tfTime.time() < tfSenseTime) { // need to let TF find the target so timer runs to let it do this
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
@@ -153,10 +191,10 @@ public class RED_Left_Line_Auto extends BasicAutonomous {
                         StackSize = recognition.getLabel();
                         //telemetry.addData("Target", Target);
                         if (StackSize == "Quad") {
-                            Square = WobbleTargetZone.RED_C;
+                            Square = WobbleTargetZone.BLUE_C;
                             telemetry.addData("Square", Square);
                         } else if (StackSize == "Single") {
-                            Square = WobbleTargetZone.RED_B;
+                            Square = WobbleTargetZone.BLUE_B;
                             telemetry.addData("Square", Square);
 
                         }
@@ -169,22 +207,59 @@ public class RED_Left_Line_Auto extends BasicAutonomous {
                 tfod.shutdown();
             }
         }
+        // Pick up the Wobble Goal before moving.
+        // Sleep statements help let things settle before moving on.
+        wobble.GripperOpen();
+        wobble.ArmExtend();
+        sleep(1000);
+        wobble.GripperClose();
+        sleep(500);
+        wobble.ArmCarryWobble();
+        sleep(500);
+
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
         // This is currently set up or field coordinates NOT RELATIVE to the last move
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
+        // Drive paths are initially all the same to get to the shooter location
+        gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
+        gyroTurn(TURN_SPEED,-10,3);
+        mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
+        shoot3Rings();   // call method to start shooter and launch 3 rings
+        drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
+
 
         switch(Square){
-            case RED_A: // This is the basic op mode. Put real paths in designated opmodes
+            case BLUE_A: // This is the basic op mode. Put real paths in designated opmodes
                 telemetry.addData("Going to RED A", "Target Zone");
-                gyroDrive(DRIVE_SPEED, 20.0, 0.0, 5);    // Drive FWD 110 inches
+                gyroTurn(TURN_SPEED*.5,20,3);
+                gyroDrive(DRIVE_SPEED, 8.0, 20.0, 5);
+                sleep(1000);
+                wobble.GripperOpen();
+                wobble.ArmExtend();
                 break;
-            case RED_B:
-                gyroDrive(DRIVE_SPEED, 40.0, 0.0, 5);    // Drive FWD 110 inches
+            case BLUE_B:
+                telemetry.addData("Going to RED B", "Target Zone");
+                //gyroTurn(TURN_SPEED*.5,20,3);
+                gyroDrive(DRIVE_SPEED, 30.0, -15.0, 5);
+                sleep(1000);
+                wobble.GripperOpen();
+                wobble.ArmContract();
+                sleep(500);
+                drivetime.reset();
+                gyroDrive(DRIVE_SPEED, -18.0, -15, 5);
                 break;
-            case RED_C:
-                gyroDrive(DRIVE_SPEED, 60.0, 0.0, 5);    // Drive FWD 110 inches
+            case BLUE_C:
+                telemetry.addData("Going to RED C", "Target Zone");
+                gyroTurn(TURN_SPEED,0,3);
+                gyroDrive(DRIVE_SPEED, 48, 0.0, 5);
+                sleep(1000);
+                wobble.GripperOpen();
+                wobble.ArmExtend();
+                sleep(1000);
+                drivetime.reset();
+                gyroDrive(DRIVE_SPEED, -48.0, 0, 5);
                 break;
         }
 
@@ -195,7 +270,6 @@ public class RED_Left_Line_Auto extends BasicAutonomous {
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
-
 
 
 
@@ -225,14 +299,6 @@ public class RED_Left_Line_Auto extends BasicAutonomous {
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
-
-
-
-
-
-
-
-
 
 
 
