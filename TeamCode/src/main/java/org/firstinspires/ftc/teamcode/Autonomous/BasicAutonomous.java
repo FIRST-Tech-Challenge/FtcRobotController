@@ -43,19 +43,22 @@ public class BasicAutonomous extends LinearOpMode {
     public Intake               intake      = new Intake();
     public Wobblegoal           wobble      = new Wobblegoal();
     public Elevator             elevator    = new Elevator();
-
     public Orientation          lastAngles  = new Orientation();
+
+    // Timers and time limits for each timer
     public ElapsedTime          PIDtimer    = new ElapsedTime(); // PID loop timer
-    public ElapsedTime          drivetime   = new ElapsedTime(); // timeout timer
-    public ElapsedTime          tfTime      = new ElapsedTime(); // timeout timer
-    public ElapsedTime      autoShootTimer  =    new ElapsedTime(); //shooter timer
+    public ElapsedTime          drivetime   = new ElapsedTime(); // timeout timer for driving
+    public ElapsedTime          tfTime      = new ElapsedTime(); // timer for tensor flow
+    public ElapsedTime          autoShootTimer  = new ElapsedTime(); //auto shooter timer (4 rings)
+    private static double       autoShootTimeAllowed = 7; //  seconds allows 4 shoot cycles in case one messes up
+    private static double       tfSenseTime          = 4; // needs a couple seconds to process the image and ID the target
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suit the specific robot drive train.
     public static final double     DRIVE_SPEED             = 0.6;     // Nominal speed for better accuracy.
     public static final double     TURN_SPEED              = 0.50;    // 0.4 for berber carpet. Check on mat too
 
-    public static final double     HEADING_THRESHOLD       = 2;      // As tight as we can make it with an integer gyro
+    public static final double     HEADING_THRESHOLD       = 1.5;      // As tight as we can make it with an integer gyro
     public static final double     Kp_TURN                 = 0.0275;   //0.025 to 0.0275 on mat seems to work
     public static final double     Ki_TURN                 = 0.003;   //0.0025 to 0.004 on a mat works. Battery voltage matters
     public static final double     Kd_TURN                 = 0.0;   //leave as 0
@@ -64,9 +67,15 @@ public class BasicAutonomous extends LinearOpMode {
     public static final double     Kd_DRIVE                = 0.0;   // Leave as 0 for now
 
 
-    private double                  globalAngle; // not used currently
+    private double                 globalAngle; // not used currently
+    // PID values for gyroDrive in order to reach target heading
     public double                  lasterror;
     public  double                 totalError;
+
+    // STATE Definitions from the ENUM package
+
+    ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition
+    WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default // default target zone
 
     //// Vuforia Content
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
@@ -74,14 +83,6 @@ public class BasicAutonomous extends LinearOpMode {
     private static final String LABEL_SECOND_ELEMENT = "Single";
     private String StackSize = "None";
 
-    // STATE Definitions
-
-    ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF;
-
-    WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default
-
-    private static double  autoShootTimeAllowed = 7;
-    private static double tfSenseTime = 4; // needs a couple seconds to process the imagee an ID the target
 
     private static final String VUFORIA_KEY =
             "AQXVmfz/////AAABmXaLleqhDEfavwYMzTtToIEdemv1X+0FZP6tlJRbxB40Cu6uDRNRyMR8yfBOmNoCPxVsl1mBgl7GKQppEQbdNI4tZLCARFsacECZkqph4VD5nho2qFN/DmvLA0e1xwz1oHBOYOyYzc14tKxatkLD0yFP7/3/s/XobsQ+3gknx1UIZO7YXHxGwSDgoU96VAhGGx+00A2wMn2UY6SGPl+oYgsE0avmlG4A4gOsc+lck55eAKZ2PwH7DyxYAtbRf5i4Hb12s7ypFoBxfyS400tDSNOUBg393Njakzcr4YqL6PYe760ZKmu78+8X4xTAYSrqFJQHaCiHt8HcTVLNl2fPQxh0wBmLvQJ/mvVfG495ER1A";
@@ -117,12 +118,23 @@ public class BasicAutonomous extends LinearOpMode {
             tfod.setZoom(2.5, 1.78);
         }
 
+        // Call init methods in the various subsystems
+        // if "null exception" occurs it is probably because the hardware init is not called below.
         drivetrain.init(hardwareMap);
         wobble.init(hardwareMap);
         shooter.init(hardwareMap);
+        // intake.init(hardwareMap); not necessary in Auto at this time
+        // elevator .....also not necessary
 
-        shooter.flipperBackward();
+        // move implements to start position. Note, 18x18x18 inch cube has to be maintained
+        // until start is pressed. Position servos and motors here so human error and set-up is not
+        // as critical. Team needs to focus on robot alignment to the field.
 
+        shooter.shooterReload(); // reload = flipper back, stacker mostly down, shooter off
+        // nothing here for wobble goal yet. Gravity will take care of most of it.
+        // the wobble gripper is automatically opened during the wobble init.
+
+        // Gyro set-up
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.mode                = BNO055IMU.SensorMode.IMU;
@@ -130,7 +142,7 @@ public class BasicAutonomous extends LinearOpMode {
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled      = false;
 
-        // Calibrate
+        // Init gyro parameters then calibrate
         drivetrain.imu.initialize(parameters);
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
@@ -204,7 +216,7 @@ public class BasicAutonomous extends LinearOpMode {
         wobble.GripperClose();
         sleep(500);
         wobble.ArmCarryWobble();
-       sleep(500);
+        sleep(500);
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
@@ -222,7 +234,6 @@ public class BasicAutonomous extends LinearOpMode {
         switch(Square){
             case BLUE_A: // This is the basic op mode. Put real paths in designated opmodes
                 telemetry.addData("Going to RED A", "Target Zone");
-
                 gyroTurn(TURN_SPEED*.5,20,3);
                 gyroDrive(DRIVE_SPEED, 8.0, 20.0, 5);
                 sleep(1000);
@@ -237,15 +248,19 @@ public class BasicAutonomous extends LinearOpMode {
                 wobble.GripperOpen();
                 wobble.ArmContract();
                 sleep(500);
-
                 drivetime.reset();
-                gyroDrive(DRIVE_SPEED, -18.0, -15.0, 5);
+                gyroDrive(DRIVE_SPEED, -18.0, -15, 5);
                 break;
             case BLUE_C:
                 telemetry.addData("Going to RED C", "Target Zone");
-                gyroDrive(DRIVE_SPEED, 115.0, 0.0, 5);    // Drive FWD 110 inches
+                gyroTurn(TURN_SPEED,0,3);
+                gyroDrive(DRIVE_SPEED, 48, 0.0, 5);
+                sleep(1000);
                 wobble.GripperOpen();
                 wobble.ArmExtend();
+                sleep(1000);
+                drivetime.reset();
+                gyroDrive(DRIVE_SPEED, -48.0, 0, 5);
                 break;
         }
 
@@ -542,9 +557,9 @@ public class BasicAutonomous extends LinearOpMode {
         while (opModeIsActive() && autoShootTimer.time()  <= autoShootTimeAllowed)  {
             if (mShooterState == ShooterState.STATE_SHOOTER_ACTIVE) {
                 shooter.shootoneRingHigh();
-                sleep(1000);
+                sleep(750);
                 shooter.flipperForward();
-                sleep(1000);
+                sleep(750);
                 shooter.flipperBackward();
 
             }
