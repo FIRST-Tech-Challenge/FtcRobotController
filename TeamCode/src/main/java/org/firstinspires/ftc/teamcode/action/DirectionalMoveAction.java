@@ -46,9 +46,9 @@ public class DirectionalMoveAction implements Action {
         int FR_pos = hardware.omniDrive.frontRight.getCurrentPosition();
         int BL_pos = hardware.omniDrive.backLeft.getCurrentPosition();
         int BR_pos = hardware.omniDrive.backRight.getCurrentPosition();
-        pos = ((int) (this.distance * hardware.COUNTS_PER_INCH));
+        pos = ((int) (this.distance * hardware.omniDrive.getCountsPerInch()));
 
-        SLOW_COUNTS = (int) (slowDistance * hardware.COUNTS_PER_INCH);
+        SLOW_COUNTS = (int) (slowDistance * hardware.omniDrive.getCountsPerInch());
         SPEED_SLOPE = (speed-SLOW_SPEED)/(SLOW_COUNTS);
 
         switch (direction) {

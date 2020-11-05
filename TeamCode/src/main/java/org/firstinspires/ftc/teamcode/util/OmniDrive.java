@@ -10,6 +10,9 @@ public class OmniDrive {
     public DcMotor backLeft;
     public DcMotor backRight;
 
+    private Double countsPerInch;
+    private Double countsPerDegreee;
+
     public enum Direction {
         FORWARD,
         LEFT,
@@ -30,6 +33,27 @@ public class OmniDrive {
         this.backLeft = backLeft;
         this.backRight = backRight;
 
+    }
+
+    public Double getCountsPerInch() {
+        return countsPerInch;
+    }
+
+    public void setCountsPerInch(double countsPerInch) {
+        this.countsPerInch = countsPerInch;
+    }
+
+    public Double getCountsPerDegreee() {
+        return countsPerDegreee;
+    }
+
+    public void setCountsPerDegree(double countsPerDegreee) {
+        this.countsPerDegreee = countsPerDegreee;
+    }
+
+    public void setWheelMeasurements(double countsPerDegreee, double countsPerInch) {
+        this.countsPerDegreee = countsPerDegreee;
+        this.countsPerInch = countsPerInch;
     }
 
     public void moveForward(double power) {

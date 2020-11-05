@@ -24,10 +24,6 @@ public abstract class RobotHardware extends OpMode {
     public Localizer  localizer;
     public HybridOpController hybridOpController;
 
-    public static double COUNTS_PER_INCH;
-    public static double COUNTS_PER_LAT_INCH;
-    public static double COUNTS_PER_DEGREE;
-
     /**
      * All hardware should initialize sensors and stuff here
      */

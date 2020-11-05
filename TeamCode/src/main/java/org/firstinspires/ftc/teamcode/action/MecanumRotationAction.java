@@ -22,7 +22,7 @@ public class MecanumRotationAction implements Action {
 
     @Override
     public void init(RobotHardware hardware) {
-        int distance = (int) (hardware.COUNTS_PER_DEGREE * degrees);
+        int distance = (int) (hardware.omniDrive.getCountsPerDegreee() * degrees);
         encoderDrive = new EncoderDrive(hardware);
         if (distance < 0) {
             distance = -distance;

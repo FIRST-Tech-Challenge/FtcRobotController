@@ -157,15 +157,15 @@ public class EncoderDrive {
         int BR_direction = (BR_speed > 0) ? 1 : (BR_speed < 0) ? -1 : 0;
 
         if (direction == OmniDrive.Direction.LEFT || direction == OmniDrive.Direction.RIGHT) {
-            FL_targetPosition = omniDrive.frontLeft.getCurrentPosition() + FL_direction * (int)(robotHardware.COUNTS_PER_LAT_INCH * distance);
-            FR_targetPosition = omniDrive.frontRight.getCurrentPosition() + FR_direction * (int)(robotHardware.COUNTS_PER_LAT_INCH * distance);
-            BL_targetPosition = omniDrive.backLeft.getCurrentPosition() + BL_direction * (int)(robotHardware.COUNTS_PER_LAT_INCH * distance);
-            BR_targetPosition = omniDrive.backRight.getCurrentPosition() + BR_direction * (int)(robotHardware.COUNTS_PER_LAT_INCH * distance);
+            FL_targetPosition = omniDrive.frontLeft.getCurrentPosition() + FL_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
+            FR_targetPosition = omniDrive.frontRight.getCurrentPosition() + FR_direction * (int)(robotHardware.omniDrive.getCountsPerInch()  * distance);
+            BL_targetPosition = omniDrive.backLeft.getCurrentPosition() + BL_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
+            BR_targetPosition = omniDrive.backRight.getCurrentPosition() + BR_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
         } else {
-            FL_targetPosition = omniDrive.frontLeft.getCurrentPosition() + FL_direction * (int)(robotHardware.COUNTS_PER_INCH * distance);
-            FR_targetPosition = omniDrive.frontRight.getCurrentPosition() + FR_direction * (int)(robotHardware.COUNTS_PER_INCH * distance);
-            BL_targetPosition = omniDrive.backLeft.getCurrentPosition() + BL_direction * (int)(robotHardware.COUNTS_PER_INCH * distance);
-            BR_targetPosition = omniDrive.backRight.getCurrentPosition() + BR_direction * (int)(robotHardware.COUNTS_PER_INCH * distance);
+            FL_targetPosition = omniDrive.frontLeft.getCurrentPosition() + FL_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
+            FR_targetPosition = omniDrive.frontRight.getCurrentPosition() + FR_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
+            BL_targetPosition = omniDrive.backLeft.getCurrentPosition() + BL_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
+            BR_targetPosition = omniDrive.backRight.getCurrentPosition() + BR_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
         }
 
 

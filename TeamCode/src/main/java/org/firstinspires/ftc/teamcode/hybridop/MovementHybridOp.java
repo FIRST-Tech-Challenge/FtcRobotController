@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.playmaker.HybridOpController;
 @TeleOp(name="Movement HyOp")
 public class MovementHybridOp extends MovementHardware implements HybridOp {
 
-    final double POWER_SCALE_FACTOR = 1;
-    final double ROTATE_SCALE_FACTOR = 0.75;
+    final double POWER_SCALE_FACTOR = 0.5;
+    final double ROTATE_SCALE_FACTOR = 0.4;
     boolean a_press = false;
     private ActionSequence movementActionSequence = new MovementActionSequence();
 

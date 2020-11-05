@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
@@ -24,12 +23,24 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 public class Localizer {
 
     private long latestAcquisitionTime = 0;
-    private OpenGLMatrix cameraMatrix;
-    private List<VuforiaTrackable> vuforiaTrackables = new ArrayList<VuforiaTrackable>();
-    private VuforiaTransform lastVuforiaTransform;
+
+    // IMU measurements
     private Orientation lastRawIMUOrientation;
     private Orientation lastIMUOrientation;
     private Double imuToWorldRotation;
+
+    // Vuforia measurements
+    private OpenGLMatrix cameraMatrix;
+    private List<VuforiaTrackable> vuforiaTrackables = new ArrayList<VuforiaTrackable>();
+    private VuforiaTransform lastVuforiaTransform;
+
+    // Encoder measurements
+    private Integer lastFrontLeft;
+    private Integer lastFrontRight;
+    private Integer lastBackLeft;
+    private Integer lastBackRight;
+    private Position lastEncoderPosition = new Position();
+    private Orientation lastEncoderOrientation = new Orientation(EXTRINSIC, XYZ, DEGREES, 0,0,0, System.nanoTime());
 
     // Vuforia Constants
     private static final float mmPerInch        = 25.4f;
@@ -37,48 +48,22 @@ public class Localizer {
     private static final float halfField = 72 * mmPerInch;
     private static final float quadField  = 36 * mmPerInch;
 
+    public boolean vuforiaOverwritesOtherLocations = true;
+    public boolean vuforiaOverwritesOtherOrientations = true;
+
     public void setLatestAcquisitionTime() {
         this.latestAcquisitionTime = System.nanoTime();
-    }
-
-
-    /**
-     * Return the robot's estimated location on the field.
-     * X: the axis running from the audience view (negative) to the goals (positive)
-     * Y: the axis running from red alliance (negative) to the blue alliance (positive)
-     * Z: height of the robot off ground, though not relevant for this game.
-     * @return the estimated Position
-     */
-
-    public Position estimatePosition() {
-        if (lastVuforiaTransform != null) {
-            VectorF translation = lastVuforiaTransform.transform.getTranslation();
-            float x = translation.get(0);
-            float y = translation.get(1);
-            float z = translation.get(2);
-            Position position = new Position(DistanceUnit.MM, x, y, z, System.currentTimeMillis());
-            return position;
-        }
-        return null;
-    }
-
-    /**
-     * Estimate the robot's orientation on the field.
-     * First Angle: Roll
-     * Second Angle: Pitch
-     * Third Angle: Heading, this is the only value you'll really care about
-     * @return
-     */
-
-    enum OrientationSource {
-        VUFORIA,
-        IMU,
-        OTHER
     }
 
     enum PositionSource {
         VUFORIA,
         ENCODERS,
+        OTHER
+    }
+
+    enum OrientationSource {
+        VUFORIA,
+        IMU,
         OTHER
     }
 
@@ -101,6 +86,43 @@ public class Localizer {
         }
     }
 
+
+    /**
+     * Return the robot's estimated location on the field.
+     * X: the axis running from the audience view (negative) to the goals (positive)
+     * Y: the axis running from red alliance (negative) to the blue alliance (positive)
+     * Z: height of the robot off ground, though not relevant for this game.
+     * @return the estimated Position
+     */
+
+    public EstimatedPosition estimatePosition() {
+        boolean newVuforiaInfo = lastVuforiaTransform.acquisitionTime >= latestAcquisitionTime;
+        boolean newEncodersInfo = lastEncoderPosition.acquisitionTime >= latestAcquisitionTime;
+        if (newVuforiaInfo) {
+            VectorF translation = lastVuforiaTransform.transform.getTranslation();
+            float x = translation.get(0);
+            float y = translation.get(1);
+            float z = translation.get(2);
+            Position position = new Position(DistanceUnit.MM, x, y, z, System.currentTimeMillis());
+
+            if (vuforiaOverwritesOtherLocations) {
+                lastEncoderPosition = position;
+            }
+            return new EstimatedPosition(PositionSource.VUFORIA, position);
+        } else if (newEncodersInfo){
+            return new EstimatedPosition(PositionSource.ENCODERS, lastEncoderPosition);
+        }
+        return null;
+    }
+
+    /**
+     * Estimate the robot's orientation on the field.
+     * First Angle: Roll
+     * Second Angle: Pitch
+     * Third Angle: Heading, this is the only value you'll really care about
+     * @return
+     */
+
     public EstimatedOrientation estimateOrientation() {
         if (lastVuforiaTransform != null) {
             Orientation rotation = Orientation.getOrientation(lastVuforiaTransform.transform, EXTRINSIC, XYZ, DEGREES);
@@ -112,7 +134,7 @@ public class Localizer {
     } //meeep
 
     public void telemetry(Telemetry telemetry) {
-        Position position = estimatePosition();
+        Position position = estimatePosition().position;
         EstimatedOrientation orientation = estimateOrientation();
         if (position != null) {
             telemetry.addData("Loc. Position", String.format("%.1f, %.1f, %.1f", position.x, position.y, position.z));
@@ -226,11 +248,71 @@ public class Localizer {
         targetsUltimateGoal.activate();
     }
 
+    public void updateTransformWithEncoders(RobotHardware hardware) {
+
+    }
+
+    /**
+     * Calculates robot transform using encoders and the IMU.
+     * The IMU is relied on for rotational measurements.
+     * @param hardware The hardware to use
+     */
+
+    public void updateTransformWithEncodersAndIMU(RobotHardware hardware) {
+        if (lastIMUOrientation == null) {
+            // If there is no IMU data, location/rotation can not be determined.
+            return;
+        }
+
+        // Get current encoder positions
+        int currentFrontLeft = hardware.omniDrive.frontLeft.getCurrentPosition();
+        int currentFrontRight = hardware.omniDrive.frontRight.getCurrentPosition();
+        int currentBackLeft = hardware.omniDrive.backLeft.getCurrentPosition();
+        int currentBackRight = hardware.omniDrive.backRight.getCurrentPosition();
+
+        // Perform location estimation if there's delta information to work with
+        if (!(lastFrontLeft == null
+                || lastFrontRight == null
+                || lastBackLeft == null
+                || lastBackRight == null
+                || lastEncoderOrientation == null)) {
+
+            // Get position deltas
+            int deltaFrontLeft = currentFrontLeft - lastFrontLeft;
+            int deltaFrontRight = currentFrontRight - lastFrontRight;
+            int deltaBackLeft = currentBackLeft - lastBackLeft;
+            int deltaBackRight = currentBackRight - lastBackRight;
+
+            // Get robot centric delta measurements
+            double countsPerMM = DistanceUnit.MM.fromInches(hardware.omniDrive.getCountsPerInch());
+            double xRobotRelMovement = (1/Math.sqrt(2))*(countsPerMM)*(deltaFrontLeft+deltaBackRight-deltaFrontRight-deltaBackLeft);
+            double yRobotRelMovement = (1/Math.sqrt(2))*(countsPerMM)*(deltaFrontLeft+deltaFrontRight+deltaBackLeft+deltaBackRight);
+
+            // Translate robot-centric movements into field deltas and apply
+            double robotHeading = lastIMUOrientation.thirdAngle;
+            double fieldXMovement = -((yRobotRelMovement*Math.cos(robotHeading)) - (yRobotRelMovement*Math.sin(robotHeading)));
+            double fieldYMovement = -((xRobotRelMovement*Math.sin(robotHeading)) + (xRobotRelMovement*Math.cos(robotHeading)));
+            double lastX = lastEncoderPosition.x;
+            double lastY = lastEncoderPosition.y;
+            lastEncoderPosition = new Position(DistanceUnit.MM, lastX + fieldXMovement, lastY + fieldYMovement, 0, System.nanoTime());
+        }
+
+        // Set current positions for next transform update.
+        lastFrontLeft = currentFrontLeft;
+        lastFrontRight = currentFrontRight;
+        lastBackLeft = currentBackLeft;
+        lastBackRight = currentBackRight;
+    }
+
     public void updateRobotTransform(RobotHardware hardware, BNO055IMU imu) {
         this.setLatestAcquisitionTime();
+
         this.updateLocationWithVuforia(hardware);
         if (imu != null) {
             this.updateIMUOrientation(imu);
+        }
+        if (hardware.omniDrive != null) {
+            this.updateTransformWithEncodersAndIMU(hardware);
         }
 
     }

@@ -28,7 +28,7 @@ public class LocalizerTelemetry extends MovementHardware {
     public void loop() {
         this.localize();
 
-        Position position = localizer.estimatePosition();
+        Position position = localizer.estimatePosition().position;
         Orientation orientation = localizer.estimateOrientation().orientation;
         if (position != null) {
             telemetry.addData("Localizer Position", String.format("%.1f, %.1f, %.1f", position.x, position.y, position.z));
