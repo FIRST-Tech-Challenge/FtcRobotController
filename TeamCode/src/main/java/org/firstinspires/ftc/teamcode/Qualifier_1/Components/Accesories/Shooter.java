@@ -3,6 +3,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * <h1> Ultimate Goal Accessory
@@ -18,9 +19,9 @@ public class Shooter {
     private HardwareMap hardwareMap = null;
     public DcMotor shooterMotor;
     Servo shooter_Servo;
-    private float speedTopGoal = 100;//will get changed when testing
-    private float speedMediumGoal=80;//will get changed when testing
-    private float speedLowGoal=50;//will get changed when testing
+    private double speedTopGoal = 1;//will get changed when testing
+    private double speedMediumGoal=0.8;//will get changed when testing
+    private double speedLowGoal=0.5;//will get changed when testing
     private double distance;
 
     public Shooter(){
@@ -36,6 +37,7 @@ public class Shooter {
         shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter_Servo.setPosition(1.0);
         int Gobilda_Ticks_Per_Rev=28;
+
     }
 
     public void moveServo(boolean direction) {
@@ -49,7 +51,7 @@ public class Shooter {
         op.sleep(2000);
     }
 
-    //0.0 is clamped, 1.0 is unclamped
+
     public void moveServoPosition(double pushPosition) {
         op.telemetry.addData("claw position :", pushPosition);
         op.telemetry.update();
@@ -58,7 +60,7 @@ public class Shooter {
     }
 
 
-    public void shootHighGoal(double distance){
+    public void shootHighGoal(double distance) {
         this.distance=distance;
         double sleepTime = (distance / speedTopGoal * 1000);
         shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
@@ -70,6 +72,8 @@ public class Shooter {
         shooterMotor.setPower(speedTopGoal);
 
         while (shooterMotor.isBusy()) {
+            op.sleep(1000);
+            moveServo(false);
             moveServo(true);
             moveServo(false);
             moveServo(true);
@@ -92,6 +96,8 @@ public class Shooter {
         shooterMotor.setPower(speedMediumGoal);
 
         while (shooterMotor.isBusy()) {
+            op.sleep(1000);
+            moveServo(false);
             moveServo(true);
             moveServo(false);
             moveServo(true);
@@ -113,6 +119,8 @@ public class Shooter {
         shooterMotor.setPower(speedLowGoal);
 
         while (shooterMotor.isBusy()) {
+            op.sleep(1000);
+            moveServo(false);
             moveServo(true);
             moveServo(false);
             moveServo(true);
