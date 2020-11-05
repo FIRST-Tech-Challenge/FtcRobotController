@@ -1,7 +1,6 @@
 from os import stat
 import requests
 import os
-from requests.models import stream_decode_response_unicode
 import websockets
 import asyncio
 import json

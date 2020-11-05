@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.playmaker;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;

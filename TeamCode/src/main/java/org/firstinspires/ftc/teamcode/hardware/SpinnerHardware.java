@@ -11,6 +11,7 @@ public abstract class SpinnerHardware extends RobotHardware {
 
     public DcMotor spinnerLeft;
     public DcMotor spinnerRight;
+    public DcMotor chainLift;
 
     @Override
     public void initializeHardware() {
@@ -18,6 +19,7 @@ public abstract class SpinnerHardware extends RobotHardware {
         spinnerLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         spinnerRight = this.initializeDevice(DcMotor.class, "spinnerRight");
         spinnerRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        chainLift = this.initializeDevice(DcMotor.class, "chain");
     }
 
 }
