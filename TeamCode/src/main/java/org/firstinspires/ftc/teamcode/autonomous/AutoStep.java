@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
+import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 
 public class AutoStep implements Cloneable {
     public static final String NO_ACTION = "";
@@ -10,6 +11,7 @@ public class AutoStep implements Cloneable {
     private int targetY;
     private double topSpeed = 0.5;
     private MoveStrategy moveStrategy = MoveStrategy.Curve;
+    private RobotDirection robotDirection = RobotDirection.Optimal;
     private String action = NO_ACTION;
     private double desiredHead = BotMoveProfile.DEFAULT_HEADING;
     private boolean continuous = false;
@@ -103,6 +105,7 @@ public class AutoStep implements Cloneable {
         clone.setTargetY(this.getTargetY());
         clone.setTopSpeed(this.getTopSpeed());
         clone.setMoveStrategy(this.getMoveStrategy());
+        clone.setRobotDirection(this.getRobotDirection());
         clone.setAction(this.getAction());
         clone.setDesiredHead(this.getDesiredHead());
         clone.setContinuous(this.isContinuous());
@@ -131,4 +134,15 @@ public class AutoStep implements Cloneable {
         this.targetReference = targetReference;
     }
 
+    public RobotDirection getRobotDirection() {
+        return robotDirection;
+    }
+
+    public String getRobotDirectionString() {
+        return getRobotDirection().name();
+    }
+
+    public void setRobotDirection(RobotDirection robotDirection) {
+        this.robotDirection = robotDirection;
+    }
 }

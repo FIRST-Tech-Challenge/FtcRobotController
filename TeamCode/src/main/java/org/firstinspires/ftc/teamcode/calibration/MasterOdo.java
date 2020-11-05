@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
+import org.firstinspires.ftc.teamcode.odometry.OdoBase;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.Led;
 
@@ -36,31 +37,16 @@ import static org.firstinspires.ftc.teamcode.autonomous.AutoRoute.NAME_RED;
 import static org.firstinspires.ftc.teamcode.autonomous.AutoStep.NO_ACTION;
 
 @TeleOp(name="Master Odo", group="Robot15173")
-public class MasterOdo extends LinearOpMode {
+public class MasterOdo extends OdoBase {
 
-    protected UltimateBot bot = new UltimateBot();
-    ElapsedTime timer = new ElapsedTime();
     public static String COORDINATE = "Coordinate";
 
-
-    public static final File ROUTES_FOLDER = new File(FIRST_FOLDER, "/routes/");
-    public static final File DOTS_FOLDER = new File(FIRST_FOLDER, "/dots/");
-    public static String BOT_ACTIONS = "bot-actions.json";
     private ArrayList<AutoRoute> routes = new ArrayList<>();
-    private ArrayList<AutoDot> coordinates = new ArrayList<>();
     private ArrayList<Integer> blueRoutes = new ArrayList<>();
     private ArrayList<Integer> redRoutes = new ArrayList<>();
-    private List<Method> botActions = new ArrayList<Method>();
-    private HashMap<String, AutoDot> coordinateFunctions = new HashMap<>();
 
     protected double right = 0;
     protected double left = 0;
-
-    protected double desiredHead = 0;
-
-
-    protected int startX = 50;
-    protected int startY = 15;
 
 
     private int selectedTopMode = 0;
@@ -80,6 +66,7 @@ public class MasterOdo extends LinearOpMode {
     private boolean desiredHeadSettingMode = false;
     private boolean routeSavingMode = false;
     private boolean actionSettingMode = false;
+    private boolean directionSettingMode = false;
 
     private boolean dynamicDestinationMode = false;
 
@@ -93,19 +80,16 @@ public class MasterOdo extends LinearOpMode {
 
     private AutoDot newDot = new AutoDot();
 
-
     private AutoStep goToInstructions = new AutoStep();
-    private AutoRoute selectedRoute = new AutoRoute();
     private AutoRoute newRoute = new AutoRoute();
-    private BotMoveProfile profileCurve = null;
 
 
 
     private static final int[] modesTop = new int[]{0, 1, 2, 3, 4};
     private static final String[] modeNamesTop = new String[]{"Start Position", "Go To", "Routes", "Save Route", "Manual Drive"};
 
-    private static final int[] modesStep = new int[]{0, 1, 2, 3, 4, 5, 6};
-    private static final String[] modeStepName = new String[]{"Destination", "Top Speed", "Strategy", "Wait", "Continue", "Heading", "Action"};
+    private static final int[] modesStep = new int[]{0, 1, 2, 3, 4, 5, 6, 7};
+    private static final String[] modeStepName = new String[]{"Destination", "Top Speed", "Strategy", "Wait", "Continue", "Heading", "Action", "Direction"};
 
 
     private double SPEED_INCREMENT = 0.1;
@@ -118,23 +102,15 @@ public class MasterOdo extends LinearOpMode {
     Deadline gamepadRateLimit;
     private final static int GAMEPAD_LOCKOUT = 500;
 
-    RobotCoordinatePosition locator = null;
-
 
 
     @Override
     public void runOpMode() throws InterruptedException {
         try {
-            bot.init(this, hardwareMap, telemetry);
+            super.runOpMode();
             this.led = bot.getLights();
-            bot.initGyro();
-            bot.initCalibData();
             gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
             listRoutes();
-
-            listCoordinates();
-
-            loadBotActions();
 
             waitForStart();
 
@@ -161,15 +137,6 @@ public class MasterOdo extends LinearOpMode {
             }
             selectedRoute.getSteps().clear();
             selectedRoute = null;
-        }
-    }
-
-    private void startLocator(){
-        if (locator == null) {
-            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), desiredHead, 75);
-            locator.reverseHorEncoder();
-            Thread positionThread = new Thread(locator);
-            positionThread.start();
         }
     }
 
@@ -387,6 +354,16 @@ public class MasterOdo extends LinearOpMode {
                 goToInstructions.setMoveStrategy(updated);
 
             }
+            else if (directionSettingMode){
+                int index = goToInstructions.getRobotDirection().ordinal();
+                int total = RobotDirection.values().length;
+                index++;
+                if (index >= total){
+                    index = 0;
+                }
+                RobotDirection updated = RobotDirection.values()[index];
+                goToInstructions.setRobotDirection(updated);
+            }
             else if (desiredHeadSettingMode){
                 double desiredHead = goToInstructions.getDesiredHead();
                 if (desiredHead == -1){
@@ -591,6 +568,16 @@ public class MasterOdo extends LinearOpMode {
                 goToInstructions.setMoveStrategy(updated);
 
             }
+            else if (directionSettingMode){
+                int index = goToInstructions.getRobotDirection().ordinal();
+                int total = RobotDirection.values().length;
+                index--;
+                if (index < 0){
+                    index = total - 1;
+                }
+                RobotDirection updated = RobotDirection.values()[index];
+                goToInstructions.setRobotDirection(updated);
+            }
             else if (actionSettingMode){
                 String action = goToInstructions.getAction();
                 int selectedIndex = -1;
@@ -670,7 +657,7 @@ public class MasterOdo extends LinearOpMode {
         if (gamepad1.start){
 
             if (goToMode){
-                goTo(this.goToInstructions, true);
+                goTo(this.goToInstructions, true, NAME_RED);
             }
             else if (routeSavingMode){
                 saveRoute();
@@ -746,6 +733,9 @@ public class MasterOdo extends LinearOpMode {
                     case 6:
                         actionSettingMode = !actionSettingMode;
                         break;
+                    case 7:
+                        directionSettingMode = !directionSettingMode;
+                        break;
                 }
             }
             showConfig();
@@ -759,144 +749,6 @@ public class MasterOdo extends LinearOpMode {
         }
     }
 
-
-    private void goTo(AutoStep instruction, boolean dryRun){
-        if (dryRun && selectedRoute.getSteps().size() == 0){
-            selectedRoute.setStartX((int)locator.getXInches());
-            selectedRoute.setStartY((int)locator.getYInches());
-        }
-        waitToStartStep(instruction.getWaitMS());
-        MoveStrategy strategy = instruction.getMoveStrategy();
-        executeStep(instruction, strategy, dryRun);
-        Method action = findActionMethod(instruction.getAction());
-        if (action != null){
-            try {
-                AutoDot result = (AutoDot)action.invoke(this.bot);
-                if (coordinateFunctions.containsKey(action.getName())){
-                    coordinateFunctions.put(action.getName(), result);
-                }
-            }
-            catch (Exception ex){
-                telemetry.addData("Error", ex.getMessage());
-                telemetry.update();
-            }
-        }
-        if (dryRun) {
-            selectedRoute.getSteps().add(instruction.clone());
-        }
-
-    }
-
-    private void executeStep(AutoStep instruction,  MoveStrategy strategy, boolean dryRun){
-        Point target = new Point(instruction.getTargetX(), instruction.getTargetY());
-        double desiredHead = instruction.getDesiredHead();
-        String targetReference = instruction.getTargetReference();
-        if (targetReference.equals("") == false){
-            AutoDot dot = coordinateFunctions.get(targetReference);
-            target = dot.getPoint();
-            if (target == null){
-                telemetry.addData("Warning", String.format("No data in target reference function %s", instruction.getTargetReference()));
-                return;
-            }
-            desiredHead = dot.getHeading();
-        }
-        BotMoveProfile profile = BotMoveProfile.bestRoute(bot, (int)locator.getXInches(), (int)locator.getYInches(), target,
-                RobotDirection.Optimal, instruction.getTopSpeed(), strategy, desiredHead, locator);
-        if (profile == null){
-            return;
-        }
-        profile.setDryRun(dryRun);
-        profile.setContinuous(instruction.isContinuous());
-
-        boolean finalSpin = true;
-
-        switch (profile.getStrategy()){
-            case Curve:
-                curve(profile);
-                break;
-            case Spin:
-            case SpinNCurve:
-            case SpinNStraight:
-                spin(profile);
-                finalSpin = false;
-                break;
-            case Strafe:
-                strafe(profile);
-                break;
-            case Straight:
-                moveStraight(profile);
-                break;
-            case Diag:
-                diag(profile);
-                break;
-
-        }
-        if (profile.getNextStep() != null){
-            //let the locator catch up
-            if (!profile.isContinuous()) {
-                sleep(locator.getThreadSleepTime());
-            }
-            executeStep(instruction, profile.getNextStep(), dryRun);
-        }
-
-        //set the desired heading
-        if (finalSpin && profile.getNextStep() == null && instruction.getDesiredHead() != BotMoveProfile.DEFAULT_HEADING) {
-            sleep(locator.getThreadSleepTime());
-            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(instruction.getDesiredHead(), instruction.getTopSpeed(), locator);
-            if (Math.abs(profile.getAngleChange()) < 30){
-                profile.setTopSpeed(0.1);
-            }
-            else{
-                profile.setTopSpeed(0.3);
-            }
-            spin(profileSpin);
-        }
-
-        telemetry.update();
-    }
-
-    private void moveStraight(BotMoveProfile profile){
-        bot.moveTo(profile);
-    }
-
-    private void spin(BotMoveProfile profile){
-        try {
-            if (profile != null) {
-                bot.spin(profile, locator);
-            }
-        }catch (Exception ex){
-            telemetry.addData("Error spin", ex.getMessage());
-        }
-    }
-
-    private void diag(BotMoveProfile profile){
-        try {
-            if (profile != null) {
-                bot.diagTo(profile);
-            }
-        }catch (Exception ex){
-            telemetry.addData("error diag", ex.getMessage());
-        }
-    }
-
-    private void  curve(BotMoveProfile profile)
-    {
-        bot.curveTo(profile, locator);
-    }
-
-    private void strafe(BotMoveProfile profile){
-        double distance = profile.getDistance();
-        double angleChange = profile.getAngleChange();
-        bot.strafeToCalib(profile.getTopSpeed(), distance, angleChange > 0, profile.getMotorReduction());
-    }
-
-
-    private void waitToStartStep(int MS){
-        timer.reset();
-        while(timer.milliseconds() < MS && opModeIsActive()){
-
-        }
-    }
 
     private String getStepValue(int index){
         String val = "";
@@ -922,6 +774,9 @@ public class MasterOdo extends LinearOpMode {
                 break;
             case 6:
                 val = goToInstructions.getAction();
+                break;
+            case 7:
+                val = goToInstructions.getRobotDirectionString();
                 break;
         }
         return val;
@@ -963,6 +818,15 @@ public class MasterOdo extends LinearOpMode {
                         telemetry.addData(s.name(), "*");
                     } else {
                         telemetry.addData(s.name(), " ");
+                    }
+                }
+            }
+            else if (directionSettingMode){
+                for (RobotDirection rd : RobotDirection.values()) {
+                    if (goToInstructions.getRobotDirection().equals(rd)) {
+                        telemetry.addData(rd.name(), "*");
+                    } else {
+                        telemetry.addData(rd.name(), " ");
                     }
                 }
             }
@@ -1028,9 +892,6 @@ public class MasterOdo extends LinearOpMode {
                 for (int i = 0; i < modesStep.length; i++) {
                     String selected = i == selectedGoToMode ? "*" : " ";
                     telemetry.addData(String.format("%s%s", selected, modeStepName[i]), getStepValue(i));
-                }
-                if (profileCurve != null){
-                    telemetry.addData("Profile", profileCurve.toString());
                 }
             }
 
@@ -1182,7 +1043,7 @@ public class MasterOdo extends LinearOpMode {
                 locator.init(selected.getStart(), desiredHead);
                 long startTime = System.currentTimeMillis();
                 for (AutoStep s : selected.getSteps()) {
-                    this.goTo(s, false);
+                    this.goTo(s, false, selected.getName());
                 }
                 long endTime = System.currentTimeMillis();
                 selected.setLastRunTime(endTime - startTime);
@@ -1239,37 +1100,9 @@ public class MasterOdo extends LinearOpMode {
         }
     }
 
-
-    public  void loadBotActions() {
-        Class<?> klass = this.bot.getClass();
-        ArrayList<BotActionObj> botActionList = new ArrayList<>();
-        while (klass != Object.class) {
-            for (final Method method : klass.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(BotAction.class)) {
-                    botActions.add(method);
-                    BotAction annotation = method.getAnnotation(BotAction.class);
-                    BotActionObj obj = new BotActionObj();
-                    obj.setMethodName(method.getName());
-                    if (annotation != null){
-                        obj.setDescription(annotation.displayName());
-                    }
-                    else{
-                        obj.setDescription(method.getName());
-                    }
-
-                    if (AutoDot.class.isAssignableFrom(method.getReturnType())){
-                        coordinateFunctions.put(method.getName(), null);
-                        obj.setGeo(true);
-                        String namedDot = annotation.defaultReturn();
-                        if (!namedDot.isEmpty()){
-                            obj.setReturnRef(namedDot);
-                        }
-                    }
-                    botActionList.add(obj);
-                }
-            }
-            klass = klass.getSuperclass();
-        }
+    @Override
+    protected ArrayList<BotActionObj> loadBotActions() {
+        ArrayList<BotActionObj> botActionList = super.loadBotActions();
         try {
             File actionsFile = getActionsFile();
             String jsonPath = SimpleGson.getInstance().toJson(botActionList);
@@ -1278,41 +1111,9 @@ public class MasterOdo extends LinearOpMode {
         catch (Exception ex){
             telemetry.addData("Error", "Unable to save Bot Actions. %s", ex.getMessage());
         }
-
+        return botActionList;
     }
 
-    private AutoDot findNamedCoordinate(String name){
-        for(AutoDot d : coordinates){
-            if(d.getDotName().equals(name)){
-                return d;
-            }
-        }
-        return null;
-    }
-
-
-    public Method findActionMethod(String actionName){
-        Method selected = null;
-        for(Method m : this.botActions){
-            if (m.getName().equals(actionName)){
-                selected = m;
-                break;
-            }
-        }
-        return selected;
-    }
-
-    private File getRouteFile(String filename)
-    {
-        String fullName = String.format("%s.json", filename);
-        File file = new File(fullName);
-        if (!file.isAbsolute())
-        {
-            AppUtil.getInstance().ensureDirectoryExists(ROUTES_FOLDER);
-            file = new File(ROUTES_FOLDER, fullName);
-        }
-        return file;
-    }
 
     private File getCoordinateFile(String filename)
     {
@@ -1348,38 +1149,8 @@ public class MasterOdo extends LinearOpMode {
         goToInstructions.setTargetY(startY);
     }
 
-    private void listCoordinates(){
-        try {
-            int count = 0;
-            AppUtil.getInstance().ensureDirectoryExists(DOTS_FOLDER);
-            File [] list = DOTS_FOLDER.listFiles();
-            if (list != null && list.length > 0) {
-                for (final File rf : DOTS_FOLDER.listFiles()) {
-                    String jsonData = ReadWriteFile.readFile(rf);
-                    AutoDot dot = AutoDot.deserialize(jsonData);
-                    if (count == 0) {
-                        dot.setSelected(true);
-                    } else {
-                        dot.setSelected(false);
-                    }
-                    addNamedCoordinate(dot);
-                    count++;
-                }
-            }
-        }
-        catch (Exception ex){
-            telemetry.addData("Error listCoordinates", ex.getMessage());
-            telemetry.update();
-        }
-    }
 
-    private void addNamedCoordinate(AutoDot dot){
-        this.coordinates.add(dot);
-        this.coordinateFunctions.put(dot.getDotName(), dot);
-    }
-
-
-    private void listRoutes(){
+    protected void listRoutes(){
         try {
             int count = 0;
             AppUtil.getInstance().ensureDirectoryExists(ROUTES_FOLDER);

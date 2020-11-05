@@ -1,40 +1,37 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.odometry.OdoBase;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 
-public abstract class AutoBase extends LinearOpMode {
-    protected UltimateBot robot = new UltimateBot();
+public abstract class AutoBase extends OdoBase {
     protected ElapsedTime runtime = new ElapsedTime();
 
     protected void runAutoMode(){
-        initRobot();
         try {
+            super.runOpMode();
             preStart();
             waitForStart();
+            startLocator();
             act();
         }
         catch (Exception ex){
-            telemetry.addData("Issues autonomous initialization", ex);
+            telemetry.addData("Error", ex);
+            telemetry.update();
+            sleep(5000);
         }
-
-        telemetry.update();
-
     }
 
     protected void preStart(){
 
     }
 
-    protected void initRobot(){
-        try{
-            robot.init(this,this.hardwareMap, telemetry);
-        }
-        catch (Exception ex){
-            telemetry.addData("Init", ex.getMessage());
-        }
+    protected String getModeName(){
+        return "";
     }
+
 
     protected void act(){
 
