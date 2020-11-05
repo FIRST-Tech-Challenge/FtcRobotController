@@ -3,6 +3,7 @@ package autofunctions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.internal.android.dex.Code;
 
@@ -22,6 +23,7 @@ public class Path {
     PID hControl = new PID();
 
     ElapsedTime timer = new ElapsedTime();
+    ElapsedTime timer2 = new ElapsedTime();
 
     public double lastTime = 0;
 
@@ -66,12 +68,16 @@ public class Path {
 
     final public double scale = 0.3;
     final public double[] ks = {0.05,0.05,0.01};
-    final public double[] ds = {0.005, 0.005, 0.001};
-    final public double[] is = {0.01,0.01,0.08};
+    final public double[] ds = {0.005, 0.005, 0.001}; // 0.001
+    final public double[] is = {0.01,0.01,0.02}; // 0.05
     final public double XAcc = 1;
     final public double YAcc = 1;
     final public double HAcc = 2;
+    final public double endWait = 0.5;
     final public double derWait = 0.5;
+    final public double restPow = 0.15;
+
+
 
 
 
@@ -212,7 +218,9 @@ public class Path {
         lherr = herr;
         xint += xerr * changeT;
         yint += yerr * changeT;
-        hint += herr * changeT;
+        if(Math.abs(herr) < 10) {
+            hint += herr * changeT;
+        }
     }
 
     public double[] update(double[] currentPos){
@@ -238,7 +246,11 @@ public class Path {
         boolean yIn = (Math.abs(yerr)) < YAcc;
         boolean hIn = (Math.abs(herr)) < HAcc;
         if(xIn && yIn && hIn){
-            next();
+            if(timer2.seconds() > endWait) {
+                next();
+            }
+        }else{
+            timer2.reset();
         }
     }
 
@@ -258,13 +270,19 @@ public class Path {
         out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, dv.y, iv.y);
         out[2] = -Math.signum(herr) * hControl.getPower(herr, hder, hint);
 
-        return normalize(out);
+        out[0] = Range.clip(out[0], -1, 1);
+        out[1] = Range.clip(out[1], -1, 1);
+        out[2] = Range.clip(out[2], -1, 1);
+
+        out[2] += -Math.signum(herr)*restPow;
+
+        return out;
     }
 
     public double[] normalize(double[] in){
         double sum = in[0]+in[1]+in[2];
         if(sum > 1){
-            return new double[]{in[0]/sum, in[1]/sum, in[2]/sum};
+            return new double[]{in[0]/sum, in[1]/sum, in[2]/(1.5*sum)};
         }else{
             return in;
         }
@@ -273,7 +291,7 @@ public class Path {
 
     public void start(TerraBot bot, LinearOpMode op){
         timer.reset();
-        //startRFThread(op);
+        startRFThread(op);
         while (op.opModeIsActive() && isExecuting){
             double[] pows = update(bot.odometry.getPos());
             bot.move(pows[1], pows[0], pows[2]);
@@ -295,7 +313,7 @@ public class Path {
             op.telemetry.update();
         }
         bot.move(0,0,0);
-        //stopRFThread();
+        stopRFThread();
     }
 
     public enum Posetype{
