@@ -9,7 +9,8 @@ import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 public abstract class AutoBase extends OdoBase {
     protected ElapsedTime runtime = new ElapsedTime();
 
-    protected void runAutoMode(){
+    @Override
+    public void runOpMode(){
         try {
             super.runOpMode();
             preStart();

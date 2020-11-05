@@ -4,6 +4,7 @@ import android.graphics.Point;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -45,16 +46,31 @@ public class UltimateBot extends YellowBot
             wobbleSwing.setDirection(DcMotor.Direction.FORWARD);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             wobbleSwing.setPower(0);
+
+        } catch (Exception ex) {
+            throw new Exception("Issues with wobbleSwing. Check the controller config", ex);
+        }
+
+        try {
+
             intake = hwMap.get(DcMotor.class, "intake");
             intake.setDirection(DcMotor.Direction.FORWARD);
             intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             intake.setPower(0);
+
+        } catch (Exception ex) {
+            throw new Exception("Issues with intake. Check the controller config", ex);
+        }
+
+
+        try {
+
             shooter = hwMap.get(DcMotor.class, "shooter");
-            shooter.setDirection(DcMotor.Direction.FORWARD);
+            shooter.setDirection(DcMotor.Direction.REVERSE);
             shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             shooter.setPower(0);
         } catch (Exception ex) {
-            throw new Exception("Issues with intake. Check the controller config", ex);
+            throw new Exception("Issues with shooter. Check the controller config", ex);
         }
 
 
@@ -68,7 +84,7 @@ public class UltimateBot extends YellowBot
 
         try{
             ringCamera = hwMap.get(Servo.class, "camera");
-            ringCamera.setPosition(1);
+            ringCamera.setPosition(0.5);
         }
         catch (Exception ex) {
             throw new Exception("Issues with ringCamera. Check the controller config", ex);
@@ -136,13 +152,13 @@ public class UltimateBot extends YellowBot
         wobbleClaw.setPosition(1);
     }
 
-    @BotAction(displayName = "Close Claw", defaultReturn="")
-    public void leftRingCamera () { ringCamera.setPosition(0);
+    @BotAction(displayName = "Camera Left", defaultReturn="")
+    public void leftRingCamera () { ringCamera.setPosition(0.5);
     }
 
-    @BotAction(displayName = "Open Claw", defaultReturn="")
+    @BotAction(displayName = "Camera Right", defaultReturn="")
     public void rightRingCamera () {
-        ringCamera.setPosition(1);
+        ringCamera.setPosition(0.35);
     }
 
     @BotAction(displayName = "Init WobbleSwing", defaultReturn="")

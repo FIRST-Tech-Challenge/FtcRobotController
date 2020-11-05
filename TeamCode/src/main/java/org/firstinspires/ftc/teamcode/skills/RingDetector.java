@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.tfrec.Detector;
 import org.firstinspires.ftc.teamcode.tfrec.classification.Classifier;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
@@ -54,7 +55,7 @@ public class RingDetector {
                         if(r.getConfidence() >= 0.8) {
                             telemetry.addData("PrintZone", r.getTitle());
                             if(r.getTitle().contains(LABEL_C)){
-                                if(side.contains("r")) {
+                                if(side.equals(AutoRoute.NAME_RED)) {
                                     zone.setX(70);
                                     zone.setY(120);
                                     zone.setHeading(45);
@@ -68,7 +69,7 @@ public class RingDetector {
                                 this.lights.recognitionSignal(4);
                             }
                             if(r.getTitle().contains(LABEL_B)){
-                                if(side.contains("r")) {
+                                if(side.equals(AutoRoute.NAME_RED)) {
                                     zone.setX(50);
                                     zone.setY(90);
                                     zone.setHeading(45);
@@ -82,7 +83,7 @@ public class RingDetector {
                                 this.lights.recognitionSignal(1);
                             }
                             if(r.getTitle().contains(LABEL_A)){
-                                if(side.contains("r")) {
+                                if(side.equals(AutoRoute.NAME_RED)) {
                                     zone.setX(78);
                                     zone.setY(70);
                                     zone.setHeading(0);
