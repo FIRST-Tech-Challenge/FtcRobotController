@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -27,18 +28,18 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
 import java.util.List;
 
 @Autonomous(name="BLUE - Left Line Wobble and Shoot 3", group="Autonomous")
+@Disabled
+/////////////////////////////////////////
+// Does not work yet - do not use
+//////////////////////////////////////////
 
-//////////////////////////////////////////////////////////
-    // EXTEND this class to create multiple drive paths.
-    // use this for test but not competiton
-        ///////////////////////////////////////////////////
 
 
 
 public class Auto_BLUE_Left_Line extends BasicAutonomous {
     /* Declare OpMode members. */
-    //public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
-    //public Shooter              shooter     = new Shooter();
+    public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
+    public Shooter              shooter     = new Shooter();
     public Intake               intake      = new Intake();
     public Wobblegoal           wobble      = new Wobblegoal();
     public Elevator             elevator    = new Elevator();
@@ -300,6 +301,111 @@ public class Auto_BLUE_Left_Line extends BasicAutonomous {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
+    public double getError(double targetAngle) {
+
+        double robotError;
+
+        // calculate error in -179 to +180 range  (
+        // instantiate an angles object from the IMU
+        Orientation angles = drivetrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        // pull out the first angle which is the Z axis for heading and use to calculate the error
+        // Positive robot rotation is left so positive error means robot needs to turn right.
+        robotError = angles.firstAngle - targetAngle; //lastAngles.firstAngle;
+        telemetry.addData("Robot Error", robotError);
+        telemetry.addData("Target Angle", targetAngle);
+        while (robotError > 180)  robotError -= 360;
+        while (robotError <= -180) robotError += 360;
+        return robotError;
+    }
+    public void gyroDrive ( double speed,
+                            double distance,
+                            double angle, double timeout) {
+
+        int     newLeftTarget;
+        int     newRightTarget;
+        int     moveCounts;
+        double  max;
+        double  error;
+        double  steer;
+        double  leftSpeed;
+        double  rightSpeed;
+        totalError = 0;
+        lasterror = 0;
+        telemetry.addData("gyroDrive Activated", "Complete");
+        // Ensure that the opmode is still active
+        // Use timeout in case robot gets stuck in mid path.
+        // Also a way to keep integral term from winding up to bad.
+        if (opModeIsActive() & drivetime.time() < timeout) {
+
+            // Determine new target position in ticks/ counts then pass to motor controller
+            moveCounts = (int)(distance * Drivetrain_v3.COUNTS_PER_INCH);
+            newLeftTarget = drivetrain.leftFront.getCurrentPosition() + moveCounts;
+            newRightTarget = drivetrain.rightFront.getCurrentPosition() + moveCounts;
+
+            // Set Target using the calculated umber of ticks/counts
+
+            drivetrain.leftFront.setTargetPosition(newLeftTarget);
+            drivetrain.rightFront.setTargetPosition(newRightTarget);
+            // Tell motor control to use encoders to go to target tick count.
+
+            drivetrain.leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drivetrain.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // start motion.
+            // Up to now this is all the same as a drive by encoder opmode.
+            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
+            drivetrain.leftFront.setPower(speed);
+            drivetrain.rightFront.setPower(speed);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            // once one motor gets to the target number of ticks it is no longer "busy"
+            // and isbusy in false causing the loop to end.
+            while (opModeIsActive() &&
+                    (drivetrain.leftFront.isBusy() && drivetrain.rightFront.isBusy())) {
+
+                // adjust relative speed based on heading error.
+                // Positive angle means drifting to the left so need to steer to the
+                // right to get back on track.
+                error = getError(angle);
+                steer = getSteer(error, Kp_DRIVE, Ki_DRIVE, Kd_DRIVE);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    steer *= -1.0;
+
+                leftSpeed = speed + steer;
+                rightSpeed = speed - steer;
+
+                // Normalize speeds if either one exceeds +/- 1.0;
+                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+                if (max > 1.0)
+                {
+                    leftSpeed /= max;
+                    rightSpeed /= max;
+                }
+
+                drivetrain.leftFront.setPower(leftSpeed);
+                drivetrain.rightFront.setPower(rightSpeed);
+
+                // Display drive status for the driver.
+                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                telemetry.addData("Target",  "%7d:%7d",      newLeftTarget,  newRightTarget);
+                telemetry.addData("Actual",  "%7d:%7d",      drivetrain.leftFront.getCurrentPosition(),
+                        drivetrain.rightFront.getCurrentPosition());
+                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                telemetry.update();
 
 
+            }
+
+            // Stop all motion;
+            drivetrain.leftFront.setPower(0);
+            drivetrain.rightFront.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            drivetrain.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            drivetrain.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        drivetime.reset(); // reset the timer for the next function call
+    }
 }
