@@ -103,6 +103,14 @@ public class WobbleMover_Test extends LinearOpMode {
                 wobble.ArmContract();
                 telemetry.addData("Reset Arm", "Complete ");
             }
+            if (gamepad2.left_trigger > 0.25) {
+                wobble.LiftRise();
+                telemetry.addData("Lifting Slide", "Complete ");
+            }
+            if (gamepad2.right_trigger > 0.25) {
+                wobble.LiftLower();
+                telemetry.addData("Lifting Slide", "Complete ");
+            }
 
         }
     }
