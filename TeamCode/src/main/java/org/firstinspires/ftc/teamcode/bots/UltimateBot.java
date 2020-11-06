@@ -29,7 +29,7 @@ public class UltimateBot extends YellowBot {
     private static int SWING_LIFTUP = 50;
     private static int SWING_GROUND_POS = 280;
     private static int SWING_LIFT_UP_POS = 230;
-    private static int SWING_LIFT_HIGH_POS = 130;
+    private static int SWING_LIFT_HIGH_POS = 60;
     private static double SHOOT_SERVO = 0.4;
 
 
@@ -249,7 +249,7 @@ public class UltimateBot extends YellowBot {
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             wobbleSwing.setPower(0);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            wobbleSwing.setPower(-0.005);
+            wobbleSwing.setPower(-0.01);
         }
     }
 
@@ -268,7 +268,7 @@ public class UltimateBot extends YellowBot {
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             wobbleSwing.setPower(0);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            wobbleSwing.setPower(-0.005);
+            wobbleSwing.setPower(0.005);
         }
     }
 
