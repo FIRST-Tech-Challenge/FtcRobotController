@@ -58,7 +58,7 @@ public class RingDetector {
                             if (r.getTitle().contains(LABEL_C)) {
                                 if (side.equals(AutoRoute.NAME_RED)) {
                                     zone.setX(70);
-                                    zone.setY(120);
+                                    zone.setY(113);
                                     zone.setHeading(45);
                                 } else {
                                     zone.setX(30);
@@ -69,25 +69,25 @@ public class RingDetector {
                                 targetZone = LABEL_C;
                                 this.lights.recognitionSignal(4);
                             }
-                            if (r.getTitle().contains(LABEL_B)) {
-                                if (side.equals(AutoRoute.NAME_RED)) {
-                                    zone.setX(50);
-                                    zone.setY(90);
-                                    zone.setHeading(45);
+                            if(r.getTitle().contains(LABEL_B)){
+                                if(side.equals(AutoRoute.NAME_RED)) {
+                                    zone.setX(62);
+                                    zone.setY(100);
+                                    zone.setHeading(-1);
                                 } else {
                                     zone.setX(30);
                                     zone.setY(12);
-                                    zone.setHeading(45);
+                                    zone.setHeading(-1);
                                 }
                                 found = true;
                                 targetZone = LABEL_B;
                                 this.lights.recognitionSignal(1);
                             }
-                            if (r.getTitle().contains(LABEL_A)) {
-                                if (side.equals(AutoRoute.NAME_RED)) {
-                                    zone.setX(78);
-                                    zone.setY(70);
-                                    zone.setHeading(0);
+                            if(r.getTitle().contains(LABEL_A)){
+                                if(side.equals(AutoRoute.NAME_RED)) {
+                                    zone.setX(70);
+                                    zone.setY(83);
+                                    zone.setHeading(45);
                                 } else {
                                     zone.setX(30);
                                     zone.setY(12);
