@@ -50,8 +50,8 @@ public class BasicAutonomous extends LinearOpMode {
     public ElapsedTime          drivetime   = new ElapsedTime(); // timeout timer for driving
     public ElapsedTime          tfTime      = new ElapsedTime(); // timer for tensor flow
     public ElapsedTime          autoShootTimer  = new ElapsedTime(); //auto shooter timer (4 rings)
-    private static double       autoShootTimeAllowed = 7; //  seconds allows 4 shoot cycles in case one messes up
-    private static double       tfSenseTime          = 4; // needs a couple seconds to process the image and ID the target
+    public static double       autoShootTimeAllowed = 7; //  seconds allows 4 shoot cycles in case one messes up
+    public static double       tfSenseTime          = 4; // needs a couple seconds to process the image and ID the target
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suit the specific robot drive train.
@@ -78,10 +78,10 @@ public class BasicAutonomous extends LinearOpMode {
     WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default // default target zone
 
     //// Vuforia Content
-    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-    private static final String LABEL_FIRST_ELEMENT = "Quad";
-    private static final String LABEL_SECOND_ELEMENT = "Single";
-    private String StackSize = "None";
+   public static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+   public static final String LABEL_FIRST_ELEMENT = "Quad";
+   public static final String LABEL_SECOND_ELEMENT = "Single";
+   public String StackSize = "None";
 
 
     private static final String VUFORIA_KEY =

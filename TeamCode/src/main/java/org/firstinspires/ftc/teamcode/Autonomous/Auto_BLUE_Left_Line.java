@@ -38,13 +38,13 @@ import java.util.List;
 
 public class Auto_BLUE_Left_Line extends BasicAutonomous {
     /* Declare OpMode members. */
-    public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
-    public Shooter              shooter     = new Shooter();
-    public Intake               intake      = new Intake();
-    public Wobblegoal           wobble      = new Wobblegoal();
-    public Elevator             elevator    = new Elevator();
-    public Orientation          lastAngles  = new Orientation();
-
+    //public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
+    //public Shooter              shooter     = new Shooter();
+    //public Intake               intake      = new Intake();
+    //public Wobblegoal           wobble      = new Wobblegoal();
+    //public Elevator             elevator    = new Elevator();
+    //public Orientation          lastAngles  = new Orientation();
+/*
     // Timers and time limits for each timer
     public ElapsedTime          PIDtimer    = new ElapsedTime(); // PID loop timer
     public ElapsedTime          drivetime   = new ElapsedTime(); // timeout timer for driving
@@ -83,7 +83,7 @@ public class Auto_BLUE_Left_Line extends BasicAutonomous {
     private static final String LABEL_SECOND_ELEMENT = "Single";
     private String StackSize = "None";
 
-
+*/
     private static final String VUFORIA_KEY =
             "AQXVmfz/////AAABmXaLleqhDEfavwYMzTtToIEdemv1X+0FZP6tlJRbxB40Cu6uDRNRyMR8yfBOmNoCPxVsl1mBgl7GKQppEQbdNI4tZLCARFsacECZkqph4VD5nho2qFN/DmvLA0e1xwz1oHBOYOyYzc14tKxatkLD0yFP7/3/s/XobsQ+3gknx1UIZO7YXHxGwSDgoU96VAhGGx+00A2wMn2UY6SGPl+oYgsE0avmlG4A4gOsc+lck55eAKZ2PwH7DyxYAtbRf5i4Hb12s7ypFoBxfyS400tDSNOUBg393Njakzcr4YqL6PYe760ZKmu78+8X4xTAYSrqFJQHaCiHt8HcTVLNl2fPQxh0wBmLvQJ/mvVfG495ER1A";
 
