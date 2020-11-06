@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.skills;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.tfrec.Detector;
 import org.firstinspires.ftc.teamcode.tfrec.classification.Classifier;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class RingDetector {
         activateDetector();
     }
 
-    public AutoDot detectRing(int timeout, String side, Telemetry telemetry, LinearOpMode caller){
+    public AutoDot detectRing(int timeout, String side, Telemetry telemetry, LinearOpMode caller) {
         AutoDot zone = new AutoDot();
         zone.setX(70);
         zone.setY(130);
@@ -47,15 +49,14 @@ public class RingDetector {
         while (!stop || runtime.seconds() <= timeout) {
             if (tfDetector != null) {
                 List<Classifier.Recognition> results = tfDetector.getLastResults();
-                if (results == null || results.size() == 0){
+                if (results == null || results.size() == 0) {
                     telemetry.addData("Info", "No results");
-                }
-                else {
+                } else {
                     for (Classifier.Recognition r : results) {
-                        if(r.getConfidence() >= 0.8) {
+                        if (r.getConfidence() >= 0.8) {
                             telemetry.addData("PrintZone", r.getTitle());
-                            if(r.getTitle().contains(LABEL_C)){
-                                if(side.equals(AutoRoute.NAME_RED)) {
+                            if (r.getTitle().contains(LABEL_C)) {
+                                if (side.equals(AutoRoute.NAME_RED)) {
                                     zone.setX(70);
                                     zone.setY(120);
                                     zone.setHeading(45);
@@ -68,8 +69,8 @@ public class RingDetector {
                                 targetZone = LABEL_C;
                                 this.lights.recognitionSignal(4);
                             }
-                            if(r.getTitle().contains(LABEL_B)){
-                                if(side.equals(AutoRoute.NAME_RED)) {
+                            if (r.getTitle().contains(LABEL_B)) {
+                                if (side.equals(AutoRoute.NAME_RED)) {
                                     zone.setX(50);
                                     zone.setY(90);
                                     zone.setHeading(45);
@@ -82,8 +83,8 @@ public class RingDetector {
                                 targetZone = LABEL_B;
                                 this.lights.recognitionSignal(1);
                             }
-                            if(r.getTitle().contains(LABEL_A)){
-                                if(side.equals(AutoRoute.NAME_RED)) {
+                            if (r.getTitle().contains(LABEL_A)) {
+                                if (side.equals(AutoRoute.NAME_RED)) {
                                     zone.setX(78);
                                     zone.setY(70);
                                     zone.setHeading(0);
@@ -101,7 +102,7 @@ public class RingDetector {
                 }
                 telemetry.update();
             }
-            if (found || !caller.opModeIsActive()){
+            if (found || !caller.opModeIsActive()) {
                 stop = true;
             }
         }
@@ -113,18 +114,18 @@ public class RingDetector {
         tfDetector = new Detector(MODEl_TYPE, MODEL_FILE_NAME, LABEL_FILE_NAME, hardwareMap.appContext, telemetry);
     }
 
-    protected void activateDetector(){
+    protected void activateDetector() {
         if (tfDetector != null) {
             tfDetector.activate();
         }
         telemetry.addData("Info", "TF Activated");
     }
 
-    public String returnZone(){
+    public String returnZone() {
         return targetZone;
     }
 
-    public void stopDetection(){
+    public void stopDetection() {
         if (tfDetector != null) {
             tfDetector.stopProcessing();
         }

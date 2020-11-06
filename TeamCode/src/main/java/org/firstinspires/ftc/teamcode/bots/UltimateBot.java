@@ -225,7 +225,8 @@ public class UltimateBot extends YellowBot {
         wobbleSwing.setPower(-0.005);
     }
 
-    public void liftHighAndHoldWobble() {
+    @BotAction(displayName = "Lift Wobble Wall", defaultReturn = "")
+    public void liftWobbleWall() {
         wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleSwing.setTargetPosition(SWING_LIFT_HIGH_POS);
         wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
