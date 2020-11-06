@@ -30,6 +30,7 @@ public class UltimateBot extends YellowBot {
     private static int SWING_GROUND_POS = 280;
     private static int SWING_LIFT_UP_POS = 230;
     private static int SWING_LIFT_HIGH_POS = 130;
+    private static double SHOOT_SERVO = 0.4;
 
 
     /* Constructor */
@@ -85,7 +86,7 @@ public class UltimateBot extends YellowBot {
 
         try {
             shooterServo = hwMap.get(Servo.class, "shoot");
-            shooterServo.setPosition(0.5);
+            shooterServo.setPosition(SHOOT_SERVO);
         } catch (Exception ex) {
             throw new Exception("Issues with shooterServo. Check the controller config", ex);
         }
@@ -146,9 +147,14 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Shoot", defaultReturn = "")
     public void shootServo() {
+        ElapsedTime runtime = new ElapsedTime();
         if (shooterServo != null) {
-            shooterServo.setPosition(0.9);
-            shooterServo.setPosition(0.5);
+            shooterServo.setPosition(0.7);
+            runtime.reset();
+            while(runtime.milliseconds() <= 200) {
+
+            }
+            shooterServo.setPosition(SHOOT_SERVO);
         }
     }
 
@@ -262,6 +268,7 @@ public class UltimateBot extends YellowBot {
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             wobbleSwing.setPower(0);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            wobbleSwing.setPower(-0.005);
         }
     }
 

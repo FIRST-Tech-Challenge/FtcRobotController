@@ -126,7 +126,7 @@ public class UltimateMode extends LinearOpMode {
                 }
 
                 // move shooter
-                if (gamepad1.b && buttonpressable) {
+                if (gamepad1.left_bumper && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     changedshooter = !changedshooter;
                 }
