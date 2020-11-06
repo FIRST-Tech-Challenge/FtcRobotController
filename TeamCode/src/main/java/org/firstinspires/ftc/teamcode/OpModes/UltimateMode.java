@@ -38,8 +38,8 @@ import org.firstinspires.ftc.teamcode.bots.SwingPosition;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 
 //Opmode for quick testing of motors
-@TeleOp(name="Ultimate", group="Robot15173")
-public class UltimateMode extends LinearOpMode{
+@TeleOp(name = "Ultimate", group = "Robot15173")
+public class UltimateMode extends LinearOpMode {
 
     // Declare OpMode members.
     UltimateBot robot = new UltimateBot();
@@ -55,9 +55,8 @@ public class UltimateMode extends LinearOpMode{
     public void runOpMode() {
         try {
             try {
-                robot.init(this,this.hardwareMap, telemetry);
-            }
-            catch (Exception ex){
+                robot.init(this, this.hardwareMap, telemetry);
+            } catch (Exception ex) {
                 telemetry.addData("Init", ex.getMessage());
             }
             telemetry.update();
@@ -72,10 +71,9 @@ public class UltimateMode extends LinearOpMode{
                 double turn = 0;
                 double ltrigger = gamepad1.left_trigger;
                 double rtrigger = gamepad1.right_trigger;
-                if (ltrigger > 0){
+                if (ltrigger > 0) {
                     turn = -ltrigger;
-                }
-                else if (rtrigger > 0){
+                } else if (rtrigger > 0) {
                     turn = rtrigger;
                 }
 
@@ -96,12 +94,12 @@ public class UltimateMode extends LinearOpMode{
                 }
 
                 // move claw
-                if(gamepad1.dpad_right && buttonpressable){
+                if (gamepad1.dpad_right && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     changedclaw = !changedclaw;
                 }
 
-                if(changedclaw){
+                if (changedclaw) {
                     robot.closeWobbleClaw();
                 } else {
                     robot.openWobbleClaw();
@@ -109,48 +107,50 @@ public class UltimateMode extends LinearOpMode{
 
                 if (gamepad1.dpad_up) {
                     robot.forwardWobbleSwing();
-                }
-                else if (gamepad1.dpad_down) {
+                } else if (gamepad1.dpad_down) {
                     robot.backWobbleSwing();
-                }
-                else if (gamepad1.dpad_left) {
-                    robot.liftAndHoldWobbleSwing();
+                } else if (gamepad1.dpad_left) {
+                    robot.liftWobbleWall();
                 }
 
                 // move intake
-               if(gamepad1.a && buttonpressable){
-                   startdelay = runtime.milliseconds();
-                   changedintake = !changedintake;
-               }
+                if (gamepad1.a && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    changedintake = !changedintake;
+                }
 
-               if(changedintake){
-                        robot.intake();
-               } else {
-                   robot.stopintake();
-               }
+                if (changedintake) {
+                    robot.intake();
+                } else {
+                    robot.stopintake();
+                }
 
-               // move shooter
+                // move shooter
                 if (gamepad1.b && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     changedshooter = !changedshooter;
                 }
 
-                if(changedshooter){
+                if (changedshooter) {
                     robot.shooter();
                 } else {
                     robot.stopshooter();
+                }
+
+                // shoot with servo
+                if (gamepad1.right_bumper && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    robot.shootServo();
                 }
 
                 telemetry.addData("Heading", robot.getGyroHeading());
                 telemetry.addData("Horiz encoder", robot.getHorizontalOdometer());
                 telemetry.update();
             }
-        }
-
-        catch (Exception ex){
+        } catch (Exception ex) {
             telemetry.addData("Issues with the OpMode", ex.getMessage());
             telemetry.update();
-            sleep (10000);
+            sleep(10000);
         }
     }
 }
