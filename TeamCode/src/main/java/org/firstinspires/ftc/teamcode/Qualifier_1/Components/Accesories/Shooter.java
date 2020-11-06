@@ -22,7 +22,7 @@ public class Shooter {
     private double speedTopGoal = 1;//will get changed when testing
     private double speedMediumGoal=0.8;//will get changed when testing
     private double speedLowGoal=0.5;//will get changed when testing
-    private double distance;
+    private int distance;
 
     public Shooter(){
 
@@ -46,7 +46,7 @@ public class Shooter {
         } else {
             shooter_Servo.setPosition(0.0);
         }
-        op.telemetry.addData("claw position :", direction);
+        op.telemetry.addData("pusher position :", direction);
         op.telemetry.update();
         op.sleep(2000);
     }
@@ -60,14 +60,14 @@ public class Shooter {
     }
 
 
-    public void shootHighGoal(double distance) {
+    public void shootHighGoal(int distance) {
         this.distance=distance;
         double sleepTime = (distance / speedTopGoal * 1000);
         shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
 
-        shooterMotor.setTargetPosition(20000);
+        shooterMotor.setTargetPosition(distance);
 
-        shooterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         shooterMotor.setPower(speedTopGoal);
 
@@ -84,12 +84,12 @@ public class Shooter {
 
     }
 
-    public void shootMidGoal(double distance){
+    public void shootMidGoal(int distance){
         this.distance=distance;
         double sleepTime = (distance / speedMediumGoal * 1000);
-        shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        shooterMotor.setTargetPosition(20000);
+        shooterMotor.setTargetPosition(distance);
 
         shooterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -107,12 +107,12 @@ public class Shooter {
         shooterMotor.setPower(0);
     }
 
-    public void shootLowGoal(double distance){
+    public void shootLowGoal(int  distance){
         this.distance=distance;
         double sleepTime = (distance / speedLowGoal * 1000);
-        shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        shooterMotor.setTargetPosition(20000);
+        shooterMotor.setTargetPosition(distance);
 
         shooterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
