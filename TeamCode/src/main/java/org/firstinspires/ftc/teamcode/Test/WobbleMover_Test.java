@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.Test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -49,7 +50,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
  */
 
 @TeleOp(name="Wobble Mover Test", group="Linear Opmode")
-//@Disabled
+@Disabled
 public class WobbleMover_Test extends LinearOpMode {
 
     // Declare OpMode members.

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Test;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,7 +25,7 @@ import java.util.List;
 //import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 
 @Autonomous(name="Basic AutonomousSimple", group="Test")
-
+@Disabled
 //////////////////////////////////////////////////////////
     // EXTEND this class to create multiple drive paths.
     // use this for test but not competiton

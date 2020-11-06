@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.Test;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
@@ -7,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Elevator;
 
 @TeleOp(name="LoadRing Test ", group="Teleop")
 
-//@Disabled
+@Disabled
 public class LoadRingTest extends OpMode {
 
     // Declare Opmode members by instantiating subsystems
