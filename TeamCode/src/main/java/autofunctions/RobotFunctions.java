@@ -130,7 +130,7 @@ public class RobotFunctions {
         return new CodeSeg() {
             @Override
             public void run() {
-                bot.turnArm(pos);
+                bot.turnWobbleArm(pos);
             }
         };
     }

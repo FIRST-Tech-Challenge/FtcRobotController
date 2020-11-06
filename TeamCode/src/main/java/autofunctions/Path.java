@@ -44,7 +44,6 @@ public class Path {
     public double hint = 0;
 
 
-
     public double radius = 5;
     public double t = 0;
     public double ans = 0;
@@ -52,6 +51,7 @@ public class Path {
     public int curIndex = 0;
 
     public int rfsIndex = 0;
+
 
     public double[] targetPos = {0,0};
 
@@ -68,14 +68,15 @@ public class Path {
 
     final public double scale = 0.3;
     final public double[] ks = {0.05,0.05,0.01};
-    final public double[] ds = {0.005, 0.005, 0.001}; // 0.001
-    final public double[] is = {0.01,0.01,0.02}; // 0.05
+    final public double[] ds = {0.005, 0.005, 0.0015}; // 0.001
+    final public double[] is = {0.01,0.01,0.015}; // 0.05
     final public double XAcc = 1;
     final public double YAcc = 1;
     final public double HAcc = 2;
-    final public double endWait = 0.5;
+    final public double endWait = 0.2;
     final public double derWait = 0.5;
     final public double restPow = 0.15;
+
 
 
 

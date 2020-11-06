@@ -34,7 +34,7 @@ public class AutoBlue extends LinearOpMode {
         path.addWaypoint(-25,50,45);
         path.addRF(rf.wobbleArm(150,1));
         path.addWaypoint(0, 100, 135);
-        path.addRF(rf.turnArm(0.18));
+        path.addRF(rf.turnArm(0.68));
         path.addSetpoint(0,40,0);
         path.addRF(rf.grab(0));
         path.start(bot, this);
