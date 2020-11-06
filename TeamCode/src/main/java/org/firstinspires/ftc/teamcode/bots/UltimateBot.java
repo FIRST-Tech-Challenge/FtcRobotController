@@ -132,113 +132,137 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Stop Intake", defaultReturn = "")
     public void stopintake() {
-        intake.setPower(0);
+        if (intake != null) {
+            intake.setPower(0);
+        }
     }
 
     @BotAction(displayName = "Move Shooter", defaultReturn = "")
     public void shooter() {
-        shooter.setPower(0.9);
+        if (shooter != null) {
+            shooter.setPower(0.9);
+        }
     }
 
     @BotAction(displayName = "Shoot", defaultReturn = "")
     public void shootServo() {
-        shooterServo.setPosition(0.9);
-        shooterServo.setPosition(0.5);
+        if (shooterServo != null) {
+            shooterServo.setPosition(0.9);
+            shooterServo.setPosition(0.5);
+        }
     }
 
     @BotAction(displayName = "Stop Shooter", defaultReturn = "")
     public void stopshooter() {
-        shooter.setPower(0);
+        if (shooter != null) {
+            shooter.setPower(0);
+        }
     }
 
     @BotAction(displayName = "Close Claw", defaultReturn = "")
     public void closeWobbleClaw() {
-        wobbleClaw.setPosition(0);
+        if (wobbleClaw != null) {
+            wobbleClaw.setPosition(0);
+        }
+
     }
 
     @BotAction(displayName = "Open Claw", defaultReturn = "")
     public void openWobbleClaw() {
-        wobbleClaw.setPosition(1);
+        if (wobbleClaw != null) {
+            wobbleClaw.setPosition(1);
+        }
     }
 
     @BotAction(displayName = "Camera Left", defaultReturn = "")
     public void leftRingCamera() {
-        ringCamera.setPosition(0.5);
+        if (ringCamera != null) {
+            ringCamera.setPosition(0.5);
+        }
     }
 
     @BotAction(displayName = "Camera Right", defaultReturn = "")
     public void rightRingCamera() {
-        ringCamera.setPosition(0.35);
+        if (ringCamera != null) {
+            ringCamera.setPosition(0.35);
+        }
     }
 
     @BotAction(displayName = "Init WobbleSwing", defaultReturn = "")
     public void backWobbleSwing() {
-        if (this.getSwingPosition() == SwingPosition.Init) {
-            return;
+        if (wobbleSwing != null) {
+            if (this.getSwingPosition() == SwingPosition.Init) {
+                return;
+            }
+            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobbleSwing.setTargetPosition(0);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wobbleSwing.setPower(0.6);
+            boolean stop = false;
+            while (!stop) {
+                stop = wobbleSwing.isBusy() == false;
+            }
+            this.swingPosition = SwingPosition.Init;
+            wobbleSwing.setPower(0);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleSwing.setTargetPosition(0);
-        wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleSwing.setPower(0.6);
-        boolean stop = false;
-        while (!stop) {
-            stop = wobbleSwing.isBusy() == false;
-        }
-        this.swingPosition = SwingPosition.Init;
-        wobbleSwing.setPower(0);
-        wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @BotAction(displayName = "Place Wobble", defaultReturn = "")
     public void forwardWobbleSwing() {
-
-        if (this.getSwingPosition() == SwingPosition.Ground) {
-            return;
+        if (wobbleSwing != null) {
+            if (this.getSwingPosition() == SwingPosition.Ground) {
+                return;
+            }
+            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobbleSwing.setTargetPosition(SWING_GROUND_POS);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wobbleSwing.setPower(0.6);
+            boolean stop = false;
+            while (!stop) {
+                stop = wobbleSwing.isBusy() == false;
+            }
+            this.swingPosition = SwingPosition.Ground;
+            wobbleSwing.setPower(0);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleSwing.setTargetPosition(SWING_GROUND_POS);
-        wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleSwing.setPower(0.6);
-        boolean stop = false;
-        while (!stop) {
-            stop = wobbleSwing.isBusy() == false;
-        }
-        this.swingPosition = SwingPosition.Ground;
-        wobbleSwing.setPower(0);
-        wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @BotAction(displayName = "Lift Wobble Up", defaultReturn = "")
     public void liftAndHoldWobbleSwing() {
-        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleSwing.setTargetPosition(SWING_LIFT_UP_POS);
-        wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleSwing.setPower(0.7);
-        boolean stop = false;
-        while (!stop) {
-            stop = wobbleSwing.isBusy() == false;
+        if (wobbleSwing != null) {
+            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobbleSwing.setTargetPosition(SWING_LIFT_UP_POS);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wobbleSwing.setPower(0.7);
+            boolean stop = false;
+            while (!stop) {
+                stop = wobbleSwing.isBusy() == false;
+            }
+            this.swingPosition = SwingPosition.LiftUp;
+            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobbleSwing.setPower(0);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            wobbleSwing.setPower(-0.005);
         }
-        this.swingPosition = SwingPosition.LiftUp;
-        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleSwing.setPower(0);
-        wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wobbleSwing.setPower(-0.005);
     }
 
     @BotAction(displayName = "Lift Wobble Wall", defaultReturn = "")
     public void liftWobbleWall() {
-        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleSwing.setTargetPosition(SWING_LIFT_HIGH_POS);
-        wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleSwing.setPower(0.7);
-        boolean stop = false;
-        while (!stop) {
-            stop = wobbleSwing.isBusy() == false;
+        if (wobbleSwing != null) {
+            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobbleSwing.setTargetPosition(SWING_LIFT_HIGH_POS);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wobbleSwing.setPower(0.7);
+            boolean stop = false;
+            while (!stop) {
+                stop = wobbleSwing.isBusy() == false;
+            }
+            this.swingPosition = SwingPosition.LiftUp;
+            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobbleSwing.setPower(0);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        this.swingPosition = SwingPosition.LiftUp;
-        wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleSwing.setPower(0);
-        wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
 
