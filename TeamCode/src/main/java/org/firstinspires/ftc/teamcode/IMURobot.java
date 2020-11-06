@@ -29,15 +29,17 @@ public class IMURobot {
     public DcMotor motorFrontLeft;
     public DcMotor motorBackRight;
     public DcMotor motorBackLeft;
+    public DcMotor intake;
+    public DcMotor outtakeLeft;
+    public DcMotor outtakeRight;
 
-    private CRServo leftIntake;
-    private CRServo rightIntake;
+    private CRServo conveyor;
+    private CRServo elevator;
 
     //Declare servos
     private Servo leftIntakeServo;
     private Servo rightIntakeServo;
-    private Servo flimsy;
-    private Servo capRelease;
+    private Servo flipper;
 
     //Declare the IMU
     private BNO055IMU imu;
@@ -72,9 +74,14 @@ public class IMURobot {
      * @param motorBackRight
      * @param motorBackLeft
      * @param imu
-     * @param leftIntake
-     * @param rightIntake
-     * @param flimsy  Servo used to move skystone and foundation
+     * @param leftIntakeServo
+     * @param rightIntakeServo
+     * @param conveyor
+     * @param elevator
+     * @param flipper
+     * @param intake
+     * @param outtakeRight
+     * @param outtakeLeft
      * @param opMode The Op Mode using the IMURobot object;
      *                for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
      */
@@ -82,18 +89,22 @@ public class IMURobot {
     OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
 
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                    BNO055IMU imu, CRServo leftIntake, CRServo rightIntake, Servo leftIntakeServo,
-                    Servo rightIntakeServo, Servo flimsy, LinearOpMode opMode){
+                    BNO055IMU imu, Servo leftIntakeServo, Servo rightIntakeServo,
+                    CRServo conveyor, CRServo elevator, Servo flipper,
+                    DcMotor intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
         this.motorBackLeft = motorBackLeft;
         this.imu = imu;
-        this.leftIntake = leftIntake;
-        this.rightIntake = rightIntake;
         this.leftIntakeServo = leftIntakeServo;
         this.rightIntakeServo = rightIntakeServo;
-        this.flimsy = flimsy;
+        this.conveyor = conveyor;
+        this.elevator = elevator;
+        this.flipper = flipper;
+        this.intake = intake;
+        this.outtakeRight = outtakeRight;
+        this.outtakeLeft = outtakeLeft;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
     }
@@ -105,27 +116,20 @@ public class IMURobot {
      * @param motorBackRight
      * @param motorBackLeft
      * @param imu
-     * @param leftIntake
-     * @param rightIntake
-     * @param flimsy  Servo used to move skystone and foundation
      * @param opMode The Op Mode using the IMURobot object;
      *                for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
      */
 
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                    BNO055IMU imu, CRServo leftIntake, CRServo rightIntake, Servo leftIntakeServo,
-                    Servo rightIntakeServo, Servo flimsy, Servo capRelease, LinearOpMode opMode){
+                    BNO055IMU imu, Servo leftIntakeServo,
+                    Servo rightIntakeServo, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
         this.motorBackLeft = motorBackLeft;
         this.imu = imu;
-        this.leftIntake = leftIntake;
-        this.rightIntake = rightIntake;
         this.leftIntakeServo = leftIntakeServo;
         this.rightIntakeServo = rightIntakeServo;
-        this.capRelease = capRelease;
-        this.flimsy = flimsy;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
     }
@@ -137,28 +141,25 @@ public class IMURobot {
      * @param motorBackRight
      * @param motorBackLeft
      * @param imu
-     * @param leftIntake
-     * @param rightIntake
      * @param leftIntakeServo
      * @param rightIntakeServo
      * @param opMode
      */
+    /* this one is duplicate of one above, and I didn't know if we wanted this still or not
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                    BNO055IMU imu, CRServo leftIntake, CRServo rightIntake, Servo leftIntakeServo,
+                    BNO055IMU imu, Servo leftIntakeServo,
                     Servo rightIntakeServo, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
         this.motorBackLeft = motorBackLeft;
         this.imu = imu;
-        this.leftIntake = leftIntake;
-        this.rightIntake = rightIntake;
         this.leftIntakeServo = leftIntakeServo;
         this.rightIntakeServo = rightIntakeServo;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
     }
-
+*/
     /**
      *
      * @param motorFrontRight The front right motor
@@ -577,8 +578,7 @@ public class IMURobot {
      */
 
     public void intakeOn() {
-        leftIntake.setPower(1);
-        rightIntake.setPower(1);
+        intake.setPower(1);
     }
 
 
@@ -588,8 +588,7 @@ public class IMURobot {
      */
 
     public void intakeOff() {
-        leftIntake.setPower(0);
-        rightIntake.setPower(0);
+        intake.setPower(0);
     }
 
 
@@ -600,28 +599,12 @@ public class IMURobot {
      */
 
     public void intakeReverse() {
-        leftIntake.setPower(-1);
-        rightIntake.setPower(-1);
-    }
-
-    public void flimsyUp() {
-        flimsy.setPosition(0);
-    }
-
-    public void flimsyDown() {
-        flimsy.setPosition(1);
+        intake.setPower(-1);
     }
 
     public void releaseIntake() {
         leftIntakeServo.setPosition(1);
         rightIntakeServo.setPosition(0);
     }
-    public void releaseCap(){
-        capRelease.setPosition(1);
-    }
-    public void holdCap(){
-        capRelease.setPosition(0.3);
-    }
-
 
 }

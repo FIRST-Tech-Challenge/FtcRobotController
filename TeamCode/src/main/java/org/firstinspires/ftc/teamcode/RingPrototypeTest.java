@@ -23,11 +23,8 @@ public class RingPrototypeTest extends LinearOpMode{
     private DcMotor intake, outtakeRight, outtakeLeft;
     private Servo flipper;
 
-    private CRServo leftIntake;
-    private CRServo rightIntake;
     private Servo leftIntakeServo;
     private Servo rightIntakeServo;
-    private Servo flimsy;
 
     private BNO055IMU imu;
 
@@ -52,8 +49,8 @@ public class RingPrototypeTest extends LinearOpMode{
     OdometryGlobalCoordinatePosition globalPositionUpdate;
 
     IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-            imu, leftIntake, rightIntake, leftIntakeServo,
-            rightIntakeServo, flimsy, this);
+            imu, leftIntakeServo, rightIntakeServo, conveyor, elevator, flipper, intake,
+            outtakeRight, outtakeLeft, this);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -74,10 +71,11 @@ public class RingPrototypeTest extends LinearOpMode{
         outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
         outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
 
+        //lifting and lowering intake
         leftIntakeServo = hardwareMap.servo.get("LIrelease");
         rightIntakeServo = hardwareMap.servo.get("RIrelease");
-        flimsy = hardwareMap.servo.get("flimsy");
 
+        //??
         verticalLeft = hardwareMap.dcMotor.get("VLE");
         verticalRight = hardwareMap.dcMotor.get("VRE");
         horizontal = hardwareMap.dcMotor.get("HE");
