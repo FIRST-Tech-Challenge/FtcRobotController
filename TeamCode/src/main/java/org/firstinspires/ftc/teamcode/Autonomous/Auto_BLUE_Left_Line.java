@@ -37,8 +37,8 @@ import java.util.List;
 
 public class Auto_BLUE_Left_Line extends BasicAutonomous {
     /* Declare OpMode members. */
-    public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
-    public Shooter              shooter     = new Shooter();
+    //public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
+    //public Shooter              shooter     = new Shooter();
     public Intake               intake      = new Intake();
     public Wobblegoal           wobble      = new Wobblegoal();
     public Elevator             elevator    = new Elevator();
