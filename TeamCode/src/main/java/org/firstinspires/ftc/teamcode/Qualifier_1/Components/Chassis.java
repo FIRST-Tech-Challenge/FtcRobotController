@@ -34,7 +34,7 @@ public class Chassis {
 
     // these encoder variables vary depending on chassis type
     final double counts_per_motor_goBilda = 383.6;
-    final double counts_per_inch = (counts_per_motor_goBilda*wheel_diameter * Math.PI)/54.48;  //2*(counts_per_motor_goBilda / (wheel_diameter * Math.PI))
+    final double counts_per_inch = (2)*(counts_per_motor_goBilda/(wheel_diameter * Math.PI));  //2*(counts_per_motor_goBilda / (wheel_diameter * Math.PI))
     final double counts_per_degree = counts_per_inch * robot_diameter * Math.PI / 360;
 
     /* local OpMode members. */

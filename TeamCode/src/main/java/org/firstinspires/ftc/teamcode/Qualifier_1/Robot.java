@@ -169,6 +169,10 @@ public class Robot {
         drivetrain.turnOdometry(target,power);
     }
 
+    public void initVuforia () {}
+
+    public void initTfod () {}
+
     public void moveForwardOdometry(double distance, double power) {
         drivetrain.moveForwardOdometry(distance,power);
     }

@@ -30,7 +30,7 @@ public class NewTest_Sai extends LinearOpMode {
         telemetry.addData("Moving LeftBack Motor", 10);
         telemetry.update();
         sleep(1000);
-        robot.moveMotorRightBack(1000);
+        robot.moveMotorRightBack(10);
         telemetry.addData("Moving RightBack Motor", 10);
         telemetry.update();
         sleep(1000);
