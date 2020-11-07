@@ -50,9 +50,13 @@ public class Drive extends SubSystem {
 
     @Override
     public void handle() {
-        double speed = robot.gamepad1.right_trigger - robot.gamepad1.left_trigger;
-        double direction = -robot.gamepad1.left_stick_x;
-        DriveDir driveDir = getDir(direction);
+        double driveSpeed = -robot.gamepad1.left_stick_y;
+        double turnSpeed = 0;
+        double strafeSpeed = -robot.gamepad1.right_stick_x;
+
+        if (Math.abs(robot.gamepad1.left_stick_x) > 0.1) {
+            turnSpeed = robot.gamepad1.left_stick_x;
+        }
 
         if(robot.gamepad1.a) {
             reverse = false;
@@ -61,75 +65,22 @@ public class Drive extends SubSystem {
             reverse = true;
         }
 
-        if(robot.gamepad1.right_bumper) {
-            strafe(speed, "right");
-        }
-        else if(robot.gamepad1.left_bumper) {
-            strafe(speed, "left");;
-        }
-        else {
-            if(Math.abs(speed) < 5 && driveDir != DriveDir.STRAIGHT) {
-                drive(-direction, direction);
-            } else {
-                if (reverse) {
-                    drive(driveDir.getLeft(reverse) * speed, driveDir.getRight(reverse) * speed);
-                } else {
-                    drive(driveDir.getRight(reverse) * speed, driveDir.getLeft(reverse) * speed);
-                }
-            }
-        }
+        drive(driveSpeed, driveSpeed);
+        strafe(strafeSpeed);
+        drive(turnSpeed, -turnSpeed);
 
-        robot.telemetry.addData("Drive - Dat - speed", speed);
-        robot.telemetry.addData("Drive - Dat - direction", driveDir.name());
+
+        robot.telemetry.addData("Drive - Dat - Drive Speed", driveSpeed);
+        robot.telemetry.addData("Drive - Dat - Turn Speed", turnSpeed);
+        robot.telemetry.addData("GamepadX", robot.gamepad1.left_stick_x);
+        robot.telemetry.addData("Drive - Dat - Strafe Speed", strafeSpeed);
         robot.telemetry.addData("Drive - Set - frontLeft", frontLeft.getPower());
         robot.telemetry.addData("Drive - Set - backLeft", backLeft.getPower());
         robot.telemetry.addData("Drive - Set - frontRight", frontRight.getPower());
         robot.telemetry.addData("Drive - Set - backRight", backRight.getPower());
         robot.telemetry.addData("Drive - Enc - Left", frontLeft.getCurrentPosition());
         robot.telemetry.addData("Drive - Enc - Right", frontRight.getCurrentPosition());
-    }
-
-    public DriveDir getDir(double dir) {
-        if(dir <= -0.7) {
-            return DriveDir.HARD_LEFT;
-        } else if(dir <= -0.4) {
-            return DriveDir.MEDIUM_LEFT;
-        } else if(dir <= -0.1) {
-            return DriveDir.EASY_LEFT;
-        } else if(dir >= 0.7) {
-            return DriveDir.HARD_RIGHT;
-        } else if(dir >= 0.4) {
-            return DriveDir.MEDIUM_RIGHT;
-        } else if(dir >= 0.1) {
-            return DriveDir.EASY_RIGHT;
-        } else {
-            return DriveDir.STRAIGHT;
-        }
-    }
-
-    public enum DriveDir {
-        HARD_LEFT(-1, 1),
-        MEDIUM_LEFT(0, 1),
-        EASY_LEFT(0.5, 1),
-        STRAIGHT(1, 1),
-        EASY_RIGHT(1, 0.5),
-        MEDIUM_RIGHT(1, 0),
-        HARD_RIGHT(1, -1);
-
-        private double left, right;
-
-        DriveDir(double left, double right) {
-            this.left = left;
-            this.right = right;
-        }
-
-        public double getLeft(boolean reverse) {
-            return reverse ? -left : left;
-        }
-
-        public double getRight(boolean reverse) {
-            return reverse ? -right : right;
-        }
+        robot.telemetry.update();
     }
 
     private void left(double power) {
@@ -146,28 +97,16 @@ public class Drive extends SubSystem {
         } catch(Exception ex) {}
     }
 
-    public void drive(double left, double right) {
-        left(left);
-        right(right);
+    public void drive(double leftPower, double rightPower) {
+        left(leftPower);
+        right(rightPower);
     }
 
-    public void strafe(double power, String direction) {
-
-        boolean strafeLeft = direction.equals("left");
-        boolean strafeRight = direction.equals("right");
-
-        if (strafeLeft) {
-            frontLeft.setPower(power);
-            backRight.setPower(power);
-            frontRight.setPower(-power);
-            backRight.setPower(-power);
-        }
-        if (strafeRight) {
-            frontLeft.setPower(-power);
-            backRight.setPower(-power);
-            frontRight.setPower(power);
-            backRight.setPower(power);
-        }
+    public void strafe(double power) {
+        frontLeft.setPower(-power);
+        backLeft.setPower(power);
+        frontRight.setPower(power);
+        backRight.setPower(-power);
     }
 
     public void moveToPosition(double inches, double speed) {
