@@ -50,7 +50,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
  */
 
 @TeleOp(name="Wobble Mover Test", group="Linear Opmode")
-@Disabled
+//@Disabled
 public class WobbleMover_Test extends LinearOpMode {
 
     // Declare OpMode members.
