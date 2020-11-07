@@ -10,6 +10,7 @@ public class testAuto extends LinearOpMode {
     OdometryGlobalCoordinatePosition globalCoordinatePosition;
     double powerA, powerB;
     double motorX, motorY = 1.0;
+    double angleRad = Math.toRadians(225-45);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -36,10 +37,15 @@ public class testAuto extends LinearOpMode {
 
     public void findPower(double x, double y) {
         double slope = y/x;
-        motorX = Math.cos(Math.toRadians(globalCoordinatePosition.changeinrobotorientationDegrees-45));//PROBLEM IN CODE
-        motorY = Math.sin(Math.toRadians(globalCoordinatePosition.changeinrobotorientationDegrees-45));//PROBLEM IN CODE
-        powerA = ((motorX/1) + (motorY/slope))/2; //(1/1) condensed to 1
-        powerB = ((-motorX/1) + (motorY/slope))/2; //(-1/1) condensed to -1
+        if (((double) Math.round(Math.sin(angleRad)*1000))/1000 == 0) {
+            angleRad = Math.toRadians(Math.toDegrees(angleRad)+0.1);
+        }
+
+        motorX = Math.cos(angleRad);
+        motorY = Math.sin(angleRad);
+
+        powerA = ((motorX/1) + (motorY/slope))/2;
+        powerB = ((-motorX/1) + (motorY/slope))/2;
         if (Math.abs(powerA) > Math.abs(powerB)) {
             powerB = 1/(powerA/powerB);
             powerA = 1;
@@ -49,8 +55,10 @@ public class testAuto extends LinearOpMode {
         }
         if (x < 0){
             powerA = -powerA;
+            System.out.println("Switch powerA neg");
         } else {
             powerB = -powerB;
+            System.out.println("Switch powerB neg");
         }
     }
 
