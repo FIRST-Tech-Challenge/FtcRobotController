@@ -27,6 +27,8 @@ public class Chassis {
     DcMotorEx motorRightFront;
     DcMotorEx motorLeftBack;
     DcMotorEx motorRightBack;
+    DcMotorEx ShooterMotor;
+    DcMotorEx wobbleGoalMotor;
 
     // Initialize Encoder Variables
     final double robot_diameter = Math.sqrt(619.84);
@@ -63,6 +65,8 @@ public class Chassis {
         motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
         motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
         motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
+        ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
+        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
 
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 //
@@ -103,7 +107,7 @@ public class Chassis {
         motorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        odom.init(opMode);
+        //odom.init(opMode);
     }
 
     public void stopAllMotors() {
@@ -190,6 +194,40 @@ public class Chassis {
         //brake
         motorRightBack.setPower(0);
         motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void moveShooterMotor(double distance){
+        double ticksToMove = counts_per_inch * distance;
+        double ticksLocationToMove = ShooterMotor.getCurrentPosition() + ticksToMove;
+        ShooterMotor.setTargetPosition((int)ticksLocationToMove);
+        ShooterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ShooterMotor.setPower(0.5);
+        while (op.opModeIsActive() && ShooterMotor.isBusy())
+        {
+            op.telemetry.addData("ShooterMotor", ShooterMotor.getCurrentPosition() + " busy=" + ShooterMotor.isBusy());
+            op.telemetry.update();
+            op.idle();
+        }
+        //brake
+        ShooterMotor.setPower(0);
+        ShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void moveWobbleGoalMotor(double distance){
+        double ticksToMove = counts_per_inch * distance;
+        double ticksLocationToMove = wobbleGoalMotor.getCurrentPosition() + ticksToMove;
+        wobbleGoalMotor.setTargetPosition((int)ticksLocationToMove);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleGoalMotor.setPower(0.5);
+        while (op.opModeIsActive() && wobbleGoalMotor.isBusy())
+        {
+            op.telemetry.addData("wobbleGoalMotor", wobbleGoalMotor.getCurrentPosition() + " busy=" + wobbleGoalMotor.isBusy());
+            op.telemetry.update();
+            op.idle();
+        }
+        //brake
+        wobbleGoalMotor.setPower(0);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     private void resetAngle()
