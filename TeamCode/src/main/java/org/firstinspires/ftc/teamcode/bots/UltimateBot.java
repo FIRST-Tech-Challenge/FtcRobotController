@@ -133,6 +133,13 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+    @BotAction(displayName = "Move Intake Reverse", defaultReturn = "")
+    public void intakeReverse() {
+        if (intake != null) {
+            intake.setPower(-0.7);
+        }
+    }
+
     @BotAction(displayName = "Stop Intake", defaultReturn = "")
     public void stopintake() {
         if (intake != null) {

@@ -48,6 +48,7 @@ public class UltimateMode extends LinearOpMode {
     boolean changedintake = false;
     boolean changedshooter = false;
     boolean changedswing = false;
+    boolean intakeReverse = false;
     boolean buttonpressable = true;
     double delaytime = 300;
     double startdelay = 0;
@@ -136,6 +137,17 @@ public class UltimateMode extends LinearOpMode {
                     robot.stopintake();
                 }
 
+                if (!changedintake && gamepad1.b){
+                    startdelay = runtime.milliseconds();
+                    intakeReverse = !intakeReverse;
+                    if (intakeReverse){
+                        robot.intakeReverse();
+                    }
+                    else{
+                        robot.stopintake();
+                    }
+                }
+
                 // move shooter
                 if (gamepad1.left_bumper && buttonpressable) {
                     startdelay = runtime.milliseconds();
@@ -162,6 +174,10 @@ public class UltimateMode extends LinearOpMode {
             telemetry.addData("Issues with the OpMode", ex.getMessage());
             telemetry.update();
             sleep(10000);
+        }
+        finally {
+            robot.stopintake();
+            robot.stopshooter();
         }
     }
 }

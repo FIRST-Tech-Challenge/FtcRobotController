@@ -30,7 +30,7 @@ public class OdoBase extends LinearOpMode {
     public static final File ROUTES_FOLDER = new File(FIRST_FOLDER, "/routes/");
     public static final File DOTS_FOLDER = new File(FIRST_FOLDER, "/dots/");
 
-    protected double desiredHead = 0;
+    protected double initHead = 0;
     protected int startX = 50;
     protected int startY = 15;
 
@@ -61,7 +61,7 @@ public class OdoBase extends LinearOpMode {
 
     protected void startLocator(){
         if (locator == null) {
-            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), desiredHead, 75);
+            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), initHead, 75);
             locator.reverseHorEncoder();
             Thread positionThread = new Thread(locator);
             positionThread.start();
@@ -71,7 +71,7 @@ public class OdoBase extends LinearOpMode {
     protected void runRoute(){
         try {
             if (this.selectedRoute != null) {
-                locator.init(selectedRoute.getStart(), desiredHead);
+                locator.init(selectedRoute.getStart(), initHead);
                 for (AutoStep s : selectedRoute.getSteps()) {
                     this.goTo(s, false, selectedRoute.getName());
                 }
@@ -166,7 +166,7 @@ public class OdoBase extends LinearOpMode {
             case Diag:
                 diag(profile);
                 break;
-
+            default: break;
         }
         if (profile.getNextStep() != null){
             //let the locator catch up
@@ -177,7 +177,7 @@ public class OdoBase extends LinearOpMode {
         }
 
         //set the desired heading
-        if (finalSpin && profile.getNextStep() == null && instruction.getDesiredHead() != BotMoveProfile.DEFAULT_HEADING) {
+        if (finalSpin && profile.getNextStep() == null && desiredHead != BotMoveProfile.DEFAULT_HEADING) {
             sleep(locator.getThreadSleepTime());
             BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(instruction.getDesiredHead(), instruction.getTopSpeed(), locator);
             if (Math.abs(profile.getAngleChange()) < 30){

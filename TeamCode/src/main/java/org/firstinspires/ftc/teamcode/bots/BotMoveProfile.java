@@ -213,7 +213,7 @@ public class BotMoveProfile {
 
 
         //do not move if within margin of error, unless spinning
-        if (Math.abs(distance) <= ERROR_MARGIN_INCHES && preferredStrategy != MoveStrategy.Spin){
+        if (preferredStrategy == MoveStrategy.None || (Math.abs(distance) <= ERROR_MARGIN_INCHES && preferredStrategy != MoveStrategy.Spin)){
             return null;
         }
 

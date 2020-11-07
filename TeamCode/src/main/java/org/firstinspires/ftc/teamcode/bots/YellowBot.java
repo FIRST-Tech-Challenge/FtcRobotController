@@ -162,16 +162,17 @@ public class YellowBot implements OdoBot {
             double leftPower = Range.clip(drive - turn, -1.0, 1.0);
 
             //create dead zone for bad joysticks
-            if (Math.abs(rightPower) < 0.02) {
-                rightPower = 0;
+            if (drive > 0) {
+                if (Math.abs(rightPower) < 0.02) {
+                    rightPower = 0;
+                }
+
+                if (Math.abs(leftPower) < 0.02) {
+                    leftPower = 0;
+                }
             }
 
-            if (Math.abs(leftPower) < 0.02) {
-                leftPower = 0;
-            }
-
-            //apply logarythmic adjustment
-
+            //apply logarithmic adjustment
             rightPower = rightPower * 100 / 110;
             rightPower = rightPower * rightPower * rightPower;
 
@@ -182,11 +183,6 @@ public class YellowBot implements OdoBot {
             this.frontRight.setPower(rightPower);
             this.backLeft.setPower(leftPower);
             this.backRight.setPower(rightPower);
-
-//            telemetry.addData("Left Speed", leftPower);
-//            telemetry.addData("Right Speed", rightPower);
-//            telemetry.addData("Odo", "Left from %7d", frontLeft.getCurrentPosition());
-//            telemetry.addData("Odo", "Right from %7d", frontRight.getCurrentPosition());
         }
     }
 
@@ -784,8 +780,9 @@ public class YellowBot implements OdoBot {
                 reduction = botConfig.getSpinRightConfig();
             }
 
-            double slowdownMark = Math.abs(degrees) * reduction.getBreakPoint(profile.getTopSpeed());
             double desired = Math.abs(degrees);
+            double slowdownMark = desired; // Math.abs(degrees) * reduction.getBreakPoint(profile.getTopSpeed());
+
 
             if (!profile.shouldStop()) {
                 desired = slowdownMark;
