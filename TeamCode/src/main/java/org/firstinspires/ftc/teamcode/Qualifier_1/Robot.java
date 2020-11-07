@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 //import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
@@ -17,6 +19,8 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
 public class Robot {
+    Shooter shooter = new Shooter();
+//    WobbleGoal wobbleGoal = new WobbleGoal();
     private LinearOpMode op = null;
     private HardwareMap hardwareMap = null;
     private ElapsedTime runtime = new ElapsedTime();
@@ -40,6 +44,7 @@ public class Robot {
         drivetrain.init(opMode);
 //        vuforiaWebcam.init(opMode);
 
+        shooter.initChassis(opMode);
 //        vuforiaWebcam.start();
 
 //        getVuforiaPosition();
@@ -148,6 +153,22 @@ public class Robot {
         drivetrain.moveAngle2(distance, angle, turn);
     }
 
+    /**Shooter**/
+    public void shootHighGoal(int distance) {
+        shooter.shootHighGoal(distance);
+    }
+
+    public void shootMidGoal(int distance) {
+        shooter.shootMidGoal(distance);
+    }
+
+    public void shootLowGoal(int distance) {
+        shooter.shootLowGoal(distance);
+    }
+
+    public void moveServo(boolean direction) {
+        shooter.moveServo(direction);
+    }
 
     /**Vuforia**/
 

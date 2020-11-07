@@ -5,6 +5,7 @@ import android.media.FaceDetector;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name = "Teleop ")
 public class Teleop extends LinearOpMode {
@@ -14,6 +15,7 @@ public class Teleop extends LinearOpMode {
     private DcMotor motorRightFront;
     private DcMotor motorRightBack;
 
+
     @Override
     public void runOpMode() {
 
@@ -21,6 +23,8 @@ public class Teleop extends LinearOpMode {
         double angleInRadian;
         double angleInDegree;
         boolean slowMode = false;
+        boolean claw_is_up = true;
+        boolean move_claw = true;
 
         motorLeftFront = hardwareMap.dcMotor.get("motorLeftFront");
         motorLeftBack = hardwareMap.dcMotor.get("motorLeftBack");
@@ -43,9 +47,25 @@ public class Teleop extends LinearOpMode {
             float left_stick_x = -gamepad1.left_stick_x;
             boolean x_button = gamepad1.x;
             boolean a_button = gamepad1.a;
+            boolean y_button2 = gamepad2.y;
+            boolean b_button2 = gamepad2.b;
+            boolean a_button2 = gamepad2.a;
 
             angleInRadian = Math.atan2(left_stick_y, left_stick_x);
             angleInDegree = Math.toDegrees(angleInRadian);
+
+            if (y_button2) {
+                robot.moveServo(true);
+                robot.shootHighGoal(1);
+            }
+            if (b_button2) {
+                robot.moveServo(true);
+                robot.shootMidGoal(1);
+            }
+            if (a_button2) {
+                robot.moveServo(true);
+                robot.shootLowGoal(1);
+            }
 
             if (a_button) { //click a to turn on slowmode
                 slowMode = true;
@@ -54,7 +74,7 @@ public class Teleop extends LinearOpMode {
                 slowMode = false;
             }
 
-            if (slowMode == true) {
+            if (slowMode) {
                 if (left_stick_x == 0 && left_stick_y == 0) {
                     magnitude = 0;
                 }

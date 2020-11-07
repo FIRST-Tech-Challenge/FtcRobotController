@@ -80,7 +80,7 @@ public class Shooter {
             moveServo(false);
             moveServo(true);
         }
-        shooterMotor.setPower(0);
+        shooterMotor.setPower(1);
 
     }
 
@@ -104,7 +104,7 @@ public class Shooter {
             moveServo(false);
             moveServo(true);
         }
-        shooterMotor.setPower(0);
+        shooterMotor.setPower(1);
     }
 
     public void shootLowGoal(int  distance){
@@ -127,7 +127,7 @@ public class Shooter {
             moveServo(false);
             moveServo(true);
         }
-        shooterMotor.setPower(0);
+        shooterMotor.setPower(1);
     }
 
 

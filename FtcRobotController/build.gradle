@@ -29,4 +29,8 @@ repositories {
     }
 }
 
+task prepareKotlinBuildScriptModel {
+
+}
+
 apply from: 'build.release.gradle'
