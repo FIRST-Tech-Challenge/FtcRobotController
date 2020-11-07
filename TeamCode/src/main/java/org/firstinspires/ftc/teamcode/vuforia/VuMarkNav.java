@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
@@ -23,7 +25,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 //@TeleOp(name="ULTIMATEGOAL Vuforia Nav", group ="Concept")
 //@Disabled
-public class VuMarkNav{
+public class VuMarkNav implements GivesPosition {
 
     // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:
     // 1) Camera Source.  Valid choices are:  BACK (behind screen) or FRONT (selfie side)
@@ -60,7 +62,7 @@ public class VuMarkNav{
     private float phoneZRotate    = 0;
 
     // just getting the bare bones stuff for the auto to work
-    pose vu_XYZ = new pose(0,0,0);
+    pose vu_XYZ = new pose(0,200,0);
 
     VectorF translation;
 
@@ -226,26 +228,30 @@ public class VuMarkNav{
             if (targetVisible) {
                 // express position (translation) of robot in inches.
                 translation = lastLocation.getTranslation();
-                telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+
+                vu_XYZ.x = -translation.get(1) / mmPerInch;
+                vu_XYZ.y = translation.get(0) / mmPerInch;
+                vu_XYZ.r = Math.toRadians(rotation.thirdAngle + 90);
+
+                telemetry.addData("Position", "X Y R = %.1f, %.1f, %.1f",
+                        vu_XYZ.x, vu_XYZ.y, vu_XYZ.r);
 
                 // express the rotation of the robot in degrees.
-                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+
+                //telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
             } else {
                 telemetry.addData("Visible Target", "none");
             }
             telemetry.update();
 
-            vu_XYZ.x = translation.get(0) / mmPerInch;
-            vu_XYZ.y = translation.get(1) / mmPerInch;
-            vu_XYZ.r = translation.get(2) / mmPerInch;
+
 
 
         }
     });
 
-    public pose getLastPosition(){
+    public pose getPosition(){
         return vu_XYZ;
     }
 }

@@ -91,7 +91,7 @@ public class StrafeDemo extends OpMode
     @Override
     public void loop() {
 
-        MecanumDrive.drive(1,0,0);
+        MecanumDrive.drive(0.4,0,0);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());

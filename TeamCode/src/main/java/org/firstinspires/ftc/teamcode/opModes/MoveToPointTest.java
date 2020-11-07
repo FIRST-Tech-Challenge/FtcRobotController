@@ -28,6 +28,7 @@ package org.firstinspires.ftc.teamcode.opModes;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -50,9 +51,9 @@ import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="MoveToPointTest", group="Iterative Opmode")
+@TeleOp(name="MoveToPointTest", group="Linear Opmode")
 
-public class MoveToPointTest extends OpMode
+public class MoveToPointTest extends LinearOpMode
 {
     // Declare OpMode members.
 
@@ -61,52 +62,31 @@ public class MoveToPointTest extends OpMode
     VuMarkNav vumark;
     Mecanum drivetrain;
     Follower pathFollower;
-    /*
-     * Code to run ONCE when the driver hits INIT
-     */
+
     @Override
-    public void init() {
+    public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         vumark = new VuMarkNav(hardwareMap, telemetry);
         drivetrain = new Mecanum(hardwareMap);
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
-    }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
-     */
-    @Override
-    public void init_loop() {
-    }
 
-    /*
-     * Code to run ONCE when the driver hits PLAY
-     */
-    @Override
-    public void start() {
+        waitForStart();
+
         vumark.activate();
         runtime.reset();
-        pathFollower = new Follower(drivetrain, vumark, pathString);
-    }
+        pathFollower = new Follower(drivetrain, vumark, pathString, telemetry);
 
-    /*
-     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
-     */
-    @Override
-    public void loop() {
-        telemetry.addData("Destination: ", )
-        telemetry.addData("Current Position: ", vumark.getLastPosition());
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-    }
+        while (opModeIsActive()){
+            telemetry.addData("Destination: ", pathFollower.targetPose);
+            telemetry.addData("Current Position: ", vumark.getPosition());
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+        }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-    @Override
-    public void stop() {
         vumark.deactivate();
     }
+
 
 }
 

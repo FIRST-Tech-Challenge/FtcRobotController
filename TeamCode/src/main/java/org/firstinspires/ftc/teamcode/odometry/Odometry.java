@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
 
+import org.firstinspires.ftc.teamcode.GivesPosition;
 import org.firstinspires.ftc.teamcode.utility.Average;
 import org.firstinspires.ftc.teamcode.utility.Timing;
 import org.firstinspires.ftc.teamcode.utility.point;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class Odometry {
+public class Odometry implements GivesPosition {
     // constants
     final static double facingForward = Math.PI/2;
     final static double facingRight = 0;

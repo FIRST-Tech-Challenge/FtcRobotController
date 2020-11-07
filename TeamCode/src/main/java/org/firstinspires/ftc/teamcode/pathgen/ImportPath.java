@@ -6,7 +6,14 @@ import java.util.StringTokenizer;
 public class ImportPath {
     public static Path getPath (String path){
         Path ret = new Path();
+        PathPoint point = new PathPoint(0,10);
+        point.speed = 1;
+        point.dir = -Math.PI/2;
 
+        ret.add(point);
+        return ret;
+
+        /*
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -27,6 +34,6 @@ public class ImportPath {
             System.out.printf("File %s not found%n", path);
         }
 
-        return null;
+        return null;*/
     }
 }

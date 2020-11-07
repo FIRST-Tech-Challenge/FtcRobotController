@@ -33,6 +33,7 @@ package org.firstinspires.ftc.teamcode.opModes.unitOpModeTests;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
@@ -82,6 +83,7 @@ public class OdoSingleWheelTest extends OpMode
      */
     @Override
     public void start() {
+
         runtime.reset();
     }
 
@@ -90,11 +92,12 @@ public class OdoSingleWheelTest extends OpMode
      */
     @Override
     public void loop() {
-
+        MotorConfigurationType type = wheel.getMotorType();
         double position = wheel.getCurrentPosition();
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Wheel Position: " + position);
+        telemetry.addData("Motor type", type);
+        telemetry.addData("Status", "Wheel Position: " + String.format("%.1f", position));
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 

@@ -100,7 +100,7 @@ public class BaseDrive extends OpMode
         double x = -gamepad1.right_stick_x;
         double turn = gamepad1.left_stick_x;
 
-        MecanumDrive.driveTeleopPower(x,y,turn);
+        MecanumDrive.drive(x,y,turn);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "X: " + x);

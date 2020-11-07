@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.teamcode.utility.pose;
+
+import java.util.logging.Logger;
 
 
 public abstract class OdometryWheel {
@@ -12,6 +16,8 @@ public abstract class OdometryWheel {
     protected double deltaTicks = 0;
 
     abstract long getWheelPosition();
+
+    public double totalDistTravelled = 0;
 
     // Offset is x and y displacement from center of rotation
     // + angle that wheel is facing (in radians with 0 facing right).
@@ -44,7 +50,7 @@ public abstract class OdometryWheel {
 
     public double getDeltaPosition(){
         // theta * radians = arc length
-        //return -1;
+        totalDistTravelled += getDeltaTicks() / ticksPerRev * radius;
         return (getDeltaTicks() / ticksPerRev) * radius;
     }
 

@@ -20,7 +20,7 @@ public class Mecanum {
     double backLeftSpeed;
     double backRightSpeed;
 
-    private static final double maxTicksPerSec = 2400;
+    private static final double maxTicksPerSec = 2000;
     private static final double wheelToCenter = 21;
 
     //top l, top r, bottom l, bottom r
@@ -46,39 +46,38 @@ public class Mecanum {
 
     //turn speed be in robot angle
 
-    public void driveTeleopPower(double xSpeed, double ySpeed, double turnSpeed) {
-
-        double frontLeftSpeed = ySpeed + xSpeed + turnSpeed;
-        double frontRightSpeed = ySpeed - xSpeed - turnSpeed;
-        double backLeftSpeed = ySpeed - xSpeed + turnSpeed;
-        double backRightSpeed = ySpeed + xSpeed - turnSpeed;
-
-        frontLeft.setPower(frontLeftSpeed);
-        frontRight.setPower(frontRightSpeed);
-        backLeft.setPower(backLeftSpeed);;
-        backRight.setPower(backRightSpeed);
-    }
+//    public void driveTeleopPower(double xSpeed, double ySpeed, double turnSpeed) {
+//
+//        double frontLeftSpeed = ySpeed + xSpeed + turnSpeed;
+//        double frontRightSpeed = ySpeed - xSpeed - turnSpeed;
+//        double backLeftSpeed = ySpeed - xSpeed + turnSpeed;
+//        double backRightSpeed = ySpeed + xSpeed - turnSpeed;
+//
+//        frontLeft.setPower(frontLeftSpeed);
+//        frontRight.setVelocity(frontRightSpeed);
+//        backLeft.setVelocity(backLeftSpeed);
+//        backRight.setVelocity(backRightSpeed);
+//    }
 
     public void drive(double xSpeed, double ySpeed, double turnSpeed){
         // radians = circumference / radius
-        turnSpeed /= wheelToCenter;
+        //turnSpeed /= wheelToCenter;
 
-        point move = new point(xSpeed, ySpeed);
-        move.normalize();
-
-        maximum max = new maximum(
-                move.y + move.x + turnSpeed,  //FL
-                move.y - move.x - turnSpeed,        //FR
-                move.y - move.x +  turnSpeed,        //BL
-                move.y + move.x - turnSpeed);       //BR
-        max.squishIntoRange(1.0);
-
+//        point move = new point(xSpeed, ySpeed);
+//
+//        maximum max = new maximum(
+//                move.y + move.x + turnSpeed,  //FL
+//                move.y - move.x - turnSpeed,        //FR
+//                move.y - move.x + turnSpeed,        //BL
+//                move.y + move.x - turnSpeed);       //BR
+        //max.squishIntoRange(1.0);
 
 
-        frontLeft.setVelocity(  (int)(maxTicksPerSec * max.nums[0]));
-        frontRight.setVelocity( (int)(maxTicksPerSec * max.nums[1]));
-        backLeft.setVelocity(   (int)(maxTicksPerSec * max.nums[2]));
-        backRight.setVelocity(  (int)(maxTicksPerSec * max.nums[3]));
+
+        frontLeft.setVelocity(  (int)(maxTicksPerSec * (ySpeed - xSpeed + turnSpeed)));
+        frontRight.setVelocity( (int)(maxTicksPerSec * (ySpeed - xSpeed - turnSpeed)));
+        backLeft.setVelocity(   (int)(maxTicksPerSec * (ySpeed + xSpeed + turnSpeed)));
+        backRight.setVelocity(  (int)(maxTicksPerSec * (ySpeed + xSpeed - turnSpeed)));
 
 //        //for debugging
 //        frontLeftSpeed = frontLeft.getVelocity();

@@ -143,10 +143,11 @@ public class OdoTest extends OpMode {
         telemetry.addData("front Left.GetCurPos", frontLeftOdo.getWheelPosition());
         telemetry.addData("back Right.GetCurPos ", backRightOdo.getWheelPosition());
         telemetry.addData("back Left.GetCurPos", backLeftOdo.getWheelPosition());
-        telemetry.addData("Detla front Right: ", frontRightOdo.getDeltaPosition());
-        telemetry.addData("Detla front Left: ", frontLeftOdo.getDeltaPosition());
-        telemetry.addData("Detla back Right: ", backRightOdo.getDeltaPosition());
-        telemetry.addData("Detla back Left: ", backLeftOdo.getDeltaPosition());
+
+        telemetry.addData("Detla front Right: ", frontRightOdo.totalDistTravelled);
+        telemetry.addData("Detla front Left: ", frontLeftOdo.totalDistTravelled);
+        telemetry.addData("Detla back Right: ", backRightOdo.totalDistTravelled);
+        telemetry.addData("Detla back Left: ", backLeftOdo.totalDistTravelled);
 //        telemetry.addData("Position", "Current X: " +  globalPosition.x);
 //        telemetry.addData(  "Position","Current Y:" +  globalPosition.y );
 //        telemetry.addData("Position", "Current R:" + globalPosition.r);
