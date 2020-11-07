@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
-@Autonomous(name = "newChassis2Test")
+@Autonomous(name = "NewTest_Sai")
 public class NewTest_Sai extends LinearOpMode {
 
     Robot robot = new Robot();
@@ -32,21 +32,57 @@ public class NewTest_Sai extends LinearOpMode {
         robot.initChassis(this);
         waitForStart();
         //Tests all of the motors individually
-        sleep(1000);
+        telemetry.addData("So Far It Is Working", 0);
+        telemetry.update();
+        sleep(3000);
         robot.moveMotorLeftFront(10);
         telemetry.addData("Moving LeftFront Motor", 10);
+        telemetry.update();
+        sleep(1000);
+        robot.moveMotorLeftFront(-10);
+        telemetry.addData("Moving LeftFront Motor", -10);
         telemetry.update();
         sleep(1000);
         robot.moveMotorRightFront(10);
         telemetry.addData("Moving RightFront Motor", 10);
         telemetry.update();
         sleep(1000);
+        robot.moveMotorRightFront(-10);
+        telemetry.addData("Moving RightFront Motor", -10);
+        telemetry.update();
+        sleep(1000);
         robot.moveMotorLeftBack(10);
         telemetry.addData("Moving LeftBack Motor", 10);
         telemetry.update();
         sleep(1000);
+        robot.moveMotorLeftBack(-10);
+        telemetry.addData("Moving LeftBack Motor", -10);
+        telemetry.update();
+        sleep(1000);
         robot.moveMotorRightBack(10);
         telemetry.addData("Moving RightBack Motor", 10);
+        telemetry.update();
+        sleep(1000);
+        robot.moveMotorRightBack(-10);
+        telemetry.addData("Moving RightBack Motor", -10);
+        telemetry.update();
+        sleep(1000);
+
+        robot.moveShooterMotor(10);
+        telemetry.addData("Moving ShooterMotor", 10);
+        telemetry.update();
+        sleep(1000);
+        robot.moveShooterMotor(-10);
+        telemetry.addData("Moving ShooterMotor", -10);
+        telemetry.update();
+        sleep(1000);
+
+        robot.moveWobbleGoalMotor(10);
+        telemetry.addData("Moving wobbleGoalMotor", 10);
+        telemetry.update();
+        sleep(1000);
+        robot.moveWobbleGoalMotor(-10);
+        telemetry.addData("Moving wobbleGoalMotor", -10);
         telemetry.update();
         sleep(1000);
 

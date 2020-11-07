@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Qualifier_1;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -35,6 +36,21 @@ public class Robot {
         op = opMode;
         hardwareMap = op.hardwareMap;
 
+        //Initialize Motors
+        DcMotorEx motorLeftFront;
+        DcMotorEx motorRightFront;
+        DcMotorEx motorLeftBack;
+        DcMotorEx motorRightBack;
+        DcMotorEx ShooterMotor;
+        DcMotorEx wobbleGoalMotor;
+
+        motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
+        motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
+        motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
+        motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
+        ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
+        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
+
         //vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
 
         drivetrain.init(opMode);
@@ -42,10 +58,10 @@ public class Robot {
 
         //vuforiaWebcam.start();
 
-        //getVuforiaPosition();
-        op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
-        op.telemetry.update();
-        op.sleep(1000);
+//        getVuforiaPosition();
+//        op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
+//        op.telemetry.update();
+//        op.sleep(1000);
     }
 
     public void moveVuforiaWebcam(double x, double y, double endAngle) {
@@ -103,6 +119,14 @@ public class Robot {
         drivetrain.moveMotorRightBack(distance);
     }
 
+    /******** shooterMotor **********/
+    public void moveShooterMotor(double distance) {
+        drivetrain.moveShooterMotor(distance);
+    }
+    /******** shooterMotor **********/
+    public void moveWobbleGoalMotor(double distance) {
+        drivetrain.moveWobbleGoalMotor(distance);
+    }
 
     public double getAngle() {
         return drivetrain.getAngle();
@@ -169,10 +193,6 @@ public class Robot {
         drivetrain.turnOdometry(target,power);
     }
 
-    public void initVuforia () {}
-
-    public void initTfod () {}
-
     public void moveForwardOdometry(double distance, double power) {
         drivetrain.moveForwardOdometry(distance,power);
     }
@@ -200,9 +220,6 @@ public class Robot {
 
     public void DirectxyPath(double x, double y, double power) {
         drivetrain.DirectxyPath(x,y,power);
-    }
-    public void moveAngleOdometry(double AngleInRadians, double x, double y, double power){
-        drivetrain.moveAngleOdometry(AngleInRadians,x,y,power);
     }
 
 
