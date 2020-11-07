@@ -169,6 +169,10 @@ public class Robot {
         drivetrain.turnOdometry(target,power);
     }
 
+    public void initVuforia () {}
+
+    public void initTfod () {}
+
     public void moveForwardOdometry(double distance, double power) {
         drivetrain.moveForwardOdometry(distance,power);
     }
@@ -196,6 +200,9 @@ public class Robot {
 
     public void DirectxyPath(double x, double y, double power) {
         drivetrain.DirectxyPath(x,y,power);
+    }
+    public void moveAngleOdometry(double AngleInRadians, double x, double y, double power){
+        drivetrain.moveAngleOdometry(AngleInRadians,x,y,power);
     }
 
 
