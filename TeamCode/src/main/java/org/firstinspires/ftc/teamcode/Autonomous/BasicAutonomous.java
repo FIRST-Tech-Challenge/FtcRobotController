@@ -29,12 +29,9 @@ import java.util.List;
 
 @Autonomous(name="Basic Autonomous for Test", group="Test")
 
-//////////////////////////////////////////////////////////
-    // EXTEND this class to create multiple drive paths.
-    // use this for test but not competiton
-        ///////////////////////////////////////////////////
-
-
+// Place robot on the left most blue line when facing the goal. Robot should be placed such that
+// as it drives straight ahead it will not hit the stack of rings. So basically center the robot on
+// the seam between the first and second floor tile. Which is an inch or to to the right of the blue line.
 
 public class BasicAutonomous extends LinearOpMode {
     /* Declare OpMode members. */
@@ -66,16 +63,16 @@ public class BasicAutonomous extends LinearOpMode {
     public static final double     Ki_DRIVE                = 0.005;   // 0.005 Larger is more responsive, but also less stable
     public static final double     Kd_DRIVE                = 0.0;   // Leave as 0 for now
 
+    // Gyro constants and variables for PID steering
 
     private double                 globalAngle; // not used currently
-    // PID values for gyroDrive in order to reach target heading
     public double                  lasterror;
     public  double                 totalError;
 
     // STATE Definitions from the ENUM package
 
-    ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition
-    WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default // default target zone
+    ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition, this is needed to keep shooter on for a Linear Opmode
+    WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default target zone
 
     //// Vuforia Content
    public static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
@@ -218,10 +215,9 @@ public class BasicAutonomous extends LinearOpMode {
         wobble.ArmCarryWobble();
         sleep(500);
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        // Put a hold after each turn
-        // This is currently set up or field coordinates NOT RELATIVE to the last move
+        // After picking up the wobble goal the robot always goes to the same spot to shoot the 3 preloaded rings.
+        // After delivering the rings, the switch case has the appropriate drive path to the identified Target Zone.
+
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
         // Drive paths are initially all the same to get to the shooter location
         gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
@@ -230,9 +226,11 @@ public class BasicAutonomous extends LinearOpMode {
         shoot3Rings();   // call method to start shooter and launch 3 rings
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
 
-
+        // Switch manages the 3 different Target Zone objectives based on the number of rings stacked up
+        // Ring stack is none, one or 4 rings tall and is determined by a randomization process.
+        // Robot has to read the stack height and set the Target Zone square state based on Vuforia/ Tensor Flow detection
         switch(Square){
-            case BLUE_A: // This is the basic op mode. Put real paths in designated opmodes
+            case BLUE_A: // no rings. 3 tiles (24 inches per tile) forward and one tile to the left from start
                 telemetry.addData("Going to RED A", "Target Zone");
                 gyroTurn(TURN_SPEED*.5,20,3);
                 gyroDrive(DRIVE_SPEED, 8.0, 20.0, 5);
@@ -240,7 +238,7 @@ public class BasicAutonomous extends LinearOpMode {
                 wobble.GripperOpen();
                 wobble.ArmExtend();
                 break;
-            case BLUE_B:
+            case BLUE_B: // one ring  4 tiles straight ahead
                 telemetry.addData("Going to RED B", "Target Zone");
                 //gyroTurn(TURN_SPEED*.5,20,3);
                 gyroDrive(DRIVE_SPEED, 30.0, -15.0, 5);
@@ -251,7 +249,7 @@ public class BasicAutonomous extends LinearOpMode {
                 drivetime.reset();
                 gyroDrive(DRIVE_SPEED, -18.0, -15, 5);
                 break;
-            case BLUE_C:
+            case BLUE_C: // four rings. 5 tiles forward and one tile to the left.
                 telemetry.addData("Going to RED C", "Target Zone");
                 gyroTurn(TURN_SPEED,0,3);
                 gyroDrive(DRIVE_SPEED, 48, 0.0, 5);
