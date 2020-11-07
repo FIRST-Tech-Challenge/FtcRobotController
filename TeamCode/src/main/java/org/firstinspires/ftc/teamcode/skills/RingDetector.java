@@ -39,14 +39,14 @@ public class RingDetector {
     public AutoDot detectRing(int timeout, String side, Telemetry telemetry, LinearOpMode caller) {
         AutoDot zone = new AutoDot();
         zone.setX(70);
-        zone.setY(130);
-        zone.setHeading(0);
+        zone.setY(120);
+        zone.setHeading(45);
         boolean found = false;
         boolean stop = false;
 
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        while (!stop || runtime.seconds() <= timeout) {
+        while (!stop && caller.opModeIsActive()) {
             if (tfDetector != null) {
                 List<Classifier.Recognition> results = tfDetector.getLastResults();
                 if (results == null || results.size() == 0) {
@@ -57,8 +57,8 @@ public class RingDetector {
                             telemetry.addData("PrintZone", r.getTitle());
                             if (r.getTitle().contains(LABEL_C)) {
                                 if (side.equals(AutoRoute.NAME_RED)) {
-                                    zone.setX(70);
-                                    zone.setY(113);
+                                    zone.setX(75);
+                                    zone.setY(120);
                                     zone.setHeading(45);
                                 } else {
                                     zone.setX(30);
@@ -86,7 +86,7 @@ public class RingDetector {
                             if(r.getTitle().contains(LABEL_A)){
                                 if(side.equals(AutoRoute.NAME_RED)) {
                                     zone.setX(70);
-                                    zone.setY(83);
+                                    zone.setY(75);
                                     zone.setHeading(45);
                                 } else {
                                     zone.setX(30);
@@ -102,9 +102,7 @@ public class RingDetector {
                 }
                 telemetry.update();
             }
-            if (found || !caller.opModeIsActive()) {
-                stop = true;
-            }
+            stop = found || runtime.seconds() >= timeout;
         }
 
         return zone;

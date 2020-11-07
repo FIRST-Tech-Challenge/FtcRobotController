@@ -47,6 +47,7 @@ public class UltimateMode extends LinearOpMode {
     boolean changedclaw = false;
     boolean changedintake = false;
     boolean changedshooter = false;
+    boolean changedswing = false;
     boolean buttonpressable = true;
     double delaytime = 300;
     double startdelay = 0;
@@ -105,10 +106,20 @@ public class UltimateMode extends LinearOpMode {
                     robot.openWobbleClaw();
                 }
 
-                if (gamepad1.dpad_up) {
-                    robot.forwardWobbleSwing();
-                } else if (gamepad1.dpad_down) {
-                    robot.backWobbleSwing();
+                // move swing
+
+                if (gamepad1.dpad_up && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    changedswing = !changedswing;
+                    if (changedswing) {
+                        robot.forwardWobbleSwing();
+                    } else {
+                        robot.backWobbleSwing();
+                    }
+                }
+
+                if (gamepad1.dpad_down) {
+                    robot.liftWobbleWallDrop();
                 } else if (gamepad1.dpad_left) {
                     robot.liftWobbleWall();
                 }

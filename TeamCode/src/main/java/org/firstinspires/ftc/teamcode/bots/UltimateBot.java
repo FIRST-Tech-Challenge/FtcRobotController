@@ -26,11 +26,13 @@ public class UltimateBot extends YellowBot {
     private DcMotor shooter = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
-    private static int SWING_LIFTUP = 50;
+    private static int SWING_LIFT_DROP = 170;
     private static int SWING_GROUND_POS = 280;
     private static int SWING_LIFT_UP_POS = 230;
-    private static int SWING_LIFT_HIGH_POS = 60;
+    private static int SWING_LIFT_WALL = 45;
     private static double SHOOT_SERVO = 0.4;
+
+    private RingDetector rf = null;
 
 
     /* Constructor */
@@ -151,7 +153,7 @@ public class UltimateBot extends YellowBot {
         if (shooterServo != null) {
             shooterServo.setPosition(0.7);
             runtime.reset();
-            while(runtime.milliseconds() <= 200) {
+            while (runtime.milliseconds() <= 200) {
 
             }
             shooterServo.setPosition(SHOOT_SERVO);
@@ -257,7 +259,7 @@ public class UltimateBot extends YellowBot {
     public void liftWobbleWall() {
         if (wobbleSwing != null) {
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setTargetPosition(SWING_LIFT_HIGH_POS);
+            wobbleSwing.setTargetPosition(SWING_LIFT_WALL);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wobbleSwing.setPower(0.7);
             boolean stop = false;
@@ -269,6 +271,24 @@ public class UltimateBot extends YellowBot {
             wobbleSwing.setPower(0);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             wobbleSwing.setPower(0.005);
+        }
+    }
+
+    @BotAction(displayName = "Lift Wobble Wall Drop", defaultReturn = "")
+    public void liftWobbleWallDrop() {
+        if (wobbleSwing != null) {
+            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobbleSwing.setTargetPosition(SWING_LIFT_DROP);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wobbleSwing.setPower(0.7);
+            boolean stop = false;
+            while (!stop) {
+                stop = wobbleSwing.isBusy() == false;
+            }
+            this.swingPosition = SwingPosition.LiftUp;
+            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobbleSwing.setPower(0);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -295,16 +315,36 @@ public class UltimateBot extends YellowBot {
         getLights().none();
     }
 
-    @BotAction(displayName = "Detect Stack", defaultReturn = "B")
-    public AutoDot detectStack(String side) {
+    @BotAction(displayName = "Detect Stack and Init", defaultReturn = "B")
+    public AutoDot detectStackandInit(String side) {
         AutoDot target = null;
-        RingDetector rf = null;
         try {
             rf = new RingDetector(this.hwMap, this.getLights(), telemetry);
             target = rf.detectRing(2, side, telemetry, owner);
         } finally {
             if (rf != null) {
                 rf.stopDetection();
+            }
+        }
+        return target;
+    }
+
+    @BotAction(displayName = "Detect Stack Init", defaultReturn = "B")
+    public void initDetector() {
+        rf = new RingDetector(this.hwMap, this.getLights(), telemetry);
+
+    }
+
+    @BotAction(displayName = "Detect Stack", defaultReturn = "B")
+    public AutoDot detectStack(String side) {
+        AutoDot target = null;
+        if (rf != null) {
+            try {
+                target = rf.detectRing(2, side, telemetry, owner);
+            } finally {
+                if (rf != null) {
+                    rf.stopDetection();
+                }
             }
         }
         return target;

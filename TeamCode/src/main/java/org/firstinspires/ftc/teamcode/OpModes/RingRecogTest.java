@@ -48,7 +48,7 @@ public class RingRecogTest extends LinearOpMode {
             waitForStart();
 
             // detect ring stack
-            wobdot = rf.detectRing(1, AutoRoute.NAME_RED, telemetry, this);
+            wobdot = rf.detectRing(2, AutoRoute.NAME_RED, telemetry, this);
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {

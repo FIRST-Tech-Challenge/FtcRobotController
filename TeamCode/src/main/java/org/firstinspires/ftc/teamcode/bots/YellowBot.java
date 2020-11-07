@@ -24,14 +24,14 @@ import org.firstinspires.ftc.teamcode.skills.Led;
 import java.io.File;
 import java.util.Random;
 
-public class YellowBot implements OdoBot{
+public class YellowBot implements OdoBot {
     public static double CALIB_SPEED = 0.5;
     private DcMotor frontLeft = null;
     private DcMotor frontRight = null;
     private DcMotor backLeft = null;
     private DcMotor backRight = null;
 
-    protected HardwareMap hwMap  =  null;
+    protected HardwareMap hwMap = null;
     protected Telemetry telemetry;
 
     private Gyroscope gyro = null;
@@ -40,11 +40,11 @@ public class YellowBot implements OdoBot{
 
     protected LinearOpMode owner = null;
 
-    static final double     COUNTS_PER_MOTOR_HD    = 560 ;    // Rev HD motor
-    static final double     REV_TBORE    = 8192 ;    // Rev HD motor
-    static final double     DRIVE_GEAR_REDUCTION    = 1 ;     // This is < 1.0 if geared UP. was 2 in the sample
-    static final double     WHEEL_DIAMETER_INCHES   = 2.0 ;     // For figuring circumference
-    public static final double     COUNTS_PER_INCH_REV     = (REV_TBORE * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);  //1303.79729
+    static final double COUNTS_PER_MOTOR_HD = 560;    // Rev HD motor
+    static final double REV_TBORE = 8192;    // Rev HD motor
+    static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP. was 2 in the sample
+    static final double WHEEL_DIAMETER_INCHES = 2.0;     // For figuring circumference
+    public static final double COUNTS_PER_INCH_REV = (REV_TBORE * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);  //1303.79729
 
     public static final double ROBOT_LENGTH_X = 17.25;
     public static final double ROBOT_LENGTH_Y = 17.5;
@@ -65,7 +65,7 @@ public class YellowBot implements OdoBot{
 
     }
 
-    public void init(LinearOpMode owner, HardwareMap hw, Telemetry t)throws Exception {
+    public void init(LinearOpMode owner, HardwareMap hw, Telemetry t) throws Exception {
         this.owner = owner;
         this.hwMap = hw;
         this.telemetry = t;
@@ -101,21 +101,19 @@ public class YellowBot implements OdoBot{
             }
 
             stop();
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             //issues accessing drive resources
             throw new Exception("Issues accessing one of drive motors. Check the controller config", ex);
         }
     }
 
-    public Telemetry getTelemetry(){
+    public Telemetry getTelemetry() {
         return this.telemetry;
     }
 
 
-    protected void resetEncoders(){
-        if (frontLeft != null && frontRight!= null && backLeft != null && backRight != null)
-        {
+    protected void resetEncoders() {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -123,8 +121,8 @@ public class YellowBot implements OdoBot{
         }
     }
 
-    public void stop (){
-        if (frontLeft != null && frontRight!= null && backLeft != null && backRight != null) {
+    public void stop() {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
 
             // Set all motors to zero power
             frontLeft.setPower(0);
@@ -134,42 +132,41 @@ public class YellowBot implements OdoBot{
         }
     }
 
-    public double getOdemeteReading(boolean left){
-        if (left){
+    public double getOdemeteReading(boolean left) {
+        if (left) {
             return frontLeft.getCurrentPosition();
-        }
-        else {
+        } else {
             return frontRight.getCurrentPosition();
         }
 
     }
 
-    public double getLeftOdometer(){
-        return   frontLeft.getCurrentPosition();
+    public double getLeftOdometer() {
+        return frontLeft.getCurrentPosition();
 
     }
 
-    public double getRightOdometer(){
-        return   frontRight.getCurrentPosition();
+    public double getRightOdometer() {
+        return frontRight.getCurrentPosition();
 
     }
 
-    public double getHorizontalOdometer(){
-        return  backLeft.getCurrentPosition();
+    public double getHorizontalOdometer() {
+        return backLeft.getCurrentPosition();
 
     }
 
-    public void move(double drive, double turn){
-        if (frontLeft != null && frontRight!= null && backLeft != null && backRight != null) {
+    public void move(double drive, double turn) {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             double rightPower = Range.clip(drive + turn, -1.0, 1.0);
             double leftPower = Range.clip(drive - turn, -1.0, 1.0);
 
             //create dead zone for bad joysticks
-            if (Math.abs(rightPower) < 0.02){
+            if (Math.abs(rightPower) < 0.02) {
                 rightPower = 0;
             }
 
-            if (Math.abs(leftPower) < 0.02){
+            if (Math.abs(leftPower) < 0.02) {
                 leftPower = 0;
             }
 
@@ -193,8 +190,8 @@ public class YellowBot implements OdoBot{
         }
     }
 
-    public void moveTo(double leftspeed, double rightspeed, double inches){
-        if (frontLeft != null && frontRight!= null && backLeft != null && backRight != null) {
+    public void moveTo(double leftspeed, double rightspeed, double inches) {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             double rightPower = rightspeed;
             double leftPower = leftspeed;
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -205,7 +202,7 @@ public class YellowBot implements OdoBot{
             boolean forward = inches > 0;
 
             //reverse speed
-            if (forward){
+            if (forward) {
                 rightPower = -rightPower;
                 leftPower = -leftPower;
             }
@@ -216,28 +213,25 @@ public class YellowBot implements OdoBot{
 
             double leftTarget = this.getLeftOdometer() + distance;
 
-            double cutOff = ROBOT_LENGTH_Y* COUNTS_PER_INCH_REV;
+            double cutOff = ROBOT_LENGTH_Y * COUNTS_PER_INCH_REV;
             //at top speed the slow-down should start at a 23% greater distance than at half speed.
-            cutOff = cutOff + ROBOT_LENGTH_Y*0.5* COUNTS_PER_INCH_REV;
+            cutOff = cutOff + ROBOT_LENGTH_Y * 0.5 * COUNTS_PER_INCH_REV;
 
             double slowdownDistance = Math.abs(distance) - cutOff;
 
             double slowdownMark = 0;
 
-            if (slowdownDistance < 0){
+            if (slowdownDistance < 0) {
                 slowdownMark = distance * 0.1;
-                if (forward){
+                if (forward) {
                     rightPower = -CALIB_SPEED;
-                }
-                else{
+                } else {
                     rightPower = CALIB_SPEED;
                 }
-            }
-            else{
-                if (forward){
+            } else {
+                if (forward) {
                     slowdownMark = startingPoint + slowdownDistance;
-                }
-                else{
+                } else {
                     slowdownMark = startingPoint - slowdownDistance;
                 }
             }
@@ -252,7 +246,7 @@ public class YellowBot implements OdoBot{
 
 
             double speedIncrement = 0.05;
-            if (forward){
+            if (forward) {
                 speedIncrement = -speedIncrement;
             }
             leftPower = 0;
@@ -270,33 +264,31 @@ public class YellowBot implements OdoBot{
             int step = 0;
             while (!stop && owner.opModeIsActive()) {
                 double leftreading = this.getLeftOdometer();
-                stop =  (forward && leftreading >= leftTarget) ||
+                stop = (forward && leftreading >= leftTarget) ||
                         (forward == false && leftreading <= leftTarget);
-                if (stop){
+                if (stop) {
                     break;
                 }
                 if ((forward && leftreading >= slowdownMark) ||
-                        (forward == false && leftreading <= slowdownMark)){
+                        (forward == false && leftreading <= slowdownMark)) {
                     step++;
 
                     if (forward) {
                         rightPower = realSpeedRight + speedDropStep * step;
                         leftPower = realSpeedLeft + speedDropStep * step;
-                        if (rightPower >= -minSpeed || leftPower >= -minSpeed){
+                        if (rightPower >= -minSpeed || leftPower >= -minSpeed) {
                             leftPower = -minSpeed;
                             rightPower = -minSpeed;
                         }
-                    }
-                    else{
+                    } else {
                         rightPower = realSpeedRight - speedDropStep * step;
                         leftPower = realSpeedLeft - speedDropStep * step;
-                        if (rightPower <=minSpeed || leftPower <= minSpeed){
+                        if (rightPower <= minSpeed || leftPower <= minSpeed) {
                             leftPower = minSpeed;
                             rightPower = minSpeed;
                         }
                     }
-                }
-                else{
+                } else {
                     //acceleration
                     if ((forward && rightPower + speedIncrement >= originalRight) ||
                             (!forward && rightPower + speedIncrement <= originalRight)) {
@@ -318,7 +310,6 @@ public class YellowBot implements OdoBot{
     }
 
 
-
 //    public MotorReductionBot getMotorAmperage(){
 //        ExpansionHubMotor rb = (ExpansionHubMotor) hwMap.dcMotor.get(RIGHT_BACK);
 //        ExpansionHubMotor rf = (ExpansionHubMotor) hwMap.dcMotor.get(RIGHT_FRONT);
@@ -335,35 +326,35 @@ public class YellowBot implements OdoBot{
 //        return sample;
 //    }
 
-    public MotorReductionBot getSuggestedMR(MotorReductionBot amperage){
+    public MotorReductionBot getSuggestedMR(MotorReductionBot amperage) {
 
-        MotorReductionBot recommended= new MotorReductionBot();
+        MotorReductionBot recommended = new MotorReductionBot();
 
         double minVal = 100;
-        if (minVal > amperage.getRB()){
+        if (minVal > amperage.getRB()) {
             minVal = amperage.getRB();
         }
-        if (minVal > amperage.getRF()){
+        if (minVal > amperage.getRF()) {
             minVal = amperage.getRF();
         }
-        if (minVal > amperage.getLB()){
+        if (minVal > amperage.getLB()) {
             minVal = amperage.getLB();
         }
 
-        if (minVal > amperage.getLF()){
+        if (minVal > amperage.getLF()) {
             minVal = amperage.getLF();
         }
 
-        recommended.setRB(minVal/amperage.getRB());
-        recommended.setRF(minVal/amperage.getRF());
-        recommended.setLB(minVal/amperage.getLB());
-        recommended.setLF(minVal/amperage.getLF());
+        recommended.setRB(minVal / amperage.getRB());
+        recommended.setRF(minVal / amperage.getRF());
+        recommended.setLB(minVal / amperage.getLB());
+        recommended.setLF(minVal / amperage.getLF());
 
         return recommended;
     }
 
-    public void moveTo(BotMoveProfile profile){
-        if (frontLeft != null && frontRight!= null && backLeft != null && backRight != null) {
+    public void moveTo(BotMoveProfile profile) {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             double rightPower = profile.getRealSpeedRight();
             double leftPower = profile.getRealSpeedLeft();
 
@@ -375,7 +366,6 @@ public class YellowBot implements OdoBot{
             MotorReductionBot mr = profile.getMotorReduction();
 
             boolean forward = profile.getDirection() == RobotDirection.Forward;
-
 
 
             double slowdownMark = profile.getSlowdownMarkLong();
@@ -391,7 +381,7 @@ public class YellowBot implements OdoBot{
 
 
             double speedIncrement = 0.05;
-            if (forward){
+            if (forward) {
                 speedIncrement = -speedIncrement;
             }
             leftPower = 0;
@@ -407,16 +397,16 @@ public class YellowBot implements OdoBot{
             while (!stop && owner.opModeIsActive()) {
                 double leftreading = this.getLeftOdometer();
                 if ((forward && leftreading >= slowdownMark) ||
-                        (forward == false && leftreading <= slowdownMark)){
+                        (forward == false && leftreading <= slowdownMark)) {
 
                     if (!slowDown) {
                         slowDown = true;
                     }
                     step++;
-                    if (Math.abs(leftPower) <= Math.abs(minSpeed) || Math.abs(rightPower) <= Math.abs(minSpeed) ){
-                        stop =  (forward && leftreading >= leftTarget) ||
+                    if (Math.abs(leftPower) <= Math.abs(minSpeed) || Math.abs(rightPower) <= Math.abs(minSpeed)) {
+                        stop = (forward && leftreading >= leftTarget) ||
                                 (forward == false && leftreading <= leftTarget);
-                        if (stop){
+                        if (stop) {
                             break;
                         }
                     }
@@ -424,21 +414,19 @@ public class YellowBot implements OdoBot{
                     if (forward) {
                         rightPower = realSpeedRight + speedDropStep * step;
                         leftPower = realSpeedLeft + speedDropStep * step;
-                        if (rightPower >= -minSpeed || leftPower >= -minSpeed){
+                        if (rightPower >= -minSpeed || leftPower >= -minSpeed) {
                             leftPower = -minSpeed;
                             rightPower = -minSpeed;
                         }
-                    }
-                    else{
+                    } else {
                         rightPower = realSpeedRight - speedDropStep * step;
                         leftPower = realSpeedLeft - speedDropStep * step;
-                        if (rightPower <=minSpeed || leftPower <= minSpeed){
+                        if (rightPower <= minSpeed || leftPower <= minSpeed) {
                             leftPower = minSpeed;
                             rightPower = minSpeed;
                         }
                     }
-                }
-                else{
+                } else {
                     //acceleration
                     if ((forward && rightPower + speedIncrement >= originalRight) ||
                             (!forward && rightPower + speedIncrement <= originalRight)) {
@@ -461,9 +449,9 @@ public class YellowBot implements OdoBot{
     }
 
 
-    public RobotMovementStats moveToCalib(double leftspeed, double rightspeed, double inches, MotorReductionBot mr, double breakPoint, Led led){
+    public RobotMovementStats moveToCalib(double leftspeed, double rightspeed, double inches, MotorReductionBot mr, double breakPoint, Led led) {
         RobotMovementStats stats = new RobotMovementStats();
-        if (frontLeft != null && frontRight!= null && backLeft != null && backRight != null) {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             double rightPower = rightspeed;
             double leftPower = leftspeed;
             stats.setMotorPower(Math.abs(leftPower));
@@ -473,15 +461,13 @@ public class YellowBot implements OdoBot{
             backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
-
             boolean forward = inches > 0;
 
             //reverse speed
-            if (forward){
+            if (forward) {
                 rightPower = -rightPower;
                 leftPower = -leftPower;
-            }
-            else{
+            } else {
                 breakPoint = -breakPoint;
             }
 
@@ -504,7 +490,7 @@ public class YellowBot implements OdoBot{
 
 
             double speedIncrement = 0.05;
-            if (forward){
+            if (forward) {
                 speedIncrement = -speedIncrement;
             }
             leftPower = 0;
@@ -523,7 +509,7 @@ public class YellowBot implements OdoBot{
             while (!stop && owner.opModeIsActive()) {
                 double leftreading = this.getLeftOdometer();
                 if ((forward && leftreading >= slowdownMark) ||
-                        (forward == false && leftreading <= slowdownMark)){
+                        (forward == false && leftreading <= slowdownMark)) {
 
                     if (!slowDown) {
                         if (fullSpeedReached) {
@@ -536,10 +522,10 @@ public class YellowBot implements OdoBot{
                         slowDown = true;
                     }
                     step++;
-                    if (Math.abs(leftPower) <= Math.abs(minSpeed) || Math.abs(rightPower) <= Math.abs(minSpeed) ){
-                        stop =  (forward && leftreading >= leftTarget) ||
-                        (forward == false && leftreading <= leftTarget);
-                        if (stop){
+                    if (Math.abs(leftPower) <= Math.abs(minSpeed) || Math.abs(rightPower) <= Math.abs(minSpeed)) {
+                        stop = (forward && leftreading >= leftTarget) ||
+                                (forward == false && leftreading <= leftTarget);
+                        if (stop) {
                             break;
                         }
                     }
@@ -547,21 +533,19 @@ public class YellowBot implements OdoBot{
                     if (forward) {
                         rightPower = realSpeedRight + speedDropStep * step;
                         leftPower = realSpeedLeft + speedDropStep * step;
-                        if (rightPower >= -minSpeed || leftPower >= -minSpeed){
+                        if (rightPower >= -minSpeed || leftPower >= -minSpeed) {
                             leftPower = -minSpeed;
                             rightPower = -minSpeed;
                         }
-                    }
-                    else{
+                    } else {
                         rightPower = realSpeedRight - speedDropStep * step;
                         leftPower = realSpeedLeft - speedDropStep * step;
-                        if (rightPower <=minSpeed || leftPower <= minSpeed){
+                        if (rightPower <= minSpeed || leftPower <= minSpeed) {
                             leftPower = minSpeed;
                             rightPower = minSpeed;
                         }
                     }
-                }
-                else{
+                } else {
                     //acceleration
                     if ((forward && rightPower + speedIncrement >= originalRight) ||
                             (!forward && rightPower + speedIncrement <= originalRight)) {
@@ -569,10 +553,9 @@ public class YellowBot implements OdoBot{
                         leftPower = rightPower;
                         realSpeedLeft = leftPower;
                         realSpeedRight = rightPower;
-                    }
-                    else{
+                    } else {
                         //full speed
-                        if (!fullSpeedReached){
+                        if (!fullSpeedReached) {
                             fullSpeedReached = true;
                             stats.stopAccelerateTimer(leftreading);
                             stats.startFullSpeedTimer(leftreading);
@@ -596,7 +579,7 @@ public class YellowBot implements OdoBot{
     }
 
 
-    public void curveTo(BotMoveProfile profile, RobotCoordinatePosition locator){
+    public void curveTo(BotMoveProfile profile, RobotCoordinatePosition locator) {
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
 
             MotorReductionBot mr = profile.getMotorReduction();
@@ -631,17 +614,17 @@ public class YellowBot implements OdoBot{
 
             if (originalLeft > originalRight) {
                 speedIncrementRight = speedIncrementLeft * profile.getSpeedRatio();
-                startPower = originalRight/2;
+                startPower = originalRight / 2;
             } else if (originalRight > originalLeft) {
                 leftLong = false;
                 speedIncrementLeft = speedIncrementRight * profile.getSpeedRatio();
-                startPower = originalLeft/2;
+                startPower = originalLeft / 2;
             }
 
 
             if (forward) {
                 speedIncrementLeft = -speedIncrementLeft;
-                speedIncrementRight = - speedIncrementRight;
+                speedIncrementRight = -speedIncrementRight;
             }
 
 
@@ -650,11 +633,10 @@ public class YellowBot implements OdoBot{
             double realSpeedRF = startPower;
             double realSpeedRB = startPower;
 
-            if (profile.shouldStop() == false){
+            if (profile.shouldStop() == false) {
                 //will terminate earlier, at the slowdown point, to start the next move
                 longTarget = slowdownMarkLong;
             }
-
 
 
             boolean accelerating = true;
@@ -694,8 +676,8 @@ public class YellowBot implements OdoBot{
                             realSpeedRB = -lastMileSpeed;
                             realSpeedLF = -lastMileSpeed;
                             realSpeedLB = -lastMileSpeed;
-                            stop =  longReading >= longTarget;
-                            if (stop){
+                            stop = longReading >= longTarget;
+                            if (stop) {
                                 break;
                             }
                         }
@@ -710,8 +692,8 @@ public class YellowBot implements OdoBot{
                             realSpeedRB = lastMileSpeed;
                             realSpeedLF = lastMileSpeed;
                             realSpeedLB = lastMileSpeed;
-                            stop =  longReading <= longTarget;
-                            if (stop){
+                            stop = longReading <= longTarget;
+                            if (stop) {
                                 break;
                             }
                         }
@@ -719,16 +701,15 @@ public class YellowBot implements OdoBot{
 
                 } else if (accelerating) {
                     if ((forward && realSpeedRF + speedIncrementRight >= originalRight && realSpeedLF + speedIncrementLeft >= originalLeft) ||
-                            (!forward && realSpeedRF + speedIncrementRight <= originalRight && realSpeedLF + speedIncrementLeft <= originalLeft)){
+                            (!forward && realSpeedRF + speedIncrementRight <= originalRight && realSpeedLF + speedIncrementLeft <= originalLeft)) {
                         accelerating = true;
                         realSpeedRF += speedIncrementRight;
                         realSpeedRB += speedIncrementRight;
                         realSpeedLF += speedIncrementLeft;
                         realSpeedLB += speedIncrementLeft;
 
-                    }
-                    else{
-                        if (!cruising){
+                    } else {
+                        if (!cruising) {
                             accelerating = false;
                             cruising = true;
                             realSpeedRF = originalRight;
@@ -740,10 +721,10 @@ public class YellowBot implements OdoBot{
                         }
                     }
                 }
-                if (cruising){
+                if (cruising) {
                     //adjust left and right speeds based on the locator
-                    double  adjustedLeft = locator.getRealSpeedLeft();
-                    double  adjustedRight = locator.getRealSpeedRight();
+                    double adjustedLeft = locator.getRealSpeedLeft();
+                    double adjustedRight = locator.getRealSpeedRight();
                     if (Math.abs(adjustedLeft) > 0 && Math.abs(adjustedRight) > 0) {
                         realSpeedRF = adjustedRight;
                         realSpeedRB = adjustedRight;
@@ -768,13 +749,13 @@ public class YellowBot implements OdoBot{
                 this.backRight.setPower(realSpeedRB * mr.getRB());
             }
 
-            if (profile.shouldStop()){
+            if (profile.shouldStop()) {
                 this.stop();
             }
         }
     }
 
-    public void spin(BotMoveProfile profile, RobotCoordinatePosition locator){
+    public void spin(BotMoveProfile profile, RobotCoordinatePosition locator) {
         if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -784,7 +765,7 @@ public class YellowBot implements OdoBot{
             double speed = Math.abs(profile.getTopSpeed());
             double degrees = profile.getAngleChange();
             boolean spinLeft = false;
-            if (degrees > 0){
+            if (degrees > 0) {
                 spinLeft = true;
             }
 
@@ -795,19 +776,18 @@ public class YellowBot implements OdoBot{
 
 
             MotorReductionBot reduction;
-            if (spinLeft){
+            if (spinLeft) {
                 rightDesiredSpeed = -rightDesiredSpeed;
                 reduction = botConfig.getSpinLeftConfig();
-            }
-            else{
+            } else {
                 leftDesiredSpeed = -leftDesiredSpeed;
                 reduction = botConfig.getSpinRightConfig();
             }
 
-            double slowdownMark = Math.abs(degrees)*reduction.getBreakPoint(profile.getTopSpeed());
+            double slowdownMark = Math.abs(degrees) * reduction.getBreakPoint(profile.getTopSpeed());
             double desired = Math.abs(degrees);
 
-            if (!profile.shouldStop()){
+            if (!profile.shouldStop()) {
                 desired = slowdownMark;
             }
 
@@ -825,35 +805,33 @@ public class YellowBot implements OdoBot{
             double minSpeed = profile.getMinSpeed();
 
             double speedDropStep = profile.getSpeedDecrement();
-            while (!stop && this.owner.opModeIsActive()){
+            while (!stop && this.owner.opModeIsActive()) {
                 double currentHead = locator.getOrientation();
                 double change = Math.abs(currentHead - startHead);
-                if (change >= desired){
+                if (change >= desired) {
                     stop = true;
                 }
                 if (!stop) {
                     //slow down
-                    if (change >= slowdownMark){
+                    if (change >= slowdownMark) {
                         step++;
 
                         if (spinLeft) {
                             rightPower = realSpeedRight + speedDropStep * step;
                             leftPower = realSpeedLeft - speedDropStep * step;
-                            if (rightPower >= -minSpeed || leftPower <= minSpeed){
+                            if (rightPower >= -minSpeed || leftPower <= minSpeed) {
                                 leftPower = minSpeed;
                                 rightPower = -minSpeed;
                             }
-                        }
-                        else{
+                        } else {
                             rightPower = realSpeedRight - speedDropStep * step;
                             leftPower = realSpeedLeft + speedDropStep * step;
-                            if (rightPower <=minSpeed || leftPower >= -minSpeed){
+                            if (rightPower <= minSpeed || leftPower >= -minSpeed) {
                                 leftPower = -minSpeed;
                                 rightPower = minSpeed;
                             }
                         }
-                    }
-                    else {
+                    } else {
                         //accelerate
                         if ((spinLeft && leftPower + speedIncrement <= leftDesiredSpeed) ||
                                 (!spinLeft && rightPower + speedIncrement <= rightDesiredSpeed)) {
@@ -882,7 +860,7 @@ public class YellowBot implements OdoBot{
     }
 
 
-    public void spinCalib(double degrees, double speed, RobotCoordinatePosition locator){
+    public void spinCalib(double degrees, double speed, RobotCoordinatePosition locator) {
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -891,7 +869,7 @@ public class YellowBot implements OdoBot{
 
         speed = Math.abs(speed);
         boolean spinLeft = false;
-        if (degrees > 0){
+        if (degrees > 0) {
             spinLeft = true;
         }
 
@@ -901,14 +879,13 @@ public class YellowBot implements OdoBot{
         double startHead = locator.getOrientation();
 
 
-        if (spinLeft){
+        if (spinLeft) {
             rightDesiredSpeed = -rightDesiredSpeed;
-        }
-        else{
+        } else {
             leftDesiredSpeed = -leftDesiredSpeed;
         }
 
-        double slowdownMark = Math.abs(degrees)*075;
+        double slowdownMark = Math.abs(degrees) * 075;
 
 
         double leftPower = 0;
@@ -924,35 +901,33 @@ public class YellowBot implements OdoBot{
         double minSpeed = 0.1;
 
         double speedDropStep = 0.1;
-        while (!stop && this.owner.opModeIsActive()){
+        while (!stop && this.owner.opModeIsActive()) {
             double currentHead = locator.getOrientation();
             double change = Math.abs(currentHead - startHead);
-            if (change >= Math.abs(degrees)){
+            if (change >= Math.abs(degrees)) {
                 stop = true;
             }
             if (!stop) {
                 //slow down
-                if (change >= slowdownMark){
+                if (change >= slowdownMark) {
                     step++;
 
                     if (spinLeft) {
                         rightPower = realSpeedRight + speedDropStep * step;
                         leftPower = realSpeedLeft - speedDropStep * step;
-                        if (rightPower >= -minSpeed || leftPower <= minSpeed){
+                        if (rightPower >= -minSpeed || leftPower <= minSpeed) {
                             leftPower = minSpeed;
                             rightPower = -minSpeed;
                         }
-                    }
-                    else{
+                    } else {
                         rightPower = realSpeedRight - speedDropStep * step;
                         leftPower = realSpeedLeft + speedDropStep * step;
-                        if (rightPower <=minSpeed || leftPower >= -minSpeed){
+                        if (rightPower <= minSpeed || leftPower >= -minSpeed) {
                             leftPower = -minSpeed;
                             rightPower = minSpeed;
                         }
                     }
-                }
-                else {
+                } else {
                     //accelerate
                     if ((spinLeft && leftPower + speedIncrement <= leftDesiredSpeed) ||
                             (!spinLeft && rightPower + speedIncrement <= rightDesiredSpeed)) {
@@ -977,20 +952,20 @@ public class YellowBot implements OdoBot{
         this.stop();
     }
 
-    public double getLeftTarget(double inches){
+    public double getLeftTarget(double inches) {
         return this.getLeftOdometer() + inches * COUNTS_PER_INCH_REV;
     }
 
-    public double getRightTarget(double inches){
+    public double getRightTarget(double inches) {
         return this.getRightOdometer() + inches * COUNTS_PER_INCH_REV;
     }
 
 
-    public void spinLeft(double speed, boolean forward){
-        if (frontLeft != null && frontRight!= null && backLeft != null && backRight != null) {
+    public void spinLeft(double speed, boolean forward) {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             double power = Range.clip(speed, -1.0, 1.0);
 
-            if (forward){
+            if (forward) {
                 power = -power;
             }
 
@@ -1003,11 +978,11 @@ public class YellowBot implements OdoBot{
         }
     }
 
-    public void spinRight(double speed, boolean forward){
-        if (frontLeft != null && frontRight!= null && backLeft != null && backRight != null) {
+    public void spinRight(double speed, boolean forward) {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             double power = Range.clip(speed, -1.0, 1.0);
 
-            if (forward){
+            if (forward) {
                 power = -power;
             }
 
@@ -1020,7 +995,7 @@ public class YellowBot implements OdoBot{
         }
     }
 
-    public void spinLeftDegrees(double speed, double degrees, boolean forward){
+    public void spinLeftDegrees(double speed, double degrees, boolean forward) {
         File leftSpinPerDegFile = AppUtil.getInstance().getSettingsFile("leftSpinPerDeg.txt");
         File rightSpinPerDegFile = AppUtil.getInstance().getSettingsFile("rightSpinPerDeg.txt");
 
@@ -1031,7 +1006,7 @@ public class YellowBot implements OdoBot{
 
         double power = Range.clip(speed, -1.0, 1.0);
 
-        if (forward){
+        if (forward) {
             power = -power;
         }
 
@@ -1039,7 +1014,7 @@ public class YellowBot implements OdoBot{
         this.frontRight.setPower(power);
         this.backLeft.setPower(-power);
         this.backRight.setPower(power);
-        while (this.getLeftOdometer() > targetPos && owner.opModeIsActive()){
+        while (this.getLeftOdometer() > targetPos && owner.opModeIsActive()) {
 
         }
 
@@ -1047,11 +1022,11 @@ public class YellowBot implements OdoBot{
     }
 
 
-    public void turnLeft(double speed, boolean forward){
-        if (frontLeft != null && frontRight!= null && backLeft != null && backRight != null) {
+    public void turnLeft(double speed, boolean forward) {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             double power = Range.clip(speed, -1.0, 1.0);
 
-            if (forward){
+            if (forward) {
                 power = -power;
             }
 
@@ -1062,11 +1037,11 @@ public class YellowBot implements OdoBot{
         }
     }
 
-    public void turnRight(double speed, boolean forward){
-        if (frontLeft != null && frontRight!= null && backLeft != null && backRight != null) {
+    public void turnRight(double speed, boolean forward) {
+        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
             double power = Range.clip(speed, -1.0, 1.0);
 
-            if (forward == true){
+            if (forward == true) {
                 power = -power;
             }
 
@@ -1077,8 +1052,8 @@ public class YellowBot implements OdoBot{
         }
     }
 
-    public void strafeLeft(double speed){
-        if (backLeft != null && backRight!= null && frontLeft != null && frontRight != null) {
+    public void strafeLeft(double speed) {
+        if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
             double power = Range.clip(speed, -1.0, 1.0);
             power = power * power * power;
             this.backLeft.setPower(power);
@@ -1090,8 +1065,8 @@ public class YellowBot implements OdoBot{
         }
     }
 
-    public void strafeRight(double speed){
-        if (backLeft != null && backRight!= null && frontLeft != null && frontRight != null) {
+    public void strafeRight(double speed) {
+        if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
             double power = Range.clip(speed, -1.0, 1.0);
             power = power * power * power;
             this.backLeft.setPower(-power);
@@ -1110,16 +1085,14 @@ public class YellowBot implements OdoBot{
         MotorReductionBot calib = null;
         if (left) {
             calib = getCalibConfig().getStrafeLeftReduction();
-        }
-        else{
+        } else {
             calib = getCalibConfig().getStrafeRightReduction();
         }
 
 
-
         double overage = 0;
 
-        if (left == false){
+        if (left == false) {
             distance = -distance;
         }
 
@@ -1127,30 +1100,29 @@ public class YellowBot implements OdoBot{
 
         boolean stop = false;
 
-        while (!stop && this.owner.opModeIsActive()){
+        while (!stop && this.owner.opModeIsActive()) {
             currentPos = this.getHorizontalOdometer();
-            if((left && currentPos >= target) || (left == false && currentPos <= target)){
+            if ((left && currentPos >= target) || (left == false && currentPos <= target)) {
                 stop = true;
             }
 
-            if (left){
-                this.backLeft.setPower(-speed*calib.getLB());
-                this.backRight.setPower(speed*calib.getRB());
-                this.frontLeft.setPower(speed*calib.getLF());
-                this.frontRight.setPower(-speed*calib.getRF());
-            }
-            else{
-                this.backLeft.setPower(speed*calib.getLB());
-                this.backRight.setPower(-speed*calib.getRB());
-                this.frontLeft.setPower(-speed*calib.getLF());
-                this.frontRight.setPower(speed*calib.getRF());
+            if (left) {
+                this.backLeft.setPower(-speed * calib.getLB());
+                this.backRight.setPower(speed * calib.getRB());
+                this.frontLeft.setPower(speed * calib.getLF());
+                this.frontRight.setPower(-speed * calib.getRF());
+            } else {
+                this.backLeft.setPower(speed * calib.getLB());
+                this.backRight.setPower(-speed * calib.getRB());
+                this.frontLeft.setPower(-speed * calib.getLF());
+                this.frontRight.setPower(speed * calib.getRF());
             }
         }
 
         stop();
         double newPos = this.getHorizontalOdometer();
         double diff = Math.abs(newPos - target);
-        overage = diff/distance*100;
+        overage = diff / distance * 100;
         return overage;
     }
 
@@ -1161,7 +1133,7 @@ public class YellowBot implements OdoBot{
 
         double overage = 0;
 
-        if (left == false){
+        if (left == false) {
             distance = -distance;
         }
 
@@ -1169,36 +1141,35 @@ public class YellowBot implements OdoBot{
 
         boolean stop = false;
 
-        while (!stop && this.owner.opModeIsActive()){
+        while (!stop && this.owner.opModeIsActive()) {
             currentPos = this.getHorizontalOdometer();
-            if((left && currentPos >= target) || (left == false && currentPos <= target)){
+            if ((left && currentPos >= target) || (left == false && currentPos <= target)) {
                 stop = true;
             }
 
-            if (left){
-                this.backLeft.setPower(-speed*calib.getLB());
-                this.backRight.setPower(speed*calib.getRB());
-                this.frontLeft.setPower(speed*calib.getLF());
-                this.frontRight.setPower(-speed*calib.getRF());
-            }
-            else{
-                this.backLeft.setPower(speed*calib.getLB());
-                this.backRight.setPower(-speed*calib.getRB());
-                this.frontLeft.setPower(-speed*calib.getLF());
-                this.frontRight.setPower(speed*calib.getRF());
+            if (left) {
+                this.backLeft.setPower(-speed * calib.getLB());
+                this.backRight.setPower(speed * calib.getRB());
+                this.frontLeft.setPower(speed * calib.getLF());
+                this.frontRight.setPower(-speed * calib.getRF());
+            } else {
+                this.backLeft.setPower(speed * calib.getLB());
+                this.backRight.setPower(-speed * calib.getRB());
+                this.frontLeft.setPower(-speed * calib.getLF());
+                this.frontRight.setPower(speed * calib.getRF());
             }
         }
 
         stop();
         double newPos = this.getHorizontalOdometer();
         double diff = Math.abs(newPos - target);
-        overage = diff/distance*100;
+        overage = diff / distance * 100;
         return overage;
     }
 
 
-    public void diagLeft(double speed){
-        if (backLeft != null && backRight!= null && frontLeft != null && frontRight != null) {
+    public void diagLeft(double speed) {
+        if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
             double power = Range.clip(speed, -1.0, 1.0);
             this.frontLeft.setPower(power);
             this.backRight.setPower(power);
@@ -1211,8 +1182,8 @@ public class YellowBot implements OdoBot{
         }
     }
 
-    public void diagRight(double speed){
-        if (backLeft != null && backRight!= null && frontLeft != null && frontRight != null) {
+    public void diagRight(double speed) {
+        if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
             double power = Range.clip(speed, -1.0, 1.0);
 
             this.backLeft.setPower(power);
@@ -1226,8 +1197,8 @@ public class YellowBot implements OdoBot{
         }
     }
 
-    public void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib){
-        if (backLeft != null && backRight!= null && frontLeft != null && frontRight != null) {
+    public void diagToCalib(double speed, double lowSpeed, double diagInches, boolean leftAxis, MotorReductionBot calib) {
+        if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
 
 
             double leftOdoStart = getLeftOdometer();
@@ -1245,7 +1216,7 @@ public class YellowBot implements OdoBot{
 
             double power = speed;
 
-            if (diagInches > 0){
+            if (diagInches > 0) {
                 power = -power;
                 lowSpeed = -lowSpeed;
             }
@@ -1253,7 +1224,7 @@ public class YellowBot implements OdoBot{
             boolean stop = false;
 
 
-            while(!stop && owner.opModeIsActive()){
+            while (!stop && owner.opModeIsActive()) {
                 double leftOdo = getLeftOdometer();
                 double rightOdo = getRightOdometer();
                 double horOdo = getHorizontalOdometer();
@@ -1262,11 +1233,11 @@ public class YellowBot implements OdoBot{
                 double horDistActual = Math.abs(horOdo - horOdoStart);
 
                 double catet = leftDistActual;
-                if (rightDistActual > catet){
+                if (rightDistActual > catet) {
                     catet = rightDistActual;
                 }
 
-                double hyp = Math.sqrt(catet* catet + horDistActual * horDistActual );
+                double hyp = Math.sqrt(catet * catet + horDistActual * horDistActual);
 
                 if (hyp >= distance) {
                     break;
@@ -1289,26 +1260,25 @@ public class YellowBot implements OdoBot{
 
 
                 if (!leftAxis) {
-                    this.frontLeft.setPower(power*calib.getLF());
-                    this.backRight.setPower(power*calib.getRB());
+                    this.frontLeft.setPower(power * calib.getLF());
+                    this.backRight.setPower(power * calib.getRB());
 
-                    this.backLeft.setPower(lowSpeed*calib.getLB());
-                    this.frontRight.setPower(lowSpeed*calib.getRF());
-                }
-                else{
-                    this.backLeft.setPower(power*calib.getLB());
-                    this.frontRight.setPower(power*calib.getRF());
+                    this.backLeft.setPower(lowSpeed * calib.getLB());
+                    this.frontRight.setPower(lowSpeed * calib.getRF());
+                } else {
+                    this.backLeft.setPower(power * calib.getLB());
+                    this.frontRight.setPower(power * calib.getRF());
 
-                    this.frontLeft.setPower(lowSpeed*calib.getLF());
-                    this.backRight.setPower(lowSpeed*calib.getRB());
+                    this.frontLeft.setPower(lowSpeed * calib.getLF());
+                    this.backRight.setPower(lowSpeed * calib.getRB());
                 }
             }
         }
         this.stop();
     }
 
-    public void diagTo(BotMoveProfile profile){
-        if (backLeft != null && backRight!= null && frontLeft != null && frontRight != null) {
+    public void diagTo(BotMoveProfile profile) {
+        if (backLeft != null && backRight != null && frontLeft != null && frontRight != null) {
 
             MotorReductionBot calib = profile.getMotorReduction();
 
@@ -1323,7 +1293,7 @@ public class YellowBot implements OdoBot{
             double power = profile.getTopSpeed();
             double lowSpeed = profile.getLowSpeed();
 
-            if (profile.getDirection() == RobotDirection.Forward){
+            if (profile.getDirection() == RobotDirection.Forward) {
                 power = -power;
                 lowSpeed = -lowSpeed;
             }
@@ -1331,7 +1301,7 @@ public class YellowBot implements OdoBot{
             boolean stop = false;
 
 
-            while(!stop && owner.opModeIsActive()){
+            while (!stop && owner.opModeIsActive()) {
                 double leftOdo = getLeftOdometer();
                 double rightOdo = getRightOdometer();
                 double horOdo = getHorizontalOdometer();
@@ -1340,11 +1310,11 @@ public class YellowBot implements OdoBot{
                 double horDistActual = Math.abs(horOdo - horOdoStart);
 
                 double catet = leftDistActual;
-                if (rightDistActual > catet){
+                if (rightDistActual > catet) {
                     catet = rightDistActual;
                 }
 
-                double hyp = Math.sqrt(catet* catet + horDistActual * horDistActual );
+                double hyp = Math.sqrt(catet * catet + horDistActual * horDistActual);
 
                 if (hyp >= distance) {
                     break;
@@ -1358,18 +1328,17 @@ public class YellowBot implements OdoBot{
 
 
                 if (!leftAxis) {
-                    this.frontLeft.setPower(power*calib.getLF());
-                    this.backRight.setPower(power*calib.getRB());
+                    this.frontLeft.setPower(power * calib.getLF());
+                    this.backRight.setPower(power * calib.getRB());
 
-                    this.backLeft.setPower(lowSpeed*calib.getLB());
-                    this.frontRight.setPower(lowSpeed*calib.getRF());
-                }
-                else{
-                    this.backLeft.setPower(power*calib.getLB());
-                    this.frontRight.setPower(power*calib.getRF());
+                    this.backLeft.setPower(lowSpeed * calib.getLB());
+                    this.frontRight.setPower(lowSpeed * calib.getRF());
+                } else {
+                    this.backLeft.setPower(power * calib.getLB());
+                    this.frontRight.setPower(power * calib.getRF());
 
-                    this.frontLeft.setPower(lowSpeed*calib.getLF());
-                    this.backRight.setPower(lowSpeed*calib.getRB());
+                    this.frontLeft.setPower(lowSpeed * calib.getLF());
+                    this.backRight.setPower(lowSpeed * calib.getRB());
                 }
             }
         }
@@ -1377,24 +1346,22 @@ public class YellowBot implements OdoBot{
     }
 
 
-
     public void initCalibData() throws Exception {
         File calibFile = AppUtil.getInstance().getSettingsFile(BotCalibConfig.BOT_CALIB_CONFIG);
-        if (calibFile.exists()){
+        if (calibFile.exists()) {
             String data = ReadWriteFile.readFile(calibFile);
             botConfig = BotCalibConfig.deserialize(data);
-            if (botConfig == null){
+            if (botConfig == null) {
                 throw new Exception("Calibration data does not exist. Run calibration first");
             }
             telemetry.addData("Bot Config", "Initialized");
             telemetry.update();
-        }
-        else{
+        } else {
             throw new Exception("Calibration data does not exist. Run calibration first");
         }
     }
 
-    public BotCalibConfig getCalibConfig(){
+    public BotCalibConfig getCalibConfig() {
         if (botConfig == null) {
             File calibFile = AppUtil.getInstance().getSettingsFile(BotCalibConfig.BOT_CALIB_CONFIG);
             if (calibFile.exists()) {
@@ -1405,28 +1372,27 @@ public class YellowBot implements OdoBot{
         return botConfig;
     }
 
-    public File getCalibConfigFile(){
+    public File getCalibConfigFile() {
         return AppUtil.getInstance().getSettingsFile(BotCalibConfig.BOT_CALIB_CONFIG);
     }
 
 
     ///gyroscope
-    public void initGyro(){
-        if (this.gyro == null){
+    public void initGyro() {
+        if (this.gyro == null) {
             this.gyro = new Gyroscope();
         }
         File calibFile = AppUtil.getInstance().getSettingsFile(gyro.CALIB_FILE);
         if (calibFile.exists()) {
             this.gyro.init(this.hwMap, this.telemetry, false);
-        }
-        else{
+        } else {
             this.gyro.init(this.hwMap, this.telemetry, true);
             this.gyro.calibrate();
         }
     }
 
-    public void calibrateGyro(){
-        if (this.gyro == null){
+    public void calibrateGyro() {
+        if (this.gyro == null) {
             this.gyro = new Gyroscope();
         }
 
@@ -1435,8 +1401,8 @@ public class YellowBot implements OdoBot{
 
     }
 
-    public double getGyroHeading(){
-        if(this.gyro != null){
+    public double getGyroHeading() {
+        if (this.gyro != null) {
             return this.gyro.getHeading();
         }
 
@@ -1446,8 +1412,8 @@ public class YellowBot implements OdoBot{
 
     //leds
 
-    public Led getLights(){
-        if (led == null){
+    public Led getLights() {
+        if (led == null) {
             led = new Led();
             led.init(hwMap, telemetry);
         }
