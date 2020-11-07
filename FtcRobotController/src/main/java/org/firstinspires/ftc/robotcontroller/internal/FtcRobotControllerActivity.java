@@ -128,6 +128,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 @SuppressWarnings("WeakerAccess")
 public class FtcRobotControllerActivity extends Activity
+
+
   {
   public static final String TAG = "RCActivity";
   public String getTag() { return TAG; }
@@ -171,6 +173,7 @@ public class FtcRobotControllerActivity extends Activity
   protected MotionDetection motionDetection;
 
   private static boolean permissionsValidated = false;
+
 
   private WifiDirectChannelChanger wifiDirectChannelChanger;
 
