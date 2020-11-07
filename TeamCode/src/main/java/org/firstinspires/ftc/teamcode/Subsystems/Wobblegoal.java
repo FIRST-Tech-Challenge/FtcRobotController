@@ -18,9 +18,9 @@ public class Wobblegoal {
     private static final double     LIFTSPEED   =   0.65;
     private static final double     LIFTUP      =   14 ; //Number is in inches
     private static final int        LIFTDOWN    =   0;
-    private static final double     GRIPPEROPEN =   0.6;
-    private static final double     GRIPPERCLOSE=   0.2;
-    private static final int        ARMEXTEND   =   45; //ticks
+    private static final double     GRIPPEROPEN =   0.35;
+    private static final double     GRIPPERCLOSE=   0.8;
+    private static final int        ARMEXTEND   =   32; //ticks
     private static final int        ARMCONTRACT =   0; // ticks
     private static final int        ARMCARRY    =   60;
     private static final double     EXTENDSPEED =   .5;
@@ -57,10 +57,13 @@ public class Wobblegoal {
     public void GripperOpen()  {
 
         WobbleGrip.setPosition(GRIPPEROPEN);
+
     }
     public void GripperClose() {
 
         WobbleGrip.setPosition(GRIPPERCLOSE);
+
+
     }
     public void ArmExtend() {
 

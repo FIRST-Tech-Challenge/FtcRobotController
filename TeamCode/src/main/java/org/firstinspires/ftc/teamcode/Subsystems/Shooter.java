@@ -26,9 +26,9 @@ public class Shooter {
     private static final double rightUp = (1-leftUp);
     private static final double rightBack = (1-leftBack);
     private static final double flippercenter = 0.5;
-    private static final double stackerReload = 0.43; // 0.42 causes rings to slide forward too much
+    private static final double stackerReload = 0.42; // 0.42 causes rings to slide forward too much
     private static final double stackerShoot = 0.54; // 0.55 is a bit high
-    private static final double stacketMidLoad = .46; // tips stacker back so it loads better
+    private static final double stacketMidLoad = .43; // tips stacker back so it loads better
 
 
 
@@ -59,6 +59,7 @@ public class Shooter {
     public void shooterOff() {
             shooterleft.setPower(0);
             shooterright.setPower(0);
+
         }
     public void stackerMoveToShoot() {
         stacker.setPosition(stackerShoot);
