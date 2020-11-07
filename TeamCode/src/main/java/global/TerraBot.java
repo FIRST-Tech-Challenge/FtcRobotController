@@ -91,8 +91,8 @@ public class TerraBot {
     public Limits limits = new Limits();
 
     //d = 0.00024
-    public SpeedController outrController = new SpeedController(0.2, 0.0, 0.00375);
-    public SpeedController outlController = new SpeedController(0.2, 0.0, 0.00375);
+    public SpeedController outrController = new SpeedController(0.2, 0.0, 0.0);
+    public SpeedController outlController = new SpeedController(0.2, 0.0, 0.0);
 
     public Odometry odometry = new Odometry();
 
@@ -182,8 +182,8 @@ public class TerraBot {
         outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        shootControlL.changeCurr(1);
-        shootControlR.changeCurr(1);
+//        shootControlL.changeCurr(1);
+//        shootControlR.changeCurr(1);
 
         resetEncoders();
 
@@ -256,8 +256,18 @@ public class TerraBot {
     public void defineShooter(){
 //        shooter.addStage(outl, outtakeSpeed, 0.01);
 //        shooter.addStage(outr, outtakeSpeed, 0.01);
+        shooter.addStage(in, 1.0, 0.01);
+        shooter.addStage(ssr, shootControlR.getPos(1), 0.01);
+        shooter.addStage(ssl, shootControlL.getPos(1), 0.5);
         shooter.addStage(slr, liftSecond+0.07, 0.01);
         shooter.addStage(sll, liftSecond, 0.7);
+        shooter.addStage(in, 0.0, 0.01);
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+               intaking = false;
+            }
+        }, 0.01);
         shooter.addWaitUntil();
         for(int i = 0; i < 3;i++) {
             shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
@@ -394,6 +404,9 @@ public class TerraBot {
                 timer.reset();
             }
         }
+    }
+    public boolean isDoneResettingArm(){
+        return resettingArm > 1;
     }
 
 

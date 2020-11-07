@@ -1,10 +1,11 @@
 package teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import global.TerraBot;
-
+@Disabled
 @TeleOp(name = "OdoTele V1")
 public class OdoTele extends OpMode {
 

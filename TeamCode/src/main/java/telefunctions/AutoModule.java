@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.ArrayList;
 
 import global.TerraBot;
+import util.CodeSeg;
 
 public class AutoModule {
     public boolean executing = false;
@@ -118,7 +119,7 @@ public class AutoModule {
 
 
 
-    public void addStage(final DcMotor mot, final double pow, double t) {
+    public void addStage(final DcMotor mot, final double pow, final double t) {
         lastTime += t;
         final double time = lastTime;
         stages.add(new Stage() {
@@ -137,6 +138,18 @@ public class AutoModule {
             @Override
             public boolean run(double in) {
                 s.setPosition(pos);
+                return in > time;
+            }
+        });
+    }
+
+    public void addCustom(final CodeSeg cs, double t){
+        lastTime += t;
+        final double time = lastTime;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                cs.run();
                 return in > time;
             }
         });

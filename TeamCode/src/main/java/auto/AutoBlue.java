@@ -22,15 +22,13 @@ public class AutoBlue extends LinearOpMode {
     @Override
     public void runOpMode() {
         initialize();
-        rf.telemetryText("done initing");
         //rf.generateRandomIM();
-
-        rf.pauseBeforeInit(2);
-        bot.resetArm();
+        while (!isStarted() && !bot.isDoneResettingArm()) {
+            bot.resetArm();
+        }
+        rf.telemetryText("done initing");
         waitForStart();
         bot.startOdoThreadAuto(this);
-
-
         path.addWaypoint(-25,50,45);
         path.addRF(rf.wobbleArm(150,1));
         path.addWaypoint(0, 100, 135);

@@ -66,16 +66,21 @@ public class Path {
     public boolean isExecuting = true;
     public boolean runningRFs = true;
 
-    final public double scale = 0.3;
-    final public double[] ks = {0.05,0.05,0.01};
-    final public double[] ds = {0.005, 0.005, 0.0015}; // 0.001
-    final public double[] is = {0.01,0.01,0.015}; // 0.05
+    final public double[] ks = {0.04,0.03,0.008};
+    final public double[] ds = {0.005, 0.004, 0.001};
+    final public double[] is = {0.01,0.01,0.005};
     final public double XAcc = 1;
     final public double YAcc = 1;
     final public double HAcc = 2;
     final public double endWait = 0.2;
     final public double derWait = 0.5;
-    final public double restPow = 0.15;
+    final public double restPowX = 0.1;
+    final public double restPowY = 0.05;
+    final public double restPowT = 0.25;
+    final public double maxIX = 0.1;
+    final public double maxIY = 0.1;
+    final public double maxIT = 0.1;
+
 
 
 
@@ -91,8 +96,18 @@ public class Path {
         timer.reset();
     }
 
-    public void updateScale(double dis){
-        radius = dis*scale;
+    public void updateRadius(double dis){
+        if(dis < 25) {
+            radius = dis * 0.5;
+        }else{
+            radius = 25;
+        }
+    }
+
+    public void scaleKs(double scale){
+        xControl.setCoeffecients(ks[0]*scale, ds[0], is[0]);
+        yControl.setCoeffecients(ks[1]*scale, ds[1], is[1]);
+        hControl.setCoeffecients(ks[2]*scale, ds[2], is[2]);
     }
 
     public void resetIs(){
@@ -183,11 +198,12 @@ public class Path {
 
         if(!Double.isNaN(ans)) {
             if(ans > 1){
-                if(herr < (HAcc*6)) {
-                    next();
-                }else{
-                    ans = 1;
-                }
+//                if(herr < (HAcc*6)) {
+//                    next();
+//                }else{
+//                    ans = 1;
+//                }
+                next();
             }
             return ans;
         }else{
@@ -201,7 +217,7 @@ public class Path {
         return targetPos;
     }
 
-    public void updateDIs(){
+    public void updateDIs(boolean isSet){
         double changeT = timer.seconds() - lastTime;
         lastTime = timer.seconds();
 
@@ -212,15 +228,33 @@ public class Path {
         }else {
             xder = (timer.seconds()/derWait) * (xerr - lxerr) / changeT;
             yder =  (timer.seconds()/derWait) * (yerr - lyerr) / changeT;
-            hder =  (timer.seconds()/derWait) * (herr - lherr) / changeT;
+            hder = (timer.seconds() / derWait) * (herr - lherr) / changeT;
         }
         lxerr = xerr;
         lyerr = yerr;
         lherr = herr;
-        xint += xerr * changeT;
-        yint += yerr * changeT;
-        if(Math.abs(herr) < 10) {
-            hint += herr * changeT;
+
+        if(isSet) {
+            if (Math.abs(herr) < 10 && hint < maxIT) {
+                hint += herr * changeT;
+                hder *= 2;
+            }
+            if (Math.abs(xerr) < 5 && xint < maxIX) {
+                xint += xerr * changeT;
+                xder *= 1.5;
+            }
+            if (Math.abs(yerr) < 5 && yint < maxIY) {
+                yint += yerr * changeT;
+                yder *= 1.5;
+            }
+        }else{
+            hint = 0;
+            xint = 0;
+            yint = 0;
+            hder *= 0;
+            xder *= 0;
+            yder *= 0;
+            scaleKs(1);
         }
     }
 
@@ -230,17 +264,19 @@ public class Path {
             xerr = currentPos[0] - target[0];
             yerr = currentPos[1] - target[1];
             herr = currentPos[2] - poses.get(curIndex + 1)[2];
-            updateDIs();
-            updateScale(lines.get(curIndex).getDis());
+            updateDIs(false);
+            updateRadius(lines.get(curIndex).getDis());
+            return calcPows(currentPos, false);
         }else{
             double[] target = poses.get(curIndex+1);
             xerr = currentPos[0] - target[0];
             yerr = currentPos[1] - target[1];
             herr = currentPos[2] - target[2];
-            updateDIs();
+            updateDIs(true);
             hasReachedSetpoint();
+            return calcPows(currentPos, true);
         }
-        return calcPows(currentPos);
+
     }
     public void hasReachedSetpoint(){
         boolean xIn = (Math.abs(xerr)) < XAcc;
@@ -255,7 +291,7 @@ public class Path {
         }
     }
 
-    public double[] calcPows(double[] currentPos){
+    public double[] calcPows(double[] currentPos, boolean isSet){
         double robotTheta = currentPos[2];
 
         Vector mv = new Vector(xerr, yerr);
@@ -275,7 +311,15 @@ public class Path {
         out[1] = Range.clip(out[1], -1, 1);
         out[2] = Range.clip(out[2], -1, 1);
 
-        out[2] += -Math.signum(herr)*restPow;
+        if(isSet) {
+            out[0] += -Math.signum(mv.x) * restPowX;
+            out[1] += -Math.signum(mv.y) * restPowY;
+            out[2] += -Math.signum(herr) * restPowT;
+
+            out[0] = Range.clip(out[0], -1, 1);
+            out[1] = Range.clip(out[1], -1, 1);
+            out[2] = Range.clip(out[2], -1, 1);
+        }
 
         return out;
     }

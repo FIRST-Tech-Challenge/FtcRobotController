@@ -12,10 +12,10 @@ public class SpeedController {
 
     double lastPos;
     double lastTime;
-    public double lastSpeed;
+    public double lastError;
 
     public double currError = 0;
-    public double currAccel = 0;
+    public double currDer = 0;
     public double integralOfError = 0;
 
     public double targetSpeed = 0;
@@ -26,6 +26,10 @@ public class SpeedController {
 
     public double pow = 0;
 
+    public double k;
+    public double d;
+    public double i;
+
     public SpeedController(double k, double d, double i){
         k *= 0.00001;
         d *= 0.00001;
@@ -33,9 +37,15 @@ public class SpeedController {
         timer.reset();
         lastPos = 0;
         lastTime = -0.1;
-        lastSpeed = 0;
+        lastError = 0;
         oldPos = 0;
         pid.setCoeffecients(k,d,i);
+        this.k = k;
+        this.d = d;
+        this.i = i;
+    }
+    public void scaleK(double scale){
+        pid.setCoeffecients(k*scale,d,i);
     }
 
     public double getMotorSpeed(double currPos){
@@ -58,9 +68,13 @@ public class SpeedController {
         double currSpeed = getMotorSpeed(currPos);
         currError = targetSpeed-currSpeed;
 
-        currAccel = (currError-lastSpeed)/changeTime;
-        lastSpeed = currSpeed;
+        currDer = (currError-lastError)/changeTime;
+        lastError = currError;
         integralOfError += currError*changeTime;
+
+        if(Math.abs(currError) < 3000){
+            scaleK(0.5);
+        }
     }
 
     public double getPercentageError(){
@@ -68,7 +82,7 @@ public class SpeedController {
     }
 
     public double getPow(){
-        pow += Math.signum(currError) * pid.getPower(currError, currAccel, integralOfError);
+        pow += Math.signum(currError) * pid.getPower(currError, currDer, integralOfError);
         pow = Range.clip(pow, -1, 1);
         return pow;
     }

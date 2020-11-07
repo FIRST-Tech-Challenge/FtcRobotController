@@ -27,35 +27,35 @@ public class TerraOp extends OpMode {
 
     @Override
     public void init_loop() {
-        bot.resetArm();
+        //bot.resetArm();
         telemetry.addData("vel", bot.getArmVel());
         telemetry.update();
     }
 
     @Override
     public void start() {
-        bot.turnArmWithEnc(50, 1);
-        bot.turnWobbleArm(0.1);
-        bot.turnControl.cur = 0.1;
-       // bot.startOdoThreadTele();
+//        bot.turnArmWithEnc(50, 1);
+//        bot.turnWobbleArm(0.1);
+//        bot.turnControl.cur = 0.1;
     }
 
     @Override
     public void loop() {
-        if(gamepad1.right_bumper){
-            bot.intaking = true;
-            bot.intake(bot.intakeSpeed);
-        }else if(gamepad1.left_bumper){
-            bot.intaking = false;
-            bot.intake(-bot.intakeSpeed);
-        }else if(bot.intaking){
-            bot.intake(bot.intakeSpeed);
-        }else{
-            bot.intake(0);
-        }
 
         if(!bot.autoModulesRunning()){
             if(!bot.autoModulesPaused()) {
+                if(gamepad1.right_bumper){
+                    bot.intaking = true;
+                    bot.intake(bot.intakeSpeed);
+                }else if(gamepad1.left_bumper){
+                    bot.intaking = false;
+                    bot.intake(-bot.intakeSpeed);
+                }else if(bot.intaking){
+                    bot.intake(bot.intakeSpeed);
+                }else{
+                    bot.intake(0);
+                }
+                
                 if (gamepad2.right_stick_y < 0) {
                     bot.outtaking = true;
                     bot.outtake(bot.outtakeSpeed);
@@ -120,7 +120,8 @@ public class TerraOp extends OpMode {
 //        telemetry.addData("touch", bot.isTouchSensorPressed());
 //        telemetry.update();
 
-        telemetry.addData("pos", bot.arm.getCurrentPosition());
+        telemetry.addData("errR", bot.outrController.getPercentageError());
+        telemetry.addData("errL", bot.outlController.getPercentageError());
         telemetry.update();
 
         bot.update();
@@ -131,6 +132,6 @@ public class TerraOp extends OpMode {
 
     @Override
     public void stop() {
-        //bot.stopOdoThreadTele();
+
     }
 }
