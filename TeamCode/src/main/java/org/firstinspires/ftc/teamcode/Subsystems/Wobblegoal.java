@@ -15,22 +15,24 @@ public class Wobblegoal {
     public Servo WobbleGrip=null;
 
     //Constants
-    private static final double     LIFTSPEED   =   0.5;
-    private static final int        LIFTUP      =   50; //Number is in Ticks
+    private static final double     LIFTSPEED   =   0.65;
+    private static final double     LIFTUP      =   14 ; //Number is in inches
     private static final int        LIFTDOWN    =   0;
-    private static final double     GRIPPEROPEN =   0.6;
-    private static final double     GRIPPERCLOSE=   0.2;
-    private static final int        ARMEXTEND   =   45; //ticks
+    private static final double     GRIPPEROPEN =   0.35;
+    private static final double     GRIPPERCLOSE=   0.8;
+    private static final int        ARMEXTEND   =   32; //ticks
     private static final int        ARMCONTRACT =   0; // ticks
     private static final int        ARMCARRY    =   60;
     private static final double     EXTENDSPEED =   .5;
+    private static final int        TICKS_PER_LIFT_IN = 76; // determined experimentally
+    private static final int        LIFT_HEIGHT_HIGH = (int) (LIFTUP * TICKS_PER_LIFT_IN); // converts to ticks
 
     public void init(HardwareMap hwMap)  {
         WobbleLift=hwMap.get(DcMotor.class,"LiftWobble");
         WobbleExtend=hwMap.get(DcMotor.class,"ArmExtend");
         WobbleGrip=hwMap.get(Servo.class,"Gripper");
         //Positive=up and Negative=down
-        WobbleLift.setDirection(DcMotor.Direction.REVERSE);
+        WobbleLift.setDirection(DcMotor.Direction.FORWARD);
         WobbleExtend.setDirection(DcMotorSimple.Direction.REVERSE);
         WobbleLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         WobbleExtend.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -43,22 +45,25 @@ public class Wobblegoal {
 
     //// Single operation methods - see below for methods to be called in Opmodes
     public void LiftRise() {
-        WobbleLift.setTargetPosition(LIFTUP);
+        WobbleLift.setTargetPosition(LIFT_HEIGHT_HIGH);// value is in ticks from above calculation
         WobbleLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         WobbleLift.setPower(LIFTSPEED);
     }
     public void LiftLower() {
-        WobbleLift.setTargetPosition(LIFTDOWN);
+        WobbleLift.setTargetPosition(LIFTDOWN); // this one is just zero for now
         WobbleLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         WobbleLift.setPower(LIFTSPEED);
     }
     public void GripperOpen()  {
 
         WobbleGrip.setPosition(GRIPPEROPEN);
+
     }
     public void GripperClose() {
 
         WobbleGrip.setPosition(GRIPPERCLOSE);
+
+
     }
     public void ArmExtend() {
 

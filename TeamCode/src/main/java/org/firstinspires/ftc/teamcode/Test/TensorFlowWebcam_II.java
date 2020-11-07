@@ -54,7 +54,7 @@ import java.util.List;
  * is explained below.
  */
 @TeleOp(name = "TensorFlow Webcam II", group = "Concept")
-//@Disabled
+@Disabled
 public class TensorFlowWebcam_II extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";

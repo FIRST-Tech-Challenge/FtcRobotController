@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -16,7 +17,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.Enums.DriveSpeedState;
 import org.firstinspires.ftc.teamcode.Enums.ShooterState;
 import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
@@ -27,28 +27,31 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
 
 import java.util.List;
 
-@Autonomous(name="Basic Autonomous for Test", group="Test")
+@Autonomous(name="BLUE - Left Line Wobble and Shoot 3", group="Autonomous")
+@Disabled
+/////////////////////////////////////////
+// Does not work yet - do not use
+//////////////////////////////////////////
 
-// Place robot on the left most blue line when facing the goal. Robot should be placed such that
-// as it drives straight ahead it will not hit the stack of rings. So basically center the robot on
-// the seam between the first and second floor tile. Which is an inch or to to the right of the blue line.
 
-public class BasicAutonomous extends LinearOpMode {
+
+
+public class Auto_BLUE_Left_Line extends BasicAutonomous {
     /* Declare OpMode members. */
-    public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
-    public Shooter              shooter     = new Shooter();
-    public Intake               intake      = new Intake(); // not currently using intake and elevator in auto
-    public Wobblegoal           wobble      = new Wobblegoal();
-    public Elevator             elevator    = new Elevator();
-    public Orientation          lastAngles  = new Orientation();
-
+    //public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
+    //public Shooter              shooter     = new Shooter();
+    //public Intake               intake      = new Intake();
+    //public Wobblegoal           wobble      = new Wobblegoal();
+    //public Elevator             elevator    = new Elevator();
+    //public Orientation          lastAngles  = new Orientation();
+/*
     // Timers and time limits for each timer
     public ElapsedTime          PIDtimer    = new ElapsedTime(); // PID loop timer
     public ElapsedTime          drivetime   = new ElapsedTime(); // timeout timer for driving
     public ElapsedTime          tfTime      = new ElapsedTime(); // timer for tensor flow
     public ElapsedTime          autoShootTimer  = new ElapsedTime(); //auto shooter timer (4 rings)
-    public static double        autoShootTimeAllowed = 6; //  seconds allows 4 shoot cycles in case one messes up
-    public static double        tfSenseTime          = 4; // needs a couple seconds to process the image and ID the target
+    private static double       autoShootTimeAllowed = 7; //  seconds allows 4 shoot cycles in case one messes up
+    private static double       tfSenseTime          = 4; // needs a couple seconds to process the image and ID the target
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suit the specific robot drive train.
@@ -63,24 +66,24 @@ public class BasicAutonomous extends LinearOpMode {
     public static final double     Ki_DRIVE                = 0.005;   // 0.005 Larger is more responsive, but also less stable
     public static final double     Kd_DRIVE                = 0.0;   // Leave as 0 for now
 
-    // Gyro constants and variables for PID steering
 
     private double                 globalAngle; // not used currently
+    // PID values for gyroDrive in order to reach target heading
     public double                  lasterror;
     public  double                 totalError;
 
     // STATE Definitions from the ENUM package
 
-    ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition, this is needed to keep shooter on for a Linear Opmode
-    WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default target zone
+    ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition
+    WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default // default target zone
 
     //// Vuforia Content
-   public static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-   public static final String LABEL_FIRST_ELEMENT = "Quad";
-   public static final String LABEL_SECOND_ELEMENT = "Single";
-   public String StackSize = "None";
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Quad";
+    private static final String LABEL_SECOND_ELEMENT = "Single";
+    private String StackSize = "None";
 
-
+*/
     private static final String VUFORIA_KEY =
             "AQXVmfz/////AAABmXaLleqhDEfavwYMzTtToIEdemv1X+0FZP6tlJRbxB40Cu6uDRNRyMR8yfBOmNoCPxVsl1mBgl7GKQppEQbdNI4tZLCARFsacECZkqph4VD5nho2qFN/DmvLA0e1xwz1oHBOYOyYzc14tKxatkLD0yFP7/3/s/XobsQ+3gknx1UIZO7YXHxGwSDgoU96VAhGGx+00A2wMn2UY6SGPl+oYgsE0avmlG4A4gOsc+lck55eAKZ2PwH7DyxYAtbRf5i4Hb12s7ypFoBxfyS400tDSNOUBg393Njakzcr4YqL6PYe760ZKmu78+8X4xTAYSrqFJQHaCiHt8HcTVLNl2fPQxh0wBmLvQJ/mvVfG495ER1A";
 
@@ -215,9 +218,10 @@ public class BasicAutonomous extends LinearOpMode {
         wobble.ArmCarryWobble();
         sleep(500);
 
-        // After picking up the wobble goal the robot always goes to the same spot to shoot the 3 preloaded rings.
-        // After delivering the rings, the switch case has the appropriate drive path to the identified Target Zone.
-
+        // Step through each leg of the path,
+        // Note: Reverse movement is obtained by setting a negative distance (not speed)
+        // Put a hold after each turn
+        // This is currently set up or field coordinates NOT RELATIVE to the last move
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
         // Drive paths are initially all the same to get to the shooter location
         gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
@@ -226,11 +230,9 @@ public class BasicAutonomous extends LinearOpMode {
         shoot3Rings();   // call method to start shooter and launch 3 rings
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
 
-        // Switch manages the 3 different Target Zone objectives based on the number of rings stacked up
-        // Ring stack is none, one or 4 rings tall and is determined by a randomization process.
-        // Robot has to read the stack height and set the Target Zone square state based on Vuforia/ Tensor Flow detection
+
         switch(Square){
-            case BLUE_A: // no rings. 3 tiles (24 inches per tile) forward and one tile to the left from start
+            case BLUE_A: // This is the basic op mode. Put real paths in designated opmodes
                 telemetry.addData("Going to RED A", "Target Zone");
                 gyroTurn(TURN_SPEED*.5,20,3);
                 gyroDrive(DRIVE_SPEED, 8.0, 20.0, 5);
@@ -238,7 +240,7 @@ public class BasicAutonomous extends LinearOpMode {
                 wobble.GripperOpen();
                 wobble.ArmExtend();
                 break;
-            case BLUE_B: // one ring  4 tiles straight ahead
+            case BLUE_B:
                 telemetry.addData("Going to RED B", "Target Zone");
                 //gyroTurn(TURN_SPEED*.5,20,3);
                 gyroDrive(DRIVE_SPEED, 30.0, -15.0, 5);
@@ -249,7 +251,7 @@ public class BasicAutonomous extends LinearOpMode {
                 drivetime.reset();
                 gyroDrive(DRIVE_SPEED, -18.0, -15, 5);
                 break;
-            case BLUE_C: // four rings. 5 tiles forward and one tile to the left.
+            case BLUE_C:
                 telemetry.addData("Going to RED C", "Target Zone");
                 gyroTurn(TURN_SPEED,0,3);
                 gyroDrive(DRIVE_SPEED, 48, 0.0, 5);
@@ -271,19 +273,50 @@ public class BasicAutonomous extends LinearOpMode {
     }
 
 
+
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
     /**
-     *  Method to drive on a fixed compass bearing (angle), based on encoder counts.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Driver stops the opmode running.
-     *  3) Timeout time is reached - prevents robot from getting stuck
-     *
-     * @param speed      Target speed for forward motion.  Should allow for _/- variance for adjusting heading
-     * @param distance   Distance (in inches) to move from current position.  Negative distance means move backwards.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
+     * Initialize the TensorFlow Object Detection engine.
      */
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+    }
+
+    public double getError(double targetAngle) {
+
+        double robotError;
+
+        // calculate error in -179 to +180 range  (
+        // instantiate an angles object from the IMU
+        Orientation angles = drivetrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        // pull out the first angle which is the Z axis for heading and use to calculate the error
+        // Positive robot rotation is left so positive error means robot needs to turn right.
+        robotError = angles.firstAngle - targetAngle; //lastAngles.firstAngle;
+        telemetry.addData("Robot Error", robotError);
+        telemetry.addData("Target Angle", targetAngle);
+        while (robotError > 180)  robotError -= 360;
+        while (robotError <= -180) robotError += 360;
+        return robotError;
+    }
     public void gyroDrive ( double speed,
                             double distance,
                             double angle, double timeout) {
@@ -375,198 +408,4 @@ public class BasicAutonomous extends LinearOpMode {
         }
         drivetime.reset(); // reset the timer for the next function call
     }
-
-    /**
-     *  Method to spin on central axis to point in a new direction.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the heading (angle)
-     *  2) Driver stops the opmode running.
-     *  3) Timeout time has elapsed - prevents getting stuck
-     *
-     * @param speed Desired speed of turn.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     * @param timeout max time allotted to complete each call to gyroTurn
-     */
-    public void gyroTurn (  double speed, double angle, double timeout) {
-        totalError = 0;
-        lasterror = 0;
-        // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, Kp_TURN, Ki_TURN, Kd_TURN) && drivetime.time() < timeout) {
-            // Update telemetry & Allow time for other processes to run.
-            //onHeading(speed, angle, P_TURN_COEFF);
-            telemetry.update();
-        }
-       drivetime.reset(); // reset after we are done with the while loop
-    }
-
-    /**
-     *  Method to obtain & hold a heading for a finite amount of time
-     *  Move will stop once the requested time has elapsed
-     *
-     * @param speed      Desired speed of turn.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     * @param holdTime   Length of time (in seconds) to hold the specified heading.
-     */
-    public void gyroHold( double speed, double angle, double holdTime) {
-
-        ElapsedTime holdTimer = new ElapsedTime();
-
-        // keep looping while we have time remaining.
-        holdTimer.reset();
-        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
-            // Update telemetry & Allow time for other processes to run.
-            onHeading(speed, angle, Kp_TURN, Ki_TURN, Kd_TURN);
-            telemetry.update();
-        }
-
-        // Stop all motion;
-        drivetrain.leftFront.setPower(0);
-        drivetrain.rightFront.setPower(0);
-    }
-
-    /**
-     * Perform one cycle of closed loop heading control.
-     *
-     * @param speed     Desired speed of turn.
-     * @param angle     Absolute Angle (in Degrees) relative to last gyro reset.
-     *                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                  If a relative angle is required, add/subtract from current heading.
-     *
-     * @return
-     */
-    boolean onHeading(double speed, double angle, double P_TURN_COEFF , double I_TURN_COEFF, double D_TURN_COEFF) {
-        double   error ;
-        double   steer ;
-        boolean  onTarget = false ;
-        double leftSpeed;
-        double rightSpeed;
-
-        // determine turn power based on +/- error
-        error = getError(angle);
-
-        if (Math.abs(error) <= HEADING_THRESHOLD) {
-            steer = 0.0;
-            leftSpeed  = 0.0;
-            rightSpeed = 0.0;
-            onTarget = true;
-        }
-        else {
-            steer = getSteer(error, P_TURN_COEFF , I_TURN_COEFF, D_TURN_COEFF);
-            rightSpeed  = -speed * steer;
-            leftSpeed   = -rightSpeed;
-        }
-
-        // Send desired speeds to motors.
-        drivetrain.leftFront.setPower(leftSpeed);
-        drivetrain.rightFront.setPower(rightSpeed);
-
-        // Display it for the driver.
-        telemetry.addData("Target", "%5.2f", angle);
-        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
-
-        return onTarget;
-    }
-
-    /**
-     * getError determines the error between the target angle and the robot's current heading
-     * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
-     * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
-     *          +ve error means the robot should turn LEFT (CCW) to reduce error.
-     *
-     */
-    public double getError(double targetAngle) {
-
-        double robotError;
-
-        // calculate error in -179 to +180 range  (
-        // instantiate an angles object from the IMU
-        Orientation angles = drivetrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        // pull out the first angle which is the Z axis for heading and use to calculate the error
-        // Positive robot rotation is left so positive error means robot needs to turn right.
-        robotError = angles.firstAngle - targetAngle; //lastAngles.firstAngle;
-        telemetry.addData("Robot Error", robotError);
-        telemetry.addData("Target Angle", targetAngle);
-        while (robotError > 180)  robotError -= 360;
-        while (robotError <= -180) robotError += 360;
-        return robotError;
-    }
-
-    /**
-     * returns desired steering force.  +/- 1 range.  +ve = steer left
-     * @param error   Error angle in robot relative degrees
-     * @param PCoeff  Proportional Gain Coefficient
-     * @param ICoef Integration coefficient to apply to the area under the error-time curve
-     * @param DCoef Derivative coefficient to apply to the area under the error-time curve
-     * @return
-     */
-    public double getSteer(double error, double PCoeff, double ICoef, double DCoef) {
-        double errorP; // combined proportional error Kp*error
-        double errorI; // combined integral error Ki * cumulative error
-        double errorD; // combined derivative error Kd*change in error
-        double changeInError;
-
-        changeInError = error - lasterror; // for the integral term only. Cumulative error tracking
-        errorP = PCoeff * error;
-        totalError = totalError  + error * PIDtimer.time();
-        errorI = ICoef * totalError;
-        errorD = DCoef * (changeInError)/PIDtimer.time();
-        lasterror = error;
-        PIDtimer.reset();
-
-        //return Range.clip(error *(PCoeff+ICoef+DCoef), -1, 1);
-        return Range.clip((errorP + errorI + errorD),-1,1);
-
-    }
-
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
-    }
-
-    /**
-     * Initialize the TensorFlow Object Detection engine.
-     */
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
-    }
-
-    public void shoot3Rings(){
-        autoShootTimer.reset();
-        while (opModeIsActive() && autoShootTimer.time()  <= autoShootTimeAllowed)  {
-            if (mShooterState == ShooterState.STATE_SHOOTER_ACTIVE) {
-                shooter.shootoneRingHigh();
-                sleep(750);
-                shooter.flipperForward();
-                sleep(750);
-                shooter.flipperBackward();
-
-            }
-            else {
-                shooter.shooterOff();
-            }
-        }
-        mShooterState = ShooterState.STATE_SHOOTER_OFF;
-        shooter.shooterReload();
-    }
-
 }

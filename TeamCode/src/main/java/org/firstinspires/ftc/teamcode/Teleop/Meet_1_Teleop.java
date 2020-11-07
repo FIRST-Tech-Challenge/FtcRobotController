@@ -29,11 +29,11 @@ public class Meet_1_Teleop extends OpMode {
     public Intake               intake      = new Intake();
     public Wobblegoal           wobble  = new Wobblegoal();
     public Elevator elevator    = new Elevator();
-
+    public ElapsedTime gripperCloseTimer = new ElapsedTime();
 
     private DriveSpeedState  currDriveState;
     private RingCollectionState ringCollectorState;
-
+    private double gripperCloseTime = 1.0;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -129,17 +129,8 @@ public class Meet_1_Teleop extends OpMode {
         }
 
        // Gamepad 1 Buttons
-        if (gamepad1.y) {
-            shooter.shootoneRingHigh();
-            //shooter.shootMiddleGoal();
-            ringCollectorState = RingCollectionState.OFF;
 
-            telemetry.addData("Shooter High", "Complete ");
-        }
-        if (gamepad1.a) {
-            shooter.shooterOff();
-            telemetry.addData("Shooter High", "Complete ");
-        }
+
         if (gamepad1.left_bumper) {
             shooter.flipperBackward();
             shooter.stackerMoveToMidLoad();
@@ -153,8 +144,23 @@ public class Meet_1_Teleop extends OpMode {
 
         }
         if (gamepad1.x) {
+            //shooter.shooterReload();
             shooter.stackerMoveToReload();
             telemetry.addData("Stacker Reset", "Complete ");
+
+        }
+        if (gamepad1.y) {
+            shooter.shootoneRingHigh();
+            //shooter.shootMiddleGoal();
+            ringCollectorState = RingCollectionState.OFF;
+
+            telemetry.addData("Shooter High", "Complete ");
+        }
+
+        if (gamepad1.a) {
+            shooter.shooterReload();
+            //shooter.shooterOff();
+            telemetry.addData("Shooter High", "Complete ");
         }
         if (gamepad1.b) {
             shooter.stackerMoveToShoot();
@@ -170,14 +176,6 @@ public class Meet_1_Teleop extends OpMode {
             telemetry.addData("Flipper Back", "Complete ");
         }
 
-
-
-
-        if (gamepad1.x) {
-        }
-        if (gamepad1.y) {
-        }
-
         // Gamepad 1 Bumpers - for Speed Control
         // set-up drive speed states on bumpers
         if (gamepad1.left_stick_button)
@@ -190,9 +188,7 @@ public class Meet_1_Teleop extends OpMode {
         }
 
 
-        //========================================
-        // GAME PAD 2
-        //========================================
+        // Wobble Controls
 
         if (gamepad1.dpad_left) {
             wobble.GripperOpen();
@@ -203,7 +199,16 @@ public class Meet_1_Teleop extends OpMode {
         }
 
         if (gamepad1.dpad_up){
+            gripperCloseTimer.reset();
             wobble.GripperClose();
+            while (gripperCloseTimer.time() < gripperCloseTime){
+
+                // stall program so gripper can close
+                // not necessary in Linear Opmode just in iterative
+                //more than a couple seconds and this will trow error
+            }
+
+
             wobble.ArmCarryWobble();
             //wobble.readyToGrabGoal();
            telemetry.addData("Carrying Wobble", "Complete ");
@@ -217,10 +222,43 @@ public class Meet_1_Teleop extends OpMode {
         if (gamepad1.dpad_down) {
             wobble.ArmContract();
             wobble.GripperOpen();
+            wobble.LiftLower();
 
             telemetry.addData("Reset Wobble", "Complete ");
         }
+        if (gamepad1.back){
+            wobble.LiftRise();
+        }
 
+        //========================================
+        // GAME PAD 2 Mainly Wobble
+        //========================================
+        if (gamepad2.dpad_left) {
+            wobble.GripperOpen();
+            wobble.ArmExtend();
+            // wobble.resetWobble();
+
+            telemetry.addData("Ready to rab Wobble", "Complete ");
+        }
+
+        if (gamepad2.dpad_up){
+            wobble.GripperClose();
+            wobble.ArmCarryWobble();
+            //wobble.readyToGrabGoal();
+            telemetry.addData("Carrying Wobble", "Complete ");
+        }
+        if (gamepad2.dpad_right) {
+            wobble.GripperOpen();
+            wobble.ArmExtend();
+
+            telemetry.addData("Dropping Wobble", "Complete ");
+        }
+        if (gamepad2.dpad_down) {
+            wobble.ArmContract();
+            wobble.GripperOpen();
+
+            telemetry.addData("Reset Wobble", "Complete ");
+        }
 
 
        // switch case to determine what mode the arm needs to operate in.

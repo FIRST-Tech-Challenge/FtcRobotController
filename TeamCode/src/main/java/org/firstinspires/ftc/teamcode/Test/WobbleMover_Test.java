@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.Test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -102,6 +103,14 @@ public class WobbleMover_Test extends LinearOpMode {
             if (gamepad2.left_bumper) {
                 wobble.ArmContract();
                 telemetry.addData("Reset Arm", "Complete ");
+            }
+            if (gamepad2.left_trigger > 0.25) {
+                wobble.LiftRise();
+                telemetry.addData("Lifting Slide", "Complete ");
+            }
+            if (gamepad2.right_trigger > 0.25) {
+                wobble.LiftLower();
+                telemetry.addData("Lifting Slide", "Complete ");
             }
 
         }
