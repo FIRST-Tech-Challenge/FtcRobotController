@@ -1,24 +1,27 @@
-package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous;
+package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.ObjectDetection.TensorFlow;
 
-@Autonomous(name = "Park")
-public class Park extends LinearOpMode {
-
+@Autonomous
+//@Disabled
+public class TensorFlowTest extends LinearOpMode {
     Robot robot = new Robot();
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
+        robot.initVuforia();
+        robot.initTfod();
         robot.initChassis(this);
+
         waitForStart();
 
-        robot.moveForward(73, 0.5);
-        sleep(5000);
-//        robot.moveForwardOdometry(80, 0.8);
+
     }
 }
