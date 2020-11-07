@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: org.firstinspires.ftc:Blocks:6.0.1@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/c75f82e8242e557dc6ab4fb0ce44c893/jetified-Blocks-6.0.1/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/c75f82e8242e557dc6ab4fb0ce44c893/jetified-Blocks-6.0.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/c75f82e8242e557dc6ab4fb0ce44c893/jetified-Blocks-6.0.1/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.firstinspires.ftc/Blocks/6.0.1/f0ed5cf13acf58298fa7eabc1d14df72eef77ecb/Blocks-6.0.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.firstinspires.ftc/Blocks/6.0.1/755b4c937ddac25c8930ffda8a817fee0438f42e/Blocks-6.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
