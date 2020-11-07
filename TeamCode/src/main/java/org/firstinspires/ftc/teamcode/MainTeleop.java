@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * 3 October 2020
  */
 
-@TeleOp(name = "Ring Prototype Test")
-public class RingPrototypeTest extends LinearOpMode{
+@TeleOp(name = "MainTeleop")
+public class MainTeleop extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
     private CRServo conveyor, elevator;
@@ -75,7 +75,7 @@ public class RingPrototypeTest extends LinearOpMode{
         leftIntakeServo = hardwareMap.servo.get("LIrelease");
         rightIntakeServo = hardwareMap.servo.get("RIrelease");
 
-        //??
+        //Encoders
         verticalLeft = hardwareMap.dcMotor.get("VLE");
         verticalRight = hardwareMap.dcMotor.get("VRE");
         horizontal = hardwareMap.dcMotor.get("HE");
@@ -118,20 +118,20 @@ public class RingPrototypeTest extends LinearOpMode{
                 powerMod = 1.0;
             }
 
-            //click a button to move in position to launch***
+            //stuff to program still
+            //click a button to move in position to launch at goals and (another for) power shot***
             //stuff for wobble
-            //click another button to move in position to launch at rings
 
             //everything intake
             /*
             Change direction of intake
             */
-            //jolie test
-            if(gamepad2.a){//press and hold a while running intake
+            if(gamepad1.a){//press and hold a while running intake
                 intakeMod = -1.0;
             }else{
                 intakeMod = 1.0;
             }
+
             double intakeSpeed = gamepad1.left_trigger * intakeMod;
             intake.setPower(intakeSpeed);
             conveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
@@ -161,8 +161,6 @@ public class RingPrototypeTest extends LinearOpMode{
 
 
             //everything outtake/launch
-            //do we want this on gamepad 1 or 2?
-            //I'm putting it on 2 for now...
             /*
             Ability to test a variety of outtake motor speeds from 1 to 0
             */
@@ -184,8 +182,6 @@ public class RingPrototypeTest extends LinearOpMode{
             double outtakeRPM = outtakePower * OUTTAKE_MOTOR_RPM * OUTTAKE_GEAR_RATIO;
             double outtakeWheelVelocity = (outtakeRPM * 2 * Math.PI * OUTTAKE_WHEEL_RADIUS_M)/60;
 
-
-            //wobble stuff??
 
             //everything driving
             //Mecanum drive using trig
