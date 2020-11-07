@@ -43,11 +43,6 @@ public class StarterStackDetectorTest extends LinearOpMode
     private DcMotor motorFrontLeft;
     private DcMotor motorBackRight;
     private DcMotor motorBackLeft;
-    private CRServo leftIntake;
-    private CRServo rightIntake;
-    private Servo leftIntakeServo;
-    private Servo rightIntakeServo;
-    private Servo flimsy;
 
     final double COUNTS_PER_INCH = 307.699557;
 
@@ -61,8 +56,7 @@ public class StarterStackDetectorTest extends LinearOpMode
     private BNO055IMU imu;
 
     IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-            imu, leftIntake, rightIntake, leftIntakeServo,
-            rightIntakeServo, flimsy, this);
+            imu, this);
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -71,11 +65,6 @@ public class StarterStackDetectorTest extends LinearOpMode
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
-        leftIntake = hardwareMap.crservo.get("LI");
-        rightIntake = hardwareMap.crservo.get("RI");
-        leftIntakeServo = hardwareMap.servo.get("LIrelease");
-        rightIntakeServo = hardwareMap.servo.get("RIrelease");
-        flimsy = hardwareMap.servo.get("flimsy");
 
         verticalLeft = hardwareMap.dcMotor.get("VLE");
         verticalRight = hardwareMap.dcMotor.get("VRE");
