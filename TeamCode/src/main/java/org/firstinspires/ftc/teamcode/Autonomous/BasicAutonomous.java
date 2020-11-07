@@ -40,7 +40,7 @@ public class BasicAutonomous extends LinearOpMode {
     /* Declare OpMode members. */
     public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
     public Shooter              shooter     = new Shooter();
-    public Intake               intake      = new Intake();
+    public Intake               intake      = new Intake(); // not currently using intake and elevator in auto
     public Wobblegoal           wobble      = new Wobblegoal();
     public Elevator             elevator    = new Elevator();
     public Orientation          lastAngles  = new Orientation();
@@ -50,8 +50,8 @@ public class BasicAutonomous extends LinearOpMode {
     public ElapsedTime          drivetime   = new ElapsedTime(); // timeout timer for driving
     public ElapsedTime          tfTime      = new ElapsedTime(); // timer for tensor flow
     public ElapsedTime          autoShootTimer  = new ElapsedTime(); //auto shooter timer (4 rings)
-    public static double       autoShootTimeAllowed = 7; //  seconds allows 4 shoot cycles in case one messes up
-    public static double       tfSenseTime          = 4; // needs a couple seconds to process the image and ID the target
+    public static double        autoShootTimeAllowed = 6; //  seconds allows 4 shoot cycles in case one messes up
+    public static double        tfSenseTime          = 4; // needs a couple seconds to process the image and ID the target
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suit the specific robot drive train.
