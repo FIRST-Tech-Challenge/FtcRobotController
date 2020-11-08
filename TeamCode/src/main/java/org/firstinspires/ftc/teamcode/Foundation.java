@@ -8,8 +8,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Foundation extends LinearOpMode {
 
   private Servo left = null;
-  private double lmax = .21; // Maximum rotational position
-  private double lmin = .7; // Minimum rotational position
+  private double lmax = .5; // Maximum rotational position
+  private double lmin = 1; // Minimum rotational position
+
 
   private String currentPos = "open";
 
@@ -23,18 +24,15 @@ public class Foundation extends LinearOpMode {
   public void release() {
     left.setPosition(lmax);
   }
-  public void alldown() {
-    left.setPosition(.85);
-  }
 
   public void nextPos() {
-    if(currentPos == "open") {
-      currentPos = "closed";
-      grab();
+    if(currentPos == "closed") {
+      currentPos = "open";
+      release();
     } else if(currentPos == "open") {
       currentPos = "closed";
-      release();
-    } 
+      grab();
+    }
   }
 
   public void runOpMode() {

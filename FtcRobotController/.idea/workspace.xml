@@ -35,7 +35,12 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../.." />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Admin\Documents\GitHub\FtcRobotController\TeamCode\src\main\java\org\firstinspires\ftc\teamcode" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
@@ -111,10 +116,14 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="740" y="340" key="FileChooserDialogImpl" timestamp="1604768477994">
+    <state x="690" y="332" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1604859275806">
       <screen x="0" y="0" width="1920" height="1170" />
     </state>
-    <state x="740" y="340" key="FileChooserDialogImpl/0.0.1920.1170@0.0.1920.1170" timestamp="1604768477994" />
+    <state x="690" y="332" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1170@0.0.1920.1170" timestamp="1604859275806" />
+    <state x="740" y="340" key="FileChooserDialogImpl" timestamp="1604859687854">
+      <screen x="0" y="0" width="1920" height="1170" />
+    </state>
+    <state x="740" y="340" key="FileChooserDialogImpl/0.0.1920.1170@0.0.1920.1170" timestamp="1604859687854" />
     <state x="656" y="409" key="com.intellij.ide.util.TipDialog" timestamp="1604768436897">
       <screen x="0" y="0" width="1920" height="1170" />
     </state>
