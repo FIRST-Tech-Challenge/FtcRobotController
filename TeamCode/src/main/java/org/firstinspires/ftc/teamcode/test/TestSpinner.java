@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.hardware.SpinnerHardware;
 
 @TeleOp(name="Spinner Test")
 public class TestSpinner extends SpinnerHardware {
-//spinny test spinner lmao
+
 
     boolean spinners = false;
     boolean bPress = false;
