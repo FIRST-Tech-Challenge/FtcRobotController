@@ -38,9 +38,9 @@ public class RingDetector {
 
     public AutoDot detectRing(int timeout, String side, Telemetry telemetry, LinearOpMode caller) {
         AutoDot zone = new AutoDot();
-        zone.setX(70);
-        zone.setY(120);
-        zone.setHeading(45);
+        zone.setX(62);
+        zone.setY(100);
+        zone.setHeading(-1);
         boolean found = false;
         boolean stop = false;
 
@@ -59,11 +59,11 @@ public class RingDetector {
                                 if (side.equals(AutoRoute.NAME_RED)) {
                                     zone.setX(75);
                                     zone.setY(120);
-                                    zone.setHeading(45);
+                                    zone.setHeading(-1);
                                 } else {
                                     zone.setX(30);
                                     zone.setY(12);
-                                    zone.setHeading(45);
+                                    zone.setHeading(-1);
                                 }
                                 found = true;
                                 targetZone = LABEL_C;
@@ -85,13 +85,13 @@ public class RingDetector {
                             }
                             if(r.getTitle().contains(LABEL_A)){
                                 if(side.equals(AutoRoute.NAME_RED)) {
-                                    zone.setX(70);
+                                    zone.setX(75);
                                     zone.setY(75);
-                                    zone.setHeading(45);
+                                    zone.setHeading(-1);
                                 } else {
                                     zone.setX(30);
                                     zone.setY(12);
-                                    zone.setHeading(45);
+                                    zone.setHeading(-1);
                                 }
                                 found = true;
                                 targetZone = LABEL_A;

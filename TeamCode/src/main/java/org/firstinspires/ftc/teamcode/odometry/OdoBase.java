@@ -179,7 +179,7 @@ public class OdoBase extends LinearOpMode {
         //set the desired heading
         if (finalSpin && profile.getNextStep() == null && desiredHead != BotMoveProfile.DEFAULT_HEADING) {
             sleep(locator.getThreadSleepTime());
-            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(instruction.getDesiredHead(), instruction.getTopSpeed(), locator);
+            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(desiredHead, instruction.getTopSpeed(), locator);
             if (Math.abs(profile.getAngleChange()) < 30){
                 profile.setTopSpeed(0.1);
             }

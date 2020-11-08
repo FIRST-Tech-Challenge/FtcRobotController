@@ -39,6 +39,7 @@ import org.firstinspires.ftc.teamcode.bots.OutreachBot;
 
 //Opmode for quick testing of motors
 @TeleOp(name="Dummy", group="Robot15173")
+@Disabled
 public class DummyMode extends LinearOpMode{
 
     // Declare OpMode members.

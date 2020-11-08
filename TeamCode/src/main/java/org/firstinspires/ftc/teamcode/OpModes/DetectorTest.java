@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import android.hardware.camera2.CameraCharacteristics;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -44,6 +45,7 @@ import java.util.List;
 
 //Opmode for quick testing of motors
 @TeleOp(name="TFDetector", group="Robot15173")
+@Disabled
 public class DetectorTest extends LinearOpMode{
 
     // Declare OpMode members.

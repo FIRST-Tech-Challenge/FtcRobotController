@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import android.graphics.Point;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -53,7 +54,7 @@ import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
  */
 
 @TeleOp(name="YellowDriveOdo", group="Robot15173")
-//@Disabled
+@Disabled
 public class YellowDriveOdo extends LinearOpMode {
 
     // Declare OpMode members.

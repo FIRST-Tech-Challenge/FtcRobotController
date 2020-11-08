@@ -311,16 +311,16 @@ public class UltimateBot extends YellowBot {
         getLights().none();
     }
 
-    @BotAction(displayName = "signalProblem", defaultReturn = "")
-    public void shoot() {
-        getLights().problem();
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-        while (timer.seconds() < 1) {
-
-        }
-        getLights().none();
-    }
+//    @BotAction(displayName = "signalProblem", defaultReturn = "")
+//    public void shoot() {
+//        getLights().problem();
+//        ElapsedTime timer = new ElapsedTime();
+//        timer.reset();
+//        while (timer.seconds() < 1) {
+//
+//        }
+//        getLights().none();
+//    }
 
     @BotAction(displayName = "Detect Stack and Init", defaultReturn = "B")
     public AutoDot detectStackandInit(String side) {
