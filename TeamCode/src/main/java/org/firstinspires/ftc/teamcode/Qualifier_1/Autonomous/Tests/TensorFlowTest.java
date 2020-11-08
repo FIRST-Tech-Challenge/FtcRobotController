@@ -16,8 +16,8 @@ public class TensorFlowTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        robot.initVuforia();
-        robot.initTfod();
+        // robot.initVuforia();
+        // robot.initTfod();
         robot.initChassis(this);
 
         waitForStart();
