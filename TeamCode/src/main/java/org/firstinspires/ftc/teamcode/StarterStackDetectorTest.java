@@ -66,9 +66,9 @@ public class StarterStackDetectorTest extends LinearOpMode
         motorBackRight = hardwareMap.dcMotor.get("BR");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
 
-        verticalLeft = hardwareMap.dcMotor.get("VLE");
-        verticalRight = hardwareMap.dcMotor.get("VRE");
-        horizontal = hardwareMap.dcMotor.get("HE");
+        verticalLeft = hardwareMap.dcMotor.get("leftOdometry");
+        verticalRight = hardwareMap.dcMotor.get("rightOdometry");
+        horizontal = hardwareMap.dcMotor.get("outtakeRight");
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");

@@ -76,9 +76,9 @@ public class MainTeleop extends LinearOpMode{
         rightIntakeServo = hardwareMap.servo.get("RIrelease");
 
         //Encoders
-        verticalLeft = hardwareMap.dcMotor.get("VLE");
-        verticalRight = hardwareMap.dcMotor.get("VRE");
-        horizontal = hardwareMap.dcMotor.get("HE");
+        verticalLeft = hardwareMap.dcMotor.get("leftOdometry");
+        verticalRight = hardwareMap.dcMotor.get("rightOdometry");
+        horizontal = hardwareMap.dcMotor.get("outtakeRight");
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
