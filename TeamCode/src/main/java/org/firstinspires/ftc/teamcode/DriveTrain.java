@@ -18,15 +18,17 @@ public class DriveTrain {
     Telemetry telemetry;
     HardwareInnov8Hera hera;
     LinearOpMode opMode;
-    private double wheelPower = 1;
+    private double wheelPower = 0.75;
     private double wheelOnePower = 1;
     private double wheelTwoPower = 1;
     private double wheelThreePower = 1;
     private double wheelFourPower = 1;
-    double wheelOneRatio = 1;
-    double wheelTwoRatio = 1;
-    double wheelThreeRatio = 1;
-    double wheelFourRatio = 1;
+    private double wheelOneRatio = 1;
+    private double wheelTwoRatio = 1;
+    private double wheelThreeRatio = 1;
+    private double wheelFourRatio = 1;
+    private int counter = 0;
+    private double baseline = 0;
     public static double INCH_TO_TICK = (360/6); // The number of encoder ticks per inch for our wheels
     public static double SIDE_INCH_TO_TICK = (360/6); // The number of encoder ticks for one inch while travelling sideways, change later
     public DriveTrain(Telemetry telemetry, HardwareInnov8Hera hera, LinearOpMode opMode) {
@@ -47,21 +49,20 @@ public class DriveTrain {
         double startPosition = 0;
         double endPosition = 0;
         showData("DRIVE_TRAIN_CAPTION", "Robot is moving forward");
-        this.telemetry.addData("wheel power", hera.motorOne.getPower());
         this.telemetry.update();
-        hera.motorOne.setPower(wheelPower);
-        hera.motorTwo.setPower(wheelPower);
-        hera.motorThree.setPower((wheelPower));
-        hera.motorFour.setPower(wheelPower);
         startPosition = hera.motorOne.getCurrentPosition();
         endPosition = startPosition + (inches * INCH_TO_TICK); // How far you need to travel
+        hera.motorOne.setPower(wheelPower);
+        hera.motorTwo.setPower(wheelPower);
+        hera.motorThree.setPower(wheelPower);
+        hera.motorFour.setPower(wheelPower);
         while (hera.motorOne.getCurrentPosition() < endPosition && this.opMode.opModeIsActive()) {
-            this.telemetry.addData("StartPosition", startPosition);
-            this.telemetry.addData("EndPosition", endPosition);
-            this.telemetry.addData("CurrentPosition", hera.motorOne.getCurrentPosition());
-            while(!(wheelOneRatio == 1 && wheelTwoRatio == 1 && wheelThreeRatio == 1 && wheelFourRatio == 1)){
+            showData("StartPosition", "" + startPosition);
+            showData("EndPosition", "" + endPosition);
+            showData("CurrentPosition", "" + hera.motorOne.getCurrentPosition());
+            do{
                 goStraight();
-            }
+            } while(!(this.wheelOneRatio == 1 && this.wheelTwoRatio == 1 && this.wheelThreeRatio == 1 && this.wheelFourRatio == 1));
 
             showData("wheel one power", "" + hera.motorOne.getPower());
             showData("wheel two power", "" + hera.motorTwo.getPower());
@@ -209,33 +210,44 @@ public class DriveTrain {
         double wheelTwoStartPos = hera.motorTwo.getCurrentPosition();
         double wheelThreeStartPos = hera.motorThree.getCurrentPosition();
         double wheelFourStartPos = hera.motorFour.getCurrentPosition();
-        double min = 0;
         double wheelOneEndPos = 0;
         double wheelTwoEndPos = 0;
         double wheelThreeEndPos = 0;
         double wheelFourEndPos = 0;
-        while(hera.motorOne.getCurrentPosition() < wheelOneStartPos + 50){
+        while(hera.motorFour.getCurrentPosition() < wheelFourStartPos + 50){
+            showData("goStraight", "in the while loop");
             wheelOneEndPos = Math.abs(hera.motorOne.getCurrentPosition() - wheelOneStartPos);
             wheelTwoEndPos = Math.abs(hera.motorTwo.getCurrentPosition() - wheelTwoStartPos);
             wheelThreeEndPos = Math.abs(hera.motorThree.getCurrentPosition() - wheelThreeStartPos);
             wheelFourEndPos = Math.abs(hera.motorFour.getCurrentPosition() - wheelFourStartPos);
-            min = Math.min(wheelOneEndPos, wheelTwoEndPos);
-            min = Math.min(wheelThreeEndPos, min);
-            min = Math.min(wheelFourEndPos, min);
+            if(this.counter ==0) {
+                baseline = Math.min(wheelOneEndPos, wheelTwoEndPos);
+                baseline = Math.min(wheelThreeEndPos, baseline);
+                baseline = Math.min(wheelFourEndPos, baseline);
+                showData("baseline: ", "" + baseline);
+            }
         }
-        wheelOneRatio = wheelOneEndPos/min;
-        wheelTwoRatio = wheelTwoEndPos/min;
-        wheelThreeRatio = wheelThreeEndPos/min;
-        wheelFourRatio = wheelFourEndPos/min;
+        counter++;
 
-        hera.motorOne.setPower(wheelOnePower/wheelOneRatio);
-        hera.motorTwo.setPower(wheelTwoPower/wheelTwoRatio);
-        hera.motorThree.setPower(wheelThreePower/wheelThreeRatio);
-        hera.motorFour.setPower(wheelFourPower/wheelFourRatio);
+        showData("wheelOneDistance: ", "" + wheelOneEndPos);
+        showData("wheelTwoDistance: ", "" + wheelTwoEndPos);
+        showData("wheelThreeDistance: ", "" + wheelThreeEndPos);
+        showData("wheelFourDistance: ", "" + wheelFourEndPos);
+
+        if(baseline !=0){
+            wheelOneRatio = wheelOneEndPos/baseline;
+            wheelTwoRatio = wheelTwoEndPos/baseline;
+            wheelThreeRatio = wheelThreeEndPos/baseline;
+            wheelFourRatio = wheelFourEndPos/baseline;
+        }
         wheelOnePower /=wheelOneRatio;
         wheelTwoPower /= wheelTwoRatio;
         wheelThreePower /= wheelThreeRatio;
         wheelFourPower /= wheelFourPower;
+        hera.motorOne.setPower(wheelOnePower);
+        hera.motorTwo.setPower(wheelTwoPower);
+        hera.motorThree.setPower(wheelThreePower);
+        hera.motorFour.setPower(wheelFourPower);
     }
 
     // Print data to both telemetry and log

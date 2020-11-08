@@ -47,7 +47,9 @@ public class Hera {
     
 
     public void forwardTurn() {
-        driveTrain.goForward(60);
+        while(true) {
+            driveTrain.goForward(47);
+        }
 //        driveTrain.turn(-90);
 //        driveTrain.goForward(30);
     }
