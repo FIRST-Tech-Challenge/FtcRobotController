@@ -27,6 +27,7 @@ public class ShooterTestHighGoal extends LinearOpMode{
         telemetry.update();
         robot.shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+
         waitForStart();
         robot.shootHighGoal(1000);
 
