@@ -22,13 +22,13 @@ public class tracktest extends LinearOpMode{
         telemetry.update();
         waitForStart();
         robot.moveForwardOdometry(10,0.5);
-        robot.moveForwardOdometry(-10,0.5);
+        robot.moveForwardOdometry(-10,-0.5);
         robot.moveSideOdometry(10,.5);
-        robot.moveSideOdometry(-10,0.5);
+        robot.moveSideOdometry(-10,-0.5);
         robot.turnOdometry(90,0.5);
-        robot.turnOdometry(-90,0.5);
+        robot.turnOdometry(-90,-0.5);
         robot.moveAngleOdometry(Math.PI/4,5,5,0.5);
-        robot.moveAngleOdometry(-3*Math.PI/4,-5,-5,0.5);
+        robot.moveAngleOdometry(-3*Math.PI/4,-5,-5,-0.5);
 
         stop();
     }

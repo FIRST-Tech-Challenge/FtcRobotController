@@ -221,7 +221,9 @@ public class Robot {
     public void DirectxyPath(double x, double y, double power) {
         drivetrain.DirectxyPath(x,y,power);
     }
-
+    public void moveAngleOdometry(double angleInRadians,double x, double y, double power){
+        drivetrain.moveAngleOdometry(angleInRadians,x,y,power);
+    }
 
 
 }
