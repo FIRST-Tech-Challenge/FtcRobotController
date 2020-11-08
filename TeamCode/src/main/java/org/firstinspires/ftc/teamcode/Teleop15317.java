@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Collect;
 import org.firstinspires.ftc.teamcode.Flick;
 import org.firstinspires.ftc.teamcode.FlickJr;
 import org.firstinspires.ftc.teamcode.Foundation;
+import org.firstinspires.ftc.teamcode.Gearbox;
 import org.firstinspires.ftc.teamcode.Claw;
 
 @TeleOp(name="15317 Teleop", group="Linear Opmode")
@@ -31,8 +32,12 @@ public class Teleop15317 extends LinearOpMode {
     // private Flick flick;
     // private FlickJr flickjr;
     private Foundation foundation;
+    private Gearbox gearbox;
 
+            // y is down, controls the claw servo
     private boolean yIsDown = false;
+
+    // y1 is down controls the gearbox servo
     private boolean y1IsDown = false;
 
     @Override
@@ -69,6 +74,11 @@ public class Teleop15317 extends LinearOpMode {
         // );
         foundation = new Foundation(
                 hardwareMap.get(Servo.class, "foundation")
+
+        );
+        gearbox = new Gearbox(
+                hardwareMap.get(Servo.class, "gearbox")
+
         );
 
         waitForStart();
@@ -92,6 +102,14 @@ public class Teleop15317 extends LinearOpMode {
                     gamepad1.right_stick_x,
                     gamepad1.right_trigger
             );
+
+            if (gamepad1.b && !y1IsDown) {
+                y1IsDown = true;
+                gearbox.nextPos();
+            } else if (!gamepad1.b) {
+                y1IsDown = false;
+            }
+
 
             //gamepad 2
             if (gamepad2.y && !yIsDown) {
@@ -156,6 +174,7 @@ public class Teleop15317 extends LinearOpMode {
             telemetry.addData("rb", d.getPowerrb());
             telemetry.addData("Clicks: ", d.getClickslf());
             telemetry.addData("Lift", lift.getClicks());
+            telemetry.addData("gearbox", gearbox.getPos());
             //telemetry.addData("flickpos", flick.getPos());
             telemetry.update();
 
