@@ -5,12 +5,14 @@ public class teleConfigSamih implements teleOpInterface {
     Drivetrain drivetrain;
     double angle = 0;
     double outlimiter = 1f;
+    
 
     public void updateTelemetryDM() {
 
     }
 
     public void loop() {
+        drivetrain.outtakeAll((robot.conveyor.getPower() >= 0.1) ? 0 : 1 * outlimiter, (robot.outtake.getPower() >= 0.1) ? 0 : 1 * outlimiter);
 
     }
 
@@ -23,7 +25,6 @@ public class teleConfigSamih implements teleOpInterface {
     }
 
     public void b(boolean pressed) {
-        drivetrain.outtakeAll((robot.conveyor.getPower() >= 0.1) ? 0 : 1 * outlimiter, (robot.outtake.getPower() >= 0.1) ? 0 : 1 * outlimiter);
         outlimiter = 1;
     }
 
@@ -55,7 +56,11 @@ public class teleConfigSamih implements teleOpInterface {
     }
 
     public void rb(boolean pressed) {
-        outlimiter = 0.5;
+        if (pressed) {
+            outlimiter = 0.5;
+        } else {
+            outlimiter = 1;
+        }
     }
 
     public void rt(float pressure) {
