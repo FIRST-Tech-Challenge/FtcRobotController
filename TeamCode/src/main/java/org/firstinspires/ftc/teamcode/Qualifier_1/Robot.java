@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
@@ -28,6 +29,7 @@ public class Robot {
     private double vuforiaY = 0;
     private double vuforiaAngle = 0;
     private double robotAngle = 0;
+    private WobbleGoal wobbleGoal;
 
     public Robot() {
     }
@@ -56,12 +58,14 @@ public class Robot {
         drivetrain.init(opMode);
         //vuforiaWebcam.init(opMode);
 
-        //vuforiaWebcam.start();
+        this.wobbleGoal = new WobbleGoal(op);
 
+        //vuforiaWebcam.start();
 //        getVuforiaPosition();
 //        op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
 //        op.telemetry.update();
 //        op.sleep(1000);
+
     }
 
     public void moveVuforiaWebcam(double x, double y, double endAngle) {
@@ -225,5 +229,23 @@ public class Robot {
         drivetrain.moveAngleOdometry(angleInRadians,x,y,power);
     }
 
+
+    /**
+     * wobble goal methods
+     */
+    public void clockwise(){
+
+        this.wobbleGoal.clockwise();
+    }
+
+    public void counterClockwise(){
+
+        wobbleGoal.counterClockwise();
+    }
+
+    public void stop(){
+
+        wobbleGoal.stop();
+    }
 
 }

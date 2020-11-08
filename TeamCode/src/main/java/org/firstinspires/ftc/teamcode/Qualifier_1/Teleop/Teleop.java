@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 @TeleOp(name = "Teleop ")
@@ -43,6 +44,8 @@ public class Teleop extends LinearOpMode {
             float left_stick_x = -gamepad1.left_stick_x;
             boolean x_button = gamepad1.x;
             boolean a_button = gamepad1.a;
+            boolean moveUp = gamepad2.dpad_up;
+            boolean moveDown = gamepad2.dpad_down;
 
             angleInRadian = Math.atan2(left_stick_y, left_stick_x);
             angleInDegree = Math.toDegrees(angleInRadian);
@@ -66,6 +69,16 @@ public class Teleop extends LinearOpMode {
                 magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
             }
             multidirectionalMove(magnitude, angleInDegree);
+
+            if (moveUp == true){
+                robot.clockwise();
+            }
+            else if (moveDown == true){
+                robot.counterClockwise();
+            }
+            else {
+                robot.stop();
+            }
 
         }
         idle();
