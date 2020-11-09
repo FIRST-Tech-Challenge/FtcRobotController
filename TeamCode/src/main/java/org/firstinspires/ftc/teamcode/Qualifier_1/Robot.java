@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGo
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.ObjectDetection.TensorFlow;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
@@ -23,6 +24,7 @@ public class Robot {
     private HardwareMap hardwareMap = null;
     private ElapsedTime runtime = new ElapsedTime();
     Chassis drivetrain = new Chassis();
+    TensorFlow tensorFlow = new TensorFlow(op);
 
     private VuforiaWebcam vuforiaWebcam = null;
     private double vuforiaX = 0;
@@ -193,6 +195,24 @@ public class Robot {
     public void stopVuforia() {
         vuforiaWebcam.interrupt();
     }
+
+
+    /**TensorFlow**/
+
+    public void initTensorFlow() {
+
+    }
+
+    public void runTensorFlow () {
+
+    }
+
+    public void stopTensorFlow () {
+
+    }
+
+    /**Odometry**/
+
     public void turnOdometry(double target, double power) {
         drivetrain.turnOdometry(target,power);
     }
