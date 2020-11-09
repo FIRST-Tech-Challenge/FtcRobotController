@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.FSM.FiniteStateMachine;
 import org.firstinspires.ftc.teamcode.FSM.State;
 
+@Deprecated
 abstract public class PID extends FiniteStateMachine {
     // PID Characteristics
     private double kp, ki, kd;
