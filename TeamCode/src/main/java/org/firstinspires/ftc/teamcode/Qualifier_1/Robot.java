@@ -6,9 +6,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.ObjectDetection.TensorFlow;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
@@ -22,12 +24,14 @@ public class Robot {
     private HardwareMap hardwareMap = null;
     private ElapsedTime runtime = new ElapsedTime();
     Chassis drivetrain = new Chassis();
+    TensorFlow tensorFlow = new TensorFlow(op);
 
     private VuforiaWebcam vuforiaWebcam = null;
     private double vuforiaX = 0;
     private double vuforiaY = 0;
     private double vuforiaAngle = 0;
     private double robotAngle = 0;
+    private WobbleGoal wobbleGoal;
 
     public Robot() {
     }
@@ -56,12 +60,14 @@ public class Robot {
         drivetrain.init(opMode);
         //vuforiaWebcam.init(opMode);
 
-        //vuforiaWebcam.start();
+        this.wobbleGoal = new WobbleGoal(op);
 
+        //vuforiaWebcam.start();
 //        getVuforiaPosition();
 //        op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
 //        op.telemetry.update();
 //        op.sleep(1000);
+
     }
 
     public void moveVuforiaWebcam(double x, double y, double endAngle) {
@@ -189,6 +195,24 @@ public class Robot {
     public void stopVuforia() {
         vuforiaWebcam.interrupt();
     }
+
+
+    /**TensorFlow**/
+
+    public void initTensorFlow() {
+
+    }
+
+    public void runTensorFlow () {
+
+    }
+
+    public void stopTensorFlow () {
+
+    }
+
+    /**Odometry**/
+
     public void turnOdometry(double target, double power) {
         drivetrain.turnOdometry(target,power);
     }
@@ -221,7 +245,27 @@ public class Robot {
     public void DirectxyPath(double x, double y, double power) {
         drivetrain.DirectxyPath(x,y,power);
     }
+    public void moveAngleOdometry(double angleInRadians,double x, double y, double power){
+        drivetrain.moveAngleOdometry(angleInRadians,x,y,power);
+    }
 
 
+    /**
+     * wobble goal methods
+     */
+    public void moveWobbleGoalClockwise(){
+
+        this.wobbleGoal.clockwise();
+    }
+
+    public void moveWobbleGoalCounterClockwise(){
+
+        wobbleGoal.counterClockwise();
+    }
+
+    public void stopWobbleGoal(){
+
+        wobbleGoal.stop();
+    }
 
 }
