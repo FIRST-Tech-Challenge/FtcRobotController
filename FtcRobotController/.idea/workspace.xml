@@ -130,13 +130,17 @@
       <screen x="0" y="0" width="1920" height="1170" />
     </state>
     <state x="690" y="332" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1170@0.0.1920.1170" timestamp="1604859275806" />
+    <state x="92" y="92" width="1736" height="986" key="DiffContextDialog" timestamp="1604890759895">
+      <screen x="0" y="0" width="1920" height="1170" />
+    </state>
+    <state x="92" y="92" width="1736" height="986" key="DiffContextDialog/0.0.1920.1170@0.0.1920.1170" timestamp="1604890759895" />
     <state x="740" y="340" key="FileChooserDialogImpl" timestamp="1604859687854">
       <screen x="0" y="0" width="1920" height="1170" />
     </state>
     <state x="740" y="340" key="FileChooserDialogImpl/0.0.1920.1170@0.0.1920.1170" timestamp="1604859687854" />
-    <state x="656" y="409" key="com.intellij.ide.util.TipDialog" timestamp="1604768436897">
+    <state x="656" y="409" key="com.intellij.ide.util.TipDialog" timestamp="1604888670238">
       <screen x="0" y="0" width="1920" height="1170" />
     </state>
-    <state x="656" y="409" key="com.intellij.ide.util.TipDialog/0.0.1920.1170@0.0.1920.1170" timestamp="1604768436897" />
+    <state x="656" y="409" key="com.intellij.ide.util.TipDialog/0.0.1920.1170@0.0.1920.1170" timestamp="1604888670238" />
   </component>
 </project>

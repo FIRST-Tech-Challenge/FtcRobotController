@@ -34,7 +34,7 @@ public class Teleop15317 extends LinearOpMode {
     private Foundation foundation;
     private Gearbox gearbox;
 
-            // y is down, controls the claw servo
+            // y is down controls the claw servo
     private boolean yIsDown = false;
 
     // y1 is down controls the gearbox servo
@@ -103,10 +103,10 @@ public class Teleop15317 extends LinearOpMode {
                     gamepad1.right_trigger
             );
 
-            if (gamepad1.b && !y1IsDown) {
+            if (gamepad1.y && !y1IsDown) {
                 y1IsDown = true;
                 gearbox.nextPos();
-            } else if (!gamepad1.b) {
+            } else if (!gamepad1.y) {
                 y1IsDown = false;
             }
 
