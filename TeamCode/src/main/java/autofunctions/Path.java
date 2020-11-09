@@ -251,9 +251,9 @@ public class Path {
             hint = 0;
             xint = 0;
             yint = 0;
-            hder *= 0;
-            xder *= 0;
-            yder *= 0;
+            hder *= 0.25;
+            xder *= 0.25;
+            yder *= 0.25;
             scaleKs(1);
         }
     }
