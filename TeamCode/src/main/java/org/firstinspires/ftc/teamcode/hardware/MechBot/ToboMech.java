@@ -57,7 +57,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public Hopper hopper;
     public Intake intake;
 
-    public double auto_chassis_power = .6;
+    public double auto_chassis_power = .5;
     public double auto_chassis_dist = 100;
     public double auto_chassis_heading = -90;
     public double auto_chassis_power_slow = .4;
@@ -482,6 +482,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
                     if (comboGrabber!=null)
                         comboGrabber.releaseWobbleGoalCombo();
+                } else if(source.isPressed(Button.BACK)){
+                    endGameGrabCombo();
                 }
             }
         }, new Button[]{Button.X});
@@ -497,6 +499,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (comboGrabber!=null)
                         comboGrabber.grabWobbleGoalCombo(true);
                     //top wobble goal combos functions go here
+                } else if(source.isPressed(Button.BACK)){
+                    comboGrabber.collectRingCombo();
                 }
             }
         }, new Button[]{Button.B});
@@ -1049,11 +1053,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // still need to change positions to be far left for blue side
         if(side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 25, 170, -60, true, 3);
+                chassis.driveTo(auto_chassis_power, 25, 180, -45, true, 3);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 55, 240, 0, true, 4);
+                chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(auto_chassis_power, 25, 290, -60, true, 5);
+                chassis.driveTo(auto_chassis_power, 25, 290, -45, true, 5);
             } else {
                 return;
             }
@@ -1089,11 +1093,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     }
     public void getSecondWobbleGoal() throws InterruptedException {
-        chassis.driveTo(auto_chassis_power, side(170), 35, 0, true,  5);
+        chassis.driveTo(auto_chassis_power, side(170), 37, 0, true,  5);
         if(startPos == StartPosition.OUT){
-            chassis.driveTo(auto_chassis_power, side(110), 30, 0, true,  3);
+            chassis.driveTo(auto_chassis_power, side(105), 30, 0, true,  3);
         } else {
-            chassis.driveTo(auto_chassis_power, side(50), 30, 0, true,  3);
+            chassis.driveTo(auto_chassis_power, side(45), 30, 0, true,  3);
         }
         //grab the wobble goal
         if (!simulation_mode) {
@@ -1107,7 +1111,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 // chassis.driveTo(.8, side(30), 40, 0, false, 2);
-                chassis.driveTo(0.9, side(30), 170, 0, false, 5);
+                chassis.driveTo(0.9, side(20), 165, -5, false, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, side(80), 225, 0, false, 5);
 
@@ -1140,7 +1144,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
     public void autoGrabBottomWobbleGoal() throws InterruptedException {
         if (simulation_mode || chassis==null) return;
-        chassis.yMove(1, 0.30);
+        chassis.yMove(1, 0.20
+        );
         //sleep(150);
         if (comboGrabber!=null) {
             comboGrabber.grabWobbleGoalCombo(false);
@@ -1171,5 +1176,21 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.stop();
     }
 
+    public void endGameGrabCombo() throws InterruptedException {
+        if (comboGrabber==null) return;
+        comboGrabber.releaseWobbleGoalCombo();
+        while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
+            TaskManager.processTasks();
+        }
+        chassis.yMove(-1, 0.2);
+        sleep(400);
+        chassis.yMove(1, 0.2);
+        sleep(450);
+        chassis.stop();
+        comboGrabber.grabWobbleGoalCombo(true);
+        while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
+            TaskManager.processTasks();
+        }
+    }
 
 }
