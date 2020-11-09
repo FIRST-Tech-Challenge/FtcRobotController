@@ -6,82 +6,44 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
+//this class represents the program for the wobble goal mechanism
 public class WobbleGoal {
 
-    DcMotorEx wobbleGoalMotor;
-    LinearOpMode op;
+    //declaring the motor
+    private DcMotor wobbleGoalMotor;
+    //declaring the op mode
+    private LinearOpMode op;
 
-
-    private Robot robot = new Robot();
-    private ElapsedTime runtime = new ElapsedTime();
-    final double robot_diameter = Math.sqrt(619.84);
-    final double wheel_diameter = 3.93701;
-    final double counts_per_motor_goBilda = 383.6;
-    final double counts_per_inch = (counts_per_motor_goBilda*wheel_diameter * Math.PI)/54.48;  //2*(counts_per_motor_goBilda / (wheel_diameter * Math.PI))
-    final double counts_per_degree = counts_per_inch * robot_diameter * Math.PI / 360;
-
-    public WobbleGoal(DcMotorEx inputWobbleGoalMotor,  LinearOpMode opMode){
+    public WobbleGoal(LinearOpMode opMode){
+        //setting the opmode
         this.op = opMode;
 
-        wobbleGoalMotor = inputWobbleGoalMotor;
-        wobbleGoalMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        wobbleGoalMotor.setDirection(DcMotorEx.Direction.FORWARD);
-        wobbleGoalMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-        wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        //getting the motor from the hardware map
+        wobbleGoalMotor = (DcMotor) opMode.hardwareMap.get("wobbleGoalMotor");
+        //setting the zero power behavior to brake
+        wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //setting the direction to forward
+        wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
+        //resetting the encoder
+        wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //setting mode to run using encoder
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+    //making the motor turn clockwise
+    public void clockwise(){
 
-    public void startingPosition() {
-
-        int targetPosition = (int)counts_per_degree*0;
-        wobbleGoalMotor.setTargetPosition(targetPosition);
-        wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
+        wobbleGoalMotor.setPower(0.25);
     }
+    //makes the motor turn counterclockwise
+    public void counterClockwise(){
 
-    public void grabbingPosition() {
-
-        int targetPosition = (int)counts_per_degree*16;
-        wobbleGoalMotor.setTargetPosition(targetPosition);
-        wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
+        wobbleGoalMotor.setPower(-0.25);
     }
+    //stops the motor
+    public void stop(){
 
-    public void liftingPosition() {
-
-        int targetPosition = (int)counts_per_degree*71;
-        wobbleGoalMotor.setTargetPosition(targetPosition);
-        wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-    }
-
-    public void droppingPosition() {
-
-
-
-
-//        double ticksToMove = counts_per_degree * liftheight;
-//        int newmotorLift = (int) (motorLift.getCurrentPosition() + ticksToMove + 0.5); //adds .5 for rounding
-//        //TODO: Check limits for safety
-        wobbleGoalMotor.setTargetPosition(1200);
-        wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        wobbleGoalMotor.setPower(1.0);
-
-        while (op.opModeIsActive() && wobbleGoalMotor.isBusy() && wobbleGoalMotor.getVelocity() !=0 ) {
-            op.telemetry.addData("Lifting ", wobbleGoalMotor.getCurrentPosition() + " velocity=" + wobbleGoalMotor.getVelocity() + " busy=" + wobbleGoalMotor.isBusy());
-            op.telemetry.update();
-            op.idle();
-        }
-        //brake
         wobbleGoalMotor.setPower(0);
-        wobbleGoalMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-
-
-
-//        int targetPosition = (int)counts_per_degree*90;
-//        wobbleGoalMotor.setTargetPosition(targetPosition);
-//        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
 
     }
 }

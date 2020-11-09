@@ -63,11 +63,13 @@ public class Shooter {
     public void shootHighGoal(int distance) {
         this.distance=distance;
         double sleepTime = (distance / speedTopGoal * 1000);
+
         shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
 
         shooterMotor.setTargetPosition(distance);
 
-        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
         shooterMotor.setPower(speedTopGoal);
 
@@ -87,7 +89,7 @@ public class Shooter {
     public void shootMidGoal(int distance){
         this.distance=distance;
         double sleepTime = (distance / speedMediumGoal * 1000);
-        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
 
         shooterMotor.setTargetPosition(distance);
 
@@ -110,7 +112,7 @@ public class Shooter {
     public void shootLowGoal(int  distance){
         this.distance=distance;
         double sleepTime = (distance / speedLowGoal * 1000);
-        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
 
         shooterMotor.setTargetPosition(distance);
 
