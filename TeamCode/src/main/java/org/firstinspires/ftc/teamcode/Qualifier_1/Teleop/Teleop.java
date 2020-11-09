@@ -71,13 +71,13 @@ public class Teleop extends LinearOpMode {
             multidirectionalMove(magnitude, angleInDegree);
 
             if (moveUp == true){
-                robot.clockwise();
+                robot.moveWobbleGoalClockwise();
             }
             else if (moveDown == true){
-                robot.counterClockwise();
+                robot.moveWobbleGoalCounterClockwise();
             }
             else {
-                robot.stop();
+                robot.stopWobbleGoal();
             }
 
         }
