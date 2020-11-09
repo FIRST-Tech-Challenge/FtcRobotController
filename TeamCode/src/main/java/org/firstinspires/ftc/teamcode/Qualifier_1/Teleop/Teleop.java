@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Qualifier_1.Teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGo
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 @TeleOp(name = "Teleop ")
+//@Disabled
 public class Teleop extends LinearOpMode {
     private Robot robot = new Robot();
     private DcMotor motorLeftFront;

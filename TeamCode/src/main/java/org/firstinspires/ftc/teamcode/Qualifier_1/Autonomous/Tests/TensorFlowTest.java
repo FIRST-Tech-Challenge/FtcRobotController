@@ -8,20 +8,25 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.ObjectDetection.TensorFlow;
 
-@Autonomous
+@Autonomous(name= "TensorFlowTest")
 //@Disabled
 public class TensorFlowTest extends LinearOpMode {
     Robot robot = new Robot();
+    TensorFlow tensorFlow = new TensorFlow(this);
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
-        robot.initVuforia();
-        robot.initTfod();
         robot.initChassis(this);
-
+        robot.runTensorFlow();
+        robot.initTensorFlow();
+        robot.stopTensorFlow();
         waitForStart();
 
-
+        tensorFlow.getNumberOfRings();
+        telemetry.addData("Number of Rings", tensorFlow.getNumberOfRings());
+        telemetry.update();
+        sleep(5000);
+        robot.stopTensorFlow();
     }
 }

@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 @Autonomous(name = "NewTest_Sai")
+//@Disabled
 public class NewTest_Sai extends LinearOpMode {
 
     Robot robot = new Robot();

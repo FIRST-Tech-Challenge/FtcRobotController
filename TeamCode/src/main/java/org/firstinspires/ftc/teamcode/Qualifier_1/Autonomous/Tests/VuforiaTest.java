@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Webcam_1;
 
 @Autonomous(name = "VuforiaTest")
+//@Disabled
 public class VuforiaTest extends LinearOpMode {
 
     Chassis robot = new Chassis();
