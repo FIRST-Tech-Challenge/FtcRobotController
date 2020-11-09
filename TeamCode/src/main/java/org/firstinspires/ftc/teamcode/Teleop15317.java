@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.Arm;
 import org.firstinspires.ftc.teamcode.Collect;
 import org.firstinspires.ftc.teamcode.Flick;
 import org.firstinspires.ftc.teamcode.FlickJr;
-import org.firstinspires.ftc.teamcode.Foundation;
-import org.firstinspires.ftc.teamcode.Gearbox;
+// import org.firstinspires.ftc.teamcode.Foundation;
+import org.firstinspires.ftc.teamcode.TwoPosServo;
 import org.firstinspires.ftc.teamcode.Claw;
 
 @TeleOp(name="15317 Teleop", group="Linear Opmode")
@@ -27,18 +27,14 @@ public class Teleop15317 extends LinearOpMode {
     private Drive d;
     private SciLift lift;
     // private Collect collector;
-    private Claw claw;
+    // private Claw claw;
     // private Arm arm;
     // private Flick flick;
     // private FlickJr flickjr;
-    private Foundation foundation;
-    private Gearbox gearbox;
-
-            // y is down controls the claw servo
-    private boolean yIsDown = false;
-
-    // y1 is down controls the gearbox servo
-    private boolean y1IsDown = false;
+    private TwoPosServo claw; //the file this used to be is still called Foundation btw
+    private TwoPosServo gearbox;
+    private boolean clawButtonIsDown = false; // controls the claw servo button press
+    private boolean gearboxButtonIsDown = false; // controls the gearbox servo button press
 
     @Override
     public void runOpMode() {
@@ -46,13 +42,13 @@ public class Teleop15317 extends LinearOpMode {
         //initializing every motor, servo, and sensor
         //these names all need to match the names in the config
         d = new Drive(
-                hardwareMap.get(DcMotor.class, "rbmotor"),
-                hardwareMap.get(DcMotor.class, "rfmotor"),
-                hardwareMap.get(DcMotor.class, "lfmotor"),
-                hardwareMap.get(DcMotor.class, "lbmotor")
+            hardwareMap.get(DcMotor.class, "rbmotor"),
+            hardwareMap.get(DcMotor.class, "rfmotor"),
+            hardwareMap.get(DcMotor.class, "lfmotor"),
+            hardwareMap.get(DcMotor.class, "lbmotor")
         );
         lift = new SciLift(
-                hardwareMap.get(DcMotor.class, "liftmotor")
+            hardwareMap.get(DcMotor.class, "liftmotor")
         );
         // arm = new Arm(
         //   hardwareMap.get(DcMotor.class, "armmotor")
@@ -72,52 +68,51 @@ public class Teleop15317 extends LinearOpMode {
         // flickjr = new FlickJr(
         //   hardwareMap.get(Servo.class, "hit")
         // );
-        foundation = new Foundation(
-                hardwareMap.get(Servo.class, "foundation")
-
+        claw = new TwoPosServo(
+            hardwareMap.get(Servo.class, "claw"),
+            0.5, 1.0
         );
-        gearbox = new Gearbox(
-                hardwareMap.get(Servo.class, "gearbox")
-
+        gearbox = new TwoPosServo(
+            hardwareMap.get(Servo.class, "gearbox"),
+            0.01, 0.99
         );
 
         waitForStart();
         while (opModeIsActive()) {
             //gamepad 1
             //drive..........sticks
-            //turbo..........right trigger
+            //gearbox........b button
+            //claw...........y button
 
             //gamepad 2
-            //lift...........right stick
-            //arm............left stick
-            //foundation.....Y to grab, X to release
-            //collection.....bumpers, left for out, right for in
-            //flicks.........hold X
-            //claw...........A to grab, B to release
+            //lift...........right stick up and down
+
 
             // gamepad 1
             d.setPower(
-                    gamepad1.left_stick_y,
-                    gamepad1.left_stick_x,
-                    gamepad1.right_stick_x,
-                    gamepad1.right_trigger
+                gamepad1.left_stick_y,
+                gamepad1.left_stick_x,
+                gamepad1.right_stick_x,
+                gamepad1.right_trigger
             );
 
-            if (gamepad1.y && !y1IsDown) {
-                y1IsDown = true;
+            if (gamepad1.b && !gearboxButtonIsDown) {
+                gearboxButtonIsDown = true;
                 gearbox.nextPos();
+            } else if (!gamepad1.b) {
+                gearboxButtonIsDown = false;
+            }
+
+            if (gamepad1.y && !clawButtonIsDown) {
+                clawButtonIsDown = true;
+                claw.nextPos();
             } else if (!gamepad1.y) {
-                y1IsDown = false;
+                clawButtonIsDown = false;
             }
 
 
             //gamepad 2
-            if (gamepad2.y && !yIsDown) {
-                yIsDown = true;
-                foundation.nextPos();
-            } else if (!gamepad2.y) {
-                yIsDown = false;
-            }
+
 
             // if (gamepad2.b) {
             //   claw.release();
@@ -175,6 +170,7 @@ public class Teleop15317 extends LinearOpMode {
             telemetry.addData("Clicks: ", d.getClickslf());
             telemetry.addData("Lift", lift.getClicks());
             telemetry.addData("gearbox", gearbox.getPos());
+            telemetry.addData("gearbox", claw.getPos());
             //telemetry.addData("flickpos", flick.getPos());
             telemetry.update();
 
