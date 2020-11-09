@@ -15,6 +15,8 @@ import org.firstinspires.ftc.teamcode.support.tasks.Progress;
 import org.firstinspires.ftc.teamcode.support.tasks.Task;
 import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
 
+import static java.lang.Thread.interrupted;
+
 /**
  * FoundationHook spec:
  */
@@ -34,10 +36,12 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private final int SLIDER_POS_INIT = 0;
     private final int SLIDER_POS_LOW = 50;
     private final int SLIDER_POS_MAX = 1733;
+    private final int SLIDER_POS_RING = 325;
 
     private final double ARM_UP = 0.48;
     private final double ARM_INIT = 0.38;
     private final double ARM_DOWN = 0.84;
+    private final double ARM_COLLECT_RING = 0.63;
 
     private final double GRABBER_OPEN = 0.58;
     private final double GRABBER_CLOSE = 0.845;
@@ -164,10 +168,13 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         if (slider==null) return;
         slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int pos = slider.getCurrentPosition();
-        if (pos>=SLIDER_POS_MAX && !forced) {
+        if ((pos>=SLIDER_POS_MAX) && !forced) {
             sliderStop();
             return;
         }
+        pos = Math.min(pos+50, SLIDER_POS_MAX);
+        slider.setTargetPosition(pos);
+        slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slider.setVelocity(SLIDER_SPEED);
         // armMotor.setPower(ARM_POWER);
         // armIsDown = false;
@@ -181,6 +188,9 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             sliderStop();
             return;
         }
+        pos=Math.max(pos-50,SLIDER_POS_INIT);
+        slider.setTargetPosition(pos);
+        slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slider.setVelocity(-SLIDER_SPEED);
         // armMotor.setPower(-ARM_POWER);
         // armIsDown = true;
@@ -271,6 +281,15 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             public Progress start() {
                 return moveGrabber(GRABBER_CLOSE);
             }}, taskName);
+    }
+
+    public void collectRingCombo(){
+        grabWobbleGoalCombo(false);
+        while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
+            TaskManager.processTasks();
+        }
+        moveArm(ARM_COLLECT_RING);
+        slideToPos(SLIDER_POS_RING);
     }
 
     public void grabWobbleGoalCombo(boolean isHigh) {
