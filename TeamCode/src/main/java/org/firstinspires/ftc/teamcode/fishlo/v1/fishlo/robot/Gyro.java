@@ -4,6 +4,9 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.SubSystem;
@@ -13,6 +16,8 @@ public class Gyro extends SubSystem {
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
+    double heading = 0;
+    double prevHeading = 0;
 
     public Gyro(Robot robot) {
         super(robot);
@@ -43,6 +48,15 @@ public class Gyro extends SubSystem {
 
         imu = robot.hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+    }
+
+    public double getHeading() {
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        heading = convert(angles.firstAngle - prevHeading);
+        return heading;
+    }
+    public void resetHeading() {
+        prevHeading = heading;
     }
 
     public double devert (double degrees) {

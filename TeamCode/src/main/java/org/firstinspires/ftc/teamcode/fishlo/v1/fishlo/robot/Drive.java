@@ -109,6 +109,13 @@ public class Drive extends SubSystem {
         backRight.setPower(-power);
     }
 
+    public void turn (double power) {
+        frontLeft.setPower(power);
+        backLeft.setPower(power);
+        frontRight.setPower(-power);
+        backRight.setPower(-power);
+    }
+
     public void moveToPosition(double inches, double speed) {
         int move = (int)(Math.round(inches*conversion));
 
@@ -133,6 +140,7 @@ public class Drive extends SubSystem {
         stop();
         return;
     }
+
 
     public void strafeToPosition(double inches, double speed) {
         int move = (int)(Math.round(inches * cpi * strafeBias));
