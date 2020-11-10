@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.program;
+package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.program.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
