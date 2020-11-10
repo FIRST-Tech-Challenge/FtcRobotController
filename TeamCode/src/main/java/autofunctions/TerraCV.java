@@ -13,17 +13,77 @@ import com.vuforia.Vuforia;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import global.TerraBot;
 import util.Rect;
 
 public class TerraCV {
+
+    public VuforiaLocalizer vuforia;
+    public final String VUFORIA_KEY ="AdfjEqf/////AAABmUFlTr2/r0XAj6nkD8iAbHMf9l6LwV12Hw/ie9OuGUT4yTUjukPdz9SlCFs4axhhmCgHvzOeNhrjwoIbSCn0kCWxpfHAV9kakdMwFr6ysGpuQ9xh2xlICm2jXxVfqYKGlWm3IFk1GuGR7N5jt071axc/xFBQ0CntpghV6siUTyuD4du5rKhqO1pp4hILhJLF5I6LbkiXN93utfwje/8kEB3+V4TI+/rVj9W+c7z26rAQ34URhQ5AcPlhIfjLyUcTW15+UylM0dxGiMpQprreFVaOk32O2epod9yIB5zgSin1bd7PiCXHbPxhVhMz0cMNRJY1LLfuDru3npuemePUkpSOp5SFbuGjzso9hDA/6V3L";
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Quad";
+    private static final String LABEL_SECOND_ELEMENT = "Single";
+    public TFObjectDetector tfod;
+    public double minConf = 0.8;
+
+    LinearOpMode op;
+    public void init(LinearOpMode op, boolean visible){
+        this.op = op;
+        initVuforia();
+        initTF(visible);
+    }
+    public void initVuforia(){
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+    }
+    public void initTF(boolean visible){
+        TFObjectDetector.Parameters tfodParameters;
+        if(visible) {
+            int tfodMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier(
+                    "tfodMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
+            tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        }else{
+            tfodParameters = new TFObjectDetector.Parameters();
+        }
+        tfodParameters.minResultConfidence = (float) minConf;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+    }
+
+    public RINGNUM scanRingsBeforeInit(){
+        RINGNUM out = RINGNUM.ZERO;
+        tfod.activate();
+        while (!op.isStarted()){
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                for (Recognition recognition : updatedRecognitions) {
+                    op.telemetry.addData("label", recognition.getLabel());
+                    op.telemetry.update();
+                    if(recognition.getLabel().equals(LABEL_FIRST_ELEMENT)){
+                        out = RINGNUM.ONE;
+                    }else if(recognition.getLabel().equals(LABEL_SECOND_ELEMENT)){
+                        out = RINGNUM.FOUR;
+                    }
+                }
+            }
+        }
+        tfod.shutdown();
+        return out;
+    }
+
+
 //
 //    public Helper h = new Helper();
 //    public TerraBot bot;
-//    public VuforiaLocalizer vuforia;
+
 //    public VuforiaLocalizer.CloseableFrame currentFrame;
 //    public Image img;
 //    public Bitmap bm;
@@ -141,9 +201,9 @@ public class TerraCV {
 //        }
 //        return total/(rect.getArea());
 //    }
-//    public enum StonePos{
-//        LEFT,
-//        RIGHT,
-//        MIDDLE
-//    }
+    public enum RINGNUM{
+        ZERO,
+        ONE,
+        FOUR
+    }
 }

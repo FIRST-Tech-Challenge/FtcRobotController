@@ -254,11 +254,9 @@ public class TerraBot {
     }
 
     public void defineShooter(){
-//        shooter.addStage(outl, outtakeSpeed, 0.01);
-//        shooter.addStage(outr, outtakeSpeed, 0.01);
-        shooter.addStage(in, 1.0, 0.01);
+        shooter.addStage(in, 1.0, 0.2);
         shooter.addStage(ssr, shootControlR.getPos(1), 0.01);
-        shooter.addStage(ssl, shootControlL.getPos(1), 0.5);
+        shooter.addStage(ssl, shootControlL.getPos(1), 0.8);
         shooter.addStage(slr, liftSecond+0.07, 0.01);
         shooter.addStage(sll, liftSecond, 0.7);
         shooter.addStage(in, 0.0, 0.01);
@@ -277,8 +275,8 @@ public class TerraBot {
         }
     }
     public void defineWobbleGoal(){
-        shooter.addStage(ssr, shootControlR.getPos(0), 0.01);
-        shooter.addStage(ssl, shootControlL.getPos(0), 0.01);
+//        wobbleGoal.addStage(ssr, shootControlR.getPos(0), 0.01);
+//        wobbleGoal.addStage(ssl, shootControlL.getPos(0), 0.01);
         wobbleGoal.addStage(st, 0.65, 0.1);
         wobbleGoal.addStage(arm,  1, degreesToTicks(205));
         wobbleGoal.addWaitUntil();
@@ -451,7 +449,7 @@ public class TerraBot {
             public void run() {
                 odometry.updateGlobalPosition(getLeftOdo(), getMiddleOdo(), getRightOdo(), getHeading());
             }
-        }, 10);
+        }, 30);
     }
     public void stopOdoThreadTele() {
         threadHandler.stopTeleThread();
@@ -462,7 +460,7 @@ public class TerraBot {
             public void run() {
                 odometry.updateGlobalPosition(getLeftOdo(), getMiddleOdo(), getRightOdo(), getHeading());
             }
-        }, op, 10);
+        }, op, 30);
     }
     public void stopOdoThreadAuto() {
         threadHandler.stopAutoThread();

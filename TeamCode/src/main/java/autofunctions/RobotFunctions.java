@@ -23,21 +23,22 @@ public class RobotFunctions {
 
     TerraBot bot = null;
     public LinearOpMode op = null;
-//
-//    ElapsedTime timer = new ElapsedTime();
-//
-//    public TerraCV.StonePos stonePos;
+
+    public TerraCV.RINGNUM ringnum;
 //
 //    public AutoThread odoThread = new AutoThread();
 //    public Thread thread;
 //
     //Inspirational Messages
+    TerraCV terraCV = new TerraCV();
+
     public ArrayList<String> ims = new ArrayList<>();
 
     public void init(TerraBot t, LinearOpMode o) {
         bot = t;
         op = o;
         initIMs();
+        terraCV.init(o,true);
     }
 
     public void initIMs(){
@@ -150,6 +151,23 @@ public class RobotFunctions {
             }
         };
     }
+    public void scanRings(){
+        ringnum = terraCV.scanRingsBeforeInit();
+    }
+
+    public CodeSeg shoot(){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.shooter.start();
+                while (bot.shooter.executing){
+                    bot.shooter.update();
+                    bot.outtakeWithEncoders(bot.outtakeSpeed);
+                }
+            }
+        };
+    }
+
 
 
 
