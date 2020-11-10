@@ -9,6 +9,12 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
     double globalPositionX, globalPositionY, robotOrientationDegrees, previousOrientationDegrees, previousleftEncoder, previousrightEncoder, previousHorizontalEncoder, changeinrobotorientationDegrees, changeinX, changeinY;
     double ENCODERS_PER_DEGREE; //Get during calibration
 
+    public OdometryGlobalCoordinatePosition(double x, double y, double rotationDeg){
+        globalPositionX = x;
+        globalPositionY = y;
+        robotOrientationDegrees = rotationDeg;
+    }
+
     public void updatePositions(double leftEncoder, double rightEncoder, double horizontal){
         previousOrientationDegrees = robotOrientationDegrees;
         changeinrobotorientationDegrees = (leftEncoder - rightEncoder)/ENCODERS_PER_DEGREE;

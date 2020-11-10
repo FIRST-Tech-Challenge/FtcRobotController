@@ -8,9 +8,9 @@ public class AutoOmniMovement {
     double x, y, motorX, motorY, powerA, powerB;
     final double MAX_POWER = 0.75;
 
-    double[] wheelPowers = new double[4]; //TopRight, BottomRight, TopmLeft, BottomLeft
+    double[] wheelPowers = new double[4]; //TopRight, BottomRight, TopLeft, BottomLeft
 
-    public AutoOmniMovement (double angleDeg, double x, double y) {
+    public AutoOmniMovement (double x, double y, double angleDeg) {
         this.x = x;
         this.y = y;
         angleRad = Math.toRadians(angleDeg-45);
