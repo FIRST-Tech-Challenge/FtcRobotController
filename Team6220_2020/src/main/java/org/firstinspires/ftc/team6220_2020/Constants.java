@@ -56,8 +56,8 @@ public class Constants
     public static final double ROTATION_I = 0.0;
     public static final double ROTATION_D = 0.0;
     public static final double TRANSLATION_P = DRIVE_POWER_FACTOR;
-    public static final double TRANSLATION_I = 0/*0.0000005*/;
-    public static final double TRANSLATION_D = 0/*0.1*/;
+    public static final double TRANSLATION_I = 0;
+    public static final double TRANSLATION_D = 0;
     //----------------------------------------------------------------
 
 
