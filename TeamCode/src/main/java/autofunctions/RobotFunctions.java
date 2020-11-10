@@ -2,19 +2,14 @@ package autofunctions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.internal.android.dex.Code;
-
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
-import java.util.Currency;
 
-import autofunctions.Path;
 import global.TerraBot;
 import util.CodeSeg;
 import util.Rect;
+
 import java.util.Random;
 ///////////////////////////////////////////////////////////////////////////////////import autoUtil.TerraCV.stoneP;
 
@@ -24,11 +19,8 @@ public class RobotFunctions {
     TerraBot bot = null;
     public LinearOpMode op = null;
 
-    public TerraCV.RINGNUM ringnum;
-//
-//    public AutoThread odoThread = new AutoThread();
-//    public Thread thread;
-//
+    public TerraCV.RingNum ringnum;
+
     //Inspirational Messages
     TerraCV terraCV = new TerraCV();
 
@@ -152,7 +144,12 @@ public class RobotFunctions {
         };
     }
     public void scanRings(){
-        ringnum = terraCV.scanRingsBeforeInit();
+        while (!op.isStarted() && !op.isStopRequested()) {
+            terraCV.takePictureBeforeInit();
+            Rect cropped = new Rect(0, 0, 1280, 720).crop(610,450,490,140);
+            ringnum = terraCV.getRingNum(cropped);
+            telemetryText(ringnum.toString());
+        }
     }
 
     public CodeSeg shoot(){

@@ -182,8 +182,6 @@ public class TerraBot {
         outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-//        shootControlL.changeCurr(1);
-//        shootControlR.changeCurr(1);
 
         resetEncoders();
 
@@ -390,9 +388,10 @@ public class TerraBot {
         if(resettingArm == 0){
             arm.setPower(-0.15);
             resettingArm++;
+            timer.reset();
         }else if(resettingArm == 1) {
             if(getArmVel() == 0){
-                if(timer.seconds() > 0.3){
+                if(timer.seconds() > 0.6){
                     arm.setPower(0);
                     arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

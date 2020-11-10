@@ -2,6 +2,7 @@
 package autofunctions;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,15 +12,12 @@ import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import global.TerraBot;
 import util.Rect;
 
 public class TerraCV {
@@ -30,7 +28,20 @@ public class TerraCV {
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
     public TFObjectDetector tfod;
-    public double minConf = 0.8;
+    public double minConf = 0.7;
+
+
+    public VuforiaLocalizer.CloseableFrame currentFrame;
+    public Image img;
+    public Bitmap bm;
+
+    public boolean discount = false;
+
+    public int accuracy = 3;
+
+
+    ElapsedTime debug = new ElapsedTime();
+    public double time = 0;
 
     LinearOpMode op;
     public void init(LinearOpMode op, boolean visible){
@@ -43,6 +54,9 @@ public class TerraCV {
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
+        vuforia.setFrameQueueCapacity(1);
+        CameraDevice.getInstance().setFlashTorchMode(true);
     }
     public void initTF(boolean visible){
         TFObjectDetector.Parameters tfodParameters;
@@ -56,46 +70,35 @@ public class TerraCV {
         tfodParameters.minResultConfidence = (float) minConf;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+//        tfod.setZoom(2.5, 1.78);
+
     }
+//
+//    public RingNum scanRingsBeforeInit(){
+//        RingNum out = RingNum.ZERO;
+//        tfod.activate();
+//        //tfod.setClippingMargins(100,500,400,200);
+//        //tfod.setZoom(2.5, 1.78);
+//        while (!op.isStarted() && !op.isStopRequested()){
+//            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+//            if (updatedRecognitions != null) {
+//                for (Recognition recognition : updatedRecognitions) {
+//                    op.telemetry.addData("label", recognition.getLabel());
+//                    op.telemetry.update();
+//                    if(recognition.getLabel().equals(LABEL_FIRST_ELEMENT)){
+//                        out = RingNum.ONE;
+//                    }else if(recognition.getLabel().equals(LABEL_SECOND_ELEMENT)){
+//                        out = RingNum.FOUR;
+//                    }
+//                }
+//            }
+//            op.idle();
+//        }
+//        tfod.shutdown();
+//        return out;
+//    }
 
-    public RINGNUM scanRingsBeforeInit(){
-        RINGNUM out = RINGNUM.ZERO;
-        tfod.activate();
-        while (!op.isStarted()){
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if (updatedRecognitions != null) {
-                for (Recognition recognition : updatedRecognitions) {
-                    op.telemetry.addData("label", recognition.getLabel());
-                    op.telemetry.update();
-                    if(recognition.getLabel().equals(LABEL_FIRST_ELEMENT)){
-                        out = RINGNUM.ONE;
-                    }else if(recognition.getLabel().equals(LABEL_SECOND_ELEMENT)){
-                        out = RINGNUM.FOUR;
-                    }
-                }
-            }
-        }
-        tfod.shutdown();
-        return out;
-    }
 
-
-//
-//    public Helper h = new Helper();
-//    public TerraBot bot;
-
-//    public VuforiaLocalizer.CloseableFrame currentFrame;
-//    public Image img;
-//    public Bitmap bm;
-//    LinearOpMode op;
-//
-//    public boolean discount = false;
-//
-//    public int Accuracy = 7;
-//
-//
-//    ElapsedTime debug = new ElapsedTime();
-//    public double time = 0;
 //
 //
 //    public void init(TerraBot b, LinearOpMode o, int acc){
@@ -131,77 +134,78 @@ public class TerraCV {
 //            }
 //        }
 //    }
-//    public void takePictureBeforeInit(){
-//        //1280, 720
-//        resetImg();
-//        while (!op.isStarted() && img == null) {
-//            try {currentFrame = vuforia.getFrameQueue().take();}catch (InterruptedException e){}
-//            long numImages = currentFrame.getNumImages();
-//            for (int i = 0; i < numImages; i++) {
-//                if (currentFrame.getImage(i).getFormat() == PIXEL_FORMAT.RGB565) {
-//                    img = currentFrame.getImage(i);
-//                    break;
-//                }
-//            }
-//            if (img != null) {
-//                bm = vuforia.convertFrameToBitmap(currentFrame);
-//            }
-//        }
-//    }
-//    public void resetImg(){
-//        img = null;
-//    }
-//    public StonePos getStonePos(Rect area){
-//        debug.reset();
-//        StonePos pos;
-//        int th = area.getWidth() / 3;
-//        Rect left = new Rect(area.getX1(), area.getY1(), th, area.getHeight());
-//        Rect middle = new Rect(area.getX1() + th, area.getY1(), th, area.getHeight());
-//        Rect right = new Rect(area.getX1() + 2 * th, area.getY1(), th, area.getHeight());
-//        double[] values = new double[3];
-//        values[0] = getAverageOfPixelsBeforeInit(left);
-//        values[1] = getAverageOfPixelsBeforeInit(middle);
-//        values[2] = getAverageOfPixelsBeforeInit(right);
-//        int index = h.findMin(values);
-//        if (index == 0) {
-//            pos = StonePos.LEFT;
-//        } else if (index == 1) {
-//            pos = StonePos.MIDDLE;
-//        } else {
-//            pos = StonePos.RIGHT;
-//        }
-//        time = debug.milliseconds();
-//
-//        if(!discount) {
-//            return pos;
-//        }else{
-//            return null;
-//        }
-//    }
-//    public double getAverageOfPixelsBeforeInit(Rect rect){
-//        double total = 0;
-//        int x1 = rect.getX1();
-//        int y1 = rect.getY1();
-//        int x2 = rect.getX2();
-//        int y2 = rect.getY2();
-//
-//        for (int x = x1; x < x2; x+= Accuracy) {
-//            for (int y = y1; y < y2; y+=Accuracy ) {
-//                int pix = bm.getPixel(x,y);
-//                float[] hsv = h.rgbToHSV(pix);
-//                total += hsv[2];
-//                if(op.isStarted()){
-//                    break;
-//                }
-//            }
-//            if(op.isStarted()){
-//                discount = true;
-//                break;
-//            }
-//        }
-//        return total/(rect.getArea());
-//    }
-    public enum RINGNUM{
+    public void takePictureBeforeInit(){
+        //1280, 720
+        resetImg();
+        while (!op.isStarted() && img == null && !op.isStopRequested()) {
+            try {currentFrame = vuforia.getFrameQueue().take();}catch (InterruptedException e){}
+            long numImages = currentFrame.getNumImages();
+            for (int i = 0; i < numImages; i++) {
+                if (currentFrame.getImage(i).getFormat() == PIXEL_FORMAT.RGB565) {
+                    img = currentFrame.getImage(i);
+                    break;
+                }
+            }
+            if (img != null) {
+                bm = vuforia.convertFrameToBitmap(currentFrame);
+            }
+        }
+    }
+    public void resetImg(){
+        img = null;
+    }
+    public RingNum getRingNum(Rect area){
+        debug.reset();
+        RingNum num = RingNum.ZERO;
+        double val = getAverageOfPixelsBeforeInit(area) * 1000;
+        if (val > 25) {
+            num = RingNum.FOUR;
+        } else if (val > 10) {
+            num = RingNum.ONE;
+        }
+        time = debug.milliseconds();
+
+        if(!discount) {
+            return num;
+        }else{
+            return null;
+        }
+    }
+    public double getAverageOfPixelsBeforeInit(Rect rect){
+        double total = 0;
+        int x1 = rect.getX1();
+        int y1 = rect.getY1();
+        int x2 = rect.getX2();
+        int y2 = rect.getY2();
+
+        for (int x = x1; x < x2; x+= accuracy) {
+            for (int y = y1; y < y2; y+= accuracy ) {
+                int pix = bm.getPixel(x,y);
+                float[] hsv = rgbToHSV(pix);
+                if(20 < hsv[0] && hsv[0] < 50) {
+                    total += hsv[1];
+                }
+                //total += hsv[2];
+                if(op.isStarted() || op.isStopRequested()){
+                    break;
+                }
+            }
+            if(op.isStarted() || op.isStopRequested()){
+                discount = true;
+                break;
+            }
+        }
+        return total/(rect.getArea());
+    }
+    public float[] rgbToHSV(int pix){
+        int r = Color.red(pix);
+        int g = Color.green(pix);
+        int b = Color.blue(pix);
+        float[] hsv = new float[3];
+        Color.RGBToHSV(r, g, b, hsv);
+        return hsv;
+    }
+    public enum RingNum {
         ZERO,
         ONE,
         FOUR
