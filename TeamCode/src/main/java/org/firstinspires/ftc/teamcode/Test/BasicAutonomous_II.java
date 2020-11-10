@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Test;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,36 +16,45 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.Enums.ShooterState;
 import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
+import org.firstinspires.ftc.teamcode.Subsystems.Elevator;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
 
 import java.util.List;
 
-//import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
+@Autonomous(name="Basic Autonomous II", group="Test")
 
-@Autonomous(name="Basic AutonomousSimple", group="Test")
-@Disabled
-//////////////////////////////////////////////////////////
-    // EXTEND this class to create multiple drive paths.
-    // use this for test but not competiton
-        ///////////////////////////////////////////////////
+// Place robot on the left most blue line when facing the goal. Robot should be placed such that
+// as it drives straight ahead it will not hit the stack of rings. So basically center the robot on
+// the seam between the first and second floor tile. Which is an inch or to to the right of the blue line.
 
-
-
-public class BasicAutonomous_Simple extends LinearOpMode {
+public class BasicAutonomous_II extends LinearOpMode {
     /* Declare OpMode members. */
-    public Drivetrain_v3       drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
-    public Orientation         lastAngles  = new Orientation();
-    public ElapsedTime         PIDtimer    = new ElapsedTime(); // PID loop timer
-    public ElapsedTime         runtime     = new ElapsedTime(); // timeout timer
-    public ElapsedTime         tfTime     = new ElapsedTime(); // timeout timer
+    public Drivetrain_v3        drivetrain  = new Drivetrain_v3(false);   // Use subsystem Drivetrain
+    public Shooter              shooter     = new Shooter();
+    public Intake               intake      = new Intake(); // not currently using intake and elevator in auto
+    public Wobblegoal           wobble      = new Wobblegoal();
+    public Elevator             elevator    = new Elevator();
+    public Orientation          lastAngles  = new Orientation();
+
+    // Timers and time limits for each timer
+    public ElapsedTime          PIDtimer    = new ElapsedTime(); // PID loop timer
+    public ElapsedTime          drivetime   = new ElapsedTime(); // timeout timer for driving
+    public ElapsedTime          tfTime      = new ElapsedTime(); // timer for tensor flow
+    public ElapsedTime          autoShootTimer  = new ElapsedTime(); //auto shooter timer (4 rings)
+    public static double        autoShootTimeAllowed = 6; //  seconds allows 4 shoot cycles in case one messes up
+    public static double        tfSenseTime          = 4; // needs a couple seconds to process the image and ID the target
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suit the specific robot drive train.
     public static final double     DRIVE_SPEED             = 0.6;     // Nominal speed for better accuracy.
     public static final double     TURN_SPEED              = 0.50;    // 0.4 for berber carpet. Check on mat too
 
-    public static final double     HEADING_THRESHOLD       = 2;      // As tight as we can make it with an integer gyro
+    public static final double     HEADING_THRESHOLD       = 1.5;      // As tight as we can make it with an integer gyro
     public static final double     Kp_TURN                 = 0.0275;   //0.025 to 0.0275 on mat seems to work
     public static final double     Ki_TURN                 = 0.003;   //0.0025 to 0.004 on a mat works. Battery voltage matters
     public static final double     Kd_TURN                 = 0.0;   //leave as 0
@@ -54,20 +62,75 @@ public class BasicAutonomous_Simple extends LinearOpMode {
     public static final double     Ki_DRIVE                = 0.005;   // 0.005 Larger is more responsive, but also less stable
     public static final double     Kd_DRIVE                = 0.0;   // Leave as 0 for now
 
+    // Gyro constants and variables for PID steering
 
-    private double                  globalAngle; // not used currently
+    private double                 globalAngle; // not used currently
     public double                  lasterror;
-    public  double                  totalError;
+    public  double                 totalError;
+
+    // STATE Definitions from the ENUM package
+
+    public ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition, this is needed to keep shooter on for a Linear Opmode
+    WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default target zone
+
+    //// Vuforia Content
+   public static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+   public static final String LABEL_FIRST_ELEMENT = "Quad";
+   public static final String LABEL_SECOND_ELEMENT = "Single";
+   public String StackSize = "None";
 
 
+    public static final String VUFORIA_KEY =
+            "AQXVmfz/////AAABmXaLleqhDEfavwYMzTtToIEdemv1X+0FZP6tlJRbxB40Cu6uDRNRyMR8yfBOmNoCPxVsl1mBgl7GKQppEQbdNI4tZLCARFsacECZkqph4VD5nho2qFN/DmvLA0e1xwz1oHBOYOyYzc14tKxatkLD0yFP7/3/s/XobsQ+3gknx1UIZO7YXHxGwSDgoU96VAhGGx+00A2wMn2UY6SGPl+oYgsE0avmlG4A4gOsc+lck55eAKZ2PwH7DyxYAtbRf5i4Hb12s7ypFoBxfyS400tDSNOUBg393Njakzcr4YqL6PYe760ZKmu78+8X4xTAYSrqFJQHaCiHt8HcTVLNl2fPQxh0wBmLvQJ/mvVfG495ER1A";
 
+    /**
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * localization engine.
+     */
+   public VuforiaLocalizer vuforia;
 
-
+    /**
+     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
+     * Detection engine.
+     */
+    public TFObjectDetector tfod;
 
     @Override
     public void runOpMode() {
-        drivetrain.init(hardwareMap);
 
+        initVuforia();
+        initTfod();
+        if (tfod != null) {
+            tfod.activate();
+
+            // The TensorFlow software will scale the input images from the camera to a lower resolution.
+            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
+            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
+            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
+            // should be set to the value of the images used to create the TensorFlow Object Detection model
+            // (typically 1.78 or 16/9).
+
+            // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
+            tfod.setZoom(2.5, 1.78);
+        }
+
+        // Call init methods in the various subsystems
+        // if "null exception" occurs it is probably because the hardware init is not called below.
+        drivetrain.init(hardwareMap);
+        wobble.init(hardwareMap);
+        shooter.init(hardwareMap);
+        // intake.init(hardwareMap); not necessary in Auto at this time
+        // elevator .....also not necessary
+
+        // move implements to start position. Note, 18x18x18 inch cube has to be maintained
+        // until start is pressed. Position servos and motors here so human error and set-up is not
+        // as critical. Team needs to focus on robot alignment to the field.
+
+        shooter.shooterReload(); // reload = flipper back, stacker mostly down, shooter off
+        // nothing here for wobble goal yet. Gravity will take care of most of it.
+        // the wobble gripper is automatically opened during the wobble init.
+
+        // Gyro set-up
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.mode                = BNO055IMU.SensorMode.IMU;
@@ -75,7 +138,7 @@ public class BasicAutonomous_Simple extends LinearOpMode {
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled      = false;
 
-        // Calibrate
+        // Init gyro parameters then calibrate
         drivetrain.imu.initialize(parameters);
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
@@ -98,17 +161,108 @@ public class BasicAutonomous_Simple extends LinearOpMode {
         telemetry.addData("Mode", "waiting for start");
         telemetry.addData("imu calib status", drivetrain.imu.getCalibrationStatus().toString());
         /** Wait for the game to begin */
+        telemetry.addData("Square", Square);
 
         telemetry.update();
 
         /////////////////////////////////////////////////////////////////////////////////////////////
         waitForStart();
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        tfTime.reset(); //  reset the TF timer
+        while (tfTime.time() < tfSenseTime) { // need to let TF find the target so timer runs to let it do this
+            if (tfod != null) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Object Detected", updatedRecognitions.size());
+                    // step through the list of recognitions and display boundary info.
+                    int i = 0;
+                    for (Recognition recognition : updatedRecognitions) {
+                        telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                recognition.getLeft(), recognition.getTop());
+                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                recognition.getRight(), recognition.getBottom());
+                        ///
+                        StackSize = recognition.getLabel();
+                        //telemetry.addData("Target", Target);
+                        if (StackSize == "Quad") {
+                            Square = WobbleTargetZone.BLUE_C;
+                            telemetry.addData("Square", Square);
+                        } else if (StackSize == "Single") {
+                            Square = WobbleTargetZone.BLUE_B;
+                            telemetry.addData("Square", Square);
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        // Put a hold after each turn
-        // This is currently set up or field coordinates NOT RELATIVE to the last move
-        gyroDrive(DRIVE_SPEED, 60.0, 0.0, 5);    // Drive FWD 110 inches
+                        }
+
+                    }
+                    telemetry.update();
+                }
+            }
+            if (tfod != null) {
+                tfod.shutdown();
+            }
+        }
+        // Pick up the Wobble Goal before moving.
+        // Sleep statements help let things settle before moving on.
+        wobble.GripperOpen();
+        wobble.ArmExtend();
+        sleep(1000);
+        wobble.GripperClose();
+        sleep(500);
+        wobble.ArmCarryWobble();
+        sleep(500);
+
+        // After picking up the wobble goal the robot always goes to the same spot to shoot the 3 preloaded rings.
+        // After delivering the rings, the switch case has the appropriate drive path to the identified Target Zone.
+
+        drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
+        // Drive paths are initially all the same to get to the shooter location
+        gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
+        gyroTurn(TURN_SPEED,-10,3);
+        mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
+        shoot3Rings_v2(mShooterState);   // call method to start shooter and launch 3 rings
+        drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
+
+        // Switch manages the 3 different Target Zone objectives based on the number of rings stacked up
+        // Ring stack is none, one or 4 rings tall and is determined by a randomization process.
+        // Robot has to read the stack height and set the Target Zone square state based on Vuforia/ Tensor Flow detection
+        switch(Square){
+            case BLUE_A: // no rings. 3 tiles (24 inches per tile) forward and one tile to the left from start
+                telemetry.addData("Going to RED A", "Target Zone");
+                gyroTurn(TURN_SPEED*.5,20,3);
+                gyroDrive(DRIVE_SPEED, 8.0, 20.0, 5);
+                sleep(1000);
+                wobble.GripperOpen();
+                wobble.ArmExtend();
+                break;
+            case BLUE_B: // one ring  4 tiles straight ahead
+                telemetry.addData("Going to RED B", "Target Zone");
+                //gyroTurn(TURN_SPEED*.5,20,3);
+                gyroDrive(DRIVE_SPEED, 30.0, -15.0, 5);
+                sleep(1000);
+                wobble.GripperOpen();
+                wobble.ArmContract();
+                sleep(500);
+                drivetime.reset();
+                gyroDrive(DRIVE_SPEED, -18.0, -15, 5);
+                break;
+            case BLUE_C: // four rings. 5 tiles forward and one tile to the left.
+                telemetry.addData("Going to RED C", "Target Zone");
+                gyroTurn(TURN_SPEED,0,3);
+                gyroDrive(DRIVE_SPEED, 48, 0.0, 5);
+                sleep(1000);
+                wobble.GripperOpen();
+                wobble.ArmExtend();
+                sleep(1000);
+                drivetime.reset();
+                gyroDrive(DRIVE_SPEED, -48.0, 0, 5);
+                break;
+        }
+
+
+
         //gyroTurn( TURN_SPEED, 90.0, 3);         // Turn  CCW to -45 Degrees
        //gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
         telemetry.addData("Path", "Complete");
@@ -143,17 +297,16 @@ public class BasicAutonomous_Simple extends LinearOpMode {
         double  rightSpeed;
         totalError = 0;
         lasterror = 0;
-
+        telemetry.addData("gyroDrive Activated", "Complete");
         // Ensure that the opmode is still active
         // Use timeout in case robot gets stuck in mid path.
         // Also a way to keep integral term from winding up to bad.
-        if (opModeIsActive() & runtime.time() < timeout) {
+        if (opModeIsActive() & drivetime.time() < timeout) {
 
             // Determine new target position in ticks/ counts then pass to motor controller
             moveCounts = (int)(distance * Drivetrain_v3.COUNTS_PER_INCH);
             newLeftTarget = drivetrain.leftFront.getCurrentPosition() + moveCounts;
             newRightTarget = drivetrain.rightFront.getCurrentPosition() + moveCounts;
-
 
             // Set Target using the calculated umber of ticks/counts
 
@@ -219,7 +372,7 @@ public class BasicAutonomous_Simple extends LinearOpMode {
             drivetrain.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             drivetrain.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        runtime.reset(); // reset the timer for the next function call
+        drivetime.reset(); // reset the timer for the next function call
     }
 
     /**
@@ -239,12 +392,12 @@ public class BasicAutonomous_Simple extends LinearOpMode {
         totalError = 0;
         lasterror = 0;
         // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, Kp_TURN, Ki_TURN, Kd_TURN) && runtime.time() < timeout) {
+        while (opModeIsActive() && !onHeading(speed, angle, Kp_TURN, Ki_TURN, Kd_TURN) && drivetime.time() < timeout) {
             // Update telemetry & Allow time for other processes to run.
             //onHeading(speed, angle, P_TURN_COEFF);
             telemetry.update();
         }
-        runtime.reset(); // reset after we are done with the while loop
+       drivetime.reset(); // reset after we are done with the while loop
     }
 
     /**
@@ -284,7 +437,7 @@ public class BasicAutonomous_Simple extends LinearOpMode {
      *
      * @return
      */
-    boolean onHeading(double speed, double angle, double P_TURN_COEFF , double I_TURN_COEFF, double D_TURN_COEFF) {
+    public boolean onHeading(double speed, double angle, double P_TURN_COEFF , double I_TURN_COEFF, double D_TURN_COEFF) {
         double   error ;
         double   steer ;
         boolean  onTarget = false ;
@@ -369,10 +522,48 @@ public class BasicAutonomous_Simple extends LinearOpMode {
 
     }
 
+    public void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
 
     /**
      * Initialize the TensorFlow Object Detection engine.
      */
+    public void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+    }
+
+    public void shoot3Rings_v2(ShooterState mShooterState){
+        autoShootTimer.reset();
+
+        while (opModeIsActive() && autoShootTimer.time()  <= autoShootTimeAllowed)  {
+            telemetry.addData("Shoot timer is at",autoShootTimer);
+            telemetry.addData("shooter state is" , mShooterState);
+            telemetry.update();
+            shooter.shootoneRingHigh();
+            sleep(750);
+            shooter.flipperForward();
+            sleep(750);
+            shooter.flipperBackward();
+
+        }
+           shooter.shooterReload();
+    }
 
 }
