@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.program.OpModes;
 
 import org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.program.FishloAutonomousProgram;
+import org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot.PID;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 public class AutoWobbleRight extends FishloAutonomousProgram {
@@ -29,6 +30,19 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
             drive.moveToPosition(55, 0.5);
             sleep(50);
             //Insert code to Turn RIGHT 90 degrees with 0.2 power
+            gyro.getHeading();
+            gyro.resetHeading();
+            PID pid = new PID(0, 0, 0);
+            pid.setLoopTime(10);
+            while (true) {
+                pid.setError(90-gyro.getHeading());
+                double power = pid.getSetValue();
+                if (power <= 0.1) {
+                    break;
+                }
+                drive.turn(power);
+                sleep(10);
+            }
             sleep(50);
             drive.moveToPosition(-20, 0.5);
             sleep(50);
@@ -38,6 +52,19 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
         //Move wobble goal to target zone B
         else if (targetZone == 'B') {
             //Insert code to Turn LEFT 5 degrees at 0.2 power
+            gyro.getHeading();
+            gyro.resetHeading();
+            PID pid = new PID(0, 0, 0);
+            pid.setLoopTime(10);
+            while (true) {
+                pid.setError(-5-gyro.getHeading());
+                double power = pid.getSetValue();
+                if (power <= 0.1) {
+                    break;
+                }
+                drive.turn(power);
+                sleep(10);
+            }
             drive.moveToPosition(80,0.5);
             sleep(50);
             drive.strafeToPosition(-10,0.4);
@@ -47,6 +74,19 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
         //Move wobble goal to target zone C
         else if (targetZone == 'C') {
             //Insert code to Turn RIGHT 5 degrees at 0.2 power
+            gyro.getHeading();
+            gyro.resetHeading();
+            PID pid = new PID(0, 0, 0);
+            pid.setLoopTime(10);
+            while (true) {
+                pid.setError(5-gyro.getHeading());
+                double power = pid.getSetValue();
+                if (power <= 0.1) {
+                    break;
+                }
+                drive.turn(power);
+                sleep(10);
+            }
             drive.moveToPosition(100,0.5);
             sleep(50);
             drive.moveToPosition(-35,0.5);
