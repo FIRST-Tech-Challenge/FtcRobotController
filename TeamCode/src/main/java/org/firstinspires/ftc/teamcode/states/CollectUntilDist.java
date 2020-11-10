@@ -58,12 +58,12 @@ public class CollectUntilDist extends OurState {
     public CollectUntilDist(){
         super ();
     }
-    
+
     public void init(RobotHardware r) {
         robotHardware = r;
         c = robotHardware.c;
         d = robotHardware.d;
-        
+
         c.in(); //starts on init, so dont make collection first
         d.setPower(-1, 0, 0, 0.3);
     }
@@ -80,7 +80,7 @@ public class CollectUntilDist extends OurState {
      */
     @Override
     public void start() {
-        
+
     }
 
     /*
@@ -105,7 +105,7 @@ public class CollectUntilDist extends OurState {
         c.rest();
         d.setPower(0, 0, 0, 0);
     }
-    
+
     @Override
     public double getVariable() {
         return d.getClickslf();

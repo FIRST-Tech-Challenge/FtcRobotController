@@ -40,7 +40,7 @@ public class Collect extends LinearOpMode {
     Rmtr.setPower(0);
   }
 
-  //the sensor reads up to 2 meters.
+//  //the sensor reads up to 2 meters.
   //in gpsbrain, once the distance sensor is under 10sm, the motors shut off.
   public double getDistance() {
     double distance = dist.getDistance(DistanceUnit.CM);
