@@ -51,6 +51,7 @@ public class Path {
     public int curIndex = 0;
 
     public int rfsIndex = 0;
+    public int stopIndex = 0;
 
 
     public double[] targetPos = {0,0};
@@ -59,6 +60,7 @@ public class Path {
     public ArrayList<Line> lines = new ArrayList<>();
     public ArrayList<Posetype> posetypes = new ArrayList<>();
     public ArrayList<CodeSeg> rfs = new ArrayList<>();
+    public ArrayList<Double> stops = new ArrayList<>();
 
     public ThreadHandler threadHandler = new ThreadHandler();
 
@@ -76,7 +78,7 @@ public class Path {
     final public double derWait = 0.5;
     final public double restPowX = 0.1;
     final public double restPowY = 0.05;
-    final public double restPowT = 0.25;
+    final public double restPowT = 0.2;
     final public double maxIX = 0.1;
     final public double maxIY = 0.1;
     final public double maxIT = 0.1;
@@ -90,9 +92,10 @@ public class Path {
     public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
         posetypes.add(Posetype.SETPOINT);
-        xControl.setCoeffecients(ks[0], ds[0], is[0]);
-        yControl.setCoeffecients(ks[1], ds[1], is[1]);
-        hControl.setCoeffecients(ks[2], ds[2], is[2]);
+        xControl.setCoeffecients(ks[0], ds[0]*1.2, is[0]);
+        yControl.setCoeffecients(ks[1], ds[1]*1.5, is[1]);
+        hControl.setCoeffecients(ks[2], ds[2]*1.3, is[2]);
+        stops.add(0.0);
         timer.reset();
     }
 
@@ -142,6 +145,20 @@ public class Path {
         lines.add(new Line(x1, y1, x2, y2));
         posetypes.add(Posetype.SETPOINT);
         rfs.add(null);
+    }
+    public void addStop(double time){
+        double[] lastPose = poses.get(poses.size()-1);
+        poses.add(new double[]{lastPose[0], lastPose[1], lastPose[2]});
+        double[] currPose = poses.get(poses.size()-1);
+        double x1 = lastPose[0];
+        double y1 = lastPose[1];
+        double x2 = currPose[0];
+        double y2 = currPose[1];
+        lines.add(new Line(x1, y1, x2, y2));
+        posetypes.add(Posetype.STOP);
+        rfs.add(null);
+        stops.add(time);
+        stopIndex++;
     }
 
     public void addRF(CodeSeg seg){
@@ -235,25 +252,31 @@ public class Path {
         lherr = herr;
 
         if(isSet) {
-            if (Math.abs(herr) < 10 && hint < maxIT) {
-                hint += herr * changeT;
-                hder *= 2;
+            if (Math.abs(herr) < 10) {
+                if(hint < maxIT) {
+                    hint += herr * changeT;
+                }
+                hder = 0;
             }
-            if (Math.abs(xerr) < 5 && xint < maxIX) {
-                xint += xerr * changeT;
-                xder *= 1.5;
+            if (Math.abs(xerr) < 5) {
+                if(xint < maxIX) {
+                    xint += xerr * changeT;
+                }
+                xder = 0;
             }
-            if (Math.abs(yerr) < 5 && yint < maxIY) {
-                yint += yerr * changeT;
-                yder *= 1.5;
+            if (Math.abs(yerr) < 5) {
+                if(yint < maxIY) {
+                    yint += yerr * changeT;
+                }
+                yder = 0;
             }
         }else{
             hint = 0;
             xint = 0;
             yint = 0;
-            hder *= 0.25;
-            xder *= 0.25;
-            yder *= 0.25;
+            hder = 0;
+            xder = 0;
+            yder = 0;
             scaleKs(1);
         }
     }
@@ -267,7 +290,7 @@ public class Path {
             updateDIs(false);
             updateRadius(lines.get(curIndex).getDis());
             return calcPows(currentPos, false);
-        }else{
+        }else if(posetypes.get(curIndex+1).equals(Posetype.SETPOINT)){
             double[] target = poses.get(curIndex+1);
             xerr = currentPos[0] - target[0];
             yerr = currentPos[1] - target[1];
@@ -275,6 +298,11 @@ public class Path {
             updateDIs(true);
             hasReachedSetpoint();
             return calcPows(currentPos, true);
+        }else{
+            if(timer.seconds() > stops.get(stopIndex)){
+                next();
+            }
+            return new double[]{0,0,0};
         }
 
     }
@@ -363,7 +391,8 @@ public class Path {
 
     public enum Posetype{
         WAYPOINT,
-        SETPOINT;
+        SETPOINT,
+        STOP;
     }
 
 

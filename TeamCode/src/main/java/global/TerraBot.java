@@ -318,7 +318,6 @@ public class TerraBot {
         wobbleGoal2.update();
         outlController.updateMotorValues(getOutlPos());
         outrController.updateMotorValues(getOutrPos());
-//        odometry.updateGlobalPosition(getLeftOdo(), getMiddleOdo(), getRightOdo(), getHeading());
     }
 
     public boolean autoModulesRunning(){

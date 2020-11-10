@@ -26,21 +26,21 @@ public class AutoBlue extends LinearOpMode {
 //        while (!isStarted() && !bot.isDoneResettingArm()) {
 //            bot.resetArm();
 //        }
-//        rf.telemetryText("done initializing");
+        rf.telemetryText("done initializing");
 //        rf.scanRings();
         waitForStart();
 
-//        bot.startOdoThreadAuto(this);
-//        path.addRF(rf.shoot());
-//        path.addSetpoint(0,20,0);
-////        path.addWaypoint(-25,50,45);
-////        path.addRF(rf.wobbleArm(150,1));
-////        path.addWaypoint(0, 100, 135);
-////        path.addRF(rf.turnArm(0.68));
-////        path.addSetpoint(0,40,0);
-////        path.addRF(rf.grab(0));
-//        path.start(bot, this);
-//        bot.stopOdoThreadAuto();
+
+        bot.startOdoThreadAuto(this);
+        path.addWaypoint(-25,50,0);
+        path.addWaypoint(0, 40, 0);
+        path.addRF(rf.shoot());
+        path.addWaypoint(35,48,0);
+        path.addSetpoint(0,10,0);
+        path.addRF(rf.shoot());
+        path.addStop(5);
+        path.start(bot, this);
+        bot.stopOdoThreadAuto();
 
     }
     private void initialize(){

@@ -30,7 +30,7 @@ public class RobotFunctions {
         bot = t;
         op = o;
         initIMs();
-        terraCV.init(o,true);
+        //terraCV.init(o,true);
     }
 
     public void initIMs(){
@@ -158,7 +158,7 @@ public class RobotFunctions {
             public void run() {
                 bot.shooter.start();
                 while (bot.shooter.executing){
-                    bot.shooter.update();
+                    bot.update();
                     bot.outtakeWithEncoders(bot.outtakeSpeed);
                 }
             }
