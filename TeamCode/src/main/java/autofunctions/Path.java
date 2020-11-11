@@ -60,13 +60,13 @@ public class Path {
     public ArrayList<Line> lines = new ArrayList<>();
     public ArrayList<Posetype> posetypes = new ArrayList<>();
     public ArrayList<CodeSeg> rfs = new ArrayList<>();
+    public ArrayList<Boolean> isRf = new ArrayList<>();
     public ArrayList<Double> stops = new ArrayList<>();
 
     public ThreadHandler threadHandler = new ThreadHandler();
 
 
     public boolean isExecuting = true;
-    public boolean runningRFs = true;
 
     final public double[] ks = {0.04,0.03,0.008};
     final public double[] ds = {0.005, 0.004, 0.001};
@@ -81,7 +81,7 @@ public class Path {
     final public double restPowT = 0.2;
     final public double maxIX = 0.1;
     final public double maxIY = 0.1;
-    final public double maxIT = 0.1;
+    final public double maxIT = 0.2;
 
 
 
@@ -118,6 +118,15 @@ public class Path {
         hint = 0;
     }
 
+    public CodeSeg nullCode(){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+
+            }
+        };
+    }
+
 
 
     public void addWaypoint(double x, double y, double h){
@@ -130,7 +139,8 @@ public class Path {
         double y2 = currPose[1];
         lines.add(new Line(x1, y1, x2, y2));
         posetypes.add(Posetype.WAYPOINT);
-        rfs.add(null);
+        rfs.add(nullCode());
+        isRf.add(false);
     }
 
     public void addSetpoint(double x, double y, double h){
@@ -143,7 +153,8 @@ public class Path {
         double y2 = currPose[1];
         lines.add(new Line(x1, y1, x2, y2));
         posetypes.add(Posetype.SETPOINT);
-        rfs.add(null);
+        rfs.add(nullCode());
+        isRf.add(false);
     }
     public void addStop(double time){
         double[] lastPose = poses.get(poses.size()-1);
@@ -155,12 +166,14 @@ public class Path {
         double y2 = currPose[1];
         lines.add(new Line(x1, y1, x2, y2));
         posetypes.add(Posetype.STOP);
-        rfs.add(null);
+        rfs.add(nullCode());
+        isRf.add(false);
         stops.add(time);
     }
 
     public void addRF(CodeSeg seg){
         rfs.add(seg);
+        isRf.add(true);
     }
 
     public void startRFThread(LinearOpMode op){
@@ -168,11 +181,9 @@ public class Path {
             @Override
             public void run() {
                 if(rfsIndex < rfs.size()) {
-                    if (rfs.get(rfsIndex) != null && runningRFs) {
+                    if (isRf.get(rfsIndex)) {
                         rfs.get(rfsIndex).run();
                         rfsIndex++;
-                    } else {
-                        runningRFs = false;
                     }
                 }
             }
@@ -188,7 +199,6 @@ public class Path {
         lastTime = 0;
         curIndex++;
         rfsIndex++;
-        runningRFs = true;
         if(curIndex >= lines.size()){
             isExecuting = false;
             curIndex--;
@@ -252,7 +262,7 @@ public class Path {
         if(isSet) {
             if (Math.abs(herr) < 10) {
                 if(hint < maxIT) {
-                    hint += herr * changeT;
+                    hint += 3*herr * changeT;
                 }
                 hder = 0;
             }

@@ -163,7 +163,10 @@ public class RobotFunctions {
                     bot.update();
                     bot.outtakeWithEncoders(speed);
                 }
-                //bot.outtake(0);
+                if(!bot.shooter.pausing){
+                    bot.outtake(0);
+                }
+
             }
         };
     }
