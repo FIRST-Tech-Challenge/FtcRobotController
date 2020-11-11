@@ -370,21 +370,24 @@ public class Path {
         while (op.opModeIsActive() && isExecuting){
             double[] pows = update(bot.odometry.getPos());
             bot.move(pows[1], pows[0], pows[2]);
-            op.telemetry.addData("xpow",  pows[0]);
-            op.telemetry.addData("ypow",  pows[1]);
-            op.telemetry.addData("hpow",  pows[2]);
-            op.telemetry.addData("targetx", targetPos[0]);
-            op.telemetry.addData("targety", targetPos[1]);
-            op.telemetry.addData("t", t);
-            op.telemetry.addData("curInd", curIndex);
-            op.telemetry.addData("y1", lines.get(0).y1);
-            op.telemetry.addData("y2", lines.get(0).y2);
-            op.telemetry.addData("ans1", ans);
-            op.telemetry.addData("ans2", ans2);
-            op.telemetry.addData("x", bot.odometry.getX());
-            op.telemetry.addData("y", bot.odometry.getY());
-            op.telemetry.addData("herr", herr);
+//            op.telemetry.addData("xpow",  pows[0]);
+//            op.telemetry.addData("ypow",  pows[1]);
+//            op.telemetry.addData("hpow",  pows[2]);
+//            op.telemetry.addData("targetx", targetPos[0]);
+//            op.telemetry.addData("targety", targetPos[1]);
+//            op.telemetry.addData("t", t);
+//            op.telemetry.addData("curInd", curIndex);
+//            op.telemetry.addData("y1", lines.get(0).y1);
+//            op.telemetry.addData("y2", lines.get(0).y2);
+//            op.telemetry.addData("ans1", ans);
+//            op.telemetry.addData("ans2", ans2);
+//            op.telemetry.addData("x", bot.odometry.getX());
+//            op.telemetry.addData("y", bot.odometry.getY());
+//            op.telemetry.addData("herr", herr);
 //            op.telemetry.addData("y", yint);
+            op.telemetry.addData("stopIndex", stopIndex);
+            op.telemetry.addData("timer.seconds()", timer.seconds());
+            op.telemetry.addData("current index", curIndex);
             op.telemetry.update();
         }
         bot.move(0,0,0);
@@ -396,6 +399,5 @@ public class Path {
         SETPOINT,
         STOP;
     }
-
 
 }
