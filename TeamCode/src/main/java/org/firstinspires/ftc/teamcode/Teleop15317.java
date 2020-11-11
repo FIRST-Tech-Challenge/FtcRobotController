@@ -27,6 +27,7 @@ public class Teleop15317 extends LinearOpMode {
     private Drive d;
     private SciLift lift;
     private Collect collector;
+    private HopperWheel hopperwheel;
     // private Claw claw;
     // private Arm arm;
     // private Flick flick;
@@ -53,11 +54,15 @@ public class Teleop15317 extends LinearOpMode {
         // arm = new Arm(
         //   hardwareMap.get(DcMotor.class, "armmotor")
         // );
-         collector = new Collect(
-           hardwareMap.get(DcMotor.class, "col_left"),
-           hardwareMap.get(DcMotor.class, "col_right"),
-           hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor")
-         );
+//         collector = new Collect(
+//           hardwareMap.get(DcMotor.class, "col_left"),
+//           hardwareMap.get(DcMotor.class, "col_right"),
+//           hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor")
+//         );
+        hopperwheel = new HopperWheel(
+                hardwareMap.get(DcMotor.class, "hopper"),
+                hardwareMap.get(DcMotor.class, "wheel")
+        );
         // claw = new Claw(
         //   hardwareMap.get(Servo.class, "clawleft"),
         //   hardwareMap.get(Servo.class, "clawright")
@@ -133,12 +138,18 @@ public class Teleop15317 extends LinearOpMode {
             //   flickjr.down();
             // }
 
-             if (gamepad2.right_bumper) {
-               collector.in();
-             } else if (gamepad2.left_bumper) {
-               collector.out();
+//             if (gamepad2.right_bumper) {
+//               collector.in();
+//             } else if (gamepad2.left_bumper) {
+//               collector.out();
+//             } else {
+//               collector.rest();
+//             }
+
+            if (gamepad2.left_bumper) {
+               hopperwheel.out();
              } else {
-               collector.rest();
+               hopperwheel.rest();
              }
 
             // if (gamepad2.left_stick_y > 0) {
