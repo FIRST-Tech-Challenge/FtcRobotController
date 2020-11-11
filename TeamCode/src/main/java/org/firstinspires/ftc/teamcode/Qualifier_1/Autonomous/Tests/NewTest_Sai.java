@@ -1,8 +1,24 @@
+/**
+ * This test program tests the four chassis motors.
+ * I am still troubleshooting the ShooterMotor and the wobbleGoalMotor
+ *
+ * Everyone should run this code when you arrive at the garage to make sure the robot is working properly.
+ *
+ * Everyone should also run it before leaving to make sure the robot is not broken.
+ *
+ *
+ * @author Sai
+ * @version 1.0
+ * @since 11/9/2020
+ * @status work in progress
+ */
+
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
@@ -55,23 +71,26 @@ public class NewTest_Sai extends LinearOpMode {
         telemetry.update();
         sleep(1000);
 
-        robot.moveShooterMotor(10);
-        telemetry.addData("Moving ShooterMotor", 10);
-        telemetry.update();
-        sleep(1000);
-        robot.moveShooterMotor(-10);
-        telemetry.addData("Moving ShooterMotor", -10);
-        telemetry.update();
-        sleep(1000);
-
-        robot.moveWobbleGoalMotor(10);
-        telemetry.addData("Moving wobbleGoalMotor", 10);
-        telemetry.update();
-        sleep(1000);
-        robot.moveWobbleGoalMotor(-10);
-        telemetry.addData("Moving wobbleGoalMotor", -10);
-        telemetry.update();
-        sleep(1000);
+//        robot.moveShooterMotor(0.5);
+//        telemetry.addData("Moving ShooterMotor", 10);
+//        telemetry.update();
+//        sleep(1000);
+//        robot.moveShooterMotor(-0.5);
+//        telemetry.addData("Moving ShooterMotor", -10);
+//        telemetry.update();
+//        sleep(1000);
+//
+//        robot.moveWobbleGoalMotor(0.1);
+//        telemetry.addData("Moving wobbleGoalMotor", 10);
+//        telemetry.update();
+//        sleep(1000);
+//        robot.moveWobbleGoalMotor(-0.1);
+//        telemetry.addData("Moving wobbleGoalMotor", -10);
+//        telemetry.update();
+//        sleep(1000);
+//
+//        //Tests Servo
+//        robot.setShooterServoPosition(-0.1);
 
         //Tests the motors moving together
         robot.moveForward(25, 0.75);
