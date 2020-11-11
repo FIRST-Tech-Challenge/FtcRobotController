@@ -1,4 +1,4 @@
-/*
+/**
  * This is a silly testing program for making sure ethe
  * robot will self distruct after running for 5 sec.
  *
