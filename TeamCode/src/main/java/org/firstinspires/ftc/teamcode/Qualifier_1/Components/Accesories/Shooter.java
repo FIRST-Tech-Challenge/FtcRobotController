@@ -64,6 +64,7 @@ public class Shooter {
         double sleepTime = (distance / speedTopGoal * 1000);
 
         shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        //^^^ could have issues. if so, change all to shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         shooterMotor.setTargetPosition(distance);
 
