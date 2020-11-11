@@ -18,7 +18,7 @@ import java.util.List;
 // as it drives straight ahead it will not hit the stack of rings. So basically center the robot on
 // the seam between the first and second floor tile. Which is an inch or to to the right of the blue line.
 
-public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous_II {
+public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
 
 
     // STATE Definitions from the ENUM package
@@ -154,7 +154,7 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous_II {
         gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
         gyroTurn(TURN_SPEED,-10,3);
         mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
-        shoot3Rings_v2(mShooterState);   // call method to start shooter and launch 3 rings. pass shooter state in case it is needed
+        shoot3Rings();   // call method to start shooter and launch 3 rings. pass shooter state in case it is needed
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
 
         // Switch manages the 3 different Target Zone objectives based on the number of rings stacked up

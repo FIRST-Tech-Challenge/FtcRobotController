@@ -88,13 +88,13 @@ public class BasicAutonomous extends LinearOpMode {
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
-    private VuforiaLocalizer vuforia;
+    public VuforiaLocalizer vuforia;
 
     /**
      * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
      * Detection engine.
      */
-    private TFObjectDetector tfod;
+    public TFObjectDetector tfod;
 
     @Override
     public void runOpMode() {
@@ -170,7 +170,7 @@ public class BasicAutonomous extends LinearOpMode {
         waitForStart();
         ////////////////////////////////////////////////////////////////////////////////////////////
         tfTime.reset(); //  reset the TF timer
-        while (tfTime.time() < tfSenseTime) { // need to let TF find the target so timer runs to let it do this
+        while (tfTime.time() < tfSenseTime && opModeIsActive()) { // need to let TF find the target so timer runs to let it do this
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
@@ -438,7 +438,7 @@ public class BasicAutonomous extends LinearOpMode {
      *
      * @return
      */
-    boolean onHeading(double speed, double angle, double P_TURN_COEFF , double I_TURN_COEFF, double D_TURN_COEFF) {
+    public boolean onHeading(double speed, double angle, double P_TURN_COEFF , double I_TURN_COEFF, double D_TURN_COEFF) {
         double   error ;
         double   steer ;
         boolean  onTarget = false ;
@@ -523,7 +523,7 @@ public class BasicAutonomous extends LinearOpMode {
 
     }
 
-    private void initVuforia() {
+    public void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
@@ -541,7 +541,7 @@ public class BasicAutonomous extends LinearOpMode {
     /**
      * Initialize the TensorFlow Object Detection engine.
      */
-    private void initTfod() {
+    public void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
