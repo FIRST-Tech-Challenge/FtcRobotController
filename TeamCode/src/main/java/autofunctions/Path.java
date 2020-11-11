@@ -92,10 +92,9 @@ public class Path {
     public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
         posetypes.add(Posetype.SETPOINT);
-        xControl.setCoeffecients(ks[0], ds[0]*1.2, is[0]);
-        yControl.setCoeffecients(ks[1], ds[1]*1.5, is[1]);
-        hControl.setCoeffecients(ks[2], ds[2]*1.3, is[2]);
-        stops.add(0.0);
+        xControl.setCoeffecients(ks[0], ds[0]/2, is[0]);
+        yControl.setCoeffecients(ks[1], ds[1]/2, is[1]);
+        hControl.setCoeffecients(ks[2], ds[2]/2, is[2]);
         timer.reset();
     }
 
@@ -158,7 +157,6 @@ public class Path {
         posetypes.add(Posetype.STOP);
         rfs.add(null);
         stops.add(time);
-        stopIndex++;
     }
 
     public void addRF(CodeSeg seg){
@@ -270,6 +268,9 @@ public class Path {
                 }
                 yder = 0;
             }
+            hder = 0;
+            xder = 0;
+            yder = 0;
         }else{
             hint = 0;
             xint = 0;
@@ -301,6 +302,7 @@ public class Path {
         }else{
             if(timer.seconds() > stops.get(stopIndex)){
                 next();
+                stopIndex++;
             }
             return new double[]{0,0,0};
         }

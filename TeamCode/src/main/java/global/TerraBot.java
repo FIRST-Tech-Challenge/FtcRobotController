@@ -252,7 +252,7 @@ public class TerraBot {
     }
 
     public void defineShooter(){
-        shooter.addStage(in, 1.0, 0.2);
+        shooter.addStage(in, 1.0, 0.5);
         shooter.addStage(ssr, shootControlR.getPos(1), 0.01);
         shooter.addStage(ssl, shootControlL.getPos(1), 0.8);
         shooter.addStage(slr, liftSecond+0.07, 0.01);

@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.internal.android.dex.Code;
+
 import java.util.ArrayList;
 
 import global.TerraBot;
@@ -152,15 +154,16 @@ public class RobotFunctions {
         }
     }
 
-    public CodeSeg shoot(){
+    public CodeSeg shoot(final double speed){
         return new CodeSeg() {
             @Override
             public void run() {
                 bot.shooter.start();
                 while (bot.shooter.executing){
                     bot.update();
-                    bot.outtakeWithEncoders(bot.outtakeSpeed);
+                    bot.outtakeWithEncoders(speed);
                 }
+                //bot.outtake(0);
             }
         };
     }

@@ -19,32 +19,46 @@ public class AutoBlue extends LinearOpMode {
     RobotFunctions rf = new RobotFunctions();
     Path path = new Path(0,0,0);
 
+    final double shootSpeed = 0.42;
+
     @Override
     public void runOpMode() {
         initialize();
         //rf.generateRandomIM();
-//        while (!isStarted() && !bot.isDoneResettingArm()) {
-//            bot.resetArm();
-//        }
+        while (!isStarted() && !bot.isDoneResettingArm()) {
+            bot.resetArm();
+        }
         rf.telemetryText("done initializing");
 //        rf.scanRings();
         waitForStart();
-
-
         bot.startOdoThreadAuto(this);
+
+        path.addRF(rf.wobbleArm(90,1));
         path.addWaypoint(-25,50,0);
         path.addWaypoint(0, 40, 0);
-        path.addRF(rf.shoot());
+        path.addRF(rf.shoot(shootSpeed));
         path.addWaypoint(35,48,0);
         path.addSetpoint(0,10,0);
-        path.addRF(rf.shoot());
+        path.addRF(rf.shoot(shootSpeed));
         path.addStop(5);
+        path.addRF(rf.wobbleArm(90,1));
+        path.addStop(3);
+        path.addSetpoint(-15,15,-115);
+        path.addRF(rf.turnArm(0.68));
+        //path.addSetpoint(0,20,180);
+        //path.addSetpoint(-15,40,115);
+
+        path.addRF(rf.grab(0));
+        path.addWaypoint(15,-15,0);
+
+
+
         path.start(bot, this);
         bot.stopOdoThreadAuto();
 
     }
     private void initialize(){
-       // bot.grabStart = 0.45;
+        bot.grabStart = 0.45;
         bot.init(hardwareMap);
         rf.init(bot, this);
     }
