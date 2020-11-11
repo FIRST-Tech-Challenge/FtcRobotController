@@ -34,17 +34,17 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private final int SLIDER_POS_HIGH = 920;
     private final int SLIDER_POS_HIGHER = 1500;
     private final int SLIDER_POS_INIT = 0;
-    private final int SLIDER_POS_LOW = 50;
+    private final int SLIDER_POS_LOW = 0;
     private final int SLIDER_POS_MAX = 1733;
     private final int SLIDER_POS_RING = 325;
 
     private final double ARM_UP = 0.48;
     private final double ARM_INIT = 0.38;
-    private final double ARM_DOWN = 0.84;
+    private final double ARM_DOWN = 0.85;
     private final double ARM_COLLECT_RING = 0.63;
 
     private final double GRABBER_OPEN = 0.58;
-    private final double GRABBER_CLOSE = 0.845;
+    private final double GRABBER_CLOSE = 0.87;
     private final double GRABBER_INIT = GRABBER_CLOSE;
 
     private boolean sliderIsLow = true;
@@ -94,7 +94,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         arm.configure(configuration.getHardwareMap(), "arm");
         configuration.register(arm);
         configuration.register(this);
-        servoInit();
+        // servoInit();
     }
 
     public void servoInit() {
