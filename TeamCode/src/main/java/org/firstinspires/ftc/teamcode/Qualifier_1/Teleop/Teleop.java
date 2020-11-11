@@ -44,6 +44,8 @@ public class Teleop extends LinearOpMode {
 
             float left_stick_y = -gamepad1.left_stick_y;
             float left_stick_x = -gamepad1.left_stick_x;
+            float start_intake = gamepad1.right_trigger;
+            float stop_intake = gamepad1.left_trigger;
             boolean x_button = gamepad1.x;
             boolean a_button = gamepad1.a;
             boolean moveUp = gamepad2.dpad_up;
@@ -52,6 +54,7 @@ public class Teleop extends LinearOpMode {
             angleInRadian = Math.atan2(left_stick_y, left_stick_x);
             angleInDegree = Math.toDegrees(angleInRadian);
 
+            // speed modes
             if (a_button) { //click a to turn on slowmode
                 slowMode = true;
             }
@@ -72,6 +75,7 @@ public class Teleop extends LinearOpMode {
             }
             multidirectionalMove(magnitude, angleInDegree);
 
+            // wobble goal movements
             if (moveUp == true){
                 robot.moveWobbleGoalClockwise();
             }
@@ -82,6 +86,13 @@ public class Teleop extends LinearOpMode {
                 robot.stopWobbleGoal();
             }
 
+            //intake
+            if (start_intake == 1.00){
+                robot.startIntake();
+            }
+            else if (stop_intake == 1.00){
+                robot.stopIntake();
+            }
         }
         idle();
     }

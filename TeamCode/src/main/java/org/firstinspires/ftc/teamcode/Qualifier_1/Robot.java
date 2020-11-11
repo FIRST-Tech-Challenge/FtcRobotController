@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Intake;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -18,6 +19,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
 
 public class Robot {
     private LinearOpMode op = null;
@@ -25,6 +27,7 @@ public class Robot {
     private ElapsedTime runtime = new ElapsedTime();
     Chassis drivetrain = new Chassis();
     TensorFlow tensorFlow = new TensorFlow(op);
+    private Intake intake = null;
 
     private VuforiaWebcam vuforiaWebcam = null;
     private double vuforiaX = 0;
@@ -33,7 +36,12 @@ public class Robot {
     private double robotAngle = 0;
     private WobbleGoal wobbleGoal;
 
+    public Robot(LinearOpMode opMode) {
+        intake = new Intake(opMode);
+    }
+
     public Robot() {
+
     }
 
     public void initChassis(LinearOpMode opMode) {
@@ -61,6 +69,7 @@ public class Robot {
         //vuforiaWebcam.init(opMode);
 
         this.wobbleGoal = new WobbleGoal(op);
+        intake = new Intake(op);
 
         //vuforiaWebcam.start();
 //        getVuforiaPosition();
@@ -266,6 +275,15 @@ public class Robot {
     public void stopWobbleGoal(){
 
         wobbleGoal.stop();
+    }
+
+    // intake
+    public void startIntake(){
+        intake.startIntake();
+    }
+
+    public void stopIntake(){
+        intake.stopIntake();
     }
 
 }
