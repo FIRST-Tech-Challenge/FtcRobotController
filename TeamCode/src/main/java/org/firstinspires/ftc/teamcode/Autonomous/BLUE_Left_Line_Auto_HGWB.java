@@ -11,21 +11,21 @@ import java.util.List;
 
 @Autonomous(name="Blue_Left_Line_HGWB", group="Test")
 
-// This opmode EXTENDS BASICAUTONOMOUS_II and actually does the same thing as BasicAutonomous
+// This opmode EXTENDS BASICAUTONOMOUS and actually does the same thing as BasicAutonomous
 // The goal here was to extend a base class with all the methods and prove it works just the same.
 
 // Place robot on the left most blue line when facing the goal. Robot should be placed such that
 // as it drives straight ahead it will not hit the stack of rings. So basically center the robot on
 // the seam between the first and second floor tile. Which is an inch or to to the right of the blue line.
 
+// Alignment Position LH Blue Line when facing the goal
+//    B     X       X       X
+//    B     X       X       X
+//    B     X       X       X
+//    B     X       X       X
+//    B     X       X       X
+
 public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
-
-
-    // STATE Definitions from the ENUM package
-
-    ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition, this is needed to keep shooter on for a Linear Opmode
-    WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default target zone
-
 
     @Override
     public void runOpMode() {
@@ -35,13 +35,7 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
         if (tfod != null) {
             tfod.activate();
 
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 1.78 or 16/9).
-
+            // See BasicAutonomous for details on camera zoom settings.
             // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
             tfod.setZoom(2.5, 1.78);
         }
@@ -154,7 +148,7 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
         gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
         gyroTurn(TURN_SPEED,-10,3);
         mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
-        shoot3Rings();   // call method to start shooter and launch 3 rings. pass shooter state in case it is needed
+        shoot3Rings(mShooterState);   // call method to start shooter and launch 3 rings. pass shooter state in case it is needed
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
 
         // Switch manages the 3 different Target Zone objectives based on the number of rings stacked up
@@ -195,9 +189,6 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
         }
 
 
-
-        //gyroTurn( TURN_SPEED, 90.0, 3);         // Turn  CCW to -45 Degrees
-       //gyroHold( TURN_SPEED, -45.0, 0.5);    // Hold -45 Deg heading for a 1/2 second
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }

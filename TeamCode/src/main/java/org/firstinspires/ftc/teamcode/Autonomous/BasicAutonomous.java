@@ -223,8 +223,8 @@ public class BasicAutonomous extends LinearOpMode {
         gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
         gyroTurn(TURN_SPEED,-10,3);
         mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
-        shoot3Rings();   // call method to start shooter and launch 3 rings
-        drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
+        shoot3Rings(mShooterState);   // call method to start shooter and launch 3 rings
+        drivetime.reset(); // reset because time starts w hen TF starts and time is up before we can call gyroDrive
 
         // Switch manages the 3 different Target Zone objectives based on the number of rings stacked up
         // Ring stack is none, one or 4 rings tall and is determined by a randomization process.
@@ -550,7 +550,7 @@ public class BasicAutonomous extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
-    public void shoot3Rings(){
+    public void shoot3Rings(ShooterState mShooterState){
         autoShootTimer.reset();
         while (opModeIsActive() && autoShootTimer.time()  <= autoShootTimeAllowed)  {
             if (mShooterState == ShooterState.STATE_SHOOTER_ACTIVE) {
