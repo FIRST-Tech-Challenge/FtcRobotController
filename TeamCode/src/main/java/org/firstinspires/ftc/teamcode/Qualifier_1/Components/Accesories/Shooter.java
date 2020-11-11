@@ -6,8 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * <h1> Ultimate Goal Accessory
- * <p>
+ * Ultimate Goal Accessory
  *
  * @author  Nikhil
  * @version 1.0
