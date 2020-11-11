@@ -27,8 +27,8 @@ public class Chassis {
     DcMotorEx motorRightFront;
     DcMotorEx motorLeftBack;
     DcMotorEx motorRightBack;
-    DcMotorEx ShooterMotor;
-    DcMotorEx wobbleGoalMotor;
+    DcMotorEx ShooterMotor;// why are these here - Aiden
+    DcMotorEx wobbleGoalMotor; // why are these here - Aiden
 
     // Initialize Encoder Variables
     final double robot_diameter = Math.sqrt(619.84);
