@@ -51,7 +51,7 @@ public class AutoOmniMovement {
     }
 
     public void addTurnPower(double angleDeg) {
-        double goalAngleDeg = angleDeg - Math.toDegrees(angleRad);
+        double goalAngleDeg = (angleDeg-45) - Math.toDegrees(angleRad);
         double powerDiff = 0;
         if (Math.abs(goalAngleDeg) > 0) {
             powerDiff = 1-MAX_POWER;
