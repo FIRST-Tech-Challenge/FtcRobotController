@@ -58,6 +58,13 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         CONTINUE_NO_CORRECTION     // do not stop at end end of each moving routine without correction
     }
 
+    public enum ShootingTarget {
+        TOWER,      // Tower Goal
+        PSHOT_L,    // Power Shot Left
+        PSHOT_M,    // Power Shot Middle
+        PSHOT_R     // Power Shot Right
+    }
+
     public static class Point { // point for the robot position (x, y, h)
         public double x,y,h;
         public Point(double lx, double ly, double lh) {
@@ -1383,6 +1390,26 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         useScalePower = true;
     }
 
+    public void rotateToTarget(ShootingTarget target) {
+        double target_x = 0;
+        double target_y = 360;
+        switch (target) {
+            case TOWER:
+                target_x = 90;
+                break;
+            case PSHOT_L:
+                target_x = 132;
+                break;
+            case PSHOT_M:
+                target_x = 151;
+                break;
+            case PSHOT_R:
+                target_x = 170;
+                break;
+        }
+        // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
+
+    }
 
     //cross two unit vectors whose argument angle is given in degree
     public static double cross(double theta, double phi) {
