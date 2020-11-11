@@ -81,20 +81,20 @@ public class BasicAutonomous extends LinearOpMode {
    public String StackSize = "None";
 
 
-    private static final String VUFORIA_KEY =
+    public static final String VUFORIA_KEY =
             "AQXVmfz/////AAABmXaLleqhDEfavwYMzTtToIEdemv1X+0FZP6tlJRbxB40Cu6uDRNRyMR8yfBOmNoCPxVsl1mBgl7GKQppEQbdNI4tZLCARFsacECZkqph4VD5nho2qFN/DmvLA0e1xwz1oHBOYOyYzc14tKxatkLD0yFP7/3/s/XobsQ+3gknx1UIZO7YXHxGwSDgoU96VAhGGx+00A2wMn2UY6SGPl+oYgsE0avmlG4A4gOsc+lck55eAKZ2PwH7DyxYAtbRf5i4Hb12s7ypFoBxfyS400tDSNOUBg393Njakzcr4YqL6PYe760ZKmu78+8X4xTAYSrqFJQHaCiHt8HcTVLNl2fPQxh0wBmLvQJ/mvVfG495ER1A";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
-    private VuforiaLocalizer vuforia;
+    public VuforiaLocalizer vuforia;
 
     /**
      * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
      * Detection engine.
      */
-    private TFObjectDetector tfod;
+    public TFObjectDetector tfod;
 
     @Override
     public void runOpMode() {
@@ -170,7 +170,7 @@ public class BasicAutonomous extends LinearOpMode {
         waitForStart();
         ////////////////////////////////////////////////////////////////////////////////////////////
         tfTime.reset(); //  reset the TF timer
-        while (tfTime.time() < tfSenseTime) { // need to let TF find the target so timer runs to let it do this
+        while (tfTime.time() < tfSenseTime && opModeIsActive()) { // need to let TF find the target so timer runs to let it do this
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.
@@ -223,8 +223,8 @@ public class BasicAutonomous extends LinearOpMode {
         gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
         gyroTurn(TURN_SPEED,-10,3);
         mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
-        shoot3Rings();   // call method to start shooter and launch 3 rings
-        drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
+        shoot3Rings(mShooterState);   // call method to start shooter and launch 3 rings
+        drivetime.reset(); // reset because time starts w hen TF starts and time is up before we can call gyroDrive
 
         // Switch manages the 3 different Target Zone objectives based on the number of rings stacked up
         // Ring stack is none, one or 4 rings tall and is determined by a randomization process.
@@ -438,7 +438,7 @@ public class BasicAutonomous extends LinearOpMode {
      *
      * @return
      */
-    boolean onHeading(double speed, double angle, double P_TURN_COEFF , double I_TURN_COEFF, double D_TURN_COEFF) {
+    public boolean onHeading(double speed, double angle, double P_TURN_COEFF , double I_TURN_COEFF, double D_TURN_COEFF) {
         double   error ;
         double   steer ;
         boolean  onTarget = false ;
@@ -523,7 +523,7 @@ public class BasicAutonomous extends LinearOpMode {
 
     }
 
-    private void initVuforia() {
+    public void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
@@ -541,7 +541,7 @@ public class BasicAutonomous extends LinearOpMode {
     /**
      * Initialize the TensorFlow Object Detection engine.
      */
-    private void initTfod() {
+    public void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -550,7 +550,7 @@ public class BasicAutonomous extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
-    public void shoot3Rings(){
+    public void shoot3Rings(ShooterState mShooterState){
         autoShootTimer.reset();
         while (opModeIsActive() && autoShootTimer.time()  <= autoShootTimeAllowed)  {
             if (mShooterState == ShooterState.STATE_SHOOTER_ACTIVE) {
