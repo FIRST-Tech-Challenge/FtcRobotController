@@ -32,47 +32,7 @@ public class RobotFunctions {
         bot = t;
         op = o;
         initIMs();
-        //terraCV.init(o,true);
-    }
-
-    public void initIMs(){
-        ims.add("NitDaWit Just a Piece of ...");
-        ims.add("The red is blood the person is you Im done with this so f u.");
-        ims.add("No Excuses");
-        ims.add("The tape is stuck!");
-        ims.add("I can't do relic!");
-        ims.add("Is Shuhul hurt");
-        ims.add("Jeff is watching");
-        ims.add("Bob Smith");
-        ims.add("Robo Avatars crying");
-        ims.add("Shuhuls computer");
-        ims.add("Big Boy Roy");
-        ims.add("Less Friction");
-        ims.add("Your PC ran into fatal errors");
-        ims.add("For testing purposes only");
-        ims.add("My hands I messed up");
-        ims.add("I made a mistake");
-        ims.add("Flow Chart");
-        ims.add("Ayush Servo");
-        ims.add("Titanium dik");
-        ims.add("Roy 'I need you for support' Help me up");
-        ims.add("Peter and Steven have blessed you");
-        ims.add("SEVEN STONE AUTO INIT");
-        ims.add("Mogli");
-        ims.add("Chipmunk");
-        ims.add("FLippin leave");
-        ims.add("UWU");
-        ims.add("Jeff stop looking at this or Ill personally disqualify");
-        ims.add("Safety glasses in the pits or GTFO");
-        ims.add("Panda Chicken");
-        ims.add("Bracket Sources");
-        ims.add("'My Heart... its beating too fast I cant stop'");
-        ims.add("14 volt big boy");
-        ims.add("rolling sky grind");
-        ims.add("this was supposed to be MY day");
-        ims.add("1115, 8802, 14525, world record no penalties");
-        ims.add("Higuchi nada nada bada enchilada na ana na...");
-
+        terraCV.init(o,true);
     }
 
     public void generateRandomIM(){
@@ -148,9 +108,14 @@ public class RobotFunctions {
     public void scanRings(){
         while (!op.isStarted() && !op.isStopRequested()) {
             terraCV.takePictureBeforeInit();
-            Rect cropped = new Rect(0, 0, 1280, 720).crop(610,450,490,140);
-            ringnum = terraCV.getRingNum(cropped);
-            telemetryText(ringnum.toString());
+            Rect cropped = new Rect(0, 0, 1280, 720).crop(610,450,490,100);
+            //Rect cropped = new Rect(0, 0, 1280, 720);
+            //terraCV.accuracy = 7;
+            TerraCV.RingNum num = terraCV.getRingNum(cropped);
+            if(num != null) {
+                //telemetryText(num.toString());
+                ringnum = num;
+            }
         }
     }
 
@@ -327,6 +292,47 @@ public class RobotFunctions {
 //            }
 //        });
 //    }
+
+
+    public void initIMs(){
+        ims.add("NitDaWit Just a Piece of ...");
+        ims.add("The red is blood the person is you Im done with this so f u.");
+        ims.add("No Excuses");
+        ims.add("The tape is stuck!");
+        ims.add("I can't do relic!");
+        ims.add("Is Shuhul hurt");
+        ims.add("Jeff is watching");
+        ims.add("Bob Smith");
+        ims.add("Robo Avatars crying");
+        ims.add("Shuhuls computer");
+        ims.add("Big Boy Roy");
+        ims.add("Less Friction");
+        ims.add("Your PC ran into fatal errors");
+        ims.add("For testing purposes only");
+        ims.add("My hands I messed up");
+        ims.add("I made a mistake");
+        ims.add("Flow Chart");
+        ims.add("Ayush Servo");
+        ims.add("Titanium dik");
+        ims.add("Roy 'I need you for support' Help me up");
+        ims.add("Peter and Steven have blessed you");
+        ims.add("SEVEN STONE AUTO INIT");
+        ims.add("Mogli");
+        ims.add("Chipmunk");
+        ims.add("FLippin leave");
+        ims.add("UWU");
+        ims.add("Jeff stop looking at this or Ill personally disqualify");
+        ims.add("Safety glasses in the pits or GTFO");
+        ims.add("Panda Chicken");
+        ims.add("Bracket Sources");
+        ims.add("'My Heart... its beating too fast I cant stop'");
+        ims.add("14 volt big boy");
+        ims.add("rolling sky grind");
+        ims.add("this was supposed to be MY day");
+        ims.add("1115, 8802, 14525, world record no penalties");
+        ims.add("Higuchi nada nada bada enchilada na ana na...");
+
+    }
 
     public void pauseBeforeInit(double secs){
         ElapsedTime time = new ElapsedTime();

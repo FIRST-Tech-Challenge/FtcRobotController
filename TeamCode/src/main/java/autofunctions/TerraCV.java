@@ -157,13 +157,39 @@ public class TerraCV {
     public RingNum getRingNum(Rect area){
         debug.reset();
         RingNum num = RingNum.ZERO;
-        double val = getAverageOfPixelsBeforeInit(area) * 1000;
-        if (val > 25) {
-            num = RingNum.FOUR;
-        } else if (val > 10) {
-            num = RingNum.ONE;
-        }
+        double val = 0;
         time = debug.milliseconds();
+//        op.telemetry.addData("val", val);
+//        op.telemetry.update();
+
+        double max = 0;
+        double enx = 0;
+        double eny = 0;
+        accuracy = 5;
+        for (int x = 400; x < 900; x+=50) {
+            for (int y = 0; y < 620; y+=50) {
+                Rect ar = new Rect(x,y,100,100);
+                val = getAverageOfPixelsBeforeInit(ar)*1000;
+                if(val > max){
+                    max = val;
+                    enx = x;
+                    eny = y;
+                }
+            }
+        }
+        if(600 < enx && enx < 800 && 400 < eny && eny < 700){
+            if (max > 25) {
+                num = RingNum.FOUR;
+            } else if (max > 10) {
+                num = RingNum.ONE;
+            }
+        }
+
+        op.telemetry.addData("val", max);
+        op.telemetry.addData("enx", enx);
+        op.telemetry.addData("eny", eny);
+        op.telemetry.addData("num", num.toString());
+        op.telemetry.update();
 
         if(!discount) {
             return num;
@@ -178,10 +204,15 @@ public class TerraCV {
         int x2 = rect.getX2();
         int y2 = rect.getY2();
 
+        int[] max = new int[]{0,0};
+
         for (int x = x1; x < x2; x+= accuracy) {
             for (int y = y1; y < y2; y+= accuracy ) {
                 int pix = bm.getPixel(x,y);
                 float[] hsv = rgbToHSV(pix);
+//                if(35 < hsv[0] && hsv[0] < 65) {
+//                    total += hsv[1];
+//                }
                 if(20 < hsv[0] && hsv[0] < 50) {
                     total += hsv[1];
                 }
@@ -195,6 +226,16 @@ public class TerraCV {
                 break;
             }
         }
+//
+//        int pix = bm.getPixel(600,350);
+//        float[] hsv = rgbToHSV(pix);
+//        op.telemetry.addData("0", hsv[0]);
+//        op.telemetry.addData("1", hsv[1]);
+//        op.telemetry.addData("2", hsv[2]);
+//        op.telemetry.update();
+//        op.telemetry.addData("posx", max[0]);
+//        op.telemetry.addData("posy", max[1]);
+//        op.telemetry.update();
         return total/(rect.getArea());
     }
     public float[] rgbToHSV(int pix){
