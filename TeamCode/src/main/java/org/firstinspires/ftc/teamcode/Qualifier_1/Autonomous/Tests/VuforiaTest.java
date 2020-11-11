@@ -27,36 +27,36 @@ public class VuforiaTest extends LinearOpMode {
         vuforiaWebcam.start();
 
         while (opModeIsActive()) {
+            //Webcam
 
-//            //Webcam
+//            while (opModeIsActive()) {
 //
-//        while (opModeIsActive()) {
+//                //Webcam
 //
-////            //Webcam
-////
-////            double x = vuforiaWebcam.getVuforiaX();
-////            double y = vuforiaWebcam.getVuforiaY();
-////            double angle = vuforiaWebcam.getVuforiaAngle();
-////
-////            telemetry.addData("Back X", x);
-////            telemetry.addData("Back Y", y);
-////            telemetry.addData("Back Angle", "%.2f, %.2f", angle, angle+90);
-////            telemetry.addData("Back Target", vuforiaWebcam.getVuforiaTrackable());
-////            telemetry.update();
+//                double x = vuforiaWebcam.getVuforiaX();
+//                double y = vuforiaWebcam.getVuforiaY();
+//                double angle = vuforiaWebcam.getVuforiaAngle();
 //
-////            //Back
-////            telemetry.addData("Back X", vuforiaB.getVuforiaX());
-////            telemetry.addData("Back Y", vuforiaB.getVuforiaY());
-////            telemetry.addData("Back Angle", vuforiaB.getVuforiaAngle());
-////            telemetry.addData("Back Target", vuforiaB.getVuforiaTrackable());
-////            sleep(500);
-////            //Front
-////            telemetry.addData("Front X", vuforiaF.getVuforiaX());
-////            telemetry.addData("Front Y", vuforiaF.getVuforiaY());
-////            telemetry.addData("Front Angle", vuforiaF.getVuforiaAngle());
-////            telemetry.addData("Front Target", vuforiaF.getVuforiaTrackable());
-////            telemetry.update();
-//        }
-////        vuforiaWebcam.interrupt();
-//    }
-//}
+//                telemetry.addData("Back X", x);
+//                telemetry.addData("Back Y", y);
+//                telemetry.addData("Back Angle", "%.2f, %.2f", angle, angle + 90);
+//                telemetry.addData("Back Target", vuforiaWebcam.getVuforiaTrackable());
+//                telemetry.update();
+//
+//                //Back
+//                telemetry.addData("Back X", vuforiaB.getVuforiaX());
+//                telemetry.addData("Back Y", vuforiaB.getVuforiaY());
+//                telemetry.addData("Back Angle", vuforiaB.getVuforiaAngle());
+//                telemetry.addData("Back Target", vuforiaB.getVuforiaTrackable());
+//                sleep(500);
+//                //Front
+//                telemetry.addData("Front X", vuforiaF.getVuforiaX());
+//                telemetry.addData("Front Y", vuforiaF.getVuforiaY());
+//                telemetry.addData("Front Angle", vuforiaF.getVuforiaAngle());
+//                telemetry.addData("Front Target", vuforiaF.getVuforiaTrackable());
+//                telemetry.update();
+//            }
+//            vuforiaWebcam.interrupt();
+        }
+    }
+}

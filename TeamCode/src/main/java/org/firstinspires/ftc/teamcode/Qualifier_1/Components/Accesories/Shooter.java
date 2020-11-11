@@ -59,6 +59,22 @@ public class Shooter {
         op.sleep(2000);
     }
 
+    public void shootGoalTeleop(int distance, int power){
+        double sleepTime = (distance / speedTopGoal * 1000);
+
+        shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+
+        shooterMotor.setTargetPosition(distance);
+
+        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        shooterMotor.setTargetPosition(distance);
+        shooterMotor.setPower(power);
+        if(shooterMotor.getCurrentPosition()==distance){
+            shooterMotor.setPower(0);
+        }
+
+    }
 
     public void shootHighGoal(int distance) {
         this.distance=distance;
@@ -69,7 +85,6 @@ public class Shooter {
         shooterMotor.setTargetPosition(distance);
 
         shooterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
 
         shooterMotor.setPower(speedTopGoal);
 
@@ -82,7 +97,7 @@ public class Shooter {
             moveServo(false);
             moveServo(true);
         }
-        shooterMotor.setPower(1);
+        shooterMotor.setPower(0);
 
     }
 
@@ -106,7 +121,7 @@ public class Shooter {
             moveServo(false);
             moveServo(true);
         }
-        shooterMotor.setPower(1);
+        shooterMotor.setPower(0);
     }
 
     public void shootLowGoal(int  distance){
@@ -129,7 +144,7 @@ public class Shooter {
             moveServo(false);
             moveServo(true);
         }
-        shooterMotor.setPower(1);
+        shooterMotor.setPower(0);
     }
 
 

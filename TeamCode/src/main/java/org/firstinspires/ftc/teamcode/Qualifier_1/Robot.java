@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
@@ -54,6 +55,8 @@ public class Robot {
         DcMotorEx motorRightBack;
         DcMotorEx ShooterMotor;
         DcMotorEx wobbleGoalMotor;
+        Servo shooter_Servo;
+
 
         motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
         motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
@@ -61,18 +64,18 @@ public class Robot {
         motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
         ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
         wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
+        shooter_Servo = (Servo) hardwareMap.servo.get("ShooterServo");
 
         //vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
 
         drivetrain.init(opMode);
-//        vuforiaWebcam.init(opMode);
+//        vuforiaWebcam.init(pMode);
 
         this.wobbleGoal = new WobbleGoal(op);
 
         //vuforiaWebcam.start();
         shooter.initChassis(opMode);
 //        vuforiaWebcam.start();
-
 //        getVuforiaPosition();
 
         op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
@@ -210,22 +213,27 @@ public class Robot {
         shooter.moveServo(direction);
     }
 
+    public void shootGoalTeleop(int direction, int power) {
+        shooter.shootGoalTeleop(direction, power);
+    }
+
+
     /**Vuforia**/
 
-    public double getVuforiaAngle() {
-        return vuforiaWebcam.getVuforiaAngle();
-    }
-
-    public void getVuforiaPosition() {
-        vuforiaX = vuforiaWebcam.getVuforiaX();
-        vuforiaY = vuforiaWebcam.getVuforiaY();
-        vuforiaAngle = vuforiaWebcam.getVuforiaAngle();
-        robotAngle = vuforiaAngle + 90;
-        robotAngle = (robotAngle>180?robotAngle-360:robotAngle);
-    }
-    public void stopVuforia() {
-        vuforiaWebcam.interrupt();
-    }
+//    public double getVuforiaAngle() {
+//        return vuforiaWebcam.getVuforiaAngle();
+//    }
+//
+//    public void getVuforiaPosition() {
+//        vuforiaX = vuforiaWebcam.getVuforiaX();
+//        vuforiaY = vuforiaWebcam.getVuforiaY();
+//        vuforiaAngle = vuforiaWebcam.getVuforiaAngle();
+//        robotAngle = vuforiaAngle + 90;
+//        robotAngle = (robotAngle>180?robotAngle-360:robotAngle);
+//    }
+//    public void stopVuforia() {
+//        vuforiaWebcam.interrupt();
+//    }
 
 
     /**TensorFlow**/
