@@ -91,7 +91,7 @@ public class Localizer {
      * X: the axis running from the audience view (negative) to the goals (positive)
      * Y: the axis running from red alliance (negative) to the blue alliance (positive)
      * Z: height of the robot off ground, though not relevant for this game.
-     * @return the estimated Position
+     * @return The robot's estimated position
      */
 
     public EstimatedPosition estimatePosition() {
@@ -119,7 +119,7 @@ public class Localizer {
      * First Angle: Roll
      * Second Angle: Pitch
      * Third Angle: Heading, this is the only value you'll really care about
-     * @return
+     * @return The robot's estimated orientation
      */
 
     public EstimatedOrientation estimateOrientation() {
@@ -158,7 +158,36 @@ public class Localizer {
 
     }
 
+    /**
+     * Updates the data needed to estimate position and transform. This should be called in every
+     * loop of the OpMode.
+     * @param hardware The robot hardware; it will be used to fetch Vuforia and encoder data
+     * @param imu The REV IMU, it will be used to determine orientation
+     */
+    public void updateRobotTransform(RobotHardware hardware, BNO055IMU imu) {
+        this.setLatestAcquisitionTime();
 
+        this.updateLocationWithVuforia(hardware);
+        if (imu != null) {
+            this.updateIMUOrientation(imu);
+        }
+        if (hardware.omniDrive != null) {
+            this.updateTransformWithEncodersAndIMU(hardware);
+        }
+    }
+
+    //region Vuforia
+
+    public class VuforiaTransform {
+        public long acquisitionTime;
+        public OpenGLMatrix transform;
+
+        public VuforiaTransform(OpenGLMatrix transform) {
+            this.acquisitionTime = System.nanoTime();
+            this.transform = transform;
+
+        }
+    }
 
     /**
      * Sets the camera matrix for navigation.
@@ -247,9 +276,27 @@ public class Localizer {
         targetsUltimateGoal.activate();
     }
 
-    public void updateTransformWithEncoders(RobotHardware hardware) {
+    public void updateLocationWithVuforia(RobotHardware hardware) {
+        // Clear the currently saved vuforia transform
+        lastVuforiaTransform = null;
 
+        for (VuforiaTrackable trackable : vuforiaTrackables) {
+            VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener) trackable.getListener();
+            if (listener.isVisible()) {
+                VectorF translation = listener.getVuforiaCameraFromTarget().getTranslation();
+                //hardware.telemetry.addData("Localizer Visible Target:", trackable.getName());
+                //hardware.telemetry.addData("Localizer Visible Target Rel Camera", String.format("%.1f, %.1f, %.1f", translation.get(0), translation.get(1), translation.get(2)));
+                OpenGLMatrix robotTransform = listener.getRobotLocation();
+                if (robotTransform != null) {
+                    lastVuforiaTransform = new VuforiaTransform(robotTransform);
+                }
+            }
+        }
     }
+
+    //endregion
+
+    // region Encoders
 
     /**
      * Calculates robot transform using encoders and the IMU.
@@ -303,36 +350,13 @@ public class Localizer {
         lastBackRight = currentBackRight;
     }
 
-    public void updateRobotTransform(RobotHardware hardware, BNO055IMU imu) {
-        this.setLatestAcquisitionTime();
-
-        this.updateLocationWithVuforia(hardware);
-        if (imu != null) {
-            this.updateIMUOrientation(imu);
-        }
-        if (hardware.omniDrive != null) {
-            this.updateTransformWithEncodersAndIMU(hardware);
-        }
+    public void updateTransformWithEncoders(RobotHardware hardware) {
 
     }
-    public void updateLocationWithVuforia(RobotHardware hardware) {
-        // Clear the currently saved vuforia transform
-        lastVuforiaTransform = null;
 
-        for (VuforiaTrackable trackable : vuforiaTrackables) {
-            VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener) trackable.getListener();
-            if (listener.isVisible()) {
-                VectorF translation = listener.getVuforiaCameraFromTarget().getTranslation();
-                //hardware.telemetry.addData("Localizer Visible Target:", trackable.getName());
-                //hardware.telemetry.addData("Localizer Visible Target Rel Camera", String.format("%.1f, %.1f, %.1f", translation.get(0), translation.get(1), translation.get(2)));
-                OpenGLMatrix robotTransform = listener.getRobotLocation();
-                if (robotTransform != null) {
-                    lastVuforiaTransform = new VuforiaTransform(robotTransform);
-                }
-            }
-        }
-    }
+    //endregion
 
+    //region IMU
     /**
      * This will attempt to find the differences of orientation between the field-centric system and
      * the IMU reference system.
@@ -363,18 +387,9 @@ public class Localizer {
         }
     }
 
+    //endregion
 
-    public class VuforiaTransform {
-        public long acquisitionTime;
-        public OpenGLMatrix transform;
-
-        public VuforiaTransform(OpenGLMatrix transform) {
-            this.acquisitionTime = System.nanoTime();
-            this.transform = transform;
-
-        }
-    }
-
+    //region Static Methods
     /**
      * Compute the XY distance between two Positions
      * @param a Position 1
@@ -426,5 +441,6 @@ public class Localizer {
         Position unit_b = b.toUnit(DistanceUnit.CM);
         return Math.toDegrees(Math.atan2((unit_b.x-unit_a.x),-(unit_b.y-unit_a.y)));
     }
+    //endregion
 
 }

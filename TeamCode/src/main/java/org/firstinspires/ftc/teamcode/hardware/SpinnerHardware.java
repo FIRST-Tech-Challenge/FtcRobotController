@@ -12,6 +12,8 @@ public abstract class SpinnerHardware extends RobotHardware {
     public DcMotor spinnerLeft;
     public DcMotor spinnerRight;
     public DcMotor chainLift;
+    public DcMotor collector;
+
 
     @Override
     public void initializeHardware() {

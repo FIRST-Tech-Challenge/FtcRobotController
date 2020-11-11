@@ -1,21 +1,22 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.playmaker.RobotHardware;
 
 public abstract class UltimateGoalHardware extends RobotHardware {
 
-    DcMotor frontLeft;
-    DcMotor frontRight;
-    DcMotor backLeft;
-    DcMotor backRight;
+    public DcMotor frontLeft;
+    public DcMotor frontRight;
+    public DcMotor backLeft;
+    public DcMotor backRight;
 
-    DcMotor shooterLeft;
-    DcMotor shooterRight;
-    DcMotor collector;
-    DcMotor escalator;
+    public DcMotor shooterLeft;
+    public DcMotor shooterRight;
+    public DcMotor collector;
+    public DcMotor escalator;
 
     Servo wobbleGoalHolder;
 
@@ -28,6 +29,7 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         shooterLeft = this.initializeDevice(DcMotor.class, "shooterLeft");
         shooterRight = this.initializeDevice(DcMotor.class, "shooterRight");
         collector = this.initializeDevice(DcMotor.class, "collector");
+        collector.setDirection(DcMotorSimple.Direction.REVERSE);
         escalator = this.initializeDevice(DcMotor.class, "escalator");
         wobbleGoalHolder = this.initializeDevice(Servo.class, "wobble");
     }
