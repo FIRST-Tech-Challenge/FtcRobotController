@@ -55,7 +55,7 @@ import java.util.Locale;
  * @see <a href="http://www.adafruit.com/products/2472">Adafruit IMU</a>
  */
 @TeleOp(name = "Sensor: BNO055 IMU", group = "Sensor")
-@Disabled                            // Comment this out to add to the opmode list
+//@Disabled                            // Comment this out to add to the opmode list
 public class SensorBNO055IMU extends LinearOpMode
     {
     //----------------------------------------------------------------------------------------------
@@ -115,6 +115,8 @@ public class SensorBNO055IMU extends LinearOpMode
 
         // At the beginning of each telemetry update, grab a bunch of data
         // from the IMU that we will then display in separate lines.
+        telemetry.addLine().addData("current position", imu.isSystemCalibrated());
+
         telemetry.addAction(new Runnable() { @Override public void run()
                 {
                 // Acquiring the angles is relatively expensive; we don't want
@@ -153,6 +155,7 @@ public class SensorBNO055IMU extends LinearOpMode
                     return formatAngle(angles.angleUnit, angles.thirdAngle);
                     }
                 });
+
 
         telemetry.addLine()
             .addData("grvty", new Func<String>() {

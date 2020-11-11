@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.utility;
 
-public class pose {
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+
+public class pose extends Position{
     public double x, y, r;// radians
 
     public pose(double x, double y, double r){
@@ -21,5 +23,10 @@ public class pose {
 
     public String toString(){
         return String.format("pose %.3f %.3f %.3f", x, y, r);
+    }
+
+    public pose positionToPose (Position position){ //TODO check z axis
+        pose XYZ = new pose(position.x, position.y, position.z);
+        return XYZ;
     }
 }

@@ -1,5 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.unitOpModeTests;
-
+package org.firstinspires.ftc.teamcode.opModes;
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -29,13 +28,14 @@ package org.firstinspires.ftc.teamcode.opModes.unitOpModeTests;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.movement.Mecanum;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.teamcode.imu.IMU;
+import org.firstinspires.ftc.teamcode.utility.pose;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -51,13 +51,15 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TurnDemo", group="Iterative Opmode")
-@Disabled
-public class TurnDemo extends OpMode
+@TeleOp(name="IMU Test Basic", group="Iterative Opmode")
+
+public class ImuTestBasic extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    Mecanum MecanumDrive;
+
+    BNO055IMU imu;
+    Position lastPosition;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -65,7 +67,7 @@ public class TurnDemo extends OpMode
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        MecanumDrive = new Mecanum(hardwareMap);
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -83,6 +85,7 @@ public class TurnDemo extends OpMode
      */
     @Override
     public void start() {
+
         runtime.reset();
     }
 
@@ -91,21 +94,14 @@ public class TurnDemo extends OpMode
      */
     @Override
     public void loop() {
-
-        MecanumDrive.drive(0,0,100);
-
-
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("MotorPower", "frontLeft ");
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        lastPosition = imu.getPosition();
+        telemetry.addData("Last Position: ", lastPosition);
     }
-
     /*
      * Code to run ONCE after the driver hits STOP
      */
     @Override
     public void stop() {
-        telemetry.addData("Status", "done! Great job!");
     }
 
 }

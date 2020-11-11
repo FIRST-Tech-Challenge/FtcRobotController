@@ -30,6 +30,7 @@ package org.firstinspires.ftc.teamcode.opModes.unitOpModeTests;
  */
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -53,7 +54,7 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
  */
 
 @TeleOp(name="Intake Only", group="Iterative Opmode")
-
+@Disabled
 public class IntakeOnly extends OpMode
 {
     // Declare OpMode members.

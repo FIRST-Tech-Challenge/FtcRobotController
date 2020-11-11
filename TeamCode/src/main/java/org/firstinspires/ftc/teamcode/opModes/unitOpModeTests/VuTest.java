@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.opModes;
+package org.firstinspires.ftc.teamcode.opModes.unitOpModeTests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -7,7 +8,7 @@ import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
 
 
 @TeleOp(name="VuTest", group="Iterative Opmode")
-
+@Disabled
 public class VuTest extends OpMode
 {
     // Declare OpMode members.

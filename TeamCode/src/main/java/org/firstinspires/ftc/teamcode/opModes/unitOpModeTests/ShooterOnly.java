@@ -30,6 +30,7 @@ package org.firstinspires.ftc.teamcode.opModes.unitOpModeTests;
  */
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -50,7 +51,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="Shooter Only", group="Iterative Opmode")
-
+@Disabled
 public class ShooterOnly extends OpMode
 {
     // Declare OpMode members.
