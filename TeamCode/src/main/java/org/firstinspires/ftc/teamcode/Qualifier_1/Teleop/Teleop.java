@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 @TeleOp(name = "Teleop ")
 //@Disabled
 public class Teleop extends LinearOpMode {
-    private Robot robot = new Robot();
+
     private DcMotor motorLeftFront;
     private DcMotor motorLeftBack;
     private DcMotor motorRightFront;
@@ -20,6 +20,7 @@ public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        Robot robot = new Robot(this);
         double magnitude;
         double angleInRadian;
         double angleInDegree;
@@ -32,7 +33,9 @@ public class Teleop extends LinearOpMode {
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
-        robot.initChassis(this);
+
+        // commented by Victor
+        // robot.initChassis(this);
 
         //Aiden - during competition day robot disconnected so we are trying this code
         while (!opModeIsActive() && !isStopRequested()) {

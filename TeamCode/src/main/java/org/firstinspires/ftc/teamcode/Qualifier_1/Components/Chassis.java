@@ -52,10 +52,62 @@ public class Chassis {
     //set true to enable imu vice versa
     final boolean enableIMU = true;
 
-    public Chassis() {
+    public Chassis(LinearOpMode opMode) {
 
+        op = opMode;
+        hardwareMap = op.hardwareMap;
+
+        // Chassis motors
+        motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
+        motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
+        motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
+        motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
+        ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
+        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
+
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//
+//        parameters.mode                = BNO055IMU.SensorMode.IMU;
+//        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        parameters.loggingEnabled      = false;
+//
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        imu.initialize(parameters);
+//        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//
+//        // make sure the imu gyro is calibrated before continuing.
+//        while (!op.isStopRequested() && !imu.isGyroCalibrated())
+//        {
+//            op.sleep(50);
+//            op.idle();
+//        }
+//
+//        op.telemetry.addData("Mode", "waiting for start");
+//        op.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
+//        op.telemetry.update();
+//        op.sleep(500);
+
+        // Chassis Motors
+        motorLeftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLeftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorRightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorRightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
+        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
+        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
+        motorRightBack.setDirection(DcMotor.Direction.FORWARD);
+
+        // reset encoder count kept by left motor.
+        motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //odom.init(opMode);
     }
-    public void init(LinearOpMode opMode) {
+
+    public void init_no_long_in_use (LinearOpMode opMode) {
 
         op = opMode;
         hardwareMap = op.hardwareMap;

@@ -11,12 +11,12 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 //@Disabled
 public class Test extends LinearOpMode {
 
-    Robot robot = new Robot();
-    private ElapsedTime runtime = new ElapsedTime();
-
     @Override
     public void runOpMode() {
-        robot.initChassis(this);
+
+        Robot robot = new Robot(this);
+        ElapsedTime runtime = new ElapsedTime();
+
         waitForStart();
 //        sleep(500);
 //        robot.moveMotorLeftFront(-10);

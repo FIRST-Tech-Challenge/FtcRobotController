@@ -27,12 +27,12 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 //@Disabled
 public class NewTest_Sai extends LinearOpMode {
 
-    Robot robot = new Robot();
-    private ElapsedTime runtime = new ElapsedTime();
-
     @Override
     public void runOpMode() {
-        robot.initChassis(this);
+
+        ElapsedTime runtime = new ElapsedTime();
+        Robot robot = new Robot(this);
+
         waitForStart();
         //Tests all of the motors individually
         telemetry.addData("So Far It Is Working", 0);

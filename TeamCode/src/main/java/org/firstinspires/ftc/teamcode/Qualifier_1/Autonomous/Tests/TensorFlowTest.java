@@ -11,15 +11,16 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.ObjectDetection.Ten
 @Autonomous
 @Disabled
 public class TensorFlowTest extends LinearOpMode {
-    Robot robot = new Robot();
-    TensorFlow tensorFlow = new TensorFlow(this);
-    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
+
+        Robot robot = new Robot(this);
+        TensorFlow tensorFlow = new TensorFlow(this);
+        ElapsedTime runtime = new ElapsedTime();
+
         robot.initTensorFlow();
         robot.runTensorFlow();
-        robot.initChassis(this);
         robot.stopTensorFlow();
 
         waitForStart();

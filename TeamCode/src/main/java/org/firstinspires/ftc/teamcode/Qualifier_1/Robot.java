@@ -22,29 +22,47 @@ import static java.lang.Math.tan;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
 
 public class Robot {
+
     private LinearOpMode op = null;
     private HardwareMap hardwareMap = null;
-    private ElapsedTime runtime = new ElapsedTime();
-    Chassis drivetrain = new Chassis();
-    TensorFlow tensorFlow = new TensorFlow(op);
-    private Intake intake = null;
+    private ElapsedTime runtime = null;
+    private TensorFlow tensorFlow = null;
 
+    // Hardware Objects
+    private Chassis drivetrain = null;
+    private Intake intake = null;
+    private WobbleGoal wobbleGoal = null;
     private VuforiaWebcam vuforiaWebcam = null;
+
     private double vuforiaX = 0;
     private double vuforiaY = 0;
     private double vuforiaAngle = 0;
     private double robotAngle = 0;
-    private WobbleGoal wobbleGoal;
 
     public Robot(LinearOpMode opMode) {
-        intake = new Intake(opMode);
+        op = opMode;
+        hardwareMap = op.hardwareMap;
+
+        runtime = new ElapsedTime();
+        drivetrain = new Chassis(op);
+        tensorFlow = new TensorFlow(op);
+        intake = new Intake(op);
+        wobbleGoal = new WobbleGoal(op);
+        intake = new Intake(op);
+
+        // comment by victor
+        // drivetrain.init(opMode);
+
+        //vuforiaWebcam.init(opMode);
     }
 
+    /*
     public Robot() {
 
     }
+     */
 
-    public void initChassis(LinearOpMode opMode) {
+    public void initChassis_no_long_in_use (LinearOpMode opMode) {
         op = opMode;
         hardwareMap = op.hardwareMap;
 
@@ -65,7 +83,9 @@ public class Robot {
 
         //vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
 
-        drivetrain.init(opMode);
+        // comment by Victor
+        // drivetrain.init(opMode);
+
         //vuforiaWebcam.init(opMode);
 
         this.wobbleGoal = new WobbleGoal(op);
