@@ -18,7 +18,7 @@ public class DriveTrain {
     Telemetry telemetry;
     HardwareInnov8Hera hera;
     LinearOpMode opMode;
-    private double wheelPower = 0.75;
+    private double wheelPower = 1;
     private double wheelOnePower = 1;
     private double wheelTwoPower = 1;
     private double wheelThreePower = 1;
@@ -27,7 +27,15 @@ public class DriveTrain {
     private double wheelTwoRatio = 1;
     private double wheelThreeRatio = 1;
     private double wheelFourRatio = 1;
-    private int counter = 0;
+    private int counter = 1;
+    private double sumOfMotorOneDist;
+    private double sumOfMotorTwoDist;
+    private double sumOfMotorThreeDist;
+    private double sumOfMotorFourDist;
+    private double avgMotorOneDist;
+    private double avgMotorTwoDist;
+    private double avgMotorThreeDist;
+    private double avgMotorFourDist;
     private double baseline = 0;
     public static double INCH_TO_TICK = (360/6); // The number of encoder ticks per inch for our wheels
     public static double SIDE_INCH_TO_TICK = (360/6); // The number of encoder ticks for one inch while travelling sideways, change later
@@ -220,25 +228,33 @@ public class DriveTrain {
             wheelTwoEndPos = Math.abs(hera.motorTwo.getCurrentPosition() - wheelTwoStartPos);
             wheelThreeEndPos = Math.abs(hera.motorThree.getCurrentPosition() - wheelThreeStartPos);
             wheelFourEndPos = Math.abs(hera.motorFour.getCurrentPosition() - wheelFourStartPos);
-            if(this.counter ==0) {
+            if(this.counter == 1) {
                 baseline = Math.min(wheelOneEndPos, wheelTwoEndPos);
                 baseline = Math.min(wheelThreeEndPos, baseline);
                 baseline = Math.min(wheelFourEndPos, baseline);
                 showData("baseline: ", "" + baseline);
             }
         }
+        sumOfMotorOneDist += wheelOneEndPos;
+        sumOfMotorTwoDist += wheelTwoEndPos;
+        sumOfMotorThreeDist += wheelThreeEndPos;
+        sumOfMotorFourDist += wheelFourEndPos;
+        avgMotorOneDist = sumOfMotorOneDist/counter;
+        avgMotorTwoDist = sumOfMotorTwoDist/counter;
+        avgMotorThreeDist = sumOfMotorThreeDist/counter;
+        avgMotorFourDist = sumOfMotorFourDist/counter;
         counter++;
-
+        showData("counter", "" + counter);
         showData("wheelOneDistance: ", "" + wheelOneEndPos);
         showData("wheelTwoDistance: ", "" + wheelTwoEndPos);
         showData("wheelThreeDistance: ", "" + wheelThreeEndPos);
         showData("wheelFourDistance: ", "" + wheelFourEndPos);
 
         if(baseline !=0){
-            wheelOneRatio = wheelOneEndPos/baseline;
-            wheelTwoRatio = wheelTwoEndPos/baseline;
-            wheelThreeRatio = wheelThreeEndPos/baseline;
-            wheelFourRatio = wheelFourEndPos/baseline;
+            wheelOneRatio = avgMotorOneDist/baseline;
+            wheelTwoRatio = avgMotorTwoDist/baseline;
+            wheelThreeRatio = avgMotorThreeDist/baseline;
+            wheelFourRatio = avgMotorFourDist/baseline;
         }
         wheelOnePower /=wheelOneRatio;
         wheelTwoPower /= wheelTwoRatio;
