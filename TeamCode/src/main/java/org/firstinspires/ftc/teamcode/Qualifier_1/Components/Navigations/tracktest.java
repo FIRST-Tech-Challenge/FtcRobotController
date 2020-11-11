@@ -9,14 +9,17 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 @Autonomous(name= "tracktest")
 public class tracktest extends LinearOpMode{
-    Robot robot=new Robot();
-    Odometry odom = new Odometry();
+
 
     @Override
     public void runOpMode(){
+
+        Robot robot=new Robot(this);
+        Odometry odom = new Odometry();
+
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
-        robot.initChassis(this);
+
         odom.init(this);
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();

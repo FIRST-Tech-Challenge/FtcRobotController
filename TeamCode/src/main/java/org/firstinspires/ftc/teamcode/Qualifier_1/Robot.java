@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Intake;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -22,31 +23,55 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
 
 public class Robot {
     Shooter shooter = new Shooter();
 //    WobbleGoal wobbleGoal = new WobbleGoal();
+
     private LinearOpMode op = null;
     private HardwareMap hardwareMap = null;
-    private ElapsedTime runtime = new ElapsedTime();
-    Chassis drivetrain = new Chassis();
-    TensorFlow tensorFlow = new TensorFlow(op);
+    private ElapsedTime runtime = null;
+    private TensorFlow tensorFlow = null;
+
+    // Hardware Objects
+    private Chassis drivetrain = null;
+    private Intake intake = null;
+    private WobbleGoal wobbleGoal = null;
+    private VuforiaWebcam vuforiaWebcam = null;
 
 //    private VuforiaWebcam vuforiaWebcam = null;
     private double vuforiaX = 0;
     private double vuforiaY = 0;
     private double vuforiaAngle = 0;
     private double robotAngle = 0;
-    private WobbleGoal wobbleGoal;
 
-    public Robot() {
-    }
-
-    public void initChassis(LinearOpMode opMode) {
+    public Robot(LinearOpMode opMode) {
         op = opMode;
         hardwareMap = op.hardwareMap;
 
-//      vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
+        runtime = new ElapsedTime();
+        drivetrain = new Chassis(op);
+        tensorFlow = new TensorFlow(op);
+        intake = new Intake(op);
+        wobbleGoal = new WobbleGoal(op);
+        intake = new Intake(op);
+
+        // comment by victor
+        // drivetrain.init(opMode);
+
+        //vuforiaWebcam.init(opMode);
+    }
+
+    /*
+    public Robot() {
+
+    }
+     */
+
+    public void initChassis_no_long_in_use (LinearOpMode opMode) {
+        op = opMode;
+        hardwareMap = op.hardwareMap;
 
         //Initialize Motors
         DcMotorEx motorLeftFront;
@@ -68,10 +93,13 @@ public class Robot {
 
         //vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
 
-        drivetrain.init(opMode);
-//        vuforiaWebcam.init(pMode);
+        // comment by Victor
+        // drivetrain.init(opMode);
+
+        //vuforiaWebcam.init(opMode);
 
         this.wobbleGoal = new WobbleGoal(op);
+        intake = new Intake(op);
 
         //vuforiaWebcam.start();
         shooter.initChassis(opMode);
@@ -89,7 +117,7 @@ public class Robot {
     }
 
     public void moveVuforiaWebcam(double x, double y, double endAngle) {
-//        getVuforiaPosition();
+        getVuforiaPosition();
 
         double xdifference = x - vuforiaX;
         double ydifference = y - vuforiaY;
@@ -106,7 +134,7 @@ public class Robot {
         op.sleep(5000);
         drivetrain.moveAngle2(magnitude, mAngle, turn);
 
-//        getVuforiaPosition();
+        getVuforiaPosition();
 
         op.telemetry.addData("VuforiaX","%.2f %.2f %.2f %.3f %.3f %.3f", vuforiaX, x, xdifference, robotAngle, vuforiaAngle, endAngle );
         op.telemetry.addData("VuforiaY","%.2f %.2f %.2f %.2f %.3f %.3f", vuforiaY, y, ydifference, magnitude, turn, mAngle);
@@ -220,20 +248,20 @@ public class Robot {
 
     /**Vuforia**/
 
-//    public double getVuforiaAngle() {
-//        return vuforiaWebcam.getVuforiaAngle();
-//    }
-//
-//    public void getVuforiaPosition() {
-//        vuforiaX = vuforiaWebcam.getVuforiaX();
-//        vuforiaY = vuforiaWebcam.getVuforiaY();
-//        vuforiaAngle = vuforiaWebcam.getVuforiaAngle();
-//        robotAngle = vuforiaAngle + 90;
-//        robotAngle = (robotAngle>180?robotAngle-360:robotAngle);
-//    }
-//    public void stopVuforia() {
-//        vuforiaWebcam.interrupt();
-//    }
+    public double getVuforiaAngle() {
+        return vuforiaWebcam.getVuforiaAngle();
+    }
+
+    public void getVuforiaPosition() {
+        vuforiaX = vuforiaWebcam.getVuforiaX();
+        vuforiaY = vuforiaWebcam.getVuforiaY();
+        vuforiaAngle = vuforiaWebcam.getVuforiaAngle();
+        robotAngle = vuforiaAngle + 90;
+        robotAngle = (robotAngle>180?robotAngle-360:robotAngle);
+    }
+    public void stopVuforia() {
+        vuforiaWebcam.interrupt();
+    }
 
 
     /**TensorFlow**/
@@ -319,6 +347,15 @@ public class Robot {
     public void stopWobbleGoal(){
 
         wobbleGoal.stop();
+    }
+
+    // intake
+    public void startIntake(){
+        intake.startIntake();
+    }
+
+    public void stopIntake(){
+        intake.stopIntake();
     }
 
 }

@@ -31,7 +31,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 @TeleOp(name = "Teleop ")
 //@Disabled
 public class Teleop extends LinearOpMode {
-    private Robot robot = new Robot();
+
     private DcMotor motorLeftFront;
     private DcMotor motorLeftBack;
     private DcMotor motorRightFront;
@@ -40,6 +40,7 @@ public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        Robot robot = new Robot(this);
         double magnitude;
         double angleInRadian;
         double angleInDegree;
@@ -54,7 +55,9 @@ public class Teleop extends LinearOpMode {
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
-        robot.initChassis(this);
+
+        // commented by Victor
+        // robot.initChassis(this);
 
         //Aiden - during competition day robot disconnected so we are trying this code
         while (!opModeIsActive() && !isStopRequested()) {
@@ -66,6 +69,8 @@ public class Teleop extends LinearOpMode {
 
             float left_stick_y = -gamepad1.left_stick_y;
             float left_stick_x = -gamepad1.left_stick_x;
+            float start_intake = gamepad1.right_trigger;
+            float stop_intake = gamepad1.left_trigger;
             boolean x_button = gamepad1.x;
             boolean a_button = gamepad1.a;
             boolean moveUp = gamepad2.dpad_up;
@@ -144,7 +149,7 @@ public class Teleop extends LinearOpMode {
             }
             multidirectionalMove(magnitude, angleInDegree);
 
-            /**WobbleGoal**/
+            // wobble goal movements
             if (moveUp == true){
                 robot.moveWobbleGoalClockwise();
             }
@@ -155,6 +160,13 @@ public class Teleop extends LinearOpMode {
                 robot.stopWobbleGoal();
             }
 
+            //intake
+            if (start_intake == 1.00){
+                robot.startIntake();
+            }
+            else if (stop_intake == 1.00){
+                robot.stopIntake();
+            }
         }
         idle();
     }

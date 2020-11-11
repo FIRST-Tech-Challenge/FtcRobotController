@@ -9,12 +9,12 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 @Autonomous(name = "Park")
 public class Park extends LinearOpMode {
 
-    Robot robot = new Robot();
-    private ElapsedTime runtime = new ElapsedTime();
-
     @Override
     public void runOpMode() {
-        robot.initChassis(this);
+
+        Robot robot = new Robot(this);
+        ElapsedTime runtime = new ElapsedTime();
+
         waitForStart();
 
         robot.moveForward(73, 0.5);

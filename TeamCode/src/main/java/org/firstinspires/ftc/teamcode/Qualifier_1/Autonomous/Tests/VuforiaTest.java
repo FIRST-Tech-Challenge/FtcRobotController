@@ -12,11 +12,13 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Webcam_
 //@Disabled
 public class VuforiaTest extends LinearOpMode {
 
-    Chassis robot = new Chassis();
-    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
+
+        Chassis robot = new Chassis(this);
+        ElapsedTime runtime = new ElapsedTime();
+
         //AamodVuforia vuforiaB = new AamodVuforia(this, VuforiaLocalizer.CameraDirection.BACK);
         //AamodVuforia vuforiaF = new AamodVuforia(this, VuforiaLocalizer.CameraDirection.FRONT);
         Webcam_1 vuforiaWebcam = new Webcam_1();

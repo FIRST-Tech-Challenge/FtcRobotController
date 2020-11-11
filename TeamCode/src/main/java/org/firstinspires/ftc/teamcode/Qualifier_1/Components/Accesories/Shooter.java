@@ -6,8 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * <h1> Ultimate Goal Accessory
- * <p>
+ * Ultimate Goal Accessory
  *
  * @author  Nikhil
  * @version 1.0
@@ -81,6 +80,7 @@ public class Shooter {
         double sleepTime = (distance / speedTopGoal * 1000);
 
         shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        //^^^ could have issues. if so, change all to shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         shooterMotor.setTargetPosition(distance);
 
