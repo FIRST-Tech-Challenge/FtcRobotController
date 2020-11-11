@@ -27,7 +27,11 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
 
 import java.util.List;
 
-@Autonomous(name="Basic Autonomous for Test", group="Test")
+@Autonomous(name="Base Autonomous OpMode", group="Auto")
+
+// This opMode will work if used from the left blue starting line. It's main intent is to be
+//the basis for all other Auto Opmodes. Extend this class to create OpModes with different starting
+// positions or different paths or objectives.
 
 // Place robot on the left most blue line when facing the goal. Robot should be placed such that
 // as it drives straight ahead it will not hit the stack of rings. So basically center the robot on

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.Enums.ShooterState;
@@ -10,8 +11,9 @@ import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
 import java.util.List;
 
 @Autonomous(name="Blue_Right_Line_HGWB", group="Test")
+@Disabled // Leave disabled until ready to test
 
-// This opmode EXTENDS BASICAUTONOMOUS and actually does the same thing as BasicAutonomous
+// This opmode EXTENDS BasicAutonomous and actually does the same thing as BasicAutonomous
 // The goal here was to extend a base class with all the methods and prove it works just the same.
 
 // Place robot on the right most blue line when facing the goal. Robot should be placed such that
