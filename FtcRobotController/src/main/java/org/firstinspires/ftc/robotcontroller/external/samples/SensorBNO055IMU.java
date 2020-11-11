@@ -115,7 +115,7 @@ public class SensorBNO055IMU extends LinearOpMode
 
         // At the beginning of each telemetry update, grab a bunch of data
         // from the IMU that we will then display in separate lines.
-        telemetry.addLine().addData("current position", imu.isSystemCalibrated());
+        telemetry.addLine().addData("current position", imu.getPosition());
 
         telemetry.addAction(new Runnable() { @Override public void run()
                 {

@@ -96,6 +96,7 @@ public class ImuTestBasic extends OpMode
     public void loop() {
         lastPosition = imu.getPosition();
         telemetry.addData("Last Position: ", lastPosition);
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
     /*
      * Code to run ONCE after the driver hits STOP
