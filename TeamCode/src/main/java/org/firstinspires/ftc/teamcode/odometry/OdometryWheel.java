@@ -8,8 +8,9 @@ import java.util.logging.Logger;
 
 
 public abstract class OdometryWheel {
-    double ticksPerRev = 386.3;
-    double radius = 5.08; //Centimeters
+    double ticksPerRev = 4096;
+    double radius = 1.9; //Centimeters
+
     pose offset;
 
     private double prevTicks = 0;
@@ -32,7 +33,7 @@ public abstract class OdometryWheel {
     /**
      * Request and calculate the change in ticks of this odo wheel
      */
-    void updateDelta(){
+    public void updateDelta(){
         prevTicks += deltaTicks;
         //get ticks
         double measurement = getWheelPosition();
@@ -50,8 +51,8 @@ public abstract class OdometryWheel {
 
     public double getDeltaPosition(){
         // theta * radians = arc length
-        totalDistTravelled += getDeltaTicks() / ticksPerRev * radius;
-        return (getDeltaTicks() / ticksPerRev) * radius;
+        totalDistTravelled += getDeltaTicks() / ticksPerRev * radius * 2 * Math.PI;
+        return getDeltaTicks() / ticksPerRev * radius * 2 * Math.PI;
     }
 
     double distanceTraveledTowardsAngle(double deltaPosition, double targetAngle){
