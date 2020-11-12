@@ -23,8 +23,8 @@ public class SampleOpMode extends LinearOpMode {
         //initializing every motor, servo, and sensor
         //these names all need to match the names in the config
 
-        hardwareMap.get(DcMotor.class, "testmotor");
-        hardwareMap.get(Servo.class, "testservo");
+        testMotor = hardwareMap.get(DcMotor.class, "testmotor");
+        testServo = hardwareMap.get(Servo.class, "testservo");
 
 
         waitForStart();
