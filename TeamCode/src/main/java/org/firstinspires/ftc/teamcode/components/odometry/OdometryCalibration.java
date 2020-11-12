@@ -34,8 +34,8 @@ public class OdometryCalibration extends LinearOpMode {
     final double PIVOT_SPEED = 0.4;
 
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
-    final double COUNTS_PER_INCH = 307.699557; // should be 360/(3.8/2.54*PI) = 76.5954
-
+    // final double COUNTS_PER_INCH = 307.699557;
+    final double COUNTS_PER_INCH = 303.7;
     ElapsedTime timer = new ElapsedTime();
 
     double horizontalTickOffset = 0;
@@ -104,7 +104,7 @@ public class OdometryCalibration extends LinearOpMode {
         THIS MAY NEED TO BE CHANGED FOR EACH ROBOT
        */
         double encoderDifference = Math.abs(verticalLeft.getCurrentPosition()) + (Math.abs(verticalRight.getCurrentPosition()));
-        if (ggConfig) encoderDifference *= -1.0;
+        // if (ggConfig) encoderDifference *= -1.0;
 
         double verticalEncoderTickOffsetPerDegree = encoderDifference/angle;
 

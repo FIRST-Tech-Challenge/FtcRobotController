@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware.MechBot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -22,13 +23,18 @@ import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 public class Shooter extends Logger<Shooter>  {
 
     final private CoreSystem core;
+    private final double shooterSpeedFast = 1.0;
+    private final double shooterSpeedSlow = 0.3;
+    private final int SHOOT_MAX = 2600;
+    private final int SHOOT_FAST = 2100;
+    private final int SHOOT_MIN = 100;
+    private final int SHOOT_INC_STEP = 50;
 
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;
-
-    private final double shooterSpeedFast = 1.0;
-    private final double shooterSpeedSlow = 0.3;
+    private int shooterSpeed = SHOOT_FAST;
     private boolean shooterOn = false;
+
 
     public String getUniqueName() {
         return "shooter";
@@ -48,14 +54,19 @@ public class Shooter extends Logger<Shooter>  {
 
     public void configure(Configuration configuration, boolean auto) {
         shooter1 = configuration.getHardwareMap().get(DcMotorEx.class, "shooter1");
-        shooter2 = configuration.getHardwareMap().get(DcMotorEx.class, "shooter2");
+        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
+        // shooter2 = configuration.getHardwareMap().get(DcMotorEx.class, "shooter2");
         init();
       // configuration.register(this);
     }
 
     public void stop() {
-        shooter1.setPower(0);
-        shooter2.setPower(0);
+        if (shooter1!=null)
+            shooter1.setPower(0);
+        if (shooter2!=null)
+            shooter2.setPower(0);
         shooterOn = false;
     }
 
@@ -64,16 +75,36 @@ public class Shooter extends Logger<Shooter>  {
     }
 
     public void shootOutFast(){
-        shooter1.setPower(shooterSpeedFast);
-        shooter2.setPower(shooterSpeedFast);
+        if (shooter1!=null)
+            shooter1.setVelocity(shooterSpeed);
+        if (shooter2!=null)
+            shooter2.setVelocity(shooterSpeed);
         shooterOn = true;
     }
 
+
     public void shootOutSlow(){
-        shooter1.setPower(shooterSpeedSlow);
-        shooter2.setPower(shooterSpeedSlow);
+        if (shooter1!=null)
+            shooter1.setPower(shooterSpeedSlow);
+        if (shooter2!=null)
+            shooter2.setPower(shooterSpeedSlow);
         shooterOn = true;
     }
+
+    public void shootSpeedInc() {
+        shooterSpeed+=SHOOT_INC_STEP;
+        if (shooterSpeed>SHOOT_MAX)
+            shooterSpeed=SHOOT_MAX;
+        shootOutFast();
+    }
+
+    public void shootSpeedDec() {
+        shooterSpeed-=SHOOT_INC_STEP;
+        if (shooterSpeed<SHOOT_MIN)
+            shooterSpeed=SHOOT_MIN;
+        shootOutFast();
+    }
+
     public void shootAutoFast(){
         if(shooterOn)
             stop();
@@ -98,19 +129,19 @@ public class Shooter extends Logger<Shooter>  {
         Telemetry.Line line = telemetry.addLine();
 
         if (shooter1 != null) {
-            line.addData("shooter1", "pow=%.2f", new Func<Double>() {
+            line.addData("shooter1", "%s", new Func<String>() {
                 @Override
-                public Double value() {
-                    return shooter1.getPower();
+                public String value() {
+                    return String.format("speed=%.0f/%d, pwd=%.2f", shooter1.getVelocity(), shooterSpeed,shooter1.getPower());
                 }
             });
         }
 
         if (shooter2 != null) {
-            line.addData("shooter2", "pow=%.2f", new Func<Double>() {
+            line.addData("shooter2", "%s", new Func<String>() {
                 @Override
-                public Double value() {
-                    return shooter2.getPower();
+                public String value() {
+                    return String.format("speed=%.0f, pwd=%.2f", shooter1.getVelocity(), shooter1.getPower());
                 }
             });
         }
