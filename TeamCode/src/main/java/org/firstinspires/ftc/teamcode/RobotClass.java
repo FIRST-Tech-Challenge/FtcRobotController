@@ -281,7 +281,7 @@ public class RobotClass {
 //        telemetry.addData("Completed Gyro Angle: ", getAngleFromGyro());
 //        telemetry.update();
 //    }
-    public void forwardToWhiteLine (double speed, double rotations, double speed2) throws InterruptedException {
+    public void forwardToWhite (double speed, double rotations, double speed2) throws InterruptedException {
         forward(speed,rotations);
         frontLeft.setPower(speed2);
         frontRight.setPower(speed2);
@@ -363,6 +363,62 @@ public class RobotClass {
             }
         }
         stopMotors();
+    }
+    public void strafeLeft (double speed, double rotations) {
+
+        int leftCurrent = frontLeft.getCurrentPosition();
+        int rightCurrent = frontRight.getCurrentPosition();
+        int backLeftCurrent = backLeft.getCurrentPosition();
+        int backRightCurrent = backRight.getCurrentPosition();
+
+        double toPositionLeft = leftCurrent + rotations*ticks;
+        double toPositionRight = rightCurrent + rotations*ticks;
+        double toPositionbackLeft = backLeftCurrent + rotations*ticks;
+        double toPositionbackRight = backRightCurrent + rotations*ticks;
+
+        frontLeft.setTargetPosition((int)toPositionLeft);
+        frontRight.setTargetPosition((int)toPositionRight);
+        backLeft.setTargetPosition((int)toPositionbackLeft);
+        backRight.setTargetPosition((int)toPositionbackRight);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setPower(Math.abs(-speed));
+        frontRight.setPower(Math.abs(speed));
+        backLeft.setPower(Math.abs(speed));
+        backRight.setPower(Math.abs(-speed));
+
+    }
+    public void strafeRight (double speed, double rotations) {
+
+        int leftCurrent = frontLeft.getCurrentPosition();
+        int rightCurrent = frontRight.getCurrentPosition();
+        int backLeftCurrent = backLeft.getCurrentPosition();
+        int backRightCurrent = backRight.getCurrentPosition();
+
+        double toPositionLeft = leftCurrent + rotations*ticks;
+        double toPositionRight = rightCurrent + rotations*ticks;
+        double toPositionbackLeft = backLeftCurrent + rotations*ticks;
+        double toPositionbackRight = backRightCurrent + rotations*ticks;
+
+        frontLeft.setTargetPosition((int)toPositionLeft);
+        frontRight.setTargetPosition((int)toPositionRight);
+        backLeft.setTargetPosition((int)toPositionbackLeft);
+        backRight.setTargetPosition((int)toPositionbackRight);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontLeft.setPower(Math.abs(speed));
+        frontRight.setPower(Math.abs(-speed));
+        backLeft.setPower(Math.abs(-speed));
+        backRight.setPower(Math.abs(speed));
+
     }
     }
 
