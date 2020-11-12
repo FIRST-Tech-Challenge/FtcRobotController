@@ -23,9 +23,8 @@ public class MovementHybridOp extends MovementHardware implements HybridOp {
     }
 
     @Override
-    public void loop() {
-        this.localize();
-        this.hybridOpController.loop();
+    public void run_loop() {
+
     }
 
     @Override

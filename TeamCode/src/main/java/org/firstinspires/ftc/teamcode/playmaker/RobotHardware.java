@@ -19,10 +19,12 @@ public abstract class RobotHardware extends OpMode {
     public WebcamName webcamName;
     public boolean initVuforia = true;
 
+    public AutonomousExecutor autonomousExecutor;
     public BNO055IMU revIMU;
     public OmniDrive omniDrive;
     public Localizer  localizer;
     public HybridOpController hybridOpController;
+    public GamepadActions gamepadActions;
 
     /**
      * All hardware should initialize sensors and stuff here
@@ -72,19 +74,32 @@ public abstract class RobotHardware extends OpMode {
         this.localizer = new Localizer();
     }
 
-    public void localize() {
-        if (localizer != null) {
-            this.localizer.updateRobotTransform(this, revIMU);
-        }
-    }
-
     @Override
     public void init() {
         this.initializeLocalizer();
         if (initVuforia) initializeVuforia();
         this.initializeHardware();
+        this.gamepadActions = new GamepadActions();
     }
 
-    public void hardware_loop() {}
+    public void hardware_loop() {
+        this.localizer.updateRobotTransform(this, revIMU);
+        gamepadActions.update(gamepad1, gamepad2);
+        if (this.hybridOpController != null) {
+            // Execute Hybrid Op Loop
+            this.hybridOpController.loop();
+        } else if (this.autonomousExecutor != null) {
+            // Execute autonomous
+            boolean done = autonomousExecutor.loop();
+            if (done) requestOpModeStop();
+        }
+    }
 
+    public abstract void run_loop();
+
+    @Override
+    public void loop() {
+        this.hardware_loop();
+        this.run_loop();
+    }
 }

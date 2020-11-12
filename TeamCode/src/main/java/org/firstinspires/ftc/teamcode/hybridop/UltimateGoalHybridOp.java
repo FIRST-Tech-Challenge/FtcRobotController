@@ -2,23 +2,32 @@ package org.firstinspires.ftc.teamcode.hybridop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.autonomous.sequences.ShootActionSequence;
 import org.firstinspires.ftc.teamcode.hardware.UltimateGoalHardware;
+import org.firstinspires.ftc.teamcode.playmaker.GamepadActions;
 import org.firstinspires.ftc.teamcode.playmaker.HybridOp;
 import org.firstinspires.ftc.teamcode.playmaker.HybridOpController;
 
 @TeleOp(name="Ultimate Goal Tele Op")
 public class UltimateGoalHybridOp extends UltimateGoalHardware implements HybridOp {
 
-    boolean spinners = false;
-    boolean bPress = false;
-    boolean upPress = false;
-    boolean downPress= false;
     double spinnerPower = 1;
     double spinner_increment = 0.05;
 
+    long prevTime = System.nanoTime();
+    int prevPos;
+
     @Override
     public void hybrid_loop() {
+        int cpos = shooterRight.getCurrentPosition();
+        long ctime = System.currentTimeMillis()*60*1000;
+        double rpm  = ((cpos/40.0-prevPos/40.0)/(ctime-prevTime));
 
+//dj hates black people
+        telemetry.addData("Shooter pos", cpos);
+        telemetry.addData("Shooter rpm", rpm);
+        prevPos = cpos;
+        prevTime = ctime;
     }
 
     @Override
@@ -30,46 +39,32 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
     public void teleop_loop() {
         telemetry.addData("spinner power", String.format("%.2f", spinnerPower));
 
-        if (gamepad1.dpad_up) {
-            if (!upPress) {
-                upPress = true;
-                double newPower = spinnerPower + spinner_increment;
-                if (newPower <= 1) {
-                    spinnerPower = newPower;
-                }
+        // region Gamepad 1
+
+        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.dpad_up)) {
+            double newPower = spinnerPower + spinner_increment;
+            if (newPower <= 1) {
+                spinnerPower = newPower;
             }
-        } else {
-            upPress = false;
         }
 
-        if (gamepad1.dpad_down) {
-            if (!downPress) {
-                downPress = true;
-                double newPower = spinnerPower - spinner_increment;
-                if (newPower >= 0) {
-                    spinnerPower = newPower;
-                }
+        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.dpad_down)) {
+            double newPower = spinnerPower - spinner_increment;
+            if (newPower >= 0) {
+                spinnerPower = newPower;
             }
-        } else {
-            downPress = false;
         }
 
-
-        if (gamepad1.b) {
-            if (!bPress) {
-                bPress = true;
-                spinners = !spinners;
-            }
-        } else {
-            bPress = false;
-        }
-
-        if (spinners) {
+        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.b)) {
             shooterLeft.setPower(-spinnerPower);
             shooterRight.setPower(spinnerPower);
         } else {
             shooterLeft.setPower(0);
             shooterRight.setPower(0);
+        }
+
+        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.x)) {
+            this.hybridOpController.executeActionSequence(new ShootActionSequence(), true);
         }
 
         if (gamepad1.a) {
@@ -83,6 +78,8 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
         } else {
             collector.setPower(0);
         }
+
+        //endregion
     }
 
     @Override
@@ -92,7 +89,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
     }
 
     @Override
-    public void loop() {
-        this.hybridOpController.loop();
+    public void run_loop() {
+        this.gamepadActions.telemetry(telemetry);
     }
 }

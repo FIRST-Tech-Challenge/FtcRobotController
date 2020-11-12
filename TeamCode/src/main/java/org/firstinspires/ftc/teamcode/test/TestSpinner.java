@@ -16,7 +16,7 @@ public class TestSpinner extends SpinnerHardware {
     double spinner_increment = 0.05;
 
     @Override
-    public void loop() {
+    public void run_loop() {
         telemetry.addData("spinner power", String.format("%.2f", spinnerPower));
 
         if (gamepad1.dpad_up) {

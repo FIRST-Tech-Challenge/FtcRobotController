@@ -25,9 +25,7 @@ public class LocalizerTelemetry extends MovementHardware {
 
     @SuppressLint("DefaultLocale")
     @Override
-    public void loop() {
-        this.localize();
-
+    public void run_loop() {
         Position position = localizer.estimatePosition().position;
         Orientation orientation = localizer.estimateOrientation().orientation;
         if (position != null) {

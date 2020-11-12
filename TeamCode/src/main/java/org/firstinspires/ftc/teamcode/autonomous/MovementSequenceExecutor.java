@@ -10,20 +10,16 @@ import org.firstinspires.ftc.teamcode.playmaker.RobotHardware;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "movement")
 public class MovementSequenceExecutor extends MovementHardware implements Autonomous {
 
-    AutonomousExecutor executor;
-
     @Override
     public void init() {
         super.init();
-        executor = new AutonomousExecutor(this);
-        executor.init();
+        autonomousExecutor = new AutonomousExecutor(this);
+        autonomousExecutor.init();
     }
 
     @Override
-    public void loop() {
-        this.localize();
-        boolean done = executor.loop();
-        if (done) requestOpModeStop();
+    public void run_loop() {
+
     }
 
     @Override

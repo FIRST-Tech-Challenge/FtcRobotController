@@ -42,7 +42,6 @@ public abstract class MovementHardware extends RobotHardware {
     public void init_loop() {
         super.init_loop();
         if (this.localizer != null) {
-            this.localize();
             telemetry.addData("ready", this.localizer.attemptIMUToWorldCalibration(revIMU));
             Double imuToWorld = this.localizer.getImuToWorldRotation();
             if (imuToWorld != null) {

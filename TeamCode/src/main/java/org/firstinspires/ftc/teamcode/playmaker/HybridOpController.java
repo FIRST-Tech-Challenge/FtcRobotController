@@ -34,7 +34,7 @@ public class HybridOpController {
         this.actionExecutor.init();
         this.isAutonomous = true;
         this.overrideManualControl = overrideManualControl;
-        if (overrideManualControl) {
+        if (overrideManualControl && hardware.omniDrive != null) {
             hardware.omniDrive.stopDrive();
         }
     }
@@ -52,7 +52,6 @@ public class HybridOpController {
      */
     public void loop() {
         hardware.telemetry.addData("Autonomous", isAutonomous);
-        hardware.hardware_loop();
         hybridOp.hybrid_loop();
         if (isAutonomous && overrideManualControl) {
             isAutonomous = !this.actionExecutor.loop();
