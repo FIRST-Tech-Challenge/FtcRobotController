@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.autonomous.sequences.ShootActionSequence;
 import org.firstinspires.ftc.teamcode.hardware.UltimateGoalHardware;
 import org.firstinspires.ftc.teamcode.playmaker.GamepadActions;
 import org.firstinspires.ftc.teamcode.playmaker.HybridOp;
-import org.firstinspires.ftc.teamcode.playmaker.HybridOpController;
+import org.firstinspires.ftc.teamcode.playmaker.HybridOpExecutor;
 
 @TeleOp(name="Ultimate Goal Tele Op")
 public class UltimateGoalHybridOp extends UltimateGoalHardware implements HybridOp {
@@ -16,19 +16,6 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
     long prevTime = System.nanoTime();
     int prevPos;
-
-    @Override
-    public void hybrid_loop() {
-        int cpos = shooterRight.getCurrentPosition();
-        long ctime = System.currentTimeMillis()*60*1000;
-        double rpm  = ((cpos/40.0-prevPos/40.0)/(ctime-prevTime));
-
-//dj hates black people
-        telemetry.addData("Shooter pos", cpos);
-        telemetry.addData("Shooter rpm", rpm);
-        prevPos = cpos;
-        prevTime = ctime;
-    }
 
     @Override
     public void autonomous_loop() {
@@ -64,7 +51,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
         }
 
         if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.x)) {
-            this.hybridOpController.executeActionSequence(new ShootActionSequence(), true);
+            this.hybridOpExecutor.executeActionSequence(new ShootActionSequence(), true, true);
         }
 
         if (gamepad1.a) {
@@ -85,11 +72,19 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
     @Override
     public void init() {
         super.init();
-        this.hybridOpController = new HybridOpController(this, this);
+        this.initializeForHybridOp(this);
     }
 
     @Override
     public void run_loop() {
+        int cpos = shooterRight.getCurrentPosition();
+        long ctime = System.currentTimeMillis()*60*1000;
+        double rpm  = ((cpos/40.0-prevPos/40.0)/(ctime-prevTime));
+        telemetry.addData("Shooter pos", cpos);
+        telemetry.addData("Shooter rpm", rpm);
+        prevPos = cpos;
+        prevTime = ctime;
+
         this.gamepadActions.telemetry(telemetry);
     }
 }

@@ -330,7 +330,7 @@ public class Localizer {
             int deltaBackRight = currentBackRight - lastBackRight;
 
             // Get robot centric delta measurements
-            double countsPerMM = DistanceUnit.MM.fromInches(hardware.omniDrive.getCountsPerInch());
+            double countsPerMM = hardware.omniDrive.getCountsPerUnit(DistanceUnit.MM);
             double xRobotRelMovement = (1/Math.sqrt(2))*(countsPerMM)*(deltaFrontLeft+deltaBackRight-deltaFrontRight-deltaBackLeft);
             double yRobotRelMovement = (1/Math.sqrt(2))*(countsPerMM)*(deltaFrontLeft+deltaFrontRight+deltaBackLeft+deltaBackRight);
 

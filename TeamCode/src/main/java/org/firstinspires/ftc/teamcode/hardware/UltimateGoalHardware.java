@@ -18,7 +18,10 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     public DcMotor collector;
     public DcMotor escalator;
 
-    Servo wobbleGoalHolder;
+    public Servo wobbleGoalHolder;
+
+    public final static double COUNTS_PER_ENCODER_REV = 8192;
+    public final static double WHEEL_DIAMETER_IN = 4;
 
     @Override
     public void initializeHardware() {
@@ -32,5 +35,8 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         collector.setDirection(DcMotorSimple.Direction.REVERSE);
         escalator = this.initializeDevice(DcMotor.class, "escalator");
         wobbleGoalHolder = this.initializeDevice(Servo.class, "wobble");
+
+        this.initializeOmniDrive(frontLeft, frontRight, backLeft, backRight);
+        this.omniDrive.setCountsPerInch((Math.PI*WHEEL_DIAMETER_IN)/COUNTS_PER_ENCODER_REV);
     }
 }
