@@ -7,4 +7,9 @@ dependencies {
     implementation 'org.firstinspires.ftc:Hardware:6.0.1'
     implementation 'org.firstinspires.ftc:FtcCommon:6.0.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+
+    //Copied from https://www.learnroadrunner.com/installing.html#method-2-installing-rr-on-your-project
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.2'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
 }
