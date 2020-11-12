@@ -1116,6 +1116,23 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         return x;
     }
+    public double  getRpmFromVelocity(double velocity){
+        double a = -0.00000246473;
+        double b = 0.0122007;
+        double c=-5.31878 - velocity;
+        double det = b*b-4*a*c;
+        if (det <0 || velocity<0){ return -1;}
+        return (-b+ Math.sqrt(det))/2/a;
+    }
+    public double getVelocityToShoot(double dx, double dy){
+        double shooterAngle = 31;
+        double vSquared = 4.905/Math.cos(Math.toRadians(shooterAngle))
+                /Math.cos(Math.toRadians(shooterAngle))*dx*dx
+                /(dx*Math.tan(Math.toDegrees(shooterAngle))-dy);
+        if (vSquared < 0){ return -1;}
+        return Math.sqrt(vSquared);
+    }
+
 
 
 }
