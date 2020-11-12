@@ -1,5 +1,13 @@
-package org.firstinspires.ftc.teamcode.Qualifier_1.Components;
+/**
+ * Warren, i appoint you the owner of this file.
+ * Please clean up
+ *
+ * @author: Warren
+ * @version: 1.0
+ * @status: work in progress
+ */
 
+package org.firstinspires.ftc.teamcode.Qualifier_1.Components;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -40,15 +48,16 @@ public class Chassis {
     final double counts_per_degree = counts_per_inch * robot_diameter * Math.PI / 360;
 
     /* local OpMode members. */
-    private LinearOpMode op             = null;
-    private HardwareMap hardwareMap     = null;
-    private ElapsedTime period          = new ElapsedTime();
-    Odometry odom = new Odometry();
+    private LinearOpMode            op = null;
+    private HardwareMap             hardwareMap = null;
+    private ElapsedTime             period = null;
+    private Odometry                odom = null;
 
-    BNO055IMU imu;
-    Orientation             lastAngles = new Orientation();
-    double                  globalAngle, power = .30, correction;
-    double IMUgain = 0.005;
+    private BNO055IMU               imu;
+    private Orientation             lastAngles = null;
+    private double                  globalAngle, power = .30, correction;
+    private double                  IMUgain = 0.005;
+
     //set true to enable imu vice versa
     final boolean enableIMU = true;
 
@@ -57,60 +66,9 @@ public class Chassis {
         op = opMode;
         hardwareMap = op.hardwareMap;
 
-        // Chassis motors
-        motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
-        motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
-        motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
-        motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
-        ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
-        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
-
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//
-//        parameters.mode                = BNO055IMU.SensorMode.IMU;
-//        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-//        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        parameters.loggingEnabled      = false;
-//
-//        imu = hardwareMap.get(BNO055IMU.class, "imu");
-//        imu.initialize(parameters);
-//        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-//
-//        // make sure the imu gyro is calibrated before continuing.
-//        while (!op.isStopRequested() && !imu.isGyroCalibrated())
-//        {
-//            op.sleep(50);
-//            op.idle();
-//        }
-//
-//        op.telemetry.addData("Mode", "waiting for start");
-//        op.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
-//        op.telemetry.update();
-//        op.sleep(500);
-
-        // Chassis Motors
-        motorLeftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorLeftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorRightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorRightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
-        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
-        motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-
-        // reset encoder count kept by left motor.
-        motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //odom.init(opMode);
-    }
-
-    public void init_no_long_in_use (LinearOpMode opMode) {
-
-        op = opMode;
-        hardwareMap = op.hardwareMap;
+        period      = new ElapsedTime();
+        odom        = new Odometry();
+        lastAngles  = new Orientation();
 
         // Chassis motors
         motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");

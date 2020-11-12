@@ -1,3 +1,11 @@
+/**
+ * Aamod, i appoint you the owner of this file.
+ *
+ * @author: Aamod
+ * @version: 1.0
+ * @status: work in progress
+ */
+
 package org.firstinspires.ftc.teamcode.Qualifier_1;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -50,53 +58,7 @@ public class Robot {
         wobbleGoal = new WobbleGoal(op);
         intake = new Intake(op);
 
-        // comment by victor
-        // drivetrain.init(opMode);
-
         //vuforiaWebcam.init(opMode);
-    }
-
-    /*
-    public Robot() {
-
-    }
-     */
-
-    public void initChassis_no_long_in_use (LinearOpMode opMode) {
-        op = opMode;
-        hardwareMap = op.hardwareMap;
-
-        //Initialize Motors
-        DcMotorEx motorLeftFront;
-        DcMotorEx motorRightFront;
-        DcMotorEx motorLeftBack;
-        DcMotorEx motorRightBack;
-        DcMotorEx ShooterMotor;
-        DcMotorEx wobbleGoalMotor;
-
-        motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
-        motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
-        motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
-        motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
-        ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
-        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
-
-        //vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
-
-        // comment by Victor
-        // drivetrain.init(opMode);
-
-        //vuforiaWebcam.init(opMode);
-
-        this.wobbleGoal = new WobbleGoal(op);
-        intake = new Intake(op);
-
-        //vuforiaWebcam.start();
-//        getVuforiaPosition();
-//        op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
-//        op.telemetry.update();
-//        op.sleep(1000);
-
     }
 
     public void moveVuforiaWebcam(double x, double y, double endAngle) {
@@ -250,7 +212,8 @@ public class Robot {
         drivetrain.moveForwardOdometry(distance,power);
     }
 
-    public void moveSideOdometry(double distance, double power) {//right is positive use distance to change direction
+    public void moveSideOdometry(double distance, double power) {
+        //right is positive use distance to change direction
         drivetrain.moveSideOdometry(distance,power);
     }
 
@@ -283,17 +246,14 @@ public class Robot {
      * wobble goal methods
      */
     public void moveWobbleGoalClockwise(){
-
         this.wobbleGoal.clockwise();
     }
 
     public void moveWobbleGoalCounterClockwise(){
-
         wobbleGoal.counterClockwise();
     }
 
     public void stopWobbleGoal(){
-
         wobbleGoal.stop();
     }
 
