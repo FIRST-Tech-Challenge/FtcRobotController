@@ -158,10 +158,6 @@ public class TerraCV {
         debug.reset();
         RingNum num = RingNum.ZERO;
         double val = 0;
-        time = debug.milliseconds();
-//        op.telemetry.addData("val", val);
-//        op.telemetry.update();
-
         double max = 0;
         double enx = 0;
         double eny = 0;
@@ -177,19 +173,20 @@ public class TerraCV {
                 }
             }
         }
-        if(600 < enx && enx < 800 && 400 < eny && eny < 700){
+        if(600 < enx && enx < 800 && 450 < eny && eny < 650){
             if (max > 25) {
                 num = RingNum.FOUR;
             } else if (max > 10) {
                 num = RingNum.ONE;
             }
         }
-
-        op.telemetry.addData("val", max);
-        op.telemetry.addData("enx", enx);
-        op.telemetry.addData("eny", eny);
-        op.telemetry.addData("num", num.toString());
-        op.telemetry.update();
+        time = debug.milliseconds();
+//
+//        op.telemetry.addData("val", max);
+//        op.telemetry.addData("enx", enx);
+//        op.telemetry.addData("eny", eny);
+//        op.telemetry.addData("num", num.toString());
+//        op.telemetry.update();
 
         if(!discount) {
             return num;

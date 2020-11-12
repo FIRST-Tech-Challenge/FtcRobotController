@@ -24,6 +24,7 @@ public class Path {
 
     ElapsedTime timer = new ElapsedTime();
     ElapsedTime timer2 = new ElapsedTime();
+    ElapsedTime timer3 = new ElapsedTime();
 
     public double lastTime = 0;
 
@@ -67,6 +68,7 @@ public class Path {
 
 
     public boolean isExecuting = true;
+    public boolean isDoneWithRfs = false;
 
     final public double[] ks = {0.04,0.03,0.008};
     final public double[] ds = {0.005, 0.004, 0.001};
@@ -78,10 +80,10 @@ public class Path {
     final public double derWait = 0.5;
     final public double restPowX = 0.1;
     final public double restPowY = 0.05;
-    final public double restPowT = 0.2;
-    final public double maxIX = 0.1;
-    final public double maxIY = 0.1;
-    final public double maxIT = 0.2;
+    public double restPowT = 0.2;
+    final public double maxIX = 100*0.05;
+    final public double maxIY = 100*0.05;
+    final public double maxIT = 200*0.1;
 
 
 
@@ -92,9 +94,9 @@ public class Path {
     public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
         posetypes.add(Posetype.SETPOINT);
-        xControl.setCoeffecients(ks[0], ds[0]/2, is[0]);
-        yControl.setCoeffecients(ks[1], ds[1]/2, is[1]);
-        hControl.setCoeffecients(ks[2], ds[2]/2, is[2]);
+        xControl.setCoeffecients(ks[0], ds[0], is[0]);
+        yControl.setCoeffecients(ks[1], ds[1], is[1]);
+        hControl.setCoeffecients(ks[2], ds[2], is[2]);
         timer.reset();
     }
 
@@ -171,9 +173,19 @@ public class Path {
         stops.add(time);
     }
 
-    public void addRF(CodeSeg seg){
-        rfs.add(seg);
+    public void addRF(CodeSeg... segs){
+        rfs.add(combineSegs(segs));
         isRf.add(true);
+    }
+    public CodeSeg combineSegs(final CodeSeg[] segs){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                for(CodeSeg seg:segs) {
+                    seg.run();
+                }
+            }
+        };
     }
 
     public void startRFThread(LinearOpMode op){
@@ -183,6 +195,7 @@ public class Path {
                 if(rfsIndex < rfs.size()) {
                     if (isRf.get(rfsIndex)) {
                         rfs.get(rfsIndex).run();
+                        isDoneWithRfs = true;
                         rfsIndex++;
                     }
                 }
@@ -196,9 +209,19 @@ public class Path {
     public void next(){
         resetIs();
         timer.reset();
+        timer3.reset();
         lastTime = 0;
         curIndex++;
-        rfsIndex++;
+        if(rfsIndex < (rfs.size()-1)) {
+            if (isRf.get(rfsIndex + 1)) {
+                if (isDoneWithRfs) {
+                    rfsIndex++;
+                    isDoneWithRfs = false;
+                }
+            } else {
+                rfsIndex++;
+            }
+        }
         if(curIndex >= lines.size()){
             isExecuting = false;
             curIndex--;
@@ -246,12 +269,13 @@ public class Path {
         double changeT = timer.seconds() - lastTime;
         lastTime = timer.seconds();
 
+
         if(timer.seconds() > derWait) {
             xder = (xerr - lxerr) / changeT;
             yder = (yerr - lyerr) / changeT;
             hder = (herr - lherr) / changeT;
         }else {
-            xder = (timer.seconds()/derWait) * (xerr - lxerr) / changeT;
+            xder = (timer.seconds() / derWait) * (xerr - lxerr) / changeT;
             yder =  (timer.seconds()/derWait) * (yerr - lyerr) / changeT;
             hder = (timer.seconds() / derWait) * (herr - lherr) / changeT;
         }
@@ -261,31 +285,35 @@ public class Path {
 
         if(isSet) {
             if (Math.abs(herr) < 10) {
-                if(hint < maxIT) {
-                    hint += 3*herr * changeT;
+                if(Math.abs(hint) < maxIT) {
+                    hint +=  Math.abs(herr) * changeT;
                 }
-                hder = 0;
             }
             if (Math.abs(xerr) < 5) {
-                if(xint < maxIX) {
-                    xint += xerr * changeT;
+                if(Math.abs(xint) < maxIX) {
+                    xint += Math.abs(xerr) * changeT;
                 }
-                xder = 0;
             }
             if (Math.abs(yerr) < 5) {
-                if(yint < maxIY) {
-                    yint += yerr * changeT;
+                if(Math.abs(yint) < maxIY) {
+                    yint += Math.abs(yerr) * changeT;
                 }
-                yder = 0;
             }
-            hder = 0;
-            xder = 0;
-            yder = 0;
+            if(Math.abs(herr) > HAcc) {
+                if (Math.abs(hder) < 1) {
+                    if(timer3.seconds() > 0.5) {
+                        restPowT = 0.5;
+                    }
+                } else {
+                    restPowT = 0.2;
+                    timer3.reset();
+                }
+            }
         }else{
             hint = 0;
             xint = 0;
             yint = 0;
-            hder = 0;
+//            hder = 0;
             xder = 0;
             yder = 0;
             scaleKs(1);
@@ -395,9 +423,10 @@ public class Path {
 //            op.telemetry.addData("y", bot.odometry.getY());
 //            op.telemetry.addData("herr", herr);
 //            op.telemetry.addData("y", yint);
-            op.telemetry.addData("stopIndex", stopIndex);
-            op.telemetry.addData("timer.seconds()", timer.seconds());
-            op.telemetry.addData("current index", curIndex);
+//            op.telemetry.addData("stopIndex", stopIndex);
+//            op.telemetry.addData("timer.seconds()", timer.seconds());
+//            op.telemetry.addData("current index", curIndex);
+            op.telemetry.addData("hder", hder);
             op.telemetry.update();
         }
         bot.move(0,0,0);

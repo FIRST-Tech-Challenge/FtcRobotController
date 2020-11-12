@@ -59,7 +59,7 @@ public class TerraBot {
     public double turnStart = 0.25;
     public double grabStart = 0.7;
     public double liftStart = 0.12;
-    public double liftSecond = 0.27;
+    public double liftSecond = 0.275;
     public double shootStartR = 0.13;
     public double shootStartL = 0.1;
     public double intakeSpeed = 1;

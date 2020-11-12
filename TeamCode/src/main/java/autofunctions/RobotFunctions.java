@@ -32,7 +32,7 @@ public class RobotFunctions {
         bot = t;
         op = o;
         initIMs();
-        terraCV.init(o,true);
+        terraCV.init(o,false);
     }
 
     public void generateRandomIM(){
@@ -109,11 +109,9 @@ public class RobotFunctions {
         while (!op.isStarted() && !op.isStopRequested()) {
             terraCV.takePictureBeforeInit();
             Rect cropped = new Rect(0, 0, 1280, 720).crop(610,450,490,100);
-            //Rect cropped = new Rect(0, 0, 1280, 720);
-            //terraCV.accuracy = 7;
             TerraCV.RingNum num = terraCV.getRingNum(cropped);
             if(num != null) {
-                //telemetryText(num.toString());
+                telemetryText(num.toString());
                 ringnum = num;
             }
         }
