@@ -21,8 +21,12 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 1;
-    public static final double MAX_RPM = 1;
+    //public static final double TICKS_PER_REV = 1;
+    //public static final double MAX_RPM = 1;
+
+    //TestRobot Calibration Parameters
+    public static final double TICKS_PER_REV = 537.6;
+    public static final double MAX_RPM = 312;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -33,7 +37,9 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    // public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    //TestRobot Calibration Parameters
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(11, 0, 0.5, 13.134);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -43,9 +49,17 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 2; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 1; // in
+    //public static double WHEEL_RADIUS = 2; // in
+    //public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
+    //public static double TRACK_WIDTH = 1; // in
+
+    //TestRobot Calibration Parameters
+    public static double WHEEL_RADIUS = 1.9685; // in
+    //EDIT THIS FOR STRAIGHT TEST
+    public static double GEAR_RATIO = 0.5 *55.5/60.0; // output (wheel) speed / input (motor) speed
+    //EDIT THIS FOR TRACK WIDTH TUNER TEST
+    public static double TRACK_WIDTH = 8.9;//9.4; // in
+
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -65,10 +79,38 @@ public class DriveConstants {
      * acceleration values are required, and the jerk values are optional (setting a jerk of 0.0
      * forces acceleration-limited profiling). All distance units are inches.
      */
-    public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
+
+    /*
+     * Note from LearnRoadRunner.com:
+     * The velocity and acceleration constraints were calculated based on the following equation:
+     * ((MAX_RPM / 60) * GEAR_RATIO * WHEEL_RADIUS * 2 * Math.PI) * 0.85
+     * Resulting in 27.334275112574463 in/s.
+     * This is only 85% of the theoretical maximum velocity of the bot, following the recommendation above.
+     * This is capped at 85% because there are a number of variables that will prevent your bot from actually
+     * reaching this maximum velocity: voltage dropping over the game, bot weight, general mechanical inefficiences, etc.
+     * However, you can push this higher yourself if you'd like. Perhaps raise it to 90-95% of the theoretically
+     * max velocity. The theoreticaly maximum velocity is 32.15797072067584 in/s.
+     * Just make sure that your bot can actually reach this maximum velocity. Path following will be detrimentally
+     * affected if it is aiming for a velocity not actually possible.
+     *
+     * The maximum acceleration is somewhat arbitrary and it is recommended that you tweak this yourself based on
+     * actual testing. Just set it at a reasonable value and keep increasing until your path following starts
+     * to degrade. As of now, it simply mirrors the velocity results in 27.334275112574463 in/s/s
+     *
+     * Maximum Angular Velocity is calculated as: maximum velocity / (trackWidth / 2) * (180 / Math.PI)
+
+     */
+
+    /*public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
             30.0, 30.0, 0.0,
             Math.toRadians(180.0), Math.toRadians(180.0), 0.0
+    );*/
+    //TestRobot Calibration Parameters
+    public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
+            27.334275112574463, 27.334275112574463, 0.0,
+            Math.toRadians(333.22097872340424), Math.toRadians(333.22097872340424), 0.0
     );
+
 
 
     public static double encoderTicksToInches(double ticks) {

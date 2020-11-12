@@ -12,7 +12,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * This is a simple routine to test translational drive capabilities.
  */
 @Config
-@Autonomous(group = "drive")
+//@Autonomous(group = "drive")
+@Autonomous(name = "Calib:RR-StraightTest", group = "Calibration")
 public class StraightTest extends LinearOpMode {
     public static double DISTANCE = 60; // in
 
