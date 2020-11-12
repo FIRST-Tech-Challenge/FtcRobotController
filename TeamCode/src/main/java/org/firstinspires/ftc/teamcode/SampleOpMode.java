@@ -13,10 +13,9 @@ public class SampleOpMode extends LinearOpMode {
 
     private DcMotor testMotor;
     private Servo testServo;
-    private double max = 0.01; // Maximum rotational position
-    private double min = 0.99; // Minimum rotational position
-    private String currentPos = "min";
-    private boolean servoButtonIsDown = false;
+    private double max = 0.00; // Maximum rotational position
+    private double min = 1.00; // Minimum rotational position
+    private double currentPos = 0.00;
 
     @Override
     public void runOpMode() {
@@ -32,31 +31,33 @@ public class SampleOpMode extends LinearOpMode {
         while (opModeIsActive()) {
             //gamepad 1
             //motor..........left stick up and down
-            //servo..........a button
+            //servo..........right stick up
 
             // gamepad 1
             testMotor.setPower( gamepad1.left_stick_y );
 
-            if (gamepad1.a && !servoButtonIsDown) { //make sure the switch triggers only once per button press
-                servoButtonIsDown = true;
-                if(currentPos == "min") { //toggle between the two positions of the servo
-                    currentPos = "max";
-                } else if(currentPos == "max") {
-                    currentPos = "min";
-                }
-            } else if (!gamepad1.a) {
-                servoButtonIsDown = false;
+            /*
+            when stick is not at zero, it moves the servo. pressing A will set the current pos
+            to the new max and pressing B will set the min. when stick is at zero, then pressing A
+            or B will set the servo to the max or min position
+            */
+
+            if (gamepad1.right_stick_y != 0) { //if stick is being moved
+                currentPos = Math.abs(gamepad1.right_stick_y);
+                if (gamepad1.a) { max = currentPos; }
+                if (gamepad1.b) { min = currentPos; }
+            } else { //if stick is untouched
+                if (gamepad1.a) { currentPos = max; }
+                if (gamepad1.b) { currentPos = min; }
             }
 
-            if(currentPos == "min") {
-                testServo.setPosition(min);
-            } else if(currentPos == "max") {
-                testServo.setPosition(max);
-            }
+            testServo.setPosition(currentPos);
 
-            telemetry.addData("Status", "Run Time: ");
             telemetry.addData("Motor Power", gamepad1.left_stick_y);
+            telemetry.addData("Right Stick Pos", gamepad1.right_stick_y);
             telemetry.addData("Servo Position", currentPos);
+            telemetry.addData("Servo Max", max);
+            telemetry.addData("Servo Min", min);
             telemetry.update();
 
         }
