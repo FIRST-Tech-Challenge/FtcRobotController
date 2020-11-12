@@ -20,10 +20,10 @@ public class Odometry implements GivesPosition {
     volatile boolean running = false;
 
     // settings
-    List<OdometryWheel> wheels;
+    protected List<OdometryWheel> wheels;
     double xCenterOfRotation = 0;
     double yCenterOfRotation = 0;
-    volatile pose position;
+    protected volatile pose position;
 
     public void start(){
         running = true;
@@ -39,11 +39,14 @@ public class Odometry implements GivesPosition {
 
     private final Thread loop = new Thread(() -> {
         while(running){
-            wheels.forEach(OdometryWheel::updateDelta);
-            position.translateRelative(curvedTrajectoryTranslation(getDeltaPose()));
-            Timing.delay(1);
+            loop();
         }
     });
+
+    protected void loop(){
+        wheels.forEach(OdometryWheel::updateDelta);
+        position.translateRelative(curvedTrajectoryTranslation(getDeltaPose()));
+    }
 
     public Odometry(pose initial, List<OdometryWheel> wheels){
         this.position = initial; this.wheels = wheels;
