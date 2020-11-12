@@ -32,11 +32,13 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.imu;
 
+import androidx.annotation.NonNull;
+
 import static org.firstinspires.ftc.robotcore.external.navigation.NavUtil.meanIntegrate;
 import static org.firstinspires.ftc.robotcore.external.navigation.NavUtil.plus;
 
-import androidx.annotation.NonNull;
-import org.jetbrains.annotations.Nullable;
+
+
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -45,12 +47,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-/**
- * {@link RealNaiveAccelerationIntegrator} provides a very naive implementation of
- * an acceleration integration algorithm. It just does the basic physics.
- * One you would actually want to use in a robot would, for example, likely
- * filter noise out the acceleration data or more sophisticated processing.
- */
 public class RealNaiveAccelerationIntegrator implements BNO055IMU.AccelerationIntegrator
 {
     //------------------------------------------------------------------------------------------
@@ -82,7 +78,7 @@ public class RealNaiveAccelerationIntegrator implements BNO055IMU.AccelerationIn
     // Operations
     //------------------------------------------------------------------------------------------
 
-    @Override public void initialize(@NonNull BNO055IMU.Parameters parameters, @Nullable Position initialPosition, @Nullable Velocity initialVelocity)
+    @Override public void initialize(@NonNull BNO055IMU.Parameters parameters,  Position initialPosition, Velocity initialVelocity)
     {
         this.parameters = parameters;
         this.position = initialPosition != null ? initialPosition : this.position;
