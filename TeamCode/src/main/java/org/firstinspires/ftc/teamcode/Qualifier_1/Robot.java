@@ -1,3 +1,11 @@
+/**
+ * Aamod, i appoint you the owner of this file.
+ *
+ * @author: Aamod
+ * @version: 1.0
+ * @status: work in progress
+ */
+
 package org.firstinspires.ftc.teamcode.Qualifier_1;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -40,7 +48,6 @@ public class Robot {
     private WobbleGoal wobbleGoal = null;
     private VuforiaWebcam vuforiaWebcam = null;
 
-//    private VuforiaWebcam vuforiaWebcam = null;
     private double vuforiaX = 0;
     private double vuforiaY = 0;
     private double vuforiaAngle = 0;
@@ -302,7 +309,8 @@ public class Robot {
         drivetrain.moveForwardOdometry(distance,power);
     }
 
-    public void moveSideOdometry(double distance, double power) {//right is positive use distance to change direction
+    public void moveSideOdometry(double distance, double power) {
+        //right is positive use distance to change direction
         drivetrain.moveSideOdometry(distance,power);
     }
 
@@ -335,17 +343,14 @@ public class Robot {
      * wobble goal methods
      */
     public void moveWobbleGoalClockwise(){
-
         this.wobbleGoal.clockwise();
     }
 
     public void moveWobbleGoalCounterClockwise(){
-
         wobbleGoal.counterClockwise();
     }
 
     public void stopWobbleGoal(){
-
         wobbleGoal.stop();
     }
 
