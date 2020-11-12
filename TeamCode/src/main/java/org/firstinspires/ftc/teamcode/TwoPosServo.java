@@ -14,17 +14,17 @@ public class TwoPosServo extends LinearOpMode {
 
     private String currentPos = "min";
 
-    public Gearbox (Servo s, double mininput, double maxinput,) {
+    public TwoPosServo (Servo s, double mininput, double maxinput) {
         servo = s;
         max = maxinput;
         min = mininput;
     }
 
     public void minPos() {
-        left.setPosition(lmin);
+        servo.setPosition(min);
     }
     public void maxPos() {
-        left.setPosition(lmax);
+        servo.setPosition(max);
     }
 
     public void nextPos() {
