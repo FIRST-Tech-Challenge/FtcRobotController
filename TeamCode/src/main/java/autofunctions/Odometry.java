@@ -121,4 +121,15 @@ public class Odometry {
         return new double[]{getX(), getY(), getTheta()};
     }
 
+    public double getYVel(){
+        return forcor;
+    }
+    public double getXVel(){
+        return strcor;
+    }
+    public double getTVel(){
+        return deltaTheta;
+    }
+    public double[] getVels(){return new double[]{getXVel(), getYVel(), getTVel()};}
+
 }

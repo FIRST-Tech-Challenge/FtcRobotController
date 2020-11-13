@@ -26,7 +26,7 @@ public class Path {
     ElapsedTime timer2 = new ElapsedTime();
     ElapsedTime timer3 = new ElapsedTime();
 
-    public double lastTime = 0;
+    public double lastTime = -0.1;
 
     public double xerr = 0;
     public double yerr = 0;
@@ -70,19 +70,18 @@ public class Path {
     public boolean isExecuting = true;
     public boolean isDoneWithRfs = false;
 
-    final public double[] ks = {0.04,0.03,0.008};
-    final public double[] ds = {0.005, 0.004, 0.001};
+    final public double[] ks = {0.04,0.03,0.01};
+    final public double[] ds = {0.00015,0.00015,0.0};
     final public double[] is = {0.01,0.01,0.005};
     final public double XAcc = 1;
     final public double YAcc = 1;
     final public double HAcc = 2;
     final public double endWait = 0.2;
-    final public double derWait = 0.5;
-    final public double restPowX = 0.1;
-    final public double restPowY = 0.05;
-    public double restPowT = 0.2;
-    final public double maxIX = 100*0.05;
-    final public double maxIY = 100*0.05;
+    public double restPowX = 0.1;
+    public double restPowY = 0.05;
+    public double restPowT = 0.3;
+    final public double maxIX = 100*0.1;
+    final public double maxIY = 100*0.1;
     final public double maxIT = 200*0.1;
 
 
@@ -112,6 +111,11 @@ public class Path {
         xControl.setCoeffecients(ks[0]*scale, ds[0], is[0]);
         yControl.setCoeffecients(ks[1]*scale, ds[1], is[1]);
         hControl.setCoeffecients(ks[2]*scale, ds[2], is[2]);
+    }
+    public void scaleDs(double scale){
+        xControl.setCoeffecients(ks[0], ds[0]*scale, is[0]);
+        yControl.setCoeffecients(ks[1], ds[1]*scale, is[1]);
+        hControl.setCoeffecients(ks[2], ds[2]*scale, is[2]);
     }
 
     public void resetIs(){
@@ -210,7 +214,7 @@ public class Path {
         resetIs();
         timer.reset();
         timer3.reset();
-        lastTime = 0;
+        lastTime = -0.1;
         curIndex++;
         if(rfsIndex < (rfs.size()-1)) {
             if (isRf.get(rfsIndex + 1)) {
@@ -265,78 +269,73 @@ public class Path {
         return targetPos;
     }
 
-    public void updateDIs(boolean isSet){
-        double changeT = timer.seconds() - lastTime;
-        lastTime = timer.seconds();
+    public void updateDIs(double[] currentVels, boolean isSet){
 
+        xder = currentVels[0];
+        yder = currentVels[1];
+        hder = currentVels[2];
 
-        if(timer.seconds() > derWait) {
-            xder = (xerr - lxerr) / changeT;
-            yder = (yerr - lyerr) / changeT;
-            hder = (herr - lherr) / changeT;
-        }else {
-            xder = (timer.seconds() / derWait) * (xerr - lxerr) / changeT;
-            yder =  (timer.seconds()/derWait) * (yerr - lyerr) / changeT;
-            hder = (timer.seconds() / derWait) * (herr - lherr) / changeT;
-        }
-        lxerr = xerr;
-        lyerr = yerr;
-        lherr = herr;
 
         if(isSet) {
-            if (Math.abs(herr) < 10) {
-                if(Math.abs(hint) < maxIT) {
-                    hint +=  Math.abs(herr) * changeT;
-                }
-            }
-            if (Math.abs(xerr) < 5) {
-                if(Math.abs(xint) < maxIX) {
-                    xint += Math.abs(xerr) * changeT;
-                }
-            }
-            if (Math.abs(yerr) < 5) {
-                if(Math.abs(yint) < maxIY) {
-                    yint += Math.abs(yerr) * changeT;
-                }
-            }
-            if(Math.abs(herr) > HAcc) {
-                if (Math.abs(hder) < 1) {
-                    if(timer3.seconds() > 0.5) {
-                        restPowT = 0.5;
+//            if (Math.abs(herr) < 10) {
+//                if(Math.abs(hint) < maxIT) {
+//                    hint +=  Math.abs(herr) * changeT;
+//                }
+//            }
+//            if (Math.abs(xerr) < 5) {
+//                if(Math.abs(xint) < maxIX) {
+//                    xint += Math.abs(xerr) * changeT;
+//                }
+//            }
+//            if (Math.abs(yerr) < 5) {
+//                if(Math.abs(yint) < maxIY) {
+//                    yint += Math.abs(yerr) * changeT;
+//                }
+//            }
+            if(Math.abs(herr) > HAcc || Math.abs(xerr) > XAcc || Math.abs(yerr)>YAcc) {
+                if (Math.abs(hder) < 1 && Math.abs(xder) < 30 && Math.abs(yder) < 30) {
+                    if(timer3.seconds() > 0.2) {
+                        restPowT = 0.8;
+                        restPowX = 0.3;
+                        restPowY = 0.3;
                     }
                 } else {
                     restPowT = 0.2;
+                    restPowX = 0.1;
+                    restPowY = 0.05;
                     timer3.reset();
                 }
             }
-        }else{
             hint = 0;
             xint = 0;
             yint = 0;
-//            hder = 0;
-            xder = 0;
-            yder = 0;
-            scaleKs(1);
+            scaleDs(1);
+        }else{
+            scaleDs(0.1);
+            hint = 0;
+            xint = 0;
+            yint = 0;
+            //scaleKs(1);
         }
     }
 
-    public double[] update(double[] currentPos){
+    public double[] update(double[] currentPos, double[] currentVels){
         if(posetypes.get(curIndex+1).equals(Posetype.WAYPOINT)) {
             double[] target = getTargetPos(currentPos);
             xerr = currentPos[0] - target[0];
             yerr = currentPos[1] - target[1];
             herr = currentPos[2] - poses.get(curIndex + 1)[2];
-            updateDIs(false);
+            updateDIs(currentVels, false);
             updateRadius(lines.get(curIndex).getDis());
-            return calcPows(currentPos, false);
+            return calcPows(currentPos,currentVels, false);
         }else if(posetypes.get(curIndex+1).equals(Posetype.SETPOINT)){
             double[] target = poses.get(curIndex+1);
             xerr = currentPos[0] - target[0];
             yerr = currentPos[1] - target[1];
             herr = currentPos[2] - target[2];
-            updateDIs(true);
+            updateDIs(currentVels, true);
             hasReachedSetpoint();
-            return calcPows(currentPos, true);
+            return calcPows(currentPos,currentVels, true);
         }else{
             if(timer.seconds() > stops.get(stopIndex)){
                 next();
@@ -359,7 +358,7 @@ public class Path {
         }
     }
 
-    public double[] calcPows(double[] currentPos, boolean isSet){
+    public double[] calcPows(double[] currentPos,double[] currentVels, boolean isSet){
         double robotTheta = currentPos[2];
 
         Vector mv = new Vector(xerr, yerr);
@@ -371,9 +370,13 @@ public class Path {
 
         double[] out = new double[3];
 
-        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, dv.x, iv.x);
-        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, dv.y, iv.y);
-        out[2] = -Math.signum(herr) * hControl.getPower(herr, hder, hint);
+        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, currentVels[0], iv.x);
+        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, currentVels[1], iv.y);
+        out[2] = -Math.signum(herr) * hControl.getPower(herr, currentVels[2], hint);
+
+//        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, dv.x, iv.x);
+//        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, dv.y, iv.y);
+//        out[2] = -Math.signum(herr) * hControl.getPower(herr, hder, hint);
 
         out[0] = Range.clip(out[0], -1, 1);
         out[1] = Range.clip(out[1], -1, 1);
@@ -406,7 +409,7 @@ public class Path {
         timer.reset();
         startRFThread(op);
         while (op.opModeIsActive() && isExecuting){
-            double[] pows = update(bot.odometry.getPos());
+            double[] pows = update(bot.odometry.getPos(), bot.odometry.getVels());
             bot.move(pows[1], pows[0], pows[2]);
 //            op.telemetry.addData("xpow",  pows[0]);
 //            op.telemetry.addData("ypow",  pows[1]);
@@ -426,6 +429,9 @@ public class Path {
 //            op.telemetry.addData("stopIndex", stopIndex);
 //            op.telemetry.addData("timer.seconds()", timer.seconds());
 //            op.telemetry.addData("current index", curIndex);
+            op.telemetry.addData("yvel", bot.odometry.getYVel());
+            op.telemetry.addData("xvel", bot.odometry.getXVel());
+            op.telemetry.addData("tvel", bot.odometry.getTVel());
             op.telemetry.addData("hder", hder);
             op.telemetry.update();
         }

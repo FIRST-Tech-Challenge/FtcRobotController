@@ -271,6 +271,7 @@ public class TerraBot {
             shooter.addStage(ssr, shootControlR.getPos(3), 0.01);
             shooter.addStage(ssl, shootControlL.getPos(3), 0.4);
         }
+        shooter.addDelay(1);
     }
     public void defineWobbleGoal(){
 //        wobbleGoal.addStage(ssr, shootControlR.getPos(0), 0.01);

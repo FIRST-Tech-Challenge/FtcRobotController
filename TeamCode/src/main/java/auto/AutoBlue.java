@@ -20,7 +20,7 @@ public class AutoBlue extends LinearOpMode {
     RobotFunctions rf = new RobotFunctions();
     Path path = new Path(0,0,0);
 
-    final double shootSpeed = 0.42;
+    final double shootSpeed = 0.4;
 
     @Override
     public void runOpMode() {
@@ -49,35 +49,37 @@ public class AutoBlue extends LinearOpMode {
         }else if(rf.ringnum.equals(RingNum.ONE)){
             path.addSetpoint(0,40,-180);
             dropWobble();
-            path.addWaypoint(25, -40, 180);
+            path.addWaypoint(30, -40, 180);
         }else if(rf.ringnum.equals(RingNum.FOUR)){
             path.addSetpoint(-15,120,-115);
             dropWobble();
-            path.addWaypoint(40, -120, 115);
+            path.addWaypoint(45, -125, 115);
         }
         path.addSetpoint(3,-35,0);
         path.addSetpoint(-8,-15,0);
         path.addRF(rf.grab(1));
         path.addStop(1);
-        path.addRF(rf.wobbleArm(160, 1));
+        path.addRF(rf.wobbleArm(100, 1));
         path.addStop(1);
         path.addWaypoint(5, 50, 0);
-        path.addWaypoint(-25, 0, 0);
+        path.addWaypoint(-25, 0, -90);
 
         if(rf.ringnum.equals(RingNum.ZERO)) {
-            path.addSetpoint(-15,15,-115);
+            path.addSetpoint(-15,15,-25);
             dropWobble();
+            path.addWaypoint(20,50,0);
         }else if(rf.ringnum.equals(RingNum.ONE)){
-            path.addSetpoint(0,40,-180);
+            path.addSetpoint(0,40,-90);
             dropWobble();
+            path.addWaypoint(0,20,0);
         }else if(rf.ringnum.equals(RingNum.FOUR)){
-            path.addSetpoint(-15,120,-115);
+            path.addSetpoint(-15,120,-25);
             dropWobble();
+            path.addWaypoint(0,-70,0);
         }
 
-
-//        path.addRF(rf.wobbleArm(10,1), rf.turnArm(0.25));
-//        path.addStop(2);
+        path.addRF(rf.wobbleArm(10,1), rf.turnArm(0.25));
+        path.addStop(2);
 
 
         path.start(bot, this);
@@ -93,6 +95,7 @@ public class AutoBlue extends LinearOpMode {
         path.addRF(rf.turnArm(0.68), rf.wobbleArm(180,1));
         path.addStop(1.5);
         path.addRF(rf.grab(0));
+        path.addStop(0.5);
         path.addWaypoint(15,-15,0);
         path.addRF(rf.wobbleArm(190,1));
     }
