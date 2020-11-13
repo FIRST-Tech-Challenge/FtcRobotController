@@ -79,6 +79,7 @@ public class OdoBase extends LinearOpMode {
         }
         catch (Exception ex){
             telemetry.addData("Error", "Run selected route. %s", ex.getMessage());
+            telemetry.update();
         }
     }
 
@@ -298,6 +299,7 @@ public class OdoBase extends LinearOpMode {
 
     protected void addNamedCoordinate(AutoDot dot){
         this.coordinateFunctions.put(dot.getDotName(), dot);
+        this.bot.addNamedCoordinate(dot);
     }
 
     protected File getRouteFile(String filename)

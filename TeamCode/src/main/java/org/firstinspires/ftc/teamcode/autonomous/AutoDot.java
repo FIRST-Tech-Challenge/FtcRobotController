@@ -9,16 +9,26 @@ import java.io.Serializable;
 
 
 public class AutoDot implements Serializable {
-    //Character.toString ((char) i);
-//    char character = 'a';
-//    int ascii = (int) character;
     public static int asciiA = 65;
     public static int asciiZ = 90;
     private String dotName = "A";
+    private String fieldSide = AutoRoute.NAME_RED;
     private boolean selected;
     private int x;
     private int y;
     private double heading = BotMoveProfile.DEFAULT_HEADING;
+
+    public AutoDot(){
+
+    }
+
+    public AutoDot(String name, int x, int y, double heading, String side){
+        this.setDotName(name);
+        this.setX(x);
+        this.setY(y);
+        this.setHeading(heading);
+        this.setFieldSide(side);
+    }
 
 
     public String serialize() {
@@ -75,5 +85,17 @@ public class AutoDot implements Serializable {
 
     public void setHeading(double heading) {
         this.heading = heading;
+    }
+
+    public String getFieldSide() {
+        return fieldSide;
+    }
+
+    public void setFieldSide(String fieldSide) {
+        this.fieldSide = fieldSide;
+    }
+
+    public String getFileName(){
+        return String.format("%s_%s.json", getDotName(), getFieldSide());
     }
 }

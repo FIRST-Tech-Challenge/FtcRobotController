@@ -339,7 +339,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Detect Stack Init", defaultReturn = "B")
     public void initDetector() {
         rf = new RingDetector(this.hwMap, this.getLights(), telemetry);
-
+        rf.setNamedCoordinates(this.namedCoordinates);
     }
 
     @BotAction(displayName = "Detect Stack", defaultReturn = "B")

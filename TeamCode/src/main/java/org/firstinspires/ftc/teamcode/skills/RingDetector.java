@@ -28,6 +28,12 @@ public class RingDetector {
     private static final String LABEL_C = "Quad";
     private String targetZone = LABEL_C;
 
+    private ArrayList<AutoDot> namedCoordinates = new ArrayList<>();
+
+    private static AutoDot zoneA = new AutoDot("A", 75, 75, -1, AutoRoute.NAME_RED);
+    private static AutoDot zoneB = new AutoDot("B", 62, 105, -1, AutoRoute.NAME_RED);
+    private static AutoDot zoneC = new AutoDot("C", 75, 120, -1, AutoRoute.NAME_RED);
+
     public RingDetector(HardwareMap hMap, Led led, Telemetry t) {
         hardwareMap = hMap;
         telemetry = t;
@@ -36,73 +42,76 @@ public class RingDetector {
         activateDetector();
     }
 
+    protected void configZones(String side){
+        if (this.namedCoordinates.size() > 0){
+            for(AutoDot d : namedCoordinates){
+                if (d.getFieldSide().equals(side)){
+                    if (d.getDotName().equals("A")){
+                        zoneA = d;
+                    }
+                    else if (d.getDotName().equals("B")){
+                        zoneB = d;
+                    }
+                    else if (d.getDotName().equals("C")){
+                        zoneC = d;
+                    }
+                }
+            }
+        }
+        else if (side.equals(AutoRoute.NAME_BLUE)){
+            zoneA.setX(30);
+            zoneA.setX(12);
+
+            zoneB.setX(30);
+            zoneB.setX(12);
+
+            zoneC.setX(30);
+            zoneC.setX(12);
+        }
+    }
+
     public AutoDot detectRing(int timeout, String side, Telemetry telemetry, LinearOpMode caller) {
-        AutoDot zone = new AutoDot();
-        zone.setX(62);
-        zone.setY(100);
-        zone.setHeading(-1);
+        configZones(side);
+        AutoDot zone = zoneB;
         boolean found = false;
         boolean stop = false;
 
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        while (!stop && caller.opModeIsActive()) {
+        boolean fromConfig = this.namedCoordinates.size() > 0;
+        while (caller.opModeIsActive() && runtime.seconds() <= timeout) {
+            telemetry.addData("this.namedCoordinates.size() > 0", fromConfig);
             if (tfDetector != null) {
                 List<Classifier.Recognition> results = tfDetector.getLastResults();
                 if (results == null || results.size() == 0) {
-                    telemetry.addData("Info", "No results");
+                    telemetry.addData("Nada", "No results");
                 } else {
                     for (Classifier.Recognition r : results) {
                         if (r.getConfidence() >= 0.8) {
                             telemetry.addData("PrintZone", r.getTitle());
                             if (r.getTitle().contains(LABEL_C)) {
-                                if (side.equals(AutoRoute.NAME_RED)) {
-                                    zone.setX(75);
-                                    zone.setY(120);
-                                    zone.setHeading(-1);
-                                } else {
-                                    zone.setX(30);
-                                    zone.setY(12);
-                                    zone.setHeading(-1);
-                                }
+                                zone = zoneC;
                                 found = true;
-                                targetZone = LABEL_C;
                                 this.lights.recognitionSignal(4);
                             }
-                            if(r.getTitle().contains(LABEL_B)){
-                                if(side.equals(AutoRoute.NAME_RED)) {
-                                    zone.setX(62);
-                                    zone.setY(100);
-                                    zone.setHeading(-1);
-                                } else {
-                                    zone.setX(30);
-                                    zone.setY(12);
-                                    zone.setHeading(-1);
-                                }
+                            else if(r.getTitle().contains(LABEL_B)){
+                                zone = zoneB;
                                 found = true;
-                                targetZone = LABEL_B;
                                 this.lights.recognitionSignal(1);
                             }
-                            if(r.getTitle().contains(LABEL_A)){
-                                if(side.equals(AutoRoute.NAME_RED)) {
-                                    zone.setX(75);
-                                    zone.setY(75);
-                                    zone.setHeading(-1);
-                                } else {
-                                    zone.setX(30);
-                                    zone.setY(12);
-                                    zone.setHeading(-1);
-                                }
+                            else if(r.getTitle().contains(LABEL_A)){
+                                zone = zoneA;
                                 found = true;
-                                targetZone = LABEL_A;
                                 this.lights.recognitionSignal(0);
                             }
+                            targetZone = zone.getDotName();
+                            telemetry.addData("Zone", targetZone);
                         }
                     }
                 }
-                telemetry.update();
             }
-            stop = found || runtime.seconds() >= timeout;
+            stop = found; //|| runtime.seconds() >= timeout;
+            telemetry.update();
         }
 
         return zone;
@@ -127,5 +136,9 @@ public class RingDetector {
         if (tfDetector != null) {
             tfDetector.stopProcessing();
         }
+    }
+
+    public void setNamedCoordinates(ArrayList<AutoDot> namedCoordinates) {
+        this.namedCoordinates = namedCoordinates;
     }
 }

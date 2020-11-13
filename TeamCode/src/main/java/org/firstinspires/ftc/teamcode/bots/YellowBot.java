@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.calibration.BotCalibConfig;
 import org.firstinspires.ftc.teamcode.calibration.DiagCalibConfig;
 import org.firstinspires.ftc.teamcode.calibration.MotorReductionBot;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.teamcode.skills.Led;
 //import org.openftc.revextensions2.ExpansionHubMotor;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class YellowBot implements OdoBot {
@@ -59,6 +61,8 @@ public class YellowBot implements OdoBot {
     public static String RIGHT_FRONT = "frontRight";
     public static String LEFT_BACK = "backLeft";
     public static String RIGHT_BACK = "backRight";
+
+    protected ArrayList<AutoDot> namedCoordinates = new ArrayList<>();
 
 
     public YellowBot() {
@@ -1415,6 +1419,10 @@ public class YellowBot implements OdoBot {
             led.init(hwMap, telemetry);
         }
         return led;
+    }
+
+    public void addNamedCoordinate(AutoDot dot){
+        this.namedCoordinates.add(dot);
     }
 
 }

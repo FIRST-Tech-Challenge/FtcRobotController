@@ -1009,8 +1009,7 @@ public class MasterOdo extends OdoBase {
 
     private void saveCoordinate(){
         try {
-            String name = newDot.getDotName();
-            File configFile = getCoordinateFile(name);
+            File configFile = getCoordinateFile(newDot.getFileName());
 
             newDot.setX((int) locator.getXInches());
             newDot.setY((int) locator.getYInches());

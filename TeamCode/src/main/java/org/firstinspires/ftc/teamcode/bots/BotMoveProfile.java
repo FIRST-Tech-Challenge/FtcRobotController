@@ -203,6 +203,10 @@ public class BotMoveProfile {
     }
 
     public static BotMoveProfile bestRoute(OdoBot bot, double currentX, double currentY, Point target, RobotDirection direction, double topSpeed, MoveStrategy preferredStrategy, double desiredHead, RobotCoordinatePosition locator){
+        if (topSpeed == 0){
+            return null;
+        }
+
         double currentHead = locator.getAdjustedCurrentHeading();
 
         if (direction == RobotDirection.Backward) {
