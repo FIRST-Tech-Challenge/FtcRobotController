@@ -74,10 +74,10 @@ public class Mecanum {
 
 
 
-        frontLeft.setVelocity(  (int)(maxTicksPerSec * (ySpeed + xSpeed + turnSpeed)));
-        frontRight.setVelocity( (int)(maxTicksPerSec * (ySpeed - xSpeed - turnSpeed)));
-        backLeft.setVelocity(   (int)(maxTicksPerSec * (ySpeed - xSpeed + turnSpeed)));
-        backRight.setVelocity(  (int)(maxTicksPerSec * (ySpeed + xSpeed - turnSpeed)));
+        frontLeft.setVelocity(  (int)(maxTicksPerSec * (-ySpeed - xSpeed + turnSpeed)));
+        frontRight.setVelocity( (int)(maxTicksPerSec * (-ySpeed + xSpeed - turnSpeed)));
+        backLeft.setVelocity(   (int)(maxTicksPerSec * (-ySpeed + xSpeed + turnSpeed)));
+        backRight.setVelocity(  (int)(maxTicksPerSec * (-ySpeed - xSpeed - turnSpeed)));
 
 //        //for debugging
 //        frontLeftSpeed = frontLeft.getVelocity();

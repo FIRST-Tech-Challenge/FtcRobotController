@@ -104,7 +104,7 @@ public class ShooterOnly extends OpMode
      */
     @Override
     public void stop() {
-        telemetry.addData("Status", "done! Great job!");
+
     }
 
 }

@@ -15,8 +15,11 @@ import org.firstinspires.ftc.teamcode.utility.pose;
 import org.firstinspires.ftc.teamcode.vuforia.VuMarkNav;
 
 public class Follower {
-    double closeEnoughDistance = 10;
+    double closeEnoughDistance = Math.PI/5;
+    double closeEnoughAngle = 30;
     public PathPoint targetPose;
+    volatile boolean running = true;
+
     /**
      * Follows the pathFile found in local directory
      * @param drivetrain a mecanum drivetrain
@@ -31,34 +34,71 @@ public class Follower {
      * @param odometry an activated, running odometry to be used for positioning
      */
     public Follower(Mecanum drivetrain, GivesPosition odometry, String pathFile, Telemetry telemetry){
-        Path path = ImportPath.getPath(pathFile);
+        //new Thread(){ public void run(){
+            Path path = ImportPath.getPath(pathFile);
 
-        //index of current target point
-        int i = 0;
-        while(i < path.size()){
-            pose position = odometry.getPosition();
-            //if close enough advance
-            for(int j = i+1; j < path.size(); j++) {
-                if (path.get(j).distTo(new point(position.x, position.y)) < closeEnoughDistance) {
-                    i = j;
-                    break;
+
+            //index of current target point
+            int i = 0;
+            muthaloop: while (i < path.size() && running) {
+                pose position = odometry.getPosition();
+
+                //if an unvisited point is close enough, move towards it
+                for (int j = i + 1; j < path.size(); j++) {
+                    if (path.get(j).distTo(new point(position.x, position.y)) < closeEnoughDistance) {
+                        i = j;
+                        break;
+                    }
+
                 }
+                double distToLast = path.get(path.size()-1).distTo(new point(position.x, position.y));
+                double angleToLast = Math.abs(RotationUtil.turnLeftOrRight(position.r, path.get(path.size()-1).dir, Math.PI/2));
+
+                if(distToLast < closeEnoughDistance && angleToLast < closeEnoughAngle) {
+                    //if last point is reached, end
+                    break muthaloop;
+                }
+
+
+                //move robot towards i
+                PathPoint target = path.get(i);
+
+                telemetry.addData("Destination", String.format("%.1f %.1f %.1f", target.x, target.y, target.dir));
+
+                //diff in rotation
+                double rotDiff = RotationUtil.turnLeftOrRight(position.r, target.dir, Math.PI * 2);
+
+                //diff in translation
+                point transDiff = new point(target.x - position.x, target.y - position.y);
+                transDiff.scale(target.speed);
+
+                //convert from field angles to robot intrinsic angles
+                point transDiffIntrinsic = transDiff.rotate(position.r - Math.PI/2);
+
+                //actually move
+                drivetrain.drive(transDiffIntrinsic.x / 90, transDiffIntrinsic.y / 90, rotDiff / 90);
+
+                telemetry.addData("driving velocity",
+                        transDiffIntrinsic.x + " " + transDiffIntrinsic.y + " " + rotDiff);
+                telemetry.addData("Odometry Position", odometry.getPosition());
+                telemetry.addData("dist to last", distToLast + " " + angleToLast);
+
+                telemetry.update();
+
             }
 
-            //move robot towards i
-            PathPoint target = path.get(i);
+            drivetrain.drive(0,0,0);
+            telemetry.addData("Done with path", "done");
+            telemetry.update();
 
-            telemetry.addData("Destination", String.format("%.1f %.1f %.1f", target.x, target.y, target.dir));
 
-            double rotDiff = RotationUtil.turnLeftOrRight(position.r, target.dir, Math.PI * 2);
+        //}}.start(); //end thread
 
-            point transDiff = new point(target.x - position.x, target.y - position.y);
-            transDiff.scale(target.speed);
-            point transDiffIntrinsic = transDiff.rotate(-position.r - Math.PI/2);
-            //-90 degs because convert from field anges to robot angles
-            drivetrain.drive(transDiffIntrinsic.x/90, transDiffIntrinsic.y/90, rotDiff/90);
-            telemetry.addData("driving towards", String.valueOf(Math.signum(transDiffIntrinsic.x))+ Math.signum(transDiffIntrinsic.y));
-        }
+    }
+
+    public void stop(){
+        running = false;
+
     }
 
 }

@@ -4,10 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.movement.Mecanum;
-import org.firstinspires.ftc.teamcode.odometry.PhysicalOdoWheel;
+import org.firstinspires.ftc.teamcode.odometry.FreeSpinOdoWheel;
 import org.firstinspires.ftc.teamcode.utility.pose;
 
 import java.util.ArrayList;
@@ -18,15 +16,15 @@ import java.util.ArrayList;
 public class OdoSingleWheelTest extends OpMode
 {
     DcMotor wheel;
-    PhysicalOdoWheel odowheel;
+    FreeSpinOdoWheel odowheel;
 
     int cyclesSinceLastUpdate = 0;
     ArrayList<Integer> recordCyclesToUpdate = new ArrayList();
 
     @Override
     public void init() {
-        wheel = hardwareMap.get(DcMotor.class, "wheel");
-        odowheel = new PhysicalOdoWheel(new pose(0,0,0), wheel);
+        wheel = hardwareMap.get(DcMotor.class, "backRight");
+        odowheel = new FreeSpinOdoWheel(new pose(0,0,0), wheel);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");

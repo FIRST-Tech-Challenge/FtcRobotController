@@ -6,9 +6,10 @@ import java.util.StringTokenizer;
 public class ImportPath {
     public static Path getPath (String path){
         Path ret = new Path();
-        PathPoint point = new PathPoint(0,10);
-        point.speed = 1;
-        point.dir = -Math.PI/2;
+
+        PathPoint point = new PathPoint(0,30);
+        point.speed = 0.3;
+        point.dir = 0;//Math.PI/2;
 
         ret.add(point);
         return ret;

@@ -4,10 +4,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.utility.pose;
 
-public class PhysicalOdoWheel extends OdometryWheel{
+public class FreeSpinOdoWheel extends OdometryWheel{
     DcMotor wheel;
+    double ticksPerRev() {return 4096;}
+    double radius (){ return  1.9;} //Centimeters
 
-    public PhysicalOdoWheel(pose offset, DcMotor wheel){
+    public FreeSpinOdoWheel(pose offset, DcMotor wheel){
         super(offset);
         this.wheel = wheel;
     }

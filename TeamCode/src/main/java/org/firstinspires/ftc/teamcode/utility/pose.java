@@ -11,6 +11,9 @@ public class pose extends Position{
         this.r = r;
     }
 
+    public pose (Position position) { //TODO check z axis
+        this(position.x, position.y, position.z);
+    }
     /**
      * The added vector is rotated about its origin by the rotation of the parent
      */
@@ -23,10 +26,5 @@ public class pose extends Position{
 
     public String toString(){
         return String.format("pose %.3f %.3f %.3f", x, y, r);
-    }
-
-    public pose positionToPose (Position position){ //TODO check z axis
-        pose XYZ = new pose(position.x, position.y, position.z);
-        return XYZ;
     }
 }

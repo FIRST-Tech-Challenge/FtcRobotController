@@ -52,7 +52,8 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
  */
 
 @TeleOp(name="BaseDrive", group="Iterative Opmode")
-
+@Disabled
+//use DriveWheelIMULocalization for the same functionality instead
 public class BaseDrive extends OpMode
 {
     // Declare OpMode members.
