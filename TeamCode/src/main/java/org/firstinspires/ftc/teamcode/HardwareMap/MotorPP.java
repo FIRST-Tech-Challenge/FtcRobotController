@@ -31,6 +31,8 @@ public class MotorPP {
 
     public MotorPP(DcMotor[] motors, double[] distance_pid, double[] acceleration_pid,
                    double[] velocity_pid){
+        // This constructor assumes control of the motors with built in pid performance
+        // In other words, this is plug and play
         runtime.reset();
         this.motors = motors;
 
@@ -81,6 +83,29 @@ public class MotorPP {
                 return calc_vel();
             }
         };
+    }
+
+    public MotorPP(DcMotor[] motors, double[] distance_pid, double[] acceleration_pid,
+                   double[] velocity_pid, PIDV2 dpid, PIDV2 aPid, PIDV2 vPid){
+        // this one lets you define how you want to create your pid controllers
+        runtime.reset();
+        this.motors = motors;
+
+        this.dkp = distance_pid[0];
+        this.dki = distance_pid[1];
+        this.dkd = distance_pid[2];
+
+        this.akp = acceleration_pid[0];
+        this.aki = acceleration_pid[1];
+        this.akd = acceleration_pid[2];
+
+        this.vkp = velocity_pid[0];
+        this.vki = velocity_pid[1];
+        this.vkd = velocity_pid[2];
+
+        this.dPid = dpid;
+        this.aPid = aPid;
+        this.vPid = vPid;
     }
 
     public void setPower(double power){

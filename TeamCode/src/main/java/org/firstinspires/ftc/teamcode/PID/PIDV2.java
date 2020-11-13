@@ -18,6 +18,13 @@ public abstract class PIDV2 {
         pidRuntime.reset();
     }
 
+    public PIDV2(double[] k){
+        this.kp = k[0];
+        this.ki = k[1];
+        this.kd = k[2];
+        pidRuntime.reset();
+    }
+
     private double RelativeError(double target){
         // Modeled after equation -> (-x/target) + 1
         // Modeled after equation -> (-x/target) - 1

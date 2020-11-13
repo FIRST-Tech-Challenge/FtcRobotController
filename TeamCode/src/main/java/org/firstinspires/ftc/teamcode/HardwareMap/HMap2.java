@@ -3,13 +3,11 @@ package org.firstinspires.ftc.teamcode.HardwareMap;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MISC.CONSTANTS;
 
-public class HMap {
-
+public class HMap2 {
     // Members of the HardwareMap
     private DcMotor TL_ = null, TR_ = null, BL_ = null, BR_ = null;
     private DcMotor IntakeMotor_ = null;
@@ -17,15 +15,17 @@ public class HMap {
     private BNO055IMU imu_;
 
     // PP extension for Hardware Devices
-    public MotorPP TL, BL, TR, BR;
     public IMUPlus imu;
 
     // Instantiate them
     com.qualcomm.robotcore.hardware.HardwareMap hwMap =  null;
     private ElapsedTime runtime  = new ElapsedTime();
 
+    // Create DriveTrain Obj
+    DriveTrain dt;
+
     /* Constructor */
-    public HMap(){
+    public HMap2(){
 
     }
 
@@ -38,12 +38,6 @@ public class HMap {
         TR_ = hwMap.get(DcMotor.class, "TR");
         BL_ = hwMap.get(DcMotor.class, "BL");
         BR_ = hwMap.get(DcMotor.class, "BR");
-
-        // Set zero power
-        TL.setPower(0.0);
-        BL.setPower(0.0);
-        TR.setPower(0.0);
-        BR.setPower(0.0);
 
         TR_.setDirection(DcMotorSimple.Direction.REVERSE);
         BR_.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -65,14 +59,15 @@ public class HMap {
         imu_.initialize(parameters);
 
         // Initializing PP Hardware Classes
-        TL = new MotorPP(new DcMotor[]{TL_}, CONSTANTS.dPid_, CONSTANTS.aPid_, CONSTANTS.vPid_);
-        TR = new MotorPP(new DcMotor[]{TR_}, CONSTANTS.dPid_, CONSTANTS.aPid_, CONSTANTS.vPid_);
-        BL = new MotorPP(new DcMotor[]{BL_}, CONSTANTS.dPid_, CONSTANTS.aPid_, CONSTANTS.vPid_);
-        BR = new MotorPP(new DcMotor[]{BR_}, CONSTANTS.dPid_, CONSTANTS.aPid_, CONSTANTS.vPid_);
+        dt = new DriveTrain(new DcMotor[]{TL_, TR_, BL_, BR_});
         imu = new IMUPlus(imu_, CONSTANTS.imuPid_);
 
         // Final Actions of Init
         runtime.reset();
+    }
+
+    public void drive(double power, double target_distance){
+        dt.drive(power, target_distance);
     }
 
     public void resetEncoders(){
