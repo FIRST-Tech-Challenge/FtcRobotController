@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.imu;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.bosch.NaiveAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -25,10 +23,11 @@ public class IMU implements GivesPosition {
         parameters.loggingEnabled = false;
 
         //TODO assumption that that thing is named "imu"
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         imu.initialize(parameters);
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
 
         //watchdog
         long start = System.currentTimeMillis();
