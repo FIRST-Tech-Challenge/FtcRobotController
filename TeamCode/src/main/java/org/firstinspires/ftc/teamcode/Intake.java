@@ -51,9 +51,18 @@ public class Intake {
         REVTouchBottom.setMode(DigitalChannel.Mode.INPUT);
     }
 
+    /**
+     * This method passes a power to the intake motor to turn it on and off.
+     * @param power
+     */
     public void intakePower(double power) {
         intake.setPower(power);
     }
+
+    /**
+     * This method lowers the intake at the given power until it comes into contact with a touch sensor.
+     * @param power
+     */
     public void lowerIntake(double power) {
         // if the digital channel returns true it's HIGH and the button is unpressed.
         if (REVTouchBottom.getState()) {

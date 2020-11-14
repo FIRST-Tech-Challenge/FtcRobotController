@@ -44,6 +44,11 @@ public class Shooter {
 
     }
 
+    /**
+     * This method passes a power value to both shooter motors.
+     * NOTE: At the time of writing this, a negative value will cause the motors to rotate outwards.
+     * @param power
+     */
     public void shooterPower(double power) {
         leftShooter.setPower(power);
         rightShooter.setPower(power);

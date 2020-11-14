@@ -11,6 +11,7 @@ public class BlueLeft extends OpMode {
     Intake intake         = new Intake();
     Shooter shooter       = new Shooter();
     WobbleGrabber grabber = new WobbleGrabber();
+    RingCamera    camera  = new RingCamera();
 
     RingNumber ringNumber = RingNumber.ZERO;
 
@@ -26,6 +27,7 @@ public class BlueLeft extends OpMode {
         intake.init(hardwareMap);
         shooter.init(hardwareMap);
         grabber.init(hardwareMap);
+        camera.init(hardwareMap);
 
         stateMachineFlow = 0;
     }
@@ -44,6 +46,14 @@ public class BlueLeft extends OpMode {
         switch(stateMachineFlow) {
             case 0:
                 //Use the camera to check for number of rings.
+                if (camera.ringCount() == 1) {
+                    ringNumber = RingNumber.ONE;
+                } else if (camera.ringCount() == 4) {
+                    ringNumber = RingNumber.FOUR;
+                } else {
+                    //Zero rings is our default case. In the event that the object recognition fails, we will assume zero.
+                    ringNumber = RingNumber.ZERO;
+                }
                 stateMachineFlow++;
                 break;
             case 1:
@@ -79,7 +89,9 @@ public class BlueLeft extends OpMode {
                 stateMachineFlow++;
                 break;
             case 104:
-                //High goal or powershot
+                /*
+                High goal or powershot
+                 */
                 if (!powerShot) {
                     //High goal
                     stateMachineFlow++;
