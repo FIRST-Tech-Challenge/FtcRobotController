@@ -33,7 +33,8 @@ public class IMURobot {
     public DcMotor outtakeLeft;
     public DcMotor outtakeRight;
 
-    private CRServo conveyor;
+    private CRServo leftConveyor;
+    private CRServo rightConveyor;
     private CRServo elevator;
 
     //Declare servos
@@ -76,7 +77,8 @@ public class IMURobot {
      * @param imu
      * @param leftIntakeServo
      * @param rightIntakeServo
-     * @param conveyor
+     * @param leftConveyor
+     * @param rightConveyor
      * @param elevator
      * @param flipper
      * @param intake
@@ -90,7 +92,7 @@ public class IMURobot {
 
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
                     BNO055IMU imu, Servo leftIntakeServo, Servo rightIntakeServo,
-                    CRServo conveyor, CRServo elevator, Servo flipper,
+                    CRServo leftConveyor, CRServo rightConveyor, CRServo elevator, Servo flipper,
                     DcMotor intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
@@ -99,7 +101,8 @@ public class IMURobot {
         this.imu = imu;
         this.leftIntakeServo = leftIntakeServo;
         this.rightIntakeServo = rightIntakeServo;
-        this.conveyor = conveyor;
+        this.leftConveyor = leftConveyor;
+        this.rightConveyor = rightConveyor;
         this.elevator = elevator;
         this.flipper = flipper;
         this.intake = intake;

@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class MainTeleop extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
-    private CRServo conveyor, elevator;
+    private CRServo leftConveyor, rightConveyor, elevator;
     private DcMotor intake, outtakeRight, outtakeLeft;
     private Servo flipper;
 
@@ -49,7 +49,7 @@ public class MainTeleop extends LinearOpMode{
     OdometryGlobalCoordinatePosition globalPositionUpdate;
 
     IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-            imu, leftIntakeServo, rightIntakeServo, conveyor, elevator, flipper, intake,
+            imu, leftIntakeServo, rightIntakeServo, leftConveyor, rightConveyor, elevator, flipper, intake,
             outtakeRight, outtakeLeft, this);
 
     @Override
@@ -61,7 +61,8 @@ public class MainTeleop extends LinearOpMode{
 
         //intake and conveyor
         intake = hardwareMap.dcMotor.get("intake");
-        conveyor = hardwareMap.crservo.get("conveyor");
+        leftConveyor = hardwareMap.crservo.get("leftConveyor");
+        rightConveyor = hardwareMap.crservo.get("rightConveyor");
 
         //elevator and flipper
         elevator = hardwareMap.crservo.get("elevator");
@@ -134,7 +135,8 @@ public class MainTeleop extends LinearOpMode{
 
             double intakeSpeed = gamepad1.left_trigger * intakeMod;
             intake.setPower(intakeSpeed);
-            conveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
+            rightConveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
+            leftConveyor.setPower(intakeSpeed);
 
             //Ring elevator
             //Run by a continuous servo; run continuous servo for some amount of time
