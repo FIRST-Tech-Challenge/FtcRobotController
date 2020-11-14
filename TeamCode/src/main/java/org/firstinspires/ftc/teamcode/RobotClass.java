@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.hitechnic.HiTechnicNxtGyroSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -22,7 +23,7 @@ public class RobotClass {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
-    private double ticks = 537;
+    private double ticks = 537;//537
     BNO055IMU imu;
 
     public Telemetry telemetry;
@@ -39,7 +40,10 @@ public class RobotClass {
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
 
         this.telemetry = telemetry;
 
@@ -62,7 +66,7 @@ public class RobotClass {
 
     public void forward (double speed, double rotations){
         int leftCurrent = frontLeft.getCurrentPosition();
-        int rightCurrent =frontRight.getCurrentPosition();
+        int rightCurrent = frontRight.getCurrentPosition();
         int backLeftCurrent = backLeft.getCurrentPosition();
         int backRightCurrent = backRight.getCurrentPosition();
 
@@ -86,11 +90,11 @@ public class RobotClass {
         backLeft.setPower(Math.abs(speed));
         backRight.setPower(Math.abs(speed));
 
-//        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
-//        telemetry.addData("Target Front Right Motor Position", toPositionRight);
-//        telemetry.addData("Target Back Left Motor Position", toPositionBackLeft);
-//        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
-//        telemetry.update();
+        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
+        telemetry.addData("Target Front Right Motor Position", toPositionRight);
+        telemetry.addData("Target Back Left Motor Position", toPositionbackLeft);
+        telemetry.addData("Target Front Left Motor Position", toPositionbackLeft);
+        telemetry.update();
     }
     public void backwards (double speed, double rotations) {
         int leftCurrent = frontLeft.getCurrentPosition();
