@@ -39,6 +39,8 @@ public class RobotClass {
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+
+
         this.telemetry = telemetry;
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -143,7 +145,7 @@ public class RobotClass {
             backRight.setPower(0);
         }
 
-        public void turnright (double speed, double angle) {
+        public void turnRight (double speed, double angle) {
         double anglemult = 1.5;
 
             int leftCurrent = frontLeft.getCurrentPosition();
@@ -177,7 +179,7 @@ public class RobotClass {
 //        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
 //        telemetry.update();
     }
-    public void turnleft (double speed, double angle) {
+    public void turnLeft (double speed, double angle) {
         double anglemult = 1.5;
 
         int leftCurrent = frontLeft.getCurrentPosition();

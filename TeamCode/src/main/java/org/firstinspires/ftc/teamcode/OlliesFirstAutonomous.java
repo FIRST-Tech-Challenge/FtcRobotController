@@ -10,15 +10,14 @@ public class OlliesFirstAutonomous extends LinearOpMode {
     RobotClass robot;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode(){
 
         robot= new RobotClass(hardwareMap, telemetry);
 
         waitForStart();
 
-        robot.forward(0.5,2);
-        robot.mecanumWitchcraftColor(45,2,1);
-        robot.turnleft(.5,90);
+        robot.forward(0.5,5);
+        robot.turnLeft(.5,90);
         robot.strafeRight(.7,4);
     }
 }
