@@ -88,7 +88,7 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
             drive = gamepad1.left_stick_y;
-            turn  =  gamepad1.right_stick_x;
+            turn  =  -gamepad1.right_stick_x;
 
             // Combine drive and turn for blended motion.
             left  = drive + turn;
