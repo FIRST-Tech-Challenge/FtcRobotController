@@ -70,7 +70,7 @@ public class Path {
     public boolean isExecuting = true;
     public boolean isDoneWithRfs = false;
 
-    final public double[] ks = {0.04,0.03,0.01};
+    final public double[] ks = {0.04,0.03,0.013};
     final public double[] ds = {0.00015,0.00015,0.0};
     final public double[] is = {0.01,0.01,0.005};
     final public double XAcc = 1;

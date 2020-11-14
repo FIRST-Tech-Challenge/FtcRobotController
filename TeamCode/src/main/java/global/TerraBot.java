@@ -59,11 +59,11 @@ public class TerraBot {
     public double turnStart = 0.25;
     public double grabStart = 0.7;
     public double liftStart = 0.12;
-    public double liftSecond = 0.275;
+    public double liftSecond = 0.265;
     public double shootStartR = 0.13;
     public double shootStartL = 0.1;
     public double intakeSpeed = 1;
-    public double outtakeSpeed = 0.42;
+    public double outtakeSpeed = 0.4;
     public double maxArmPos = 215;
     public double heading = 0;
     public double lastAngle = 0;
@@ -79,8 +79,8 @@ public class TerraBot {
 
     public Cycle grabControl = new Cycle(grabStart, 0.45);
     public Cycle liftControl = new Cycle(liftStart, liftSecond, 0.53);
-    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.24, 0.25);
-    public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.15, 0.33);
+    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.24+0.08, 0.25+0.08);
+    public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.15+0.05, 0.34+0.05);
 
     public ServoController turnControl = new ServoController(turnStart, 0.0, 0.7);
 
@@ -182,6 +182,8 @@ public class TerraBot {
         outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        shootControlR.changeCurr(1);
+        shootControlL.changeCurr(1);
 
         resetEncoders();
 
