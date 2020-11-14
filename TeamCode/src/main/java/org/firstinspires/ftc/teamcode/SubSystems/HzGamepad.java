@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 /**
  * Defenition of the HzGamepad Class <BR>
@@ -311,5 +315,32 @@ public class HzGamepad {
         /*    if (getDpad_downPress()){}*/
 
     }
+
+    public Pose2d poseEstimate;
+
+    public void runHazmatRobotByGamepad(SampleMecanumDrive hzDrive, int playingAlliance){
+        poseEstimate = hzDrive.getPoseEstimate();
+
+        // Create a vector from the gamepad x/y inputs
+        // Then, rotate that vector by the inverse of that heading
+        Vector2d input = new Vector2d(
+                -turboMode(getLeftStickY()) /* TODO : playingalliance modifier*/,
+                -turboMode(getLeftStickX()) /* TODO : playingalliance modifier*/
+        ).rotated(-poseEstimate.getHeading());
+
+        // Pass in the rotated input + right stick value for rotation
+        // Rotation is not part of the rotated input thus must be passed in separately
+        hzDrive.setWeightedDrivePower(
+                new Pose2d(
+                        input.getX(),
+                        input.getY(),
+                        -turboMode(getRightStickX()) /* TODO : playingalliance modifier*/
+                )
+        );
+
+        // Update everything. Odometry. Etc.
+        hzDrive.update();
+    }
+
 }
 

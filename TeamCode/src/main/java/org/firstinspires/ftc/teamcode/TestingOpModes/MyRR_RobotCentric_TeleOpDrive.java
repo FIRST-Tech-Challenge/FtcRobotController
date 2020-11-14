@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
  * <p>
  * This opmode is essentially just LocalizationTest.java with a few additions and comments.
  */
-@TeleOp(name = "MyRR Robot Centric TeleOp Drive", group = "Teleop")
+@TeleOp(name = "TestOpMode : MyRR Robot Centric TeleOp Drive", group = "TestOpMode")
 public class MyRR_RobotCentric_TeleOpDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

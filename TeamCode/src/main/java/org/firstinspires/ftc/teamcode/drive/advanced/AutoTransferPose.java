@@ -30,7 +30,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * to a file in the event of an app crash. This way, the pose can be retrieved and set even if
  * something disastrous occurs. Such a sample has not been included.
  */
-@Autonomous(group = "advanced")
+//@Autonomous(group = "advanced")
+@Autonomous(name = "TestAdvanced:AutoTransferPose", group = "TestAdvanced")
 public class AutoTransferPose extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

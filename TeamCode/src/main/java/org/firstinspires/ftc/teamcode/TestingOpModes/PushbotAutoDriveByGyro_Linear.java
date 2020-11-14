@@ -78,7 +78,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive By IMU Gyro", group="SampleCode")
+@Autonomous(name="TestOpMode : Pushbot: Auto Drive By IMU Gyro", group="TestOpMode")
 //@Disabled
 public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
 

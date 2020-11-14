@@ -28,7 +28,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * to supercharge your code. This can be much cleaner by abstracting many of these things. This
  * opmode only serves as an initial starting point.
  */
-@Autonomous(group = "advanced")
+//@Autonomous(group = "advanced")
+@Autonomous(name = "TestAdvanced:AsyncFollowingFSM", group = "TestAdvanced")
 public class AsyncFollowingFSM extends LinearOpMode {
 
     // This enum defines our "state"

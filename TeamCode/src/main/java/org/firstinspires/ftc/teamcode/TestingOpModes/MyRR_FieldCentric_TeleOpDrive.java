@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
  * <p>
  * See lines 42-57.
  */
-@TeleOp(name = "MyRR Field Centric TeleOp", group = "Teleop")
+@TeleOp(name = "TestOpMode : MyRR Field Centric TeleOp", group = "TestOpMode")
 public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
  * want that to interfere with our graph so we just directly update localizer instead
  */
 @Config
-@TeleOp(group = "advanced")
+@TeleOp(name = "TestAdvanced:TeleOpAlignWithPoint", group = "TestAdvanced")
 public class TeleOpAlignWithPoint extends LinearOpMode {
 
     public static double DRAWING_TARGET_RADIUS = 2;

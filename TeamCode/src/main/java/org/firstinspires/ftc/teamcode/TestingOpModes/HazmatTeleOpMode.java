@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
  * TeleOpMode for Team Hazmat<BR>
  * Includes autoplacement routince for automatically placing block on tower
  */
-@TeleOp(name = "HazmatTeleOpMode", group = "Teleop")
+@TeleOp(name = "TestOpMode:HazmatTeleOpMode", group = "TestOpMode")
 public class HazmatTeleOpMode extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;

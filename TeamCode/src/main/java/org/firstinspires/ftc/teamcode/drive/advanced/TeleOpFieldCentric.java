@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * <p>
  * See lines 42-57.
  */
-@TeleOp(group = "advanced")
+@TeleOp(name = "TestAdvanced:TeleOpFieldCentric", group = "TestAdvanced")
 public class TeleOpFieldCentric extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

@@ -86,7 +86,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  */
 
 
-public class Vuforia {
+public class HzVuforia {
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
@@ -126,21 +126,25 @@ public class Vuforia {
      */
     WebcamName webcamName = null;
 
-    private boolean targetVisible = false;
+    public  boolean targetVisible = false;
     private float phoneXRotate    = 0;
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
 
-    VuforiaLocalizer.Parameters parameters;
+    public VuforiaLocalizer.Parameters parameters;
 
-    VuforiaTrackables targetsUltimateGoal;
-    VuforiaTrackable blueTowerGoalTarget;
-    VuforiaTrackable redTowerGoalTarget;
-    VuforiaTrackable redAllianceTarget;
-    VuforiaTrackable blueAllianceTarget;
-    VuforiaTrackable frontWallTarget;
+    public VuforiaTrackables targetsUltimateGoal;
+    public VuforiaTrackable blueTowerGoalTarget;
+    public VuforiaTrackable redTowerGoalTarget;
+    public VuforiaTrackable redAllianceTarget;
+    public VuforiaTrackable blueAllianceTarget;
+    public VuforiaTrackable frontWallTarget;
 
-    List<VuforiaTrackable> allTrackables;
+    public List<VuforiaTrackable> allTrackables;
+
+    public String visibleTargetName = "";
+
+    public Pose2d poseVuforia;
 
     //Tensor Flow parameters
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
@@ -152,7 +156,7 @@ public class Vuforia {
     /**
      * Initialize the Vuforia localization engine.
      */
-    public Vuforia(HardwareMap hardwareMap) {
+    public HzVuforia(HardwareMap hardwareMap) {
         /*
          * Retrieve the camera we are to use.
          */
@@ -180,6 +184,7 @@ public class Vuforia {
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        initTfod(hardwareMap);
     }
 
     /**
@@ -295,8 +300,7 @@ public class Vuforia {
 
     }
 
-    public void runVuforia() {
-
+    public void activateVuforiaNavigation() {
         // WARNING:
         // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
         // This sequence is used to enable the new remote DS Camera Preview feature to be used with this sample.
@@ -310,13 +314,15 @@ public class Vuforia {
         // Tap the preview window to receive a fresh image.
 
         targetsUltimateGoal.activate();
+    }
 
+    public void runVuforiaNavigation() {
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
-        /****Loop start ****/
         for (VuforiaTrackable trackable : allTrackables) {
             if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
                 //telemetry.addData("Visible Target", trackable.getName());
+                visibleTargetName = trackable.getName();
                 targetVisible = true;
 
                 // getUpdatedRobotLocation() will return null if no new information is available since
@@ -339,24 +345,23 @@ public class Vuforia {
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
             //telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle+90);
-            Pose2d PoseVuforia = new Pose2d(translation.get(0)/mmPerInch,translation.get(1) / mmPerInch, rotation.thirdAngle+90 );
+            poseVuforia = new Pose2d(translation.get(0)/mmPerInch,translation.get(1) / mmPerInch, rotation.thirdAngle );
         }
         else {
             //telemetry.addData("Visible Target", "none");
+            visibleTargetName = "none";
         }
-        /****Loop end ****/
-        //telemetry.update();
 
+        //telemetry.update();
+     }
+
+    public void deactivateVuforiaNavigation() {
         // Disable Tracking when we are done;
         targetsUltimateGoal.deactivate();
+
     }
 
-    public void runVuforiaTensorFlow() {
-        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
-        // first.
-        //initVuforia();
-        //initTfod();
-
+    public void activateVuforiaTensorFlow(){
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
@@ -374,8 +379,9 @@ public class Vuforia {
             // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
             tfod.setZoom(2.5, 1.78);
         }
+    }
 
-        /****Loop start ****/
+    public void runVuforiaTensorFlow() {
         if (tfod != null) {
               // getUpdatedRecognitions() will return null if no new information is available since
              // the last time that call was made.
@@ -411,8 +417,9 @@ public class Vuforia {
                 //telemetry.update();
             }
         }
-        /****Loop end ****/
+    }
 
+    public void deactivateVuforiaTensorFlow(){
         if (tfod != null) {
             tfod.shutdown();
         }
