@@ -40,6 +40,7 @@ public class Robot {
     private LinearOpMode op = null;
     private HardwareMap hardwareMap = null;
     private ElapsedTime runtime = null;
+    final boolean isCorgi = true;
     private TensorFlow tensorFlow = null;
 
     // Hardware Objects
@@ -52,22 +53,24 @@ public class Robot {
     private double vuforiaY = 0;
     private double vuforiaAngle = 0;
     private double robotAngle = 0;
-
     public Robot(LinearOpMode opMode) {
         op = opMode;
         hardwareMap = op.hardwareMap;
 
         runtime = new ElapsedTime();
         drivetrain = new Chassis(op);
-        tensorFlow = new TensorFlow(op);
+        if(!isCorgi){
+            tensorFlow = new TensorFlow(op);
+        }
         intake = new Intake(op);
         wobbleGoal = new WobbleGoal(op);
         intake = new Intake(op);
 
         // comment by victor
         // drivetrain.init(opMode);
-
-        //vuforiaWebcam.init(opMode);
+        if(!isCorgi) {
+            vuforiaWebcam.init(opMode);
+        }
     }
 
     /*
@@ -97,65 +100,69 @@ public class Robot {
         ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
         wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
         shooter_Servo = (Servo) hardwareMap.servo.get("ShooterServo");
-
-        //vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
-
+        if(!isCorgi) {
+            vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
+        }
         // comment by Victor
         // drivetrain.init(opMode);
-
-        //vuforiaWebcam.init(opMode);
+        if(!isCorgi) {
+            vuforiaWebcam.init(opMode);
+        }
 
         this.wobbleGoal = new WobbleGoal(op);
         intake = new Intake(op);
-
-        //vuforiaWebcam.start();
+        if(!isCorgi) {
+            vuforiaWebcam.start();
+        }
         shooter.initChassis(opMode);
-//        vuforiaWebcam.start();
-//        getVuforiaPosition();
-
-        op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
-        op.telemetry.update();
-        op.sleep(1000);
-
-//        op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
-//        op.telemetry.update();
-//        op.sleep(1000);
+        if(!isCorgi) {
+        vuforiaWebcam.start();
+        getVuforiaPosition();
+        }
+        if(!isCorgi) {
+            op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
+            op.telemetry.update();
+            op.sleep(1000);
+            op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
+            op.telemetry.update();
+            op.sleep(1000);
+        }
 
     }
 
     public void moveVuforiaWebcam(double x, double y, double endAngle) {
-        getVuforiaPosition();
+        if(!isCorgi) {
+            getVuforiaPosition();
 
-        double xdifference = x - vuforiaX;
-        double ydifference = y - vuforiaY;
+            double xdifference = x - vuforiaX;
+            double ydifference = y - vuforiaY;
 
-        double turn = endAngle - robotAngle;
+            double turn = endAngle - robotAngle;
 
-        double magnitude = Math.sqrt((xdifference * xdifference) + (ydifference * ydifference));
+            double magnitude = Math.sqrt((xdifference * xdifference) + (ydifference * ydifference));
 
-        double mAngle = robotAngle - Math.toDegrees(Math.acos(ydifference/magnitude)); //move Angle
+            double mAngle = robotAngle - Math.toDegrees(Math.acos(ydifference / magnitude)); //move Angle
 
-        op.telemetry.addData("VuforiaX","%.2f %.2f %.2f %.3f %.3f %.3f", vuforiaX, x, xdifference, robotAngle, vuforiaAngle, endAngle );
-        op.telemetry.addData("VuforiaY","%.2f %.2f %.2f %.2f %.3f %.3f", vuforiaY, y, ydifference, magnitude, turn, mAngle);
-        op.telemetry.update();
-        op.sleep(5000);
-        drivetrain.moveAngle2(magnitude, mAngle, turn);
+            op.telemetry.addData("VuforiaX", "%.2f %.2f %.2f %.3f %.3f %.3f", vuforiaX, x, xdifference, robotAngle, vuforiaAngle, endAngle);
+            op.telemetry.addData("VuforiaY", "%.2f %.2f %.2f %.2f %.3f %.3f", vuforiaY, y, ydifference, magnitude, turn, mAngle);
+            op.telemetry.update();
+            op.sleep(5000);
+            drivetrain.moveAngle2(magnitude, mAngle, turn);
 
-        getVuforiaPosition();
+            getVuforiaPosition();
 
-        op.telemetry.addData("VuforiaX","%.2f %.2f %.2f %.3f %.3f %.3f", vuforiaX, x, xdifference, robotAngle, vuforiaAngle, endAngle );
-        op.telemetry.addData("VuforiaY","%.2f %.2f %.2f %.2f %.3f %.3f", vuforiaY, y, ydifference, magnitude, turn, mAngle);
-        op.telemetry.update();
-        op.sleep(5000);
+            op.telemetry.addData("VuforiaX", "%.2f %.2f %.2f %.3f %.3f %.3f", vuforiaX, x, xdifference, robotAngle, vuforiaAngle, endAngle);
+            op.telemetry.addData("VuforiaY", "%.2f %.2f %.2f %.2f %.3f %.3f", vuforiaY, y, ydifference, magnitude, turn, mAngle);
+            op.telemetry.update();
+            op.sleep(5000);
+        }
     }
+
 
     public void stopAllMotors() {
         drivetrain.stopAllMotors();
     }
 
-    public void stopAllMotorsSideways() {
-        drivetrain.stopAllMotorsSideways();
-    }
 
 
     /******** Left Front Motor **********/
@@ -259,19 +266,27 @@ public class Robot {
     /**Vuforia**/
 
     public double getVuforiaAngle() {
-        return vuforiaWebcam.getVuforiaAngle();
+        if(!isCorgi) {
+            return vuforiaWebcam.getVuforiaAngle();
+        }
+        return 0;
     }
 
     public void getVuforiaPosition() {
-        vuforiaX = vuforiaWebcam.getVuforiaX();
-        vuforiaY = vuforiaWebcam.getVuforiaY();
-        vuforiaAngle = vuforiaWebcam.getVuforiaAngle();
-        robotAngle = vuforiaAngle + 90;
-        robotAngle = (robotAngle>180?robotAngle-360:robotAngle);
+        if(!isCorgi) {
+            vuforiaX = vuforiaWebcam.getVuforiaX();
+            vuforiaY = vuforiaWebcam.getVuforiaY();
+            vuforiaAngle = vuforiaWebcam.getVuforiaAngle();
+            robotAngle = vuforiaAngle + 90;
+            robotAngle = (robotAngle > 180 ? robotAngle - 360 : robotAngle);
+        }
     }
     public void stopVuforia() {
-        vuforiaWebcam.interrupt();
+        if(!isCorgi) {
+            vuforiaWebcam.interrupt();
+        }
     }
+
 
 
     /**TensorFlow**/
@@ -290,20 +305,6 @@ public class Robot {
 
     /**Odometry**/
 
-//    public double getVuforiaAngle() {
-//        return vuforiaWebcam.getVuforiaAngle();
-//    }
-//
-//    public void getVuforiaPosition() {
-//        vuforiaX = vuforiaWebcam.getVuforiaX();
-//        vuforiaY = vuforiaWebcam.getVuforiaY();
-//        vuforiaAngle = vuforiaWebcam.getVuforiaAngle();
-//        robotAngle = vuforiaAngle + 90;
-//        robotAngle = (robotAngle>180?robotAngle-360:robotAngle);
-//    }
-//    public void stopVuforia() {
-//        vuforiaWebcam.interrupt();
-//    }
     public void turnOdometry(double target, double power) {
         drivetrain.turnOdometry(target,power);
     }
@@ -337,8 +338,8 @@ public class Robot {
     public void DirectxyPath(double x, double y, double power) {
         drivetrain.DirectxyPath(x,y,power);
     }
-    public void moveAngleOdometry(double angleInRadians,double x, double y, double power){
-        drivetrain.moveAngleOdometry(angleInRadians,x,y,power);
+    public void moveAngleOdometry(double x, double y, double power){
+        drivetrain.moveAngleOdometry(x,y,power);
     }
 
 

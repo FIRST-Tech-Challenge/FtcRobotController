@@ -1,3 +1,9 @@
+/**
+ * This is the program for testing the wobble goal arm
+ * @author Sid
+ * @version 1.0
+ * @since 2020-11-01
+ */
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
