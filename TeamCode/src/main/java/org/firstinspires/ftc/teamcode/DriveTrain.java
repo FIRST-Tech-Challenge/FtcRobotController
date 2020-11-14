@@ -61,21 +61,21 @@ public class DriveTrain {
         startPosition = hera.motorOne.getCurrentPosition();
         endPosition = startPosition + (inches * INCH_TO_TICK); // How far you need to travel
         hera.motorOne.setPower(wheelPower);
-        hera.motorTwo.setPower(wheelPower);
+        //hera.motorTwo.setPower(wheelPower);
         hera.motorThree.setPower(wheelPower);
-        hera.motorFour.setPower(wheelPower);
+        //hera.motorFour.setPower(wheelPower);
         while (hera.motorOne.getCurrentPosition() < endPosition && this.opMode.opModeIsActive()) {
             showData("StartPosition", "" + startPosition);
             showData("EndPosition", "" + endPosition);
             showData("CurrentPosition", "" + hera.motorOne.getCurrentPosition());
             do{
                 goStraight();
-            } while(!(this.wheelOneRatio == 1 && this.wheelTwoRatio == 1 && this.wheelThreeRatio == 1 && this.wheelFourRatio == 1));
+            } while(!(this.wheelOneRatio == 1 && this.wheelThreeRatio == 1));
 
             showData("wheel one power", "" + hera.motorOne.getPower());
-            showData("wheel two power", "" + hera.motorTwo.getPower());
+            //showData("wheel two power", "" + hera.motorTwo.getPower());
             showData("wheel three power", "" + hera.motorThree.getPower());
-            showData("wheel four power", "" + hera.motorFour.getPower());
+            //showData("wheel four power", "" + hera.motorFour.getPower());
             showData("CurrentPosition", "" + hera.motorOne.getCurrentPosition());
             this.telemetry.update();
         }
@@ -215,55 +215,60 @@ public class DriveTrain {
     public void goStraight() {
         showData("DRIVE_TRAIN_CAPTION", "Balancing power");
         double wheelOneStartPos = hera.motorOne.getCurrentPosition();
-        double wheelTwoStartPos = hera.motorTwo.getCurrentPosition();
+        //double wheelTwoStartPos = hera.motorTwo.getCurrentPosition();
         double wheelThreeStartPos = hera.motorThree.getCurrentPosition();
-        double wheelFourStartPos = hera.motorFour.getCurrentPosition();
+        //double wheelFourStartPos = hera.motorFour.getCurrentPosition();
+        showData("wheelThreeStartPos", "" + wheelThreeStartPos);
         double wheelOneEndPos = 0;
-        double wheelTwoEndPos = 0;
+        //double wheelTwoEndPos = 0;
         double wheelThreeEndPos = 0;
-        double wheelFourEndPos = 0;
-        while(hera.motorFour.getCurrentPosition() < wheelFourStartPos + 50){
+        //double wheelFourEndPos = 0;
+        while(hera.motorThree.getCurrentPosition() < wheelThreeStartPos + 50){
             showData("goStraight", "in the while loop");
             wheelOneEndPos = Math.abs(hera.motorOne.getCurrentPosition() - wheelOneStartPos);
-            wheelTwoEndPos = Math.abs(hera.motorTwo.getCurrentPosition() - wheelTwoStartPos);
+            //wheelTwoEndPos = Math.abs(hera.motorTwo.getCurrentPosition() - wheelTwoStartPos);
             wheelThreeEndPos = Math.abs(hera.motorThree.getCurrentPosition() - wheelThreeStartPos);
-            wheelFourEndPos = Math.abs(hera.motorFour.getCurrentPosition() - wheelFourStartPos);
-            if(this.counter == 1) {
-                baseline = Math.min(wheelOneEndPos, wheelTwoEndPos);
-                baseline = Math.min(wheelThreeEndPos, baseline);
-                baseline = Math.min(wheelFourEndPos, baseline);
-                showData("baseline: ", "" + baseline);
-            }
+            //wheelFourEndPos = Math.abs(hera.motorFour.getCurrentPosition() - wheelFourStartPos);
+            showData("wheelThreeEndPos", "" + wheelThreeEndPos);
+            showData("wheelThreeCurrentPos", "" + hera.motorThree.getCurrentPosition());
+        }
+        if(this.counter == 1) {
+            baseline = Math.min(wheelOneEndPos, wheelThreeEndPos);
+            showData("baseline calc: ", "" + wheelOneEndPos + ", " + wheelThreeEndPos);
+            showData("baseline: ", "" + baseline);
         }
         sumOfMotorOneDist += wheelOneEndPos;
-        sumOfMotorTwoDist += wheelTwoEndPos;
+        //sumOfMotorTwoDist += wheelTwoEndPos;
         sumOfMotorThreeDist += wheelThreeEndPos;
-        sumOfMotorFourDist += wheelFourEndPos;
+        //sumOfMotorFourDist += wheelFourEndPos;
         avgMotorOneDist = sumOfMotorOneDist/counter;
-        avgMotorTwoDist = sumOfMotorTwoDist/counter;
+        //avgMotorTwoDist = sumOfMotorTwoDist/counter;
         avgMotorThreeDist = sumOfMotorThreeDist/counter;
-        avgMotorFourDist = sumOfMotorFourDist/counter;
-        counter++;
+        //avgMotorFourDist = sumOfMotorFourDist/counter;
         showData("counter", "" + counter);
+        counter++;
         showData("wheelOneDistance: ", "" + wheelOneEndPos);
-        showData("wheelTwoDistance: ", "" + wheelTwoEndPos);
+        //showData("wheelTwoDistance: ", "" + wheelTwoEndPos);
         showData("wheelThreeDistance: ", "" + wheelThreeEndPos);
-        showData("wheelFourDistance: ", "" + wheelFourEndPos);
+        //showData("wheelFourDistance: ", "" + wheelFourEndPos);
 
         if(baseline !=0){
             wheelOneRatio = avgMotorOneDist/baseline;
-            wheelTwoRatio = avgMotorTwoDist/baseline;
+            //wheelTwoRatio = avgMotorTwoDist/baseline;
             wheelThreeRatio = avgMotorThreeDist/baseline;
-            wheelFourRatio = avgMotorFourDist/baseline;
+            //wheelFourRatio = avgMotorFourDist/baseline;
+            showData("Ratios", "" + wheelOneRatio + ", " + wheelThreeRatio);
         }
         wheelOnePower /=wheelOneRatio;
-        wheelTwoPower /= wheelTwoRatio;
+        //wheelTwoPower /= wheelTwoRatio;
         wheelThreePower /= wheelThreeRatio;
-        wheelFourPower /= wheelFourPower;
+        //wheelFourPower /= wheelFourPower;
         hera.motorOne.setPower(wheelOnePower);
-        hera.motorTwo.setPower(wheelTwoPower);
+        //hera.motorTwo.setPower(wheelTwoPower);
         hera.motorThree.setPower(wheelThreePower);
-        hera.motorFour.setPower(wheelFourPower);
+        //hera.motorFour.setPower(wheelFourPower);
+        showData("Powers" , "" + wheelOnePower + ", " + wheelThreePower);
+        showData("All the Data", "" + baseline +", " + avgMotorOneDist + ", " + avgMotorThreeDist);
     }
 
     // Print data to both telemetry and log
