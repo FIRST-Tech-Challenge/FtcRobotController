@@ -24,7 +24,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
  *      <emsp>Button Dpad_down to <TO-BE-UPDATED> (gamepad1.dpad_down) <BR>
  */
 
-public class HzGamepad1 {
+public class HzGamepad {
 
     //Create gamepad object reference to connect to gamepad1
     public Gamepad gpGamepad1;
@@ -45,7 +45,7 @@ public class HzGamepad1 {
      *
      * @param gamepadPassedfromOpMode from OpMode. In the case of Hazmat Skystone, this is gamepad1
      */
-    public HzGamepad1(Gamepad gamepadPassedfromOpMode) {
+    public HzGamepad(Gamepad gamepadPassedfromOpMode) {
         gpGamepad1 = gamepadPassedfromOpMode;
     }
 
@@ -290,7 +290,7 @@ public class HzGamepad1 {
     }
 
 
-    public void runSubsystemByGamepadInput(Chassis gpChassis) {
+    public void runSubsystemByGamepadInput(ChassisClassic gpChassisClassic) {
 
         double leftStickX = turboMode(getLeftStickX());
         double leftStickY = turboMode(getLeftStickY());
@@ -298,7 +298,7 @@ public class HzGamepad1 {
         double power = Math.hypot(leftStickX, leftStickY);
         double targetAngle = Math.atan2(leftStickY, leftStickX);
         double turn = rightStickX;
-        gpChassis.runByGamepadCommand(targetAngle, turn, power);
+        gpChassisClassic.runByGamepadCommand(targetAngle, turn, power);
 
         /*    if(getLeftTrigger()>0.5){}*/
         /*    if (getLeftBumperPress()) {}*/

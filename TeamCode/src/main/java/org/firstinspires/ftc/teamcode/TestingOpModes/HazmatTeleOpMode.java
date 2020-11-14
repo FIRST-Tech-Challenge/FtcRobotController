@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.TestingOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.SubSystems.Chassis;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad1;
+import org.firstinspires.ftc.teamcode.SubSystems.ChassisClassic;
+import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
@@ -15,8 +15,8 @@ public class HazmatTeleOpMode extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepad1 hzGamepad1;
-    Chassis hzChassis;
+    HzGamepad hzGamepad;
+    ChassisClassic hzChassisClassic;
 
 
 
@@ -24,9 +24,9 @@ public class HazmatTeleOpMode extends LinearOpMode {
     public void runOpMode() {
 
         //Instantiate Subsystems : Chassis, Arm, Intake, Gamepad1
-        hzChassis = new Chassis(hardwareMap);
+        hzChassisClassic = new ChassisClassic(hardwareMap);
 
-        hzGamepad1 = new HzGamepad1(gamepad1);
+        hzGamepad = new HzGamepad(gamepad1);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 
@@ -34,12 +34,12 @@ public class HazmatTeleOpMode extends LinearOpMode {
         waitForStart();
 
         //Initialize on press of play
-        hzChassis.initChassis();
+        hzChassisClassic.initChassis();
 
         //Run Robot based on Gamepad1 inputs
         while (opModeIsActive()) {
             //Run per Gamepad input
-            hzGamepad1.runSubsystemByGamepadInput(hzChassis);
+            hzGamepad.runSubsystemByGamepadInput(hzChassisClassic);
 
             if(HzDEBUG_FLAG) {
                 printDebugMessages();
@@ -55,11 +55,11 @@ public class HazmatTeleOpMode extends LinearOpMode {
     public void printDebugMessages(){
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
-        telemetry.addData("backRightDrive.getCurrentPosition()", hzChassis.backRight.getCurrentPosition());
-        telemetry.addData("backLeftDrive.getCurrentPosition()", hzChassis.backLeft.getCurrentPosition());
-        telemetry.addData("frontRightDrive.getCurrentPosition()", hzChassis.frontRight.getCurrentPosition());
-        telemetry.addData("frontLeftDrive.getCurrentPosition()", hzChassis.frontLeft.getCurrentPosition());
-        telemetry.addData("hzGamepad1.getLeftTrigger()",hzGamepad1.getLeftTrigger());
+        telemetry.addData("backRightDrive.getCurrentPosition()", hzChassisClassic.backRight.getCurrentPosition());
+        telemetry.addData("backLeftDrive.getCurrentPosition()", hzChassisClassic.backLeft.getCurrentPosition());
+        telemetry.addData("frontRightDrive.getCurrentPosition()", hzChassisClassic.frontRight.getCurrentPosition());
+        telemetry.addData("frontLeftDrive.getCurrentPosition()", hzChassisClassic.frontLeft.getCurrentPosition());
+        telemetry.addData("hzGamepad1.getLeftTrigger()", hzGamepad.getLeftTrigger());
 
 
     }
