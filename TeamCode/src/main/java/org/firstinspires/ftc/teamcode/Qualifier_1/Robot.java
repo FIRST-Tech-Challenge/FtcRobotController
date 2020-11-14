@@ -223,6 +223,9 @@ public class Robot {
         drivetrain.moveLeft(distance, power);
     }
 
+    public void multidirectionalMove(double power, double angle) {
+        drivetrain.multidirectionalMove(power, angle);}
+
     public void moveLeftIMU(double distance, double power, double startingAngle, double gain, double maxCorrection) {
         drivetrain.moveLeftIMU(distance, power, startingAngle, gain, maxCorrection);
     }

@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometry;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Teleop;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
@@ -30,6 +31,7 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
 public class Chassis {
+    Teleop teleop = new Teleop();
     //initialize motor
     DcMotorEx motorLeftFront;
     DcMotorEx motorRightFront;
@@ -510,6 +512,31 @@ public class Chassis {
             motorLeftFront.setPower(power + correction);
         }
         stopAllMotorsSideways();
+    }
+
+    /**
+     * moves in any direction
+     * @param   power   from values -1 through 1
+     * @param   angle   angle in degrees
+     * @return  void
+     */
+    public void multidirectionalMove(double power, double angle) {
+
+        float right_stick_x = -teleop.gamepad1.right_stick_x;
+
+        double angleInRadian;
+        angleInRadian = Math.toRadians(angle);
+
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorLeftBack.setPower(Math.sin(angleInRadian - Math.PI/4) * power - right_stick_x);
+        motorRightBack.setPower(Math.sin(angleInRadian + Math.PI/4) * power + right_stick_x);
+        motorLeftFront.setPower(Math.sin(angleInRadian + Math.PI/4) * power - right_stick_x);
+        motorRightFront.setPower(Math.sin(angleInRadian - Math.PI/4) * power + right_stick_x);
+
     }
 
     public void moveAngle2(double distance, double angle, double turn){

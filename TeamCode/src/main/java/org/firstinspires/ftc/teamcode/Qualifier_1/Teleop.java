@@ -32,11 +32,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 //@Disabled
 public class Teleop extends LinearOpMode {
 
-    private DcMotor motorLeftFront;
-    private DcMotor motorLeftBack;
-    private DcMotor motorRightFront;
-    private DcMotor motorRightBack;
-
     @Override
     public void runOpMode() {
 
@@ -47,11 +42,6 @@ public class Teleop extends LinearOpMode {
         boolean slowMode = false;
         boolean moveServo = true;
         boolean servoIsMoved = true;
-
-        motorLeftFront = hardwareMap.dcMotor.get("motorLeftFront");
-        motorLeftBack = hardwareMap.dcMotor.get("motorLeftBack");
-        motorRightFront = hardwareMap.dcMotor.get("motorRightFront");
-        motorRightBack = hardwareMap.dcMotor.get("motorRightBack");
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
@@ -109,23 +99,22 @@ public class Teleop extends LinearOpMode {
                 }
             }
 
-            if (shooter != 0){
+            if (shooter != 0) {
                 robot.shootGoalTeleop(999999999, 100);
-            }
-            else {
+            } else {
                 robot.shootGoalTeleop(0, 0);
             }
 
             /**Speed Mode**/
-            if(y_button2) {
+            if (y_button2) {
                 robot.shootHighGoal(5);
             }
 
-            if(b_button2) {
+            if (b_button2) {
                 robot.shootMidGoal(1);
             }
 
-            if(a_button2) {
+            if (a_button2) {
                 robot.shootLowGoal(1);
             }
 
@@ -139,61 +128,25 @@ public class Teleop extends LinearOpMode {
             if (slowMode) {
                 if (left_stick_x == 0 && left_stick_y == 0) {
                     magnitude = 0;
-                }
-                else {
+                } else {
                     magnitude = 0.3;
                 }
-            }
-            else {
+            } else {
                 magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
             }
-            multidirectionalMove(magnitude, angleInDegree);
+            robot.multidirectionalMove(magnitude, angleInDegree);
 
             // wobble goal movements
-            if (moveUp == true){
+            if (moveUp == true) {
                 robot.moveWobbleGoalClockwise();
-            }
-            else if (moveDown == true){
+            } else if (moveDown == true) {
                 robot.moveWobbleGoalCounterClockwise();
-            }
-            else {
+            } else {
                 robot.stopWobbleGoal();
             }
 
-            //intake
-            if (start_intake == 1.00){
-                robot.startIntake();
-            }
-            else if (stop_intake == 1.00){
-                robot.stopIntake();
-            }
         }
         idle();
-    }
-
-    /**
-     * moves in any direction
-     * @param   power   from values -1 through 1
-     * @param   angle   angle in degrees
-     * @return  void
-     */
-    public void multidirectionalMove(double power, double angle) {
-
-        float right_stick_x = -gamepad1.right_stick_x;
-
-        double angleInRadian;
-        angleInRadian = Math.toRadians(angle);
-
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        motorLeftBack.setPower(Math.sin(angleInRadian - Math.PI/4) * power - right_stick_x);
-        motorRightBack.setPower(Math.sin(angleInRadian + Math.PI/4) * power + right_stick_x);
-        motorLeftFront.setPower(Math.sin(angleInRadian + Math.PI/4) * power - right_stick_x);
-        motorRightFront.setPower(Math.sin(angleInRadian - Math.PI/4) * power + right_stick_x);
-
     }
 
 }
