@@ -44,6 +44,8 @@ public class BlueLeft extends OpMode {
         switch(stateMachineFlow) {
             case 0:
                 //Use the camera to check for number of rings.
+                stateMachineFlow++;
+                break;
             case 1:
                 //Use the value found by the camera scan to choose the path. The ZERO case is the default if the camera fails.
                 if (ringNumber == RingNumber.ZERO) {
@@ -61,9 +63,85 @@ public class BlueLeft extends OpMode {
              *
               **************************/
             case 100:
-                //Start of the zero ring path
+                //Lower Wobble Grabber
                 stateMachineFlow++;
                 break;
+            case 101:
+                //Grab wobble grabber
+                stateMachineFlow++;
+                break;
+            case 102:
+                //Drive forward to A zone
+                stateMachineFlow++;
+                break;
+            case 103:
+                //Back up behind shot line
+                stateMachineFlow++;
+                break;
+            case 104:
+                //High goal or powershot
+                if (!powerShot) {
+                    //High goal
+                    stateMachineFlow++;
+                } else {
+                    //powershot
+                    stateMachineFlow = 150;
+                }
+                break;
+            case 105:
+                //Move right to be in line with goal
+                stateMachineFlow++;
+                break;
+            case 106:
+                //Turn on shooter
+                stateMachineFlow++;
+                break;
+            case 107:
+                //Shoot rings into the goal
+                stateMachineFlow++;
+                break;
+            case 108:
+                //Drive forward onto shot line
+                stateMachineFlow++;
+                break;
+                /*
+                End...
+                 */
+            case 150:
+                //Move right in line with first power shot
+                stateMachineFlow++;
+                break;
+            case 151:
+                //Turn on the shooter
+                stateMachineFlow++;
+                break;
+            case 152:
+                //Shoot first power shot
+                stateMachineFlow++;
+                break;
+            case 153:
+                //Move right to second power shot
+                stateMachineFlow++;
+                break;
+            case 154:
+                //Shoot second power shot
+                stateMachineFlow++;
+                break;
+            case 155:
+                //Move right to third power shot
+                stateMachineFlow++;
+                break;
+            case 156:
+                //Shoot third power shot
+                stateMachineFlow++;
+                break;
+            case 157:
+                //Move forward onto the shot line
+                stateMachineFlow++;
+                break;
+                /*
+                End...
+                 */
 
             /***************************
              *
@@ -83,6 +161,11 @@ public class BlueLeft extends OpMode {
             case 300:
                 //Start of the four ring path
                 stateMachineFlow++;
+                break;
+
+            default:
+                //End program...
+                stop();
                 break;
         }
     }
