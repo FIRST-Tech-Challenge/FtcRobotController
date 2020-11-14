@@ -75,7 +75,7 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Hello Driver");    //
+        telemetry.addData("Say", "Howdy partner, good on ya katie rules");    //
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -103,10 +103,10 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
             }
 
             // Output the safe vales to the motor drives.
-            robot.leftfrontDrive.setPower(left);
-            robot.rightfrontDrive.setPower(right);
-            robot.leftbackDrive.setPower(left);
-            robot.rightbackDrive.setPower(right);
+            robot.leftfrontDrive.setPower(left*0.5);
+            robot.rightfrontDrive.setPower(right*0.5);
+            robot.leftbackDrive.setPower(left*0.5);
+            robot.rightbackDrive.setPower(right*0.5);
 
             // Use gamepad left & right Bumpers to open and close the claw
 //            if (gamepad1.right_bumper)
