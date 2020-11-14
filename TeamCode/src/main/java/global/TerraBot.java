@@ -30,7 +30,6 @@ import util.ThreadHandler;
 
 public class TerraBot {
 
-
     public DcMotor l1;
     public DcMotor l2;
     public DcMotor r1;
@@ -59,9 +58,9 @@ public class TerraBot {
     public double turnStart = 0.25;
     public double grabStart = 0.7;
     public double liftStart = 0.12;
-    public double liftSecond = 0.265;
-    public double shootStartR = 0.13;
-    public double shootStartL = 0.1;
+    public double liftSecond = 0.25;
+    public double shootStartR = 0.07;
+    public double shootStartL = 0.05;
     public double intakeSpeed = 1;
     public double outtakeSpeed = 0.4;
     public double maxArmPos = 215;
@@ -79,8 +78,8 @@ public class TerraBot {
 
     public Cycle grabControl = new Cycle(grabStart, 0.45);
     public Cycle liftControl = new Cycle(liftStart, liftSecond, 0.53);
-    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.24+0.08, 0.25+0.08);
-    public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.15+0.05, 0.34+0.05);
+    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.13, 0.2);
+    public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.15, 0.16);
 
     public ServoController turnControl = new ServoController(turnStart, 0.0, 0.7);
 
@@ -225,7 +224,7 @@ public class TerraBot {
     }
 
     public void lift(double pos){
-        slr.setPosition(pos+0.07);
+        slr.setPosition(pos);
         sll.setPosition(pos);
     }
 
@@ -257,7 +256,7 @@ public class TerraBot {
         shooter.addStage(in, 1.0, 0.5);
         shooter.addStage(ssr, shootControlR.getPos(1), 0.01);
         shooter.addStage(ssl, shootControlL.getPos(1), 0.8);
-        shooter.addStage(slr, liftSecond+0.07, 0.01);
+        shooter.addStage(slr, liftSecond, 0.01);
         shooter.addStage(sll, liftSecond, 0.7);
         shooter.addStage(in, 0.0, 0.01);
         shooter.addCustom(new CodeSeg() {
@@ -285,13 +284,13 @@ public class TerraBot {
         wobbleGoal.addStage(sgr, grabControl.getPos(1), 0.5);
         wobbleGoal.addStage(st, 0.18, 0.01);
         wobbleGoal.addStage(arm,  1, degreesToTicks(215));
-        wobbleGoal.addStage(slr, liftControl.getPos(1)+0.07, 0.01);
+        wobbleGoal.addStage(slr, liftControl.getPos(1), 0.01);
         wobbleGoal.addStage(sll, liftControl.getPos(1), 0.5);
-        wobbleGoal.addStage(slr, liftControl.getPos(2)+0.07, 0.01);
+        wobbleGoal.addStage(slr, liftControl.getPos(2), 0.01);
         wobbleGoal.addStage(sll, liftControl.getPos(2), 0.5);
         wobbleGoal.addDelay(0.25);
         wobbleGoal.addStage(st, 0.65, 0.05);
-        wobbleGoal.addStage(slr, liftControl.getPos(0)+0.07, 0.01);
+        wobbleGoal.addStage(slr, liftControl.getPos(0), 0.01);
         wobbleGoal.addStage(sll, liftControl.getPos(0), 0.01);
         wobbleGoal.addDelay(0.7);
         wobbleGoal.addStage(arm, 1, degreesToTicks(210));

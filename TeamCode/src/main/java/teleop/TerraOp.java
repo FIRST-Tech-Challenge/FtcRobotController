@@ -89,10 +89,10 @@ public class TerraOp extends OpMode {
             if(gamepad2.y){
                 bot.shooter.start();
             }
+//            if(gamepad2.a){
+//                bot.wobbleGoal.start();
+//            }
             if(gamepad2.x){
-                bot.wobbleGoal.start();
-            }
-            if(gamepad2.a){
                 bot.wobbleGoal2.start();
             }
 
