@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -37,8 +38,9 @@ public class Chassis {
     DcMotorEx motorRightFront;
     DcMotorEx motorLeftBack;
     DcMotorEx motorRightBack;
-    DcMotorEx ShooterMotor;// why are these here - Aiden
-    DcMotorEx wobbleGoalMotor; // why are these here - Aiden
+    DcMotorEx ShooterMotor;
+    DcMotorEx wobbleGoalMotor;
+    Servo ShooterServo;
 
     // Initialize Encoder Variables
     final double robot_diameter = Math.sqrt(619.84);
@@ -79,6 +81,7 @@ public class Chassis {
         motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
         ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
         wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
+        ShooterServo = (Servo) hardwareMap.servo.get("ShooterServo");
 
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 //
@@ -113,6 +116,9 @@ public class Chassis {
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
+
+        //Servo
+        ShooterServo.setPosition(0);
 
         // reset encoder count kept by left motor.
         motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -199,25 +205,25 @@ public class Chassis {
         motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void moveShooterMotor(double distance){
-        double ticksToMove = counts_per_inch * distance;
-        double ticksLocationToMove = ShooterMotor.getCurrentPosition() + ticksToMove;
-        ShooterMotor.setTargetPosition((int)ticksLocationToMove);
-        ShooterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        ShooterMotor.setPower(0.5);
-        while (op.opModeIsActive() && ShooterMotor.isBusy())
-        {
-            op.telemetry.addData("ShooterMotor", ShooterMotor.getCurrentPosition() + " busy=" + ShooterMotor.isBusy());
-            op.telemetry.update();
-            op.idle();
+    public void moveShooterMotor(int distance, int power){
+        double sleepTime = (distance / 1 * 1000);
+
+        ShooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+
+        ShooterMotor.setTargetPosition(distance);
+
+        ShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        ShooterMotor.setTargetPosition(distance);
+        ShooterMotor.setPower(power);
+        if(ShooterMotor.getCurrentPosition()==distance){
+            ShooterMotor.setPower(0);
         }
-        //brake
-        ShooterMotor.setPower(0);
-        ShooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     public void moveWobbleGoalMotor(double distance){
-        double ticksToMove = counts_per_inch * distance;
+        double ticksToMove = distance;
         double ticksLocationToMove = wobbleGoalMotor.getCurrentPosition() + ticksToMove;
         wobbleGoalMotor.setTargetPosition((int)ticksLocationToMove);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -231,6 +237,10 @@ public class Chassis {
         //brake
         wobbleGoalMotor.setPower(0);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void setShooterServoPosition( double position){
+        ShooterServo.setPosition(position);
     }
 
     private void resetAngle()

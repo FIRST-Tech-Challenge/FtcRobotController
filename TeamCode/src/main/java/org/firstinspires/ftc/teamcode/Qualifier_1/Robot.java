@@ -186,8 +186,8 @@ public class Robot {
     }
 
     /******** shooterMotor **********/
-    public void moveShooterMotor(double distance) {
-        drivetrain.moveShooterMotor(distance);
+    public void moveShooterMotor(int distance, int power) {
+        drivetrain.moveShooterMotor(distance, power);
     }
     /******** shooterMotor **********/
     public void moveWobbleGoalMotor(double distance) {
