@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 
 public abstract class AutoBase extends OdoBase {
     protected ElapsedTime runtime = new ElapsedTime();
+    private String opModeSide = AutoRoute.NAME_RED;
 
     @Override
     public void runOpMode(){
@@ -19,7 +20,6 @@ public abstract class AutoBase extends OdoBase {
             waitForStart();
             startLocator();
             act();
-            sleep(5000);
         }
         catch (Exception ex){
             telemetry.addData("Error", ex);
@@ -41,4 +41,11 @@ public abstract class AutoBase extends OdoBase {
 
     }
 
+    public String getOpModeSide() {
+        return opModeSide;
+    }
+
+    public void setOpModeSide(String opModeSide) {
+        this.opModeSide = opModeSide;
+    }
 }

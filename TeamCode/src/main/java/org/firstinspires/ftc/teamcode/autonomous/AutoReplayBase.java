@@ -9,6 +9,9 @@ public class AutoReplayBase extends AutoBase {
         String routeName = getModeName();
         if (!routeName.isEmpty()) {
             loadRoute(routeName);
+            if (this.selectedRoute != null){
+                this.setOpModeSide(this.selectedRoute.getName());
+            }
         }
     }
 
