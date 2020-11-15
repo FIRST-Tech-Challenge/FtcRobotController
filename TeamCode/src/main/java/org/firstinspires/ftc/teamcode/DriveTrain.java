@@ -225,13 +225,13 @@ public class DriveTrain {
         //double wheelFourEndPos = 0;
         while(hera.motorThree.getCurrentPosition() < wheelThreeStartPos + 50){
             showData("goStraight", "in the while loop");
-            wheelOneEndPos = Math.abs(hera.motorOne.getCurrentPosition() - wheelOneStartPos);
-            //wheelTwoEndPos = Math.abs(hera.motorTwo.getCurrentPosition() - wheelTwoStartPos);
-            wheelThreeEndPos = Math.abs(hera.motorThree.getCurrentPosition() - wheelThreeStartPos);
-            //wheelFourEndPos = Math.abs(hera.motorFour.getCurrentPosition() - wheelFourStartPos);
-            showData("wheelThreeEndPos", "" + wheelThreeEndPos);
-            showData("wheelThreeCurrentPos", "" + hera.motorThree.getCurrentPosition());
         }
+        wheelOneEndPos = Math.abs(hera.motorOne.getCurrentPosition() - wheelOneStartPos);
+        //wheelTwoEndPos = Math.abs(hera.motorTwo.getCurrentPosition() - wheelTwoStartPos);
+        wheelThreeEndPos = Math.abs(hera.motorThree.getCurrentPosition() - wheelThreeStartPos);
+        //wheelFourEndPos = Math.abs(hera.motorFour.getCurrentPosition() - wheelFourStartPos);
+        showData("wheelEndPos's", "" + wheelOneEndPos + ", " + wheelThreeEndPos);
+        showData("wheelCurrentPos's", "" + hera.motorThree.getCurrentPosition() + ", " + hera.motorOne.getCurrentPosition());
         if(this.counter == 1) {
             baseline = Math.min(wheelOneEndPos, wheelThreeEndPos);
             showData("baseline calc: ", "" + wheelOneEndPos + ", " + wheelThreeEndPos);
@@ -247,19 +247,27 @@ public class DriveTrain {
         //avgMotorFourDist = sumOfMotorFourDist/counter;
         showData("counter", "" + counter);
         counter++;
-        showData("wheelOneDistance: ", "" + wheelOneEndPos);
         //showData("wheelTwoDistance: ", "" + wheelTwoEndPos);
-        showData("wheelThreeDistance: ", "" + wheelThreeEndPos);
         //showData("wheelFourDistance: ", "" + wheelFourEndPos);
 
         if(baseline !=0){
-            wheelOneRatio = avgMotorOneDist/baseline;
+            if(Math.abs(avgMotorOneDist - baseline) <= 0.5) {
+                wheelOneRatio = 1;
+            }
+            else{
+                wheelOneRatio = avgMotorOneDist/baseline;
+            }
             //wheelTwoRatio = avgMotorTwoDist/baseline;
-            wheelThreeRatio = avgMotorThreeDist/baseline;
+            if(Math.abs(avgMotorThreeDist - baseline) <= 0.5){
+                wheelThreeRatio = 1;
+            }
+            else {
+                wheelThreeRatio = avgMotorThreeDist / baseline;
+            }
             //wheelFourRatio = avgMotorFourDist/baseline;
             showData("Ratios", "" + wheelOneRatio + ", " + wheelThreeRatio);
         }
-        wheelOnePower /=wheelOneRatio;
+        wheelOnePower /= wheelOneRatio;
         //wheelTwoPower /= wheelTwoRatio;
         wheelThreePower /= wheelThreeRatio;
         //wheelFourPower /= wheelFourPower;
