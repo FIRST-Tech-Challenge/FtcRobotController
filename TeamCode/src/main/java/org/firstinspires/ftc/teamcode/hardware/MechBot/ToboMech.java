@@ -1236,7 +1236,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         // start the shooter with expected RPM
         double dx = target_x-chassis.odo_x_pos_cm();
-        double dy = target_x-chassis.odo_y_pos_cm();
+        double dy = target_y-chassis.odo_y_pos_cm();
         double dist = Math.hypot(dx,dy);
         double v = getVelocityToShoot(dist, target_height);
         double rpm = getRpmFromVelocity(v);
@@ -1258,13 +1258,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         return a*velocity+b;
     }
 
-    public double getVelocityToShoot(double dx, double dy){
+    public double getVelocityToShoot(double dHorizontal, double dVertical){
         // (dx, dy) is the location delta from the target to the the robot
         // height is the target height to hit
+        dHorizontal /= 100.;
+        dVertical /= 100.;
         double shooterAngle = 31;
         double vSquared = 4.905/Math.cos(Math.toRadians(shooterAngle))
-                /Math.cos(Math.toRadians(shooterAngle))*dx*dx
-                /(dx*Math.tan(Math.toDegrees(shooterAngle))-dy);
+                /Math.cos(Math.toRadians(shooterAngle))*dHorizontal*dHorizontal
+                /(dHorizontal*Math.tan(Math.toDegrees(shooterAngle))-dVertical);
         if (vSquared < 0){ return -1;}
         return Math.sqrt(vSquared);
     }
