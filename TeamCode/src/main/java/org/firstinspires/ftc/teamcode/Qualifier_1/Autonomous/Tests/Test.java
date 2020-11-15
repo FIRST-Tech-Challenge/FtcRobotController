@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 @Autonomous(name = "ChassisTest")
-//@Disabled
+@Disabled
 public class Test extends LinearOpMode {
 
     @Override

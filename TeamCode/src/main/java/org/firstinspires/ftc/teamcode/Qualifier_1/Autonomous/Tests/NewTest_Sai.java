@@ -9,7 +9,7 @@
  *
  * @author Sai
  * @version 1.0
- * @since 11/9/2020
+ * @since 11/14/2020
  * @status work in progress
  */
 
@@ -71,8 +71,8 @@ public class NewTest_Sai extends LinearOpMode {
         telemetry.update();
         sleep(1000);
 
-//        robot.moveShooterMotor(0.5);
-//        telemetry.addData("Moving ShooterMotor", 10);
+//        robot.moveShooterMotor(1, 1);
+//        telemetry.addData("Moving ShooterMotor", 1);
 //        telemetry.update();
 //        sleep(1000);
 //        robot.moveShooterMotor(-0.5);
@@ -109,34 +109,5 @@ public class NewTest_Sai extends LinearOpMode {
         telemetry.addData("Moving Right", 10);
         telemetry.update();
         sleep(1000);
-
-        //Moving with IMU
-        robot.moveForwardIMU(50,0.8);
-        telemetry.addData("Moving Forward IMU", 50);
-        telemetry.update();
-        sleep(1000);
-        robot.moveBackwardIMU(50,0.8);
-        telemetry.addData("Moving Backward IMU", 10);
-        telemetry.update();
-        sleep(3000);
-        robot.moveLeftIMU(70, 0.8, 0, 0.15, 0.2);
-        telemetry.addData("Moving Left IMU", 0);
-        telemetry.update();
-        sleep(1000);
-        robot.moveRightIMU(70, 0.8, 0, 0.1, 0.2);
-        telemetry.addData("Moving Right IMU", 0);
-        telemetry.update();
-        sleep(1000);
-
-        //Tests Moving at a Specific Angle (I am testing how the moveAngle2 function works, I am still not completely sure what it is)
-        robot.moveAngle2(30, 45, 0.5);
-        telemetry.addData("Moving Angle", 0.5);
-        telemetry.update();
-        sleep(1000);
-        robot.moveAngle2(30, 45, 0.8);
-        telemetry.addData("Moving Angle", 0.8);
-        telemetry.update();
-        sleep(1000);
-
     }
 }
