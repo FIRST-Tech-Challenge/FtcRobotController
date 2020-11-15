@@ -1234,13 +1234,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 target_height = 76;
                 break;
         }
-        // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
-        double angle = Math.toDegrees(Math.atan2(target_x - chassis.odo_x_pos_cm(), target_y - chassis.odo_y_pos_cm()));
-        try {
-            chassis.rotateTo(auto_chassis_power, angle);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         // start the shooter with expected RPM
         double dx = target_x-chassis.odo_x_pos_cm();
         double dy = target_x-chassis.odo_y_pos_cm();
@@ -1248,6 +1241,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double v = getVelocityToShoot(dist, target_height);
         double rpm = getRpmFromVelocity(v);
         shooter.shootOutByRpm(rpm);
+        // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
+        double angle = Math.toDegrees(Math.atan2(target_x - chassis.odo_x_pos_cm() - shooter_offset, target_y - chassis.odo_y_pos_cm()));
+        try {
+            if (Math.abs(chassis.odo_heading() - angle) > 1)
+                chassis.rotateTo(0.35, angle);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
     }
 
     public double  getRpmFromVelocity(double velocity){
