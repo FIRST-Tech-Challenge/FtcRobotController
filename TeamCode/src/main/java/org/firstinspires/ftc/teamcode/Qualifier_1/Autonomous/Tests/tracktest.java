@@ -26,12 +26,13 @@ final boolean debug = true;
         telemetry.update();
         sleep(1000);
         waitForStart();
-        robot.moveAngleOdometry(0,5,0.5);
+       /* robot.moveAngleOdometry(0,5,0.5);
         robot.moveAngleOdometry(0,-5,0.5);
         robot.moveAngleOdometry( 0,5,0.5);
         robot.moveAngleOdometry( 0,-5,0.5);
         robot.moveAngleOdometry( 5,5,0.5);
-        robot.moveAngleOdometry( -5,-5,0.5);
+        robot.moveAngleOdometry( -5,-5,0.5);*/
+        robot.moveAngleOdometry(0,72,0.5);
         sleep(500);
         stop();
     }

@@ -17,7 +17,7 @@ public class ParkOdometry extends LinearOpMode {
 
         waitForStart();
 
-        robot.moveForwardOdometry(60, 0.8);
+        robot.moveForwardOdometry(60, 0.5);
         sleep(5000);
     }
 }

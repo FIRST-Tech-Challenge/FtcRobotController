@@ -20,8 +20,8 @@ public class Odometry {
     DcMotorEx odom2;
     DcMotorEx odom3;
     int[] odomconst = {1,1,1};
-    double ticks_per_inch = 1440*1.1 / 4.7;
-    double robot_diameter = 17*4.7/2.8;
+    double ticks_per_inch = 1440/3.2;
+    double robot_diameter = sqrt(619.84);
     double[] odom = new double[3];
     double xpos = 0;
     double ypos = 0;
@@ -52,7 +52,7 @@ public class Odometry {
 
 
     public double getAngle() {
-        double angle = (odomconst[0]*odom1.getCurrentPosition() - odomconst[1]*odom2.getCurrentPosition()) / (ticks_per_inch * robot_diameter * Math.PI);
+        double angle = (odomconst[0]*odom1.getCurrentPosition() - odomconst[1]*odom2.getCurrentPosition()) / (ticks_per_inch *2* robot_diameter * Math.PI);
         angle *= 360;
         angle %= 360;
         if (angle < -180) {
@@ -94,13 +94,13 @@ public class Odometry {
                 data[0] = xpos;
                 data[1] = ypos;
                 data[2] = getAngle();
-                op.telemetry.addData("X", data[0]);
+                /*op.telemetry.addData("X", data[0]);
                 op.telemetry.addData("Y", data[1]);
                 op.telemetry.addData("odom1", odomconst[0]*odom1.getCurrentPosition());
                 op.telemetry.addData("odom2",  odomconst[1]*odom2.getCurrentPosition());
                 op.telemetry.addData("odom3", odomconst[2]*odom3.getCurrentPosition());
                 op.telemetry.addData("angle", data[2]);
-                op.telemetry.update();
+                op.telemetry.update();*/
                 return data;
 
         } else {
