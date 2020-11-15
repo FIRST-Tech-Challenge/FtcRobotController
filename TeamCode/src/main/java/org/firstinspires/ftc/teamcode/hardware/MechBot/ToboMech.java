@@ -1251,12 +1251,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public double  getRpmFromVelocity(double velocity){
-        double a = -0.00000246473;
-        double b = 0.0122007;
-        double c=-5.31878 - velocity;
-        double det = b*b-4*a*c;
-        if (det <0 || velocity<0){ return -1;}
-        return (-b+ Math.sqrt(det))/2/a;
+        double a = 225.686;
+        double b = -35.9631;
+        return a*velocity+b;
     }
 
     public double getVelocityToShoot(double dx, double dy){
