@@ -1258,16 +1258,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         return a*velocity+b;
     }
 
-    public double getVelocityToShoot(double dHorizontal, double dVertical){
+    public  double getVelocityToShoot(double dHorizontal, double dVertical){
         // (dx, dy) is the location delta from the target to the the robot
         // height is the target height to hit
-        dHorizontal /= 100.;
-        dVertical /= 100.;
+        dHorizontal = dHorizontal/ 100.;
+        dVertical  = dVertical /100.;
         double shooterAngle = 31;
-        double vSquared = 4.905/Math.cos(Math.toRadians(shooterAngle))
-                /Math.cos(Math.toRadians(shooterAngle))*dHorizontal*dHorizontal
-                /(dHorizontal*Math.tan(Math.toDegrees(shooterAngle))-dVertical);
+        double vSquared = (4.905/Math.cos(Math.toRadians(shooterAngle))
+                /Math.cos(Math.toRadians(shooterAngle)))*dHorizontal*dHorizontal
+                /(dHorizontal*Math.tan(Math.toRadians(shooterAngle))-dVertical);
         if (vSquared < 0){ return -1;}
+
+
         return Math.sqrt(vSquared);
     }
 
