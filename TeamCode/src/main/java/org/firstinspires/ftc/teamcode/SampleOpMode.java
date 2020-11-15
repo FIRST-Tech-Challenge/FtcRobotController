@@ -50,7 +50,6 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-<<<<<<< Updated upstream
 @TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
 public class SampleOpMode extends OpMode
 {
@@ -61,14 +60,6 @@ public class SampleOpMode extends OpMode
 //
 //    /*
 //     * Code to run ONCE when the driver hits INIT
-=======
-    private DcMotor testMotor;
-    private DcMotor testMotor2;
-//    private Servo testServo;
-//    private double max = 0.00; // Maximum rotational position
-//    private double min = 1.00; // Minimum rotational position
-//    private double currentPos = 0.00;
->>>>>>> Stashed changes
 
     @Override
     public void init() {
@@ -80,16 +71,10 @@ public class SampleOpMode extends OpMode
 //        leftDrive  = hardwareMap.get(DcMotor.class, "lfmotor");
 //        rightDrive = hardwareMap.get(DcMotor.class, "rfmotor");
 
-<<<<<<< Updated upstream
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
 //        leftDrive.setDirection(DcMotor.Direction.FORWARD);
 //        rightDrive.setDirection(DcMotor.Direction.REVERSE);
-=======
-        testMotor = hardwareMap.get(DcMotor.class, "testmotor");
-        testMotor2 = hardwareMap.get(DcMotor.class, "testmotor2");
-//        testServo = hardwareMap.get(Servo.class, "testservo");
->>>>>>> Stashed changes
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -102,7 +87,6 @@ public class SampleOpMode extends OpMode
     public void init_loop() {
     }
 
-<<<<<<< Updated upstream
     /*
      * Code to run ONCE when the driver hits PLAY
      */
@@ -119,24 +103,10 @@ public class SampleOpMode extends OpMode
         // Setup a variable for each drive wheel to save power level for telemetry
 //        double leftPower;
 //        double rightPower;
-=======
-            // gamepad 1
-            if(gamepad2.right_bumper) {
-                testMotor.setPower(1);
-                testMotor2.setPower(.35);
-            } else {
-                testMotor.setPower(0);
-                testMotor2.setPower(0);
-            }
-
-//            testMotor.setPower( gamepad1.left_stick_y );
-//            testMotor2.setPower( 0.9*gamepad1.left_stick_y );
->>>>>>> Stashed changes
 
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
 
-<<<<<<< Updated upstream
         // POV Mode uses left stick to go forward, and right stick to turn.
         // - This uses basic math to combine motions and is easier to drive straight.
 //        double turn  =  gamepad1.right_stick_x;
@@ -152,25 +122,6 @@ public class SampleOpMode extends OpMode
 //        // Send calculated power to wheels
 //        leftDrive.setPower(leftPower);
 //        rightDrive.setPower(rightPower);
-=======
-//            if (gamepad1.right_stick_y != 0) { //if stick is being moved
-//                currentPos = Math.abs(gamepad1.right_stick_y);
-//                if (gamepad1.a) { max = currentPos; }
-//                if (gamepad1.b) { min = currentPos; }
-//            } else { //if stick is untouched
-//                if (gamepad1.a) { currentPos = max; }
-//                if (gamepad1.b) { currentPos = min; }
-//            }
-
-//            testServo.setPosition(currentPos);
-
-            telemetry.addData("Motor Power", gamepad1.left_stick_y);
-            telemetry.addData("Right Stick Pos", gamepad1.right_stick_y);
-//            telemetry.addData("Servo Position", currentPos);
-//            telemetry.addData("Servo Max", max);
-//            telemetry.addData("Servo Min", min);
-            telemetry.update();
->>>>>>> Stashed changes
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());

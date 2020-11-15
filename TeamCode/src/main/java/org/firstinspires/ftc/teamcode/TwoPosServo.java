@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class TwoPosServo extends LinearOpMode {
 
-    private Servo servo;
-    private double max; // Maximum rotational position
-    private double min; // Minimum rotational position
+    private Servo servo = null;
+    private double max = 0.01; // Maximum rotational position
+    private double min = 0.99; // Minimum rotational position
 
 
     private String currentPos = "min";
@@ -28,10 +28,10 @@ public class TwoPosServo extends LinearOpMode {
     }
 
     public void nextPos() {
-        if(currentPos.equals("min")) {
+        if(currentPos == "min") {
             currentPos = "max";
             maxPos();
-        } else if(currentPos.equals("max")) {
+        } else if(currentPos == "max") {
             currentPos = "min";
             minPos();
         }

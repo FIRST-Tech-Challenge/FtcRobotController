@@ -79,7 +79,7 @@ public class Teleop15317 extends LinearOpMode {
         );
         gearbox = new TwoPosServo(
             hardwareMap.get(Servo.class, "gearbox"),
-            .5, 0.6
+            0.01, 0.99
         );
 
         waitForStart();
