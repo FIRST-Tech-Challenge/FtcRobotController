@@ -309,6 +309,24 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }, Events.Axis.BOTH, Events.Side.RIGHT);
 
+        em.onTrigger(new Events.Listener() {
+            @Override
+            public void triggerMoved(EventManager source, Events.Side side, float current, float change) throws InterruptedException {
+                // 0.2 is a dead zone threshold for the trigger
+                if (current > 0.2 && chassis!=null) {
+                    if (source.isPressed(Button.DPAD_UP)) { // high goal
+                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER);
+                    } else if (source.isPressed(Button.DPAD_RIGHT)) { // high goal
+                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R);
+                    } else if (source.isPressed(Button.DPAD_LEFT)) { // high goal
+                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L);
+                    } else if (source.isPressed(Button.DPAD_DOWN)) { // high goal
+                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_M);
+                    }
+                }
+            }
+        }, Events.Side.RIGHT);
+
         em.onButtonDown(new Events.Listener() {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
@@ -323,7 +341,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (shooter!=null)
                         shooter.shootSpeedInc();
-                } else {
+                } else if (source.getTrigger(Events.Side.RIGHT)<0.2) {
                     if (intake!=null)
                        intake.intakeInAuto();
                 }
@@ -1192,5 +1210,58 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             TaskManager.processTasks();
         }
     }
+
+    public void rotateToTargetAndStartShooter(MechChassis.ShootingTarget target) {
+        double target_x = 0;
+        double target_y = 360;
+        double target_height = 0;
+        switch (target) {
+            case TOWER:
+                target_x = 90;
+                target_height = 93;
+                break;
+            case PSHOT_L:
+                target_x = 132;
+                target_height = 76;
+                break;
+            case PSHOT_M:
+                target_x = 151;
+                target_height = 76;
+                break;
+            case PSHOT_R:
+                target_x = 170;
+                target_height = 76;
+                break;
+        }
+        // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
+
+        // start the shooter with expected RPM
+        double dx = target_x-chassis.odo_x_pos_cm();
+        double dy = target_x-chassis.odo_y_pos_cm();
+        double v = getVelocityToShoot(dx, dy, target_height);
+        double rpm = getRpmFromVelocity(v);
+        shooter.shootOutByRpm(rpm);
+    }
+
+    public double  getRpmFromVelocity(double velocity){
+        double a = -0.00000246473;
+        double b = 0.0122007;
+        double c=-5.31878 - velocity;
+        double det = b*b-4*a*c;
+        if (det <0 || velocity<0){ return -1;}
+        return (-b+ Math.sqrt(det))/2/a;
+    }
+
+    public double getVelocityToShoot(double dx, double dy, double height){
+        // (dx, dy) is the location delta from the target to the the robot
+        // height is the target height to hit
+        double shooterAngle = 31;
+        double vSquared = 4.905/Math.cos(Math.toRadians(shooterAngle))
+                /Math.cos(Math.toRadians(shooterAngle))*dx*dx
+                /(dx*Math.tan(Math.toDegrees(shooterAngle))-dy);
+        if (vSquared < 0){ return -1;}
+        return Math.sqrt(vSquared);
+    }
+
 
 }

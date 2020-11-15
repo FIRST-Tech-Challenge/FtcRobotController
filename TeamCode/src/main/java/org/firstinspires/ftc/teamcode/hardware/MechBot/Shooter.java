@@ -82,6 +82,13 @@ public class Shooter extends Logger<Shooter>  {
         shooterOn = true;
     }
 
+    public void shootOutByRpm(double rpm){
+        if (shooter1!=null)
+            shooter1.setVelocity(rpm);
+        if (shooter2!=null)
+            shooter2.setVelocity(rpm);
+        shooterOn = true;
+    }
 
     public void shootOutSlow(){
         if (shooter1!=null)
