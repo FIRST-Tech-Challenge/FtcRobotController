@@ -25,10 +25,10 @@ public class Shooter extends Logger<Shooter>  {
     final private CoreSystem core;
     private final double shooterSpeedFast = 1.0;
     private final double shooterSpeedSlow = 0.3;
-    private final int SHOOT_MAX = 2600;
-    private final int SHOOT_FAST = 2100;
+    private final int SHOOT_MAX = 2500;
+    private final int SHOOT_FAST = 1600;
     private final int SHOOT_MIN = 100;
-    private final int SHOOT_INC_STEP = 50;
+    private final int SHOOT_INC_STEP = 25;
 
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;

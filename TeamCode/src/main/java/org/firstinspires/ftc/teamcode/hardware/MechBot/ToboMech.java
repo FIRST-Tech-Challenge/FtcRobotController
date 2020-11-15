@@ -62,6 +62,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double auto_chassis_heading = -90;
     public double auto_chassis_power_slow = .4;
     public double auto_chassis_align_power = .22;
+    public double shooter_offset = 8; // cm to the robot center x coordination
 
 
     public double auto_rotate_degree = 0;
@@ -75,7 +76,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean useComboGrabber = true;
     public boolean useHopper = false;
     public boolean useShooter = true;
-    public boolean useIntake = false;
+    public boolean useIntake = true;
 
     public void set_simulation_mode(boolean value) {
         simulation_mode = value;
@@ -366,7 +367,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (chassis != null) {
                         if (source.isPressed(Button.BACK)) {
                             // chassis.chassis_test();
-                        } else {
+                        } else if (source.getTrigger(Events.Side.RIGHT)<0.2) {
                             if (intake!=null)
                                 intake.intakeOutAuto();
                         }
@@ -1238,7 +1239,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // start the shooter with expected RPM
         double dx = target_x-chassis.odo_x_pos_cm();
         double dy = target_x-chassis.odo_y_pos_cm();
-        double v = getVelocityToShoot(dx, dy, target_height);
+        double dist = Math.hypot(dx,dy);
+        double v = getVelocityToShoot(dist, target_height);
         double rpm = getRpmFromVelocity(v);
         shooter.shootOutByRpm(rpm);
     }
@@ -1252,7 +1254,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         return (-b+ Math.sqrt(det))/2/a;
     }
 
-    public double getVelocityToShoot(double dx, double dy, double height){
+    public double getVelocityToShoot(double dx, double dy){
         // (dx, dy) is the location delta from the target to the the robot
         // height is the target height to hit
         double shooterAngle = 31;
