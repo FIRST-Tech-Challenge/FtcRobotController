@@ -14,11 +14,15 @@ import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RingDetector {
+public class RingDetector implements Runnable{
     Telemetry telemetry;
     private Detector tfDetector = null;
     private HardwareMap hardwareMap;
     private Led lights;
+
+    private boolean isRunning = true;
+
+    private AutoDot recogZone = null;
 
     private static String MODEL_FILE_NAME = "rings_float.tflite";
     private static String LABEL_FILE_NAME = "labels.txt";
@@ -27,6 +31,9 @@ public class RingDetector {
     private static final String LABEL_B = "Single";
     private static final String LABEL_C = "Quad";
     private String targetZone = LABEL_C;
+
+    private String side = AutoRoute.NAME_RED;
+    private LinearOpMode caller = null;
 
     private ArrayList<AutoDot> namedCoordinates = new ArrayList<>();
 
@@ -40,6 +47,12 @@ public class RingDetector {
         lights = led;
         initDetector();
         activateDetector();
+    }
+
+    public void init(String side, LinearOpMode caller) {
+        this.side = side;
+        this.caller = caller;
+        configZones(side);
     }
 
     protected void configZones(String side){
@@ -79,7 +92,7 @@ public class RingDetector {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
         boolean fromConfig = this.namedCoordinates.size() > 0;
-        while (caller.opModeIsActive() && runtime.seconds() <= timeout) {
+        while (runtime.seconds() <= timeout) {
             telemetry.addData("this.namedCoordinates.size() > 0", fromConfig);
             if (tfDetector != null) {
                 List<Classifier.Recognition> results = tfDetector.getLastResults();
@@ -117,6 +130,45 @@ public class RingDetector {
         return zone;
     }
 
+    public void detectRingThread() {
+        this.recogZone = zoneB;
+
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+        boolean fromConfig = this.namedCoordinates.size() > 0;
+        while (isRunning) {
+            telemetry.addData("this.namedCoordinates.size() > 0", fromConfig);
+            if (tfDetector != null) {
+                List<Classifier.Recognition> results = tfDetector.getLastResults();
+                if (results == null || results.size() == 0) {
+                    telemetry.addData("Nada", "No results");
+                } else {
+                    for (Classifier.Recognition r : results) {
+                        if (r.getConfidence() >= 0.8) {
+                            telemetry.addData("PrintZone", r.getTitle());
+                            if (r.getTitle().contains(LABEL_C)) {
+                                this.recogZone = zoneC;
+                                this.lights.recognitionSignal(4);
+                            }
+                            else if(r.getTitle().contains(LABEL_B)){
+                                this.recogZone = zoneB;
+                                this.lights.recognitionSignal(1);
+                            }
+                            else if(r.getTitle().contains(LABEL_A)){
+                                this.recogZone = zoneA;
+                                this.lights.recognitionSignal(0);
+                            }
+                            targetZone = this.recogZone.getDotName();
+                            telemetry.addData("Zone", targetZone);
+                        }
+                    }
+                }
+            }
+            telemetry.update();
+        }
+
+    }
+
     public void initDetector() {
         tfDetector = new Detector(MODEl_TYPE, MODEL_FILE_NAME, LABEL_FILE_NAME, hardwareMap.appContext, telemetry);
     }
@@ -133,6 +185,7 @@ public class RingDetector {
     }
 
     public void stopDetection() {
+        stopThread();
         if (tfDetector != null) {
             tfDetector.stopProcessing();
         }
@@ -140,5 +193,24 @@ public class RingDetector {
 
     public void setNamedCoordinates(ArrayList<AutoDot> namedCoordinates) {
         this.namedCoordinates = namedCoordinates;
+    }
+
+    public void stopThread() {
+        isRunning = false;
+    }
+
+    @Override
+    public void run() {
+        while(isRunning) {
+            detectRingThread();
+        }
+    }
+
+    public AutoDot getRecogZone() {
+        return recogZone;
+    }
+
+    public void setRecogZone(AutoDot recogZone) {
+        this.recogZone = recogZone;
     }
 }

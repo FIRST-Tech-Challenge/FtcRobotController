@@ -36,20 +36,21 @@ public class RingRecogTest extends LinearOpMode {
                 Led lights = new Led();
                 lights.init(this.hardwareMap, telemetry);
                 rf = new RingDetector(this.hardwareMap, lights, telemetry);
+                rf.init(AutoRoute.NAME_RED, this);
+                Thread detectThread = new Thread(rf);
+                detectThread.start();
             } catch (Exception ex) {
                 telemetry.addData("Error", String.format("Unable to initialize Detector. %s", ex.getMessage()));
                 sleep(5000);
                 return;
             }
 
-            telemetry.addData("Detector", "Ready");
-            telemetry.update();
-
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
 
-            // detect ring stack
-            wobdot = rf.detectRing(2, AutoRoute.NAME_RED, telemetry, this);
+            rf.stopDetection();
+
+            wobdot = rf.getRecogZone();
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
