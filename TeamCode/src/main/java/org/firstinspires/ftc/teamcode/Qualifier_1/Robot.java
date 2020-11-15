@@ -347,13 +347,22 @@ public class Robot {
     /**
      * wobble goal methods
      */
-    public void moveWobbleGoalClockwise(){
-        this.wobbleGoal.clockwise();
+    public void wobbleGoalStartingPosition(){
+        this.wobbleGoal.startingPosition();
     }
 
-    public void moveWobbleGoalCounterClockwise(){
-        wobbleGoal.counterClockwise();
+    public void wobbleGoalGrabbingPosition(){
+        wobbleGoal.grabbingPosition();
     }
+
+    public void wobbleGoalLiftingPosition(){
+        wobbleGoal.liftingPosition();
+    }
+
+    public void wobbleGoalDroppingPosition(){
+        wobbleGoal.droppingPosition();
+    }
+
 
     public void stopWobbleGoal(){
         wobbleGoal.stop();

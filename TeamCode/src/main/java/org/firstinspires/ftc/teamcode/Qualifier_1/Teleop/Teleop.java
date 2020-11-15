@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Qualifier_1;
+package org.firstinspires.ftc.teamcode.Qualifier_1.Teleop;
 
 import android.media.FaceDetector;
 
@@ -64,8 +64,10 @@ public class Teleop extends LinearOpMode {
             float stop_intake = gamepad1.left_trigger;
             boolean x_button = gamepad1.x;
             boolean a_button = gamepad1.a;
-            boolean moveUp = gamepad2.dpad_up;
-            boolean moveDown = gamepad2.dpad_down;
+            boolean startingPosition = gamepad2.dpad_up;
+            boolean grabbingPosition = gamepad2.dpad_right;
+            boolean liftingPosition = gamepad2.dpad_down;
+            boolean droppingPosition = gamepad2.dpad_left;
             boolean y_button2 = gamepad2.y;
             boolean b_button2 = gamepad2.b;
             boolean a_button2 = gamepad2.a;
@@ -127,12 +129,14 @@ public class Teleop extends LinearOpMode {
             robot.multidirectionalMove(magnitude, angleInDegree, right_stick_x);
 
             // wobble goal movements
-            if (moveUp == true) {
-                robot.moveWobbleGoalClockwise();
-            } else if (moveDown == true) {
-                robot.moveWobbleGoalCounterClockwise();
-            } else {
-                robot.stopWobbleGoal();
+            if (startingPosition == true) {
+                robot.wobbleGoalStartingPosition();
+            } else if (grabbingPosition == true) {
+                robot.wobbleGoalGrabbingPosition();
+            } else if (liftingPosition == true) {
+                robot.wobbleGoalLiftingPosition();
+            } else if (droppingPosition == true) {
+                robot.wobbleGoalDroppingPosition();
             }
 
         }
