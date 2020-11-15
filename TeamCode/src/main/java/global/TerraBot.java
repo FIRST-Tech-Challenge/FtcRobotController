@@ -57,12 +57,12 @@ public class TerraBot {
 
     public double turnStart = 0.25;
     public double grabStart = 0.7;
-    public double liftStart = 0.12;
+    public double liftStart = 0.05;
     public double liftSecond = 0.25;
-    public double shootStartR = 0.07;
-    public double shootStartL = 0.05;
+    public double shootStartR = 0.02;
+    public double shootStartL = 0.01;
     public double intakeSpeed = 1;
-    public double outtakeSpeed = 0.4;
+    public double outtakeSpeed = 0.3;
     public double maxArmPos = 215;
     public double heading = 0;
     public double lastAngle = 0;
@@ -77,9 +77,9 @@ public class TerraBot {
     public ElapsedTime timer = new ElapsedTime();
 
     public Cycle grabControl = new Cycle(grabStart, 0.45);
-    public Cycle liftControl = new Cycle(liftStart, liftSecond, 0.53);
-    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.13, 0.2);
-    public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.15, 0.16);
+    public Cycle liftControl = new Cycle(liftStart, liftSecond, liftSecond+0.03,  0.53);
+    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.24, 0.27);
+    public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.15, 0.26);
 
     public ServoController turnControl = new ServoController(turnStart, 0.0, 0.7);
 
@@ -253,11 +253,15 @@ public class TerraBot {
     }
 
     public void defineShooter(){
-        shooter.addStage(in, 1.0, 0.5);
-        shooter.addStage(ssr, shootControlR.getPos(1), 0.01);
-        shooter.addStage(ssl, shootControlL.getPos(1), 0.8);
-        shooter.addStage(slr, liftSecond, 0.01);
-        shooter.addStage(sll, liftSecond, 0.7);
+        //shooter.addStage(in, 1.0, 0.5);
+//        shooter.addStage(ssr, shootControlR.getPos(1), 0.01);
+//        shooter.addStage(ssl, shootControlL.getPos(1), 0.8);
+        shooter.addStage(slr, liftControl.getPos(2), 0.01);
+        shooter.addStage(sll, liftControl.getPos(2), 0.7);
+        shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
+        shooter.addStage(ssl, shootControlL.getPos(2), 1);
+        shooter.addStage(slr, liftControl.getPos(1), 0.01);
+        shooter.addStage(sll, liftControl.getPos(1), 0.01);
         shooter.addStage(in, 0.0, 0.01);
         shooter.addCustom(new CodeSeg() {
             @Override
@@ -268,9 +272,9 @@ public class TerraBot {
         shooter.addWaitUntil();
         for(int i = 0; i < 3;i++) {
             shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
-            shooter.addStage(ssl, shootControlL.getPos(2), 0.4);
+            shooter.addStage(ssl, shootControlL.getPos(2), 2);
             shooter.addStage(ssr, shootControlR.getPos(3), 0.01);
-            shooter.addStage(ssl, shootControlL.getPos(3), 0.4);
+            shooter.addStage(ssl, shootControlL.getPos(3), 0.2);
         }
         shooter.addDelay(1);
     }

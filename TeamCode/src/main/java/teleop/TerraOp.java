@@ -27,16 +27,16 @@ public class TerraOp extends OpMode {
 
     @Override
     public void init_loop() {
-        bot.resetArm();
+        //bot.resetArm();
         telemetry.addData("vel", bot.getArmVel());
         telemetry.update();
     }
 
     @Override
     public void start() {
-        bot.turnArmWithEnc(50, 1);
-        bot.turnWobbleArm(0.1);
-        bot.turnControl.cur = 0.1;
+//        bot.turnArmWithEnc(50, 1);
+//        bot.turnWobbleArm(0.1);
+//        bot.turnControl.cur = 0.1;
     }
 
     @Override
@@ -58,12 +58,12 @@ public class TerraOp extends OpMode {
                 
                 if (gamepad2.right_stick_y < 0) {
                     bot.outtaking = true;
-                    bot.outtake(bot.outtakeSpeed);
+                    bot.outtake(0.41);
                 } else if (gamepad2.right_stick_y > 0) {
                     bot.outtaking = false;
-                    bot.outtake(-bot.outtakeSpeed);
+                    bot.outtake(-0.41);
                 } else if (bot.outtaking) {
-                    bot.outtake(bot.outtakeSpeed);
+                    bot.outtake(0.41);
                 } else {
                     bot.outtake(0);
                 }
