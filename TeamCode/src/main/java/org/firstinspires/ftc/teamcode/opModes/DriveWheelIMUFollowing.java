@@ -25,6 +25,7 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
     Mecanum mecanum;
     IMU imu;
     Odometry odometry;
+    volatile boolean running = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -36,9 +37,15 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
 
         odometry.start();
 
-        Follower f = new Follower(mecanum, odometry, telemetry);
+//        new Thread(() -> {
+//            telemetry.addData("running", "yes");
+//            telemetry.update();
+//            Follower f = new Follower(mecanum, odometry, telemetry);
+//        }).start();
 
+//        f.start();
         while (opModeIsActive()){
+            Follower f = new Follower(mecanum, odometry, telemetry);
             telemetry.addData("IMU Position", imu.getPosition());
             telemetry.addData("Odometry Position", odometry.getPosition());
             telemetry.update();
@@ -46,7 +53,7 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
             //mecanum.drive(gamepad1.right_stick_x/3, gamepad1.right_stick_y/3, -gamepad1.left_stick_x/3);
         }
 
-        f.stop();
+//        f.stop();
         odometry.end();
     }
 

@@ -23,7 +23,7 @@ public class OdoSingleWheelTest extends OpMode
 
     @Override
     public void init() {
-        wheel = hardwareMap.get(DcMotor.class, "backRight");
+        wheel = hardwareMap.get(DcMotor.class, "horizontal");
         odowheel = new FreeSpinOdoWheel(new pose(0,0,0), wheel);
 
         // Tell the driver that initialization is complete.

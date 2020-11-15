@@ -28,15 +28,16 @@ public class OdoDriveIMUFollowing extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         mecanum = new Mecanum(hardwareMap);
         imu = new IMU(hardwareMap, telemetry);
-        String pathFile = "src/main/java/org/firstinspires/ftc/teamcode/pathFollow/PathTXTs/testPath.txt";
+//        String pathFile = "src/main/java/org/firstinspires/ftc/teamcode/pathFollow/PathTXTs/testPath.txt";
         odometry = defaultConfiguration();
+        Follower pathFollower = new Follower(mecanum, odometry, telemetry);
 
 
         waitForStart();
 
         odometry.start();
+        pathFollower.start();
 
-        Follower pathFollower = new Follower(mecanum, odometry, pathFile, telemetry);
 
         while (opModeIsActive()){
             telemetry.addData("IMU Position", imu.getPosition());
@@ -49,6 +50,7 @@ public class OdoDriveIMUFollowing extends LinearOpMode {
 
         pathFollower.stop();
         odometry.end();
+        pathFollower.stop();
     }
 
     Odometry defaultConfiguration(){
