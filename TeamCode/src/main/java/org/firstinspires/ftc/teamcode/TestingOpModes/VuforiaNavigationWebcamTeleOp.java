@@ -289,7 +289,7 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
 
         targetsUltimateGoal.activate();
         while (!isStopRequested()) {
-            hzGamepad.runSubsystemByGamepadInput(hzChassisClassic);
+            hzGamepad.runByGamepadInputClassicChassis(hzChassisClassic);
 
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;

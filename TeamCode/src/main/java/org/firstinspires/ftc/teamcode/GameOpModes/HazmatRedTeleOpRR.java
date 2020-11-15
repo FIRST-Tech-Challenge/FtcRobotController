@@ -25,22 +25,23 @@ public class HazmatRedTeleOpRR extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepad hzGamepad1;
-    SampleMecanumDrive drive;
-    HzVuforia hzVuforia1;
+    public HzGamepad hzGamepad1;
+    public SampleMecanumDrive hzDrive;
+    public HzVuforia hzVuforia1;
+    public Pose2d startPose;
     int playingAlliance = 1; //1 for Red, -1 for Blue
     //TODO : Create another TeleOp for Red
 
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
-        drive = new SampleMecanumDrive(hardwareMap);
+        hzDrive = new SampleMecanumDrive(hardwareMap);
         hzGamepad1 = new HzGamepad(gamepad1);
         hzVuforia1 = new HzVuforia(hardwareMap);
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hzDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // TODO : When implementing Autonomous Mode uncomment this section.
         // Retrieve our pose from the PoseStorage.currentPose static field
@@ -48,11 +49,11 @@ public class HazmatRedTeleOpRR extends LinearOpMode {
         //drive.setPoseEstimate(PoseStorage.currentPose);
 
         // TODO : When in game comment below, so that Pose is retrieved from PoseStorage
-        drive.setPoseEstimate(new Pose2d(-68,24,Math.toRadians(0))); // Blue Inner Start Line
-        //drive.setPoseEstimate(new Pose2d(-68,48,Math.toRadians(0))); // Blue Outer Start Line
-        //drive.setPoseEstimate(new Pose2d(-68,-24,Math.toRadians(0))); // Red Inner Start Line
-        //drive.setPoseEstimate(new Pose2d(-68,-48,Math.toRadians(0))); // Red Outer Start Line
-
+        startPose = (new Pose2d(-68,24,Math.toRadians(0))); // Blue Inner Start Line
+        //startPose = (new Pose2d(-68,48,Math.toRadians(0))); // Blue Outer Start Line
+        //startPose = (new Pose2d(-68,-24,Math.toRadians(0))); // Red Inner Start Line
+        //startPose = (new Pose2d(-68,-48,Math.toRadians(0))); // Red Outer Start Line
+        hzDrive.setPoseEstimate(startPose);
 
         // Initiate Camera even before Start is pressed.
         //waitForStart();
@@ -78,7 +79,7 @@ public class HazmatRedTeleOpRR extends LinearOpMode {
                 hzVuforia1.runVuforiaNavigation();
 
                 //Run Robot based on field centric gamepad input, aligned to playing alliance direction
-                hzGamepad1.runHazmatRobotByGamepad(drive, playingAlliance);
+                hzGamepad1.runByGamepadRRDriveModes(this, hzDrive, playingAlliance);
 
                 if(HzDEBUG_FLAG) {
                     printDebugMessages();
@@ -100,6 +101,7 @@ public class HazmatRedTeleOpRR extends LinearOpMode {
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
 
         // Print pose to telemetry
+        telemetry.addData("Drive Mode : ", hzGamepad1.driveMode);
         telemetry.addData("PoseEstimate : x", hzGamepad1.poseEstimate.getX());
         telemetry.addData("PoseEstimate : y", hzGamepad1.poseEstimate.getY());
         telemetry.addData("PoseEstimate : heading", Math.toDegrees(hzGamepad1.poseEstimate.getHeading()));

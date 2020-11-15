@@ -39,7 +39,7 @@ public class HazmatTeleOpMode extends LinearOpMode {
         //Run Robot based on Gamepad1 inputs
         while (opModeIsActive()) {
             //Run per Gamepad input
-            hzGamepad.runSubsystemByGamepadInput(hzChassisClassic);
+            hzGamepad.runByGamepadInputClassicChassis(hzChassisClassic);
 
             if(HzDEBUG_FLAG) {
                 printDebugMessages();
