@@ -1235,7 +1235,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 break;
         }
         // start the shooter with expected RPM
-        double dx = target_x-chassis.odo_x_pos_cm();
+        double dx = target_x-chassis.odo_x_pos_cm() - shooter_offset;
         double dy = target_y-chassis.odo_y_pos_cm();
         double dist = Math.hypot(dx,dy);
         double v = getVelocityToShoot(dist, target_height);
