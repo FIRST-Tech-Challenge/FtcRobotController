@@ -41,7 +41,7 @@ public class HzGamepad {
     public Gamepad gpGamepad1;
 
     //**** Drive Train ****
-    SampleMecanumDrive gpDrive;
+    //SampleMecanumDrive gpDrive;
     //For Position
     public Pose2d poseEstimate;
 
@@ -63,7 +63,17 @@ public class HzGamepad {
 
     // Declare a target vector you'd like your bot to align with
     // Can be any x/y coordinate of your choosing
-    private Vector2d drivePointToAlign = new Vector2d(0, 0);
+    public static final Vector2d origin = new Vector2d(0,0);
+    public static final Vector2d blueGoal = new Vector2d(72,36);
+    public static final Vector2d redGoal = new Vector2d(72,-36);
+    public static final Vector2d bluePowerShot1 = new Vector2d(72,36);
+    public static final Vector2d bluePowerShot2 = new Vector2d(72,36);
+    public static final Vector2d bluePowerShot3 = new Vector2d(72,36);
+    public static final Vector2d redPowerShot1 = new Vector2d(72,-36);
+    public static final Vector2d redPowerShot2 = new Vector2d(72,-36);
+    public static final Vector2d redPowerShot3 = new Vector2d(72,-36);
+
+    private Vector2d drivePointToAlign = origin;
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as SampleMecanumDrive's heading controller
@@ -148,8 +158,8 @@ public class HzGamepad {
 
 
     // RR Drive Train
-    public void runByGamepadRRDriveModes(LinearOpMode callingOpMode, SampleMecanumDrive driveHandlePassedFromOpMode, int playingAlliance) {
-        this.gpDrive = driveHandlePassedFromOpMode;
+    public void runByGamepadRRDriveModes(LinearOpMode callingOpMode, SampleMecanumDrive gpDrive, int playingAlliance) {
+        //this.gpDrive = driveHandlePassedFromOpMode;
 
         /*    if(getLeftTrigger()>0.5){}*/
         /*    if (getLeftBumperPress()) {}*/
@@ -164,14 +174,14 @@ public class HzGamepad {
         //Code to toggle Drive Mode when Y is pressed
         if (getButtonYPress()){ driveMode.toggle();}
 
-        //driveTrainFieldCentric();
+        //driveTrainFieldCentric(gpDrive);
 
         //drivePointToAlign = Target Vector;
-        driveTrainPointFieldModes(/*callingOpMode*/ drivePointToAlign);
+        driveTrainPointFieldModes(/*callingOpMode*/ gpDrive, drivePointToAlign);
 
     }
 
-    public void driveTrainFieldCentric(){
+    public void driveTrainFieldCentric(SampleMecanumDrive gpDrive){
 
         poseEstimate = gpDrive.getPoseEstimate();
 
@@ -197,7 +207,7 @@ public class HzGamepad {
     }
 
 
-    public void driveTrainPointFieldModes(/*LinearOpMode callingOpMode*/ Vector2d pointToAlign){
+    public void driveTrainPointFieldModes(/*LinearOpMode callingOpMode*/ SampleMecanumDrive gpDrive, Vector2d pointToAlign){
         poseEstimate = gpDrive.getPoseEstimate();
 
         // Set input bounds for the heading controller
