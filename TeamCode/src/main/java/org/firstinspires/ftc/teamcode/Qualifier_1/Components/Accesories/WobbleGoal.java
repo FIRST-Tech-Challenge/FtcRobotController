@@ -21,7 +21,7 @@ public class WobbleGoal {
     //declaring the op mode
     private LinearOpMode op;
 
-    public WobbleGoal(LinearOpMode opMode){
+    public WobbleGoal(LinearOpMode opMode) {
         //setting the opmode
         this.op = opMode;
 
@@ -37,21 +37,41 @@ public class WobbleGoal {
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
-    //making the motor turn clockwise
-    public void clockwise(){
+//    //making the motor turn clockwise
+//    public void clockwise(){
+//
+//        wobbleGoalMotor.setPower(0.25);
+//    }
+//    //makes the motor turn counterclockwise
+//    public void counterClockwise(){
+//
+//        wobbleGoalMotor.setPower(-0.25);
+//    }
+    //stops the motor
+    public void stop() {
+        wobbleGoalMotor.setPower(0);
+    }
 
+    public void startingPosition() {
+        wobbleGoalMotor.setTargetPosition(0);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleGoalMotor.setPower(0.25);
+
+    }
+
+    public void grabbingPosition() {
+        wobbleGoalMotor.setTargetPosition(-940);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleGoalMotor.setPower(0.25);
     }
-    //makes the motor turn counterclockwise
-    public void counterClockwise(){
-
-        wobbleGoalMotor.setPower(-0.25);
+    public void liftingPosition() {
+        wobbleGoalMotor.setTargetPosition(-550);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleGoalMotor.setPower(0.25);
     }
-    //stops the motor
-    public void stop(){
-
-        wobbleGoalMotor.setPower(0);
-
+    public void droppingPosition() {
+        wobbleGoalMotor.setTargetPosition(-760);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleGoalMotor.setPower(0.25);
     }
 }
-
