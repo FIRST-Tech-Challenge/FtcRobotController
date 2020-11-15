@@ -35,7 +35,12 @@ public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        telemetry.addData("Status", "Before new RObot");
+        telemetry.update();
         Robot robot = new Robot(this);
+        telemetry.addData("Status", "Done with new Robot");
+        telemetry.update();
+
         double magnitude;
         double angleInRadian;
         double angleInDegree;
@@ -133,6 +138,13 @@ public class Teleop extends LinearOpMode {
                 robot.moveWobbleGoalCounterClockwise();
             } else {
                 robot.stopWobbleGoal();
+            }
+
+            //intake
+            if(start_intake == 1.00){
+                robot.startIntake();
+            } else if (stop_intake == 1.00){
+                robot.stopIntake();
             }
 
         }

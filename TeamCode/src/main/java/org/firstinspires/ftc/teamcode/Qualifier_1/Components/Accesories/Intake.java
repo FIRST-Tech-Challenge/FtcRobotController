@@ -20,7 +20,7 @@ public class Intake {
     private LinearOpMode op = null;
     private HardwareMap hardwareMap = null;
     private DcMotor intakeMotor = null;
-    final private double intakeSpeed = 0.5;
+    final private double intakeSpeed = 1.0;
 
     // initialization of intakeMotor
     public Intake(LinearOpMode opMode){
