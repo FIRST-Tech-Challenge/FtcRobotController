@@ -59,6 +59,7 @@ public class Teleop extends LinearOpMode {
 
             float left_stick_y = -gamepad1.left_stick_y;
             float left_stick_x = -gamepad1.left_stick_x;
+            float right_stick_x = -gamepad1.right_stick_x;
             float start_intake = gamepad1.right_trigger;
             float stop_intake = gamepad1.left_trigger;
             boolean x_button = gamepad1.x;
@@ -98,26 +99,14 @@ public class Teleop extends LinearOpMode {
                     robot.moveServo(false);
                 }
             }
-
-            if (shooter != 0) {
-                robot.shootGoalTeleop(999999999, 100);
-            } else {
-                robot.shootGoalTeleop(0, 0);
-            }
+            // as of nov 14, 2020, the shooter crashes the program
+//            if (shooter != 0) {
+//                robot.shootGoalTeleop(999999999, 100);
+//            } else {
+//                robot.shootGoalTeleop(0, 0);
+//            }
 
             /**Speed Mode**/
-            if (y_button2) {
-                robot.shootHighGoal(5);
-            }
-
-            if (b_button2) {
-                robot.shootMidGoal(1);
-            }
-
-            if (a_button2) {
-                robot.shootLowGoal(1);
-            }
-
             if (a_button) { //click a to turn on slowmode
                 slowMode = true;
             }
@@ -131,10 +120,11 @@ public class Teleop extends LinearOpMode {
                 } else {
                     magnitude = 0.3;
                 }
+
             } else {
                 magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
             }
-            robot.multidirectionalMove(magnitude, angleInDegree);
+            robot.multidirectionalMove(magnitude, angleInDegree, right_stick_x);
 
             // wobble goal movements
             if (moveUp == true) {
