@@ -7,7 +7,7 @@ public class ImportPath {
     public static Path getPath (String path){
         Path ret = new Path();
 
-        PathPoint point = new PathPoint(0,30);
+        PathPoint point = new PathPoint(0,-30);
         point.speed = 0.3;
         point.dir = 0;//Math.PI/2;
 

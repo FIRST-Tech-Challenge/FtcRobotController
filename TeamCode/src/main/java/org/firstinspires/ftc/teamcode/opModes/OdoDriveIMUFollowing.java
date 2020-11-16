@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.imu.IMU;
 import org.firstinspires.ftc.teamcode.movement.Mecanum;
 import org.firstinspires.ftc.teamcode.odometry.DriveWheelOdometryWheel;
+import org.firstinspires.ftc.teamcode.odometry.FreeSpinOdoWheel;
 import org.firstinspires.ftc.teamcode.odometry.Odometry;
 import org.firstinspires.ftc.teamcode.odometry.OdometryThatusesIMUforHeading;
 import org.firstinspires.ftc.teamcode.odometry.OdometryWheel;
@@ -68,8 +69,8 @@ public class OdoDriveIMUFollowing extends LinearOpMode {
         OdometryWheel frontLeftOdo = new DriveWheelOdometryWheel(new pose(-178.5,168,Math.PI/2), frontLeft);
         OdometryWheel backRightOdo = new DriveWheelOdometryWheel(new pose(178.5,-168,Math.PI/2), backRight);
         OdometryWheel backLeftOdo = new DriveWheelOdometryWheel(new pose(-178.5,-168,Math.PI/2), backLeft);
-        OdometryWheel verticalOdo = new DriveWheelOdometryWheel(new pose(-180,91,Math.PI/2), vertical);
-        OdometryWheel horizontalOdo = new DriveWheelOdometryWheel(new pose(170,-190,0), horizontal);
+        OdometryWheel verticalOdo = new FreeSpinOdoWheel(new pose(-180,91,Math.PI/2), vertical);
+        OdometryWheel horizontalOdo = new FreeSpinOdoWheel(new pose(170,-190,0), horizontal);
 
         List<OdometryWheel> odometryWheels = new ArrayList<>();
         odometryWheels.add(frontLeftOdo);

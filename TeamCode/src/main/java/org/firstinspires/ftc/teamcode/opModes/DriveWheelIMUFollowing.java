@@ -32,7 +32,7 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
         mecanum = new Mecanum(hardwareMap);
         imu = new IMU(hardwareMap, telemetry);
         odometry = defaultConfiguration();
-
+        Follower f = null;
         waitForStart();
 
         odometry.start();
@@ -45,7 +45,7 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
 
 //        f.start();
         while (opModeIsActive()){
-            Follower f = new Follower(mecanum, odometry, telemetry);
+            f = new Follower(mecanum, odometry, telemetry);
             telemetry.addData("IMU Position", imu.getPosition());
             telemetry.addData("Odometry Position", odometry.getPosition());
             telemetry.update();
@@ -55,6 +55,8 @@ public class DriveWheelIMUFollowing extends LinearOpMode {
 
 //        f.stop();
         odometry.end();
+        assert f != null;
+        f.stop();
     }
 
     Odometry defaultConfiguration(){

@@ -52,13 +52,14 @@ import org.firstinspires.ftc.teamcode.movement.Mecanum;
  */
 
 @TeleOp(name="BaseDrive", group="Iterative Opmode")
-@Disabled
+//@Disabled
 //use DriveWheelIMULocalization for the same functionality instead
 public class BaseDrive extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     Mecanum MecanumDrive;
+    DcMotor intake;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -68,6 +69,7 @@ public class BaseDrive extends OpMode
         telemetry.addData("Status", "Initialized");
 
         MecanumDrive = new Mecanum(hardwareMap);
+        intake = hardwareMap.get(DcMotor.class, "vertical");
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -100,8 +102,10 @@ public class BaseDrive extends OpMode
         double y = gamepad1.right_stick_y;
         double x = -gamepad1.right_stick_x;
         double turn = gamepad1.left_stick_x;
+        double intakeSpeed = gamepad1.right_trigger;
 
         MecanumDrive.drive(x,y,turn);
+        intake.setPower(intakeSpeed);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "X: " + x);
