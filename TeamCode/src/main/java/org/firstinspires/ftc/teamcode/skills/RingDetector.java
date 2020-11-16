@@ -41,17 +41,17 @@ public class RingDetector implements Runnable{
     private static AutoDot zoneB = new AutoDot("B", 62, 105, -1, AutoRoute.NAME_RED);
     private static AutoDot zoneC = new AutoDot("C", 75, 120, -1, AutoRoute.NAME_RED);
 
-    public RingDetector(HardwareMap hMap, Led led, Telemetry t) {
+    public RingDetector(HardwareMap hMap, String side, LinearOpMode caller, ArrayList<AutoDot> namedCoordinates, Led led, Telemetry t) {
         hardwareMap = hMap;
         telemetry = t;
         lights = led;
         initDetector();
         activateDetector();
-    }
-
-    public void init(String side, LinearOpMode caller) {
         this.side = side;
         this.caller = caller;
+        if (namedCoordinates != null) {
+            this.namedCoordinates = namedCoordinates;
+        }
         configZones(side);
     }
 
@@ -189,10 +189,6 @@ public class RingDetector implements Runnable{
         if (tfDetector != null) {
             tfDetector.stopProcessing();
         }
-    }
-
-    public void setNamedCoordinates(ArrayList<AutoDot> namedCoordinates) {
-        this.namedCoordinates = namedCoordinates;
     }
 
     public void stopThread() {

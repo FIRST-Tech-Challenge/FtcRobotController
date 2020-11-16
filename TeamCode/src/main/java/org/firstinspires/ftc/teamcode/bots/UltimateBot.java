@@ -311,37 +311,35 @@ public class UltimateBot extends YellowBot {
         getLights().none();
     }
 
-//    @BotAction(displayName = "signalProblem", defaultReturn = "")
-//    public void shoot() {
-//        getLights().problem();
-//        ElapsedTime timer = new ElapsedTime();
-//        timer.reset();
-//        while (timer.seconds() < 1) {
-//
-//        }
-//        getLights().none();
-//    }
 
-    @BotAction(displayName = "Detect Stack and Init", defaultReturn = "B")
-    public AutoDot detectStackandInit(String side) {
+    public void initDetector(String side, LinearOpMode caller) {
+        rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, this.getLights(), telemetry);
+    }
+
+    public void initDetectorThread(String side, LinearOpMode caller) {
+        try{
+            rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, this.getLights(), telemetry);
+            Thread detectThread = new Thread(rf);
+            detectThread.start();
+        } catch (Exception ex) {
+            telemetry.addData("Error", String.format("Unable to initialize Detector thread. %s", ex.getMessage()));
+            telemetry.update();
+        }
+    }
+
+    ///get results of detection on the thread
+    @BotAction(displayName = "Get Detection Result", defaultReturn = "B")
+    public AutoDot getDetectionResult() {
         AutoDot target = null;
-        try {
-            rf = new RingDetector(this.hwMap, this.getLights(), telemetry);
-            target = rf.detectRing(2, side, telemetry, owner);
-        } finally {
-            if (rf != null) {
-                rf.stopDetection();
-            }
+        if (rf != null) {
+            rf.stopDetection();
+            target = rf.getRecogZone();
         }
         return target;
     }
 
-    @BotAction(displayName = "Detect Stack Init", defaultReturn = "B")
-    public void initDetector() {
-        rf = new RingDetector(this.hwMap, this.getLights(), telemetry);
-        rf.setNamedCoordinates(this.namedCoordinates);
-    }
 
+    ///use for non-threaded detection
     @BotAction(displayName = "Detect Stack", defaultReturn = "B")
     public AutoDot detectStack(String side) {
         AutoDot target = null;

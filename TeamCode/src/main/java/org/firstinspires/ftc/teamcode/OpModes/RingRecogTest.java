@@ -35,8 +35,7 @@ public class RingRecogTest extends LinearOpMode {
             try {
                 Led lights = new Led();
                 lights.init(this.hardwareMap, telemetry);
-                rf = new RingDetector(this.hardwareMap, lights, telemetry);
-                rf.init(AutoRoute.NAME_RED, this);
+                rf = new RingDetector(this.hardwareMap, AutoRoute.NAME_RED, this, null, lights, telemetry);
                 Thread detectThread = new Thread(rf);
                 detectThread.start();
             } catch (Exception ex) {
