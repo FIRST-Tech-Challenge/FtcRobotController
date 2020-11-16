@@ -32,6 +32,9 @@ public class UltimateBot extends YellowBot {
     private static int SWING_LIFT_WALL = 45;
     private static double SHOOT_SERVO = 0.4;
 
+    private static double CAMERA_RIGHT_LINE = 0.35;
+    private static double CAMERA_LEFT_LINE = 0.5;
+
     private RingDetector rf = null;
 
 
@@ -81,7 +84,7 @@ public class UltimateBot extends YellowBot {
 
         try {
             ringCamera = hwMap.get(Servo.class, "camera");
-            ringCamera.setPosition(0.5);
+            ringCamera.setPosition(CAMERA_RIGHT_LINE);
         } catch (Exception ex) {
             throw new Exception("Issues with ringCamera. Check the controller config", ex);
         }
@@ -192,14 +195,14 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Camera Left", defaultReturn = "")
     public void leftRingCamera() {
         if (ringCamera != null) {
-            ringCamera.setPosition(0.5);
+            ringCamera.setPosition(CAMERA_LEFT_LINE);
         }
     }
 
     @BotAction(displayName = "Camera Right", defaultReturn = "")
     public void rightRingCamera() {
         if (ringCamera != null) {
-            ringCamera.setPosition(0.35);
+            ringCamera.setPosition(CAMERA_RIGHT_LINE);
         }
     }
 
@@ -316,8 +319,14 @@ public class UltimateBot extends YellowBot {
         rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, this.getLights(), telemetry);
     }
 
+    public void stopDetection() {
+        if (rf != null) {
+            rf.stopDetection();
+        }
+    }
+
     public void initDetectorThread(String side, LinearOpMode caller) {
-        try{
+        try {
             rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, this.getLights(), telemetry);
             Thread detectThread = new Thread(rf);
             detectThread.start();
@@ -335,6 +344,10 @@ public class UltimateBot extends YellowBot {
             rf.stopDetection();
             target = rf.getRecogZone();
         }
+        telemetry.addData("Detected Zone: ", target.getDotName());
+        telemetry.addData("Detected X: ", target.getX());
+        telemetry.addData("Detected Y: ", target.getY());
+        telemetry.update();
         return target;
     }
 
