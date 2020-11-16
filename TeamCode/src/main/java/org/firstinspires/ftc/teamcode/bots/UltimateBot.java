@@ -28,6 +28,7 @@ public class UltimateBot extends YellowBot {
     private SwingPosition swingPosition = SwingPosition.Init;
     private static int SWING_LIFT_DROP = 170;
     private static int SWING_GROUND_POS = 280;
+    private static int SWING_RISE_POS = 90;
     private static int SWING_LIFT_UP_POS = 230;
     private static int SWING_LIFT_WALL = 45;
     private static double SHOOT_SERVO = 0.4;
@@ -213,7 +214,7 @@ public class UltimateBot extends YellowBot {
                 return;
             }
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setTargetPosition(0);
+            wobbleSwing.setTargetPosition(SWING_RISE_POS);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wobbleSwing.setPower(0.6);
             boolean stop = false;
