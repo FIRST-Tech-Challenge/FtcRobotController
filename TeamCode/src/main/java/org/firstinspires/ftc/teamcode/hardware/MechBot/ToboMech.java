@@ -63,6 +63,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double auto_chassis_power_slow = .4;
     public double auto_chassis_align_power = .22;
     public double shooter_offset = 8; // cm to the robot center x coordination
+    public double shooting_dist = 0;
+    public double shooting_angle = 0;
 
 
     public double auto_rotate_degree = 0;
@@ -612,6 +614,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void setupTelemetry(Telemetry telemetry) {
         if (Thread.currentThread().isInterrupted()) return;
         if (chassis==null) return;
+        Telemetry.Line line = telemetry.addLine();
+        line.addData(" | Shooting (dist,angle) =", new Func<String>() {
+            @Override
+            public String value() {
+                return String.format("(%1.0f,%1.0f)\n", shooting_dist, shooting_angle);
+            }
+        });
         /* Telemetry.Line line = telemetry.addLine();
 
         line.addData(" | Odometry (vl,vr,h) =", new Func<String>() {
@@ -972,6 +981,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     // Enable the following line only for the debugging purpose
                     // chassis.setupIMUTelemetry(telemetry);
                 }
+                if (chassis!=null)
+                    chassis.set_init_pos(side(60), 23, 0);
                 break;
             case AUTO_RED:
                 if (startP == StartPosition.OUT) {
@@ -1076,7 +1087,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(auto_chassis_power, 25, 290, -45, true, 5);
+                chassis.driveTo(auto_chassis_power, 25, 300, -55, true, 5);
             } else {
                 return;
             }
@@ -1237,15 +1248,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // start the shooter with expected RPM
         double dx = target_x-chassis.odo_x_pos_cm() - shooter_offset;
         double dy = target_y-chassis.odo_y_pos_cm();
-        double dist = Math.hypot(dx,dy);
-        double v = getVelocityToShoot(dist, target_height);
+        shooting_dist = Math.hypot(dx,dy);
+        double v = getVelocityToShoot(shooting_dist, target_height);
         double rpm = getRpmFromVelocity(v);
         shooter.shootOutByRpm(rpm);
         // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
-        double angle = Math.toDegrees(Math.atan2(target_x - chassis.odo_x_pos_cm() - shooter_offset, target_y - chassis.odo_y_pos_cm()));
+        shooting_angle = Math.toDegrees(Math.atan2(target_x - chassis.odo_x_pos_cm() - shooter_offset, target_y - chassis.odo_y_pos_cm()));
         try {
-            if (Math.abs(chassis.odo_heading() - angle) > 1)
-                chassis.rotateTo(0.35, angle);
+            if (Math.abs(chassis.odo_heading() - shooting_angle) > 1)
+                chassis.rotateTo(0.35, shooting_angle);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
