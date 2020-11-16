@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * Ring Prototype Test
+ * Main Teleop
  *
  * 3 October 2020
  */
@@ -19,14 +19,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class MainTeleop extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
-    private CRServo leftConveyor, rightConveyor, elevator;
-    private DcMotor intake, outtakeRight, outtakeLeft;
+    private CRServo leftConveyor, rightConveyor, elevator, intake;
+    private DcMotor outtakeRight, outtakeLeft;
     private Servo flipper;
 
     private Servo leftIntakeServo;
     private Servo rightIntakeServo;
 
     private BNO055IMU imu;
+
+    private IMURobot robot;
 
     //Figures for ring elevator calculations
     private static final double PINION_CIRCUMFERENCE = 2.57;
@@ -48,10 +50,6 @@ public class MainTeleop extends LinearOpMode{
 
     OdometryGlobalCoordinatePosition globalPositionUpdate;
 
-    IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-            imu, leftIntakeServo, rightIntakeServo, leftConveyor, rightConveyor, elevator, flipper, intake,
-            outtakeRight, outtakeLeft, this);
-
     @Override
     public void runOpMode() throws InterruptedException {
         motorFrontRight = hardwareMap.dcMotor.get("FR");
@@ -60,7 +58,7 @@ public class MainTeleop extends LinearOpMode{
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
         //intake and conveyor
-        intake = hardwareMap.dcMotor.get("intake");
+        intake = hardwareMap.crservo.get("intake");
         leftConveyor = hardwareMap.crservo.get("leftConveyor");
         rightConveyor = hardwareMap.crservo.get("rightConveyor");
 
@@ -84,9 +82,6 @@ public class MainTeleop extends LinearOpMode{
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        robot.setupRobot();//calibrate IMU, set any required parameters
-
-
         //reverse the needed motors
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -98,6 +93,12 @@ public class MainTeleop extends LinearOpMode{
 
         //reverse one of the outtakes
         outtakeLeft.setDirection(DcMotor.Direction.REVERSE);
+
+        robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
+                imu, leftIntakeServo, rightIntakeServo, leftConveyor, rightConveyor, elevator, flipper, intake,
+                outtakeRight, outtakeLeft, this);
+
+        robot.setupRobot();//calibrate IMU, set any required parameters
 
         double powerMod = 1.0;
         double intakeMod = 1.0;
@@ -132,6 +133,8 @@ public class MainTeleop extends LinearOpMode{
             }else{
                 intakeMod = 1.0;
             }
+
+            //Release intake
 
             double intakeSpeed = gamepad1.left_trigger * intakeMod;
             intake.setPower(intakeSpeed);
@@ -227,7 +230,7 @@ public class MainTeleop extends LinearOpMode{
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
-        while(timer.seconds() < ELEVATOR_TIME){
+        while(timer.milliseconds() < 200){
             elevator.setPower(1);
         }
 
@@ -238,7 +241,7 @@ public class MainTeleop extends LinearOpMode{
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
-        while(timer.seconds() < ELEVATOR_TIME){
+        while(timer.milliseconds() < 200){
             elevator.setPower(-1);
         }
 

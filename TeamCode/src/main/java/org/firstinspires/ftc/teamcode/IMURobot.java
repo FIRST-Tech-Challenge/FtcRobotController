@@ -29,7 +29,7 @@ public class IMURobot {
     public DcMotor motorFrontLeft;
     public DcMotor motorBackRight;
     public DcMotor motorBackLeft;
-    public DcMotor intake;
+    public CRServo intake;
     public DcMotor outtakeLeft;
     public DcMotor outtakeRight;
 
@@ -93,7 +93,7 @@ public class IMURobot {
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
                     BNO055IMU imu, Servo leftIntakeServo, Servo rightIntakeServo,
                     CRServo leftConveyor, CRServo rightConveyor, CRServo elevator, Servo flipper,
-                    DcMotor intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
+                    CRServo intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -214,14 +214,14 @@ public class IMURobot {
      * @throws InterruptedException if robot is stopped while IMU is still calibrating
      */
     public void setupRobot() throws InterruptedException{
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        /*motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
 
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);*/
 
         setIMUParameters();
 
