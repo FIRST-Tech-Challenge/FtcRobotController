@@ -32,7 +32,7 @@ public class CombinedOrientationSensor extends Logger<CombinedOrientationSensor>
     /**
      * Configures the hardware
      */
-    public void configure(HardwareMap hardwareMap, String... deviceNames) {
+    public void configure(HardwareMap hardwareMap, boolean noReset,String... deviceNames) {
         sensors = new LinkedHashMap<>();
         for (String deviceName : deviceNames) {
             BNO055IMU sensor = hardwareMap.tryGet(BNO055IMU.class, deviceName);
@@ -48,8 +48,8 @@ public class CombinedOrientationSensor extends Logger<CombinedOrientationSensor>
             warn("No orientation sensors were found!");
             return;
         }
-
-        reset();
+        if (!noReset)
+           reset();
     }
 
     public void reset() {

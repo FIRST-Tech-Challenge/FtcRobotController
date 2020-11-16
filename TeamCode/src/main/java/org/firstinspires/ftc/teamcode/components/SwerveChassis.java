@@ -260,7 +260,7 @@ public class SwerveChassis extends Logger<SwerveChassis> implements Configurable
 
         if (auto || setImuTelemetry) {
             orientationSensor = new CombinedOrientationSensor().configureLogging(logTag + "-sensor", logLevel);
-            orientationSensor.configure(configuration.getHardwareMap(), "imu", "imu2");
+            orientationSensor.configure(configuration.getHardwareMap(), false,"imu", "imu2");
         }
 
         if ((auto || setRangeSensorTelemetry) && enableSensors) {

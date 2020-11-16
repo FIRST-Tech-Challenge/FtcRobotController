@@ -182,9 +182,9 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     public AutoDriveMode getAutoDriveMode() { return autoDriveMode;}
     public void setAutoDriveMode(AutoDriveMode mode) { autoDriveMode = mode;}
 
-    public void configure_IMUs(Configuration configuration) {
+    public void configure_IMUs(Configuration configuration, boolean noReset) {
         orientationSensor = new CombinedOrientationSensor().configureLogging(logTag + "-sensor", logLevel);
-        orientationSensor.configure(configuration.getHardwareMap(), "imu", "imu2");
+        orientationSensor.configure(configuration.getHardwareMap(), noReset, "imu", "imu2");
     }
 
     public void reset_imus() {
@@ -342,7 +342,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     public void enableImuTelemetry(Configuration configuration) {
         setImuTelemetry = true;
         if (orientationSensor==null) {
-            configure_IMUs(configuration);
+            configure_IMUs(configuration, false);
         }
 
     }
@@ -418,7 +418,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         //  that would react to track / wheel base / radius adjustments
     }
 
-    public void configure(Configuration configuration, boolean auto) {
+    public void configure(Configuration configuration, boolean auto, boolean noReset) {
         // set up motors / sensors as wheel assemblies
         if (simulation_mode) return;
 
@@ -466,7 +466,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         }
 
         if (auto || setImuTelemetry) {
-            configure_IMUs(configuration);
+            configure_IMUs(configuration, noReset);
         }
 
         // register chassis as configurable component

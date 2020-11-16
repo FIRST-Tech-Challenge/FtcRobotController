@@ -62,7 +62,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double auto_chassis_heading = -90;
     public double auto_chassis_power_slow = .4;
     public double auto_chassis_align_power = .22;
-    public double shooter_offset = 8; // cm to the robot center x coordination
+    public double shooter_offset = 10; // shooter is 10 cm right of the robot center x coordination
+    public double webcam_offset = -25; // webcam is 25 cm left of the robot center x coordination
     public double shooting_dist = 0;
     public double shooting_angle = 0;
 
@@ -79,6 +80,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean useHopper = false;
     public boolean useShooter = true;
     public boolean useIntake = true;
+    public boolean isTeleOpAfterAuto = false;
 
     public void set_simulation_mode(boolean value) {
         simulation_mode = value;
@@ -133,7 +135,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 // enable imu for diagnosis
                 // chassis.enableImuTelemetry(configuration);
             }
-            chassis.configure(configuration, (autoside != ProgramType.TELE_OP));
+            chassis.configure(configuration, (autoside != ProgramType.TELE_OP), isTeleOpAfterAuto);
         }
         if (simulation_mode) { // need to call after chassis is initialized
             set_simulation_mode(true);
@@ -977,12 +979,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_TELE_OP);
                 if (chassis.orientationSensor==null) {
                     // chassis.enableImuTelemetry(configuration);
-                    chassis.configure_IMUs(configuration);
+                    chassis.configure_IMUs(configuration, isTeleOpAfterAuto);
                     // Enable the following line only for the debugging purpose
                     // chassis.setupIMUTelemetry(telemetry);
                 }
-                if (chassis!=null)
-                    chassis.set_init_pos(side(60), 23, 0);
+                if ((chassis!=null) && !isTeleOpAfterAuto)
+                    chassis.set_init_pos(side(120), 155, 0);
                 break;
             case AUTO_RED:
                 if (startP == StartPosition.OUT) {
@@ -1174,9 +1176,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
     public void autoGrabBottomWobbleGoal() throws InterruptedException {
         if (simulation_mode || chassis==null) return;
-        chassis.yMove(1, 0.20
-        );
-        //sleep(150);
+        chassis.yMove(1, 0.20);
+        sleep(200);
         if (comboGrabber!=null) {
             comboGrabber.grabWobbleGoalCombo(false);
             while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
@@ -1230,19 +1231,19 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         switch (target) {
             case TOWER:
                 target_x = 90;
-                target_height = 93;
+                target_height = 92;
                 break;
             case PSHOT_L:
                 target_x = 132;
-                target_height = 76;
+                target_height = 78;
                 break;
             case PSHOT_M:
                 target_x = 151;
-                target_height = 76;
+                target_height = 78;
                 break;
             case PSHOT_R:
                 target_x = 170;
-                target_height = 76;
+                target_height = 78;
                 break;
         }
         // start the shooter with expected RPM
@@ -1254,6 +1255,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooter.shootOutByRpm(rpm);
         // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
         shooting_angle = Math.toDegrees(Math.atan2(target_x - chassis.odo_x_pos_cm() - shooter_offset, target_y - chassis.odo_y_pos_cm()));
+        // to-do: need to adjust the angle (to right) when dist is > 200 cm 0.047 degree/cm
+        if (shooting_dist>200) {
+            shooting_angle += (shooting_dist-200)*0.047;
+        }
         try {
             if (Math.abs(chassis.odo_heading() - shooting_angle) > 1)
                 chassis.rotateTo(0.35, shooting_angle);

@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.support.events.EventManager;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
 
-@TeleOp(name="Mec-TeleOp", group="MechBot")
-public class MecTeleOp extends LinearOpMode {
+@TeleOp(name="TeleOp-Along", group="MechBot")
+public class TeleOpAlong extends LinearOpMode {
     protected static int LOG_LEVEL = Log.INFO;
 
     private Configuration configuration;
@@ -38,6 +38,7 @@ public class MecTeleOp extends LinearOpMode {
             // configure robot and reset all hardware
             robot.configure(configuration, telemetry, Robot2.ProgramType.TELE_OP);
             configuration.apply();
+            robot.isTeleOpAfterAuto = false;
             robot.initSetup(Robot2.ProgramType.TELE_OP, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(false);
 

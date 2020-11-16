@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.opmodes.mechBot;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -74,7 +75,7 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-
+@Disabled
 @TeleOp(name="TFOD-Detector", group ="MechBot")
 public class TfodStackDetection extends LinearOpMode {
     protected static int LOG_LEVEL = Log.INFO;

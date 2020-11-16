@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.support.CoreSystem;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
-import static org.firstinspires.ftc.teamcode.opmodes.mechBot.MecTeleOp.LOG_LEVEL;
+import static org.firstinspires.ftc.teamcode.opmodes.mechBot.TeleOpAfterAuto.LOG_LEVEL;
 
 /**
  * Created by 28761 on 6/14/2019.
@@ -39,7 +39,7 @@ public class mechTest  extends LinearOpMode {
 
         core = new CoreSystem();
         mc = new MechChassis(core).configureLogging("Mecanum", Log.INFO); // Log.DEBUG
-        mc.configure(configuration, false);
+        mc.configure(configuration, false, false);
 
         while(true){
 
