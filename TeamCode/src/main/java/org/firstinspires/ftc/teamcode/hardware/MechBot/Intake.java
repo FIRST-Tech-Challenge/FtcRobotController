@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware.MechBot;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -39,6 +40,7 @@ public class Intake extends Logger<Intake>  {
 
     public void configure(Configuration configuration, boolean auto) {
         intake1 = configuration.getHardwareMap().get(DcMotorEx.class, "intake1");
+        intake1.setDirection(DcMotorSimple.Direction.REVERSE);
         // intake2 = configuration.getHardwareMap().get(DcMotorEx.class, "intake2");
         init();
       // configuration.register(this);
