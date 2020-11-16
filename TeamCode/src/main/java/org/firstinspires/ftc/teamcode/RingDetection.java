@@ -20,7 +20,7 @@ public class RingDetection extends OpenCvPipeline {
 
     public static final double STICKR = 9;
     public static final double SMAXR = STICKR * 1.2;
-    public static final double SMINR = STICKR * 0.6;
+    public static final double SMINR = STICKR * 0.8;
 
     public static final int CURVE_EXTENSION = 5;
 
@@ -44,9 +44,6 @@ public class RingDetection extends OpenCvPipeline {
     Telemetry telemetry;
     Mat output;
 
-
-
-
     public RingDetection(Telemetry t){
         telemetry = t;
     }
@@ -66,6 +63,7 @@ public class RingDetection extends OpenCvPipeline {
         double scale = 960.0/input.height();
         Imgproc.resize(recolored, resized, new Size(Math.round(input.width() * scale), Math.round(input.height() * scale)));
         recolored.release();
+        avgValues(resized);
         return resized;
     }
 
