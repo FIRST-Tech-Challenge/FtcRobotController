@@ -25,6 +25,7 @@ public class BNO055GyroMethod implements GyroMethod {
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled      = false;
         m_BNO055Gyro.initialize(parameters);
+       
     }
 
     @Override
