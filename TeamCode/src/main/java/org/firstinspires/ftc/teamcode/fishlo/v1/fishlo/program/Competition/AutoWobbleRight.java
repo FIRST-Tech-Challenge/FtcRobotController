@@ -30,8 +30,14 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
         //Initialize the imu
         gyro.initGyro();
         //Find the target zone based on the starter stack
-        for (int i = 0; i < 3; i++) {
+        int i = 0;
+        while (true) {
+            i += 0.1;
             targetZone = vision.getTargetZone();
+            if (i == 2) {
+                break;
+            }
+            sleep(100);
         }
     }
 
