@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -57,12 +58,12 @@ public class TerraBot {
 
     public double turnStart = 0.25;
     public double grabStart = 0.7;
-    public double liftStart = 0.05;
-    public double liftSecond = 0.25;
-    public double shootStartR = 0.02;
-    public double shootStartL = 0.01;
+    public double liftStart = 0.0;
+    public double liftSecond = 0.45;
+    public double shootStartR = 0.06;
+    public double shootStartL = 0.05;
     public double intakeSpeed = 1;
-    public double outtakeSpeed = 0.3;
+    public double outtakeSpeed = 0.35;
     public double maxArmPos = 215;
     public double heading = 0;
     public double lastAngle = 0;
@@ -77,9 +78,9 @@ public class TerraBot {
     public ElapsedTime timer = new ElapsedTime();
 
     public Cycle grabControl = new Cycle(grabStart, 0.45);
-    public Cycle liftControl = new Cycle(liftStart, liftSecond, liftSecond+0.03,  0.53);
-    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.24, 0.27);
-    public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.15, 0.26);
+    public Cycle liftControl = new Cycle(liftStart, liftSecond);
+    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.22, 0.25);
+    public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.13, 0.26);
 
     public ServoController turnControl = new ServoController(turnStart, 0.0, 0.7);
 
@@ -90,8 +91,8 @@ public class TerraBot {
     public Limits limits = new Limits();
 
     //d = 0.00024
-    public SpeedController outrController = new SpeedController(0.2, 0.0, 0.0);
-    public SpeedController outlController = new SpeedController(0.2, 0.0, 0.0);
+    public SpeedController outrController = new SpeedController(0.2, 0.0, 0.0, outtakeSpeed);
+    public SpeedController outlController = new SpeedController(0.2, 0.0, 0.0, outtakeSpeed);
 
     public Odometry odometry = new Odometry();
 
@@ -123,6 +124,12 @@ public class TerraBot {
         sgl = hwMap.get(Servo.class, "sgl");
 
         gyro = hwMap.get(BNO055IMU.class, "gyro");
+//
+//        voltR = hwMap.voltageSensor.get("outr");
+//        voltL = hwMap.voltageSensor.get("outl");
+
+
+
         
 
 
@@ -200,6 +207,8 @@ public class TerraBot {
         resetGyro();
 
 
+
+
     }
 
     public void move(double f, double s, double t){
@@ -253,15 +262,12 @@ public class TerraBot {
     }
 
     public void defineShooter(){
-        //shooter.addStage(in, 1.0, 0.5);
-//        shooter.addStage(ssr, shootControlR.getPos(1), 0.01);
-//        shooter.addStage(ssl, shootControlL.getPos(1), 0.8);
-        shooter.addStage(slr, liftControl.getPos(2), 0.01);
-        shooter.addStage(sll, liftControl.getPos(2), 0.7);
+
+        shooter.addStage(in, 1.0, 0.01);
+        shooter.addStage(slr, liftControl.getPos(1), 0.01);
+        shooter.addStage(sll, liftControl.getPos(1), 1);
         shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
         shooter.addStage(ssl, shootControlL.getPos(2), 1);
-        shooter.addStage(slr, liftControl.getPos(1), 0.01);
-        shooter.addStage(sll, liftControl.getPos(1), 0.01);
         shooter.addStage(in, 0.0, 0.01);
         shooter.addCustom(new CodeSeg() {
             @Override
@@ -271,10 +277,10 @@ public class TerraBot {
         }, 0.01);
         shooter.addWaitUntil();
         for(int i = 0; i < 3;i++) {
-            shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
-            shooter.addStage(ssl, shootControlL.getPos(2), 2);
             shooter.addStage(ssr, shootControlR.getPos(3), 0.01);
-            shooter.addStage(ssl, shootControlL.getPos(3), 0.2);
+            shooter.addStage(ssl, shootControlL.getPos(3), 0.3);
+            shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
+            shooter.addStage(ssl, shootControlL.getPos(2), 0.5);
         }
         shooter.addDelay(1);
     }
@@ -290,8 +296,8 @@ public class TerraBot {
         wobbleGoal.addStage(arm,  1, degreesToTicks(215));
         wobbleGoal.addStage(slr, liftControl.getPos(1), 0.01);
         wobbleGoal.addStage(sll, liftControl.getPos(1), 0.5);
-        wobbleGoal.addStage(slr, liftControl.getPos(2), 0.01);
-        wobbleGoal.addStage(sll, liftControl.getPos(2), 0.5);
+//        wobbleGoal.addStage(slr, liftControl.getPos(2), 0.01);
+//        wobbleGoal.addStage(sll, liftControl.getPos(2), 0.5);
         wobbleGoal.addDelay(0.25);
         wobbleGoal.addStage(st, 0.65, 0.05);
         wobbleGoal.addStage(slr, liftControl.getPos(0), 0.01);
@@ -356,6 +362,8 @@ public class TerraBot {
     public double getOutlPos(){
         return outl.getCurrentPosition()/GO_DEGREES_TO_TICKS;
     }
+
+
 
     public void outtakeWithEncoders(double speed){
         speed = speed*MAX_OUTTAKE_SPEED;

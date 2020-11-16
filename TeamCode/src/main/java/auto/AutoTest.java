@@ -13,7 +13,7 @@ import global.TerraBot;
 import util.CodeSeg;
 import util.Rect;
 import autofunctions.TerraCV.RingNum;
-
+@Disabled
 @Autonomous(name = "AutoTest", group = "Auto")
 public class AutoTest extends LinearOpMode {
     TerraBot bot = new TerraBot();

@@ -98,10 +98,12 @@ public class TerraOp extends OpMode {
 
             if(bot.shooter.pausing){
                 bot.outtakeWithEncoders(bot.outtakeSpeed);
+//                bot.outtake(bot.outtakeSpeed);
             }
             
         }else if(bot.shooter.executing){
             bot.outtakeWithEncoders(bot.outtakeSpeed);
+            //bot.outtake(bot.outtakeSpeed);
         }
 
 
@@ -119,10 +121,11 @@ public class TerraOp extends OpMode {
 //        telemetry.update();
 //        telemetry.addData("touch", bot.isTouchSensorPressed());
 //        telemetry.update();
-
+//
         telemetry.addData("errR", bot.outrController.getPercentageError());
         telemetry.addData("errL", bot.outlController.getPercentageError());
         telemetry.update();
+
 
         bot.update();
 

@@ -30,7 +30,7 @@ public class SpeedController {
     public double d;
     public double i;
 
-    public SpeedController(double k, double d, double i){
+    public SpeedController(double k, double d, double i, double startPow){
         k *= 0.00001;
         d *= 0.00001;
         i *=  0.00001;
@@ -43,6 +43,7 @@ public class SpeedController {
         this.k = k;
         this.d = d;
         this.i = i;
+        pow = startPow;
     }
     public void scaleK(double scale){
         pid.setCoeffecients(k*scale,d,i);
@@ -72,9 +73,6 @@ public class SpeedController {
         lastError = currError;
         integralOfError += currError*changeTime;
 
-        if(Math.abs(currError) < 3000){
-            scaleK(0.5);
-        }
     }
 
     public double getPercentageError(){
@@ -82,9 +80,14 @@ public class SpeedController {
     }
 
     public double getPow(){
-        pow += Math.signum(currError) * pid.getPower(currError, currDer, integralOfError);
-        pow = Range.clip(pow, -1, 1);
-        return pow;
+        if(Math.abs(currError) < 3000){
+            pow += Math.signum(currError) * pid.getPower(currError, currDer, integralOfError);
+            pow = Range.clip(pow, -1, 1);
+            return pow;
+        }else{
+            return Math.signum(currError)*0.5;
+        }
+
     }
 
 
