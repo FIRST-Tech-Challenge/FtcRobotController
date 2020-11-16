@@ -25,8 +25,12 @@ public class DriveConstants {
     //public static final double MAX_RPM = 1;
 
     //TestRobot Calibration Parameters
-    public static final double TICKS_PER_REV = 537.6;
-    public static final double MAX_RPM = 312;
+    //public static final double TICKS_PER_REV = 537.6;
+    //public static final double MAX_RPM = 312;
+
+    //Main Robot Calibration Parameters
+    public static final double TICKS_PER_REV = 383.6 ;
+    public static final double MAX_RPM = 435 ;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -54,12 +58,18 @@ public class DriveConstants {
     //public static double TRACK_WIDTH = 1; // in
 
     //TestRobot Calibration Parameters
-    public static double WHEEL_RADIUS = 1.9685; // in
+    //public static double WHEEL_RADIUS = 1.9685; // in
     //EDIT THIS FOR STRAIGHT TEST
-    public static double GEAR_RATIO = 0.5 *55.5/60.0; // output (wheel) speed / input (motor) speed
+    //public static double GEAR_RATIO = 0.5 *55.5/60.0; // output (wheel) speed / input (motor) speed
     //EDIT THIS FOR TRACK WIDTH TUNER TEST
-    public static double TRACK_WIDTH = 8.9;//9.4; // in
+    //public static double TRACK_WIDTH = 8.9;//9.4; // in
 
+    //Main Robot Calibration Parameters
+    public static double WHEEL_RADIUS = 1.8898; // in
+    //EDIT THIS FOR STRAIGHT TEST
+    public static double GEAR_RATIO = 1.0; //*55.5/60.0; // output (wheel) speed / input (motor) speed
+    //EDIT THIS FOR TRACK WIDTH TUNER TEST
+    public static double TRACK_WIDTH = 10.75;//9.4; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using

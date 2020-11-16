@@ -43,7 +43,7 @@ public class HzGamepad {
     //**** Drive Train ****
     //SampleMecanumDrive gpDrive;
     //For Position
-    public Pose2d poseEstimate;
+    public Pose2d poseEstimate = new Pose2d(0,0,0);
 
     //**** Align to point and Field Drive Mode ****
     // Define 2 states, driver control or alignment control
@@ -64,14 +64,14 @@ public class HzGamepad {
     // Declare a target vector you'd like your bot to align with
     // Can be any x/y coordinate of your choosing
     public static final Vector2d origin = new Vector2d(0,0);
-    public static final Vector2d blueGoal = new Vector2d(72,36);
-    public static final Vector2d redGoal = new Vector2d(72,-36);
-    public static final Vector2d bluePowerShot1 = new Vector2d(72,36);
-    public static final Vector2d bluePowerShot2 = new Vector2d(72,36);
-    public static final Vector2d bluePowerShot3 = new Vector2d(72,36);
-    public static final Vector2d redPowerShot1 = new Vector2d(72,-36);
-    public static final Vector2d redPowerShot2 = new Vector2d(72,-36);
-    public static final Vector2d redPowerShot3 = new Vector2d(72,-36);
+    public static final Vector2d BLUE_TOWER_GOAL = new Vector2d(72,36);
+    public static final Vector2d BLUE_POWERSHOT1 = new Vector2d(72,17.75);
+    public static final Vector2d BLUE_POWERSHOT2 = new Vector2d(72,10.25);
+    public static final Vector2d BLUE_POWERSHOT3 = new Vector2d(72,2.75);
+    public static final Vector2d RED_POWERSHOT3 = new Vector2d(72,-2.75);
+    public static final Vector2d RED_POWERSHOT2 = new Vector2d(72,-10.25);
+    public static final Vector2d RED_POWERSHOT1 = new Vector2d(72,-17.75);
+    public static final Vector2d RED_TOWER_GOAL = new Vector2d(72,-36);
 
     private Vector2d drivePointToAlign = origin;
 
@@ -159,7 +159,7 @@ public class HzGamepad {
 
     // RR Drive Train
     public void runByGamepadRRDriveModes(LinearOpMode callingOpMode, SampleMecanumDrive gpDrive, int playingAlliance) {
-        //this.gpDrive = driveHandlePassedFromOpMode;
+        //this.gpDrive = gpDrive;
 
         /*    if(getLeftTrigger()>0.5){}*/
         /*    if (getLeftBumperPress()) {}*/
@@ -174,16 +174,17 @@ public class HzGamepad {
         //Code to toggle Drive Mode when Y is pressed
         if (getButtonYPress()){ driveMode.toggle();}
 
-        //driveTrainFieldCentric(gpDrive);
+        driveTrainFieldCentric(gpDrive);
 
         //drivePointToAlign = Target Vector;
-        driveTrainPointFieldModes(/*callingOpMode*/ gpDrive, drivePointToAlign);
+        //drivePointToAlign = BLUE_TOWER_GOAL;
+        //driveTrainPointFieldModes(callingOpMode, gpDrive, drivePointToAlign);
 
     }
 
     public void driveTrainFieldCentric(SampleMecanumDrive gpDrive){
 
-        poseEstimate = gpDrive.getPoseEstimate();
+        Pose2d poseEstimate = gpDrive.getPoseEstimate();
 
         // Create a vector from the gamepad x/y inputs
         // Then, rotate that vector by the inverse of that heading
@@ -207,8 +208,8 @@ public class HzGamepad {
     }
 
 
-    public void driveTrainPointFieldModes(/*LinearOpMode callingOpMode*/ SampleMecanumDrive gpDrive, Vector2d pointToAlign){
-        poseEstimate = gpDrive.getPoseEstimate();
+    public void driveTrainPointFieldModes(LinearOpMode callingOpMode,SampleMecanumDrive gpDrive, Vector2d pointToAlign){
+        Pose2d poseEstimate = gpDrive.getPoseEstimate();
 
         // Set input bounds for the heading controller
         // Automatically handles overflow
@@ -218,7 +219,7 @@ public class HzGamepad {
         // Pose representing desired x, y, and angular velocity
         Pose2d driveDirection = new Pose2d();
 
-        //callingOpMode.telemetry.addData("mode", driveMode);
+        callingOpMode.telemetry.addData("mode", driveMode);
 
         // Declare telemetry packet for dashboard field drawing
         TelemetryPacket packet = new TelemetryPacket();
@@ -305,9 +306,9 @@ public class HzGamepad {
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
         // Print pose to telemetry
-        //telemetry.addData("x", poseEstimate.getX());
-        //telemetry.addData("y", poseEstimate.getY());
-        //telemetry.addData("heading", poseEstimate.getHeading());
+        callingOpMode.telemetry.addData("x", poseEstimate.getX());
+        callingOpMode.telemetry.addData("y", poseEstimate.getY());
+        callingOpMode.telemetry.addData("heading", poseEstimate.getHeading());
         //telemetry.update();
     }
 
@@ -330,7 +331,7 @@ public class HzGamepad {
      *
      * @return gpGamepad1.left_stick_y * (-1)
      */
-    public double getLeftStickY() { return gpGamepad1.left_stick_y * (-1); }
+    public double getLeftStickY() { return gpGamepad1.left_stick_y; }
 
     /**
      * Methods to get the value of gamepad Right stick X to keep turning.

@@ -31,8 +31,8 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
 
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
-        drive.setPoseEstimate(PoseStorage.currentPose);
-        //drive.setPoseEstimate(new Pose2d(0,24,Math.toRadians(0)));
+       // drive.setPoseEstimate(PoseStorage.currentPose);
+        drive.setPoseEstimate(new Pose2d(-68,24,Math.toRadians(0)));
 
         waitForStart();
 

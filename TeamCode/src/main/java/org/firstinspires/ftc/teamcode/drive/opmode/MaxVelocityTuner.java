@@ -25,7 +25,7 @@ import java.util.Objects;
 //@Autonomous(group = "drive")
 @Autonomous(name = "Calib:RR-MaxVelocityTuner", group = "Calibration")
 public class MaxVelocityTuner extends LinearOpMode {
-    public static double RUNTIME = 2.0;
+    public static double RUNTIME = 1.0;
 
     private ElapsedTime timer;
     private double maxVelocity = 0.0;

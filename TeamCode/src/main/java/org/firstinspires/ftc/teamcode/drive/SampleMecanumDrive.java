@@ -55,13 +55,21 @@ public class SampleMecanumDrive extends MecanumDrive {
     //public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     //public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
     //TestRobot Calibration Parameters
+    //public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
+    //public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
+
+    //Main Robot Calibration Parameters
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
     //public static double LATERAL_MULTIPLIER = 1;
-    //TestRobot Calibration Parameters
     //EDIT THIS FOR STRAFE TEST
+    //TestRobot Calibration Parameters
+    //public static double LATERAL_MULTIPLIER = 60.0/52.0; //1;
+
+    //Main Robot Calibration Parameters
     public static double LATERAL_MULTIPLIER = 60.0/52.0; //1;
+
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;

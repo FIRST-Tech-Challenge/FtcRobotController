@@ -37,7 +37,7 @@ public class HazmatRedTeleOpRR extends LinearOpMode {
         // Initialize SampleMecanumDrive
         hzDrive = new SampleMecanumDrive(hardwareMap);
         hzGamepad1 = new HzGamepad(gamepad1);
-        hzVuforia1 = new HzVuforia(hardwareMap);
+        //hzVuforia1 = new HzVuforia(hardwareMap);
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
@@ -49,14 +49,14 @@ public class HazmatRedTeleOpRR extends LinearOpMode {
         //drive.setPoseEstimate(PoseStorage.currentPose);
 
         // TODO : When in game comment below, so that Pose is retrieved from PoseStorage
-        startPose = (new Pose2d(-68,24,Math.toRadians(0))); // Blue Inner Start Line
+        startPose = new Pose2d(-68,24,Math.toRadians(0)); // Blue Inner Start Line
         //startPose = (new Pose2d(-68,48,Math.toRadians(0))); // Blue Outer Start Line
         //startPose = (new Pose2d(-68,-24,Math.toRadians(0))); // Red Inner Start Line
         //startPose = (new Pose2d(-68,-48,Math.toRadians(0))); // Red Outer Start Line
         hzDrive.setPoseEstimate(startPose);
 
         // Initiate Camera even before Start is pressed.
-        //waitForStart();
+        waitForStart();
 
         if (isStopRequested()) return;
 
@@ -64,10 +64,10 @@ public class HazmatRedTeleOpRR extends LinearOpMode {
             //Init is pressed at this time, and start is not pressed yet
 
             //Activate Vuforia Navigation
-            hzVuforia1.activateVuforiaNavigation();
+            //hzVuforia1.activateVuforiaNavigation();
 
             //Run Vuforia Navigation
-            hzVuforia1.runVuforiaNavigation();
+            //hzVuforia1.runVuforiaNavigation();
 
             if(HzDEBUG_FLAG) {
                 printDebugMessages();
@@ -76,7 +76,7 @@ public class HazmatRedTeleOpRR extends LinearOpMode {
 
             while (opModeIsActive()) {
 
-                hzVuforia1.runVuforiaNavigation();
+                //hzVuforia1.runVuforiaNavigation();
 
                 //Run Robot based on field centric gamepad input, aligned to playing alliance direction
                 hzGamepad1.runByGamepadRRDriveModes(this, hzDrive, playingAlliance);
@@ -101,16 +101,16 @@ public class HazmatRedTeleOpRR extends LinearOpMode {
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
 
         // Print pose to telemetry
-        telemetry.addData("Drive Mode : ", hzGamepad1.driveMode);
-        telemetry.addData("PoseEstimate : x", hzGamepad1.poseEstimate.getX());
-        telemetry.addData("PoseEstimate : y", hzGamepad1.poseEstimate.getY());
-        telemetry.addData("PoseEstimate : heading", Math.toDegrees(hzGamepad1.poseEstimate.getHeading()));
+        //telemetry.addData("Drive Mode : ", hzGamepad1.driveMode);
+        //telemetry.addData("PoseEstimate : x", hzGamepad1.poseEstimate.getX());
+        //telemetry.addData("PoseEstimate : y", hzGamepad1.poseEstimate.getY());
+        //telemetry.addData("PoseEstimate : heading", Math.toDegrees(hzGamepad1.poseEstimate.getHeading()));
 
-        telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
+        //telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
         // Print pose to telemetry
-        telemetry.addData("PoseVuforia : x", hzVuforia1.poseVuforia.getX());
-        telemetry.addData("PoseVuforia : y", hzVuforia1.poseVuforia.getY());
-        telemetry.addData("PoseVuforia : heading", Math.toDegrees(hzVuforia1.poseVuforia.getHeading()));
+        //telemetry.addData("PoseVuforia : x", hzVuforia1.poseVuforia.getX());
+        //telemetry.addData("PoseVuforia : y", hzVuforia1.poseVuforia.getY());
+        //telemetry.addData("PoseVuforia : heading", Math.toDegrees(hzVuforia1.poseVuforia.getHeading()));
 
         telemetry.update();
 
