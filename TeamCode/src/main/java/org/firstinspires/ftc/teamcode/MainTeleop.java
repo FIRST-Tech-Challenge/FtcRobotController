@@ -23,8 +23,7 @@ public class MainTeleop extends LinearOpMode{
     private DcMotor outtakeRight, outtakeLeft;
     private Servo flipper;
 
-    private Servo leftIntakeServo;
-    private Servo rightIntakeServo;
+    private CRServo leftIntakeServo, rightIntakeServo;
 
     private BNO055IMU imu;
 
@@ -71,8 +70,8 @@ public class MainTeleop extends LinearOpMode{
         outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
 
         //lifting and lowering intake
-        leftIntakeServo = hardwareMap.servo.get("LIrelease");
-        rightIntakeServo = hardwareMap.servo.get("RIrelease");
+        leftIntakeServo = hardwareMap.crservo.get("LIrelease");
+        rightIntakeServo = hardwareMap.crservo.get("RIrelease");
 
         //Encoders
         verticalLeft = hardwareMap.dcMotor.get("leftOdometry");
@@ -135,6 +134,26 @@ public class MainTeleop extends LinearOpMode{
             }
 
             //Release intake
+            if(gamepad1.x){
+                lowerIntake();
+            }
+            if(gamepad1.y){
+                raiseIntake();
+            }
+            if(gamepad1.dpad_up){
+                leftIntakeServo.setPower(0.1);
+                rightIntakeServo.setPower(0.1);
+                wait(100);
+                leftIntakeServo.setPower(0);
+                rightIntakeServo.setPower(0);
+            }
+            if(gamepad1.dpad_down){
+                leftIntakeServo.setPower(-0.1);
+                rightIntakeServo.setPower(-0.1);
+                wait(100);
+                leftIntakeServo.setPower(0);
+                rightIntakeServo.setPower(0);
+            }
 
             double intakeSpeed = gamepad1.left_trigger * intakeMod;
             intake.setPower(intakeSpeed);
@@ -149,6 +168,16 @@ public class MainTeleop extends LinearOpMode{
 
             if(gamepad2.y){
                 lowerElevator();
+            }
+            if(gamepad2.dpad_left){
+                elevator.setPower(-0.1);
+                wait(100);
+                elevator.setPower(0);
+            }
+            if(gamepad2.dpad_right){
+                elevator.setPower(0.1);
+                wait(100);
+                elevator.setPower(0);
             }
 
             //Ring flipper
@@ -247,7 +276,30 @@ public class MainTeleop extends LinearOpMode{
 
         elevator.setPower(0);
     }
+    private void raiseIntake(){
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
 
+        while(timer.milliseconds() < 200){
+            leftIntakeServo.setPower(1);
+            rightIntakeServo.setPower(1);
+        }
+
+        leftIntakeServo.setPower(0);
+        rightIntakeServo.setPower(0);
+    }
+    private void lowerIntake(){
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+
+        while(timer.milliseconds() < 200){
+            leftIntakeServo.setPower(-1);
+            rightIntakeServo.setPower(-1);
+        }
+
+        leftIntakeServo.setPower(0);
+        rightIntakeServo.setPower(0);
+    }
     public void odometryNormalizeAngle(){
         while (globalPositionUpdate.returnOrientation() > 0){
             robot.turnCounterClockwise(1);

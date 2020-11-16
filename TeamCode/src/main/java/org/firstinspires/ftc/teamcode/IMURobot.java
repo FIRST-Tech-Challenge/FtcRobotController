@@ -38,8 +38,8 @@ public class IMURobot {
     private CRServo elevator;
 
     //Declare servos
-    private Servo leftIntakeServo;
-    private Servo rightIntakeServo;
+    private CRServo leftIntakeServo;
+    private CRServo rightIntakeServo;
     private Servo flipper;
 
     //Declare the IMU
@@ -91,7 +91,7 @@ public class IMURobot {
     OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
 
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                    BNO055IMU imu, Servo leftIntakeServo, Servo rightIntakeServo,
+                    BNO055IMU imu, CRServo leftIntakeServo, CRServo rightIntakeServo,
                     CRServo leftConveyor, CRServo rightConveyor, CRServo elevator, Servo flipper,
                     CRServo intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
@@ -124,8 +124,8 @@ public class IMURobot {
      */
 
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                    BNO055IMU imu, Servo leftIntakeServo,
-                    Servo rightIntakeServo, LinearOpMode opMode){
+                    BNO055IMU imu, CRServo leftIntakeServo,
+                    CRServo rightIntakeServo, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -605,9 +605,9 @@ public class IMURobot {
         intake.setPower(-1);
     }
 
-    public void releaseIntake() {
+    /*public void releaseIntake() {
         leftIntakeServo.setPosition(1);
         rightIntakeServo.setPosition(0);
-    }
+    }*/
 
 }
