@@ -40,7 +40,7 @@ public class AutoBlue extends LinearOpMode {
         path.addWaypoint(35,48,0);
         path.addSetpoint(0,10,0);
         path.addRF(rf.shoot(shootSpeed));
-        path.addStop(3);
+        path.addStop(3.1);
 
         if(rf.ringnum.equals(RingNum.ZERO)) {
             path.addSetpoint(-15,15,-115);
@@ -90,6 +90,7 @@ public class AutoBlue extends LinearOpMode {
         bot.grabStart = 0.45;
         bot.init(hardwareMap);
         rf.init(bot, this);
+        bot.lift(bot.liftControl.getPos(1));
     }
     private void dropWobble(){
         path.addRF(rf.turnArm(0.68), rf.wobbleArm(180,1));

@@ -265,7 +265,7 @@ public class TerraBot {
 
         shooter.addStage(in, 1.0, 0.01);
         shooter.addStage(slr, liftControl.getPos(1), 0.01);
-        shooter.addStage(sll, liftControl.getPos(1), 1);
+        shooter.addStage(sll, liftControl.getPos(1), 1.5);
         shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
         shooter.addStage(ssl, shootControlL.getPos(2), 1);
         shooter.addStage(in, 0.0, 0.01);
