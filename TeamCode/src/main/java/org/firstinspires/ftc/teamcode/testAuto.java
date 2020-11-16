@@ -21,8 +21,10 @@ public class testAuto extends LinearOpMode {
 
         Thread positionThread = new Thread(globalCoordinatePosition);
         positionThread.start();
-
-        driveTo(40, 40, 50);
+        while (opModeIsActive()) {
+            driveTo(40, 40, 50);
+        }
+        globalCoordinatePosition.stop();
 
     }
 
