@@ -20,6 +20,7 @@ public class Vision extends SubSystem {
 
     OpenCvCamera webcam;
     EasyOpenCVExample.SkystoneDeterminationPipeline pipeline;
+    char targetZone = 'X';
 
     public Vision(Robot robot) {
         super(robot);
@@ -32,15 +33,10 @@ public class Vision extends SubSystem {
         pipeline = new EasyOpenCVExample.SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
 
-        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
-        // out when the RC activity is in portrait. We do our actual image processing assuming
-        // landscape orientation, though.
-        webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
-
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.startStreaming(320, 240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
         });
     }
@@ -49,12 +45,12 @@ public class Vision extends SubSystem {
     public void handle() {}
 
     @Override
-    public void stop() {}
+    public void stop() {webcam.stopStreaming();}
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
         /*
-         * An enum to define the skystone position
+         * An enum to define the ring position
          */
         public enum RingPosition
         {
@@ -72,7 +68,7 @@ public class Vision extends SubSystem {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(181,98);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(100,100);
 
         static final int REGION_WIDTH = 35;
         static final int REGION_HEIGHT = 25;
@@ -130,7 +126,6 @@ public class Vision extends SubSystem {
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD){
                 position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR;
             }else if (avg1 > ONE_RING_THRESHOLD){
@@ -156,10 +151,13 @@ public class Vision extends SubSystem {
     }
 
     public char getTargetZone() {
-        char targetZone = 'a';
+
+        robot.telemetry.addData("Analysis", pipeline.getAnalysis());
+        robot.telemetry.update();
 
         if (pipeline.position == EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.NONE) {
             targetZone = 'A';
+
         }
         else if (pipeline.position == EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.ONE) {
             targetZone = 'B';

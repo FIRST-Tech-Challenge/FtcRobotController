@@ -29,19 +29,33 @@ public abstract class AutonomousProgram extends LinearOpMode {
     protected abstract Robot buildRobot();
 
     /**
-     * Allow this method to be overridden in the Autonomous program.
+     * Allow these methods to be overridden in the Autonomous program.
      * From there, you can code just like a linear opmode.
      */
+
+    /**
+     * The main method is for code after start is pressed
+     * The preMain method is for code during the init phase
+     */
     public abstract void main();
+    public abstract void preMain();
 
     @Override
     public final void runOpMode() throws InterruptedException {
         robot = buildRobot();
+        telemetry.setAutoClear(false);
 
         try {
             robot.init();
         } catch(Exception ex) {
             telemetry.addData("ERROR!!!", ex.getMessage());
+        }
+
+        try {
+            preMain();
+        } catch(Exception ex) {
+            telemetry.addData("ERROR!!!", ex.getMessage());
+            ex.printStackTrace();
         }
 
         waitForStart();

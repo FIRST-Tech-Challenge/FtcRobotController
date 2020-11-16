@@ -14,18 +14,17 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.SubSystem;
 
 public class Drive extends SubSystem {
-    private DcMotor frontLeft, backLeft, frontRight, backRight;
 
-    LinearOpMode opmode;
+    private DcMotor frontLeft, backLeft, frontRight, backRight;
 
     int cpr = 28;
     int gearRatio = 19;
     double diameter = 3.780;
     double cpi = (cpr * gearRatio)/(Math.PI * diameter);
-    double bias = 0.8;
+    double bias = 0.955;
     double strafeBias = 0.9;
-
     double conversion = cpi * bias;
+
     boolean exit = false;
     
     public Drive(Robot robot) {
@@ -119,6 +118,8 @@ public class Drive extends SubSystem {
     public void moveToPosition(double inches, double speed) {
         int move = (int)(Math.round(inches*conversion));
 
+        encoderReset();
+
         frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + move);
         backLeft.setTargetPosition(backLeft.getCurrentPosition() + move);
         frontRight.setTargetPosition(frontRight.getCurrentPosition() + move);
@@ -131,19 +132,21 @@ public class Drive extends SubSystem {
 
         drive(speed, speed);
 
-        while (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
+        while (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy()) {
             if (exit) {
-                stop();
                 return;
             }
         }
         stop();
+        encoderReset();
         return;
     }
 
 
     public void strafeToPosition(double inches, double speed) {
         int move = (int)(Math.round(inches * cpi * strafeBias));
+
+        encoderReset();
 
         frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + move);
         backLeft.setTargetPosition(backLeft.getCurrentPosition() - move);
@@ -157,8 +160,9 @@ public class Drive extends SubSystem {
 
         drive(speed, speed);
 
-        while (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {}
+        while (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy()) {}
         stop();
+        encoderReset();
         return;
     }
 
@@ -166,16 +170,25 @@ public class Drive extends SubSystem {
         drive(0, 0);
     }
 
-
+/*
     int base = 0;
     public void resetEncoder() {
         base = backRight.getCurrentPosition();
     }
+*/
 
+    public void encoderReset() {
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+/*
     public int getEncoder() {
         return backRight.getCurrentPosition() - base;
     }
-
+*/
 
 
 

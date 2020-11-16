@@ -15,7 +15,6 @@ public class Gyro extends SubSystem {
 
     BNO055IMU imu;
     Orientation angles;
-    Acceleration gravity;
     double heading = 0;
     double prevHeading = 0;
 
@@ -53,6 +52,8 @@ public class Gyro extends SubSystem {
     public double getHeading() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         heading = convert(angles.firstAngle - prevHeading);
+        robot.telemetry.addData("Gyro", "Heading - " + heading);
+        robot.telemetry.update();
         return heading;
     }
     public void resetHeading() {

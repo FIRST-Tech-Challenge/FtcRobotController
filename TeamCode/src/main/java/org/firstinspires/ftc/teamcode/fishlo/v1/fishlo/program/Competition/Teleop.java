@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.program.OpModes;
+package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.program.Competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 
 
 
-@TeleOp()
+@TeleOp
 public class Teleop extends DriverControlledProgram {
     private Fishlo fishlo;
 

@@ -8,7 +8,7 @@ public class PID {
     private double prev_error;
     private double loop_time;
 
-    public PID(double proportional, double derivative, double integral) {
+    public PID(double proportional, double integral, double derivative) {
         Kp = proportional;
         Kd = derivative;
         Ki = integral;

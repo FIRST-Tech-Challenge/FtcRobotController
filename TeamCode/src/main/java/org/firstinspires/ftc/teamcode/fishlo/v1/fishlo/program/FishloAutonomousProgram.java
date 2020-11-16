@@ -8,7 +8,6 @@ public class FishloAutonomousProgram extends AutonomousProgram {
     protected Claw claw;
     protected Drive drive;
     protected Gyro gyro;
-    protected Lift lift;
     protected Vision vision;
 
     @Override
@@ -18,7 +17,6 @@ public class FishloAutonomousProgram extends AutonomousProgram {
         drive = (Drive) fishlo.getSubSystem("Drive");
         claw = (Claw) fishlo.getSubSystem("Claw");
         gyro = (Gyro) fishlo.getSubSystem("Gyro");
-        lift = (Lift) fishlo.getSubSystem("Lift");
         vision = (Vision) fishlo.getSubSystem("Vision");
 
         return fishlo;
@@ -26,4 +24,7 @@ public class FishloAutonomousProgram extends AutonomousProgram {
 
     @Override
     public void main() {}
+
+    @Override
+    public void preMain() {}
 }
