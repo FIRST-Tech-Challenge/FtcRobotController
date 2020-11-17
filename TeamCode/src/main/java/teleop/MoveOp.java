@@ -24,6 +24,7 @@ public class MoveOp extends OpMode {
         telemetry.addData("Status: ","Ready");
         telemetry.update();
 
+
     }
 
 
@@ -35,23 +36,19 @@ public class MoveOp extends OpMode {
     @Override
     public void loop() {
 
-        double forward = -gamepad1.right_stick_y;
-        double strafe = gamepad1.right_stick_x;
-        double turn = -gamepad1.left_stick_x;
-
-        bot.move(forward, strafe, turn);
-
+        if(gamepad2.y){
+            bot.powerShot.start();
+        }
 //
-//        telemetry.addData("Heading", bot.getHeading());
-//        telemetry.addData("deltaX", bot.odometry.testx);
-//        telemetry.addData("deltaY", bot.odometry.testy);
-//        telemetry.addData("OdometryX", bot.odometry.getX());
-//        telemetry.addData("OdometryY", bot.odometry.getY());
-//        telemetry.addData("Heading", bot.getHeading());
-//        telemetry.addData("sketch angle", bot.odometry.thetaEnc);
-//        telemetry.update();
+        bot.update();
 
-//        bot.update();
+
+        telemetry.addData("OdometryX", bot.odometry.getX());
+        telemetry.addData("OdometryY", bot.odometry.getY());
+        telemetry.addData("Heading", bot.odometry.getTheta());
+        telemetry.update();
+
+        bot.update();
 
     }
 

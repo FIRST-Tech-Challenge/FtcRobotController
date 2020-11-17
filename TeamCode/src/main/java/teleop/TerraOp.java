@@ -37,6 +37,7 @@ public class TerraOp extends OpMode {
 //        bot.turnArmWithEnc(50, 1);
 //        bot.turnWobbleArm(0.1);
 //        bot.turnControl.cur = 0.1;
+        bot.gameTime.reset();
     }
 
     @Override
@@ -86,33 +87,65 @@ public class TerraOp extends OpMode {
             }
 
 
+
+
             if(gamepad2.y){
-                bot.shooter.start();
+                if(!bot.powershot) {
+                    bot.shooter.start();
+                    bot.outrController.setStartPow(bot.outtakeSpeed);
+                    bot.outlController.setStartPow(bot.outtakeSpeed);
+                }else{
+                    bot.powerShot.start();
+                    bot.outrController.setStartPow(bot.powerShotSpeed);
+                    bot.outlController.setStartPow(bot.powerShotSpeed);
+                }
             }
 //            if(gamepad2.a){
 //                bot.wobbleGoal.start();
 //            }
+
             if(gamepad2.x){
                 bot.wobbleGoal2.start();
             }
 
-            if(bot.shooter.pausing){
-                bot.outtakeWithEncoders(bot.outtakeSpeed);
-//                bot.outtake(bot.outtakeSpeed);
+            if(bot.shooter.pausing || bot.powerShot.pausing){
+                if(bot.powershot){
+                    bot.outtakeWithEncoders(bot.powerShotSpeed);
+                }else {
+                    bot.outtakeWithEncoders(bot.outtakeSpeed);
+                }
             }
             
-        }else if(bot.shooter.executing){
-            bot.outtakeWithEncoders(bot.outtakeSpeed);
-            //bot.outtake(bot.outtakeSpeed);
+        }else if(bot.shooter.executing || bot.powerShot.executing){
+            if(bot.powershot){
+                bot.outtakeWithEncoders(bot.powerShotSpeed);
+            }else {
+                bot.outtakeWithEncoders(bot.outtakeSpeed);
+            }
         }
 
 
+        if(gamepad2.left_stick_button && bot.timer.seconds() > 0.5){
+            bot.fastmode = !bot.fastmode;
+            bot.timer.reset();
+        }
+
+        if(gamepad2.right_stick_button && bot.timer2.seconds() > 0.5){
+            bot.powershot = !bot.powershot;
+            bot.timer2.reset();
+        }
+
+        if(!bot.powershot && bot.gameTime.seconds() > 85){
+            bot.powershot = true;
+        }
 
         double forward = -gamepad1.right_stick_y;
         double strafe = gamepad1.right_stick_x;
         double turn = -gamepad1.left_stick_x;
 
-        bot.move(forward, strafe, turn);
+        if(!bot.powerShot.executing) {
+            bot.moveTeleOp(forward, strafe, turn);
+        }
 
 //
 //        telemetry.addData("Heading", bot.getHeading());
@@ -122,9 +155,10 @@ public class TerraOp extends OpMode {
 //        telemetry.addData("touch", bot.isTouchSensorPressed());
 //        telemetry.update();
 //
-        telemetry.addData("errR", bot.outrController.getPercentageError());
-        telemetry.addData("errL", bot.outlController.getPercentageError());
-        telemetry.addData("voltage", bot.getVoltage());
+//        telemetry.addData("errR", bot.outrController.getPercentageError());
+//        telemetry.addData("errL", bot.outlController.getPercentageError());
+//        telemetry.addData("isFast", bot.fastmode);
+
         telemetry.update();
 
 

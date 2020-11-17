@@ -45,6 +45,12 @@ public class SpeedController {
         this.i = i;
         pow = startPow;
     }
+
+    public void setStartPow(double startPow){
+        pow = startPow;
+    }
+
+
     public void scaleK(double scale){
         pid.setCoeffecients(k*scale,d,i);
     }
@@ -59,6 +65,7 @@ public class SpeedController {
 
     public void setTargetSpeed(double ts){
         targetSpeed = ts;
+
     }
     public void reset(){
         integralOfError = 0;

@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.openftc.revextensions2.ExpansionHubEx;
 
 import autofunctions.Odometry;
+import autofunctions.Path;
 import telefunctions.AutoModule;
 import telefunctions.Cycle;
 import telefunctions.Limits;
@@ -47,6 +48,8 @@ public class TerraBot {
 
     public boolean intaking = false;
     public boolean outtaking = false;
+    public boolean fastmode = true;
+    public boolean powershot = false;
 
     public int resettingArm = 0;
 
@@ -58,6 +61,7 @@ public class TerraBot {
     public double shootStartL = 0.05;
     public double intakeSpeed = 1;
     public double outtakeSpeed = 0.35;
+    public double powerShotSpeed = 0.3;
     public double maxArmPos = 215;
     public double heading = 0;
     public double lastAngle = 0;
@@ -70,6 +74,8 @@ public class TerraBot {
     public final double MAX_OUTTAKE_SPEED = 32400;
 
     public ElapsedTime timer = new ElapsedTime();
+    public ElapsedTime timer2 = new ElapsedTime();
+    public ElapsedTime gameTime = new ElapsedTime();
 
     public Cycle grabControl = new Cycle(grabStart, 0.45);
     public Cycle liftControl = new Cycle(liftStart, liftSecond);
@@ -79,6 +85,7 @@ public class TerraBot {
     public ServoController turnControl = new ServoController(turnStart, 0.0, 0.7);
 
     public AutoModule shooter = new AutoModule();
+    public AutoModule powerShot = new AutoModule();
     public AutoModule wobbleGoal = new AutoModule();
     public AutoModule wobbleGoal2 = new AutoModule();
 
@@ -189,6 +196,7 @@ public class TerraBot {
         resetEncoders();
 
         defineShooter();
+        definePowerShot();
         defineWobbleGoal();
         defineWobbleGoal2();
 
@@ -211,6 +219,14 @@ public class TerraBot {
         l2.setPower(-f-s+t);
         r1.setPower(f+s+t);
         r2.setPower(-f+s-t);
+    }
+
+    public void moveTeleOp(double f, double s, double t){
+        if(fastmode) {
+            move(f, s, t);
+        }else{
+            move((f*0.2) + Math.signum(f)*0.05, (s*0.2)+Math.signum(s)*0.1, (t*0.2)+Math.signum(t)*0.3);
+        }
     }
 
 
@@ -270,6 +286,12 @@ public class TerraBot {
                intaking = false;
             }
         }, 0.01);
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                fastmode = false;
+            }
+        }, 0.01);
         shooter.addWaitUntil();
         for(int i = 0; i < 3;i++) {
             shooter.addStage(ssr, shootControlR.getPos(3), 0.01);
@@ -277,7 +299,69 @@ public class TerraBot {
             shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
             shooter.addStage(ssl, shootControlL.getPos(2), 0.5);
         }
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                fastmode = true;
+            }
+        }, 0.01);
         shooter.addDelay(1);
+    }
+
+    public void definePowerShot(){
+        powerShot.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                startOdoThreadTele();
+            }
+        });
+        powerShot.addStage(in, 1.0, 0.01);
+        powerShot.addStage(slr, liftControl.getPos(1), 0.01);
+        powerShot.addStage(sll, liftControl.getPos(1), 1.5);
+        powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
+        powerShot.addStage(ssl, shootControlL.getPos(2), 0.01);
+        powerShot.addStage(in, 0.0, 0.01);
+        powerShot.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                intaking = false;
+            }
+        }, 0.01);
+        powerShot.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                fastmode = false;
+            }
+        }, 0.01);
+        powerShot.addWaitUntil();
+        powerShot.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() { odometry.reset(getLeftOdo(), getMiddleOdo(), getRightOdo()); }
+        });
+        for(int i = 0; i < 3;i++) {
+            powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
+            powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
+            powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
+            powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
+            if(i < 2) {
+                Path path = new Path(i * 18, 0, 0);
+                path.addSetpoint(18, 0, 0);
+                powerShot.addPath(path, this);
+            }
+        }
+        powerShot.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                fastmode = true;
+            }
+        }, 0.01);
+        powerShot.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                stopOdoThreadTele();
+            }
+        });
+        powerShot.addDelay(1);
     }
     public void defineWobbleGoal(){
 //        wobbleGoal.addStage(ssr, shootControlR.getPos(0), 0.01);
@@ -321,6 +405,7 @@ public class TerraBot {
 
     public void update(){
         shooter.update();
+        powerShot.update();
         wobbleGoal.update();
         wobbleGoal2.update();
         outlController.updateMotorValues(getOutlPos());
@@ -328,10 +413,10 @@ public class TerraBot {
     }
 
     public boolean autoModulesRunning(){
-        return (shooter.executing || wobbleGoal.executing || wobbleGoal2.executing);
+        return (shooter.executing || powerShot.executing|| wobbleGoal.executing || wobbleGoal2.executing);
     }
 
-    public boolean autoModulesPaused(){return  wobbleGoal.pausing || shooter.pausing || wobbleGoal2.pausing;}
+    public boolean autoModulesPaused(){return  wobbleGoal.pausing || shooter.pausing || wobbleGoal2.pausing || powerShot.pausing;}
 
 
     public double getArmPos(){

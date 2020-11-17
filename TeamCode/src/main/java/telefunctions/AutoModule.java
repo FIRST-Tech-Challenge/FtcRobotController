@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 
+import autofunctions.Path;
 import global.TerraBot;
 import util.CodeSeg;
 
@@ -139,6 +140,43 @@ public class AutoModule {
             public boolean run(double in) {
                 s.setPosition(pos);
                 return in > time;
+            }
+        });
+    }
+    public void addPath(final Path path, final TerraBot bot){
+        lastTime = 0;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                path.timer.reset();
+                return true;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                double[] pows = path.update(bot.odometry.getPos(), bot.odometry.getVels());
+                bot.move(pows[1], pows[0], pows[2]);
+                return !path.isExecuting;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.move(0,0,0);
+                timer.reset();
+                return true;
+            }
+        });
+    }
+
+    public void addCustomOnce(final CodeSeg cs){
+        lastTime = 0;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                cs.run();
+                return true;
             }
         });
     }

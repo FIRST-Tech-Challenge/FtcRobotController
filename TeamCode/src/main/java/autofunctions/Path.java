@@ -22,9 +22,9 @@ public class Path {
     PID yControl = new PID();
     PID hControl = new PID();
 
-    ElapsedTime timer = new ElapsedTime();
-    ElapsedTime timer2 = new ElapsedTime();
-    ElapsedTime timer3 = new ElapsedTime();
+    public ElapsedTime timer = new ElapsedTime();
+    public ElapsedTime timer2 = new ElapsedTime();
+    public ElapsedTime timer3 = new ElapsedTime();
 
     public double lastTime = -0.1;
 
