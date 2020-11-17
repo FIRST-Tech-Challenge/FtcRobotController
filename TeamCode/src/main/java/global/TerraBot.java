@@ -1,23 +1,17 @@
 package global;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-
-import java.util.concurrent.ForkJoinPool;
+import org.openftc.revextensions2.ExpansionHubEx;
 
 import autofunctions.Odometry;
 import telefunctions.AutoModule;
@@ -98,6 +92,8 @@ public class TerraBot {
 
     public ThreadHandler threadHandler = new ThreadHandler();
 
+    public ExpansionHubEx expansionHub;
+
 
 
 
@@ -124,9 +120,8 @@ public class TerraBot {
         sgl = hwMap.get(Servo.class, "sgl");
 
         gyro = hwMap.get(BNO055IMU.class, "gyro");
-//
-//        voltR = hwMap.voltageSensor.get("outr");
-//        voltL = hwMap.voltageSensor.get("outl");
+
+        expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
 
 
 
@@ -224,8 +219,8 @@ public class TerraBot {
     }
 
     public void outtake(double p){
-        outr.setPower(p);
-        outl.setPower(p);
+        outr.setPower(p*getVoltageScale());
+        outl.setPower(p*getVoltageScale());
     }
 
     public void turnArm(double p){
@@ -477,4 +472,16 @@ public class TerraBot {
     public void stopOdoThreadAuto() {
         threadHandler.stopAutoThread();
     }
+
+    public double getVoltage(){
+        return expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS);
+    }
+
+    public double getVoltageScale(){
+        return ((getVoltage()-12.5)*-0.07)+1;
+        //0.367 - 14
+
+    }
+
+
 }

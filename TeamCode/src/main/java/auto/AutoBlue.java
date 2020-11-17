@@ -91,6 +91,7 @@ public class AutoBlue extends LinearOpMode {
         bot.init(hardwareMap);
         rf.init(bot, this);
         bot.lift(bot.liftControl.getPos(1));
+        bot.shoot(bot.shootControlR.getPos(2), bot.shootControlL.getPos(2));
     }
     private void dropWobble(){
         path.addRF(rf.turnArm(0.68), rf.wobbleArm(180,1));

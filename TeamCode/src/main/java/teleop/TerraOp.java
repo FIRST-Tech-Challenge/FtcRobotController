@@ -124,6 +124,7 @@ public class TerraOp extends OpMode {
 //
         telemetry.addData("errR", bot.outrController.getPercentageError());
         telemetry.addData("errL", bot.outlController.getPercentageError());
+        telemetry.addData("voltage", bot.getVoltage());
         telemetry.update();
 
 
