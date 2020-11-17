@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 
 
 /**
@@ -18,20 +19,23 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
 @Autonomous(name= "Shooter Test High Goal")
 //@Disabled
 public class ShooterTestHighGoal extends LinearOpMode{
-    Shooter robot=new Shooter();
+//    private Shooter shooter=null;
+    //private Object Shooter;
+
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
-        robot.initChassis(this);
+        Shooter shooter = null;
+        shooter = new Shooter(this);
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
-        robot.shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         waitForStart();
-        robot.shootHighGoal(1000);
+        shooter.shootHighGoal(1000);
 
     }
 

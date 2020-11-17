@@ -17,18 +17,17 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
 @Autonomous(name= "ShooterServoTest")
 //@Disabled
 public class ShooterServoTest extends LinearOpMode{
-    Shooter robot=new Shooter();
+    private Shooter shooter=null;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
-        robot.initChassis(this);
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
 
 
         waitForStart();
-        robot.moveServoPosition(1.0);
+        shooter.moveServoPosition(1.0);
     }
 }

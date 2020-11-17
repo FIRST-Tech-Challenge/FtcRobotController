@@ -35,7 +35,7 @@ import static java.lang.Math.tan;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
 
 public class Robot {
-    Shooter shooter = new Shooter();
+//    Shooter shooter = new Shooter();
 //    WobbleGoal wobbleGoal = new WobbleGoal();
 
     private LinearOpMode op = null;
@@ -50,6 +50,8 @@ public class Robot {
     private WobbleGoal wobbleGoal = null;
     private RingDepositor ringDepositor = null;
     private VuforiaWebcam vuforiaWebcam = null;
+    private Shooter shooter=null;
+
 
     private double vuforiaX = 0;
     private double vuforiaY = 0;
@@ -68,6 +70,7 @@ public class Robot {
         wobbleGoal = new WobbleGoal(op);
         ringDepositor = new RingDepositor(op);
         intake = new Intake(op);
+        shooter=new Shooter(op);
 
         // comment by victor
         // drivetrain.init(opMode);
@@ -117,7 +120,7 @@ public class Robot {
         if(!isCorgi) {
             vuforiaWebcam.start();
         }
-        shooter.initChassis(opMode);
+        shooter=new Shooter(op);
         if(!isCorgi) {
         vuforiaWebcam.start();
         getVuforiaPosition();

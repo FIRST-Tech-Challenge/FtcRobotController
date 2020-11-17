@@ -23,21 +23,17 @@ public class Shooter {
     private double speedLowGoal=0.5;//will get changed when testing
     private int distance;
 
-    public Shooter(){
-
-    }
-
-    public void initChassis(LinearOpMode opMode) {//initialization
+    public Shooter(LinearOpMode opMode){
         op = opMode;
         hardwareMap = op.hardwareMap;
 
         shooterMotor = hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
         shooter_Servo=hardwareMap.servo.get("ShooterServo");
-        shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter_Servo.setPosition(1.0);
-        int Gobilda_Ticks_Per_Rev=28;
-
     }
+
+
 
     public void moveServo(boolean direction) {
         if (direction == true) {
