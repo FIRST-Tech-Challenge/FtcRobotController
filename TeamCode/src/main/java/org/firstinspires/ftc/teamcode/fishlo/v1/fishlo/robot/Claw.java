@@ -9,10 +9,10 @@ public class Claw extends SubSystem {
     private Servo claw;
     private Servo arm;
 
-    public static final double CLAW_HOME = 0.0;
+    public static final double CLAW_HOME = 0;
     public static final double CLAW_MAX = 0.5;
-    public static final double ARM_HOME = 0.0;
-    public static final double ARM_MAX = 0.5;
+    public static final double ARM_HOME = 0.5;
+    public static final double ARM_MAX = 0;
 
     boolean armIsUp = true;
     boolean clawIsReset = true;
