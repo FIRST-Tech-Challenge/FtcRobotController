@@ -18,18 +18,19 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
 @Autonomous(name= "Shooter Test Low Goal")
 //@Disabled
 public class ShooterTestLowGoal extends LinearOpMode{
-    Shooter robot=new Shooter();
 
     @Override
     public void runOpMode(){
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
-        robot.initChassis(this);
+        Shooter shooter = null;
+        shooter = new Shooter(this);
+
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
-        robot.shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         waitForStart();
-        robot.shootLowGoal(200000);
+        shooter.shootLowGoal(200000);
 
     }
 

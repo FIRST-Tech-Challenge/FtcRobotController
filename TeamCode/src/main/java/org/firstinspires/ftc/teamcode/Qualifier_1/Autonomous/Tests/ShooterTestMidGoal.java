@@ -18,18 +18,19 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
 @Autonomous(name= "Shooter Test Mid Goal")
 //@Disabled
 public class ShooterTestMidGoal extends LinearOpMode{
-    Shooter robot=new Shooter();
+    //private Shooter shooter=null;
 
     @Override
     public void runOpMode(){
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
-        robot.initChassis(this);
+        Shooter shooter = null;
+        shooter = new Shooter(this);
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
-        robot.shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         waitForStart();
-        robot.shootMidGoal(200000);
+        shooter.shootMidGoal(200000);
 
     }
 
