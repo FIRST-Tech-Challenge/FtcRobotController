@@ -27,16 +27,16 @@ public class TerraOp extends OpMode {
 
     @Override
     public void init_loop() {
-        //bot.resetArm();
+        bot.resetArm();
         telemetry.addData("vel", bot.getArmVel());
         telemetry.update();
     }
 
     @Override
     public void start() {
-//        bot.turnArmWithEnc(50, 1);
-//        bot.turnWobbleArm(0.1);
-//        bot.turnControl.cur = 0.1;
+        bot.turnArmWithEnc(50, 1);
+        bot.turnWobbleArm(0.1);
+        bot.turnControl.cur = 0.1;
         bot.gameTime.reset();
     }
 
@@ -157,8 +157,7 @@ public class TerraOp extends OpMode {
 //
 //        telemetry.addData("errR", bot.outrController.getPercentageError());
 //        telemetry.addData("errL", bot.outlController.getPercentageError());
-//        telemetry.addData("isFast", bot.fastmode);
-
+        telemetry.addData("gameTime", bot.gameTime.seconds());
         telemetry.update();
 
 

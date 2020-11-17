@@ -336,7 +336,7 @@ public class TerraBot {
         powerShot.addWaitUntil();
         powerShot.addCustomOnce(new CodeSeg() {
             @Override
-            public void run() { odometry.reset(getLeftOdo(), getMiddleOdo(), getRightOdo()); }
+            public void run() { odometry.reset(getLeftOdo(), getMiddleOdo(), getRightOdo()); resetGyro();}
         });
         for(int i = 0; i < 3;i++) {
             powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
@@ -344,8 +344,8 @@ public class TerraBot {
             powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
             powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
             if(i < 2) {
-                Path path = new Path(i * 18, 0, 0);
-                path.addSetpoint(18, 0, 0);
+                Path path = new Path(i * 17, 0, 0);
+                path.addSetpoint(17, 0, 0);
                 powerShot.addPath(path, this);
             }
         }
