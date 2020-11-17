@@ -53,7 +53,7 @@ public class Teleop_wheels extends LinearOpMode {
                 lbPower = gamepad1.left_stick_x;
             } else
             if (abs(gamepad1.left_stick_y) < 0.2 && abs(gamepad1.left_stick_x) < 0.2){
-                lfPower = 0.15 * ((gamepad1.left_stick_y - gamepad1.left_stick_x)/(abs(gamepad1.left_stick_y - gamepad1.left_stick_x))) ;
+                lfPower = 0.15 * ((gamepad1.left_stick_y - gamepad1.left_stick_x)/(abs(gamepad1.left_stick_y - gamepad1.left_stick_x)));
                 lbPower = 0.15 * ((gamepad1.left_stick_y + gamepad1.left_stick_x)/(abs(gamepad1.left_stick_y + gamepad1.left_stick_x)));
             } else
             if (abs(gamepad1.left_stick_y) > 0.2 && abs(gamepad1.left_stick_x) > 0.2){
@@ -97,10 +97,10 @@ public class Teleop_wheels extends LinearOpMode {
                 lb.setPower(lbPower *0.5);
                 rb.setPower(rbPower *0.5);
             } else{
-                lf.setPower(lfPower);
-                rf.setPower(rfPower);
-                lb.setPower(lbPower);
-                rb.setPower(rbPower);
+                lf.setPower(lfPower *0.25);
+                rf.setPower(rfPower *0.25);
+                lb.setPower(lbPower *0.25);
+                rb.setPower(rbPower *0.25);
             }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
