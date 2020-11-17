@@ -34,12 +34,9 @@ public class Odometry {
         hardwareMap = op.hardwareMap;
 
         // Chassis encoders
-        /*odom1 = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
+        odom1 = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
         odom3 = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
-        odom2 = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");*/
-        odom1 = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
-        odom3 = (DcMotorEx) hardwareMap.dcMotor.get("odom2");
-        odom2 = (DcMotorEx) hardwareMap.dcMotor.get("IntakeMotor");
+        odom2 = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
         // reset encoder count.
         odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -94,13 +91,13 @@ public class Odometry {
                 data[0] = xpos;
                 data[1] = ypos;
                 data[2] = getAngle();
-                /*op.telemetry.addData("X", data[0]);
+                op.telemetry.addData("X", data[0]);
                 op.telemetry.addData("Y", data[1]);
                 op.telemetry.addData("odom1", odomconst[0]*odom1.getCurrentPosition());
                 op.telemetry.addData("odom2",  odomconst[1]*odom2.getCurrentPosition());
                 op.telemetry.addData("odom3", odomconst[2]*odom3.getCurrentPosition());
                 op.telemetry.addData("angle", data[2]);
-                op.telemetry.update();*/
+                op.telemetry.update();
                 return data;
 
         } else {

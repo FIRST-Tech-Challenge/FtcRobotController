@@ -22,7 +22,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometry;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Teleop;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -805,7 +804,7 @@ public class Chassis {
         else {
              angleInRadians = atan2(y, x) - odom.getAngle() * PI / 180;
         }
-            double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
+            double[] anglePower = {sin(angleInRadians +PI/2+ PI / 4), sin(angleInRadians+PI/2 - PI / 4)};
         //op.telemetry.addData("moved8","done");
         //op.telemetry.update();
         while (op.opModeIsActive() && (difference >= 0.75)) {
@@ -826,10 +825,6 @@ public class Chassis {
                     power=0.2*power;
                 }
             }
-            anglecorrection=(currentPosition[2]-target_position[2])*0.1;
-            if(abs(power * anglePower[0]*gain[0]+anglecorrection)<0.2 && abs(power *anglePower[1]*gain[1]+anglecorrection)<0.2 && abs(power *  anglePower[1]*gain[1]-anglecorrection)<0.2 && power * anglePower[0]*gain[0]-anglecorrection<0.2){
-                    break;
-            }
             x=target_position[0] - currentPosition[0];
             y=target_position[1] - currentPosition[1];
             if(x==0&&y>=0){
@@ -839,22 +834,26 @@ public class Chassis {
                 angleInRadians = PI;
             }
             else if(y==0&&x>=0){
-                angleInRadians = 3*PI/2;
-            }
-            else if(y==0&&x<0){
                 angleInRadians = PI/2;
             }
-            else {
-                angleInRadians = atan2(target_position[1]-currentPosition[1],target_position[0]-currentPosition[0])-odom.getAngle()*PI/180;
+            else if(y==0&&x<0){
+                angleInRadians = 3*PI/2;
             }
-            anglePower[0] =  sin(angleInRadians+PI/4);
-            anglePower[1] = sin(angleInRadians-PI/4);
+            else {
+                angleInRadians = atan2(target_position[1]-currentPosition[1],target_position[0]-currentPosition[0]);
+            }
+            anglePower[0] =  sin(angleInRadians+PI/2+PI/4);
+            anglePower[1] = sin(angleInRadians+PI/2-PI/4);
+            anglecorrection=(currentPosition[2]-target_position[2])*0.006;
+            if(abs(power * anglePower[0]+anglecorrection)<0.2 && abs(power *anglePower[1]+anglecorrection)<0.2 && abs(power *  anglePower[1]-anglecorrection)<0.2 && power * anglePower[0]-anglecorrection<0.2){
+                break;
+            }
 
             op.telemetry.update();
-            motorRightBack.setPower(power * anglePower[0]+anglecorrection);
+            motorRightBack.setPower(power *anglePower[0]+anglecorrection);
             motorRightFront.setPower(power *anglePower[1]+anglecorrection);
-            motorLeftBack.setPower(power *  anglePower[1]-anglecorrection);
-            motorLeftFront.setPower(power * anglePower[0]-anglecorrection);
+            motorLeftBack.setPower(power *anglePower[1]-anglecorrection);
+            motorLeftFront.setPower(power *anglePower[0]-anglecorrection);
             //op.telemetry.addData("current xpos", currentPosition[0] + "current ypos"+currentPosition[1]);
             //op.telemetry.update();
             op.idle();
