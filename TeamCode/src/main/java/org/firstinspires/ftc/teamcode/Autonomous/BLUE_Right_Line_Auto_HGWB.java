@@ -187,11 +187,11 @@ public class BLUE_Right_Line_Auto_HGWB extends BasicAutonomous {
 
                 wobble.GripperOpen();
                 wobble.ArmExtend();
-                sleep(1000);
+                //sleep(1000);
                 drivetime.reset();
                 // change gyroDrive(DRIVE_SPEED, -32.0, 10, 5);
                 gyroDrive(DRIVE_SPEED, -40, 20,3);
-                gyroTurn(TURN_SPEED,-20,3);
+                //gyroTurn(TURN_SPEED,-20,3);
                 //gyroDrive(DRIVE_SPEED,-40,10,3);
                 break;
         }

@@ -52,7 +52,7 @@ public class BasicAutonomous extends LinearOpMode {
     public ElapsedTime          tfTime      = new ElapsedTime(); // timer for tensor flow
     public ElapsedTime          autoShootTimer  = new ElapsedTime(); //auto shooter timer (4 rings)
     public static double        autoShootTimeAllowed = 6; //  seconds allows 4 shoot cycles in case one messes up
-    public static double        tfSenseTime          = 4; // needs a couple seconds to process the image and ID the target
+    public static double        tfSenseTime          = 1; // needs a couple seconds to process the image and ID the target
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suit the specific robot drive train.

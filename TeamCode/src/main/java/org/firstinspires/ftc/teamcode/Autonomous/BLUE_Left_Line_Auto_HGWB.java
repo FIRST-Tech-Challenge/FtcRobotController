@@ -146,7 +146,7 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
         // Drive paths are initially all the same to get to the shooter location
         gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
-        gyroTurn(TURN_SPEED,-10,3);
+        gyroTurn(TURN_SPEED,-11,3);
         mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
         shoot3Rings(mShooterState);   // call method to start shooter and launch 3 rings. pass shooter state in case it is needed
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
@@ -177,14 +177,19 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
             case BLUE_C: // four rings. 5 tiles forward and one tile to the left.
                 telemetry.addData("Going to RED C", "Target Zone");
                 gyroTurn(TURN_SPEED,10,3);
-                gyroDrive(DRIVE_SPEED, 52, 10.0, 5);
+                gyroDrive(DRIVE_SPEED, 50, 10.0, 5);
                 sleep(1000);
                 wobble.GripperOpen();
                 wobble.ArmExtend();
                 sleep(1000);
                 drivetime.reset();
-                gyroDrive(DRIVE_SPEED, -32.0, 10, 5);
-                gyroTurn(TURN_SPEED,-30,3);
+                gyroDrive(DRIVE_SPEED, -45.0, 20, 5);
+                gyroDrive(.95, -25.0, 20, 5);
+                gyroDrive(DRIVE_SPEED, 28.0, 20, 5);
+                //gyroDrive(DRIVE_SPEED, 2.0, 10, 5);
+                gyroTurn(TURN_SPEED,-180,3);
+                //gyroDrive(DRIVE_SPEED, 25.0, -20, 5);
+                //gyroTurn(TURN_SPEED,-30,3);
                 break;
         }
 
