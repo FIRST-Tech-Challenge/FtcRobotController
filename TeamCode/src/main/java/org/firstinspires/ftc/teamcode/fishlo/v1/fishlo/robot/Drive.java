@@ -102,10 +102,10 @@ public class Drive extends SubSystem {
     }
 
     public void strafe(double power) {
-        frontLeft.setPower(-power);
-        backLeft.setPower(power);
-        frontRight.setPower(power);
-        backRight.setPower(-power);
+        frontLeft.setPower(power);
+        backLeft.setPower(-power);
+        frontRight.setPower(-power);
+        backRight.setPower(power);
     }
 
     public void turn (double power) {
