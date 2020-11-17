@@ -74,6 +74,10 @@ public class OdoBase extends LinearOpMode {
                 locator.init(selectedRoute.getStart(), initHead);
                 for (AutoStep s : selectedRoute.getSteps()) {
                     this.goTo(s, false, selectedRoute.getName());
+                    telemetry.addData("X: ", locator.getXInches());
+                    telemetry.addData("Y: ", locator.getYInches());
+                    telemetry.addData("Heading: ", locator.getAdjustedCurrentHeading());
+                    telemetry.update();
                 }
             }
         }

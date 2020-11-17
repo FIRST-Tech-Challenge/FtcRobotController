@@ -113,6 +113,9 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
     }
 
     public synchronized void stopProcessing() {
+        if(handlerThread == null) {
+            return;
+        }
         handlerThread.quitSafely();
         try {
             handlerThread.join();
