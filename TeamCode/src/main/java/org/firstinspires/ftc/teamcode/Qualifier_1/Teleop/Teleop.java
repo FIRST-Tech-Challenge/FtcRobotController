@@ -113,12 +113,12 @@ public class Teleop extends LinearOpMode {
                     robot.moveServo(false);
                 }
             }
-            // as of nov 14, 2020, the shooter crashes the program
-//            if (shooter != 0) {
-//                robot.shootGoalTeleop(999999999, 100);
-//            } else {
-//                robot.shootGoalTeleop(0, 0);
-//            }
+            
+            if (shooter != 0) {
+                robot.shootGoalTeleop(999999999, 100);
+            } else {
+                robot.shootGoalTeleop(0, 0);
+            }
 
             /**Speed Mode**/
             if (a_button) { //click a to turn on slowmode
