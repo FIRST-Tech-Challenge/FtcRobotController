@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.RingDepositor;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Intake;
@@ -47,6 +48,7 @@ public class Robot {
     private Chassis drivetrain = null;
     private Intake intake = null;
     private WobbleGoal wobbleGoal = null;
+    private RingDepositor ringDepositor = null;
     private VuforiaWebcam vuforiaWebcam = null;
 
     private double vuforiaX = 0;
@@ -64,6 +66,7 @@ public class Robot {
         }
         intake = new Intake(op);
         wobbleGoal = new WobbleGoal(op);
+        ringDepositor = new RingDepositor(op);
         intake = new Intake(op);
 
         // comment by victor
@@ -363,9 +366,42 @@ public class Robot {
         wobbleGoal.droppingPosition();
     }
 
+    public WobbleGoal.Position wobbleGoalGoToPosition(WobbleGoal.Position p){
+        wobbleGoal.goToPosition(p);
+        return(p);
+    }
+
+    public void printCurrentWobbleGoalLocation(){
+        wobbleGoal.printCurrentLocation();
+    }
 
     public void stopWobbleGoal(){
         wobbleGoal.stop();
+    }
+
+    // ring depositor
+    public void ringDepositorClockwise() {
+        ringDepositor.clockwise();
+    }
+
+    public void ringDepositorCounterClockwise() {
+        ringDepositor.counterClockwise();
+    }
+
+    public void ringDepositorGoToPosition(RingDepositor.Position p){
+        ringDepositor.goToPosition(p);
+    }
+
+    public void printCurrentRingDepositorLocation() {
+        ringDepositor.printCurrentLocation();
+    }
+
+    public void stopRingDepositor(){
+        ringDepositor.stop();
+    }
+
+    public void moveRingClamp(boolean direction) {
+        ringDepositor.moveRingClamp(direction);
     }
 
     // intake

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.RingDepositor;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -47,6 +48,8 @@ public class Teleop extends LinearOpMode {
         boolean slowMode = false;
         boolean moveServo = true;
         boolean servoIsMoved = true;
+        WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
+        RingDepositor.Position currentRingDepositorPosition = RingDepositor.Position.REST;
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
@@ -65,10 +68,14 @@ public class Teleop extends LinearOpMode {
             float left_stick_y = -gamepad1.left_stick_y;
             float left_stick_x = -gamepad1.left_stick_x;
             float right_stick_x = -gamepad1.right_stick_x;
-            float start_intake = gamepad1.right_trigger;
-            float stop_intake = gamepad1.left_trigger;
+            boolean move_wobble_goal_arm = gamepad1.right_bumper;
+            boolean move_ring_depositor = gamepad1.left_bumper;
+//            float start_intake = gamepad1.right_trigger;
+//            float stop_intake = gamepad1.left_trigger;
             boolean x_button = gamepad1.x;
             boolean a_button = gamepad1.a;
+            boolean ring_clamp_true = gamepad1.b;
+            boolean ring_clamp_false = gamepad1.y;
             boolean startingPosition = gamepad2.dpad_up;
             boolean grabbingPosition = gamepad2.dpad_right;
             boolean liftingPosition = gamepad2.dpad_down;
@@ -134,6 +141,32 @@ public class Teleop extends LinearOpMode {
             robot.multidirectionalMove(magnitude, angleInDegree, right_stick_x);
 
             // wobble goal movements
+            telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
+            telemetry.update();
+            if (move_wobble_goal_arm){
+                WobbleGoal.Position nextWobbleGoalPosition = WobbleGoal.Position.REST;
+                if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
+                    nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
+                } else if (currentWobbleGoalPosition == WobbleGoal.Position.GRAB) {
+                    nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.RAISE);
+                } else if (currentWobbleGoalPosition == WobbleGoal.Position.RAISE) {
+                    nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.RELEASE);
+                } else if (currentWobbleGoalPosition == WobbleGoal.Position.RELEASE) {
+                    nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
+                } else {
+                    telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
+                    telemetry.update();
+                    sleep(2000);
+                }
+                // added by Aiden; must have this otherwise if you hold onto the button multiple
+                // actions/movements will be executed by mistake
+                sleep(1000);
+                currentWobbleGoalPosition = nextWobbleGoalPosition;
+            }
+
+            telemetry.addData("Wobble Goal Direct", startingPosition + ", " + grabbingPosition + ", " + liftingPosition + ", " + droppingPosition);
+            telemetry.update();
+//            sleep(2000);
             if (startingPosition == true) {
                 robot.wobbleGoalStartingPosition();
             } else if (grabbingPosition == true) {
@@ -144,12 +177,43 @@ public class Teleop extends LinearOpMode {
                 robot.wobbleGoalDroppingPosition();
             }
 
-            //intake
-            if(start_intake == 1.00){
-                robot.startIntake();
-            } else if (stop_intake == 1.00){
-                robot.stopIntake();
+
+            // ring depositor
+            if (move_ring_depositor){
+                if (currentRingDepositorPosition == RingDepositor.Position.REST){
+                    robot.ringDepositorGoToPosition(RingDepositor.Position.LOWGOAL);
+                    currentRingDepositorPosition = RingDepositor.Position.LOWGOAL;
+                } else if (currentRingDepositorPosition == RingDepositor.Position.LOWGOAL) {
+                    robot.ringDepositorGoToPosition(RingDepositor.Position.REST);
+                    currentRingDepositorPosition = RingDepositor.Position.REST;
+                } else {
+                    telemetry.addData("Ring Depositor: ", "u have made a STUPID MISTAKE");
+                    telemetry.update();
+                    sleep(2000);
+                }
             }
+//            if (move_ring_depositor_frwd == 1.00){
+//                robot.ringDepositorClockwise();
+//            } else if (move_ring_depositor_bckwrd == 1.00){
+//                robot.ringDepositorCounterClockwise();
+//            } else {
+//                robot.stopRingDepositor();
+//            }
+
+            if (ring_clamp_true){
+                robot.moveRingClamp(true);
+            }
+            if (ring_clamp_false){
+                robot.moveRingClamp(false);
+            }
+
+
+            //intake
+//            if(start_intake == 1.00){
+//                robot.startIntake();
+//            } else if (stop_intake == 1.00){
+//                robot.stopIntake();
+//            }
 
         }
         idle();

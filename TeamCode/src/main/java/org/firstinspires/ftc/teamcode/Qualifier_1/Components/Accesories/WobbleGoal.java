@@ -16,10 +16,19 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 public class WobbleGoal {
 
+    public enum Position {
+        REST, GRAB, RAISE, RELEASE
+    }
+
     //declaring the motor
     private DcMotor wobbleGoalMotor;
     //declaring the op mode
     private LinearOpMode op;
+    private final int ticksForREST = 0;
+    private final int ticksForGRAB = -940;
+    private final int ticksForRAISE = -630;
+    private final int ticksForRELEASE = -835;
+    private final double wobbleGoalSpeed = 0.25;
 
     public WobbleGoal(LinearOpMode opMode) {
         //setting the opmode
@@ -37,16 +46,49 @@ public class WobbleGoal {
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
-//    //making the motor turn clockwise
-//    public void clockwise(){
-//
-//        wobbleGoalMotor.setPower(0.25);
-//    }
-//    //makes the motor turn counterclockwise
-//    public void counterClockwise(){
-//
-//        wobbleGoalMotor.setPower(-0.25);
-//    }
+
+    //making the motor turn clockwise
+    public void clockwise() {
+        wobbleGoalMotor.setPower(wobbleGoalSpeed);
+    }
+
+    //makes the motor turn counterclockwise
+    public void counterClockwise() {
+        wobbleGoalMotor.setPower(-wobbleGoalSpeed);
+    }
+
+    //tells motor to go to a specified position based on ticks(i)
+    public void goToPosition(Position p) {
+        int i = 0;
+        if (p == Position.REST) {
+            i = ticksForREST;
+        } else if (p == Position.GRAB) {
+            i = ticksForGRAB;
+        } else if (p == Position.RAISE) {
+            i = ticksForRAISE;
+        } else if (p == Position.RELEASE) {
+            i = ticksForRELEASE;
+        } else {
+            op.telemetry.addData("IQ Lvl", "0; u dumbass");
+            op.telemetry.update();
+            op.sleep(10000);
+        }
+
+        wobbleGoalMotor.setTargetPosition(i);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleGoalMotor.setPower(wobbleGoalSpeed);
+//        op.sleep(100);
+        op.telemetry.addData("Wobble Goal", "Position:" + wobbleGoalMotor.getCurrentPosition() + "-->" + i);
+        op.telemetry.update();
+//        op.sleep(2000);
+    }
+
+    public void printCurrentLocation(){
+        op.telemetry.addData("Wobble Goal ", "Current Position:" + wobbleGoalMotor.getCurrentPosition());
+        op.telemetry.update();
+//        op.sleep(2000);
+    }
+
     //stops the motor
     public void stop() {
         wobbleGoalMotor.setPower(0);
@@ -56,7 +98,6 @@ public class WobbleGoal {
         wobbleGoalMotor.setTargetPosition(0);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleGoalMotor.setPower(0.25);
-
     }
 
     public void grabbingPosition() {
@@ -75,3 +116,4 @@ public class WobbleGoal {
         wobbleGoalMotor.setPower(0.25);
     }
 }
+

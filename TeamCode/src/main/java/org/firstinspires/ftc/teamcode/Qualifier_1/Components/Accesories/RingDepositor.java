@@ -1,0 +1,112 @@
+/**
+ * This class includes all the necessary functions
+ * for the ring depositor to work in both Autonomous & Teleop.
+ * For example moving clockwise and counter clockwise
+ *
+ *
+ * @author Aiden Ma
+ * @date 11.15.20
+ * @versin 1.0
+ * @status working in Teleop
+ */
+
+package org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
+public class RingDepositor {
+
+    public enum Position {
+        REST, LOWGOAL
+    }
+
+    private LinearOpMode op = null;
+    private HardwareMap hardwareMap = null;
+    private DcMotor ringDepositorMotor = null;
+    Servo ringClampServo = null;
+    private final int ticksForREST = 0;
+    private final int ticksForLOWGOAL = 400;
+    private final double ringDepositorSpeed = 0.05;
+
+    public RingDepositor(LinearOpMode opMode) {
+        //setting the opmode & hardwareMap
+        this.op = opMode;
+        hardwareMap = op.hardwareMap;
+
+        ringDepositorMotor = (DcMotor) opMode.hardwareMap.get("RingDepositorMotor");
+        ringClampServo = hardwareMap.servo.get("RingClampServo");
+        ringDepositorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ringDepositorMotor.setDirection(DcMotor.Direction.FORWARD);
+        ringDepositorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        ringClampServo.setPosition(1.0);
+    }
+
+    // tells the motor turn clockwise
+    public void clockwise() {
+        ringDepositorMotor.setPower(ringDepositorSpeed);
+    }
+
+    // tells the motor turn counterclockwise
+    public void counterClockwise() {
+        ringDepositorMotor.setPower(-ringDepositorSpeed);
+    }
+
+    //tells motor to go to a specified position based on ticks(i)
+    public void goToPosition(RingDepositor.Position p) {
+        int i = 0;
+        if (p == RingDepositor.Position.REST) {
+            i = ticksForREST;
+        } else if (p == Position.LOWGOAL) {
+            i = ticksForLOWGOAL;
+        } else {
+            op.telemetry.addData("IQ Lvl", "0.00");
+            op.telemetry.update();
+            op.sleep(5000);
+        }
+
+        ringDepositorMotor.setTargetPosition(i);
+        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ringDepositorMotor.setPower(ringDepositorSpeed);
+        op.sleep(100);
+        op.telemetry.addData("Ring Depositor", "Position:" + ringDepositorMotor.getCurrentPosition() + "-->" + i);
+        op.telemetry.update();
+        op.sleep(2000);
+        while (op.opModeIsActive() && ringDepositorMotor.isBusy()) {
+            op.telemetry.addData("Ring Depositor: ", ringDepositorMotor.getCurrentPosition() + " busy=" + ringDepositorMotor.isBusy());
+            op.telemetry.update();
+            op.idle();
+        }
+        //op.sleep(2000);
+        //brake
+        ringDepositorMotor.setPower(0);
+        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void printCurrentLocation(){
+        op.telemetry.addData("Wobble Goal ", "Current Position:" + ringDepositorMotor.getCurrentPosition());
+        op.telemetry.update();
+//        op.sleep(2000);
+    }
+
+    //stops the motor
+    public void stop() {
+        ringDepositorMotor.setPower(0);
+    }
+
+    // moves te ring clamp servo
+    public void moveRingClamp(boolean direction){
+        if (direction){
+            ringClampServo.setPosition(1.0);
+        } else {
+            ringClampServo.setPosition(0.0);
+        }
+        op.telemetry.addData("Ring Clamp Position: ", direction);
+        op.telemetry.update();
+        op.sleep(2000);
+    }
+
+}
