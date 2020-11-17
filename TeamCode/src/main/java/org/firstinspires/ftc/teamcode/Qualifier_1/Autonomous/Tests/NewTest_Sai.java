@@ -1,6 +1,5 @@
 /**
- * This test program tests the four chassis motors.
- * I am still troubleshooting the ShooterMotor and the wobbleGoalMotor
+ * This test program tests the six chassis motors and the servo.
  *
  * Everyone should run this code when you arrive at the garage to make sure the robot is working properly.
  *
@@ -8,9 +7,9 @@
  *
  *
  * @author Sai
- * @version 1.0
- * @since 11/14/2020
- * @status work in progress
+ * @version 2.0
+ * @since 11/16/2020
+ * @status finished
  */
 
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
@@ -19,6 +18,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
@@ -30,84 +32,140 @@ public class NewTest_Sai extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        DcMotorEx motorLeftFront;
+        DcMotorEx motorRightFront;
+        DcMotorEx motorLeftBack;
+        DcMotorEx motorRightBack;
+        DcMotorEx ShooterMotor;
+        DcMotorEx wobbleGoalMotor;
+        Servo shooter_Servo;
+
+
+        motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
+        motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
+        motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
+        motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
+        ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
+        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
+        shooter_Servo = (Servo) hardwareMap.servo.get("ShooterServo");
+
+        // All Motors
+        motorLeftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorLeftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorRightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorRightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        motorLeftFront.setDirection(DcMotor.Direction.FORWARD);
+        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
+        motorLeftBack.setDirection(DcMotor.Direction.FORWARD);
+        motorRightBack.setDirection(DcMotor.Direction.FORWARD);
+        ShooterMotor.setDirection(DcMotor.Direction.FORWARD);
+        wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        //Servo
+        shooter_Servo.setPosition(0);
+
+        // reset encoder count kept by left motor.
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         ElapsedTime runtime = new ElapsedTime();
-        Robot robot = new Robot(this);
+        //Robot robot = new Robot(this);
 
         waitForStart();
         //Tests all of the motors individually
-        telemetry.addData("So Far It Is Working", 0);
-        telemetry.update();
-        sleep(3000);
-        robot.moveMotorLeftFront(10);
-        telemetry.addData("Moving LeftFront Motor", 10);
+        motorLeftFront.setPower(0.5);
+        telemetry.addData("Moving LeftFront Motor", 0.5);
         telemetry.update();
         sleep(1000);
-        robot.moveMotorLeftFront(-10);
-        telemetry.addData("Moving LeftFront Motor", -10);
+        motorLeftFront.setPower(0);
+        sleep(1000);
+        motorLeftFront.setPower(-0.5);
+        telemetry.addData("Moving LeftFront Motor", -0.5);
         telemetry.update();
         sleep(1000);
-        robot.moveMotorRightFront(10);
-        telemetry.addData("Moving RightFront Motor", 10);
+        motorLeftFront.setPower(0);
+        sleep(1000);
+        motorRightFront.setPower(0.5);
+        telemetry.addData("Moving RightFront Motor", 0.5);
         telemetry.update();
         sleep(1000);
-        robot.moveMotorRightFront(-10);
-        telemetry.addData("Moving RightFront Motor", -10);
+        motorRightFront.setPower(0);
+        sleep(1000);
+        motorRightFront.setPower(-0.5);
+        telemetry.addData("Moving RightFront Motor", -0.5);
         telemetry.update();
         sleep(1000);
-        robot.moveMotorLeftBack(10);
-        telemetry.addData("Moving LeftBack Motor", 10);
+        motorRightFront.setPower(0);
+        sleep(1000);
+        motorLeftBack.setPower(0.5);
+        telemetry.addData("Moving LeftBack Motor", 0.5);
         telemetry.update();
         sleep(1000);
-        robot.moveMotorLeftBack(-10);
-        telemetry.addData("Moving LeftBack Motor", -10);
+        motorLeftBack.setPower(0);
+        sleep(1000);
+        motorLeftBack.setPower(-0.5);
+        telemetry.addData("Moving LeftBack Motor", -0.5);
         telemetry.update();
         sleep(1000);
-        robot.moveMotorRightBack(10);
-        telemetry.addData("Moving RightBack Motor", 10);
+        motorLeftBack.setPower(0);
+        sleep(1000);
+        motorRightBack.setPower(0.5);
+        telemetry.addData("Moving RightBack Motor", 0.5);
         telemetry.update();
         sleep(1000);
-        robot.moveMotorRightBack(-10);
-        telemetry.addData("Moving RightBack Motor", -10);
+        motorRightBack.setPower(0);
+        sleep(1000);
+        motorRightBack.setPower(-0.5);
+        telemetry.addData("Moving RightBack Motor", -0.5);
         telemetry.update();
+        sleep(1000);
+        motorRightBack.setPower(0);
         sleep(1000);
 
-//        robot.moveShooterMotor(1, 1);
-//        telemetry.addData("Moving ShooterMotor", 1);
-//        telemetry.update();
-//        sleep(1000);
-//        robot.moveShooterMotor(-0.5);
-//        telemetry.addData("Moving ShooterMotor", -10);
-//        telemetry.update();
-//        sleep(1000);
-//
-//        robot.moveWobbleGoalMotor(0.1);
-//        telemetry.addData("Moving wobbleGoalMotor", 10);
-//        telemetry.update();
-//        sleep(1000);
-//        robot.moveWobbleGoalMotor(-0.1);
-//        telemetry.addData("Moving wobbleGoalMotor", -10);
-//        telemetry.update();
-//        sleep(1000);
-//
-//        //Tests Servo
-//        robot.setShooterServoPosition(-0.1);
+        ShooterMotor.setPower(0.5);
+        telemetry.addData("Moving Shooter Motor", 0.5);
+        telemetry.update();
+        sleep(1000);
+        ShooterMotor.setPower(0);
+        sleep(1000);
+        ShooterMotor.setPower(-0.5);
+        telemetry.addData("Moving Shooter Motor", -0.5);
+        telemetry.update();
+        sleep(1000);
+        ShooterMotor.setPower(0);
 
-        //Tests the motors moving together
-        robot.moveForward(25, 0.75);
-        telemetry.addData("Moving Forward", 10);
+        wobbleGoalMotor.setPower(-0.2);
+        telemetry.addData("Moving wobbleGoalMotor Motor", -0.5);
+        telemetry.update();
+        sleep(300);
+        wobbleGoalMotor.setPower(0);
+        sleep(1000);
+        wobbleGoalMotor.setPower(0.2);
+        telemetry.addData("Moving wobbleGoalMotor Motor", 0.5);
+        telemetry.update();
+        sleep(200);
+        wobbleGoalMotor.setPower(0);
+        sleep(1000);
+
+
+        //Tests Servo
+        shooter_Servo.setPosition(0.5);
+        telemetry.addData("Moving Shooter Servo", 0.5);
         telemetry.update();
         sleep(1000);
-        robot.moveBackward(25, 0.75);
-        telemetry.addData("Moving Backward", 10);
+        shooter_Servo.setPosition(0);
+        sleep(2000);
+        shooter_Servo.setPosition(-0.5);
+        telemetry.addData("Moving Shooter Servo", -0.5);
         telemetry.update();
         sleep(1000);
-        robot.moveLeft(25, 0.75);
-        telemetry.addData("Moving Left", 10);
-        telemetry.update();
-        sleep(1000);
-        robot.moveRight(25, 0.75);
-        telemetry.addData("Moving Right", 10);
-        telemetry.update();
-        sleep(1000);
+        shooter_Servo.setPosition(0);
     }
 }
