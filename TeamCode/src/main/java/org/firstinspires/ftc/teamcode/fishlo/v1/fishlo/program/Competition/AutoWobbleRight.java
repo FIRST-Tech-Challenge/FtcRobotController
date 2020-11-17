@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.program.Competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.program.FishloAutonomousProgram;
-import org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot.PID;
-import org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot.Vision;
+import org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot.Utility.PID;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 
 @Autonomous 
@@ -14,8 +14,8 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
 
     //Create the variables for PID constants
     protected final double Kp = 1;
-    protected final double Ki = 1;
-    protected final double Kd = 1;
+    protected final double Ki = 0;
+    protected final double Kd = 0;
 
     //Build the robot
     @Override
@@ -29,15 +29,16 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
     public void preMain() {
         //Initialize the imu
         gyro.initGyro();
+        //Timer for vision
+        claw.reset();
+        claw.armUp();
+        claw.grab();
+        ElapsedTime timer = new ElapsedTime();
         //Find the target zone based on the starter stack
-        int i = 0;
-        while (true) {
-            i += 0.1;
-            targetZone = vision.getTargetZone();
-            if (i == 2) {
-                break;
-            }
-            sleep(100);
+        timer.reset();
+        telemetry.setAutoClear(true);
+        while (timer.milliseconds() < 2000) {
+            targetZone = 'A'; //vision.getTargetZone();
         }
     }
 
@@ -53,49 +54,14 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
             telemetry.addData("Main", "Driving - P: 55 in, S: 0.5");
             telemetry.update();
             //Drives to position (55 inches forward at 0.5 power)
-            drive.moveToPosition(55, 0.5);
-            sleep(50);
+            drive.moveToPosition(68, 0.5);
+            claw.armDown();
+            claw.reset();
            //Status update: The robot turning to the desired angle
             telemetry.addData("Main", "Turning - P:90R, S: 0.2");
             telemetry.update();
+            drive.strafeToPosition(-12, 0.4);
 
-            //Turning right 90 degrees at 0.2 using PID
-            //Reset the heading of the gyroscope
-            gyro.getHeading();
-            gyro.resetHeading();
-            //Initializes PID with constants
-            PID pid = new PID(Kp, Ki, Kd);
-            //Sets loop time
-            pid.setLoopTime(10);
-            //Loops until destination is reached
-            while (true) {
-                //Sets the error of the pid to 90- the current gyro heading
-                pid.setError(90-gyro.getHeading());
-                //Uses the error to find the appropriate motor power
-                double power = pid.getSetValue();
-                //Status update: Displays the power given by PID
-                telemetry.addData("Main", "PID power: " + power);
-                telemetry.update();
-                //Creates a buffer to make sure the robot does not move at a power below 0.1
-                if (power <= 0.1) {
-                    break;
-                }
-                //Turns using the created power
-                drive.turn(power);
-                sleep(10);
-            }
-            sleep(50);
-            //Status update: The robot is driving near the line
-            telemetry.addData("Main", "Driving - P: -20 in, S: 0.5");
-            telemetry.update();
-            //Drives to position (20 inches backward at 0.5 power)
-            drive.moveToPosition(-20, 0.5);
-            sleep(50);
-            //Status update: The robot is strafing to the line
-            telemetry.addData("Main", "Strafing - P: -9 in, S: 0.3");
-            telemetry.update();
-            //Strafes to the line (9 inches left at 0.3 power)
-            drive.strafeToPosition(-9, 0.3);
         }
         //Move wobble goal to target zone B
         else if (targetZone == 'B') {
