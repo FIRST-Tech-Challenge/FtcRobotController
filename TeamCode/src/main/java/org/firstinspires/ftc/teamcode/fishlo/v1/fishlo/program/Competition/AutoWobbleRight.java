@@ -30,9 +30,9 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
         //Initialize the imu
         gyro.initGyro();
         //Timer for vision
-        claw.reset();
+        claw.open();
         claw.armUp();
-        claw.grab();
+        claw.close();
         ElapsedTime timer = new ElapsedTime();
         //Find the target zone based on the starter stack
         timer.reset();
@@ -55,8 +55,8 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
             telemetry.update();
             //Drives to position (55 inches forward at 0.5 power)
             drive.moveToPosition(68, 0.5);
-            claw.armDown();
-            claw.reset();
+//           claw.armDown();
+            claw.open();
            //Status update: The robot turning to the desired angle
             telemetry.addData("Main", "Turning - P:90R, S: 0.2");
             telemetry.update();

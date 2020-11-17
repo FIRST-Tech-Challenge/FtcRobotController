@@ -9,13 +9,13 @@ public class Claw extends SubSystem {
     private Servo claw;
     private Servo arm;
 
-    public static final double CLAW_HOME = 0.0;
+    public static final double CLAW_HOME = 0;
     public static final double CLAW_MAX = 0.5;
-    public static final double ARM_HOME = 0.0;
-    public static final double ARM_MAX = 0.5;
+    public static final double ARM_HOME = 0.3;
+    public static final double ARM_MAX = 0;
 
     boolean armIsUp = true;
-    boolean clawIsReset = true;
+    boolean clawIsClosed = true;
 
     public Claw(Robot robot) {
         super(robot);
@@ -29,38 +29,42 @@ public class Claw extends SubSystem {
 
     @Override
     public void handle() {
-        if (robot.gamepad1.x) {
-            if (armIsUp) {
-                armDown();
-                armIsUp = !armIsUp;
-            }
-            else if (!armIsUp) {
+        if (robot.gamepad1.x && !armIsUp) {
+            if (arm.getPosition() == ARM_HOME) {
                 armUp();
-                armIsUp = !armIsUp;
+                armIsUp = true;
             }
         }
-        if (robot.gamepad1.b) {
-            if(clawIsReset) {
-                grab();
-                clawIsReset = !clawIsReset;
+        else if (robot.gamepad1.x && armIsUp) {
+            if (arm.getPosition() == ARM_MAX) {
+                armDown();
+                armIsUp = false;
             }
-            else if (!clawIsReset) {
-                reset();
-                clawIsReset = !clawIsReset;
+        }
+        if (robot.gamepad1.b && !clawIsClosed) {
+            if (claw.getPosition() == CLAW_HOME) {
+                close();
+                clawIsClosed = true;
+            }
+        }
+        else if (robot.gamepad1.b && clawIsClosed) {
+            if (claw.getPosition() == CLAW_MAX) {
+                open();
+                clawIsClosed = false;
             }
         }
     }
 
     @Override
     public void stop() {
-        reset();
+        open();
     }
 
-    public void grab() {
+    public void close() {
         claw.setPosition(CLAW_MAX);
     }
 
-    public void reset() {
+    public void open() {
         claw.setPosition(CLAW_HOME);
     }
 
