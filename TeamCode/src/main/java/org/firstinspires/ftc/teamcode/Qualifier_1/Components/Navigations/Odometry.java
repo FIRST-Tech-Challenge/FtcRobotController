@@ -91,13 +91,13 @@ public class Odometry {
                 data[0] = xpos;
                 data[1] = ypos;
                 data[2] = getAngle();
-                op.telemetry.addData("X", data[0]);
+                /*op.telemetry.addData("X", data[0]);
                 op.telemetry.addData("Y", data[1]);
                 op.telemetry.addData("odom1", odomconst[0]*odom1.getCurrentPosition());
                 op.telemetry.addData("odom2",  odomconst[1]*odom2.getCurrentPosition());
                 op.telemetry.addData("odom3", odomconst[2]*odom3.getCurrentPosition());
                 op.telemetry.addData("angle", data[2]);
-                op.telemetry.update();
+                op.telemetry.update();*/
                 return data;
 
         } else {

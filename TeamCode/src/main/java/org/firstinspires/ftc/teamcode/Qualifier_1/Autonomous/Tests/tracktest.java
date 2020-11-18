@@ -26,7 +26,7 @@ final boolean debug = true;
         telemetry.update();
         sleep(1000);
         waitForStart();
-        robot.moveAngleOdometry(0,5,0.5);
+        /*robot.moveAngleOdometry(0,5,0.5);
         telemetry.addData("moved1s", "done");
         telemetry.update();
         sleep(1000);
@@ -34,11 +34,11 @@ final boolean debug = true;
         telemetry.addData("moved2s", "done");
         telemetry.update();
         sleep(1000);
-        robot.moveAngleOdometry( 0,5,0.5);
+        robot.moveAngleOdometry( 5,0,0.5);
         telemetry.addData("moved3s", "done");
         telemetry.update();
         sleep(1000);
-        robot.moveAngleOdometry( 0,-5,0.5);
+        robot.moveAngleOdometry( -5,0,0.5);
         telemetry.addData("moved4s", "done");
         telemetry.update();
         sleep(1000);
@@ -49,8 +49,8 @@ final boolean debug = true;
         robot.moveAngleOdometry( -5,-5,0.5);
         telemetry.addData("moved6s", "done");
         telemetry.update();
-        sleep(1000);
-
+        sleep(1000);*/
+    robot.moveAngleOdometry(0,72,0.5);
         stop();
     }
 
