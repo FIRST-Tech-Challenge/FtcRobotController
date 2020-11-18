@@ -38,8 +38,15 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
         timer.reset();
         telemetry.setAutoClear(true);
         while (timer.milliseconds() < 2000) {
-            targetZone = 'A'; //vision.getTargetZone();
+            targetZone = 'B'; //vision.getTargetZone();
         }
+        while (!isStopRequested() && !gyro.isCalibrated()) {
+            sleep(50);
+            idle();
+        }
+        telemetry.addData("Gyro", gyro.getCallibrationStatus());
+        telemetry.update();
+
     }
 
     //This method is for code that needs to run after start is pressed.

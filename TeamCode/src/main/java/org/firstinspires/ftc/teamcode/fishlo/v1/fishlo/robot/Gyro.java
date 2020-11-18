@@ -49,6 +49,14 @@ public class Gyro extends SubSystem {
         imu.initialize(parameters);
     }
 
+    public boolean isCalibrated() {
+        return imu.isGyroCalibrated();
+    }
+
+    public String getCallibrationStatus() {
+        return imu.getCalibrationStatus().toString();
+    }
+
     public double getHeading() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         heading = convert(angles.firstAngle - prevHeading);

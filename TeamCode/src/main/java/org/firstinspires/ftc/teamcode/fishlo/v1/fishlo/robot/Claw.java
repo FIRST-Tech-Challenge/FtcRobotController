@@ -32,6 +32,9 @@ public class Claw extends SubSystem {
         if (robot.gamepad1.x) {
             if (armIsUp) {
                 armDown();
+
+
+
                 armIsUp = !armIsUp;
             }
             else if (!armIsUp) {
