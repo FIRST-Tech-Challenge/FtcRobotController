@@ -1,4 +1,5 @@
 dependencies {
+    implementation 'org.openftc:easyopencv:1.4.1'
     implementation project(':FtcRobotController')
     implementation project(':DarbotsFtcLib')
     implementation 'org.firstinspires.ftc:RobotCore:6.0.1'
