@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.Autos.BASE;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.HardwareMap.HMap;
 import org.firstinspires.ftc.teamcode.HardwareMap.MotorPlus;
 import org.firstinspires.ftc.teamcode.MISC.CONSTANTS;
+import org.firstinspires.ftc.teamcode.MISC.DeadReckoning;
 
 public abstract class AutoBase extends LinearOpMode {
 
     HMap robot = new HMap();
+    public DeadReckoning dR;
 
     public abstract void autoCode();
 
@@ -17,6 +21,13 @@ public abstract class AutoBase extends LinearOpMode {
 
         // Initializing the hardware map
         robot.init(hardwareMap);
+
+        dR = new DeadReckoning(
+                new DcMotor[]{robot.TL_, robot.BL_},
+                new DcMotor[]{robot.TR_, robot.BR_},
+                new BNO055IMU[]{robot.imu_},
+                telemetry
+        );
 
         // Calibrating Sensors
         addTelemetryData("IMU Calibration: ",
@@ -46,6 +57,10 @@ public abstract class AutoBase extends LinearOpMode {
             sleep(50);
             idle();
         }
+    }
+
+    public void drive(double[] coordinate){
+        dR.move(coordinate[0], coordinate[1]);
     }
 
     public void drive(double power_cap, double target_distance){

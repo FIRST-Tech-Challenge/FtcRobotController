@@ -9,6 +9,11 @@ public class CONSTANTS {
 
     public final static double[] fusedDPid_ = new double[]{0, 0, 0};
 
+    // DeadReckoning Parameter Tuning
+    // TODO: TUNE THE DeadRImuPid_
+    public final static double[] DeadRImuPid_ = new double[]{1, 0.00000000000004, 0.000000000000000000}; // imu tuning for dead reckoning alignment code
+    public final static double[] DeadRDPid_ = new double[]{0, 0, 0}; // imu tuning for dead reckoning alignment code
+
     // PID Drive Parameters
     public final static double target_acceleration = 0.0000124;
     public final static double target_velocity     = .114;

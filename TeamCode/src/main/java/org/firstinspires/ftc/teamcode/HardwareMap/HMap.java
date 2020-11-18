@@ -11,10 +11,10 @@ import org.firstinspires.ftc.teamcode.MISC.CONSTANTS;
 public class HMap {
 
     // Members of the HardwareMap
-    private DcMotor TL_ = null, TR_ = null, BL_ = null, BR_ = null;
+    public DcMotor TL_ = null, TR_ = null, BL_ = null, BR_ = null;
     private DcMotor IntakeMotor_ = null;
     private DcMotor LauncherMotor_ = null;
-    private BNO055IMU imu_;
+    public BNO055IMU imu_;
 
     // PP extension for Hardware Devices
     public MotorPP TL, BL, TR, BR;
@@ -22,7 +22,7 @@ public class HMap {
 
     // Instantiate them
     com.qualcomm.robotcore.hardware.HardwareMap hwMap =  null;
-    private ElapsedTime runtime  = new ElapsedTime();
+    public ElapsedTime runtime  = new ElapsedTime();
 
     /* Constructor */
     public HMap(){
@@ -39,11 +39,6 @@ public class HMap {
         BL_ = hwMap.get(DcMotor.class, "BL");
         BR_ = hwMap.get(DcMotor.class, "BR");
 
-        // Set zero power
-        TL.setPower(0.0);
-        BL.setPower(0.0);
-        TR.setPower(0.0);
-        BR.setPower(0.0);
 
         TR_.setDirection(DcMotorSimple.Direction.REVERSE);
         BR_.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -70,6 +65,12 @@ public class HMap {
         BL = new MotorPP(new DcMotor[]{BL_}, CONSTANTS.dPid_, CONSTANTS.aPid_, CONSTANTS.vPid_);
         BR = new MotorPP(new DcMotor[]{BR_}, CONSTANTS.dPid_, CONSTANTS.aPid_, CONSTANTS.vPid_);
         imu = new IMUPlus(imu_, CONSTANTS.imuPid_);
+
+        // Set zero power
+        TL.setPower(0.0);
+        BL.setPower(0.0);
+        TR.setPower(0.0);
+        BR.setPower(0.0);
 
         // Final Actions of Init
         runtime.reset();

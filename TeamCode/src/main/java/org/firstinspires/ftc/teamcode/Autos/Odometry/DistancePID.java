@@ -18,7 +18,7 @@ public abstract class DistancePID extends LinearOpMode {
     private PIDClass pidClass = new PIDClass(2.7, 0.0000006, 0.0, PIDClass.ERROR_TYPES.RUNNING_WITH_REL_ERROR, telemetry) {
         @Override
         public double getInput() {
-            return getAvgEncoderPos();
+            return 0;
         }
 
         @Override
@@ -41,14 +41,14 @@ public abstract class DistancePID extends LinearOpMode {
         return motor.getCurrentPosition();
     }
 
-    private int getAvgEncoderPos(){
-        int TL_pos = getEncoderCountFromMotor(robot.TL);
-        int TR_pos = getEncoderCountFromMotor(robot.TR);
-        int BL_pos = getEncoderCountFromMotor(robot.BL);
-        int BR_pos = getEncoderCountFromMotor(robot.BR);
-
-        return (int)((double)(TL_pos + TR_pos + BL_pos + BR_pos) / (double)4); // Not sure whether this type casting is required
-    }
+//    private int getAvgEncoderPos(){
+////        int TL_pos = getEncoderCountFromMotor(robot.TL);
+////        int TR_pos = getEncoderCountFromMotor(robot.TR);
+////        int BL_pos = getEncoderCountFromMotor(robot.BL);
+////        int BR_pos = getEncoderCountFromMotor(robot.BR);
+//
+////        return (int)((double)(TL_pos + TR_pos + BL_pos + BR_pos) / (double)4); // Not sure whether this type casting is required
+//    }
 
     // Motor Manipulation Methods
     private void setMotorPower(double power){
