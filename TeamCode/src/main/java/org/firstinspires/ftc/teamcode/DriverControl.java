@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode;
         import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
         import com.qualcomm.robotcore.hardware.DcMotor;
+        import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
         import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
         import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
         import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -24,26 +26,8 @@ public class DriverControl extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        leftFrontMotor = hardwareMap.dcMotor.get("leftFrontMotor");
-        leftBackMotor = hardwareMap.dcMotor.get("leftBackMotor");
-        rightFrontMotor = hardwareMap.dcMotor.get("rightFrontMotor");
-        rightBackMotor = hardwareMap.dcMotor.get("rightBackMotor");
 
-        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = false;
-
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        imu.initialize(parameters);
+        initializeHardware();
 
         telemetry.addData("Mode", "calibrating...");
         telemetry.update();
@@ -68,7 +52,7 @@ public class DriverControl extends LinearOpMode {
         sleep(1000);
 
         while (opModeIsActive()) {
-            correction = checkDirection();
+            correction = getCorrectionValue();
 
             telemetry.addData("1 imu heading", lastAngles.firstAngle);
             telemetry.addData("2 global heading", globalAngle);
@@ -129,8 +113,34 @@ public class DriverControl extends LinearOpMode {
         rightBackMotor.setPower(0);
     }
 
-    private double getOrient() {
+    private void initializeHardware()
+    {
+        //Init motors
+        leftFrontMotor = hardwareMap.dcMotor.get("leftFrontMotor");
+        leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        leftBackMotor = hardwareMap.dcMotor.get("leftBackMotor");
+        leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rightFrontMotor = hardwareMap.dcMotor.get("rightFrontMotor");
+        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rightBackMotor = hardwareMap.dcMotor.get("rightBackMotor");
+        rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //Init IMU
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+    }
+
+    private double getCorrectionValue() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
@@ -144,18 +154,12 @@ public class DriverControl extends LinearOpMode {
 
         lastAngles = angles;
 
-        return globalAngle;
-    }
+        double correction, gain = .03;
 
-    private double checkDirection() {
-        double correction, angle, gain = .03;
-
-        angle = getOrient();
-
-        if (angle == target)
+        if (globalAngle == target)
             correction = 0;
         else
-            correction = -(angle - target);
+            correction = -(globalAngle - target);
 
         correction = correction * gain;
 

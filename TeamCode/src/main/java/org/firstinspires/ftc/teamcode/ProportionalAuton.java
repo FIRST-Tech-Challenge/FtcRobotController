@@ -33,18 +33,46 @@ public class ProportionalAuton extends LinearOpMode
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        leftFrontMotor = hardwareMap.dcMotor.get("leftFrontMotor");
-        rightFrontMotor = hardwareMap.dcMotor.get("rightFrontMotor");
-        leftBackMotor = hardwareMap.dcMotor.get("leftBackMotor");
-        rightBackMotor = hardwareMap.dcMotor.get("rightBackMotor");
-        rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        initializeHardware();
 
+        waitForStart();
+
+        runtime.reset();
+
+        while (opModeIsActive())
+        {
+            // For debug
+            telemetry.addData("1 positiveDistanceTraveled", positiveDistanceTraveled);
+            telemetry.addData("2 negativeDistanceTraveled", negativeDistanceTraveled);
+            telemetry.addData("3 leftFrontPower", leftFrontPower);
+            telemetry.addData("4 rightFrontPower", rightFrontPower);
+            telemetry.update();
+
+            // Move functions
+            move(220/Math.sqrt(2), 220/Math.sqrt(2));
+        }
+    }
+
+    private void initializeHardware()
+    {
+        //Init motors
+        leftFrontMotor = hardwareMap.dcMotor.get("leftFrontMotor");
+        leftFrontMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftBackMotor = hardwareMap.dcMotor.get("leftBackMotor");
+        leftBackMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rightFrontMotor = hardwareMap.dcMotor.get("rightFrontMotor");
+        rightFrontMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        rightBackMotor = hardwareMap.dcMotor.get("rightBackMotor");
+        rightBackMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        //Init IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
         parameters.mode = BNO055IMU.SensorMode.IMU;
@@ -53,28 +81,10 @@ public class ProportionalAuton extends LinearOpMode
         parameters.loggingEnabled = false;
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-
         imu.initialize(parameters);
-
-        waitForStart();
-
-        runtime.reset();
-
-        while (opModeIsActive())
-        {
-            // Fill this section with variables when your shit doesn't work
-            telemetry.addData("1 positiveDistanceTraveled", positiveDistanceTraveled);
-            telemetry.addData("2 negativeDistanceTraveled", negativeDistanceTraveled);
-            telemetry.addData("3 leftFrontPower", leftFrontPower);
-            telemetry.addData("4 rightFrontPower", rightFrontPower);
-            telemetry.update();
-
-            // Call functions to actually move the thing
-            move(220/Math.sqrt(2), 220/Math.sqrt(2));
-        }
     }
 
-    void move(double posTarget, double negTarget)
+    void getMotorPositions()
     {
         // Update the positions of each individual motor
         leftFrontMotorPos = leftFrontMotor.getCurrentPosition();
@@ -96,6 +106,11 @@ public class ProportionalAuton extends LinearOpMode
         deltaRightBackMotorPos = distancePerTick * (rightBackMotorPos - previousRightBackMotorPos);
         rightBackDistanceTraveled += deltaRightBackMotorPos;
         previousRightBackMotorPos = rightBackMotorPos;
+    }
+
+    void move(double posTarget, double negTarget)
+    {
+        getMotorPositions();
 
         positiveDistanceTraveled = (leftFrontDistanceTraveled + rightBackDistanceTraveled) / 2;
         negativeDistanceTraveled = (leftBackDistanceTraveled + rightFrontDistanceTraveled) / 2;
@@ -146,9 +161,9 @@ public class ProportionalAuton extends LinearOpMode
     void turn(double degrees)
     {
         // Get the current orientation of the bot
-        double angle = getOrientation();
+        double angle = getAngle();
 
-        degrees -= 13;
+        degrees -= 13; //Account for +13 degrees gltich.
 
         // Make sure we're not at the target. If not, move. If so, stop.
         if (angle < degrees) {
@@ -178,7 +193,7 @@ public class ProportionalAuton extends LinearOpMode
         rightBackMotor.setPower(rightBackPower);
     }
 
-    private double getOrientation()
+    private double getAngle()
     {
         // Get the orientation from the gyroscope
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
