@@ -88,6 +88,7 @@ public class TerraBot {
     public AutoModule powerShot = new AutoModule();
     public AutoModule wobbleGoal = new AutoModule();
     public AutoModule wobbleGoal2 = new AutoModule();
+    public AutoModule goback = new AutoModule();
 
     public Limits limits = new Limits();
 
@@ -199,6 +200,7 @@ public class TerraBot {
         definePowerShot();
         defineWobbleGoal();
         defineWobbleGoal2();
+        defineGoback();
 
 
         limits.addLimit(arm, 0, maxArmPos);
@@ -309,12 +311,12 @@ public class TerraBot {
     }
 
     public void definePowerShot(){
-        powerShot.addCustomOnce(new CodeSeg() {
-            @Override
-            public void run() {
-                startOdoThreadTele();
-            }
-        });
+//        powerShot.addCustomOnce(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                startOdoThreadTele();
+//            }
+//        });
         powerShot.addStage(in, 1.0, 0.01);
         powerShot.addCustom(new CodeSeg() {
             @Override
@@ -336,7 +338,7 @@ public class TerraBot {
         powerShot.addWaitUntil();
         powerShot.addCustomOnce(new CodeSeg() {
             @Override
-            public void run() { odometry.reset(getLeftOdo(), getMiddleOdo(), getRightOdo()); resetGyro();}
+            public void run() { resetAll();}
         });
         for(int i = 0; i < 3;i++) {
             powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
@@ -355,12 +357,12 @@ public class TerraBot {
                 fastmode = true;
             }
         }, 0.01);
-        powerShot.addCustomOnce(new CodeSeg() {
-            @Override
-            public void run() {
-                stopOdoThreadTele();
-            }
-        });
+//        powerShot.addCustomOnce(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                stopOdoThreadTele();
+//            }
+//        });
         powerShot.addDelay(1);
     }
     public void defineWobbleGoal(){
@@ -415,20 +417,35 @@ public class TerraBot {
         wobbleGoal2.addStage(arm, 1, degreesToTicks(120));
     }
 
+    public void defineGoback(){
+        AutoModule back = new AutoModule();
+        Path p1 = new Path(0,0,0);
+        p1.addSetpoint(0,0,0);
+        back.addPath(p1, this);
+        goback = back;
+    }
+
+
+    public void resetAll(){
+        odometry.reset(getLeftOdo(), getMiddleOdo(), getRightOdo());
+        resetGyro();
+    }
+
     public void update(){
         shooter.update();
         powerShot.update();
         wobbleGoal.update();
         wobbleGoal2.update();
+        goback.update();
         outlController.updateMotorValues(getOutlPos());
         outrController.updateMotorValues(getOutrPos());
     }
 
     public boolean autoModulesRunning(){
-        return (shooter.executing || powerShot.executing|| wobbleGoal.executing || wobbleGoal2.executing);
+        return (shooter.executing || powerShot.executing|| wobbleGoal.executing || wobbleGoal2.executing || goback.executing);
     }
 
-    public boolean autoModulesPaused(){return  wobbleGoal.pausing || shooter.pausing || wobbleGoal2.pausing || powerShot.pausing;}
+    public boolean autoModulesPaused(){return  wobbleGoal.pausing || shooter.pausing || wobbleGoal2.pausing || powerShot.pausing || goback.pausing;}
 
 
     public double getArmPos(){

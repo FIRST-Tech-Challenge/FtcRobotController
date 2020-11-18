@@ -87,12 +87,16 @@ public class SpeedController {
     }
 
     public double getPow(){
-        if(Math.abs(currError) < 3000){
+        if(Math.abs(currError) < 2000){
             pow += Math.signum(currError) * pid.getPower(currError, currDer, integralOfError);
             pow = Range.clip(pow, -1, 1);
             return pow;
         }else{
-            return Math.signum(currError)*0.5;
+            if(currError > 0){
+                return 0.5;
+            }else{
+                return -0.3;
+            }
         }
 
     }

@@ -38,6 +38,7 @@ public class TerraOp extends OpMode {
         bot.turnWobbleArm(0.1);
         bot.turnControl.cur = 0.1;
         bot.gameTime.reset();
+        bot.startOdoThreadTele();
     }
 
     @Override
@@ -92,17 +93,17 @@ public class TerraOp extends OpMode {
             if(gamepad1.y){
                 if(!bot.powershot) {
                     bot.shooter.start();
-                    bot.outrController.setStartPow(bot.outtakeSpeed);
-                    bot.outlController.setStartPow(bot.outtakeSpeed);
                 }else{
                     bot.powerShot.start();
-                    bot.outrController.setStartPow(bot.powerShotSpeed);
-                    bot.outlController.setStartPow(bot.powerShotSpeed);
                 }
             }
-//            if(gamepad2.a){
-//                bot.wobbleGoal.start();
-//            }
+            if(gamepad2.x){
+                bot.resetAll();
+            }
+            if(gamepad2.y){
+                bot.defineGoback();
+                bot.goback.start();
+            }
 
             if(gamepad1.x){
                 bot.wobbleGoal2.start();
@@ -143,7 +144,7 @@ public class TerraOp extends OpMode {
         double strafe = gamepad1.right_stick_x;
         double turn = -gamepad1.left_stick_x;
 
-        if(!bot.powerShot.executing) {
+        if(!bot.powerShot.executing && !bot.goback.executing) {
             bot.moveTeleOp(forward, strafe, turn);
         }
 
@@ -156,8 +157,11 @@ public class TerraOp extends OpMode {
 //        telemetry.update();
 //
 //        telemetry.addData("errR", bot.outrController.getPercentageError());
-//        telemetry.addData("errL", bot.outlController.getPercentageError());
-        telemetry.addData("gameTime", bot.gameTime.seconds());
+       // telemetry.addData("gameTime", bot.gameTime.seconds());
+        telemetry.addData("powl", bot.outlController.pow);
+        telemetry.addData("powr", bot.outrController.pow);
+        telemetry.addData("outr", bot.getOutrPos());
+        telemetry.addData("outl", bot.getOutlPos());
         telemetry.update();
 
 
@@ -169,6 +173,6 @@ public class TerraOp extends OpMode {
 
     @Override
     public void stop() {
-
+        bot.stopOdoThreadTele();
     }
 }

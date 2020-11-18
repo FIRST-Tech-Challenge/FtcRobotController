@@ -99,6 +99,63 @@ public class Path {
         timer.reset();
     }
 
+    public void reset(){
+        lastTime = -0.1;
+
+        xerr = 0;
+        yerr = 0;
+        herr = 0;
+
+        lxerr = 0;
+        lyerr = 0;
+        lherr = 0;
+
+        xder = 0;
+        yder = 0;
+        hder = 0;
+
+        xint = 0;
+        yint = 0;
+        hint = 0;
+
+
+        radius = 5;
+        t = 0;
+        ans = 0;
+        ans2 = 0;
+        curIndex = 0;
+
+        rfsIndex = 0;
+        stopIndex = 0;
+
+
+        targetPos[0] = 0;
+        targetPos[1] = 0;
+
+        poses.clear();
+        lines.clear();
+        posetypes.clear();
+        rfs.clear();
+        isRf.clear();
+        stops.clear();
+
+
+        isExecuting = true;
+        isDoneWithRfs = false;
+
+        restPowX = 0.1;
+        restPowY = 0.05;
+        restPowT = 0.3;
+
+        poses.add(new double[]{0, 0, 0});
+        posetypes.add(Posetype.SETPOINT);
+        xControl.setCoeffecients(ks[0], ds[0], is[0]);
+        yControl.setCoeffecients(ks[1], ds[1], is[1]);
+        hControl.setCoeffecients(ks[2], ds[2], is[2]);
+        timer.reset();
+
+    }
+
     public void updateRadius(double dis){
         if(dis < 25) {
             radius = dis * 0.5;

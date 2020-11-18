@@ -165,6 +165,7 @@ public class AutoModule {
             public boolean run(double in) {
                 bot.move(0,0,0);
                 timer.reset();
+                path.reset();
                 return true;
             }
         });
