@@ -16,8 +16,8 @@ public class OlliesFirstAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        robot.forward(0.1,5);
-//        robot.turnLeft(.5,90);
-//        robot.strafeRight(.7,4);
+        robot.turnLeft(.5,90);
+        robot.turnRight(.5,90);
+
     }
 }
