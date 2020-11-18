@@ -1040,6 +1040,7 @@ public class MasterOdo extends OdoBase {
             }
             if (selected != null) {
                 locator.init(selected.getStart(), initHead);
+                bot.initDetectorThread(selected.getName(), this);
                 long startTime = System.currentTimeMillis();
                 for (AutoStep s : selected.getSteps()) {
                     this.goTo(s, false, selected.getName());
@@ -1051,6 +1052,9 @@ public class MasterOdo extends OdoBase {
         }
         catch (Exception ex){
             telemetry.addData("Error", "Run selected route. %s", ex.getMessage());
+        }
+        finally {
+            bot.stopDetection();
         }
     }
 
