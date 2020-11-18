@@ -105,17 +105,14 @@ public class RingDetector implements Runnable{
                             if (r.getTitle().contains(LABEL_C)) {
                                 zone = zoneC;
                                 found = true;
-                                this.lights.recognitionSignal(4);
                             }
                             else if(r.getTitle().contains(LABEL_B)){
                                 zone = zoneB;
                                 found = true;
-                                this.lights.recognitionSignal(1);
                             }
                             else if(r.getTitle().contains(LABEL_A)){
                                 zone = zoneA;
                                 found = true;
-                                this.lights.recognitionSignal(0);
                             }
                             targetZone = zone.getDotName();
                             telemetry.addData("Zone", targetZone);
@@ -148,15 +145,12 @@ public class RingDetector implements Runnable{
                             telemetry.addData("PrintZone", r.getTitle());
                             if (r.getTitle().contains(LABEL_C)) {
                                 this.recogZone = zoneC;
-                                this.lights.recognitionSignal(4);
                             }
                             else if(r.getTitle().contains(LABEL_B)){
                                 this.recogZone = zoneB;
-                                this.lights.recognitionSignal(1);
                             }
                             else if(r.getTitle().contains(LABEL_A)){
                                 this.recogZone = zoneA;
-                                this.lights.recognitionSignal(0);
                             }
                             targetZone = this.recogZone.getDotName();
                             telemetry.addData("Zone", targetZone);
@@ -167,6 +161,20 @@ public class RingDetector implements Runnable{
             telemetry.update();
         }
 
+    }
+
+    public void displayLights() {
+        switch (targetZone) {
+            case "C":
+                this.lights.blue();
+                break;
+            case "B":
+                this.lights.orange();
+                break;
+            case "A":
+                this.lights.pink();
+                break;
+        }
     }
 
     public void initDetector() {
@@ -189,6 +197,7 @@ public class RingDetector implements Runnable{
         if (tfDetector != null) {
             tfDetector.stopProcessing();
         }
+        tfDetector = null;
     }
 
     public void stopThread() {

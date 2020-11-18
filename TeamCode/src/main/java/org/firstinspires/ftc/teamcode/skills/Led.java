@@ -56,6 +56,10 @@ public class Led {
         setPattern(RevBlinkinLedDriver.BlinkinPattern.FIRE_LARGE);
     }
 
+    public void pink() {setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);}
+    public void blue() {setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);}
+    public void orange() {setPattern(RevBlinkinLedDriver.BlinkinPattern.ORANGE);}
+
     public void recognitionSignal(int numBlinks){
         boolean none = numBlinks == 0;
         if (none){

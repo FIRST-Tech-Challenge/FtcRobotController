@@ -337,6 +337,7 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+
     ///get results of detection on the thread
     @BotAction(displayName = "Get Detection Result", defaultReturn = "B")
     public AutoDot getDetectionResult() {
@@ -345,6 +346,7 @@ public class UltimateBot extends YellowBot {
             rf.stopDetection();
             target = rf.getRecogZone();
         }
+
         telemetry.addData("Detected Zone: ", target.getDotName());
         telemetry.addData("Detected X: ", target.getX());
         telemetry.addData("Detected Y: ", target.getY());
@@ -352,6 +354,16 @@ public class UltimateBot extends YellowBot {
         return target;
     }
 
+
+    @BotAction(displayName = "Detection Lights", defaultReturn = "")
+    public void displayDetectionLights() {
+        rf.displayLights();
+    }
+
+    @BotAction(displayName = "Lights Off", defaultReturn = "")
+    public void lightsOff(){
+        getLights().none();
+    }
 
     ///use for non-threaded detection
     @BotAction(displayName = "Detect Stack", defaultReturn = "B")

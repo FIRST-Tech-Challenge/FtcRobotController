@@ -27,6 +27,7 @@ public abstract class AutoBase extends OdoBase {
             sleep(5000);
         } finally {
             bot.stopDetection();
+            bot.lightsOff();
         }
     }
 
