@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.hitechnic.HiTechnicNxtGyroSensor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -29,7 +30,9 @@ public class RobotClass {
     public Telemetry telemetry;
     ColorSensor colorSensor;
 
-    public RobotClass(HardwareMap hardwareMap, Telemetry telemetry) {
+    LinearOpMode opmode;
+
+    public RobotClass(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opmode) {
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft" );
         frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
@@ -58,6 +61,8 @@ public class RobotClass {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        this.opmode = opmode;
+
     }
     public double getAngleFromGyro() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -70,10 +75,27 @@ public class RobotClass {
         int backLeftCurrent = backLeft.getCurrentPosition();
         int backRightCurrent = backRight.getCurrentPosition();
 
+        telemetry.addData("Target Front Left Motor Position", leftCurrent);
+        telemetry.addData("Target Front Right Motor Position", rightCurrent);
+        telemetry.addData("Target Back Left Motor Position", backLeftCurrent);
+        telemetry.addData("Target Front Left Motor Position", backRightCurrent);
+        telemetry.update();
+//        try {
+//            wait(5_000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
         double toPositionLeft = leftCurrent + rotations*ticks;
         double toPositionRight = rightCurrent + rotations*ticks;
         double toPositionbackLeft = backLeftCurrent + rotations*ticks;
         double toPositionbackRight = backRightCurrent + rotations*ticks;
+
+        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
+        telemetry.addData("Target Front Right Motor Position", toPositionRight);
+        telemetry.addData("Target Back Left Motor Position", toPositionbackLeft);
+        telemetry.addData("Target Front Left Motor Position", toPositionbackLeft);
+        telemetry.update();
 
         frontLeft.setTargetPosition((int)toPositionLeft);
         frontRight.setTargetPosition((int)toPositionRight);
@@ -90,11 +112,37 @@ public class RobotClass {
         backLeft.setPower(Math.abs(speed));
         backRight.setPower(Math.abs(speed));
 
+        while (this.opmode.opModeIsActive() &&
+                (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
+
+            // Display it for the driver.
+            telemetry.addData("Target Front Left Motor Position", frontLeft.getCurrentPosition());
+            telemetry.addData("Target Front Right Motor Position", frontRight.getCurrentPosition());
+            telemetry.addData("Target Back Left Motor Position", backLeft.getCurrentPosition());
+            telemetry.addData("Target Front Left Motor Position", backRight.getCurrentPosition());
+            telemetry.update();
+        }
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+
         telemetry.addData("Target Front Left Motor Position", toPositionLeft);
         telemetry.addData("Target Front Right Motor Position", toPositionRight);
         telemetry.addData("Target Back Left Motor Position", toPositionbackLeft);
         telemetry.addData("Target Front Left Motor Position", toPositionbackLeft);
         telemetry.update();
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        try {
+            wait(30000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     public void backwards (double speed, double rotations) {
         int leftCurrent = frontLeft.getCurrentPosition();

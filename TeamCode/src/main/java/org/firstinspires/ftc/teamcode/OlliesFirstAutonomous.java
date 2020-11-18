@@ -12,12 +12,12 @@ public class OlliesFirstAutonomous extends LinearOpMode {
     @Override
     public void runOpMode(){
 
-        robot= new RobotClass(hardwareMap, telemetry);
+        robot= new RobotClass(hardwareMap, telemetry, this);
 
         waitForStart();
 
-        robot.forward(0.5,5);
-        robot.turnLeft(.5,90);
-        robot.strafeRight(.7,4);
+        robot.forward(0.1,5);
+//        robot.turnLeft(.5,90);
+//        robot.strafeRight(.7,4);
     }
 }
