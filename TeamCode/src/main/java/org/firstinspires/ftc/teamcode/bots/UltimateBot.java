@@ -26,11 +26,9 @@ public class UltimateBot extends YellowBot {
     private DcMotor shooter = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
-    private static int SWING_LIFT_DROP = 170;
-    private static int SWING_GROUND_POS = 280;
-    private static int SWING_RISE_POS = 90;
-    private static int SWING_LIFT_UP_POS = 230;
-    private static int SWING_LIFT_WALL = 45;
+    private static int SWING_GROUND_POS = 170;
+    private static int SWING_LIFT_UP_POS = 115;
+    private static int SWING_LIFT_WALL = -45;
     private static double SHOOT_SERVO = 0.4;
 
     private static double CAMERA_RIGHT_LINE = 0.35;
@@ -214,7 +212,7 @@ public class UltimateBot extends YellowBot {
                 return;
             }
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setTargetPosition(SWING_RISE_POS);
+            wobbleSwing.setTargetPosition(0);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wobbleSwing.setPower(0.6);
             boolean stop = false;
@@ -285,23 +283,23 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    @BotAction(displayName = "Lift Wobble Wall Drop", defaultReturn = "")
-    public void liftWobbleWallDrop() {
-        if (wobbleSwing != null) {
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setTargetPosition(SWING_LIFT_DROP);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.7);
-            boolean stop = false;
-            while (!stop) {
-                stop = wobbleSwing.isBusy() == false;
-            }
-            this.swingPosition = SwingPosition.LiftUp;
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setPower(0);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-    }
+//    @BotAction(displayName = "Lift Wobble Wall Drop", defaultReturn = "")
+//    public void liftWobbleWallDrop() {
+//        if (wobbleSwing != null) {
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            wobbleSwing.setTargetPosition(SWING_LIFT_DROP);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            wobbleSwing.setPower(0.7);
+//            boolean stop = false;
+//            while (!stop) {
+//                stop = wobbleSwing.isBusy() == false;
+//            }
+//            this.swingPosition = SwingPosition.LiftUp;
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            wobbleSwing.setPower(0);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
+//    }
 
 
     @BotAction(displayName = "Green Light", defaultReturn = "")
