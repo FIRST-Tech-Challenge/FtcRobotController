@@ -1,10 +1,23 @@
+/**
+ * Tensor Flow Class. This is for detecting the
+ * number of rings in autonomous. It uses
+ * the Vuforia Engine.
+ *
+ * @author  Aamod
+ * @version 1.0
+ * @since   2020-November-5
+ * @status: Fully working
+ */
+
+
 package org.firstinspires.ftc.teamcode.Qualifier_1.Components.ObjectDetection;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
+//import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
@@ -27,13 +40,10 @@ public class TensorFlow extends Thread{
     }
 
     public void initTensorFlow() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = CameraDirection.BACK;
+        parameters.cameraName = op.hardwareMap.get(WebcamName.class, "WebcamFront");
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);

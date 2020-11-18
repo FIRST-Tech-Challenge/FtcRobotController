@@ -32,6 +32,9 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
 public class Chassis {
+
+    public static final boolean isCorgi = true;
+
     //initialize motor
     DcMotorEx motorLeftFront;
     DcMotorEx motorRightFront;
@@ -78,9 +81,12 @@ public class Chassis {
         motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
         motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
         motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
-        ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
-        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
-        ShooterServo = (Servo) hardwareMap.servo.get("ShooterServo");
+
+        if(isCorgi) {
+            ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
+            wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
+            ShooterServo = (Servo) hardwareMap.servo.get("ShooterServo");
+        }
 
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 //
@@ -116,8 +122,10 @@ public class Chassis {
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
 
-        //Servo
-        ShooterServo.setPosition(0);
+        if(isCorgi) {
+            //Servo
+            ShooterServo.setPosition(0);
+        }
 
         // reset encoder count kept by left motor.
         motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -205,41 +213,45 @@ public class Chassis {
     }
 
     public void moveShooterMotor(int distance, int power){
-        double sleepTime = (distance / 1 * 1000);
+        if(isCorgi) {
+            double sleepTime = (distance / 1 * 1000);
 
-        ShooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+            ShooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
 
-        ShooterMotor.setTargetPosition(distance);
+            ShooterMotor.setTargetPosition(distance);
 
-        ShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            ShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        ShooterMotor.setTargetPosition(distance);
-        ShooterMotor.setPower(power);
-        if(ShooterMotor.getCurrentPosition()==distance){
-            ShooterMotor.setPower(0);
+            ShooterMotor.setTargetPosition(distance);
+            ShooterMotor.setPower(power);
+            if (ShooterMotor.getCurrentPosition() == distance) {
+                ShooterMotor.setPower(0);
+            }
         }
-
     }
 
     public void moveWobbleGoalMotor(double distance){
-        double ticksToMove = distance;
-        double ticksLocationToMove = wobbleGoalMotor.getCurrentPosition() + ticksToMove;
-        wobbleGoalMotor.setTargetPosition((int)ticksLocationToMove);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleGoalMotor.setPower(0.5);
-        while (op.opModeIsActive() && wobbleGoalMotor.isBusy())
-        {
-            op.telemetry.addData("wobbleGoalMotor", wobbleGoalMotor.getCurrentPosition() + " busy=" + wobbleGoalMotor.isBusy());
-            op.telemetry.update();
-            op.idle();
+        if(isCorgi) {
+            double ticksToMove = distance;
+            double ticksLocationToMove = wobbleGoalMotor.getCurrentPosition() + ticksToMove;
+            wobbleGoalMotor.setTargetPosition((int) ticksLocationToMove);
+            wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wobbleGoalMotor.setPower(0.5);
+            while (op.opModeIsActive() && wobbleGoalMotor.isBusy()) {
+                op.telemetry.addData("wobbleGoalMotor", wobbleGoalMotor.getCurrentPosition() + " busy=" + wobbleGoalMotor.isBusy());
+                op.telemetry.update();
+                op.idle();
+            }
+            //brake
+            wobbleGoalMotor.setPower(0);
+            wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        //brake
-        wobbleGoalMotor.setPower(0);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void setShooterServoPosition( double position){
-        ShooterServo.setPosition(position);
+        if(isCorgi) {
+            ShooterServo.setPosition(position);
+        }
     }
 
     private void resetAngle()

@@ -41,7 +41,7 @@ public class Robot {
     private LinearOpMode op = null;
     private HardwareMap hardwareMap = null;
     private ElapsedTime runtime = null;
-    final boolean isCorgi = true;
+    final boolean isCorgi = Chassis.isCorgi;
     private TensorFlow tensorFlow = null;
 
     // Hardware Objects
@@ -57,26 +57,28 @@ public class Robot {
     private double vuforiaY = 0;
     private double vuforiaAngle = 0;
     private double robotAngle = 0;
+
     public Robot(LinearOpMode opMode) {
         op = opMode;
         hardwareMap = op.hardwareMap;
 
         runtime = new ElapsedTime();
         drivetrain = new Chassis(op);
-        if(!isCorgi){
+        if(!isCorgi){ //TODO: fix later
+            vuforiaWebcam = new VuforiaWebcam(op);
+            vuforiaWebcam.init(opMode);
             tensorFlow = new TensorFlow(op);
         }
-        intake = new Intake(op);
-        wobbleGoal = new WobbleGoal(op);
-        ringDepositor = new RingDepositor(op);
-        intake = new Intake(op);
-        shooter=new Shooter(op);
+        if(isCorgi) {
+            intake = new Intake(op);
+            wobbleGoal = new WobbleGoal(op);
+            ringDepositor = new RingDepositor(op);
+            intake = new Intake(op);
+            shooter = new Shooter(op);
+        }
 
         // comment by victor
         // drivetrain.init(opMode);
-        if(!isCorgi) {
-            vuforiaWebcam.init(opMode);
-        }
     }
 
     /*
@@ -94,6 +96,9 @@ public class Robot {
         DcMotorEx motorRightFront;
         DcMotorEx motorLeftBack;
         DcMotorEx motorRightBack;
+        if(!isCorgi) {
+            vuforiaWebcam.init(opMode);
+        }
         DcMotorEx ShooterMotor;
         DcMotorEx wobbleGoalMotor;
         Servo shooter_Servo;
@@ -107,7 +112,7 @@ public class Robot {
         wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
         shooter_Servo = (Servo) hardwareMap.servo.get("ShooterServo");
         if(!isCorgi) {
-            vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
+            vuforiaWebcam = new VuforiaWebcam(op);
         }
         // comment by Victor
         // drivetrain.init(opMode);
@@ -122,16 +127,16 @@ public class Robot {
         }
         shooter=new Shooter(op);
         if(!isCorgi) {
-        vuforiaWebcam.start();
-        getVuforiaPosition();
+            vuforiaWebcam.start();
+            getVuforiaPosition();
         }
         if(!isCorgi) {
             op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
             op.telemetry.update();
             op.sleep(1000);
-            op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
-            op.telemetry.update();
-            op.sleep(1000);
+//            op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
+//            op.telemetry.update();
+//            op.sleep(1000);
         }
 
     }
@@ -164,12 +169,13 @@ public class Robot {
         }
     }
 
+    public void startVuforia () {
+        vuforiaWebcam.start();
+    }
 
     public void stopAllMotors() {
         drivetrain.stopAllMotors();
     }
-
-
 
     /******** Left Front Motor **********/
     public void moveMotorLeftFront(double distance) {
@@ -193,11 +199,15 @@ public class Robot {
 
     /******** shooterMotor **********/
     public void moveShooterMotor(int distance, int power) {
-        drivetrain.moveShooterMotor(distance, power);
+        if(isCorgi) {
+            drivetrain.moveShooterMotor(distance, power);
+        }
     }
     /******** shooterMotor **********/
     public void moveWobbleGoalMotor(double distance) {
-        drivetrain.moveWobbleGoalMotor(distance);
+        if(isCorgi) {
+            drivetrain.moveWobbleGoalMotor(distance);
+        }
     }
 
     public double getAngle() {
@@ -288,29 +298,25 @@ public class Robot {
             robotAngle = (robotAngle > 180 ? robotAngle - 360 : robotAngle);
         }
     }
-    public void stopVuforia() {
+    public void stopVuforiaTF() {
         if(!isCorgi) {
             vuforiaWebcam.interrupt();
         }
     }
 
-
-
     /**TensorFlow**/
 
     public void initTensorFlow() {
-
+        tensorFlow.initTensorFlow();
     }
 
     public void runTensorFlow () {
-
+        tensorFlow.runTensorFlow();
     }
 
     public void stopTensorFlow () {
-
+        tensorFlow.stopTensorFlow();
     }
-
-    /**Odometry**/
 
     public void turnOdometry(double target, double power) {
         drivetrain.turnOdometry(target,power);
@@ -354,66 +360,96 @@ public class Robot {
      * wobble goal methods
      */
     public void wobbleGoalStartingPosition(){
-        this.wobbleGoal.startingPosition();
+        if(isCorgi) {
+            this.wobbleGoal.startingPosition();
+        }
     }
 
     public void wobbleGoalGrabbingPosition(){
-        wobbleGoal.grabbingPosition();
+        if(isCorgi) {
+            wobbleGoal.grabbingPosition();
+        }
     }
 
     public void wobbleGoalLiftingPosition(){
-        wobbleGoal.liftingPosition();
+        if(isCorgi) {
+            wobbleGoal.liftingPosition();
+        }
     }
 
     public void wobbleGoalDroppingPosition(){
-        wobbleGoal.droppingPosition();
+        if(isCorgi) {
+            wobbleGoal.droppingPosition();
+        }
     }
 
     public WobbleGoal.Position wobbleGoalGoToPosition(WobbleGoal.Position p){
-        wobbleGoal.goToPosition(p);
-        return(p);
+        if(isCorgi) {
+            wobbleGoal.goToPosition(p);
+        }
+        return (p);
     }
 
     public void printCurrentWobbleGoalLocation(){
-        wobbleGoal.printCurrentLocation();
+        if(isCorgi) {
+            wobbleGoal.printCurrentLocation();
+        }
     }
 
     public void stopWobbleGoal(){
-        wobbleGoal.stop();
+        if(isCorgi) {
+            wobbleGoal.stop();
+        }
     }
 
     // ring depositor
     public void ringDepositorClockwise() {
-        ringDepositor.clockwise();
+        if(isCorgi) {
+            ringDepositor.clockwise();
+        }
     }
 
     public void ringDepositorCounterClockwise() {
-        ringDepositor.counterClockwise();
+        if(isCorgi) {
+            ringDepositor.counterClockwise();
+        }
     }
 
     public void ringDepositorGoToPosition(RingDepositor.Position p){
-        ringDepositor.goToPosition(p);
+        if(isCorgi) {
+            ringDepositor.goToPosition(p);
+        }
     }
 
     public void printCurrentRingDepositorLocation() {
-        ringDepositor.printCurrentLocation();
+        if(isCorgi) {
+            ringDepositor.printCurrentLocation();
+        }
     }
 
     public void stopRingDepositor(){
-        ringDepositor.stop();
+        if(isCorgi) {
+            ringDepositor.stop();
+        }
     }
 
     public void moveRingClamp(boolean direction) {
-        ringDepositor.moveRingClamp(direction);
+        if(isCorgi) {
+            ringDepositor.moveRingClamp(direction);
+        }
     }
 
     // intake
     public void startIntake(){
-        intake.startIntake();
+        if(isCorgi) {
+            intake.startIntake();
+        }
     }
 
     public void stopIntake(){
-        intake.stopIntake();
+        if(isCorgi) {
+            intake.stopIntake();
+        }
     }
 
 }

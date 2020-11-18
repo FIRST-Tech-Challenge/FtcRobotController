@@ -1,3 +1,17 @@
+/**
+ * Vuforia Class. This is for detecting the
+ * VuMarks. This class is for using the Phones' camera
+ * It should display the target
+ * seen, the location of the phone/robot
+ * relative to the target, and the rotation/
+ * angle of the phone in telemetry.
+ *
+ * @author  Aamod
+ * @version 1.0
+ * @since   2020-July-10
+ * @status: Fully working
+ */
+
 package org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -121,7 +135,7 @@ public class Vuforia extends Thread{
         }
 
         // Activate Vuforia Tracking
-        targetsSkystone.activate();
+        targetsUltimateGoal.activate();
 
     }
 

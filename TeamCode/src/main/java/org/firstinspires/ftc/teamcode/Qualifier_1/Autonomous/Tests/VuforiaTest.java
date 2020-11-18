@@ -1,3 +1,15 @@
+/**
+ * Vuforia Test. Inits Vuforia and it
+ * displays the target it sees, the location
+ * of the phone/robot relative to the target,
+ * and the angle/rotation of the phone.
+ *
+ * @author  Aamod
+ * @version 1.0
+ * @since   2020-July-10
+ * @status: Fully working
+ */
+
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -5,8 +17,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Vuforia;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Webcam_1;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 @Autonomous(name = "VuforiaTest")
 //@Disabled
@@ -16,17 +30,17 @@ public class VuforiaTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Chassis robot = new Chassis(this);
+        Robot robot = new Robot(this);
         ElapsedTime runtime = new ElapsedTime();
 
         //AamodVuforia vuforiaB = new AamodVuforia(this, VuforiaLocalizer.CameraDirection.BACK);
         //AamodVuforia vuforiaF = new AamodVuforia(this, VuforiaLocalizer.CameraDirection.FRONT);
-        Webcam_1 vuforiaWebcam = new Webcam_1();
+        VuforiaWebcam vuforiaWebcam = new VuforiaWebcam(this);
 
-        vuforiaWebcam.init();
+        vuforiaWebcam.init(this);
+        vuforiaWebcam.start();
 
         waitForStart();
-        vuforiaWebcam.start();
 
         while (opModeIsActive()) {
             //Webcam

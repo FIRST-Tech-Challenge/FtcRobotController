@@ -1,3 +1,17 @@
+/**
+ * Vuforia Class. This is for detecting the
+ * VuMarks. This class is for using the Webcams
+ * It should display the target
+ * seen, the location of the phone/robot
+ * relative to the target, and the rotation/
+ * angle of the phone in telemetry.
+ *
+ * @author  Aamod
+ * @version 1.0
+ * @since   2020-September-30
+ * @status: Fully working
+ */
+
 package org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,14 +36,13 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 public class VuforiaWebcam extends Thread {
-
     private OpMode op;
     private double xpos, ypos, angle;
     private String trackable;
 
     private boolean targetVisible = false;
 
-    private VuforiaTrackables targetsSkystone;
+    private VuforiaTrackables targetsUltimateGoal;
     private List<VuforiaTrackable> allTrackables = new ArrayList<>();
 
     private OpenGLMatrix lastLocation = null;
@@ -38,9 +51,8 @@ public class VuforiaWebcam extends Thread {
 
     private VuforiaLocalizer vuforia = null;
 
-    public VuforiaWebcam(OpMode opMode, VuforiaLocalizer.CameraDirection camera_direction) {
+    public VuforiaWebcam(OpMode opMode) {
         op = opMode;
-        VuforiaLocalizer.CameraDirection CAMERA_CHOICE = camera_direction;
     }
 
     public void init(LinearOpMode opMode){
@@ -59,7 +71,7 @@ public class VuforiaWebcam extends Thread {
         final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
 
 
-        WebcamName webcamName = op.hardwareMap.get(WebcamName.class, "Webcam 1");
+        WebcamName webcamName = op.hardwareMap.get(WebcamName.class, "WebcamSide");
 
         // Show camera view on RC phone screen
         int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
@@ -68,6 +80,7 @@ public class VuforiaWebcam extends Thread {
         // Set parameters
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraName = webcamName;
+        parameters.useExtendedTracking = false;
 
         // Start Vuforia
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -122,7 +135,7 @@ public class VuforiaWebcam extends Thread {
         }
 
         // Activate Vuforia Tracking
-        targetsSkystone.activate();
+        targetsUltimateGoal.activate();
 
     }
 
