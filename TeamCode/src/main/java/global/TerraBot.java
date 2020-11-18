@@ -60,7 +60,7 @@ public class TerraBot {
     public double shootStartR = 0.06;
     public double shootStartL = 0.05;
     public double intakeSpeed = 1;
-    public double outtakeSpeed = 0.35;
+    public double outtakeSpeed = 0.37;
     public double powerShotSpeed = 0.3;
     public double maxArmPos = 215;
     public double heading = 0;
@@ -275,6 +275,12 @@ public class TerraBot {
     public void defineShooter(){
 
         shooter.addStage(in, 1.0, 0.01);
+        shooter.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                fastmode = false;
+            }
+        }, 0.01);
         shooter.addStage(slr, liftControl.getPos(1), 0.01);
         shooter.addStage(sll, liftControl.getPos(1), 1.5);
         shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
@@ -286,16 +292,10 @@ public class TerraBot {
                intaking = false;
             }
         }, 0.01);
-        shooter.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                fastmode = false;
-            }
-        }, 0.01);
         shooter.addWaitUntil();
         for(int i = 0; i < 3;i++) {
             shooter.addStage(ssr, shootControlR.getPos(3), 0.01);
-            shooter.addStage(ssl, shootControlL.getPos(3), 0.3);
+            shooter.addStage(ssl, shootControlL.getPos(3), 0.5);
             shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
             shooter.addStage(ssl, shootControlL.getPos(2), 0.5);
         }
@@ -316,6 +316,12 @@ public class TerraBot {
             }
         });
         powerShot.addStage(in, 1.0, 0.01);
+        powerShot.addCustom(new CodeSeg() {
+            @Override
+            public void run() {
+                fastmode = false;
+            }
+        }, 0.01);
         powerShot.addStage(slr, liftControl.getPos(1), 0.01);
         powerShot.addStage(sll, liftControl.getPos(1), 1.5);
         powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
@@ -325,12 +331,6 @@ public class TerraBot {
             @Override
             public void run() {
                 intaking = false;
-            }
-        }, 0.01);
-        powerShot.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                fastmode = false;
             }
         }, 0.01);
         powerShot.addWaitUntil();
@@ -367,40 +367,52 @@ public class TerraBot {
 //        wobbleGoal.addStage(ssr, shootControlR.getPos(0), 0.01);
 //        wobbleGoal.addStage(ssl, shootControlL.getPos(0), 0.01);
         wobbleGoal.addStage(st, 0.65, 0.1);
-        wobbleGoal.addStage(arm,  1, degreesToTicks(205));
-        wobbleGoal.addWaitUntil();
-        wobbleGoal.addStage(sgl, grabControl.getPos(1), 0.01);
-        wobbleGoal.addStage(sgr, grabControl.getPos(1), 0.5);
-        wobbleGoal.addStage(st, 0.18, 0.01);
-        wobbleGoal.addStage(arm,  1, degreesToTicks(215));
-        wobbleGoal.addStage(slr, liftControl.getPos(1), 0.01);
-        wobbleGoal.addStage(sll, liftControl.getPos(1), 0.5);
-//        wobbleGoal.addStage(slr, liftControl.getPos(2), 0.01);
-//        wobbleGoal.addStage(sll, liftControl.getPos(2), 0.5);
-        wobbleGoal.addDelay(0.25);
-        wobbleGoal.addStage(st, 0.65, 0.05);
-        wobbleGoal.addStage(slr, liftControl.getPos(0), 0.01);
-        wobbleGoal.addStage(sll, liftControl.getPos(0), 0.01);
-        wobbleGoal.addDelay(0.7);
-        wobbleGoal.addStage(arm, 1, degreesToTicks(210));
-        wobbleGoal.addSave(grabControl, 0);
-        wobbleGoal.addSave(turnControl, 0.65);
+//        wobbleGoal.addStage(arm,  1, degreesToTicks(205));
+//        wobbleGoal.addWaitUntil();
+//        wobbleGoal.addStage(sgl, grabControl.getPos(1), 0.01);
+//        wobbleGoal.addStage(sgr, grabControl.getPos(1), 0.5);
+//        wobbleGoal.addStage(st, 0.18, 0.01);
+//        wobbleGoal.addStage(arm,  1, degreesToTicks(215));
+//        wobbleGoal.addStage(slr, liftControl.getPos(1), 0.01);
+//        wobbleGoal.addStage(sll, liftControl.getPos(1), 0.5);
+////        wobbleGoal.addStage(slr, liftControl.getPos(2), 0.01);
+////        wobbleGoal.addStage(sll, liftControl.getPos(2), 0.5);
+//        wobbleGoal.addDelay(0.25);
+//        wobbleGoal.addStage(st, 0.65, 0.05);
+//        wobbleGoal.addStage(slr, liftControl.getPos(0), 0.01);
+//        wobbleGoal.addStage(sll, liftControl.getPos(0), 0.01);
+//        wobbleGoal.addDelay(0.7);
+//        wobbleGoal.addStage(arm, 1, degreesToTicks(210));
+//        wobbleGoal.addSave(grabControl, 0);
+//        wobbleGoal.addSave(turnControl, 0.65);
 
     }
     public void defineWobbleGoal2(){
-        wobbleGoal2.addStage(st, 0.68, 0.1);
-        wobbleGoal2.addStage(arm,  1, degreesToTicks(200));
+        wobbleGoal2.addStage(st, 0.65, 0.1);
+        wobbleGoal2.addStage(arm,  1, degreesToTicks(185));
+        wobbleGoal2.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                fastmode = false;
+            }
+        });
         wobbleGoal2.addWaitUntil();
         wobbleGoal2.addStage(sgl, grabControl.getPos(1), 0.01);
         wobbleGoal2.addStage(sgr, grabControl.getPos(1), 0.5);
         wobbleGoal2.addStage(st, 1, 0.01);
-        wobbleGoal2.addStage(arm, 1, degreesToTicks(100));
+        wobbleGoal2.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                fastmode = true;
+            }
+        });
+        wobbleGoal2.addStage(arm, 1, degreesToTicks(95));
         wobbleGoal2.addWaitUntil();
         wobbleGoal2.addStage(st, 0.8, 0.01);
         wobbleGoal2.addStage(arm, 1, degreesToTicks(180));
         wobbleGoal2.addStage(sgl, grabControl.getPos(0), 0.01);
         wobbleGoal2.addStage(sgr, grabControl.getPos(0), 0.5);
-        wobbleGoal2.addStage(arm, 1, degreesToTicks(160));
+        wobbleGoal2.addStage(arm, 1, degreesToTicks(120));
     }
 
     public void update(){

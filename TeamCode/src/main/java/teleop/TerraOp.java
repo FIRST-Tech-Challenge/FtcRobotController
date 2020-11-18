@@ -89,7 +89,7 @@ public class TerraOp extends OpMode {
 
 
 
-            if(gamepad2.y){
+            if(gamepad1.y){
                 if(!bot.powershot) {
                     bot.shooter.start();
                     bot.outrController.setStartPow(bot.outtakeSpeed);
@@ -104,7 +104,7 @@ public class TerraOp extends OpMode {
 //                bot.wobbleGoal.start();
 //            }
 
-            if(gamepad2.x){
+            if(gamepad1.x){
                 bot.wobbleGoal2.start();
             }
 
@@ -130,14 +130,14 @@ public class TerraOp extends OpMode {
             bot.timer.reset();
         }
 
-        if(gamepad2.right_stick_button && bot.timer2.seconds() > 0.5){
+        if(gamepad1.right_trigger > 0 && bot.timer2.seconds() > 0.5){
             bot.powershot = !bot.powershot;
             bot.timer2.reset();
         }
 
-        if(!bot.powershot && bot.gameTime.seconds() > 85){
-            bot.powershot = true;
-        }
+//        if(!bot.powershot && bot.gameTime.seconds() > 85){
+//            bot.powershot = true;
+//        }
 
         double forward = -gamepad1.right_stick_y;
         double strafe = gamepad1.right_stick_x;
