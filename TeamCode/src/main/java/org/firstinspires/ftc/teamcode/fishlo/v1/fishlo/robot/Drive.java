@@ -51,7 +51,7 @@ public class Drive extends SubSystem {
     public void handle() {
         double driveSpeed = -robot.gamepad1.left_stick_y;
         double turnSpeed = 0;
-        double strafeSpeed = -robot.gamepad1.right_stick_x;
+        double strafeSpeed = robot.gamepad1.right_stick_x;
 
         if (Math.abs(robot.gamepad1.left_stick_x) > 0.1) {
             turnSpeed = robot.gamepad1.left_stick_x;
@@ -109,6 +109,12 @@ public class Drive extends SubSystem {
     }
 
     public void turn (double power) {
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         frontLeft.setPower(power);
         backLeft.setPower(power);
         frontRight.setPower(-power);

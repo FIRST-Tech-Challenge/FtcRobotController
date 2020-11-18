@@ -11,11 +11,11 @@ public class Claw extends SubSystem {
 
     public static final double CLAW_HOME = 0;
     public static final double CLAW_MAX = 0.5;
-    public static final double ARM_HOME = 0.5;
+    public static final double ARM_HOME = 0.3;
     public static final double ARM_MAX = 0;
 
-    boolean armIsUp = true;
-    boolean clawIsReset = true;
+    boolean armIsUp;
+    boolean clawIsClosed;
 
     public Claw(Robot robot) {
         super(robot);
@@ -25,45 +25,36 @@ public class Claw extends SubSystem {
     public void init() {
         claw = robot.hardwareMap.servo.get("claw");
         arm = robot.hardwareMap.servo.get("arm");
+        armUp();
+        open();
     }
 
     @Override
     public void handle() {
         if (robot.gamepad1.x) {
-            if (armIsUp) {
-                armDown();
-
-
-
-                armIsUp = !armIsUp;
-            }
-            else if (!armIsUp) {
-                armUp();
-                armIsUp = !armIsUp;
-            }
+            open();
         }
-        if (robot.gamepad1.b) {
-            if(clawIsReset) {
-                grab();
-                clawIsReset = !clawIsReset;
-            }
-            else if (!clawIsReset) {
-                reset();
-                clawIsReset = !clawIsReset;
-            }
+        else if (robot.gamepad1.b) {
+            close();
+        }
+        if (robot.gamepad1.a) {
+            armUp();
+        }
+        else if (robot.gamepad1.y) {
+            armDown();
         }
     }
 
     @Override
     public void stop() {
-        reset();
+        open();
     }
 
-    public void grab() {
+    public void close() {
         claw.setPosition(CLAW_MAX);
     }
 
-    public void reset() {
+    public void open() {
         claw.setPosition(CLAW_HOME);
     }
 

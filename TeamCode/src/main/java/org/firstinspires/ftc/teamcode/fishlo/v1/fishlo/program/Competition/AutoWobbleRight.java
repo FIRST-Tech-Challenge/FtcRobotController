@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.program.Competition;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.program.FishloAutonomousProgram;
 import org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot.Utility.PID;
@@ -13,9 +14,12 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
     protected char targetZone;
 
     //Create the variables for PID constants
-    protected final double Kp = 1;
-    protected final double Ki = 0;
-    protected final double Kd = 0;
+    protected final double Kp = 0.1;
+    protected final double HEADING_THRESHOLD = 1;
+    protected final double Kd = 0; //425;
+    PID pidController = new PID(Kp, Kd, 0);
+
+
 
     //Build the robot
     @Override
@@ -29,23 +33,36 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
     public void preMain() {
         //Initialize the imu
         gyro.initGyro();
-        //Timer for vision
-        claw.reset();
-        claw.armUp();
-        claw.grab();
-        ElapsedTime timer = new ElapsedTime();
-        //Find the target zone based on the starter stack
-        timer.reset();
-        telemetry.setAutoClear(true);
-        while (timer.milliseconds() < 2000) {
-            targetZone = 'B'; //vision.getTargetZone();
+        pidController.setLoopTime(10);
+        //Waits until gyro is fully initialized and calibrated before continuing
+        while (!isStopRequested() && !gyro.gyroCalibrated()) {
+            sleep(50);
+            idle();
         }
+        //Reset claw and arm to starting position
+        claw.open();
+        claw.armUp();
+        claw.close();
+        //Timer for vision
+        ElapsedTime timer = new ElapsedTime();
+        //Reset the timer
+        timer.reset();
+        //Make sure that the telemetry clears when printing on the screen
+        telemetry.setAutoClear(true);
+        //Find the targetZone based on the starter stack
         while (!isStopRequested() && !gyro.isCalibrated()) {
             sleep(50);
             idle();
         }
         telemetry.addData("Gyro", gyro.getCallibrationStatus());
         telemetry.update();
+        while (!isStarted()) {
+
+            targetZone = vision.getTargetZone();
+
+        }
+
+
 
     }
 
@@ -60,12 +77,13 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
             //Status update: The robot is driving to the target zone
             telemetry.addData("Main", "Driving - P: 55 in, S: 0.5");
             telemetry.update();
-            //Drives to position (55 inches forward at 0.5 power)
+            //Drives to position (68 inches forward at 0.5 power)
             drive.moveToPosition(68, 0.5);
-            claw.armDown();
-            claw.reset();
+            //Drops the wobble goal
+            claw.open();
+            sleep(100);
            //Status update: The robot turning to the desired angle
-            telemetry.addData("Main", "Turning - P:90R, S: 0.2");
+            telemetry.addData("Main", "Strafing - P:-12 in, S: 0.4");
             telemetry.update();
             drive.strafeToPosition(-12, 0.4);
 
@@ -74,88 +92,33 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
         else if (targetZone == 'B') {
             telemetry.addData("Main", "Driving to Target Zone B");
             telemetry.update();
-            //Turning left 5 degrees at 0.2 power using PID
-            //Reset the heading of the gyroscope
-            gyro.getHeading();
-            gyro.resetHeading();
-            //Initializes PID with constants
-            PID pid = new PID(Kp, Ki, Kd);
-            //Sets loop time
-            pid.setLoopTime(10);
-            //Loops until destination is reached
-            while (true) {
-                //Sets the error of the PID to -5- the current gyro heading
-                pid.setError(-5-gyro.getHeading());
-                //Uses the error to find the appropriate motor power
-                double power = pid.getSetValue();
-                //Status update: Displays the power given by PID
-                telemetry.addData("Main", "PID power" + power);
-                telemetry.update();
-                //Creates a buffer to make sure the robot does not move at a power below 0.1
-                if (power <= 0.1) {
-                    break;
-                }
-                //Turns using the created power
-                drive.turn(power);
-                sleep(10);
-            }
-            telemetry.addData("Main", "Driving - P: 80 in, S: 0.5");
-            telemetry.update();
-            drive.moveToPosition(80,0.5);
-            sleep(50);
-            telemetry.addData("Main", "Strafing - P: -10 in, S: 0.4");
-            telemetry.update();
-            drive.strafeToPosition(-10,0.4);
-            sleep(50);
-            telemetry.addData("Main", "Driving - P: -15 in, S: 0.4");
-            drive.moveToPosition(-15,0.4);
+            drive.moveToPosition(95,0.5);
+            drive.strafeToPosition(-35,0.4);
+            sleep(1500);
+            //Drop the wobble goal
+            claw.open();
+            drive.moveToPosition(-15, 0.3);
         }
         //Move wobble goal to target zone C
         else if (targetZone == 'C') {
             telemetry.addData("Main", "Driving to Target Zone C");
             telemetry.update();
-            //Turning right 5 degrees at 0.2 power
-            //Resets the heading of the gyroscope
-            gyro.getHeading();
-            gyro.resetHeading();
-            //Initializes PID with constants
-            PID pid = new PID(Kp, Ki, Kd);
-            //Sets loop time
-            pid.setLoopTime(10);
-            //Loops until the destination is reached
-            while (true) {
-                //Sets the error of the PID to 5- the current gyro heading
-                pid.setError(5-gyro.getHeading());
-                //Uses the error to find the appropriate motor power
-                double power = pid.getSetValue();
-                //Status update: Displays power given by PID
-                telemetry.addData("Main", "PID power" + power);
-                telemetry.update();
-                //Creates a buffer to make sure the robot does not move at a power below 0.1
-                if (power <= 0.1) {
-                    break;
-                }
-                //Turns with created power
-                drive.turn(power);
-                sleep(10);
-            }
             //Status update: The robot is driving to the target zone
             telemetry.addData("Main", "Driving - P: 100 in, S: 0.5");
             telemetry.update();
             //Drives to position (100 inches forward at 0.5 power)
-            drive.moveToPosition(100,0.5);
+            drive.moveToPosition(125,0.5);
             sleep(50);
             //Status update: The robot is driving to the line
             telemetry.addData("Main", "Driving - P: -35 in, S: 0.5");
             telemetry.update();
             //Drives to position (35 inches backward at 0.5 power)
-            drive.moveToPosition(-35,0.5);
+            drive.moveToPosition(-50,0.5);
+            claw.open();
             sleep(50);
             //Status update: The robot is strafing away from the target zones and towards the line
-            telemetry.addData("Main", "Strafing - P: -18 in, S: 0.5");
-            telemetry.update();
+
             //Strafes to position (18 inches left at 0.4 power)
-            drive.strafeToPosition(-18,0.4);
         }
         //Clears the screen of all telemetry updates
         telemetry.clear();
@@ -163,4 +126,55 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
         telemetry.addData("Main", "Program Complete");
         telemetry.update();
     }
+
+//    public void gyroTurn(double speed, double angle) {
+//        while (opModeIsActive() && !onHeading(speed, angle, Kp)) {
+//            telemetry.update();
+//        }
+//    }
+//
+//    boolean onHeading(double speed, double angle, double Kp) {
+//        double error;
+//        double steer;
+//        boolean onTarget = false;
+//
+//        double power;
+//
+//        error = getError(angle);
+//
+//        if (Math.abs(error) <= HEADING_THRESHOLD) {
+//            steer = 0;
+//            power = 0;
+//            onTarget = true;
+//        }
+//        else {
+//            steer = getSteer(error, angle);
+//            power = steer;
+//
+//        }
+//
+//        telemetry.addData("Power: ", power);
+//        telemetry.update();
+//
+//        drive.turn(power);
+//        sleep(10);
+//        return onTarget;
+//
+//    }
+//
+//    public double getError(double targetAngle) {
+//        double robotError;
+//
+//        robotError = targetAngle - gyro.getHeading();
+//
+//        while (robotError > 180) robotError -= 360;
+//        while (robotError <= -180) robotError += 360;
+//        return robotError;
+//    }
+//
+//    public double getSteer(double error, double angle) {
+//        pidController.setError(error);
+//        return pidController.getSetValue();
+//    }
 }
+

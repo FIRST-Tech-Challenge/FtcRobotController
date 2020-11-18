@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot.Utility;
 
+
 public class PID {
 
     private double Kp, Kd, Ki;
@@ -8,7 +9,7 @@ public class PID {
     private double prev_error;
     private double loop_time;
 
-    public PID(double proportional, double integral, double derivative) {
+    public PID(double proportional, double derivative, double integral) {
         Kp = proportional;
         Kd = derivative;
         Ki = integral;
@@ -36,6 +37,9 @@ public class PID {
     }
 
     public double getSetValue() {
+        proportionalError();
+        derivativeError();
+        integralError();
         return (p_error*Kp) + (d_error*Kd) + (i_error*Ki);
     }
 }

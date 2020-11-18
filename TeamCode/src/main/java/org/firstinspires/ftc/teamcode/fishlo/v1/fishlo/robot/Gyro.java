@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -87,4 +88,10 @@ public class Gyro extends SubSystem {
         }
         return degrees;
     }
+
+    public boolean gyroCalibrated() {
+        return imu.isGyroCalibrated();
+    }
+
 }
+ 
