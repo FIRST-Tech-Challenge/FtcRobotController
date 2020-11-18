@@ -47,7 +47,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public ElapsedTime runtime = new ElapsedTime();
     public ElapsedTime runtimeAuto = new ElapsedTime();
     public double rotateRatio = 0.7; // slow down ratio for rotation
-    public CameraStackDetector cameraStackDetector;
+    public CameraDetector cameraDetector;
     public CameraSystem cameraSystem;
     public File simEventFile;
     public BottomWobbleGoalGrabber bottomWobbleGoalGrabber;
@@ -98,13 +98,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void configureVisualTool(Configuration configuration) {
         if (!useTfod && !useVuforia) return;
         if (!simulation_mode) {
-            if (useTfod) {
-                cameraStackDetector = new CameraStackDetector();
-                cameraStackDetector.configure(configuration);
-            } else if (useVuforia) {
-                cameraSystem = new CameraSystem();
-                cameraSystem.init(configuration.getHardwareMap());
-            }
+            cameraDetector = new CameraDetector();
+            cameraDetector.configure(configuration,useTfod);
         }
     }
 
@@ -212,8 +207,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (cameraSystem!=null) {
             cameraSystem.end();
         }
-        if (cameraStackDetector!=null) {
-            cameraStackDetector.end();
+        if (cameraDetector !=null) {
+            cameraDetector.end();
         }
     }
 
@@ -236,8 +231,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             bottomWobbleGoalGrabber.setupTelemetry(telemetry);
         if (topWobbleGoalGrabber!=null)
             topWobbleGoalGrabber.setupTelemetry(telemetry);
-        if (cameraStackDetector!=null)
-            cameraStackDetector.setupTelemetry(telemetry);
+        if (cameraDetector !=null)
+            cameraDetector.setupTelemetry(telemetry);
         em.onStick(new Events.Listener() { // Left-Joystick
             @Override
             public void stickMoved(EventManager source, Events.Side side, float currentX, float changeX, float currentY, float changeY) throws InterruptedException {
@@ -394,8 +389,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 //                    chassis.crab(0.45, 30, 3);
 //                }
                 if (source.getTrigger(Events.Side.LEFT) > 0.3) {
-                    if (cameraStackDetector!=null)
-                        cameraStackDetector.dec_cam_pos();
+                    if (cameraDetector !=null)
+                        cameraDetector.dec_cam_pos();
                 }
             }
         }, new Button[]{Button.DPAD_RIGHT});
@@ -406,8 +401,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 //                    chassis.crab(0.45, -30, 3);
 //                }
                 if (source.getTrigger(Events.Side.LEFT) > 0.3) {
-                    if (cameraStackDetector!=null)
-                        cameraStackDetector.inc_cam_pos();
+                    if (cameraDetector !=null)
+                        cameraDetector.inc_cam_pos();
                 }
             }
         }, new Button[]{Button.DPAD_LEFT});
@@ -562,9 +557,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             else
                 mode="Red-Out";
         }
-        if (cameraStackDetector!=null) {
+        if (cameraDetector !=null) {
             sleep(2000);
-            tZone = cameraStackDetector.getTargetZone();
+            tZone = cameraDetector.getTargetZone();
         }
         telemetry.addData("Config._1", "%s | Simu.=%s | Chassis=%s",
                 mode, (simulation_mode?"Yes":"No"),(useChassis?"Yes":"No"));
@@ -939,8 +934,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     @MenuEntry(label = "Tensorflow Test", group = "Test Chassis")
     public void testSkystoneDetection()//loc = 1 left, 2 center, 3 right
     {
-        if (cameraStackDetector !=null) {
-            ToboSigma.SkystoneLocation location = cameraStackDetector.getSkystonePositionTF(true);
+        if (cameraDetector !=null) {
+            ToboSigma.SkystoneLocation location = cameraDetector.getSkystonePositionTF(true);
         }
     }
 
@@ -975,8 +970,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             case TELE_OP:
                 useVuforia = true;
                 useTfod = false;
-                if (cameraStackDetector!=null)
-                    cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_TELE_OP);
+                if (cameraDetector !=null)
+                    cameraDetector.set_cam_pos(cameraDetector.CAM_TELE_OP);
                 if (chassis.orientationSensor==null) {
                     // chassis.enableImuTelemetry(configuration);
                     chassis.configure_IMUs(configuration, isTeleOpAfterAuto);
@@ -993,16 +988,16 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     useVuforia = false;
                     useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
-                    if (cameraStackDetector!=null)
-                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_RED_OUT);
+                    if (cameraDetector !=null)
+                        cameraDetector.set_cam_pos(cameraDetector.CAM_RED_OUT);
                 } else { // in position
                     if (chassis!=null)
                         chassis.set_init_pos(side(240), 23, 0);
                     useVuforia = false;
                     useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
-                    if (cameraStackDetector!=null)
-                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_RED_IN);
+                    if (cameraDetector !=null)
+                        cameraDetector.set_cam_pos(cameraDetector.CAM_RED_IN);
                 }
                 break;
             case AUTO_BLUE:
@@ -1012,16 +1007,16 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     useVuforia = false;
                     useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
-                    if (cameraStackDetector!=null)
-                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_BLUE_OUT);
+                    if (cameraDetector !=null)
+                        cameraDetector.set_cam_pos(cameraDetector.CAM_BLUE_OUT);
                 } else { // in position
                     if (chassis!=null)
                         chassis.set_init_pos(side(120), 23, 0);
                     useVuforia = false;
                     useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
-                    if (cameraStackDetector!=null)
-                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_BLUE_IN);
+                    if (cameraDetector !=null)
+                        cameraDetector.set_cam_pos(cameraDetector.CAM_BLUE_IN);
                 }
                 break;
             case DIAGNOSIS:
@@ -1036,25 +1031,25 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //setup WebCam servo position for autonomous during initialization
         switch (type) {
             case TELE_OP:
-                if (cameraStackDetector!=null)
-                    cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_TELE_OP);
+                if (cameraDetector !=null)
+                    cameraDetector.set_cam_pos(cameraDetector.CAM_TELE_OP);
                 break;
             case AUTO_RED:
                 if (startP == StartPosition.OUT) {
-                    if (cameraStackDetector!=null)
-                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_RED_OUT);
+                    if (cameraDetector !=null)
+                        cameraDetector.set_cam_pos(cameraDetector.CAM_RED_OUT);
                 } else { // in position
-                    if (cameraStackDetector!=null)
-                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_RED_IN);
+                    if (cameraDetector !=null)
+                        cameraDetector.set_cam_pos(cameraDetector.CAM_RED_IN);
                 }
                 break;
             case AUTO_BLUE:
                 if (startP == StartPosition.OUT) {
-                    if (cameraStackDetector!=null)
-                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_BLUE_OUT);
+                    if (cameraDetector !=null)
+                        cameraDetector.set_cam_pos(cameraDetector.CAM_BLUE_OUT);
                 } else { // in position
-                    if (cameraStackDetector!=null)
-                        cameraStackDetector.set_cam_pos(cameraStackDetector.CAM_BLUE_IN);
+                    if (cameraDetector !=null)
+                        cameraDetector.set_cam_pos(cameraDetector.CAM_BLUE_IN);
                 }
                 break;
             case DIAGNOSIS:
@@ -1073,12 +1068,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // use camera (Tensorflow) to detect position
 //        tZone = TargetZone.ZONE_B;
 //        return;
-        if (cameraStackDetector==null) {
+        if (cameraDetector ==null) {
             tZone = TargetZone.ZONE_B; // assuming zone_A for simulation purpose
             return;
         }
         // tZone = TargetZone.ZONE_A;
-        tZone = cameraStackDetector.getTargetZone();
+        tZone = cameraDetector.getTargetZone();
     }
     public void deliverFirstWobbleGoal () throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
