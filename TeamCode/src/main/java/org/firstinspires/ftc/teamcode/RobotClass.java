@@ -272,7 +272,9 @@ public class RobotClass {
         backLeft.setPower(speed);
         backRight.setPower(-speed);
 
-        while (getAngleFromGyro() < angle) {
+        double targetAngle = getAngleFromGyro() + angle;
+
+        while (getAngleFromGyro() < targetAngle) {
             wait(5);
         }
 
