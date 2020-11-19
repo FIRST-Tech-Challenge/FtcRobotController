@@ -1,21 +1,20 @@
 package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.SubSystem;
 
 public class Claw extends SubSystem {
     private Servo claw;
-    private Servo arm;
+    private DcMotor arm;
 
     public static final double CLAW_HOME = 0;
-    public static final double CLAW_MAX = 0.5;
-    public static final double ARM_HOME = 0.3;
-    public static final double ARM_MAX = 0;
+    public static final double CLAW_MAX = 0.7;
+    public static double claw_speed = 0.5;
 
-    boolean armIsUp;
-    boolean clawIsClosed;
 
     public Claw(Robot robot) {
         super(robot);
@@ -24,25 +23,25 @@ public class Claw extends SubSystem {
     @Override
     public void init() {
         claw = robot.hardwareMap.servo.get("claw");
-        arm = robot.hardwareMap.servo.get("arm");
+        arm = robot.hardwareMap.dcMotor.get("arm");
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armUp();
         open();
     }
 
     @Override
     public void handle() {
-        if (robot.gamepad1.x) {
+        claw_speed = 0.5 + robot.gamepad2.right_trigger/2;
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        arm.setPower(-robot.gamepad2.left_stick_x * claw_speed);
+        if (robot.gamepad2.x) {
             open();
         }
-        else if (robot.gamepad1.b) {
+        else if (robot.gamepad2.b) {
             close();
         }
-        if (robot.gamepad1.a) {
-            armUp();
-        }
-        else if (robot.gamepad1.y) {
-            armDown();
-        }
+
     }
 
     @Override
@@ -58,8 +57,21 @@ public class Claw extends SubSystem {
         claw.setPosition(CLAW_HOME);
     }
 
-    public void armDown() {arm.setPosition(ARM_MAX);}
+    ElapsedTime armTimer = new ElapsedTime();
+    public void armDown() {
+        armTimer.reset();
+        while (armTimer.milliseconds() <= 500) {
+            arm.setPower(.5);
+        }
+        arm.setPower(0);
+    }
 
-    public void armUp() {arm.setPosition(ARM_HOME);}
+    public void armUp() {
+        armTimer.reset();
+        while (armTimer.milliseconds() <= 500) {
+            arm.setPower(-.5);
+        }
+        arm.setPower(0);
+    }
 
 }

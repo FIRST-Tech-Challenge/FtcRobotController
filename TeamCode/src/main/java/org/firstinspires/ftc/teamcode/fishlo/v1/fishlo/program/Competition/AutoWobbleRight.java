@@ -33,20 +33,13 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
     public void preMain() {
         //Initialize the imu
         gyro.initGyro();
-        pidController.setLoopTime(10);
-        //Waits until gyro is fully initialized and calibrated before continuing
-        while (!isStopRequested() && !gyro.gyroCalibrated()) {
-            sleep(50);
-            idle();
-        }
+
         //Reset claw and arm to starting position
         claw.open();
         claw.armUp();
         claw.close();
         //Timer for vision
-        ElapsedTime timer = new ElapsedTime();
-        //Reset the timer
-        timer.reset();
+
         //Make sure that the telemetry clears when printing on the screen
         telemetry.setAutoClear(true);
         //Find the targetZone based on the starter stack
