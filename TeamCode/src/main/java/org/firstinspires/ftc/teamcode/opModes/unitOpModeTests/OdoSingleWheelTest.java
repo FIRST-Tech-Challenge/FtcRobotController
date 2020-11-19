@@ -18,13 +18,18 @@ public class OdoSingleWheelTest extends OpMode
     DcMotor wheel;
     FreeSpinOdoWheel odowheel;
 
+    DcMotor wheel2;
+    FreeSpinOdoWheel odowheel2;
+
     int cyclesSinceLastUpdate = 0;
     ArrayList<Integer> recordCyclesToUpdate = new ArrayList();
 
     @Override
     public void init() {
         wheel = hardwareMap.get(DcMotor.class, "horizontal");
+        wheel2 = hardwareMap.get(DcMotor.class, "vertical");
         odowheel = new FreeSpinOdoWheel(new pose(0,0,0), wheel);
+        odowheel2 = new FreeSpinOdoWheel(new pose(0,0,0), wheel2);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -54,11 +59,16 @@ public class OdoSingleWheelTest extends OpMode
 
         odowheel.updateDelta();
         odowheel.getDeltaPosition();
+        odowheel2.updateDelta();
+        odowheel2.getDeltaPosition();
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Motor type", type);
-        telemetry.addData("Status", "Wheel Position: " + String.format("%d", wheel.getCurrentPosition()));
-        telemetry.addData("Status", "Wheel Distance: " + String.format("%.1f", odowheel.totalDistTravelled));
+        telemetry.addData("Status", "WheelHoriz Position: " + String.format("%d", wheel.getCurrentPosition()));
+        telemetry.addData("Status", "WheelHoriz Distance: " + String.format("%.1f", odowheel.totalDistTravelled));
+
+        telemetry.addData("Status", "WheelVert Position: " + String.format("%d", wheel2.getCurrentPosition()));
+        telemetry.addData("Status", "WheelVert Distance: " + String.format("%.1f", odowheel2.totalDistTravelled));
 
         /*//did it update?
         if(wheel.getCurrentPosition() == prevDist){//no

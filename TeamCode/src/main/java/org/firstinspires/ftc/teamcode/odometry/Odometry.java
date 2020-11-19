@@ -35,7 +35,9 @@ public class Odometry implements GivesPosition {
 
     public pose getPosition(){ return position;}
 
-    public void resetPosition(){ position = new pose(0,0,0);}
+    public void overridePosition(pose aNewPosition){
+        position = aNewPosition;
+    }
 
     private final Thread loop = new Thread(() -> {
         while(running){

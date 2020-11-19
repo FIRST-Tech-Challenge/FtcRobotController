@@ -8,10 +8,17 @@ public class ImportPath {
         Path ret = new Path();
 
         PathPoint point = new PathPoint(0,-30);
+
         point.speed = 0.3;
         point.dir = 0;//Math.PI/2;
 
+        PathPoint point2 = new PathPoint(0,-21);
+        point2.speed = 0.3;
+        point2.dir = Math.PI;
+
         ret.add(point);
+        ret.add(point2);
+
         return ret;
 
         /*

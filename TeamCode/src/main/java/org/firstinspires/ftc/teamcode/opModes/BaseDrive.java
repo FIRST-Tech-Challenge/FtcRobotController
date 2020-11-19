@@ -102,15 +102,26 @@ public class BaseDrive extends OpMode
         double y = gamepad1.right_stick_y;
         double x = -gamepad1.right_stick_x;
         double turn = gamepad1.left_stick_x;
-        double intakeSpeed = gamepad1.right_trigger;
+        double intakeOut = gamepad1.right_trigger;
+        double intakeIn = -gamepad1.left_trigger;
+
+        // make the intake do the correct trigger, + is outward, - is inward
+        intake.setPower(intakeIn + intakeOut);
+//        if (intakeIn != 0){
+//            intake.setPower(intakeIn);
+//        } else if(intakeOut != 0){
+//            intake.setPower(intakeOut);
+//        }
 
         MecanumDrive.drive(x,y,turn);
-        intake.setPower(intakeSpeed);
+
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "X: " + x);
         telemetry.addData("Status", "Y: " + y);
         telemetry.addData("Status", "Turn: " + turn);
+        telemetry.addData("Trigger Left: ", intakeOut);
+        telemetry.addData("Trigger Right: ", intakeIn);
         telemetry.addData("Status", "Run Time: " + runtime.toString());
     }
 
