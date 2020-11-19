@@ -297,44 +297,47 @@ public class RobotClass {
         telemetry.addData("Gyro Angle", getAngleFromGyro());
         telemetry.update();
         }
-//
-//    public void pivotLeft (double speed, double angle) throws InterruptedException {
-//        telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
-//
-//        frontLeft.setPower(-speed);
-//        frontRight.setPower(speed);
-//        backLeft.setPower(-speed);
-//        backRight.setPower(speed);
-//
-//        while (getAngleFromGyro() < angle) {
-//            wait(5);
-//        }
-//
-//        frontLeft.setPower(0);
-//        frontRight.setPower(0);
-//        backLeft.setPower(0);
-//        frontLeft.setPower(0);
-//
-//        telemetry.addData("Middle Gyro Angle: ", getAngleFromGyro());
-//        telemetry.update();
-//
-//        frontLeft.setPower(-speed*.5);
-//        frontRight.setPower(speed*.5);
-//        backLeft.setPower(-speed*.5);
-//        backRight.setPower(speed*.5);
-//        while (getAngleFromGyro() < angle) {
-//            wait(5);
-//            telemetry.addData("Correcting Gyro Angle: ", getAngleFromGyro());
-//            telemetry.update();
-//        }
-//
-//        frontLeft.setPower(0);
-//        frontRight.setPower(0);
-//        backLeft.setPower(0);
-//        frontLeft.setPower(0);
-//        telemetry.addData("Completed Gyro Angle: ", getAngleFromGyro());
-//        telemetry.update();
-//    }
+
+    public void pivotLeft (double speed, double angle) throws InterruptedException {
+        telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
+        telemetry.update();
+
+        frontLeft.setPower(-speed);
+        frontRight.setPower(speed);
+        backLeft.setPower(-speed);
+        backRight.setPower(speed);
+
+        while (getAngleFromGyro() < angle) {
+            telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
+            telemetry.update();
+            wait(5);
+        }
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        frontLeft.setPower(0);
+
+        telemetry.addData("Middle Gyro Angle: ", getAngleFromGyro());
+        telemetry.update();
+
+        frontLeft.setPower(-speed*.5);
+        frontRight.setPower(speed*.5);
+        backLeft.setPower(-speed*.5);
+        backRight.setPower(speed*.5);
+        while (getAngleFromGyro() < angle) {
+            wait(5);
+            telemetry.addData("Correcting Gyro Angle: ", getAngleFromGyro());
+            telemetry.update();
+        }
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        frontLeft.setPower(0);
+        telemetry.addData("Completed Gyro Angle: ", getAngleFromGyro());
+        telemetry.update();
+    }
     public void forwardToWhite (double speed, double rotations, double speed2) throws InterruptedException {
         forward(speed,rotations);
         frontLeft.setPower(speed2);
