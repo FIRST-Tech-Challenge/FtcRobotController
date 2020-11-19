@@ -1,2 +1,18 @@
 include ':FtcRobotController'
-include ':TeamCode'
+
+// Iterate through all team-provided directories and include them.
+FileCollection teamFiles = files { rootProject.projectDir.listFiles() }
+boolean teamDirectoryFound = false
+teamFiles.each { File teamDirectory ->
+    if (teamDirectory.isDirectory()) {
+        if (file(teamDirectory.name + '/.teamcode').exists()) {
+            include ':' + teamDirectory.name
+            teamDirectoryFound = true
+        }
+    }
+}
+
+// If no team-provided directories were found, include the TeamCode directory.
+if (!teamDirectoryFound) {
+    include ':TeamCode'
+}
