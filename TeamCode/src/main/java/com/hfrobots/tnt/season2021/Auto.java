@@ -20,7 +20,17 @@
 package com.hfrobots.tnt.season2021;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 @Autonomous(name="Auto-UG")
-public class Auto {
+public class Auto extends OpMode {
+    @Override
+    public void init() {
+        
+    }
+
+    @Override
+    public void loop() {
+
+    }
 }

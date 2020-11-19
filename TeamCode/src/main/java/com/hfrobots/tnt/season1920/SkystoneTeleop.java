@@ -55,7 +55,7 @@ public class SkystoneTeleop extends OpMode {
 
     private FoundationGripMechanism foundationGripMechanism;
 
-    private StationKeeping stationKeeping;
+    //private StationKeeping stationKeeping;
 
     protected StatsDMetricSampler metricSampler;
 
@@ -75,7 +75,7 @@ public class SkystoneTeleop extends OpMode {
 
     private CapstoneMechanism capstoneMechanism;
 
-    private ParkingSticks parkingSticks;
+    //private ParkingSticks parkingSticks;
 
     @Override
     public void init() {
@@ -85,19 +85,19 @@ public class SkystoneTeleop extends OpMode {
         driveBase = new RoadRunnerMecanumDriveREV(new SkystoneDriveConstants(), simplerHardwareMap, false);
         kinematics = new OpenLoopMecanumKinematics(driveBase);
 
-        stationKeeping = new StationKeeping(simplerHardwareMap, telemetry);
+        //stationKeeping = new StationKeeping(simplerHardwareMap, telemetry);
 
         foundationGripMechanism = new FoundationGripMechanism(simplerHardwareMap);
 
         driversGamepad = new NinjaGamePad(gamepad1);
 
-        parkingSticks = new ParkingSticks(simplerHardwareMap);
+        //parkingSticks = new ParkingSticks(simplerHardwareMap);
 
         driverControls = DriverControls.builder().driversGamepad(driversGamepad)
                 .kinematics(kinematics)
                 .foundationGripMechanism(foundationGripMechanism)
-                .stationKeeping(stationKeeping)
-                .parkingSticks(parkingSticks)
+                //.stationKeeping(stationKeeping)
+                //.parkingSticks(parkingSticks)
                 .build();
 
         deliveryMechanism = new DeliveryMechanism(simplerHardwareMap, telemetry, ticker);
