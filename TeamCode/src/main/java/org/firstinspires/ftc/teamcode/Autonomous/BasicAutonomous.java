@@ -558,10 +558,10 @@ public class BasicAutonomous extends LinearOpMode {
         autoShootTimer.reset();
         while (opModeIsActive() && autoShootTimer.time()  <= autoShootTimeAllowed)  {
             if (mShooterState == ShooterState.STATE_SHOOTER_ACTIVE) {
-                shooter.shootoneRingHigh();
-                sleep(750);
+                shooter.shootOneRingHigh(); // this is only used in auto due to different stacker position
+                sleep(700);
                 shooter.flipperForward();
-                sleep(750);
+                sleep(700);
                 shooter.flipperBackward();
 
             }
@@ -569,7 +569,7 @@ public class BasicAutonomous extends LinearOpMode {
                 shooter.shooterOff();
             }
         }
-        mShooterState = ShooterState.STATE_SHOOTER_OFF;
+        //mShooterState = ShooterState.STATE_SHOOTER_OFF;
         shooter.shooterReload();
     }
 
