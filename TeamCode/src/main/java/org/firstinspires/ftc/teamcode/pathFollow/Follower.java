@@ -50,7 +50,7 @@ public class Follower {
         this.pathFile = pathFile;
 
 //        loop = new Thread(() -> {
-//            while (running){}
+
             Path path = ImportPath.getPath(pathFile);
 
 
