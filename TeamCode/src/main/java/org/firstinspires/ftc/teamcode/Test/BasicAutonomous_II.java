@@ -556,7 +556,7 @@ public class BasicAutonomous_II extends LinearOpMode {
             telemetry.addData("Shoot timer is at",autoShootTimer);
             telemetry.addData("shooter state is" , mShooterState);
             telemetry.update();
-            shooter.shootoneRingHigh();
+            shooter.shootOneRingHigh();
             sleep(750);
             shooter.flipperForward();
             sleep(750);
