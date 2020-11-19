@@ -51,6 +51,7 @@ public class UltimateMode extends LinearOpMode {
     boolean buttonpressable = true;
     double delaytime = 300;
     double startdelay = 0;
+    double grabdelay = 0;
 
     @Override
     public void runOpMode() {
@@ -113,13 +114,15 @@ public class UltimateMode extends LinearOpMode {
                 } else if (gamepad1.dpad_down) {
                     robot.backWobbleSwing();
                 } else if (gamepad1.dpad_left) {
-                    robot.liftAndHoldWobbleSwing();
+                    robot.liftWobbleWall();
                 } else if (gamepad1.x) {
                     robot.closeWobbleClaw();
+                    sleep(300);
                     robot.liftWobbleWall();
                     changedclaw = !changedclaw;
                 } else if (gamepad1.y){
                     robot.closeWobbleClaw();
+                    sleep(300);
                     robot.liftAndHoldWobbleSwing();
                     changedclaw = !changedclaw;
                 }

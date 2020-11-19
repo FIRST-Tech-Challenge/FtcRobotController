@@ -27,9 +27,10 @@ public class UltimateBot extends YellowBot {
 //    private DcMotor intakeblack = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
-    private static int SWING_GROUND_POS = 140;
-    private static int SWING_LIFT_UP_POS = 100;
-    private static int SWING_LIFT_WALL = -70;
+    private static int SWING_GROUND_POS = 240;
+    private static int SWING_LIFT_UP_POS = 160;
+    private static int SWING_LIFT_WALL = 60;
+    private static int STRAIGHT_UP = 70;
     private static double SHOOT_SERVO = 0.4;
 
     private static double CAMERA_RIGHT_LINE = 0.35;
@@ -169,11 +170,18 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+    @BotAction(displayName = "Move Shooter", defaultReturn = "")
+    public void shooterpeg() {
+        if (shooter != null) {
+            shooter.setPower(0.8);
+        }
+    }
+
     @BotAction(displayName = "Shoot", defaultReturn = "")
     public void shootServo() {
         ElapsedTime runtime = new ElapsedTime();
         if (shooterServo != null) {
-            shooterServo.setPosition(0.7);
+            shooterServo.setPosition(0.8);
             runtime.reset();
             while (runtime.milliseconds() <= 200) {
 
