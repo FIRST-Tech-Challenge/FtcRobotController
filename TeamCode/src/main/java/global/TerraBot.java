@@ -57,10 +57,10 @@ public class TerraBot {
     public double grabStart = 0.7;
     public double liftStart = 0.0;
     public double liftSecond = 0.45;
-    public double shootStartR = 0.06;
-    public double shootStartL = 0.05;
+    public double shootStartR = 0.08;
+    public double shootStartL = 0.06;
     public double intakeSpeed = 1;
-    public double outtakeSpeed = 0.37;
+    public double outtakeSpeed = 0.34; //0.37
     public double powerShotSpeed = 0.3;
     public double maxArmPos = 215;
     public double heading = 0;
@@ -79,8 +79,8 @@ public class TerraBot {
 
     public Cycle grabControl = new Cycle(grabStart, 0.45);
     public Cycle liftControl = new Cycle(liftStart, liftSecond);
-    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.22, 0.25);
-    public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.13, 0.26);
+    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.2, 0.22);//0.22, 0.25
+    public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.1, 0.26); //0.13, 0.26
 
     public ServoController turnControl = new ServoController(turnStart, 0.0, 0.7);
 
@@ -93,8 +93,8 @@ public class TerraBot {
     public Limits limits = new Limits();
 
     //d = 0.00024
-    public SpeedController outrController = new SpeedController(0.2, 0.0, 0.0, outtakeSpeed);
-    public SpeedController outlController = new SpeedController(0.2, 0.0, 0.0, outtakeSpeed);
+    public SpeedController outrController = new SpeedController(0.5, 0.0, 0.0, outtakeSpeed);
+    public SpeedController outlController = new SpeedController(0.5, 0.0, 0.0, outtakeSpeed);
 
     public Odometry odometry = new Odometry();
 
@@ -311,12 +311,12 @@ public class TerraBot {
     }
 
     public void definePowerShot(){
-//        powerShot.addCustomOnce(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                startOdoThreadTele();
-//            }
-//        });
+        powerShot.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                startOdoThreadTele();
+            }
+        });
         powerShot.addStage(in, 1.0, 0.01);
         powerShot.addCustom(new CodeSeg() {
             @Override
@@ -357,12 +357,12 @@ public class TerraBot {
                 fastmode = true;
             }
         }, 0.01);
-//        powerShot.addCustomOnce(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                stopOdoThreadTele();
-//            }
-//        });
+        powerShot.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                stopOdoThreadTele();
+            }
+        });
         powerShot.addDelay(1);
     }
     public void defineWobbleGoal(){

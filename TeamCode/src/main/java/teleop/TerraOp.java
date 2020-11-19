@@ -38,7 +38,7 @@ public class TerraOp extends OpMode {
         bot.turnWobbleArm(0.1);
         bot.turnControl.cur = 0.1;
         bot.gameTime.reset();
-        bot.startOdoThreadTele();
+        //bot.startOdoThreadTele();
     }
 
     @Override
@@ -173,6 +173,6 @@ public class TerraOp extends OpMode {
 
     @Override
     public void stop() {
-        bot.stopOdoThreadTele();
+        //bot.stopOdoThreadTele();
     }
 }

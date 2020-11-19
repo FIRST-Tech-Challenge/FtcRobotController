@@ -164,15 +164,15 @@ public class Path {
         }
     }
 
-    public void scaleKs(double scale){
-        xControl.setCoeffecients(ks[0]*scale, ds[0], is[0]);
-        yControl.setCoeffecients(ks[1]*scale, ds[1], is[1]);
-        hControl.setCoeffecients(ks[2]*scale, ds[2], is[2]);
+    public void scaleKs(double sx, double sy, double sh){
+        xControl.setCoeffecients(ks[0]*sx, xControl.Kd, xControl.Ki);
+        yControl.setCoeffecients(ks[1]*sy, yControl.Kd, yControl.Ki);
+        hControl.setCoeffecients(ks[2]*sh, hControl.Kd, hControl.Ki);
     }
-    public void scaleDs(double scale){
-        xControl.setCoeffecients(ks[0], ds[0]*scale, is[0]);
-        yControl.setCoeffecients(ks[1], ds[1]*scale, is[1]);
-        hControl.setCoeffecients(ks[2], ds[2]*scale, is[2]);
+    public void scaleDs(double sx, double sy, double sh){
+        xControl.setCoeffecients(xControl.Kp, ds[0]*sx, xControl.Ki);
+        yControl.setCoeffecients(yControl.Kp, ds[1]*sy, yControl.Ki);
+        hControl.setCoeffecients(hControl.Kp, ds[2]*sh, hControl.Ki);
     }
 
     public void resetIs(){
@@ -366,9 +366,9 @@ public class Path {
             hint = 0;
             xint = 0;
             yint = 0;
-            scaleDs(1);
+            scaleDs(1, 1, 1);
         }else{
-            scaleDs(0.1);
+            scaleDs(0.1, 0.1, 0.5);
             hint = 0;
             xint = 0;
             yint = 0;
