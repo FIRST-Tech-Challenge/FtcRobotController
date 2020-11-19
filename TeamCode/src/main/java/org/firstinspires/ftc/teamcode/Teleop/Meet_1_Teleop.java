@@ -150,7 +150,7 @@ public class Meet_1_Teleop extends OpMode {
 
         }
         if (gamepad1.y) {
-            shooter.shootoneRingHigh();
+            shooter.shootOneRingHigh();
             //shooter.shootMiddleGoal();
             ringCollectorState = RingCollectionState.OFF;
 
