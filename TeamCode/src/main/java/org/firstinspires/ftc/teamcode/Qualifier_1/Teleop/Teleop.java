@@ -48,6 +48,8 @@ public class Teleop extends LinearOpMode {
         boolean slowMode = false;
         boolean moveServo = true;
         boolean servoIsMoved = true;
+        boolean ring_clamp_is_up = true;
+        boolean move_ring_clamp = true;
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
         RingDepositor.Position currentRingDepositorPosition = RingDepositor.Position.REST;
 
@@ -72,10 +74,11 @@ public class Teleop extends LinearOpMode {
             boolean move_ring_depositor = gamepad1.left_bumper;
 //            float start_intake = gamepad1.right_trigger;
 //            float stop_intake = gamepad1.left_trigger;
+            boolean ring_clamp = gamepad1.y;
             boolean x_button = gamepad1.x;
             boolean a_button = gamepad1.a;
-            boolean ring_clamp_true = gamepad1.b;
-            boolean ring_clamp_false = gamepad1.y;
+//            boolean ring_clamp_true = gamepad1.b;
+//            boolean ring_clamp_false = gamepad1.y;
             boolean startingPosition = gamepad2.dpad_up;
             boolean grabbingPosition = gamepad2.dpad_right;
             boolean liftingPosition = gamepad2.dpad_down;
@@ -181,9 +184,9 @@ public class Teleop extends LinearOpMode {
             // ring depositor
             if (move_ring_depositor){
                 if (currentRingDepositorPosition == RingDepositor.Position.REST){
-                    robot.ringDepositorGoToPosition(RingDepositor.Position.LOWGOAL);
-                    currentRingDepositorPosition = RingDepositor.Position.LOWGOAL;
-                } else if (currentRingDepositorPosition == RingDepositor.Position.LOWGOAL) {
+                    robot.ringDepositorGoToPosition(RingDepositor.Position.FLOOR);
+                    currentRingDepositorPosition = RingDepositor.Position.FLOOR;
+                } else if (currentRingDepositorPosition == RingDepositor.Position.FLOOR) {
                     robot.ringDepositorGoToPosition(RingDepositor.Position.REST);
                     currentRingDepositorPosition = RingDepositor.Position.REST;
                 } else {
@@ -192,21 +195,31 @@ public class Teleop extends LinearOpMode {
                     sleep(2000);
                 }
             }
-//            if (move_ring_depositor_frwd == 1.00){
-//                robot.ringDepositorClockwise();
-//            } else if (move_ring_depositor_bckwrd == 1.00){
-//                robot.ringDepositorCounterClockwise();
-//            } else {
-//                robot.stopRingDepositor();
-//            }
 
-            if (ring_clamp_true){
-                robot.moveRingClamp(true);
-            }
-            if (ring_clamp_false){
-                robot.moveRingClamp(false);
+            // ring clamp
+            if (ring_clamp) {
+                move_ring_clamp = true;
+
+                if (ring_clamp_is_up) {
+                    ring_clamp_is_up = false;
+                } else if (!ring_clamp_is_up) {
+                    ring_clamp_is_up = true;
+                }
+            } else {
+                move_ring_clamp = false;
             }
 
+            if (move_ring_clamp) {
+                if (ring_clamp_is_up) {
+                    telemetry.addData("Ring Clamp", " RING CLAMP UP y_button");
+                    telemetry.update();
+                    robot.moveRingClamp(true);
+                } else if (!ring_clamp_is_up) {
+                    telemetry.addData("Ring Clamp", " RING CLAMP DOWN y_button");
+                    telemetry.update();
+                    robot.moveRingClamp(false);
+                }
+            }
 
             //intake
 //            if(start_intake == 1.00){
