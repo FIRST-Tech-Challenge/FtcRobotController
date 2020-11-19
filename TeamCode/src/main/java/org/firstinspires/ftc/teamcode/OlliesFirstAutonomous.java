@@ -16,8 +16,17 @@ public class OlliesFirstAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        robot.turnLeft(.5,90);
-        robot.turnRight(.5,90);
+        try {
+            robot.pivotLeft(.5, 90);
+          //  robot.turnRight(.5, 90);
+        }catch (Exception e){
+
+        }
+        try {
+            wait(30_000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 }
