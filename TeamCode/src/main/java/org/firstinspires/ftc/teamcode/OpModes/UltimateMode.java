@@ -109,11 +109,19 @@ public class UltimateMode extends LinearOpMode {
                 // move swing
 
                 if (gamepad1.dpad_up) {
-                        robot.forwardWobbleSwing();
+                    robot.forwardWobbleSwing();
                 } else if (gamepad1.dpad_down) {
                     robot.backWobbleSwing();
                 } else if (gamepad1.dpad_left) {
+                    robot.liftAndHoldWobbleSwing();
+                } else if (gamepad1.x) {
+                    robot.closeWobbleClaw();
                     robot.liftWobbleWall();
+                    changedclaw = !changedclaw;
+                } else if (gamepad1.y){
+                    robot.closeWobbleClaw();
+                    robot.liftAndHoldWobbleSwing();
+                    changedclaw = !changedclaw;
                 }
 
                 // move intake

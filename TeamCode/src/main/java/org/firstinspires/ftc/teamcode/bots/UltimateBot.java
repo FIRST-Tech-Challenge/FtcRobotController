@@ -26,9 +26,9 @@ public class UltimateBot extends YellowBot {
     private DcMotor shooter = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
-    private static int SWING_GROUND_POS = 170;
-    private static int SWING_LIFT_UP_POS = 115;
-    private static int SWING_LIFT_WALL = -45;
+    private static int SWING_GROUND_POS = 140;
+    private static int SWING_LIFT_UP_POS = 100;
+    private static int SWING_LIFT_WALL = -70;
     private static double SHOOT_SERVO = 0.4;
 
     private static double CAMERA_RIGHT_LINE = 0.35;
