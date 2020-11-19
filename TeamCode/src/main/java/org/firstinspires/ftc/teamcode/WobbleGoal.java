@@ -3,17 +3,25 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class WobbleGoal {
-    private Servo servo;
-    public WobbleGoal(Servo servo) {
-        this.servo = servo;
+    private Servo armServo;
+    private Servo handServo;
+    public WobbleGoal(Servo armServo, Servo handServo) {
+        this.armServo = armServo;
+        this.handServo = handServo;
     }
     public void raise() {
-        servo.setPosition(0);
+        armServo.setPosition(0);
 
     }
 
     public void lower() {
-        servo.setPosition(1);
+        armServo.setPosition(1);
 
+    }
+    public void open() {
+        handServo.setPosition(0);
+    }
+    public void close() {
+        handServo.setPosition(1);
     }
 }
