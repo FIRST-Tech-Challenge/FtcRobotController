@@ -26,7 +26,7 @@ public class WobbleGoal {
     private LinearOpMode op;
     private final int ticksForREST = 0;
     private final int ticksForGRAB = -940;
-    private final int ticksForRAISE = -630;
+    private final int ticksForRAISE = -610;
     private final int ticksForRELEASE = -835;
     private final double wobbleGoalSpeed = 0.25;
 
