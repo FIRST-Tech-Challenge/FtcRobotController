@@ -24,7 +24,7 @@ public class UltimateBot extends YellowBot {
     private Servo shooterServo = null;
     private DcMotor intake = null;
     private DcMotor shooter = null;
-    private DcMotor intakeblack = null;
+//    private DcMotor intakeblack = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
     private static int SWING_GROUND_POS = 140;
@@ -66,14 +66,14 @@ public class UltimateBot extends YellowBot {
             throw new Exception("Issues with intake. Check the controller config", ex);
         }
 
-        try {
-            intake = hwMap.get(DcMotor.class, "blackintake");
-            intake.setDirection(DcMotor.Direction.FORWARD);
-            intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            intake.setPower(0);
-        } catch (Exception ex) {
-            throw new Exception("Issues with intake. Check the controller config", ex);
-        }
+//        try {
+//            intake = hwMap.get(DcMotor.class, "blackintake");
+//            intake.setDirection(DcMotor.Direction.FORWARD);
+//            intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            intake.setPower(0);
+//        } catch (Exception ex) {
+//            throw new Exception("Issues with intake. Check the controller config", ex);
+//        }
 
         try {
             shooter = hwMap.get(DcMotor.class, "shooter");
@@ -142,7 +142,7 @@ public class UltimateBot extends YellowBot {
     public void intake() {
         if (intake != null) {
             intake.setPower(0.7);
-            intakeblack.setPower(-0.7);
+//            intakeblack.setPower(-0.7);
         }
     }
 
@@ -150,7 +150,7 @@ public class UltimateBot extends YellowBot {
     public void intakeReverse() {
         if (intake != null) {
             intake.setPower(-0.7);
-            intakeblack.setPower(0.7);
+//            intakeblack.setPower(0.7);
         }
     }
 
@@ -158,7 +158,7 @@ public class UltimateBot extends YellowBot {
     public void stopintake() {
         if (intake != null) {
             intake.setPower(0);
-            intakeblack.setPower(0);
+//            intakeblack.setPower(0);
         }
     }
 
