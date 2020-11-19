@@ -27,13 +27,6 @@ public class Autonomous_Proto extends LinearOpMode {
     private Servo atmt;
     private DcMotor liftL;
     private DcMotor liftR;
-    /*private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
-    private static final String LABEL_FIRST_ELEMENT = "Stone";
-    private static final String LABEL_SECOND_ELEMENT = "Skystone";
-    private static final String VUFORIA_KEY =
-            "ASHE5an/////AAABmZz09E/aWUWnt8ZyGO7Alj0kRvzin8IO8K1Nb0WUinKpgoIKfzmoMrq2D25qvsuUM4hcYLqkUS836SvznXp3BdwnryrcwwJTpbMZhtuZedPV32TudRnSn3xz4bPzQ3ysYefUlV45yy98H4v2XyeE8GHPiAOfbqoRDuYvEMb3stpJhI725n+NwRuE5jG9moTaSA4tuByRAZLSW6oyHwRR4TU5YzZHKQbFnLKR6Y33FnwHbI2aN015Xau10JWO+qXlA0F1qvkKMraQYL3HjmqX6JhSetjKK9iKKnwunuRmeLR4HrQ19xNxIEm+egmvOX9q2aVZpccrfmQzQ34aYh8N/nRNmK7FFevxK8B1nw3T1BVp";
-    private VuforiaLocalizer vuforia;
-    private TFObjectDetector tfod;*/
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Ready to run");
