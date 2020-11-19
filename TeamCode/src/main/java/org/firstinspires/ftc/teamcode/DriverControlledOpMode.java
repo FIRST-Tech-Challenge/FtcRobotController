@@ -53,6 +53,24 @@ package org.firstinspires.ftc.teamcode;
 @Disabled
 public class DriverControlledOpMode extends LinearOpMode {
 
+    private MechanumWheels drive;
+    private WobbleGoal wgoal;
+    private Launcher launcher;
+    private Loader loader;
+
+    private DcMotor leftBackMotor;
+    private DcMotor leftFrontMotor;
+    private DcMotor rightBackMotor;
+    private DcMotor rightFrontMotor;
+
+    private Servo handServo;
+    private Servo armServo;
+
+    private Servo launchServo;
+    private DcMotor launchMotor;
+
+    private DcMotor loaderMotor;
+
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -64,9 +82,25 @@ public class DriverControlledOpMode extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
+        leftBackMotor = hardwareMap.get(DcMotor.class, "leftBackMotor");
+        leftFrontMotor = hardwareMap.get(DcMotor.class, "leftFrontMotor");
+        rightBackMotor = hardwareMap.get(DcMotor.class, "rightBackMotor");
+        rightFrontMotor = hardwareMap.get(DcMotor.class, "rightFrontMotor");
 
-        // Most robots need the motor on one side to be reversed to drive forward
-        // Reverse the motor that runs backwards when connected directly to the battery
+        handServo = hardwareMap.get(Servo.class, "handServo");
+        armServo = hardwareMap.get(Servo.class, "armServo");
+
+        launchServo = hardwareMap.get(Servo.class, "launchServo");
+        launchMotor = hardwareMap.get(DcMotor.class, "launchMotor");
+
+        loaderMotor = hardwareMap.get(DcMotor.class, "loaderMotor");
+
+
+
+        drive = new Drive(leftBackMotor, leftFrontMotor, rightBackMotor, rightFrontMotor);
+        wgoal = new WobbleGoal(armServo, handServo);
+        launcher = new Launcher(launcherServo, launcherMotor);
+        loader = new Loader(loaderMotor);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
