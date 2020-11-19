@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class SampleOpMode extends LinearOpMode {
 
     private DcMotor testMotor;
-    private DcMotor testMotor2;
+//    private DcMotor testMotor2;
 //    private Servo testServo;
 //    private double max = 0.00; // Maximum rotational position
 //    private double min = 1.00; // Minimum rotational position
@@ -25,7 +25,7 @@ public class SampleOpMode extends LinearOpMode {
         //these names all need to match the names in the config
 
         testMotor = hardwareMap.get(DcMotor.class, "testmotor");
-        testMotor2 = hardwareMap.get(DcMotor.class, "testmotor2");
+//        testMotor2 = hardwareMap.get(DcMotor.class, "testmotor2");
 //        testServo = hardwareMap.get(Servo.class, "testservo");
 
 
@@ -39,10 +39,10 @@ public class SampleOpMode extends LinearOpMode {
 //            testMotor.setPower( gamepad1.left_stick_y );
             if(gamepad2.right_bumper) {
                 testMotor.setPower(1);
-                testMotor2.setPower(.35);
+//                testMotor2.setPower(.35);
             } else {
                 testMotor.setPower(0);
-                testMotor2.setPower(0);
+//                testMotor2.setPower(0);
             }
             /*
             when stick is not at zero, it moves the servo. pressing A will set the current pos
