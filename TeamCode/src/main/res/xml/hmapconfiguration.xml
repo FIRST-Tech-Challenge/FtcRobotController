@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <!-- REV -->
+    <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ1NXDE5" parentModuleAddress="1">
+        <LynxModule name="Expansion Hub 1" port="1">
+            <!-- add devices here -->
+            <RevRobotics20HDHexMotor name="motor1" port="1" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
+
+    <!-- I need to commit this change in ftcRobotController -->
