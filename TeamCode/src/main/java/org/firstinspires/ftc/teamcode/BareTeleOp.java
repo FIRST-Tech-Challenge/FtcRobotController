@@ -9,16 +9,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Bare TeleOP")
-public class BareTeleOp extends LinearOpMode{
+public class BareTeleOp extends LinearOpMode {
 
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
-
-    private CRServo leftConveyor, rightConveyor, elevator, intake;
     private DcMotor outtakeRight, outtakeLeft;
     private Servo flipper;
 
-    private CRServo leftIntakeServo, rightIntakeServo;
-    
+
     @Override
     public void runOpMode() throws InterruptedException {
         motorFrontRight = hardwareMap.dcMotor.get("FR");
@@ -26,22 +23,12 @@ public class BareTeleOp extends LinearOpMode{
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
-        //intake and conveyor
-        intake = hardwareMap.crservo.get("intake");
-        leftConveyor = hardwareMap.crservo.get("leftConveyor");
-        rightConveyor = hardwareMap.crservo.get("rightConveyor");
-
-        //elevator and flipper
-        elevator = hardwareMap.crservo.get("elevator");
         flipper = hardwareMap.servo.get("flipper");
 
         //launcher
         outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
         outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
 
-        //lifting and lowering intake
-        leftIntakeServo = hardwareMap.crservo.get("LIrelease");
-        rightIntakeServo = hardwareMap.crservo.get("RIrelease");
 
         //reverse the needed motors
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -55,95 +42,53 @@ public class BareTeleOp extends LinearOpMode{
         //reverse one of the outtakes
         outtakeLeft.setDirection(DcMotor.Direction.REVERSE);
 
-        //reverse one of the conveyors
-        leftIntakeServo.setDirection(DcMotor.Direction.REVERSE);
-
         double powerMod = 1.0;
         double intakeMod = 1.0;
 
         waitForStart();
 
-        while(opModeIsActive()){
+        while (opModeIsActive()) {
             /*
             Checks if right bumper is pressed. If so, power is reduced
              */
-            if(gamepad1.right_bumper){
+            if (gamepad1.right_bumper) {
                 powerMod = 0.5;
-            }else{
+            } else {
                 powerMod = 1.0;
             }
 
             //everything driving
             //Mecanum drive using trig
-            double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI/4);
+            double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI / 4);
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
             double rotation = gamepad1.left_stick_x;
 
-            double powerOne = r*Math.sin(angle);
-            double powerTwo = r*Math.cos(angle);
+            double powerOne = r * Math.sin(angle);
+            double powerTwo = r * Math.cos(angle);
 
             motorFrontLeft.setPower((powerOne - (rotation))*powerMod);
-            motorFrontRight.setPower((powerTwo + (rotation))*powerMod);
+            motorFrontRight.setPower((powerOne + (rotation))*powerMod);
             motorBackLeft.setPower((powerTwo - (rotation))*powerMod);
-            motorBackRight.setPower((powerOne + (rotation))*powerMod);
+            motorBackRight.setPower((powerTwo + (rotation))*powerMod);
 
             //outtake
-            double outtakePower = (gamepad2.right_trigger * -0.5);
+            double outtakePower = (gamepad2.right_trigger * -0.25);
             outtakeLeft.setPower(outtakePower);
             outtakeRight.setPower(outtakePower);
 
             //flipper
-            if(gamepad2.b){
-                if(flipper.getPosition() = 1){
-                    flipper.setPosition(0);
-                }else{
+            if (gamepad2.b) {
+
                     flipper.setPosition(1);
-                }
+
+            }
+
+            if(gamepad2.a){
+                flipper.setPosition(0);
             }
 
 
-            //elevator
-            if(gamepad2.dpad_up){
-                elevator.setPower(-0.1);
-                wait(100);
-                elevator.setPower(0);
-            }
-            if(gamepad2.dpad_down){
-                elevator.setPower(0.1);
-                wait(100);
-                elevator.setPower(0);
-            }
-
-            //intake release
-            if(gamepad1.dpad_up){
-                leftIntakeServo.setPower(0.1);
-                rightIntakeServo.setPower(0.1);
-                wait(100);
-                leftIntakeServo.setPower(0);
-                rightIntakeServo.setPower(0);
-            }
-            if(gamepad1.dpad_down){
-                leftIntakeServo.setPower(-0.1);
-                rightIntakeServo.setPower(-0.1);
-                wait(100);
-                leftIntakeServo.setPower(0);
-                rightIntakeServo.setPower(0);
-            }
-            
-            //Intake
-            /*
-            Change direction of intake
-            */
-            if(gamepad1.a){//press and hold a while running intake
-                intakeMod = -1.0;
-            }else{
-                intakeMod = 1.0;
-            }
-            
-            double intakeSpeed = gamepad1.left_trigger * intakeMod;
-            intake.setPower(intakeSpeed);
-            rightConveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
-            leftConveyor.setPower(intakeSpeed);
 
         }
+    }
 }
