@@ -778,87 +778,52 @@ public class Chassis {
         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double[] currentPosition = odom.track();
-        op.telemetry.update();
-        double[] startPosition = currentPosition;
         double[] target_position = {0, 0,0};
-        int direction = 1;
-        double[] misdirection = {0, 0};
-        double[] gain = {0, 0};
         double anglecorrection;
         target_position[0] = currentPosition[0] + x;
         target_position[1] = currentPosition[1] + y;
         target_position[2] = currentPosition[2];
         double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
-        if (difference < 0) {
-            direction = -1;
-        }
-        op.telemetry.addData("moved6","done");
-        //op.telemetry.update();
-        double angleInRadians = 0;
-        if(x==0){
-             angleInRadians = 0;
-        }
-        else if(y==0){
-            angleInRadians = PI/2;
-        }
-        else {
-             angleInRadians = atan2(y, x) - odom.getAngle() * PI / 180;
-        }
-            double[] anglePower = {sin(angleInRadians +PI/2+ PI / 4), sin(angleInRadians+PI/2 - PI / 4)};
-        //op.telemetry.addData("moved8","done");
-        //op.telemetry.update();
-        while (op.opModeIsActive() && (difference >= 0.75)) {
-
-            op.telemetry.update();
+        double angleInRadians = atan2(y, x) - odom.getAngle() * PI / 180;
+        double[] anglePower = {sin(angleInRadians +PI / 4), sin(angleInRadians - PI / 4)};
+        while (op.opModeIsActive() && (difference >= 1)) {
             currentPosition = odom.track();
-
-            difference = abs(sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1])));
-            op.telemetry.addData("targetx", target_position[0]);
+            /*op.telemetry.addData("targetx", target_position[0]);
             op.telemetry.addData("targety",target_position[1]);
             op.telemetry.addData("angle",angleInRadians);
             op.telemetry.addData("distance",difference);
             op.telemetry.addData("power1",anglePower[0]);
             op.telemetry.addData("power2",anglePower[1]);
             op.telemetry.update();
-            op.telemetry.update();
-            if (difference * direction < 5) {
-                power *= difference / 5;
-                if(abs(power)<0.3){
-                    power=0.3;
+            op.telemetry.update();*/
+            if (difference  < 5) {
+                power *= difference / 10;
+                if(abs(power)<0.2){
+                    power=0.2;
                 }
             }
             x=target_position[0] - currentPosition[0];
             y=target_position[1] - currentPosition[1];
-            angleInRadians = atan2(y,x)-odom.getAngle()*PI/180;
+            angleInRadians = atan2(y,x)-currentPosition[2]*PI/180;
             anglePower[0] =  sin(angleInRadians+PI/4);
             anglePower[1] = sin(angleInRadians-PI/4);
             anglecorrection=(currentPosition[2]-target_position[2])*0.005;
-            if(anglecorrection>power*0.2){
-                anglecorrection=power*0.2;
-            }
-            /*if(abs(power * anglePower[0]+anglecorrection)<0.1 && abs(power *anglePower[1]+anglecorrection)<0.1 && abs(power *  anglePower[1]-anglecorrection)<0.1 && power * anglePower[0]-anglecorrection<0.1){
-                break;
-            }*/
-            if(abs(anglePower[1])>abs(anglePower[0])){
-                anglePower[1]*=abs(1/anglePower[1]);
-                anglePower[0]*=abs(1/anglePower[1]);
-            }
-            else{
-                anglePower[1]*=abs(1/anglePower[0]);
-                anglePower[0]*=abs(1/anglePower[0]);
+            if(difference>10) {
+                if (abs(anglePower[1]) > abs(anglePower[0])) {
+                    anglePower[1] *= abs(1 / anglePower[1]);
+                    anglePower[0] *= abs(1 / anglePower[1]);
+                } else {
+                    anglePower[1] *= abs(1 / anglePower[0]);
+                    anglePower[0] *= abs(1 / anglePower[0]);
 
+                }
             }
-
             motorRightBack.setPower(power *anglePower[1]+anglecorrection);
             motorRightFront.setPower(power *anglePower[0]+anglecorrection);
             motorLeftBack.setPower(power *anglePower[0]-anglecorrection);
             motorLeftFront.setPower(power *anglePower[1]-anglecorrection);
-            //op.telemetry.addData("current xpos", currentPosition[0] + "current ypos"+currentPosition[1]);
-            //op.telemetry.update();
+            difference = abs(sqrt((x) * (x) + (y) * (y)));
         }
-        motorLeftBack.setPower(0);
-        motorRightBack.setPower(0);
-        motorLeftFront.setPower(0);
-        motorRightFront.setPower(0);
+        stopAllMotors();
     }
 }
