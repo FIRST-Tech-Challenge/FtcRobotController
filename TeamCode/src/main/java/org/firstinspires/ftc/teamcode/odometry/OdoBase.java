@@ -142,8 +142,15 @@ public class OdoBase extends LinearOpMode {
             }
             desiredHead = dot.getHeading();
         }
-        BotMoveProfile profile = BotMoveProfile.bestRoute(bot, (int)locator.getXInches(), (int)locator.getYInches(), target,
-                instruction.getRobotDirection(), instruction.getTopSpeed(), strategy, desiredHead, locator);
+        BotMoveProfile profile = null;
+        if (strategy == MoveStrategy.StraightRelative){
+            profile = BotMoveProfile.buildMoveProfile(bot, target.x, instruction.getTopSpeed(), 0, 0, false, instruction.getRobotDirection(), null, desiredHead, desiredHead, locator );
+        }
+        else{
+            profile = BotMoveProfile.bestRoute(bot, (int)locator.getXInches(), (int)locator.getYInches(), target,
+                    instruction.getRobotDirection(), instruction.getTopSpeed(), strategy, desiredHead, locator);
+        }
+
         if (profile == null){
             return;
         }
@@ -166,6 +173,7 @@ public class OdoBase extends LinearOpMode {
                 strafe(profile);
                 break;
             case Straight:
+            case StraightRelative:
                 moveStraight(profile);
                 break;
             case Diag:

@@ -8,6 +8,7 @@ public enum MoveStrategy {
     SpinNStraight,
     Strafe,
     Straight,
+    StraightRelative,
     Auto,
     None
 }
