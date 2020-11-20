@@ -157,7 +157,8 @@ public class TerraOp extends OpMode {
 //        telemetry.update();
 //
 //        telemetry.addData("errR", bot.outrController.getPercentageError());
-       // telemetry.addData("gameTime", bot.gameTime.seconds());
+        telemetry.addData("ce l", bot.outlController.currError);
+        telemetry.addData("ce r", bot.outrController.currError);
         telemetry.addData("powl", bot.outlController.pow);
         telemetry.addData("powr", bot.outrController.pow);
         telemetry.addData("outr", bot.getOutrPos());

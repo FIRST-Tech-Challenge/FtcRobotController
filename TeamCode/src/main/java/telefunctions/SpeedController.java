@@ -30,6 +30,8 @@ public class SpeedController {
     public double d;
     public double i;
 
+    public boolean isReady = false;
+
     public SpeedController(double k, double d, double i, double startPow){
         k *= 0.00001;
         d *= 0.00001;
@@ -82,16 +84,28 @@ public class SpeedController {
 
     }
 
+    public boolean isReady(){
+        return isReady;
+    }
+
     public double getPercentageError(){
         return ((currError/targetSpeed))*100;
     }
 
+
     public double getPow(){
-        if(Math.abs(currError) < 1000){
-            pow += Math.signum(currError) * pid.getPower(currError, currDer, integralOfError);
-            pow = Range.clip(pow, -1, 1);
-            return pow;
+        if(Math.abs(currError) < 2000){
+            if(Math.abs(currError) < 800){
+                isReady = true;
+                return pow;
+            }else {
+                pow += Math.signum(currError) * pid.getPower(currError, currDer, integralOfError);
+                pow = Range.clip(pow, -1, 1);
+                isReady = false;
+                return pow;
+            }
         }else{
+            isReady = false;
             if(currError > 0){
                 return 0.5;
             }else{

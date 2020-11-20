@@ -296,10 +296,11 @@ public class TerraBot {
         }, 0.01);
         shooter.addWaitUntil();
         for(int i = 0; i < 3;i++) {
+            shooter.addSPWait(outlController, outrController);
             shooter.addStage(ssr, shootControlR.getPos(3), 0.01);
-            shooter.addStage(ssl, shootControlL.getPos(3), 0.5);
+            shooter.addStage(ssl, shootControlL.getPos(3), 0.3);
             shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
-            shooter.addStage(ssl, shootControlL.getPos(2), 0.5);
+            shooter.addStage(ssl, shootControlL.getPos(2), 0.3);
         }
         shooter.addCustom(new CodeSeg() {
             @Override

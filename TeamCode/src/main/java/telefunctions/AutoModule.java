@@ -194,6 +194,17 @@ public class AutoModule {
         });
     }
 
+    public void addSPWait(final SpeedController sl, final  SpeedController sr){
+        lastTime = 0;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                timer.reset();
+                return sl.isReady() && sr.isReady();
+            }
+        });
+    }
+
 
 
 
