@@ -1,0 +1,5 @@
+package org.firstinspires.ftc.teamcode.mason_wu;
+
+public class Robot4100Common {
+    public static final String VUFORIA_LICENSE = "AbbXw07/////AAABmb3Btlsgk0kds/dIfBHuXJpPmJG5blwxr150leKi1IwYvrDK9zsrm72lOhm7a6szhUJLWov316p/3cDMerJne7Ah7GicPOIq5pgAEpOEnFZwtKwwF3xnAZ4Spy9J0TYgeDR6qkcnAQJUdOKfICqCumWMIPJS/LP2F8NS083qqTJQ68bD1D7wxuCCtYfVdtEPNuj1M4rGb3uhWTRHjSO5yjVrkjV+iBnnQoaDLSXHNH0pp5VY5PbBj734yCf1TF6YmBuaC9tbFNEZUmCmTjgsLBXqIGD6LTQmiZa/pay1+NIv0kv/GfWjk9Q6MwhEMg9oDXuEv6jMJmNHEECJga/iiUKepl7OFj5PpvyrlrBsfTtD";
+}
