@@ -31,6 +31,7 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.hardware.bosch.NaiveAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -115,6 +116,8 @@ public class SensorBNO055IMU extends LinearOpMode
 
         // At the beginning of each telemetry update, grab a bunch of data
         // from the IMU that we will then display in separate lines.
+        telemetry.addLine().addData("current position", imu.getPosition());
+
         telemetry.addAction(new Runnable() { @Override public void run()
                 {
                 // Acquiring the angles is relatively expensive; we don't want
@@ -153,6 +156,7 @@ public class SensorBNO055IMU extends LinearOpMode
                     return formatAngle(angles.angleUnit, angles.thirdAngle);
                     }
                 });
+
 
         telemetry.addLine()
             .addData("grvty", new Func<String>() {
