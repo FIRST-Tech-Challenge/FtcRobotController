@@ -37,7 +37,6 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opM
 public class Robot {
 
     private LinearOpMode op = null;
-    private HardwareMap hardwareMap = null;
     private ElapsedTime runtime = null;
     final boolean isCorgi = true;
     private TensorFlow tensorFlow = null;
@@ -54,9 +53,9 @@ public class Robot {
     private double vuforiaY = 0;
     private double vuforiaAngle = 0;
     private double robotAngle = 0;
+
     public Robot(LinearOpMode opMode) {
         op = opMode;
-        hardwareMap = op.hardwareMap;
 
         runtime = new ElapsedTime();
         drivetrain = new Chassis(op);
