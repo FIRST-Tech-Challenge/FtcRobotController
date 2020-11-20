@@ -116,7 +116,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double maxRange = 127; // max range sensor detectable
     private double defaultScale = 1.0;
     private double mecanumForwardRatio = 0.8;
-    private double chassisAligmentPower = 0.17;
+    public double chassisAligmentPower = 0.15;
+    public double chassisAligmentPowerMin = 0.13;
     private double init_x_cm = 0.0;
     private double init_y_cm = 0.0;
     private double init_heading = 0;
@@ -1293,7 +1294,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
         if (Thread.interrupted()) return;
         double iniHeading = odo_heading();
-        if (power <= chassisAligmentPower || Math.abs(iniHeading-finalHeading)<2.0) {
+        if (power <= chassisAligmentPower || Math.abs(iniHeading-finalHeading)<5.0) {
             // rawRotateTo(power, finalHeading, false, timeout_sec);//was power
             if (Thread.interrupted()) return;
             if (autoDriveMode== AutoDriveMode.CONTINUE_NO_CORRECTION) return;

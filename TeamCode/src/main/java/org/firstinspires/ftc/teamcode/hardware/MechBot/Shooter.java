@@ -28,7 +28,7 @@ public class Shooter extends Logger<Shooter>  {
     private final int SHOOT_MAX = 2500;
     private final int SHOOT_FAST = 1600;
     private final int SHOOT_MIN = 100;
-    private final int SHOOT_INC_STEP = 25;
+    private final int SHOOT_INC_STEP = 20;
 
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;

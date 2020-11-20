@@ -1230,15 +1230,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 break;
             case PSHOT_L:
                 target_x = 132;
-                target_height = 78;
+                target_height = 79;
                 break;
             case PSHOT_M:
                 target_x = 151;
-                target_height = 78;
+                target_height = 79;
                 break;
             case PSHOT_R:
                 target_x = 170;
-                target_height = 78;
+                target_height = 79;
                 break;
         }
         // start the shooter with expected RPM
@@ -1255,8 +1255,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             shooting_angle += (shooting_dist-200)*0.047;
         }
         try {
-            if (Math.abs(chassis.odo_heading() - shooting_angle) > 1)
+            if (Math.abs(chassis.odo_heading() - shooting_angle) > 0.8) {
                 chassis.rotateTo(0.35, shooting_angle);
+                if (Math.abs(chassis.odo_heading() - shooting_angle)>0.8)
+                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin,shooting_angle,false,0.5);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
