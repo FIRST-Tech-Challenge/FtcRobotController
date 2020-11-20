@@ -260,6 +260,10 @@ public class chrisBot
     }
 
     /** SENSOR METHODS */
+    public Orientation getOrientation() {
+        // Code to get the gyro orientation goes here
+        return new Orientation();
+    }
 
 
     /** VUFORIA METHODS */
@@ -276,7 +280,6 @@ public class chrisBot
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Loading trackables is not necessary for the TensorFlow Object Detection engine.
-
     }
 
     // This initializes the TensorFlow object detection (TFOD) engine.

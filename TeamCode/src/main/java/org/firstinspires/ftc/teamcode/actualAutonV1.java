@@ -1,6 +1,6 @@
-// See Auton_plan.md for more info
-
 package org.firstinspires.ftc.teamcode;
+
+// See Auton_plan.md for more info
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -29,7 +29,7 @@ public class actualAutonV1 extends LinearOpMode {
     }
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         // Start with wobble goal in hand (left) and 3 rings
 
@@ -54,10 +54,9 @@ public class actualAutonV1 extends LinearOpMode {
         // Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
 
         if (robot.tfod != null) { robot.tfod.activate(); }
+        boolean[] ringPositions = robot.detectRings();
 
         // Create boolean variables to store the amount of rings
-
-        boolean[] ringPositions = robot.detectRings();
         boolean oneRing = ringPositions[0];
         boolean fourRings = ringPositions[1];
         boolean noRings = !oneRing && !fourRings;
@@ -110,6 +109,8 @@ public class actualAutonV1 extends LinearOpMode {
         robot.wheelMecanumDrive(robot.calculateInches(0,16));
 
         // End auton
+
+        robot.tfod.shutdown();
 
     }
 }
