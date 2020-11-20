@@ -145,7 +145,7 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
 
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
         // Drive paths are initially all the same to get to the shooter location
-        gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
+        gyroDrive(DRIVE_SPEED, 58.0, 0.0, 10);
         gyroTurn(TURN_SPEED,-11,3);
         mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
         shoot3Rings(mShooterState);   // call method to start shooter and launch 3 rings. pass shooter state in case it is needed
@@ -156,15 +156,15 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
         // Robot has to read the stack height and set the Target Zone square state based on Vuforia/ Tensor Flow detection
         switch(Square){
             case BLUE_A: // no rings. 3 tiles (24 inches per tile) forward and one tile to the left from start
-                telemetry.addData("Going to RED A", "Target Zone");
+                telemetry.addData("Going to BLUE A", "Target Zone");
                 gyroTurn(TURN_SPEED*.5,20,3);
-                gyroDrive(DRIVE_SPEED, 8.0, 20.0, 5);
+                gyroDrive(DRIVE_SPEED, 6.0, 20.0, 5);
                 sleep(1000);
                 wobble.GripperOpen();
                 wobble.ArmExtend();
                 break;
             case BLUE_B: // one ring  4 tiles straight ahead
-                telemetry.addData("Going to RED B", "Target Zone");
+                telemetry.addData("Going to BLUE B", "Target Zone");
                 //gyroTurn(TURN_SPEED*.5,20,3);
                 gyroDrive(DRIVE_SPEED, 30.0, -15.0, 5);
                 sleep(1000);
