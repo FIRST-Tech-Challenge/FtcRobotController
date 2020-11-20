@@ -3,17 +3,11 @@ package org.firstinspires.ftc.teamcode.TEST;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.HardwareMap.HMap;
-import org.firstinspires.ftc.teamcode.HardwareMap.IMUPlus;
-import org.firstinspires.ftc.teamcode.HardwareMap.MotorPP;
-import org.firstinspires.ftc.teamcode.HardwareMap.MotorPlus;
-import org.firstinspires.ftc.teamcode.MISC.CONSTANTS;
-
-import static org.firstinspires.ftc.teamcode.MISC.CONSTANTS.aPid_;
-import static org.firstinspires.ftc.teamcode.MISC.CONSTANTS.dPid_;
-import static org.firstinspires.ftc.teamcode.MISC.CONSTANTS.vPid_;
+import org.firstinspires.ftc.teamcode.middleend.HardwareMappings.HMap;
+import org.firstinspires.ftc.teamcode.backend.hardware_extensions.IMUPlus;
+import org.firstinspires.ftc.teamcode.backend.hardware_extensions.MotorPP;
+import org.firstinspires.ftc.teamcode.backend.hardware_extensions.MotorPlus;
 
 @Autonomous(name="MotorPP Distance(0.40)")
 @Disabled

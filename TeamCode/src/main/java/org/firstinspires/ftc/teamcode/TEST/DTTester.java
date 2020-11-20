@@ -3,8 +3,7 @@ package org.firstinspires.ftc.teamcode.TEST;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.HardwareMap.HMap2;
+import org.firstinspires.ftc.teamcode.middleend.HardwareMappings.HMap2;
 
 @Autonomous(name = "DTTester")
 public class DTTester extends LinearOpMode {
