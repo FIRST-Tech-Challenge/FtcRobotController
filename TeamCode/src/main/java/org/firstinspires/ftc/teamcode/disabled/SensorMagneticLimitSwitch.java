@@ -55,6 +55,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * @see <a href="http://revrobotics.com">REV Robotics Web Page</a>
  */
 @TeleOp(name = "Sensor: REV Magnetic Limit Switch", group = "Sensor")
+@Disabled
+
 public class SensorMagneticLimitSwitch extends LinearOpMode {
 
     private RevTouchSensor mlSwitch;

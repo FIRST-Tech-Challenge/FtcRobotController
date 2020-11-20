@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -42,6 +43,8 @@ import java.util.ArrayList;
 
 
 @Autonomous(name="testDistance", group="Zippo")
+@Disabled
+
 public class testDistanceAuton extends LinearOpMode {
 
     /* Declare OpMode members. */

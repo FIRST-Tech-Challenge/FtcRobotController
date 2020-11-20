@@ -43,6 +43,8 @@ import java.util.ArrayList;
 
 
 @Autonomous(name="testRingAuton", group="Zippo")
+@Disabled
+
 public class testRingAuton extends LinearOpMode {
 
     /* Declare OpMode members. */

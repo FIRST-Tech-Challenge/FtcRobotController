@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name="TensorDrivingTest", group="Zippo")
-//@Disabled
+@Disabled
 
 public class TensorDrivingTest extends OpMode {
     testPlatformHardware robot  = new testPlatformHardware();
