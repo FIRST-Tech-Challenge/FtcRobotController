@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -42,8 +41,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.ArrayList;
 
 
-@Autonomous(name="testRingAuton", group="Zippo")
-public class testRingAuton extends LinearOpMode {
+@Autonomous(name="testRingAutonPt2", group="Zippo")
+public class testRingAutonPt2 extends LinearOpMode {
 
     /* Declare OpMode members. */
     testPlatformHardware    robot   = new testPlatformHardware();
@@ -126,18 +125,24 @@ public class testRingAuton extends LinearOpMode {
         boolean is4rings = false;
 
        for (ringObject ring : rings) {
-           is1ring = (ring.label.equals("Single"));
-           is4rings = (ring.label.equals("Quad"));
-       }
+        is1ring = (ring.label.equals("Single"));
+        is4rings = (ring.label.equals("Quad"));
+    }
+       double edInches = 65;
        if(is1ring && !is4rings) {
            telemetry.addLine("1 ring");
+           edInches += 24;
        } else if (is4rings) {
            telemetry.addLine("4 rings");
+           edInches += 48;
        } else {
            telemetry.addLine("0 rings");
        }
        telemetry.update();
+       encoderDrive(DRIVE_SPEED, 36);
+       if (is1ring && !is4rings) {
 
+       }
        tfod.shutdown();
 
 

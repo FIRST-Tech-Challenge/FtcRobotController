@@ -37,6 +37,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 @Autonomous(name="driveInDirectionAuton", group="Zippo")
 
 public class driveInDirectionAuton extends LinearOpMode {
@@ -49,7 +52,10 @@ public class driveInDirectionAuton extends LinearOpMode {
     public void runOpMode() {
         robot.init(hardwareMap);
         waitForStart();
-        wheelMecanumDrive(calculateInches(12,12), 4);
+        int x = selectInt("X inches");
+        sleep(200);
+        int y = selectInt("Y inches");
+        wheelMecanumDrive(calculateInches(x,y), Math.hypot(x,y)/3);
     }
     public void wheelMecanumDrive(double[] inches, double timeoutS) {
         int FLTarget = 0;
@@ -61,6 +67,13 @@ public class driveInDirectionAuton extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
+
+            double inchesMax = 0;
+            for (double inch : inches) {
+                if (inch > inchesMax) {
+                    inchesMax = inch;
+                }
+            }
 
             FLTarget = robot.motorFrontLeft.getCurrentPosition() + (int) (inches[0] * testPlatformHardware.COUNTS_PER_INCH);
             FRTarget = robot.motorFrontRight.getCurrentPosition() + (int) (inches[1] * testPlatformHardware.COUNTS_PER_INCH);
@@ -79,6 +92,7 @@ public class driveInDirectionAuton extends LinearOpMode {
             // reset the timeout time and start motion.
             runtime.reset();
             setAllPower(testPlatformHardware.DRIVE_SPEED);
+
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             while (opModeIsActive() && (runtime.seconds() < timeoutS) && (robot.motorFrontLeft.isBusy() || robot.motorFrontRight.isBusy())) {
@@ -113,6 +127,21 @@ public class driveInDirectionAuton extends LinearOpMode {
         double r = Math.hypot(xInches, yInches);
         double robotAngle = Math.atan2(yInches, xInches) - Math.PI / 4;
         return new double[]{r * Math.cos(robotAngle), r * Math.sin(robotAngle), r * Math.sin(robotAngle), r * Math.cos(robotAngle)}; //fl,fr,bl,br
+    }
+    public int selectInt(String input) {
+        int selected = 0;
+        do {
+            if (gamepad1.dpad_left) {
+                selected -= 1;
+            } else if (gamepad1.dpad_right) {
+                selected += 1;
+            }
+            telemetry.addData(input, selected);
+            telemetry.addLine("Press the A button to confirm");
+            sleep(100);
+            telemetry.update();
+        } while (!gamepad1.a || isStopRequested());
+        return selected;
     }
 
 }

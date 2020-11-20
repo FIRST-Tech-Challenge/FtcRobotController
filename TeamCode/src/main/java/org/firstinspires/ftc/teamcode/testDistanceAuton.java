@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -42,8 +41,8 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.ArrayList;
 
 
-@Autonomous(name="testRingAuton", group="Zippo")
-public class testRingAuton extends LinearOpMode {
+@Autonomous(name="testDistance", group="Zippo")
+public class testDistanceAuton extends LinearOpMode {
 
     /* Declare OpMode members. */
     testPlatformHardware    robot   = new testPlatformHardware();
@@ -54,26 +53,8 @@ public class testRingAuton extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = testPlatformHardware.WHEEL_DIAMETER_INCHES ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_INCHES * Math.PI);
-    static final double     DRIVE_SPEED             = 0.5;
+    static final double     DRIVE_SPEED             = 1;
 
-    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-    private static final String LABEL_FIRST_ELEMENT = "Quad";
-    private static final String LABEL_SECOND_ELEMENT = "Single";
-
-    private static final String VUFORIA_KEY = vuforia_key.key1;
-
-
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
-    private VuforiaLocalizer vuforia;
-
-    /**
-     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
-     * Detection engine.
-     */
-    private TFObjectDetector tfod;
 
     @Override
     public void runOpMode() {
@@ -88,57 +69,17 @@ public class testRingAuton extends LinearOpMode {
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
 
-        initVuforia();
-        initTfod();
-
-        /**
-         * Activate TensorFlow Object Detection before we wait for the start command.
-         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
-        if (tfod != null) {
-            tfod.activate();
-
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 1.78 or 16/9).
-
-            // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
-            //tfod.setZoom(2.5, 1.78);
-        }
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        say("1");
-        encoderDrive(DRIVE_SPEED,  7);
-        say("Done");
 
+        say("Done");
+        suicide(13);
         sleep(3000);
 
-        ArrayList<ringObject> rings = ringObject.detectRings(tfod);
-
-        boolean is1ring = false;
-        boolean is4rings = false;
-
-       for (ringObject ring : rings) {
-           is1ring = (ring.label.equals("Single"));
-           is4rings = (ring.label.equals("Quad"));
-       }
-       if(is1ring && !is4rings) {
-           telemetry.addLine("1 ring");
-       } else if (is4rings) {
-           telemetry.addLine("4 rings");
-       } else {
-           telemetry.addLine("0 rings");
-       }
-       telemetry.update();
-
-       tfod.shutdown();
 
 
     }
@@ -203,38 +144,18 @@ public class testRingAuton extends LinearOpMode {
         telemetry.addLine(s);
         telemetry.update();
     }
+    public void suicide(int x) {
+        for (int i = 1; i <= x; i++) {
+            encoderDrive(DRIVE_SPEED, 3*i);
+            sleep(500);
+            encoderDrive(DRIVE_SPEED, -3*i);
+            sleep(500);
+        }
+    }
     public void setAllPower(testPlatformHardware robot, double speed) {
         robot.motorFrontLeft.setPower(speed);
         robot.motorFrontRight.setPower(speed);
         robot.motorBackRight.setPower(speed);
         robot.motorBackLeft.setPower(speed);
-    }
-
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
-
-    }
-
-    /**
-     * Initialize the TensorFlow Object Detection engine.
-     */
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 }

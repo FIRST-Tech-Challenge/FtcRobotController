@@ -50,26 +50,15 @@ public class testPlatformTeleopV2 extends OpMode{
     }
 
     public static double[] getGamepadState(Gamepad gamepad) {
-        double[] gamepadState = new double[4];
-        if (Math.abs(gamepad.left_stick_x) > 0.1) {
-            gamepadState[0] = gamepad.left_stick_x;
-        } else {
-            gamepadState[0] = 0;
-        }
-        if (Math.abs(gamepad.left_stick_y) > 0.1) {
-            gamepadState[1] = gamepad.left_stick_y;
-        } else {
-            gamepadState[1] = 0;
-        }
-        if (Math.abs(gamepad.right_stick_x) > 0.1) {
-            gamepadState[2] = gamepad.right_stick_x;
-        } else {
-            gamepadState[2] = 0;
-        }
-        if (Math.abs(gamepad.right_stick_y) > 0.1) {
-            gamepadState[3] = gamepad.right_stick_y;
-        } else {
-            gamepadState[3] = 0;
+        double[] gamepadState = {(double)gamepad.left_stick_x, (double)gamepad.left_stick_y, (double)gamepad.right_stick_x, (double)gamepad.right_stick_y};
+        for (int i = 0; i < gamepadState.length; i++) {
+            if (gamepadState[i] > 0.9) {
+                gamepadState[i] = Math.signum(gamepadState[i])*1;
+            } else if (Math.abs(gamepadState[i]) > 0.1) {
+                gamepadState[i] = gamepadState[i];
+            } else {
+                gamepadState[i] = 0;
+            }
         }
         return gamepadState;
     }
