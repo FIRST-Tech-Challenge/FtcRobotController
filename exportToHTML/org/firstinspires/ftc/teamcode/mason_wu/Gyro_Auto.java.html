@@ -1,0 +1,220 @@
+<html>
+<head>
+<title>Gyro_Auto.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #000080; font-weight: bold;}
+.s1 { color: #000000;}
+.s2 { color: #008000; font-weight: bold;}
+.s3 { color: #808080; font-style: italic;}
+.s4 { color: #0000ff;}
+</style>
+</head>
+<body bgcolor="#ffffff">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Gyro_Auto.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span>org.firstinspires.ftc.teamcode.mason_wu;
+
+        <span class="s0">import </span>com.qualcomm.hardware.bosch.BNO055IMU;
+        <span class="s0">import </span>com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+        <span class="s0">import </span>com.qualcomm.robotcore.hardware.Servo;
+        <span class="s0">import </span>com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+        <span class="s0">import </span>com.qualcomm.robotcore.hardware.DcMotor;
+        <span class="s0">import </span>com.qualcomm.robotcore.util.ElapsedTime;
+        <span class="s0">import </span>com.qualcomm.robotcore.util.Range;
+        <span class="s0">import </span>com.qualcomm.robotcore.util.ReadWriteFile;
+
+        <span class="s0">import </span>org.firstinspires.ftc.robotcore.external.Func;
+        <span class="s0">import </span>org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+        <span class="s0">import </span>org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+        <span class="s0">import </span>org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+        <span class="s0">import </span>org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+        <span class="s0">import </span>org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+
+        <span class="s0">import </span>java.io.File;
+        <span class="s0">import </span>java.util.Locale;
+
+@Autonomous(name=<span class="s2">&quot;Mechanum AutoOp&quot;</span>, group=<span class="s2">&quot;Iterative Opmode&quot;</span>)
+<span class="s0">public class </span>Gyro_Auto <span class="s0">extends </span>LinearOpMode
+{
+    <span class="s3">// Declare OpMode members.</span>
+    <span class="s0">private </span>DcMotor shooter = <span class="s0">null</span>;
+    <span class="s0">private </span>Servo spanker = <span class="s0">null</span>;
+    <span class="s0">private </span>DcMotor LF = <span class="s0">null</span>;
+    <span class="s0">private </span>DcMotor RF = <span class="s0">null</span>;
+    <span class="s0">private </span>DcMotor LB = <span class="s0">null</span>;
+    <span class="s0">private </span>DcMotor RB = <span class="s0">null</span>;
+
+    BNO055IMU imu;
+    Orientation angles;
+
+    @Override
+    <span class="s0">public void </span>runOpMode() <span class="s0">throws </span>InterruptedException
+    {
+
+        <span class="s3">// Initialize the hardware variables.</span>
+        spanker = hardwareMap.get(Servo.<span class="s0">class</span>,<span class="s2">&quot;spanker&quot;</span>);
+        shooter = hardwareMap.get(DcMotor.<span class="s0">class</span>, <span class="s2">&quot;shooter&quot;</span>);
+
+        LF  = hardwareMap.get(DcMotor.<span class="s0">class</span>, <span class="s2">&quot;LF&quot;</span>);
+        RF = hardwareMap.get(DcMotor.<span class="s0">class</span>, <span class="s2">&quot;RF&quot;</span>);
+        LB  = hardwareMap.get(DcMotor.<span class="s0">class</span>, <span class="s2">&quot;LB&quot;</span>);
+        RB = hardwareMap.get(DcMotor.<span class="s0">class</span>, <span class="s2">&quot;RB&quot;</span>);
+
+        LF.setDirection(DcMotor.Direction.FORWARD);
+        RF.setDirection(DcMotor.Direction.REVERSE);
+        LB.setDirection(DcMotor.Direction.REVERSE);
+        RB.setDirection(DcMotor.Direction.FORWARD);
+
+        shooter.setDirection(DcMotor.Direction.REVERSE);
+        spanker.setPosition(<span class="s4">0.4</span>);
+
+
+        <span class="s3">// Tell the driver that initialization is complete.</span>
+        telemetry.addData(<span class="s2">&quot;Status&quot;</span>, <span class="s2">&quot;Initialized&quot;</span>);
+
+        BNO055IMU.Parameters parameters = <span class="s0">new </span>BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.mode                 = BNO055IMU.SensorMode.IMU;
+        parameters.calibrationDataFile = <span class="s2">&quot;BNO055IMUCalibration.json&quot;</span>; <span class="s3">// see the calibration sample opmode</span>
+        parameters.loggingEnabled      = <span class="s0">true</span>;
+
+        imu = hardwareMap.get(BNO055IMU.<span class="s0">class</span>, <span class="s2">&quot;imu&quot;</span>);
+
+        imu.initialize(parameters);
+        telemetry.addData(<span class="s2">&quot;Gyro Calibration Status&quot;</span>, imu.getCalibrationStatus().toString());
+
+        <span class="s3">// composeTelemetry();</span>
+
+        waitForStart();
+
+        <span class="s0">if </span>(opModeIsActive()) {
+            ElapsedTime t = <span class="s0">new </span>ElapsedTime(ElapsedTime.Resolution.SECONDS);
+
+            <span class="s0">while</span>(t.seconds()&lt;=<span class="s4">15</span>){
+                driveStraight(<span class="s4">5</span>,<span class="s4">0.3</span>);
+            }
+        }
+
+    }
+
+    <span class="s0">double </span>aquireHeading(){
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        <span class="s0">double </span>heading = angles.firstAngle;
+        <span class="s0">double </span>tempDeg = heading % <span class="s4">360</span>;
+        <span class="s0">if</span>(tempDeg &gt;= <span class="s4">180</span>){
+            tempDeg -= <span class="s4">360</span>;
+        }<span class="s0">else if</span>(tempDeg &lt; -<span class="s4">180</span>){
+            tempDeg += <span class="s4">360</span>;
+        }
+        telemetry.addData(<span class="s2">&quot;Heading&quot;</span>, aquireHeading());
+        telemetry.update();
+        sleep(<span class="s4">50</span>);
+        <span class="s0">return </span>tempDeg;
+    }
+    <span class="s0">void </span>driveStraight (<span class="s0">double </span>range, <span class="s0">double </span>power) <span class="s0">throws </span>InterruptedException{
+        <span class="s0">double </span>currentAngle = aquireHeading();
+        <span class="s0">double </span>LF_power = power;
+        <span class="s0">double </span>LB_power = power;
+        <span class="s0">double </span>RF_power = power;
+        <span class="s0">double </span>RB_power = power;
+        <span class="s0">if</span>(currentAngle&lt;(-<span class="s4">1</span>*range)){
+            RF_power += <span class="s4">0.1</span>;
+            RB_power += <span class="s4">0.1</span>;
+            LF_power -= <span class="s4">0.1</span>;
+            LB_power -= <span class="s4">0.1</span>;
+        }
+        <span class="s0">else if</span>(currentAngle&gt;(range)){
+            RF_power -= <span class="s4">0.1</span>;
+            RB_power -= <span class="s4">0.1</span>;
+            LF_power += <span class="s4">0.1</span>;
+            LB_power += <span class="s4">0.1</span>;
+        }
+        RF_power = Range.clip(RF_power,-<span class="s4">1</span>,<span class="s4">1</span>);
+        RB_power = Range.clip(RB_power,-<span class="s4">1</span>,<span class="s4">1</span>);
+        LF_power = Range.clip(LF_power,-<span class="s4">1</span>,<span class="s4">1</span>);
+        LB_power = Range.clip(LB_power,-<span class="s4">1</span>,<span class="s4">1</span>);
+        LF.setPower(LF_power);
+        RF.setPower(RF_power);
+        LB.setPower(LB_power);
+        RB.setPower(RB_power);
+        telemetry.addData(<span class="s2">&quot;RF_power&quot;</span>, RF_power);
+        telemetry.addData(<span class="s2">&quot;LF_power&quot;</span>, LF_power);
+        telemetry.addData(<span class="s2">&quot;RB_power&quot;</span>, RB_power);
+        telemetry.addData(<span class="s2">&quot;LB_power&quot;</span>, LB_power);
+        telemetry.update();
+    }
+
+    <span class="s3">// void composeTelemetry() {</span>
+
+    <span class="s3">//        // At the beginning of each telemetry update, grab a bunch of data</span>
+    <span class="s3">//        // from the IMU that we will then display in separate lines.</span>
+    <span class="s3">//        telemetry.addAction(new Runnable() { @Override public void run()</span>
+    <span class="s3">//                {</span>
+    <span class="s3">//                // Acquiring the angles is relatively expensive; we don't want</span>
+    <span class="s3">//                // to do that in each of the three items that need that info, as that's</span>
+    <span class="s3">//                // three times the necessary expense.</span>
+    <span class="s3">//                angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);</span>
+    <span class="s3">//                gravity  = imu.getGravity();</span>
+    <span class="s3">//                }</span>
+    <span class="s3">//            });</span>
+
+    <span class="s3">//        telemetry.addLine()</span>
+    <span class="s3">//            .addData(&quot;status&quot;, new Func&lt;String&gt;() {</span>
+    <span class="s3">//                @Override public String value() {</span>
+    <span class="s3">//                    return imu.getSystemStatus().toShortString();</span>
+    <span class="s3">//                    }</span>
+    <span class="s3">//                })</span>
+    <span class="s3">//            .addData(&quot;calib&quot;, new Func&lt;String&gt;() {</span>
+    <span class="s3">//                @Override public String value() {</span>
+    <span class="s3">//                    return imu.getCalibrationStatus().toString();</span>
+    <span class="s3">//                    }</span>
+    <span class="s3">//                });</span>
+
+    <span class="s3">//        telemetry.addLine()</span>
+    <span class="s3">//            .addData(&quot;heading&quot;, new Func&lt;String&gt;() {</span>
+    <span class="s3">//                @Override public String value() {</span>
+    <span class="s3">//                    return formatAngle(angles.angleUnit, angles.firstAngle);</span>
+    <span class="s3">//                    }</span>
+    <span class="s3">//                })</span>
+    <span class="s3">//            .addData(&quot;roll&quot;, new Func&lt;String&gt;() {</span>
+    <span class="s3">//                @Override public String value() {</span>
+    <span class="s3">//                    return formatAngle(angles.angleUnit, angles.secondAngle);</span>
+    <span class="s3">//                    }</span>
+    <span class="s3">//                })</span>
+    <span class="s3">//            .addData(&quot;pitch&quot;, new Func&lt;String&gt;() {</span>
+    <span class="s3">//                @Override public String value() {</span>
+    <span class="s3">//                    return formatAngle(angles.angleUnit, angles.thirdAngle);</span>
+    <span class="s3">//                    }</span>
+    <span class="s3">//                });</span>
+
+    <span class="s3">//        telemetry.addLine()</span>
+    <span class="s3">//            .addData(&quot;grvty&quot;, new Func&lt;String&gt;() {</span>
+    <span class="s3">//                @Override public String value() {</span>
+    <span class="s3">//                    return gravity.toString();</span>
+    <span class="s3">//                    }</span>
+    <span class="s3">//                })</span>
+    <span class="s3">//            .addData(&quot;mag&quot;, new Func&lt;String&gt;() {</span>
+    <span class="s3">//                @Override public String value() {</span>
+    <span class="s3">//                    return String.format(Locale.getDefault(), &quot;%.3f&quot;,</span>
+    <span class="s3">//                            Math.sqrt(gravity.xAccel*gravity.xAccel</span>
+    <span class="s3">//                                    + gravity.yAccel*gravity.yAccel</span>
+    <span class="s3">//                                    + gravity.zAccel*gravity.zAccel));</span>
+    <span class="s3">//                    }</span>
+    <span class="s3">//                });</span>
+    <span class="s3">//    }</span>
+
+    <span class="s3">//    String formatAngle(AngleUnit angleUnit, double angle) {</span>
+    <span class="s3">//        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));</span>
+    <span class="s3">//    }</span>
+
+    <span class="s3">//    String formatDegrees(double degrees){</span>
+    <span class="s3">//        return String.format(Locale.getDefault(), &quot;%.1f&quot;, AngleUnit.DEGREES.normalize(degrees));</span>
+    <span class="s3">//    }</span>
+}</pre>
+</body>
+</html>
