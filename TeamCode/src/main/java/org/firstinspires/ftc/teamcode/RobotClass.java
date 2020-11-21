@@ -308,6 +308,15 @@ public class RobotClass {
 
         double targetAngle = getAngleFromGyro() - angle;
 
+        if (targetAngle > 180) {
+            double newTargetAngle = targetAngle - 180 *-1;
+            targetAngle = (targetAngle-newTargetAngle)*-1;
+        }else if (targetAngle < -180) {
+            double newTargetAngle = targetAngle + 180*-1;
+            targetAngle = (targetAngle+newTargetAngle)*-1;
+        }
+
+
         while (getAngleFromGyro() > targetAngle) {
             telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
             telemetry.update();
@@ -326,7 +335,7 @@ public class RobotClass {
         frontRight.setPower(speed*.5);
         backLeft.setPower(-speed*.5);
         backRight.setPower(speed*.5);
-        while (getAngleFromGyro() < angle) {
+        while (getAngleFromGyro() < targetAngle) {
             wait(5);
             telemetry.addData("Correcting Gyro Angle: ", getAngleFromGyro());
             telemetry.update();
