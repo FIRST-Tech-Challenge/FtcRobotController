@@ -30,7 +30,7 @@ public class Angle {
 
     //relative to robot starting position (right = east, left = west, forward = north, backward = south)
     public static final Angle
-            RIGHT = new Angle(90, AngleType.NEG_180_TO_180_HEADING),
+            RIGHT = new Angle(90, AngleType.                                    NEG_180_TO_180_HEADING),
             LEFT = new Angle(-90, AngleType.NEG_180_TO_180_HEADING),
             BACKWARD = new Angle(180, AngleType.NEG_180_TO_180_HEADING),
             FORWARD = new Angle(0, AngleType.NEG_180_TO_180_HEADING);

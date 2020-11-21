@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.openftc.revextensions2.ExpansionHubMotor;
@@ -81,10 +82,12 @@ public class DriveModule {
         if (moduleSide == ModuleSide.RIGHT) {
             motor1 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("rightTopMotor");
             motor2 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("rightBottomMotor");
+            motor1.setDirection(DcMotorSimple.Direction.REVERSE);
             positionVector = new Vector2d((double)18/2, 0); //points from robot center to right module
         } else {
             motor1 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("leftTopMotor");
             motor2 = (ExpansionHubMotor) robot.hardwareMap.dcMotor.get("leftBottomMotor");
+            motor1.setDirection(DcMotorSimple.Direction.REVERSE);
             positionVector = new Vector2d((double)-18/2, 0); //points from robot center to left module
         }
 
