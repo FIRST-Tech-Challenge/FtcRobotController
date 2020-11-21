@@ -93,8 +93,8 @@ public class TerraBot {
     public Limits limits = new Limits();
 
     //d = 0.00024
-    public SpeedController outrController = new SpeedController(0.5, 0.0, 0.0, outtakeSpeed);
-    public SpeedController outlController = new SpeedController(0.5, 0.0, 0.0, outtakeSpeed);
+    public SpeedController outrController = new SpeedController(0.3, 0.0, 0.0, outtakeSpeed);//0.5
+    public SpeedController outlController = new SpeedController(0.3, 0.0, 0.0, outtakeSpeed);//0.5
 
     public Odometry odometry = new Odometry();
 
@@ -225,7 +225,7 @@ public class TerraBot {
 
     public void moveTeleOp(double f, double s, double t){
         if(fastmode) {
-            move(f, s, t);
+            move(f, s, Math.signum(t)*t*t);
         }else{
             move((f*0.2) + Math.signum(f)*0.05, (s*0.2)+Math.signum(s)*0.1, (t*0.2)+Math.signum(t)*0.3);
         }
@@ -401,7 +401,7 @@ public class TerraBot {
         });
         wobbleGoal2.addWaitUntil();
         wobbleGoal2.addStage(sgl, grabControl.getPos(1), 0.01);
-        wobbleGoal2.addStage(sgr, grabControl.getPos(1), 0.5);
+        wobbleGoal2.addStage(sgr, grabControl.getPos(1), 0.3);
         wobbleGoal2.addStage(st, 1, 0.01);
         wobbleGoal2.addCustomOnce(new CodeSeg() {
             @Override
@@ -414,7 +414,7 @@ public class TerraBot {
         wobbleGoal2.addStage(st, 0.8, 0.01);
         wobbleGoal2.addStage(arm, 1, degreesToTicks(180));
         wobbleGoal2.addStage(sgl, grabControl.getPos(0), 0.01);
-        wobbleGoal2.addStage(sgr, grabControl.getPos(0), 0.5);
+        wobbleGoal2.addStage(sgr, grabControl.getPos(0), 0.3);
         wobbleGoal2.addStage(arm, 1, degreesToTicks(120));
     }
 

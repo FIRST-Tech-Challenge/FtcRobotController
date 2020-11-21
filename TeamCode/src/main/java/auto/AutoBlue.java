@@ -88,6 +88,8 @@ public class AutoBlue extends LinearOpMode {
     }
     private void initialize(){
         bot.grabStart = 0.45;
+        bot.outrController.acc = 1000;
+        bot.outlController.acc = 1000;
         bot.init(hardwareMap);
         rf.init(bot, this);
         bot.lift(bot.liftControl.getPos(1));

@@ -32,6 +32,8 @@ public class SpeedController {
 
     public boolean isReady = false;
 
+    public double acc = 150;
+
     public SpeedController(double k, double d, double i, double startPow){
         k *= 0.00001;
         d *= 0.00001;
@@ -95,7 +97,7 @@ public class SpeedController {
 
     public double getPow(){
         if(Math.abs(currError) < 2000){
-            if(Math.abs(currError) < 800){
+            if(Math.abs(currError) < acc){
                 isReady = true;
                 return pow;
             }else {
