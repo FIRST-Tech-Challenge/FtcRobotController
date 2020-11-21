@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.strafer.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.technototes.library.control.gamepad.CommandGamepad;
 import com.technototes.library.structure.CommandOpMode;
-import com.technototes.library.structure.TeleOpCommandOpMode;
 import com.technototes.logger.Loggable;
-import com.technototes.logger.Logger;
 
 import org.firstinspires.ftc.teamcode.strafer.OI;
 import org.firstinspires.ftc.teamcode.strafer.Robot;
@@ -20,7 +17,7 @@ public class StraferTeleOp extends CommandOpMode implements Loggable {
     //test change
 
     @Override
-    public void beginInit() {
+    public void uponInit() {
         robot = new Robot(hardwareMap, telemetry);
         oi = new OI(driverGamepad, codriverGamepad, robot);
     }

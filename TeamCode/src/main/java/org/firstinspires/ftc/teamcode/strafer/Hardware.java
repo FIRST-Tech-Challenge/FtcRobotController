@@ -4,11 +4,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.technototes.library.hardware.motor.Motor;
 import com.technototes.library.hardware.sensor.IMU;
-import com.technototes.library.structure.HardwareBase;
 import com.technototes.logger.Log;
 import com.technototes.logger.Loggable;
 
-public class Hardware extends HardwareBase implements Loggable {
+public class Hardware implements Loggable {
     //drive motors
     @Log.Number(name = "flmotor")
     public Motor<DcMotor> flMotor;
