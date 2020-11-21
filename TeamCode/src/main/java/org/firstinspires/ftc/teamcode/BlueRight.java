@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-@Autonomous(name="Blue_Left", group="Competition")
-public class BlueLeft extends OpMode {
+@Autonomous(name="Blue_Right", group="Competition")
+public class BlueRight extends OpMode {
 
     private int stateMachineFlow;
     MecanumDrive robot    = new MecanumDrive();
@@ -81,7 +81,7 @@ public class BlueLeft extends OpMode {
                 stateMachineFlow++;
                 break;
             case 102:
-                //Drive forward into zone A
+                //Drive forward, left, and forward into zone A
                 stateMachineFlow++;
                 break;
             case 103:
@@ -173,7 +173,7 @@ public class BlueLeft extends OpMode {
                 stateMachineFlow++;
                 break;
             case 202:
-                //Drive forward, to the right, and into zone B
+                //Drive forward into zone B
                 stateMachineFlow++;
                 break;
             case 203:
@@ -265,7 +265,7 @@ public class BlueLeft extends OpMode {
                 stateMachineFlow++;
                 break;
             case 302:
-                //Drive forward into zone C
+                //Drive forward, to the left, and into zone C
                 stateMachineFlow++;
                 break;
             case 303:

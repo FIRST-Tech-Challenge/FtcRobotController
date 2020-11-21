@@ -58,7 +58,7 @@ public class MoveTest extends OpMode{
                 break;
             case 3:
                 //move backwards
-                robot.linearDrive(-.5,20);
+                robot.linearDrive(.5,-20);
                 telemetry.addData("Rf",robot.getRFencoder());
                 telemetry.addData("Lf",robot.getLFencoder());
                 telemetry.addData("Rb",robot.getRBencoder());
