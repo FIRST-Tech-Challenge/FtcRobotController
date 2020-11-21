@@ -75,12 +75,12 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
 
     public final double CAM_MIN = 0.01;
     public final double CAM_MAX = 0.99;
-    public final double CAM_INIT = 0.5;
+    public final double CAM_INIT = 0.45;
     public final double CAM_BLUE_IN = 0.56;
-    public final double CAM_BLUE_OUT = 0.27;
-    public final double CAM_RED_IN = 0.27;
+    public final double CAM_BLUE_OUT = 0.22;
+    public final double CAM_RED_IN = 0.22;
     public final double CAM_RED_OUT = 0.56;
-    public final double CAM_TELE_OP = 0.5;
+    public final double CAM_TELE_OP = 0.45;
 
     //multipliers for alternative detection
     double[][] relativePointsQuad = new double[][]{{0,-50}, {-50,-30}, {+50, -30}, {-50,20}, {+50,20}, {-50,-60}, {0, -67}, {+50,-60}, {-85, -60}, {+85, -60}, {-85, 0}, {+85, 0}, {-50,50}, {+50,50}, {0, -95}};
@@ -285,8 +285,8 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
             for (VuforiaTrackable trackable : allTrackables) {
                 ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
             }
+            targetsUltimateGoal.activate();
         }
-        targetsUltimateGoal.activate();
 
         // register CameraStoneDetector as a configurable component
         configuration.register(this);

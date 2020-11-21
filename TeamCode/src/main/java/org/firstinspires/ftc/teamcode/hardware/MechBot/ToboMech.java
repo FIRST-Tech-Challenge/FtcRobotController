@@ -1020,6 +1020,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 }
                 break;
             case DIAGNOSIS:
+                useVuforia = true;
                 break;
         }
 
