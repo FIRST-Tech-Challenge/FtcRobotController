@@ -2,13 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.hitechnic.HiTechnicNxtGyroSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -16,7 +13,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
 
 
 public class RobotClass {
@@ -68,6 +64,16 @@ public class RobotClass {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.firstAngle;
     }
+    public double relegateTargetAngle(double targetAngle) {
+        if (targetAngle > 180) {
+            double newTargetAngle = (targetAngle - 180);
+            targetAngle = -180+newTargetAngle;
+        }else if (targetAngle < -180) {
+            double newTargetAngle = (targetAngle + 180);
+            targetAngle = 180-newTargetAngle;
+        }
+        return targetAngle;
+    }
 
     public void forward (double speed, double rotations){
         int leftCurrent = frontLeft.getCurrentPosition();
@@ -81,7 +87,7 @@ public class RobotClass {
         telemetry.addData("Target Front Left Motor Position", backRightCurrent);
         telemetry.update();
 //        try {
-//            wait(5_000);
+//
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
@@ -138,11 +144,6 @@ public class RobotClass {
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        try {
-            wait(30000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
     public void backwards (double speed, double rotations) {
         int leftCurrent = frontLeft.getCurrentPosition();
@@ -273,7 +274,7 @@ public class RobotClass {
         backRight.setPower(-speed);
 
         while (getAngleFromGyro() < angle) {
-            wait(5);
+            
         }
 
         frontLeft.setPower(0);
@@ -289,7 +290,7 @@ public class RobotClass {
         setSpeedForTurnLeft(speed);
 
         while (getAngleFromGyro() < angle) {
-            wait(5);
+            
         }
 
         stopMotors();
@@ -308,19 +309,12 @@ public class RobotClass {
 
         double targetAngle = getAngleFromGyro() - angle;
 
-        if (targetAngle > 180) {
-            double newTargetAngle = (targetAngle - 180);
-            targetAngle = -180+newTargetAngle;
-        }else if (targetAngle < -180) {
-            double newTargetAngle = (targetAngle + 180);
-            targetAngle = 180-newTargetAngle;
-        }
-
+        relegateTargetAngle(targetAngle);
 
         while (getAngleFromGyro() > targetAngle) {
             telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
             telemetry.update();
-            wait(5);
+            
         }
 
         frontLeft.setPower(0);
@@ -336,7 +330,7 @@ public class RobotClass {
         backLeft.setPower(-speed*.5);
         backRight.setPower(speed*.5);
         while (getAngleFromGyro() < targetAngle) {
-            wait(5);
+            
             telemetry.addData("Correcting Gyro Angle: ", getAngleFromGyro());
             telemetry.update();
         }
@@ -359,10 +353,12 @@ public class RobotClass {
 
         double targetAngle = getAngleFromGyro() + angle;
 
+        relegateTargetAngle(targetAngle);
+        
         while (getAngleFromGyro() < targetAngle) {
             telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
             telemetry.update();
-            wait(5);
+            
         }
 
         frontLeft.setPower(0);
@@ -378,7 +374,7 @@ public class RobotClass {
         backLeft.setPower(-speed*.5);
         backRight.setPower(speed*.5);
         while (getAngleFromGyro() < angle) {
-            wait(5);
+            
             telemetry.addData("Correcting Gyro Angle: ", getAngleFromGyro());
             telemetry.update();
         }
@@ -398,7 +394,7 @@ public class RobotClass {
         backRight.setPower(speed2);
 
         while (colorSensor.alpha() < 20) {
-            wait(5);
+            
             telemetry.addData("Light Level: ", colorSensor.alpha());
             telemetry.update();
         }
@@ -413,7 +409,7 @@ public class RobotClass {
         backRight.setPower(speed2);
 
         while (colorSensor.blue() < 20) {
-            wait(5);
+            
             telemetry.addData("Blue Level: ", colorSensor.blue());
             telemetry.update();
         }
@@ -428,7 +424,7 @@ public class RobotClass {
         backRight.setPower(speed2);
 
         while (colorSensor.red() < 20) {
-            wait(5);
+            
             telemetry.addData("Red Level: ", colorSensor.red());
             telemetry.update();
         }
@@ -444,7 +440,7 @@ public class RobotClass {
         frontRight.setPower(y - x);
         backRight.setPower(y + x);
 
-        wait((long) time);
+
 
         stopMotors();
 
@@ -460,15 +456,15 @@ public class RobotClass {
 
         if (color == 1) {
             while (colorSensor.alpha() < 20) {
-                wait(5);
+                
             }
         } else if (color == 2)  {
             while (colorSensor.red() < 20) {
-                wait(5);
+                
             }
         } else {
             while (colorSensor.blue() < 20) {
-                wait(5);
+                
             }
         }
         stopMotors();
