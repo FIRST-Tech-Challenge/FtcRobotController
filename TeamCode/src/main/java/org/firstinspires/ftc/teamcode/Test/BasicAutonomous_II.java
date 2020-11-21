@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Test;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -27,6 +28,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
 import java.util.List;
 
 @Autonomous(name="Basic Autonomous II", group="Test")
+@Disabled
 
 // Place robot on the left most blue line when facing the goal. Robot should be placed such that
 // as it drives straight ahead it will not hit the stack of rings. So basically center the robot on
