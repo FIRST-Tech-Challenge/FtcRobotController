@@ -311,10 +311,16 @@ public class RobotClass {
 
         relegateTargetAngle(targetAngle);
 
-        while (getAngleFromGyro() > targetAngle) {
-            telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
-            telemetry.update();
-            
+        if (targetAngle > 0) {
+            while (getAngleFromGyro() > targetAngle) {
+                telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
+                telemetry.update();
+            }
+        } else if (targetAngle < 0) {
+            while (getAngleFromGyro() < targetAngle) {
+                telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
+                telemetry.update();
+            }
         }
 
         frontLeft.setPower(0);
