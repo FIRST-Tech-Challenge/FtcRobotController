@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
  * This opmode assumes you have your own robot class and simply wish to utilize Road Runner's
  * packaged localizer tools.
  */
-@TeleOp(group = "advanced")
+@TeleOp(name = "TestAdvanced:TeleOpJustLocalizer", group = "TestAdvanced")
 public class TeleOpJustLocalizer extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

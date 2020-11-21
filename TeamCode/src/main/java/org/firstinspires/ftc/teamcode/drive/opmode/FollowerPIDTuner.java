@@ -22,7 +22,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * These coefficients can be tuned live in dashboard.
  */
 @Config
-@Autonomous(group = "drive")
+//@Autonomous(group = "drive")
+@Autonomous(name = "Calib:RR-FollowerPIDTuner", group = "Calibration")
 public class FollowerPIDTuner extends LinearOpMode {
     public static double DISTANCE = 48; // in
 

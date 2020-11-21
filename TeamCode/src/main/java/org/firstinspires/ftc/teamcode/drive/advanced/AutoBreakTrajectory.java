@@ -17,7 +17,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * <p>
  * This sample utilizes the SampleMecanumDriveCancelable.java class.
  */
-@Autonomous(group = "advanced")
+//@Autonomous(group = "advanced")
+@Autonomous(name = "TestAdvanced:AutoBreakTrajectory", group = "TestAdvanced")
 public class AutoBreakTrajectory extends LinearOpMode {
 
     @Override

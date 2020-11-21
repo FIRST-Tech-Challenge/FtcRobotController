@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.advanced;
+package org.firstinspires.ftc.teamcode.TestingOpModes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 /**
@@ -27,8 +28,8 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
  * want that to interfere with our graph so we just directly update localizer instead
  */
 @Config
-@TeleOp(name = "TestAdvanced:TeleOpAlignWithPoint", group = "TestAdvanced")
-public class TeleOpAlignWithPoint extends LinearOpMode {
+@TeleOp(name = "TestAdvanced:MyRR_TeleOpAlignWithPoint", group = "TestAdvanced")
+public class MyRR_TeleOpAlignWithPoint extends LinearOpMode {
 
     public static double DRAWING_TARGET_RADIUS = 2;
 

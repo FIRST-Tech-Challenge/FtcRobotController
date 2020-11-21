@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * <p>
  * This sample utilizes the SampleMecanumDriveCancelable.java class.
  */
-@TeleOp(group = "advanced")
+@TeleOp(name = "TestAdvanced:TeleOpAugmentedDriving", group = "TestAdvanced")
 public class TeleOpAugmentedDriving extends LinearOpMode {
     // Define 2 states, drive control or automatic control
     enum Mode {
