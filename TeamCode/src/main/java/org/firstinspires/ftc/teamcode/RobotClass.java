@@ -309,11 +309,11 @@ public class RobotClass {
         double targetAngle = getAngleFromGyro() - angle;
 
         if (targetAngle > 180) {
-            double newTargetAngle = targetAngle - 180 *-1;
-            targetAngle = (targetAngle-newTargetAngle)*-1;
+            double newTargetAngle = (targetAngle - 180);
+            targetAngle = -180+newTargetAngle;
         }else if (targetAngle < -180) {
-            double newTargetAngle = targetAngle + 180*-1;
-            targetAngle = (targetAngle+newTargetAngle)*-1;
+            double newTargetAngle = (targetAngle + 180);
+            targetAngle = 180-newTargetAngle;
         }
 
 
