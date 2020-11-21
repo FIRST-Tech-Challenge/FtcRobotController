@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Enums.DriveSpeedState;
 import static java.lang.Thread.sleep;
 
 @TeleOp(name="Meet 1 Teleop", group="Teleop")
-//@Disabled
+@Disabled
 public class Meet_1_Teleop extends OpMode {
 
 
