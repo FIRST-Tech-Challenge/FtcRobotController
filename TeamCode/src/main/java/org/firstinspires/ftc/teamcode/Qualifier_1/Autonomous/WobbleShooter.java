@@ -7,7 +7,7 @@ package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous;
         import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 @Autonomous(name= "WobbleShooter_autonomous")
-public class WobbleShooterAutonomous extends LinearOpMode {
+public class WobbleShooter extends LinearOpMode {
     final boolean debug = true;
 
     @Override
@@ -23,10 +23,11 @@ public class WobbleShooterAutonomous extends LinearOpMode {
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
         waitForStart();
-        robot.moveAngleOdometry(0,-52,0.5);
-        robot.moveAngleOdometry(20,7,0.5);
+        robot.moveAngle(0,-63,0.5);
+        robot.moveAngle(20,5,0.5);
+        sleep(2000);
         //robot.shootHighGoal(3);
-        robot.moveAngleOdometry(0,-7,0.5);
+        robot.moveAngle(0,-5,0.5);
         sleep(500);
         stop();
     }
