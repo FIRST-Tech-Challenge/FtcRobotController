@@ -24,17 +24,15 @@ public class Claw extends SubSystem {
     public void init() {
         claw = robot.hardwareMap.servo.get("claw");
         arm = robot.hardwareMap.dcMotor.get("arm");
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armUp();
-        open();
+        close();
     }
 
     @Override
     public void handle() {
-        claw_speed = 0.5 + robot.gamepad2.right_trigger/2;
+        claw_speed = (robot.gamepad2.left_stick_x < 0) ? Math.pow(robot.gamepad2.left_stick_x, 2) : -Math.pow(robot.gamepad2.left_stick_x, 2);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        arm.setPower(-robot.gamepad2.left_stick_x * claw_speed);
+        arm.setPower(claw_speed);
         if (robot.gamepad2.x) {
             open();
         }
@@ -58,20 +56,23 @@ public class Claw extends SubSystem {
     }
 
     ElapsedTime armTimer = new ElapsedTime();
+
     public void armDown() {
         armTimer.reset();
         while (armTimer.milliseconds() <= 500) {
-            arm.setPower(.5);
+            arm.setPower(-1);
         }
         arm.setPower(0);
     }
 
     public void armUp() {
         armTimer.reset();
-        while (armTimer.milliseconds() <= 500) {
-            arm.setPower(-.5);
+        while (armTimer.milliseconds() <= 1000) {
+            arm.setPower(.3);
         }
         arm.setPower(0);
     }
+
+
 
 }

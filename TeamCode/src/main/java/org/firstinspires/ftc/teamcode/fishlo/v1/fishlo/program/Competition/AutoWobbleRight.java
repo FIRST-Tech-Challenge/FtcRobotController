@@ -37,7 +37,7 @@ public class AutoWobbleRight extends FishloAutonomousProgram {
         //Reset claw and arm to starting position
         claw.open();
         claw.armUp();
-        claw.close();
+//        claw.close();
         //Timer for vision
 
         //Make sure that the telemetry clears when printing on the screen
