@@ -25,7 +25,7 @@ public class track extends LinearOpMode{
         telemetry.update();
         waitForStart();
         while(isStopRequested()==false){
-            odom.track();
+            robot.motor_track();
         }
         stop();
     }
