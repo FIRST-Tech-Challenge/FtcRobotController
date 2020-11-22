@@ -50,6 +50,8 @@ public class Teleop extends LinearOpMode {
         boolean servoIsMoved = true;
         boolean ring_clamp_is_up = true;
         boolean move_ring_clamp = true;
+        boolean wobble_goal_servo_is_up = true;
+        boolean move_wobble_goal_servo = true;
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
         RingDepositor.Position currentRingDepositorPosition = RingDepositor.Position.REST;
 
@@ -75,10 +77,9 @@ public class Teleop extends LinearOpMode {
 //            float start_intake = gamepad1.right_trigger;
 //            float stop_intake = gamepad1.left_trigger;
             boolean ring_clamp = gamepad1.y;
-            boolean x_button = gamepad1.x;
+            boolean wobble_goal_servo = gamepad1.x;
             boolean a_button = gamepad1.a;
-//            boolean ring_clamp_true = gamepad1.b;
-//            boolean ring_clamp_false = gamepad1.y;
+            boolean b_button = gamepad1.b;
             boolean startingPosition = gamepad2.dpad_up;
             boolean grabbingPosition = gamepad2.dpad_right;
             boolean liftingPosition = gamepad2.dpad_down;
@@ -127,7 +128,7 @@ public class Teleop extends LinearOpMode {
             if (a_button) { //click a to turn on slowmode
                 slowMode = true;
             }
-            if (x_button) { //click x to turn off slow mode
+            if (b_button) { //click x to turn off slow mode
                 slowMode = false;
             }
 
@@ -155,16 +156,40 @@ public class Teleop extends LinearOpMode {
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.RAISE) {
                     nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.RELEASE);
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.RELEASE) {
-                    nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
+                    nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
                 } else {
                     telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
                     telemetry.update();
-                    sleep(2000);
+                    sleep(1000);
                 }
                 // added by Aiden; must have this otherwise if you hold onto the button multiple
                 // actions/movements will be executed by mistake
                 sleep(1000);
                 currentWobbleGoalPosition = nextWobbleGoalPosition;
+            }
+
+            if (wobble_goal_servo) {
+                move_wobble_goal_servo = true;
+
+                if (wobble_goal_servo_is_up) {
+                    wobble_goal_servo_is_up = false;
+                } else if (!wobble_goal_servo_is_up) {
+                    wobble_goal_servo_is_up = true;
+                }
+            } else {
+                move_wobble_goal_servo = false;
+            }
+
+            if (move_wobble_goal_servo) {
+                if (wobble_goal_servo_is_up) {
+                    telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
+                    telemetry.update();
+                    robot.moveWobbleGoalServo(true);
+                } else if (!wobble_goal_servo_is_up) {
+                    telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
+                    telemetry.update();
+                    robot.moveWobbleGoalServo(false);
+                }
             }
 
             telemetry.addData("Wobble Goal Direct", startingPosition + ", " + grabbingPosition + ", " + liftingPosition + ", " + droppingPosition);
@@ -192,7 +217,7 @@ public class Teleop extends LinearOpMode {
                 } else {
                     telemetry.addData("Ring Depositor: ", "u have made a STUPID MISTAKE");
                     telemetry.update();
-                    sleep(2000);
+                    sleep(500);
                 }
             }
 

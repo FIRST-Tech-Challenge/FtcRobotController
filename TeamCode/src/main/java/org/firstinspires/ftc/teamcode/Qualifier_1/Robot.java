@@ -307,6 +307,10 @@ public class Robot {
         wobbleGoal.stop();
     }
 
+    public void moveWobbleGoalServo(boolean direction){
+        wobbleGoal.moveWobbleGoalServo(direction);
+    }
+
     // ring depositor
     public void ringDepositorClockwise() {
         ringDepositor.clockwise();
