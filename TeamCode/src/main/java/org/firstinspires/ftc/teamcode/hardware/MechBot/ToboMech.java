@@ -1123,7 +1123,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if(tZone == TargetZone.ZONE_A) {
             chassis.driveTo(auto_chassis_power, side(60), 165, -60, true, 5);
         }
-        shooter.shootOutByRpm(1000);
+        shooter.shootOutByRpm(1260);
         chassis.driveTo(.6, side(130), 170, 0, true,  2); // need to do something about this
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
         //shoot
@@ -1139,6 +1139,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shoot
         hopper.feederAuto();
         sleep(500);
+        shooter.shootOutByRpm(0);
     }
     public void shootGoal() throws InterruptedException {
         chassis.driveTo(.55, side(90), 180, 0, false,  5);
