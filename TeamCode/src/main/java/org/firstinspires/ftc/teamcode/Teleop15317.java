@@ -27,6 +27,7 @@ public class Teleop15317 extends LinearOpMode {
     private Drive d;
     private SciLift lift;
 //    private Collect collector;
+    private Intake intake;
 //    private HopperWheel hopperwheel;
     // private Claw claw;
     // private Arm arm;
@@ -59,6 +60,10 @@ public class Teleop15317 extends LinearOpMode {
 //           hardwareMap.get(DcMotor.class, "col_right"),
 //           hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor")
 //         );
+        intake = new Intake(
+           hardwareMap.get(DcMotor.class, "topmotor"),
+           hardwareMap.get(DcMotor.class, "botmotor")
+        );
 //        hopperwheel = new HopperWheel(
 //                hardwareMap.get(DcMotor.class, "hopper"),
 //                hardwareMap.get(DcMotor.class, "wheel")
@@ -145,6 +150,14 @@ public class Teleop15317 extends LinearOpMode {
 //             } else {
 //               collector.rest();
 //             }
+
+            if (gamepad2.right_bumper) {
+               intake.in();
+             } else if (gamepad2.left_bumper) {
+               intake.out();
+             } else {
+               intake.rest();
+             }
 
 //            if (gamepad2.left_bumper) {
 //               hopperwheel.out();
