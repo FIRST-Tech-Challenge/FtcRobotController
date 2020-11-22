@@ -30,9 +30,9 @@ public class OdometryCalibration extends LinearOpMode {
 
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
     String rfName = "FR", rbName = "BR", lfName = "FL", lbName = "BL";
-    String verticalLeftEncoderName = "leftOdometry", verticalRightEncoderName = "rightOdometry", horizontalEncoderName = "outtakeRight";
+    String verticalLeftEncoderName = "leftOdometry", verticalRightEncoderName = "rightOdometry", horizontalEncoderName = "horizontalOdometry";
 
-    final double PIVOT_SPEED = 0.5;
+    final double PIVOT_SPEED = 0.25;
 
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
     final double COUNTS_PER_INCH = 307.699557;
@@ -167,7 +167,6 @@ public class OdometryCalibration extends LinearOpMode {
         left_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         left_back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        left_front.setDirection(DcMotorSimple.Direction.REVERSE);
         right_front.setDirection(DcMotorSimple.Direction.REVERSE);
         right_back.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -182,7 +181,7 @@ public class OdometryCalibration extends LinearOpMode {
      * @return the angle of the robot
      */
     private double getZAngle(){
-        return (-imu.getAngularOrientation().firstAngle);
+        return (imu.getAngularOrientation().firstAngle);
     }
 
     /**

@@ -20,8 +20,8 @@ public class MyOdometryOpmode extends LinearOpMode {
     final double COUNTS_PER_INCH = 307.699557;
 
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
-    String rfName = "rf", rbName = "rb", lfName = "lf", lbName = "lb";
-    String verticalLeftEncoderName = rbName, verticalRightEncoderName = lfName, horizontalEncoderName = rfName;
+    String rfName = "FR", rbName = "BR", lfName = "FL", lbName = "BL";
+    String verticalLeftEncoderName = "leftOdometry", verticalRightEncoderName = "rightOdometry", horizontalEncoderName = "outtakeRight";
 
     OdometryGlobalCoordinatePosition globalPositionUpdate;
 
@@ -42,7 +42,27 @@ public class MyOdometryOpmode extends LinearOpMode {
         globalPositionUpdate.reverseRightEncoder();
         globalPositionUpdate.reverseNormalEncoder();
 
+        double powerMod = 1.0;
+
         while(opModeIsActive()){
+
+            if (gamepad1.right_bumper) {
+                powerMod = 0.5;
+            } else {
+                powerMod = 1.0;
+            }
+            double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI / 4);
+            double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
+            double rotation = gamepad1.left_stick_x*.5;
+
+            double powerOne = r * Math.cos(angle);
+            double powerTwo = r * Math.sin(angle);
+
+            left_front.setPower((powerOne + (rotation))*powerMod);
+            right_front.setPower((powerOne - (rotation))*powerMod);
+            left_back.setPower((powerTwo + (rotation))*powerMod);
+            right_back.setPower((powerTwo - (rotation))*powerMod);
+
             //Display Global (x, y, theta) coordinates
             telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
@@ -95,7 +115,6 @@ public class MyOdometryOpmode extends LinearOpMode {
         left_front.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         left_back.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        left_front.setDirection(DcMotorSimple.Direction.REVERSE);
         right_front.setDirection(DcMotorSimple.Direction.REVERSE);
         right_back.setDirection(DcMotorSimple.Direction.REVERSE);
 
