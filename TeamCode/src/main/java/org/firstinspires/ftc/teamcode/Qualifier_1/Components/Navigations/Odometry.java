@@ -20,7 +20,7 @@ public class Odometry {
     DcMotorEx odom2;
     DcMotorEx odom3;
     int[] odomconst = {1,1,1};
-    double ticks_per_inch = 1440*0.8/4.691;
+    double ticks_per_inch = 1440/4.691;//13.36 0.8//12.93 9/16//12.63 0.65//11.77 1.0
     double robot_diameter = sqrt(619.84);
     double[] odom = new double[3];
     double xpos = 0;
@@ -43,7 +43,7 @@ public class Odometry {
         odom3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odomconst[0]=-1;
         odomconst[1]=-1;
-        odomconst[2]=1;
+        odomconst[2]=-1;
     }
 
 
@@ -55,6 +55,15 @@ public class Odometry {
             angle += 360;
         }
         return angle;
+    }
+    public double odom1() {
+        return odom1.getCurrentPosition();
+    }
+    public double odom2() {
+        return odom2.getCurrentPosition();
+    }
+    public double odom3() {
+        return odom3.getCurrentPosition();
     }
 
     public double[] track() {
@@ -87,10 +96,14 @@ public class Odometry {
                 double y = sin((getAngle() * Math.PI / 180));
                 xpos += y * (diff[0]+diff[1])/(2*ticks_per_inch) + x * diff[2]/ticks_per_inch;
                 ypos += x * (diff[0]+diff[1])/(2*ticks_per_inch) - y * diff[2]/ticks_per_inch;
+        op.telemetry.addData("odom1",odom1.getCurrentPosition());
+        op.telemetry.addData("odom2",odom2.getCurrentPosition());
+                op.telemetry.addData("odom3",odom3.getCurrentPosition());
+                op.telemetry.update();
                 data[0] = xpos;
                 data[1] = ypos;
                 data[2] = getAngle();
-                return data;
+            return data;
     }
 }
 

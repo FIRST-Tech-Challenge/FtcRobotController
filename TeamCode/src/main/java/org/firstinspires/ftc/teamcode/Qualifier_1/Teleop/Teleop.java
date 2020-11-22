@@ -155,7 +155,7 @@ public class Teleop extends LinearOpMode {
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.RAISE) {
                     nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.RELEASE);
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.RELEASE) {
-                    nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
+                    nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
                 } else {
                     telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
                     telemetry.update();
