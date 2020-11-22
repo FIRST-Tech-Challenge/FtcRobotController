@@ -38,7 +38,7 @@ public class SampleOpMode extends LinearOpMode {
 //            // gamepad 1
 //            testMotor.setPower( gamepad1.left_stick_y );
             if(gamepad2.right_bumper) {
-                testMotor.setPower(1);
+                testMotor.setPower(-1);
 //                testMotor2.setPower(.35);
             } else {
                 testMotor.setPower(0);

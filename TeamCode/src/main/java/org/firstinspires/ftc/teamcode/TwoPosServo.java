@@ -1,15 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class TwoPosServo extends LinearOpMode {
 
-    private Servo servo = null;
-    private double max = 0.01; // Maximum rotational position
-    private double min = 0.99; // Minimum rotational position
+    private Servo servo;
+    private double max; // Maximum rotational position
+    private double min; // Minimum rotational position
 
 
     private String currentPos = "min";
@@ -28,10 +27,10 @@ public class TwoPosServo extends LinearOpMode {
     }
 
     public void nextPos() {
-        if(currentPos == "min") {
+        if(currentPos.equals("min")) {
             currentPos = "max";
             maxPos();
-        } else if(currentPos == "max") {
+        } else if(currentPos.equals("max")) {
             currentPos = "min";
             minPos();
         }

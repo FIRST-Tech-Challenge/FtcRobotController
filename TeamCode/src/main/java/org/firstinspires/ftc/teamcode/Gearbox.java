@@ -26,10 +26,10 @@ public class Gearbox extends LinearOpMode {
     }
 
     public void nextPos() {
-        if(currentPos == "closed") {
+        if(currentPos.equals("closed")) {
             currentPos = "open";
             release();
-        } else if(currentPos == "open") {
+        } else if(currentPos.equals("open")) {
             currentPos = "closed";
             grab();
         }

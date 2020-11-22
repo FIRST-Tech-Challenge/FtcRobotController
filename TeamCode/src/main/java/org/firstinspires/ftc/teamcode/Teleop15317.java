@@ -26,8 +26,8 @@ public class Teleop15317 extends LinearOpMode {
     //creating objects for all of the different parts
     private Drive d;
     private SciLift lift;
-    private Collect collector;
-    private HopperWheel hopperwheel;
+//    private Collect collector;
+//    private HopperWheel hopperwheel;
     // private Claw claw;
     // private Arm arm;
     // private Flick flick;
@@ -59,10 +59,10 @@ public class Teleop15317 extends LinearOpMode {
 //           hardwareMap.get(DcMotor.class, "col_right"),
 //           hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor")
 //         );
-        hopperwheel = new HopperWheel(
-                hardwareMap.get(DcMotor.class, "hopper"),
-                hardwareMap.get(DcMotor.class, "wheel")
-        );
+//        hopperwheel = new HopperWheel(
+//                hardwareMap.get(DcMotor.class, "hopper"),
+//                hardwareMap.get(DcMotor.class, "wheel")
+//        );
         // claw = new Claw(
         //   hardwareMap.get(Servo.class, "clawleft"),
         //   hardwareMap.get(Servo.class, "clawright")
@@ -79,7 +79,7 @@ public class Teleop15317 extends LinearOpMode {
         );
         gearbox = new TwoPosServo(
             hardwareMap.get(Servo.class, "gearbox"),
-            0.01, 0.99
+            0.5, 0.6
         );
 
         waitForStart();
@@ -146,11 +146,11 @@ public class Teleop15317 extends LinearOpMode {
 //               collector.rest();
 //             }
 
-            if (gamepad2.left_bumper) {
-               hopperwheel.out();
-             } else {
-               hopperwheel.rest();
-             }
+//            if (gamepad2.left_bumper) {
+//               hopperwheel.out();
+//             } else {
+//               hopperwheel.rest();
+//             }
 
             // if (gamepad2.left_stick_y > 0) {
             //     arm.extend(Math.abs(gamepad2.left_stick_y*0.75));
@@ -169,7 +169,7 @@ public class Teleop15317 extends LinearOpMode {
             }
 
             telemetry.addData("Status", "Run Time: ");
-            telemetry.addData("Collect Power", collector.getPower());
+//            telemetry.addData("Collect Power", collector.getPower());
             // telemetry.addData("Dist Sensor", collector.getDistance());
             telemetry.addData("Ly", gamepad1.left_stick_y);
             telemetry.addData("Lx", gamepad1.left_stick_x);
