@@ -50,12 +50,30 @@ final boolean debug = true;
         telemetry.addData("moved6s", "done");
         telemetry.update();
         sleep(1000);*/
-        robot.moveForward(48,0.5);
-        telemetry.addData("moved1s", "done");
+        robot.moveAngle(0,24,0.5);
+        telemetry.addData("moved", "done");
         telemetry.update();
         sleep(1000);
-        //robot.moveAngleMotor(0,-72,0.5);
-        telemetry.addData("moved2s", "done");
+        robot.moveAngle(0,-24,0.5);
+        telemetry.addData("moved", "done");
+        telemetry.update();
+        sleep(1000);
+        robot.moveAngle(24,0,0.5);
+        telemetry.addData("moved", "done");
+        telemetry.update();
+        sleep(1000);
+        robot.moveAngle(-24,0,0.5);
+        telemetry.addData("moved", "done");
+        telemetry.update();
+        sleep(1000);
+        robot.moveAngle(24,24,0.5);
+        telemetry.addData("moved", "done");
+        telemetry.update();
+        sleep(1000);
+        robot.moveAngle(-24,-24,0.5);
+        telemetry.addData("moved", "done");
+        telemetry.update();
+        sleep(1000);
         stop();
     }
 

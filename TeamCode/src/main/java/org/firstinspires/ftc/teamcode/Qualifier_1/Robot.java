@@ -26,6 +26,8 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Vuforia
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.ObjectDetection.TensorFlow;
 //import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
 
+import java.util.Base64;
+
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
@@ -51,6 +53,7 @@ public class Robot {
     private RingDepositor ringDepositor = null;
     private VuforiaWebcam vuforiaWebcam = null;
     private Shooter shooter=null;
+    private EncoderChassis encoder = null;
 
 
     private double vuforiaX = 0;
@@ -71,6 +74,7 @@ public class Robot {
         ringDepositor = new RingDepositor(op);
         intake = new Intake(op);
         shooter=new Shooter(op);
+        encoder = new EncoderChassis(op);
 
         // comment by victor
         // drivetrain.init(opMode);
@@ -227,6 +231,9 @@ public class Robot {
     public void moveRight(double distance, double power) {
         drivetrain.moveRight(distance, power);
     }
+    public void moveAngle(double x, double y, double power){
+        encoder.moveAngle(x,y,power);
+    }
 
     public void moveRightIMU(double distance, double power, double startingAngle, double gain, double maxCorrection) {
         drivetrain.moveRightIMU(distance, power, startingAngle, gain, maxCorrection);
@@ -308,6 +315,9 @@ public class Robot {
 
     public void stopTensorFlow () {
 
+    }
+    public void motor_track(){
+        encoder.track();
     }
 
     /**Odometry**/

@@ -42,7 +42,7 @@ public class EncoderChassis {
 
     // these encoder variables vary depending on chassis type
     final double counts_per_motor_goBilda = 383.6;
-    final double counts_per_inch =  (1440 / (wheel_diameter * Math.PI));  //2*(counts_per_motor_goBilda / (wheel_diameter * Math.PI))
+    final double counts_per_inch =  (counts_per_motor_goBilda / (wheel_diameter * Math.PI));  //2*(counts_per_motor_goBilda / (wheel_diameter * Math.PI))
     final double counts_per_degree = counts_per_inch * robot_diameter * Math.PI / 360;
 
     /* local OpMode members. */
@@ -102,14 +102,14 @@ public class EncoderChassis {
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
     }
-    public double[] motor_track(){
+    public double[] track(){
         double[] data = {0, 0, 0};
         double diff[]={motorLeftFront.getCurrentPosition() - encoder[0],motorRightFront.getCurrentPosition() - encoder[1],motorLeftBack.getCurrentPosition() - encoder[2],motorRightBack.getCurrentPosition()-encoder[3]};
         encoder[0] += diff[0];
         encoder[1] += diff[1];
         encoder[2] += diff[2];
         encoder[3] += diff[3];
-        xpos += sqrt(2) * ((diff[0]+diff[3])/(2*counts_per_inch) -  (diff[2]+diff[1])/(2*counts_per_inch));
+        xpos += sqrt(2) * (-(diff[0]+diff[3])/(2*counts_per_inch) +  (diff[2]+diff[1])/(2*counts_per_inch));
         ypos += sqrt(2) * ((diff[0]+diff[3])/(2*counts_per_inch) + (diff[2]+diff[1])/(2*counts_per_inch));
         op.telemetry.addData("LeftFront",motorLeftFront.getCurrentPosition());
         op.telemetry.addData("RightFront",motorRightFront.getCurrentPosition());
@@ -117,14 +117,19 @@ public class EncoderChassis {
         op.telemetry.addData("RightBack",motorRightBack.getCurrentPosition());
         op.telemetry.addData("xpos",xpos);
         op.telemetry.addData("ypos",ypos);
-        op.telemetry.addData("angle",motorGetAngle());
+        op.telemetry.addData("angle",getAngle());
         op.telemetry.update();
         data[0] = xpos;
         data[1] = ypos;
-        data[2] = motorGetAngle();
+        data[2] = getAngle();
         return data;
     }
-    public double motorGetAngle() {
+    public double getAngle() {
+        double diff[]={motorLeftFront.getCurrentPosition() - encoder[0],motorRightFront.getCurrentPosition() - encoder[1],motorLeftBack.getCurrentPosition() - encoder[2],motorRightBack.getCurrentPosition()-encoder[3]};
+        encoder[0] += diff[0];
+        encoder[1] += diff[1];
+        encoder[2] += diff[2];
+        encoder[3] += diff[3];
         double angle = ((encoder[0]+encoder[2]) - (encoder[1]+encoder[3])) / (counts_per_inch *4* robot_diameter * Math.PI*360);
         angle %= 360;
         if (angle < -180) {
@@ -132,20 +137,20 @@ public class EncoderChassis {
         }
         return angle;
     }
-    public void Motorturn(double target, double power) {
-        double currentAngle = motorGetAngle();
+    public void turn(double target, double power) {
+        double currentAngle = getAngle();
         int direction = 1;
         double difference = currentAngle - target;
         double targetAngle = target;
         if (target < 0) {
             direction = -1;
         }
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         while (op.opModeIsActive() && (difference >= 0.5)) {
-            currentAngle = motorGetAngle();
+            currentAngle = getAngle();
             difference = targetAngle - currentAngle;
             if (difference * direction < 5) {
                 power *= difference / 5;
@@ -167,53 +172,111 @@ public class EncoderChassis {
         motorRightFront.setPower(0);
     }
     public void moveForward(double distance, double power) {
-        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        double startAngle =motorGetAngle();
-        double[] currentPosition = motor_track();
-        double[] target_position = {0, 0, 0};
-        double anglecorrection;
-        target_position[0] = currentPosition[0];
-        target_position[1] = currentPosition[1] + distance;
-        target_position[2] = currentPosition[2];
-        double difference = distance;
+            double ticksToMove = counts_per_inch * distance;
+            double newLeftBackTargetPosition = motorLeftBack.getCurrentPosition() + ticksToMove;
+            double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() + ticksToMove;
+            double newRightBackTargetPosition = motorRightBack.getCurrentPosition() + ticksToMove;
+            double newRightFrontTargetPosition = motorRightFront.getCurrentPosition() + ticksToMove;
+            motorLeftBack.setTargetPosition((int) newLeftBackTargetPosition);
+            motorLeftFront.setTargetPosition((int) newLeftFrontTargetPosition);
+            motorRightBack.setTargetPosition((int) newRightBackTargetPosition);
+            motorRightFront.setTargetPosition((int) newRightFrontTargetPosition);
 
+            op.telemetry.addData("ticks: ", (int) ticksToMove +
+                    "LB: " + (int) newLeftBackTargetPosition + "LF: " + (int) newLeftFrontTargetPosition +
+                    "RB: " + (int) newRightBackTargetPosition + "LB: " + (int) newRightFrontTargetPosition);
+            op.telemetry.update();
 
-            while (op.opModeIsActive() && (difference >= 1)) {
-                currentPosition = motor_track();
-                difference = target_position[1]-currentPosition[1];
-                if (difference < 5) {
-                    power *= difference / 10;
-                    if (abs(power) < 0.2) {
-                        power = 0.2;
-                    }
-                }
-                motorRightBack.setPower(power  );
-                motorRightFront.setPower(power  );
-                motorLeftBack.setPower(power  );
-                motorLeftFront.setPower(power );
+            motorRightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorRightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorLeftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorLeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            motorRightFront.setPower(power);
+            motorLeftFront.setPower(power);
+            motorRightBack.setPower(power);
+            motorLeftBack.setPower(power);
+
+            while (op.opModeIsActive() && (motorLeftBack.isBusy() && motorLeftFront.isBusy() && motorRightBack.isBusy() &&
+                    motorRightFront.isBusy())) {
+                //correction = checkDirection();
+
+                motorRightBack.setPower(power);
+                motorRightFront.setPower(power);
+                motorLeftBack.setPower(power);
+                motorLeftFront.setPower(power);
+//            op.telemetry.addData("correction", correction);
+//            op.telemetry.update();
+//            op.idle();
             }
 
+            stopAllMotors();
+            ypos+=48;
+            // Changes motor mode back to default
+            motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    public void moveSideways(double distance, double power) {
+        double ticksToMove = counts_per_inch * distance;
+        double newLeftBackTargetPosition = motorLeftBack.getCurrentPosition() + ticksToMove;
+        double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() - ticksToMove;
+        double newRightBackTargetPosition = motorRightBack.getCurrentPosition() - ticksToMove;
+        double newRightFrontTargetPosition = motorRightFront.getCurrentPosition() + ticksToMove;
+        motorLeftBack.setTargetPosition((int) newLeftBackTargetPosition);
+        motorLeftFront.setTargetPosition((int) newLeftFrontTargetPosition);
+        motorRightBack.setTargetPosition((int) newRightBackTargetPosition);
+        motorRightFront.setTargetPosition((int) newRightFrontTargetPosition);
+
+        motorRightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        op.telemetry.addData("ticks: ", (int) ticksToMove +
+                "LB: " + (int) newLeftBackTargetPosition + "LF: " + (int) newLeftFrontTargetPosition +
+                "RB: " + (int) newRightBackTargetPosition + "LB: " + (int) newRightFrontTargetPosition);
+        op.telemetry.update();
+
+        motorLeftBack.setPower(power);
+        motorRightBack.setPower(-power);
+        motorLeftFront.setPower(-power);
+        motorRightFront.setPower(power);
+
+        while (op.opModeIsActive() && (motorLeftBack.isBusy() && motorLeftFront.isBusy() && motorRightBack.isBusy() &&
+                motorRightFront.isBusy())) {
+
+            motorRightBack.setPower(power - correction);
+            motorRightFront.setPower(power + correction);
+            motorLeftBack.setPower(power - correction);
+            motorLeftFront.setPower(power + correction);
+        }
+
         stopAllMotors();
+
+        // Changes motor mode back to default
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void moveAngleMotor(double x, double y, double power) {
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    public void moveAngle(double x, double y, double power) {
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        double startAngle =motorGetAngle();
-        double[] currentPosition = motor_track();
+        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double startAngle =getAngle();
+        double[] currentPosition = track();
         double[] target_position = {0, 0, 0};
         double anglecorrection;
         target_position[0] = currentPosition[0] + x;
         target_position[1] = currentPosition[1] + y;
         target_position[2] = currentPosition[2];
         double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
-        double angleInRadians = atan2(y, x) - motorGetAngle() * PI / 180;
+        double angleInRadians = atan2(y, x) - getAngle() * PI / 180;
         double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
-        try {
+        /*try {
             //Create File
             File myFTCfile = new File("/storage/emulated/0/tmp/OdometryTest.csv");
             if (myFTCfile.createNewFile()) {
@@ -223,10 +286,10 @@ public class EncoderChassis {
                 op.telemetry.addData("moveAngleOdometry:", "File already exists:%S\n", "Odometry");
                 op.telemetry.update();
             }
-            FileWriter wFTCfile = new FileWriter(myFTCfile);
+            FileWriter wFTCfile = new FileWriter(myFTCfile);*/
 
             while (op.opModeIsActive() && (difference >= 1)) {
-                currentPosition = motor_track();
+                currentPosition = track();
             /*op.telemetry.addData("targetx", target_position[0]);
             op.telemetry.addData("targety",target_position[1]);
             op.telemetry.addData("angle",angleInRadians);
@@ -246,8 +309,8 @@ public class EncoderChassis {
                 angleInRadians = atan2(y, x) - currentPosition[2] * PI / 180;
                 anglePower[0] = sin(angleInRadians + PI / 4);
                 anglePower[1] = sin(angleInRadians - PI / 4);
-                anglecorrection = (currentPosition[2] - target_position[2]) * 0.005;
-                if (difference > 10) {
+                anglecorrection = (currentPosition[2] - target_position[2]) * 0.007;
+                /*if (difference > 10) {
                     if (abs(anglePower[1]) > abs(anglePower[0])) {
                         anglePower[1] *= abs(1 / anglePower[1]);
                         anglePower[0] *= abs(1 / anglePower[1]);
@@ -255,8 +318,8 @@ public class EncoderChassis {
                         anglePower[1] *= abs(1 / anglePower[0]);
                         anglePower[0] *= abs(1 / anglePower[0]);
 
-                    }
-                }
+                    }*/
+                //}
                 motorRightBack.setPower(power * anglePower[1] + anglecorrection);
                 motorRightFront.setPower(power * anglePower[0] + anglecorrection);
                 motorLeftBack.setPower(power * anglePower[0] - anglecorrection);
@@ -266,7 +329,7 @@ public class EncoderChassis {
                 op.telemetry.update();
                 //op.sleep(3000);
                 //FileWriteHandle;
-                wFTCfile.write(System.currentTimeMillis() + "," + String.format("%.2f",currentPosition[0]) + "," + String.format("%.2f",currentPosition[1]) + "," +
+                /*wFTCfile.write(System.currentTimeMillis() + "," + String.format("%.2f",currentPosition[0]) + "," + String.format("%.2f",currentPosition[1]) + "," +
                         String.format("%.2f",currentPosition[2]) + "," +
                         String.format("%.2f",power) + "," +
                         String.format("%.2f",anglePower[0]) + "," +
@@ -274,12 +337,12 @@ public class EncoderChassis {
                         String.format("%.2f",anglecorrection) + "," +
                         String.format("%.2f",difference) +","+"\n"+
                         String.format("%.2f",encoder[0])+"," +String.format("%.2f",encoder[1])+","+ String.format("%.2f",encoder[2])+","+String.format("%.2f",encoder[3])+","+"\n");
-            }
-            wFTCfile.close();
+            */}
+            /*wFTCfile.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        Motorturn(startAngle, power);
+        }*/
+        turn(0,0.25);
         stopAllMotors();
     }
 }
