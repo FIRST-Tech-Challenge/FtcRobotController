@@ -63,7 +63,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double auto_chassis_power_slow = .4;
     public double auto_chassis_align_power = .22;
     public double shooter_offset = 10; // shooter is 10 cm right of the robot center x coordination
-    public double webcam_offset = -25; // webcam is 25 cm left of the robot center x coordination
+    public double webcam_offset_x = -25; // webcam is 25 cm left of the robot center x coordination
+    public double webcam_offset_y = 20;
     public double shooting_dist = 0;
     public double shooting_angle = 0;
 
@@ -315,13 +316,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 // 0.2 is a dead zone threshold for the trigger
                 if (current > 0.2 && chassis!=null) {
                     if (source.isPressed(Button.DPAD_UP)) { // high goal
-                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER);
+                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
                     } else if (source.isPressed(Button.DPAD_RIGHT)) { // high goal
-                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R);
+                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R, false);
                     } else if (source.isPressed(Button.DPAD_LEFT)) { // high goal
-                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L);
+                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
                     } else if (source.isPressed(Button.DPAD_DOWN)) { // high goal
-                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_M);
+                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_M, false);
                     }
                 }
             }
@@ -1220,10 +1221,23 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
     }
 
-    public void rotateToTargetAndStartShooter(MechChassis.ShootingTarget target) {
+    public void rotateToTargetAndStartShooter(MechChassis.ShootingTarget target, boolean useVuforia) {
         double target_x = 0;
         double target_y = 360;
         double target_height = 0;
+        double[] vuforia_position = {-1,-1,-1};
+        if(useVuforia&&cameraDetector!=null)
+        {
+            vuforia_position = cameraDetector.getPositionFromVuforia();
+        }
+        if(vuforia_position[0] == -1 && vuforia_position[1] == -1)
+        {
+            useVuforia = false;
+        }
+        double[] shooter_position = new double[]{
+                (useVuforia?vuforia_position[0] - webcam_offset_x + shooter_offset : chassis.odo_x_pos_cm() + shooter_offset),
+                (useVuforia?vuforia_position[1] - webcam_offset_y : chassis.odo_y_pos_cm())
+        };
         switch (target) {
             case TOWER:
                 target_x = 90;
@@ -1243,8 +1257,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 break;
         }
         // start the shooter with expected RPM
-        double dx = target_x-chassis.odo_x_pos_cm() - shooter_offset;
-        double dy = target_y-chassis.odo_y_pos_cm();
+        double dx = target_x - shooter_position[0];
+        double dy = target_y - shooter_position[1];
         shooting_dist = Math.hypot(dx,dy);
         double v = getVelocityToShoot(shooting_dist, target_height);
         double rpm = getRpmFromVelocity(v);
@@ -1266,6 +1280,23 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
     }
+
+    public void initializePositionFromVuforia()
+    {
+        if(cameraDetector == null)
+        {
+            return;
+        }
+        double[] vuforia_position;
+        vuforia_position = cameraDetector.getPositionFromVuforia();
+        if(vuforia_position[0] == -1 && vuforia_position[1] == -1)
+        {
+            chassis.set_init_pos(vuforia_position[0]+webcam_offset_x,
+                    vuforia_position[1]+webcam_offset_y,
+                    vuforia_position[2]);
+        }
+    }
+
 
     public double  getRpmFromVelocity(double velocity){
         double a = 225.686;
