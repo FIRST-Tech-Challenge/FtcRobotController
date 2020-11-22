@@ -30,7 +30,7 @@ public class Shooter {
         shooterMotor = hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
         shooter_Servo=hardwareMap.servo.get("ShooterServo");
         shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooter_Servo.setPosition(1.0);
+        shooter_Servo.setPosition(0.0);
     }
 
 
