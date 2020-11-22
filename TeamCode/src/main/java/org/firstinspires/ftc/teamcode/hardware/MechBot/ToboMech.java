@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-import org.firstinspires.ftc.teamcode.components.CameraSystem;
 import org.firstinspires.ftc.teamcode.components.MechChassis;
 import org.firstinspires.ftc.teamcode.components.Robot2;
 import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
@@ -48,7 +47,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public ElapsedTime runtimeAuto = new ElapsedTime();
     public double rotateRatio = 0.7; // slow down ratio for rotation
     public CameraDetector cameraDetector;
-    public CameraSystem cameraSystem;
     public File simEventFile;
     public BottomWobbleGoalGrabber bottomWobbleGoalGrabber;
     public TopWobbleGoalGrabber topWobbleGoalGrabber;
@@ -63,8 +61,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double auto_chassis_power_slow = .4;
     public double auto_chassis_align_power = .22;
     public double shooter_offset = 10; // shooter is 10 cm right of the robot center x coordination
-    public double webcam_offset_x = -25; // webcam is 25 cm left of the robot center x coordination
-    public double webcam_offset_y = 20;
+    public double webcam_offset_x = 25; // webcam is 25 cm left of the robot center x coordination
+    public double webcam_offset_y = -14.2;
     public double shooting_dist = 0;
     public double shooting_angle = 0;
 
@@ -180,6 +178,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             topWobbleGoalGrabber.servoInit();
         if (comboGrabber!=null)
             comboGrabber.servoInit();
+        if (hopper!=null)
+            hopper.servoInit();
         if (!auto) {
             chassis.setupTelemetry(telemetry);
         }
@@ -205,9 +205,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 //            telemetry.update();
 //            sleep(10000);
 //        }
-        if (cameraSystem!=null) {
-            cameraSystem.end();
-        }
         if (cameraDetector !=null) {
             cameraDetector.end();
         }
@@ -224,6 +221,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 positionThread.start();
 
         }
+        if (intake!=null)
+            intake.setupTelemetry(telemetry);
+        if (hopper!=null)
+            hopper.setupTelemetry(telemetry);
         if (shooter!=null)
             shooter.setupTelemetry(telemetry);
         if (comboGrabber!=null)
@@ -435,6 +436,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if(source.isPressed(Button.RIGHT_BUMPER)){
                     if (comboGrabber!=null)
                         comboGrabber.armDownInc();
+                } else {
+                    if (hopper!=null) {
+                        hopper.feederAuto();
+                    }
                 }
             }
         }, new Button[]{Button.A});
@@ -569,8 +574,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
         // telemetry.addData("Config._3", "Top_grab=%s | Bottom_grab=%s",
         //        (useTopWobbleGoalGrabber?"Yes":"No"),(useBottomWobbleGoalGrabber?"Yes":"No"));
-        telemetry.addData("Config._3", "Grabber=%s | Shooter=%s | Intake=%s",
-                (useComboGrabber?"Yes":"No"), (useShooter?"Yes":"No"),(useIntake?"Yes":"No"));
+        telemetry.addData("Config._3", "Grabber=%s|Shooter=%s|Intake=%s|Hopper=%s",
+                (useComboGrabber?"Yes":"No"), (useShooter?"Yes":"No"),(useIntake?"Yes":"No"), (useHopper?"Yes":"No"));
         if (chassis!=null) {
             if (chassis.getGPS() == null) {
                 telemetry.addData("Warning", "GPS is not initialized.");
@@ -757,7 +762,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void testStraight(EventManager em) throws InterruptedException {
         if (chassis==null) return;
         if (chassis!=null && chassis.getGPS()==null) {
-            // chassis.set_init_pos(60,23 ,0);
+            chassis.set_init_pos(120,155 ,0);
             chassis.configureOdometry(telemetry);
             positionThread = (chassis.getGPS()==null? null: new Thread(chassis.getGPS()));
             if (positionThread!=null) {
@@ -785,8 +790,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.isPressed(Button.BACK)) {
                     auto_chassis_power += 0.05;
                     if (auto_chassis_power > 1) auto_chassis_power = 1;
-                } else if (source.getTrigger(Events.Side.LEFT)>0.5) {
+                } else if (source.getTrigger(Events.Side.LEFT) > 0.5) {
                     chassis.auto_target_y += 10;
+                } else if (source.getTrigger(Events.Side.RIGHT) > 0.5) { // doPowerShots
+                    doPowerShots();
                 } else if (!source.isPressed(Button.START)) {
                     chassis.driveTo(auto_chassis_power, chassis.auto_target_x,  chassis.auto_target_y, auto_rotate_degree, true, 5);
                 }
@@ -1101,7 +1108,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 }
 
 
-        // put wobble goal down
     public void doPowerShots() throws InterruptedException {
         if(tZone == TargetZone.ZONE_A) {
             chassis.driveTo(auto_chassis_power, side(60), 165, -60, true, 5);
@@ -1235,8 +1241,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             useVuforia = false;
         }
         double[] shooter_position = new double[]{
-                (useVuforia?vuforia_position[0] - webcam_offset_x + shooter_offset : chassis.odo_x_pos_cm() + shooter_offset),
-                (useVuforia?vuforia_position[1] - webcam_offset_y : chassis.odo_y_pos_cm())
+                (useVuforia?vuforia_position[0] + webcam_offset_x + shooter_offset : chassis.odo_x_pos_cm() + shooter_offset),
+                (useVuforia?vuforia_position[1] + webcam_offset_y : chassis.odo_y_pos_cm())
         };
         switch (target) {
             case TOWER:

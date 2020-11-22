@@ -108,11 +108,13 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double wheelRadius = 2.0;
     // minimum power that should be applied to the wheel motors for robot to start moving
     private double minPower = 0.1;
-    private double slowDownSpeed = 0.25;
-    private double minPowerHorizontal = 0.3;
-
     // maximum power that should be applied to the wheel motors
     private double maxPower = 0.999;
+    private double slowDownSpeed = 0.25;
+    private double minPowerHorizontal = 0.3;
+    private double initX = 0;
+    private double initY = 0;
+    
     private double maxRange = 127; // max range sensor detectable
     private double defaultScale = 1.0;
     private double mecanumForwardRatio = 0.8;
@@ -391,6 +393,18 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
     public void setMaxPower(double maxPower) {
         this.maxPower = maxPower;
+    }
+
+    @Adjustable(min = 0, max = 360.0, step = 1)
+    public double getInitX() { return initX; }
+    public void setInitX(double x) {
+        this.initX = x;
+    }
+
+    @Adjustable(min = 0, max = 360.0, step = 1)
+    public double getInitY() { return initY; }
+    public void setInitY(double y) {
+        this.initY = y;
     }
 
     @Override

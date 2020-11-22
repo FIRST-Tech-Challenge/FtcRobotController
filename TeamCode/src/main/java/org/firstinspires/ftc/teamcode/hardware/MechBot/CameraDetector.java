@@ -58,7 +58,7 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
     static Logger<CameraDetector> logger = new Logger<>();
 
     static {
-        logger.configureLogging("CameraStoneDetector", Log.VERBOSE);
+        logger.configureLogging("CameraDetector", Log.VERBOSE);
     }
 
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
@@ -76,12 +76,12 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
 
     public final double CAM_MIN = 0.01;
     public final double CAM_MAX = 0.99;
-    public final double CAM_INIT = 0.45;
+    public final double CAM_INIT = 0.46;
     public final double CAM_BLUE_IN = 0.56;
     public final double CAM_BLUE_OUT = 0.22;
     public final double CAM_RED_IN = 0.22;
     public final double CAM_RED_OUT = 0.56;
-    public final double CAM_TELE_OP = 0.45;
+    public final double CAM_TELE_OP = 0.46;
 
     //multipliers for alternative detection
     double[][] relativePointsQuad = new double[][]{{0,-50}, {-50,-30}, {+50, -30}, {-50,20}, {+50,20}, {-50,-60}, {0, -67}, {+50,-60}, {-85, -60}, {+85, -60}, {-85, 0}, {+85, 0}, {-50,50}, {+50,50}, {0, -95}};
@@ -154,7 +154,7 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
 
     @Override
     public String getUniqueName() {
-        return "CameraStackDetector";
+        return "CameraDetector";
     }
 
     public TFObjectDetector getTfod() {
@@ -196,16 +196,18 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
         configuration.register(camLR);
         set_cam_pos(CAM_INIT);
 
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
+        VuforiaLocalizer.Parameters parameters;
+        if (isTFOD) {
+            parameters = new VuforiaLocalizer.Parameters();
+        } else {
+            int cameraMonitorViewId = configuration.getHardwareMap().appContext.getResources().getIdentifier("cameraMonitorViewId",
+                    "id", configuration.getHardwareMap().appContext.getPackageName());
+            parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        }
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraName = configuration.getHardwareMap().get(WebcamName.class, "Webcam");
         //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
-
-        // initTfod()
+        this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         if(isTFOD)
         {
@@ -218,7 +220,7 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
             tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
 
 
-            logger.verbose("CameraStackDetector status: %s", tfod);
+            logger.verbose("CameraDetector status: %s", tfod);
 
             /** Activate Tensor Flow Object Detection. */
             if (tfod != null) {
@@ -237,26 +239,26 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
             blueTowerGoalTarget.setName("Blue Tower Goal Target");
             VuforiaTrackable redTowerGoalTarget = targetsUltimateGoal.get(1);
             redTowerGoalTarget.setName("Red Tower Goal Target");
-            VuforiaTrackable redAllianceTarget = targetsUltimateGoal.get(2);
-            redAllianceTarget.setName("Red Alliance Target");
-            VuforiaTrackable blueAllianceTarget = targetsUltimateGoal.get(3);
-            blueAllianceTarget.setName("Blue Alliance Target");
-            VuforiaTrackable frontWallTarget = targetsUltimateGoal.get(4);
-            frontWallTarget.setName("Front Wall Target");
+//            VuforiaTrackable redAllianceTarget = targetsUltimateGoal.get(2);
+//            redAllianceTarget.setName("Red Alliance Target");
+//            VuforiaTrackable blueAllianceTarget = targetsUltimateGoal.get(3);
+//            blueAllianceTarget.setName("Blue Alliance Target");
+//            VuforiaTrackable frontWallTarget = targetsUltimateGoal.get(4);
+//            frontWallTarget.setName("Front Wall Target");
             // For convenience, gather together all the trackable objects in one easily-iterable collection */
             allTrackables = new ArrayList<VuforiaTrackable>();
             allTrackables.addAll(targetsUltimateGoal);
 
-            redAllianceTarget.setLocation(OpenGLMatrix
-                    .translation(0, -hField, mmTargetHeight)
-                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 180)));
-
-            blueAllianceTarget.setLocation(OpenGLMatrix
-                    .translation(0, hField, mmTargetHeight)
-                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0)));
-            frontWallTarget.setLocation(OpenGLMatrix
-                    .translation(-hField, 0, mmTargetHeight)
-                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , 90)));
+//            redAllianceTarget.setLocation(OpenGLMatrix
+//                    .translation(0, -hField, mmTargetHeight)
+//                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 180)));
+//
+//            blueAllianceTarget.setLocation(OpenGLMatrix
+//                    .translation(0, hField, mmTargetHeight)
+//                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0)));
+//            frontWallTarget.setLocation(OpenGLMatrix
+//                    .translation(-hField, 0, mmTargetHeight)
+//                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , 90)));
 
             // The tower goal targets are located a quarter field length from the ends of the back perimeter wall.
             blueTowerGoalTarget.setLocation(OpenGLMatrix
@@ -275,9 +277,9 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
             phoneYRotate = -90; // camera facing forward
             phoneXRotate = 0; // in case of Portrait mode, phoneXRotate = 90;
 
-            final float CAMERA_FORWARD_DISPLACEMENT = 7.5f * mmPerInch;   // eg: Camera is 4 Inches in front of robot-center
-            final float CAMERA_VERTICAL_DISPLACEMENT = 7.5f * mmPerInch;   // eg: Camera is 8 Inches above ground
-            final float CAMERA_LEFT_DISPLACEMENT = 0;     // eg: Camera is ON the robot's center line
+            final float CAMERA_FORWARD_DISPLACEMENT = 0; // 6.5f * mmPerInch;   // Camera is 6.5 inches in front the center
+            final float CAMERA_VERTICAL_DISPLACEMENT = 14.0f * mmPerInch; // Camera is 14 Inches above ground
+            final float CAMERA_LEFT_DISPLACEMENT = 0; // 6.0f * mmPerInch;      // Camera is 6.0 inches left of the robot's center line
 
             OpenGLMatrix robotFromCamera = OpenGLMatrix
                     .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
@@ -842,8 +844,8 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
             // express position (translation) of robot in inches.
             VectorF translation = lastLocation.getTranslation();
             //telemetry.addData("Pos (cm)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-            x = translation.get(0) / 10;
-            y = translation.get(1) / 10;
+            x = 180 - translation.get(1) / 10;
+            y = 180 + translation.get(0) / 10;
 
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);

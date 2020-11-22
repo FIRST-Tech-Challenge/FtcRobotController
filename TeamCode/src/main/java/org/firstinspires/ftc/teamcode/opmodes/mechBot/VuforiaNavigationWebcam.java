@@ -105,10 +105,11 @@ public class VuforiaNavigationWebcam extends LinearOpMode {
 
         try {
             // configure robot and reset all hardware
-            robot.configure(configuration, telemetry, Robot2.ProgramType.AUTO_BLUE);
+            robot.configure(configuration, telemetry, Robot2.ProgramType.TELE_OP);
             robot.chassis.enableImuTelemetry(configuration);
             configuration.apply();
             robot.reset(false);
+            robot.initSetup(Robot2.ProgramType.TELE_OP, ToboMech.StartPosition.OUT, configuration);
             robot.showStatus();
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
@@ -124,7 +125,7 @@ public class VuforiaNavigationWebcam extends LinearOpMode {
 
             // check all the trackable targets to see which one (if any) is visible.
             targetVisible = false;
-            for (VuforiaTrackable trackable : robot.cameraSystem.allTrackables) {
+            for (VuforiaTrackable trackable : robot.cameraDetector.allTrackables) {
                 if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
                     telemetry.addData("Visible Target", trackable.getName());
                     targetVisible = true;
@@ -133,7 +134,7 @@ public class VuforiaNavigationWebcam extends LinearOpMode {
                     // the last time that call was made, or if the trackable is not currently visible.
                     OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
                     if (robotLocationTransform != null) {
-                        robot.cameraSystem.lastLocation = robotLocationTransform;
+                        robot.cameraDetector.lastLocation = robotLocationTransform;
                     }
                     break;
                 }
@@ -142,12 +143,13 @@ public class VuforiaNavigationWebcam extends LinearOpMode {
             // Provide feedback as to where the robot is located (if we know).
             if (targetVisible) {
                 // express position (translation) of robot in inches.
-                VectorF translation = robot.cameraSystem.lastLocation.getTranslation();
+                VectorF translation = robot.cameraDetector.lastLocation.getTranslation();
+                double[] vuforia_position = robot.cameraDetector.getPositionFromVuforia();
                 telemetry.addData("Pos (cm)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                        translation.get(0) / 10, translation.get(1) / 10, translation.get(2) / 10);
+                        vuforia_position[0], vuforia_position[1], translation.get(2) / 10);
 
                 // express the rotation of the robot in degrees.
-                Orientation rotation = Orientation.getOrientation(robot.cameraSystem.lastLocation, EXTRINSIC, XYZ, DEGREES);
+                Orientation rotation = Orientation.getOrientation(robot.cameraDetector.lastLocation, EXTRINSIC, XYZ, DEGREES);
                 telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
             }
             else {

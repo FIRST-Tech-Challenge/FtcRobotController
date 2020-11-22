@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configurable;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 
+import static java.lang.Thread.sleep;
+
 /**
  * FoundationHook spec:
  */
@@ -27,11 +29,11 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     public DistanceSensor rangetouch;
 
 
-    private final double FEEDER_IN = 0.9;
+    private final double FEEDER_IN = 0.5;
     private final double FEEDER_INIT = FEEDER_IN;
-    private final double FEEDER_OUT = 0.25;
+    private final double FEEDER_OUT = 0.7;
 
-    private boolean feederIsIn = false;
+    private boolean feederIsIn = true;
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -58,14 +60,14 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     }
 
     public void configure(Configuration configuration, boolean auto) {
-        transfer = configuration.getHardwareMap().get(CRServo.class, "hopper");
+        transfer = configuration.getHardwareMap().get(CRServo.class, "ringLifter");
 
         feeder = new AdjustableServo(0, 1).configureLogging(
                 logTag + ":hopper", logLevel
         );
         feeder.configure(configuration.getHardwareMap(), "feeder");
         configuration.register(feeder);
-        servoInit();
+        // servoInit();
       // configuration.register(this);
     }
 
@@ -95,12 +97,10 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         feederIsIn = false;
     }
 
-    public void feederAuto() {
-        if (feederIsIn) {
-            feederIn();
-        } else {
-            feederOut();
-        }
+    public void feederAuto() throws InterruptedException {
+        feederOut();
+        sleep(500);
+        feederIn();
     }
 
     public void transferUp(){
