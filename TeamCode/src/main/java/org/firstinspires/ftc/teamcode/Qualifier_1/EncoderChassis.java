@@ -42,7 +42,7 @@ public class EncoderChassis {
 
     // these encoder variables vary depending on chassis type
     final double counts_per_motor_goBilda = 383.6;
-    final double counts_per_inch =  (counts_per_motor_goBilda / (wheel_diameter * Math.PI));  //2*(counts_per_motor_goBilda / (wheel_diameter * Math.PI))
+    final double counts_per_inch = 2* (counts_per_motor_goBilda / (wheel_diameter * Math.PI));  //2*(counts_per_motor_goBilda / (wheel_diameter * Math.PI))
     final double counts_per_degree = counts_per_inch * robot_diameter * Math.PI / 360;
 
     /* local OpMode members. */
@@ -211,7 +211,7 @@ public class EncoderChassis {
             }
 
             stopAllMotors();
-            ypos+=48;
+            ypos+=distance;
             // Changes motor mode back to default
             motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -260,12 +260,13 @@ public class EncoderChassis {
         motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        xpos+=distance;
     }
     public void moveAngle(double x, double y, double power) {
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double startAngle =getAngle();
         double[] currentPosition = track();
         double[] target_position = {0, 0, 0};
