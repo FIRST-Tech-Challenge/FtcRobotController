@@ -28,10 +28,10 @@ public class WobbleGoal {
     private DcMotor wobbleGoalMotor = null;
     Servo wobbleGoalServo = null;
     private final int ticksForREST = 0;
-    private final int ticksForGRAB = -940;
-    private final int ticksForRAISE = -550;
-    private final int ticksForRELEASE = -815;
-    private final double wobbleGoalSpeed = 0.35;
+    private final int ticksForGRAB = 940;
+    private final int ticksForRAISE = 550;
+    private final int ticksForRELEASE = 815;
+    private final double wobbleGoalSpeed = 0.3;
 
     public WobbleGoal(LinearOpMode opMode) {
         //setting the opmode

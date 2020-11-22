@@ -160,11 +160,11 @@ public class Teleop extends LinearOpMode {
                 } else {
                     telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
                     telemetry.update();
-                    sleep(1000);
+                    sleep(500);
                 }
                 // added by Aiden; must have this otherwise if you hold onto the button multiple
                 // actions/movements will be executed by mistake
-                sleep(1000);
+                sleep(500);
                 currentWobbleGoalPosition = nextWobbleGoalPosition;
             }
 
@@ -217,7 +217,7 @@ public class Teleop extends LinearOpMode {
                 } else {
                     telemetry.addData("Ring Depositor: ", "u have made a STUPID MISTAKE");
                     telemetry.update();
-                    sleep(500);
+                    sleep(200);
                 }
             }
 
