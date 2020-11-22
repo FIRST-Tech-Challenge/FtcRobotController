@@ -10,6 +10,8 @@ public class TerraOp extends OpMode {
 
     TerraBot bot = new TerraBot();
 
+    double vs = 0;
+
 
 
 
@@ -39,6 +41,9 @@ public class TerraOp extends OpMode {
         bot.turnControl.cur = 0.1;
         bot.gameTime.reset();
         //bot.startOdoThreadTele();
+        vs = bot.getVoltageScale();
+       // bot.startOdoThreadTele();
+
     }
 
     @Override
@@ -93,8 +98,12 @@ public class TerraOp extends OpMode {
             if(gamepad1.y){
                 if(!bot.powershot) {
                     bot.shooter.start();
+                    bot.outrController.setStartPow(bot.outtakeStartR*vs);
+                    bot.outlController.setStartPow(bot.outtakeStartL*vs);
                 }else{
                     bot.powerShot.start();
+                    bot.outrController.setStartPow(bot.outtakeStartR*0.85*vs);
+                    bot.outlController.setStartPow(bot.outtakeStartL*0.85*vs);
                 }
             }
             if(gamepad2.x){
@@ -157,12 +166,18 @@ public class TerraOp extends OpMode {
 //        telemetry.update();
 //
 //        telemetry.addData("errR", bot.outrController.getPercentageError());
-        telemetry.addData("ce l", bot.outlController.currError);
-        telemetry.addData("ce r", bot.outrController.currError);
-        telemetry.addData("powl", bot.outlController.pow);
-        telemetry.addData("powr", bot.outrController.pow);
-        telemetry.addData("outr", bot.getOutrPos());
-        telemetry.addData("outl", bot.getOutlPos());
+//        telemetry.addData("ce l", bot.outlController.currError);
+//        telemetry.addData("ce r", bot.outrController.currError);
+//        telemetry.addData("powl", bot.outlController.pow);
+//        telemetry.addData("powr", bot.outrController.pow);
+//        telemetry.addData("targetr", bot.outrController.targetSpeed);
+//        telemetry.addData("targetl", bot.outlController.targetSpeed);
+//        telemetry.addData("curr", bot.outrController.currSpeed);
+//        telemetry.addData("curl", bot.outlController.currSpeed);
+//        telemetry.addData("outr", bot.getOutrPos());
+//        telemetry.addData("outl", bot.getOutlPos());
+        telemetry.addData("dsr1", bot.getDisR1());
+        telemetry.addData("dsl2", bot.getDisL2());
         telemetry.update();
 
 
@@ -174,6 +189,6 @@ public class TerraOp extends OpMode {
 
     @Override
     public void stop() {
-        //bot.stopOdoThreadTele();
+      //  bot.stopOdoThreadTele();
     }
 }

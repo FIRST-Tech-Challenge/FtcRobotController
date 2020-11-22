@@ -19,6 +19,7 @@ public class SpeedController {
     public double integralOfError = 0;
 
     public double targetSpeed = 0;
+    public double currSpeed = 0;
 
     double changeTime = 0;
 
@@ -32,7 +33,7 @@ public class SpeedController {
 
     public boolean isReady = false;
 
-    public double acc = 150;
+    public double acc = 1000;
 
     public SpeedController(double k, double d, double i, double startPow){
         k *= 0.00001;
@@ -77,7 +78,7 @@ public class SpeedController {
 
     //add Pause when starting
     public void updateMotorValues(double currPos){
-        double currSpeed = getMotorSpeed(currPos);
+        currSpeed = getMotorSpeed(currPos);
         currError = targetSpeed-currSpeed;
 
         currDer = (currError-lastError)/changeTime;
@@ -96,24 +97,30 @@ public class SpeedController {
 
 
     public double getPow(){
-        if(Math.abs(currError) < 2000){
-            if(Math.abs(currError) < acc){
-                isReady = true;
-                return pow;
-            }else {
-                pow += Math.signum(currError) * pid.getPower(currError, currDer, integralOfError);
-                pow = Range.clip(pow, -1, 1);
-                isReady = false;
-                return pow;
-            }
-        }else{
-            isReady = false;
-            if(currError > 0){
-                return 0.5;
-            }else{
-                return -0.3;
-            }
+//        if(Math.abs(currError) < 2000){
+//            if(Math.abs(currError) < acc){
+//                isReady = true;
+//                return pow;
+//            }
+//            isReady = true;
+//                //pow += Math.signum(currError) * pid.getPower(currError, currDer, integralOfError);
+//            pow += Math.signum(currError) * 0.01;
+//            pow = Range.clip(pow, -1, 1);
+//            //isReady = false;
+//            return pow;
+//        }else{
+//            isReady = false;
+//            if(currError > 0){
+//                return 0.4;
+//            }else{
+//                return -0.3;
+//            }
+//        }
+        if(Math.abs(currError) < 2000) {
+            pow += Math.signum(currError) * 0.0001;
+            pow = Range.clip(pow, -1, 1);
         }
+        return pow;
 
     }
 
