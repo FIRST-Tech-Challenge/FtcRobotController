@@ -39,6 +39,8 @@ public class NewTest_Sai extends LinearOpMode {
         DcMotorEx ShooterMotor;
         DcMotorEx wobbleGoalMotor;
         Servo shooter_Servo;
+        DcMotor ringDepositorMotor;
+        Servo ringClampServo;
 
 
         motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
@@ -48,6 +50,9 @@ public class NewTest_Sai extends LinearOpMode {
         ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
         wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
         shooter_Servo = (Servo) hardwareMap.servo.get("ShooterServo");
+        ringDepositorMotor = (DcMotor) hardwareMap.dcMotor.get("RingDepositorMotor");
+        ringClampServo = (Servo) hardwareMap.servo.get("RingClampServo");
+
 
         // All Motors
         motorLeftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -56,6 +61,7 @@ public class NewTest_Sai extends LinearOpMode {
         motorRightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ShooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ringDepositorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorLeftFront.setDirection(DcMotor.Direction.FORWARD);
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
@@ -63,9 +69,11 @@ public class NewTest_Sai extends LinearOpMode {
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
         ShooterMotor.setDirection(DcMotor.Direction.FORWARD);
         wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
+        ringDepositorMotor.setDirection(DcMotor.Direction.FORWARD);
 
-        //Servo
+        //Servos
         shooter_Servo.setPosition(0);
+        ringClampServo.setPosition(0);
 
         // reset encoder count kept by left motor.
         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -74,6 +82,8 @@ public class NewTest_Sai extends LinearOpMode {
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         ShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ringDepositorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         ElapsedTime runtime = new ElapsedTime();
         //Robot robot = new Robot(this);
@@ -129,6 +139,7 @@ public class NewTest_Sai extends LinearOpMode {
         motorRightBack.setPower(0);
         sleep(1000);
 
+        //Shooter Motor
         ShooterMotor.setPower(0.5);
         telemetry.addData("Moving Shooter Motor", 0.5);
         telemetry.update();
@@ -141,6 +152,7 @@ public class NewTest_Sai extends LinearOpMode {
         sleep(1000);
         ShooterMotor.setPower(0);
 
+        //Wobble Goal Motor
         wobbleGoalMotor.setPower(-0.2);
         telemetry.addData("Moving wobbleGoalMotor Motor", -0.5);
         telemetry.update();
@@ -155,7 +167,7 @@ public class NewTest_Sai extends LinearOpMode {
         sleep(1000);
 
 
-        //Tests Servo
+        //Tests Shooter Servo
         shooter_Servo.setPosition(0.5);
         telemetry.addData("Moving Shooter Servo", 0.5);
         telemetry.update();
@@ -167,5 +179,27 @@ public class NewTest_Sai extends LinearOpMode {
         telemetry.update();
         sleep(1000);
         shooter_Servo.setPosition(0);
+
+        //Tests Ring Depositor Motor
+        ringDepositorMotor.setTargetPosition(-100);
+        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        telemetry.addData("Moving Ring Depositor Motor", -100);
+        telemetry.update();
+        ringDepositorMotor.setPower(0.2);
+
+        ringDepositorMotor.setTargetPosition(0);
+        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        telemetry.addData("Moving Ring Depositor Motor", 0);
+        telemetry.update();
+        ringDepositorMotor.setPower(0.2);
+
+        //Tests Intake Servo
+        ringClampServo.setPosition(1);
+        telemetry.addData("Moving Ring Clamp Servo", 1);
+        telemetry.update();
+        sleep(1000);
+        ringClampServo.setPosition(0);
+        telemetry.addData("Moving Ring Clamp Servo", 0);
+        telemetry.update();
     }
 }

@@ -199,11 +199,10 @@ public class Robot {
     public void moveShooterMotor(int distance, int power) {
         drivetrain.moveShooterMotor(distance, power);
     }
-    /******** shooterMotor **********/
+    /******** wobbleGoalMotor **********/
     public void moveWobbleGoalMotor(double distance) {
         drivetrain.moveWobbleGoalMotor(distance);
     }
-
     public double getAngle() {
         return drivetrain.getAngle();
     }
@@ -256,8 +255,8 @@ public class Robot {
     }
 
     /**Shooter**/
-    public void shootHighGoal(int distance) {
-        shooter.shootHighGoal(distance);
+    public void shootHighGoal(int rings) {
+        shooter.shootHighGoal(rings);
     }
 
     public void shootMidGoal(int distance) {
