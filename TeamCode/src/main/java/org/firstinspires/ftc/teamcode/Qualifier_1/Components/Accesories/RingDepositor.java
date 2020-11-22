@@ -29,7 +29,7 @@ public class RingDepositor {
     Servo ringClampServo = null;
     private final int ticksForREST = 0;
     private final int ticksForFLOOR = 915 ;
-    private final double ringDepositorSpeed = 0.3;
+    private final double ringDepositorSpeed = 0.2;
 
     public RingDepositor(LinearOpMode opMode) {
         //setting the opmode & hardwareMap
