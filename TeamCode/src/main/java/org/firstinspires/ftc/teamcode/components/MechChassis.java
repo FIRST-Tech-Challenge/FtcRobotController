@@ -114,7 +114,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double minPowerHorizontal = 0.3;
     private double initX = 0;
     private double initY = 0;
-    
+
     private double maxRange = 127; // max range sensor detectable
     private double defaultScale = 1.0;
     private double mecanumForwardRatio = 0.8;

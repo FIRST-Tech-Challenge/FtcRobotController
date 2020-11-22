@@ -31,7 +31,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     private final double FEEDER_IN = 0.5;
     private final double FEEDER_INIT = FEEDER_IN;
-    private final double FEEDER_OUT = 0.7;
+    private final double FEEDER_OUT = 0.9;
 
     private boolean feederIsIn = true;
     private ElapsedTime runtime = new ElapsedTime();
@@ -99,16 +99,16 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     public void feederAuto() throws InterruptedException {
         feederOut();
-        sleep(500);
+        sleep(300);
         feederIn();
     }
 
     public void transferUp(){
-        ringLifter.setPower(1);
+        ringLifter.setPower(-1);
     }
 
     public void transferDown(){
-        ringLifter.setPower(-1);
+        ringLifter.setPower(1);
     }
 
     public void transferStop(){
