@@ -76,7 +76,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean useBottomWobbleGoalGrabber = false;
     public boolean useTopWobbleGoalGrabber = false;
     public boolean useComboGrabber = true;
-    public boolean useHopper = false;
+    public boolean useHopper = true;
     public boolean useShooter = true;
     public boolean useIntake = true;
     public boolean isTeleOpAfterAuto = false;

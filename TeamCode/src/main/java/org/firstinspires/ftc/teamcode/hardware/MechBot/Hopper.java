@@ -24,7 +24,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     final private CoreSystem core;
 
     private AdjustableServo feeder;
-    private CRServo transfer;
+    private CRServo ringLifter;
     /*private*/ public TouchSensor magTouch;
     public DistanceSensor rangetouch;
 
@@ -55,12 +55,12 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     }
 
     public void reset(boolean Auto) {
-        if (transfer != null)
+        if (ringLifter != null)
             servoInit();
     }
 
     public void configure(Configuration configuration, boolean auto) {
-        transfer = configuration.getHardwareMap().get(CRServo.class, "ringLifter");
+        ringLifter = configuration.getHardwareMap().get(CRServo.class, "ringLifter");
 
         feeder = new AdjustableServo(0, 1).configureLogging(
                 logTag + ":hopper", logLevel
@@ -72,7 +72,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     }
 
     public void servoInit() {
-        transfer.setPower(0);
+        ringLifter.setPower(0);
         feeder.setPosition(FEEDER_INIT);
         feederIsIn = false;
         //hookUp();
@@ -104,15 +104,15 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     }
 
     public void transferUp(){
-        transfer.setPower(1);
+        ringLifter.setPower(1);
     }
 
     public void transferDown(){
-        transfer.setPower(-1);
+        ringLifter.setPower(-1);
     }
 
     public void transferStop(){
-        transfer.setPower(0);
+        ringLifter.setPower(0);
     }
 
 
@@ -125,11 +125,11 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     public void setupTelemetry(Telemetry telemetry) {
         Telemetry.Line line = telemetry.addLine();
 
-        if (transfer != null) {
+        if (ringLifter != null) {
             line.addData("Transfer", "pow=%.2f", new Func<Double>() {
                 @Override
                 public Double value() {
-                    return transfer.getPower();
+                    return ringLifter.getPower();
                 }
             });
         }
