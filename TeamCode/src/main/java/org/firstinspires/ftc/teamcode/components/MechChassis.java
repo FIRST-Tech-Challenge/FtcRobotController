@@ -1392,7 +1392,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         if (autoDriveMode== AutoDriveMode.STOP||autoDriveMode== AutoDriveMode.CONTINUE) {
             currentHeading = odo_heading();
             currentAbsDiff = abs(finalHeading - currentHeading) > 180 ? 360 - abs(finalHeading - currentHeading) : abs(finalHeading - currentHeading);
-            if ((currentAbsDiff > 1.2) && !Thread.interrupted()) {
+            if ((currentAbsDiff > 1) && !Thread.interrupted()) {
                 rawRotateTo(chassisAligmentPower, finalHeading, false, 0.5);
             }
         }

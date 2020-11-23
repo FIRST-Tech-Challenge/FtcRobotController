@@ -1124,7 +1124,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(auto_chassis_power, side(60), 165, -60, true, 5);
         }
         shooter.shootOutByRpm(1260);
-        chassis.driveTo(.6, side(130), 170, 0, true,  2); // need to do something about this
+        chassis.driveTo(.6, side(150), 170, 0, true,  2); // need to do something about this
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
         //shoot
         hopper.feederAuto();
@@ -1274,11 +1274,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 break;
             case PSHOT_M:
                 target_x = 151;
-                target_height = 79;
+                target_height = 78.5;
                 break;
             case PSHOT_R:
                 target_x = 170;
-                target_height = 79;
+                target_height = 78;
                 break;
         }
         // start the shooter with expected RPM
@@ -1295,10 +1295,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             shooting_angle += (shooting_dist-200)*0.047;
         }
         try {
-            if (Math.abs(chassis.odo_heading() - shooting_angle) > 0.8) {
+            if (Math.abs(chassis.odo_heading() - shooting_angle) > 0.6) {
                 chassis.rotateTo(0.35, shooting_angle);
-                if (Math.abs(chassis.odo_heading() - shooting_angle)>0.8)
-                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin,shooting_angle,false,0.5);
+                int i=0;
+                while (Math.abs(chassis.odo_heading() - shooting_angle)>0.6 && i<3) {
+                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin, shooting_angle, false, 0.5);
+                    i++;
+                }
             }
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -39,6 +39,8 @@
     "wheelBase": 13,
     "wheelRadius": 2.0,
     "maxPower": 0.999,
-    "minPower": 0.1
+    "minPower": 0.1,
+    "initX": 0,
+    "initY": 0
   }
 }
