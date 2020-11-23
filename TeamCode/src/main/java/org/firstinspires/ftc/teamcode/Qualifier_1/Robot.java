@@ -37,13 +37,12 @@ public class Robot {
     private TensorFlow tensorFlow = null;
 
     // Hardware Objects
-    private Chassis drivetrain = null;
+    private EncoderChassis drivetrain = null;
     private Intake intake = null;
     private WobbleGoal wobbleGoal = null;
     private RingDepositor ringDepositor = null;
     private VuforiaWebcam vuforiaWebcam = null;
     private Shooter shooter=null;
-    private EncoderChassis encoder = null;
 
 
     private double vuforiaX = 0;
@@ -55,7 +54,7 @@ public class Robot {
         hardwareMap = op.hardwareMap;
 
         runtime = new ElapsedTime();
-        drivetrain = new Chassis(op);
+        drivetrain = new EncoderChassis(op);
         if(!isCorgi){
             tensorFlow = new TensorFlow(op);
         }
@@ -64,7 +63,6 @@ public class Robot {
         ringDepositor = new RingDepositor(op);
         intake = new Intake(op);
         shooter=new Shooter(op);
-        encoder = new EncoderChassis(op);
 
         // comment by victor
         // drivetrain.init(opMode);
@@ -72,64 +70,6 @@ public class Robot {
             vuforiaWebcam.init(opMode);
         }
     }
-
-    /*
-    public Robot() {
-
-    }
-     */
-
-    public void initChassis_no_long_in_use (LinearOpMode opMode) {
-        op = opMode;
-        hardwareMap = op.hardwareMap;
-
-        //Initialize Motors
-        DcMotorEx motorLeftFront;
-        DcMotorEx motorRightFront;
-        DcMotorEx motorLeftBack;
-        DcMotorEx motorRightBack;
-        DcMotorEx ShooterMotor;
-        DcMotorEx wobbleGoalMotor;
-        Servo shooter_Servo;
-
-
-        motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
-        motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
-        motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
-        motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
-        ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
-        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
-        shooter_Servo = (Servo) hardwareMap.servo.get("ShooterServo");
-        if(!isCorgi) {
-            vuforiaWebcam = new VuforiaWebcam(op, VuforiaLocalizer.CameraDirection.BACK);
-        }
-        // comment by Victor
-        // drivetrain.init(opMode);
-        if(!isCorgi) {
-            vuforiaWebcam.init(opMode);
-        }
-
-        this.wobbleGoal = new WobbleGoal(op);
-        intake = new Intake(op);
-        if(!isCorgi) {
-            vuforiaWebcam.start();
-        }
-        shooter=new Shooter(op);
-        if(!isCorgi) {
-        vuforiaWebcam.start();
-        getVuforiaPosition();
-        }
-        if(!isCorgi) {
-            op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
-            op.telemetry.update();
-            op.sleep(1000);
-            op.telemetry.addData("Position","%.2f %.2f %.2f %.2f", vuforiaX, vuforiaY, vuforiaAngle, robotAngle);
-            op.telemetry.update();
-            op.sleep(1000);
-        }
-
-    }
-
     public void moveVuforiaWebcam(double x, double y, double endAngle) {
         if(!isCorgi) {
             getVuforiaPosition();
@@ -147,7 +87,7 @@ public class Robot {
             op.telemetry.addData("VuforiaY", "%.2f %.2f %.2f %.2f %.3f %.3f", vuforiaY, y, ydifference, magnitude, turn, mAngle);
             op.telemetry.update();
             op.sleep(5000);
-            drivetrain.moveAngle2(magnitude, mAngle, turn);
+            //drivetrain.moveAngle2(magnitude, mAngle, turn);
 
             getVuforiaPosition();
 
@@ -165,29 +105,29 @@ public class Robot {
 
 
 
-    /******** Left Front Motor **********/
-    public void moveMotorLeftFront(double distance) {
+    /*/******** Left Front Motor **********/
+   /* public void moveMotorLeftFront(double distance) {
         drivetrain.moveMotorLeftFront(distance);
     }
 
     /******** Right Front Motor **********/
-    public void moveMotorRightFront(double distance) {
+   /* public void moveMotorRightFront(double distance) {
         drivetrain.moveMotorRightFront(distance);
     }
 
     /******** Left Back Motor **********/
-    public void moveMotorLeftBack(double distance) {
+    /*public void moveMotorLeftBack(double distance) {
         drivetrain.moveMotorLeftBack(distance);
     }
 
     /******** Right Back Motor **********/
-    public void moveMotorRightBack(double distance) {
+    /*public void moveMotorRightBack(double distance) {
         drivetrain.moveMotorRightBack(distance);
-    }
+    }*/
 
     /******** shooterMotor **********/
-    public void moveShooterMotor(int distance, int power) {
-        drivetrain.moveShooterMotor(distance, power);
+    /*public void moveShooterMotor(int distance, int power) {
+        shooter.moveShooterMotor(distance, power);
     }
     public double getAngle() {
         return drivetrain.getAngle();
@@ -201,45 +141,28 @@ public class Robot {
         drivetrain.moveForward(distance, power);
     }
 
-    public void moveForwardIMU(double distance, double power) {
-        drivetrain.moveForwardIMU(distance, power);
-    }
+
 
     public void moveBackward(double distance, double power) {
         drivetrain.moveBackward(distance, power);
-    }
-
-    public void moveBackwardIMU(double distance, double power) {
-        drivetrain.moveBackwardIMU(distance, power);
     }
 
     public void moveRight(double distance, double power) {
         drivetrain.moveRight(distance, power);
     }
     public void moveAngle(double x, double y, double power){
-        encoder.moveAngle(x,y,power);
+        drivetrain.moveAngle(x,y,power);
     }
-
-    public void moveRightIMU(double distance, double power, double startingAngle, double gain, double maxCorrection) {
-        drivetrain.moveRightIMU(distance, power, startingAngle, gain, maxCorrection);
-    }
-
     public void moveLeft(double distance, double power) {
         drivetrain.moveLeft(distance, power);
     }
-
     public void multidirectionalMove(double power, double angle, float rightStick) {
-        drivetrain.multidirectionalMove(power, angle, rightStick);
+        drivetrain.moveMultidirectional(power, angle, rightStick);
     }
 
-    public void moveLeftIMU(double distance, double power, double startingAngle, double gain, double maxCorrection) {
-        drivetrain.moveLeftIMU(distance, power, startingAngle, gain, maxCorrection);
-    }
-
-    public void moveAngle2(double distance, double angle, double turn) {
+    /*public void moveAngle2(double distance, double angle, double turn) {
         drivetrain.moveAngle2(distance, angle, turn);
-    }
-
+    }*/
     /**Shooter**/
     public void shootHighGoal(int rings) {
         shooter.shootHighGoal(rings);
@@ -260,8 +183,6 @@ public class Robot {
     public void shootGoalTeleop(int direction, int power) {
         shooter.shootGoalTeleop(direction, power);
     }
-
-
     /**Vuforia**/
 
     public double getVuforiaAngle() {
@@ -301,49 +222,8 @@ public class Robot {
     public void stopTensorFlow () {
 
     }
-    public void motor_track(){
-        encoder.track();
-    }
 
     /**Odometry**/
-
-    public void turnOdometry(double target, double power) {
-        drivetrain.turnOdometry(target,power);
-    }
-
-    public void moveForwardOdometry(double distance, double power) {
-        drivetrain.moveForwardOdometry(distance,power);
-    }
-
-    public void moveSideOdometry(double distance, double power) {
-        //right is positive use distance to change direction
-        drivetrain.moveSideOdometry(distance,power);
-    }
-
-
-    public void xyPath(double x, double y, double power) {
-        drivetrain.xyPath(x,y,power);
-    }
-
-    public void StraightxyPath(double x, double y, double power) {
-        drivetrain.StraightxyPath(x,y,power);
-    }
-
-    public void StraightPointPath(double x, double y, double power) {
-        drivetrain.StraightPointPath(x,y,power);
-    }
-
-    public void DirectPointPath(double x, double y, double power) {
-        drivetrain.DirectPointPath(x,y,power);
-    }
-
-    public void DirectxyPath(double x, double y, double power) {
-        drivetrain.DirectxyPath(x,y,power);
-    }
-    public void moveAngleOdometry(double x, double y, double power){
-        drivetrain.moveAngleOdometry(x,y,power);
-    }
-
 
     /**
      * wobble goal methods
