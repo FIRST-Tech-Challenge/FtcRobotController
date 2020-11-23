@@ -80,10 +80,6 @@ public class Teleop extends LinearOpMode {
             boolean wobble_goal_servo = gamepad1.x;
             boolean a_button = gamepad1.a;
             boolean b_button = gamepad1.b;
-            boolean startingPosition = gamepad2.dpad_up;
-            boolean grabbingPosition = gamepad2.dpad_right;
-            boolean liftingPosition = gamepad2.dpad_down;
-            boolean droppingPosition = gamepad2.dpad_left;
             boolean y_button2 = gamepad2.y;
             boolean b_button2 = gamepad2.b;
             boolean a_button2 = gamepad2.a;
@@ -191,20 +187,6 @@ public class Teleop extends LinearOpMode {
                     robot.moveWobbleGoalServo(false);
                 }
             }
-
-            telemetry.addData("Wobble Goal Direct", startingPosition + ", " + grabbingPosition + ", " + liftingPosition + ", " + droppingPosition);
-            telemetry.update();
-//            sleep(2000);
-            if (startingPosition == true) {
-                robot.wobbleGoalStartingPosition();
-            } else if (grabbingPosition == true) {
-                robot.wobbleGoalGrabbingPosition();
-            } else if (liftingPosition == true) {
-                robot.wobbleGoalLiftingPosition();
-            } else if (droppingPosition == true) {
-                robot.wobbleGoalDroppingPosition();
-            }
-
 
             // ring depositor
             if (move_ring_depositor){

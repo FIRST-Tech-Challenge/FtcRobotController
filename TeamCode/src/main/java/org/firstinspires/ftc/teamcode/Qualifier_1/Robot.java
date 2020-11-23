@@ -189,10 +189,6 @@ public class Robot {
     public void moveShooterMotor(int distance, int power) {
         drivetrain.moveShooterMotor(distance, power);
     }
-    /******** wobbleGoalMotor **********/
-   /* public void moveWobbleGoalMotor(double distance) {
-        wobbleGoal.moveWobbleGoalMotor(distance);
-    }*/
     public double getAngle() {
         return drivetrain.getAngle();
     }
@@ -352,26 +348,10 @@ public class Robot {
     /**
      * wobble goal methods
      */
-   /* public void wobbleGoalStartingPosition(){
-        this.wobbleGoal.startingPosition();
-    }
-
-    public void wobbleGoalGrabbingPosition(){
-        wobbleGoal.grabbingPosition();
-    }
-
-    public void wobbleGoalLiftingPosition(){
-        wobbleGoal.liftingPosition();
-    }
-
-    public void wobbleGoalDroppingPosition(){
-        wobbleGoal.droppingPosition();
-    }
-
     public WobbleGoal.Position wobbleGoalGoToPosition(WobbleGoal.Position p){
         wobbleGoal.goToPosition(p);
         return(p);
-    }*/
+    }
 
     public void printCurrentWobbleGoalLocation(){
         wobbleGoal.printCurrentLocation();
