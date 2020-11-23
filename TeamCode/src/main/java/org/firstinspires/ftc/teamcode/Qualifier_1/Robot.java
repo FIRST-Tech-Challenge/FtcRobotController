@@ -42,16 +42,15 @@ public class Robot {
     private HardwareMap hardwareMap = null;
     private ElapsedTime runtime = null;
     final boolean isCorgi = Chassis.isCorgi;
-    private TensorFlow tensorFlow = null;
 
     // Hardware Objects
     private Chassis drivetrain = null;
     private Intake intake = null;
     private WobbleGoal wobbleGoal = null;
     private RingDepositor ringDepositor = null;
-    private VuforiaWebcam vuforiaWebcam = null;
-    private Shooter shooter=null;
-
+    private Shooter shooter = null;
+    public VuforiaWebcam vuforiaWebcam = null;
+    public TensorFlow tensorFlow = null;
 
     private double vuforiaX = 0;
     private double vuforiaY = 0;
@@ -66,7 +65,6 @@ public class Robot {
         drivetrain = new Chassis(op);
         if(!isCorgi){ //TODO: fix later
             vuforiaWebcam = new VuforiaWebcam(op);
-            vuforiaWebcam.init(opMode);
             tensorFlow = new TensorFlow(op);
         }
         if(isCorgi) {
