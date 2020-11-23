@@ -42,9 +42,9 @@ public class TensorFlowTest extends LinearOpMode {
         if (rings == 4) {
             robot.moveForward(10,0.5); //moves forward if tensorflow detects 4 rings
         } else if (rings == 1) {
-            robot.moveLeft(10,0.5);
+            robot.moveLeft(10,0.5); //moves left if tensorflow detects 1 ring
         } else {
-            robot.moveRight(10, 0.5);
+            robot.moveRight(10, 0.5); //moves right if tensorflow detects 0 rings
         }
     }
 }
