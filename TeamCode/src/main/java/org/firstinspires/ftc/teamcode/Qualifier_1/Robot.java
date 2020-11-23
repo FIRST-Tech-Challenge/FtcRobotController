@@ -126,10 +126,15 @@ public class Robot {
         drivetrain.moveMotorRightBack(distance);
     }*/
 
+<<<<<<< HEAD
     /******** shooterMotor **********/
     /*public void moveShooterMotor(int distance, int power) {
         shooter.moveShooterMotor(distance, power);
     }
+=======
+
+
+>>>>>>> ec67fdba045b584dda5cc09fb9b84572119b6f1d
     public double getAngle() {
         return drivetrain.getAngle();
     }
@@ -163,7 +168,12 @@ public class Robot {
 
     /*public void moveAngle2(double distance, double angle, double turn) {
         drivetrain.moveAngle2(distance, angle, turn);
+<<<<<<< HEAD
     }*/
+=======
+    }
+
+>>>>>>> ec67fdba045b584dda5cc09fb9b84572119b6f1d
 
 
     /**Vuforia**/
@@ -254,7 +264,10 @@ public class Robot {
         intake.stopIntake();
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ec67fdba045b584dda5cc09fb9b84572119b6f1d
     //shooter
 
     public void moveShooterMotor(int distance, int power) {
@@ -267,15 +280,26 @@ public class Robot {
         shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         shooter.shooterMotor.setTargetPosition(distance);
+<<<<<<< HEAD
 
         shooter.shooterMotor.setPower(power);
 
+=======
+        shooter.shooterMotor.setPower(power);
+>>>>>>> ec67fdba045b584dda5cc09fb9b84572119b6f1d
         if (shooter.shooterMotor.getCurrentPosition() == distance) {
             shooter.shooterMotor.setPower(0);
         }
 
     }
 
+<<<<<<< HEAD
+=======
+    public void setShooterServoPosition(double position) {
+        shooter.moveServoPosition(position);
+    }
+
+>>>>>>> ec67fdba045b584dda5cc09fb9b84572119b6f1d
     public void shootHighGoal(int rings) {
         shooter.shootHighGoal(rings);
     }
@@ -296,4 +320,9 @@ public class Robot {
         shooter.shootGoalTeleop(direction, power);
     }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> ec67fdba045b584dda5cc09fb9b84572119b6f1d
 }
