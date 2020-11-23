@@ -9,6 +9,7 @@
 package org.firstinspires.ftc.teamcode.Qualifier_1;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -168,26 +169,8 @@ public class Robot {
     /*public void moveAngle2(double distance, double angle, double turn) {
         drivetrain.moveAngle2(distance, angle, turn);
     }*/
-    /**Shooter**/
-    public void shootHighGoal(int rings) {
-        shooter.shootHighGoal(rings);
-    }
 
-    public void shootMidGoal(int distance) {
-        shooter.shootMidGoal(distance);
-    }
 
-    public void shootLowGoal(int distance) {
-        shooter.shootLowGoal(distance);
-    }
-
-    public void moveServo(boolean direction) {
-        shooter.moveServo(direction);
-    }
-
-    public void shootGoalTeleop(int direction, int power) {
-        shooter.shootGoalTeleop(direction, power);
-    }
     /**Vuforia**/
 
     public double getVuforiaAngle() {
@@ -290,6 +273,46 @@ public class Robot {
         if(isCorgi) {
             intake.stopIntake();
         }
+    }
+
+    //shooter
+
+    public void moveShooterMotor(int distance, int power) {
+        double sleepTime = (distance / 1 * 1000);
+
+        shooter.shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+
+        shooter.shooterMotor.setTargetPosition(distance);
+
+        shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        shooter.shooterMotor.setTargetPosition(distance);
+        shooter.shooterMotor.setPower(power);
+        if (shooter.shooterMotor.getCurrentPosition() == distance) {
+            shooter.shooterMotor.setPower(0);
+        }
+
+
+    }
+
+    public void shootHighGoal(int rings) {
+        shooter.shootHighGoal(rings);
+    }
+
+    public void shootMidGoal(int distance) {
+        shooter.shootMidGoal(distance);
+    }
+
+    public void shootLowGoal(int distance) {
+        shooter.shootLowGoal(distance);
+    }
+
+    public void moveServo(boolean direction) {
+        shooter.moveServo(direction);
+    }
+
+    public void shootGoalTeleop(int direction, int power) {
+        shooter.shootGoalTeleop(direction, power);
     }
 
 }

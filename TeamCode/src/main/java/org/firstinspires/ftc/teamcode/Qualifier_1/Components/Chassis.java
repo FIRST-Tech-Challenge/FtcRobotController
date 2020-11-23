@@ -44,8 +44,7 @@ public class Chassis {
     DcMotorEx motorRightFront;
     DcMotorEx motorLeftBack;
     DcMotorEx motorRightBack;
-    DcMotorEx ShooterMotor;
-    Servo ShooterServo;
+
 
     // Initialize Encoder Variables
     final double robot_diameter = Math.sqrt(619.84);
@@ -87,10 +86,7 @@ public class Chassis {
         motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
         motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
         motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
-        if(isCorgi) {
-            ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
-            ShooterServo = (Servo) hardwareMap.servo.get("ShooterServo");
-        }
+
 
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 //
@@ -125,9 +121,6 @@ public class Chassis {
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-
-        //Servo
-//        ShooterServo.setPosition(0);
 
         // reset encoder count kept by left motor.
         motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -210,21 +203,6 @@ public class Chassis {
         //brake
         motorRightBack.setPower(0);
         motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    public void moveShooterMotor(int distance, int power) {
-        double sleepTime = (distance / 1 * 1000);
-
-        ShooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-
-        ShooterMotor.setTargetPosition(distance);
-
-        ShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        ShooterMotor.setTargetPosition(distance);
-        ShooterMotor.setPower(power);
-        if (ShooterMotor.getCurrentPosition() == distance) {
-            ShooterMotor.setPower(0);
-        }
     }
 
     public double getAngle() {
