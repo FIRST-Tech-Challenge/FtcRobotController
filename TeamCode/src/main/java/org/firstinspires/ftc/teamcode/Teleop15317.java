@@ -34,7 +34,7 @@ public class Teleop15317 extends LinearOpMode {
     // private Flick flick;
     // private FlickJr flickjr;
     private TwoPosServo claw; //the file this used to be is still called Foundation btw
-    private TwoPosServo gearbox;
+   // private TwoPosServo gearbox;
     private boolean clawButtonIsDown = false; // controls the claw servo button press
     private boolean gearboxButtonIsDown = false; // controls the gearbox servo button press
 
@@ -205,7 +205,7 @@ public class Teleop15317 extends LinearOpMode {
             telemetry.addData("rb", d.getPowerrb());
             telemetry.addData("Clicks: ", d.getClickslf());
             telemetry.addData("Lift", lift.getClicks());
-            telemetry.addData("gearbox", gearbox.getPos());
+         //   telemetry.addData("gearbox", gear.getPos());
             telemetry.addData("gearbox", claw.getPos());
             //telemetry.addData("flickpos", flick.getPos());
             telemetry.update();
