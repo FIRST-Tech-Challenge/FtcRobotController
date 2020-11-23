@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 public class EncoderChassis extends BasicChassis {
@@ -97,6 +98,12 @@ public class EncoderChassis extends BasicChassis {
     }
     public void moveForward(double distance, double power) {
         double ticksToMove = counts_per_inch * distance;
+        double[] currentPosition = track();
+        double[] target_position = {0, 0, 0};
+        double anglecorrection = 0;
+        target_position[0] = currentPosition[0] + cos(getAngle() * PI / 180) * distance;
+        target_position[1] = currentPosition[1] + sin(getAngle() * PI / 180) * distance;
+        target_position[2] = currentPosition[2];
         double newLeftBackTargetPosition = motorLeftBack.getCurrentPosition() + ticksToMove;
         double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() + ticksToMove;
         double newRightBackTargetPosition = motorRightBack.getCurrentPosition() + ticksToMove;
@@ -124,18 +131,18 @@ public class EncoderChassis extends BasicChassis {
         while (op.opModeIsActive() && (motorLeftBack.isBusy() && motorLeftFront.isBusy() && motorRightBack.isBusy() &&
                 motorRightFront.isBusy())) {
             //correction = checkDirection();
-
-            motorRightBack.setPower(power);
-            motorRightFront.setPower(power);
-            motorLeftBack.setPower(power);
-            motorLeftFront.setPower(power);
+            currentPosition = track();
+            anglecorrection = (currentPosition[2] - target_position[2]) * 0.005;
+            motorRightBack.setPower(power+anglecorrection);
+            motorRightFront.setPower(power+anglecorrection);
+            motorLeftBack.setPower(power-anglecorrection);
+            motorLeftFront.setPower(power-anglecorrection);
 //            op.telemetry.addData("correction", correction);
 //            op.telemetry.update();
 //            op.idle();
         }
 
         stopAllMotors();
-        ypos += distance;
         // Changes motor mode back to default
         motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -143,11 +150,17 @@ public class EncoderChassis extends BasicChassis {
         motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void moveBackward(double distance, double power) {
-        double ticksToMove = counts_per_inch * distance;
-        double newLeftBackTargetPosition = motorLeftBack.getCurrentPosition() - ticksToMove;
-        double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() - ticksToMove;
-        double newRightBackTargetPosition = motorRightBack.getCurrentPosition() - ticksToMove;
-        double newRightFrontTargetPosition = motorRightFront.getCurrentPosition() - ticksToMove;
+        double ticksToMove = counts_per_inch * -distance;
+        double[] currentPosition = track();
+        double[] target_position = {0, 0, 0};
+        double anglecorrection = 0;
+        target_position[0] = currentPosition[0] + cos(getAngle() * PI / 180) *- distance;
+        target_position[1] = currentPosition[1] + sin(getAngle() * PI / 180) *- distance;
+        target_position[2] = currentPosition[2];
+        double newLeftBackTargetPosition = motorLeftBack.getCurrentPosition() + ticksToMove;
+        double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() + ticksToMove;
+        double newRightBackTargetPosition = motorRightBack.getCurrentPosition() + ticksToMove;
+        double newRightFrontTargetPosition = motorRightFront.getCurrentPosition() + ticksToMove;
         motorLeftBack.setTargetPosition((int) newLeftBackTargetPosition);
         motorLeftFront.setTargetPosition((int) newLeftFrontTargetPosition);
         motorRightBack.setTargetPosition((int) newRightBackTargetPosition);
@@ -163,26 +176,26 @@ public class EncoderChassis extends BasicChassis {
         motorLeftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorLeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        motorRightFront.setPower(-power);
-        motorLeftFront.setPower(-power);
-        motorRightBack.setPower(-power);
-        motorLeftBack.setPower(-power);
+        motorRightFront.setPower(power);
+        motorLeftFront.setPower(power);
+        motorRightBack.setPower(power);
+        motorLeftBack.setPower(power);
 
         while (op.opModeIsActive() && (motorLeftBack.isBusy() && motorLeftFront.isBusy() && motorRightBack.isBusy() &&
                 motorRightFront.isBusy())) {
             //correction = checkDirection();
-
-            motorRightBack.setPower(power);
-            motorRightFront.setPower(power);
-            motorLeftBack.setPower(power);
-            motorLeftFront.setPower(power);
+            currentPosition = track();
+            anglecorrection = (currentPosition[2] - target_position[2]) * 0.005;
+            motorRightBack.setPower(power+anglecorrection);
+            motorRightFront.setPower(power+anglecorrection);
+            motorLeftBack.setPower(power-anglecorrection);
+            motorLeftFront.setPower(power-anglecorrection);
 //            op.telemetry.addData("correction", correction);
 //            op.telemetry.update();
 //            op.idle();
         }
 
         stopAllMotors();
-        ypos -= distance;
         // Changes motor mode back to default
         motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -196,6 +209,12 @@ public class EncoderChassis extends BasicChassis {
         double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() - ticksToMove;
         double newRightBackTargetPosition = motorRightBack.getCurrentPosition() - ticksToMove;
         double newRightFrontTargetPosition = motorRightFront.getCurrentPosition() + ticksToMove;
+        double[] currentPosition = track();
+        double[] target_position = {0, 0, 0};
+        double anglecorrection = 0;
+        target_position[0] = currentPosition[0] + sin(getAngle() * PI / 180) * distance;
+        target_position[1] = currentPosition[1] + cos(getAngle() * PI / 180) * distance;
+        target_position[2] = currentPosition[2];
         motorLeftBack.setTargetPosition((int) newLeftBackTargetPosition);
         motorLeftFront.setTargetPosition((int) newLeftFrontTargetPosition);
         motorRightBack.setTargetPosition((int) newRightBackTargetPosition);
@@ -218,11 +237,12 @@ public class EncoderChassis extends BasicChassis {
 
         while (op.opModeIsActive() && (motorLeftBack.isBusy() && motorLeftFront.isBusy() && motorRightBack.isBusy() &&
                 motorRightFront.isBusy())) {
-
-            motorRightBack.setPower(power);
-            motorRightFront.setPower(power);
-            motorLeftBack.setPower(power);
-            motorLeftFront.setPower(power);
+            currentPosition = track();
+            anglecorrection = (target_position[2]-currentPosition[2])*0.007;
+            motorRightBack.setPower(power+anglecorrection);
+            motorRightFront.setPower(power+anglecorrection);
+            motorLeftBack.setPower(power-anglecorrection);
+            motorLeftFront.setPower(power-anglecorrection);
         }
 
         stopAllMotors();
@@ -235,11 +255,17 @@ public class EncoderChassis extends BasicChassis {
         xpos += distance;
     }
     public void moveLeft(double distance, double power) {//left
-        double ticksToMove = counts_per_inch * distance;
-        double newLeftBackTargetPosition = motorLeftBack.getCurrentPosition() - ticksToMove;
-        double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() + ticksToMove;
-        double newRightBackTargetPosition = motorRightBack.getCurrentPosition() + ticksToMove;
-        double newRightFrontTargetPosition = motorRightFront.getCurrentPosition() - ticksToMove;
+        double ticksToMove = counts_per_inch * -distance;
+        double newLeftBackTargetPosition = motorLeftBack.getCurrentPosition() + ticksToMove;
+        double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() - ticksToMove;
+        double newRightBackTargetPosition = motorRightBack.getCurrentPosition() - ticksToMove;
+        double newRightFrontTargetPosition = motorRightFront.getCurrentPosition() + ticksToMove;
+        double[] currentPosition = track();
+        double[] target_position = {0, 0, 0};
+        double anglecorrection = 0;
+        target_position[0] = currentPosition[0] + sin(getAngle() * PI / 180) * distance;
+        target_position[1] = currentPosition[1] + cos(getAngle() * PI / 180) * distance;
+        target_position[2] = currentPosition[2];
         motorLeftBack.setTargetPosition((int) newLeftBackTargetPosition);
         motorLeftFront.setTargetPosition((int) newLeftFrontTargetPosition);
         motorRightBack.setTargetPosition((int) newRightBackTargetPosition);
@@ -255,20 +281,20 @@ public class EncoderChassis extends BasicChassis {
                 "RB: " + (int) newRightBackTargetPosition + "LB: " + (int) newRightFrontTargetPosition);
         op.telemetry.update();
 
-        motorLeftBack.setPower(-power);
-        motorRightBack.setPower(power);
-        motorLeftFront.setPower(power);
-        motorRightFront.setPower(-power);
+        motorLeftBack.setPower(power);
+        motorRightBack.setPower(-power);
+        motorLeftFront.setPower(-power);
+        motorRightFront.setPower(power);
 
         while (op.opModeIsActive() && (motorLeftBack.isBusy() && motorLeftFront.isBusy() && motorRightBack.isBusy() &&
                 motorRightFront.isBusy())) {
-
-            motorRightBack.setPower(power);
-            motorRightFront.setPower(power);
-            motorLeftBack.setPower(power);
-            motorLeftFront.setPower(power);
+            currentPosition = track();
+            anglecorrection = (target_position[2]-currentPosition[2])*0.007;
+            motorRightBack.setPower(power+anglecorrection);
+            motorRightFront.setPower(power+anglecorrection);
+            motorLeftBack.setPower(power-anglecorrection);
+            motorLeftFront.setPower(power-anglecorrection);
         }
-
         stopAllMotors();
 
         // Changes motor mode back to default
@@ -276,7 +302,6 @@ public class EncoderChassis extends BasicChassis {
         motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        xpos -= distance;
     }
 
     @Override
@@ -338,7 +363,7 @@ public class EncoderChassis extends BasicChassis {
             difference = abs(sqrt((x) * (x) + (y) * (y)));
             op.telemetry.addData("distance", difference);
             op.telemetry.update();
-            turnInPlace(0, 0.25);
+            turnInPlace(startAngle, 0.25);
             stopAllMotors();
         }
     }

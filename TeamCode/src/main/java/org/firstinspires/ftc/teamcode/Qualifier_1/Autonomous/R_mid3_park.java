@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometr
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 @Autonomous(name= "shooter_autonomous")
-public class Shooter_Autonomous extends LinearOpMode {
+public class R_mid3_park extends LinearOpMode {
     final boolean debug = true;
 
     @Override
