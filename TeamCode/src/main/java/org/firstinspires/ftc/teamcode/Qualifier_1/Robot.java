@@ -396,14 +396,6 @@ public class Robot {
     }
 
     // ring depositor
-    public void ringDepositorClockwise() {
-        ringDepositor.clockwise();
-    }
-
-    public void ringDepositorCounterClockwise() {
-        ringDepositor.counterClockwise();
-    }
-
     public void ringDepositorGoToPosition(RingDepositor.Position p){
         ringDepositor.goToPosition(p);
     }

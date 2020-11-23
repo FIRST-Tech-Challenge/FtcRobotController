@@ -1,7 +1,7 @@
 /**
  * This is the program for moving the wobble goal arm up and down
  * @author Sid
- * @version 1.0
+ * @version 2.0
  * @since 2020-11-08
  * @status teleop working
  */
@@ -49,16 +49,6 @@ public class WobbleGoal {
 
     }
 
-    //making the motor turn clockwise
-    public void clockwise() {
-        wobbleGoalMotor.setPower(wobbleGoalSpeed);
-    }
-
-    //makes the motor turn counterclockwise
-    public void counterClockwise() {
-        wobbleGoalMotor.setPower(-wobbleGoalSpeed);
-    }
-
     //tells motor to go to a specified position based on ticks(i)
     public void goToPosition(Position p) {
         int i = 0;
@@ -96,7 +86,7 @@ public class WobbleGoal {
         wobbleGoalMotor.setPower(0);
     }
 
-    // moves te wobble goal servo
+    // moves the wobble goal servo
     public void moveWobbleGoalServo (boolean direction){
         if (direction){
             wobbleGoalServo.setPosition(1.0);
@@ -106,28 +96,6 @@ public class WobbleGoal {
         op.telemetry.addData(" Wobble Goal Position: ", direction);
         op.telemetry.update();
         op.sleep(1000);
-    }
-
-    public void startingPosition() {
-        wobbleGoalMotor.setTargetPosition(0);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleGoalMotor.setPower(0.25);
-    }
-
-    public void grabbingPosition() {
-        wobbleGoalMotor.setTargetPosition(-940);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleGoalMotor.setPower(0.25);
-    }
-    public void liftingPosition() {
-        wobbleGoalMotor.setTargetPosition(-550);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleGoalMotor.setPower(0.25);
-    }
-    public void droppingPosition() {
-        wobbleGoalMotor.setTargetPosition(-760);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleGoalMotor.setPower(0.25);
     }
 }
 

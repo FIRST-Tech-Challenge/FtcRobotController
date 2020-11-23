@@ -1,7 +1,7 @@
 /**
  * This class includes all the necessary functions
  * for the ring depositor to work in both Autonomous & Teleop.
- * For example moving clockwise and counter clockwise
+ * For example goToPosition
  *
  *
  * @author Aiden Ma
@@ -43,16 +43,6 @@ public class RingDepositor {
         ringDepositorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ringDepositorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         ringClampServo.setPosition(0.0);
-    }
-
-    // tells the motor turn clockwise
-    public void clockwise() {
-        ringDepositorMotor.setPower(ringDepositorSpeed);
-    }
-
-    // tells the motor turn counterclockwise
-    public void counterClockwise() {
-        ringDepositorMotor.setPower(-ringDepositorSpeed);
     }
 
     //tells motor to go to a specified position based on ticks(i)

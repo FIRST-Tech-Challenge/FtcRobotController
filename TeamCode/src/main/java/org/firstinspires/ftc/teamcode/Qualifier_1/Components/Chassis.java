@@ -42,7 +42,6 @@ public class Chassis {
     DcMotorEx motorLeftBack;
     DcMotorEx motorRightBack;
     DcMotorEx ShooterMotor;
-    DcMotorEx wobbleGoalMotor;
     Servo ShooterServo;
 
     // Initialize Encoder Variables
@@ -86,7 +85,6 @@ public class Chassis {
         motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
         motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
         ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
-        wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
         ShooterServo = (Servo) hardwareMap.servo.get("ShooterServo");
 
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -287,32 +285,6 @@ public class Chassis {
             ShooterMotor.setPower(0);
         }
 
-    }
-
-    public void moveWobbleGoalMotor(double distance) {
-        double ticksToMove = distance;
-        double ticksLocationToMove = wobbleGoalMotor.getCurrentPosition() + ticksToMove;
-        wobbleGoalMotor.setTargetPosition((int) ticksLocationToMove);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleGoalMotor.setPower(0.5);
-        while (op.opModeIsActive() && wobbleGoalMotor.isBusy()) {
-            op.telemetry.addData("wobbleGoalMotor", wobbleGoalMotor.getCurrentPosition() + " busy=" + wobbleGoalMotor.isBusy());
-            op.telemetry.update();
-            op.idle();
-        }
-        //brake
-        wobbleGoalMotor.setPower(0);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
-    public void setShooterServoPosition(double position) {
-        ShooterServo.setPosition(position);
-    }
-
-    private void resetAngle() {
-        lastAngles = null;//imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        globalAngle = 0;
     }
 
     public double getAngle() {
