@@ -38,6 +38,12 @@ public class Teleop15317 extends LinearOpMode {
     private boolean clawButtonIsDown = false; // controls the claw servo button press
     private boolean gearboxButtonIsDown = false; // controls the gearbox servo button press
 
+
+    private Servo gear;
+    private double gearmax = 0.6; // Maximum rotational position
+    private double gearmin = 0.5; // Minimum rotational position
+    private String gearcurrentPos = "min";
+
     @Override
     public void runOpMode() {
 
@@ -82,10 +88,8 @@ public class Teleop15317 extends LinearOpMode {
             hardwareMap.get(Servo.class, "claw"),
             0.5, 1.0
         );
-        gearbox = new TwoPosServo(
-            hardwareMap.get(Servo.class, "gearbox"),
-            0.5, 0.6
-        );
+
+        gear = hardwareMap.get(Servo.class, "gearbox");
 
         waitForStart();
         while (opModeIsActive()) {
@@ -108,10 +112,18 @@ public class Teleop15317 extends LinearOpMode {
 
             if (gamepad1.b && !gearboxButtonIsDown) {
                 gearboxButtonIsDown = true;
-                gearbox.nextPos();
+                if(gearcurrentPos.equals("min")) {
+                    gearcurrentPos = "max";
+                    gear.setPosition(gearmax);
+                } else if(gearcurrentPos.equals("max")) {
+                    gearcurrentPos = "min";
+                    gear.setPosition(gearmin);
+                }
             } else if (!gamepad1.b) {
                 gearboxButtonIsDown = false;
             }
+
+
 
             if (gamepad1.y && !clawButtonIsDown) {
                 clawButtonIsDown = true;
