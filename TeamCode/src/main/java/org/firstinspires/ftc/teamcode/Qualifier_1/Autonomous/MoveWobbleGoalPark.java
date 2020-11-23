@@ -26,9 +26,9 @@ public class MoveWobbleGoalPark extends LinearOpMode {
         } else if (i==1) {
             robot.moveForward(80,0.8);
             sleep(200);
-            robot.turnOdometry(60,0.8);
+            //robot.turnOdometry(60,0.8); //TODO: add turn
             sleep(200);
-            robot.turnOdometry(0,0.8); //TODO: -60, or 0
+            //robot.turnOdometry(0,0.8); //TODO: add turn
             sleep(200);
             robot.moveForward(-8,0.8);
         } else {
