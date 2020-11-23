@@ -41,6 +41,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     Thread positionThread;
     private Telemetry telemetry;
+    private Configuration cfg;
     public MechChassis chassis;
     public CoreSystem core;
     public ElapsedTime runtime = new ElapsedTime();
@@ -110,6 +111,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     @Override
     public void configure(Configuration configuration, Telemetry telemetry, ProgramType autoside) throws FileNotFoundException {
         runtime.reset();
+        cfg = configuration;
         double ini_time = runtime.seconds();
         this.telemetry = telemetry;
         simEventFile = AppUtil.getInstance().getSettingsFile("ToboMech_events.txt"); // at First/settings directory
@@ -193,7 +195,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.simOS.close();
             }
             // ReadWriteFile.writeFile(simEventFile, chassis.getSimEvents());
-            if (isSimulationMode()) {
+            if (simulation_mode) {
                 telemetry.addData("Running simulation mode and dump events to file:","%s/%s",simEventFile.getParent(),simEventFile.getName());
                 telemetry.addData("Content:","%s",chassis.getSimEvents());
                 telemetry.update();
@@ -205,6 +207,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 //            telemetry.update();
 //            sleep(10000);
 //        }
+        if(chassis != null){
+            chassis.updateInitPosFromOdo();
+            cfg.storе(); // store updated jason file
+        }
+
         if (cameraDetector !=null) {
             cameraDetector.end();
         }
@@ -997,8 +1004,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     // Enable the following line only for the debugging purpose
                     // chassis.setupIMUTelemetry(telemetry);
                 }
-                if ((chassis!=null) && !isTeleOpAfterAuto)
-                    chassis.set_init_pos(side(120), 155, 0);
+                if (chassis!=null) {
+                    if (isTeleOpAfterAuto) {
+                        chassis.initOdoFromJson();
+                    } else {
+                        chassis.set_init_pos(side(120), 155, 0);
+                    }
+                }
                 break;
             case AUTO_RED:
                 if (startP == StartPosition.OUT) {

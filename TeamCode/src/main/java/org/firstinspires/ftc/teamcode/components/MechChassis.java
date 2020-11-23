@@ -1411,4 +1411,13 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     public static double cross(double theta, double phi) {
         return cos(theta * degreeToRad) * sin(phi * degreeToRad) - sin(theta * degreeToRad) * cos(phi * degreeToRad);
     }
+
+    public void updateInitPosFromOdo(){
+        initX = odo_x_pos_cm();
+        initY = odo_y_pos_cm();
+    }
+
+    public void initOdoFromJson(){
+        set_init_pos(initX, initY, odo_heading());
+    }
 }
