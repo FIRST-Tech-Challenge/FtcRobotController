@@ -40,7 +40,7 @@ public class TensorFlowTest extends LinearOpMode {
         waitForStart();
 
         if (rings == 4) {
-            robot.moveForward(10,0.5);
+            robot.moveForward(10,0.5); //moves forward if tensorflow detects 4 rings
         } else if (rings == 1) {
             robot.moveLeft(10,0.5);
         } else {
