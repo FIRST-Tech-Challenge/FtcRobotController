@@ -1,10 +1,3 @@
-package org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 /**
  * Ultimate Goal Accessory
  *
@@ -13,6 +6,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * @since   2020-October-26
  *
  */
+
+package org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+
 public class Shooter {
     private LinearOpMode op = null;
     private HardwareMap hardwareMap = null;
@@ -24,7 +27,7 @@ public class Shooter {
     private int distance;
 
     public Shooter(LinearOpMode opMode){
-        op = opMode;
+        this.op = opMode;
         hardwareMap = op.hardwareMap;
 
         shooterMotor = hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
@@ -48,7 +51,7 @@ public class Shooter {
 
 
     public void moveServoPosition(double pushPosition) {
-        op.telemetry.addData("claw position :", pushPosition);
+        op.telemetry.addData("pusher position :", pushPosition);
         op.telemetry.update();
         shooter_Servo.setPosition(pushPosition);
         op.sleep(2000);
