@@ -124,7 +124,7 @@ public class Chassis {
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
 
         //Servo
-        ShooterServo.setPosition(0);
+//        ShooterServo.setPosition(0);
 
         // reset encoder count kept by left motor.
         motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

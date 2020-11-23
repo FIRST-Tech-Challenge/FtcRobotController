@@ -16,6 +16,7 @@ public class Park_And_Shoot extends LinearOpMode {
         ElapsedTime runtime = new ElapsedTime();
 
         waitForStart();
+        robot.moveServo(true);
         robot.moveWobbleGoalServo(false);
         robot.moveBackward(60, 0.5);
         robot.shootHighGoal(3);
