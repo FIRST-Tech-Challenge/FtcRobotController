@@ -42,6 +42,8 @@ public class TerraOp extends OpMode {
         bot.gameTime.reset();
         //bot.startOdoThreadTele();
         vs = bot.getVoltageScale();
+        bot.outtakeStartL *= vs;
+        bot.outtakeStartR *= vs;
        // bot.startOdoThreadTele();
 
     }
@@ -98,12 +100,12 @@ public class TerraOp extends OpMode {
             if(gamepad1.y){
                 if(!bot.powershot) {
                     bot.shooter.start();
-                    bot.outrController.setStartPow(bot.outtakeStartR*vs);
-                    bot.outlController.setStartPow(bot.outtakeStartL*vs);
+                    bot.outrController.setStartPow(bot.outtakeStartR);
+                    bot.outlController.setStartPow(bot.outtakeStartL);
                 }else{
                     bot.powerShot.start();
-                    bot.outrController.setStartPow(bot.outtakeStartR*0.85*vs);
-                    bot.outlController.setStartPow(bot.outtakeStartL*0.85*vs);
+                    bot.outrController.setStartPow(bot.outtakeStartR*bot.powerShotSpeed);
+                    bot.outlController.setStartPow(bot.outtakeStartL*bot.powerShotSpeed);
                 }
             }
             if(gamepad2.x){
@@ -122,7 +124,7 @@ public class TerraOp extends OpMode {
                 if(bot.powershot){
                     bot.outtakeWithEncoders(bot.powerShotSpeed);
                 }else {
-                    bot.outtakeWithEncoders(bot.outtakeSpeed);
+                    bot.outtakeWithEncoders(1);
                 }
             }
             
@@ -130,7 +132,7 @@ public class TerraOp extends OpMode {
             if(bot.powershot){
                 bot.outtakeWithEncoders(bot.powerShotSpeed);
             }else {
-                bot.outtakeWithEncoders(bot.outtakeSpeed);
+                bot.outtakeWithEncoders(1);
             }
         }
 
@@ -176,9 +178,9 @@ public class TerraOp extends OpMode {
 //        telemetry.addData("curl", bot.outlController.currSpeed);
 //        telemetry.addData("outr", bot.getOutrPos());
 //        telemetry.addData("outl", bot.getOutlPos());
-        telemetry.addData("dsr1", bot.getDisR1());
-        telemetry.addData("dsl2", bot.getDisL2());
-        telemetry.update();
+//        telemetry.addData("dsr1", bot.getDisR1());
+//        telemetry.addData("dsl2", bot.getDisL2());
+//        telemetry.update();
 
 
         bot.update();

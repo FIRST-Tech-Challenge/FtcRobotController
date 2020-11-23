@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.revextensions2.ExpansionHubEx;
 
+import autofunctions.Localizer;
 import autofunctions.Odometry;
 import autofunctions.Path;
 import telefunctions.AutoModule;
@@ -50,6 +51,8 @@ public class TerraBot {
     public BNO055IMU gyro;
     public Rev2mDistanceSensor dsr1;
     public Rev2mDistanceSensor dsl2;
+    public Rev2mDistanceSensor dsr2;
+    public Rev2mDistanceSensor dsl1;
 
     public boolean intaking = false;
     public boolean outtaking = false;
@@ -65,8 +68,7 @@ public class TerraBot {
     public double shootStartR = 0.08;
     public double shootStartL = 0.06;
     public double intakeSpeed = 1;
-    public double outtakeSpeed = 0.34; //0.37
-    public double powerShotSpeed = 0.3;
+    public double powerShotSpeed = 0.8;
     public double maxArmPos = 215;
     public double heading = 0;
     public double lastAngle = 0;
@@ -89,7 +91,7 @@ public class TerraBot {
 
     public Cycle grabControl = new Cycle(grabStart, 0.45);
     public Cycle liftControl = new Cycle(liftStart, liftSecond);
-    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.2, 0.22);//0.22, 0.25
+    public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.18, 0.2);//0.22, 0.25
     public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.1, 0.26); //0.13, 0.26
 
     public ServoController turnControl = new ServoController(turnStart, 0.0, 0.7);
@@ -104,16 +106,23 @@ public class TerraBot {
 
     //d = 0.00024
 
-    public double outtakeStartR = outtakeSpeed*rightP*1.2;
-    public double outtakeStartL = outtakeSpeed*leftP*0.9;
+    public double ratio = 2.5;
+    public double outtakeStartR = 0.658;
+    public double outtakeStartL = outtakeStartR/ratio;
     public SpeedController outrController = new SpeedController(0.3, 0.0, 0.0, outtakeStartR);//0.5
     public SpeedController outlController = new SpeedController(0.3, 0.0, 0.0, outtakeStartL);//0.5
 
     public Odometry odometry = new Odometry();
+    public Localizer localizer = new Localizer();
 
     public ThreadHandler threadHandler = new ThreadHandler();
 
     public ExpansionHubEx expansionHub;
+
+    //1.075
+    //0.658,
+    //2.5
+    //0.4
 
 
 
@@ -142,10 +151,14 @@ public class TerraBot {
 
         gyro = hwMap.get(BNO055IMU.class, "gyro");
 
-        expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
-
         dsl2 = hwMap.get(Rev2mDistanceSensor.class, "dsl2");
         dsr1 = hwMap.get(Rev2mDistanceSensor.class, "dsr1");
+        dsl1 = hwMap.get(Rev2mDistanceSensor.class, "dsl1");
+        dsr2 = hwMap.get(Rev2mDistanceSensor.class, "dsr2");
+
+        expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+
+
 
 
 
@@ -242,7 +255,8 @@ public class TerraBot {
 
     public void moveTeleOp(double f, double s, double t){
         if(fastmode) {
-            move(f, s, Math.signum(t)*t*t);
+//            move(f, s, Math.signum(t)*t*t);
+            move((f*0.95) + Math.signum(f)*0.05, (s*0.9)+Math.signum(s)*0.1, (Math.signum(t)*t*t*0.7)+Math.signum(t)*0.3);
         }else{
             move((f*0.2) + Math.signum(f)*0.05, (s*0.2)+Math.signum(s)*0.1, (t*0.2)+Math.signum(t)*0.3);
         }
@@ -358,19 +372,24 @@ public class TerraBot {
             @Override
             public void run() { resetAll();}
         });
-        for(int i = 0; i < 3;i++) {
-            powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
-            powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
-            powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
-            powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
-            if(i < 2) {
-//                Path path = new Path(i * 17, 0, 0);
-//                path.addSetpoint(17, 0, 0);
-                Path path = new Path(0, 0, -7*i);
-                path.addSetpoint(0, 0, -7);
-                powerShot.addPath(path, this);
-            }
-        }
+        powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
+        powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
+        powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
+        powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
+        Path path = new Path(0, 0, 0);
+        path.addSetpoint(0, 0, -4);
+        powerShot.addPath(path, this);
+        powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
+        powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
+        powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
+        powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
+        Path path1 = new Path(0, 0, -4);
+        path1.addSetpoint(0, 0, -8);
+        powerShot.addPath(path1, this);
+        powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
+        powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
+        powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
+        powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
         powerShot.addCustom(new CodeSeg() {
             @Override
             public void run() {
@@ -496,8 +515,8 @@ public class TerraBot {
 
     public void outtakeWithEncoders(double speed){
         speed = speed*MAX_OUTTAKE_SPEED;
-        outrController.setTargetSpeed(speed*rightP);
-        outlController.setTargetSpeed(speed*leftP);
+        outrController.setTargetSpeed(outtakeStartR*speed);
+        outlController.setTargetSpeed(outtakeStartL*speed);
         double outrPow = outrController.getPow();
         double outlPow = outlController.getPow();
         outr.setPower(outrPow);
@@ -612,7 +631,7 @@ public class TerraBot {
     }
 
     public double getVoltageScale(){
-        return ((getVoltage()-12.8)*-0.05)+1;
+        return ((getVoltage()-12.5)*-0.05)+1;
         //0.367 - 14
 
     }
@@ -622,6 +641,14 @@ public class TerraBot {
     }
     public double getDisL2(){
         return dsl2.getDistance(DistanceUnit.CM);
+    }
+    public double getDisR2(){
+        return dsr2.getDistance(DistanceUnit.CM);
+    }
+    public double getDisL1(){  return dsl1.getDistance(DistanceUnit.CM); }
+
+    public void updateLocalizer(){
+        localizer.update(getDisR1(), getDisL1(), getDisR2(), getDisL2(), getHeading());
     }
 
 

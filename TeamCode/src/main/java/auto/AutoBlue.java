@@ -20,7 +20,7 @@ public class AutoBlue extends LinearOpMode {
     RobotFunctions rf = new RobotFunctions();
     Path path = new Path(0,0,0);
 
-    final double shootSpeed = bot.outtakeSpeed;
+    final double shootSpeed = 1;
 
     @Override
     public void runOpMode() {

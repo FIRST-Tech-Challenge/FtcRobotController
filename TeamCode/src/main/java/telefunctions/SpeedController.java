@@ -117,7 +117,7 @@ public class SpeedController {
 //            }
 //        }
         if(Math.abs(currError) < 2000) {
-            pow += Math.signum(currError) * 0.0001;
+            //pow += Math.signum(currError) * 0.0004;
             pow = Range.clip(pow, -1, 1);
         }
         return pow;
