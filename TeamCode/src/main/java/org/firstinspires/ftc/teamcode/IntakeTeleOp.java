@@ -17,7 +17,7 @@ class IntakeTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        motorPower =  -gamepad1.left_stick_x;
+        motorPower =  -gamepad1.left_stick_y;
         intakeMotor.setPower(motorPower);
     }
 }
