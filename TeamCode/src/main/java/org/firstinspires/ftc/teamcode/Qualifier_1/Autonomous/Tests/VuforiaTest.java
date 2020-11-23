@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Vuforia;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Webcam_1;
@@ -30,7 +31,7 @@ public class VuforiaTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Robot robot = new Robot(this);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER);
         ElapsedTime runtime = new ElapsedTime();
 
         //AamodVuforia vuforiaB = new AamodVuforia(this, VuforiaLocalizer.CameraDirection.BACK);
