@@ -36,7 +36,7 @@ public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        telemetry.addData("Status", "Before new RObot");
+        telemetry.addData("Status", "Before new Robot");
         telemetry.update();
         Robot robot = new Robot(this);
         telemetry.addData("Status", "Done with new Robot");
@@ -57,9 +57,6 @@ public class Teleop extends LinearOpMode {
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
-
-        // commented by Victor
-        // robot.initChassis(this);
 
         //Aiden - during competition day robot disconnected so we are trying this code
         while (!opModeIsActive() && !isStopRequested()) {
