@@ -35,6 +35,16 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
+/**
+ * !!!!!!!!!!!!!!!!!!!!!!!! This class is absolete !!!!!!!!!!!!!!!!!!!!!!!!
+ *
+ * Please do not use.
+ * This is left here for reference only.
+ * Please talk to Warren & Nathan to determine which of
+ * the new Chassis classes to use
+ *
+ * Victor
+ */
 public class Chassis {
 
     public static final boolean isCorgi = true;
