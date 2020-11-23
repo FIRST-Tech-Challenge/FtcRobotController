@@ -41,7 +41,8 @@ public class Chassis {
     DcMotorEx motorRightFront;
     DcMotorEx motorLeftBack;
     DcMotorEx motorRightBack;
-
+    DcMotorEx ShooterMotor;
+    Servo ShooterServo;
 
     // Initialize Encoder Variables
     final double robot_diameter = Math.sqrt(619.84);
@@ -83,7 +84,8 @@ public class Chassis {
         motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
         motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
         motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
-
+        ShooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
+        ShooterServo = (Servo) hardwareMap.servo.get("ShooterServo");
 
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 //
@@ -119,7 +121,8 @@ public class Chassis {
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
 
-
+        //Servo
+//        ShooterServo.setPosition(0);
 
         // reset encoder count kept by left motor.
         motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -203,74 +206,22 @@ public class Chassis {
         motorRightBack.setPower(0);
         motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-<<<<<<< HEAD
-=======
-    public double[] motor_track(){
-        double[] data = {0, 0, 0};
-        double diff[]={motorLeftFront.getCurrentPosition() - encoder[0],motorRightFront.getCurrentPosition() - encoder[1],motorLeftBack.getCurrentPosition() - encoder[2],motorRightBack.getCurrentPosition()-encoder[3]};
-        encoder[0] += diff[0];
-        encoder[1] += diff[1];
-        encoder[2] += diff[2];
-        encoder[3] += diff[3];
-        xpos += sqrt(2) * ((diff[0]+diff[3])/(2*counts_per_inch) -  (diff[2]+diff[1])/(2*counts_per_inch));
-        ypos += sqrt(2) * ((diff[0]+diff[3])/(2*counts_per_inch) + (diff[2]+diff[1])/(2*counts_per_inch));
-        op.telemetry.addData("LeftFront",motorLeftFront.getCurrentPosition());
-        op.telemetry.addData("RightFront",motorRightFront.getCurrentPosition());
-        op.telemetry.addData("LeftBack",motorLeftBack.getCurrentPosition());
-        op.telemetry.addData("RightBack",motorRightBack.getCurrentPosition());
-        op.telemetry.addData("xpos",xpos);
-        op.telemetry.addData("ypos",ypos);
-        op.telemetry.addData("angle",motorGetAngle());
-        op.telemetry.update();
-        data[0] = xpos;
-        data[1] = ypos;
-        data[2] = motorGetAngle();
-        return data;
-    }
-    public double motorGetAngle() {
-        double angle = ((encoder[0]+encoder[2]) - (encoder[1]+encoder[3])) / (counts_per_inch *4* robot_diameter * Math.PI*360);
-        angle %= 360;
-        if (angle < -180) {
-            angle += 360;
-        }
-        return angle;
-    }
-    public void Motorturn(double target, double power) {
-        double currentAngle = motorGetAngle();
-        int direction = 1;
-        double difference = currentAngle - target;
-        double targetAngle = target;
-        if (target < 0) {
-            direction = -1;
-        }
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        while (op.opModeIsActive() && (difference >= 0.5)) {
-            currentAngle = motorGetAngle();
-            difference = targetAngle - currentAngle;
-            if (difference * direction < 5) {
-                power *= difference / 5;
-                if (power < 0.2) {
-                    power = 0.2 * power;
-                }
-            }
-            motorRightBack.setPower(-power * direction);
-            motorRightFront.setPower(-power * direction);
-            motorLeftBack.setPower(power * direction);
-            motorLeftFront.setPower(power * direction);
-            op.telemetry.addData("current angle", currentAngle);
-            op.telemetry.update();
-            op.idle();
-        }
-        motorLeftBack.setPower(0);
-        motorRightBack.setPower(0);
-        motorLeftFront.setPower(0);
-        motorRightFront.setPower(0);
-    }
->>>>>>> ec67fdba045b584dda5cc09fb9b84572119b6f1d
+    public void moveShooterMotor(int distance, int power) {
+        double sleepTime = (distance / 1 * 1000);
 
+        ShooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
+
+        ShooterMotor.setTargetPosition(distance);
+
+        ShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        ShooterMotor.setTargetPosition(distance);
+        ShooterMotor.setPower(power);
+        if (ShooterMotor.getCurrentPosition() == distance) {
+            ShooterMotor.setPower(0);
+        }
+
+    }
 
     public double getAngle() {
         // We experimentally determined the Z axis is the axis we want to use for heading angle.
