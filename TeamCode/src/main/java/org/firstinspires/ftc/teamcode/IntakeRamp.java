@@ -17,7 +17,7 @@ class IntakeRamp extends OpMode {
 
     @Override
     public void loop() {
-        motorPower =  -gamepad1.right_stick_x;
+        motorPower =  -gamepad1.right_stick_y;
         ramp.setPower(motorPower);
     }
 }
