@@ -1,15 +1,14 @@
-package org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations;
+package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometry;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
-
-@Autonomous(name= "track")
-public class track extends LinearOpMode{
-
+@Autonomous(name= "shooter_autonomous")
+public class R_mid3_park extends LinearOpMode {
+    final boolean debug = true;
 
     @Override
     public void runOpMode(){
@@ -24,13 +23,13 @@ public class track extends LinearOpMode{
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
         waitForStart();
-        while(isStopRequested()==false){
-            //robot.motor_track();
-        }
+        robot.moveBackward(57,0.5);
+        robot.shootHighGoal(3);
+        robot.moveBackward(7,0.5);
+        sleep(500);
         stop();
     }
 
 
 
 }
-

@@ -18,14 +18,14 @@ public class IMUTest extends LinearOpMode {
 
         waitForStart();
 
-        robot.moveForwardIMU(50, 0.8);
+       /* robot.moveForwardIMU(50, 0.8);
         sleep(1000);
         robot.moveBackwardIMU(50, 0.8);
         sleep(1000);
         robot.moveLeftIMU(70, 0.8, 0, 0.15, 0.2);
         sleep(1000);
         robot.moveRightIMU(70, 0.8, 0, 0.1, 0.2);
-        sleep(1000);
+        sleep(1000);*/
 
     }
 }

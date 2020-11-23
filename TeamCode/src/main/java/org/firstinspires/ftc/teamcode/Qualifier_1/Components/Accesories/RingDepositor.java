@@ -1,7 +1,7 @@
 /**
  * This class includes all the necessary functions
  * for the ring depositor to work in both Autonomous & Teleop.
- * For example moving clockwise and counter clockwise
+ * For example goToPosition
  *
  *
  * @author Aiden Ma
@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class RingDepositor {
 
     public enum Position {
-        REST, LOWGOAL
+        REST, FLOOR
     }
 
     private LinearOpMode op = null;
@@ -28,8 +28,8 @@ public class RingDepositor {
     private DcMotor ringDepositorMotor = null;
     Servo ringClampServo = null;
     private final int ticksForREST = 0;
-    private final int ticksForLOWGOAL = 400;
-    private final double ringDepositorSpeed = 0.05;
+    private final int ticksForFLOOR = 908 ;
+    private final double ringDepositorSpeed = 0.2;
 
     public RingDepositor(LinearOpMode opMode) {
         //setting the opmode & hardwareMap
@@ -42,17 +42,7 @@ public class RingDepositor {
         ringDepositorMotor.setDirection(DcMotor.Direction.FORWARD);
         ringDepositorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ringDepositorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        ringClampServo.setPosition(1.0);
-    }
-
-    // tells the motor turn clockwise
-    public void clockwise() {
-        ringDepositorMotor.setPower(ringDepositorSpeed);
-    }
-
-    // tells the motor turn counterclockwise
-    public void counterClockwise() {
-        ringDepositorMotor.setPower(-ringDepositorSpeed);
+        ringClampServo.setPosition(0.0);
     }
 
     //tells motor to go to a specified position based on ticks(i)
@@ -60,8 +50,8 @@ public class RingDepositor {
         int i = 0;
         if (p == RingDepositor.Position.REST) {
             i = ticksForREST;
-        } else if (p == Position.LOWGOAL) {
-            i = ticksForLOWGOAL;
+        } else if (p == Position.FLOOR) {
+            i = ticksForFLOOR;
         } else {
             op.telemetry.addData("IQ Lvl", "0.00");
             op.telemetry.update();

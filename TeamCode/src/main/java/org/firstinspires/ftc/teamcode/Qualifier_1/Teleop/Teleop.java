@@ -48,6 +48,10 @@ public class Teleop extends LinearOpMode {
         boolean slowMode = false;
         boolean moveServo = true;
         boolean servoIsMoved = true;
+        boolean ring_clamp_is_up = true;
+        boolean move_ring_clamp = true;
+        boolean wobble_goal_servo_is_up = true;
+        boolean move_wobble_goal_servo = true;
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
         RingDepositor.Position currentRingDepositorPosition = RingDepositor.Position.REST;
 
@@ -72,14 +76,10 @@ public class Teleop extends LinearOpMode {
             boolean move_ring_depositor = gamepad1.left_bumper;
 //            float start_intake = gamepad1.right_trigger;
 //            float stop_intake = gamepad1.left_trigger;
-            boolean x_button = gamepad1.x;
+            boolean ring_clamp = gamepad1.y;
+            boolean wobble_goal_servo = gamepad1.x;
             boolean a_button = gamepad1.a;
-            boolean ring_clamp_true = gamepad1.b;
-            boolean ring_clamp_false = gamepad1.y;
-            boolean startingPosition = gamepad2.dpad_up;
-            boolean grabbingPosition = gamepad2.dpad_right;
-            boolean liftingPosition = gamepad2.dpad_down;
-            boolean droppingPosition = gamepad2.dpad_left;
+            boolean b_button = gamepad1.b;
             boolean y_button2 = gamepad2.y;
             boolean b_button2 = gamepad2.b;
             boolean a_button2 = gamepad2.a;
@@ -124,7 +124,7 @@ public class Teleop extends LinearOpMode {
             if (a_button) { //click a to turn on slowmode
                 slowMode = true;
             }
-            if (x_button) { //click x to turn off slow mode
+            if (b_button) { //click x to turn off slow mode
                 slowMode = false;
             }
 
@@ -152,61 +152,81 @@ public class Teleop extends LinearOpMode {
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.RAISE) {
                     nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.RELEASE);
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.RELEASE) {
-                    nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
+                    nextWobbleGoalPosition = robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
                 } else {
                     telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
                     telemetry.update();
-                    sleep(2000);
+                    sleep(500);
                 }
                 // added by Aiden; must have this otherwise if you hold onto the button multiple
                 // actions/movements will be executed by mistake
-                sleep(1000);
+                sleep(500);
                 currentWobbleGoalPosition = nextWobbleGoalPosition;
             }
 
-            telemetry.addData("Wobble Goal Direct", startingPosition + ", " + grabbingPosition + ", " + liftingPosition + ", " + droppingPosition);
-            telemetry.update();
-//            sleep(2000);
-            if (startingPosition == true) {
-                robot.wobbleGoalStartingPosition();
-            } else if (grabbingPosition == true) {
-                robot.wobbleGoalGrabbingPosition();
-            } else if (liftingPosition == true) {
-                robot.wobbleGoalLiftingPosition();
-            } else if (droppingPosition == true) {
-                robot.wobbleGoalDroppingPosition();
+            if (wobble_goal_servo) {
+                move_wobble_goal_servo = true;
+
+                if (wobble_goal_servo_is_up) {
+                    wobble_goal_servo_is_up = false;
+                } else if (!wobble_goal_servo_is_up) {
+                    wobble_goal_servo_is_up = true;
+                }
+            } else {
+                move_wobble_goal_servo = false;
             }
 
+            if (move_wobble_goal_servo) {
+                if (wobble_goal_servo_is_up) {
+                    telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
+                    telemetry.update();
+                    robot.moveWobbleGoalServo(true);
+                } else if (!wobble_goal_servo_is_up) {
+                    telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
+                    telemetry.update();
+                    robot.moveWobbleGoalServo(false);
+                }
+            }
 
             // ring depositor
             if (move_ring_depositor){
                 if (currentRingDepositorPosition == RingDepositor.Position.REST){
-                    robot.ringDepositorGoToPosition(RingDepositor.Position.LOWGOAL);
-                    currentRingDepositorPosition = RingDepositor.Position.LOWGOAL;
-                } else if (currentRingDepositorPosition == RingDepositor.Position.LOWGOAL) {
+                    robot.ringDepositorGoToPosition(RingDepositor.Position.FLOOR);
+                    currentRingDepositorPosition = RingDepositor.Position.FLOOR;
+                } else if (currentRingDepositorPosition == RingDepositor.Position.FLOOR) {
                     robot.ringDepositorGoToPosition(RingDepositor.Position.REST);
                     currentRingDepositorPosition = RingDepositor.Position.REST;
                 } else {
                     telemetry.addData("Ring Depositor: ", "u have made a STUPID MISTAKE");
                     telemetry.update();
-                    sleep(2000);
+                    sleep(200);
                 }
             }
-//            if (move_ring_depositor_frwd == 1.00){
-//                robot.ringDepositorClockwise();
-//            } else if (move_ring_depositor_bckwrd == 1.00){
-//                robot.ringDepositorCounterClockwise();
-//            } else {
-//                robot.stopRingDepositor();
-//            }
 
-            if (ring_clamp_true){
-                robot.moveRingClamp(true);
-            }
-            if (ring_clamp_false){
-                robot.moveRingClamp(false);
+            // ring clamp
+            if (ring_clamp) {
+                move_ring_clamp = true;
+
+                if (ring_clamp_is_up) {
+                    ring_clamp_is_up = false;
+                } else if (!ring_clamp_is_up) {
+                    ring_clamp_is_up = true;
+                }
+            } else {
+                move_ring_clamp = false;
             }
 
+            if (move_ring_clamp) {
+                if (ring_clamp_is_up) {
+                    telemetry.addData("Ring Clamp", " RING CLAMP UP y_button");
+                    telemetry.update();
+                    robot.moveRingClamp(true);
+                } else if (!ring_clamp_is_up) {
+                    telemetry.addData("Ring Clamp", " RING CLAMP DOWN y_button");
+                    telemetry.update();
+                    robot.moveRingClamp(false);
+                }
+            }
 
             //intake
 //            if(start_intake == 1.00){

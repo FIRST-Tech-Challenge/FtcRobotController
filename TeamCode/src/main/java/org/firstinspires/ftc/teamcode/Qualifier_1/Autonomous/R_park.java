@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 @Autonomous(name = "Park")
-public class Park extends LinearOpMode {
+public class R_park extends LinearOpMode {
 
     @Override
     public void runOpMode() {
