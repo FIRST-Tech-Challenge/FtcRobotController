@@ -28,14 +28,14 @@ public class Test extends LinearOpMode {
 //        robot.moveMotorLeftBack(-10);
 //        sleep(1000);
 //
-            robot.moveForward(30, 0.8);
+            /*robot.moveForward(30, 0.8);
             sleep(1000);
             robot.moveBackward(30, 0.8);
             sleep(3000);
             robot.moveForwardIMU(50, 0.8);
             sleep(1000);
             robot.moveBackwardIMU(50, 0.8);
-            sleep(3000);
+            sleep(3000);*/
 //
 //        robot.moveLeft(50,0.8);
 //        sleep(1000);
