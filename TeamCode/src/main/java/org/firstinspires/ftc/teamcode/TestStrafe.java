@@ -20,9 +20,9 @@ class TestStrafe extends OpMode {
     @Override
     public void loop() {
         power = -gamepad2.left_stick_x;
-        fl.setPower(power);
-        fr.setPower(-power);
-        rr.setPower(power);
-        rl.setPower(-power);
+        fl.setPower(-power);
+        fr.setPower(power);
+        rr.setPower(-power);
+        rl.setPower(power);
     }
 }
