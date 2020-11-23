@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.FlickJr;
 import org.firstinspires.ftc.teamcode.TwoPosServo;
 import org.firstinspires.ftc.teamcode.Claw;
 
-@TeleOp(name="15317 Teleop", group="Linear Opmode")
+@TeleOp(name="15317 Claw Teleop", group="Linear Opmode")
 
 public class Teleop15317 extends LinearOpMode {
 
@@ -40,8 +40,8 @@ public class Teleop15317 extends LinearOpMode {
 
 
     private Servo gear;
-    private double gearmax = 0.6; // Maximum rotational position
-    private double gearmin = 0.5; // Minimum rotational position
+    private double gearmax = 1; // Maximum rotational position
+    private double gearmin = 0; // Minimum rotational position
     private String gearcurrentPos = "min";
 
     @Override
