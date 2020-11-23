@@ -23,9 +23,9 @@ public class Shooter_Autonomous extends LinearOpMode {
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
         waitForStart();
-        robot.moveAngleOdometry(0,-55,0.5);
+        robot.moveBackward(57,0.5);
         robot.shootHighGoal(3);
-        robot.moveAngleOdometry(0,-7,0.5);
+        robot.moveBackward(7,0.5);
         sleep(500);
         stop();
     }

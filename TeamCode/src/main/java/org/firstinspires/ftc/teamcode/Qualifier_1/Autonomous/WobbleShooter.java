@@ -23,11 +23,12 @@ public class WobbleShooter extends LinearOpMode {
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
         waitForStart();
-        robot.moveAngle(0,-63,0.5);
-        robot.moveAngle(20,5,0.5);
+        robot.moveBackward(63,0.5);
+        robot.moveRight(20,0.5);
+        robot.moveForward(7,0.5);
         sleep(2000);
         //robot.shootHighGoal(3);
-        robot.moveAngle(0,-5,0.5);
+        robot.moveBackward(10,0.5);
         sleep(500);
         stop();
     }
