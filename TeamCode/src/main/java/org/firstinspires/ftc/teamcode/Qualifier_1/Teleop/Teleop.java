@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.RingDepositor;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -38,7 +39,7 @@ public class Teleop extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this);
+        Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
 

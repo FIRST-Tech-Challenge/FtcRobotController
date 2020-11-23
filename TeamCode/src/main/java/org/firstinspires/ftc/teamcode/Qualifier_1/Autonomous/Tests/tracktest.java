@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometry;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
@@ -15,7 +16,7 @@ final boolean debug = true;
     @Override
     public void runOpMode(){
 
-        Robot robot=new Robot(this);
+        Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER);
         Odometry odom = new Odometry();
 
         telemetry.addData("Status", "Ready to go");
@@ -50,11 +51,11 @@ final boolean debug = true;
         telemetry.addData("moved6s", "done");
         telemetry.update();
         sleep(1000);*/
-        robot.moveAngle(0,24,0.5);
+        robot.moveAngle(0,72,0.5);
         telemetry.addData("moved", "done");
         telemetry.update();
         sleep(1000);
-        robot.moveAngle(0,-24,0.5);
+        robot.moveAngle(0,-72,0.5);
         telemetry.addData("moved", "done");
         telemetry.update();
         sleep(1000);
