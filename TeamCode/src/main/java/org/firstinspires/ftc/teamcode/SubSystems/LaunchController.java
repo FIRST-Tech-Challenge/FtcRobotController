@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.hardware.I2cDevice;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class LaunchController {
 
@@ -45,33 +42,43 @@ public class LaunchController {
     public LAUNCH_MODE launchMode = LAUNCH_MODE.MODE_AUTOMATED;
     public LAUNCH_READINESS launchReadiness;
 
-    public I2cDevice launchControllerColorBeacon;
-    public I2cDeviceSynch launchControllerColorBreader;
+    public Servo launchControllerBeaconServo;
+
+    //TODO : AMJAD : Use servo to flag if beacon is not working
+    public static final double launchControllerBeaconServo_MAGAZINE_RINGS_0 = 0.0;
+    public static final double launchControllerBeaconServo_MAGAZINE_RINGS_1 = 0.25;
+    public static final double launchControllerBeaconServo_MAGAZINE_RINGS_2 = 0.5;
+    public static final double launchControllerBeaconServo_MAGAZINE_RINGS_3 = 1.0;
+
+    //public I2cDevice launchControllerColorBeacon;
+    //public I2cDeviceSynch launchControllerColorBreader;
 
     public LaunchController(HardwareMap hardwareMap) {
-        launchControllerColorBeacon = hardwareMap.i2cDevice.get("launch_beacon");
-        launchControllerColorBreader = new I2cDeviceSynchImpl(launchControllerColorBeacon, I2cAddr.create8bit(0x4c), false);
-        launchControllerColorBreader.engage();
+        //launchControllerColorBeacon = hardwareMap.i2cDevice.get("launch_beacon");
+        //launchControllerColorBreader = new I2cDeviceSynchImpl(launchControllerColorBeacon, I2cAddr.create8bit(0x4c), false);
+        //launchControllerColorBreader.engage();
+        launchControllerBeaconServo = hardwareMap.servo.get("launch_beacon_servo");
     }
 
     public void turnlaunchControllerBeaconOff() {
-        launchControllerColorBreader.write8(4, 0);
+
+        //launchControllerColorBreader.write8(4, 0);
     }
 
     public void turnlaunchControllerBeaconRed() {
-        launchControllerColorBreader.write8(4, 1);
+        //launchControllerColorBreader.write8(4, 1);
     }
 
     public void turnlaunchControllerBeaconGreen() {
-        launchControllerColorBreader.write8(4, 2);
+        //launchControllerColorBreader.write8(4, 2);
     }
 
     public void turnlaunchControllerBeaconYellow() {
-        launchControllerColorBreader.write8(4, 3);
+        //launchControllerColorBreader.write8(4, 3);
     }
 
     public void turnlaunchControllerBeaconBlue() {
-        launchControllerColorBreader.write8(4, 4);
+        //launchControllerColorBreader.write8(4, 4);
     }
 
     public void toggleModeManualAutomated() {

@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Arm {
 
@@ -28,17 +29,17 @@ public class Arm {
         ARM_RING_POSITION
     }
 
-    public static int ARM_PARKED_POSITION_COUNT = 0; //TODO : AMJAD : Test and fix value
-    public static int ARM_DROP_WOBBLE_GOAL_POSITION_COUNT = 600 ; //TODO : AMJAD : Test and fix value
-    public static int ARM_HOLD_WOBBLE_GOAL_POSITION_COUNT = 800 ; //TODO : AMJAD : Test and fix value
-    public static int ARM_RING_POSITION_COUNT = 1000 ; //TODO : AMJAD : Test and fix value
+    public static int ARM_PARKED_POSITION_COUNT = 30; //TODO : AMJAD : Test and fix value
+    public static int ARM_DROP_WOBBLE_GOAL_POSITION_COUNT = -450 ; //TODO : AMJAD : Test and fix value
+    public static int ARM_HOLD_WOBBLE_GOAL_POSITION_COUNT = -700 ; //TODO : AMJAD : Test and fix value
+    public static int ARM_RING_POSITION_COUNT = -875 ; //TODO : AMJAD : Test and fix value
 
     public ARM_POSITIONS currentArmPosition = ARM_POSITIONS.ARM_PARKED_POSITION;
     public int initialArmPositionCount;
 
     public enum GRIP_SERVO_STATE {OPENED, CLOSED};
 
-    public static final double GRIP_OPEN = 0.2, GRIP_CLOSE = 0.7; //TODO : AMJAD : Test and fix value
+    public static final double GRIP_OPEN = 1.0, GRIP_CLOSE = 0.5; //TODO : AMJAD : Test and fix value
 
     public GRIP_SERVO_STATE gripServoState = GRIP_SERVO_STATE.OPENED ;
 
@@ -92,10 +93,12 @@ public class Arm {
     public void runArmToLevel() {
         //armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //Turn Motors on
+        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+        timer.reset();
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         int sign = armMotor.getCurrentPosition() < armMotor.getTargetPosition() ? -1 : 1;
         armMotor.setPower(sign * 0.2);
-        while(sign*(armMotor.getTargetPosition() - armMotor.getCurrentPosition()) < 0 ){
+        while((sign*(armMotor.getTargetPosition() - armMotor.getCurrentPosition()) < 0 ) && timer.time() < 2){
             opModepassed.telemetry.addData("armMotor.getCurrentPosition()", armMotor.getTargetPosition());
             opModepassed.telemetry.addData("armMotor.getCurrentPosition()", armMotor.getCurrentPosition());
             opModepassed.telemetry.update();
@@ -105,7 +108,7 @@ public class Arm {
     public void moveArmParkedPosition() {
         armMotor.setTargetPosition(ARM_PARKED_POSITION_COUNT);
         runArmToLevel();
-        resetArm();
+        //resetArm();
         turnArmBrakeModeOff();
         currentArmPosition = ARM_POSITIONS.ARM_PARKED_POSITION;
     }

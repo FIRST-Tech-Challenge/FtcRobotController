@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -22,34 +23,20 @@ public class Magazine {
     public I2cDevice magazineColorBeacon;
     public I2cDeviceSynch magazineColorBreader;
 
+    public Servo magazineBeaconServo;
+
     public TouchSensor magazineLaunchTouchSensor;
     public TouchSensor magazineCollectTouchSensor;
 
     LinearOpMode opModepassed;
 
-    //TODO : AMJAD : Magazine ring distance values to be set correctly
-    //Distance measure is float. Need to convert to float than int.
-
-    public static final double RING_NONE_DISTANCE = 3.4;
-    public static final double RING_ONE_DISTANCE = 3.0;
-    public static final double RING_TWO_DISTANCE = 2.0;
-    public static final double RING_THREE_DISTANCE = 0.5;
-
-    public double magazine_distance;
-
-
-    public enum MAGAZINE_POSITION {
+        public enum MAGAZINE_POSITION {
         MAGAZINE_AT_COLLECT,
         MAGAZINE_AT_LAUNCH,
         MAGAZINE_AT_ERROR
     }
 
-    public enum MAGAZINE_RING_COUNT {
-        MAGAZINE_RINGS_0,
-        MAGAZINE_RINGS_1,
-        MAGAZINE_RINGS_2,
-        MAGAZINE_RINGS_3
-    }
+    public MAGAZINE_POSITION magazinePosition = MAGAZINE_POSITION.MAGAZINE_AT_ERROR;
 
     public enum MAGAZINE_TOUCH_SENSORS_STATE {
         LAUNCH_TS_PRESSED,
@@ -59,8 +46,28 @@ public class Magazine {
         TS_ERROR
     }
 
+    public enum MAGAZINE_RING_COUNT {
+        MAGAZINE_RINGS_0,
+        MAGAZINE_RINGS_1,
+        MAGAZINE_RINGS_2,
+        MAGAZINE_RINGS_3
+    }
+
     public MAGAZINE_RING_COUNT magazineRingCount = MAGAZINE_RING_COUNT.MAGAZINE_RINGS_0;
-    public MAGAZINE_POSITION magazinePosition = MAGAZINE_POSITION.MAGAZINE_AT_COLLECT;
+
+    //TODO : AMJAD : Better coding of enum with values at https://www.baeldung.com/java-enum-values
+    public static final double RING_NONE_DISTANCE = 3.4;
+    public static final double RING_ONE_DISTANCE = 3.0;
+    public static final double RING_TWO_DISTANCE = 2.0;
+    public static final double RING_THREE_DISTANCE = 0.5;
+
+    public double magazine_distance;
+
+    //TODO : AMJAD : Use servo to flag if beacon is not working
+    public static final double magazineBeaconServoPos_MAGAZINE_RINGS_0 = 0.0;
+    public static final double magazineBeaconServoPos_MAGAZINE_RINGS_1 = 0.25;
+    public static final double magazineBeaconServoPos_MAGAZINE_RINGS_2 = 0.5;
+    public static final double magazineBeaconServoPos_MAGAZINE_RINGS_3 = 1.0;
 
     public Magazine(HardwareMap hardwareMap) {
         magazineServo = hardwareMap.crservo.get("mgz_servo");
@@ -69,6 +76,8 @@ public class Magazine {
         //magazineColorBeacon = hardwareMap.i2cDevice.get("mgz_beacon");
        // magazineColorBreader = new I2cDeviceSynchImpl(magazineColorBeacon, I2cAddr.create8bit(0x4c), false);
         //magazineColorBreader.engage();
+
+        magazineBeaconServo = hardwareMap.servo.get("mgs_beacon_servo");
 
         magazineLaunchTouchSensor = hardwareMap.touchSensor.get("mgz_launch_ts");
         magazineCollectTouchSensor = hardwareMap.touchSensor.get("mgz_collect_ts");
@@ -127,22 +136,22 @@ public class Magazine {
     }
 
     public void turnMagazineBeaconOff() {
-
+        magazineBeaconServo.setPosition(magazineBeaconServoPos_MAGAZINE_RINGS_0);
         //magazineColorBreader.write8(4, 0);
     }
 
     public void turnMagazineBeaconPurple() {
-
+        magazineBeaconServo.setPosition(magazineBeaconServoPos_MAGAZINE_RINGS_1);
         //magazineColorBreader.write8(4, 5);
     }
 
     public void turnMagazineBeaconTeal() {
-
+        magazineBeaconServo.setPosition(magazineBeaconServoPos_MAGAZINE_RINGS_2);
         //magazineColorBreader.write8(4, 6);
     }
 
     public void turnMagazineBeaconWhite() {
-
+        magazineBeaconServo.setPosition(magazineBeaconServoPos_MAGAZINE_RINGS_3);
         //magazineColorBreader.write8(4, 7);
     }
 
@@ -196,16 +205,16 @@ public class Magazine {
 
         if((magazine_distance > RING_THREE_DISTANCE) && (magazine_distance < RING_TWO_DISTANCE - 0.2)){
             magazineRingCount = MAGAZINE_RING_COUNT.MAGAZINE_RINGS_3;
-            //turnMagazineBeaconWhite();
+            turnMagazineBeaconWhite();
         } else if((magazine_distance > RING_TWO_DISTANCE) && (magazine_distance < RING_ONE_DISTANCE - 0.2)){
             magazineRingCount = MAGAZINE_RING_COUNT.MAGAZINE_RINGS_2;
-            //turnMagazineBeaconTeal();
+            turnMagazineBeaconTeal();
         } else if((magazine_distance > RING_ONE_DISTANCE) && (magazine_distance < RING_NONE_DISTANCE - 0.05)){
             magazineRingCount = MAGAZINE_RING_COUNT.MAGAZINE_RINGS_1;
-            //turnMagazineBeaconPurple();
+            turnMagazineBeaconPurple();
         } else if((magazine_distance > RING_NONE_DISTANCE)) {
             magazineRingCount = MAGAZINE_RING_COUNT.MAGAZINE_RINGS_0;
-            //turnMagazineBeaconOff();
+            turnMagazineBeaconOff();
         }
 
     }

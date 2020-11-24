@@ -1,25 +1,26 @@
 
 Hardware configuration declarations :
 
-        frontLeft = hardwareMap.dcMotor.get("flmotor");
-        frontRight = hardwareMap.dcMotor.get("frmotor");
-        backLeft = hardwareMap.dcMotor.get("blmotor");
-        backRight = hardwareMap.dcMotor.get("brmotor");
+        frontLeft = hardwareMap.dcMotor.get("flmotor"); Hub 1 Motor Port 0
+        frontRight = hardwareMap.dcMotor.get("frmotor"); Hub 2 Motor Port 0
+        backLeft = hardwareMap.dcMotor.get("blmotor"); Hub 1 Motor Port 1
+        backRight = hardwareMap.dcMotor.get("brmotor"); Hub 2 Motor Port 1
 
-        armRotateMotor = hardwareMap.dcMotor.get("arm_rotate");
-        armWobbleGoalGripServo = hardwareMap.servo.get("arm_grip");
+        armRotateMotor = hardwareMap.dcMotor.get("arm_rotate"); Hub 1 Motor Port 2
+        armWobbleGoalGripServo = hardwareMap.servo.get("arm_grip"); Hub 1 Servo 0
 
-        intakeMotor = hardwareMap.dcMotor.get("intake_motor");
+        intakeMotor = hardwareMap.dcMotor.get("intake_motor"); Hub 2 Motor Port 2
 
-        launchControllerColorBeacon = hardwareMap.i2cDevice.get("launch_beacon");
+        //launchControllerColorBeacon = hardwareMap.i2cDevice.get("launch_beacon");
+        launchControllerBeaconServo = hardwareMap.servo.get("launch_beacon_servo"); Hub 2 Servo 0
 
-        launcherRingPlungerServo = hardwareMap.servo.get("launch__servo");
-        launcherFlyWheelMotor = hardwareMap.dcMotor.get("launch_motor");
+        launcherRingPlungerServo = hardwareMap.servo.get("launch_servo"); Hub 1 Servo 1
+        launcherFlyWheelMotor = hardwareMap.dcMotor.get("launch_motor"); Hub 2 Motor Port 3
 
-        magazineServo = hardwareMap.crservo.get("mgz_servo");
-        magazineRingSensor = hardwareMap.get(NormalizedColorSensor.class, "mgz_ring_sensor");
+        magazineServo = hardwareMap.crservo.get("mgz_servo"); Hub 1 Servo 2
+        magazineRingSensor = hardwareMap.get(NormalizedColorSensor.class, "mgz_ring_sensor"); Hub 1 I2C Bus 1 Rev V3
+        magazineBeaconServo = hardwareMap.servo.get("mgs_beacon_servo"); Hub 1 Servo 3
+        //magazineColorBeacon = hardwareMap.i2cDevice.get("mgz_beacon");
 
-        magazineColorBeacon = hardwareMap.i2cDevice.get("mgz_beacon");
-
-        magazineLaunchTouchSensor = hardwareMap.get(DigitalChannel.class, "mgz_launch_ts");
-        magazineLaunchTouchSensor = hardwareMap.get(DigitalChannel.class, "mgz_collect_ts");
+        magazineLaunchTouchSensor = hardwareMap.get(DigitalChannel.class, "mgz_launch_ts"); Hub 1 Digital 3 TouchSensor
+        magazineCollectTouchSensor = hardwareMap.get(DigitalChannel.class, "mgz_collect_ts"); Hub 1 Digital 1 TouchSensor

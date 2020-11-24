@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.TestingOpModes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -79,7 +80,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
  */
 
 @Autonomous(name="TestOpMode : Pushbot: Auto Drive By IMU Gyro", group="TestOpMode")
-//@Disabled
+@Disabled
 public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */

@@ -22,8 +22,8 @@ public class Launcher {
     float launcherServoPosition;
     public double launcherMotorPower;
     public static final double FLYWHEEL_SUPPLY_MODE_SPEED = 0.1;
-    public static final double PLUNGER_LAUNCH_POSITION = 0.5; //TODO : AMJAD : Test and fix value
-    public static final double PLUNGER_REST_POSITION = 0.0; //TODO : AMJAD : Test and fix value
+    public static final double PLUNGER_LAUNCH_POSITION = 0.7; //TODO : AMJAD : Test and fix value
+    public static final double PLUNGER_REST_POSITION = 0.85; //TODO : AMJAD : Test and fix value
 
     private boolean LauncherController;
 
