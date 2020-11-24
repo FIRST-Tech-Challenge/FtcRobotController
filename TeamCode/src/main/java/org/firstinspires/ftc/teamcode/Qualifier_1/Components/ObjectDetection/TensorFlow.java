@@ -76,12 +76,16 @@ public class TensorFlow extends Thread{
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
-                op.telemetry.addData("# Object Detected", updatedRecognitions.size());
+                op.telemetry.addData("# aa Object Detected", updatedRecognitions.size());
 
                 // step through the list of recognitions and display boundary info.
                 int i = 0;
                 for (Recognition recognition : updatedRecognitions) {
                     op.telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                    op.telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                            recognition.getLeft(), recognition.getTop());
+                    op.telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                            recognition.getRight(), recognition.getBottom());
                     if (recognition.getLabel() == "Quad" ) {
                         numberOfRings = 4;
                     }
@@ -91,12 +95,10 @@ public class TensorFlow extends Thread{
                     else{
                         numberOfRings = 0;
                     }
-                    op.telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                            recognition.getLeft(), recognition.getTop());
-                    op.telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                            recognition.getRight(), recognition.getBottom());
                 }
                 op.telemetry.update();
+            } else {
+                op.telemetry.addData("InElse", 0);
             }
         }
     }
