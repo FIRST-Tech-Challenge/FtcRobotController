@@ -19,11 +19,14 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.RingDepo
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Intake;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.EncoderChassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.IMUChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.ObjectDetection.TensorFlow;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.OdometryChassis;
 //import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
 
 
@@ -37,7 +40,7 @@ public class Robot {
     final boolean isCorgi = Chassis.isCorgi;
 
     // Hardware Objects
-    private EncoderChassis drivetrain = null;
+    private BasicChassis drivetrain = null;
     private Intake intake = null;
     private WobbleGoal wobbleGoal = null;
     private RingDepositor ringDepositor = null;
@@ -50,12 +53,21 @@ public class Robot {
     private double vuforiaAngle = 0;
     private double robotAngle = 0;
 
-    public Robot(LinearOpMode opMode) {
+    public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType ) {
         op = opMode;
         hardwareMap = op.hardwareMap;
-
+        WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
+        RingDepositor.Position currentRingDepositorPosition = RingDepositor.Position.REST;
         runtime = new ElapsedTime();
-        drivetrain = new EncoderChassis(op);
+        if(chassisType==BasicChassis.ChassisType.ENCODER){
+            drivetrain = new EncoderChassis(op);
+        }
+        else if(chassisType==BasicChassis.ChassisType.IMU){
+            drivetrain = new IMUChassis(op);
+        }
+        else if(chassisType==BasicChassis.ChassisType.ODOMETRY){
+            drivetrain = new OdometryChassis(op);
+        }
         if(!isCorgi){
             vuforiaWebcam = new VuforiaWebcam(op);
             tensorFlow = new TensorFlow(op);
@@ -146,9 +158,6 @@ public class Robot {
     public void moveForward(double distance, double power) {
         drivetrain.moveForward(distance, power);
     }
-
-
-
     public void moveBackward(double distance, double power) {
         drivetrain.moveBackward(distance, power);
     }
@@ -162,7 +171,10 @@ public class Robot {
     public void moveLeft(double distance, double power) {
         drivetrain.moveLeft(distance, power);
     }
-    public void multidirectionalMove(double power, double angle, float rightStick) {
+    public void turnInPlace(double target, double power) {
+        drivetrain.turnInPlace(target, power);
+    }
+    public void moveMultidirectional(double power, double angle, float rightStick) {
         drivetrain.moveMultidirectional(power, angle, rightStick);
     }
 
@@ -219,6 +231,10 @@ public class Robot {
             wobbleGoal.goToPosition(p);
         }
         return (p);
+    }
+
+    public void teleopStartPosition(){
+        wobbleGoal.teleopStartPosition();
     }
 
     public void printCurrentWobbleGoalLocation(){
@@ -314,5 +330,4 @@ public class Robot {
     public void shootGoalTeleop(int direction, int power) {
         shooter.shootGoalTeleop(direction, power);
     }
-
 }

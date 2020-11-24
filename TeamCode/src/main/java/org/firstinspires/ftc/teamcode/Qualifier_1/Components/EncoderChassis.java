@@ -20,6 +20,7 @@ public class EncoderChassis extends BasicChassis {
     private LinearOpMode op = null;
     public EncoderChassis(LinearOpMode opMode) {
         super(opMode);
+        op=opMode;
     }
     public void stopAllMotors() {
         motorLeftBack.setPower(0);
@@ -34,16 +35,19 @@ public class EncoderChassis extends BasicChassis {
         encoder[1] += diff[1];
         encoder[2] += diff[2];
         encoder[3] += diff[3];
-        xpos += sqrt(2) * (-(diff[0] + diff[3]) / (2 * counts_per_inch) + (diff[2] + diff[1]) / (2 * counts_per_inch));
-        ypos += sqrt(2) * ((diff[0] + diff[3]) / (2 * counts_per_inch) + (diff[2] + diff[1]) / (2 * counts_per_inch));
-        op.telemetry.addData("LeftFront", motorLeftFront.getCurrentPosition());
+        double x = (-(diff[0] + diff[3]) / (2 * counts_per_inch) + (diff[2] + diff[1]) / (2 * counts_per_inch));
+        double y =  ((diff[0] + diff[3]) / (2 * counts_per_inch) + (diff[2] + diff[1]) / (2 * counts_per_inch));
+        data[2]=getAngle();
+        xpos += x*cos(data[2]*PI/180)+y*sin(data[2]*PI/180);
+        ypos += y*cos(data[2]*PI/180)-x*sin(data[2]*PI/180);
+        /*op.telemetry.addData("LeftFront", motorLeftFront.getCurrentPosition());
         op.telemetry.addData("RightFront", motorRightFront.getCurrentPosition());
         op.telemetry.addData("LeftBack", motorLeftBack.getCurrentPosition());
         op.telemetry.addData("RightBack", motorRightBack.getCurrentPosition());
         op.telemetry.addData("xpos", xpos);
         op.telemetry.addData("ypos", ypos);
         op.telemetry.addData("angle", getAngle());
-        op.telemetry.update();
+        op.telemetry.update();*/
         data[0] = xpos;
         data[1] = ypos;
         data[2] = getAngle();
@@ -304,16 +308,11 @@ public class EncoderChassis extends BasicChassis {
         motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    @Override
-    public void moveMultidirectional(double power, double angle, float rightStick) {
-
-    }
-
     public void moveAngle(double x, double y, double power) {
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double startAngle = getAngle();
         double[] currentPosition = track();
         double[] target_position = {0, 0, 0};
@@ -363,8 +362,8 @@ public class EncoderChassis extends BasicChassis {
             difference = abs(sqrt((x) * (x) + (y) * (y)));
             op.telemetry.addData("distance", difference);
             op.telemetry.update();
+        }
             turnInPlace(startAngle, 0.25);
             stopAllMotors();
         }
     }
-}

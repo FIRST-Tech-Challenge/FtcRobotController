@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.RingDepositor;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -36,9 +37,9 @@ public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        telemetry.addData("Status", "Before new RObot");
+        telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this);
+        Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
 
@@ -58,14 +59,13 @@ public class Teleop extends LinearOpMode {
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
 
-        // commented by Victor
-        // robot.initChassis(this);
-
         //Aiden - during competition day robot disconnected so we are trying this code
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("status", "waiting for start command...");
             telemetry.update();
         }
+
+        robot.teleopStartPosition();
 
         while (!isStopRequested()) {
 
@@ -138,7 +138,7 @@ public class Teleop extends LinearOpMode {
             } else {
                 magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
             }
-            robot.multidirectionalMove(magnitude, angleInDegree, right_stick_x);
+            robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x);
 
             // wobble goal movements
             telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);

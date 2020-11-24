@@ -18,6 +18,9 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
 public abstract class BasicChassis {
+    public enum ChassisType {
+        ENCODER,IMU,ODOMETRY
+    }
     //initialize motor
     DcMotorEx motorLeftFront;
     DcMotorEx motorRightFront;
@@ -71,7 +74,8 @@ public abstract class BasicChassis {
     abstract public void moveBackward(double distance, double power);
     abstract public void moveRight(double distance, double power);
     abstract public void moveLeft(double distance, double power);
-     public void moveMultidirectional(double power, double angle, float rightStick){
+    abstract public void moveAngle(double x, double y, double power);
+    public void moveMultidirectional(double power, double angle, float rightStick){
          double angleInRadian;
          angleInRadian = Math.toRadians(angle);
 

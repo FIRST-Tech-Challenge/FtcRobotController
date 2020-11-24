@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
@@ -27,7 +28,8 @@ public class TensorFlowTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Robot robot = new Robot(this);
+
+        Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER);
         ElapsedTime runtime = new ElapsedTime();
         Chassis chassis = new Chassis(this);
 

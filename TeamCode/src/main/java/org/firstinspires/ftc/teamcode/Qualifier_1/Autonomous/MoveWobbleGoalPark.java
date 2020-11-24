@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 @Autonomous(name = "MoveWobbleGoalPark")
@@ -13,7 +14,7 @@ public class MoveWobbleGoalPark extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Robot robot = new Robot(this);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER);
         ElapsedTime runtime = new ElapsedTime();
         Chassis chassis = new Chassis(this);
 
@@ -22,9 +23,7 @@ public class MoveWobbleGoalPark extends LinearOpMode {
         int i = 4;  // FOR TESTING ONLY
 
         if (i==4){
-            chassis.moveForward(6, 0.5);
-            sleep(200);
-            chassis.turnInPlace(14, 0.6);
+            robot.moveForward(121, 0.8);
             sleep(200);
             chassis.moveForward(109, 0.8);
             sleep(200);
