@@ -77,7 +77,7 @@ public class Magazine {
        // magazineColorBreader = new I2cDeviceSynchImpl(magazineColorBeacon, I2cAddr.create8bit(0x4c), false);
         //magazineColorBreader.engage();
 
-        magazineBeaconServo = hardwareMap.servo.get("mgs_beacon_servo");
+        magazineBeaconServo = hardwareMap.servo.get("mgz_beacon_servo");
 
         magazineLaunchTouchSensor = hardwareMap.touchSensor.get("mgz_launch_ts");
         magazineCollectTouchSensor = hardwareMap.touchSensor.get("mgz_collect_ts");

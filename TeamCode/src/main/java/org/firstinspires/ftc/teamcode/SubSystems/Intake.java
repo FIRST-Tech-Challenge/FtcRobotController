@@ -24,7 +24,7 @@ public class Intake {
 
     public void runIntakeMotor(double intakePower) {
         if(intakeMotorState != INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
-            intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+            intakeMotor.setDirection(DcMotor.Direction.REVERSE);
             intakeMotor.setPower(intakePower);
             intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING;
         }
@@ -39,7 +39,7 @@ public class Intake {
 
     public void reverseIntakeMotor(double power) {
         if(intakeMotorState != INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING) {
-            intakeMotor.setDirection((DcMotor.Direction.REVERSE));
+            intakeMotor.setDirection((DcMotor.Direction.FORWARD));
             intakeMotor.setPower(power);
             intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING;
         }
