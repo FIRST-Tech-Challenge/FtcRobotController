@@ -1,16 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.control.PIDFController;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
-
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 /**
  * Defenition of the HzGamepad Class <BR>
@@ -38,68 +29,226 @@ public class HzGamepad {
 
     //Create gamepad object reference to connect to gamepad1
     public Gamepad gpGamepad1;
-
-    //**** Drive Train ****
-    //SampleMecanumDrive gpDrive;
-    //For Position
-    public Pose2d poseEstimate = new Pose2d(0,0,0);
-
-    //**** Align to point and Field Drive Mode ****
-    // Define 2 states, driver control or alignment control
-    enum DriveMode {
-        NORMAL_CONTROL,
-        ALIGN_TO_POINT;
-        DriveMode toggle() {
-            if (this.equals(NORMAL_CONTROL))
-                return ALIGN_TO_POINT;
-            else
-                return NORMAL_CONTROL;
-        }
-    }
-
-    public DriveMode driveMode = DriveMode.NORMAL_CONTROL; //Default initializer
-    public static double DRAWING_TARGET_RADIUS = 2;
-
-    // Declare a target vector you'd like your bot to align with
-    // Can be any x/y coordinate of your choosing
-    public static final Vector2d origin = new Vector2d(0,0);
-    public static final Vector2d BLUE_TOWER_GOAL = new Vector2d(72,36);
-    public static final Vector2d BLUE_POWERSHOT1 = new Vector2d(72,17.75);
-    public static final Vector2d BLUE_POWERSHOT2 = new Vector2d(72,10.25);
-    public static final Vector2d BLUE_POWERSHOT3 = new Vector2d(72,2.75);
-    public static final Vector2d RED_POWERSHOT3 = new Vector2d(72,-2.75);
-    public static final Vector2d RED_POWERSHOT2 = new Vector2d(72,-10.25);
-    public static final Vector2d RED_POWERSHOT1 = new Vector2d(72,-17.75);
-    public static final Vector2d RED_TOWER_GOAL = new Vector2d(72,-36);
-
-    public Vector2d drivePointToAlign = origin;
-
-    // Declare a PIDF Controller to regulate heading
-    // Use the same gains as SampleMecanumDrive's heading controller
-    private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
-
-
-    //**** Gamepad buttons
-    //Records last button press to deal with single button presses doing a certain methods
-    boolean buttonALast = false;
-    boolean buttonBLast = false;
-    boolean buttonXLast = false;
-    boolean buttonYLast = false;
-    boolean rightBumperLast = false;
-    boolean leftBumperLast = false;
-    boolean dpad_upLast = false;
-    boolean dpad_downLast = false;
+    public HzDrive gpDrive;
+    public Magazine gpMagazine;
+    public Intake gpIntake;
+    public LaunchController gpLaunchController;
+    public Launcher gpLauncher;
+    public Arm gpArm;
+    public GameField.PLAYING_ALLIANCE playingAlliance;
 
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
      * Assign the gamepad1 given in OpMode to the gamepad used here.
      *
-     * @param gamepadPassedfromOpMode from OpMode. In the case of Hazmat Skystone, this is gamepad1
+     * @param gamepadPassed from OpMode. In the case of Hazmat Skystone, this is gamepad1
      */
-    public HzGamepad(Gamepad gamepadPassedfromOpMode) {
-        gpGamepad1 = gamepadPassedfromOpMode;
+    public HzGamepad(Gamepad gamepadPassed,
+                     HzDrive gpDrivePassed,
+                     Magazine gpMagazinePassed,
+                     Intake gpIntakePassed,
+                     LaunchController gpLaunchControllerPassed,
+                     Launcher gpLauncherPassed,
+                     Arm gpArmPassed) {
+        gpGamepad1 = gamepadPassed;
+        gpDrive = gpDrivePassed;
+        gpMagazine = gpMagazinePassed;
+        gpIntake = gpIntakePassed;
+        gpLaunchController = gpLaunchControllerPassed;
+        gpLauncher = gpLauncherPassed;
+        gpArm = gpArmPassed;
     }
 
+    public void runByGamepad(){
+        /*    if(getLeftTrigger()>0.5){}*/
+        /*    if (getLeftBumperPress()) {}*/
+        /*    if (getRightBumperPress()) {}*/
+        /*    if (getButtonXPress()) {}*/
+        /*    if (getButtonBPress()){}*/
+        /*    if (getButtonAPress()){}*/
+        /*    if (getButtonYPress()){}*/
+        /*    if (getDpad_upPress()){}*/
+        /*    if (getDpad_downPress()){}*/
+
+        runMagazineControl();
+        runIntakeControl();
+        runLaunchController();
+        runLauncher();
+        //Run Drive based on gamePad Left stick and right stick
+        runByGamepadRRDriveModes();
+        runArm();
+    }
+
+
+    // RR Drive Train
+    public void runByGamepadRRDriveModes(/*HzDrive gpDrive, int playingAlliance*/) {
+        gpDrive.poseEstimate = gpDrive.getPoseEstimate();
+
+        gpDrive.driveType = HzDrive.DriveType.FIELD_CENTRIC;
+
+        if (gpDrive.driveType == HzDrive.DriveType.ROBOT_CENTRIC){
+            gpDrive.gamepadInput = new Vector2d(
+                    -turboMode(getLeftStickY()) ,
+                    -turboMode(getLeftStickX())
+            );//.rotated(-gpDrive.poseEstimate.getHeading());
+        };
+
+        if (gpDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
+            if (playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE) { // Audience
+                gpDrive.gamepadInput = new Vector2d(
+                        -turboMode(getLeftStickY()),
+                        -turboMode(getLeftStickX())
+                );//.rotated(-gpDrive.poseEstimate.getHeading());
+            }
+
+            if (playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
+                gpDrive.gamepadInput = new Vector2d(
+                        turboMode(getLeftStickX()),
+                        -turboMode(getLeftStickY())
+                );//.rotated(-gpDrive.poseEstimate.getHeading());
+                };
+
+            if (playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
+                gpDrive.gamepadInput = new Vector2d(
+                        -turboMode(getLeftStickX()),
+                        turboMode(getLeftStickY())
+                );//.rotated(-gpDrive.poseEstimate.getHeading());
+            };
+            gpDrive.gamepadInput.rotated(-gpDrive.poseEstimate.getHeading());
+        }
+        gpDrive.gamepadInputTurn = -turboMode(getRightStickX());
+
+        //TODO : AMJAD : LaunchController to be invoked here to invoke drive mode and point to align
+        //drivePointToAlign = Target Vector;
+        //drivePointToAlign = BLUE_TOWER_GOAL;
+
+        //gpDrive.driveTrainFieldCentric();
+        gpDrive.driveTrainPointFieldModes();
+
+    }
+
+    public void runMagazineControl(){
+        //****Magazine Actions****
+        gpMagazine.senseMagazineRingStatus();;
+        if (gpMagazine.isMagazineFull()) {
+            gpIntake.stopIntakeMotor();
+            gpMagazine.moveMagazineToLaunch();
+        }
+
+        if (gpMagazine.isMagazineEmpty()) {
+            gpMagazine.moveMagazineToCollect();
+            gpIntake.runIntakeMotor(0.7);
+        }
+
+    }
+
+    public void runIntakeControl(){
+        //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
+        if (getDpad_downPress()) {
+            if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
+                if(gpMagazine.moveMagazineToCollect()) {
+                    gpIntake.runIntakeMotor(0.5);
+                }
+            } else if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
+                gpIntake.stopIntakeMotor();
+            }
+        }
+
+        //Reverse Intake motors and run - in case of stuck state)
+        if (getDpad_upPersistent()) {
+            gpIntake.reverseIntakeMotor(0.5);
+        } else if (gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING){
+            gpIntake.stopIntakeMotor();
+        }
+    }
+
+    public void runLaunchController(){
+        //High, Middle, Low Goal
+        if (getButtonYPress()) {
+            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
+            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_HIGH_GOAL);
+        }
+
+        //Power Shot 1
+        if (getButtonXPress()) {
+            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
+            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_POWER_SHOT1);
+        }
+
+        //Power Shot 2
+        if (getButtonBPress()) {
+            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
+            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_POWER_SHOT2);
+        }
+
+        //Power Shot 3
+        if (getButtonAPress()) {
+            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
+            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_POWER_SHOT3);
+        }
+
+        if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED){
+            if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
+                gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_NOT_ACTIVATED;
+                gpLaunchController.turnRobotToNormalControl();
+            }
+        }
+
+        gpLaunchController.indicateLaunchReadiness();
+
+    }
+
+    public void runLauncher(){
+        if (getRightBumperPress()) {
+            //TODO : AMJAD : Launch Controller should be used to check if status is good to launch
+
+            //AMJAD : moveMagazinetoLaunch should not be called by right bumper,
+            //it is to be done either automatically, or by Y,X,A,B button press.
+            //gpMagazine.moveMagazineToLaunch();
+
+            if (!gpMagazine.isMagazineEmpty()) {
+                gpLauncher.plungeRingToFlyWheel();
+            }
+
+        }
+    }
+
+    public void runArm(){
+        gpArm.moveArmByTrigger(getLeftTrigger());
+        //Toggle Arm Grip actions
+        if (getLeftBumperPress()) {
+            if(gpArm.getGripServoState() == Arm.GRIP_SERVO_STATE.OPENED) {
+                gpArm.closeGrip();
+            } else if(gpArm.getGripServoState() == Arm.GRIP_SERVO_STATE.CLOSED) {
+                gpArm.openGrip();
+            }
+        }
+    }
+
+    // Classic Drive Train
+    public void runByGamepadInputClassicChassis(ChassisClassic gpChassisClassic) {
+        //Run Classic DriveTrain
+        double leftStickX = turboMode(getLeftStickX());
+        double leftStickY = turboMode(getLeftStickY());
+        double rightStickX = turboMode(getRightStickX());
+        double power = Math.hypot(leftStickX, leftStickY);
+        double targetAngle = Math.atan2(leftStickY, leftStickX);
+        double turn = rightStickX;
+        gpChassisClassic.runByGamepadCommand(targetAngle, turn, power);
+    }
+
+    //*********** KEY PAD MODIFIERS BELOW ***********
+
+    //**** Gamepad buttons
+    //Records last button press to deal with single button presses doing a certain methods
+    boolean gp1ButtonALast = false;
+    boolean gp1ButtonBLast = false;
+    boolean gp1ButtonXLast = false;
+    boolean gp1ButtonYLast = false;
+    boolean gp1RightBumperLast = false;
+    boolean gp1LeftBumperLast = false;
+    boolean gp1Dpad_upLast = false;
+    boolean gp1Dpad_downLast = false;
 
     /**
      * Method to convert linear map from gamepad1 stick input to a cubic map
@@ -130,214 +279,6 @@ public class HzGamepad {
         turboFactor = limitStick(stickInput) * acceleration_factor;
         return turboFactor;
     }
-
-
-    // Classic Drive Train
-    public void runByGamepadInputClassicChassis(ChassisClassic gpChassisClassic) {
-
-        /*    if(getLeftTrigger()>0.5){}*/
-        /*    if (getLeftBumperPress()) {}*/
-        /*    if (getRightBumperPress()) {}*/
-        /*    if (getButtonXPress()) {}*/
-        /*    if (getButtonBPress()){}*/
-        /*    if (getButtonAPress()){}*/
-        /*    if (getButtonYPress()){}*/
-        /*    if (getDpad_upPress()){}*/
-        /*    if (getDpad_downPress()){}*/
-
-        //Run Classic DriveTrain
-        double leftStickX = turboMode(getLeftStickX());
-        double leftStickY = turboMode(getLeftStickY());
-        double rightStickX = turboMode(getRightStickX());
-        double power = Math.hypot(leftStickX, leftStickY);
-        double targetAngle = Math.atan2(leftStickY, leftStickX);
-        double turn = rightStickX;
-        gpChassisClassic.runByGamepadCommand(targetAngle, turn, power);
-    }
-
-
-    // RR Drive Train
-    public void runByGamepadRRDriveModes(SampleMecanumDrive gpDrive, int playingAlliance) {
-        //this.gpDrive = gpDrive;
-
-        /*    if(getLeftTrigger()>0.5){}*/
-        /*    if (getLeftBumperPress()) {}*/
-        /*    if (getRightBumperPress()) {}*/
-        /*    if (getButtonXPress()) {}*/
-        /*    if (getButtonBPress()){}*/
-        /*    if (getButtonAPress()){}*/
-        /*    if (getButtonYPress()){}*/
-        /*    if (getDpad_upPress()){}*/
-        /*    if (getDpad_downPress()){}*/
-
-        //Code to toggle Drive Mode when Y is pressed
-        if (getButtonYPress()){ driveMode.toggle();}
-
-        //driveTrainFieldCentric(gpDrive, playingAlliance);
-
-        //drivePointToAlign = Target Vector;
-        //drivePointToAlign = BLUE_TOWER_GOAL;
-        driveTrainPointFieldModes(gpDrive, drivePointToAlign);
-
-    }
-
-    public void driveTrainFieldCentric(SampleMecanumDrive gpDrive, int playingAlliance){
-
-        Pose2d poseEstimate = gpDrive.getPoseEstimate();
-
-        // Create a vector from the gamepad x/y inputs
-        // Then, rotate that vector by the inverse of that heading
-//        Vector2d input = new Vector2d(
-  //              -turboMode(getLeftStickY()) /* TODO : playingalliance modifier*/,
-    //            -turboMode(getLeftStickX()) /* TODO : playingalliance modifier*/
-      //  ).rotated(-poseEstimate.getHeading());
-
-        Vector2d input;
-
-        //if (playingAlliance == 0) { //Audience
-            input = new Vector2d(
-                    -turboMode(getLeftStickY()) /* TODO : playingalliance modifier*/,
-                    -turboMode(getLeftStickX()) /* TODO : playingalliance modifier*/
-            ).rotated(-poseEstimate.getHeading());
-
-        //};
-
-        if (playingAlliance == 1) { // Red Alliance
-            input = new Vector2d(
-                    turboMode(getLeftStickX()),
-                    -turboMode(getLeftStickY())
-            ).rotated(-poseEstimate.getHeading());
-
-
-        };
-
-        if (playingAlliance == -1) { // Blue Alliance
-            input = new Vector2d(
-                    -turboMode(getLeftStickX()),
-                    turboMode(getLeftStickY())
-            ).rotated(-poseEstimate.getHeading());
-        };
-
-        // Pass in the rotated input + right stick value for rotation
-        // Rotation is not part of the rotated input thus must be passed in separately
-        gpDrive.setWeightedDrivePower(
-                new Pose2d(
-                        input.getX(),
-                        input.getY(),
-                        -turboMode(getRightStickX()) /* TODO : playingalliance modifier*/
-                )
-        );
-
-        // Update everything. Odometry. Etc.
-        gpDrive.update();
-    }
-
-
-    public void driveTrainPointFieldModes(SampleMecanumDrive gpDrive, Vector2d pointToAlign){
-        Pose2d poseEstimate = gpDrive.getPoseEstimate();
-
-        // Set input bounds for the heading controller
-        // Automatically handles overflow
-        headingController.setInputBounds(-Math.PI, Math.PI);
-
-        // Declare a drive direction
-        // Pose representing desired x, y, and angular velocity
-        Pose2d driveDirection = new Pose2d();
-
-        //callingOpMode.telemetry.addData("mode", driveMode);
-
-        // Declare telemetry packet for dashboard field drawing
-        TelemetryPacket packet = new TelemetryPacket();
-        Canvas fieldOverlay = packet.fieldOverlay();
-
-        switch (driveMode) {
-            case NORMAL_CONTROL:
-                // Switch into alignment mode if `a` is pressed
-                if (gpGamepad1.a) {
-                    driveMode = driveMode.ALIGN_TO_POINT;
-                }
-
-                // Standard teleop control
-                // Convert gamepad input into desired pose velocity
-                driveDirection = new Pose2d(
-                        -turboMode(getLeftStickY()),
-                        -turboMode(getLeftStickX()),
-                        -turboMode(getRightStickX())
-                );
-
-                break;
-            case ALIGN_TO_POINT:
-                // Switch back into normal driver control mode if `b` is pressed
-                if (gpGamepad1.b) {
-                    driveMode = driveMode.NORMAL_CONTROL;
-                }
-
-                // Create a vector from the gamepad x/y inputs which is the field relative movement
-                // Then, rotate that vector by the inverse of that heading for field centric control
-                Vector2d fieldFrameInput = new Vector2d(
-                        -turboMode(getLeftStickY()),
-                        -turboMode(getLeftStickX())
-                );
-                Vector2d robotFrameInput = fieldFrameInput.rotated(-poseEstimate.getHeading());
-
-                // Difference between the target vector and the bot's position
-                Vector2d difference = drivePointToAlign.minus(poseEstimate.vec());
-                // Obtain the target angle for feedback and derivative for feedforward
-                double theta = difference.angle();
-
-                // Not technically omega because its power. This is the derivative of atan2
-                double thetaFF = -fieldFrameInput.rotated(-Math.PI / 2).dot(difference) / (difference.norm() * difference.norm());
-
-                // Set the target heading for the heading controller to our desired angle
-                headingController.setTargetPosition(theta);
-
-                // Set desired angular velocity to the heading controller output + angular
-                // velocity feedforward
-                double headingInput = (headingController.update(poseEstimate.getHeading())
-                        * DriveConstants.kV + thetaFF)
-                        * DriveConstants.TRACK_WIDTH;
-
-                // Combine the field centric x/y velocity with our derived angular velocity
-                driveDirection = new Pose2d(
-                        robotFrameInput,
-                        headingInput
-                );
-
-                // Draw the target on the field
-                fieldOverlay.setStroke("#dd2c00");
-                fieldOverlay.strokeCircle(drivePointToAlign.getX(), drivePointToAlign.getY(), DRAWING_TARGET_RADIUS);
-
-                // Draw lines to target
-                fieldOverlay.setStroke("#b89eff");
-                fieldOverlay.strokeLine(drivePointToAlign.getX(), drivePointToAlign.getY(), poseEstimate.getX(), poseEstimate.getY());
-                fieldOverlay.setStroke("#ffce7a");
-                fieldOverlay.strokeLine(drivePointToAlign.getX(), drivePointToAlign.getY(), drivePointToAlign.getX(), poseEstimate.getY());
-                fieldOverlay.strokeLine(drivePointToAlign.getX(), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
-                break;
-        }
-
-        // Draw bot on canvas
-        fieldOverlay.setStroke("#3F51B5");
-        DashboardUtil.drawRobot(fieldOverlay, poseEstimate);
-
-        gpDrive.setWeightedDrivePower(driveDirection);
-
-        // Update the heading controller with our current heading
-        headingController.update(poseEstimate.getHeading());
-
-        // Update he localizer
-        gpDrive.getLocalizer().update();
-
-        // Send telemetry packet off to dashboard
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
-
-        // Print pose to telemetry
-        //callingOpMode.telemetry.addData("x", poseEstimate.getX());
-        //callingOpMode.telemetry.addData("y", poseEstimate.getY());
-        //callingOpMode.telemetry.addData("heading", poseEstimate.getHeading());
-        //callingOpMode.telemetry.update();
-    }
-
 
     /**
      * Methods to get the value of gamepad Left stick X for Pan motion X direction.
@@ -402,10 +343,10 @@ public class HzGamepad {
      */
     public boolean getLeftBumperPress() {
         boolean isPressedLeftBumper = false;
-        if (!leftBumperLast && gpGamepad1.left_bumper) {
+        if (!gp1LeftBumperLast && gpGamepad1.left_bumper) {
             isPressedLeftBumper = true;
         }
-        leftBumperLast = gpGamepad1.left_bumper;
+        gp1LeftBumperLast = gpGamepad1.left_bumper;
         return isPressedLeftBumper;
     }
 
@@ -421,10 +362,10 @@ public class HzGamepad {
      */
     public boolean getRightBumperPress() {
         boolean isPressedRightBumper = false;
-        if (!rightBumperLast && gpGamepad1.right_bumper) {
+        if (!gp1RightBumperLast && gpGamepad1.right_bumper) {
             isPressedRightBumper = true;
         }
-        rightBumperLast = gpGamepad1.right_bumper;
+        gp1RightBumperLast = gpGamepad1.right_bumper;
         return isPressedRightBumper;
     }
 
@@ -440,10 +381,10 @@ public class HzGamepad {
      */
     public boolean getButtonAPress() {
         boolean isPressedButtonA = false;
-        if (!buttonALast && gpGamepad1.a) {
+        if (!gp1ButtonALast && gpGamepad1.a) {
             isPressedButtonA = true;
         }
-        buttonALast = gpGamepad1.a;
+        gp1ButtonALast = gpGamepad1.a;
         return isPressedButtonA;
     }
 
@@ -459,10 +400,10 @@ public class HzGamepad {
      */
     public boolean getButtonYPress() {
         boolean isPressedButtonY = false;
-        if (!buttonYLast && gpGamepad1.y) {
+        if (!gp1ButtonYLast && gpGamepad1.y) {
             isPressedButtonY = true;
         }
-        buttonYLast = gpGamepad1.y;
+        gp1ButtonYLast = gpGamepad1.y;
         return isPressedButtonY;
     }
 
@@ -478,10 +419,10 @@ public class HzGamepad {
      */
     public boolean getButtonXPress() {
         boolean isPressedButtonX = false;
-        if (!buttonXLast && gpGamepad1.x) {
+        if (!gp1ButtonXLast && gpGamepad1.x) {
             isPressedButtonX = true;
         }
-        buttonXLast = gpGamepad1.x;
+        gp1ButtonXLast = gpGamepad1.x;
         return isPressedButtonX;
     }
 
@@ -497,10 +438,10 @@ public class HzGamepad {
      */
     public boolean getButtonBPress() {
         boolean isPressedButtonB = false;
-        if (!buttonBLast && gpGamepad1.b) {
+        if (!gp1ButtonBLast && gpGamepad1.b) {
             isPressedButtonB = true;
         }
-        buttonBLast = gpGamepad1.b;
+        gp1ButtonBLast = gpGamepad1.b;
         return isPressedButtonB;
     }
 
@@ -519,12 +460,16 @@ public class HzGamepad {
 
         isPressedDpad_up = false;
 
-        if (!dpad_upLast && gpGamepad1.dpad_up) {
+        if (!gp1Dpad_upLast && gpGamepad1.dpad_up) {
             isPressedDpad_up = true;
         }
-        dpad_upLast = gpGamepad1.dpad_up;
+        gp1Dpad_upLast = gpGamepad1.dpad_up;
         return isPressedDpad_up;
 
+    }
+
+    public boolean getDpad_upPersistent(){
+        return gpGamepad1.dpad_up;
     }
 
     /**
@@ -541,10 +486,10 @@ public class HzGamepad {
         boolean isPressedDpad_down;
 
         isPressedDpad_down = false;
-        if (!dpad_downLast && gpGamepad1.dpad_down) {
+        if (!gp1Dpad_downLast && gpGamepad1.dpad_down) {
             isPressedDpad_down = true;
         }
-        dpad_downLast = gpGamepad1.dpad_down;
+        gp1Dpad_downLast = gpGamepad1.dpad_down;
         return isPressedDpad_down;
 
     }

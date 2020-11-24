@@ -6,11 +6,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.SubSystems.Arm;
+import org.firstinspires.ftc.teamcode.SubSystems.GameField;
+import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
 import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-
-
+import org.firstinspires.ftc.teamcode.SubSystems.Intake;
+import org.firstinspires.ftc.teamcode.SubSystems.LaunchController;
+import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
+import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
 
 
 /**
@@ -27,25 +31,36 @@ public class HazmatTeleOpRRFieldCentric extends LinearOpMode {
     public boolean HzDEBUG_FLAG = true;
 
     public HzGamepad hzGamepad1;
-    public SampleMecanumDrive hzDrive;
+    public GameField hzGameField;
+    //public SampleMecanumDrive hzDrive;
+    public HzDrive hzDrive;
+    public Magazine hzMagazine;
+    public Intake hzIntake;
+    public LaunchController hzLaunchController;
+    public Launcher hzLauncher;
+    public Arm hzArm;
+
     public HzVuforia hzVuforia1;
-    public Pose2d startPose;
-    int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
+    public Pose2d startPose = hzGameField.ORIGIN_FIELD;
+    //int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
     //TODO : Create another TeleOp for Red
 
-    enum GAMEPAD_LOCATION {
-        RED_ALLIANCE,
-        BLUE_ALLIANCE,
-        AUDIENCE
-    }
-    public GAMEPAD_LOCATION gamepadLocation = GAMEPAD_LOCATION.AUDIENCE;
-
+    public GameField.PLAYING_ALLIANCE playingAlliance = GameField.PLAYING_ALLIANCE.AUDIENCE;
 
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
-        hzDrive = new SampleMecanumDrive(hardwareMap);
-        hzGamepad1 = new HzGamepad(gamepad1);
+        hzDrive = new HzDrive(hardwareMap, hzGameField);
+        hzMagazine = new Magazine(hardwareMap);
+        hzIntake = new Intake(hardwareMap);
+
+        hzLauncher = new Launcher(hardwareMap);
+        hzArm = new Arm(hardwareMap);
+        hzLaunchController = new LaunchController(hardwareMap, hzLauncher, hzMagazine, playingAlliance, hzDrive);
+        hzGamepad1 = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
+
+        initialConfiguration();
+
         //hzVuforia1 = new HzVuforia(hardwareMap);
 
         // We want to turn off velocity control for teleop
@@ -56,39 +71,8 @@ public class HazmatTeleOpRRFieldCentric extends LinearOpMode {
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
         //drive.setPoseEstimate(PoseStorage.currentPose);
-
         // TODO : When in game comment below, so that Pose is retrieved from PoseStorage
-        startPose = new Pose2d(0,0,Math.toRadians(0)); // Origin
-        //startPose = new Pose2d(-68,24,Math.toRadians(0)); // Blue Inner Start Line
-        //startPose = (new Pose2d(-68,48,Math.toRadians(0))); // Blue Outer Start Line
-        //startPose = (new Pose2d(-68,-24,Math.toRadians(0))); // Red Inner Start Line
-        //startPose = (new Pose2d(-68,-48,Math.toRadians(0))); // Red Outer Start Line
         hzDrive.setPoseEstimate(startPose);
-
-        telemetry.addData("Compile time : 10:52", "11/23");
-        telemetry.addData("Enter Alliance (Red:B, Blue:X, Audience:A", "11/23");
-        telemetry.update();
-
-        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-        timer.reset();
-        while (timer.time() < 10) {
-            if (gamepad1.b) {
-                gamepadLocation = GAMEPAD_LOCATION.RED_ALLIANCE;
-                playingAlliance = 1;
-                telemetry.addData("GAMEPAD_LOCATION", "RED_ALLIANCE");
-                break;}
-            if (gamepad1.x) {
-                gamepadLocation = GAMEPAD_LOCATION.BLUE_ALLIANCE;
-                playingAlliance = -1;
-                telemetry.addData("GAMEPAD_LOCATION", "BLUE_ALLIANCE");
-                break;}
-            if (gamepad1.a) {
-                gamepadLocation = GAMEPAD_LOCATION.AUDIENCE;
-                playingAlliance = 0;
-                telemetry.addData("GAMEPAD_LOCATION", "AUDIENCE");
-                break;}
-        }
-        telemetry.update();
 
         // Initiate Camera even before Start is pressed.
         waitForStart();
@@ -114,8 +98,8 @@ public class HazmatTeleOpRRFieldCentric extends LinearOpMode {
                 //hzVuforia1.runVuforiaNavigation();
 
                 //Run Robot based on field centric gamepad input, aligned to playing alliance direction
-                hzGamepad1.runByGamepadRRDriveModes(hzDrive, playingAlliance);
-
+                //hzGamepad1.runByGamepadRRDriveModes(hzDrive, playingAlliance*/);
+                hzGamepad1.runByGamepad();
                 if(HzDEBUG_FLAG) {
                     printDebugMessages();
                     telemetry.update();
@@ -127,6 +111,73 @@ public class HazmatTeleOpRRFieldCentric extends LinearOpMode {
         hzVuforia1.deactivateVuforiaNavigation();
     }
 
+    public void initialConfiguration(){
+        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+        telemetry.addData("Compile time : ", "4:41 : 11/24");
+
+        //***** Select Alliance ******
+        telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X, Audience:A)");
+        telemetry.update();
+
+        timer.reset();
+        while (timer.time() < 10) {
+            if (hzGamepad1.getButtonBPress()) {
+                hzGamepad1.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
+                telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
+                break;}
+            if (hzGamepad1.getButtonXPress()) {
+                hzGamepad1.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+                telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
+                break;}
+            if (hzGamepad1.getButtonAPress()) {
+                hzGamepad1.playingAlliance = GameField.PLAYING_ALLIANCE.AUDIENCE;
+                telemetry.addData("Playing Alliance Selected : ", "AUDIENCE");
+                break;}
+            telemetry.addData("10s Time out : Default Alliance selected : Audience A : %.3f", timer.time());
+            telemetry.update();
+        }
+        telemetry.update();
+
+        //***** Select Start Pose ******
+        timer.reset();
+        telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
+        while (timer.time() < 10) {
+            if (playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE){
+                telemetry.addData("Start Pose : ", "ORIGIN_FIELD");
+                startPose = GameField.ORIGIN_FIELD;
+                break;
+            }
+            if (playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
+                if (hzGamepad1.getButtonAPress()) {
+                    startPose = GameField.RED_INNER_START_LINE;
+                    telemetry.addData("Start Pose : ", "RED_INNER_START_LINE");
+                    break;
+                }
+                if (hzGamepad1.getButtonAPress()) {
+                    startPose = GameField.RED_OUTER_START_LINE;
+                    telemetry.addData("Start Pose : ", "RED_OUTER_START_LINE");
+                    break;
+                }
+            }
+            if (playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                if (hzGamepad1.getButtonAPress()) {
+                    startPose = GameField.BLUE_INNER_START_LINE;
+                    telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
+                    break;
+                }
+                if (hzGamepad1.getButtonAPress()) {
+                    startPose = GameField.BLUE_OUTER_START_LINE;
+                    telemetry.addData("Start Pose : ", "BLUE_OUTER_START_LINE");
+                    break;
+                }
+            }
+            telemetry.addData("Start Pose : ", "ORIGIN_FIELD");
+            telemetry.addData("10s Time out : Default Pose selected : ORIGIN_FIELD : %.3f", timer.time());
+            telemetry.update();
+        }
+        telemetry.update();
+    }
+
     /**
      * Method to add debug messages. Update as telemetry.addData.
      * Use public attributes or methods if needs to be called here.
@@ -135,11 +186,12 @@ public class HazmatTeleOpRRFieldCentric extends LinearOpMode {
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
 
-        // Print pose to telemetry
-        telemetry.addData("Drive Mode : ", hzGamepad1.driveMode);
-        telemetry.addData("PoseEstimate : x", hzGamepad1.poseEstimate.getX());
-        telemetry.addData("PoseEstimate : y", hzGamepad1.poseEstimate.getY());
-        telemetry.addData("PoseEstimate : heading", Math.toDegrees(hzGamepad1.poseEstimate.getHeading()));
+
+        //****** Drive debug ******
+        telemetry.addData("Drive Mode : ", hzDrive.driveMode);
+        telemetry.addData("PoseEstimate : x", hzDrive.poseEstimate.getX());
+        telemetry.addData("PoseEstimate : y", hzDrive.poseEstimate.getY());
+        telemetry.addData("PoseEstimate : heading", Math.toDegrees(hzDrive.poseEstimate.getHeading()));
 
         //telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
         // Print pose to telemetry
@@ -147,6 +199,48 @@ public class HazmatTeleOpRRFieldCentric extends LinearOpMode {
         //telemetry.addData("PoseVuforia : y", hzVuforia1.poseVuforia.getY());
         //telemetry.addData("PoseVuforia : heading", Math.toDegrees(hzVuforia1.poseVuforia.getHeading()));
 
+
+
+        //******* Magazine Debug ********
+        telemetry.addData("getDistance(DistanceUnit.CM)",hzMagazine.magazine_distance);
+        switch (hzMagazine.getMagazineRingCount()){
+            case MAGAZINE_RINGS_0:  {
+                telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_0");
+                break;
+            }
+            case MAGAZINE_RINGS_1:  {
+                telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_1");
+                break;
+            }
+            case MAGAZINE_RINGS_2:  {
+                telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_2");
+                break;
+            }
+            case MAGAZINE_RINGS_3:  {
+                telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_3");
+                break;
+            }
+        }
+        switch (hzMagazine.getMagazinePosition()) {
+            case MAGAZINE_AT_LAUNCH: {
+                telemetry.addData("hzMagazine.getMagazinePosition()", "MAGAZINE_AT_LAUNCH");
+                break;
+            }
+            case MAGAZINE_AT_COLLECT: {
+                telemetry.addData("hzMagazine.getMagazinePosition()", "MAGAZINE_AT_COLLECT");
+                break;
+            }
+            case MAGAZINE_AT_ERROR: {
+                telemetry.addData("hzMagazine.getMagazinePosition()", "MAGAZINE_AT_ERROR");
+                break;
+            }
+        }
+        telemetry.addData("magazineLaunchTouchSensor.getState()", hzMagazine.magazineLaunchTouchSensor.isPressed());
+        telemetry.addData("magazineCollectTouchSensor.getState()", hzMagazine.magazineCollectTouchSensor.isPressed());
+
+        //***** Arm Debug ****
+        telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
+        telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
         telemetry.update();
 
     }

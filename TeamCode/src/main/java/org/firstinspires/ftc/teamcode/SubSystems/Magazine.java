@@ -161,8 +161,7 @@ public class Magazine {
         if(magazinePosition != MAGAZINE_POSITION.MAGAZINE_AT_ERROR &&
                 magazinePosition != MAGAZINE_POSITION.MAGAZINE_AT_LAUNCH &&
                 magazineRingCount != MAGAZINE_RING_COUNT.MAGAZINE_RINGS_0) {
-
-        while (!magazineLaunchTouchSensor.isPressed()){
+            while (!magazineLaunchTouchSensor.isPressed()){
                 magazineServo.setPower(0.1);
             }
             magazineServo.setPower(0);

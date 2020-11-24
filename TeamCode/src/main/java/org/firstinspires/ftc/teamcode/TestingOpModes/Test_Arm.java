@@ -27,7 +27,8 @@ public class Test_Arm extends LinearOpMode {
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 
-        hzArm.initArm(this);
+        //hzArm.initArm(this);
+        hzArm.initArm();
         hzArm.initGrip();
         //Wait for pressing plan on controller
         waitForStart();
@@ -38,7 +39,8 @@ public class Test_Arm extends LinearOpMode {
             //**** Arm Actions ****
             //Arm Rotation
             //COMMENT THIS LINE OUT TO TEST KEY PAD ONLY.
-            hzArm.moveArmByTrigger(hzGamepadClassic.getLeftTrigger(), this);
+            //hzArm.moveArmByTrigger(hzGamepadClassic.getLeftTrigger(), this);
+            hzArm.moveArmByTrigger(hzGamepadClassic.getLeftTrigger());
 
             if (hzGamepadClassic.getButtonYPress()) {
                 hzArm.moveArmParkedPosition();
@@ -95,7 +97,6 @@ public class Test_Arm extends LinearOpMode {
         telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
         telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
 
-        telemetry.addData("triggerPositionCount", hzArm.triggerPositionCount);
         telemetry.addData("armGripServo.getCurrentPosition()", hzArm.armGripServo.getPosition());
 
         switch (hzArm.getCurrentArmPosition()){

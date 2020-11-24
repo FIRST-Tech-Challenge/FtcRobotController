@@ -348,8 +348,6 @@ public class HzGamepadClassic {
 
         //****Intake Actions****
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
-        //TODO : AMJAD : Check if this logic works to keep motor running till Dpad_down is toggled.
-        //May need to save state of last time button pressed and runmotor based on button last pressed state
         if (getDpad_downPress()) {
             if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
                 if(gpMagazine.moveMagazineToCollect()) {
@@ -361,8 +359,6 @@ public class HzGamepadClassic {
         }
 
         //Reverse Intake motors and run - in case of stuck state)
-        //TODO : AMJAD : This probably works, since we want to run the Intake motor in reverse
-        // only as long as te Dpad_up remains pressed (different from Dpad_down behavior, which is a toggle)
         if (getDpad_upPersistent()) {
             gpIntake.reverseIntakeMotor(0.5);
         } else if (gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING){
@@ -381,11 +377,10 @@ public class HzGamepadClassic {
             double distance, speed, robotAngle;
             distance = gpLauncherController.getDistanceFromTarget();
             speed = gpLauncherController.getLaunchMotorSpeed();
-            robotAngle = gpLauncherController.getTargetAngle();
             gpLauncher.runFlyWheelToTarget(speed);
 
             if (gpLauncherController.getLaunchMode() == LaunchController.LAUNCH_MODE.MODE_AUTOMATED) {
-                gpLauncherController.alignRobot(targetAngle);
+                //gpLauncherController.alignRobot(targetAngle);
             }
             gpLauncherController.setLaunchReadyIndicator(LaunchController.LAUNCH_READINESS.LAUNCH_READY);
 
@@ -424,7 +419,7 @@ public class HzGamepadClassic {
 
         //**** Arm Actions ****
         //Arm Rotation
-        gpArm.moveArmByTrigger(getLeftTrigger(), opModepassed);
+        gpArm.moveArmByTrigger(getLeftTrigger()/*, opModepassed*/);
 
         //Toggle Arm Grip actions
         if (getLeftBumperPress()) {

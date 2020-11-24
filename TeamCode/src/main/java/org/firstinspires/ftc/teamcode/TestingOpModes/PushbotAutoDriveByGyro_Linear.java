@@ -42,7 +42,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.SubSystems.ChassisClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
+import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
 
 //import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 
@@ -87,7 +87,7 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
     //HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
     //ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
 
-    HzGamepad hzGamepad;
+    HzGamepadClassic hzGamepad;
     ChassisClassic hzChassisClassic;
 
     // The IMU sensor object
@@ -125,7 +125,7 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
          */
         //robot.init(hardwareMap);
         hzChassisClassic = new ChassisClassic(hardwareMap);
-        hzGamepad = new HzGamepad(gamepad1);
+        hzGamepad = new HzGamepadClassic(gamepad1, this);
 
 
         //gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");

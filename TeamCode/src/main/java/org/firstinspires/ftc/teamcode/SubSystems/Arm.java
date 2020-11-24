@@ -49,8 +49,8 @@ public class Arm {
 
     LinearOpMode opModepassed;
 
-    public void initArm(LinearOpMode opModepassed1){
-        this.opModepassed = opModepassed1;
+    public void initArm(/*LinearOpMode opModepassed1*/){
+        //this.opModepassed = opModepassed1;
         armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         resetArm();
@@ -97,9 +97,9 @@ public class Arm {
         int sign = armMotor.getCurrentPosition() < armMotor.getTargetPosition() ? 1 : -1;
         armMotor.setPower(sign * 0.2);
         while((sign*(armMotor.getCurrentPosition() - armMotor.getTargetPosition()) < 0 ) && timer.time() < 4){
-            opModepassed.telemetry.addData("armMotor.getTargetPosition()", armMotor.getTargetPosition());
-            opModepassed.telemetry.addData("armMotor.getCurrentPosition()", armMotor.getCurrentPosition());
-            opModepassed.telemetry.update();
+            //opModepassed.telemetry.addData("armMotor.getTargetPosition()", armMotor.getTargetPosition());
+            //opModepassed.telemetry.addData("armMotor.getCurrentPosition()", armMotor.getCurrentPosition());
+            //opModepassed.telemetry.update();
         }
     }
 
@@ -131,9 +131,7 @@ public class Arm {
         currentArmPosition = ARM_POSITIONS.ARM_RING_POSITION;
     }
 
-    public int triggerPositionCount;
-
-    public void moveArmByTrigger(double triggerPosition, LinearOpMode opModepassed) {
+    public void moveArmByTrigger(double triggerPosition) {
         if ((triggerPosition < 0.1) && (currentArmPosition!= ARM_POSITIONS.ARM_PARKED_POSITION)) {
             moveArmParkedPosition();
         } else if ((triggerPosition > 0.1) && (triggerPosition < 0.5) &&

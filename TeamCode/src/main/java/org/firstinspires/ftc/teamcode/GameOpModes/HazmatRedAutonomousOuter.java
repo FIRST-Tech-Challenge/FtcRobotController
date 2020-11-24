@@ -6,8 +6,15 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.SubSystems.Arm;
+import org.firstinspires.ftc.teamcode.SubSystems.GameField;
+import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
 import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
+import org.firstinspires.ftc.teamcode.SubSystems.Intake;
+import org.firstinspires.ftc.teamcode.SubSystems.LaunchController;
+import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
+import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 
@@ -25,6 +32,15 @@ public class HazmatRedAutonomousOuter extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
+    public GameField hzGameField;
+    //public SampleMecanumDrive hzDrive;
+    public HzDrive hzDrive;
+    public Magazine hzMagazine;
+    public Intake hzIntake;
+    public LaunchController hzLaunchController;
+    public Launcher hzLauncher;
+    public Arm hzArm;
+
     HzGamepad hzGamepad1;
     SampleMecanumDrive drive;
     HzVuforia hzVuforia1;
@@ -36,7 +52,7 @@ public class HazmatRedAutonomousOuter extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
         drive = new SampleMecanumDrive(hardwareMap);
-        hzGamepad1 = new HzGamepad(gamepad1);
+        hzGamepad1 = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
         hzVuforia1 = new HzVuforia(hardwareMap);
 
         // Set initial pose
@@ -118,9 +134,9 @@ public class HazmatRedAutonomousOuter extends LinearOpMode {
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
 
         // Print pose to telemetry
-        telemetry.addData("PoseEstimate : x", hzGamepad1.poseEstimate.getX());
-        telemetry.addData("PoseEstimate : y", hzGamepad1.poseEstimate.getY());
-        telemetry.addData("PoseEstimate : heading", Math.toDegrees(hzGamepad1.poseEstimate.getHeading()));
+        telemetry.addData("PoseEstimate : x", hzDrive.poseEstimate.getX());
+        telemetry.addData("PoseEstimate : y", hzDrive.poseEstimate.getY());
+        telemetry.addData("PoseEstimate : heading", Math.toDegrees(hzDrive.poseEstimate.getHeading()));
 
         telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
         // Print pose to telemetry
