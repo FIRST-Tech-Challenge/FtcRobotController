@@ -89,9 +89,7 @@ public class Test_Arm extends LinearOpMode {
             }
         }
 
-        telemetry.addData("8:20","39");
-        telemetry.addData("keyCount", keyCount);
-        telemetry.addData("initialArmPositionCount", hzArm.initialArmPositionCount);
+        telemetry.addData("7:05","11/23");
         telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
         telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
 
