@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
+ *  Expected behavior.. trigger will pull arm back to park all the time.. To test only key pad, comment out trigger line.
  */
 @TeleOp(name = "Test_Arm", group = "Test")
 public class Test_Arm extends LinearOpMode {
@@ -36,7 +37,8 @@ public class Test_Arm extends LinearOpMode {
         while (opModeIsActive()) {
             //**** Arm Actions ****
             //Arm Rotation
-              hzArm.moveArmByTrigger(hzGamepadClassic.getLeftTrigger(), this);
+            //COMMENT THIS LINE OUT TO TEST KEY PAD ONLY.
+            hzArm.moveArmByTrigger(hzGamepadClassic.getLeftTrigger(), this);
 
             if (hzGamepadClassic.getButtonYPress()) {
                 hzArm.moveArmParkedPosition();
