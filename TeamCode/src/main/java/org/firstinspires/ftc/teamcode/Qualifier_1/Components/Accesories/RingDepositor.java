@@ -55,7 +55,7 @@ public class RingDepositor {
         } else {
             op.telemetry.addData("IQ Lvl", "0.00");
             op.telemetry.update();
-            op.sleep(5000);
+            op.sleep(2000);
         }
 
         ringDepositorMotor.setTargetPosition(i);
@@ -64,7 +64,7 @@ public class RingDepositor {
         op.sleep(100);
         op.telemetry.addData("Ring Depositor", "Position:" + ringDepositorMotor.getCurrentPosition() + "-->" + i);
         op.telemetry.update();
-        op.sleep(2000);
+        op.sleep(500);
         while (op.opModeIsActive() && ringDepositorMotor.isBusy()) {
             op.telemetry.addData("Ring Depositor: ", ringDepositorMotor.getCurrentPosition() + " busy=" + ringDepositorMotor.isBusy());
             op.telemetry.update();
@@ -96,7 +96,7 @@ public class RingDepositor {
         }
         op.telemetry.addData("Ring Clamp Position: ", direction);
         op.telemetry.update();
-        op.sleep(2000);
+        op.sleep(500);
     }
 
 }
