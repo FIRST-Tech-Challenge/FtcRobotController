@@ -3,13 +3,15 @@ package org.firstinspires.ftc.teamcode.robots.UGBot;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.robots.UGBot.vision.VisionProvider;
+import org.firstinspires.ftc.teamcode.robots.UGBot.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.MineralStateProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVisionProvider;
-import org.firstinspires.ftc.teamcode.vision.StonePos;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
-import org.firstinspires.ftc.teamcode.vision.VisionProvidersSkystone;
+import org.firstinspires.ftc.teamcode.robots.UGBot.vision.VisionProvider;
 
 /**
  * Class to keep all autonomous-related functions and state-machines in
@@ -26,14 +28,14 @@ public class Autonomous {
     public static boolean sampleContinue = false;
 
     // vision-related configuration
-    public SkystoneVisionProvider vp;
+    public VisionProvider vp;
     public int visionProviderState = 2;
     public boolean visionProviderFinalized;
     public boolean enableTelemetry = false;
-    public static final Class<? extends SkystoneVisionProvider>[] visionProviders = VisionProvidersSkystone.visionProviders;
+    public static final Class<? extends VisionProvider>[] visionProviders = VisionProviders.visionProviders;
     public static final Viewpoint viewpoint = Viewpoint.WEBCAM;
-    public int skystoneState = 1;
-    private MineralStateProvider skystoneStateProvider = () -> skystoneState;
+    public int ugState = 1;
+    private MineralStateProvider ugStateProvider = () -> ugState;
 
     // staging and timer variables
     public float autoDelay = 0;
@@ -53,28 +55,23 @@ public class Autonomous {
 
     public boolean sample() {
         // Turn on camera to see which is gold
-        StonePos gp = vp.detectSkystone().getQuarryPosition();
+        StackHeight gp = vp.detect();
         // Hold state lets us know that we haven't finished looping through detection
-        if (gp != StonePos.NONE_FOUND) {
+        if (gp != StackHeight.NONE_FOUND) {
             switch (gp) {
-                case SOUTH:
-                    skystoneState = 0;
+                case ZERO:
+                    ugState = 0;
                     break;
-                case MIDDLE:
-                    skystoneState = 1;
+                case FOUR:
+                    ugState = 2;
                     break;
-                case NORTH:
-                    skystoneState = 2;
-                    break;
+                case ONE:
                 case NONE_FOUND:
-                case ERROR1:
-                case ERROR2:
-                case ERROR3:
                 default:
-                    skystoneState = 1;
+                    ugState = 1;
                     break;
             }
-            telemetry.addData("Vision Detection", "StonePos: %s", gp.toString());
+            telemetry.addData("Vision Detection", "Stack Height: %s", gp.toString());
             vp.shutdownVision();
             return true;
         } else {
@@ -82,13 +79,6 @@ public class Autonomous {
             return false;
         }
     }
-
-    // public StateMachine visionTest = getStateMachine(autoStage)
-    // .addState(() -> {
-    // robot.xPos = robot.vps.detect();
-    // return false;
-    // })
-    // .build();
 
     public StateMachine simultaneousStateTest = getStateMachine(autoStage).addSimultaneousStates(() -> {
         robot.turret.rotateRight(0.25);
@@ -130,7 +120,7 @@ public class Autonomous {
             // telemetry.update();
             robot.ledSystem.setColor(LEDSystem.Color.CALM);
             vp = visionProviders[visionProviderState].newInstance();
-             vp.initializeVision(robot.hwMap, telemetry, enableTelemetry, viewpoint, !robot.isBlue);
+             vp.initializeVision(robot.hwMap, viewpoint);
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
@@ -142,39 +132,11 @@ public class Autonomous {
             telemetry.addData("Please wait", "Initializing vision");
             // telemetry.update();
             robot.ledSystem.setColor(LEDSystem.Color.CALM);
-            vp = VisionProvidersSkystone.defaultProvider.newInstance();
-             vp.initializeVision(robot.hwMap, telemetry, enableTelemetry, viewpoint, !robot.isBlue);
+            vp = VisionProviders.defaultProvider.newInstance();
+             vp.initializeVision(robot.hwMap, viewpoint);
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
         visionProviderFinalized = true;
-    }
-
-    int stoneCount = 0;
-    boolean[] quarryStones = new boolean[6];
-
-    public int nextAutonStone(int firstStone) {
-        if (stoneCount == 0) {
-            quarryStones[firstStone] = true;
-            stoneCount++;
-            return firstStone;
-        }
-        if (stoneCount == 1) {
-            quarryStones[firstStone + 3] = true;
-            stoneCount++;
-            return firstStone + 3;
-        }
-        if (stoneCount > 1 && stoneCount < 6) {
-            for (int i = 0; i < quarryStones.length; i++) {
-                if (!quarryStones[i]) // this is the first stone still false
-                {
-                    stoneCount++;
-                    quarryStones[i] = true;
-                    return i;
-                }
-            }
-
-        }
-        return -1; // this would be a fail
     }
 }

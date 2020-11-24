@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.vision.SkystoneTargetInfo;
 import org.firstinspires.ftc.teamcode.vision.StonePos;
 import org.opencv.core.Mat;
@@ -146,7 +147,7 @@ public class UG_6832 extends LinearOpMode {
     private int soundID = -1;
 
     // auto stuff
-    private SkystoneTargetInfo initGoldPosTest;
+    private StackHeight initStackHeightTest;
     private double pCoeff = 0.14;
     private double dCoeff = 1.31;
     private double targetAngle = 287.25;
@@ -374,11 +375,11 @@ public class UG_6832 extends LinearOpMode {
                     // !CenterOfGravityCalculator.drawRobotDiagram;
                 }
                 if (auto.visionProviderFinalized && gamepad1.left_trigger > 0.3) {
-                    SkystoneTargetInfo sp = auto.vp.detectSkystone();
-                    if (sp.getQuarryPosition() != StonePos.NONE_FOUND)
-                        initGoldPosTest = sp;
-                    telemetry.addData("Vision", "Prep detection: %s%s", initGoldPosTest,
-                            sp.getQuarryPosition() == StonePos.NONE_FOUND ? " (NONE_FOUND)" : "");
+                    StackHeight sp = auto.vp.detect();
+                    if (sp != StackHeight.NONE_FOUND)
+                        initStackHeightTest = sp;
+                    telemetry.addData("Vision", "Prep detection: %s%s", initStackHeightTest,
+                            sp == StackHeight.NONE_FOUND ? " (NONE_FOUND)" : "");
                 }
 
                 if (soundState == 0 && toggleAllowed(gamepad1.right_stick_button, right_stick_button, 1)) {
@@ -415,7 +416,7 @@ public class UG_6832 extends LinearOpMode {
 
         auto.vp.reset();
 
-        robot.luncher.restart(.4, .5);
+        robot.launcher.restart(.4, .5);
 
         lastLoopClockTime = System.nanoTime();
 
@@ -439,7 +440,7 @@ public class UG_6832 extends LinearOpMode {
                         joystickDrive();
                         break;
                     case 2:
-                        robot.luncher.alignGripperForwardFacing();
+                        robot.launcher.alignGripperForwardFacing();
                         break;
                     case 4:
                         break;
@@ -538,11 +539,11 @@ public class UG_6832 extends LinearOpMode {
 
     private void joystickDrive() {
         if (notdeadzone(gamepad2.left_stick_y)) {
-            robot.luncher.adjustElbowAngle(-gamepad2.left_stick_y);
+            robot.launcher.adjustElbowAngle(-gamepad2.left_stick_y);
         }
 
         if (notdeadzone(gamepad2.right_stick_y)) {
-            robot.luncher.adjustBelt(-gamepad2.right_stick_y);
+            robot.launcher.adjustBelt(-gamepad2.right_stick_y);
         }
         if (notdeadzone(gamepad2.right_stick_x)) {
             robot.turret.adjust(gamepad2.right_stick_x);
@@ -552,7 +553,7 @@ public class UG_6832 extends LinearOpMode {
             robot.resetMotors(true);
             robot.setAutonSingleStep(true);
             joystickDriveStarted = true;
-            robot.luncher.setActive(true);
+            robot.launcher.setActive(true);
         }
 
         // robot.crane.extendToTowerHeight(0.25, Config.currentTowerHeight);
@@ -578,23 +579,23 @@ public class UG_6832 extends LinearOpMode {
         }
 
         if (toggleAllowed(gamepad1.x, x, 1)) {
-            robot.luncher.hookToggle();
+            robot.launcher.hookToggle();
         }
 
         if (toggleAllowed(gamepad1.b, b, 1)) {
-            robot.luncher.setElbowTargetPos(250,1);
-            robot.luncher.extendToPosition(1500, 1.0);
+            robot.launcher.setElbowTargetPos(250,1);
+            robot.launcher.extendToPosition(1500, 1.0);
         }
 
         if (toggleAllowed(gamepad1.y, y, 1) && toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
-            robot.luncher.servoGripper.setPosition(servoNormalize(800));
+            robot.launcher.servoGripper.setPosition(servoNormalize(800));
 
         }
 
         // gamepad2 controls
 
         if (toggleAllowed(gamepad2.a, a, 2)) {
-            robot.luncher.toggleGripper();
+            robot.launcher.toggleGripper();
         }
 
         if (toggleAllowed(gamepad2.b, b, 2)) {
@@ -603,7 +604,7 @@ public class UG_6832 extends LinearOpMode {
 
         if (toggleAllowed(gamepad2.y, y, 2)) {
 //            robot.crane.toggleSwivel();
-            robot.luncher.setGripperSwivelRotation(robot.luncher.swivel_Front);
+            robot.launcher.setGripperSwivelRotation(robot.launcher.swivel_Front);
         }
 
         if (toggleAllowed(gamepad2.x, x, 2)) {
@@ -611,22 +612,22 @@ public class UG_6832 extends LinearOpMode {
         }
 
         if (gamepad2.left_bumper) {
-            robot.luncher.swivelGripper(false);
+            robot.launcher.swivelGripper(false);
         }
 
         if (gamepad2.right_bumper) {
-            robot.luncher.swivelGripper(true);
+            robot.launcher.swivelGripper(true);
         }
 
         if (toggleAllowed(gamepad2.dpad_up, dpad_up, 2)) {
-            robot.luncher.setElbowTargetPos(2501,1);
-            robot.luncher.extendToPosition(1500, 1.0);
+            robot.launcher.setElbowTargetPos(2501,1);
+            robot.launcher.extendToPosition(1500, 1.0);
 
         }
 
         if (toggleAllowed(gamepad2.dpad_down, dpad_down, 2)) {
-            robot.luncher.setElbowTargetPos(350,1);
-            robot.luncher.extendToPosition(1200, 1.0);
+            robot.launcher.setElbowTargetPos(350,1);
+            robot.launcher.extendToPosition(1200, 1.0);
         }
 
         // turret controls
@@ -638,7 +639,7 @@ public class UG_6832 extends LinearOpMode {
             robot.turret.rotateLeft(gamepad2.left_trigger * 5);
         // robot.articulate(PoseSkystone.Articulation.yoinkStone);
 
-        robot.luncher.update();
+        robot.launcher.update();
         robot.turret.update(opModeIsActive());
     }
 
@@ -777,10 +778,10 @@ public class UG_6832 extends LinearOpMode {
         telemetry.addLine().addData("state", () -> state);
         telemetry.addLine() .addData("autoStage", () -> auto.autoStage).addData("Game Mode", () -> GAME_MODES[gameMode]);
         telemetry.addLine() .addData("Articulation", () -> robot.getArticulation());
-        telemetry.addLine().addData("elbow Current Position", () -> robot.luncher.getElbowCurrentPos());
-        telemetry.addLine().addData("elbow Target Position", () -> robot.luncher.getElbowTargetPos());
-        telemetry.addLine().addData("Extension Current Position", () -> robot.luncher.getExtendABobCurrentPos());
-        telemetry.addLine().addData("Extension Target Position", () -> robot.luncher.getExtendABobTargetPos());
+        telemetry.addLine().addData("elbow Current Position", () -> robot.launcher.getElbowCurrentPos());
+        telemetry.addLine().addData("elbow Target Position", () -> robot.launcher.getElbowTargetPos());
+        telemetry.addLine().addData("Extension Current Position", () -> robot.launcher.getExtendABobCurrentPos());
+        telemetry.addLine().addData("Extension Target Position", () -> robot.launcher.getExtendABobTargetPos());
         telemetry.addLine()  .addData("chassis heading", () -> robot.getHeading());
         telemetry.addLine()  .addData("chassis ticks left", () -> robot.getLeftMotorTicks());
         telemetry.addLine()  .addData("chassis ticks right", () -> robot.getRightMotorTicks());
@@ -788,10 +789,10 @@ public class UG_6832 extends LinearOpMode {
         telemetry.addLine().addData("Loop time", "%.0fms", () -> loopAvg / 1000000);
         telemetry.addLine().addData("Turret Heading", () -> robot.turret.getHeading());
         telemetry.addLine().addData("Turret Target`s", () -> robot.turret.getTurretTargetHeading());
-        telemetry.addLine().addData("Turret Current tower height: ", () -> robot.luncher.getCurrentTowerHeight());
+        telemetry.addLine().addData("Turret Current tower height: ", () -> robot.launcher.getCurrentTowerHeight());
         telemetry.addLine().addData("Turret Current angle ", () -> robot.turret.getHeading());
-        telemetry.addLine().addData("gripperLeft ", () -> robot.luncher.gripLeftSharp.getUnscaledDistance());
-        telemetry.addLine().addData("gripperRight ", () -> robot.luncher.gripRightSharp.getUnscaledDistance());
+        telemetry.addLine().addData("gripperLeft ", () -> robot.launcher.gripLeftSharp.getUnscaledDistance());
+        telemetry.addLine().addData("gripperRight ", () -> robot.launcher.gripRightSharp.getUnscaledDistance());
         telemetry.addLine() .addData("left distance ", () -> robot.getDistLeftDist());
         telemetry.addLine() .addData("right distance ", () -> robot.getDistRightDist());
         telemetry.addLine() .addData("front distance ", () -> robot.getDistForwardDist());

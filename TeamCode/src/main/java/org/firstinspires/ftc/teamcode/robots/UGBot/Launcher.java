@@ -16,7 +16,7 @@ import static org.firstinspires.ftc.teamcode.vision.Config.SERVO_MAX;
  * Created by 2938061 on 11/10/2017.
  */
 @Config
-public class Luncher {
+public class Launcher {
 
     //number of ticks per revolution REV HD motor: 2240
     //number of ticks per revolution REV Core    : 288
@@ -152,7 +152,7 @@ public class Luncher {
 
 
 
-    public Luncher(DcMotor elbow, DcMotor extendABob, Servo hook, Servo servoGripper, Servo intakeServoBack, Servo gripperSwivel, AnalogInput gripperLeft, AnalogInput gripperRight){
+    public Launcher(DcMotor elbow, DcMotor extendABob, Servo hook, Servo servoGripper, Servo intakeServoBack, Servo gripperSwivel, AnalogInput gripperLeft, AnalogInput gripperRight){
 
         //elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbow.setTargetPosition(elbow.getCurrentPosition());

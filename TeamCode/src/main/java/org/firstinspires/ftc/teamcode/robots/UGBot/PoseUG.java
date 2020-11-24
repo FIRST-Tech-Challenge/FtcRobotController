@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.UGBot;
 
-import android.graphics.Bitmap;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,11 +17,8 @@ import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
-import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngleMinus;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_D;
@@ -85,7 +79,7 @@ public class PoseUG {
     Servo blinkin = null;
 
     // All Subsystems
-    public Luncher luncher = null;
+    public Launcher launcher = null;
     public LEDSystem ledSystem = null;
     public Turret turret = null;
 
@@ -330,7 +324,7 @@ public class PoseUG {
          * driveRight.setDirection(DcMotorSimple.Direction.FORWARD); }
          */
         // setup subsystems
-        luncher = new Luncher(elbow, extender, hook, intakeServoFront, intakeServoBack, gripperSwivel,gripperLeft,gripperRight);
+        launcher = new Launcher(elbow, extender, hook, intakeServoFront, intakeServoBack, gripperSwivel,gripperLeft,gripperRight);
         turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
         turret = new Turret(turretMotor, turretIMU);
         ledSystem = new LEDSystem(blinkin);
@@ -377,7 +371,7 @@ public class PoseUG {
     }
 
     public void resetEncoders() {
-        luncher.resetEncoders();
+        launcher.resetEncoders();
     }
 
     /**
@@ -438,7 +432,7 @@ public class PoseUG {
          */
 
         articulate(articulation); // call the most recently requested articulation
-        luncher.update();
+        launcher.update();
         turret.update(isActive);
 
         // we haven't worked out the trig of calculating displacement from any
@@ -714,7 +708,7 @@ public class PoseUG {
      * Stops all motors on the robot
      */
     public void stopAll() {
-        luncher.stopAll();
+        launcher.stopAll();
         turret.stopAll();
         driveMixerMec(0, 0, 0);
     }
