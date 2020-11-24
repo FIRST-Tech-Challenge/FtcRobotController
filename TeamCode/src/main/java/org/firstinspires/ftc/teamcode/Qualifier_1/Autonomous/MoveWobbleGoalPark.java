@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
@@ -15,25 +16,31 @@ public class MoveWobbleGoalPark extends LinearOpMode {
 
         Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER);
         ElapsedTime runtime = new ElapsedTime();
+        Chassis chassis = new Chassis(this);
 
         waitForStart();
 
-        int i = 1;  // FOR TESTING ONLY
+        int i = 4;  // FOR TESTING ONLY
 
         if (i==4){
             robot.moveForward(121, 0.8);
             sleep(200);
-            robot.moveForward(-46, 0.8);
+            chassis.moveForward(109, 0.8);
+            sleep(200);
+            chassis.turnInPlace(-14, 0.6);
+            chassis.moveForward(-44, 0.8);
         } else if (i==1) {
-            robot.moveForward(80,0.8);
+            chassis.turnInPlace(-2,0.8);
             sleep(200);
-            //robot.turnOdometry(60,0.8); //TODO: add turn
+            chassis.moveForward(80,0.8);
             sleep(200);
-            //robot.turnOdometry(0,0.8); //TODO: add turn
-            sleep(200);
-            robot.moveForward(-8,0.8);
+            chassis.moveForward(-8,0.8);
         } else {
-            robot.moveForward(73, 0.8);
+            chassis.moveForward(6, 0.5);
+            sleep(200);
+            chassis.turnInPlace(20, 0.6);
+            sleep(200);
+            chassis.moveForward(65, 0.8);
         }
     }
 }

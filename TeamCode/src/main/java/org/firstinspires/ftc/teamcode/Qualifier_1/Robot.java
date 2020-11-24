@@ -233,6 +233,10 @@ public class Robot {
         return (p);
     }
 
+    public void teleopStartPosition(){
+        wobbleGoal.teleopStartPosition();
+    }
+
     public void printCurrentWobbleGoalLocation(){
         if(isCorgi) {
             wobbleGoal.printCurrentLocation();

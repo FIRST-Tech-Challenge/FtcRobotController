@@ -65,6 +65,8 @@ public class Teleop extends LinearOpMode {
             telemetry.update();
         }
 
+        robot.teleopStartPosition();
+
         while (!isStopRequested()) {
 
             float left_stick_y = -gamepad1.left_stick_y;

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 public class WobbleGoal {
 
     public enum Position {
-        REST, GRAB, RAISE, RELEASE
+        REST, GRAB, RAISE, RELEASE, STARTOFTELEEOP
     }
 
     //declaring the op mode
@@ -31,6 +31,7 @@ public class WobbleGoal {
     private final int ticksForGRAB = 940;
     private final int ticksForRAISE = 550;
     private final int ticksForRELEASE = 815;
+    private final int ticksForSTARTOFTELEEOP = 500;
     private final double wobbleGoalSpeed = 0.3;
 
     public WobbleGoal(LinearOpMode opMode) {
@@ -61,9 +62,9 @@ public class WobbleGoal {
         } else if (p == Position.RELEASE) {
             i = ticksForRELEASE;
         } else {
-            op.telemetry.addData("IQ Lvl", "0; u dumbass");
+            op.telemetry.addData("IQ Lvl", "0.00");
             op.telemetry.update();
-            op.sleep(10000);
+            op.sleep(2000);
         }
 
         wobbleGoalMotor.setTargetPosition(i);
@@ -73,6 +74,12 @@ public class WobbleGoal {
         op.telemetry.addData("Wobble Goal", "Position:" + wobbleGoalMotor.getCurrentPosition() + "-->" + i);
         op.telemetry.update();
 //        op.sleep(2000);
+    }
+
+    public void teleopStartPosition(){
+        wobbleGoalMotor.setTargetPosition(500);
+        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleGoalMotor.setPower(wobbleGoalSpeed);
     }
 
     public void printCurrentLocation(){
@@ -95,7 +102,7 @@ public class WobbleGoal {
         }
         op.telemetry.addData(" Wobble Goal Position: ", direction);
         op.telemetry.update();
-        op.sleep(1000);
+        op.sleep(500);
     }
 }
 

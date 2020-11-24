@@ -35,18 +35,19 @@ public class EncoderChassis extends BasicChassis {
         encoder[1] += diff[1];
         encoder[2] += diff[2];
         encoder[3] += diff[3];
-        double x = sqrt(2) * (-(diff[0] + diff[3]) / (2 * counts_per_inch) + (diff[2] + diff[1]) / (2 * counts_per_inch));
-        double y = sqrt(2) * ((diff[0] + diff[3]) / (2 * counts_per_inch) + (diff[2] + diff[1]) / (2 * counts_per_inch));
-        xpos += x*cos(getAngle()*PI/180)+y*sin(getAngle()*PI/180);
-        ypos += y*cos(getAngle()*PI/180)-x*sin(getAngle()*PI/180);
-        op.telemetry.addData("LeftFront", motorLeftFront.getCurrentPosition());
+        double x = (-(diff[0] + diff[3]) / (2 * counts_per_inch) + (diff[2] + diff[1]) / (2 * counts_per_inch));
+        double y =  ((diff[0] + diff[3]) / (2 * counts_per_inch) + (diff[2] + diff[1]) / (2 * counts_per_inch));
+        data[2]=getAngle();
+        xpos += x*cos(data[2]*PI/180)+y*sin(data[2]*PI/180);
+        ypos += y*cos(data[2]*PI/180)-x*sin(data[2]*PI/180);
+        /*op.telemetry.addData("LeftFront", motorLeftFront.getCurrentPosition());
         op.telemetry.addData("RightFront", motorRightFront.getCurrentPosition());
         op.telemetry.addData("LeftBack", motorLeftBack.getCurrentPosition());
         op.telemetry.addData("RightBack", motorRightBack.getCurrentPosition());
         op.telemetry.addData("xpos", xpos);
         op.telemetry.addData("ypos", ypos);
         op.telemetry.addData("angle", getAngle());
-        op.telemetry.update();
+        op.telemetry.update();*/
         data[0] = xpos;
         data[1] = ypos;
         data[2] = getAngle();
@@ -308,10 +309,10 @@ public class EncoderChassis extends BasicChassis {
     }
 
     public void moveAngle(double x, double y, double power) {
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         double startAngle = getAngle();
         double[] currentPosition = track();
         double[] target_position = {0, 0, 0};

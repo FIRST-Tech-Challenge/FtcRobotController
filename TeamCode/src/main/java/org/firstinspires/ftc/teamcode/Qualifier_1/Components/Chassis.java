@@ -264,6 +264,54 @@ public class Chassis {
 
     /****Moving Robot****/
 
+    public void turnInPlace(double distance, double power){
+        double ticksToMove = counts_per_degree * distance;
+        double newLeftBackTargetPosition = motorLeftBack.getCurrentPosition() + ticksToMove;
+        double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() + ticksToMove;
+        double newRightBackTargetPosition = motorRightBack.getCurrentPosition() - ticksToMove;
+        double newRightFrontTargetPosition = motorRightFront.getCurrentPosition() - ticksToMove;
+        motorLeftBack.setTargetPosition((int) newLeftBackTargetPosition);
+        motorLeftFront.setTargetPosition((int) newLeftFrontTargetPosition);
+        motorRightBack.setTargetPosition((int) newRightBackTargetPosition);
+        motorRightFront.setTargetPosition((int) newRightFrontTargetPosition);
+
+        op.telemetry.addData("ticks: ", (int) ticksToMove +
+                "LB: " + (int) newLeftBackTargetPosition + "LF: " + (int) newLeftFrontTargetPosition +
+                "RB: " + (int) newRightBackTargetPosition + "LB: " + (int) newRightFrontTargetPosition);
+        op.telemetry.update();
+
+        motorRightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        motorRightFront.setPower(power);
+        motorLeftFront.setPower(power);
+        motorRightBack.setPower(power);
+        motorLeftBack.setPower(power);
+
+        while (op.opModeIsActive() && (motorLeftBack.isBusy() && motorLeftFront.isBusy() && motorRightBack.isBusy() &&
+                motorRightFront.isBusy())) {
+            //correction = checkDirection();
+
+            motorRightBack.setPower(power);
+            motorRightFront.setPower(power);
+            motorLeftBack.setPower(power);
+            motorLeftFront.setPower(power);
+//            op.telemetry.addData("correction", correction);
+//            op.telemetry.update();
+//            op.idle();
+        }
+
+        stopAllMotors();
+
+        // Changes motor mode back to default
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     public void moveForward(double distance, double power) {
         double ticksToMove = counts_per_inch * distance;
         double newLeftBackTargetPosition = motorLeftBack.getCurrentPosition() + ticksToMove;

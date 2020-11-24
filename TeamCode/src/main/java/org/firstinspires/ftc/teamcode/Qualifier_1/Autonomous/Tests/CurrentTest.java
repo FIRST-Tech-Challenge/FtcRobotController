@@ -72,7 +72,7 @@ public class CurrentTest extends LinearOpMode {
         ringDepositorMotor.setDirection(DcMotor.Direction.FORWARD);
 
         //Servos
-        shooter_Servo.setPosition(0);
+        shooter_Servo.setPosition(-0.5);
         ringClampServo.setPosition(0);
 
         // reset encoder count kept by left motor.
@@ -153,16 +153,16 @@ public class CurrentTest extends LinearOpMode {
         ShooterMotor.setPower(0);
 
         //Wobble Goal Motor
-        wobbleGoalMotor.setPower(-0.2);
-        telemetry.addData("Moving wobbleGoalMotor Motor", -0.5);
+        wobbleGoalMotor.setPower(0.3);
+        telemetry.addData("Moving wobbleGoalMotor Motor", 0.3);
         telemetry.update();
         sleep(300);
         wobbleGoalMotor.setPower(0);
         sleep(1000);
-        wobbleGoalMotor.setPower(0.2);
-        telemetry.addData("Moving wobbleGoalMotor Motor", 0.5);
+        wobbleGoalMotor.setPower(-0.2);
+        telemetry.addData("Moving wobbleGoalMotor Motor", -0.2);
         telemetry.update();
-        sleep(200);
+        sleep(400);
         wobbleGoalMotor.setPower(0);
         sleep(1000);
 
@@ -180,8 +180,14 @@ public class CurrentTest extends LinearOpMode {
         sleep(1000);
         shooter_Servo.setPosition(0);
 
-        //Tests Ring Depositor Motor
-        ringDepositorMotor.setTargetPosition(-100);
+        //Tests Ring Depositor Motor, so I move the Wobble Goal Arm out of the way before testing it
+        wobbleGoalMotor.setPower(0.3);
+        telemetry.addData("Moving wobbleGoalMotor Motor", 0.3);
+        telemetry.update();
+        sleep(650);
+        wobbleGoalMotor.setPower(0);
+
+        ringDepositorMotor.setTargetPosition(908);
         ringDepositorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         telemetry.addData("Moving Ring Depositor Motor", -100);
         telemetry.update();
