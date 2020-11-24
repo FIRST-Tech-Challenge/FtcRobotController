@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.EncoderChassis;
+import org.firstinspires.ftc.teamcode.Qualifier_1.Components.IMUChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.ObjectDetection.TensorFlow;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.OdometryChassis;
@@ -62,7 +63,7 @@ public class Robot {
             drivetrain = new EncoderChassis(op);
         }
         else if(chassisType==BasicChassis.ChassisType.IMU){
-            //drivetrain = new IMUChassis(op);
+            drivetrain = new IMUChassis(op);
         }
         else if(chassisType==BasicChassis.ChassisType.ODOMETRY){
             drivetrain = new OdometryChassis(op);
@@ -157,9 +158,6 @@ public class Robot {
     public void moveForward(double distance, double power) {
         drivetrain.moveForward(distance, power);
     }
-
-
-
     public void moveBackward(double distance, double power) {
         drivetrain.moveBackward(distance, power);
     }
@@ -173,7 +171,10 @@ public class Robot {
     public void moveLeft(double distance, double power) {
         drivetrain.moveLeft(distance, power);
     }
-    public void multidirectionalMove(double power, double angle, float rightStick) {
+    public void turnInPlace(double target, double power) {
+        drivetrain.turnInPlace(target, power);
+    }
+    public void moveMultidirectional(double power, double angle, float rightStick) {
         drivetrain.moveMultidirectional(power, angle, rightStick);
     }
 
@@ -325,5 +326,4 @@ public class Robot {
     public void shootGoalTeleop(int direction, int power) {
         shooter.shootGoalTeleop(direction, power);
     }
-
 }

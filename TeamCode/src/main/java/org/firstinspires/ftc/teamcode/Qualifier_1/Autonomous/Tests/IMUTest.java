@@ -14,19 +14,23 @@ public class IMUTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER);
+        Robot robot=new Robot(this, BasicChassis.ChassisType.IMU);
         ElapsedTime runtime = new ElapsedTime();
 
         waitForStart();
 
-       /* robot.moveForwardIMU(50, 0.8);
+        robot.moveForward(48, 0.5);
         sleep(1000);
-        robot.moveBackwardIMU(50, 0.8);
+        robot.turnInPlace(0, 0.5);
+        robot.moveBackward(48, 0.5);
         sleep(1000);
-        robot.moveLeftIMU(70, 0.8, 0, 0.15, 0.2);
+        robot.turnInPlace(0, 0.5);
+        robot.moveLeft(24, 0.5);
         sleep(1000);
-        robot.moveRightIMU(70, 0.8, 0, 0.1, 0.2);
-        sleep(1000);*/
+        robot.turnInPlace(0, 0.5);
+        robot.moveRight(24, 0.5);
+        sleep(1000);
+        robot.turnInPlace(0, 0.5);
 
     }
 }
