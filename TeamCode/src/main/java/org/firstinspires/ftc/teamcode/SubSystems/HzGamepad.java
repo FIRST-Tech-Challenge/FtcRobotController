@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
@@ -73,7 +72,7 @@ public class HzGamepad {
     public static final Vector2d RED_POWERSHOT1 = new Vector2d(72,-17.75);
     public static final Vector2d RED_TOWER_GOAL = new Vector2d(72,-36);
 
-    private Vector2d drivePointToAlign = origin;
+    public Vector2d drivePointToAlign = origin;
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as SampleMecanumDrive's heading controller
@@ -158,7 +157,7 @@ public class HzGamepad {
 
 
     // RR Drive Train
-    public void runByGamepadRRDriveModes(LinearOpMode callingOpMode, SampleMecanumDrive gpDrive, int playingAlliance) {
+    public void runByGamepadRRDriveModes(SampleMecanumDrive gpDrive, int playingAlliance) {
         //this.gpDrive = gpDrive;
 
         /*    if(getLeftTrigger()>0.5){}*/
@@ -174,24 +173,50 @@ public class HzGamepad {
         //Code to toggle Drive Mode when Y is pressed
         if (getButtonYPress()){ driveMode.toggle();}
 
-        driveTrainFieldCentric(gpDrive);
+        //driveTrainFieldCentric(gpDrive, playingAlliance);
 
         //drivePointToAlign = Target Vector;
         //drivePointToAlign = BLUE_TOWER_GOAL;
-        //driveTrainPointFieldModes(callingOpMode, gpDrive, drivePointToAlign);
+        driveTrainPointFieldModes(gpDrive, drivePointToAlign);
 
     }
 
-    public void driveTrainFieldCentric(SampleMecanumDrive gpDrive){
+    public void driveTrainFieldCentric(SampleMecanumDrive gpDrive, int playingAlliance){
 
         Pose2d poseEstimate = gpDrive.getPoseEstimate();
 
         // Create a vector from the gamepad x/y inputs
         // Then, rotate that vector by the inverse of that heading
-        Vector2d input = new Vector2d(
-                -turboMode(getLeftStickY()) /* TODO : playingalliance modifier*/,
-                -turboMode(getLeftStickX()) /* TODO : playingalliance modifier*/
-        ).rotated(-poseEstimate.getHeading());
+//        Vector2d input = new Vector2d(
+  //              -turboMode(getLeftStickY()) /* TODO : playingalliance modifier*/,
+    //            -turboMode(getLeftStickX()) /* TODO : playingalliance modifier*/
+      //  ).rotated(-poseEstimate.getHeading());
+
+        Vector2d input;
+
+        //if (playingAlliance == 0) { //Audience
+            input = new Vector2d(
+                    -turboMode(getLeftStickY()) /* TODO : playingalliance modifier*/,
+                    -turboMode(getLeftStickX()) /* TODO : playingalliance modifier*/
+            ).rotated(-poseEstimate.getHeading());
+
+        //};
+
+        if (playingAlliance == 1) { // Red Alliance
+            input = new Vector2d(
+                    turboMode(getLeftStickX()),
+                    -turboMode(getLeftStickY())
+            ).rotated(-poseEstimate.getHeading());
+
+
+        };
+
+        if (playingAlliance == -1) { // Blue Alliance
+            input = new Vector2d(
+                    -turboMode(getLeftStickX()),
+                    turboMode(getLeftStickY())
+            ).rotated(-poseEstimate.getHeading());
+        };
 
         // Pass in the rotated input + right stick value for rotation
         // Rotation is not part of the rotated input thus must be passed in separately
@@ -208,7 +233,7 @@ public class HzGamepad {
     }
 
 
-    public void driveTrainPointFieldModes(LinearOpMode callingOpMode,SampleMecanumDrive gpDrive, Vector2d pointToAlign){
+    public void driveTrainPointFieldModes(SampleMecanumDrive gpDrive, Vector2d pointToAlign){
         Pose2d poseEstimate = gpDrive.getPoseEstimate();
 
         // Set input bounds for the heading controller
@@ -219,7 +244,7 @@ public class HzGamepad {
         // Pose representing desired x, y, and angular velocity
         Pose2d driveDirection = new Pose2d();
 
-        callingOpMode.telemetry.addData("mode", driveMode);
+        //callingOpMode.telemetry.addData("mode", driveMode);
 
         // Declare telemetry packet for dashboard field drawing
         TelemetryPacket packet = new TelemetryPacket();
@@ -228,9 +253,9 @@ public class HzGamepad {
         switch (driveMode) {
             case NORMAL_CONTROL:
                 // Switch into alignment mode if `a` is pressed
-                /*if (gamepad1.a) {*/
+                if (gpGamepad1.a) {
                     driveMode = driveMode.ALIGN_TO_POINT;
-                /*}*/
+                }
 
                 // Standard teleop control
                 // Convert gamepad input into desired pose velocity
@@ -239,12 +264,13 @@ public class HzGamepad {
                         -turboMode(getLeftStickX()),
                         -turboMode(getRightStickX())
                 );
+
                 break;
             case ALIGN_TO_POINT:
                 // Switch back into normal driver control mode if `b` is pressed
-                /*if (gamepad1.b) {*/
+                if (gpGamepad1.b) {
                     driveMode = driveMode.NORMAL_CONTROL;
-                /*}*/
+                }
 
                 // Create a vector from the gamepad x/y inputs which is the field relative movement
                 // Then, rotate that vector by the inverse of that heading for field centric control
@@ -306,10 +332,10 @@ public class HzGamepad {
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
         // Print pose to telemetry
-        callingOpMode.telemetry.addData("x", poseEstimate.getX());
-        callingOpMode.telemetry.addData("y", poseEstimate.getY());
-        callingOpMode.telemetry.addData("heading", poseEstimate.getHeading());
-        //telemetry.update();
+        //callingOpMode.telemetry.addData("x", poseEstimate.getX());
+        //callingOpMode.telemetry.addData("y", poseEstimate.getY());
+        //callingOpMode.telemetry.addData("heading", poseEstimate.getHeading());
+        //callingOpMode.telemetry.update();
     }
 
 

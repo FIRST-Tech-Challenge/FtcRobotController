@@ -33,6 +33,9 @@ public class MyRR_RobotCentric_TeleOpDrive extends LinearOpMode {
         drive.setPoseEstimate(PoseStorage.currentPose);
         //drive.setPoseEstimate(new Pose2d(0,24,Math.toRadians(0)));
 
+        telemetry.addData("7:43","11/23");
+        telemetry.update();
+
         waitForStart();
 
         if (isStopRequested()) return;

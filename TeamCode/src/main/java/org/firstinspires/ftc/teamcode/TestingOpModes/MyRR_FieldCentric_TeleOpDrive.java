@@ -64,8 +64,8 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
             if (gamepadLocation == GAMEPAD_LOCATION.AUDIENCE) {
 
                 Vector2d input = new Vector2d(
-                        turboMode(getLeftStickY()),
-                        turboMode(-getLeftStickX())
+                        -turboMode(getLeftStickY()) /* TODO : playingalliance modifier*/,
+                        -turboMode(getLeftStickX()) /* TODO : playingalliance modifier*/
                 ).rotated(-poseEstimate.getHeading());
 
             };
@@ -73,8 +73,8 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
             if (gamepadLocation == GAMEPAD_LOCATION.RED_ALLIANCE) {
 
                 Vector2d input = new Vector2d(
-                        turboMode(getLeftStickX()),
-                        turboMode(-getLeftStickY())
+                        -turboMode(getLeftStickX()),
+                        turboMode(getLeftStickY())
                 ).rotated(-poseEstimate.getHeading());
 
 
@@ -82,8 +82,8 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
 
             if (gamepadLocation == GAMEPAD_LOCATION.BLUE_ALLIANCE) {
                 Vector2d input = new Vector2d(
-                        turboMode(-getLeftStickX()),
-                        turboMode(-getLeftStickY())
+                        turboMode(getLeftStickX()),
+                        turboMode(getLeftStickY())
                 ).rotated(-poseEstimate.getHeading());
             };
 
@@ -100,7 +100,7 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
                     new Pose2d(
                             input.getX(),
                             input.getY(),
-                            turboMode(getRightStickX())
+                            -turboMode(getRightStickX())
                     )
             );
 
@@ -142,7 +142,7 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
      * @return gpGamepad1.right_stick_x
      */
     public double getRightStickX() {
-        return -gamepad1.right_stick_x;
+        return gamepad1.right_stick_x;
     }
 
     /**
