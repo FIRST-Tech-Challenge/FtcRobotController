@@ -13,17 +13,20 @@ import global.TerraBot;
 import util.CodeSeg;
 import util.Rect;
 import autofunctions.TerraCV.RingNum;
+
 @Disabled
 @Autonomous(name = "AutoTest", group = "Auto")
 public class AutoTest extends LinearOpMode {
     TerraBot bot = new TerraBot();
-    RobotFunctions rf = new RobotFunctions();
+    //RobotFunctions rf = new RobotFunctions();
     Path path = new Path(0,0,0);
 
     @Override
     public void runOpMode() {
         initialize();
-        rf.telemetryText("done initializing");
+        telemetry.addData("ready", "yes");
+        telemetry.update();
+        //rf.telemetryText("done initializing");
         waitForStart();
         bot.startOdoThreadAuto(this);
         path.addWaypoint(30,30,90);
@@ -33,7 +36,7 @@ public class AutoTest extends LinearOpMode {
     }
     private void initialize(){
         bot.init(hardwareMap);
-        rf.init(bot, this);
+        //rf.init(bot, this);
     }
 
 }

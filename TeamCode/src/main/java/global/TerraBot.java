@@ -1,10 +1,13 @@
 package global;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,6 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.revextensions2.ExpansionHubEx;
+
+import java.util.List;
 
 import autofunctions.Localizer;
 import autofunctions.Odometry;
@@ -49,10 +54,10 @@ public class TerraBot {
     public Servo sgl;
 
     public BNO055IMU gyro;
-    public Rev2mDistanceSensor dsr1;
-    public Rev2mDistanceSensor dsl2;
-    public Rev2mDistanceSensor dsr2;
-    public Rev2mDistanceSensor dsl1;
+    public DistanceSensor dsr1;
+    public DistanceSensor dsl2;
+    public DistanceSensor dsr2;
+    public DistanceSensor dsl1;
 
     public boolean intaking = false;
     public boolean outtaking = false;
@@ -119,6 +124,8 @@ public class TerraBot {
 
     public ExpansionHubEx expansionHub;
 
+    public double[] startPos = {0,0};
+
     //1.075
     //0.658,
     //2.5
@@ -133,13 +140,13 @@ public class TerraBot {
     public void init(HardwareMap hwMap) {
 
         l1 = hwMap.get(DcMotor.class, "l1");
-        l2 = hwMap.get(DcMotor.class, "l2");
-        r1 = hwMap.get(DcMotor.class, "r1");
+        l2 = hwMap.get(DcMotorEx.class, "l2");
+        r1 = hwMap.get(DcMotorEx.class, "r1");
         r2 = hwMap.get(DcMotor.class, "r2");
-        in = hwMap.get(DcMotor.class, "in");
-        outr = hwMap.get(DcMotor.class, "outr");
-        outl = hwMap.get(DcMotor.class, "outl");
-        arm = hwMap.get(DcMotor.class, "arm");
+        in = hwMap.get(DcMotorEx.class, "in");
+        outr = hwMap.get(DcMotorEx.class, "outr");
+        outl = hwMap.get(DcMotorEx.class, "outl");
+        arm = hwMap.get(DcMotorEx.class, "arm");
 
         slr = hwMap.get(Servo.class, "slr");
         sll = hwMap.get(Servo.class, "sll");
@@ -151,12 +158,18 @@ public class TerraBot {
 
         gyro = hwMap.get(BNO055IMU.class, "gyro");
 
-        dsl2 = hwMap.get(Rev2mDistanceSensor.class, "dsl2");
-        dsr1 = hwMap.get(Rev2mDistanceSensor.class, "dsr1");
-        dsl1 = hwMap.get(Rev2mDistanceSensor.class, "dsl1");
-        dsr2 = hwMap.get(Rev2mDistanceSensor.class, "dsr2");
+        dsl2 = hwMap.get(DistanceSensor.class, "dsl2");
+        dsr1 = hwMap.get(DistanceSensor.class, "dsr1");
+        dsl1 = hwMap.get(DistanceSensor.class, "dsl1");
+        dsr2 = hwMap.get(DistanceSensor.class, "dsr2");
 
         expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+
+        List<LynxModule> allHubs = hwMap.getAll(LynxModule.class);
+
+        for (LynxModule module : allHubs) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
 
 
@@ -458,8 +471,8 @@ public class TerraBot {
 
     public void defineGoback(){
         AutoModule back = new AutoModule();
-        Path p1 = new Path(0,0,0);
-        p1.addSetpoint(0,0,0);
+        Path p1 = new Path(-startPos[0],-startPos[1],0);
+        p1.addSetpoint(91,-177,0);
         back.addPath(p1, this);
         goback = back;
     }
@@ -648,8 +661,19 @@ public class TerraBot {
     public double getDisL1(){  return dsl1.getDistance(DistanceUnit.CM); }
 
     public void updateLocalizer(){
-        localizer.update(getDisR1(), getDisL1(), getDisR2(), getDisL2(), getHeading());
+        double heading = getHeading();
+        for(int i = 0; i < 3; i++) {
+            localizer.update(getDisR1(), getDisL1(), getDisR2(), getDisL2(), heading);
+        }
     }
+
+    public void updateStartPos(){
+        heading = localizer.getAngle();
+        startPos[0] = localizer.getX();
+        startPos[1] = localizer.getY();
+    }
+
+
 
 
 }

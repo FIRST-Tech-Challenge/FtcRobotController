@@ -366,13 +366,13 @@ public class Path {
             hint = 0;
             xint = 0;
             yint = 0;
-            scaleDs(1, 1, 1);
+            scaleDs(1, 1, 2);
+            scaleKs(1, 1, 1.2);
         }else{
-            scaleDs(0.1, 0.1, 0.5);
+            scaleDs(0.1, 0.1, 1);
             hint = 0;
             xint = 0;
             yint = 0;
-            //scaleKs(1);
         }
     }
 
@@ -466,6 +466,7 @@ public class Path {
         timer.reset();
         startRFThread(op);
         while (op.opModeIsActive() && isExecuting){
+
             double[] pows = update(bot.odometry.getPos(), bot.odometry.getVels());
             bot.move(pows[1], pows[0], pows[2]);
 //            op.telemetry.addData("xpow",  pows[0]);

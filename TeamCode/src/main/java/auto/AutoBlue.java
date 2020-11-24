@@ -40,22 +40,22 @@ public class AutoBlue extends LinearOpMode {
         path.addWaypoint(35,48,0);
         path.addSetpoint(0,10,0);
         path.addRF(rf.shoot(shootSpeed));
-        path.addStop(2.2);
+        path.addStop(3);
 
         if(rf.ringnum.equals(RingNum.ZERO)) {
             path.addSetpoint(-15,15,-115);
             dropWobble();
-            path.addWaypoint(40, -15, 115);
+            path.addWaypoint(40, -15, 10); //115
         }else if(rf.ringnum.equals(RingNum.ONE)){
             path.addSetpoint(0,40,-180);
             dropWobble();
-            path.addWaypoint(30, -40, 180);
+            path.addWaypoint(30, -40, 75);
         }else if(rf.ringnum.equals(RingNum.FOUR)){
             path.addSetpoint(-15,120,-115);
             dropWobble();
-            path.addWaypoint(45, -125, 115);
+            path.addWaypoint(45, -125, 10);
         }
-        path.addSetpoint(3,-35,0);
+        path.addSetpoint(3,-35,105);
         path.addSetpoint(-8,-15,0);
         path.addRF(rf.grab(1));
         path.addStop(1);

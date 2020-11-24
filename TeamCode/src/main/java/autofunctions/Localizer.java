@@ -1,5 +1,9 @@
 package autofunctions;
 
+import java.util.ArrayList;
+
+import telefunctions.AutoModule;
+
 public class Localizer {
 
     public double r1 = 0;
@@ -22,6 +26,8 @@ public class Localizer {
     public final double robotLength = 33;
     public final double robotRadius = Math.sqrt(Math.pow(robotWidth/2, 2) + Math.pow(robotLength/2, 2));
     public final double centerTheta = Math.atan2(robotLength,robotWidth);
+
+    //public ArrayList<Double> distances = new ArrayList<>();
 
 
     public void update(double r1, double l1, double r2, double l2, double heading){
@@ -47,6 +53,10 @@ public class Localizer {
             l1fn = 0;
             r2fn = 0;
             l2fn = 0;
+
+//            scaleXs();
+//            scaleYs();
+            //distances.add(this.l2);
         }
 
     }
@@ -64,7 +74,10 @@ public class Localizer {
         dx = d;
         double phi = Math.asin((a*Math.sin(centerTheta+n9))/d);
         double x = d*Math.cos(Math.toRadians(theta)+phi);
+
+        x = l2; //* Math.cos(Math.toRadians(theta));
         return x;
+
     }
     public double getY(){
         double a = robotRadius;
@@ -74,7 +87,16 @@ public class Localizer {
         dy = d;
         double phi = Math.asin((a*Math.sin(centerTheta+n9))/d);
         double y = d*Math.cos(Math.toRadians(theta)-phi);
-        return y;
+
+        y = l1;//l1*Math.cos(Math.toRadians(theta));
+        return -y;
+    }
+
+    public void scaleXs(){
+        l2 = (l2*1.07) - (2);
+    }
+    public void scaleYs(){
+        l1 = (l1*1.07) - (2);
     }
 
 

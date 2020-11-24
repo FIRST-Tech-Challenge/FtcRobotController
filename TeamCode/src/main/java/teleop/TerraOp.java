@@ -40,11 +40,12 @@ public class TerraOp extends OpMode {
         bot.turnWobbleArm(0.1);
         bot.turnControl.cur = 0.1;
         bot.gameTime.reset();
-        //bot.startOdoThreadTele();
         vs = bot.getVoltageScale();
         bot.outtakeStartL *= vs;
         bot.outtakeStartR *= vs;
-       // bot.startOdoThreadTele();
+
+
+        bot.startOdoThreadTele();
 
     }
 
@@ -110,6 +111,8 @@ public class TerraOp extends OpMode {
             }
             if(gamepad2.x){
                 bot.resetAll();
+                bot.updateLocalizer();
+                bot.updateStartPos();
             }
             if(gamepad2.y){
                 bot.defineGoback();
@@ -182,6 +185,12 @@ public class TerraOp extends OpMode {
 //        telemetry.addData("dsl2", bot.getDisL2());
 //        telemetry.update();
 
+        telemetry.addData("x", bot.odometry.getX());
+        telemetry.addData("y", bot.odometry.getY());
+        telemetry.addData("theta", bot.odometry.getTheta());
+
+        telemetry.update();
+
 
         bot.update();
 
@@ -191,6 +200,6 @@ public class TerraOp extends OpMode {
 
     @Override
     public void stop() {
-      //  bot.stopOdoThreadTele();
+       bot.stopOdoThreadTele();
     }
 }
