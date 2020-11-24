@@ -333,15 +333,15 @@ public class UG_6832 extends LinearOpMode {
                 if (robot.articulation == PoseUG.Articulation.manual)
                     joystickDrivePregameMode();
 
-                // red alliance
-                if (toggleAllowed(gamepad1.b, b, 1)) {
-                    calibrateInitStageMethod(false);
-                }
-
-                // blue alliance
-                if (toggleAllowed(gamepad1.x, x, 1)) {
-                    calibrateInitStageMethod(true);
-                }
+                // old calibraton sequence todo-
+//                if (toggleAllowed(gamepad1.b, b, 1)) {
+//                    calibrateInitStageMethod(false);
+//                }
+//
+//                // blue alliance
+//                if (toggleAllowed(gamepad1.x, x, 1)) {
+//                    calibrateInitStageMethod(true);
+//                }
                 //resets the headings of the turret and chassis to initial values - press only after careful alignment perpendicular to alliance wall
                 if (toggleAllowed(gamepad1.y, y, 1)) {
                     robot.setHeadingAlliance();
@@ -441,19 +441,7 @@ public class UG_6832 extends LinearOpMode {
                     case 2:
                         robot.luncher.alignGripperForwardFacing();
                         break;
-
-                    case 3: // autonomous that starts in our crater
-                        if (auto.walkOfShame.execute()) {
-                            active = false;
-                            state = 1;
-                        }
-                        break;
                     case 4:
-                        break;
-                    case 5:
-                        if (auto.autoMethodTesterTool.execute()) {
-                            state = 1;
-                        }
                         break;
                     case 6:
                         demo();
@@ -544,48 +532,6 @@ public class UG_6832 extends LinearOpMode {
             robot.maintainHeading(gamepad1.x);
         if (gamepad1.y)
             robot.turret.maintainHeadingTurret(gamepad1.y);
-
-        if (notdeadzone(gamepad1.left_stick_y)) {
-            robot.luncher.adjustElbowAngle(-gamepad1.left_stick_y);
-        }
-
-        if (notdeadzone(gamepad1.right_stick_y)) {
-            robot.luncher.adjustBelt(-gamepad1.right_stick_y);
-        }
-        if (notdeadzone(gamepad1.right_stick_x)) {
-            robot.turret.adjust(gamepad1.right_stick_x);
-        }
-
-        if (toggleAllowed(gamepad1.dpad_up, dpad_up, 1)) {
-            robot.luncher.changeTowerHeight(1);
-        }
-
-        if (toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
-            robot.luncher.changeTowerHeight(-1);
-        }
-        if (toggleAllowed(gamepad1.a, a, 1)) {
-            // robot.articulate(PoseSkystone.Articulation.autoExtendToTowerHeightArticulation);
-            Mat mat = robot.towerHeightPipeline.process();
-
-        }
-        if (toggleAllowed(gamepad1.dpad_right, dpad_right, 1)) {
-            robot.luncher.toggleGripper();
-        }
-        if (toggleAllowed(gamepad1.b, b, 1))
-            robot.articulate(PoseUG.Articulation.retractFromTower);
-
-        if (gamepad1.left_trigger > 0) {
-            robot.luncher.swivelGripper(false);
-        }
-        if (gamepad1.right_trigger > 0) {
-            robot.luncher.swivelGripper(true);
-        }
-        if (gamepad1.left_bumper) {
-            robot.rotateIMU(nextCardinal(robot.getHeading(), false, 10), 1);
-        }
-        if (gamepad1.right_bumper) {
-            robot.rotateIMU(nextCardinal(robot.getHeading(), true, 10), 1);
-        }
     }
 
     int reverse = 1;
@@ -622,35 +568,16 @@ public class UG_6832 extends LinearOpMode {
         if (notdeadzone(gamepad1.right_stick_x))
             pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
 
-        if (nearZero(pwrFwd) && nearZero(pwrRot) && robot.isNavigating) {
+        if (nearZero(pwrFwd) && nearZero(pwrRot)) {
         } else {
-            robot.isNavigating = false; // take control back from any auton navigation if any joystick input is running
-            robot.autonTurnInitialized = false;
             robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
         }
 
-        // old mecanum controls
-        // pwrFwdL = direction * pwrDamper * gamepad1.left_stick_y;
-        // pwrStfL = direction * pwrDamper * gamepad1.left_stick_x;
-        //
-        // pwrFwdR = direction * pwrDamper * gamepad1.right_stick_y;
-        // pwrStfR = direction * pwrDamper * gamepad1.right_stick_x;
-
-        // gamepad1 controls
-
-        // trigger retractFromTower articulation
-        // if(toggleAllowed(gamepad1.a,a,1)){
-        // robot.articulate(PoseSkystone.Articulation.retractFromTower);
-        // }
-
         if (toggleAllowed(gamepad1.a, a, 1)) {
-//            robot.articulate(PoseSkystone.Articulation.autoExtendToTowerHeightArticulation);
-            robot.articulate(PoseUG.Articulation.autoAlignArticulation);
-
+//
         }
 
         if (toggleAllowed(gamepad1.x, x, 1)) {
-
             robot.luncher.hookToggle();
         }
 
@@ -659,30 +586,9 @@ public class UG_6832 extends LinearOpMode {
             robot.luncher.extendToPosition(1500, 1.0);
         }
 
-        // // Foundation Gripper
-        // if (toggleAllowed(gamepad1.x, x, 1)) {
-        //// robot.crane.hookToggle();
-        // robot.crane.currentTowerHeight = 3;
-        // robot.articulate(PoseSkystone.Articulation.extendToTowerHeightArticulation);
-        // }
-
-        if (toggleAllowed(gamepad1.dpad_left, dpad_left, 1)) {
-            robot.articulate(PoseUG.Articulation.yoinkStone);
-        }
-
         if (toggleAllowed(gamepad1.y, y, 1) && toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
             robot.luncher.servoGripper.setPosition(servoNormalize(800));
 
-        }
-
-        // Pad1 Bumbers - Rotate Cardinal
-        if (toggleAllowed(gamepad1.right_bumper, right_bumper, 1)) {
-            robot.articulate(PoseUG.Articulation.cardinalBaseRight);
-
-        }
-
-        if (toggleAllowed(gamepad1.left_bumper, left_bumper, 1)) {
-            robot.articulate(PoseUG.Articulation.cardinalBaseLeft);
         }
 
         // gamepad2 controls
@@ -712,10 +618,6 @@ public class UG_6832 extends LinearOpMode {
             robot.luncher.swivelGripper(true);
         }
 
-        if (toggleAllowed(gamepad2.dpad_right, dpad_right, 2)) {
-            robot.articulate(PoseUG.Articulation.retractFromTower);
-        }
-
         if (toggleAllowed(gamepad2.dpad_up, dpad_up, 2)) {
             robot.luncher.setElbowTargetPos(2501,1);
             robot.luncher.extendToPosition(1500, 1.0);
@@ -725,10 +627,6 @@ public class UG_6832 extends LinearOpMode {
         if (toggleAllowed(gamepad2.dpad_down, dpad_down, 2)) {
             robot.luncher.setElbowTargetPos(350,1);
             robot.luncher.extendToPosition(1200, 1.0);
-        }
-
-        if (toggleAllowed(gamepad2.dpad_left, dpad_left, 2)) {
-            robot.articulate(PoseUG.Articulation.retrieveStone);
         }
 
         // turret controls
@@ -784,21 +682,6 @@ public class UG_6832 extends LinearOpMode {
     private void logTurns(double target) {
         telemetry.addData("Error: ", target - robot.getHeading());
         // telemetry.update();
-    }
-
-    public void calibrateInitStageMethod(boolean isBlue) {
-
-        if (!calibrateFirstHalfDone) {
-            robot.setIsBlue(isBlue);
-            robot.articulate(PoseUG.Articulation.calibratePartOne);
-            calibrateFirstHalfDone = true;
-        }
-
-        else {
-            robot.articulate(PoseUG.Articulation.calibratePartTwo);
-            calibrateFirstHalfDone = false;
-        }
-
     }
 
     private void turnTest() {
