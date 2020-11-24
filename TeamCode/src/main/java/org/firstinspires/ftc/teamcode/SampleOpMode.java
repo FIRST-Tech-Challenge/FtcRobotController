@@ -38,11 +38,42 @@ public class SampleOpMode extends LinearOpMode {
 //            // gamepad 1
 //            testMotor.setPower( gamepad1.left_stick_y );
             if(gamepad2.right_bumper) {
-                testMotor.setPower(-1);
-                testMotor2.setPower(1);
+                testMotor.setPower(-1.00);
+                testMotor2.setPower(-1.00);
+
             } else {
-                testMotor.setPower(0);
-                testMotor2.setPower(0);
+                if (gamepad2.left_bumper) {
+                    testMotor.setPower(-.90);
+                    testMotor2.setPower(-.90);
+
+                } else {
+                    if (gamepad2.a) {
+                        testMotor.setPower(-.80);
+                        testMotor2.setPower(-.80);
+
+                    } else {
+                        if (gamepad2.b) {
+                            testMotor.setPower(-.70);
+                            testMotor2.setPower(-.70);
+
+                        } else {
+                            if (gamepad2.x) {
+                                testMotor.setPower(-.60);
+                                testMotor2.setPower(-.60);
+
+                            } else {
+                                if (gamepad2.y) {
+                                    testMotor.setPower(-.50);
+                                    testMotor2.setPower(-.50);
+
+                                } else {
+                                    testMotor.setPower(0);
+                                    testMotor2.setPower(0);
+                                }
+                            }
+                        }
+                    }
+                }
             }
             /*
             when stick is not at zero, it moves the servo. pressing A will set the current pos
