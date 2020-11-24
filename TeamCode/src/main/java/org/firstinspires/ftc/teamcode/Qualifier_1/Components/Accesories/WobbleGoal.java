@@ -46,7 +46,7 @@ public class WobbleGoal {
         wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
         wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wobbleGoalServo.setPosition(1.0);
+        wobbleGoalServo.setPosition(0);
 
     }
 
