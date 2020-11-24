@@ -56,7 +56,7 @@ public class HazmatTeleOpRRFieldCentric extends LinearOpMode {
 
         hzLauncher = new Launcher(hardwareMap);
         hzArm = new Arm(hardwareMap);
-        hzLaunchController = new LaunchController(hardwareMap, hzLauncher, hzMagazine, playingAlliance, hzDrive);
+        hzLaunchController = new LaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, playingAlliance, hzDrive);
         hzGamepad1 = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
 
         initialConfiguration();
@@ -113,7 +113,7 @@ public class HazmatTeleOpRRFieldCentric extends LinearOpMode {
 
     public void initialConfiguration(){
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-        telemetry.addData("Compile time : ", "4:41 : 11/24");
+        telemetry.addData("Compile time : ", "4:58 : 11/24");
 
         //***** Select Alliance ******
         telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X, Audience:A)");

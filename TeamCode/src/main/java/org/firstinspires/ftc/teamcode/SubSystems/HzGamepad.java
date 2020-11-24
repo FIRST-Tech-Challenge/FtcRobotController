@@ -147,7 +147,7 @@ public class HzGamepad {
         if (getDpad_downPress()) {
             if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
                 if(gpMagazine.moveMagazineToCollect()) {
-                    gpIntake.runIntakeMotor(0.5);
+                    gpIntake.runIntakeMotor(0.7);
                 }
             } else if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
                 gpIntake.stopIntakeMotor();

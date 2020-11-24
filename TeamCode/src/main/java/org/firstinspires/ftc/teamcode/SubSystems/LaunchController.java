@@ -58,16 +58,18 @@ public class LaunchController {
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE = 0.0;
 
     public Launcher lcLauncher;
+    public Intake lcIntake;
     public Magazine lcMagazine;
     public GameField.PLAYING_ALLIANCE lcPlayingAlliance;
     public HzDrive lcDrive;
     public LAUNCH_TARGET lcTarget;
 
-    public LaunchController(HardwareMap hardwareMap, Launcher lcLauncherPassed, Magazine lcMagazinePassed,
+    public LaunchController(HardwareMap hardwareMap, Launcher lcLauncherPassed, Intake lcIntakePassed, Magazine lcMagazinePassed,
                                  GameField.PLAYING_ALLIANCE lcPlayingAlliancePassed,
                                  HzDrive lcDrivePassed){
         lcLauncher = lcLauncherPassed;
         lcMagazine = lcMagazinePassed;
+        lcIntake = lcIntakePassed;
         lcPlayingAlliance = lcPlayingAlliancePassed;
         lcDrive = lcDrivePassed;
 
@@ -150,6 +152,7 @@ public class LaunchController {
         lcMagazine.senseMagazineRingStatus();
         lcMagazine.senseMagazinePosition();
         if (lcMagazine.magazineRingCount != Magazine.MAGAZINE_RING_COUNT.MAGAZINE_RINGS_0) {
+            lcIntake.stopIntakeMotor();
             lcMagazine.moveMagazineToLaunch();
             if (lcMagazine.magazinePosition == Magazine.MAGAZINE_POSITION.MAGAZINE_AT_COLLECT) {
                 return launchReadiness = LAUNCH_READINESS.LAUNCH_READY;
