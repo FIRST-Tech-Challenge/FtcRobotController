@@ -1,0 +1,25 @@
+
+Hardware configuration declarations :
+
+        frontLeft = hardwareMap.dcMotor.get("flmotor");
+        frontRight = hardwareMap.dcMotor.get("frmotor");
+        backLeft = hardwareMap.dcMotor.get("blmotor");
+        backRight = hardwareMap.dcMotor.get("brmotor");
+
+        armRotateMotor = hardwareMap.dcMotor.get("arm_rotate");
+        armWobbleGoalGripServo = hardwareMap.servo.get("arm_grip");
+
+        intakeMotor = hardwareMap.dcMotor.get("intake_motor");
+
+        launchControllerColorBeacon = hardwareMap.i2cDevice.get("launch_beacon");
+
+        launcherRingPlungerServo = hardwareMap.servo.get("launch__servo");
+        launcherFlyWheelMotor = hardwareMap.dcMotor.get("launch_motor");
+
+        magazineServo = hardwareMap.crservo.get("mgz_servo");
+        magazineRingSensor = hardwareMap.get(NormalizedColorSensor.class, "mgz_ring_sensor");
+
+        magazineColorBeacon = hardwareMap.i2cDevice.get("mgz_beacon");
+
+        magazineLaunchTouchSensor = hardwareMap.get(DigitalChannel.class, "mgz_launch_ts");
+        magazineLaunchTouchSensor = hardwareMap.get(DigitalChannel.class, "mgz_collect_ts");
