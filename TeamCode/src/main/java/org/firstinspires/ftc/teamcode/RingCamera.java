@@ -16,6 +16,7 @@ public class RingCamera {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
+    int i = 0;
 
     private static final String VUFORIA_KEY =
             "ATL0ncP/////AAABmT2pP6X1AUWloxNJ52z7pHEOjunJDTCB7rFvK9R38fBtenmamHFRo1IJFI/H+TzU90tguYTW4L/I0g2wBlqld9RzXISaItld+tNXARVeJUVn1GEESaZa8dG9bn9POCtVrfAysAHVgXrpzSvVI+AS+3tCxcDaVJtRbStvRaL/62OeNleqMRHJpRU8026f5odx6L0/toQbfvpWV9HUU1/naUwOhBRxeh+8yuVHVuGFOxii3qmHewAB3955neBrABR8eb8Llh9LbYg1ZCGNBDNKbqa762bGQzEPPijQTJMNcJGRbNAQZP/mPMOJGFLz9gXRByPVLzUWpjEtbsjQBohKWIKdNKzo0+vgpgcTTXWB+a5A";
@@ -46,6 +47,10 @@ public class RingCamera {
     public void init(HardwareMap ahwMap) {
         initVuforia(ahwMap);
         initTfod(ahwMap);
+
+        if (tfod != null) {
+            tfod.activate();
+        }
     }
 
     private void initVuforia(HardwareMap ahwMap) {
@@ -90,9 +95,20 @@ public class RingCamera {
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
-                return updatedRecognitions.size();
+                String count = "";
+                for (Recognition recognition : updatedRecognitions) {
+                    count = recognition.getLabel();
+                    if (count.equals("Quad")) {
+                        i = 4;
+                    } else if (count.equals("Single")) {
+                        i = 1;
+                    }
+                }
+                if (count.equals("")) {
+                    i = 0;
+                }
             }
         }
-        return 0;
+        return i;
     }
 }

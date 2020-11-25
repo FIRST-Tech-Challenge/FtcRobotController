@@ -3,9 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 //@Disabled
-@Autonomous(name="Camera: Test", group="Test")
+@TeleOp(name="Camera: Test", group="Test")
 public class CameraTest extends OpMode{
 
     RingCamera camera = new RingCamera();
