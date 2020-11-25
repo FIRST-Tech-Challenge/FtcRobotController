@@ -15,8 +15,9 @@ public class Shooter {
 
     //
     //Constants for shooter motors
-    private static final double ShooterSpeedfastleft=.4;
-    private static final double ShooterSpeedfastright=.55 ;
+    private static final double ShooterSpeedfastleft=.47;
+    private static final double ShooterSpeedfastright=.53;
+    //We are changing the speeds to see which speeds make the first ring in
     private static final double shooterSpeedslowleft=.4;
     private static final double shooterSpeedslowright=.50;
     private static final double jamClear=-.35;
@@ -28,6 +29,7 @@ public class Shooter {
     private static final double flippercenter = 0.5;
     private static final double stackerReload = 0.43; // 0.42 causes rings to slide forward too much
     private static final double stackerShoot = 0.54; // 0.55 is a bit high
+    private static final double stackerShootAutoOnly = 0.54; // slightly different in Auto so Teleop stays the same
     private static final double stacketMidLoad = .43; // tips stacker back so it loads better
 
 
@@ -47,6 +49,9 @@ public class Shooter {
 
         // make sure flippers are back and stacker it ready to load
         shooterReload();
+
+
+    // Single Function Methods
     }
     public void shootMiddleGoal() {
         shooterleft.setPower(shooterSpeedslowleft);
@@ -63,6 +68,11 @@ public class Shooter {
         }
     public void stackerMoveToShoot() {
         stacker.setPosition(stackerShoot);
+
+    }
+
+    public void stackerMoveToShootInAutoOnly() {
+        stacker.setPosition(stackerShootAutoOnly);
 
     }
 
@@ -88,6 +98,9 @@ public class Shooter {
         leftFlipper.setPosition(leftBack);
         rightFlipper.setPosition(rightBack);
     }
+
+
+    // Multi Function Methods that combine several simple methods together
     public void shootonePowerShots() {
         shootMiddleGoal();
         stackerMoveToShoot();
@@ -95,12 +108,14 @@ public class Shooter {
 
     }
 
-    public void shootoneRingHigh() {
+    public void shootOneRingHigh() {
         shootHighGoal();
-        stackerMoveToShoot();
+        stackerMoveToShootInAutoOnly();
         flipperBackward();
 
     }
+
+
     public void shooterReload() {
         stackerMoveToMidLoad(); //
         flipperBackward(); // move flippers back

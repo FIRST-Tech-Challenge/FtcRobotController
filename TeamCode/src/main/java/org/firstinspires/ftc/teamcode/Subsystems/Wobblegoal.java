@@ -18,7 +18,8 @@ public class Wobblegoal {
     private static final double     LIFTSPEED   =   0.65;
     private static final double     LIFTUP      =   14 ; //Number is in inches
     private static final int        LIFTDOWN    =   0;
-    private static final double     GRIPPEROPEN =   0.35;
+    private static final double     GRIPPERINIT  = 0.35;
+    private static final double     GRIPPEROPEN =   0.3;
     private static final double     GRIPPERCLOSE=   0.8;
     private static final int        ARMEXTEND   =   35; //32-33 is good ticks
     private static final int        ARMCONTRACT =   0; // ticks
@@ -39,7 +40,7 @@ public class Wobblegoal {
 
         WobbleLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         WobbleExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        WobbleGrip.setPosition(GRIPPEROPEN);
+        WobbleGrip.setPosition(GRIPPERINIT);
 
     }
 

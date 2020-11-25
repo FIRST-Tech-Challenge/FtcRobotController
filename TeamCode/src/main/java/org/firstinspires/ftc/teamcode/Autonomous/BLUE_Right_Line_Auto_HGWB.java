@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
 import java.util.List;
 
 @Autonomous(name="Blue_Right_Line_HGWB", group="Test")
-//@Disabled // Leave disabled until ready to test
+@Disabled // Leave disabled until ready to test
 
 // This opmode EXTENDS BasicAutonomous and actually does the same thing as BasicAutonomous
 // The goal here was to extend a base class with all the methods and prove it works just the same.

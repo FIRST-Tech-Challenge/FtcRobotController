@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.Enums.RingCollectionState;
 import org.firstinspires.ftc.teamcode.Enums.ShooterState;
 import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
 import org.firstinspires.ftc.teamcode.Test.BasicAutonomous_II;
@@ -45,8 +46,9 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
         drivetrain.init(hardwareMap);
         wobble.init(hardwareMap);
         shooter.init(hardwareMap);
-        // intake.init(hardwareMap); not necessary in Auto at this time
-        // elevator .....also not necessary
+        intake.init(hardwareMap);
+        elevator.init(hardwareMap);
+
 
         // move implements to start position. Note, 18x18x18 inch cube has to be maintained
         // until start is pressed. Position servos and motors here so human error and set-up is not
@@ -145,7 +147,7 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
 
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
         // Drive paths are initially all the same to get to the shooter location
-        gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
+        gyroDrive(DRIVE_SPEED, 58.0, 0.0, 10);
         gyroTurn(TURN_SPEED,-11,3);
         mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
         shoot3Rings(mShooterState);   // call method to start shooter and launch 3 rings. pass shooter state in case it is needed
@@ -156,36 +158,48 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
         // Robot has to read the stack height and set the Target Zone square state based on Vuforia/ Tensor Flow detection
         switch(Square){
             case BLUE_A: // no rings. 3 tiles (24 inches per tile) forward and one tile to the left from start
-                telemetry.addData("Going to RED A", "Target Zone");
+                telemetry.addData("Going to BLUE A", "Target Zone");
                 gyroTurn(TURN_SPEED*.5,20,3);
-                gyroDrive(DRIVE_SPEED, 8.0, 20.0, 5);
+                gyroDrive(DRIVE_SPEED, 6.0, 20.0, 5);
                 sleep(1000);
                 wobble.GripperOpen();
                 wobble.ArmExtend();
                 break;
             case BLUE_B: // one ring  4 tiles straight ahead
-                telemetry.addData("Going to RED B", "Target Zone");
-                //gyroTurn(TURN_SPEED*.5,20,3);
-                gyroDrive(DRIVE_SPEED, 30.0, -15.0, 5);
+                telemetry.addData("Going to BLUE B", "Target Zone");
+                gyroDrive(DRIVE_SPEED, 25.0, -20.0, 5);
                 sleep(1000);
                 wobble.GripperOpen();
+                sleep(500);
                 wobble.ArmContract();
                 sleep(500);
                 drivetime.reset();
-                gyroDrive(DRIVE_SPEED, -18.0, -15, 5);
+                gyroDrive(DRIVE_SPEED, -13.0, -15, 5);
+                gyroTurn(TURN_SPEED *.5, 190,3); // turn towards ring stack
+                gyroDrive(DRIVE_SPEED, 9,190,3); //drive to ring stack w/ gyro ri get correct heading
+                mRingCollectionState = RingCollectionState.COLLECT; // change collector state to get ready to pick up rings
+                collectRingsInAuto_A(mRingCollectionState);// switch to method to drive and collect (no encoders)
+                drivetime.reset();
+                gyroTurn(TURN_SPEED * .75, -1,3); // rotate back towards goal
+                gyroDrive(DRIVE_SPEED,33,-1,3); // drive to goal at prescribed heading
+                autoShootTimeAllowed = 4; // set shoot timer to lower number since there is only one ring and we will run out of time
+                mShooterState = ShooterState.STATE_SHOOTER_ACTIVE; // set shooter to active again
+                shoot3Rings(mShooterState);   // call method to start shooter and launch rings. Time will only let 1 or 2 out this time
+                gyroDrive(DRIVE_SPEED,4,-1,3); // make final drive to the line and park
+
                 break;
             case BLUE_C: // four rings. 5 tiles forward and one tile to the left.
                 telemetry.addData("Going to RED C", "Target Zone");
                 gyroTurn(TURN_SPEED,10,3);
-                gyroDrive(DRIVE_SPEED, 50, 10.0, 5);
+                gyroDrive(DRIVE_SPEED, 48, 10.0, 5);
                 sleep(1000);
                 wobble.GripperOpen();
                 wobble.ArmExtend();
                 sleep(1000);
                 drivetime.reset();
-                gyroDrive(DRIVE_SPEED, -45.0, 20, 5);
-                gyroDrive(.95, -25.0, 20, 5);
-                gyroDrive(DRIVE_SPEED, 28.0, 20, 5);
+                gyroDrive(DRIVE_SPEED, -43.0, 20, 5);
+                gyroDrive(.95, -23.0, 20, 5);
+                gyroDrive(DRIVE_SPEED, 26.0, 20, 5);
                 //gyroDrive(DRIVE_SPEED, 2.0, 10, 5);
                 gyroTurn(TURN_SPEED,-180,3);
                 //gyroDrive(DRIVE_SPEED, 25.0, -20, 5);
