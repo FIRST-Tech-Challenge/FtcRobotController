@@ -15,8 +15,9 @@ public class Shooter {
 
     //
     //Constants for shooter motors
-    private static final double ShooterSpeedfastleft=.4;
-    private static final double ShooterSpeedfastright=.55 ;
+    private static final double ShooterSpeedfastleft=.47;
+    private static final double ShooterSpeedfastright=.53;
+    //We are changing the speeds to see which speeds make the first ring in
     private static final double shooterSpeedslowleft=.4;
     private static final double shooterSpeedslowright=.50;
     private static final double jamClear=-.35;
