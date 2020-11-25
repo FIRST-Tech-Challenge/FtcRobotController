@@ -176,13 +176,13 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
                 drivetime.reset();
                 gyroDrive(DRIVE_SPEED, -13.0, -15, 5);
                 gyroTurn(TURN_SPEED *.5, 190,3); // turn towards ring stack
-                gyroDrive(DRIVE_SPEED, 10,190,3); //drive to ring stack w/ gyro ri get correct heading
+                gyroDrive(DRIVE_SPEED, 9,190,3); //drive to ring stack w/ gyro ri get correct heading
                 mRingCollectionState = RingCollectionState.COLLECT; // change collector state to get ready to pick up rings
                 collectRingsInAuto_A(mRingCollectionState);// switch to method to drive and collect (no encoders)
                 drivetime.reset();
                 gyroTurn(TURN_SPEED * .75, -1,3); // rotate back towards goal
                 gyroDrive(DRIVE_SPEED,33,-1,3); // drive to goal at prescribed heading
-                autoShootTimeAllowed = 2; // set shoot timer to lower number since there is only one ring and we will run out of time
+                autoShootTimeAllowed = 4; // set shoot timer to lower number since there is only one ring and we will run out of time
                 mShooterState = ShooterState.STATE_SHOOTER_ACTIVE; // set shooter to active again
                 shoot3Rings(mShooterState);   // call method to start shooter and launch rings. Time will only let 1 or 2 out this time
                 gyroDrive(DRIVE_SPEED,4,-1,3); // make final drive to the line and park

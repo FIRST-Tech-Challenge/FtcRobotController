@@ -56,7 +56,7 @@ public class BasicAutonomous extends LinearOpMode {
     public ElapsedTime          autoShootTimer  = new ElapsedTime(); //auto shooter timer (4 rings)
     public ElapsedTime          autoRingCollectTimer  = new ElapsedTime(); //auto shooter timer (4 rings)
 
-    public static double        autoShootTimeAllowed = 5; //  seconds allows 4 shoot cycles in case one messes up
+    public static double        autoShootTimeAllowed = 8; //  seconds allows 4 shoot cycles in case one messes up
     public static double        tfSenseTime          = 1; // needs a couple seconds to process the image and ID the target
 
 
@@ -134,6 +134,8 @@ public class BasicAutonomous extends LinearOpMode {
         shooter.init(hardwareMap);
         intake.init(hardwareMap);
         elevator.init(hardwareMap);
+
+
         // intake.init(hardwareMap); not necessary in Auto at this time
         // elevator .....also not necessary
 
@@ -569,9 +571,9 @@ public class BasicAutonomous extends LinearOpMode {
         while (opModeIsActive() && autoShootTimer.time()  <= autoShootTimeAllowed)  {
             if (mShooterState == ShooterState.STATE_SHOOTER_ACTIVE) {
                 shooter.shootOneRingHigh(); // this is only used in auto due to different stacker position
-                sleep(700);
+                sleep(1500);
                 shooter.flipperForward();
-                sleep(700);
+                sleep(750);
                 shooter.flipperBackward();
 
             }
