@@ -165,7 +165,6 @@ public class AutoModule {
             public boolean run(double in) {
                 bot.move(0,0,0);
                 timer.reset();
-                path.reset();
                 return true;
             }
         });
@@ -201,6 +200,18 @@ public class AutoModule {
             public boolean run(double in) {
                 timer.reset();
                 return sl.isReady() && sr.isReady();
+            }
+        });
+    }
+
+    public void addOdometySave(final double x, final double y, final TerraBot bot){
+        lastTime = 0;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+               bot.odometrySave(x,y);
+                timer.reset();
+                return true;
             }
         });
     }

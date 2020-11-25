@@ -188,6 +188,7 @@ public class TerraOp extends OpMode {
         telemetry.addData("x", bot.odometry.getX());
         telemetry.addData("y", bot.odometry.getY());
         telemetry.addData("theta", bot.odometry.getTheta());
+        telemetry.addData("heading", bot.getHeading());
 
         telemetry.update();
 

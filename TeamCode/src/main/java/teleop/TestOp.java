@@ -41,26 +41,13 @@ public class TestOp extends OpMode {
         }
 
         if(gamepad1.x){
-            //bot.heading = bot.localizer.getAngle();
             bot.resetAll();
+            bot.heading = bot.localizer.getAngle();
         }
-//
+
         telemetry.addData("X", bot.localizer.getX());
         telemetry.addData("Y", bot.localizer.getY());
         telemetry.addData("Angle", bot.localizer.getAngle());
-        telemetry.addData("x", bot.odometry.getX());
-        telemetry.addData("y", bot.odometry.getY());
-        telemetry.addData("theta", bot.odometry.getTheta());
-
-//        telemetry.addData("Radius", bot.localizer.robotRadius);
-//        telemetry.addData("dx", bot.localizer.dx);
-//        telemetry.addData("dy", bot.localizer.dy);
-//        telemetry.addData("r1", bot.localizer.r1);
-//        telemetry.addData("l1", bot.localizer.l1);
-//        telemetry.addData("r2", bot.localizer.r2);
-//        telemetry.addData("l2", bot.localizer.l2);
-//        telemetry.addData("theta", bot.localizer.theta);
-//        telemetry.addData("heading", bot.getHeading());
 
         double forward = -gamepad1.right_stick_y;
         double strafe = gamepad1.right_stick_x;

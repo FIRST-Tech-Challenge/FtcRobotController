@@ -27,23 +27,19 @@ public class Localizer {
     public final double robotRadius = Math.sqrt(Math.pow(robotWidth/2, 2) + Math.pow(robotLength/2, 2));
     public final double centerTheta = Math.atan2(robotLength,robotWidth);
 
-    //public ArrayList<Double> distances = new ArrayList<>();
+    public double numGets = 5;
 
 
     public void update(double r1, double l1, double r2, double l2, double heading){
         theta = heading;
-//        this.r1 = r1;
-//        this.r2 = r2;
-//        this.l1 = l1;
-//        this.l2 = l2;
 
-        r1fn += r1/3;
-        l1fn += l1/3;
-        r2fn += r2/3;
-        l2fn += l2/3;
+        r1fn += r1/numGets;
+        l1fn += l1/numGets;
+        r2fn += r2/numGets;
+        l2fn += l2/numGets;
 
         counter++;
-        if(counter == 3){
+        if(counter == numGets){
             counter = 0;
             this.r1 = r1fn;
             this.r2 = r2fn;
@@ -54,11 +50,12 @@ public class Localizer {
             r2fn = 0;
             l2fn = 0;
 
-//            scaleXs();
-//            scaleYs();
-            //distances.add(this.l2);
         }
 
+    }
+
+    public void updateHeading(double head){
+        theta = head;
     }
 
     public double getAngle(){
@@ -70,33 +67,27 @@ public class Localizer {
     public double getX(){
         double a = robotRadius;
         double n9 = Math.toRadians(90);
-        double d = Math.sqrt(l2*l2+a*a-(2*Math.abs(l2)*a*Math.cos(centerTheta+n9)));
-        dx = d;
-        double phi = Math.asin((a*Math.sin(centerTheta+n9))/d);
+
+        double cent = n9-centerTheta;
+
+        double d = Math.sqrt(l2*l2+a*a-(2*Math.abs(l2)*a*Math.cos(cent+n9)));
+
+        double phi = Math.abs(Math.asin((a*Math.sin(cent+n9))/d));
         double x = d*Math.cos(Math.toRadians(theta)+phi);
 
-        x = l2; //* Math.cos(Math.toRadians(theta));
         return x;
 
     }
     public double getY(){
         double a = robotRadius;
-//        double theta2 = Math.toRadians(90)-centerTheta;
         double n9 = Math.toRadians(90);
+
         double d = Math.sqrt(l1*l1+a*a-(2*Math.abs(l1)*a*Math.cos(centerTheta+n9)));
-        dy = d;
-        double phi = Math.asin((a*Math.sin(centerTheta+n9))/d);
+
+        double phi = Math.abs(Math.asin((a*Math.sin(centerTheta+n9))/d));
         double y = d*Math.cos(Math.toRadians(theta)-phi);
 
-        y = l1;//l1*Math.cos(Math.toRadians(theta));
         return -y;
-    }
-
-    public void scaleXs(){
-        l2 = (l2*1.07) - (2);
-    }
-    public void scaleYs(){
-        l1 = (l1*1.07) - (2);
     }
 
 

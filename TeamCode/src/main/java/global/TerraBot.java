@@ -2,6 +2,7 @@ package global;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -55,7 +56,7 @@ public class TerraBot {
 
     public BNO055IMU gyro;
     public DistanceSensor dsr1;
-    public DistanceSensor dsl2;
+    public ModernRoboticsI2cRangeSensor dsl2;
     public DistanceSensor dsr2;
     public DistanceSensor dsl1;
 
@@ -106,6 +107,7 @@ public class TerraBot {
     public AutoModule wobbleGoal = new AutoModule();
     public AutoModule wobbleGoal2 = new AutoModule();
     public AutoModule goback = new AutoModule();
+    public AutoModule calibrate = new AutoModule();
 
     public Limits limits = new Limits();
 
@@ -158,7 +160,7 @@ public class TerraBot {
 
         gyro = hwMap.get(BNO055IMU.class, "gyro");
 
-        dsl2 = hwMap.get(DistanceSensor.class, "dsl2");
+        dsl2 = hwMap.get(ModernRoboticsI2cRangeSensor.class, "dsl2");
         dsr1 = hwMap.get(DistanceSensor.class, "dsr1");
         dsl1 = hwMap.get(DistanceSensor.class, "dsl1");
         dsr2 = hwMap.get(DistanceSensor.class, "dsr2");
@@ -244,6 +246,7 @@ public class TerraBot {
         defineWobbleGoal();
         defineWobbleGoal2();
         defineGoback();
+        defineCalibrate();
 
 
         limits.addLimit(arm, 0, maxArmPos);
@@ -471,10 +474,45 @@ public class TerraBot {
 
     public void defineGoback(){
         AutoModule back = new AutoModule();
-        Path p1 = new Path(-startPos[0],-startPos[1],0);
-        p1.addSetpoint(91,-177,0);
+        //back.addOdometySave(startPos[0], startPos[1], this);
+        back.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                shooter.start();
+            }
+        });
+        back.addDelay(0.5);
+        Path p1 = new Path(0,0,0);
+        p1.addSetpoint(81,-174,0);
         back.addPath(p1, this);
+        back.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                localizer.l2 = getDisL2();
+                localizer.theta = getHeading();
+                odometry.tx = odometry.cmToTicks(localizer.getX());
+            }
+        });
+        Path p2 = new Path(0,0,0);
+        p2.addSetpoint(81,-174,0);
+        back.addPath(p2, this);
+        back.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                shooter.start();
+            }
+        });
         goback = back;
+    }
+
+    public void defineCalibrate(){
+        AutoModule cal = new AutoModule();
+        Path p1 = new Path(0,0,0);
+        p1.addSetpoint(0,0,5);
+        cal.addPath(p1, this);
+
+
+        calibrate = cal;
     }
 
 
@@ -489,15 +527,16 @@ public class TerraBot {
         wobbleGoal.update();
         wobbleGoal2.update();
         goback.update();
+        calibrate.update();
         outlController.updateMotorValues(getOutlPos());
         outrController.updateMotorValues(getOutrPos());
     }
 
     public boolean autoModulesRunning(){
-        return (shooter.executing || powerShot.executing|| wobbleGoal.executing || wobbleGoal2.executing || goback.executing);
+        return (shooter.executing || powerShot.executing|| wobbleGoal.executing || wobbleGoal2.executing || goback.executing || calibrate.executing);
     }
 
-    public boolean autoModulesPaused(){return  wobbleGoal.pausing || shooter.pausing || wobbleGoal2.pausing || powerShot.pausing || goback.pausing;}
+    public boolean autoModulesPaused(){return  wobbleGoal.pausing || shooter.pausing || wobbleGoal2.pausing || powerShot.pausing || goback.pausing || calibrate.pausing;}
 
 
     public double getArmPos(){
@@ -662,15 +701,23 @@ public class TerraBot {
 
     public void updateLocalizer(){
         double heading = getHeading();
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < localizer.numGets; i++) {
             localizer.update(getDisR1(), getDisL1(), getDisR2(), getDisL2(), heading);
         }
     }
 
     public void updateStartPos(){
         heading = localizer.getAngle();
+        lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        localizer.updateHeading(heading);
         startPos[0] = localizer.getX();
         startPos[1] = localizer.getY();
+        odometrySave(startPos[0], startPos[1]);
+    }
+
+    public void odometrySave(double x, double y){
+        odometry.tx = odometry.cmToTicks(x);
+        odometry.ty = odometry.cmToTicks(y);
     }
 
 
