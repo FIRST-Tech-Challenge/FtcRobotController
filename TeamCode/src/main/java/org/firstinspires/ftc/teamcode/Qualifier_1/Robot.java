@@ -260,6 +260,10 @@ public class Robot {
         }
     }
 
+    public void ringDepositorSmartDeposit(){
+        ringDepositor.smartDeposit();
+    }
+
     public void printCurrentRingDepositorLocation() {
         if(isCorgi) {
             ringDepositor.printCurrentLocation();
