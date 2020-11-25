@@ -483,7 +483,7 @@ public class TerraBot {
         });
         back.addDelay(0.5);
         Path p1 = new Path(0,0,0);
-        p1.addSetpoint(81,-174,0);
+        p1.addSetpoint(81,-172,0);
         back.addPath(p1, this);
         back.addCustomOnce(new CodeSeg() {
             @Override
@@ -494,7 +494,7 @@ public class TerraBot {
             }
         });
         Path p2 = new Path(0,0,0);
-        p2.addSetpoint(81,-174,0);
+        p2.addSetpoint(81,-172,0);
         back.addPath(p2, this);
         back.addCustomOnce(new CodeSeg() {
             @Override
@@ -507,9 +507,44 @@ public class TerraBot {
 
     public void defineCalibrate(){
         AutoModule cal = new AutoModule();
+        cal.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                resetAll();
+                localizer.startCalibrating(getDisL2(), getHeading(), odometry.getX(), odometry.getY());
+            }
+        });
         Path p1 = new Path(0,0,0);
         p1.addSetpoint(0,0,5);
         cal.addPath(p1, this);
+        cal.addDelay(0.5);
+        cal.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                localizer.stopCalibrating(getDisL2(), getHeading(), odometry.getX(), odometry.getY());
+                updateLocalizer();
+                heading = (localizer.getCalibratedTheta()*1.5 + localizer.getAngle()*0.5)/2;
+                lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+//                resetAll();
+//                updateLocalizer();
+//                localizer.updateHeading(localizer.getCalibratedTheta());
+//                updateStartPos();
+            }
+        });
+        cal.addDelay(0.5);
+        Path p2 = new Path(0,0,0);
+        p2.addSetpoint(0,0,0);
+        cal.addPath(p2, this);
+        cal.addDelay(0.5);
+        cal.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                resetOdometry();
+                updateLocalizer();
+                updateStartPos();
+            }
+        });
+
 
 
         calibrate = cal;
@@ -519,6 +554,9 @@ public class TerraBot {
     public void resetAll(){
         odometry.reset(getLeftOdo(), getMiddleOdo(), getRightOdo());
         resetGyro();
+    }
+    public void resetOdometry(){
+        odometry.reset(getLeftOdo(), getMiddleOdo(), getRightOdo());
     }
 
     public void update(){
@@ -707,8 +745,8 @@ public class TerraBot {
     }
 
     public void updateStartPos(){
-        heading = localizer.getAngle();
-        lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+//        heading = localizer.getAngle();
+//        lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         localizer.updateHeading(heading);
         startPos[0] = localizer.getX();
         startPos[1] = localizer.getY();
