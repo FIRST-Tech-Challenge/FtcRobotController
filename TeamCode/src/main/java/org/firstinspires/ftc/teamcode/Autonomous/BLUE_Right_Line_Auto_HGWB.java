@@ -150,7 +150,7 @@ public class BLUE_Right_Line_Auto_HGWB extends BasicAutonomous {
         gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
         gyroTurn(TURN_SPEED,10,3); //Need to change this angle for the right line start point
         mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
-        shoot3Rings(mShooterState);   // call method to start shooter and launch 3 rings. pass shooter state in case it is needed
+        shoot3Rings(mShooterState, autoShootTimeAllowed);   // call method to start shooter and launch 3 rings. pass shooter state in case it is needed
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
 
         // Switch manages the 3 different Target Zone objectives based on the number of rings stacked up

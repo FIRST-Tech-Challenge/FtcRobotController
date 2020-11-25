@@ -53,14 +53,15 @@ public class BasicAutonomous extends LinearOpMode {
     public ElapsedTime          PIDtimer    = new ElapsedTime(); // PID loop timer
     public ElapsedTime          drivetime   = new ElapsedTime(); // timeout timer for driving
     public ElapsedTime          tfTime      = new ElapsedTime(); // timer for tensor flow
-    public ElapsedTime          autoShootTimer  = new ElapsedTime(); //auto shooter timer (4 rings)
-    public ElapsedTime          autoRingCollectTimer  = new ElapsedTime(); //auto shooter timer (4 rings)
+    public ElapsedTime          ShootTimer          = new ElapsedTime(); //auto shooter timer (4 rings)
+    public ElapsedTime          autoRingCollectTimer    = new ElapsedTime(); //auto shooter timer (4 rings)
 
-    public static double        autoShootTimeAllowed = 8; //  seconds allows 4 shoot cycles in case one messes up
-    public static double        tfSenseTime          = 1; // needs a couple seconds to process the image and ID the target
+    public static double        autoShootTimeAllowed    = 8; //  seconds allows 4 shoot cycles in case one messes up
+    //public static double      extraRingShootTimeAllowed    = 4; //  seconds allows 4 shoot cycles in case one messes up
+    public static double        tfSenseTime             = 1; // needs a couple seconds to process the image and ID the target
 
 
-    public static double     autoRingCollectTimeAllowed = 1.5;
+    public static double        autoRingCollectTimeAllowed = 1.5; // time allowed to let the single ring to get picked up
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suit the specific robot drive train.
@@ -239,7 +240,7 @@ public class BasicAutonomous extends LinearOpMode {
         gyroDrive(DRIVE_SPEED, 55.0, 0.0, 10);
         gyroTurn(TURN_SPEED,-10,3);
         mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
-        shoot3Rings(mShooterState);   // call method to start shooter and launch 3 rings
+        shoot3Rings(mShooterState, autoShootTimeAllowed);   // call method to start shooter and launch 3 rings
         drivetime.reset(); // reset because time starts w hen TF starts and time is up before we can call gyroDrive
 
         // Switch manages the 3 different Target Zone objectives based on the number of rings stacked up
@@ -566,20 +567,22 @@ public class BasicAutonomous extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
-    public void shoot3Rings(ShooterState mShooterState){
-        autoShootTimer.reset();
-        while (opModeIsActive() && autoShootTimer.time()  <= autoShootTimeAllowed)  {
+    public void shoot3Rings(ShooterState mShooterState, double ShootTimeAllowed){
+
+        ShootTimer.reset();
+        while (opModeIsActive() && ShootTimer.time()  <= ShootTimeAllowed)  {
             if (mShooterState == ShooterState.STATE_SHOOTER_ACTIVE) {
                 shooter.shootOneRingHigh(); // this is only used in auto due to different stacker position
-                sleep(1500);
+                sleep(1250);
                 shooter.flipperForward();
-                sleep(750);
+                sleep(700);
                 shooter.flipperBackward();
 
             }
             else {
                 shooter.shooterOff();
             }
+            telemetry.addData("Shoot Timer Elappsed", ShootTimer.time());
         }
         //mShooterState = ShooterState.STATE_SHOOTER_OFF;
         shooter.shooterReload();
