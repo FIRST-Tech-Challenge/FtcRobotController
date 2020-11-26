@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot;
+package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot.Utility;
+
 
 public class PID {
 
@@ -36,6 +37,9 @@ public class PID {
     }
 
     public double getSetValue() {
+        proportionalError();
+        derivativeError();
+        integralError();
         return (p_error*Kp) + (d_error*Kd) + (i_error*Ki);
     }
 }

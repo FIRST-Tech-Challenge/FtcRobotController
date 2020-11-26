@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -15,7 +16,6 @@ public class Gyro extends SubSystem {
 
     BNO055IMU imu;
     Orientation angles;
-    Acceleration gravity;
     double heading = 0;
     double prevHeading = 0;
 
@@ -50,9 +50,19 @@ public class Gyro extends SubSystem {
         imu.initialize(parameters);
     }
 
+    public boolean isCalibrated() {
+        return imu.isGyroCalibrated();
+    }
+
+    public String getCallibrationStatus() {
+        return imu.getCalibrationStatus().toString();
+    }
+
     public double getHeading() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         heading = convert(angles.firstAngle - prevHeading);
+        robot.telemetry.addData("Gyro", "Heading - " + heading);
+        robot.telemetry.update();
         return heading;
     }
     public void resetHeading() {
@@ -78,4 +88,10 @@ public class Gyro extends SubSystem {
         }
         return degrees;
     }
+
+    public boolean gyroCalibrated() {
+        return imu.isGyroCalibrated();
+    }
+
 }
+ 

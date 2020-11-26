@@ -1,31 +1,22 @@
 package org.firstinspires.ftc.teamcode.fishlo.v1.fishlo.robot;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.SubSystem;
 
-public class Drive extends SubSystem {
-    private DcMotor frontLeft, backLeft, frontRight, backRight;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
-    LinearOpMode opmode;
+public class Drive extends SubSystem {
+
+    private DcMotor frontLeft, backLeft, frontRight, backRight;
 
     int cpr = 28;
     int gearRatio = 19;
     double diameter = 3.780;
     double cpi = (cpr * gearRatio)/(Math.PI * diameter);
-    double bias = 0.8;
+    double bias = 0.955;
     double strafeBias = 0.9;
-
     double conversion = cpi * bias;
+
     boolean exit = false;
     
     public Drive(Robot robot) {
@@ -52,7 +43,7 @@ public class Drive extends SubSystem {
     public void handle() {
         double driveSpeed = -robot.gamepad1.left_stick_y;
         double turnSpeed = 0;
-        double strafeSpeed = -robot.gamepad1.right_stick_x;
+        double strafeSpeed = robot.gamepad1.right_stick_x;
 
         if (Math.abs(robot.gamepad1.left_stick_x) > 0.1) {
             turnSpeed = robot.gamepad1.left_stick_x;
@@ -103,13 +94,19 @@ public class Drive extends SubSystem {
     }
 
     public void strafe(double power) {
-        frontLeft.setPower(-power);
-        backLeft.setPower(power);
-        frontRight.setPower(power);
-        backRight.setPower(-power);
+        frontLeft.setPower(power);
+        backLeft.setPower(-power);
+        frontRight.setPower(-power);
+        backRight.setPower(power);
     }
 
     public void turn (double power) {
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         frontLeft.setPower(power);
         backLeft.setPower(power);
         frontRight.setPower(-power);
@@ -118,6 +115,8 @@ public class Drive extends SubSystem {
 
     public void moveToPosition(double inches, double speed) {
         int move = (int)(Math.round(inches*conversion));
+
+        encoderReset();
 
         frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + move);
         backLeft.setTargetPosition(backLeft.getCurrentPosition() + move);
@@ -131,19 +130,21 @@ public class Drive extends SubSystem {
 
         drive(speed, speed);
 
-        while (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {
+        while (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy()) {
             if (exit) {
-                stop();
                 return;
             }
         }
         stop();
+        encoderReset();
         return;
     }
 
 
     public void strafeToPosition(double inches, double speed) {
         int move = (int)(Math.round(inches * cpi * strafeBias));
+
+        encoderReset();
 
         frontLeft.setTargetPosition(frontLeft.getCurrentPosition() + move);
         backLeft.setTargetPosition(backLeft.getCurrentPosition() - move);
@@ -157,8 +158,9 @@ public class Drive extends SubSystem {
 
         drive(speed, speed);
 
-        while (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy()) {}
+        while (frontLeft.isBusy() || frontRight.isBusy() || backLeft.isBusy() || backRight.isBusy()) {}
         stop();
+        encoderReset();
         return;
     }
 
@@ -166,16 +168,25 @@ public class Drive extends SubSystem {
         drive(0, 0);
     }
 
-
+/*
     int base = 0;
     public void resetEncoder() {
         base = backRight.getCurrentPosition();
     }
+*/
 
+    public void encoderReset() {
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+/*
     public int getEncoder() {
         return backRight.getCurrentPosition() - base;
     }
-
+*/
 
 
 

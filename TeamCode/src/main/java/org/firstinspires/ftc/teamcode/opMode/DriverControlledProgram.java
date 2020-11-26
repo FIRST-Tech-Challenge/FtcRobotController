@@ -34,7 +34,7 @@ public abstract class DriverControlledProgram extends OpMode {
     /**
      * Called when the the program is started.
      */
-    protected void onStart() {}
+    protected void onStart() {telemetry.setAutoClear(true);}
 
     /**
      * Called when the loop finishes.

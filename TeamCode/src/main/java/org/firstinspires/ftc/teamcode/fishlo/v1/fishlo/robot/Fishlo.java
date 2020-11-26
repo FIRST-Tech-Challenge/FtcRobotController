@@ -10,8 +10,8 @@ public class Fishlo extends Robot {
         super(opMode);
 
         putSubSystem("Drive", new Drive(this));
+        putSubSystem("Gyro", new Gyro(this));
         putSubSystem("Claw", new Claw(this));
-        putSubSystem("Lift", new Lift(this));
         putSubSystem("Vision", new Vision(this));
     }
 
