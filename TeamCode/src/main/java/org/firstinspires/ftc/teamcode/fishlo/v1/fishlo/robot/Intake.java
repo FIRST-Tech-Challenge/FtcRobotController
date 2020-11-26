@@ -30,6 +30,6 @@ public class Intake extends SubSystem {
 
     @Override
     public void stop() {
-
+        intake.setPower(0);
     }
 }
