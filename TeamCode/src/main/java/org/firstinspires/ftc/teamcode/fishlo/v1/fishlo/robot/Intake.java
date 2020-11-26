@@ -20,7 +20,12 @@ public class Intake extends SubSystem {
 
     @Override
     public void handle() {
-
+        if (robot.gamepad2.a) {
+            intake.setPower(1);
+        }
+        if (robot.gamepad2.y) {
+            intake.setPower(0);
+        }
     }
 
     @Override
