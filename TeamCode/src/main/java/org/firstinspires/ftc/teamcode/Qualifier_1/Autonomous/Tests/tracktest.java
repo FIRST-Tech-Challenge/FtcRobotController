@@ -51,7 +51,7 @@ final boolean debug = true;
         telemetry.addData("moved6s", "done");
         telemetry.update();
         sleep(1000);*/
-        robot.moveAngle(0,72,0.2);
+        robot.moveAngle(0,72,0.5);
         telemetry.addData("moved", "done");
         telemetry.update();
         sleep(1000);

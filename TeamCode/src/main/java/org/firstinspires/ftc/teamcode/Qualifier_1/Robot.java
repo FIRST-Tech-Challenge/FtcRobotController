@@ -318,6 +318,32 @@ public class Robot {
     public void shootHighGoal(int rings) {
         shooter.shootHighGoal(rings);
     }
+    public void shootLeftPowerShot(int rings) {
+        shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter.shooterMotor.setPower(1.0);
+        op.sleep(1000);
+        for(int i=0;i<rings;i++){
+            moveServo(false);
+            if(i!=rings-1) {
+                moveAngle(-8, 0, 0.5);
+            }
+            moveServo(true);
+        }
+        shooter.shooterMotor.setPower(0);
+    }
+    public void shootRightPowerShot(int rings) {
+        shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter.shooterMotor.setPower(1.0);
+        op.sleep(1000);
+        for(int i=0;i<rings;i++){
+            moveServo(false);
+            if(i!=rings-1) {
+                moveAngle(8, 0, 0.5);
+            }
+            moveServo(true);
+        }
+        shooter.shooterMotor.setPower(0);
+    }
 
     public void shootMidGoal(int distance) {
         shooter.shootMidGoal(distance);
