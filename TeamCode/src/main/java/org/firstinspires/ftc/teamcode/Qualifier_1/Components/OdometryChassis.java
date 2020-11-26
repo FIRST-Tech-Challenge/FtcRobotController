@@ -322,4 +322,9 @@ public class OdometryChassis extends BasicChassis {
         stopAllMotors();
     }
 
-}
+    @Override
+    public void moveMultidirectional(double power, double angle, float rightStick) {
+
+    }
+
+    }
