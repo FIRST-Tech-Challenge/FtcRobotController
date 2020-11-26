@@ -68,7 +68,7 @@ public class Robot {
         else if(chassisType==BasicChassis.ChassisType.ODOMETRY){
             drivetrain = new OdometryChassis(op);
         }
-        if(!isCorgi){
+        if(isCorgi){ //TODO: aamod 11/24
             vuforiaWebcam = new VuforiaWebcam(op);
             tensorFlow = new TensorFlow(op);
         }
@@ -186,14 +186,14 @@ public class Robot {
     /**Vuforia**/
 
     public double getVuforiaAngle() {
-        if(!isCorgi) {
+        if(isCorgi) { //TODO: aamod 11/24
             return vuforiaWebcam.getVuforiaAngle();
         }
         return 0;
     }
 
     public void getVuforiaPosition() {
-        if(!isCorgi) {
+        if(isCorgi) { //TODO: aamod 11/24
             vuforiaX = vuforiaWebcam.getVuforiaX();
             vuforiaY = vuforiaWebcam.getVuforiaY();
             vuforiaAngle = vuforiaWebcam.getVuforiaAngle();
@@ -201,8 +201,8 @@ public class Robot {
             robotAngle = (robotAngle > 180 ? robotAngle - 360 : robotAngle);
         }
     }
-    public void stopVuforiaTF() {
-        if(!isCorgi) {
+    public void stopVuforiaTF() { //TODO: aamod 11/24
+        if(isCorgi) {
             vuforiaWebcam.interrupt();
         }
     }
@@ -258,6 +258,10 @@ public class Robot {
         if(isCorgi) {
             ringDepositor.goToPosition(p);
         }
+    }
+
+    public void ringDepositorSmartDeposit(){
+        ringDepositor.smartDeposit();
     }
 
     public void printCurrentRingDepositorLocation() {

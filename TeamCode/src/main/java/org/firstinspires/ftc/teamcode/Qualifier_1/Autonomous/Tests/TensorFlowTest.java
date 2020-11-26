@@ -29,9 +29,8 @@ public class TensorFlowTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER);
+        Robot robot=new Robot(this, BasicChassis.ChassisType.IMU);
         ElapsedTime runtime = new ElapsedTime();
-        Chassis chassis = new Chassis(this);
 
         int rings = -1;
         int i = 0;
@@ -53,33 +52,45 @@ public class TensorFlowTest extends LinearOpMode {
         rings = robot.tensorFlow.getNumberOfRings();
         robot.stopTensorFlow();
 
+        robot.moveBackward(58, 0.8);
+
         if (rings == 4) {
-            chassis.moveForward(6, 0.5);
+            robot.moveBackward(6, 0.5);
             sleep(200);
-            chassis.turnInPlace(14, 0.6);
+            robot.turnInPlace(-6, 0.6);
             sleep(200);
-            chassis.moveForward(109, 0.8);
+            robot.moveBackward(70, 0.8);
             sleep(200);
-            chassis.turnInPlace(-14, 0.6);
-            chassis.moveForward(-44, 0.8);
+            robot.moveBackward(28, 0.5);
+            sleep(200);
+            robot.moveWobbleGoalServo(true);
+            sleep(500);
+            robot.turnInPlace(8, 0.6);
+            robot.moveForward(37, 0.8);
             telemetry.addData("NumberOfRings: ", 4);
             telemetry.update();
             sleep(2000);
         } else if (rings == 1) {
-            chassis.turnInPlace(-2,0.8);
+            robot.moveBackward(6, 0.5);
             sleep(200);
-            chassis.moveForward(80,0.8);
+            robot.turnInPlace(4,0.8);
             sleep(200);
-            chassis.moveForward(-8,0.8);
+            robot.moveBackward(80,0.8);
+            sleep(200);
+            robot.moveWobbleGoalServo(true);
+            sleep(1000);
+            robot.moveForward(8,0.8);
             telemetry.addData("NumberOfRings: ", 1);
             telemetry.update();
             sleep(2000);
         } else {
-            chassis.moveForward(6, 0.5);
+            robot.moveBackward(6, 0.5);
             sleep(200);
-            chassis.turnInPlace(20, 0.6);
+            robot.turnInPlace(-20, 0.6);
             sleep(200);
-            chassis.moveForward(65, 0.8);
+            robot.moveForward(6, 0.8);
+            robot.moveWobbleGoalServo(true);
+            sleep(1000);
             telemetry.addData("NumberOfRings: ", 0);
             telemetry.update();
             sleep(2000);

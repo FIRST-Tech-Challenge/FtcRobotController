@@ -29,7 +29,7 @@ public class RingDepositor {
     Servo ringClampServo = null;
     private final int ticksForREST = 0;
     private final int ticksForFLOOR = 908 ;
-    private final double ringDepositorSpeed = 0.2;
+    private final double ringDepositorSpeed = 0.25;
 
     public RingDepositor(LinearOpMode opMode) {
         //setting the opmode & hardwareMap
@@ -74,6 +74,20 @@ public class RingDepositor {
         //brake
         ringDepositorMotor.setPower(0);
         ringDepositorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void smartDeposit(){
+        ringDepositorMotor.setTargetPosition(ticksForFLOOR);
+        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ringDepositorMotor.setPower(ringDepositorSpeed);
+        op.sleep(1500);
+        ringClampServo.setPosition(1.0);
+        op.sleep(500);
+        ringDepositorMotor.setTargetPosition(ticksForREST);
+        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ringDepositorMotor.setPower(ringDepositorSpeed);
+        op.sleep(1500);
+        ringClampServo.setPosition(0.0);
     }
 
     public void printCurrentLocation(){

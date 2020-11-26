@@ -74,10 +74,9 @@ public class Teleop extends LinearOpMode {
             float left_stick_x = -gamepad1.left_stick_x;
             float right_stick_x = -gamepad1.right_stick_x;
             boolean move_wobble_goal_arm = gamepad1.right_bumper;
-            boolean move_ring_depositor = gamepad1.left_bumper;
+            boolean smart_depo = gamepad1.left_bumper;
 //            float start_intake = gamepad1.right_trigger;
 //            float stop_intake = gamepad1.left_trigger;
-            boolean ring_clamp = gamepad1.y;
             boolean wobble_goal_servo = gamepad1.x;
             boolean a_button = gamepad1.a;
             boolean b_button = gamepad1.b;
@@ -187,43 +186,8 @@ public class Teleop extends LinearOpMode {
             }
 
             // ring depositor
-            if (move_ring_depositor){
-                if (currentRingDepositorPosition == RingDepositor.Position.REST){
-                    robot.ringDepositorGoToPosition(RingDepositor.Position.FLOOR);
-                    currentRingDepositorPosition = RingDepositor.Position.FLOOR;
-                } else if (currentRingDepositorPosition == RingDepositor.Position.FLOOR) {
-                    robot.ringDepositorGoToPosition(RingDepositor.Position.REST);
-                    currentRingDepositorPosition = RingDepositor.Position.REST;
-                } else {
-                    telemetry.addData("Ring Depositor: ", "u have made a STUPID MISTAKE");
-                    telemetry.update();
-                    sleep(200);
-                }
-            }
-
-            // ring clamp
-            if (ring_clamp) {
-                move_ring_clamp = true;
-
-                if (ring_clamp_is_up) {
-                    ring_clamp_is_up = false;
-                } else if (!ring_clamp_is_up) {
-                    ring_clamp_is_up = true;
-                }
-            } else {
-                move_ring_clamp = false;
-            }
-
-            if (move_ring_clamp) {
-                if (ring_clamp_is_up) {
-                    telemetry.addData("Ring Clamp", " RING CLAMP UP y_button");
-                    telemetry.update();
-                    robot.moveRingClamp(true);
-                } else if (!ring_clamp_is_up) {
-                    telemetry.addData("Ring Clamp", " RING CLAMP DOWN y_button");
-                    telemetry.update();
-                    robot.moveRingClamp(false);
-                }
+            if (smart_depo){
+                robot.ringDepositorSmartDeposit();
             }
 
             //intake
