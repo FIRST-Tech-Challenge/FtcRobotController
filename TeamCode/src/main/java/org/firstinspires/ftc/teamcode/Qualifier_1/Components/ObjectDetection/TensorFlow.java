@@ -77,7 +77,7 @@ public class TensorFlow extends Thread{
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
                 int recognitions = updatedRecognitions.size();
-                op.telemetry.addData("# aa Object Detected", recognitions);
+                op.telemetry.addData("# AA Object Detected", recognitions);
 
                 // step through the list of recognitions and display boundary info.
                 numberOfRings = 0;
@@ -85,10 +85,10 @@ public class TensorFlow extends Thread{
                 for (Recognition recognition : updatedRecognitions) {
                     op.telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
                     op.telemetry.addData("Confidence", "%3.3f", recognition.getConfidence());
-                    op.telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                            recognition.getLeft(), recognition.getTop());
-                    op.telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                            recognition.getRight(), recognition.getBottom());
+//                    op.telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+//                            recognition.getLeft(), recognition.getTop());
+//                    op.telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+//                            recognition.getRight(), recognition.getBottom());
                     if (recognition.getLabel() == "Quad" ) {
                         numberOfRings = 4;
                     }
