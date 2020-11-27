@@ -1,5 +1,14 @@
-//For this autonomous program, the robot should be ALIGNED TO THE LAUNCH LINE CLOSER TO THE SIDE OF THE FIELD
-
+/**
+ * This is the autonomous program for Position 3.
+ *
+ * The robot shoots 3 rings into the middle goal, delivers the wobble goal to the Position 3 square,
+ * and parks on the Launch Line.
+ *
+ * @author Sai
+ * @version 1.0
+ * @since 11/26/2020
+ * @status finished
+ */
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -16,50 +25,27 @@ public class R_mid3_P3w_park extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        //Chassis Motors
-        DcMotor motorLeftFront;
-        DcMotor motorRightFront;
-        DcMotor motorLeftBack;
-        DcMotor motorRightBack;
-
-        // Chassis motors
-        motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
-        motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
-        motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
-        motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
-
-        // Chassis Motors
-        motorLeftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorLeftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorRightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorRightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
-        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
-        motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-
-        // reset encoder count kept by left motor.
-        motorLeftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLeftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Robot robot=new Robot(this, BasicChassis.ChassisType.IMU);
         ElapsedTime runtime = new ElapsedTime();
 
         waitForStart();
         robot.moveWobbleGoalServo(false);
+        //Move to Shooting Position
         robot.moveAngle(-13, -57, 0.5);
         telemetry.addData("Moving Backwards", 60);
         telemetry.update();
+        //Shoot 2 rings into the Middle Goal
         robot.shootHighGoal(3);
         telemetry.addData("Shooting Rings", 3);
         telemetry.update();
+        //Adjust the Wobble Goal's Position
         robot.moveAngle(3, 0, 0.5);
+        //Go to Position 3
         robot.moveAngle(-30.5, -34, 0.5);
         telemetry.addData("MoveAngle", 3);
         telemetry.update();
         robot.moveBackward(7, 0.5);
+        //Release the Wobble Goal and Park on the Launch Line
         robot.moveWobbleGoalServo(true);
         sleep(1000);
         robot.moveAngle(8, 40, 0.5);
