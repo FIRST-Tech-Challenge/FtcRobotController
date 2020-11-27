@@ -32,7 +32,7 @@ public class WobbleGoal {
     private final int ticksForRAISE = 550;
     private final int ticksForRELEASE = 815;
     private final int ticksForAutonomousDrop = 1000;
-    private final int ticksForSTARTOFTELEEOP = 500;
+    private final int ticksForSTARTOFTELEEOP = 200;
     private final double wobbleGoalSpeed = 0.3;
 
     public WobbleGoal(LinearOpMode opMode) {
@@ -80,7 +80,7 @@ public class WobbleGoal {
     }
 
     public void teleopStartPosition(){
-        wobbleGoalMotor.setTargetPosition(500);
+        wobbleGoalMotor.setTargetPosition(ticksForSTARTOFTELEEOP);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleGoalMotor.setPower(wobbleGoalSpeed);
     }
