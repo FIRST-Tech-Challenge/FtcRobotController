@@ -9,6 +9,8 @@ public class FishloAutonomousProgram extends AutonomousProgram {
     protected Drive drive;
     protected Gyro gyro;
     protected Vision vision;
+    protected Intake intake;
+    protected Shooter shooter;
 
     @Override
     protected Robot buildRobot() {
@@ -18,6 +20,8 @@ public class FishloAutonomousProgram extends AutonomousProgram {
         claw = (Claw) fishlo.getSubSystem("Claw");
         gyro = (Gyro) fishlo.getSubSystem("Gyro");
         vision = (Vision) fishlo.getSubSystem("Vision");
+        intake = (Intake) fishlo.getSubSystem("Intake");
+        shooter = (Shooter) fishlo.getSubSystem("Shooter");
 
         return fishlo;
     }
