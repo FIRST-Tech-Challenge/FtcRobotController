@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 public class WobbleGoal {
 
     public enum Position {
-        REST, GRAB, RAISE, RELEASE, STARTOFTELEEOP
+        REST, GRAB, RAISE, RELEASE, DROP, STARTOFTELEEOP
     }
 
     //declaring the op mode
@@ -31,6 +31,7 @@ public class WobbleGoal {
     private final int ticksForGRAB = 940;
     private final int ticksForRAISE = 550;
     private final int ticksForRELEASE = 815;
+    private final int ticksForAutonomousDrop = 1000;
     private final int ticksForSTARTOFTELEEOP = 500;
     private final double wobbleGoalSpeed = 0.3;
 
@@ -61,6 +62,8 @@ public class WobbleGoal {
             i = ticksForRAISE;
         } else if (p == Position.RELEASE) {
             i = ticksForRELEASE;
+        } else if (p == Position.DROP) {
+            i = ticksForAutonomousDrop;
         } else {
             op.telemetry.addData("IQ Lvl", "0.00");
             op.telemetry.update();
