@@ -76,12 +76,15 @@ public class TensorFlow extends Thread{
             // the last time that call was made.
             List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
             if (updatedRecognitions != null) {
-                op.telemetry.addData("# aa Object Detected", updatedRecognitions.size());
+                int recognitions = updatedRecognitions.size();
+                op.telemetry.addData("# aa Object Detected", recognitions);
 
                 // step through the list of recognitions and display boundary info.
+                numberOfRings = 0;
                 int i = 0;
                 for (Recognition recognition : updatedRecognitions) {
                     op.telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                    op.telemetry.addData("Confidence", "%3.3f", recognition.getConfidence());
                     op.telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
                             recognition.getLeft(), recognition.getTop());
                     op.telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
@@ -96,10 +99,11 @@ public class TensorFlow extends Thread{
                         numberOfRings = 0;
                     }
                 }
-                op.telemetry.update();
             } else {
+                numberOfRings = -1;
                 op.telemetry.addData("InElse", 0);
             }
+            //op.telemetry.update();
         }
     }
 
