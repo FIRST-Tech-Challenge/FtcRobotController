@@ -5,15 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
-import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Chassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "MoveWobbleGoalPark")
-public class MoveWobbleGoalPark extends LinearOpMode {
-
+@Autonomous(name = "Move2WobbleGoalsShootHighPark")
+public class Move2WobbleGoalsShootHighPark extends LinearOpMode {
     @Override
     public void runOpMode() {
 
@@ -109,19 +107,6 @@ public class MoveWobbleGoalPark extends LinearOpMode {
             sleep(200);
             robot.moveForward(27, 0.8);
             sleep(2000);
-
-//            robot.moveBackward(6, 0.5);
-//            sleep(200);
-//            robot.turnInPlace(-6, 0.6);
-//            sleep(200);
-//            robot.moveBackward(70, 0.8);
-//            sleep(200);
-//            robot.moveBackward(28, 0.5);
-//            sleep(200);
-//            robot.moveWobbleGoalServo(true);
-//            sleep(500);
-//            robot.turnInPlace(8, 0.6);
-//            robot.moveForward(37, 0.8);
             telemetry.addData("NumberOfRings: ", 4);
             telemetry.update();
             sleep(2000);
@@ -131,16 +116,6 @@ public class MoveWobbleGoalPark extends LinearOpMode {
             robot.moveBackward(25, 0.8);
             sleep(200);
             robot.moveForward(8, 0.8);
-
-//            robot.moveBackward(6, 0.5);
-//            sleep(200);
-//            robot.turnInPlace(4,0.8);
-//            sleep(200);
-//            robot.moveBackward(80,0.8);
-//            sleep(200);
-//            robot.moveWobbleGoalServo(true);
-//            sleep(1000);
-//            robot.moveForward(8,0.8);
             telemetry.addData("NumberOfRings: ", 1);
             telemetry.update();
             sleep(2000);
@@ -168,14 +143,6 @@ public class MoveWobbleGoalPark extends LinearOpMode {
             robot.turnInPlace(70, 0.5);
             sleep(100);
             robot.moveBackward(30, 0.8);
-
-//            robot.moveBackward(6, 0.5);
-//            sleep(200);
-//            robot.turnInPlace(-20, 0.6);
-//            sleep(200);
-//            robot.moveForward(6, 0.8);
-//            robot.moveWobbleGoalServo(true);
-//            sleep(1000);
             telemetry.addData("NumberOfRings: ", 0);
             telemetry.update();
             sleep(2000);
@@ -183,4 +150,3 @@ public class MoveWobbleGoalPark extends LinearOpMode {
         }
     }
 }
-

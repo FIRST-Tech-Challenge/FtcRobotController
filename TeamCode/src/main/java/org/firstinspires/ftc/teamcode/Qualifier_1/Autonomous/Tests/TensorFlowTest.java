@@ -161,29 +161,31 @@ public class TensorFlowTest extends LinearOpMode {
             telemetry.update();
             sleep(2000);
         } else {
-            robot.turnInPlace(-60, 0.6);
+            robot.turnInPlace(-60, 0.5);
             sleep(200);
-            robot.moveBackward(12, 0.75);
+            robot.moveBackward(12, 0.6);
             sleep(100);
             robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
-            robot.moveForward(44, 0.8);
+            sleep(100);
+            robot.moveForward(42, 0.8);
             sleep(100);
             robot.moveLeft(15, 0.8);
-            sleep(100);
+            sleep(500);
             robot.wobbleGoalGoToPosition(WobbleGoal.Position.RAISE);
-            sleep(750);
-            robot.moveBackward(29, 0.6);
+            sleep(500);
+            robot.moveBackward(33, 0.6);
             sleep(100);
-            robot.turnInPlace(80, 0.7);
+            robot.turnInPlace(75, 0.7);
             sleep(200);
             robot.wobbleGoalGoToPosition(WobbleGoal.Position.DROP);
-            sleep(200);
+            sleep(450);
             robot.moveRight(8, 0.7);
             sleep(100);
-            robot.turnInPlace(40, 0.5);
+            robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
+            sleep(200);
+            robot.turnInPlace(23, 0.5);
             sleep(100);
             robot.moveBackward(30, 0.8);
-
 //            robot.moveBackward(6, 0.5);
 //            sleep(200);
 //            robot.turnInPlace(-20, 0.6);
@@ -194,6 +196,7 @@ public class TensorFlowTest extends LinearOpMode {
             telemetry.addData("NumberOfRings: ", 0);
             telemetry.update();
             sleep(2000);
+            stop();
         }
     }
 }
