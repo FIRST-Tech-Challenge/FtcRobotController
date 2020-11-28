@@ -38,7 +38,7 @@ public class Launcher {
     public Launcher(HardwareMap hardwareMap) {
         //Parameter Initialization
         launcherRingPlungerServo = hardwareMap.servo.get("launch_servo");
-        launcherFlyWheelMotor = hardwareMap.dcMotor.get("launch_motor");
+        launcherFlyWheelMotor = hardwareMap.dcMotor.get("launch_backenc");
         launcherFlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //TODO : AMJAD : Test this.. May be Float is enough
         launcherFlyWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

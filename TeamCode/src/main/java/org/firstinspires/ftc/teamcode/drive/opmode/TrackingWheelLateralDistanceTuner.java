@@ -64,7 +64,7 @@ import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 @Config
 //@TeleOp(group = "drive")
 @TeleOp(name = "Calib:RR-TrackingWheelLateralDistanceTuner", group = "Calibration")
-public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
+public class  TrackingWheelLateralDistanceTuner extends LinearOpMode {
     public static int NUM_TURNS = 10;
 
     @Override
@@ -109,6 +109,7 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
             lastHeading = heading;
 
             telemetry.clearAll();
+            telemetry.addLine("Time : 7:30 11/27/2020");
             telemetry.addLine("Total Heading (deg): " + Math.toDegrees(headingAccumulator));
             telemetry.addLine("Raw Heading (deg): " + Math.toDegrees(heading));
             telemetry.addLine();
@@ -120,6 +121,8 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
         }
 
         telemetry.clearAll();
+        telemetry.addLine("Time : 7:30 11/27/2020");
+        telemetry.addLine("StandardTrackingWheelLocalizer.LATERAL_DISTANCE: " + StandardTrackingWheelLocalizer.LATERAL_DISTANCE);
         telemetry.addLine("Localizer's total heading: " + Math.toDegrees(headingAccumulator) + "°");
         telemetry.addLine("Effective LATERAL_DISTANCE: " +
                 (headingAccumulator / (NUM_TURNS * Math.PI * 2)) * StandardTrackingWheelLocalizer.LATERAL_DISTANCE);

@@ -15,7 +15,7 @@ public class Intake {
     public INTAKE_MOTOR_STATE intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED;
 
     public Intake(HardwareMap hardwareMap) {
-        intakeMotor = hardwareMap.dcMotor.get("intake_motor");
+        intakeMotor = hardwareMap.dcMotor.get("intake_rightenc");
     }
 
     public void initIntake(){
