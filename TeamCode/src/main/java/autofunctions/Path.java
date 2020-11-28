@@ -54,6 +54,8 @@ public class Path {
     public int rfsIndex = 0;
     public int stopIndex = 0;
 
+    public double dScale = 2;
+
 
     public double[] targetPos = {0,0};
 
@@ -83,6 +85,7 @@ public class Path {
     final public double maxIX = 100*0.1;
     final public double maxIY = 100*0.1;
     final public double maxIT = 200*0.1;
+
 
 
 
@@ -366,7 +369,7 @@ public class Path {
             hint = 0;
             xint = 0;
             yint = 0;
-            scaleDs(1, 1, 2);
+            scaleDs(1, 1, dScale);
             scaleKs(1, 1, 1.2);
         }else{
             scaleDs(0.1, 0.1, 1);

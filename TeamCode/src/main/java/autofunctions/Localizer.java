@@ -43,28 +43,54 @@ public class Localizer {
     public Vector sub;
 
 
-    public void update(double r1, double l1, double r2, double l2, double heading){
+//    public void update(double r1, double l1, double r2, double l2, double heading){
+//        theta = heading;
+//
+//        r1fn += r1/numGets;
+//        l1fn += l1/numGets;
+//        r2fn += r2/numGets;
+//        l2fn += l2/numGets;
+//
+//        counter++;
+//        if(counter == numGets){
+//            counter = 0;
+//            this.r1 = r1fn;
+//            this.r2 = r2fn;
+//            this.l1 = l1fn;
+//            this.l2 = l2fn;
+//            r1fn = 0;
+//            l1fn = 0;
+//            r2fn = 0;
+//            l2fn = 0;
+//
+//        }
+//
+//
+//    }
+    public void update(double l2, double heading){
         theta = heading;
 
-        r1fn += r1/numGets;
-        l1fn += l1/numGets;
-        r2fn += r2/numGets;
-        l2fn += l2/numGets;
+        this.l2 = l2;
 
-        counter++;
-        if(counter == numGets){
-            counter = 0;
-            this.r1 = r1fn;
-            this.r2 = r2fn;
-            this.l1 = l1fn;
-            this.l2 = l2fn;
-            r1fn = 0;
-            l1fn = 0;
-            r2fn = 0;
-            l2fn = 0;
-
-        }
-
+//        r1fn += r1/numGets;
+//        l1fn += l1/numGets;
+//        r2fn += r2/numGets;
+//        l2fn += l2/numGets;
+//
+//        counter++;
+//        if(counter == numGets){
+//            counter = 0;
+//            this.r1 = r1fn;
+//            this.r2 = r2fn;
+//            this.l1 = l1fn;
+//            this.l2 = l2fn;
+//            r1fn = 0;
+//            l1fn = 0;
+//            r2fn = 0;
+//            l2fn = 0;
+//
+//        }
+//
 
     }
 
@@ -88,18 +114,18 @@ public class Localizer {
         return x;
 
     }
-    public double getY(){
-        double a = robotRadius;
-        double d = geometry.lawOfCosinesC(l1,a,centerTheta+n9);
-        double phi = geometry.lawOfSinesAngle(a,d,centerTheta+n9);
-        double y = d*Math.cos(Math.toRadians(theta)-phi);
-
-        double d1 = geometry.lawOfCosinesC(r1,a,centerTheta+n9);
-        double phi2 = geometry.lawOfSinesAngle(a,d1,centerTheta+n9);
-        double y2 = d*Math.cos(Math.toRadians(theta)+phi2);
-
-        return -(y+y2)/2;
-    }
+//    public double getY(){
+//        double a = robotRadius;
+//        double d = geometry.lawOfCosinesC(l1,a,centerTheta+n9);
+//        double phi = geometry.lawOfSinesAngle(a,d,centerTheta+n9);
+//        double y = d*Math.cos(Math.toRadians(theta)-phi);
+//
+//        double d1 = geometry.lawOfCosinesC(r1,a,centerTheta+n9);
+//        double phi2 = geometry.lawOfSinesAngle(a,d1,centerTheta+n9);
+//        double y2 = d*Math.cos(Math.toRadians(theta)+phi2);
+//
+//        return -(y+y2)/2;
+//    }
 
     public void startCalibrating(double l2dis, double startAngle, double x, double y){
         lastL2 = l2dis;

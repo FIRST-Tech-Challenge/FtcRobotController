@@ -1,8 +1,13 @@
 package teleop;
 
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -14,6 +19,7 @@ import global.TerraBot;
 public class TestOp extends OpMode {
 
     TerraBot bot = new TerraBot();
+
 
 
 
@@ -29,6 +35,11 @@ public class TestOp extends OpMode {
         telemetry.update();
 
 
+
+
+
+
+
     }
 
 
@@ -39,14 +50,18 @@ public class TestOp extends OpMode {
 
     @Override
     public void loop() {
-//
+
         if(gamepad1.y){
-            bot.calibrate.start();
+            bot.calibrateCol.start();
         }
-        if(gamepad1.x){
-            bot.heading = bot.localizer.getCalibratedTheta();
-            bot.lastAngle = bot.gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        }
+//
+//        if(gamepad1.y){
+//            bot.calibrate.start();
+//        }
+//        if(gamepad1.x){
+//            bot.heading = bot.localizer.getCalibratedTheta();
+//            bot.lastAngle = bot.gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+//        }
 
 //        telemetry.addData("l2", bot.localizer.l2);
 //        telemetry.addData("angle", Math.toDegrees(bot.localizer.angle));
@@ -63,21 +78,33 @@ public class TestOp extends OpMode {
 //        telemetry.addData("the", Math.toDegrees(bot.localizer.the));
 //        telemetry.addData("cal", bot.localizer.getCalibratedTheta());
 
-        telemetry.addData("heading", bot.getHeading());
-//        telemetry.addData("l2", bot.getDisL2());
-
-
-
+//        telemetry.addData("heading", bot.getHeading());
+////        telemetry.addData("l2", bot.getDisL2());
+//
+//
+//
         double forward = -gamepad1.right_stick_y;
         double strafe = gamepad1.right_stick_x;
         double turn = -gamepad1.left_stick_x;
+//
+//        if(!bot.calibrate.executing) {
+//            bot.moveTeleOp(forward, strafe, turn);
+//        }
+//
+//        bot.update();
 
-        if(!bot.calibrate.executing) {
+//        telemetry.addData("cor", bot.isOnWhiteR());
+//        telemetry.addData("col", bot.isOnWhiteL());
+//        telemetry.addData("corV", bot.getColorR()[2]);
+//        telemetry.addData("colV", bot.getColorL()[2]);
+//        telemetry.update();
+
+        if(!bot.calibrateCol.executing) {
             bot.moveTeleOp(forward, strafe, turn);
         }
 
         bot.update();
-        telemetry.update();
+
 
 
     }

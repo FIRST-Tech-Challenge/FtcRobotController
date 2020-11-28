@@ -110,8 +110,8 @@ public class TerraOp extends OpMode {
                 }
             }
             if(gamepad2.x){
-                bot.defineCalibrate();
-                bot.calibrate.start();
+                bot.defineCalibrateCol();
+                bot.calibrateCol.start();
             }
             if(gamepad2.y){
                 bot.defineGoback();
@@ -157,7 +157,7 @@ public class TerraOp extends OpMode {
         double strafe = gamepad1.right_stick_x;
         double turn = -gamepad1.left_stick_x;
 
-        if(!bot.powerShot.executing && !bot.goback.executing && !bot.calibrate.executing) {
+        if(!bot.powerShot.executing && !bot.goback.executing && !bot.calibrateCol.executing) {
             bot.moveTeleOp(forward, strafe, turn);
         }
 

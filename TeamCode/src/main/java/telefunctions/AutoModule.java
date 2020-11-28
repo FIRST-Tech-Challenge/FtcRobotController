@@ -3,6 +3,7 @@ package telefunctions;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
 
@@ -212,6 +213,55 @@ public class AutoModule {
                bot.odometrySave(x,y);
                 timer.reset();
                 return true;
+            }
+        });
+    }
+
+    public void addCalibrateCol(final TerraBot bot){
+        lastTime = 0;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.move(0.15, 0, 0);
+                timer.reset();
+                return bot.whiteValR() > 0.6|| bot.whiteValL() > 0.6;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+
+                double lval = 0.6-bot.whiteValL();
+                double rval = 0.6-bot.whiteValR();
+                double lpow = 0;
+                double rpow = 0;
+                if(Math.abs(lval-rval) < 0.4){
+                    lpow = lval*lval*lval*1.5;
+                    rpow = rval*rval*rval*1.5;
+                    if(bot.odometry.getYVel() > 30 || bot.odometry.getTVel() > 1){
+                        timer.reset();
+                    }
+                }else{
+                    if(lval > 0){
+                        lpow = 0.25;
+                    }else{
+                        lpow = -0.35;
+                    }
+                    if(rval > 0){
+                        rpow = 0.25;
+                    }else{
+                        rpow = -0.35;
+                    }
+
+                    timer.reset();
+                }
+
+
+
+
+                bot.moveTank(lpow, rpow);
+
+                return in > 0.5;
             }
         });
     }

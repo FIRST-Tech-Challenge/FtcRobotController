@@ -1,5 +1,7 @@
 package global;
 
+import android.graphics.Color;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
@@ -10,7 +12,10 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorREV2mDistance;
@@ -55,10 +60,13 @@ public class TerraBot {
     public Servo sgl;
 
     public BNO055IMU gyro;
-    public DistanceSensor dsr1;
+//    public DistanceSensor dsr1;
     public ModernRoboticsI2cRangeSensor dsl2;
-    public DistanceSensor dsr2;
-    public DistanceSensor dsl1;
+//    public DistanceSensor dsr2;
+//    public DistanceSensor dsl1;
+
+    public NormalizedColorSensor col;
+    public NormalizedColorSensor cor;
 
     public boolean intaking = false;
     public boolean outtaking = false;
@@ -108,6 +116,7 @@ public class TerraBot {
     public AutoModule wobbleGoal2 = new AutoModule();
     public AutoModule goback = new AutoModule();
     public AutoModule calibrate = new AutoModule();
+    public AutoModule calibrateCol = new AutoModule();
 
     public Limits limits = new Limits();
 
@@ -161,9 +170,14 @@ public class TerraBot {
         gyro = hwMap.get(BNO055IMU.class, "gyro");
 
         dsl2 = hwMap.get(ModernRoboticsI2cRangeSensor.class, "dsl2");
-        dsr1 = hwMap.get(DistanceSensor.class, "dsr1");
-        dsl1 = hwMap.get(DistanceSensor.class, "dsl1");
-        dsr2 = hwMap.get(DistanceSensor.class, "dsr2");
+//        dsr1 = hwMap.get(DistanceSensor.class, "dsr1");
+//        dsl1 = hwMap.get(DistanceSensor.class, "dsl1");
+//        dsr2 = hwMap.get(DistanceSensor.class, "dsr2");
+
+        col = hwMap.get(NormalizedColorSensor.class, "col");
+        cor = hwMap.get(NormalizedColorSensor.class, "cor");
+
+
 
         expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
 
@@ -247,6 +261,7 @@ public class TerraBot {
         defineWobbleGoal2();
         defineGoback();
         defineCalibrate();
+        defineCalibrateCol();
 
 
         limits.addLimit(arm, 0, maxArmPos);
@@ -256,6 +271,9 @@ public class TerraBot {
         odometry.init(getLeftOdo(), getMiddleOdo(), getRightOdo());
 
         resetGyro();
+
+        col.setGain(10);
+        cor.setGain(10);
 
 
 
@@ -267,6 +285,13 @@ public class TerraBot {
         l2.setPower(-f-s+t);
         r1.setPower(f+s+t);
         r2.setPower(-f+s-t);
+    }
+
+    public void moveTank(double l, double r){
+        l1.setPower(l);
+        l2.setPower(-l);
+        r1.setPower(r);
+        r2.setPower(-r);
     }
 
     public void moveTeleOp(double f, double s, double t){
@@ -474,7 +499,6 @@ public class TerraBot {
 
     public void defineGoback(){
         AutoModule back = new AutoModule();
-        //back.addOdometySave(startPos[0], startPos[1], this);
         back.addCustomOnce(new CodeSeg() {
             @Override
             public void run() {
@@ -483,7 +507,8 @@ public class TerraBot {
         });
         back.addDelay(0.5);
         Path p1 = new Path(0,0,0);
-        p1.addSetpoint(81,-172,0);
+        p1.dScale = 4;
+        p1.addSetpoint(81,-180,0);
         back.addPath(p1, this);
         back.addCustomOnce(new CodeSeg() {
             @Override
@@ -494,7 +519,7 @@ public class TerraBot {
             }
         });
         Path p2 = new Path(0,0,0);
-        p2.addSetpoint(81,-172,0);
+        p2.addSetpoint(81,-180,0);
         back.addPath(p2, this);
         back.addCustomOnce(new CodeSeg() {
             @Override
@@ -506,48 +531,59 @@ public class TerraBot {
     }
 
     public void defineCalibrate(){
+//        AutoModule cal = new AutoModule();
+//        cal.addCustomOnce(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                resetAll();
+//                localizer.startCalibrating(getDisL2(), getHeading(), odometry.getX(), odometry.getY());
+//            }
+//        });
+//        Path p1 = new Path(0,0,0);
+//        p1.addSetpoint(0,0,5);
+//        cal.addPath(p1, this);
+//        cal.addDelay(0.5);
+//        cal.addCustomOnce(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                localizer.stopCalibrating(getDisL2(), getHeading(), odometry.getX(), odometry.getY());
+//                updateLocalizer();
+//                heading = (localizer.getCalibratedTheta()*1.5 + localizer.getAngle()*0.5)/2;
+//                lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+//            }
+//        });
+//        cal.addDelay(0.5);
+//        Path p2 = new Path(0,0,0);
+//        p2.addSetpoint(0,0,0);
+//        cal.addPath(p2, this);
+//        cal.addDelay(0.5);
+//        cal.addCustomOnce(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                resetOdometry();
+//                updateLocalizer();
+//                updateStartPos();
+//            }
+//        });
+
+
+//
+//        calibrate = cal;
+    }
+
+    public void defineCalibrateCol(){
         AutoModule cal = new AutoModule();
+        cal.addCalibrateCol( this);
         cal.addCustomOnce(new CodeSeg() {
             @Override
             public void run() {
                 resetAll();
-                localizer.startCalibrating(getDisL2(), getHeading(), odometry.getX(), odometry.getY());
-            }
-        });
-        Path p1 = new Path(0,0,0);
-        p1.addSetpoint(0,0,5);
-        cal.addPath(p1, this);
-        cal.addDelay(0.5);
-        cal.addCustomOnce(new CodeSeg() {
-            @Override
-            public void run() {
-                localizer.stopCalibrating(getDisL2(), getHeading(), odometry.getX(), odometry.getY());
-                updateLocalizer();
-                heading = (localizer.getCalibratedTheta()*1.5 + localizer.getAngle()*0.5)/2;
-                lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-//                resetAll();
-//                updateLocalizer();
-//                localizer.updateHeading(localizer.getCalibratedTheta());
-//                updateStartPos();
-            }
-        });
-        cal.addDelay(0.5);
-        Path p2 = new Path(0,0,0);
-        p2.addSetpoint(0,0,0);
-        cal.addPath(p2, this);
-        cal.addDelay(0.5);
-        cal.addCustomOnce(new CodeSeg() {
-            @Override
-            public void run() {
-                resetOdometry();
-                updateLocalizer();
-                updateStartPos();
+                localizer.update(getDisL2(), 0);
+                updateStartPos(-170);
             }
         });
 
-
-
-        calibrate = cal;
+        calibrateCol = cal;
     }
 
 
@@ -566,15 +602,16 @@ public class TerraBot {
         wobbleGoal2.update();
         goback.update();
         calibrate.update();
+        calibrateCol.update();
         outlController.updateMotorValues(getOutlPos());
         outrController.updateMotorValues(getOutrPos());
     }
 
     public boolean autoModulesRunning(){
-        return (shooter.executing || powerShot.executing|| wobbleGoal.executing || wobbleGoal2.executing || goback.executing || calibrate.executing);
+        return (shooter.executing || powerShot.executing|| wobbleGoal.executing || wobbleGoal2.executing || goback.executing || calibrate.executing || calibrateCol.executing);
     }
 
-    public boolean autoModulesPaused(){return  wobbleGoal.pausing || shooter.pausing || wobbleGoal2.pausing || powerShot.pausing || goback.pausing || calibrate.pausing;}
+    public boolean autoModulesPaused(){return  wobbleGoal.pausing || shooter.pausing || wobbleGoal2.pausing || powerShot.pausing || goback.pausing || calibrate.pausing|| calibrateCol.pausing;}
 
 
     public double getArmPos(){
@@ -726,30 +763,36 @@ public class TerraBot {
 
     }
 
-    public double getDisR1(){
-        return dsr1.getDistance(DistanceUnit.CM);
-    }
+//    public double getDisR1(){
+//        return dsr1.getDistance(DistanceUnit.CM);
+//    }
     public double getDisL2(){
         return dsl2.getDistance(DistanceUnit.CM);
     }
-    public double getDisR2(){
-        return dsr2.getDistance(DistanceUnit.CM);
-    }
-    public double getDisL1(){  return dsl1.getDistance(DistanceUnit.CM); }
+//    public double getDisR2(){
+//        return dsr2.getDistance(DistanceUnit.CM);
+//    }
+//    public double getDisL1(){  return dsl1.getDistance(DistanceUnit.CM); }
 
-    public void updateLocalizer(){
-        double heading = getHeading();
-        for(int i = 0; i < localizer.numGets; i++) {
-            localizer.update(getDisR1(), getDisL1(), getDisR2(), getDisL2(), heading);
-        }
-    }
+//    public void updateLocalizer(){
+//        double heading = getHeading();
+//        for(int i = 0; i < localizer.numGets; i++) {
+//            localizer.update(getDisR1(), getDisL1(), getDisR2(), getDisL2(), heading);
+//        }
+//    }
 
-    public void updateStartPos(){
-//        heading = localizer.getAngle();
-//        lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        localizer.updateHeading(heading);
+//    public void updateStartPos(){
+////        heading = localizer.getAngle();
+////        lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+//        localizer.updateHeading(heading);
+//        startPos[0] = localizer.getX();
+//        startPos[1] = localizer.getY();
+//        odometrySave(startPos[0], startPos[1]);
+//    }
+
+    public void updateStartPos(double y){
         startPos[0] = localizer.getX();
-        startPos[1] = localizer.getY();
+        startPos[1] = y;
         odometrySave(startPos[0], startPos[1]);
     }
 
@@ -757,6 +800,29 @@ public class TerraBot {
         odometry.tx = odometry.cmToTicks(x);
         odometry.ty = odometry.cmToTicks(y);
     }
+
+    public float[] getColorL(){
+        final float[] hsvValues = new float[3];
+        NormalizedRGBA colors = col.getNormalizedColors();
+        Color.colorToHSV(colors.toColor(), hsvValues);
+        return hsvValues;
+    }
+
+    public float[] getColorR(){
+        final float[] hsvValues = new float[3];
+        NormalizedRGBA colors = cor.getNormalizedColors();
+        Color.colorToHSV(colors.toColor(), hsvValues);
+        return hsvValues;
+    }
+
+    public double whiteValL(){
+         return getColorL()[2];
+    }
+    public double whiteValR(){
+        return getColorR()[2];
+    }
+
+
 
 
 
