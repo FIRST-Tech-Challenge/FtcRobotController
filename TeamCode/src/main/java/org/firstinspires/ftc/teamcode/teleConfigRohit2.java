@@ -72,7 +72,7 @@ public class teleConfigRohit2 implements teleOpInterface {
     }
 
     public void rb(boolean pressed) {
-        limiter2 = (pressed) ? 0.2 : 1.0;
+        limiter1 = (pressed) ? 0.2 : 1.0;
     }
 
     public void rt(float pressure) {
