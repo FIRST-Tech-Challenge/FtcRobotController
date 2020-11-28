@@ -1,3 +1,15 @@
+/**
+ * This is the autonomous program for Position 2.
+ *
+ * The robot shoots 3 rings into the middle goal, delivers the wobble goal to the Position 2 square,
+ * and parks on the Launch Line.
+ *
+ * @author Sai
+ * @version 1.0
+ * @since 11/26/2020
+ * @status finished
+ */
+
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
