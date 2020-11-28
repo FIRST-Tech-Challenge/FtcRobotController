@@ -13,6 +13,8 @@
 package org.firstinspires.ftc.teamcode.Qualifier_1.Components.ObjectDetection;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -115,5 +117,71 @@ public class TensorFlow extends Thread{
         if (tfod != null) {
             tfod.shutdown();
         }
+    }
+
+    public int runTensorFlowWaitForStart(){
+        int rings = -1;
+        int i = 0;
+
+        int numOfTime4Rings = 0;
+        int numOfTime1Ring = 0;
+        int numOfTime0Rings = 0;
+
+        int arraySize = 11;
+        ArrayList<Integer> NumberOfRings = new ArrayList<Integer>(arraySize);
+
+        initTensorFlow();
+
+        for (int index = 0; index<arraySize; index++) {
+            runTensorFlow();
+            op.sleep(10);
+            rings = getNumberOfRings();
+            NumberOfRings.add(index, rings);
+            //telemetry.addData("11 Number of Rings: ", "i=%4d %d", i++, rings);
+            //telemetry.update();
+        }
+        //sleep(2000);
+
+//        telemetry.addData("Number of Rings: ", "%d %d %d %d %d %d", NumberOfRings.get(0),NumberOfRings.get(1),NumberOfRings.get(2),NumberOfRings.get(3),NumberOfRings.get(4), NumberOfRings.get(5));
+//        telemetry.addData("Number of Rings: ", "%d %d %d %d %d", NumberOfRings.get(6),NumberOfRings.get(7),NumberOfRings.get(8),NumberOfRings.get(9),NumberOfRings.get(10));
+//        telemetry.update();
+//        sleep(2000);
+
+        while(!op.opModeIsActive() && !op.isStopRequested()) {
+            numOfTime4Rings = 0;
+            numOfTime1Ring = 0;
+            numOfTime0Rings = 0;
+
+            runTensorFlow();
+            NumberOfRings.remove(0);
+            NumberOfRings.add(getNumberOfRings());
+            op.telemetry.addData("Number of Rings: ", "%d %d %d %d %d %d", NumberOfRings.get(0), NumberOfRings.get(1), NumberOfRings.get(2), NumberOfRings.get(3), NumberOfRings.get(4), NumberOfRings.get(5));
+            op.telemetry.addData("Number of Rings: ", "%d %d %d %d %d", NumberOfRings.get(6), NumberOfRings.get(7), NumberOfRings.get(8), NumberOfRings.get(9), NumberOfRings.get(10));
+
+            for (i = 0; i < arraySize; i++) {
+                if (NumberOfRings.get(i) == 4) {
+                    numOfTime4Rings++;
+                } else if (NumberOfRings.get(i) == 1) {
+                    numOfTime1Ring++;
+                } else {
+                    numOfTime0Rings++;
+                }
+            }
+
+            op.telemetry.addData("Rings Summary: ", "4-rings: %2d 1-ring: %2d 0-rings: %2d", numOfTime4Rings, numOfTime1Ring, numOfTime0Rings);
+
+            if (numOfTime4Rings > numOfTime1Ring && numOfTime4Rings >= numOfTime0Rings) {
+                rings = 4;
+            } else if (numOfTime1Ring > numOfTime4Rings && numOfTime1Ring >= numOfTime0Rings) {
+                rings = 1;
+            } else {
+                rings = 0;
+            }
+
+            op.telemetry.addData("FinalNumOfRings: ", rings);
+            op.telemetry.update();
+            op.sleep(100);
+        }
+        return rings;
     }
 }
