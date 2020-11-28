@@ -221,6 +221,11 @@ public class Robot {
         tensorFlow.stopTensorFlow();
     }
 
+    public int runTensorFlowWaitForStart(){
+        tensorFlow.runTensorFlowWaitForStart();
+        return tensorFlow.getNumberOfRings();
+    }
+
     /**Odometry**/
 
     /**
