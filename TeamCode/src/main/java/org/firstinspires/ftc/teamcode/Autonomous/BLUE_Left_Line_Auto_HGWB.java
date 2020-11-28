@@ -28,9 +28,10 @@ import java.util.List;
 
 public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
 
-    private static  final double        extraRingShootTimeAllowed    = 4; //  timer for shooting the single ring unique to this opMode
-    private static  final double       autoShootTimeAllowed = 7;//
-    private static final  double        autoRingCollectTimeAllowed = 1.5; // time allowed to let the single ring to get picked up
+    private static  final double       extraRingShootTimeAllowed    = 2; //  timer for shooting the single ring unique to this opMode
+    private static  final double       autoShootTimeAllowed = 4;//
+    private static final  double       autoRingCollectTimeAllowed = 1.5; // time allowed to let the single ring to get picked up
+    private static final double        shooterStartUpTimeAllowed = 1.25;
 
     @Override
     public void runOpMode() {
@@ -141,20 +142,21 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
         // Sleep statements help let things settle before moving on.
         wobble.GripperOpen();
         wobble.ArmExtend();
-        sleep(1000);
+        sleep(500);
         wobble.GripperClose();
         sleep(500);
         wobble.ArmCarryWobble();
-        sleep(500);
+        sleep(250);
 
         // After picking up the wobble goal the robot always goes to the same spot to shoot the 3 preloaded rings.
         // After delivering the rings, the switch case has the appropriate drive path to the identified Target Zone.
 
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
         // Drive paths are initially all the same to get to the shooter location
-        gyroDrive(DRIVE_SPEED, 58.0, 0.0, 10);
-        gyroTurn(TURN_SPEED,-11,3);
+        gyroDrive(DRIVE_SPEED, 57.0, 0.0, 10);
+        gyroTurn(TURN_SPEED,-10,3);
         mShooterState = ShooterState.STATE_SHOOTER_ACTIVE;
+        shooterStartUp(mShooterState, shooterStartUpTimeAllowed);
         shoot3Rings(mShooterState, autoShootTimeAllowed);   // call method to start shooter and launch 3 rings. pass shooter state in case it is needed
         drivetime.reset(); // reset because time starts when TF starts and time is up before we can call gyroDrive
 
@@ -166,32 +168,37 @@ public class BLUE_Left_Line_Auto_HGWB extends BasicAutonomous {
                 telemetry.addData("Going to BLUE A", "Target Zone");
                 gyroTurn(TURN_SPEED*.5,20,3);
                 gyroDrive(DRIVE_SPEED, 6.0, 20.0, 5);
-                sleep(1000);
+                sleep(750);
                 wobble.GripperOpen();
+                sleep(500);
                 wobble.ArmExtend();
+                drivetime.reset();
+                gyroTurn(TURN_SPEED *.5, 25,2);
+                gyroDrive(DRIVE_SPEED, -44.0, 25, 5);
+                wobble.ArmContract();
+
                 break;
             case BLUE_B: // one ring  4 tiles straight ahead
                 telemetry.addData("Going to BLUE B", "Target Zone");
                 gyroDrive(DRIVE_SPEED, 25.0, -20.0, 5);
                 sleep(750);
-                //wobble.GripperOpen();
-                sleep(250);
-                wobble.ArmExtend();
-                sleep(250);
                 wobble.GripperOpen();
+                sleep(500);
+                wobble.ArmExtend();
                 drivetime.reset();
                 gyroDrive(DRIVE_SPEED, -13.0, -15, 5);
                 wobble.ArmContract();
                 gyroTurn(TURN_SPEED *.5, 190,3); // turn towards ring stack
                 gyroDrive(DRIVE_SPEED, 9,190,3); //drive to ring stack w/ gyro ri get correct heading
                 mRingCollectionState = RingCollectionState.COLLECT; // change collector state to get ready to pick up rings
-                collectRingsInAuto_A(mRingCollectionState);// switch to method to drive and collect (no encoders)
+                collectRingsInAuto_A(mRingCollectionState, autoRingCollectTimeAllowed);// switch to method to drive and collect (no encoders)
                 drivetime.reset();
                 gyroTurn(TURN_SPEED * .75, -1,3); // rotate back towards goal
-                gyroDrive(DRIVE_SPEED,33,-1,3); // drive to goal at prescribed heading
+                gyroDrive(DRIVE_SPEED,32,-1,3); // drive to goal at prescribed heading
                 mShooterState = ShooterState.STATE_SHOOTER_ACTIVE; // set shooter to active again
                 shoot3Rings(mShooterState, extraRingShootTimeAllowed);   // call method to start shooter and launch rings. Time will only let 1 or 2 out this time
-                gyroDrive(DRIVE_SPEED,4,-1,3); // make final drive to the line and park
+                gyroDrive(DRIVE_SPEED,6,-1,3); // make final drive to the line and park
+                wobble.ArmContract();
 
                 break;
             case BLUE_C: // four rings. 5 tiles forward and one tile to the left.

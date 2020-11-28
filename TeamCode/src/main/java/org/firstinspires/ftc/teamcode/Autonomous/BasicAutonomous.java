@@ -55,8 +55,8 @@ public class BasicAutonomous extends LinearOpMode {
     public ElapsedTime          tfTime      = new ElapsedTime(); // timer for tensor flow
     public ElapsedTime          ShootTimer          = new ElapsedTime(); //auto shooter timer (4 rings)
     public ElapsedTime          autoRingCollectTimer    = new ElapsedTime(); //auto shooter timer (4 rings)
-
-    public static double        autoShootTimeAllowed    = 8; //  seconds allows 4 shoot cycles in case one messes up
+    //public static double        shooterStartUpTimeAllowed = 1.25;
+    public static double        autoShootTimeAllowed    = 5; //  seconds allows 4 shoot cycles in case one messes up
     //public static double      extraRingShootTimeAllowed    = 4; //  seconds allows 4 shoot cycles in case one messes up
     public static double        tfSenseTime             = 1; // needs a couple seconds to process the image and ID the target
 
@@ -567,15 +567,24 @@ public class BasicAutonomous extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
+    public void shooterStartUp(ShooterState mShooterState, double shooterStartUpTimeAllowed) {
+        ShootTimer.reset();
+        while (opModeIsActive() && ShootTimer.time()  <= shooterStartUpTimeAllowed)  {
+                shooter.shootHighGoal();  // spins up the shooter before first shot
+
+        }
+
+    }
+
     public void shoot3Rings(ShooterState mShooterState, double ShootTimeAllowed){
 
         ShootTimer.reset();
         while (opModeIsActive() && ShootTimer.time()  <= ShootTimeAllowed)  {
             if (mShooterState == ShooterState.STATE_SHOOTER_ACTIVE) {
                 shooter.shootOneRingHigh(); // this is only used in auto due to different stacker position
-                sleep(1250);
+                sleep(750);
                 shooter.flipperForward();
-                sleep(700);
+                sleep(750);
                 shooter.flipperBackward();
 
             }
@@ -588,13 +597,13 @@ public class BasicAutonomous extends LinearOpMode {
         shooter.shooterReload();
     }
 
-    public void collectRingsInAuto_A(RingCollectionState mRingCollectionState){
+    public void collectRingsInAuto_A(RingCollectionState mRingCollectionState, double autoRingCollectTimeAllowed ){
         autoRingCollectTimer.reset();
         while (opModeIsActive() && autoRingCollectTimer.time()  <= autoRingCollectTimeAllowed)  {
             if (mRingCollectionState == RingCollectionState.COLLECT) {
                 intake.Intakeon(); // this is only used in auto due to different stacker position
                 elevator.ElevatorSpeedfast();
-                drivetrain.leftFront.setPower(DRIVE_SPEED);
+                drivetrain.leftFront.setPower(DRIVE_SPEED); // simple drive forward encododers shound handle speed but not distance here.
                 drivetrain.rightFront.setPower(DRIVE_SPEED);
 
 
