@@ -53,21 +53,10 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 public class DriveVelocityPIDTuner extends LinearOpMode {
     public static double DISTANCE = 72; // in
 
-    private FtcDashboard dashboard = FtcDashboard.getInstance();
-
-    private SampleMecanumDrive drive;
-
     enum Mode {
         DRIVER_MODE,
         TUNING_MODE
     }
-
-    private Mode mode;
-
-    private double lastKp = MOTOR_VELO_PID.p;
-    private double lastKi = MOTOR_VELO_PID.i;
-    private double lastKd = MOTOR_VELO_PID.d;
-    private double lastKf = MOTOR_VELO_PID.f;
 
     private static MotionProfile generateProfile(boolean movingForward) {
         MotionState start = new MotionState(movingForward ? 0 : DISTANCE, 0, 0, 0);
@@ -85,11 +74,16 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
                     "PID is not in use", getClass().getSimpleName());
         }
 
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        mode = Mode.TUNING_MODE;
+        Mode mode = Mode.TUNING_MODE;
+
+        double lastKp = MOTOR_VELO_PID.p;
+        double lastKi = MOTOR_VELO_PID.i;
+        double lastKd = MOTOR_VELO_PID.d;
+        double lastKf = MOTOR_VELO_PID.f;
 
         drive.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
 
