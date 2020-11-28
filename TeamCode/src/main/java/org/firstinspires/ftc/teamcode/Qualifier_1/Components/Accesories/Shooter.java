@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,7 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Shooter {
     private LinearOpMode op = null;
     private HardwareMap hardwareMap = null;
-    public DcMotor shooterMotor;
+    public DcMotorEx shooterMotor;
     Servo shooter_Servo;
     private double speedTopGoal = 1;//will get changed when testing
     private double speedMediumGoal=0.5;//will get changed when testing
@@ -27,9 +28,9 @@ public class Shooter {
         op = opMode;
         hardwareMap = op.hardwareMap;
 
-        shooterMotor = hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
+        shooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
         shooter_Servo=hardwareMap.servo.get("ShooterServo");
-        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooterMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         shooter_Servo.setPosition(1.0);
     }
 

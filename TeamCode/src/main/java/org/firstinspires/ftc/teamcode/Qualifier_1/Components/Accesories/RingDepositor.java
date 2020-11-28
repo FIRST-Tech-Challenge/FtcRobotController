@@ -86,7 +86,7 @@ public class RingDepositor {
         ringDepositorMotor.setTargetPosition(ticksForREST);
         ringDepositorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         ringDepositorMotor.setPower(ringDepositorSpeed);
-        op.sleep(1500);
+        op.sleep(2000);
         ringClampServo.setPosition(0.0);
     }
 

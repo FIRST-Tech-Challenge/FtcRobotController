@@ -325,12 +325,14 @@ public class Robot {
     }
     public void shootLeftPowerShot(int rings) {
         shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter.shooterMotor.setVelocity(10000.0);
         shooter.shooterMotor.setPower(1.0);
         op.sleep(1000);
         for(int i=0;i<rings;i++){
             moveServo(false);
             if(i!=rings-1) {
-                moveAngle(-8, 0, 0.5);
+                moveAngle(-10, 0, 0.5);
+                turnInPlace(0,1.0);
             }
             moveServo(true);
         }
@@ -338,12 +340,14 @@ public class Robot {
     }
     public void shootRightPowerShot(int rings) {
         shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooter.shooterMotor.setVelocity(10000.0);
         shooter.shooterMotor.setPower(1.0);
         op.sleep(1000);
         for(int i=0;i<rings;i++){
             moveServo(false);
             if(i!=rings-1) {
-                moveAngle(8, 0, 0.5);
+                moveAngle(10, 0, 0.5);
+                turnInPlace(0,1.0);
             }
             moveServo(true);
         }
