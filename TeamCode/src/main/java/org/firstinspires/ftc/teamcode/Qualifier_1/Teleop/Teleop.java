@@ -49,12 +49,9 @@ public class Teleop extends LinearOpMode {
         boolean slowMode = false;
         boolean moveServo = true;
         boolean servoIsMoved = true;
-        boolean ring_clamp_is_up = true;
-        boolean move_ring_clamp = true;
         boolean wobble_goal_servo_is_up = true;
         boolean move_wobble_goal_servo = true;
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
-        RingDepositor.Position currentRingDepositorPosition = RingDepositor.Position.REST;
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
@@ -112,7 +109,7 @@ public class Teleop extends LinearOpMode {
                     robot.moveServo(false);
                 }
             }
-            
+
             if (shooter != 0) {
                 robot.shootGoalTeleop(999999999, 100);
             } else {

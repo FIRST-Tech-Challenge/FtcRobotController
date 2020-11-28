@@ -17,7 +17,8 @@ public class R_3Power_park extends LinearOpMode {
         int rings=-1, i=0;
         ElapsedTime runtime = new ElapsedTime();;
         Robot robot=new Robot(this, BasicChassis.ChassisType.IMU);
-        robot.initTensorFlow();while (runtime.seconds()<4) {
+        robot.initTensorFlow();
+        while (runtime.seconds()<4) {
             robot.runTensorFlow();
             sleep(50);
             rings = robot.tensorFlow.getNumberOfRings();
@@ -31,7 +32,6 @@ public class R_3Power_park extends LinearOpMode {
         robot.shootPowerShot(3);
         robot.moveAngle(0,-14,0.5);
         sleep(500);*/
-        rings = 4;
         robot.moveWobbleGoalServo(false);
         if(rings==0) {
             robot.moveAngle( -26,-60, 0.5);
@@ -51,13 +51,12 @@ public class R_3Power_park extends LinearOpMode {
             robot.moveAngle(14,19, 0.7);
         }
         else if(rings==4) {
-            robot.moveAngle(-40, -107,0.7);
+            robot.moveAngle(-40, -104,0.7);
             robot.turnInPlace(0,0.5);
             robot.moveWobbleGoalServo(true);
             robot.moveAngle(-0, 10,0.7);
             robot.turnInPlace(0,0.5);
-            robot.turnInPlace(0,0.5);
-            robot.moveAngle(35,45,0.5);
+            robot.moveAngle(35,45.5,0.7);
         }
         robot.shootRightPowerShot(3);
         robot.moveAngle(0,-10,0.5);
