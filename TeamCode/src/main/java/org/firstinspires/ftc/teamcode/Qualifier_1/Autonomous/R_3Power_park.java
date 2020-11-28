@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -8,11 +9,10 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGo
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometry;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
-
+@Disabled
 @Autonomous(name= "R_3Power_park")
 public class R_3Power_park extends LinearOpMode {
     final boolean debug= true;
-
     @Override
     public void runOpMode(){
         int rings=-1, i=0;
