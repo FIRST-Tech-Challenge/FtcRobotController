@@ -344,6 +344,7 @@ public class Robot {
         shooter.shooterMotor.setPower(1.0);
         op.sleep(1000);
         for(int i=0;i<rings;i++){
+            shooter.shooterMotor.setPower(1.0);
             moveServo(false);
             if(i!=rings-1) {
                 moveAngle(10, 0, 0.5);
