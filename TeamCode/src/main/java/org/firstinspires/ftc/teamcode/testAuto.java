@@ -22,7 +22,11 @@ public class testAuto extends LinearOpMode {
         Thread positionThread = new Thread(globalCoordinatePosition);
         positionThread.start();
         while (opModeIsActive()) {
-            driveTo(40, 40, 50);
+            driveTo(40, 40, 50); //Drive to a position WHILE turning
+
+            driveTo(-30, false); //Only turning
+
+            driveTo(Drivetrain.moveDirection.LEFT, 100); //Moving in a specific direction
         }
         globalCoordinatePosition.stop();
 
