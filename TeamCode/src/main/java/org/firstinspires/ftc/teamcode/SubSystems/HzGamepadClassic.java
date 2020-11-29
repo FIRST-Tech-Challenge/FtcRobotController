@@ -311,7 +311,7 @@ public class HzGamepadClassic {
         double turn = rightStickX;
         gpChassis.runByGamepadCommand(targetAngle, turn, power);
 
-        /*    if(getLeftTrigger()>0.5){}*/
+        /*    if (getLeftTrigger()>0.5){}*/
         /*    if (getLeftBumperPress()) {}*/
         /*    if (getRightBumperPress()) {}*/
         /*    if (getButtonXPress()) {}*/
@@ -343,25 +343,25 @@ public class HzGamepadClassic {
 
         if (gpMagazine.isMagazineEmpty()) {
             gpMagazine.moveMagazineToCollect();
-            gpIntake.runIntakeMotor(0.5);
+            gpIntake.runIntakeMotor();
         }
 
         //****Intake Actions****
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
         if (getDpad_downPress()) {
-            if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
+            if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.STOPPED) {
                 if(gpMagazine.moveMagazineToCollect()) {
-                    gpIntake.runIntakeMotor(0.5);
+                    gpIntake.runIntakeMotor();
                 }
-            } else if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
+            } else if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.RUNNING) {
                 gpIntake.stopIntakeMotor();
             }
         }
 
         //Reverse Intake motors and run - in case of stuck state)
         if (getDpad_upPersistent()) {
-            gpIntake.reverseIntakeMotor(0.5);
-        } else if (gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING){
+            gpIntake.reverseIntakeMotor();
+        } else if (gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.REVERSING){
             gpIntake.stopIntakeMotor();
         }
 
@@ -379,10 +379,10 @@ public class HzGamepadClassic {
             speed = gpLauncherController.getLaunchMotorSpeed();
             gpLauncher.runFlyWheelToTarget(speed);
 
-            if (gpLauncherController.getLaunchMode() == LaunchController.LAUNCH_MODE.MODE_AUTOMATED) {
+            if (gpLauncherController.getLaunchMode() == LaunchController.LAUNCH_MODE.AUTOMATED) {
                 //gpLauncherController.alignRobot(targetAngle);
             }
-            gpLauncherController.setLaunchReadyIndicator(LaunchController.LAUNCH_READINESS.LAUNCH_READY);
+            gpLauncherController.setLaunchReadyIndicator(LaunchController.LAUNCH_READINESS.READY);
 
         }
 
@@ -430,8 +430,6 @@ public class HzGamepadClassic {
                 gpArm.openGrip();
             }
         }
-
-
     }
 }
 

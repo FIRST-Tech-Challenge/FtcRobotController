@@ -77,15 +77,15 @@ public class Test_Launcher extends LinearOpMode {
         telemetry.addData("launcherRingPlungerServo.getPosition()", hzLauncher.launcherRingPlungerServo.getPosition());
 
         switch (hzLauncher.getLauncherState()){
-            case FLYWHEEL_RUNNING_FOR_TARGET:  {
+            case RUNNING_FOR_TARGET:  {
                 telemetry.addData("hzLauncher.getLauncherState()", "FLYWHEEL_RUNNING_FOR_SUPPLY");
                 break;
             }
-            case FLYWHEEL_RUNNING_FOR_SUPPLY:  {
+            case RUNNING_FOR_SUPPLY:  {
                 telemetry.addData("hzLauncher.getLauncherState()", "FLYWHEEL_RUNNING_FOR_SUPPLY");
                 break;
             }
-            case FLYWHEEL_STOPPED:  {
+            case STOPPED:  {
                 telemetry.addData("hzLauncher.getLauncherState()", "FLYWHEEL_STOPPED");
                 break;
             }

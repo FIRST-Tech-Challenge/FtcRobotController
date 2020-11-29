@@ -137,7 +137,11 @@ public class HzGamepad {
 
         if (gpMagazine.isMagazineEmpty()) {
             gpMagazine.moveMagazineToCollect();
-            gpIntake.runIntakeMotor(0.7);
+            //Intake will not start automatically when magazine comes down
+            //gpIntake.runIntakeMotor();
+            if (gpIntake.intakeButtonState == Intake.INTAKE_BUTTON_STATE.ON){
+                gpIntake.runIntakeMotor();
+            }
         }
 
     }
@@ -145,19 +149,21 @@ public class HzGamepad {
     public void runIntakeControl(){
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
         if (getDpad_downPress()) {
-            if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
+            if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.STOPPED) {
                 if(gpMagazine.moveMagazineToCollect()) {
-                    gpIntake.runIntakeMotor(0.7);
+                    gpIntake.runIntakeMotor();
                 }
-            } else if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
+                gpIntake.intakeButtonState = Intake.INTAKE_BUTTON_STATE.ON;
+            } else if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.RUNNING) {
                 gpIntake.stopIntakeMotor();
+                gpIntake.intakeButtonState = Intake.INTAKE_BUTTON_STATE.OFF;
             }
         }
 
         //Reverse Intake motors and run - in case of stuck state)
         if (getDpad_upPersistent()) {
-            gpIntake.reverseIntakeMotor(0.5);
-        } else if (gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING){
+            gpIntake.reverseIntakeMotor();
+        } else if (gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.REVERSING){
             gpIntake.stopIntakeMotor();
         }
     }
@@ -165,31 +171,31 @@ public class HzGamepad {
     public void runLaunchController(){
         //High, Middle, Low Goal
         if (getButtonYPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_HIGH_GOAL);
+            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.ACTIVATED;
+            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.HIGH_GOAL);
         }
 
         //Power Shot 1
         if (getButtonXPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_POWER_SHOT1);
+            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.ACTIVATED;
+            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.POWER_SHOT1);
         }
 
         //Power Shot 2
         if (getButtonBPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_POWER_SHOT2);
+            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.ACTIVATED;
+            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.POWER_SHOT2);
         }
 
         //Power Shot 3
         if (getButtonAPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_POWER_SHOT3);
+            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.ACTIVATED;
+            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.POWER_SHOT3);
         }
 
-        if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED){
+        if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.ACTIVATED){
             if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
-                gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_NOT_ACTIVATED;
+                gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
                 gpLaunchController.turnRobotToNormalControl();
             }
         }

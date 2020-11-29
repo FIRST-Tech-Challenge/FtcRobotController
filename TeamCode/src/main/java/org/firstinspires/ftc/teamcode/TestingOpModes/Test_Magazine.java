@@ -89,34 +89,34 @@ public class Test_Magazine extends LinearOpMode {
         telemetry.addData("getDistance(DistanceUnit.CM)",hzMagazine.magazine_distance);
 
         switch (hzMagazine.getMagazineRingCount()){
-            case MAGAZINE_RINGS_0:  {
+            case ZERO:  {
                 telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_0");
                 break;
             }
-            case MAGAZINE_RINGS_1:  {
+            case ONE:  {
                 telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_1");
                 break;
             }
-            case MAGAZINE_RINGS_2:  {
+            case TWO:  {
                 telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_2");
                 break;
             }
-            case MAGAZINE_RINGS_3:  {
+            case THREE:  {
                 telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_3");
                 break;
             }
         }
 
         switch (hzMagazine.getMagazinePosition()) {
-            case MAGAZINE_AT_LAUNCH: {
+            case AT_LAUNCH: {
                 telemetry.addData("hzMagazine.getMagazinePosition()", "MAGAZINE_AT_LAUNCH");
                 break;
             }
-            case MAGAZINE_AT_COLLECT: {
+            case AT_COLLECT: {
                 telemetry.addData("hzMagazine.getMagazinePosition()", "MAGAZINE_AT_COLLECT");
                 break;
             }
-            case MAGAZINE_AT_ERROR: {
+            case AT_ERROR: {
                 telemetry.addData("hzMagazine.getMagazinePosition()", "MAGAZINE_AT_ERROR");
                 break;
             }

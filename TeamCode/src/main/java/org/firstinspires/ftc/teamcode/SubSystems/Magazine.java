@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -30,13 +31,13 @@ public class Magazine {
 
     LinearOpMode opModepassed;
 
-        public enum MAGAZINE_POSITION {
-        MAGAZINE_AT_COLLECT,
-        MAGAZINE_AT_LAUNCH,
-        MAGAZINE_AT_ERROR
+    public enum MAGAZINE_POSITION {
+        AT_COLLECT,
+        AT_LAUNCH,
+        AT_ERROR
     }
 
-    public MAGAZINE_POSITION magazinePosition = MAGAZINE_POSITION.MAGAZINE_AT_ERROR;
+    public MAGAZINE_POSITION magazinePosition = MAGAZINE_POSITION.AT_ERROR;
 
     public enum MAGAZINE_TOUCH_SENSORS_STATE {
         LAUNCH_TS_PRESSED,
@@ -47,13 +48,13 @@ public class Magazine {
     }
 
     public enum MAGAZINE_RING_COUNT {
-        MAGAZINE_RINGS_0,
-        MAGAZINE_RINGS_1,
-        MAGAZINE_RINGS_2,
-        MAGAZINE_RINGS_3
+        ZERO,
+        ONE,
+        TWO,
+        THREE
     }
 
-    public MAGAZINE_RING_COUNT magazineRingCount = MAGAZINE_RING_COUNT.MAGAZINE_RINGS_0;
+    public MAGAZINE_RING_COUNT magazineRingCount = MAGAZINE_RING_COUNT.ZERO;
 
     //TODO : AMJAD : Better coding of enum with values at https://www.baeldung.com/java-enum-values
     public static final double RING_NONE_DISTANCE = 3.4;
@@ -97,11 +98,11 @@ public class Magazine {
     public void senseMagazinePosition(){
         MAGAZINE_TOUCH_SENSORS_STATE magazine_touch_sensors_state = getMagazineTouchSensorsState();
         if (magazine_touch_sensors_state == MAGAZINE_TOUCH_SENSORS_STATE.LAUNCH_TS_PRESSED) {
-            magazinePosition = MAGAZINE_POSITION.MAGAZINE_AT_LAUNCH;
+            magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
         } else if (magazine_touch_sensors_state == MAGAZINE_TOUCH_SENSORS_STATE.COLLECT_TS_PRESSED) {
-            magazinePosition = MAGAZINE_POSITION.MAGAZINE_AT_COLLECT;
+            magazinePosition = MAGAZINE_POSITION.AT_COLLECT;
         } else if (magazine_touch_sensors_state == MAGAZINE_TOUCH_SENSORS_STATE.TS_ERROR){
-            magazinePosition = MAGAZINE_POSITION.MAGAZINE_AT_ERROR;
+            magazinePosition = MAGAZINE_POSITION.AT_ERROR;
         }
     }
 
@@ -158,18 +159,24 @@ public class Magazine {
     public boolean moveMagazineToLaunch() {
         senseMagazinePosition();
         senseMagazineRingStatus();
-        if(magazinePosition != MAGAZINE_POSITION.MAGAZINE_AT_ERROR &&
-                magazinePosition != MAGAZINE_POSITION.MAGAZINE_AT_LAUNCH &&
-                magazineRingCount != MAGAZINE_RING_COUNT.MAGAZINE_RINGS_0) {
+        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        if(magazinePosition != MAGAZINE_POSITION.AT_ERROR &&
+                magazinePosition != MAGAZINE_POSITION.AT_LAUNCH &&
+                magazineRingCount != MAGAZINE_RING_COUNT.ZERO) {
             while (!magazineLaunchTouchSensor.isPressed()){
-                magazineServo.setPower(0.1);
+                magazineServo.setPower(0.3);
+            }
+            // Aim to keep the magazine pressed to switch, as well as give a shake.
+            timer.reset();
+            while (timer.time() < 200){
+                magazineServo.setPower(0.3);
             }
             magazineServo.setPower(0);
 
             senseMagazinePosition();
         }
 
-        if (magazinePosition == MAGAZINE_POSITION.MAGAZINE_AT_LAUNCH){
+        if (magazinePosition == MAGAZINE_POSITION.AT_LAUNCH){
             return true;
         } else {
             return false;
@@ -179,9 +186,9 @@ public class Magazine {
     public boolean moveMagazineToCollect() {
         senseMagazinePosition();
         senseMagazineRingStatus();
-        if (magazinePosition != MAGAZINE_POSITION.MAGAZINE_AT_ERROR &&
-                magazinePosition != MAGAZINE_POSITION.MAGAZINE_AT_COLLECT &&
-                magazineRingCount != MAGAZINE_RING_COUNT.MAGAZINE_RINGS_3) {
+        if (magazinePosition != MAGAZINE_POSITION.AT_ERROR &&
+                magazinePosition != MAGAZINE_POSITION.AT_COLLECT &&
+                magazineRingCount != MAGAZINE_RING_COUNT.THREE) {
 
             while (!magazineCollectTouchSensor.isPressed()) {
                 magazineServo.setPower(-0.1);
@@ -191,7 +198,7 @@ public class Magazine {
             senseMagazinePosition();
         }
 
-        if (magazinePosition == MAGAZINE_POSITION.MAGAZINE_AT_COLLECT){
+        if (magazinePosition == MAGAZINE_POSITION.AT_COLLECT){
             return true;
         } else {
             return false;
@@ -203,16 +210,16 @@ public class Magazine {
          magazine_distance = ((DistanceSensor) magazineRingSensor).getDistance(DistanceUnit.CM);
 
         if((magazine_distance > RING_THREE_DISTANCE) && (magazine_distance < RING_TWO_DISTANCE - 0.2)){
-            magazineRingCount = MAGAZINE_RING_COUNT.MAGAZINE_RINGS_3;
+            magazineRingCount = MAGAZINE_RING_COUNT.THREE;
             turnMagazineBeaconWhite();
         } else if((magazine_distance > RING_TWO_DISTANCE) && (magazine_distance < RING_ONE_DISTANCE - 0.2)){
-            magazineRingCount = MAGAZINE_RING_COUNT.MAGAZINE_RINGS_2;
+            magazineRingCount = MAGAZINE_RING_COUNT.TWO;
             turnMagazineBeaconTeal();
         } else if((magazine_distance > RING_ONE_DISTANCE) && (magazine_distance < RING_NONE_DISTANCE - 0.05)){
-            magazineRingCount = MAGAZINE_RING_COUNT.MAGAZINE_RINGS_1;
+            magazineRingCount = MAGAZINE_RING_COUNT.ONE;
             turnMagazineBeaconPurple();
         } else if((magazine_distance > RING_NONE_DISTANCE)) {
-            magazineRingCount = MAGAZINE_RING_COUNT.MAGAZINE_RINGS_0;
+            magazineRingCount = MAGAZINE_RING_COUNT.ZERO;
             turnMagazineBeaconOff();
         }
 
@@ -230,7 +237,7 @@ public class Magazine {
     }
 
     public boolean isMagazineFull(){
-        if (getMagazineRingCount() == MAGAZINE_RING_COUNT.MAGAZINE_RINGS_3){
+        if (getMagazineRingCount() == MAGAZINE_RING_COUNT.THREE){
             return true;
         } else {
             return false;
@@ -238,10 +245,26 @@ public class Magazine {
     }
 
     public boolean isMagazineEmpty(){
-        if (getMagazineRingCount() == MAGAZINE_RING_COUNT.MAGAZINE_RINGS_0){
+        if (getMagazineRingCount() == MAGAZINE_RING_COUNT.ZERO){
             return true;
         } else {
             return false;
+        }
+    }
+
+    public void shakeMagazine(int timeInMilliseconds){
+        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        ElapsedTime shaketimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        shaketimer.reset();
+        while (shaketimer.time() < timeInMilliseconds) {
+            timer.reset();
+            while (timer.time() < 100) {
+                magazineServo.setPower(0.2);
+            }
+            timer.reset();
+            while (timer.time() < 100) {
+                magazineServo.setPower(0.2);
+            }
         }
     }
 
