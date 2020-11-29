@@ -271,9 +271,21 @@ public class DriveTrain {
         //wheelTwoPower /= wheelTwoRatio;
         wheelThreePower /= wheelThreeRatio;
         //wheelFourPower /= wheelFourPower;
-        hera.motorOne.setPower(wheelOnePower);
+        if(wheelOnePower>1){
+            wheelOnePower = 1;
+            hera.motorOne.setPower(wheelOnePower);
+        }
+        else {
+            hera.motorOne.setPower(wheelOnePower);
+        }
         //hera.motorTwo.setPower(wheelTwoPower);
-        hera.motorThree.setPower(wheelThreePower);
+        if(wheelThreePower > 1){
+            wheelThreePower = 1;
+            hera.motorThree.setPower(wheelThreePower);
+        }
+        else {
+            hera.motorThree.setPower(wheelThreePower);
+        }
         //hera.motorFour.setPower(wheelFourPower);
         showData("Powers" , "" + wheelOnePower + ", " + wheelThreePower);
         showData("All the Data", "" + baseline +", " + avgMotorOneDist + ", " + avgMotorThreeDist);

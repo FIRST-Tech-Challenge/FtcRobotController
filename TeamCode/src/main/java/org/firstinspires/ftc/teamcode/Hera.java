@@ -46,12 +46,39 @@ public class Hera {
     }
     
 
-    public void forwardTurn() {
-        while(true) {
-            driveTrain.goForward(47);
-        }
+    public void forwardTurn(int count) {
+//        while(true) {
+//            driveTrain.goForward(10000000);
+//        }
 //        driveTrain.turn(-90);
 //        driveTrain.goForward(30);
+        double motorOneEndPos = 0;
+        double motorThreeEndPos = 0;
+        hwmap.motorOne.setPower(1);
+        hwmap.motorThree.setPower(1);
+        double motorOneStartPos = hwmap.motorOne.getCurrentPosition();
+        double motorThreeStartPos = hwmap.motorThree.getCurrentPosition();
+        int i = 0;
+            while (i < 10 && this.opMode.opModeIsActive()) {
+                motorOneEndPos = hwmap.motorOne.getCurrentPosition();
+                motorThreeEndPos = hwmap.motorThree.getCurrentPosition();
+                i ++;
+            }
+        double motorOneDist = motorOneEndPos-motorOneStartPos;
+        double motorOneSpeed =  motorOneDist/10;
+        double motorThreeDist = motorThreeEndPos-motorThreeStartPos;
+        double motorThreeSpeed = motorThreeDist/10;
+        Log.d("Motor Speeds,", motorOneSpeed + "," + motorThreeSpeed);
+        this.telemetry.addData("MotorOne Distance: ", motorOneDist);
+        this.telemetry.addData("MotorThree Distance: ", motorThreeDist);
+        this.telemetry.addData("Motor3 - Motor1", motorThreeDist-motorOneDist);
+        this.telemetry.addData("Number of Iterations", count);
+        this.telemetry.update();
+
+
+
+
+
     }
 
 
