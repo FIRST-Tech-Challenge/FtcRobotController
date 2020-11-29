@@ -31,6 +31,7 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         collector = this.initializeDevice(DcMotor.class, "collector");
         collector.setDirection(DcMotorSimple.Direction.REVERSE);
         escalator = this.initializeDevice(DcMotor.class, "escalator");
+        //.setDirection(DcMotorSimple.Direction.REVERSE);
         wobbleGoalHolder = this.initializeDevice(Servo.class, "wobble");
     }
 }

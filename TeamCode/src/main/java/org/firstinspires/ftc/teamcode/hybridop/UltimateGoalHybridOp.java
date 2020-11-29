@@ -22,8 +22,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
         int cpos = shooterRight.getCurrentPosition();
         long ctime = System.currentTimeMillis()*60*1000;
         double rpm  = ((cpos/40.0-prevPos/40.0)/(ctime-prevTime));
-
-//dj hates black people
+        
         telemetry.addData("Shooter pos", cpos);
         telemetry.addData("Shooter rpm", rpm);
         prevPos = cpos;
