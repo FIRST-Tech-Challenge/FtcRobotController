@@ -23,10 +23,10 @@ public class Arm {
     public Servo armGripServo;
 
     public enum ARM_POSITIONS {
-        ARM_PARKED_POSITION,
-        ARM_DROP_WOBBLE_GOAL_POSITION,
-        ARM_HOLD_WOBBLE_GOAL_POSITION,
-        ARM_RING_POSITION
+        PARKED,
+        DROP_WOBBLE_GOAL,
+        HOLD_WOBBLE_GOAL,
+        PICK_RING
     }
 
     public static int ARM_PARKED_POSITION_COUNT = 0;
@@ -34,9 +34,12 @@ public class Arm {
     public static int ARM_HOLD_WOBBLE_GOAL_POSITION_COUNT = -700 ;
     public static int ARM_RING_POSITION_COUNT = -875 ;
 
-    public ARM_POSITIONS currentArmPosition = ARM_POSITIONS.ARM_PARKED_POSITION;
+    public ARM_POSITIONS currentArmPosition = ARM_POSITIONS.PARKED;
 
-    public enum GRIP_SERVO_STATE {OPENED, CLOSED};
+    public enum GRIP_SERVO_STATE {
+        OPENED,
+        CLOSED
+    };
 
     public static final double GRIP_OPEN = 1.0, GRIP_CLOSE = 0.5;
 
@@ -107,41 +110,41 @@ public class Arm {
         armMotor.setTargetPosition(ARM_PARKED_POSITION_COUNT);
         runArmToLevel();
         turnArmBrakeModeOn();
-        currentArmPosition = ARM_POSITIONS.ARM_PARKED_POSITION;
+        currentArmPosition = ARM_POSITIONS.PARKED;
     }
 
     public void moveArmDropWobbleGoalPosition() {
         armMotor.setTargetPosition(ARM_DROP_WOBBLE_GOAL_POSITION_COUNT);
         runArmToLevel();
         turnArmBrakeModeOn();
-        currentArmPosition = ARM_POSITIONS.ARM_DROP_WOBBLE_GOAL_POSITION;
+        currentArmPosition = ARM_POSITIONS.DROP_WOBBLE_GOAL;
     }
 
     public void moveArmHoldWobbleRingPosition() {
         armMotor.setTargetPosition(ARM_HOLD_WOBBLE_GOAL_POSITION_COUNT);
         runArmToLevel();
         turnArmBrakeModeOn();
-        currentArmPosition = ARM_POSITIONS.ARM_HOLD_WOBBLE_GOAL_POSITION;
+        currentArmPosition = ARM_POSITIONS.HOLD_WOBBLE_GOAL;
     }
 
     public void moveArmRingPosition() {
         armMotor.setTargetPosition(ARM_RING_POSITION_COUNT);
         runArmToLevel();
         turnArmBrakeModeOn();
-        currentArmPosition = ARM_POSITIONS.ARM_RING_POSITION;
+        currentArmPosition = ARM_POSITIONS.PICK_RING;
     }
 
     public void moveArmByTrigger(double triggerPosition) {
-        if ((triggerPosition < 0.1) && (currentArmPosition!= ARM_POSITIONS.ARM_PARKED_POSITION)) {
+        if ((triggerPosition < 0.1) && (currentArmPosition!= ARM_POSITIONS.PARKED)) {
             moveArmParkedPosition();
         } else if ((triggerPosition > 0.1) && (triggerPosition < 0.5) &&
-                (currentArmPosition!= ARM_POSITIONS.ARM_DROP_WOBBLE_GOAL_POSITION)) {
+                (currentArmPosition!= ARM_POSITIONS.DROP_WOBBLE_GOAL)) {
             moveArmDropWobbleGoalPosition();
         } else if ((triggerPosition > 0.5) && (triggerPosition < 0.9) &&
-                (currentArmPosition!= ARM_POSITIONS.ARM_HOLD_WOBBLE_GOAL_POSITION)) {
+                (currentArmPosition!= ARM_POSITIONS.HOLD_WOBBLE_GOAL)) {
             moveArmHoldWobbleRingPosition();
         } else if ((triggerPosition > 0.9) &&
-                (currentArmPosition!= ARM_POSITIONS.ARM_RING_POSITION)) {
+                (currentArmPosition!= ARM_POSITIONS.PICK_RING)) {
             moveArmRingPosition();
         }
 

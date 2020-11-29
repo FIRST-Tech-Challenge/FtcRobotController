@@ -100,19 +100,19 @@ public class Test_Arm extends LinearOpMode {
         telemetry.addData("armGripServo.getCurrentPosition()", hzArm.armGripServo.getPosition());
 
         switch (hzArm.getCurrentArmPosition()){
-            case ARM_PARKED_POSITION : {
+            case PARKED: {
                 telemetry.addData("hzArm.getCurrentArmPosition()", "ARM_MOTOR_PARKED_POSITION");
                 break;
             }
-            case ARM_DROP_WOBBLE_GOAL_POSITION : {
+            case DROP_WOBBLE_GOAL: {
                 telemetry.addData("hzArm.getCurrentArmPosition()", "ARM_DROP_WOBBLE_GOAL_POSITION");
                 break;
             }
-            case ARM_HOLD_WOBBLE_GOAL_POSITION : {
+            case HOLD_WOBBLE_GOAL: {
                 telemetry.addData("hzArm.getCurrentArmPosition()", "ARM_HOLD_WOBBLE_GOAL_POSITION");
                 break;
             }
-            case ARM_RING_POSITION : {
+            case PICK_RING: {
                 telemetry.addData("hzArm.getCurrentArmPosition()", "ARM_RING_POSITION");
                 break;
             }

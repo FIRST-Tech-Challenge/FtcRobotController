@@ -40,7 +40,7 @@ public class Test_Intake extends LinearOpMode {
             if (hzGamepadClassic.getDpad_downPress()) {
                 if(hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.STOPPED) {
                     //if(gpMagazine.moveMagazineToCollect()) {
-                        hzIntake.runIntakeMotor(0.8);
+                        hzIntake.runIntakeMotor();
                     //}
                 } else if(hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.RUNNING) {
                     hzIntake.stopIntakeMotor();
@@ -51,7 +51,7 @@ public class Test_Intake extends LinearOpMode {
             //TODO : AMJAD : This probably works, since we want to run the Intake motor in reverse
             // only as long as te Dpad_up remains pressed (different from Dpad_down behavior, which is a toggle)
             if (hzGamepadClassic.getDpad_upPersistent()) {
-                hzIntake.reverseIntakeMotor(0.8);
+                hzIntake.reverseIntakeMotor();
             } else if (hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.REVERSING){
                 hzIntake.stopIntakeMotor();
             }
