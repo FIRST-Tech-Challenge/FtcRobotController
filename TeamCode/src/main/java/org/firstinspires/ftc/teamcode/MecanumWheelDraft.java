@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.view.View;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -27,14 +28,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import java.util.concurrent.TimeUnit;
 
 
-@TeleOp(name = "Graham: Mechanum", group = "Opmode")
+@TeleOp(name = "Graham: Mecanum", group = "Opmode")
 //@Disabled
 public class MecanumWheelDraft extends LinearOpMode {
 
-    GrahamHWMap robot = new GrahamHWMap();   // Use a BACONbot's hardware
+    GrahamHWMap robot = new GrahamHWMap();
+
+
 
     @Override
     public void runOpMode() {
+
+    robot.init(hardwareMap);
 
     double x;
     double y;
