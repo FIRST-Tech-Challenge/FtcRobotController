@@ -1130,6 +1130,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //sleep(1000);
 }
 
+    public void autoShoot() throws InterruptedException {
+        int target = shooter.getShooterSpeed();
+        while (Math.abs(shooter.getCurrentRPM()-target)>25) {
+            sleep(5);
+        }
+        hopper.feederAuto();
+    }
 
     public void doPowerShots() throws InterruptedException {
         if(tZone == TargetZone.ZONE_A) {
@@ -1139,18 +1146,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.driveTo(.6, side(150), 170, 0, true,  2); // need to do something about this
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
         //shoot
-        hopper.feederAuto();
-        sleep(500);
+        autoShoot();
+        //sleep(500);
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_M, false);
         //chassis.driveTo(.55, side(150), 170, 0, false,  2);
         //shoot
-        hopper.feederAuto();
-        sleep(500);
+        autoShoot();
+        //sleep(500);
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R, false);
         //chassis.driveTo(.55, side(170), 170, 0, false,  2);
         //shoot
-        hopper.feederAuto();
-        sleep(500);
+        autoShoot();
+        // sleep(500);
         shooter.shootOutByRpm(0);
     }
     public void shootGoal() throws InterruptedException {
@@ -1303,9 +1310,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
         shooting_angle = Math.toDegrees(Math.atan2(target_x - chassis.odo_x_pos_cm() - shooter_offset, target_y - chassis.odo_y_pos_cm()));
         // to-do: need to adjust the angle (to right) when dist is > 200 cm 0.047 degree/cm
-        if (shooting_dist>200) {
-            shooting_angle += (shooting_dist-200)*0.047;
-        }
+        //if (shooting_dist>200) {
+        //    shooting_angle += (shooting_dist-200)*0.047;
+        //}
+        double rpm_shift = getShootingAngleErrorFromRPM(rpm);
+        shooting_angle -= rpm_shift;
         try {
             if (Math.abs(chassis.odo_heading() - shooting_angle) > 0.6) {
                 chassis.rotateTo(0.35, shooting_angle);

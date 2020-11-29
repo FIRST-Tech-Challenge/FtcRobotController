@@ -36,6 +36,8 @@ public class Shooter extends Logger<Shooter>  {
     private boolean shooterOn = false;
 
 
+    public int getShooterSpeed() { return shooterSpeed; }
+    public double getCurrentRPM() { return shooter1.getVelocity(); }
     public String getUniqueName() {
         return "shooter";
     }
@@ -83,6 +85,7 @@ public class Shooter extends Logger<Shooter>  {
     }
 
     public void shootOutByRpm(double rpm){
+        shooterSpeed = (int)rpm;
         if (shooter1!=null)
             shooter1.setVelocity(rpm);
         if (shooter2!=null)
