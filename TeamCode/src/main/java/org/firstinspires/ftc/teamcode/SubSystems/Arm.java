@@ -157,7 +157,7 @@ public class Arm {
          */
     }
 
-        //**** Grip Methods ****
+    //**** Grip Methods ****
     public void initGrip() {
         // On init close grip - In Autonomous mode, this will be used by drive to make robot hold the wobble goal
         armGripServo.setPosition(GRIP_CLOSE);
@@ -168,17 +168,16 @@ public class Arm {
     }
 
     public void openGrip() {
-            armGripServo.setPosition(GRIP_OPEN);
-            gripServoState = GRIP_SERVO_STATE.OPENED;
+        armGripServo.setPosition(GRIP_OPEN);
+        gripServoState = GRIP_SERVO_STATE.OPENED;
     }
 
     public void closeGrip() {
-            armGripServo.setPosition(GRIP_CLOSE);
-            gripServoState = GRIP_SERVO_STATE.CLOSED;
+        armGripServo.setPosition(GRIP_CLOSE);
+        gripServoState = GRIP_SERVO_STATE.CLOSED;
     }
 
     // grips ring with hand of the arm by running armRingGripServo
-
     public ARM_POSITIONS getCurrentArmPosition() {
         return currentArmPosition;
     }
