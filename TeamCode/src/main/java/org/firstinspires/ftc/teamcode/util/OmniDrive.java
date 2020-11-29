@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 public class OmniDrive {
 
     public DcMotor frontLeft;
@@ -33,6 +35,13 @@ public class OmniDrive {
         this.backLeft = backLeft;
         this.backRight = backRight;
 
+    }
+
+    public Double getCountsPerUnit(DistanceUnit unit) {
+        if (countsPerInch != null) {
+            unit.fromInches(countsPerInch);
+        }
+        return null;
     }
 
     public Double getCountsPerInch() {

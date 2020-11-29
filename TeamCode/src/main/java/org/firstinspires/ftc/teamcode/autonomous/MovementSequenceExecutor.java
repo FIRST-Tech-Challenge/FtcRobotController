@@ -13,18 +13,12 @@ public class MovementSequenceExecutor extends MovementHardware implements Autono
     @Override
     public void init() {
         super.init();
-        autonomousExecutor = new AutonomousExecutor(this);
-        autonomousExecutor.init();
+        this.initializeForAutonomous(this);
     }
 
     @Override
     public void run_loop() {
 
-    }
-
-    @Override
-    public RobotHardware getHardware() {
-        return this;
     }
 
     @Override

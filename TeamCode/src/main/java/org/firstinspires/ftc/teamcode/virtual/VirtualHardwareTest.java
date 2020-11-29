@@ -17,7 +17,7 @@ public class VirtualHardwareTest extends VirtualHardware {
     }
 
     @Override
-    public void loop() {
+    public void run_loop() {
         this.testMotor.setPower(gamepad1.left_stick_y);
 
         try {

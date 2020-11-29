@@ -31,7 +31,7 @@ public abstract class MovementHardware extends RobotHardware {
         backRight = this.initializeDevice(DcMotor.class, "backRight");
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.omniDrive = new OmniDrive(frontLeft, frontRight, backLeft, backRight);
+        this.initializeOmniDrive(frontLeft, frontRight, backLeft, backRight);
         this.localizer.loadUltimateGoalTrackables(this);
         this.localizer.setCameraMatrix(this,
                 new Position(DistanceUnit.INCH, 0, 9.5, 0, System.nanoTime()),

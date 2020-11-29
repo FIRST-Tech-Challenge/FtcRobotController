@@ -11,22 +11,20 @@ public class AutonomousExecutor {
     private ActionSequence actionSequence;
     private ActionExecutor actionExecutor;
     private Autonomous autonomous;
+    private RobotHardware hardware;
 
-    public AutonomousExecutor(Autonomous autonomous) {
+    public AutonomousExecutor(Autonomous autonomous, RobotHardware hardware) {
         this.autonomous = autonomous;
-    }
-
-    public void init() {
+        this.hardware = hardware;
         actionSequence = autonomous.getActionSequence();
-        actionExecutor = new ActionExecutor(autonomous.getHardware(), actionSequence);
+        actionExecutor = new ActionExecutor(hardware, actionSequence);
     }
-
     public boolean loop() {
         return actionExecutor.loop();
     }
 
     public void stop() {
-        autonomous.getHardware().omniDrive.stopDrive();
+        hardware.omniDrive.stopDrive();
         actionExecutor.stop();
     }
 }
