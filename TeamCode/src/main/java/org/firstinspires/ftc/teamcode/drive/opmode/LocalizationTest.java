@@ -40,10 +40,10 @@ public class LocalizationTest extends LinearOpMode {
             drive.update();
 
             Pose2d poseEstimate = drive.getPoseEstimate();
-            telemetry.addLine("Time : 7:27 11/27/2020");
-            telemetry.addData("Left Encoder value", StandardTrackingWheelLocalizer.leftEncoder.getCurrentPosition());
-            telemetry.addData("Right Encoder value", StandardTrackingWheelLocalizer.rightEncoder.getCurrentPosition());
-            telemetry.addData("Front Encoder value", StandardTrackingWheelLocalizer.frontEncoder.getCurrentPosition());
+            telemetry.addLine("Time : 11:34 11/28/2020");
+            //telemetry.addData("Left Encoder value", StandardTrackingWheelLocalizer.leftEncoder.getCurrentPosition());
+            //telemetry.addData("Right Encoder value", StandardTrackingWheelLocalizer.rightEncoder.getCurrentPosition());
+            //telemetry.addData("Front Encoder value", StandardTrackingWheelLocalizer.frontEncoder.getCurrentPosition());
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());

@@ -62,7 +62,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     //public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
     //Main Robot Calibration Parameters
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(2, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
     //public static double LATERAL_MULTIPLIER = 1;
@@ -71,7 +71,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     //public static double LATERAL_MULTIPLIER = 60.0/52.0; //1;
 
     //Main Robot Calibration Parameters
-    public static double LATERAL_MULTIPLIER = 1;
+    public static double LATERAL_MULTIPLIER = (60.0/25.0); //60.0/61.0;
 
 
     public static double VX_WEIGHT = 1;
@@ -102,7 +102,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
-    private BNO055IMU imu;
+    //private BNO055IMU imu;
 
     private VoltageSensor batteryVoltageSensor;
 
@@ -135,8 +135,9 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        /* Deleting IMU since using dead wheel encoders
         // adjust the names of the following hardware devices to match your configuration
-        /*imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
@@ -145,8 +146,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         //  if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
         BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
+        */
 
-         */
 
         //leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         //leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
