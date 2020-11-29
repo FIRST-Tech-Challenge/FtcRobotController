@@ -1358,6 +1358,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
         return Math.sqrt(vSquared);
     }
+    public double getShootingAngleErrorFromRPM(double rpm){
+        double a0 = 14.8449;
+        double a1 = -0.00919769;
+        return a1*rpm + a0;
+    }
 
 
 }
