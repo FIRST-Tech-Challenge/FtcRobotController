@@ -34,46 +34,50 @@ public class AutoBlue extends LinearOpMode {
         waitForStart();
         bot.startOdoThreadAuto(this);
 
-        path.addRF(rf.wobbleArm(90,1), rf.shoot(shootSpeed));
+        //path.addRF(rf.wobbleArm(90,1), rf.shoot(shootSpeed));
+        path.addRF(rf.wobbleArm(90,1), rf.toggleOuttake(bot));
         path.addWaypoint(-25,50,0);
         path.addWaypoint(0, 40, 0);
-        path.addWaypoint(35,48,0);
-        path.addSetpoint(0,10,0);
-        path.addRF(rf.shoot(shootSpeed));
-        path.addStop(3);
+        path.addWaypoint(45,48,0);
+        //path.addRF(rf.shoot(shootSpeed));
+        powerShot();
+
+        //path.addStop(3);
 
         if(rf.ringnum.equals(RingNum.ZERO)) {
-            path.addSetpoint(-15,15,-115);
+            path.addWaypoint(-37, -5, 12);
+            path.addWaypoint(-15,15,-115);
             dropWobble();
             path.addWaypoint(40, -15, 10); //115
         }else if(rf.ringnum.equals(RingNum.ONE)){
-            path.addSetpoint(0,40,-180);
+            //path.addWaypoint(-37, -5, 0);
+            path.addWaypoint(-37,35,-168);
             dropWobble();
             path.addWaypoint(30, -40, 75);
         }else if(rf.ringnum.equals(RingNum.FOUR)){
-            path.addSetpoint(-15,120,-115);
+            path.addWaypoint(-15,120,-115);
             dropWobble();
             path.addWaypoint(45, -125, 10);
         }
         path.addSetpoint(3,-35,105);
         path.addSetpoint(-8,-15,0);
         path.addRF(rf.grab(1));
-        path.addStop(1);
+        path.addStop(0.3);
         path.addRF(rf.wobbleArm(100, 1));
-        path.addStop(1);
+        path.addStop(0.3);
         path.addWaypoint(5, 50, 0);
         path.addWaypoint(-25, 0, -90);
 
         if(rf.ringnum.equals(RingNum.ZERO)) {
-            path.addSetpoint(-15,15,-25);
+            path.addWaypoint(-15,15,-25);
             dropWobble();
             path.addWaypoint(20,50,0);
         }else if(rf.ringnum.equals(RingNum.ONE)){
-            path.addSetpoint(0,40,-90);
+            path.addWaypoint(0,40,-90);
             dropWobble();
             path.addWaypoint(0,20,0);
         }else if(rf.ringnum.equals(RingNum.FOUR)){
-            path.addSetpoint(-15,120,-25);
+            path.addWaypoint(-15,120,-25);
             dropWobble();
             path.addWaypoint(0,-70,0);
         }
@@ -94,13 +98,46 @@ public class AutoBlue extends LinearOpMode {
         rf.init(bot, this);
         bot.lift(bot.liftControl.getPos(1));
         bot.shoot(bot.shootControlR.getPos(2), bot.shootControlL.getPos(2));
+        path.shootSpeed = bot.powerShotSpeed;
+        bot.outrController.setStartPow(bot.outtakeStartR*bot.powerShotSpeed);
+        bot.outlController.setStartPow(bot.outtakeStartL*bot.powerShotSpeed);
     }
     private void dropWobble(){
         path.addRF(rf.turnArm(0.68), rf.wobbleArm(180,1));
-        path.addStop(1.5);
+        path.addStop(1);
         path.addRF(rf.grab(0));
         path.addStop(0.5);
         path.addWaypoint(15,-15,0);
         path.addRF(rf.wobbleArm(190,1));
+    }
+
+    private void powerShot(){
+        path.addSetpoint(23, 10, 0);
+
+        path.addRF(rf.shootControl(3));
+        path.addStop(0.3);
+        path.addRF(rf.shootControl(2));
+        path.addStop(0.3);
+
+        path.addSetpoint(0,0,-5);
+
+        path.addRF(rf.shootControl(3));
+        path.addStop(0.3);
+        path.addRF(rf.shootControl(2));
+        path.addStop(0.3);
+
+        path.addSetpoint(0,0,-7);
+
+        path.addRF(rf.shootControl(3));
+        path.addStop(0.3);
+        path.addRF(rf.shootControl(2));
+        path.addStop(0.3);
+
+        path.addRF(rf.toggleOuttake(bot));
+
+
+
+
+
     }
 }

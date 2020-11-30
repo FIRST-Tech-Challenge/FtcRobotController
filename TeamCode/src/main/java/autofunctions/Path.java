@@ -86,6 +86,8 @@ public class Path {
     final public double maxIY = 100*0.1;
     final public double maxIT = 200*0.1;
 
+    public double shootSpeed = 1;
+
 
 
 
@@ -469,6 +471,15 @@ public class Path {
         timer.reset();
         startRFThread(op);
         while (op.opModeIsActive() && isExecuting){
+
+            if(bot.outtaking){
+                bot.outtakeWithEncoders(shootSpeed);
+            }else{
+                if(bot.outr.getPower() != 0) {
+                    bot.outr.setPower(0);
+                    bot.outl.setPower(0);
+                }
+            }
 
             double[] pows = update(bot.odometry.getPos(), bot.odometry.getVels());
             bot.move(pows[1], pows[0], pows[2]);

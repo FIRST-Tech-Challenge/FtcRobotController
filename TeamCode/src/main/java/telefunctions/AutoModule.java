@@ -265,6 +265,35 @@ public class AutoModule {
             }
         });
     }
+    public void addCalibrateCol2(final TerraBot bot){
+        lastTime = 0;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.move(0.1, 0, 0);
+                timer.reset();
+                bot.odometry.ty = 0;
+                if(bot.whiteValL() > 0.4){
+                    bot.calRightFirst = false;
+                }else if(bot.whiteValR() > 0.4){
+                    bot.calRightFirst = true;
+                }
+                return bot.whiteValR() > 0.4 || bot.whiteValL() > 0.4;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.move(0.1, 0, 0);
+                timer.reset();
+                if(bot.calRightFirst) {
+                    return bot.whiteValL() > 0.4;
+                }else{
+                    return bot.whiteValR() > 0.4;
+                }
+            }
+        });
+    }
 
 
 

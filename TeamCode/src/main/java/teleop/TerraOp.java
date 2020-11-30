@@ -45,7 +45,7 @@ public class TerraOp extends OpMode {
         bot.outtakeStartR *= vs;
 
 
-        bot.startOdoThreadTele();
+        //bot.startOdoThreadTele();
 
     }
 
@@ -104,6 +104,7 @@ public class TerraOp extends OpMode {
                     bot.outrController.setStartPow(bot.outtakeStartR);
                     bot.outlController.setStartPow(bot.outtakeStartL);
                 }else{
+                   // bot.definePowerShot();
                     bot.powerShot.start();
                     bot.outrController.setStartPow(bot.outtakeStartR*bot.powerShotSpeed);
                     bot.outlController.setStartPow(bot.outtakeStartL*bot.powerShotSpeed);
@@ -184,10 +185,12 @@ public class TerraOp extends OpMode {
 //        telemetry.addData("dsl2", bot.getDisL2());
 //        telemetry.update();
 
-        telemetry.addData("x", bot.odometry.getX());
-        telemetry.addData("y", bot.odometry.getY());
-        telemetry.addData("theta", bot.odometry.getTheta());
-        telemetry.addData("heading", bot.getHeading());
+//        telemetry.addData("x", bot.odometry.getX());
+//        telemetry.addData("y", bot.odometry.getY());
+//        telemetry.addData("theta", bot.odometry.getTheta());
+//        telemetry.addData("heading", bot.getHeading());
+
+        telemetry.addData("isPowerShotMode", bot.powershot);
 
         telemetry.update();
 
@@ -200,6 +203,6 @@ public class TerraOp extends OpMode {
 
     @Override
     public void stop() {
-       bot.stopOdoThreadTele();
+       //bot.stopOdoThreadTele();
     }
 }

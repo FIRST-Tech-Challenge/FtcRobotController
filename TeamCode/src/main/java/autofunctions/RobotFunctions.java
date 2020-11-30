@@ -28,6 +28,11 @@ public class RobotFunctions {
 
     public ArrayList<String> ims = new ArrayList<>();
 
+//    public int outtakeInd = 0;
+//    public int lastOuttakeInd = 0;
+
+    ElapsedTime timer = new ElapsedTime();
+
     public void init(TerraBot t, LinearOpMode o) {
         bot = t;
         op = o;
@@ -77,6 +82,7 @@ public class RobotFunctions {
                 while (op.opModeIsActive() && bot.arm.isBusy()){ }
                 bot.arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 bot.arm.setPower(0);
+
             }
         };
     }
@@ -131,6 +137,53 @@ public class RobotFunctions {
                     bot.outtake(0);
                 }
 
+            }
+        };
+    }
+
+//    public CodeSeg shoot2(final double speed){
+//        return new CodeSeg() {
+//            @Override
+//            public void run() {
+//                lift(1).run();
+//                while (outtakeInd < 3){
+//                    if(lastOuttakeInd != outtakeInd){
+//                        timer.reset();
+//                        shootControl(3).run();
+//                        while (timer.seconds() < 0.3){}
+//                        shootControl(2).run();
+//                        lastOuttakeInd = outtakeInd;
+//                    }
+//                    bot.outtakeWithEncoders(speed);
+//                }
+//            }
+//        };
+//    }
+
+//    public CodeSeg outNext(){
+//        return new CodeSeg() {
+//            @Override
+//            public void run() {
+//                outtakeInd++;
+//            }
+//        };
+//    }
+
+    public CodeSeg toggleOuttake(final TerraBot bot){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.outtaking = !bot.outtaking;
+            }
+        };
+    }
+
+
+    public CodeSeg shootControl(final int cur){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                bot.shoot(bot.shootControlR.getPos(cur), bot.shootControlL.getPos(cur));
             }
         };
     }

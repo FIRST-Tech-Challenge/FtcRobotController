@@ -72,6 +72,7 @@ public class TerraBot {
     public boolean outtaking = false;
     public boolean fastmode = true;
     public boolean powershot = false;
+    public boolean calRightFirst = false;
 
     public int resettingArm = 0;
 
@@ -82,7 +83,7 @@ public class TerraBot {
     public double shootStartR = 0.08;
     public double shootStartL = 0.06;
     public double intakeSpeed = 1;
-    public double powerShotSpeed = 0.8;
+    public double powerShotSpeed = 0.82;
     public double maxArmPos = 215;
     public double heading = 0;
     public double lastAngle = 0;
@@ -384,6 +385,7 @@ public class TerraBot {
     }
 
     public void definePowerShot(){
+//        AutoModule powerShot = new AutoModule();
         powerShot.addCustomOnce(new CodeSeg() {
             @Override
             public void run() {
@@ -411,21 +413,28 @@ public class TerraBot {
         powerShot.addWaitUntil();
         powerShot.addCustomOnce(new CodeSeg() {
             @Override
-            public void run() { resetAll();}
+            public void run() {
+                resetAll();
+                odometry.tx = odometry.cmToTicks(getDisL2());
+            }
         });
+
+        Path path0 = new Path(98, 0, 0);
+        path0.addSetpoint(0, 0, 0);
+        powerShot.addPath(path0, this);
         powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
         powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
-        Path path = new Path(0, 0, 0);
-        path.addSetpoint(0, 0, -4);
+        Path path = new Path(98, 0, 0);
+        path.addSetpoint(0, 0, -5);
         powerShot.addPath(path, this);
         powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
         powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
-        Path path1 = new Path(0, 0, -4);
-        path1.addSetpoint(0, 0, -8);
+        Path path1 = new Path(98, 0, -5);
+        path1.addSetpoint(0, 0, -7);
         powerShot.addPath(path1, this);
         powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
@@ -437,13 +446,15 @@ public class TerraBot {
                 fastmode = true;
             }
         }, 0.01);
-//        powerShot.addCustomOnce(new CodeSeg() {
-//            @Override
-//            public void run() {
-//                stopOdoThreadTele();
-//            }
-//        });
+        powerShot.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                stopOdoThreadTele();
+            }
+        });
         powerShot.addDelay(1);
+
+        //this.powerShot = powerShot;
     }
     public void defineWobbleGoal(){
 //        wobbleGoal.addStage(ssr, shootControlR.getPos(0), 0.01);
@@ -573,15 +584,29 @@ public class TerraBot {
 
     public void defineCalibrateCol(){
         AutoModule cal = new AutoModule();
-        cal.addCalibrateCol( this);
         cal.addCustomOnce(new CodeSeg() {
             @Override
             public void run() {
                 resetAll();
-                localizer.update(getDisL2(), 0);
-                updateStartPos(-170);
             }
         });
+        cal.addCalibrateCol2(this);
+        cal.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                heading = localizer.getAngle(odometry.getY(), calRightFirst);
+                lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            }
+        });
+//        cal.addCalibrateCol( this);
+//        cal.addCustomOnce(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                resetAll();
+//                localizer.update(getDisL2(), 0);
+//                updateStartPos(-170);
+//            }
+//        });
 
         calibrateCol = cal;
     }

@@ -30,7 +30,7 @@ public class Localizer {
 
     public int counter = 0;
 
-    public final double robotWidth = 28;
+    public final double robotWidth = 30;
     public final double robotLength = 33;
     public final double robotRadius = Math.sqrt(Math.pow(robotWidth/2, 2) + Math.pow(robotLength/2, 2));
     public final double centerTheta = Math.atan2(robotLength,robotWidth);
@@ -98,11 +98,20 @@ public class Localizer {
         theta = head;
     }
 
-    public double getAngle(){
-        double cd = l1 - r1;
-        double out = Math.atan2(cd, robotWidth);
-        return Math.toDegrees(out);
+//    public double getAngle(){
+//        double cd = l1 - r1;
+//        double out = Math.atan2(cd, robotWidth);
+//        return Math.toDegrees(out);
+//    }
+    public double getAngle(double dis, boolean sign){
+        double out = Math.atan2(dis, robotWidth);
+        if(sign) {
+            return Math.toDegrees(out);
+        }else{
+            return -Math.toDegrees(out);
+        }
     }
+
 
     public double getX(){
         double a = robotRadius;

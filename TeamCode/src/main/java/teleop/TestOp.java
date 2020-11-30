@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 import global.TerraBot;
-
+@Disabled
 @TeleOp(name = "TestOp V1")
 public class TestOp extends OpMode {
 
@@ -102,6 +102,8 @@ public class TestOp extends OpMode {
         if(!bot.calibrateCol.executing) {
             bot.moveTeleOp(forward, strafe, turn);
         }
+
+        telemetry.addData("heading", bot.getHeading());
 
         bot.update();
 
