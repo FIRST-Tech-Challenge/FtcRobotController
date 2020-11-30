@@ -88,5 +88,29 @@ public abstract class BasicChassis {
          motorRightBack.setPower(Math.sin(angleInRadian + Math.PI / 4) * power + rightStick);
          motorLeftFront.setPower(Math.sin(angleInRadian + Math.PI / 4) * power - rightStick);
          motorRightFront.setPower(Math.sin(angleInRadian - Math.PI / 4) * power + rightStick);
-     }
+
+    }
+
+    public void newmoveMultidirectional(double power, double angle, float rightStick, boolean isSlow) {
+        double angleInRadian;
+        angleInRadian = Math.toRadians(angle);
+
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if (isSlow) {
+            motorLeftBack.setPower((Math.sin(angleInRadian - Math.PI / 4) * power - rightStick) * 0.3);
+            motorRightBack.setPower((Math.sin(angleInRadian + Math.PI / 4) * power + rightStick) * 0.3);
+            motorLeftFront.setPower((Math.sin(angleInRadian + Math.PI / 4) * power - rightStick) * 0.3);
+            motorRightFront.setPower((Math.sin(angleInRadian - Math.PI / 4) * power + rightStick) * 0.3);
+        } else {
+            motorLeftBack.setPower(Math.sin(angleInRadian - Math.PI / 4) * power - rightStick);
+            motorRightBack.setPower(Math.sin(angleInRadian + Math.PI / 4) * power + rightStick);
+            motorLeftFront.setPower(Math.sin(angleInRadian + Math.PI / 4) * power - rightStick);
+            motorRightFront.setPower(Math.sin(angleInRadian - Math.PI / 4) * power + rightStick);
+        }
+    }
+
 }

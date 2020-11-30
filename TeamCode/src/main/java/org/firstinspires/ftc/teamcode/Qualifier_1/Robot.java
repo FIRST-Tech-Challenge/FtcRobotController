@@ -177,6 +177,9 @@ public class Robot {
     public void moveMultidirectional(double power, double angle, float rightStick) {
         drivetrain.moveMultidirectional(power, angle, rightStick);
     }
+    public void newmoveMultidirectional(double power, double angle, float rightStick, boolean isSlow) {
+        drivetrain.newmoveMultidirectional(power, angle, rightStick, isSlow);
+    }
 
     /*public void moveAngle2(double distance, double angle, double turn) {
         drivetrain.moveAngle2(distance, angle, turn);
