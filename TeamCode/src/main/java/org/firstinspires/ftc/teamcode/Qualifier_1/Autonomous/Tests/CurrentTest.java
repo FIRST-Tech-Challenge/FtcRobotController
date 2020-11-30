@@ -187,17 +187,19 @@ public class CurrentTest extends LinearOpMode {
         sleep(650);
         wobbleGoalMotor.setPower(0);
 
-        ringDepositorMotor.setTargetPosition(908);
-        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ringDepositorMotor.setPower(0.2);
+        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("Moving Ring Depositor Motor", -100);
         telemetry.update();
-        ringDepositorMotor.setPower(0.2);
-
-        ringDepositorMotor.setTargetPosition(0);
-        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        sleep(500);
+        ringDepositorMotor.setPower(0);
+        sleep(1000);
+        ringDepositorMotor.setPower(-0.2);
+        ringDepositorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("Moving Ring Depositor Motor", 0);
         telemetry.update();
-        ringDepositorMotor.setPower(0.2);
+        sleep(200);
+        ringDepositorMotor.setPower(0);
 
         //Tests Intake Servo
         ringClampServo.setPosition(1);
