@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.hardware.MechBot;
 
+import android.hardware.camera2.params.TonemapCurve;
+
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -66,6 +69,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 logTag + ":hopper", logLevel
         );
         feeder.configure(configuration.getHardwareMap(), "feeder");
+        magTouch = configuration.getHardwareMap().get(TouchSensor.class, "touch");
+
         configuration.register(feeder);
         // servoInit();
       // configuration.register(this);
@@ -139,6 +144,15 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 @Override
                 public Double value() {
                     return feeder.getPosition();
+                }
+            });
+        }
+
+        if (magTouch != null) {
+            line.addData("Touch", "pressed=%s", new Func<String>() {
+                @Override
+                public String value() {
+                    return (magTouch.isPressed()?"Yes":"No");
                 }
             });
         }
