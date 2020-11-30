@@ -75,23 +75,8 @@ public abstract class BasicChassis {
     abstract public void moveRight(double distance, double power);
     abstract public void moveLeft(double distance, double power);
     abstract public void moveAngle(double x, double y, double power);
-    public void moveMultidirectional(double power, double angle, float rightStick){
-         double angleInRadian;
-         angleInRadian = Math.toRadians(angle);
 
-         motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-         motorLeftBack.setPower(Math.sin(angleInRadian - Math.PI / 4) * power - rightStick);
-         motorRightBack.setPower(Math.sin(angleInRadian + Math.PI / 4) * power + rightStick);
-         motorLeftFront.setPower(Math.sin(angleInRadian + Math.PI / 4) * power - rightStick);
-         motorRightFront.setPower(Math.sin(angleInRadian - Math.PI / 4) * power + rightStick);
-
-    }
-
-    public void newmoveMultidirectional(double power, double angle, float rightStick, boolean isSlow) {
+    public void moveMultidirectional(double power, double angle, float rightStick, boolean isSlow) {
         double angleInRadian;
         angleInRadian = Math.toRadians(angle);
 

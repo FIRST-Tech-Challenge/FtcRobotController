@@ -174,11 +174,9 @@ public class Robot {
     public void turnInPlace(double target, double power) {
         drivetrain.turnInPlace(target, power);
     }
-    public void moveMultidirectional(double power, double angle, float rightStick) {
-        drivetrain.moveMultidirectional(power, angle, rightStick);
-    }
-    public void newmoveMultidirectional(double power, double angle, float rightStick, boolean isSlow) {
-        drivetrain.newmoveMultidirectional(power, angle, rightStick, isSlow);
+
+    public void moveMultidirectional(double power, double angle, float rightStick, boolean isSlow) {
+        drivetrain.moveMultidirectional(power, angle, rightStick, isSlow);
     }
 
     /*public void moveAngle2(double distance, double angle, double turn) {
@@ -350,7 +348,7 @@ public class Robot {
             shooter.shooterMotor.setPower(1.0);
             moveServo(false);
             if(i!=rings-1) {
-                moveAngle(10, 0, 0.5);
+                moveAngle(9.5, 0, 0.5);
                 turnInPlace(0,1.0);
             }
             moveServo(true);
