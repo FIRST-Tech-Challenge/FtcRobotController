@@ -46,6 +46,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public CoreSystem core;
     public ElapsedTime runtime = new ElapsedTime();
     public ElapsedTime runtimeAuto = new ElapsedTime();
+    private ElapsedTime EventTimer = new ElapsedTime();
+    private double waitSec;
     public double rotateRatio = 0.7; // slow down ratio for rotation
     public CameraDetector cameraDetector;
     public File simEventFile;
@@ -448,7 +450,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         comboGrabber.armDownInc();
                 } else if (!source.isPressed((Button.START))){
                     if (hopper!=null) {
-                        hopper.feederAuto();
+                        //hopper.feederAuto();
+                        autoShoot();
                     }
                 }
             }
@@ -1131,8 +1134,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 }
 
     public void autoShoot() throws InterruptedException {
+        if (shooter==null||hopper==null) return;
+        double iniTime = System.currentTimeMillis();
         int target = shooter.getShooterSpeed();
-        while (Math.abs(shooter.getCurrentRPM()-target)>25) {
+        while (Math.abs(shooter.getCurrentRPM()-target)>25 && (System.currentTimeMillis()-iniTime<1000)) { // timeout 1 sec
             sleep(5);
         }
         hopper.feederAuto();

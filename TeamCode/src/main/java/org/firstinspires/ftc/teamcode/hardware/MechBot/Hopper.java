@@ -16,6 +16,9 @@ import org.firstinspires.ftc.teamcode.support.CoreSystem;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Configurable;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
+import org.firstinspires.ftc.teamcode.support.tasks.Progress;
+import org.firstinspires.ftc.teamcode.support.tasks.Task;
+import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
 
 import static java.lang.Thread.sleep;
 
@@ -30,6 +33,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     private CRServo ringLifter;
     /*private*/ public TouchSensor magTouch;
     public DistanceSensor rangetouch;
+    private ElapsedTime HopperTimer = new ElapsedTime();
+
 
 
     private final double FEEDER_IN = 0.5;
@@ -110,35 +115,124 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     }
 
     public void transferUp(){
+        if (ringLifter==null) return;
         ringLifter.setPower(-1);
     }
 
     public void transferDown(){
+        if (ringLifter==null) return;
         ringLifter.setPower(1);
     }
 
     public void transferStop(){
+        if (ringLifter==null) return;
         ringLifter.setPower(0);
     }
+
 
     public void transferUpAuto() throws InterruptedException {
         if (ringLifter == null) return;
         if (!transferIsDown) return;
         ringLifter.setPower(-1);
-        sleep(300);
+        sleep(1500);
+        ringLifter.setPower(-0.85);
+        sleep(100);
+        ringLifter.setPower(0.6);
+        sleep(50);
         ringLifter.setPower(0);
         transferIsDown = false;
     }
 
+    public void transferUpCombo() throws InterruptedException {
+        if (ringLifter == null) return;
+        final String taskName = "Transfer Up Combo";
+        if (!TaskManager.isComplete(taskName)) return;
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                HopperTimer.reset();
+                ringLifter.setPower(-1);
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (magTouch.isPressed() || (HopperTimer.seconds()>=2));
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                HopperTimer.reset();
+                ringLifter.setPower(0.5);
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (HopperTimer.milliseconds()>=50);
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                ringLifter.setPower(0);
+                transferIsDown = false;
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (true);
+                    }
+                }; }}, taskName);
+    }
+
     public void transferDownAuto() throws InterruptedException {
         if (ringLifter == null) return;
-        if (transferIsDown) return;
+        // if (transferIsDown) return;
         double iniTime = System.currentTimeMillis();
         ringLifter.setPower(1);
-        while(!magTouch.isPressed() && System.currentTimeMillis() - iniTime < 1000 )
+        while(!magTouch.isPressed() && (System.currentTimeMillis() - iniTime < 2500) ) {
             sleep(5);
+        }
+        ringLifter.setPower(-0.5);
+        sleep(50);
         ringLifter.setPower(0);
         transferIsDown = true;
+    }
+
+    public void transferDownCombo() throws InterruptedException {
+        if (ringLifter == null) return;
+        final String taskName = "Transfer Down Combo";
+        if (!TaskManager.isComplete(taskName)) return;
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                HopperTimer.reset();
+                ringLifter.setPower(1);
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (magTouch.isPressed() || (HopperTimer.seconds()>=2));
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                HopperTimer.reset();
+                ringLifter.setPower(-0.5);
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (HopperTimer.milliseconds()>=50);
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                ringLifter.setPower(0);
+                transferIsDown = true;
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (true);
+                    }
+                }; }}, taskName);
     }
 
 
