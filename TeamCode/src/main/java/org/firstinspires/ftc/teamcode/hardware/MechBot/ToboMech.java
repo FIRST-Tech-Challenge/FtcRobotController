@@ -346,7 +346,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 //                    sleep(10000);
 //                    chassis.stop();
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
-                    //
+                    hopper.transferUpAuto();
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (shooter!=null)
                         shooter.shootSpeedInc();
@@ -367,7 +367,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
                 if (source.isPressed(Button.RIGHT_BUMPER)) {
-                    //
+                    hopper.transferDownAuto();
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (shooter!=null)
                         shooter.shootSpeedDec();

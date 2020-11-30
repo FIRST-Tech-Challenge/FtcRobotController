@@ -37,6 +37,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     private final double FEEDER_OUT = 0.9;
 
     private boolean feederIsIn = true;
+    private boolean transferIsDown = true;
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -118,6 +119,26 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     public void transferStop(){
         ringLifter.setPower(0);
+    }
+
+    public void transferUpAuto() throws InterruptedException {
+        if (ringLifter == null) return;
+        if (!transferIsDown) return;
+        ringLifter.setPower(-1);
+        sleep(300);
+        ringLifter.setPower(0);
+        transferIsDown = false;
+    }
+
+    public void transferDownAuto() throws InterruptedException {
+        if (ringLifter == null) return;
+        if (transferIsDown) return;
+        double iniTime = System.currentTimeMillis();
+        ringLifter.setPower(1);
+        while(!magTouch.isPressed() && System.currentTimeMillis() - iniTime < 1000 )
+            sleep(5);
+        ringLifter.setPower(0);
+        transferIsDown = true;
     }
 
 
