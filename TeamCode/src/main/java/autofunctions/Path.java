@@ -77,7 +77,7 @@ public class Path {
     final public double[] is = {0.01,0.01,0.005};
     final public double XAcc = 1;
     final public double YAcc = 1;
-    final public double HAcc = 2;
+    public double HAcc = 2;
     final public double endWait = 0.2;
     public double restPowX = 0.1;
     public double restPowY = 0.05;

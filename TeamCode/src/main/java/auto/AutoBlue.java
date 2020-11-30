@@ -34,28 +34,26 @@ public class AutoBlue extends LinearOpMode {
         waitForStart();
         bot.startOdoThreadAuto(this);
 
-        //path.addRF(rf.wobbleArm(90,1), rf.shoot(shootSpeed));
         path.addRF(rf.wobbleArm(90,1), rf.toggleOuttake(bot));
         path.addWaypoint(-25,50,0);
         path.addWaypoint(0, 40, 0);
         path.addWaypoint(45,48,0);
-        //path.addRF(rf.shoot(shootSpeed));
         powerShot();
 
-        //path.addStop(3);
 
         if(rf.ringnum.equals(RingNum.ZERO)) {
-            path.addWaypoint(-37, -5, 12);
-            path.addWaypoint(-15,15,-115);
+            path.addWaypoint(-42, 5, 0);
+            path.addSetpoint(-12,10,-103);
             dropWobble();
-            path.addWaypoint(40, -15, 10); //115
+            path.addWaypoint(40, -15, 10);
         }else if(rf.ringnum.equals(RingNum.ONE)){
-            //path.addWaypoint(-37, -5, 0);
-            path.addWaypoint(-37,35,-168);
+            path.addWaypoint(-20, 20, 0);
+            path.addSetpoint(-18,20,-168);
             dropWobble();
             path.addWaypoint(30, -40, 75);
         }else if(rf.ringnum.equals(RingNum.FOUR)){
-            path.addWaypoint(-15,120,-115);
+            path.addWaypoint(-40, 100, -73);
+            path.addSetpoint(-12,20,-30);
             dropWobble();
             path.addWaypoint(45, -125, 10);
         }
@@ -69,18 +67,58 @@ public class AutoBlue extends LinearOpMode {
         path.addWaypoint(-25, 0, -90);
 
         if(rf.ringnum.equals(RingNum.ZERO)) {
-            path.addWaypoint(-15,15,-25);
+            path.addSetpoint(-15,15,-25);
             dropWobble();
             path.addWaypoint(20,50,0);
         }else if(rf.ringnum.equals(RingNum.ONE)){
-            path.addWaypoint(0,40,-90);
+            path.addWaypoint(0, 20, -70);
+            path.addSetpoint(0,20,-20);
             dropWobble();
             path.addWaypoint(0,20,0);
         }else if(rf.ringnum.equals(RingNum.FOUR)){
-            path.addWaypoint(-15,120,-25);
+            path.addWaypoint(-15, 100, -25);
+            path.addSetpoint(0,20,0);
             dropWobble();
             path.addWaypoint(0,-70,0);
         }
+
+
+//
+//        if(rf.ringnum.equals(RingNum.ZERO)) {
+//            path.addSetpoint(-52,15,-103);
+//            dropWobble();
+//            path.addWaypoint(40, -15, 10);
+//        }else if(rf.ringnum.equals(RingNum.ONE)){
+//            path.addSetpoint(-37,40,-168);
+//            dropWobble();
+//            path.addWaypoint(30, -40, 75);
+//        }else if(rf.ringnum.equals(RingNum.FOUR)){
+//            path.addSetpoint(-52,120,-103);
+//            dropWobble();
+//            path.addWaypoint(45, -125, 10);
+//        }
+//        path.addSetpoint(3,-35,105);
+//        path.addSetpoint(-8,-15,0);
+//        path.addRF(rf.grab(1));
+//        path.addStop(0.3);
+//        path.addRF(rf.wobbleArm(100, 1));
+//        path.addStop(0.3);
+//        path.addWaypoint(5, 50, 0);
+//        path.addWaypoint(-25, 0, -90);
+//
+//        if(rf.ringnum.equals(RingNum.ZERO)) {
+//            path.addSetpoint(-15,15,-25);
+//            dropWobble();
+//            path.addWaypoint(20,50,0);
+//        }else if(rf.ringnum.equals(RingNum.ONE)){
+//            path.addSetpoint(0,40,-90);
+//            dropWobble();
+//            path.addWaypoint(0,20,0);
+//        }else if(rf.ringnum.equals(RingNum.FOUR)){
+//            path.addSetpoint(-15,120,-25);
+//            dropWobble();
+//            path.addWaypoint(0,-70,0);
+//        }
 
         path.addRF(rf.wobbleArm(10,1), rf.turnArm(0.25));
         path.addStop(2);
@@ -113,6 +151,10 @@ public class AutoBlue extends LinearOpMode {
 
     private void powerShot(){
         path.addSetpoint(23, 10, 0);
+        path.addRF(rf.changeAcc(1, path));
+        path.addRF(rf.updateXWithDis(60));
+        path.addStop(1);
+        path.addSetpoint(0,0,0);
 
         path.addRF(rf.shootControl(3));
         path.addStop(0.3);
@@ -134,6 +176,8 @@ public class AutoBlue extends LinearOpMode {
         path.addStop(0.3);
 
         path.addRF(rf.toggleOuttake(bot));
+
+        path.addRF(rf.changeAcc(2, path));
 
 
 
