@@ -30,7 +30,7 @@ public class RingDetector implements Runnable{
     private static final String LABEL_A = "None";
     private static final String LABEL_B = "Single";
     private static final String LABEL_C = "Quad";
-    private String targetZone = LABEL_C;
+    private String targetZone = LABEL_B;
 
     private String side = AutoRoute.NAME_RED;
     private LinearOpMode caller = null;
@@ -86,8 +86,6 @@ public class RingDetector implements Runnable{
     public AutoDot detectRing(int timeout, String side, Telemetry telemetry, LinearOpMode caller) {
         configZones(side);
         AutoDot zone = zoneB;
-        boolean found = false;
-        boolean stop = false;
 
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
@@ -104,15 +102,12 @@ public class RingDetector implements Runnable{
                             telemetry.addData("PrintZone", r.getTitle());
                             if (r.getTitle().contains(LABEL_C)) {
                                 zone = zoneC;
-                                found = true;
                             }
                             else if(r.getTitle().contains(LABEL_B)){
                                 zone = zoneB;
-                                found = true;
                             }
                             else if(r.getTitle().contains(LABEL_A)){
                                 zone = zoneA;
-                                found = true;
                             }
                             targetZone = zone.getDotName();
                             telemetry.addData("Zone", targetZone);
@@ -120,7 +115,6 @@ public class RingDetector implements Runnable{
                     }
                 }
             }
-            stop = found; //|| runtime.seconds() >= timeout;
             telemetry.update();
         }
 
