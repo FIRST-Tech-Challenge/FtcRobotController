@@ -141,11 +141,13 @@ public class RobotFunctions {
         };
     }
 
-    public CodeSeg changeAcc(final double hacc, final Path path){
+    public CodeSeg changeAcc(final double sx, final double sy, final double sh, final Path path){
         return new CodeSeg() {
             @Override
             public void run() {
-                path.HAcc = hacc;
+                path.HAcc = path.HAccS*sh;
+                path.XAcc = path.XAccS*sx;
+                path.YAcc = path.YAccS*sy;
             }
         };
     }
@@ -202,6 +204,17 @@ public class RobotFunctions {
             @Override
             public void run() {
                 bot.odometry.tx = bot.odometry.cmToTicks(bot.getDisL2()-x);
+            }
+        };
+    }
+
+    public CodeSeg changeOuttakePow(final double pow, final double vs, final Path path){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                path.shootSpeed = pow;
+                bot.outrController.setStartPow(bot.outtakeStartR*pow * vs);
+                bot.outlController.setStartPow(bot.outtakeStartL*pow * vs);
             }
         };
     }

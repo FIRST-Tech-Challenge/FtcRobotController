@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.internal.android.dex.Code;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import global.TerraBot;
 import util.CodeSeg;
@@ -75,9 +76,13 @@ public class Path {
     final public double[] ks = {0.04,0.03,0.02};
     final public double[] ds = {0.00015,0.00015,3};
     final public double[] is = {0.01,0.01,0.005};
-    final public double XAcc = 1;
-    final public double YAcc = 1;
-    public double HAcc = 2;
+    final public double XAccS = 1;
+    final public double YAccS = 1;
+    final public double HAccS = 2;
+
+    public double XAcc = XAccS;
+    public double YAcc = YAccS;
+    public double HAcc = HAccS;
     final public double endWait = 0.2;
     public double restPowX = 0.1;
     public double restPowY = 0.05;
@@ -159,6 +164,17 @@ public class Path {
         hControl.setCoeffecients(ks[2], ds[2], is[2]);
         timer.reset();
 
+    }
+
+    public CodeSeg changeAcc(final double xacc, final double yacc, final double hacc){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                XAcc = xacc;
+                YAcc = yacc;
+                HAcc = hacc;
+            }
+        };
     }
 
     public void updateRadius(double dis){
@@ -398,11 +414,13 @@ public class Path {
             updateDIs(currentVels, true);
             hasReachedSetpoint();
             return calcPows(currentPos,currentVels, true);
-        }else{
+        }else if(posetypes.get(curIndex+1).equals(Posetype.STOP)){
             if(timer.seconds() > stops.get(stopIndex)){
                 next();
                 stopIndex++;
             }
+            return new double[]{0,0,0};
+        }else{
             return new double[]{0,0,0};
         }
 
@@ -501,11 +519,12 @@ public class Path {
 //            op.telemetry.addData("stopIndex", stopIndex);
 //            op.telemetry.addData("timer.seconds()", timer.seconds());
 //            op.telemetry.addData("current index", curIndex);
-            op.telemetry.addData("yvel", bot.odometry.getYVel());
-            op.telemetry.addData("xvel", bot.odometry.getXVel());
-            op.telemetry.addData("tvel", bot.odometry.getTVel());
-            op.telemetry.addData("hder", hder);
-            op.telemetry.update();
+            //
+//            op.telemetry.addData("yvel", bot.odometry.getYVel());
+//            op.telemetry.addData("xvel", bot.odometry.getXVel());
+//            op.telemetry.addData("tvel", bot.odometry.getTVel());
+//            op.telemetry.addData("hder", hder);
+//            op.telemetry.update();
         }
         bot.move(0,0,0);
         stopRFThread();

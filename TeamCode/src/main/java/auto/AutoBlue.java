@@ -37,6 +37,7 @@ public class AutoBlue extends LinearOpMode {
         bot.startOdoThreadAuto(this);
 
         path.addRF(rf.wobbleArm(90,1), rf.toggleOuttake(bot));
+
         path.addWaypoint(-30,50,0);
         path.addWaypoint(10, 40, 0);
         path.addWaypoint(50,48,0);
@@ -50,6 +51,8 @@ public class AutoBlue extends LinearOpMode {
             path.addWaypoint(40, -15, 10);
         }else if(rf.ringnum.equals(RingNum.ONE)){
             path.addWaypoint(-20, 20, 0);
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////
+            path.addRF(rf.changeAcc(3, 3, 5, path));
             path.addSetpoint(-18,20,-168);
             dropWobble();
             path.addWaypoint(30, -40, 75);
@@ -60,6 +63,8 @@ public class AutoBlue extends LinearOpMode {
             path.addWaypoint(43, -122, 10);
         }
         path.addSetpoint(3,-35,105);
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        path.addRF(rf.changeAcc(1, 1, 1, path));
         path.addSetpoint(-8,-15,0);
         path.addRF(rf.grab(1));
         path.addStop(0.3);
@@ -68,22 +73,55 @@ public class AutoBlue extends LinearOpMode {
         path.addWaypoint(5, 50, 0);
         path.addWaypoint(-25, 0, -90);
 
+//        if(rf.ringnum.equals(RingNum.ZERO)) {
+//            path.addWaypoint(-10,10,-25);
+//            path.addSetpoint(-5,5,0);
+//            dropWobble();
+//            path.addWaypoint(20,50,0);
+//        }else if(rf.ringnum.equals(RingNum.ONE)){
+//            path.addWaypoint(0, 20, -70);
+//            path.addSetpoint(0,20,-20);
+//            dropWobble();
+//            path.addWaypoint(0,20,0);
+//        }else if(rf.ringnum.equals(RingNum.FOUR)){
+//            path.addWaypoint(-15, 100, -25);
+//            path.addSetpoint(0,20,0);
+//            dropWobble();
+//            path.addWaypoint(0,-70,0);
+//        }
+
         if(rf.ringnum.equals(RingNum.ZERO)) {
             path.addWaypoint(-10,10,-25);
             path.addSetpoint(-5,5,0);
             dropWobble();
             path.addWaypoint(20,50,0);
         }else if(rf.ringnum.equals(RingNum.ONE)){
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////
+            path.addRF(rf.lift(0), rf.shootControl(1), rf.changeAcc(3, 3, 5, path));
             path.addWaypoint(0, 20, -70);
             path.addSetpoint(0,20,-20);
+            path.addRF(rf.intake(1), rf.changeOuttakePow(1, vs, path), rf.toggleOuttake(bot));
+            path.addWaypoint(0.5,0, 0);
             dropWobble();
+            path.addWaypoint(-20,-20,0);
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////
+            path.addRF(rf.changeAcc(1, 1, 1, path));
+            path.addSetpoint(0,-30,0);
+            path.addWaypoint(-10, 35, 50);
+            path.addRF(rf.lift(1));
+            path.addStop(0.3);
+            path.addSetpoint(-5, 10, 130);
+            path.addRF(rf.shootControl(3));
             path.addWaypoint(0,20,0);
+
+
         }else if(rf.ringnum.equals(RingNum.FOUR)){
             path.addWaypoint(-15, 100, -25);
             path.addSetpoint(0,20,0);
             dropWobble();
             path.addWaypoint(0,-70,0);
         }
+
 
         path.addRF(rf.wobbleArm(10,1), rf.turnArm(0.25));
         path.addStop(2);
@@ -117,7 +155,8 @@ public class AutoBlue extends LinearOpMode {
 
     private void powerShot(){
         path.addSetpoint(13, 10, 0);
-        path.addRF(rf.changeAcc(1, path));
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        path.addRF(rf.changeAcc(1, 1, 0.5, path));
         path.addRF(rf.updateXWithDis(60));
         path.addStop(1);
         path.addSetpoint(0,0,0);
@@ -142,8 +181,8 @@ public class AutoBlue extends LinearOpMode {
         path.addStop(0.3);
 
         path.addRF(rf.toggleOuttake(bot));
-
-        path.addRF(rf.changeAcc(2, path));
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        path.addRF(rf.changeAcc(1, 1, 1, path));
 
 
 
