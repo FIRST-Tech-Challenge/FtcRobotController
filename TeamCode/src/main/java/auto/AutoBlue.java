@@ -36,9 +36,8 @@ public class AutoBlue extends LinearOpMode {
         waitForStart();
         bot.startOdoThreadAuto(this);
 
-        path.addRF(rf.wobbleArm(90,1), rf.toggleOuttake(bot));
-
         path.addWaypoint(-30,50,0);
+        path.addRF(rf.wobbleArm(90,1), rf.toggleOuttake(bot));
         path.addWaypoint(10, 40, 0);
         path.addWaypoint(50,48,0);
         powerShot();
@@ -156,8 +155,7 @@ public class AutoBlue extends LinearOpMode {
     private void powerShot(){
         path.addSetpoint(13, 10, 0);
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        path.addRF(rf.changeAcc(1, 1, 0.5, path));
-        path.addRF(rf.updateXWithDis(60));
+        path.addRF(rf.changeAcc(1, 1, 0.5, path), rf.updateXWithDis(60));
         path.addStop(1);
         path.addSetpoint(0,0,0);
 
@@ -180,9 +178,9 @@ public class AutoBlue extends LinearOpMode {
         path.addRF(rf.shootControl(2));
         path.addStop(0.3);
 
-        path.addRF(rf.toggleOuttake(bot));
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        path.addRF(rf.changeAcc(1, 1, 1, path));
+        path.addRF(rf.toggleOuttake(bot), rf.changeAcc(1, 1, 1, path));
+
 
 
 

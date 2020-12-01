@@ -55,6 +55,10 @@ public class Path {
     public int rfsIndex = 0;
     public int stopIndex = 0;
 
+    public int rfsQueueIndex = 0;
+
+
+
     public double dScale = 2;
 
 
@@ -66,6 +70,8 @@ public class Path {
     public ArrayList<CodeSeg> rfs = new ArrayList<>();
     public ArrayList<Boolean> isRf = new ArrayList<>();
     public ArrayList<Double> stops = new ArrayList<>();
+
+    public ArrayList<CodeSeg> rfsQueue = new ArrayList<>();
 
     public ThreadHandler threadHandler = new ThreadHandler();
 
@@ -275,10 +281,9 @@ public class Path {
             @Override
             public void run() {
                 if(rfsIndex < rfs.size()) {
-                    if (isRf.get(rfsIndex)) {
-                        rfs.get(rfsIndex).run();
-                        isDoneWithRfs = true;
-                        rfsIndex++;
+                    if((rfsQueue.size()) > rfsQueueIndex){
+                        rfsQueue.get(rfsQueueIndex).run();
+                        rfsQueueIndex++;
                     }
                 }
             }
@@ -295,15 +300,12 @@ public class Path {
         lastTime = -0.1;
         curIndex++;
         if(rfsIndex < (rfs.size()-1)) {
-            if (isRf.get(rfsIndex + 1)) {
-                if (isDoneWithRfs) {
-                    rfsIndex++;
-                    isDoneWithRfs = false;
-                }
-            } else {
-                rfsIndex++;
+            if (isRf.get(rfsIndex+1)) {
+               rfsQueue.add(rfs.get(rfsIndex+1));
+               rfsIndex++;
             }
         }
+        rfsIndex++;
         if(curIndex >= lines.size()){
             isExecuting = false;
             curIndex--;
@@ -525,6 +527,8 @@ public class Path {
 //            op.telemetry.addData("tvel", bot.odometry.getTVel());
 //            op.telemetry.addData("hder", hder);
 //            op.telemetry.update();
+            op.telemetry.addData("isrf", rfsQueue.size());
+            op.telemetry.update();
         }
         bot.move(0,0,0);
         stopRFThread();
