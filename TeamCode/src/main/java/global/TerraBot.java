@@ -420,6 +420,7 @@ public class TerraBot {
         });
 
         Path path0 = new Path(98, 0, 0);
+        path0.HAcc = 1;
         path0.addSetpoint(0, 0, 0);
         powerShot.addPath(path0, this);
         powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
@@ -427,14 +428,16 @@ public class TerraBot {
         powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
         Path path = new Path(98, 0, 0);
-        path.addSetpoint(0, 0, -5);
+        path.HAcc = 1;
+        path.addSetpoint(0, 0, -6);
         powerShot.addPath(path, this);
         powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
         powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
         Path path1 = new Path(98, 0, -5);
-        path1.addSetpoint(0, 0, -7);
+        path1.HAcc = 1;
+        path1.addSetpoint(0, 0, -6);
         powerShot.addPath(path1, this);
         powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);

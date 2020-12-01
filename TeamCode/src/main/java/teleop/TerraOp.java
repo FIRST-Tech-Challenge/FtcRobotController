@@ -140,7 +140,7 @@ public class TerraOp extends OpMode {
         }
 
 
-        if(gamepad2.left_stick_button && bot.timer.seconds() > 0.5){
+        if(gamepad1.left_trigger> 0  && bot.timer.seconds() > 0.5){
             bot.fastmode = !bot.fastmode;
             bot.timer.reset();
         }
@@ -150,9 +150,9 @@ public class TerraOp extends OpMode {
             bot.timer2.reset();
         }
 
-//        if(!bot.powershot && bot.gameTime.seconds() > 85){
-//            bot.powershot = true;
-//        }
+        if (!bot.powershot && bot.gameTime.seconds() > 88 && bot.gameTime.seconds() < 90) {
+            bot.powershot = true;
+        }
 
         double forward = -gamepad1.right_stick_y;
         double strafe = gamepad1.right_stick_x;
@@ -190,6 +190,7 @@ public class TerraOp extends OpMode {
 //        telemetry.addData("theta", bot.odometry.getTheta());
 //        telemetry.addData("heading", bot.getHeading());
 
+        telemetry.addData("gameTime", bot.gameTime.seconds());
         telemetry.addData("isPowerShotMode", bot.powershot);
 
         telemetry.update();
