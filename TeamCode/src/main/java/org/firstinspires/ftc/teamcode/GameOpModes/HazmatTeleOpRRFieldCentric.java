@@ -72,6 +72,7 @@ public class HazmatTeleOpRRFieldCentric extends LinearOpMode {
         // See AutoTransferPose.java for further details
         //drive.setPoseEstimate(PoseStorage.currentPose);
         // TODO : When in game comment below, so that Pose is retrieved from PoseStorage
+        //startPose = GameField.BLUE_INNER_START_LINE;
         hzDrive.setPoseEstimate(startPose);
 
         // Initiate Camera even before Start is pressed.

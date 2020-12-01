@@ -84,7 +84,7 @@ public class HzGamepad {
     public void runByGamepadRRDriveModes(/*HzDrive gpDrive, int playingAlliance*/) {
         gpDrive.poseEstimate = gpDrive.getPoseEstimate();
 
-        gpDrive.driveType = HzDrive.DriveType.FIELD_CENTRIC;
+        gpDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
 
         if (gpDrive.driveType == HzDrive.DriveType.ROBOT_CENTRIC){
             gpDrive.gamepadInput = new Vector2d(
@@ -98,23 +98,23 @@ public class HzGamepad {
                 gpDrive.gamepadInput = new Vector2d(
                         -turboMode(getLeftStickY()),
                         -turboMode(getLeftStickX())
-                );//.rotated(-gpDrive.poseEstimate.getHeading());
+                ).rotated(-gpDrive.poseEstimate.getHeading());
             }
 
             if (playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
                 gpDrive.gamepadInput = new Vector2d(
                         turboMode(getLeftStickX()),
                         -turboMode(getLeftStickY())
-                );//.rotated(-gpDrive.poseEstimate.getHeading());
-                };
+                ).rotated(-gpDrive.poseEstimate.getHeading());
+            };
 
             if (playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
                 gpDrive.gamepadInput = new Vector2d(
                         -turboMode(getLeftStickX()),
                         turboMode(getLeftStickY())
-                );//.rotated(-gpDrive.poseEstimate.getHeading());
+                ).rotated(-gpDrive.poseEstimate.getHeading());
             };
-            gpDrive.gamepadInput.rotated(-gpDrive.poseEstimate.getHeading());
+            //gpDrive.gamepadInput.rotated(-gpDrive.poseEstimate.getHeading());
         }
         gpDrive.gamepadInputTurn = -turboMode(getRightStickX());
 
@@ -137,11 +137,13 @@ public class HzGamepad {
 
         if (gpMagazine.isMagazineEmpty()) {
             gpMagazine.moveMagazineToCollect();
-            //Intake will not start automatically when magazine comes down
-            //gpIntake.runIntakeMotor();
+        }
+
+        if (gpMagazine.magazinePosition == Magazine.MAGAZINE_POSITION.AT_COLLECT){
             if (gpIntake.intakeButtonState == Intake.INTAKE_BUTTON_STATE.ON){
                 gpIntake.runIntakeMotor();
             }
+            gpLauncher.stopFlyWheel();
         }
 
     }
@@ -163,6 +165,7 @@ public class HzGamepad {
         //Reverse Intake motors and run - in case of stuck state)
         if (getDpad_upPersistent()) {
             gpIntake.reverseIntakeMotor();
+            //gpMagazine.shakeMagazine(100);
         } else if (gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.REVERSING){
             gpIntake.stopIntakeMotor();
         }
@@ -212,7 +215,9 @@ public class HzGamepad {
             //it is to be done either automatically, or by Y,X,A,B button press.
             //gpMagazine.moveMagazineToLaunch();
 
-            if (!gpMagazine.isMagazineEmpty()) {
+            if (!gpMagazine.isMagazineEmpty() &&
+                    gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
+                    gpLaunchController.launchReadiness == LaunchController.LAUNCH_READINESS.READY) {
                 gpLauncher.plungeRingToFlyWheel();
             }
 
@@ -220,7 +225,10 @@ public class HzGamepad {
     }
 
     public void runArm(){
-        gpArm.moveArmByTrigger(getLeftTrigger());
+        //gpArm.moveArmByTrigger(getLeftTrigger());
+        if (getLeftTriggerPress()) {
+            gpArm.moveArmByTrigger2();
+        }
         //Toggle Arm Grip actions
         if (getLeftBumperPress()) {
             if(gpArm.getGripServoState() == Arm.GRIP_SERVO_STATE.OPENED) {
@@ -255,6 +263,7 @@ public class HzGamepad {
     boolean gp1LeftBumperLast = false;
     boolean gp1Dpad_upLast = false;
     boolean gp1Dpad_downLast = false;
+    boolean gp1LeftTriggerLast = false;
 
     /**
      * Method to convert linear map from gamepad1 stick input to a cubic map
@@ -302,7 +311,7 @@ public class HzGamepad {
      * This is the method to apply any directional modifiers to match to the Y plane of robot.
      * For Hazmat Skystone Robot, Y direction needs to be inverted.
      *
-     * @return gpGamepad1.left_stick_y * (-1)
+     * @return gpGamepad1.left_stick_y
      */
     public double getLeftStickY() { return gpGamepad1.left_stick_y; }
 
@@ -335,6 +344,15 @@ public class HzGamepad {
      */
     public double getLeftTrigger() {
         return gpGamepad1.left_trigger;
+    }
+
+    public boolean getLeftTriggerPress() {
+        boolean isPressedLeftTrigger = false;
+        if (!gp1LeftTriggerLast && (getLeftTrigger()>0.7)) {
+            isPressedLeftTrigger = true;
+        }
+        gp1LeftTriggerLast = (getLeftTrigger()>0.7);
+        return isPressedLeftTrigger;
     }
 
     /**

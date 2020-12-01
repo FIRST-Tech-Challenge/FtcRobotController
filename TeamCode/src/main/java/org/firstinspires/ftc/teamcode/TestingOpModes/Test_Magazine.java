@@ -16,6 +16,7 @@ public class Test_Magazine extends LinearOpMode {
 
     HzGamepadClassic hzGamepadClassic;
 
+    //Magazine hzMagazine;
     Magazine hzMagazine;
 
     @Override
@@ -82,7 +83,7 @@ public class Test_Magazine extends LinearOpMode {
     public void printDebugMessages(){
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
-        telemetry.addData("7:30","11/23");
+        telemetry.addData("3:38","11/29 ");
         //telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncher.launcherFlyWheelMotor.isBusy());
         //telemetry.addData("launcherRingPlungerServo.getPosition()", hzLauncher.launcherRingPlungerServo.getPosition());
 

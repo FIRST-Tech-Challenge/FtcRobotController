@@ -9,16 +9,19 @@ public class LaunchController {
         MANUAL,
         AUTOMATED
     };
+    public LAUNCH_MODE launchMode = LAUNCH_MODE.MANUAL;
 
     public enum LAUNCH_READINESS{
         READY,
         NOT_READY
     };
+    public LAUNCH_READINESS launchReadiness = LAUNCH_READINESS.NOT_READY;
 
     public enum LAUNCH_ACTIVATION{
         ACTIVATED,
         NOT_ACTIVATED
     }
+    public LAUNCH_ACTIVATION launchActivation;
 
     public enum ROBOT_ZONE{
         HIGH_GOAL_ZONE,
@@ -26,6 +29,7 @@ public class LaunchController {
         LOW_GOAL_ZONE,
         POWER_GOAL_ZONE
     };
+    public ROBOT_ZONE robotZone = ROBOT_ZONE.HIGH_GOAL_ZONE;
 
     public enum LAUNCH_TARGET{
         HIGH_GOAL,
@@ -36,18 +40,14 @@ public class LaunchController {
         POWER_SHOT3
     };
 
+
     public enum LAUNCHER_ALIGNMENT{
         TARGET_ALIGNED,
         TARGET_NOT_ALIGNED
     };
-
-    public ROBOT_ZONE robotZone = ROBOT_ZONE.HIGH_GOAL_ZONE;
+    public LAUNCHER_ALIGNMENT launcherAlignment = LAUNCHER_ALIGNMENT.TARGET_NOT_ALIGNED;
 
     public double distanceFromTarget, launchMotorSpeed, angleToTarget;
-
-    public LAUNCH_MODE launchMode = LAUNCH_MODE.AUTOMATED;
-    public LAUNCH_READINESS launchReadiness;
-    public LAUNCH_ACTIVATION launchActivation;
 
     public Servo launchControllerBeaconServo;
 
@@ -82,8 +82,6 @@ public class LaunchController {
 
     //public I2cDevice launchControllerColorBeacon;
     //public I2cDeviceSynch launchControllerColorBreader;
-
-
 
     //gpLauncherController.activateLaunchReadiness(gpLauncher, gpMagazine, gpVuforia);
     //gpLauncherController.senseLaunchReadiness(gpLauncher, gpMagazine, gpVuforia);
@@ -129,8 +127,7 @@ public class LaunchController {
         //gpVuforia.identifyCurrentLocation();
         //gpVuforia.setCurrentZone();
         determineLaunchTarget(lcTargetPassed);
-        turnRobotToTarget();
-
+        if (launchMode == LAUNCH_MODE.AUTOMATED)  turnRobotToTarget();
 
         double distance, speed, robotAngle;
         //TODO : AMJAD determineDistanceToTarget
@@ -151,12 +148,12 @@ public class LaunchController {
         //Use senseMagazineStatus - Check if atleast 1 ring is in magazine - magazineRingCount
         //If MAGAZINE_AT_COLLECT, use moveMagazineToLaunch
         lcMagazine.senseMagazineRingStatus();
-        lcMagazine.senseMagazinePosition();
+
+        //lcMagazine.senseMagazinePosition();
         if (lcMagazine.magazineRingCount != Magazine.MAGAZINE_RING_COUNT.ZERO) {
             lcIntake.stopIntakeMotor();
-            lcMagazine.moveMagazineToLaunch();
-            if (lcMagazine.magazinePosition == Magazine.MAGAZINE_POSITION.AT_LAUNCH) {
-                return launchReadiness = LAUNCH_READINESS.READY;
+            if (lcMagazine.moveMagazineToLaunch()); {
+                  return launchReadiness = LAUNCH_READINESS.READY;
             }
         }
         return launchReadiness = LAUNCH_READINESS.NOT_READY;

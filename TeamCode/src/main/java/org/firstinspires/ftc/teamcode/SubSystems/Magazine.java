@@ -38,6 +38,7 @@ public class Magazine {
     }
 
     public MAGAZINE_POSITION magazinePosition = MAGAZINE_POSITION.AT_ERROR;
+    public boolean magazinePositionError = false;
 
     public enum MAGAZINE_TOUCH_SENSORS_STATE {
         LAUNCH_TS_PRESSED,
@@ -57,7 +58,7 @@ public class Magazine {
     public MAGAZINE_RING_COUNT magazineRingCount = MAGAZINE_RING_COUNT.ZERO;
 
     //TODO : AMJAD : Better coding of enum with values at https://www.baeldung.com/java-enum-values
-    public static final double RING_NONE_DISTANCE = 3.4;
+    public static final double RING_NONE_DISTANCE = 3.45;
     public static final double RING_ONE_DISTANCE = 3.0;
     public static final double RING_TWO_DISTANCE = 2.0;
     public static final double RING_THREE_DISTANCE = 0.5;
@@ -99,10 +100,14 @@ public class Magazine {
         MAGAZINE_TOUCH_SENSORS_STATE magazine_touch_sensors_state = getMagazineTouchSensorsState();
         if (magazine_touch_sensors_state == MAGAZINE_TOUCH_SENSORS_STATE.LAUNCH_TS_PRESSED) {
             magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
+            magazinePositionError = false;
         } else if (magazine_touch_sensors_state == MAGAZINE_TOUCH_SENSORS_STATE.COLLECT_TS_PRESSED) {
             magazinePosition = MAGAZINE_POSITION.AT_COLLECT;
+            magazinePositionError = false;
         } else if (magazine_touch_sensors_state == MAGAZINE_TOUCH_SENSORS_STATE.TS_ERROR){
-            magazinePosition = MAGAZINE_POSITION.AT_ERROR;
+            //Retain old magazinePosition State
+            //magazinePosition = MAGAZINE_POSITION.AT_ERROR;
+            magazinePositionError = true;
         }
     }
 
@@ -158,22 +163,18 @@ public class Magazine {
 
     public boolean moveMagazineToLaunch() {
         senseMagazinePosition();
-        senseMagazineRingStatus();
+        //senseMagazineRingStatus();
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        if(magazinePosition != MAGAZINE_POSITION.AT_ERROR &&
+        timer.reset();
+        if(/*magazinePosition != MAGAZINE_POSITION.AT_ERROR &&*/
                 magazinePosition != MAGAZINE_POSITION.AT_LAUNCH &&
                 magazineRingCount != MAGAZINE_RING_COUNT.ZERO) {
-            while (!magazineLaunchTouchSensor.isPressed()){
-                magazineServo.setPower(0.3);
-            }
-            // Aim to keep the magazine pressed to switch, as well as give a shake.
-            timer.reset();
-            while (timer.time() < 200){
-                magazineServo.setPower(0.3);
-            }
-            magazineServo.setPower(0);
-
-            senseMagazinePosition();
+            magazineServo.setPower(0.3);
+            //TODO : AMJAD : SET TIMER TO EXIT
+            while (!magazineLaunchTouchSensor.isPressed() /*&& timer.time() < 2000*/) { }
+            magazineServo.setPower(0.05);
+            //senseMagazinePosition();
+            magazinePosition = MAGAZINE_POSITION.AT_LAUNCH; // Over ride the sense with state set
         }
 
         if (magazinePosition == MAGAZINE_POSITION.AT_LAUNCH){
@@ -184,18 +185,20 @@ public class Magazine {
     }
 
     public boolean moveMagazineToCollect() {
-        senseMagazinePosition();
-        senseMagazineRingStatus();
-        if (magazinePosition != MAGAZINE_POSITION.AT_ERROR &&
+        //senseMagazinePosition();
+        //senseMagazineRingStatus();
+        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        timer.reset();
+        if (/*magazinePosition != MAGAZINE_POSITION.AT_ERROR &&*/
                 magazinePosition != MAGAZINE_POSITION.AT_COLLECT &&
                 magazineRingCount != MAGAZINE_RING_COUNT.THREE) {
-
-            while (!magazineCollectTouchSensor.isPressed()) {
-                magazineServo.setPower(-0.1);
+            magazineServo.setPower(-0.2);
+            //TODO : AMJAD : SET TIMER TO EXIT
+            while (!magazineCollectTouchSensor.isPressed() /*&& timer.time() < 4000*/)  {
             }
-            magazineServo.setPower(0);
-
-            senseMagazinePosition();
+            magazineServo.setPower(0.0);
+            //senseMagazinePosition();
+            magazinePosition = MAGAZINE_POSITION.AT_COLLECT; // Over ride the sense with state set
         }
 
         if (magazinePosition == MAGAZINE_POSITION.AT_COLLECT){
@@ -227,7 +230,7 @@ public class Magazine {
 
     //For Telemetry use
     public MAGAZINE_RING_COUNT getMagazineRingCount() {
-        senseMagazineRingStatus();
+        //senseMagazineRingStatus();
         return magazineRingCount;
     }
 
@@ -258,11 +261,11 @@ public class Magazine {
         shaketimer.reset();
         while (shaketimer.time() < timeInMilliseconds) {
             timer.reset();
-            while (timer.time() < 100) {
+            while (timer.time() < 50) {
                 magazineServo.setPower(0.2);
             }
             timer.reset();
-            while (timer.time() < 100) {
+            while (timer.time() < 50) {
                 magazineServo.setPower(0.2);
             }
         }

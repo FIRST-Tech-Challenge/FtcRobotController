@@ -21,7 +21,7 @@ public class HzDrive extends SampleMecanumDrive {
         FIELD_CENTRIC,
     }
 
-    public DriveType driveType = DriveType.FIELD_CENTRIC;
+    public DriveType driveType = DriveType.ROBOT_CENTRIC;
 
     //**** Align to point and Field Drive Mode ****
     // Define 2 states, driver control or alignment control
@@ -54,8 +54,8 @@ public class HzDrive extends SampleMecanumDrive {
 
     }
 
-    public Vector2d gamepadInput;
-    public double gamepadInputTurn;
+    public Vector2d gamepadInput = new Vector2d(0,0);
+    public double gamepadInputTurn = 0;
 
     public void driveTrainFieldCentric(){
 

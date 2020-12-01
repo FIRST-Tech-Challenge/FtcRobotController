@@ -39,6 +39,7 @@ public class HzGamepadClassic {
     boolean leftBumperLast = false;
     boolean dpad_upLast = false;
     boolean dpad_downLast = false;
+    boolean gp1LeftTriggerLast = false;
 
     LinearOpMode opModepassed;
     /**
@@ -105,6 +106,15 @@ public class HzGamepadClassic {
      */
     public double getLeftTrigger() {
         return gpGamepad1.left_trigger;
+    }
+
+    public boolean getLeftTriggerPress() {
+        boolean isPressedLeftTrigger = false;
+        if (!gp1LeftTriggerLast && (getLeftTrigger()>0.95)) {
+            isPressedLeftTrigger = true;
+        }
+        gp1LeftTriggerLast = (getLeftTrigger()>0.95) ? true : false;
+        return isPressedLeftTrigger;
     }
 
     /**
