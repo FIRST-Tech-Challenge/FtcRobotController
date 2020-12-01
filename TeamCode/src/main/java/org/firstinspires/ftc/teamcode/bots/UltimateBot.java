@@ -304,24 +304,6 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-//    @BotAction(displayName = "Lift Wobble Wall Drop", defaultReturn = "")
-//    public void liftWobbleWallDrop() {
-//        if (wobbleSwing != null) {
-//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            wobbleSwing.setTargetPosition(SWING_LIFT_DROP);
-//            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            wobbleSwing.setPower(0.7);
-//            boolean stop = false;
-//            while (!stop) {
-//                stop = wobbleSwing.isBusy() == false;
-//            }
-//            this.swingPosition = SwingPosition.LiftUp;
-//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//            wobbleSwing.setPower(0);
-//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        }
-//    }
-
 
     @BotAction(displayName = "Green Light", defaultReturn = "")
     public void signalOK() {
@@ -356,6 +338,15 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+    // compound claw up for wall
+    @BotAction(displayName = "Lift Wall and Grab", defaultReturn = "")
+    public void liftWallGrab() {
+        ElapsedTime runtime = new ElapsedTime();
+        closeWobbleClaw();
+        while (runtime.milliseconds() <= 300) {
+        }
+        liftWobbleWall();
+    }
 
     ///get results of detection on the thread
     @BotAction(displayName = "Get Detection Result", defaultReturn = "B")
@@ -380,7 +371,7 @@ public class UltimateBot extends YellowBot {
     }
 
     @BotAction(displayName = "Lights Off", defaultReturn = "")
-    public void lightsOff(){
+    public void lightsOff() {
         getLights().none();
     }
 

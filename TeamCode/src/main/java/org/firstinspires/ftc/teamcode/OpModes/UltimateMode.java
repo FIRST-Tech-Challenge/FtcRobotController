@@ -36,6 +36,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.bots.DummyBot;
 import org.firstinspires.ftc.teamcode.bots.SwingPosition;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
+import org.firstinspires.ftc.teamcode.skills.BotThreadAction;
+import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
 //Opmode for quick testing of motors
 @TeleOp(name = "Ultimate", group = "Robot15173")
@@ -52,6 +54,8 @@ public class UltimateMode extends LinearOpMode {
     double delaytime = 300;
     double startdelay = 0;
     double grabdelay = 0;
+    private BotThreadAction bta = null;
+    Thread btaThread = null;
 
     @Override
     public void runOpMode() {
@@ -109,21 +113,33 @@ public class UltimateMode extends LinearOpMode {
 
                 // move swing
 
+//                if (gamepad1.dpad_up) {
+//                    robot.forwardWobbleSwing();
+//                } else if (gamepad1.dpad_down) {
+//                    robot.backWobbleSwing();
+//                } else if (gamepad1.dpad_left) {
+//                    robot.liftWobbleWall();
+//                } else if (gamepad1.x) {
+//                    robot.liftWallGrab();
+//                    changedclaw = !changedclaw;
+//                }
+
                 if (gamepad1.dpad_up) {
-                    robot.forwardWobbleSwing();
+                    bta = new BotThreadAction(robot, telemetry, "wobbleforward", this);
+                    btaThread = new Thread(bta);
+                    btaThread.start();
                 } else if (gamepad1.dpad_down) {
-                    robot.backWobbleSwing();
+                    bta = new BotThreadAction(robot, telemetry, "wobbleback", this);
+                    btaThread = new Thread(bta);
+                    btaThread.start();
                 } else if (gamepad1.dpad_left) {
-                    robot.liftWobbleWall();
+                    bta = new BotThreadAction(robot, telemetry, "wobblewall", this);
+                    btaThread = new Thread(bta);
+                    btaThread.start();
                 } else if (gamepad1.x) {
-                    robot.closeWobbleClaw();
-                    sleep(300);
-                    robot.liftWobbleWall();
-                    changedclaw = !changedclaw;
-                } else if (gamepad1.y){
-                    robot.closeWobbleClaw();
-                    sleep(300);
-                    robot.liftAndHoldWobbleSwing();
+                    bta = new BotThreadAction(robot, telemetry, "wallclose", this);
+                    btaThread = new Thread(bta);
+                    btaThread.start();
                     changedclaw = !changedclaw;
                 }
 
