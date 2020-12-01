@@ -25,22 +25,27 @@ public class OdometryChassis extends BasicChassis {
     double ypos = 0;
     private LinearOpMode op = null;
     private Odometry odom = null;
+
     public OdometryChassis(LinearOpMode opMode) {
         super(opMode);
         odom = new Odometry();
     }
+
     public void stopAllMotors() {
         motorLeftBack.setPower(0);
         motorRightBack.setPower(0);
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
     }
+
     public double[] track() {
         return odom.track();
     }
+
     public double getAngle() {
         return odom.getAngle();
     }
+
     public void turnInPlace(double target, double power) {
         double currentAngle = odom.getAngle();
         int direction = 1;
@@ -116,6 +121,7 @@ public class OdometryChassis extends BasicChassis {
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
     }
+
     public void moveBackward(double distance, double power) {
         double[] currentPosition = odom.track();
         double[] target_position = {0, 0, 0};
@@ -156,6 +162,7 @@ public class OdometryChassis extends BasicChassis {
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
     }
+
     public void moveRight(double distance, double power) {//right is positive use distance to change direction
         double[] currentPosition = odom.track();
         double[] target_position = {0, 0, 0};
@@ -196,6 +203,7 @@ public class OdometryChassis extends BasicChassis {
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
     }
+
     public void moveLeft(double distance, double power) {
         double[] currentPosition = odom.track();
         double[] target_position = {0, 0, 0};
@@ -237,13 +245,14 @@ public class OdometryChassis extends BasicChassis {
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
     }
+
     public void moveAngle(double x, double y, double power) {
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        double startAngle =odom.getAngle();
-        double[] currentPosition =odom.track();
+        double startAngle = odom.getAngle();
+        double[] currentPosition = odom.track();
         double[] target_position = {0, 0, 0};
         double anglecorrection;
         target_position[0] = currentPosition[0] + x;
@@ -256,7 +265,7 @@ public class OdometryChassis extends BasicChassis {
             //Create File
             File myFTCfile = new File("/storage/emulated/0/tmp/OdometryTest.csv");
             if (myFTCfile.createNewFile()) {
-                op.telemetry.addData("moveAngleOdometry:", "File created:%S\n", "Odomeytry" );
+                op.telemetry.addData("moveAngleOdometry:", "File created:%S\n", "Odomeytry");
                 op.telemetry.update();
             } else {
                 op.telemetry.addData("moveAngleOdometry:", "File already exists:%S\n", "Odometry");
@@ -305,14 +314,14 @@ public class OdometryChassis extends BasicChassis {
                 op.telemetry.update();
                 //op.sleep(3000);
                 //FileWriteHandle;
-                wFTCfile.write(System.currentTimeMillis() + "," + String.format("%.2f",currentPosition[0]) + "," + String.format("%.2f",currentPosition[1]) + "," +
-                        String.format("%.2f",currentPosition[2]) + "," +
-                        String.format("%.2f",power) + "," +
-                        String.format("%.2f",anglePower[0]) + "," +
-                        String.format("%.2f",anglePower[1]) + "," +
-                        String.format("%.2f",anglecorrection) + "," +
-                        String.format("%.2f",difference) +","+"\n"+
-                        String.format("%.2f",encoder[0])+"," +String.format("%.2f",encoder[1])+","+ String.format("%.2f",encoder[2])+","+String.format("%.2f",encoder[3])+","+"\n");
+                wFTCfile.write(System.currentTimeMillis() + "," + String.format("%.2f", currentPosition[0]) + "," + String.format("%.2f", currentPosition[1]) + "," +
+                        String.format("%.2f", currentPosition[2]) + "," +
+                        String.format("%.2f", power) + "," +
+                        String.format("%.2f", anglePower[0]) + "," +
+                        String.format("%.2f", anglePower[1]) + "," +
+                        String.format("%.2f", anglecorrection) + "," +
+                        String.format("%.2f", difference) + "," + "\n" +
+                        String.format("%.2f", encoder[0]) + "," + String.format("%.2f", encoder[1]) + "," + String.format("%.2f", encoder[2]) + "," + String.format("%.2f", encoder[3]) + "," + "\n");
             }
             wFTCfile.close();
         } catch (IOException e) {
@@ -321,10 +330,4 @@ public class OdometryChassis extends BasicChassis {
         turnInPlace(startAngle, 0.5);
         stopAllMotors();
     }
-
-    @Override
-    public void moveMultidirectional(double power, double angle, float rightStick) {
-
-    }
-
-    }
+}
