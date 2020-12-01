@@ -144,7 +144,7 @@ public class Teleop extends LinearOpMode {
 
             magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
 
-            robot.newmoveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode);
+            robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode);
 
             // wobble goal movements
             telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
