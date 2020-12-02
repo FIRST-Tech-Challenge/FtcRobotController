@@ -32,25 +32,28 @@ import java.util.concurrent.TimeUnit;
 //@Disabled
 public class MecanumWheelDraft extends LinearOpMode {
 
+    private ElapsedTime runtime = new ElapsedTime();
     GrahamHWMap robot = new GrahamHWMap();
-
 
 
     @Override
     public void runOpMode() {
 
-    robot.init(hardwareMap);
+        robot.init(hardwareMap);
 
-    double x;
-    double y;
-    double r;
-    double frontLeft;
-    double frontRight;
-    double backLeft;
-    double backRight;
+        double x;
+        double y;
+        double r;
+        double frontLeft;
+        double frontRight;
+        double backLeft;
+        double backRight;
 
-    double max;
+        double step = .5;    //was .2
+        double interval = 75    ;  //was 75
+        double lastSpeedTime = runtime.milliseconds();
 
+        double max;
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -64,12 +67,6 @@ public class MecanumWheelDraft extends LinearOpMode {
             r = gamepad1.right_stick_x;
 
 
-
-
-
-
-
-
             // do not let rotation dominate movement
             r = r / 2;
 
@@ -79,7 +76,7 @@ public class MecanumWheelDraft extends LinearOpMode {
 
             frontRight = -y - x + r;
             backRight = -y + x + r;
-
+            /*
             // Normalize the values so none exceeds +/- 1.0
             max = Math.max(Math.max(Math.abs(frontLeft), Math.abs(frontRight)), Math.max(Math.abs(frontRight), Math.abs(frontRight)));
             if (max > 1.0) {
@@ -89,40 +86,73 @@ public class MecanumWheelDraft extends LinearOpMode {
                 backRight = backRight / max;
             }
 
-            robot.frontLeftMotor.setPower(frontLeft);
-            robot.frontRightMotor.setPower(frontRight);
-            robot.backLeftMotor.setPower(backLeft);
-            robot.backRightMotor.setPower(backRight);
+             */
+
+            if (runtime.milliseconds() > lastSpeedTime + interval) {
+                lastSpeedTime = runtime.milliseconds();
+
+                frontLeft = getRampPower(frontLeft, robot.frontLeftMotor.getPower(), step);
+                frontRight = getRampPower(-frontRight, -robot.frontRightMotor.getPower(), step);
+                backLeft = getRampPower(backLeft, robot.backLeftMotor.getPower(), step);
+                backRight = getRampPower(-backRight, -robot.backRightMotor.getPower(), step);
+
+                frontRight = -frontRight;
+                backRight = -backRight;
 
 
 
 
+                max = Math.max(Math.max(Math.abs(frontLeft), Math.abs(frontRight)), Math.max(Math.abs(frontRight), Math.abs(frontRight)));
+                if (max > .9) {   //was 1
+                    frontLeft = frontLeft / max;
+                    frontRight = frontRight / max;
+                    backLeft = backLeft / max;
+                    backRight = backRight / max;
+                }
 
 
+                robot.frontLeftMotor.setPower(frontLeft);
+                robot.frontRightMotor.setPower(frontRight);
+                robot.backLeftMotor.setPower(backLeft);
+                robot.backRightMotor.setPower(backRight);
 
 
+                // Show wheel power to driver
+                telemetry.addData("front left", "%.2f", frontLeft);
+                telemetry.addData("front right", "%.2f", frontRight);
+                telemetry.addData("back left", "%.2f", backLeft);
+                telemetry.addData("back right", "%.2f", backRight);
+                telemetry.update();
 
 
-
-
-
-
-
-
-            // Show wheel power to driver
-            telemetry.addData("front left", "%.2f", frontLeft);
-            telemetry.addData("front right", "%.2f", frontRight);
-            telemetry.addData("back left", "%.2f", backLeft);
-            telemetry.addData("back right", "%.2f", backRight);
-            telemetry.update();
-
-
-
-
-
-
-
+            }
 
         }
+
+
     }
+
+    double getRampPower(double t, double a, double step) {
+        double delta;
+        double returnPower = 0;
+
+        delta = t - a;
+        if (delta > 0) {  // speeding up
+            returnPower = a + step;
+            if (returnPower > t) {
+                returnPower = t;
+            }
+        }
+        if (delta < 0) {  //slowing down
+            returnPower = a - (step);
+            if (returnPower < t)
+                returnPower = t;
+        }
+        if (delta == 0) {
+            returnPower = a;
+        }
+        return returnPower;
+    }
+
+
 }
