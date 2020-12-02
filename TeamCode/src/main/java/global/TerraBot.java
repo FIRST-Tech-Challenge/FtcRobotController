@@ -702,12 +702,12 @@ public class TerraBot {
 
     public void resetArm(){
         if(resettingArm == 0){
-            arm.setPower(-0.15);
+            arm.setPower(-0.15 + (-0.2-getArmVel()));
             resettingArm++;
             timer.reset();
         }else if(resettingArm == 1) {
             if(getArmVel() == 0){
-                if(timer.seconds() > 0.6){
+                if(timer.seconds() > 0.3){
                     arm.setPower(0);
                     arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

@@ -25,19 +25,25 @@ public class AutoTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         initialize();
+        while (!isStarted() && !bot.isDoneResettingArm()) {
+            bot.resetArm();
+        }
         telemetry.addData("ready", "yes");
         telemetry.update();
         //rf.telemetryText("done initializing");
         waitForStart();
         bot.startOdoThreadAuto(this);
         path.addStop(1);
-        path.addRF(rf.changeAcc(3, 2, 3, path));
-        path.addSetpoint(0,30,0);
-        path.addRF(rf.intake(1));
-        path.addStop(0.3);
-        path.addSetpoint(0, 3, 0);
-        path.addRF(rf.changeKs(0.4, path));
-        path.addWaypoint(0, 20, 0);
+        path.addRF(rf.turnArm(0.68), rf.wobbleArm(180,1));
+        path.addStop(2);
+//        path.addStop(1);
+//        path.addRF(rf.changeAcc(3, 2, 3, path));
+//        path.addSetpoint(0,30,0);
+//        path.addRF(rf.intake(1));
+//        path.addStop(0.3);
+//        path.addSetpoint(0, 3, 0);
+//        path.addRF(rf.changeKs(0.4, path));
+//        path.addWaypoint(0, 20, 0);
        // path.addWaypoint(0,5,0);
         //path.addStop(1);
         path.start(bot, this);
