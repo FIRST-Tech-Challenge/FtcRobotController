@@ -15,6 +15,7 @@ import java.util.List;
 // This opmode EXTENDS BASICAUTONOMOUS and actually does the same thing as BasicAutonomous
 // The goal here was to extend a base class with all the methods and prove it works just the same.
 
+
 // Place robot on the left most blue line when facing the goal. Robot should be placed such that
 // as it drives straight ahead it will not hit the stack of rings. So basically center the robot on
 // the seam between the first and second floor tile. Which is an inch or to to the right of the blue line.

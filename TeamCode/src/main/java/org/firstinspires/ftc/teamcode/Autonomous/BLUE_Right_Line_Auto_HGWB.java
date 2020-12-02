@@ -20,6 +20,7 @@ import java.util.List;
 // as it drives straight ahead it will not hit the stack of rings. So basically center the robot on
 // the seam between the first and second floor tile. Which is an inch or to to the right of the blue line.
 
+
 // Alignment Position RH Blue Line when facing the goal
 //    X     B       X       X
 //    X     B       X       X

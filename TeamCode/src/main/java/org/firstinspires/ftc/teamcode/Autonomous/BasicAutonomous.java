@@ -596,6 +596,7 @@ public class BasicAutonomous extends LinearOpMode {
         //mShooterState = ShooterState.STATE_SHOOTER_OFF;
         shooter.shooterReload();
     }
+    
 
     public void collectRingsInAuto_A(RingCollectionState mRingCollectionState, double autoRingCollectTimeAllowed ){
         autoRingCollectTimer.reset();
