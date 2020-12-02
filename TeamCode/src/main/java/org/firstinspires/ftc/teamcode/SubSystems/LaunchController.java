@@ -58,7 +58,10 @@ public class LaunchController {
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL = 0.8;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE = 0.0;
 
+    public static final double slopeOfPowerShot = 0.001;
+    public static final double slopeOfHighGoal = 0.0011111;
     public static int slopeOfGetLaunchMotorSpeed;
+
 
     public Launcher lcLauncher;
     public Intake lcIntake;
@@ -119,7 +122,7 @@ public class LaunchController {
     public LAUNCH_READINESS activateLaunchReadiness(LAUNCH_TARGET lcTargetPassed) {
         //TODO: AMJAD : identifyCurrentLocation : Use Vuforia to determine robots' own current position and pose in the field. Vuforia functions returns the x,y,z, pose of the robot with respect to the tower goal for the current alliance color
         //TODO: AMJAD : setCurrentZone :  based on button pressed and current location of the robot on the field, set the robotCurrentZone state
-
+        lcTarget = lcTargetPassed;
         if (senseMagazineStatus() == LAUNCH_READINESS.NOT_READY){
             turnRobotToNormalControl();
             launchReadiness = LAUNCH_READINESS.NOT_READY;
@@ -265,8 +268,19 @@ public class LaunchController {
 
     public void getLaunchMotorSpeed() {
         //TODO : AMJAD CALCULATE MOTOR SPEED USING DISTANCE
+
+        switch (lcTarget) {
+            case LAUNCH_TARGET.POWER_SHOT1 :
+            case LAUNCH_TARGET.POWER_SHOT2 :
+            case LAUNCH_TARGET.POWER_SHOT3 :
+                slopeOfGetLaunchMotorSpeed = slopeOfPowerShot;
+                break;
+            case LAUNCH_TARGET.HIGH_GOAL:
+                slopeOfGetLaunchMotorSpeed = slopeOfHighGoal;
+                break;
+        }
+
         if(distanceFromTarget > 66 && distanceFromTarget < 138) {
-            slopeOfGetLaunchMotorSpeed = 0.00111;
             launchMotorSpeed = slopeOfGetLaunchMotorSpeed*distanceFromTarget;
         } else {
             launchMotorSpeed = 0;
