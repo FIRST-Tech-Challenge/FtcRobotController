@@ -173,6 +173,7 @@ public class Arm {
             previousArmPosition = currentArmPosition;
             moveArmPickWobblePosition();
             openGrip();
+            return;
         }
 
         //To go to ring position, grip should be open and triggered again from pick position
@@ -181,6 +182,7 @@ public class Arm {
                 (getGripServoState() == GRIP_SERVO_STATE.OPENED)) {
             previousArmPosition = currentArmPosition;
             moveArmPickRingPosition();
+            return;
         }
 
         if ((currentArmPosition== ARM_POSITION.PICK_RING) /*&&
@@ -189,6 +191,7 @@ public class Arm {
             previousArmPosition = currentArmPosition;
             closeGrip();
             moveArmParkedPosition();
+            return;
         }
 
         // After closing grip in pick wobble or ring position - assumes holding of wobble goal is done
@@ -198,7 +201,7 @@ public class Arm {
                 (getGripServoState() == GRIP_SERVO_STATE.CLOSED)) {
             previousArmPosition = currentArmPosition;
             moveArmHoldUpWobbleRingPosition();
-
+            return;
         }
 
         // After closing grip in pick wobble or ring position - assumes holding of wobble goal is done
@@ -207,7 +210,7 @@ public class Arm {
                 (getGripServoState() == GRIP_SERVO_STATE.CLOSED)) {
             previousArmPosition = currentArmPosition;
             moveArmHoldUpWobbleRingPosition();
-
+            return;
         }
 
         if ((currentArmPosition== ARM_POSITION.HOLD_UP_WOBBLE_RING) /*&&
@@ -215,6 +218,7 @@ public class Arm {
                 (getGripServoState() == GRIP_SERVO_STATE.CLOSED)) {
             previousArmPosition = currentArmPosition;
             moveArmDropWobbleRingPosition();
+            return;
         }
 
         if ((currentArmPosition== ARM_POSITION.DROP_WOBBLE_RING) /*&&
@@ -223,6 +227,7 @@ public class Arm {
             previousArmPosition = currentArmPosition;
             closeGrip();
             moveArmParkedPosition();
+            return;
         }
 
         if ((currentArmPosition== ARM_POSITION.DROP_WOBBLE_RING) /*&&
@@ -230,6 +235,7 @@ public class Arm {
                 (getGripServoState() == GRIP_SERVO_STATE.CLOSED)) {
             previousArmPosition = currentArmPosition;
             moveArmHoldUpWobbleRingPosition();
+            return;
         }
 
     }

@@ -58,6 +58,8 @@ public class LaunchController {
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL = 0.8;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE = 0.0;
 
+    public static int slopeOfGetLaunchMotorSpeed;
+
     public Launcher lcLauncher;
     public Intake lcIntake;
     public Magazine lcMagazine;
@@ -137,7 +139,7 @@ public class LaunchController {
 
         //TODO : AMJAD determineFlyWheelSpeed
         //determineFlyWheelSpeed : determine launcher motor speed and hence flywheel speed required to hit the target, and start the motor to rotate at the speed. (runFlyWheelToTarget) [Logic: Mechanical and game strategy team to come up with formula or table to determine the same TBD]
-        speed = getLaunchMotorSpeed();
+        speed = getLaunchMotorSpeed(distance);
         lcLauncher.runFlyWheelToTarget(speed);
 
         senseLaunchReadiness();
@@ -253,14 +255,22 @@ public class LaunchController {
         return robotZone;
     }
 
-    public double getDistanceFromTarget() {
+    public void getDistanceFromTarget() {
         //TODO : AMJAD determineDistanceToTarget
-        return distanceFromTarget;
+        Vector2d difference = lcDrive.drivePointToAlign.minus(lcDrive.poseEstimate.vec());
+        distanceFromTarget = Math.sqrt(Math.pow(difference.getX(), 2) + Math.pow(difference.getY(), 2);
+        //Calclate scalar distance
+        //distanceFromTarget;
     }
 
-    public double getLaunchMotorSpeed() {
+    public void getLaunchMotorSpeed() {
         //TODO : AMJAD CALCULATE MOTOR SPEED USING DISTANCE
-        return 0.7;//launchMotorSpeed;
+        if(distanceFromTarget > 66 && distanceFromTarget < 138) {
+            slopeOfGetLaunchMotorSpeed = 0.00111;
+            launchMotorSpeed = slopeOfGetLaunchMotorSpeed*distanceFromTarget;
+        } else {
+            launchMotorSpeed = 0;
+        }
     }
 
     public LAUNCH_MODE getLaunchMode(){
