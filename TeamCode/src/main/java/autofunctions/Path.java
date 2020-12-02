@@ -89,7 +89,7 @@ public class Path {
     public double XAcc = XAccS;
     public double YAcc = YAccS;
     public double HAcc = HAccS;
-    final public double endWait = 0.2;
+    final public double endWait = 0.1;
     public double restPowX = 0.1;
     public double restPowY = 0.05;
     public double restPowT = 0.3;
@@ -115,62 +115,7 @@ public class Path {
         timer.reset();
     }
 
-    public void reset(){
-        lastTime = -0.1;
 
-        xerr = 0;
-        yerr = 0;
-        herr = 0;
-
-        lxerr = 0;
-        lyerr = 0;
-        lherr = 0;
-
-        xder = 0;
-        yder = 0;
-        hder = 0;
-
-        xint = 0;
-        yint = 0;
-        hint = 0;
-
-
-        radius = 5;
-        t = 0;
-        ans = 0;
-        ans2 = 0;
-        curIndex = 0;
-
-        rfsIndex = 0;
-        stopIndex = 0;
-
-
-        targetPos[0] = 0;
-        targetPos[1] = 0;
-
-        poses.clear();
-        lines.clear();
-        posetypes.clear();
-        rfs.clear();
-        isRf.clear();
-        stops.clear();
-
-
-        isExecuting = true;
-        isDoneWithRfs = false;
-
-        restPowX = 0.1;
-        restPowY = 0.05;
-        restPowT = 0.3;
-
-        poses.add(new double[]{0, 0, 0});
-        posetypes.add(Posetype.SETPOINT);
-        xControl.setCoeffecients(ks[0], ds[0], is[0]);
-        yControl.setCoeffecients(ks[1], ds[1], is[1]);
-        hControl.setCoeffecients(ks[2], ds[2], is[2]);
-        timer.reset();
-
-    }
 
     public CodeSeg changeAcc(final double xacc, final double yacc, final double hacc){
         return new CodeSeg() {
@@ -357,21 +302,6 @@ public class Path {
 
 
         if(isSet) {
-//            if (Math.abs(herr) < 10) {
-//                if(Math.abs(hint) < maxIT) {
-//                    hint +=  Math.abs(herr) * changeT;
-//                }
-//            }
-//            if (Math.abs(xerr) < 5) {
-//                if(Math.abs(xint) < maxIX) {
-//                    xint += Math.abs(xerr) * changeT;
-//                }
-//            }
-//            if (Math.abs(yerr) < 5) {
-//                if(Math.abs(yint) < maxIY) {
-//                    yint += Math.abs(yerr) * changeT;
-//                }
-//            }
             if(Math.abs(herr) > HAcc || Math.abs(xerr) > XAcc || Math.abs(yerr)>YAcc) {
                 if (Math.abs(hder) < 1 && Math.abs(xder) < 30 && Math.abs(yder) < 30) {
                     if(timer3.seconds() > 0.2) {
@@ -392,7 +322,7 @@ public class Path {
             scaleDs(1, 1, dScale);
             scaleKs(1, 1, 1.2);
         }else{
-            scaleDs(0.1, 0.1, 1);
+            scaleDs(0.3, 0.3, 1);
             hint = 0;
             xint = 0;
             yint = 0;
@@ -527,7 +457,9 @@ public class Path {
 //            op.telemetry.addData("tvel", bot.odometry.getTVel());
 //            op.telemetry.addData("hder", hder);
 //            op.telemetry.update();
-            op.telemetry.addData("isrf", rfsQueue.size());
+            op.telemetry.addData("hacc", HAcc);
+            op.telemetry.addData("xacc", XAcc);
+            op.telemetry.addData("yacc", YAcc);
             op.telemetry.update();
         }
         bot.move(0,0,0);

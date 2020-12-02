@@ -14,7 +14,6 @@ import util.CodeSeg;
 import util.Rect;
 import autofunctions.TerraCV.RingNum;
 
-
 @Autonomous(name = "AutoTest", group = "Auto")
 public class AutoTest extends LinearOpMode {
     TerraBot bot = new TerraBot();
@@ -29,7 +28,7 @@ public class AutoTest extends LinearOpMode {
         //rf.telemetryText("done initializing");
         waitForStart();
         bot.startOdoThreadAuto(this);
-        path.addWaypoint(30,30,90);
+        path.addSetpoint(0,40,0);
         path.start(bot, this);
         bot.stopOdoThreadAuto();
 

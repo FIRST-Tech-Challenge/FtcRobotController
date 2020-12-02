@@ -49,10 +49,8 @@ public class AutoBlue extends LinearOpMode {
             dropWobble();
             path.addWaypoint(40, -15, 10);
         }else if(rf.ringnum.equals(RingNum.ONE)){
-            path.addWaypoint(-20, 20, 0);
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////
-            path.addRF(rf.changeAcc(3, 3, 5, path));
-            path.addSetpoint(-18,20,-168);
+            path.addWaypoint(-20, 20, -168);
+            path.addSetpoint(-18,20,0);
             dropWobble();
             path.addWaypoint(30, -40, 75);
         }else if(rf.ringnum.equals(RingNum.FOUR)){
@@ -179,7 +177,7 @@ public class AutoBlue extends LinearOpMode {
         path.addStop(0.3);
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
-        path.addRF(rf.toggleOuttake(bot), rf.changeAcc(1, 1, 1, path));
+        path.addRF(rf.toggleOuttake(bot), rf.changeAcc(3, 3, 5, path));
 
 
 
