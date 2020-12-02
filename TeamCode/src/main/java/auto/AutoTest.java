@@ -20,6 +20,8 @@ public class AutoTest extends LinearOpMode {
     //RobotFunctions rf = new RobotFunctions();
     Path path = new Path(0,0,0);
 
+    RobotFunctions rf = new RobotFunctions();
+
     @Override
     public void runOpMode() {
         initialize();
@@ -28,14 +30,23 @@ public class AutoTest extends LinearOpMode {
         //rf.telemetryText("done initializing");
         waitForStart();
         bot.startOdoThreadAuto(this);
-        path.addSetpoint(0,40,0);
+        path.addStop(1);
+        path.addRF(rf.changeAcc(3, 2, 3, path));
+        path.addSetpoint(0,30,0);
+        path.addRF(rf.intake(1));
+        path.addStop(0.3);
+        path.addSetpoint(0, 3, 0);
+        path.addRF(rf.changeKs(0.4, path));
+        path.addWaypoint(0, 20, 0);
+       // path.addWaypoint(0,5,0);
+        //path.addStop(1);
         path.start(bot, this);
         bot.stopOdoThreadAuto();
 
     }
     private void initialize(){
         bot.init(hardwareMap);
-        //rf.init(bot, this);
+        rf.init(bot, this);
     }
 
 }

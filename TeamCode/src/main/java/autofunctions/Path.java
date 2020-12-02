@@ -60,6 +60,7 @@ public class Path {
 
 
     public double dScale = 2;
+    public double kScale = 1;
 
 
     public double[] targetPos = {0,0};
@@ -275,11 +276,6 @@ public class Path {
 
         if(!Double.isNaN(ans)) {
             if(ans > 1){
-//                if(herr < (HAcc*6)) {
-//                    next();
-//                }else{
-//                    ans = 1;
-//                }
                 next();
             }
             return ans;
@@ -320,8 +316,9 @@ public class Path {
             xint = 0;
             yint = 0;
             scaleDs(1, 1, dScale);
-            scaleKs(1, 1, 1.2);
+            scaleKs(kScale, kScale, 1.2);
         }else{
+            scaleKs(kScale, kScale, 1.2);
             scaleDs(0.3, 0.3, 1);
             hint = 0;
             xint = 0;
@@ -385,10 +382,6 @@ public class Path {
         out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, currentVels[0], iv.x);
         out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, currentVels[1], iv.y);
         out[2] = -Math.signum(herr) * hControl.getPower(herr, currentVels[2], hint);
-
-//        out[0] = -Math.signum(mv.x) * xControl.getPower(mv.x, dv.x, iv.x);
-//        out[1] = -Math.signum(mv.y) * yControl.getPower(mv.y, dv.y, iv.y);
-//        out[2] = -Math.signum(herr) * hControl.getPower(herr, hder, hint);
 
         out[0] = Range.clip(out[0], -1, 1);
         out[1] = Range.clip(out[1], -1, 1);

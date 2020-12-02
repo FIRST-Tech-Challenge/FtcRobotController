@@ -151,6 +151,14 @@ public class RobotFunctions {
             }
         };
     }
+    public CodeSeg changeKs(final double sk, final Path path){
+        return new CodeSeg() {
+            @Override
+            public void run() {
+                path.kScale = sk;
+            }
+        };
+    }
 
 //    public CodeSeg shoot2(final double speed){
 //        return new CodeSeg() {
