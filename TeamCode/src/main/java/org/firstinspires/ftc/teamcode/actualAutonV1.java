@@ -11,10 +11,6 @@ public class actualAutonV1 extends LinearOpMode {
 
     chrisBot robot = new chrisBot();
 
-    public void say(String s) {
-        telemetry.addLine(s);
-        telemetry.update();
-    }
     public int[] range(int start, int end) {
         if (end - start <= 0) {
             return new int[]{};
@@ -39,7 +35,8 @@ public class actualAutonV1 extends LinearOpMode {
         robot.initTfod();
         robot.setAllPower(0);
 
-        say("Please wait for encoders to reset");
+        telemetry.addLine("Please wait for encoders to reset");
+        telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
 
@@ -52,6 +49,9 @@ public class actualAutonV1 extends LinearOpMode {
         // Sense the number of rings using TensorFlow (demo code)
         // Activate TensorFlow Object Detection before we wait for the start command.
         // Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
+
+        telemetry.addLine("Detecting rings...");
+        telemetry.update();
 
         if (robot.tfod != null) { robot.tfod.activate(); }
         boolean[] ringPositions = robot.detectRings();
@@ -68,10 +68,18 @@ public class actualAutonV1 extends LinearOpMode {
         // (conditional) 4 rings: drive 48 inches forward to third foam tile
         // Calculate the number of inches to drive forward in one step
 
+
         double inches = 36;
 
         if (oneRing) { inches += 24; }
         else if (fourRings) { inches += 48; }
+
+        telemetry.addData("One ring",oneRing);
+        telemetry.addData("Four rings",fourRings);
+        telemetry.addData("Inches to drive",inches);
+        telemetry.update();
+
+        sleep(2000);
 
         robot.encoderDrive(inches);
 
@@ -79,6 +87,8 @@ public class actualAutonV1 extends LinearOpMode {
         // (else) drop goal
 
         if (oneRing) { robot.wheelMecanumDrive(robot.calculateInches(24,0)); }
+
+        telemetry.clear();
 
         robot.dropGoal(); /* DUMMY METHOD */
 
@@ -95,13 +105,13 @@ public class actualAutonV1 extends LinearOpMode {
 
         // Shoot first target
 
-        robot.shoot();
+        shoot();
 
         // Repeat with other two targets
 
         for(int i : range(0,2)) {
             robot.wheelMecanumDrive(robot.calculateInches(24,0));
-            robot.shoot();
+            shoot();
         }
 
         // Drive forward to go over white line
@@ -111,6 +121,11 @@ public class actualAutonV1 extends LinearOpMode {
         // End auton
 
         robot.tfod.shutdown();
+    }
 
+    private void shoot() {
+        robot.shootOn();
+        sleep(1000);
+        robot.shootOff();
     }
 }
