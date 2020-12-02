@@ -27,7 +27,7 @@ import java.awt.font.NumericShaper;
 import java.util.ArrayList;
 
 @Autonomous
-//@Disabled
+@Disabled
 public class TensorFlowTest extends LinearOpMode {
 
     @Override

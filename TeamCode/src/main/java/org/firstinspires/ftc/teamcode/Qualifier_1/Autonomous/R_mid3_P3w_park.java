@@ -12,6 +12,7 @@
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 @Autonomous(name = "R_mid3_P3w_park")
+@Disabled
 public class R_mid3_P3w_park extends LinearOpMode {
 
     @Override

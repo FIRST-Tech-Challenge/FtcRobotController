@@ -26,14 +26,14 @@ public class MoveWobbleGoalPark extends LinearOpMode {
 //        rings = robot.tensorFlow.getNumberOfRings();
         robot.stopTensorFlow();
 
-        robot.moveBackward(53, 0.8);
-        sleep(200);
-        robot.turnInPlace(-3, 0.6);
-        sleep(500);
-        robot.shootHighGoal(3);
-        sleep(200);
-
         if (rings == 4) {
+            robot.moveBackward(53, 0.8);
+            sleep(200);
+            robot.turnInPlace(-3, 0.6);
+            sleep(500);
+            robot.shootHighGoal(3);
+            sleep(200);
+
             robot.turnInPlace(-13, 0.6);
             sleep(200);
             robot.moveBackward(30, 0.8);
@@ -65,6 +65,13 @@ public class MoveWobbleGoalPark extends LinearOpMode {
             telemetry.update();
             sleep(2000);
         } else if (rings == 1) {
+            robot.moveBackward(53, 0.8);
+            sleep(200);
+            robot.turnInPlace(-3, 0.6);
+            sleep(500);
+            robot.shootHighGoal(3);
+            sleep(200);
+
             robot.turnInPlace(10, 0.5);
             sleep(200);
             robot.moveBackward(25, 0.8);
@@ -84,29 +91,41 @@ public class MoveWobbleGoalPark extends LinearOpMode {
             telemetry.update();
             sleep(2000);
         } else {
-            robot.turnInPlace(-60, 0.6);
+            robot.moveAngle( -47,-54, 0.7);
             sleep(200);
-            robot.moveBackward(12, 0.75);
-            sleep(100);
-            robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
-            sleep(500);
-            robot.moveForward(41, 0.8);
-            sleep(100);
-            robot.moveLeft(15, 0.8);
-            sleep(100);
-            robot.wobbleGoalGoToPosition(WobbleGoal.Position.RAISE);
-            sleep(750);
-            robot.moveBackward(33, 0.6);
-            sleep(100);
-            robot.turnInPlace(75, 0.7);
+            robot.turnInPlace(0,0.6);
             sleep(200);
-            robot.wobbleGoalGoToPosition(WobbleGoal.Position.DROP);
-            sleep(450);
-            robot.moveRight(8, 0.7);
-            sleep(100);
-            robot.turnInPlace(70, 0.5);
-            sleep(100);
-            robot.moveBackward(30, 0.8);
+            robot.moveWobbleGoalServo(true);
+            sleep(200);
+            robot.moveAngle(20, 12, 0.7);
+            sleep(200);
+            robot.shootHighGoal(3);
+            sleep(200);
+
+//            robot.turnInPlace(-60, 0.6);
+//            sleep(200);
+//            robot.moveBackward(12, 0.75);
+//            sleep(100);
+
+//            robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
+//            sleep(500);
+//            robot.moveForward(41, 0.8);
+//            sleep(100);
+//            robot.moveLeft(15, 0.8);
+//            sleep(100);
+//            robot.wobbleGoalGoToPosition(WobbleGoal.Position.RAISE);
+//            sleep(750);
+//            robot.moveBackward(33, 0.6);
+//            sleep(100);
+//            robot.turnInPlace(75, 0.7);
+//            sleep(200);
+//            robot.wobbleGoalGoToPosition(WobbleGoal.Position.DROP);
+//            sleep(450);
+//            robot.moveRight(8, 0.7);
+//            sleep(100);
+//            robot.turnInPlace(70, 0.5);
+//            sleep(100);
+//            robot.moveBackward(30, 0.8);
 
 //            robot.moveBackward(6, 0.5);
 //            sleep(200);
