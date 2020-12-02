@@ -13,11 +13,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class DriveTrain {
     String DRIVE_TRAIN_CAPTION = "Drive Status";
     Telemetry telemetry;
     HardwareInnov8Hera hera;
     LinearOpMode opMode;
+    Timer timer;
+    TimerTask increasePower;
     private double wheelPower = 1;
     private double wheelOnePower = 1;
     private double wheelTwoPower = 1;
