@@ -67,6 +67,9 @@ public class Hardware {
     // Drive train
     public DcMotorEx leftFront, rightFront, leftRear, rightRear;
 
+    //Wobble Goal Lifter
+    public Servo leftWobbleGoal, rightWobbleGoal;
+
     // Odometry hardware
     private DcMotorEx leftEncoder, rightEncoder, centerEncoder;
 
@@ -121,6 +124,10 @@ public class Hardware {
         leftOdom = (ExpansionHubMotor) hwMap.dcMotor.get("leftFront");
         rightOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightFront");
         centerOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightRear");
+
+        //Wobble goal Servo setup
+        leftWobbleGoal = hwMap.servo.get("leftWobbleGoal");
+        rightWobbleGoal = hwMap.servo.get("rightWobbleGoal");
 
 
     }
@@ -192,5 +199,24 @@ public class Hardware {
         rightEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         centerEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         centerEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    //Up and down left and right wobble goals
+    /*
+
+    WARNING CHANGE WOBBLE GOAL POSITIONS BEFORE RUNNING
+
+     */
+    public void leftWobbleGoalUp(){
+        leftWobbleGoal.setPosition(1);
+    }
+    public void rightWobbleGoalUp(){
+        rightWobbleGoal.setPosition(1);
+    }
+    public void leftWobbleGoalDown() {
+        leftWobbleGoal.setPosition(0);
+    }
+    public void rightWobbleGoalDown(){
+        rightWobbleGoal.setPosition(0);
     }
 }
