@@ -32,8 +32,14 @@ public class ServoTest extends LinearOpMode {
 
             if (gamepad1.y && !clawButtonIsDown) {
                 clawButtonIsDown = true;
-                gear.nextPos();
                 claw.nextPos();
+            } else if (!gamepad1.y) {
+                clawButtonIsDown = false;
+            }
+
+            if (gamepad1.y && !gearboxButtonIsDown) {
+                clawButtonIsDown = true;
+                gear.nextPos();
             } else if (!gamepad1.y) {
                 clawButtonIsDown = false;
             }
