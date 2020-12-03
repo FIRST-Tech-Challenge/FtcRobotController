@@ -385,9 +385,9 @@ public class HzGamepadClassic {
             //gpLauncherController.senseLaunchReadiness(gpLauncher, gpMagazine, gpVuforia);
             //gpLauncherController.indicateLaunchReadiness();
             double distance, speed, robotAngle;
-            distance = gpLauncherController.getDistanceFromTarget();
-            speed = gpLauncherController.getLaunchMotorSpeed();
-            gpLauncher.runFlyWheelToTarget(speed);
+            gpLauncherController.getDistanceFromTarget();
+            gpLauncherController.getLaunchMotorSpeed();
+            gpLauncher.runFlyWheelToTarget(gpLauncher.launcherMotorPower);
 
             if (gpLauncherController.getLaunchMode() == LaunchController.LAUNCH_MODE.AUTOMATED) {
                 //gpLauncherController.alignRobot(targetAngle);

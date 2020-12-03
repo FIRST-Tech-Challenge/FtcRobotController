@@ -84,7 +84,7 @@ public class HzGamepad {
     public void runByGamepadRRDriveModes(/*HzDrive gpDrive, int playingAlliance*/) {
         gpDrive.poseEstimate = gpDrive.getPoseEstimate();
 
-        gpDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
+        gpDrive.driveType = HzDrive.DriveType.FIELD_CENTRIC;
 
         if (gpDrive.driveType == HzDrive.DriveType.ROBOT_CENTRIC){
             gpDrive.gamepadInput = new Vector2d(
@@ -227,7 +227,7 @@ public class HzGamepad {
     public void runArm(){
         //gpArm.moveArmByTrigger(getLeftTrigger());
         if (getLeftTriggerPress()) {
-            gpArm.moveArmByTrigger2();
+            gpArm.moveArmByTrigger();
         }
         //Toggle Arm Grip actions
         if (getLeftBumperPress()) {

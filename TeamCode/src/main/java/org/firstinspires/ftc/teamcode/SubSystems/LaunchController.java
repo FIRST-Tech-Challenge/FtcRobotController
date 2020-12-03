@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -60,8 +61,7 @@ public class LaunchController {
 
     public static final double slopeOfPowerShot = 0.001;
     public static final double slopeOfHighGoal = 0.0011111;
-    public static int slopeOfGetLaunchMotorSpeed;
-
+    public static double slopeOfGetLaunchMotorSpeed;
 
     public Launcher lcLauncher;
     public Intake lcIntake;
@@ -137,13 +137,13 @@ public class LaunchController {
         double distance, speed, robotAngle;
         //TODO : AMJAD determineDistanceToTarget
         //determineDistanceToTarget : Determine the distance from the launch target (from the location information)
-        distance = getDistanceFromTarget();
+        getDistanceFromTarget();
         //TODO : AMJAD : DETERMINE IF DISTANCE NEEDS TO BE LIMITED FOR ACCURACY AND PROJECTILE LIMIT
 
         //TODO : AMJAD determineFlyWheelSpeed
         //determineFlyWheelSpeed : determine launcher motor speed and hence flywheel speed required to hit the target, and start the motor to rotate at the speed. (runFlyWheelToTarget) [Logic: Mechanical and game strategy team to come up with formula or table to determine the same TBD]
-        speed = getLaunchMotorSpeed(distance);
-        lcLauncher.runFlyWheelToTarget(speed);
+        getLaunchMotorSpeed();
+        lcLauncher.runFlyWheelToTarget(launchMotorSpeed);
 
         senseLaunchReadiness();
         return launchReadiness;
@@ -261,7 +261,7 @@ public class LaunchController {
     public void getDistanceFromTarget() {
         //TODO : AMJAD determineDistanceToTarget
         Vector2d difference = lcDrive.drivePointToAlign.minus(lcDrive.poseEstimate.vec());
-        distanceFromTarget = Math.sqrt(Math.pow(difference.getX(), 2) + Math.pow(difference.getY(), 2);
+        distanceFromTarget = Math.sqrt(Math.pow(difference.getX(), 2) + Math.pow(difference.getY(), 2));
         //Calclate scalar distance
         //distanceFromTarget;
     }
@@ -270,12 +270,12 @@ public class LaunchController {
         //TODO : AMJAD CALCULATE MOTOR SPEED USING DISTANCE
 
         switch (lcTarget) {
-            case LAUNCH_TARGET.POWER_SHOT1 :
-            case LAUNCH_TARGET.POWER_SHOT2 :
-            case LAUNCH_TARGET.POWER_SHOT3 :
+            case POWER_SHOT1 :
+            case POWER_SHOT2 :
+            case POWER_SHOT3 :
                 slopeOfGetLaunchMotorSpeed = slopeOfPowerShot;
                 break;
-            case LAUNCH_TARGET.HIGH_GOAL:
+            case HIGH_GOAL:
                 slopeOfGetLaunchMotorSpeed = slopeOfHighGoal;
                 break;
         }

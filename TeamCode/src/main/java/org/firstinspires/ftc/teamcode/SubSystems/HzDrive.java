@@ -8,11 +8,34 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+//import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+//import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+
+//import org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder;
+//import org.firstinspires.ftc.teamcode.drive.MecanumDriveDeadWheelsEncoder;
+
+import org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders;
+import org.firstinspires.ftc.teamcode.drive.MecanumDriveDriveEncoders;
+
+
+
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
-public class HzDrive extends SampleMecanumDrive {
+//public class HzDrive extends SampleMecanumDrive {
+public class HzDrive extends MecanumDriveDriveEncoders {
+    //double DriveConstants_kV = DriveConstants.kV;
+    //double DriveConstants_kV = DriveConstantsDeadWheelEncoder.kV;
+    double DriveConstants_kV = DriveConstantsDriveEncoders.kV;
+
+    //double DriveConstants_TRACK_WIDTH = DriveConstants.TRACK_WIDTH;
+    //double DriveConstants_TRACK_WIDTH = DriveConstantsDeadWheelEncoder.TRACK_WIDTH;
+    double DriveConstants_TRACK_WIDTH = DriveConstantsDriveEncoders.TRACK_WIDTH;
+
+    // Declare a PIDF Controller to regulate heading
+    // Use the same gains as SampleMecanumDrive's heading controller
+    //private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
+    //private PIDFController headingController = new PIDFController(MecanumDriveDeadWheelsEncoder.HEADING_PID);
+    private PIDFController headingController = new PIDFController(MecanumDriveDriveEncoders.HEADING_PID);
 
     GameField hzGameField;
 
@@ -21,7 +44,7 @@ public class HzDrive extends SampleMecanumDrive {
         FIELD_CENTRIC,
     }
 
-    public DriveType driveType = DriveType.ROBOT_CENTRIC;
+    public DriveType driveType = DriveType.FIELD_CENTRIC;
 
     //**** Align to point and Field Drive Mode ****
     // Define 2 states, driver control or alignment control
@@ -40,9 +63,6 @@ public class HzDrive extends SampleMecanumDrive {
     public static double DRAWING_TARGET_RADIUS = 2;
     public Vector2d drivePointToAlign = hzGameField.ORIGIN;
 
-    // Declare a PIDF Controller to regulate heading
-    // Use the same gains as SampleMecanumDrive's heading controller
-    private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
 
     //**** Drive Train ****
     //For Position
@@ -144,8 +164,10 @@ public class HzDrive extends SampleMecanumDrive {
                 // Set desired angular velocity to the heading controller output + angular
                 // velocity feedforward
                 double headingInput = (headingController.update(poseEstimate.getHeading())
-                        * DriveConstants.kV + thetaFF)
-                        * DriveConstants.TRACK_WIDTH;
+                        //* DriveConstants.kV + thetaFF)
+                        //* DriveConstants.TRACK_WIDTH;
+                        * DriveConstants_kV + thetaFF)
+                        * DriveConstants_TRACK_WIDTH;
 
                 // Combine the field centric x/y velocity with our derived angular velocity
                 driveDirection = new Pose2d(

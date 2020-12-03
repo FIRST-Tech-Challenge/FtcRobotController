@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive;
+ package org.firstinspires.ftc.teamcode.drive;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
@@ -16,17 +16,13 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * and op modes themselves.
  */
 @Config
-public class DriveConstants {
+public class DriveConstantsDriveEncoders {
 
     /*
      * These are motor constants that should be listed online for your motors.
      */
     //public static final double TICKS_PER_REV = 1;
     //public static final double MAX_RPM = 1;
-
-    //TestRobot Calibration Parameters
-    //public static final double TICKS_PER_REV = 537.6;
-    //public static final double MAX_RPM = 312;
 
     //Main Robot Calibration Parameters
     public static final double TICKS_PER_REV = 383.6 ;
@@ -41,9 +37,6 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
-    // public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
-    //TestRobot Calibration Parameters
-    //public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(11, 0, 0.5, 13.134);
     //public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(11, 0, 0.01, 14.7);
 
@@ -58,13 +51,6 @@ public class DriveConstants {
     //public static double WHEEL_RADIUS = 2; // in
     //public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
     //public static double TRACK_WIDTH = 1; // in
-
-    //TestRobot Calibration Parameters
-    //public static double WHEEL_RADIUS = 1.9685; // in
-    //EDIT THIS FOR STRAIGHT TEST
-    //public static double GEAR_RATIO = 0.5 *55.5/60.0; // output (wheel) speed / input (motor) speed
-    //EDIT THIS FOR TRACK WIDTH TUNER TEST
-    //public static double TRACK_WIDTH = 8.9;//9.4; // in
 
     //Main Robot Calibration Parameters
     public static double WHEEL_RADIUS = 1.8898;//1.8898; // in
@@ -119,11 +105,7 @@ public class DriveConstants {
             30.0, 30.0, 0.0,
             Math.toRadians(180.0), Math.toRadians(180.0), 0.0
     );*/
-    //TestRobot Calibration Parameters
-    /*public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            27.334275112574463, 27.334275112574463, 0.0,
-            Math.toRadians(333.22097872340424), Math.toRadians(333.22097872340424), 0.0
-    );*/
+
     //85% max velocity
     /*public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
             73.17330064499293, 73.17330064499293, 0.0,
