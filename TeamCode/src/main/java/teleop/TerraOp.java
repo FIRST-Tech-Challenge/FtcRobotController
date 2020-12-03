@@ -103,6 +103,9 @@ public class TerraOp extends OpMode {
 
             if(gamepad1.y){
                 if(!bot.powershot) {
+                    if(!bot.shooter.pausing) {
+                        bot.defineShooter();
+                    }
                     bot.shooter.start();
                     bot.outrController.setStartPow(bot.outtakeStartR);
                     bot.outlController.setStartPow(bot.outtakeStartL);
@@ -166,22 +169,35 @@ public class TerraOp extends OpMode {
         double strafe = gamepad1.right_stick_x;
         double turn = -gamepad1.left_stick_x;
 
-        if (!bot.powerShot.executing && !bot.goback.executing && !bot.calibrateCol.executing) {
-            if(Math.abs(strafe) < 0.2) {
-                bot.moveTeleOp(forward, strafe, turn);
-                bot.strafeMode = false;
-            }else{
-                if(!bot.strafeMode) {
-                    bot.savedHeading = bot.getHeading();
-                    bot.strafeMode = true;
-                }
-                double err = (bot.getHeading()-bot.savedHeading);
-                if(bot.fastmode) {
+        if(bot.matchGyro) {
+            if (!bot.powerShot.executing && !bot.goback.executing && !bot.calibrateCol.executing && !bot.shooter.executing) {
+                if (Math.abs(strafe) < 0.2 || !bot.fastmode) {
+                    bot.moveTeleOp(forward, strafe, turn);
+                    bot.strafeMode = false;
+                } else {
+                    if (!bot.strafeMode) {
+                        bot.savedHeading = bot.getHeading();
+                        bot.strafeMode = true;
+                    }
+                    double err = (bot.getHeading() - bot.savedHeading);
                     turn = -Math.signum(err) * (0.25) + err * (-0.03);
-                }else{
-                    turn = -Math.signum(err) * (0.05) + err * (-0.01);
+                    bot.moveTeleOp(forward, strafe, turn);
                 }
-                bot.moveTeleOp(forward, strafe, turn);
+            }
+        }else{
+            if (!bot.powerShot.executing && !bot.goback.executing && !bot.calibrateCol.executing) {
+                if (Math.abs(strafe) < 0.2 || !bot.fastmode) {
+                    bot.moveTeleOp(forward, strafe, turn);
+                    bot.strafeMode = false;
+                } else {
+                    if (!bot.strafeMode) {
+                        bot.savedHeading = bot.getHeading();
+                        bot.strafeMode = true;
+                    }
+                    double err = (bot.getHeading() - bot.savedHeading);
+                    turn = -Math.signum(err) * (0.25) + err * (-0.03);
+                    bot.moveTeleOp(forward, strafe, turn);
+                }
             }
         }
 

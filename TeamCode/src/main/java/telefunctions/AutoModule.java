@@ -295,6 +295,25 @@ public class AutoModule {
         });
     }
 
+    public void addMoveUntilLine(final double p, final TerraBot bot){
+        lastTime = 0;
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                bot.move(p, 0,0);
+                return bot.whiteValR() > 0.8 || bot.whiteValL() > 0.8;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                timer.reset();
+                bot.move(0,0,0);
+                return true;
+            }
+        });
+    }
+
 
 
 

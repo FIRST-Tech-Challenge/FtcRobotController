@@ -75,6 +75,7 @@ public class TerraBot {
     public boolean calRightFirst = false;
     public boolean globalMode = false;
     public boolean strafeMode = false;
+    public boolean matchGyro = false;
 
     public int resettingArm = 0;
 
@@ -353,31 +354,74 @@ public class TerraBot {
     }
 
     public void defineShooter(){
-
-        shooter.addCustomOnce(new CodeSeg() {
-            @Override
-            public void run() {
-                setLEDs(128, 0, 128);
-            }
-        });
+        AutoModule shooter = new AutoModule();
         shooter.addStage(in, 1.0, 0.01);
-        shooter.addStage(slr, liftControl.getPos(1), 0.01);
-        shooter.addStage(sll, liftControl.getPos(1), 1.5);
-        shooter.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-                fastmode = false;
-            }
-        }, 0.01);
-        shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
-        shooter.addStage(ssl, shootControlL.getPos(2), 1);
-        shooter.addStage(in, 0.0, 0.01);
-        shooter.addCustom(new CodeSeg() {
-            @Override
-            public void run() {
-               intaking = false;
-            }
-        }, 0.01);
+        if(matchGyro) {
+            shooter.addStage(slr, liftControl.getPos(1), 0.01);
+            shooter.addStage(sll, liftControl.getPos(1), 0.01);
+            shooter.addCustom(new CodeSeg() {
+                @Override
+                public void run() {
+                    fastmode = false;
+                }
+            }, 0.01);
+            shooter.addCustomOnce(new CodeSeg() {
+                @Override
+                public void run() {
+                    startOdoThreadTele();
+                    resetOdometry();
+                    setLEDs(128, 0, 128);
+                }
+            });
+            Path p = new Path(0, 0, 0);
+            p.addSetpoint(0, 0, 0);
+            shooter.addPath(p, this);
+            shooter.addMoveUntilLine(-0.3, this);
+            shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
+            shooter.addStage(ssl, shootControlL.getPos(2), 0.5);
+            shooter.addStage(in, 0.0, 0.01);
+            shooter.addCustom(new CodeSeg() {
+                @Override
+                public void run() {
+                    intaking = false;
+                }
+            }, 0.01);
+            shooter.addCustomOnce(new CodeSeg() {
+                @Override
+                public void run() {
+                    odometry.ty = 0;
+                    odometry.tx = odometry.cmToTicks(getDisL2());
+                }
+            });
+            Path p1 = new Path(0, 0, 0);
+            p1.addSetpoint(67, 0, 0);
+            shooter.addPath(p1, this);
+            shooter.addCustomOnce(new CodeSeg() {
+                @Override
+                public void run() {
+                    stopOdoThreadTele();
+                }
+            });
+        }else{
+            shooter.addStage(slr, liftControl.getPos(1), 0.01);
+            shooter.addStage(sll, liftControl.getPos(1), 1.5);
+            shooter.addCustom(new CodeSeg() {
+                @Override
+                public void run() {
+                    fastmode = false;
+                }
+            }, 0.01);
+            shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
+            shooter.addStage(ssl, shootControlL.getPos(2), 1);
+            shooter.addStage(in, 0.0, 0.01);
+            shooter.addCustom(new CodeSeg() {
+                @Override
+                public void run() {
+                    intaking = false;
+                }
+            }, 0.01);
+        }
+
         shooter.addWaitUntil();
         shooter.addCustomOnce(new CodeSeg() {
             @Override
@@ -386,6 +430,10 @@ public class TerraBot {
 //                    globalMode = true;
 //                    resetGyro();
 //                }
+                if(!matchGyro){
+                    matchGyro = true;
+                    resetGyro();
+                }
             }
         });
         for(int i = 0; i < 3;i++) {
@@ -407,6 +455,7 @@ public class TerraBot {
                 setLEDs(0,255,0);
             }
         });
+        this.shooter = shooter;
     }
 
     public void definePowerShot(){
@@ -628,17 +677,41 @@ public class TerraBot {
         cal.addCustomOnce(new CodeSeg() {
             @Override
             public void run() {
-                resetAll();
+                startOdoThreadTele();
+                resetOdometry();
             }
         });
-        cal.addCalibrateCol2(this);
+        Path p = new Path(0,0,0);
+        p.addSetpoint(0,0,0);
+        cal.addPath(p, this);
+        cal.addMoveUntilLine(-0.3, this);
+        cal.addDelay(0.5);
         cal.addCustomOnce(new CodeSeg() {
             @Override
             public void run() {
-                heading = localizer.getAngle(odometry.getY(), calRightFirst);
-                lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+                odometry.ty = 0;
+                odometry.tx = odometry.cmToTicks(getDisL2());
             }
         });
+        Path p1 = new Path(0,0,0);
+        p1.addSetpoint(67,0,0);
+        cal.addPath(p1, this);
+
+
+//        cal.addCustomOnce(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                resetAll();
+//            }
+//        });
+//        cal.addCalibrateCol2(this);
+//        cal.addCustomOnce(new CodeSeg() {
+//            @Override
+//            public void run() {
+//                heading = localizer.getAngle(odometry.getY(), calRightFirst);
+//                lastAngle = (int) gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+//            }
+//        });
 //        cal.addCalibrateCol( this);
 //        cal.addCustomOnce(new CodeSeg() {
 //            @Override
@@ -648,6 +721,12 @@ public class TerraBot {
 //                updateStartPos(-170);
 //            }
 //        });
+        cal.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                stopOdoThreadTele();
+            }
+        });
 
         calibrateCol = cal;
     }
