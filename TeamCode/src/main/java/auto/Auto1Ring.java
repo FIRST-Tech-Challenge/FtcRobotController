@@ -13,7 +13,7 @@ import global.TerraBot;
 import util.CodeSeg;
 import util.Rect;
 import autofunctions.TerraCV.RingNum;
-
+@Disabled
 @Autonomous(name = "Auto1Ring", group = "Auto")
 public class Auto1Ring extends LinearOpMode {
     TerraBot bot = new TerraBot();
@@ -41,7 +41,6 @@ public class Auto1Ring extends LinearOpMode {
         path.addWaypoint(10, 60, 0);
         path.addWaypoint(50,28,0);
         powerShot();
-
         path.addWaypoint(-20, 20, -168);
         path.addRF(rf.lift(0), rf.shootControl(1), rf.intake(1));
         path.addSetpoint(-18,20,0);
@@ -58,46 +57,12 @@ public class Auto1Ring extends LinearOpMode {
         path.addStop(0.5);
         path.addRF(rf.shootControl(3));
         path.addStop(1);
-        path.addRF(rf.changeAcc(3, 3, 3, path));
+        path.addRF(rf.toggleOuttake(bot), rf.changeAcc(3, 3, 3, path));
         path.addSetpoint(10, 28, 180);
         dropWobble();
         path.addSetpoint(0, 5, 0);
         path.addRF(rf.wobbleArm(10,1), rf.turnArm(0.25));
         path.addStop(2);
-
-
-//        path.addWaypoint(30, -40, 75);
-//
-//
-//        path.addRF(rf.changeAcc(1, 1, 1, path));
-        //path.addSetpoint(-8,-15,0);
-//        path.addRF(rf.grab(1));
-//        path.addStop(0.3);
-//        path.addRF(rf.wobbleArm(100, 1));
-//        path.addStop(0.3);
-//        path.addWaypoint(5, 50, 0);
-//        path.addWaypoint(-25, 0, -90);
-        //path.addRF(rf.lift(0), rf.shootControl(1), rf.changeAcc(3, 3, 5, path));
-//        path.addWaypoint(0, 20, -70);
-//        path.addSetpoint(0,20,-20);
-//        path.addRF(rf.intake(1), rf.changeOuttakePow(1, vs, path), rf.toggleOuttake(bot));
-//        path.addWaypoint(0.5,0, 0);
-//        dropWobble();
-//        path.addWaypoint(-20,-20,0);
-//
-//
-//        path.addRF(rf.changeAcc(1, 1, 1, path));
-//        path.addSetpoint(0,-30,0);
-//        path.addWaypoint(-10, 35, 50);
-//        path.addRF(rf.lift(1));
-//        path.addStop(0.3);
-//        path.addSetpoint(-5, 10, 130);
-//        path.addRF(rf.shootControl(3));
-//        path.addWaypoint(0,20,0);
-//
-//        path.addRF(rf.wobbleArm(10,1), rf.turnArm(0.25));
-//        path.addStop(2);
-
 
         path.start(bot, this);
         bot.stopOdoThreadAuto();
@@ -127,7 +92,7 @@ public class Auto1Ring extends LinearOpMode {
 
     private void powerShot(){
         path.addSetpoint(13, 10, 0);
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         path.addRF(rf.changeAcc(1, 1, 0.5, path), rf.updateXWithDis(60));
         path.addStop(1);
         path.addSetpoint(0,0,0);
@@ -151,7 +116,7 @@ public class Auto1Ring extends LinearOpMode {
         path.addRF(rf.shootControl(2));
         path.addStop(0.3);
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         path.addRF(rf.toggleOuttake(bot), rf.changeAcc(3, 3, 5, path));
 
 
