@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import global.TerraBot;
+import util.Vector;
 
 @TeleOp(name = "TerraOp V5")
 public class TerraOp extends OpMode {
@@ -43,6 +44,8 @@ public class TerraOp extends OpMode {
         vs = bot.getVoltageScale();
         bot.outtakeStartL *= vs;
         bot.outtakeStartR *= vs;
+
+        bot.setLEDs(0,255,0);
 
 
         //bot.startOdoThreadTele();
@@ -152,15 +155,60 @@ public class TerraOp extends OpMode {
 
         if (!bot.powershot && bot.gameTime.seconds() > 88 && bot.gameTime.seconds() < 90) {
             bot.powershot = true;
+            bot.setLEDs(255,165,0);
         }
+
+//        double forward = -gamepad1.right_stick_y;
+//        double strafe = gamepad1.right_stick_x;
+//        double turn = -gamepad1.left_stick_x;
 
         double forward = -gamepad1.right_stick_y;
         double strafe = gamepad1.right_stick_x;
         double turn = -gamepad1.left_stick_x;
 
-        if(!bot.powerShot.executing && !bot.goback.executing && !bot.calibrateCol.executing) {
-            bot.moveTeleOp(forward, strafe, turn);
+        if (!bot.powerShot.executing && !bot.goback.executing && !bot.calibrateCol.executing) {
+            if(Math.abs(strafe) < 0.2) {
+                bot.moveTeleOp(forward, strafe, turn);
+                bot.strafeMode = false;
+            }else{
+                if(!bot.strafeMode) {
+                    bot.savedHeading = bot.getHeading();
+                    bot.strafeMode = true;
+                }
+                double err = (bot.getHeading()-bot.savedHeading);
+                if(bot.fastmode) {
+                    turn = -Math.signum(err) * (0.25) + err * (-0.03);
+                }else{
+                    turn = -Math.signum(err) * (0.05) + err * (-0.01);
+                }
+                bot.moveTeleOp(forward, strafe, turn);
+            }
         }
+
+
+
+//
+//        if(!bot.globalMode) {
+//            double forward = -gamepad1.right_stick_x;
+//            double strafe = -gamepad1.right_stick_y;
+//            double turn = -gamepad1.left_stick_x;
+//
+//            if (!bot.powerShot.executing && !bot.goback.executing && !bot.calibrateCol.executing) {
+//                bot.moveTeleOp(forward, strafe, turn);
+//            }
+//        }else{
+//            double forward = -gamepad1.right_stick_x;
+//            double strafe = -gamepad1.right_stick_y;
+//            double turn = -gamepad1.left_stick_x;
+//
+//            Vector vect = new Vector(strafe, forward);
+//            Vector vect2 = vect.getRotatedVec(-bot.getHeading(), Vector.angle.DEGREES);
+//
+//
+//            if (!bot.powerShot.executing && !bot.goback.executing && !bot.calibrateCol.executing) {
+//                bot.moveTeleOp(vect2.y, vect2.x, turn);
+//            }
+//        }
 
 //
 //        telemetry.addData("Heading", bot.getHeading());

@@ -73,6 +73,8 @@ public class TerraBot {
     public boolean fastmode = true;
     public boolean powershot = false;
     public boolean calRightFirst = false;
+    public boolean globalMode = false;
+    public boolean strafeMode = false;
 
     public int resettingArm = 0;
 
@@ -89,6 +91,8 @@ public class TerraBot {
     public double lastAngle = 0;
     public double lastArmAngle = 0;
 
+    public double savedHeading = 0;
+
     public double rightP = 1.5;
     public double leftP = 0.8;
 
@@ -104,7 +108,7 @@ public class TerraBot {
     public ElapsedTime timer2 = new ElapsedTime();
     public ElapsedTime gameTime = new ElapsedTime();
 
-    public Cycle grabControl = new Cycle(grabStart, 0.45);
+    public Cycle grabControl = new Cycle(grabStart, 0.53);
     public Cycle liftControl = new Cycle(liftStart, liftSecond);
     public Cycle shootControlR = new Cycle(0.0, shootStartR, 0.18, 0.2);//0.22, 0.25
     public Cycle shootControlL = new Cycle(0.0, shootStartL, 0.1, 0.26); //0.13, 0.26
@@ -135,6 +139,7 @@ public class TerraBot {
     public ThreadHandler threadHandler = new ThreadHandler();
 
     public ExpansionHubEx expansionHub;
+    public ExpansionHubEx expansionHub2;
 
     public double[] startPos = {0,0};
 
@@ -179,8 +184,8 @@ public class TerraBot {
         cor = hwMap.get(NormalizedColorSensor.class, "cor");
 
 
-
-        expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        expansionHub2 = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 1");
 
         List<LynxModule> allHubs = hwMap.getAll(LynxModule.class);
 
@@ -349,6 +354,12 @@ public class TerraBot {
 
     public void defineShooter(){
 
+        shooter.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                setLEDs(128, 0, 128);
+            }
+        });
         shooter.addStage(in, 1.0, 0.01);
         shooter.addStage(slr, liftControl.getPos(1), 0.01);
         shooter.addStage(sll, liftControl.getPos(1), 1.5);
@@ -368,12 +379,20 @@ public class TerraBot {
             }
         }, 0.01);
         shooter.addWaitUntil();
+        shooter.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+//                if(!globalMode){
+//                    globalMode = true;
+//                    resetGyro();
+//                }
+            }
+        });
         for(int i = 0; i < 3;i++) {
-            //shooter.addSPWait(outlController, outrController);
             shooter.addStage(ssr, shootControlR.getPos(3), 0.01);
-            shooter.addStage(ssl, shootControlL.getPos(3), 0.3);
+            shooter.addStage(ssl, shootControlL.getPos(3), 0.4);
             shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
-            shooter.addStage(ssl, shootControlL.getPos(2), 0.3);
+            shooter.addStage(ssl, shootControlL.getPos(2), 0.4);
         }
         shooter.addCustom(new CodeSeg() {
             @Override
@@ -381,7 +400,13 @@ public class TerraBot {
                 fastmode = true;
             }
         }, 0.01);
-        shooter.addDelay(1);
+        shooter.addDelay(0.2);
+        shooter.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                setLEDs(0,255,0);
+            }
+        });
     }
 
     public void definePowerShot(){
@@ -453,6 +478,7 @@ public class TerraBot {
             @Override
             public void run() {
                 stopOdoThreadTele();
+                setLEDs(0, 255, 0);
             }
         });
         powerShot.addDelay(1);
@@ -484,7 +510,13 @@ public class TerraBot {
 
     }
     public void defineWobbleGoal2(){
-        wobbleGoal2.addStage(st, 0.65, 0.1);
+        wobbleGoal2.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                setLEDs(0,0,255);
+            }
+        });
+        wobbleGoal2.addStage(st, 0.68, 0.1);
         wobbleGoal2.addStage(arm,  1, degreesToTicks(185));
         wobbleGoal2.addCustomOnce(new CodeSeg() {
             @Override
@@ -509,6 +541,12 @@ public class TerraBot {
         wobbleGoal2.addStage(sgl, grabControl.getPos(0), 0.01);
         wobbleGoal2.addStage(sgr, grabControl.getPos(0), 0.3);
         wobbleGoal2.addStage(arm, 1, degreesToTicks(120));
+        wobbleGoal2.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                setLEDs(0,255,0);
+            }
+        });
     }
 
     public void defineGoback(){
@@ -848,6 +886,11 @@ public class TerraBot {
     }
     public double whiteValR(){
         return getColorR()[2];
+    }
+
+    public void setLEDs(int r, int g, int b){
+        expansionHub.setLedColor(r, g, b);
+        expansionHub2.setLedColor(r, g, b);
     }
 
 
