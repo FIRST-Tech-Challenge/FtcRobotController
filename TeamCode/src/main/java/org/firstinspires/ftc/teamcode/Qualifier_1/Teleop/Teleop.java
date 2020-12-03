@@ -91,29 +91,35 @@ public class Teleop extends LinearOpMode {
             angleInDegree = Math.toDegrees(angleInRadian);
 
             /**Shooter**/
-            if (servo) {
-                moveServo = true;
-
-                if (servoIsMoved) {
-                    servoIsMoved = false;
-                } else if (servoIsMoved == false) {
-                    servoIsMoved = true;
-                }
-            } else {
-                moveServo = false;
+//            if (servo) {
+//                moveServo = true;
+//
+//                if (servoIsMoved) {
+//                    servoIsMoved = false;
+//                } else if (servoIsMoved == false) {
+//                    servoIsMoved = true;
+//                }
+//            } else {
+//                moveServo = false;
+//            }
+            if (servo){
+                telemetry.addData("Servo", " SERVO Forward and Backward");
+                telemetry.update();
+                robot.moveServo(false);
+                robot.moveServo(true);
             }
 
-            if (moveServo) {
-                if (servoIsMoved) {
-                    telemetry.addData("Servo", " SERVO FORTH x button");
-                    telemetry.update();
-                    robot.moveServo(true);
-                } else if (servoIsMoved == false) {
-                    telemetry.addData("Servo", " SERVO BACK x button");
-                    telemetry.update();
-                    robot.moveServo(false);
-                }
-            }
+//            if (moveServo) {
+//                if (servoIsMoved) {
+//                    telemetry.addData("Servo", " SERVO FORTH x button");
+//                    telemetry.update();
+//                    robot.moveServo(true);
+//                } else if (servoIsMoved == false) {
+//                    telemetry.addData("Servo", " SERVO BACK x button");
+//                    telemetry.update();
+//                    robot.moveServo(false);
+//                }
+//            }
 
             if (shooter != 0) {
                 robot.shootGoalTeleop(999999999, 100);
