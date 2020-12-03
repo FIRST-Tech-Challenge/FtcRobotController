@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static java.lang.StrictMath.abs;
@@ -17,6 +18,7 @@ public class Teleop_wheels extends LinearOpMode {
     private DcMotor rf = null;
     private DcMotor lb = null;
     private DcMotor rb = null;
+    private DcMotor collecter = null;
 
     @Override
     public void runOpMode() {
@@ -27,11 +29,13 @@ public class Teleop_wheels extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
+        collecter = hardwareMap.get(DcMotor.class, "collecter");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
         lb.setDirection(DcMotor.Direction.REVERSE);
-        rb.setDirection(DcMotor.Direction.REVERSE);
+        rb.setDirection(DcMotor.Direction.FORWARD);
+        collecter.setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
         runtime.reset();
@@ -42,11 +46,14 @@ public class Teleop_wheels extends LinearOpMode {
             double rfPower;
             double lbPower;
             double rbPower;
+            double collectorPower;
 
             lfPower = 0.0f ;
             rfPower = 0.0f ;
             lbPower = 0.0f ;
             rbPower = 0.0f ;
+
+            collectorPower = gamepad2.left_stick_y;
 
             if (abs(gamepad1.left_stick_y) < 0.2 && abs(gamepad1.left_stick_x) > 0.2){
                 lfPower = -gamepad1.left_stick_x;
