@@ -25,6 +25,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.ftc9929.corelib.control.DebouncedButton;
 import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
 import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.state.State;
 import com.ftc9929.corelib.state.StateMachine;
@@ -44,6 +45,19 @@ import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 @SuppressWarnings("unused")
 public class GrungyUltimateGoalAuto extends OpMode {
     private Ticker ticker;
+
+    private OnOffButton unsafe = new OnOffButton() {
+        @Override
+        public boolean isPressed() {
+            return true;
+            //Danger Will Robinson
+        }
+
+        @Override
+        public DebouncedButton debounced() {
+            return null;
+        }
+    };
 
     private RoadRunnerMecanumDriveREV driveBase;
 
@@ -111,6 +125,8 @@ public class GrungyUltimateGoalAuto extends OpMode {
         stateMachine = new StateMachine(telemetry);
 
         deliveryMechanism = new DeliveryMechanism(simplerHardwareMap, telemetry, ticker);
+
+        deliveryMechanism.setUnsafe(unsafe);
 
         skystoneGrabber = new SkystoneGrabber(simplerHardwareMap);
 
@@ -311,7 +327,7 @@ public class GrungyUltimateGoalAuto extends OpMode {
             }
         };
 
-        State depositWobbleGoalState = newDelayState("Deposit Wobble Goal", 4);
+        State wobbleGoalWaitState = newDelayState("Deposit Wobble Goal", 4);
 
         State toParkedPosition = new TrajectoryFollowerState("Parking",
                 telemetry, driveBase, ticker, TimeUnit.SECONDS.toMillis(20 * 1000)) {
@@ -321,7 +337,7 @@ public class GrungyUltimateGoalAuto extends OpMode {
 
                 switch (target) {
                     case A:
-                        trajectoryBuilder.forward(8);
+                        trajectoryBuilder.strafeLeft(22).forward(12);
                         break;
                     case B:
                         trajectoryBuilder.back(14);
@@ -336,11 +352,53 @@ public class GrungyUltimateGoalAuto extends OpMode {
         };
 
         // toParkedPosition
-        // depositWobbleGoalState
+        // ejectWobbleGoalState
+        // wobbleGoalWaitState
+        // wobbleGoalCoolDownState
+
         // toTargetZone
 
+        State ejectWobbleGoalState = new State("Eject wobble goal", telemetry) {
+
+            @Override
+            public State doStuffAndGetNextState() {
+                deliveryMechanism.setIntakeVelocity(-.2);
+                return nextState;
+            }
+
+            @Override
+            public void resetToStart() {
+
+            }
+
+            @Override
+            public void liveConfigure(NinjaGamePad gamePad) {
+
+            }
+        };
+
+        State wobbleGoalCoolDownState = new State("Stop the delivey Mech",telemetry){
+            @Override
+            public State doStuffAndGetNextState() {
+                deliveryMechanism.setIntakeVelocity(0);
+                return nextState;
+            }
+
+            @Override
+            public void resetToStart() {
+
+            }
+
+            @Override
+            public void liveConfigure(NinjaGamePad gamePad) {
+
+            }
+        };
+
         stateMachine.addSequential(toTargetZone);
-        stateMachine.addSequential(depositWobbleGoalState);
+        stateMachine.addSequential(ejectWobbleGoalState);
+        stateMachine.addSequential(wobbleGoalWaitState);
+        stateMachine.addSequential(wobbleGoalCoolDownState);
         stateMachine.addSequential(toParkedPosition);
         stateMachine.addSequential(newDoneState("Done!"));
     }
