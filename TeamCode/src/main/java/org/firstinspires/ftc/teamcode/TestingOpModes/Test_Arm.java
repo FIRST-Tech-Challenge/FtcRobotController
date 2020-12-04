@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.SubSystems.Arm;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
 
 /**
@@ -61,7 +60,7 @@ public class Test_Arm extends LinearOpMode {
 
             //gpArm.moveArmByTrigger(getLeftTrigger());
             if (hzGamepad.getLeftTriggerPress()) {
-                hzArm.moveArmByTrigger2();
+                hzArm.moveArmByTrigger();
             }
             //Toggle Arm Grip actions
             if (hzGamepad.getLeftBumperPress()) {

@@ -429,7 +429,7 @@ public class HzGamepadClassic {
 
         //**** Arm Actions ****
         //Arm Rotation
-        gpArm.moveArmByTrigger(getLeftTrigger()/*, opModepassed*/);
+        gpArm.moveArmByTrigger();
 
         //Toggle Arm Grip actions
         if (getLeftBumperPress()) {

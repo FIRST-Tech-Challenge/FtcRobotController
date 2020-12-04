@@ -100,7 +100,7 @@ public class Arm {
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         timer.reset();
         int sign = armMotor.getCurrentPosition() < armMotor.getTargetPosition() ? 1 : -1;
-        armMotor.setPower(sign * 0.2);
+        armMotor.setPower(sign * 0.4);
         while((sign*(armMotor.getCurrentPosition() - armMotor.getTargetPosition()) < 0 ) && timer.time() < 4){
             //opModepassed.telemetry.addData("armMotor.getTargetPosition()", armMotor.getTargetPosition());
             //opModepassed.telemetry.addData("armMotor.getCurrentPosition()", armMotor.getCurrentPosition());
