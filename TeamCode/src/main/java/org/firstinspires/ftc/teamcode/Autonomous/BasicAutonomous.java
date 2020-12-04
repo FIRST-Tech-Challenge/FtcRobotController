@@ -168,7 +168,7 @@ public class BasicAutonomous extends LinearOpMode {
         telemetry.update();
 
         // make sure the gyro is calibrated before continuing
-        while (!isStopRequested() && drivetrain.imu.isGyroCalibrated())  {
+        while (!isStopRequested() && !drivetrain.imu.isGyroCalibrated())  {
             sleep(50);
             idle();
         }
