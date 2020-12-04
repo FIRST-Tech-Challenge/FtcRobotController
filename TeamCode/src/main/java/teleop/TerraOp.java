@@ -156,9 +156,9 @@ public class TerraOp extends OpMode {
             bot.timer2.reset();
         }
 
-        if (!bot.powershot && bot.gameTime.seconds() > 88 && bot.gameTime.seconds() < 90) {
+        if (!bot.powershot && bot.gameTime.seconds() > 82 && bot.gameTime.seconds() < 90) {
             bot.powershot = true;
-            bot.setLEDs(255,165,0);
+            bot.setLEDs(255,50,0);
         }
 
 //        double forward = -gamepad1.right_stick_y;
@@ -253,6 +253,8 @@ public class TerraOp extends OpMode {
 //        telemetry.addData("y", bot.odometry.getY());
 //        telemetry.addData("theta", bot.odometry.getTheta());
 //        telemetry.addData("heading", bot.getHeading());
+
+//        telemetry.addData("vs", vs);
 
         telemetry.addData("gameTime", bot.gameTime.seconds());
         telemetry.addData("isPowerShotMode", bot.powershot);

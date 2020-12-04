@@ -140,7 +140,7 @@ public class TerraBot {
     public ThreadHandler threadHandler = new ThreadHandler();
 
     public ExpansionHubEx expansionHub;
-    public ExpansionHubEx expansionHub2;
+    //public ExpansionHubEx expansionHub2;
 
     public double[] startPos = {0,0};
 
@@ -185,7 +185,7 @@ public class TerraBot {
         cor = hwMap.get(NormalizedColorSensor.class, "cor");
 
 
-        expansionHub2 = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        //expansionHub2 = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 1");
 
         List<LynxModule> allHubs = hwMap.getAll(LynxModule.class);
@@ -376,9 +376,9 @@ public class TerraBot {
             Path p = new Path(0, 0, 0);
             p.addSetpoint(0, 0, 0);
             shooter.addPath(p, this);
-            shooter.addMoveUntilLine(-0.3, this);
+            //shooter.addMoveUntilLine(-0.3, this);
             shooter.addStage(ssr, shootControlR.getPos(2), 0.01);
-            shooter.addStage(ssl, shootControlL.getPos(2), 0.5);
+            shooter.addStage(ssl, shootControlL.getPos(2), 0.01);
             shooter.addStage(in, 0.0, 0.01);
             shooter.addCustom(new CodeSeg() {
                 @Override
@@ -464,8 +464,10 @@ public class TerraBot {
             @Override
             public void run() {
                 startOdoThreadTele();
+                resetOdometry();
             }
         });
+
         powerShot.addStage(in, 1.0, 0.01);
         powerShot.addCustom(new CodeSeg() {
             @Override
@@ -474,7 +476,10 @@ public class TerraBot {
             }
         }, 0.01);
         powerShot.addStage(slr, liftControl.getPos(1), 0.01);
-        powerShot.addStage(sll, liftControl.getPos(1), 1.5);
+        powerShot.addStage(sll, liftControl.getPos(1), 0.01);
+        Path p = new Path(0, 0, 0);
+        p.addSetpoint(0, 0, 0);
+        powerShot.addPath(p, this);
         powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(2), 0.01);
         powerShot.addStage(in, 0.0, 0.01);
@@ -484,11 +489,10 @@ public class TerraBot {
                 intaking = false;
             }
         }, 0.01);
-        powerShot.addWaitUntil();
         powerShot.addCustomOnce(new CodeSeg() {
             @Override
             public void run() {
-                resetAll();
+                odometry.ty = 0;
                 odometry.tx = odometry.cmToTicks(getDisL2());
             }
         });
@@ -497,6 +501,13 @@ public class TerraBot {
         path0.HAcc = 1;
         path0.addSetpoint(0, 0, 0);
         powerShot.addPath(path0, this);
+        powerShot.addWaitUntil();
+        powerShot.addCustomOnce(new CodeSeg() {
+            @Override
+            public void run() {
+                resetGyro();
+            }
+        });
         powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
         powerShot.addStage(ssr, shootControlR.getPos(2), 0.01);
@@ -511,7 +522,7 @@ public class TerraBot {
         powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
         Path path1 = new Path(98, 0, -5);
         path1.HAcc = 1;
-        path1.addSetpoint(0, 0, -6);
+        path1.addSetpoint(0, 0, -5.5);
         powerShot.addPath(path1, this);
         powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);
@@ -528,6 +539,7 @@ public class TerraBot {
             public void run() {
                 stopOdoThreadTele();
                 setLEDs(0, 255, 0);
+                outtake(0);
             }
         });
         powerShot.addDelay(1);
@@ -819,7 +831,12 @@ public class TerraBot {
 
     public void resetArm(){
         if(resettingArm == 0){
-            arm.setPower(-0.15 + (-0.2-getArmVel()));
+            if(Math.abs(getArmVel()) != 0) {
+                arm.setPower(-0.25);
+            }else{
+                arm.setPower(-0.05);
+            }
+            arm.setPower(-0.25);
             resettingArm++;
             timer.reset();
         }else if(resettingArm == 1) {
@@ -969,7 +986,7 @@ public class TerraBot {
 
     public void setLEDs(int r, int g, int b){
         expansionHub.setLedColor(r, g, b);
-        expansionHub2.setLedColor(r, g, b);
+        //expansionHub2.setLedColor(r, g, b);
     }
 
 
