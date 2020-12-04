@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.technototes.library.hardware.motor.Motor;
 import com.technototes.library.hardware.sensor.IMU;
+import com.technototes.library.hardware.sensor.RangeSensor;
 import com.technototes.logger.Log;
 import com.technototes.logger.Loggable;
 
@@ -20,14 +21,20 @@ public class Hardware implements Loggable {
     // hellooooooo
     public IMU imu;
 
-    public Hardware(HardwareMap hmap){
-        flMotor = new Motor<DcMotor>("fl");
-        frMotor = new Motor<DcMotor>("fr");
-        rlMotor = new Motor<DcMotor>("rl");
-        rrMotor = new Motor<DcMotor>("rr");
+    //new stuff
+    public RangeSensor rangeSensor;
+
+
+    public Hardware(){
+        flMotor = new Motor<>("fl");
+        frMotor = new Motor<>("fr");
+        rlMotor = new Motor<>("rl");
+        rrMotor = new Motor<>("rr");
 
         imu = new IMU("imu1");
-//hello there ryan
+
+
+        rangeSensor = new RangeSensor("range");
     }
 
 }

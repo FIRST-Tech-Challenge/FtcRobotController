@@ -6,16 +6,18 @@ import com.technototes.library.command.InstantCommand;
 import com.technototes.library.command.simple.MecanumDriveCommand;
 import com.technototes.library.control.gamepad.CommandGamepad;
 import com.technototes.library.subsystem.drivebase.DrivebaseSubsystem;
+import com.technototes.logger.Log;
+
+import java.util.function.BooleanSupplier;
 
 import static com.technototes.subsystem.DrivebaseSubsystem.DriveSpeed.NORMAL;
 import static com.technototes.subsystem.DrivebaseSubsystem.DriveSpeed.TURBO;
 
-public class OI {
-
+public class OperatorInterface {
     public Robot robot;
     public CommandGamepad driverGamepad;
 
-    public OI(CommandGamepad g1, CommandGamepad g2, Robot r) {
+    public OperatorInterface(CommandGamepad g1, CommandGamepad g2, Robot r) {
         driverGamepad = g1;
         robot = r;
         setDriverControls();
