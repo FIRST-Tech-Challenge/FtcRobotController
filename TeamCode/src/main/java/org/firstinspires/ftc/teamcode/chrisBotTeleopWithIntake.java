@@ -14,7 +14,7 @@ public class chrisBotTeleopWithIntake extends OpMode{
     @Override
     public void init() {
 
-        robot.init(hardwareMap);
+        robot.init(hardwareMap, telemetry);
         double time =  System.currentTimeMillis();
 
     }

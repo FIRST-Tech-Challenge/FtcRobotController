@@ -4,10 +4,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(group="Zippo", name="actualAutonV1")
 
 public class actualAutonV1 extends LinearOpMode {
+
+    private ElapsedTime time = new ElapsedTime();
 
     chrisBot robot = new chrisBot();
 
@@ -30,17 +33,19 @@ public class actualAutonV1 extends LinearOpMode {
         // Start with wobble goal in hand (left) and 3 rings
 
         // Initialize robot
-        robot.init(hardwareMap);
-        robot.initVuforia();
-        robot.initTfod();
-        robot.setAllPower(0);
+        robot.init(hardwareMap, telemetry, true, true);
 
-        telemetry.addLine("Please wait for encoders to reset");
+
+        telemetry.addLine("");
+        telemetry.addLine("");
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
 
         waitForStart();
+
+        telemetry.addLine("**************************************\nStarted match");
+        time.reset();
 
         // Drive forward appropriate amount to be able to clearly see the rings
 
@@ -49,9 +54,6 @@ public class actualAutonV1 extends LinearOpMode {
         // Sense the number of rings using TensorFlow (demo code)
         // Activate TensorFlow Object Detection before we wait for the start command.
         // Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-
-        telemetry.addLine("Detecting rings...");
-        telemetry.update();
 
         if (robot.tfod != null) { robot.tfod.activate(); }
         boolean[] ringPositions = robot.detectRings();
@@ -68,14 +70,11 @@ public class actualAutonV1 extends LinearOpMode {
         // (conditional) 4 rings: drive 48 inches forward to third foam tile
         // Calculate the number of inches to drive forward in one step
 
-
         double inches = 36;
 
         if (oneRing) { inches += 24; }
         else if (fourRings) { inches += 48; }
 
-        telemetry.addData("One ring",oneRing);
-        telemetry.addData("Four rings",fourRings);
         telemetry.addData("Inches to drive",inches);
         telemetry.update();
 
@@ -86,7 +85,10 @@ public class actualAutonV1 extends LinearOpMode {
         // (conditional) 1 ring: strafe right 18 inches
         // (else) drop goal
 
-        if (oneRing) { robot.wheelMecanumDrive(robot.calculateInches(24,0)); }
+        if (oneRing) {
+            telemetry.addLine("Moving into \"one-ring\" square...");
+            robot.wheelMecanumDrive(robot.calculateInches(24,0));
+        }
 
         telemetry.clear();
 

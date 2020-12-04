@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -46,7 +48,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  */
 public class chrisBot
 {
-    private boolean shooterExists = false, intakeExists = false, webcamExists = false;
+    private String version = "1.0.0";
 
     /** MOTOR OBJECTS */
     public DcMotor  motorBackLeft   = null;
@@ -84,10 +86,8 @@ public class chrisBot
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false  ;
 
-    // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
-    // We will define some constants and conversions here
     private static final float mmPerInch        = 25.4f;
-    private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
+    private static final float mmTargetHeight   = (6) * mmPerInch;
 
     // Constants for perimeter targets
     private static final float halfField = 72 * mmPerInch;
@@ -102,34 +102,37 @@ public class chrisBot
 
     private OpenGLMatrix lastLocation = null;
 
-    /*
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
     public VuforiaLocalizer vuforia;
 
-    /*
-     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
-     * Detection engine.
-     */
     public TFObjectDetector tfod;
 
     public static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     public static final String LABEL_FIRST_ELEMENT = "Quad";
     public static final String LABEL_SECOND_ELEMENT = "Single";
 
-    public static final String VUFORIA_KEY = "AQU7a8H/////AAABmfH4ZcQHIkPTjsjCf80CSVReJtuQBMiQodPHMSkdFHY8RhKT4fIEcY3JbCWjXRsUBFiewYx5etup17dUnX/SIQx6cjctrioEXrID+gV4tD9B29eCOdFVgyAr+7ZnEHHDYcSnt2pfzDZyMpi+I3IODqbUgVO82UiaZViuZBnA3dNvokZNFwZvv8/YDkcd4LhHv75QdkqgBzKe/TumwxjR/EqtR2fQRy9WnRjNVR9fYGl9MsuGNBSEmmys6GczXn8yZ/k2PKusiYz7h4hFGiXmlVLyikZuB4dxETGoqz+WWYUFJAdHzFiBptg5xXaa86qMBYBi3ht0RUiBKicLJhQZzLG0bIEJZWr198ihexUuhhGV";
+    public static final String VUFORIA_KEY = "AQU7a8H/////AAABmfH4ZcQHIkPTjsjCf80CSVReJtuQBMiQodPHMSkdFHY8RhKT4fIEcY3JbCWjXRsUBFiewYx5etup17dUnX/SIQx6cjctrioEXrID+gV4tD9B29eCOdFVgyAr+7ZnEHHDYcSnt2pfzDZyMpi+I3IODqbUgVO82UiaZViuZBnA3dNvokZNFwZvv8/YDkcd4LhHv75Qdk" +
+            "qgBzKe/TumwxjR/EqtR2fQRy9WnRjNVR9fYGl9MsuGNBSEmmys6GczXn8yZ/k2PKusiYz7h4hFGiXmlVLyikZuB4dxETGoqz+WWYUFJAdHzFiBptg5xXaa86qMBYBi3ht0RUiBKicLJhQZzLG0bIEJZWr198ihexUuhhGV";
 
     /** local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
     private ElapsedTime runtime = new ElapsedTime();
 
+    private Telemetry telemetry;
+
+    private boolean shooterExists = false, intakeExists = false, webcamExists = false;
+
     /* Constructor */
     public chrisBot() { }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap ahwMap, Telemetry telemetry) {
+        this.telemetry = telemetry;
+        this.telemetry.setAutoClear(false);
+
+        telemetry.addLine("Booting...");
+        telemetry.update();
+
         // Save reference to Hardware map
         hwMap = ahwMap;
 
@@ -158,12 +161,6 @@ public class chrisBot
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         motorFrontRight.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         motorBackRight.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-
-        // Set all motors to zero power
-        motorBackLeft.setPower(0);
-        motorFrontLeft.setPower(0);
-        motorFrontRight.setPower(0);
-        motorBackLeft.setPower(0);
 
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -202,7 +199,16 @@ public class chrisBot
             webcam = hwMap.get(WebcamName.class, "Webcam 1");
         }
 
+        setAllPower(0);
 
+        welcome();
+
+    }
+
+    public void init(HardwareMap hwMap, Telemetry telemetry, boolean initVuforia, boolean initTfod) {
+        if (initVuforia) { initVuforia(); }
+        if (initTfod) { initTfod(); }
+        init(hwMap, telemetry);
     }
 
     /** MOTOR METHODS */
@@ -343,6 +349,8 @@ public class chrisBot
     // This method runs the motors in order to drop the Wobble Goal.
     public void dropGoal() {
         /* Code to drop goal goes here */
+        telemetry.addLine("Wobble goal dropped");
+        telemetry.update();
     }
 
     // This code runs the motors to shoot exactly one ring.
@@ -506,6 +514,9 @@ public class chrisBot
     // This detects the number of rings in front of the robot (for use in auton). Vuforia and TFOD must be initialized first.
     public boolean[] detectRings() {
 
+        telemetry.addLine("Detecting rings... (those pesky orange toruses)");
+        telemetry.update();
+
         ArrayList<ringObject> rings = ringObject.detectRings(tfod);
 
         boolean is1ring = false;
@@ -515,6 +526,9 @@ public class chrisBot
             is1ring = (ring.label.equals("Single"));
             is4rings = (ring.label.equals("Quad"));
         }
+
+        telemetry.addData("One ring detected",is1ring);
+        telemetry.addData("Four rings detected",is4rings);
 
         return new boolean[]{is1ring, is4rings};
     }
@@ -563,6 +577,11 @@ public class chrisBot
         return new double[]{r * Math.cos(robotAngle), r * Math.sin(robotAngle), r * Math.sin(robotAngle), r * Math.cos(robotAngle)}; //fl,fr,bl,br
     }
 
+    /** TELEMETRY METHODS */
+    private void welcome() {
+        telemetry.addLine("Welcome to ChrisBot version "+version+"!\nPlease wait a few seconds for the encoders to reset, so that Chris doesn't complain about not having gyro yet\nWhen you're ready to pwn some n00bs press the \"Play\" button");
+        telemetry.update();
+    }
 
 }
 
