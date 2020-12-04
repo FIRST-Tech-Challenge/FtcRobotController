@@ -5,6 +5,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Enums.ShooterState;
+
+import static java.lang.Thread.sleep;
+
 public class Shooter {
     // Define hardware objects
     public DcMotor  shooterleft=null;
@@ -127,6 +131,23 @@ public class Shooter {
         shooterright.setPower(jamClear);
 
 
+    }
+
+    public void shoot_N_rings(int rings) throws InterruptedException {
+        int ShotCount = 0;
+        while (ShotCount<rings)  {
+
+                shootOneRingHigh(); // this is only used in auto due to different stacker position
+                sleep(750);
+                flipperForward();
+                sleep(750);
+                flipperBackward();
+                ShotCount++;
+
+
+
+        }
+        shooterOff(); // turn off when we exit the loop
     }
 }
 
