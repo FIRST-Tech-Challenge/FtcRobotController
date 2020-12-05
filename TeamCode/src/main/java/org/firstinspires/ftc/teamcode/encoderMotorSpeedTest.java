@@ -46,6 +46,15 @@ public class encoderMotorSpeedTest extends LinearOpMode {
         int flD, frD, blD, brD;
 
         for(int i : range(1,13)) {
+            if(!opModeIsActive()) {
+                break;
+            }
+            if(robot.intakeExists) {
+                robot.motorIntake.setPower(1);
+            }
+            if(robot.shooterExists) {
+                robot.motorShooter.setPower(1);
+            }
             flPos = robot.motorFrontLeft.getCurrentPosition();
             frPos = robot.motorFrontRight.getCurrentPosition();
             blPos = robot.motorBackLeft.getCurrentPosition();
@@ -72,8 +81,17 @@ public class encoderMotorSpeedTest extends LinearOpMode {
 
         robot.setAllPower(0);
 
+        if(robot.intakeExists) {
+            robot.motorIntake.setPower(0);
+        }
+        if(robot.shooterExists) {
+            robot.motorShooter.setPower(0);
+        }
+
         telemetry.addLine("Test done");
         telemetry.update();
+
+        sleep(60000);
 
     }
 }

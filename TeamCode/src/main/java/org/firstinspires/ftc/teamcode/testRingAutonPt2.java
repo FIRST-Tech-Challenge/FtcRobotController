@@ -45,57 +45,22 @@ import java.util.ArrayList;
 public class testRingAutonPt2 extends LinearOpMode {
 
     /* Declare OpMode members. */
-    testPlatformHardware    robot   = new testPlatformHardware();
-    private ElapsedTime     runtime = new ElapsedTime();
+    chrisBot    robot   = new chrisBot();
 
-    static final double     COUNTS_PER_MOTOR_REV    = testPlatformHardware.COUNTS_PER_MOTOR_REV ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = testPlatformHardware.DRIVE_GEAR_REDUCTION ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = testPlatformHardware.WHEEL_DIAMETER_INCHES ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * Math.PI);
-    static final double     DRIVE_SPEED             = 0.5;
-
-    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-    private static final String LABEL_FIRST_ELEMENT = "Quad";
-    private static final String LABEL_SECOND_ELEMENT = "Single";
-
-    private static final String VUFORIA_KEY = "AQU7a8H/////AAABmfH4ZcQHIkPTjsjCf80CSVReJtuQBMiQodPHMSkdFHY8RhKT4fIEcY3JbCWjXRsUBFiewYx5etup17dUnX/SIQx6cjctrioEXrID+gV4tD9B29eCOdFVgyAr+7ZnEHHDYcSnt2pfzDZyMpi+I3IODqbUgVO82UiaZViuZBnA3dNvokZNFwZvv8/YDkcd4LhHv75QdkqgBzKe/TumwxjR/EqtR2fQRy9WnRjNVR9fYGl9MsuGNBSEmmys6GczXn8yZ/k2PKusiYz7h4hFGiXmlVLyikZuB4dxETGoqz+WWYUFJAdHzFiBptg5xXaa86qMBYBi3ht0RUiBKicLJhQZzLG0bIEJZWr198ihexUuhhGV";;
-
-
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
-     */
-    private VuforiaLocalizer vuforia;
-
-    /**
-     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
-     * Detection engine.
-     */
-    private TFObjectDetector tfod;
-
-    @Override
     public void runOpMode() {
 
         /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-        robot.init(hardwareMap);
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
-
-        initVuforia();
-        initTfod();
+        robot.init(hardwareMap, telemetry, true, true);
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
          **/
-        if (tfod != null) {
-            tfod.activate();
+        if (robot.tfod != null) {
+            robot.tfod.activate();
 
             // The TensorFlow software will scale the input images from the camera to a lower resolution.
             // This can result in lower detection accuracy at longer distances (> 55cm or 22").
@@ -108,18 +73,9 @@ public class testRingAutonPt2 extends LinearOpMode {
             //tfod.setZoom(2.5, 1.78);
         }
 
-        // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        say("1");
-        encoderDrive(DRIVE_SPEED,  7);
-        say("Done");
-
-        sleep(3000);
-
-        ArrayList<ringObject> rings = ringObject.detectRings(tfod);
+        ArrayList<ringObject> rings = ringObject.detectRings(robot.tfod);
 
         boolean is1ring = false;
         boolean is4rings = false;
@@ -139,107 +95,10 @@ public class testRingAutonPt2 extends LinearOpMode {
            telemetry.addLine("0 rings");
        }
        telemetry.update();
-       encoderDrive(DRIVE_SPEED, 36);
-       if (is1ring && !is4rings) {
 
-       }
-       tfod.shutdown();
-
-
+       sleep(60000);
+        robot.tfod.shutdown();
     }
 
-    /*
-     *  Method to perform a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the opmode running.
-     */
-    public void encoderDrive(double speed, double inches) {
-        int newflTarget, newfrTarget, newblTarget, newbrTarget;
 
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            int countsToTravel = (int)(inches * COUNTS_PER_INCH);
-            newflTarget = robot.motorFrontLeft.getCurrentPosition() + countsToTravel;
-            newfrTarget = robot.motorFrontRight.getCurrentPosition() + countsToTravel;
-            newblTarget = robot.motorBackLeft.getCurrentPosition() + countsToTravel;
-            newbrTarget = robot.motorBackRight.getCurrentPosition() + countsToTravel;
-
-            robot.motorFrontLeft.setTargetPosition(newflTarget);
-            robot.motorFrontRight.setTargetPosition(newfrTarget);
-            robot.motorBackLeft.setTargetPosition(newblTarget);
-            robot.motorBackRight.setTargetPosition(newbrTarget);
-
-
-            // Turn On RUN_TO_POSITION
-            robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            setAllPower(robot, Math.abs(speed));
-
-            while (opModeIsActive() &&
-                    (robot.motorFrontLeft.isBusy() && robot.motorFrontRight.isBusy() && robot.motorBackLeft.isBusy() && robot.motorBackRight.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d :%7d :%7d", newflTarget,  newfrTarget, newblTarget, newbrTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d :%7d :%7d", robot.motorFrontLeft.getCurrentPosition(), robot.motorFrontRight.getCurrentPosition(), robot.motorBackLeft.getCurrentPosition(), robot.motorBackRight.getCurrentPosition());
-                telemetry.update();
-            }
-
-            // Stop all motion;
-            setAllPower(robot, 0);
-
-            // Turn off RUN_TO_POSITION
-            robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
-        }
-    }
-    public void say(String s) {
-        telemetry.addLine(s);
-        telemetry.update();
-    }
-    public void setAllPower(testPlatformHardware robot, double speed) {
-        robot.motorFrontLeft.setPower(speed);
-        robot.motorFrontRight.setPower(speed);
-        robot.motorBackRight.setPower(speed);
-        robot.motorBackLeft.setPower(speed);
-    }
-
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
-
-    }
-
-    /**
-     * Initialize the TensorFlow Object Detection engine.
-     */
-    private void initTfod() {
-        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
-    }
 }

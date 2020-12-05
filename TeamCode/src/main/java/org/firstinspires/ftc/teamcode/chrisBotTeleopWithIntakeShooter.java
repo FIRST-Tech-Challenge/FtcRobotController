@@ -4,19 +4,17 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-@TeleOp(name="chrisBotTeleopWithIntake", group="chrisBot")
+@TeleOp(name="chrisBotTeleopWithIntakeShooter", group="chrisBot")
 //@Disabled
 
-public class chrisBotTeleopWithIntake extends OpMode{
+public class chrisBotTeleopWithIntakeShooter extends OpMode{
 
     chrisBot robot = new chrisBot();
 
     @Override
     public void init() {
-
         robot.init(hardwareMap, telemetry);
         double time =  System.currentTimeMillis();
-
     }
 
     @Override
@@ -39,6 +37,13 @@ public class chrisBotTeleopWithIntake extends OpMode{
             robot.intakeOn();
         } else {
             robot.intakeOff();
+        }
+
+        // Shooter code
+        if (gamepad1.b) {
+            robot.shootOn();
+        } else {
+            robot.shootOff();
         }
     }
 

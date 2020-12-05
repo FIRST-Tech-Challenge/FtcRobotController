@@ -60,8 +60,8 @@ public class chrisBot
 
     public WebcamName webcam = null;
 
-    public static final double COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder
-    public static final double DRIVE_GEAR_REDUCTION    = 0.625 ;     // This is < 1.0 if geared UP
+    public static final double COUNTS_PER_MOTOR_REV    = 560 ;    // eg: TETRIX Motor Encoder
+    public static final double DRIVE_GEAR_REDUCTION    = (double)2/(double)3 ;     // This is < 1.0 if geared UP
     public static final double WHEEL_DIAMETER_INCHES   = 2.95276 ;     // For figuring circumference
     public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
     public static final double DRIVE_SPEED = 0.7;
@@ -84,6 +84,7 @@ public class chrisBot
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
+
     private static final boolean PHONE_IS_PORTRAIT = false  ;
 
     private static final float mmPerInch        = 25.4f;
@@ -120,18 +121,19 @@ public class chrisBot
 
     private Telemetry telemetry;
 
-    private boolean shooterExists = false, intakeExists = false, webcamExists = false;
+    public boolean shooterExists = false, intakeExists = false, webcamExists = false;
 
     /* Constructor */
     public chrisBot() { }
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap, Telemetry telemetry) {
-        this.telemetry = telemetry;
-        this.telemetry.setAutoClear(false);
-
-        telemetry.addLine("Booting...");
-        telemetry.update();
+        if (this.telemetry == null) {
+            this.telemetry = telemetry;
+            this.telemetry.setAutoClear(false);
+            telemetry.addLine("Booting...");
+            telemetry.update();
+        }
 
         // Save reference to Hardware map
         hwMap = ahwMap;
@@ -181,10 +183,13 @@ public class chrisBot
 
         if (intakeExists) {
             motorIntake = hwMap.get(DcMotor.class, "motorIntake");
-            motorIntake.setDirection(DcMotor.Direction.FORWARD);
+            motorIntake.setDirection(DcMotor.Direction.REVERSE);
             motorIntake.setPower(0);
             motorIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            motorIntake.setMode((DcMotor.RunMode.RUN_USING_ENCODER));
+            motorIntake.setMode((DcMotor.RunMode.RUN_WITHOUT_ENCODER));
+
+            telemetry.addLine("Intake motor initialized");
+            telemetry.update();
         }
 
         if (shooterExists) {
@@ -192,11 +197,17 @@ public class chrisBot
             motorShooter.setDirection(DcMotor.Direction.FORWARD);
             motorShooter.setPower(0);
             motorShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            motorShooter.setMode((DcMotor.RunMode.RUN_USING_ENCODER));
+            motorShooter.setMode((DcMotor.RunMode.RUN_WITHOUT_ENCODER));
+
+            telemetry.addLine("Shooter motor initialized");
+            telemetry.update();
         }
 
         if (webcamExists) {
             webcam = hwMap.get(WebcamName.class, "Webcam 1");
+
+            telemetry.addLine("Webcam initialized");
+            telemetry.update();
         }
 
         setAllPower(0);
@@ -206,8 +217,41 @@ public class chrisBot
     }
 
     public void init(HardwareMap hwMap, Telemetry telemetry, boolean initVuforia, boolean initTfod) {
-        if (initVuforia) { initVuforia(); }
-        if (initTfod) { initTfod(); }
+        this.telemetry = telemetry;
+        this.telemetry.setAutoClear(false);
+
+        telemetry.addLine("Booting...");
+        telemetry.update();
+
+        if (initVuforia) {
+            /*
+             * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+             */
+            VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+            parameters.vuforiaLicenseKey = VUFORIA_KEY;
+            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+
+            //  Instantiate the Vuforia engine
+            vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+            // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+
+            telemetry.addLine("Vuforia initialized successfully");
+            telemetry.update();
+        }
+        if (initTfod) {
+            int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
+                    "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
+            TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+            tfodParameters.minResultConfidence = 0.8f;
+            tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+            tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+
+            telemetry.addLine("TensorFlow OD initialized successfully");
+            telemetry.update();
+        }
+
         init(hwMap, telemetry);
     }
 
@@ -353,7 +397,13 @@ public class chrisBot
         telemetry.update();
     }
 
-    // This code runs the motors to shoot exactly one ring.
+    // These methods turn the shooter motor on and off, at a set power or at full power.
+    public void shootOn(double power) {
+        if(shooterExists) {
+            motorShooter.setPower(power);
+        }
+    }
+
     public void shootOn() {
         if(shooterExists) {
             motorShooter.setPower(1);
@@ -367,15 +417,21 @@ public class chrisBot
 
     // These methods turn the intake motor on and off, at a set power or at full power.
     public void intakeOn(double power) {
-        motorIntake.setPower(power);
+        if(intakeExists) {
+            motorIntake.setPower(power);
+        }
     }
 
     public void intakeOn() {
-        motorIntake.setPower(1);
+        if(intakeExists) {
+            motorIntake.setPower(1);
+        }
     }
 
     public void intakeOff() {
-        motorIntake.setPower(0);
+        if(intakeExists) {
+            motorIntake.setPower(0);
+        }
     }
 
     /** SENSOR METHODS */
@@ -386,29 +442,6 @@ public class chrisBot
 
     /** VUFORIA METHODS */
 
-    // This initializes Vuforia for use.
-    public void initVuforia() {
-        // Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = chrisBot.VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
-    }
-
-    // This initializes the TensorFlow object detection (TFOD) engine.
-    public void initTfod() {
-        int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(chrisBot.TFOD_MODEL_ASSET, chrisBot.LABEL_FIRST_ELEMENT, chrisBot.LABEL_SECOND_ELEMENT);
-    }
     public void initVuMarks() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -578,10 +611,16 @@ public class chrisBot
     }
 
     /** TELEMETRY METHODS */
+    public void breakTelemetry() {
+        telemetry.addLine("**************************************");
+    }
     private void welcome() {
+        breakTelemetry();
         telemetry.addLine("Welcome to ChrisBot version "+version+"!\nPlease wait a few seconds for the encoders to reset, so that Chris doesn't complain about not having gyro yet\nWhen you're ready to pwn some n00bs press the \"Play\" button");
         telemetry.update();
     }
+
+
 
 }
 
