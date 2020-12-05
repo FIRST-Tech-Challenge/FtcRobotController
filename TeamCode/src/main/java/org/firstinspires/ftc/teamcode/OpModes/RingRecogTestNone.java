@@ -26,12 +26,11 @@ public class RingRecogTestNone extends LinearOpMode {
                 Led lights = new Led();
                 lights.init(this.hardwareMap, telemetry);
                 rf = new RingDetector(this.hardwareMap, AutoRoute.NAME_RED, this, null, lights, telemetry);
+                telemetry.addData("Info", "Opmode initialized");
                 telemetry.update();
             } catch (Exception ex) {
                 telemetry.addData("Error", String.format("Unable to initialize Detector. %s", ex.getMessage()));
                 telemetry.update();
-                sleep(5000);
-                return;
             }
 
             // Wait for the game to start (driver presses PLAY)

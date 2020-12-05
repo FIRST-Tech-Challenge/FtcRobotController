@@ -16,6 +16,8 @@ public class AutoStep implements Cloneable {
     private double desiredHead = BotMoveProfile.DEFAULT_HEADING;
     private boolean continuous = false;
     private String targetReference = "";
+    private String conditionValue = "";
+    private String conditionFunction = "";
 
     public int getWaitMS() {
         return waitMS;
@@ -110,6 +112,8 @@ public class AutoStep implements Cloneable {
         clone.setDesiredHead(this.getDesiredHead());
         clone.setContinuous(this.isContinuous());
         clone.setTargetReference(this.getTargetReference());
+        clone.setConditionFunction(this.getConditionFunction());
+        clone.setConditionValue(this.getConditionValue());
         return clone;
     }
 
@@ -144,5 +148,21 @@ public class AutoStep implements Cloneable {
 
     public void setRobotDirection(RobotDirection robotDirection) {
         this.robotDirection = robotDirection;
+    }
+
+    public String getConditionValue() {
+        return conditionValue;
+    }
+
+    public void setConditionValue(String conditionValue) {
+        this.conditionValue = conditionValue;
+    }
+
+    public String getConditionFunction() {
+        return conditionFunction;
+    }
+
+    public void setConditionFunction(String conditionFunction) {
+        this.conditionFunction = conditionFunction;
     }
 }

@@ -29,6 +29,7 @@ public class LegacyCameraConnectionFragment extends Fragment {
      * Conversion from screen rotation to JPEG orientation.
      */
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+    private static final String TAG = "Fragment";
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -58,10 +59,9 @@ public class LegacyCameraConnectionFragment extends Fragment {
                 @Override
                 public void onSurfaceTextureAvailable(
                         final SurfaceTexture texture, final int width, final int height) {
-
+                    Log.d("Listener", "Starting texture listener");
                     int index = getCameraId();
                     Log.d("cameraIndex", String.valueOf(index));
-                    telemetry.addData("cameraIndex", index);
                     camera = Camera.open(index);
 
                     try {
@@ -85,6 +85,7 @@ public class LegacyCameraConnectionFragment extends Fragment {
                         camera.setParameters(parameters);
                         camera.setPreviewTexture(texture);
                     } catch (IOException exception) {
+                        Log.e("Listener", "Error when starting texture listener", exception);
                         camera.release();
                     }
 
@@ -95,6 +96,7 @@ public class LegacyCameraConnectionFragment extends Fragment {
                     textureView.setAspectRatio(s.height, s.width);
 
                     camera.startPreview();
+                    Log.d("Listener", "Camera preview started by texture listener");
                 }
 
                 @Override
@@ -149,16 +151,17 @@ public class LegacyCameraConnectionFragment extends Fragment {
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
         // a camera and start preview from here (otherwise, we wait until the surface is ready in
         // the SurfaceTextureListener).
-        telemetry.addData("Info","Starting preview");
-        Log.d("Info", "Checking texture");
+        Log.d(TAG, "Starting texture preview");
         if (textureView.isAvailable()) {
-            telemetry.addData("Camera exists",camera != null);
             if (camera != null) {
                 camera.startPreview();
-                telemetry.addData("Info","Started preview");
+                Log.d(TAG, "Started preview");
+            }
+            else{
+                Log.e(TAG, "Failed to start preview. Camera unavailable");
             }
         } else {
-            telemetry.addData("Info","Texture not available");
+            Log.d(TAG, "Texture not available yet. Starting the listener...");
             textureView.setSurfaceTextureListener(surfaceTextureListener);
         }
     }
@@ -187,7 +190,7 @@ public class LegacyCameraConnectionFragment extends Fragment {
             backgroundThread.join();
             backgroundThread = null;
         } catch (final InterruptedException e) {
-            telemetry.addData("Error", e.getMessage());
+            Log.e(TAG, "stopBackgroundThread", e);
         }
     }
 

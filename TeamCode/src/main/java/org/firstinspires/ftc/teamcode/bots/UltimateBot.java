@@ -318,7 +318,13 @@ public class UltimateBot extends YellowBot {
 
 
     public void initDetector(String side, LinearOpMode caller) {
-        rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, this.getLights(), telemetry);
+        try {
+            rf = new RingDetector(this.hwMap, side, caller, this.namedCoordinates, this.getLights(), telemetry);
+        }
+        catch (Exception ex){
+            telemetry.addData("Error", String.format("Unable to initialize Detector. %s", ex.getMessage()));
+            telemetry.update();
+        }
     }
 
     public void stopDetection() {

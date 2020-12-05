@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.internal.collections.SimpleGson;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 
 public class AutoDot implements Serializable {
@@ -28,6 +29,23 @@ public class AutoDot implements Serializable {
         this.setY(y);
         this.setHeading(heading);
         this.setFieldSide(side);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o instanceof String){
+            return Objects.equals(getDotName(), o.toString());
+        }
+        else if (o instanceof AutoDot){
+            return Objects.equals(getDotName(), ((AutoDot) o).getDotName());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(dotName);
     }
 
 

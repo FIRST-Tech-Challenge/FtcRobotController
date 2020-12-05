@@ -212,11 +212,11 @@ public abstract class Classifier {
             }
             tfliteOptions.setNumThreads(numThreads);
             tflite = new Interpreter(tfliteModel, tfliteOptions);
-            telemetry.addData("Info", "tflite created");
 
             // Loads labels out from the label file.
             labels = FileUtil.loadLabels(activity, getLabelPath());
-            telemetry.addData("Info", "Labels loaded");
+
+            Log.d(TAG, "Classifier. Labels loaded");
 
             // Reads type and shape of input and output tensors, respectively.
             int imageTensorIndex = 0;
@@ -237,7 +237,6 @@ public abstract class Classifier {
 
             // Creates the post processor for the output probability.
             probabilityProcessor = new TensorProcessor.Builder().add(getPostprocessNormalizeOp()).build();
-            telemetry.addData("Info", "Classifier constructed");
 
             Log.d(TAG, "Created a Tensorflow Lite Image Classifier.");
         }
@@ -256,7 +255,7 @@ public abstract class Classifier {
         inputImageBuffer = loadImage(bitmap, sensorOrientation);
         long endTimeForLoadImage = SystemClock.uptimeMillis();
         Trace.endSection();
-        Log.v(TAG, "Timecost to load the image: " + (endTimeForLoadImage - startTimeForLoadImage));
+        Log.v(TAG, "Time to load the image: " + (endTimeForLoadImage - startTimeForLoadImage));
 
         // Runs the inference call.
         Trace.beginSection("runInference");
@@ -264,7 +263,7 @@ public abstract class Classifier {
         tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer().rewind());
         long endTimeForReference = SystemClock.uptimeMillis();
         Trace.endSection();
-        Log.v(TAG, "Timecost to run model inference: " + (endTimeForReference - startTimeForReference));
+        Log.v(TAG, "Time to run model inference: " + (endTimeForReference - startTimeForReference));
 
         // Gets the map of label and probability.
         Map<String, Float> labeledProbability =

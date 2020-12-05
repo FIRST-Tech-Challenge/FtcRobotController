@@ -15,6 +15,7 @@ import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Trace;
+import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 import android.view.Surface;
@@ -35,6 +36,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 public class Detector implements ImageReader.OnImageAvailableListener, Camera.PreviewCallback {
+    private static final String TAG = "Detector";
     private Bitmap rgbFrameBitmap = null;
     String cameraId;
     private Integer sensorOrientation;
@@ -70,18 +72,19 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
     private int imageSizeY;
 
 
-    public Detector(Model modelType, String modelPath, Context ctx, Telemetry t){
+    public Detector(Model modelType, String modelPath, Context ctx, Telemetry t) throws Exception{
         String modelFileName = modelPath.substring(0, modelPath.lastIndexOf('.'));
         String labelFileName = String.format("%s_labels.txt", modelFileName);
         modelFileName = String.format("%s.tflite", modelFileName);
         init(modelType, modelFileName, labelFileName, ctx, t);
     }
 
-    public Detector(Model modelType, String modelPath, String labelPath, Context ctx, Telemetry t){
+    public Detector(Model modelType, String modelPath, String labelPath, Context ctx, Telemetry t) throws Exception{
         init(modelType, modelPath, labelPath, ctx, t);
     }
 
-    protected void init(Model modelType, String modelPath, String labelPath, Context ctx, Telemetry t){
+    protected void init(Model modelType, String modelPath, String labelPath, Context ctx, Telemetry t) throws Exception{
+        Log.d(TAG, "Classifier. Starting Init method");
         appContext = ctx;
         telemetry = t;
         tfodMonitorViewId = appContext.getResources().getIdentifier(
@@ -101,8 +104,10 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
             setModelType(modelType);
             setModelPath(modelPath);
             setLabelPath(labelPath);
+            Log.d(TAG, "Classifier. Init method complete");
         } catch (Exception e) {
-            telemetry.addData("Error","Make frame visible", e.getMessage());
+            Log.e(TAG, "Init method error", e);
+            throw new Exception("Make frame visible", e);
         }
     }
 
@@ -126,24 +131,24 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
             }
 
         } catch (final InterruptedException e) {
-            telemetry.addData("Error", e.getMessage());
+            Log.e(TAG, "Unable to stop processing", e);
         }
     }
 
 
-    public void activate(){
+    public void activate() throws Exception{
         startProcessing();
         final CameraManager manager = (CameraManager) appContext.getSystemService(Context.CAMERA_SERVICE);
         try {
             for (final String cameraId : manager.getCameraIdList()) {
                 final CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
-                telemetry.addData("Cam ID", cameraId);
+                Log.d(TAG, String.format("Activation. Cam ID: %s", cameraId));
 
                 final Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
-                telemetry.addData("facing", facing);
+                Log.d(TAG, String.format("Activation. Facing: %d", facing));
 
                 Integer orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-                telemetry.addData("orientation", orientation);
+                Log.d(TAG, String.format("Activation. Orientation: %d", orientation));
 
                 if (facing != null && facing == CameraCharacteristics.LENS_FACING_BACK) {
 
@@ -160,15 +165,21 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
                     useCamera2API = (facing == CameraCharacteristics.LENS_FACING_EXTERNAL)
                                     || isHardwareLevelSupported(
                                     characteristics, CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL);
-                    telemetry.addData("Camera API lv2?", useCamera2API);
+                    Log.d(TAG, String.format("Activation. Camera API lv2?: %b", useCamera2API));
                     this.cameraId = cameraId;
                     break;
                 }
             }
-            telemetry.addData("Selected Camera", cameraId);
+            Log.d(TAG, String.format("Activation. Selected Camera: %s", cameraId));
             setFragment();
+            Log.d(TAG, "Activation. Complete");
         } catch (CameraAccessException e) {
-            telemetry.addData("Error", "Not allowed to access camera", e.getMessage());
+            Log.e(TAG, "Not allowed to access camera", e);
+            throw new Exception("Not allowed to access camera", e);
+        }
+        catch (Exception e) {
+            Log.e(TAG, "Problems with activation", e);
+            throw new Exception("Problems with activation", e);
         }
     }
 
@@ -197,6 +208,7 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
 
 
         ((Activity)appContext).getFragmentManager().beginTransaction().replace(tfodMonitorViewId, fragment).commit();
+        Log.d(TAG, "SetFragment. Complete");
     }
 
     protected int getLayoutId() {
@@ -264,7 +276,7 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
     @Override
     public void onPreviewFrame(final byte[] bytes, final Camera camera) {
         if (isProcessingFrame) {
-            telemetry.addData("Info","Dropping frame");
+            Log.d(TAG, "onPreviewFrame. Dropping frame");
             return;
         }
 
@@ -278,12 +290,12 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
                 onPreviewSizeChosen(new Size(previewSize.width, previewSize.height), 90);
             }
         } catch (final Exception e) {
-            telemetry.addData("onPreviewFrame", e.getMessage());
+            Log.e(TAG, "onPreviewFrame. Error", e);
             return;
         }
 
         if (classifier == null) {
-            telemetry.addData("Warning","No classifier on preview!");
+            Log.e(TAG, "No classifier on preview!");
             return;
         }
 
@@ -319,7 +331,7 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
 
         recreateClassifier(getModelType(), getDevice(), getNumThreads());
         if (classifier == null) {
-            telemetry.addData("Warning","No classifier on preview!");
+            Log.e(TAG, "onPreviewSizeChosen. No classifier on preview!");
             return;
         }
 
@@ -327,15 +339,15 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
         previewHeight = size.getHeight();
 
         sensorOrientation = rotation - getScreenOrientation();
-        telemetry.addData("Info", "Camera orientation relative to screen canvas: %d", sensorOrientation);
 
-        telemetry.addData("info", "Initializing at size %dx%d", previewWidth, previewHeight);
+        Log.d(TAG, String.format("onPreviewSizeChosen. Camera orientation relative to screen canvas: %d", sensorOrientation));
+        Log.d(TAG, String.format("onPreviewSizeChosen. Initializing at size %dx%ds:", previewWidth, previewHeight));
         rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888);
     }
 
     protected void processImage() {
         rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
-        final int cropSize = Math.min(previewWidth, previewHeight);
+//        final int cropSize = Math.min(previewWidth, previewHeight);
 
         runInBackground(
                 new Runnable() {
@@ -343,6 +355,9 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
                     public void run() {
                         if (classifier != null) {
                             lastResults = classifier.recognizeImage(rgbFrameBitmap, sensorOrientation);
+                        }
+                        else{
+                            Log.e(TAG, "processImage. No Classifier to process image");
                         }
                         readyForNextImage();
                     }
@@ -404,7 +419,7 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
 
             processImage();
         } catch (final Exception e) {
-            telemetry.addData("Error", e.getMessage());
+            Log.e(TAG, "onImageAvailable error", e);
             Trace.endSection();
             return;
         }
@@ -429,28 +444,31 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
 
     private void recreateClassifier(Model model, Device device, int numThreads) {
         if (classifier != null) {
-            telemetry.addData("Info", "Closing classifier.");
+            Log.d(TAG, "recreateClassifier. Closing classifier");
             classifier.close();
             classifier = null;
         }
         if (device == Device.GPU
                 && (model == Model.QUANTIZED_MOBILENET || model == Model.QUANTIZED_EFFICIENTNET)) {
-            telemetry.addData("Error", "Not creating classifier: GPU doesn't support quantized models.");
+            Log.e(TAG, "recreateClassifier. Not creating classifier: GPU doesn't support quantized models.");
             return;
         }
         try {
-            telemetry.addData("Info",
-                    "Creating classifier (model=%s, device=%s, numThreads=%d)", model, device, numThreads);
             classifier = Classifier.create((Activity)this.appContext, model, device, numThreads, this.getModelPath(), this.getLabelPath(), telemetry);
+            Log.d(TAG, String.format("Created classifier (model=%s, device=%s, numThreads=%d)", model, device, numThreads));
         }
         catch (Exception e) {
-            telemetry.addData("Error", String.format("Failed to create classifier. %s", e.toString()));
+            Log.e(TAG, "Failed to create classifier", e);
         }
 
         if (classifier != null) {
             // Updates the input image size.
             imageSizeX = classifier.getImageSizeX();
             imageSizeY = classifier.getImageSizeY();
+            Log.d(TAG, "Classifier done");
+        }
+        else{
+            Log.e(TAG, "Failed to create classifier");
         }
     }
 
@@ -460,8 +478,8 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
 
     public void setModelType(Model model) {
         if (this.model != model) {
-            telemetry.addData("Info", "Updating  model: " + model);
             this.model = model;
+            Log.d(TAG, String.format("Updated model %s", model));
 //            onInferenceConfigurationChanged();
         }
     }
@@ -473,8 +491,8 @@ public class Detector implements ImageReader.OnImageAvailableListener, Camera.Pr
 
     private void setDevice(Device device) {
         if (this.device != device) {
-            telemetry.addData("Info", "Updating  device: " + device);
             this.device = device;
+            Log.d(TAG, String.format("Updated device %s", device));
             final boolean threadsEnabled = device == Device.CPU;
             onInferenceConfigurationChanged();
         }

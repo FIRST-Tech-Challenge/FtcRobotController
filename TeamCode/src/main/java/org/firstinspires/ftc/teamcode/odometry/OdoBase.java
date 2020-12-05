@@ -88,6 +88,9 @@ public class OdoBase extends LinearOpMode {
     }
 
     protected void goTo(AutoStep instruction, boolean dryRun, String opMode){
+        if (!qualifies(instruction)){
+            return;
+        }
         if (dryRun && selectedRoute.getSteps().size() == 0){
             selectedRoute.setStartX((int)locator.getXInches());
             selectedRoute.setStartY((int)locator.getYInches());
@@ -120,6 +123,16 @@ public class OdoBase extends LinearOpMode {
             selectedRoute.getSteps().add(instruction.clone());
         }
 
+    }
+
+    protected boolean qualifies(AutoStep step){
+        if (!step.getConditionFunction().isEmpty() && !step.getConditionValue().isEmpty()){
+            if (coordinateFunctions.containsKey(step.getConditionFunction())){
+                AutoDot dot = coordinateFunctions.get(step.getConditionFunction());
+                return dot != null && dot.equals(step.getConditionValue());
+            }
+        }
+        return true;
     }
 
     protected void waitToStartStep(int MS){
