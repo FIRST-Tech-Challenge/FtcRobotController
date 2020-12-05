@@ -101,7 +101,7 @@ public class Autonomous {
 
     private StateMachine.Builder getStateMachine(Stage stage) {
         return
-                StateMachine.builder().stateSwitchAction(() -> robot.luncher.setGripperPos(robot.luncher.toggleGripper())) // resetMotors(true)
+                StateMachine.builder().stateSwitchAction(() -> robot.launcher.setGripperPos(robot.launcher.toggleGripper())) // resetMotors(true)
                 .stateEndAction(() -> robot.turret.maintainHeadingTurret(false)).stage(stage);
     }
 
