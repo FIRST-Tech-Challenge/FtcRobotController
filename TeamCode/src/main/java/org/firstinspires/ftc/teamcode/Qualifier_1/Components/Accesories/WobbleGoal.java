@@ -31,9 +31,10 @@ public class WobbleGoal {
     private final int ticksForGRAB = 940;
     private final int ticksForRAISE = 550;
     private final int ticksForRELEASE = 815;
-    private final int ticksForAutonomousDrop = 1000;
+    private final int ticksForAutonomousDrop = 950;
     private final int ticksForSTARTOFTELEEOP = 200;
     private final double wobbleGoalSpeed = 0.3;
+    private final double wobbleGoalSpeedDrop = 0.5;
 
     public WobbleGoal(LinearOpMode opMode) {
         //setting the opmode
@@ -72,7 +73,11 @@ public class WobbleGoal {
 
         wobbleGoalMotor.setTargetPosition(i);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleGoalMotor.setPower(wobbleGoalSpeed);
+        if (p==Position.DROP){
+            wobbleGoalMotor.setPower(wobbleGoalSpeedDrop);
+        } else{
+            wobbleGoalMotor.setPower(wobbleGoalSpeed);
+        }
 //        op.sleep(100);
         op.telemetry.addData("Wobble Goal", "Position:" + wobbleGoalMotor.getCurrentPosition() + "-->" + i);
         op.telemetry.update();
