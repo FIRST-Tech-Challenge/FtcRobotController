@@ -12,28 +12,25 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-class motorMode {
-    DcMotor motor;
-    DcMotor.RunMode mode;
-    motorMode(DcMotor motor, DcMotor.RunMode mode){
-        this.motor = motor;
-        this.mode = mode;
-    }
-}
 
 public class HardwareMapV2 {
-    DcMotor frontRight, frontLeft, backRight, backLeft, intake, outtake;
+    DcMotor frontRight, frontLeft, backRight, backLeft, intake;
     DcMotor leftVertical, rightVertical, horizontal;
 
     CRServo conveyor;
     Servo leftTilt, rightTilt;
+    boolean odometry = false;
 
-    ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake, outtake));
+    ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake));
     ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(leftVertical, rightVertical, horizontal));
     ArrayList<? extends HardwareDevice> servos = new ArrayList<>(Arrays.asList(conveyor, leftTilt, rightTilt));
 
     ModernRoboticsI2cGyro realgyro1;
-    HardwareMap hwMap;
+    HardwareMap hwMap = null;
+
+    public HardwareMapV2 (){
+
+    }
 
     public void init () {
         frontLeft = hwMap.dcMotor.get("front_left");
@@ -41,11 +38,12 @@ public class HardwareMapV2 {
         backRight = hwMap.dcMotor.get("back_right");
         backLeft = hwMap.dcMotor.get("back_left");
         intake = hwMap.dcMotor.get("succ");
-        outtake = hwMap.dcMotor.get("spit");
-        leftVertical = hwMap.dcMotor.get("left_vertical");
-        rightVertical = hwMap.dcMotor.get("right_vertical");
-        horizontal = hwMap.dcMotor.get("horizontal");
-
+        //outtake = hwMap.dcMotor.get("spit");
+        if (odometry) {
+            leftVertical = hwMap.dcMotor.get("left_vertical");
+            rightVertical = hwMap.dcMotor.get("right_vertical");
+            horizontal = hwMap.dcMotor.get("horizontal");
+        }
         conveyor = hwMap.crservo.get("convey");
         leftTilt = hwMap.servo.get("left_tilt");
         rightTilt = hwMap.servo.get("right_tilt");
@@ -55,12 +53,13 @@ public class HardwareMapV2 {
         backRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotor.Direction.FORWARD);
-        outtake.setDirection(DcMotor.Direction.FORWARD);
+        //outtake.setDirection(DcMotor.Direction.FORWARD);
 
-        leftVertical.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightVertical.setDirection(DcMotorSimple.Direction.FORWARD);
-        horizontal.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        if (odometry) {
+            leftVertical.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightVertical.setDirection(DcMotorSimple.Direction.FORWARD);
+            horizontal.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
         conveyor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftTilt.setDirection(Servo.Direction.REVERSE);
         rightTilt.setDirection(Servo.Direction.FORWARD);
@@ -77,18 +76,6 @@ public class HardwareMapV2 {
         setEncoders(odomotors, mode);
     }
 
-    public void setEncoders(ArrayList<DcMotor> motors, DcMotor.RunMode mode, motorMode... mm){
-        for (DcMotor motor: motors){
-            for (motorMode m : mm) {
-                if (m.equals(motor)) {
-                    motor.setMode(m.mode);
-                }
-                else {
-                    motor.setMode(mode);
-                }
-            }
-        }
-    }
     public void setPowerAll(double power){
         for (DcMotor motor: motors){
             motor.setPower(power);
