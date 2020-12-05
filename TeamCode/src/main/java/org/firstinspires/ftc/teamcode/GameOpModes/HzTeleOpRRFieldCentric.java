@@ -149,7 +149,7 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
         }
         hzGamepad.playingAlliance = playingAlliance;
         telemetry.update();
-        sleep(2000);
+        sleep(1000);
 
         //***** Select Start Pose ******
         timer.reset();
@@ -189,7 +189,7 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
             telemetry.update();
         }
         telemetry.update();
-        sleep(2000);
+        sleep(1000);
     }
 
     /**
@@ -278,7 +278,8 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
         telemetry.addData("hzLaunchController.lcTarget : ", hzLaunchController.lcTarget);
         telemetry.addData("hzLaunchController.distanceFromTarget : ", hzLaunchController.distanceFromTarget);
         telemetry.addData("hzLaunchController.lclaunchMotorPower : ", hzLaunchController.lclaunchMotorPower);
-        telemetry.addData("hzDrive.drivePointToAlign : ", hzDrive.drivePointToAlign);
+        telemetry.addData("hzDrive.drivePointToAlign X : ", hzDrive.drivePointToAlign.getX());
+        telemetry.addData("hzDrive.drivePointToAlign Y : ", hzDrive.drivePointToAlign.getY());
 
 
         //******* Launcher Debug *********

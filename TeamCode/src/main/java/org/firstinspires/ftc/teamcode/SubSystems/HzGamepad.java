@@ -155,6 +155,7 @@ public class HzGamepad {
                 if(gpMagazine.moveMagazineToCollect()) {
                     gpIntake.runIntakeMotor();
                 }
+                gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
                 gpIntake.intakeButtonState = Intake.INTAKE_BUTTON_STATE.ON;
             } else if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.RUNNING) {
                 gpIntake.stopIntakeMotor();
@@ -208,6 +209,7 @@ public class HzGamepad {
         if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.ACTIVATED){
             if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
                 gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
+                gpLauncher.stopFlyWheel();
                 gpLaunchController.turnRobotToNormalControl();
             }
         }

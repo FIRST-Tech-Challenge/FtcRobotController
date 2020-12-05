@@ -41,6 +41,7 @@ public class LaunchController {
         POWER_SHOT3
     };
     public LAUNCH_TARGET lcTarget = LAUNCH_TARGET.HIGH_GOAL;
+    public Vector2d lcTargetVector;
 
     public enum LAUNCHER_ALIGNMENT{
         TARGET_ALIGNED,
@@ -151,7 +152,7 @@ public class LaunchController {
         //determineDistanceToTarget : Determine the distance from the launch target (from the location information)
         //determineFlyWheelSpeed : determine launcher motor speed and hence flywheel speed required to hit the target, and start the motor to rotate at the speed. (runFlyWheelToTarget) [Logic: Mechanical and game strategy team to come up with formula or table to determine the same TBD]
         getDistanceFromTarget();
-        setLaunchMotorSpeed();
+        setLaunchMotorPower();
         lcLauncher.runFlyWheelToTarget(lclaunchMotorPower);
 
     }
@@ -178,21 +179,27 @@ public class LaunchController {
             switch (lcTarget) {
                 case HIGH_GOAL:
                     lcDrive.drivePointToAlign = GameField.BLUE_TOWER_GOAL;
+                    lcTargetVector = GameField.BLUE_TOWER_GOAL;
                     break;
                 case MID_GOAL:
                     lcDrive.drivePointToAlign = GameField.RED_TOWER_GOAL;
+                    lcTargetVector = GameField.RED_TOWER_GOAL;
                     break;
                 case LOW_GOAL:
                     lcDrive.drivePointToAlign = GameField.BLUE_TOWER_GOAL;
+                    lcTargetVector = GameField.BLUE_TOWER_GOAL;
                     break;
                 case POWER_SHOT1:
                     lcDrive.drivePointToAlign = GameField.BLUE_POWERSHOT1;
+                    lcTargetVector = GameField.BLUE_POWERSHOT1;
                     break;
                 case POWER_SHOT2:
                     lcDrive.drivePointToAlign = GameField.BLUE_POWERSHOT2;
+                    lcTargetVector = GameField.BLUE_POWERSHOT2;
                     break;
                 case POWER_SHOT3:
                     lcDrive.drivePointToAlign = GameField.BLUE_POWERSHOT3;
+                    lcTargetVector = GameField.BLUE_POWERSHOT3;
                     break;
             }
         }
@@ -201,21 +208,27 @@ public class LaunchController {
             switch (lcTarget) {
                 case HIGH_GOAL:
                     lcDrive.drivePointToAlign = GameField.RED_TOWER_GOAL;
+                    lcTargetVector = GameField.RED_TOWER_GOAL;
                     break;
                 case MID_GOAL:
                     lcDrive.drivePointToAlign = GameField.BLUE_TOWER_GOAL;
+                    lcTargetVector = GameField.BLUE_TOWER_GOAL;
                     break;
                 case LOW_GOAL:
                     lcDrive.drivePointToAlign = GameField.RED_TOWER_GOAL;
+                    lcTargetVector = GameField.RED_TOWER_GOAL;
                     break;
                 case POWER_SHOT1:
                     lcDrive.drivePointToAlign = GameField.RED_POWERSHOT1;
+                    lcTargetVector = GameField.RED_POWERSHOT1;
                     break;
                 case POWER_SHOT2:
                     lcDrive.drivePointToAlign = GameField.RED_POWERSHOT2;
+                    lcTargetVector = GameField.RED_POWERSHOT2;
                     break;
                 case POWER_SHOT3:
                     lcDrive.drivePointToAlign = GameField.RED_POWERSHOT3;
+                    lcTargetVector = GameField.RED_POWERSHOT3;
                     break;
             }
         }
@@ -266,11 +279,13 @@ public class LaunchController {
     }
 
     public void getDistanceFromTarget() {
-        Vector2d difference = lcDrive.drivePointToAlign.minus(lcDrive.poseEstimate.vec());
-        distanceFromTarget = Math.sqrt(Math.pow(difference.getX(), 2) + Math.pow(difference.getY(), 2));
+        //Vector2d difference = lcDrive.drivePointToAlign.minus(lcDrive.poseEstimate.vec());
+        //distanceFromTarget = Math.sqrt(Math.pow(difference.getX(), 2) + Math.pow(difference.getY(), 2));
+        distanceFromTarget = Math.sqrt(Math.pow(lcDrive.poseEstimate.getX()-lcDrive.drivePointToAlign.getX(), 2)
+                + Math.pow(lcDrive.poseEstimate.getY()-lcDrive.drivePointToAlign.getY(), 2));
     }
 
-    public void setLaunchMotorSpeed() {
+    public void setLaunchMotorPower() {
         switch (lcTarget) {
             case POWER_SHOT1 :
             case POWER_SHOT2 :

@@ -167,7 +167,8 @@ public class Magazine {
             magazineServo.setPower(0.3);
             //TODO : AMJAD : SET TIMER TO EXIT
             while (!magazineLaunchTouchSensor.isPressed() /*&& timer.time() < 2000*/) { }
-            magazineServo.setPower(0.05);
+            //magazineServo.setPower(0.05);
+            magazineServo.setPower(0.0);
             //senseMagazinePosition();
             magazinePosition = MAGAZINE_POSITION.AT_LAUNCH; // Over ride the sense with state set
         }
