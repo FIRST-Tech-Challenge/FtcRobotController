@@ -531,7 +531,7 @@ public class TerraBot {
         powerShot.addStage(ssl, shootControlL.getPos(2), 0.3);
         Path path1 = new Path(98, 0, -5);
         path1.HAcc = 1;
-        path1.addSetpoint(0, 0, -5.5);
+        path1.addSetpoint(0, 0, -6);
         powerShot.addPath(path1, this);
         powerShot.addStage(ssr, shootControlR.getPos(3), 0.01);
         powerShot.addStage(ssl, shootControlL.getPos(3), 0.3);

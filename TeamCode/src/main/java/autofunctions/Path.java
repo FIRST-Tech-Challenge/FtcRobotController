@@ -90,7 +90,7 @@ public class Path {
     public double XAcc = XAccS;
     public double YAcc = YAccS;
     public double HAcc = HAccS;
-    final public double endWait = 0.1;
+    final public double endWait = 0.3;
     public double restPowX = 0.1;
     public double restPowY = 0.05;
     public double restPowT = 0.3;
