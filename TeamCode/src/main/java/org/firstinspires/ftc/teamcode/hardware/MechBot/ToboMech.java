@@ -1392,8 +1392,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // 1600rpm = -4.216304
         // 1200rpm = 0.537228
         //
-        double a0 = 10.5;
-        double a1 = -0.00919769;
+        double a0 = 11.1772;
+        double a1= -0.00919319;
         return a1*rpm + a0;
     }
 
