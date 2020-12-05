@@ -351,7 +351,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
                     if (intake!=null)
                         intake.stop();
-                    if (hopper!=null) hopper.transferUpAuto();
+                    if (hopper!=null) hopper.transferUpCombo();
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (shooter!=null)
                         shooter.shootSpeedInc();
@@ -376,7 +376,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (source.isPressed(Button.RIGHT_BUMPER)) {
                     if (shooter!=null)
                         shooter.stop();
-                    hopper.transferDownAuto();
+                    hopper.transferDownCombo();
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (shooter!=null)
                         shooter.shootSpeedDec();
@@ -421,6 +421,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (source.getTrigger(Events.Side.LEFT) > 0.3) {
                     if (cameraDetector !=null)
                         cameraDetector.inc_cam_pos();
+                } else if (source.isPressed(Button.RIGHT_BUMPER)) {
+                    if (intake!=null)
+                        intake.stop();
+                    if (hopper!=null) hopper.transferShakeCombo();
                 }
             }
         }, new Button[]{Button.DPAD_LEFT});

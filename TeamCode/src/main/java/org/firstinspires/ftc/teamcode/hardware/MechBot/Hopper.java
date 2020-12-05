@@ -155,14 +155,25 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (magTouch.isPressed() || (HopperTimer.seconds()>=2));
+                        return (HopperTimer.seconds()>=1.5);
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
                 HopperTimer.reset();
-                ringLifter.setPower(0.5);
+                ringLifter.setPower(-0.85);
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (HopperTimer.milliseconds()>=100);
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                HopperTimer.reset();
+                ringLifter.setPower(0.6);
                 return new Progress() {
                     @Override
                     public boolean isDone() {
@@ -200,6 +211,55 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         if (ringLifter == null) return;
         final String taskName = "Transfer Down Combo";
         if (!TaskManager.isComplete(taskName)) return;
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                HopperTimer.reset();
+                ringLifter.setPower(1);
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (magTouch.isPressed() || (HopperTimer.seconds()>=2));
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                HopperTimer.reset();
+                ringLifter.setPower(-0.5);
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (HopperTimer.milliseconds()>=50);
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                ringLifter.setPower(0);
+                transferIsDown = true;
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (true);
+                    }
+                }; }}, taskName);
+    }
+    public void transferShakeCombo() throws InterruptedException {
+        if (ringLifter == null) return;
+        final String taskName = "Transfer Shake Combo";
+        if (!TaskManager.isComplete(taskName)) return;
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                HopperTimer.reset();
+                ringLifter.setPower(-1);
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (HopperTimer.seconds()>=0.3);
+                    }
+                }; }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
