@@ -62,6 +62,7 @@ public class AutoBlue extends LinearOpMode {
             path.addRF(rf.wobbleArm(90,1), rf.toggleOuttake(bot));
             path.addWaypoint(10, 60, 0);
             path.addWaypoint(50,28,0);
+            path.addRF(rf.changeKs(1.2, path));
             powerShot();
             path.addWaypoint(-20, 20, -168);
             path.addRF(rf.lift(0), rf.shootControl(1), rf.intake(1));
@@ -92,7 +93,7 @@ public class AutoBlue extends LinearOpMode {
             path.addWaypoint(50,28,0);
             powerShot();
             path.addWaypoint(-55, 105, -103);
-            path.addRF(rf.lift(0), rf.shootControl(1), rf.turnArm(0.68), rf.wobbleArm(180,1));
+            path.addRF(rf.changeKs(1, path), rf.lift(0), rf.shootControl(1), rf.turnArm(0.68), rf.wobbleArm(180,1));
             path.addSetpoint(-12, 20, 0);
             path.addStop(0.2);
             path.addRF(rf.grab(0));
@@ -101,14 +102,15 @@ public class AutoBlue extends LinearOpMode {
             path.addRF(rf.wobbleArm(190,1));
             path.addStop(0.1);
             path.addRF(rf.changeAcc(3, 3, 2, path));
-            path.addSetpoint(8, -117, -61);
-            path.addRF(rf.changeAcc(3, 2, 3, path));
-            path.addSetpoint(0,-45,0);
-            path.addRF(rf.intake(1));
-            path.addStop(0.3);
-            path.addSetpoint(0, -3, 0);
+            path.addSetpoint(8, -122, -61);
+            path.addRF(rf.changeAcc(3, 2, 3, path), rf.changeKs(1.4, path));
+            path.addSetpoint(0,-40,0);
+            path.addRF(rf.intake(1), rf.changeKs(1, path));
+            path.addStop(0.5);
+            path.addSetpoint(0, -5, 0);
+            path.addStop(0.5);
             path.addRF(rf.changeKs(0.5, path));
-            path.addWaypoint(0, -22, 0);
+            path.addWaypoint(0, -20, 0);
             path.addRF(rf.changeKs(1, path), rf.intake(0));
             path.addSetpoint(30,23,180);
             path.addRF(rf.changeAcc(1,1,1, path), rf.intake(1), rf.toggleOuttake(bot));
@@ -177,6 +179,7 @@ public class AutoBlue extends LinearOpMode {
         path.addStop(0.3);
         path.addRF(rf.shootControl(2));
         path.addStop(0.3);
+        path.addRF(rf.changeKs(1.3, path));
         path.addSetpoint(0,0,-6);
         path.addRF(rf.shootControl(3));
         path.addStop(0.3);

@@ -255,6 +255,7 @@ public class TerraOp extends OpMode {
 //        telemetry.addData("heading", bot.getHeading());
 
 //        telemetry.addData("vs", vs);
+//        telemetry.addData("dis", bot.getDisL2());
 
         telemetry.addData("gameTime", bot.gameTime.seconds());
         telemetry.addData("isPowerShotMode", bot.powershot);

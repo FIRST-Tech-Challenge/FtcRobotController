@@ -224,7 +224,8 @@ public class TerraBot {
 
 
         l1.setDirection(DcMotorSimple.Direction.REVERSE);
-        l2.setDirection(DcMotorSimple.Direction.FORWARD);
+        l2.setDirection(DcMotorSimple.Direction.REVERSE);
+//        l2.setDirection(DcMotorSimple.Direction.FORWARD);
         r1.setDirection(DcMotorSimple.Direction.FORWARD);
         r2.setDirection(DcMotorSimple.Direction.REVERSE);
         in.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -390,7 +391,11 @@ public class TerraBot {
                 @Override
                 public void run() {
                     odometry.ty = 0;
-                    odometry.tx = odometry.cmToTicks(getDisL2());
+                    if(isDisValid()) {
+                        odometry.tx = odometry.cmToTicks(getDisL2());
+                    }else{
+                        odometry.tx = odometry.cmToTicks(67);
+                    }
                 }
             });
             Path p1 = new Path(0, 0, 0);
@@ -493,7 +498,11 @@ public class TerraBot {
             @Override
             public void run() {
                 odometry.ty = 0;
-                odometry.tx = odometry.cmToTicks(getDisL2());
+                if(isDisValid()) {
+                    odometry.tx = odometry.cmToTicks(getDisL2());
+                }else{
+                    odometry.tx = odometry.cmToTicks(98);
+                }
             }
         });
 
@@ -854,6 +863,11 @@ public class TerraBot {
     }
     public boolean isDoneResettingArm(){
         return resettingArm > 1;
+    }
+
+    public boolean isDisValid(){
+        double d = getDisL2();
+        return d > 20 && d < 150;
     }
 
 
