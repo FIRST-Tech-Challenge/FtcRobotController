@@ -48,14 +48,14 @@ public class Magazine {
         TS_ERROR
     }
 
-    public enum MAGAZINE_RING_COUNT {
+    /*public enum MAGAZINE_RING_COUNT {
         ZERO,
         ONE,
         TWO,
         THREE
-    }
+    }*/
 
-    public MAGAZINE_RING_COUNT magazineRingCount = MAGAZINE_RING_COUNT.ZERO;
+    //public MAGAZINE_RING_COUNT magazineRingCount = MAGAZINE_RING_COUNT.ZERO;
 
     //TODO : AMJAD : Better coding of enum with values at https://www.baeldung.com/java-enum-values
     public static final double RING_NONE_DISTANCE = 3.45;
@@ -63,7 +63,7 @@ public class Magazine {
     public static final double RING_TWO_DISTANCE = 2.0;
     public static final double RING_THREE_DISTANCE = 0.5;
 
-    public double magazine_distance;
+    //public double magazine_distance;
 
     //TODO : AMJAD : Use servo to flag if beacon is not working
     public static final double magazineBeaconServoPos_MAGAZINE_RINGS_0 = 0.0;
@@ -73,13 +73,9 @@ public class Magazine {
 
     public Magazine(HardwareMap hardwareMap) {
         magazineServo = hardwareMap.crservo.get("mgz_servo");
-        magazineRingSensor = hardwareMap.get(NormalizedColorSensor.class, "mgz_ring_sensor");
+        //magazineRingSensor = hardwareMap.get(NormalizedColorSensor.class, "mgz_ring_sensor");
 
-        //magazineColorBeacon = hardwareMap.i2cDevice.get("mgz_beacon");
-       // magazineColorBreader = new I2cDeviceSynchImpl(magazineColorBeacon, I2cAddr.create8bit(0x4c), false);
-        //magazineColorBreader.engage();
-
-        magazineBeaconServo = hardwareMap.servo.get("mgz_beacon_servo");
+        //magazineBeaconServo = hardwareMap.servo.get("mgz_beacon_servo");
 
         magazineLaunchTouchSensor = hardwareMap.touchSensor.get("mgz_launch_ts");
         magazineCollectTouchSensor = hardwareMap.touchSensor.get("mgz_collect_ts");
@@ -87,13 +83,10 @@ public class Magazine {
     }
 
     public void initMagazine(LinearOpMode opModepassed){
-         this.opModepassed = opModepassed;
-
-        //magazineLaunchTouchSensor.setMode(DigitalChannel.Mode.INPUT);
-        //magazineCollectTouchSensor.setMode(DigitalChannel.Mode.INPUT);
+        this.opModepassed = opModepassed;
 
         senseMagazinePosition();
-        senseMagazineRingStatus();
+        //senseMagazineRingStatus();
     }
 
     public void senseMagazinePosition(){
@@ -141,7 +134,7 @@ public class Magazine {
         return magazine_touch_sensors_state;
     }
 
-    public void turnMagazineBeaconOff() {
+    /*public void turnMagazineBeaconOff() {
         magazineBeaconServo.setPosition(magazineBeaconServoPos_MAGAZINE_RINGS_0);
         //magazineColorBreader.write8(4, 0);
     }
@@ -161,14 +154,16 @@ public class Magazine {
         //magazineColorBreader.write8(4, 7);
     }
 
+     */
+
     public boolean moveMagazineToLaunch() {
         senseMagazinePosition();
         //senseMagazineRingStatus();
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         timer.reset();
         if(/*magazinePosition != MAGAZINE_POSITION.AT_ERROR &&*/
-                magazinePosition != MAGAZINE_POSITION.AT_LAUNCH &&
-                magazineRingCount != MAGAZINE_RING_COUNT.ZERO) {
+                magazinePosition != MAGAZINE_POSITION.AT_LAUNCH /*&&
+                magazineRingCount != MAGAZINE_RING_COUNT.ZERO*/) {
             magazineServo.setPower(0.3);
             //TODO : AMJAD : SET TIMER TO EXIT
             while (!magazineLaunchTouchSensor.isPressed() /*&& timer.time() < 2000*/) { }
@@ -190,8 +185,8 @@ public class Magazine {
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         timer.reset();
         if (/*magazinePosition != MAGAZINE_POSITION.AT_ERROR &&*/
-                magazinePosition != MAGAZINE_POSITION.AT_COLLECT &&
-                magazineRingCount != MAGAZINE_RING_COUNT.THREE) {
+                magazinePosition != MAGAZINE_POSITION.AT_COLLECT /*&&
+                magazineRingCount != MAGAZINE_RING_COUNT.THREE*/) {
             magazineServo.setPower(-0.2);
             //TODO : AMJAD : SET TIMER TO EXIT
             while (!magazineCollectTouchSensor.isPressed() /*&& timer.time() < 4000*/)  {
@@ -209,37 +204,38 @@ public class Magazine {
     }
 
     //TODO : AMJAD : Incomplete
+    /*
     public void senseMagazineRingStatus() {
          magazine_distance = ((DistanceSensor) magazineRingSensor).getDistance(DistanceUnit.CM);
 
         if((magazine_distance > RING_THREE_DISTANCE) && (magazine_distance < RING_TWO_DISTANCE - 0.2)){
-            magazineRingCount = MAGAZINE_RING_COUNT.THREE;
+            //magazineRingCount = MAGAZINE_RING_COUNT.THREE;
             turnMagazineBeaconWhite();
         } else if((magazine_distance > RING_TWO_DISTANCE) && (magazine_distance < RING_ONE_DISTANCE - 0.2)){
-            magazineRingCount = MAGAZINE_RING_COUNT.TWO;
+            //magazineRingCount = MAGAZINE_RING_COUNT.TWO;
             turnMagazineBeaconTeal();
         } else if((magazine_distance > RING_ONE_DISTANCE) && (magazine_distance < RING_NONE_DISTANCE - 0.05)){
-            magazineRingCount = MAGAZINE_RING_COUNT.ONE;
+            //magazineRingCount = MAGAZINE_RING_COUNT.ONE;
             turnMagazineBeaconPurple();
         } else if((magazine_distance > RING_NONE_DISTANCE)) {
-            magazineRingCount = MAGAZINE_RING_COUNT.ZERO;
+            //magazineRingCount = MAGAZINE_RING_COUNT.ZERO;
             turnMagazineBeaconOff();
         }
 
-    }
+    }*/
 
     //For Telemetry use
-    public MAGAZINE_RING_COUNT getMagazineRingCount() {
+    /*public MAGAZINE_RING_COUNT getMagazineRingCount() {
         //senseMagazineRingStatus();
         return magazineRingCount;
-    }
+    }*/
 
     public MAGAZINE_POSITION getMagazinePosition(){
         senseMagazinePosition();
         return magazinePosition;
     }
 
-    public boolean isMagazineFull(){
+    /*public boolean isMagazineFull(){
         if (getMagazineRingCount() == MAGAZINE_RING_COUNT.THREE){
             return true;
         } else {
@@ -253,7 +249,7 @@ public class Magazine {
         } else {
             return false;
         }
-    }
+    }*/
 
     public void shakeMagazine(int timeInMilliseconds){
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);

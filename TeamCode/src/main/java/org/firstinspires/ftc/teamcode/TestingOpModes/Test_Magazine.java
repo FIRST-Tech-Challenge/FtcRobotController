@@ -37,7 +37,7 @@ public class Test_Magazine extends LinearOpMode {
         //Run Robot based on Gamepad1 inputs
         while (opModeIsActive()) {
 
-            if (hzGamepadClassic.getButtonXPress()) {
+            /*if (hzGamepadClassic.getButtonXPress()) {
                 if (keyCount==0){
                     hzMagazine.turnMagazineBeaconOff();
                     keyCount++;
@@ -51,11 +51,11 @@ public class Test_Magazine extends LinearOpMode {
                     hzMagazine.turnMagazineBeaconWhite();
                     keyCount = 0;
                 }
-            }
+            }*/
 
-            if (hzGamepadClassic.getButtonAPress()) {
+            /*if (hzGamepadClassic.getButtonAPress()) {
                 hzMagazine.senseMagazineRingStatus();;
-            }
+            }*/
 
             if (hzGamepadClassic.getButtonBPress()){
                 hzMagazine.senseMagazinePosition();
@@ -87,9 +87,9 @@ public class Test_Magazine extends LinearOpMode {
         //telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncher.launcherFlyWheelMotor.isBusy());
         //telemetry.addData("launcherRingPlungerServo.getPosition()", hzLauncher.launcherRingPlungerServo.getPosition());
 
-        telemetry.addData("getDistance(DistanceUnit.CM)",hzMagazine.magazine_distance);
+        //telemetry.addData("getDistance(DistanceUnit.CM)",hzMagazine.magazine_distance);
 
-        switch (hzMagazine.getMagazineRingCount()){
+        /*switch (hzMagazine.getMagazineRingCount()){
             case ZERO:  {
                 telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_0");
                 break;
@@ -106,7 +106,7 @@ public class Test_Magazine extends LinearOpMode {
                 telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_3");
                 break;
             }
-        }
+        }*/
 
         switch (hzMagazine.getMagazinePosition()) {
             case AT_LAUNCH: {

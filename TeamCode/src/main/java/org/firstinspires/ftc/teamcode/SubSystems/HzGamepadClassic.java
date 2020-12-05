@@ -345,7 +345,7 @@ public class HzGamepadClassic {
         gpChassis.runByGamepadCommand(targetAngle, turn, power);
 
         //****Magazine Actions****
-        gpMagazine.senseMagazineRingStatus();;
+        /*gpMagazine.senseMagazineRingStatus();;
         if (gpMagazine.isMagazineFull()) {
             gpMagazine.moveMagazineToLaunch();
             gpIntake.stopIntakeMotor();
@@ -354,7 +354,7 @@ public class HzGamepadClassic {
         if (gpMagazine.isMagazineEmpty()) {
             gpMagazine.moveMagazineToCollect();
             gpIntake.runIntakeMotor();
-        }
+        }*/
 
         //****Intake Actions****
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
@@ -386,7 +386,7 @@ public class HzGamepadClassic {
             //gpLauncherController.indicateLaunchReadiness();
             double distance, speed, robotAngle;
             gpLauncherController.getDistanceFromTarget();
-            gpLauncherController.getLaunchMotorSpeed();
+            gpLauncherController.setLaunchMotorSpeed();
             gpLauncher.runFlyWheelToTarget(gpLauncher.launcherMotorPower);
 
             if (gpLauncherController.getLaunchMode() == LaunchController.LAUNCH_MODE.AUTOMATED) {
@@ -421,9 +421,9 @@ public class HzGamepadClassic {
             //it is to be done either automatically, or by Y,X,A,B button press.
             //gpMagazine.moveMagazineToLaunch();
 
-            if (!gpMagazine.isMagazineEmpty()) {
+            //if (!gpMagazine.isMagazineEmpty()) {
                 gpLauncher.plungeRingToFlyWheel();
-            }
+            //}
 
         }
 

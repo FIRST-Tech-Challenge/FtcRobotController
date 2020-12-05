@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.SubSystems.Arm;
 import org.firstinspires.ftc.teamcode.SubSystems.GameField;
@@ -28,10 +29,11 @@ import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
  * See lines 42-57.
  */
 @Autonomous(name = "Hazmat Red Autonomous Outer", group = "00-Autonomous")
-public class HazmatRedAutonomousOuter extends LinearOpMode {
+public class HzAutonomous extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
+    public HzGamepad hzGamepad1;
     public GameField hzGameField;
     //public SampleMecanumDrive hzDrive;
     public HzDrive hzDrive;
@@ -41,34 +43,54 @@ public class HazmatRedAutonomousOuter extends LinearOpMode {
     public Launcher hzLauncher;
     public Arm hzArm;
 
-    HzGamepad hzGamepad1;
-    SampleMecanumDrive drive;
-    HzVuforia hzVuforia1;
-    int playingAlliance = 1; //1 for Red, -1 for Blue
-    int startLine = 1 ; //0 for inner, 1 for outer
+    public HzVuforia hzVuforia1;
+    public GameField.PLAYING_ALLIANCE playingAlliance = GameField.PLAYING_ALLIANCE.AUDIENCE;
+    public Pose2d startPose = hzGameField.ORIGIN_FIELD;
+
+    //int playingAlliance = 1; //1 for Red, -1 for Blue
+    //int startLine = 1 ; //0 for inner, 1 for outer
     boolean parked = false ;
+
+    public enum TARGET_ZONE{
+        A,
+        B,
+        C,
+        UNKNOWN;
+    };
+
+    public TARGET_ZONE targetZone = TARGET_ZONE.A;
 
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
-        drive = new SampleMecanumDrive(hardwareMap);
+        hzDrive = new HzDrive(hardwareMap, hzGameField);
+        hzMagazine = new Magazine(hardwareMap);
+        hzIntake = new Intake(hardwareMap);
+
+        hzLauncher = new Launcher(hardwareMap);
+        hzArm = new Arm(hardwareMap);
+        hzLaunchController = new LaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, playingAlliance, hzDrive);
         hzGamepad1 = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
+
         hzVuforia1 = new HzVuforia(hardwareMap);
 
+        initialConfiguration();
+
+        /*
         // Set initial pose
-        if (playingAlliance == 1) /* Red */ {
-            if (startLine == 0)  /* Inner Line */ {
+        if (playingAlliance == 1)  { //Red
+            if (startLine == 0)   { //Inner Line
                 drive.setPoseEstimate(new Pose2d(-68,-24,Math.toRadians(0))); // Red Inner Start Line
-            } else /* Outer Line */ {
+            } else  { //Outer Line
                 drive.setPoseEstimate(new Pose2d(-68,-48,Math.toRadians(0))); // Red Outer Start Line
             }
-        } else /* Blue */ {
-            if (startLine == 0) /* Inner Line */{
+        } else  { // Blue
+            if (startLine == 0) { // Inner Line
                 drive.setPoseEstimate(new Pose2d(-68,24,Math.toRadians(0))); // Blue Inner Start Line
-            } else /* Outer Line */ {
+            } else  { // Outer Line
                 drive.setPoseEstimate(new Pose2d(-68,48,Math.toRadians(0))); // Blue Outer Start Line
             }
-        }
+        }*/
 
         // Initiate Camera even before Start is pressed.
         //waitForStart();
@@ -81,7 +103,7 @@ public class HazmatRedAutonomousOuter extends LinearOpMode {
             //Init is pressed at this time, and start is not pressed yet
 
             //Run Vuforia Tensor Flow
-            hzVuforia1.runVuforiaTensorFlow();
+            targetZone = hzVuforia1.runVuforiaTensorFlow();
 
 
             if (HzDEBUG_FLAG) {
@@ -95,19 +117,22 @@ public class HazmatRedAutonomousOuter extends LinearOpMode {
 
                 // Example spline path from SplineTest.java
                 // Make sure the start pose matches with the localizer's start pose
-                Trajectory traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+                Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                         .splineTo(new Vector2d(45, 45), 0)
                         .build();
 
-                drive.followTrajectory(traj);
+                hzDrive.followTrajectory(traj);
 
                 sleep(2000);
 
-                drive.followTrajectory(
-                        drive.trajectoryBuilder(traj.end(), true)
+                hzDrive.followTrajectory(
+                        hzDrive.trajectoryBuilder(traj.end(), true)
                                 .splineTo(new Vector2d(15, 15), Math.toRadians(180))
                                 .build()
                 );
+
+                //Move to Launching Position
+
 
                 parked = true;
 
@@ -120,10 +145,79 @@ public class HazmatRedAutonomousOuter extends LinearOpMode {
         }
 
         // Transfer the current pose to PoseStorage so we can use it in TeleOp
-        PoseStorage.currentPose = drive.getPoseEstimate();
+        PoseStorage.currentPose = hzDrive.getPoseEstimate();
+        PoseStorage.poseSetInAutonomous = true;
 
         hzVuforia1.deactivateVuforiaTensorFlow();
     }
+
+    public void initialConfiguration(){
+        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+        telemetry.addData("Compile time : ", "4:58 : 11/24");
+
+        //***** Select Alliance ******
+        telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X, Audience:A)");
+        telemetry.update();
+
+        timer.reset();
+        while (timer.time() < 10) {
+            if (hzGamepad1.getButtonBPress()) {
+                hzGamepad1.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
+                telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
+                break;}
+            if (hzGamepad1.getButtonXPress()) {
+                hzGamepad1.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+                telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
+                break;}
+            if (hzGamepad1.getButtonAPress()) {
+                hzGamepad1.playingAlliance = GameField.PLAYING_ALLIANCE.AUDIENCE;
+                telemetry.addData("Playing Alliance Selected : ", "AUDIENCE");
+                break;}
+            telemetry.addData("10s Time out : Default Alliance selected : Audience A : %.3f", timer.time());
+            telemetry.update();
+        }
+        telemetry.update();
+
+        //***** Select Start Pose ******
+        timer.reset();
+        telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
+        while (timer.time() < 10) {
+            if (playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE){
+                telemetry.addData("Start Pose : ", "ORIGIN_FIELD");
+                startPose = GameField.ORIGIN_FIELD;
+                break;
+            }
+            if (playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
+                if (hzGamepad1.getButtonAPress()) {
+                    startPose = GameField.RED_INNER_START_LINE;
+                    telemetry.addData("Start Pose : ", "RED_INNER_START_LINE");
+                    break;
+                }
+                if (hzGamepad1.getButtonAPress()) {
+                    startPose = GameField.RED_OUTER_START_LINE;
+                    telemetry.addData("Start Pose : ", "RED_OUTER_START_LINE");
+                    break;
+                }
+            }
+            if (playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                if (hzGamepad1.getButtonAPress()) {
+                    startPose = GameField.BLUE_INNER_START_LINE;
+                    telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
+                    break;
+                }
+                if (hzGamepad1.getButtonAPress()) {
+                    startPose = GameField.BLUE_OUTER_START_LINE;
+                    telemetry.addData("Start Pose : ", "BLUE_OUTER_START_LINE");
+                    break;
+                }
+            }
+            telemetry.addData("Start Pose : ", "ORIGIN_FIELD");
+            telemetry.addData("10s Time out : Default Pose selected : ORIGIN_FIELD : %.3f", timer.time());
+            telemetry.update();
+        }
+        telemetry.update();
+    }
+
 
     /**
      * Method to add debug messages. Update as telemetry.addData.
@@ -139,6 +233,7 @@ public class HazmatRedAutonomousOuter extends LinearOpMode {
         telemetry.addData("PoseEstimate : heading", Math.toDegrees(hzDrive.poseEstimate.getHeading()));
 
         telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
+        telemetry.addData("TARGET_ZONE Detected", targetZone);
         // Print pose to telemetry
         telemetry.addData("PoseVuforia : x", hzVuforia1.poseVuforia.getX());
         telemetry.addData("PoseVuforia : y", hzVuforia1.poseVuforia.getY());

@@ -129,21 +129,21 @@ public class HzGamepad {
 
     public void runMagazineControl(){
         //****Magazine Actions****
-        gpMagazine.senseMagazineRingStatus();;
-        if (gpMagazine.isMagazineFull()) {
+        //gpMagazine.senseMagazineRingStatus();;
+        /*if (gpMagazine.isMagazineFull()) {
             gpIntake.stopIntakeMotor();
             gpMagazine.moveMagazineToLaunch();
         }
 
         if (gpMagazine.isMagazineEmpty()) {
             gpMagazine.moveMagazineToCollect();
-        }
+        }*/
 
         if (gpMagazine.magazinePosition == Magazine.MAGAZINE_POSITION.AT_COLLECT){
+            gpLauncher.stopFlyWheel();
             if (gpIntake.intakeButtonState == Intake.INTAKE_BUTTON_STATE.ON){
                 gpIntake.runIntakeMotor();
             }
-            gpLauncher.stopFlyWheel();
         }
 
     }
@@ -172,6 +172,11 @@ public class HzGamepad {
     }
 
     public void runLaunchController(){
+
+        if (getStartPersistent() && getButtonBPress()) {
+            gpLaunchController.toggleModeManualAutomated();
+        }
+
         //High, Middle, Low Goal
         if (getButtonYPress()) {
             gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.ACTIVATED;
@@ -196,6 +201,10 @@ public class HzGamepad {
             gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.POWER_SHOT3);
         }
 
+        if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.ACTIVATED) {
+            gpLaunchController.runLauncherByDistanceToTarget();
+        }
+
         if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.ACTIVATED){
             if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
                 gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
@@ -215,7 +224,7 @@ public class HzGamepad {
             //it is to be done either automatically, or by Y,X,A,B button press.
             //gpMagazine.moveMagazineToLaunch();
 
-            if (!gpMagazine.isMagazineEmpty() &&
+            if (/*!gpMagazine.isMagazineEmpty() &&*/
                     gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
                     gpLaunchController.launchReadiness == LaunchController.LAUNCH_READINESS.READY) {
                 gpLauncher.plungeRingToFlyWheel();
@@ -516,6 +525,10 @@ public class HzGamepad {
         gp1Dpad_downLast = gpGamepad1.dpad_down;
         return isPressedDpad_down;
 
+    }
+
+    public boolean getStartPersistent(){
+        return gpGamepad1.start;
     }
 
 

@@ -22,7 +22,7 @@ public class LaunchController {
         ACTIVATED,
         NOT_ACTIVATED
     }
-    public LAUNCH_ACTIVATION launchActivation;
+    public LAUNCH_ACTIVATION launchActivation = LAUNCH_ACTIVATION.NOT_ACTIVATED;
 
     public enum ROBOT_ZONE{
         HIGH_GOAL_ZONE,
@@ -40,7 +40,7 @@ public class LaunchController {
         POWER_SHOT2,
         POWER_SHOT3
     };
-
+    public LAUNCH_TARGET lcTarget = LAUNCH_TARGET.HIGH_GOAL;
 
     public enum LAUNCHER_ALIGNMENT{
         TARGET_ALIGNED,
@@ -48,7 +48,7 @@ public class LaunchController {
     };
     public LAUNCHER_ALIGNMENT launcherAlignment = LAUNCHER_ALIGNMENT.TARGET_NOT_ALIGNED;
 
-    public double distanceFromTarget, launchMotorSpeed, angleToTarget;
+    public double distanceFromTarget, lclaunchMotorPower, angleToTarget;
 
     public Servo launchControllerBeaconServo;
 
@@ -59,8 +59,8 @@ public class LaunchController {
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL = 0.8;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE = 0.0;
 
-    public static final double slopeOfPowerShot = 0.001;
-    public static final double slopeOfHighGoal = 0.0011111;
+    public static final double slopeOfPowerShot = 0.01;
+    public static final double slopeOfHighGoal = 0.011111;
     public static double slopeOfGetLaunchMotorSpeed;
 
     public Launcher lcLauncher;
@@ -68,7 +68,7 @@ public class LaunchController {
     public Magazine lcMagazine;
     public GameField.PLAYING_ALLIANCE lcPlayingAlliance;
     public HzDrive lcDrive;
-    public LAUNCH_TARGET lcTarget;
+
 
     public LaunchController(HardwareMap hardwareMap, Launcher lcLauncherPassed, Intake lcIntakePassed, Magazine lcMagazinePassed,
                                  GameField.PLAYING_ALLIANCE lcPlayingAlliancePassed,
@@ -123,38 +123,45 @@ public class LaunchController {
         //TODO: AMJAD : identifyCurrentLocation : Use Vuforia to determine robots' own current position and pose in the field. Vuforia functions returns the x,y,z, pose of the robot with respect to the tower goal for the current alliance color
         //TODO: AMJAD : setCurrentZone :  based on button pressed and current location of the robot on the field, set the robotCurrentZone state
         lcTarget = lcTargetPassed;
-        if (senseMagazineStatus() == LAUNCH_READINESS.NOT_READY){
+        /*if (senseMagazineStatus() == LAUNCH_READINESS.NOT_READY){
             turnRobotToNormalControl();
             launchReadiness = LAUNCH_READINESS.NOT_READY;
             launchActivation = LAUNCH_ACTIVATION.NOT_ACTIVATED;
             return launchReadiness;
-        };
+        };*/
+
+        lcMagazine.senseMagazinePosition();
+        lcIntake.stopIntakeMotor();
+        if (lcMagazine.moveMagazineToLaunch()); {
+            launchReadiness = LAUNCH_READINESS.READY;
+        }
+
         //gpVuforia.identifyCurrentLocation();
         //gpVuforia.setCurrentZone();
         determineLaunchTarget(lcTargetPassed);
         if (launchMode == LAUNCH_MODE.AUTOMATED)  turnRobotToTarget();
 
-        double distance, speed, robotAngle;
-        //TODO : AMJAD determineDistanceToTarget
-        //determineDistanceToTarget : Determine the distance from the launch target (from the location information)
-        getDistanceFromTarget();
-        //TODO : AMJAD : DETERMINE IF DISTANCE NEEDS TO BE LIMITED FOR ACCURACY AND PROJECTILE LIMIT
-
-        //TODO : AMJAD determineFlyWheelSpeed
-        //determineFlyWheelSpeed : determine launcher motor speed and hence flywheel speed required to hit the target, and start the motor to rotate at the speed. (runFlyWheelToTarget) [Logic: Mechanical and game strategy team to come up with formula or table to determine the same TBD]
-        getLaunchMotorSpeed();
-        lcLauncher.runFlyWheelToTarget(launchMotorSpeed);
+        runLauncherByDistanceToTarget();
 
         senseLaunchReadiness();
         return launchReadiness;
     }
 
-    public LAUNCH_READINESS senseMagazineStatus() {
+    public void runLauncherByDistanceToTarget(){
+        //determineDistanceToTarget : Determine the distance from the launch target (from the location information)
+        //determineFlyWheelSpeed : determine launcher motor speed and hence flywheel speed required to hit the target, and start the motor to rotate at the speed. (runFlyWheelToTarget) [Logic: Mechanical and game strategy team to come up with formula or table to determine the same TBD]
+        getDistanceFromTarget();
+        setLaunchMotorSpeed();
+        lcLauncher.runFlyWheelToTarget(lclaunchMotorPower);
+
+    }
+
+    /*public LAUNCH_READINESS senseMagazineStatus() {
         //Use senseMagazineStatus - Check if atleast 1 ring is in magazine - magazineRingCount
         //If MAGAZINE_AT_COLLECT, use moveMagazineToLaunch
-        lcMagazine.senseMagazineRingStatus();
+        //lcMagazine.senseMagazineRingStatus();
 
-        //lcMagazine.senseMagazinePosition();
+        lcMagazine.senseMagazinePosition();
         if (lcMagazine.magazineRingCount != Magazine.MAGAZINE_RING_COUNT.ZERO) {
             lcIntake.stopIntakeMotor();
             if (lcMagazine.moveMagazineToLaunch()); {
@@ -162,7 +169,7 @@ public class LaunchController {
             }
         }
         return launchReadiness = LAUNCH_READINESS.NOT_READY;
-    }
+    }*/
 
     public void determineLaunchTarget(LAUNCH_TARGET lcTarget){
         //determineLaunchTarget : Determine the launch target based on current zone of the robot
@@ -218,7 +225,7 @@ public class LaunchController {
         //If MODE_AUTOMATED, turnRobotToTarget : turn the robot to face the target based on angle determined. Ensure this function is on time out, or on a parallel thread where drivers can override, so that robot does not get locked in this function. (Driver has to manually turn the robot in MODE_AUTOMATED) [Priority : This is second priority after all other basic functionality is done]
         if (getLaunchMode() == LAUNCH_MODE.AUTOMATED) {
             lcDrive.driveMode = HzDrive.DriveMode.ALIGN_TO_POINT;
-            lcDrive.driveTrainPointFieldModes();
+            //lcDrive.driveTrainPointFieldModes();
         }
     }
 
@@ -259,16 +266,11 @@ public class LaunchController {
     }
 
     public void getDistanceFromTarget() {
-        //TODO : AMJAD determineDistanceToTarget
         Vector2d difference = lcDrive.drivePointToAlign.minus(lcDrive.poseEstimate.vec());
         distanceFromTarget = Math.sqrt(Math.pow(difference.getX(), 2) + Math.pow(difference.getY(), 2));
-        //Calclate scalar distance
-        //distanceFromTarget;
     }
 
-    public void getLaunchMotorSpeed() {
-        //TODO : AMJAD CALCULATE MOTOR SPEED USING DISTANCE
-
+    public void setLaunchMotorSpeed() {
         switch (lcTarget) {
             case POWER_SHOT1 :
             case POWER_SHOT2 :
@@ -281,10 +283,17 @@ public class LaunchController {
         }
 
         if(distanceFromTarget > 66 && distanceFromTarget < 138) {
-            launchMotorSpeed = slopeOfGetLaunchMotorSpeed*distanceFromTarget;
+            lclaunchMotorPower = slopeOfGetLaunchMotorSpeed * distanceFromTarget;
         } else {
-            launchMotorSpeed = 0;
+            lclaunchMotorPower = 0.0;
         }
+
+        //TODO: REMOVED THIS CODE
+        /*if (lclaunchMotorPower == 0.0) {
+            lclaunchMotorPower = 0.75;
+        }*/
+
+
     }
 
     public LAUNCH_MODE getLaunchMode(){
@@ -297,27 +306,22 @@ public class LaunchController {
 
     public void turnlaunchControllerBeaconRed() {
         launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_AUTO);
-        //launchControllerColorBreader.write8(4, 1);
     }
 
     public void turnlaunchControllerBeaconGreen() {
         launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_AUTO);
-        //launchControllerColorBreader.write8(4, 2);
     }
 
     public void turnlaunchControllerBeaconYellow() {
         launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_MANUAL);
-        //launchControllerColorBreader.write8(4, 3);
     }
 
     public void turnlaunchControllerBeaconBlue() {
         launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL);
-        //launchControllerColorBreader.write8(4, 4);
     }
 
     public void turnlaunchControllerBeaconOff() {
         launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE);
-        //launchControllerColorBreader.write8(4, 0);
     }
 
     public void toggleModeManualAutomated() {
