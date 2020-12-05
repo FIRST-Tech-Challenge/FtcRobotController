@@ -35,6 +35,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public enum StartPosition{
         IN, OUT, NA;
     }
+    public final double MIN_STICK_VAL = 0.1;
     public TargetZone tZone = TargetZone.UNKNOWN;
     public ProgramType side = ProgramType.AUTO_BLUE; // default to blue
     public StartPosition startPos = StartPosition.OUT; // default to OUT position
@@ -63,7 +64,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double auto_chassis_heading = -90;
     public double auto_chassis_power_slow = .4;
     public double auto_chassis_align_power = .22;
-    public double shooter_offset = 10; // shooter is 10 cm right of the robot center x coordination
+    public double shooter_offset = 14; // shooter is 10 cm right of the robot center x coordination
     public double webcam_offset_x = 25; // webcam is 25 cm left of the robot center x coordination
     public double webcam_offset_y = -14.2;
     public double shooting_dist = 0;
@@ -247,7 +248,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         em.onStick(new Events.Listener() { // Left-Joystick
             @Override
             public void stickMoved(EventManager source, Events.Side side, float currentX, float changeX, float currentY, float changeY) throws InterruptedException {
-                if (Math.abs(source.getStick(Events.Side.RIGHT, Events.Axis.Y_ONLY))> 0.2 )
+                if (Math.abs(source.getStick(Events.Side.RIGHT, Events.Axis.Y_ONLY))> MIN_STICK_VAL )
                     return; // avoid conflicting drives
                 if (chassis==null) return;
 
@@ -258,11 +259,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     normalizeRatio = 1;
 
                 // Left joystick for forward/backward and turn
-                if (Math.abs(currentY)>0.2) { // car mode
+                if (Math.abs(currentY)>MIN_STICK_VAL) { // car mode
                     chassis.carDrive(currentY*Math.abs(currentY) * normalizeRatio, right_x);
-                }else if (Math.abs(currentX) > 0.2) {
+                }else if (Math.abs(currentX) > MIN_STICK_VAL) {
                     chassis.turn((currentX > 0 ? 1 : -1), Math.abs(currentX * currentX) * chassis.powerScale()*normalizeRatio);
-                } else if (Math.abs(currentY)>0.2) {
+                } else if (Math.abs(currentY)>MIN_STICK_VAL) {
                     chassis.yMove((currentY>0?1:-1), Math.abs(currentY * currentY) * chassis.powerScale() * normalizeRatio);
                 } else {
                     chassis.stop();
@@ -280,14 +281,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if(!chassis.getNormalizeMode())
                     normalizeRatio = 1;
 
-                if (Math.abs(source.getStick(Events.Side.LEFT, Events.Axis.Y_ONLY))>0.2 )
+                if (Math.abs(source.getStick(Events.Side.LEFT, Events.Axis.Y_ONLY))>MIN_STICK_VAL )
                     return; // avoid conflicting drives
                 double left_x = source.getStick(Events.Side.LEFT, Events.Axis.X_ONLY);
                 // right joystick for free crabbing
-                if (Math.abs(left_x)>0.1 && Math.abs(currentY)>0.1) {
+                if (Math.abs(left_x)>MIN_STICK_VAL && Math.abs(currentY)>MIN_STICK_VAL) {
                     // car drive
                     chassis.carDrive(currentY*Math.abs(currentY)*normalizeRatio, left_x);
-                } else if (Math.abs(currentX)+Math.abs(currentY)>0.2) {
+                } else if (Math.abs(currentX)+Math.abs(currentY)>MIN_STICK_VAL) {
                     movingAngle = Math.toDegrees(Math.atan2(currentX, currentY));
 
                     if(!chassis.getNormalizeMode()) {
@@ -348,11 +349,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 //                    sleep(10000);
 //                    chassis.stop();
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
-                    hopper.transferUpAuto();
+                    if (intake!=null)
+                        intake.stop();
+                    if (hopper!=null) hopper.transferUpAuto();
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (shooter!=null)
                         shooter.shootSpeedInc();
-                } else if (source.getTrigger(Events.Side.RIGHT)<0.2) {
+                } else if (source.getTrigger(Events.Side.LEFT)>0.2 && chassis!=null) { // shoot high goal using Vuforia (x,y)
+                    rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, true);
+                } else if (source.getTrigger(Events.Side.RIGHT)<0.2 && source.getTrigger(Events.Side.LEFT)<0.2) {
                     if (intake!=null)
                        intake.intakeInAuto();
                 }
@@ -369,6 +374,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
                 if (source.isPressed(Button.RIGHT_BUMPER)) {
+                    if (shooter!=null)
+                        shooter.stop();
                     hopper.transferDownAuto();
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (shooter!=null)
@@ -377,7 +384,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (chassis != null) {
                         if (source.isPressed(Button.BACK)) {
                             // chassis.chassis_test();
-                        } else if (source.getTrigger(Events.Side.RIGHT)<0.2) {
+                        } else if (source.getTrigger(Events.Side.RIGHT)<0.2 && source.getTrigger(Events.Side.LEFT)<0.2) {
                             if (intake!=null)
                                 intake.intakeOutAuto();
                         }
@@ -645,6 +652,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 return String.format("(%1.0f,%1.0f)\n", shooting_dist, shooting_angle);
             }
         });
+        if (useVuforia && (cameraDetector!=null)) {
+            line.addData(" | Vuforia (X,Y) =", new Func<String>() {
+                @Override
+                public String value() {
+                    double[] vuforia_position = cameraDetector.getPositionFromVuforia();
+                    return String.format("(%1.0f,%1.0f)\n", vuforia_position[0]+webcam_offset_x, vuforia_position[1]+webcam_offset_y);
+                }
+            });
+        }
         /* Telemetry.Line line = telemetry.addLine();
 
         line.addData(" | Odometry (vl,vr,h) =", new Func<String>() {
@@ -1137,7 +1153,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (shooter==null||hopper==null) return;
         double iniTime = System.currentTimeMillis();
         int target = shooter.getShooterSpeed();
-        while (Math.abs(shooter.getCurrentRPM()-target)>25 && (System.currentTimeMillis()-iniTime<1000)) { // timeout 1 sec
+        while (Math.abs(shooter.getCurrentRPM()-target)>20 && (System.currentTimeMillis()-iniTime<1500)) { // timeout 1.5 sec
             sleep(5);
         }
         hopper.feederAuto();
@@ -1373,7 +1389,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         return Math.sqrt(vSquared);
     }
     public double getShootingAngleErrorFromRPM(double rpm){
-        double a0 = 14.8449;
+        // 1600rpm = -4.216304
+        // 1200rpm = 0.537228
+        //
+        double a0 = 10.5;
         double a1 = -0.00919769;
         return a1*rpm + a0;
     }

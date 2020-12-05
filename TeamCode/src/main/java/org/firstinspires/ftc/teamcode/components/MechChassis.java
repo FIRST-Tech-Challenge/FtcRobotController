@@ -108,6 +108,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double wheelRadius = 2.0;
     // minimum power that should be applied to the wheel motors for robot to start moving
     private double minPower = 0.1;
+    private double minDrivePower = 0.15;
     // maximum power that should be applied to the wheel motors
     private double maxPower = 0.999;
     private double slowDownSpeed = 0.25;
@@ -233,7 +234,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         GPS.set_orientationSensor(orientationSensor);
         // GPS.reverseRightEncoder();
         // GPS.reverseLeftEncoder();
-        GPS.reverseNormalEncoder();
+        // GPS.reverseNormalEncoder();
         GPS.set_init_pos(init_x_cm*odo_count_per_cm(), init_y_cm*odo_count_per_cm(), init_heading);
         setupGPSTelemetry(telemetry);
     }
@@ -715,7 +716,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
      */
     public void yMove(int sgn, double power) {
         if (simulation_mode) return;
-        if (Math.abs(power)<minPower) power=minPower*Math.signum(power);
+        if (Math.abs(power)<minDrivePower) power=minDrivePower*Math.signum(power);
         motorFL.setPower(sgn * power * left_ratio * ratioFL);
         motorFR.setPower(sgn * power * right_ratio * ratioFR);
         motorBL.setPower(sgn * power * left_ratio * ratioBL);
@@ -730,7 +731,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
      */
     public void xMove(int sgn, double power) {
         if (simulation_mode) return;
-        if (Math.abs(power)<1.75*minPower) power=1.5*minPower*Math.signum(power);
+        if (Math.abs(power)<1.5*minDrivePower) power=1.5*minDrivePower*Math.signum(power);
         motorFL.setPower(sgn * power * front_ratio * ratioFL);
         motorFR.setPower(-sgn * power * front_ratio * ratioFR);
         motorBL.setPower(-sgn * power * back_ratio * ratioBL);
@@ -854,7 +855,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         //        < 0, crab left 90 degree
         if (simulation_mode) return;
         power = Math.abs(power);
-        if (Math.abs(power)<minPower) power=minPower*Math.signum(power);
+        if (Math.abs(power)<minDrivePower) power=minDrivePower*Math.signum(power);
         boolean count_up = (Math.signum(inches)>0);
 
         double error_inches = 0.1;
@@ -882,7 +883,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
      */
     public void turn(int sgn, double power) {
         if (simulation_mode) return;
-        if (Math.abs(power)<minPower) power=minPower*Math.signum(power);
+        if (Math.abs(power)<minDrivePower) power=minDrivePower*Math.signum(power);
         motorFL.setPower(sgn * power);
         motorFR.setPower(-sgn * power);
         motorBL.setPower(sgn * power);
@@ -924,7 +925,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
      */
     public void carDrive(double power, double turningFactor) {
         if (simulation_mode) return;
-        if (Math.abs(power)<minPower) power=minPower*Math.signum(power);
+        if (Math.abs(power)<minDrivePower) power=minDrivePower*Math.signum(power);
         if (turningFactor > 0) {
             turningFactor = 1 - turningFactor;
             if (power>0) { // drive forward

@@ -93,7 +93,7 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
     private float phoneXRotate    = 0;
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
-    VuforiaTrackables targetsUltimateGoal;
+    public VuforiaTrackables targetsUltimateGoal;
     public List<VuforiaTrackable> allTrackables;
     public OpenGLMatrix lastLocation;
 
@@ -293,6 +293,15 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
 
         // register CameraStoneDetector as a configurable component
         configuration.register(this);
+    }
+
+    public boolean VuforiaEnabled() {
+        return !targetsUltimateGoal.isEmpty();
+    }
+
+    public void resetVuforiaTarget() {
+        targetsUltimateGoal.deactivate();
+        targetsUltimateGoal.activate();
     }
 
     private Bitmap convertFrameToBitmap(VuforiaLocalizer.CloseableFrame frame) {
