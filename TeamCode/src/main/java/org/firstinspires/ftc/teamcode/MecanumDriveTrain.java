@@ -30,7 +30,7 @@ public class MecanumDriveTrain {
 
     // Global variables to be initialized in the constructor
     private Telemetry telemetry = null;
-    private HardwareMap hardwareMap = null;
+    private HardwareMapV2 hardwareMap = null;
     private Gamepad gamepad1 = null;
     private Gamepad gamepad2 = null;
     boolean malinDrive = false;

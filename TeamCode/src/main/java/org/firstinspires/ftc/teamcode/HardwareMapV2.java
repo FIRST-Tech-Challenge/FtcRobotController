@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class HardwareMapV2 {
-    DcMotor frontRight, frontLeft, backRight, backLeft, intake;
+    DcMotor frontRight, frontLeft, backRight, backLeft, intake, outtake;
     DcMotor leftVertical, rightVertical, horizontal;
 
     CRServo conveyor;
     Servo leftTilt, rightTilt;
     boolean odometry = false;
 
-    ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake));
+    ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake, outtake));
     ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(leftVertical, rightVertical, horizontal));
     ArrayList<? extends HardwareDevice> servos = new ArrayList<>(Arrays.asList(conveyor, leftTilt, rightTilt));
 
@@ -33,20 +33,20 @@ public class HardwareMapV2 {
     }
 
     public void init () {
-        frontLeft = hwMap.dcMotor.get("front_left");
-        frontRight = hwMap.dcMotor.get("front_right");
-        backRight = hwMap.dcMotor.get("back_right");
-        backLeft = hwMap.dcMotor.get("back_left");
-        intake = hwMap.dcMotor.get("succ");
+        frontLeft = hwMap.get(DcMotor.class, "front_left");
+        frontRight = hwMap.get(DcMotor.class, "front_right");
+        backRight = hwMap.get(DcMotor.class, "back_right");
+        backLeft = hwMap.get(DcMotor.class, "back_left");
+        intake = hwMap.get(DcMotor.class, "succ");
         //outtake = hwMap.dcMotor.get("spit");
         if (odometry) {
             leftVertical = hwMap.dcMotor.get("left_vertical");
             rightVertical = hwMap.dcMotor.get("right_vertical");
             horizontal = hwMap.dcMotor.get("horizontal");
         }
-        conveyor = hwMap.crservo.get("convey");
-        leftTilt = hwMap.servo.get("left_tilt");
-        rightTilt = hwMap.servo.get("right_tilt");
+        //conveyor = hwMap.crservo.get("convey");
+        leftTilt = hwMap.get(Servo.class, "left_tilt");
+        rightTilt = hwMap.get(Servo.class, "right_tilt");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         frontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
@@ -60,7 +60,7 @@ public class HardwareMapV2 {
             rightVertical.setDirection(DcMotorSimple.Direction.FORWARD);
             horizontal.setDirection(DcMotorSimple.Direction.REVERSE);
         }
-        conveyor.setDirection(DcMotorSimple.Direction.FORWARD);
+        //conveyor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftTilt.setDirection(Servo.Direction.REVERSE);
         rightTilt.setDirection(Servo.Direction.FORWARD);
     }
