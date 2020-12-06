@@ -3,22 +3,25 @@ package org.firstinspires.ftc.teamcode;
 public class teleConfigEx implements teleOpInterface {
     HardwareMapV2 robot;
     Drivetrain drivetrain;
-    double intakeTime;
+    double intakeTime, outtakeTime, xTime, yTime;
 
     teleConfigEx (HardwareMapV2 robot) {
         this.robot = robot;
+        drivetrain = new Drivetrain(robot);
     }
 
-    public void a(boolean pressed) { if (pressed && System.currentTimeMillis()-intakeTime>=1000) {robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 0.6); intakeTime = System.currentTimeMillis();} }
+    public void a(boolean pressed) { if (pressed && System.currentTimeMillis()-intakeTime>=700) {robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 0.6); intakeTime = System.currentTimeMillis();} }
 
-    public void b(boolean pressed) { if (pressed) {drivetrain.outtakeAll((robot.outtake.getPower() >= 0.1) ? 0 : 1);} }
+    public void b(boolean pressed) {
+        if (pressed && System.currentTimeMillis()-outtakeTime>=700) {drivetrain.outtakeAll(((robot.conveyor.getPower() >= 0.1) ? 0 : 1)); outtakeTime = System.currentTimeMillis();}
+    }
 
     public void x(boolean pressed) {
-
+        if (pressed && System.currentTimeMillis()-xTime>=500) {drivetrain.incrementaltiltLeft(0.1); xTime = System.currentTimeMillis();}
     }
 
     public void y(boolean pressed) {
-
+        if (pressed && System.currentTimeMillis()-yTime>=500) {drivetrain.incrementaltiltRight(0.1); yTime = System.currentTimeMillis();}
     }
 
     public void dd(boolean pressed) {
@@ -38,7 +41,7 @@ public class teleConfigEx implements teleOpInterface {
     }
 
     public void rb(boolean pressed) {
-
+        if (pressed && System.currentTimeMillis()-yTime>=500) {drivetrain.incrementaltiltRight(-0.1); yTime = System.currentTimeMillis();}
     }
 
     public void rt(float pressure) {
@@ -46,7 +49,7 @@ public class teleConfigEx implements teleOpInterface {
     }
 
     public void lb(boolean pressed) {
-
+        if (pressed && System.currentTimeMillis()-xTime>=500) {drivetrain.incrementaltiltLeft(-0.1); xTime = System.currentTimeMillis();}
     }
 
     public void lt(float pressure) {
@@ -75,6 +78,8 @@ public class teleConfigEx implements teleOpInterface {
 
     public void updateTelemetryDM() {
         telemetryDM.put("test","test");
+        telemetryDM.put("Left Tilt", String.valueOf(robot.leftTilt.getPosition()));
+        telemetryDM.put("Right Tilt", String.valueOf(robot.rightTilt.getPosition()));
     }
 
     public void loop() {

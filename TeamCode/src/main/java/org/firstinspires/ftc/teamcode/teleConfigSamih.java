@@ -8,6 +8,7 @@ public class teleConfigSamih implements teleOpInterface {
 
     teleConfigSamih(HardwareMapV2 robot){
         this.robot = robot;
+        drivetrain = new Drivetrain(robot);
     }
 
     public void updateTelemetryDM() {

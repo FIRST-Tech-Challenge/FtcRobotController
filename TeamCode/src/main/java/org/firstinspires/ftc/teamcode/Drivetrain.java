@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 public class Drivetrain {
     HardwareMapV2 robot;
+    Drivetrain (HardwareMapV2 robot) { this.robot = robot; }
     enum tiltDirect{
         UP, DOWN
     }
@@ -62,6 +63,23 @@ public class Drivetrain {
             pos--;
         }
         tilt((pos==0) ? 0.0 : (pos==1) ? 0.5 : 1.0);
+    }
+    public void incrementtilt(double amount){
+        incrementtilt(amount, amount);
+    }
+
+    public void incrementtilt(double amountRT, double amountLT){
+        amountLT = (robot.leftTilt.getPosition()-amountLT<0 || robot.leftTilt.getPosition()-amountLT>1.0) ? robot.leftTilt.getPosition() : amountLT;
+        amountRT = (robot.rightTilt.getPosition()+amountRT<0 || robot.rightTilt.getPosition()+amountRT>1.0) ? robot.rightTilt.getPosition() : amountRT;
+        robot.leftTilt.setPosition(robot.leftTilt.getPosition()-amountLT);
+        robot.rightTilt.setPosition(robot.rightTilt.getPosition()+amountRT);
+    }
+
+    public void incrementaltiltRight(double amount){
+        robot.rightTilt.setPosition(robot.rightTilt.getPosition()+amount);
+    }
+    public void incrementaltiltLeft(double amount){
+        robot.leftTilt.setPosition(robot.leftTilt.getPosition()+amount);
     }
 
 }

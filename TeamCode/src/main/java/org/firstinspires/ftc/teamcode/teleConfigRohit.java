@@ -11,12 +11,13 @@ public class teleConfigRohit implements teleOpInterface {
         INCREMENT, POSITION
     }
     static mode tiltmode = mode.POSITION;
-    static double inttakePower = 1.0;
-    static double outtakePower = 1.0;
+    static double inttakePower = 0.0;
+    static double outtakePower = 0.0;
     static double conveyorPower = 1.0;
 
     teleConfigRohit(HardwareMapV2 robot){
         this.robot = robot;
+        drivetrain = new Drivetrain(robot);
     }
 
     public void a(boolean pressed) {
@@ -112,7 +113,7 @@ public class teleConfigRohit implements teleOpInterface {
 
     @Override
     public void loop() {
-
+        drivetrain.outtakeAll(conveyorPower, outtakePower);
     }
 
     public String getName() {

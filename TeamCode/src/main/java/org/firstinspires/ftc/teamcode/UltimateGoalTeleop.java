@@ -58,6 +58,8 @@ public class UltimateGoalTeleop extends OpMode{
     teleOpInterface t = new teleConfigEx(robot);
     ArrayList<Class<? extends teleOpInterface>> configs = new ArrayList<>();
     int index = 0;
+    double duTimer, ddTimer;
+    boolean switching = false;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -114,42 +116,58 @@ public class UltimateGoalTeleop extends OpMode{
         //Mecanum Drivetrain function to set powers
         vroom.loop();
 
-        t.a(gamepad2.a);
-        t.b(gamepad2.b);
-        t.x(gamepad2.x);
-        t.y(gamepad2.y);
-
-        t.dd(gamepad2.dpad_down);
-        t.dp(gamepad2.dpad_up);
-        t.dr(gamepad2.dpad_right);
-        t.dl(gamepad2.dpad_left);
-
-        t.rb(gamepad2.right_bumper);
-        t.lb(gamepad2.left_bumper);
-
-        t.lt(gamepad2.left_trigger);
-        t.rt(gamepad2.right_trigger);
-
-        t.rjoy(gamepad2.right_stick_x, gamepad2.right_stick_y);
-        t.ljoy(gamepad2.left_stick_x, gamepad2.left_stick_y);
-        t.rjoyb(gamepad2.right_stick_button);
-        t.ljoyb(gamepad2.left_stick_button);
-
-        for (String caption : t.telemetryDM.keySet()){
-            telemetry.addData(caption, t.telemetryDM.get(caption));
+        if (gamepad2.start){
+            switching = true;
         }
 
-        telemetry.update();
-        t.updateTelemetryDM();
-
-        t.loop();
-
-        if (gamepad2.start){
-            try {
-                changeConfig();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        if (switching) {
+            if (gamepad2.dpad_down && index!=(configs.size()-1) && System.currentTimeMillis()-ddTimer>=500){index++; ddTimer = System.currentTimeMillis();}
+            if (gamepad2.dpad_up && index!=0 && System.currentTimeMillis()-duTimer>=500){index--; duTimer = System.currentTimeMillis();}
+            for (Class<? extends teleOpInterface> t : configs){
+                telemetry.addData(t.getName(), (index==configs.indexOf(t)) ? " <" : "");
             }
+            telemetry.update();
+            if (gamepad2.x) {
+                if (configs.get(index).getName().equals(teleConfigEx.class.getName())) {
+                    t = new teleConfigEx(robot);
+                } else if (configs.get(index).getName().equals(teleConfigRohit.class.getName())) {
+                    t = new teleConfigRohit(robot);
+//              }else if (configs.get(index).getName().equals(teleConfigSamih.class.getName())){
+//                  t = new teleConfigSamih(robot);
+                } else if (configs.get(index).getName().equals(teleConfigRohit2.class.getName())) {
+                    t = new teleConfigRohit2(robot);
+                }
+            }
+        } else {
+            t.a(gamepad2.a);
+            t.b(gamepad2.b);
+            t.x(gamepad2.x);
+            t.y(gamepad2.y);
+
+            t.dd(gamepad2.dpad_down);
+            t.dp(gamepad2.dpad_up);
+            t.dr(gamepad2.dpad_right);
+            t.dl(gamepad2.dpad_left);
+
+            t.rb(gamepad2.right_bumper);
+            t.lb(gamepad2.left_bumper);
+
+            t.lt(gamepad2.left_trigger);
+            t.rt(gamepad2.right_trigger);
+
+            t.rjoy(gamepad2.right_stick_x, gamepad2.right_stick_y);
+            t.ljoy(gamepad2.left_stick_x, gamepad2.left_stick_y);
+            t.rjoyb(gamepad2.right_stick_button);
+            t.ljoyb(gamepad2.left_stick_button);
+
+            for (String caption : t.telemetryDM.keySet()){
+                telemetry.addData(caption, t.telemetryDM.get(caption));
+            }
+            telemetry.addData("Configuration: ", t.getName());
+            telemetry.update();
+            t.updateTelemetryDM();
+
+            t.loop();
         }
 
     }
@@ -163,10 +181,10 @@ public class UltimateGoalTeleop extends OpMode{
 
     public void changeConfig() throws InterruptedException {
         while (!gamepad2.x) {
-            if (gamepad2.dpad_down && index==(configs.size()-1)){index++;}
-            if (gamepad2.dpad_up && index==0){index--;}
+            if (gamepad2.dpad_down && index!=(configs.size()-1) && System.currentTimeMillis()-ddTimer>=500){index++; ddTimer = System.currentTimeMillis();}
+            if (gamepad2.dpad_up && index!=0 && System.currentTimeMillis()-duTimer>=500){index--; duTimer = System.currentTimeMillis();}
             for (Class<? extends teleOpInterface> t : configs){
-                telemetry.addData(t.getName(), (index==configs.indexOf(t)) ? "<" : "");
+                telemetry.addData(t.getName(), (index==configs.indexOf(t)) ? " <" : "");
             }
             telemetry.update();
         }

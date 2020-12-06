@@ -56,7 +56,7 @@ public class HardwareMapV2 {
         backRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotor.Direction.REVERSE);
-        outtake.setDirection(DcMotor.Direction.FORWARD);
+        outtake.setDirection(DcMotor.Direction.REVERSE);
 
         if (odometry) {
             leftVertical.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -66,7 +66,10 @@ public class HardwareMapV2 {
         //conveyor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftTilt.setDirection(Servo.Direction.REVERSE);
         rightTilt.setDirection(Servo.Direction.FORWARD);
-        conveyor.setDirection(CRServo.Direction.FORWARD);
+        conveyor.setDirection(CRServo.Direction.REVERSE);
+
+        rightTilt.setPosition(0.5);
+        leftTilt.setPosition(0.5);
 
     }
 
