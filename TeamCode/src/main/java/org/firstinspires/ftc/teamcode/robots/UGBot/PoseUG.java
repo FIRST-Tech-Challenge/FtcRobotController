@@ -89,8 +89,6 @@ public class PoseUG {
     DistanceSensor distForward;
     DistanceSensor distLeft;
     DistanceSensor distRight;
-    AnalogInput gripperLeft;
-    AnalogInput gripperRight;
     // DigitalChannel magSensor;
 
     // drive train power values
@@ -290,9 +288,6 @@ public class PoseUG {
         this.distRight = this.hwMap.get(DistanceSensor.class, "distRight");
         this.distLeft = this.hwMap.get(DistanceSensor.class, "distLeft");
         // this.magSensor = this.hwMap.get(DigitalChannel.class, "magSensor");
-        this.gripperLeft = this.hwMap.get(AnalogInput.class, "gripperLeft"); // Use generic form of device mapping
-        this.gripperRight = this.hwMap.get(AnalogInput.class, "gripperRight"); // Use generic form of device mapping
-
         // motorFrontLeft = hwMap.get(DcMotor.class, "motorFrontLeft");
         motorBackLeft = hwMap.get(DcMotor.class, "motorBackLeft");
         // motorFrontRight = hwMap.get(DcMotor.class, "motorFrontRight");
@@ -324,7 +319,7 @@ public class PoseUG {
          * driveRight.setDirection(DcMotorSimple.Direction.FORWARD); }
          */
         // setup subsystems
-        launcher = new Launcher(elbow, extender, hook, intakeServoFront, intakeServoBack, gripperSwivel,gripperLeft,gripperRight);
+        launcher = new Launcher(elbow, extender, hook, intakeServoFront, intakeServoBack, gripperSwivel);
         turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
         turret = new Turret(turretMotor, turretIMU);
         ledSystem = new LEDSystem(blinkin);

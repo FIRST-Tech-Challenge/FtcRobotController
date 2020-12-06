@@ -45,9 +45,6 @@ public class Launcher {
     Servo intakeServoBack = null;
     Servo gripperSwivel = null;
 
-    AnalogInput gripperLeft;
-    AnalogInput gripperRight;
-
     SharpDistanceSensor gripLeftSharp;
     SharpDistanceSensor gripRightSharp;
 
@@ -152,7 +149,7 @@ public class Launcher {
 
 
 
-    public Launcher(DcMotor elbow, DcMotor extendABob, Servo hook, Servo servoGripper, Servo intakeServoBack, Servo gripperSwivel, AnalogInput gripperLeft, AnalogInput gripperRight){
+    public Launcher(DcMotor elbow, DcMotor extendABob, Servo hook, Servo servoGripper, Servo intakeServoBack, Servo gripperSwivel){
 
         //elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbow.setTargetPosition(elbow.getCurrentPosition());
@@ -174,11 +171,6 @@ public class Launcher {
         this.intakeServoBack = intakeServoBack;
         this.gripperSwivel = gripperSwivel;
         intakeServoBack.setDirection(Servo.Direction.REVERSE);
-        this.gripperLeft = gripperLeft;
-        this.gripperRight = gripperRight;
-        this.gripLeftSharp = new SharpDistanceSensor(gripperLeft);
-        this.gripRightSharp = new SharpDistanceSensor(gripperRight);
-
         intakePwr = .3; //.35;
         //normal Teleop encoder values
         pos_preIntake = 3600;
@@ -236,10 +228,6 @@ public class Launcher {
 
 
     public void update(){
-
-        gripLeftDist = gripperLeft.getVoltage();
-        gripRightDist = gripperRight.getVoltage();
-
         gripLeftDist = gripLeftSharp.getUnscaledDistance(); //remove these two lines if looking for raw voltage which goes up with proximity
         gripRightDist = gripRightSharp.getUnscaledDistance();
 

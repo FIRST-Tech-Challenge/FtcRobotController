@@ -431,10 +431,7 @@ public class UG_6832 extends LinearOpMode {
             if (active) {
                 switch (state) {
                     case 0: // auton full
-                        if (auto.AutoFull.execute()) {
-                            active = false;
-                            state = 1;
-                        }
+                        joystickDrive();
                         break;
                     case 1: // teleop
                         joystickDrive();
@@ -791,8 +788,6 @@ public class UG_6832 extends LinearOpMode {
         telemetry.addLine().addData("Turret Target`s", () -> robot.turret.getTurretTargetHeading());
         telemetry.addLine().addData("Turret Current tower height: ", () -> robot.launcher.getCurrentTowerHeight());
         telemetry.addLine().addData("Turret Current angle ", () -> robot.turret.getHeading());
-        telemetry.addLine().addData("gripperLeft ", () -> robot.launcher.gripLeftSharp.getUnscaledDistance());
-        telemetry.addLine().addData("gripperRight ", () -> robot.launcher.gripRightSharp.getUnscaledDistance());
         telemetry.addLine() .addData("left distance ", () -> robot.getDistLeftDist());
         telemetry.addLine() .addData("right distance ", () -> robot.getDistRightDist());
         telemetry.addLine() .addData("front distance ", () -> robot.getDistForwardDist());
