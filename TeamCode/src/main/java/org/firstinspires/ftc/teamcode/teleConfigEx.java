@@ -4,6 +4,7 @@ public class teleConfigEx implements teleOpInterface {
     HardwareMapV2 robot;
     Drivetrain drivetrain;
     double intakeTime, outtakeTime, xTime, yTime;
+    double perfectval = 0.35;
 
     teleConfigEx (HardwareMapV2 robot) {
         this.robot = robot;
@@ -17,11 +18,11 @@ public class teleConfigEx implements teleOpInterface {
     }
 
     public void x(boolean pressed) {
-        if (pressed && System.currentTimeMillis()-xTime>=500) {drivetrain.incrementaltiltLeft(0.1); xTime = System.currentTimeMillis();}
+        if (pressed && System.currentTimeMillis()-xTime>=500) {drivetrain.incrementtilt(-0.01); xTime = System.currentTimeMillis();}
     }
 
     public void y(boolean pressed) {
-        if (pressed && System.currentTimeMillis()-yTime>=500) {drivetrain.incrementaltiltRight(0.1); yTime = System.currentTimeMillis();}
+        if (pressed && System.currentTimeMillis()-yTime>=500) {drivetrain.incrementtilt(0.01); yTime = System.currentTimeMillis();}
     }
 
     public void dd(boolean pressed) {
@@ -41,7 +42,7 @@ public class teleConfigEx implements teleOpInterface {
     }
 
     public void rb(boolean pressed) {
-        if (pressed && System.currentTimeMillis()-yTime>=500) {drivetrain.incrementaltiltRight(-0.1); yTime = System.currentTimeMillis();}
+        if (pressed){drivetrain.tilt(perfectval);}
     }
 
     public void rt(float pressure) {
@@ -49,7 +50,9 @@ public class teleConfigEx implements teleOpInterface {
     }
 
     public void lb(boolean pressed) {
-        if (pressed && System.currentTimeMillis()-xTime>=500) {drivetrain.incrementaltiltLeft(-0.1); xTime = System.currentTimeMillis();}
+        if (pressed) {
+            perfectval = robot.leftTilt.getPosition();
+        }
     }
 
     public void lt(float pressure) {

@@ -137,6 +137,7 @@ public class UltimateGoalTeleop extends OpMode{
                 } else if (configs.get(index).getName().equals(teleConfigRohit2.class.getName())) {
                     t = new teleConfigRohit2(robot);
                 }
+                switching = false;
             }
         } else {
             t.a(gamepad2.a);
