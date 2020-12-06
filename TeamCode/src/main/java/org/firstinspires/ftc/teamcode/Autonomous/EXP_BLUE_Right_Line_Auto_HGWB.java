@@ -144,7 +144,7 @@ public class EXP_BLUE_Right_Line_Auto_HGWB extends BasicAutonomous {
         sleep(1000);
         wobble.GripperClose();
         sleep(500);
-        wobble.ArmCarryWobble();
+        //wobble.ArmCarryWobble();
         sleep(500);
 
         // After picking up the wobble goal the robot always goes to the same spot to shoot the 3 preloaded rings.
@@ -180,7 +180,7 @@ public class EXP_BLUE_Right_Line_Auto_HGWB extends BasicAutonomous {
                 sleep(500);
                 wobble.ArmExtend();
                 sleep(500);
-                wobble.ArmExtend();
+
                 drivetime.reset();
                 gyroDrive(DRIVE_SPEED,-4,60,4);
                 gyroTurn(TURN_SPEED, 165,2);
@@ -197,9 +197,9 @@ public class EXP_BLUE_Right_Line_Auto_HGWB extends BasicAutonomous {
                 gyroDrive(DRIVE_SPEED,14,90,2);
                 wobble.GripperOpen();
                 sleep(250);
-                gyroDrive(DRIVE_SPEED,-5,90,2);
+                gyroDrive(DRIVE_SPEED,-3,90,2);
                 wobble.ArmContract();
-                sleep(500);
+                sleep(250);
 
                 break;
             case BLUE_B: // one ring  4 tiles straight ahead
