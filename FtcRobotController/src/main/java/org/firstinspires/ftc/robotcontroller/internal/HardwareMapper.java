@@ -31,16 +31,16 @@ public class HardwareMapper {
 
         return temporaryMotor;
     }
-    public DcMotor mapMotor(final String NAME, final DcMotorSimple.Direction Direction){
-        DcMotor temporaryMotor;
-        temporaryMotor = base.getHardwaremap().dcMotor.get(NAME);
-        temporaryMotor.setDirection(Direction);
+    public DcMotor mapMotor(final String NAME, final DcMotorSimple.Direction DIRECTION){
+        DcMotor tempMotor;
+        tempMotor = base.getHardwaremap().get(DcMotor.class, NAME);
+        tempMotor.setDirection(DIRECTION);
 
-        return temporaryMotor;
+        return tempMotor;
     }
     public DcMotor mapMotor(final String NAME){
         DcMotor temporaryMotor;
-        temporaryMotor = base.getHardwaremap().dcMotor.get(NAME);
+        temporaryMotor = base.getHardwaremap().get(DcMotor.class, NAME);
 
         return temporaryMotor;
     }

@@ -12,15 +12,16 @@ public abstract class robotBase {
     protected Telemetry telemetry;
     protected HardwareMapper mapper;
     protected LinearOpMode opMode;
-    protected HardwareMap hardwaremap;
+    public HardwareMap hardwaremap;
 
-     public robotBase(Telemetry telemetry, HardwareMapper mapper, LinearOpMode opMode, HardwareMap hardwaremap){
+     public robotBase(Telemetry telemetry, LinearOpMode opMode, HardwareMap hardwaremap){
         this.telemetry = telemetry;
-        this.mapper = mapper;
+         this.mapper = new HardwareMapper(this);
         this.opMode = opMode;
         this.hardwaremap = hardwaremap;
 
     }
+
 
     public HardwareMap getHardwaremap() {
         return hardwaremap;
@@ -34,14 +35,11 @@ public abstract class robotBase {
         return telemetry;
     }
 
-    public HardwareMapper getMapper() {
+    public HardwareMapper getMapper(){
         return mapper;
     }
 
     public void init(){}
-
-
-
 
     abstract public void stop();
 }

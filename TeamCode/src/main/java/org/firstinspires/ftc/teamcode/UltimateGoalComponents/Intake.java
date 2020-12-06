@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcontroller.internal.RobotComponent;
 import org.firstinspires.ftc.robotcontroller.internal.robotBase;
 
-class Intake extends RobotComponent {
+public class Intake extends RobotComponent {
 
     DcMotor flyWheelShooter;
 
-    public Intake(robotBase base) {
-        super(base);
+    public Intake(robotBase BASE) {
+        super(BASE);
 
-        flyWheelShooter = base.getMapper().mapMotor("fw");
+        //flyWheelShooter = base.getMapper().mapMotor("flyWheel");
     }
 
     public void suck(double power){

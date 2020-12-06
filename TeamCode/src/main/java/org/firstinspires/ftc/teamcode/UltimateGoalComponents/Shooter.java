@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcontroller.internal.RobotComponent;
 import org.firstinspires.ftc.robotcontroller.internal.robotBase;
 
-class Shooter extends RobotComponent {
+public class Shooter extends RobotComponent {
 
 
 
@@ -16,43 +16,56 @@ class Shooter extends RobotComponent {
 
     public final double STOP = 0;
 
-    public Shooter(robotBase base) {
-        super(base);
+    boolean stop = false;
 
-        ShooterWheel = base.getMapper().mapMotor("sw", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT);
+    public Shooter(robotBase BASE) {
+        super(BASE);
+
+       ShooterWheel = base.getMapper().mapMotor("shooter", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT);
     }
-    public void shoot(){
+    public void shoot(boolean button){
+        if(button)
         getToTargetSpeed(1);
     }
 
     public void getToTargetSpeed(double target_speed) {
-        boolean target;
+        boolean target = false;
         double initEncoder;
         double finEncoder;
         double difEncoder;
         double timeRecorded;
 
         ShooterWheel.setPower(target_speed);
-        do{
-            initEncoder = ShooterWheel.getCurrentPosition();
-            timeRecorded = runtime.seconds();
-            while(runtime.seconds()<=timeRecorded);
-            finEncoder = ShooterWheel.getCurrentPosition();
+      /*
+      do{
+            while(!stop) {
+                initEncoder = ShooterWheel.getCurrentPosition();
+                timeRecorded = runtime.seconds();
+                while (runtime.seconds() <= timeRecorded + 1) ;
+                finEncoder = ShooterWheel.getCurrentPosition();
 
-            difEncoder = finEncoder - initEncoder;
+                difEncoder = finEncoder - initEncoder;
 
-           if(difEncoder>2700){
-               target = true;
-           } else
-           {
-               target = false;
-           }
+                if (difEncoder > 2700) {
+                    target = true;
+                } else {
+                    target = false;
+                }
+            }
         }
         while(!target);
+       */
     }
 
     @Override
     public void stop() {
         ShooterWheel.setPower(STOP);
+        stop = true;
     }
+    public void stop(boolean button) {
+        if(button)
+        ShooterWheel.setPower(STOP);
+        stop = true;
+    }
+
 }

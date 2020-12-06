@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.UltimateGoalComponents;
 
+import android.widget.ExpandableListView;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,50 +14,46 @@ import org.firstinspires.ftc.robotcontroller.internal.RobotComponent;
 import java.util.ArrayList;
 
 
-class Drivetrain extends RobotComponent {
+@SuppressWarnings("MoveFieldAssignmentToInitializer")
+public class Drivetrain extends RobotComponent {
 
-
-    public DcMotor frontLeft;
-    public DcMotor frontRight;
-    public DcMotor backLeft;
-    public DcMotor backRight;
-    public DcMotor[] motors = new DcMotor[4];
+   
+        public DcMotor frontLeft;
+        public DcMotor frontRight;
+        public DcMotor backLeft;
+        public DcMotor backRight;
+        public DcMotor[] motors = new DcMotor[4];
 
     private double stopBuffer = 0.05;
 
     static final double COUNTS_PER_INCH = 85.9;
 
-    private ElapsedTime runTime = new ElapsedTime();
-
-    public Drivetrain(robotBase robotbase) {
-        super(robotbase);
-
+    public Drivetrain(robotBase BASE) {
+        super(BASE);
+        initMotors();
     }
 
      void initMotors() {
-        HardwareMap hwMap = null;
-         frontLeft = base.getMapper().mapMotor("frontLeft", DcMotorSimple.Direction.REVERSE);
-        frontLeft = hwMap.get(DcMotor.class, "fl");
-        motors[0] = frontLeft;
 
-        backLeft = base.getMapper().mapMotor("backLeft", DcMotorSimple.Direction.REVERSE);
-        backLeft = hwMap.get(DcMotor.class, "bl");
-        motors[1] = backLeft;
+               frontLeft = base().getMapper().mapMotor("frontLeft");
+               motors[0] = frontLeft;
 
-        frontRight = base.getMapper().mapMotor("frontRight");
-        frontRight = hwMap.get(DcMotor.class, "fr");
+               backLeft = base().getMapper().mapMotor("backLeft");
+               motors[1] = backLeft;
+         frontRight = base().getMapper().mapMotor("frontRight", DcMotorSimple.Direction.REVERSE);
         motors[2] = frontRight;
 
-        backRight = base.getMapper().mapMotor("backRight");
-        backRight = hwMap.get(DcMotor.class, "br");
+         backRight = base().getMapper().mapMotor("backRight", DcMotorSimple.Direction.REVERSE);
         motors[3] = backRight;
+
 
         setModes(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         setZeroPowerBehaviors(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
 
-    private void drive(double forward, double right, double turn) {
+     }
+
+    public void drive(double forward, double right, double turn) {
 
         forward = getProcessedInput(forward);
         right = getProcessedInput(right);
@@ -86,6 +84,7 @@ class Drivetrain extends RobotComponent {
             rightFrontPower /= greatest;
             rightBackPower /= greatest;
         }
+        setPowers(powers);
     }
         public double[] getPowers () {
             double[] powers = {frontLeft.getPower(), backLeft.getPower(), frontRight.getPower(), backRight.getPower()};

@@ -2,13 +2,15 @@ package org.firstinspires.ftc.robotcontroller.internal;
 
 import org.firstinspires.ftc.robotcontroller.internal.robotBase;
 public abstract class RobotComponent {
-   public robotBase base;
+   protected robotBase base;
 
     public RobotComponent (robotBase base){
         this.base = base;
     }
 
-    public robotBase getRobotbase() {
+    public final robotBase base()
+    {
+
         return base;
     }
 
