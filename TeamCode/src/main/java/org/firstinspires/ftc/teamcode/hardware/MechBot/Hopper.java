@@ -219,7 +219,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (magTouch.isPressed() || (HopperTimer.seconds()>=2));
+                        return (magTouch.isPressed() || (HopperTimer.seconds()>=2.5));
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
