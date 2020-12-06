@@ -1,3 +1,10 @@
+/**
+ * Moves 2 wobble goals, shoots 3 high goals, and parks
+ * @author  Aamod
+ * @volgate 13.6-13.8 V
+ * USE BATTERY 4 and 5 (Batter 5 works better)
+ */
+
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
