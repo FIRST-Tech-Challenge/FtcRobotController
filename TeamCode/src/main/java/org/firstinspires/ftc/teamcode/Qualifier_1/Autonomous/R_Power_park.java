@@ -28,25 +28,25 @@ public class R_Power_park extends LinearOpMode {
         telemetry.update();
         //waitForStart();
         if(rings==0) {
-            robot.moveAngle( -45,-58, 0.5);
+            robot.moveAngle( -53,-55, 0.6);
             robot.turnInPlace(0,1.0);
             robot.moveWobbleGoalServo(true);
             robot.moveAngle(0,8,0.8);
             robot.turnInPlace(0,1.0);
             robot.moveAngle(37,2,0.5);
-            robot.turnInPlace(4.0,1.0);
+            robot.turnInPlace(2.0,1.0);
         }
         else if(rings==1) {
-            robot.moveAngle(5,-83, 0.7);
+            robot.moveAngle(4,-83, 0.7);
             robot.turnInPlace(0,0.5);
             robot.moveWobbleGoalServo(true);
             robot.moveAngle(0,4.5, 0.7);
             robot.turnInPlace(0,0.5);
             robot.moveAngle(10,22, 0.7);
-            robot.turnInPlace(4,1.0);
+            robot.turnInPlace(2,1.0);
         }
         else if(rings==4) {
-            robot.moveAngle(-47, -102,0.7);
+            robot.moveAngle(-48, -102,0.7);
             robot.turnInPlace(0,0.5);
             robot.moveWobbleGoalServo(true);
             robot.moveAngle(-0, 12,0.7);
@@ -57,7 +57,7 @@ public class R_Power_park extends LinearOpMode {
             robot.turnInPlace(2,1.0);
         }
         robot.shootRightPowerShot(3);
-        robot.moveAngle(0,-15,0.5);
+
         sleep(500);
         stop();
     }

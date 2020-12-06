@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGo
  *
  */
 @Autonomous(name= "Shooter Test High Goal")
-//@Disabled
+@Disabled
 public class ShooterTestHighGoal extends LinearOpMode{
 //    private Shooter shooter=null;
     //private Object Shooter;

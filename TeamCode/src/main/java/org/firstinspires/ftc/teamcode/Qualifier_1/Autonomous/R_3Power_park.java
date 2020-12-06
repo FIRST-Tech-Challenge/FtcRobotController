@@ -25,56 +25,73 @@ public class R_3Power_park extends LinearOpMode {
         robot.stopTensorFlow();
         telemetry.update();
         //waitForStart();
-        robot.moveWobbleGoalServo(false);
-        /*if(rings==0) {
-            robot.moveAngle( -45,-58, 0.5);
+        if(rings==0) {
+            robot.moveAngle( -25,-65, 0.6);
             robot.turnInPlace(0,1.0);
             robot.moveWobbleGoalServo(true);
-            robot.moveAngle(0,11,0.8);
+            robot.moveAngle(0,2,0.8);
             robot.turnInPlace(0,1.0);
-            robot.moveAngle(35,0,0.5);
-            robot.turnInPlace(0,1.0);
-            robot.shootRightPowerShot(3);
-            robot.moveAngle(0,-10,0.8);
+            robot.moveAngle(37,2,0.5);
+            robot.turnInPlace(2.0,1.0);
         }
         else if(rings==1) {
-            robot.moveAngle(5,-83, 0.7);
+            robot.moveAngle(4,-83, 0.7);
             robot.turnInPlace(0,0.5);
             robot.moveWobbleGoalServo(true);
-            robot.moveAngle(0,9, 0.7);
+            robot.moveAngle(0,2.5, 0.7);
             robot.turnInPlace(0,0.5);
-            robot.moveAngle(10,19, 0.7);
+            robot.moveAngle(11,22, 0.7);
             robot.turnInPlace(0,1.0);
-            robot.shootRightPowerShot(3);
-            robot.moveAngle(5,45,0.7);
-            robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
-            sleep(1000);
-            robot.moveAngle(-10,0,0.5);
-            robot.wobbleGoalGoToPosition(WobbleGoal.Position.RAISE);
-            robot.moveAngle(-10,-70,0.5);
-            robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
-            sleep(1000);
-            robot.moveAngle(15,15,0.7);
         }
         else if(rings==4) {
-            robot.moveAngle(-40, -102,0.7);
+            robot.moveAngle(-25, -110,0.7);
             robot.turnInPlace(0,0.5);
             robot.moveWobbleGoalServo(true);
-            robot.moveAngle(-0, 10,0.7);
+            robot.moveAngle(-0, 7,0.7);
             robot.turnInPlace(0,0.5);
-            robot.moveAngle(2,39,0.7);
+            robot.moveAngle(2,39.5,0.7);
             robot.turnInPlace(0,1.0);
-            robot.moveAngle(36,2,0.7);
-            robot.turnInPlace(0,1.0);
-            robot.shootRightPowerShot(3);
-            robot.moveAngle(0,-10,0.8);
-        }*/
-        robot.turnInPlace(0,1.0);
-        robot.moveAngle(10,36,0.7);
-        robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
-        sleep(1000);
-        robot.turnInPlace(0,0.5);
-        robot.moveAngle(-17,0,0.5);
+            robot.moveAngle(39,2,0.7);
+            robot.turnInPlace(2,1.0);
+        }
+        robot.shootRightPowerShot(3);
+        if(rings!=4) {
+
+            if (rings == 0) {
+                robot.turnInPlace(0, 1.0);
+                robot.moveAngle(10, 45.5, 0.7);
+                robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
+                sleep(250);
+                robot.turnInPlace(0, 0.5);
+                robot.moveAngle(-15, 0, 0.5);
+                robot.wobbleGoalGoToPosition(WobbleGoal.Position.RAISE);
+                robot.moveAngle(-35, -55, 0.5);
+                robot.wobbleGoalGoToPosition(WobbleGoal.Position.DROP);
+                sleep(1500);
+                robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
+                robot.moveAngle(15, 0, 0.7);
+            }
+            if (rings == 1) {
+                robot.turnInPlace(0, 1.0);
+                robot.moveAngle(15, 45, 0.8);
+                robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
+                sleep(250);
+                robot.turnInPlace(0, 0.5);
+                robot.moveAngle(-15, 0, 0.5);
+                robot.wobbleGoalGoToPosition(WobbleGoal.Position.RAISE);
+                robot.moveAngle(-10, -82, 0.5);
+                robot.wobbleGoalGoToPosition(WobbleGoal.Position.DROP);
+                robot.moveAngle(5,0,0.25);
+                robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
+                robot.moveAngle(7, 5, 0.7);
+                robot.moveAngle(0, 15, 0.7);
+
+            }
+        }
+        else{
+            robot.moveAngle(0,-15,0.5);
+        }
+        robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
         stop();
     }
 

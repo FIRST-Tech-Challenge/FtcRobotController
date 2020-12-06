@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.WobbleGoal;
 
 @Autonomous (name = "WobbleGoalAutonomous")
-//@Disabled
+@Disabled
 public class WobbleGoalAutonomousTest extends LinearOpMode {
 
     public void runOpMode(){

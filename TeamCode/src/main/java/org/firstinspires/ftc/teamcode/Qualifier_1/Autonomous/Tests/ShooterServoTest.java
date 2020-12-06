@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
 
 @Autonomous(name= "ShooterServoTest")
-//@Disabled
+@Disabled
 public class ShooterServoTest extends LinearOpMode{
     private Shooter shooter=null;
 

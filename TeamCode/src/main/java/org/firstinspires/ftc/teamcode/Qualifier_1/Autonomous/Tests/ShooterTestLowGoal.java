@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
  *
  */
 @Autonomous(name= "Shooter Test Low Goal")
-//@Disabled
+@Disabled
 public class ShooterTestLowGoal extends LinearOpMode{
 
     @Override

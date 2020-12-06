@@ -462,7 +462,7 @@ public class IMUChassis extends BasicChassis{
         angleInRadians = atan2(y, x);
         anglePower[0] = sin(angleInRadians + PI / 4);
         anglePower[1] = sin(angleInRadians - PI / 4);
-        anglecorrection = (currentPosition[2] - target_position[2]) * 0.007;
+        anglecorrection = (currentPosition[2] - target_position[2]) * 0.025;
         if (difference > 10) {
             if (abs(anglePower[1]) > abs(anglePower[0])) {
                 anglePower[1] *= abs(1 / anglePower[1]);
