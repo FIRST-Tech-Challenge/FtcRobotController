@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.LaunchController;
 import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
 import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 
 
@@ -33,7 +32,7 @@ public class HzAutonomous extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    public HzGamepad hzGamepad1;
+    public HzGamepad hzGamepad;
     public GameField hzGameField;
     //public SampleMecanumDrive hzDrive;
     public HzDrive hzDrive;
@@ -44,7 +43,6 @@ public class HzAutonomous extends LinearOpMode {
     public Arm hzArm;
 
     public HzVuforia hzVuforia1;
-    public GameField.PLAYING_ALLIANCE playingAlliance = GameField.PLAYING_ALLIANCE.AUDIENCE;
     public Pose2d startPose = hzGameField.ORIGIN_FIELD;
 
     //int playingAlliance = 1; //1 for Red, -1 for Blue
@@ -63,14 +61,14 @@ public class HzAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
-        hzDrive = new HzDrive(hardwareMap, hzGameField);
+        hzDrive = new HzDrive(hardwareMap);
         hzMagazine = new Magazine(hardwareMap);
         hzIntake = new Intake(hardwareMap);
 
         hzLauncher = new Launcher(hardwareMap);
         hzArm = new Arm(hardwareMap);
-        hzLaunchController = new LaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, playingAlliance, hzDrive);
-        hzGamepad1 = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
+        hzLaunchController = new LaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, hzDrive);
+        hzGamepad = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
 
         hzVuforia1 = new HzVuforia(hardwareMap);
 
@@ -152,8 +150,9 @@ public class HzAutonomous extends LinearOpMode {
     }
 
     public void initialConfiguration(){
+        telemetry.setAutoClear(true);
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-        telemetry.addData("Compile time : ", "4:58 : 11/24");
+        telemetry.addData("Compile time : ", "6:50 : 12/05");
 
         //***** Select Alliance ******
         telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X, Audience:A)");
@@ -161,63 +160,68 @@ public class HzAutonomous extends LinearOpMode {
 
         timer.reset();
         while (timer.time() < 10) {
-            if (hzGamepad1.getButtonBPress()) {
-                hzGamepad1.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
+            if (hzGamepad.getButtonBPress()) {
+                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
                 telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
-                break;}
-            if (hzGamepad1.getButtonXPress()) {
-                hzGamepad1.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+                break;
+            }
+            if (hzGamepad.getButtonXPress()) {
+                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
-                break;}
-            if (hzGamepad1.getButtonAPress()) {
-                hzGamepad1.playingAlliance = GameField.PLAYING_ALLIANCE.AUDIENCE;
+                break;
+            }
+            if (hzGamepad.getButtonAPress()) {
+                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.AUDIENCE;
                 telemetry.addData("Playing Alliance Selected : ", "AUDIENCE");
-                break;}
-            telemetry.addData("10s Time out : Default Alliance selected : Audience A : %.3f", timer.time());
+                break;
+            }
+            telemetry.addData("10s time : Default Alliance A : %.3f", timer.time());
             telemetry.update();
         }
+
         telemetry.update();
+        sleep(1000);
 
         //***** Select Start Pose ******
         timer.reset();
         telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
         while (timer.time() < 10) {
-            if (playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE){
-                telemetry.addData("Start Pose : ", "ORIGIN_FIELD");
+            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE){
+                telemetry.addData("Default Start Pose : ", "ORIGIN_FIELD");
                 startPose = GameField.ORIGIN_FIELD;
                 break;
             }
-            if (playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                if (hzGamepad1.getButtonAPress()) {
+            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
+                if (hzGamepad.getButtonAPress()) {
                     startPose = GameField.RED_INNER_START_LINE;
                     telemetry.addData("Start Pose : ", "RED_INNER_START_LINE");
                     break;
                 }
-                if (hzGamepad1.getButtonAPress()) {
+                if (hzGamepad.getButtonAPress()) {
                     startPose = GameField.RED_OUTER_START_LINE;
                     telemetry.addData("Start Pose : ", "RED_OUTER_START_LINE");
                     break;
                 }
             }
-            if (playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                if (hzGamepad1.getButtonAPress()) {
+            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                if (hzGamepad.getButtonAPress()) {
                     startPose = GameField.BLUE_INNER_START_LINE;
                     telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
                     break;
                 }
-                if (hzGamepad1.getButtonAPress()) {
+                if (hzGamepad.getButtonAPress()) {
                     startPose = GameField.BLUE_OUTER_START_LINE;
                     telemetry.addData("Start Pose : ", "BLUE_OUTER_START_LINE");
                     break;
                 }
             }
             telemetry.addData("Start Pose : ", "ORIGIN_FIELD");
-            telemetry.addData("10s Time out : Default Pose selected : ORIGIN_FIELD : %.3f", timer.time());
+            telemetry.addData("10s Timer : Default Pose : ORIGIN_FIELD : %.3f", timer.time());
             telemetry.update();
         }
         telemetry.update();
+        sleep(1000);
     }
-
 
     /**
      * Method to add debug messages. Update as telemetry.addData.
@@ -227,17 +231,129 @@ public class HzAutonomous extends LinearOpMode {
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
 
-        // Print pose to telemetry
-        telemetry.addData("PoseEstimate : x", hzDrive.poseEstimate.getX());
-        telemetry.addData("PoseEstimate : y", hzDrive.poseEstimate.getY());
-        telemetry.addData("PoseEstimate : heading", Math.toDegrees(hzDrive.poseEstimate.getHeading()));
+        telemetry.addData("GameField.playingAlliance : ", GameField.playingAlliance);
+        telemetry.addData("startPose : ", startPose);
 
-        telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
-        telemetry.addData("TARGET_ZONE Detected", targetZone);
+        //****** Drive debug ******
+        telemetry.addData("Drive Mode : ", hzDrive.driveMode);
+        telemetry.addData("PoseEstimate :", hzDrive.poseEstimate);
+
+        //telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
         // Print pose to telemetry
-        telemetry.addData("PoseVuforia : x", hzVuforia1.poseVuforia.getX());
-        telemetry.addData("PoseVuforia : y", hzVuforia1.poseVuforia.getY());
-        telemetry.addData("PoseVuforia : heading", Math.toDegrees(hzVuforia1.poseVuforia.getHeading()));
+        //telemetry.addData("PoseVuforia :",hzVuforia1.poseVuforia);
+
+        //******* Magazine Debug ********
+        switch (hzMagazine.getMagazinePosition()) {
+            case AT_LAUNCH: {
+                telemetry.addData("hzMagazine.getMagazinePosition(): ", "MAGAZINE_AT_LAUNCH");
+                break;
+            }
+            case AT_COLLECT: {
+                telemetry.addData("hzMagazine.getMagazinePosition():", "MAGAZINE_AT_COLLECT");
+                break;
+            }
+            case AT_ERROR: {
+                telemetry.addData("hzMagazine.getMagazinePosition():", "MAGAZINE_AT_ERROR");
+                break;
+            }
+        }
+        telemetry.addData("magazineLaunchTouchSensor.getState():", hzMagazine.magazineLaunchTouchSensor.isPressed());
+        telemetry.addData("magazineCollectTouchSensor.getState():", hzMagazine.magazineCollectTouchSensor.isPressed());
+
+        //********** Intake Debug *******
+        //telemetry.addData("hzGamepad1.getDpad_downPress()", hzGamepad.getDpad_downPress());
+        //telemetry.addData("hzGamepad1.getDpad_upPress()", hzGamepad.getDpad_upPress());
+        //telemetry.addData("intakeMotor.isBusy()", hzIntake.intakeMotor.isBusy());
+        switch (hzIntake.getIntakeState()){
+            case RUNNING: {
+                telemetry.addData("hzIntake.getIntakeState()", "INTAKE_MOTOR_RUNNING");
+                break;
+            }
+            case STOPPED: {
+                telemetry.addData("hzIntake.getIntakeState()", "INTAKE_MOTOR_STOPPED");
+                break;
+            }
+            case REVERSING: {
+                telemetry.addData("hzIntake.getIntakeState()", "INTAKE_MOTOR_REVERSING");
+                break;
+            }
+        }
+
+        //******* Launch Controller Debug ********
+        telemetry.addData("hzLaunchController.launchMode : ", hzLaunchController.launchMode);
+        telemetry.addData("hzLaunchController.launchReadiness : ", hzLaunchController.launchReadiness);
+        telemetry.addData("hzLaunchController.launchActivation : ", hzLaunchController.launchActivation);
+        telemetry.addData("hzLaunchController.lcTarget : ", hzLaunchController.lcTarget);
+        telemetry.addData("hzLaunchController.lcTargetVector", hzLaunchController.lcTargetVector);
+        telemetry.addData("hzLaunchController.distanceFromTarget : ", hzLaunchController.distanceFromTarget);
+        telemetry.addData("hzLaunchController.lclaunchMotorPower : ", hzLaunchController.lclaunchMotorPower);
+        telemetry.addData("hzDrive.drivePointToAlign : ", hzDrive.drivePointToAlign);
+
+        //******* Launcher Debug *********
+        //telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncher.launcherFlyWheelMotor.isBusy());
+        telemetry.addData("launcherRingPlungerServo.getPosition() : ", hzLauncher.launcherRingPlungerServo.getPosition());
+
+        switch (hzLauncher.getLauncherState()){
+            case RUNNING_FOR_TARGET:  {
+                telemetry.addData("hzLauncher.getLauncherState()", "FLYWHEEL_RUNNING_FOR_TARGET");
+                break;
+            }
+            case RUNNING_FOR_SUPPLY:  {
+                telemetry.addData("hzLauncher.getLauncherState()", "FLYWHEEL_RUNNING_FOR_SUPPLY");
+                break;
+            }
+            case STOPPED:  {
+                telemetry.addData("hzLauncher.getLauncherState()", "FLYWHEEL_STOPPED");
+                break;
+            }
+        }
+
+
+
+
+        //***** Arm Debug ****
+        //telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
+        //telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
+
+        switch (hzArm.getGripServoState()){
+            case OPENED  : {
+                telemetry.addData("hzArm.getGripServoState()", "OPENED");
+                break;
+            }
+            case CLOSED: {
+                telemetry.addData("hzArm.getGripServoState()", "CLOSED");
+                break;
+            }
+        }
+
+        //telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
+        //telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
+
+        //telemetry.addData("armGripServo.getCurrentPosition()", hzArm.armGripServo.getPosition());
+        //telemetry.addData("hzGamepad.getLeftTriggerPress()", hzGamepad.getLeftTriggerPress());
+
+        switch (hzArm.getCurrentArmPosition()){
+            case PARKED: {
+                telemetry.addData("hzArm.getCurrentArmPosition()", "PARKED");
+                break;
+            }
+            case DROP_WOBBLE_RING: {
+                telemetry.addData("hzArm.getCurrentArmPosition()", "DROP_WOBBLE_RING");
+                break;
+            }
+            case HOLD_UP_WOBBLE_RING: {
+                telemetry.addData("hzArm.getCurrentArmPosition()", "HOLD_UP_WOBBLE_RING");
+                break;
+            }
+            case PICK_WOBBLE:{
+                telemetry.addData("hzArm.getCurrentArmPosition()", "PICK_WOBBLE");
+                break;
+            }
+            case PICK_RING: {
+                telemetry.addData("hzArm.getCurrentArmPosition()", "PICK_RING");
+                break;
+            }
+        }
 
         telemetry.update();
 

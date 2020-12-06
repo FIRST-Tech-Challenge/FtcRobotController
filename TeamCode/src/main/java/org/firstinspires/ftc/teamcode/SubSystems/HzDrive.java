@@ -68,9 +68,9 @@ public class HzDrive extends MecanumDriveDriveEncoders {
     //For Position
     public Pose2d poseEstimate = new Pose2d(0,0,0);
 
-    public HzDrive(HardwareMap hardwareMap, GameField hzGameFieldPassed) {
+    public HzDrive(HardwareMap hardwareMap) {
         super(hardwareMap);
-        hzGameField = hzGameFieldPassed;
+        //hzGameField = hzGameFieldPassed;
 
     }
 
@@ -202,12 +202,6 @@ public class HzDrive extends MecanumDriveDriveEncoders {
 
         // Send telemetry packet off to dashboard
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
-
-        // Print pose to telemetry
-        //callingOpMode.telemetry.addData("x", poseEstimate.getX());
-        //callingOpMode.telemetry.addData("y", poseEstimate.getY());
-        //callingOpMode.telemetry.addData("heading", poseEstimate.getHeading());
-        //callingOpMode.telemetry.update();
     }
 
 

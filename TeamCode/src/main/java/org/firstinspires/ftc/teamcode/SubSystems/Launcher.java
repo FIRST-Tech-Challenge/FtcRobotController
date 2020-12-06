@@ -17,9 +17,6 @@ public class Launcher {
     public Servo launcherRingPlungerServo;
     public DcMotor launcherFlyWheelMotor;
 
-    float arrayForHeight;
-    float arrayForDistance;
-    float launcherServoPosition;
     public double launcherMotorPower;
     public static final double FLYWHEEL_SUPPLY_MODE_SPEED = 0.1;
     public static final double PLUNGER_LAUNCH_POSITION = 0.67;
@@ -85,17 +82,6 @@ public class Launcher {
     public LAUNCHER_FLYWHEEL_CONTROL getLauncherState(){
         return launcherState;
     }
-
-    /*public void flywheelStatus(boolean dpadUpPressed, Magazine.MAGAZINE_POSITION magazinePos) {
-        if(magazinePos == Magazine.MAGAZINE_POSITION.MAGAZINE_AT_LAUNCH) {
-            if(dpadUpPressed) {
-                launcherFlyWheelMotor.setPower(FLYWHEEL_SUPPLY_MODE_SPEED);
-                //I don't know how to set the state to FLYWHEEL_RUNNING_FOR_SUPPLY.
-            }
-
-        }
-
-    }*/
 
 }
 

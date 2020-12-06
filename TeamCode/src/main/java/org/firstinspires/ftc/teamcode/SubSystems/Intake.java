@@ -15,13 +15,6 @@ public class Intake {
 
     public INTAKE_MOTOR_STATE intakeMotorState = INTAKE_MOTOR_STATE.STOPPED;
 
-    public enum INTAKE_BUTTON_STATE {
-        ON,
-        OFF,
-    }
-
-    public INTAKE_BUTTON_STATE intakeButtonState = INTAKE_BUTTON_STATE.OFF;
-
     public double intakePower = 0.8;
     public double intakeReversePower = 0.5;
 
@@ -55,12 +48,6 @@ public class Intake {
             intakeMotorState = INTAKE_MOTOR_STATE.REVERSING;
         }
     }
-
-    /*public void reverseIntake(boolean reverseIntakeFlag) {
-        if(reverseIntakeFlag) {
-            reverseIntakeMotor(0.5);
-        }
-    }*/
 
     public INTAKE_MOTOR_STATE getIntakeState() {
         return intakeMotorState;

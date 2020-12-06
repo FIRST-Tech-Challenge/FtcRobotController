@@ -28,8 +28,5 @@ public class GameField {
         BLUE_ALLIANCE,
         AUDIENCE
     }
-
-    public void Gamefield(){
-
-    }
+    public static PLAYING_ALLIANCE playingAlliance = PLAYING_ALLIANCE.AUDIENCE;
 }

@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import static org.firstinspires.ftc.teamcode.SubSystems.Intake.INTAKE_MOTOR_STATE.STOPPED;
+
 /**
  * Defenition of the HzGamepad Class <BR>
  *
@@ -28,14 +30,14 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class HzGamepad {
 
     //Create gamepad object reference to connect to gamepad1
-    public Gamepad gpGamepad1;
+    public Gamepad gpGamepad;
     public HzDrive gpDrive;
     public Magazine gpMagazine;
     public Intake gpIntake;
     public LaunchController gpLaunchController;
     public Launcher gpLauncher;
     public Arm gpArm;
-    public GameField.PLAYING_ALLIANCE playingAlliance;
+    //public GameField gpGameField;
 
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
@@ -50,7 +52,7 @@ public class HzGamepad {
                      LaunchController gpLaunchControllerPassed,
                      Launcher gpLauncherPassed,
                      Arm gpArmPassed) {
-        gpGamepad1 = gamepadPassed;
+        gpGamepad = gamepadPassed;
         gpDrive = gpDrivePassed;
         gpMagazine = gpMagazinePassed;
         gpIntake = gpIntakePassed;
@@ -60,21 +62,10 @@ public class HzGamepad {
     }
 
     public void runByGamepad(){
-        /*    if(getLeftTrigger()>0.5){}*/
-        /*    if (getLeftBumperPress()) {}*/
-        /*    if (getRightBumperPress()) {}*/
-        /*    if (getButtonXPress()) {}*/
-        /*    if (getButtonBPress()){}*/
-        /*    if (getButtonAPress()){}*/
-        /*    if (getButtonYPress()){}*/
-        /*    if (getDpad_upPress()){}*/
-        /*    if (getDpad_downPress()){}*/
-
         runMagazineControl();
         runIntakeControl();
         runLaunchController();
         runLauncher();
-        //Run Drive based on gamePad Left stick and right stick
         runByGamepadRRDriveModes();
         runArm();
     }
@@ -94,27 +85,26 @@ public class HzGamepad {
         };
 
         if (gpDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
-            if (playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE) { // Audience
+            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE) { // Audience
                 gpDrive.gamepadInput = new Vector2d(
                         -turboMode(getLeftStickY()),
                         -turboMode(getLeftStickX())
                 ).rotated(-gpDrive.poseEstimate.getHeading());
             }
 
-            if (playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
+            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
                 gpDrive.gamepadInput = new Vector2d(
                         turboMode(getLeftStickX()),
                         -turboMode(getLeftStickY())
                 ).rotated(-gpDrive.poseEstimate.getHeading());
             };
 
-            if (playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
+            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
                 gpDrive.gamepadInput = new Vector2d(
                         -turboMode(getLeftStickX()),
                         turboMode(getLeftStickY())
                 ).rotated(-gpDrive.poseEstimate.getHeading());
             };
-            //gpDrive.gamepadInput.rotated(-gpDrive.poseEstimate.getHeading());
         }
         gpDrive.gamepadInputTurn = -turboMode(getRightStickX());
 
@@ -128,38 +118,22 @@ public class HzGamepad {
     }
 
     public void runMagazineControl(){
-        //****Magazine Actions****
-        //gpMagazine.senseMagazineRingStatus();;
-        /*if (gpMagazine.isMagazineFull()) {
-            gpIntake.stopIntakeMotor();
-            gpMagazine.moveMagazineToLaunch();
-        }
-
-        if (gpMagazine.isMagazineEmpty()) {
-            gpMagazine.moveMagazineToCollect();
-        }*/
-
         if (gpMagazine.magazinePosition == Magazine.MAGAZINE_POSITION.AT_COLLECT){
             gpLauncher.stopFlyWheel();
-            if (gpIntake.intakeButtonState == Intake.INTAKE_BUTTON_STATE.ON){
-                gpIntake.runIntakeMotor();
-            }
         }
-
     }
 
     public void runIntakeControl(){
+
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
         if (getDpad_downPress()) {
             if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.STOPPED) {
+                gpLaunchController.deactivateLaunchReadiness();
                 if(gpMagazine.moveMagazineToCollect()) {
                     gpIntake.runIntakeMotor();
                 }
-                gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
-                gpIntake.intakeButtonState = Intake.INTAKE_BUTTON_STATE.ON;
             } else if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.RUNNING) {
                 gpIntake.stopIntakeMotor();
-                gpIntake.intakeButtonState = Intake.INTAKE_BUTTON_STATE.OFF;
             }
         }
 
@@ -173,44 +147,40 @@ public class HzGamepad {
     }
 
     public void runLaunchController(){
-
-        if (getStartPersistent() && getButtonBPress()) {
+        if (getStartPersistent() && getButtonYPress()) {
             gpLaunchController.toggleModeManualAutomated();
         }
 
-        //High, Middle, Low Goal
-        if (getButtonYPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.HIGH_GOAL);
-        }
+        if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED) {
+            //High, Middle, Low Goal
+            if (getButtonYPress()) {
+                gpLaunchController.lcTarget = LaunchController.LAUNCH_TARGET.HIGH_GOAL;
+                gpLaunchController.activateLaunchReadiness();
+            }
 
-        //Power Shot 1
-        if (getButtonXPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.POWER_SHOT1);
-        }
+            //Power Shot 1
+            if (getButtonXPress()) {
+                gpLaunchController.lcTarget = LaunchController.LAUNCH_TARGET.POWER_SHOT1;
+                gpLaunchController.activateLaunchReadiness();
+            }
 
-        //Power Shot 2
-        if (getButtonBPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.POWER_SHOT2);
-        }
+            //Power Shot 2
+            if (getButtonBPress()) {
+                gpLaunchController.lcTarget = LaunchController.LAUNCH_TARGET.POWER_SHOT2;
+                gpLaunchController.activateLaunchReadiness();
+            }
 
-        //Power Shot 3
-        if (getButtonAPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.POWER_SHOT3);
+            //Power Shot 3
+            if (getButtonAPress()) {
+                gpLaunchController.lcTarget = LaunchController.LAUNCH_TARGET.POWER_SHOT3;
+                gpLaunchController.activateLaunchReadiness();
+            }
         }
 
         if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.ACTIVATED) {
             gpLaunchController.runLauncherByDistanceToTarget();
-        }
-
-        if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.ACTIVATED){
             if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
-                gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
-                gpLauncher.stopFlyWheel();
-                gpLaunchController.turnRobotToNormalControl();
+                gpLaunchController.deactivateLaunchReadiness();
             }
         }
 
@@ -220,18 +190,10 @@ public class HzGamepad {
 
     public void runLauncher(){
         if (getRightBumperPress()) {
-            //TODO : AMJAD : Launch Controller should be used to check if status is good to launch
-
-            //AMJAD : moveMagazinetoLaunch should not be called by right bumper,
-            //it is to be done either automatically, or by Y,X,A,B button press.
-            //gpMagazine.moveMagazineToLaunch();
-
-            if (/*!gpMagazine.isMagazineEmpty() &&*/
-                    gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
+            if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
                     gpLaunchController.launchReadiness == LaunchController.LAUNCH_READINESS.READY) {
                 gpLauncher.plungeRingToFlyWheel();
             }
-
         }
     }
 
@@ -248,18 +210,6 @@ public class HzGamepad {
                 gpArm.openGrip();
             }
         }
-    }
-
-    // Classic Drive Train
-    public void runByGamepadInputClassicChassis(ChassisClassic gpChassisClassic) {
-        //Run Classic DriveTrain
-        double leftStickX = turboMode(getLeftStickX());
-        double leftStickY = turboMode(getLeftStickY());
-        double rightStickX = turboMode(getRightStickX());
-        double power = Math.hypot(leftStickX, leftStickY);
-        double targetAngle = Math.atan2(leftStickY, leftStickX);
-        double turn = rightStickX;
-        gpChassisClassic.runByGamepadCommand(targetAngle, turn, power);
     }
 
     //*********** KEY PAD MODIFIERS BELOW ***********
@@ -314,7 +264,7 @@ public class HzGamepad {
      * @return gpGamepad1.left_stick_x
      */
     public double getLeftStickX() {
-        return gpGamepad1.left_stick_x;
+        return gpGamepad.left_stick_x;
     }
 
     /**
@@ -324,7 +274,7 @@ public class HzGamepad {
      *
      * @return gpGamepad1.left_stick_y
      */
-    public double getLeftStickY() { return gpGamepad1.left_stick_y; }
+    public double getLeftStickY() { return gpGamepad.left_stick_y; }
 
     /**
      * Methods to get the value of gamepad Right stick X to keep turning.
@@ -334,7 +284,7 @@ public class HzGamepad {
      * @return gpGamepad1.right_stick_x
      */
     public double getRightStickX() {
-        return gpGamepad1.right_stick_x;
+        return gpGamepad.right_stick_x;
     }
 
     /**
@@ -345,7 +295,7 @@ public class HzGamepad {
      * @return gpGamepad1.right_trigger
      */
     public double getRightTrigger() {
-        return gpGamepad1.right_trigger;
+        return gpGamepad.right_trigger;
     }
 
     /**
@@ -354,7 +304,7 @@ public class HzGamepad {
      * @return gpGamepad1.right_trigger
      */
     public double getLeftTrigger() {
-        return gpGamepad1.left_trigger;
+        return gpGamepad.left_trigger;
     }
 
     public boolean getLeftTriggerPress() {
@@ -378,10 +328,10 @@ public class HzGamepad {
      */
     public boolean getLeftBumperPress() {
         boolean isPressedLeftBumper = false;
-        if (!gp1LeftBumperLast && gpGamepad1.left_bumper) {
+        if (!gp1LeftBumperLast && gpGamepad.left_bumper) {
             isPressedLeftBumper = true;
         }
-        gp1LeftBumperLast = gpGamepad1.left_bumper;
+        gp1LeftBumperLast = gpGamepad.left_bumper;
         return isPressedLeftBumper;
     }
 
@@ -397,10 +347,10 @@ public class HzGamepad {
      */
     public boolean getRightBumperPress() {
         boolean isPressedRightBumper = false;
-        if (!gp1RightBumperLast && gpGamepad1.right_bumper) {
+        if (!gp1RightBumperLast && gpGamepad.right_bumper) {
             isPressedRightBumper = true;
         }
-        gp1RightBumperLast = gpGamepad1.right_bumper;
+        gp1RightBumperLast = gpGamepad.right_bumper;
         return isPressedRightBumper;
     }
 
@@ -416,10 +366,10 @@ public class HzGamepad {
      */
     public boolean getButtonAPress() {
         boolean isPressedButtonA = false;
-        if (!gp1ButtonALast && gpGamepad1.a) {
+        if (!gp1ButtonALast && gpGamepad.a) {
             isPressedButtonA = true;
         }
-        gp1ButtonALast = gpGamepad1.a;
+        gp1ButtonALast = gpGamepad.a;
         return isPressedButtonA;
     }
 
@@ -435,10 +385,10 @@ public class HzGamepad {
      */
     public boolean getButtonYPress() {
         boolean isPressedButtonY = false;
-        if (!gp1ButtonYLast && gpGamepad1.y) {
+        if (!gp1ButtonYLast && gpGamepad.y) {
             isPressedButtonY = true;
         }
-        gp1ButtonYLast = gpGamepad1.y;
+        gp1ButtonYLast = gpGamepad.y;
         return isPressedButtonY;
     }
 
@@ -454,10 +404,10 @@ public class HzGamepad {
      */
     public boolean getButtonXPress() {
         boolean isPressedButtonX = false;
-        if (!gp1ButtonXLast && gpGamepad1.x) {
+        if (!gp1ButtonXLast && gpGamepad.x) {
             isPressedButtonX = true;
         }
-        gp1ButtonXLast = gpGamepad1.x;
+        gp1ButtonXLast = gpGamepad.x;
         return isPressedButtonX;
     }
 
@@ -473,10 +423,10 @@ public class HzGamepad {
      */
     public boolean getButtonBPress() {
         boolean isPressedButtonB = false;
-        if (!gp1ButtonBLast && gpGamepad1.b) {
+        if (!gp1ButtonBLast && gpGamepad.b) {
             isPressedButtonB = true;
         }
-        gp1ButtonBLast = gpGamepad1.b;
+        gp1ButtonBLast = gpGamepad.b;
         return isPressedButtonB;
     }
 
@@ -495,16 +445,16 @@ public class HzGamepad {
 
         isPressedDpad_up = false;
 
-        if (!gp1Dpad_upLast && gpGamepad1.dpad_up) {
+        if (!gp1Dpad_upLast && gpGamepad.dpad_up) {
             isPressedDpad_up = true;
         }
-        gp1Dpad_upLast = gpGamepad1.dpad_up;
+        gp1Dpad_upLast = gpGamepad.dpad_up;
         return isPressedDpad_up;
 
     }
 
     public boolean getDpad_upPersistent(){
-        return gpGamepad1.dpad_up;
+        return gpGamepad.dpad_up;
     }
 
     /**
@@ -521,16 +471,16 @@ public class HzGamepad {
         boolean isPressedDpad_down;
 
         isPressedDpad_down = false;
-        if (!gp1Dpad_downLast && gpGamepad1.dpad_down) {
+        if (!gp1Dpad_downLast && gpGamepad.dpad_down) {
             isPressedDpad_down = true;
         }
-        gp1Dpad_downLast = gpGamepad1.dpad_down;
+        gp1Dpad_downLast = gpGamepad.dpad_down;
         return isPressedDpad_down;
 
     }
 
     public boolean getStartPersistent(){
-        return gpGamepad1.start;
+        return gpGamepad.start;
     }
 
 
