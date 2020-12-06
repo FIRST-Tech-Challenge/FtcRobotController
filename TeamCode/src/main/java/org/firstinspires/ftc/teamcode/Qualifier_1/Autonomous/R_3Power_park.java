@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometry;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
-@Autonomous(name= "R_3Power_park")
+@Autonomous(name= "R_3Power_park")//12.76-13.7
 public class R_3Power_park extends LinearOpMode {
     final boolean debug= true;
     @Override
@@ -38,10 +38,10 @@ public class R_3Power_park extends LinearOpMode {
             robot.moveAngle(4,-83, 0.7);
             robot.turnInPlace(0,0.5);
             robot.moveWobbleGoalServo(true);
-            robot.moveAngle(0,2.5, 0.7);
+            robot.moveAngle(0,3.5, 0.7);
             robot.turnInPlace(0,0.5);
-            robot.moveAngle(11,22, 0.7);
-            robot.turnInPlace(0,1.0);
+            robot.moveAngle(15,22, 0.7);
+            robot.turnInPlace(2,1.0);
         }
         else if(rings==4) {
             robot.moveAngle(-25, -110,0.7);
@@ -64,12 +64,12 @@ public class R_3Power_park extends LinearOpMode {
                 sleep(250);
                 robot.turnInPlace(0, 0.5);
                 robot.moveAngle(-15, 0, 0.5);
-                robot.wobbleGoalGoToPosition(WobbleGoal.Position.RAISE);
-                robot.moveAngle(-35, -55, 0.5);
+                robot.wobbleGoalGoToPosition(WobbleGoal.Position.RELEASE);
+                robot.moveAngle(-35, -50, 0.5);
                 robot.wobbleGoalGoToPosition(WobbleGoal.Position.DROP);
-                sleep(1500);
+                robot.moveAngle(15,0,0.5);
                 robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
-                robot.moveAngle(15, 0, 0.7);
+                sleep(5000);
             }
             if (rings == 1) {
                 robot.turnInPlace(0, 1.0);
@@ -77,14 +77,13 @@ public class R_3Power_park extends LinearOpMode {
                 robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
                 sleep(250);
                 robot.turnInPlace(0, 0.5);
-                robot.moveAngle(-15, 0, 0.5);
-                robot.wobbleGoalGoToPosition(WobbleGoal.Position.RAISE);
+                robot.moveAngle(-25, 0, 0.5);
+                robot.wobbleGoalGoToPosition(WobbleGoal.Position.RELEASE);
                 robot.moveAngle(-10, -82, 0.5);
                 robot.wobbleGoalGoToPosition(WobbleGoal.Position.DROP);
-                robot.moveAngle(5,0,0.25);
+                robot.moveAngle(10,0,0.4);
                 robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
-                robot.moveAngle(7, 5, 0.7);
-                robot.moveAngle(0, 15, 0.7);
+                robot.moveAngle(7, 30, 0.7);
 
             }
         }

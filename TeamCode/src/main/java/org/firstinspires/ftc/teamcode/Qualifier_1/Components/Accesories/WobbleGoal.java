@@ -34,7 +34,7 @@ public class WobbleGoal {
     private final int ticksForAutonomousDrop = 950;
     private final int ticksForSTARTOFTELEEOP = 200;
     private final double wobbleGoalSpeed = 0.3;
-    private final double wobbleGoalSpeedDrop = 0.5;
+    private final double wobbleGoalSpeedDrop = 0.3;
 
     public WobbleGoal(LinearOpMode opMode) {
         //setting the opmode

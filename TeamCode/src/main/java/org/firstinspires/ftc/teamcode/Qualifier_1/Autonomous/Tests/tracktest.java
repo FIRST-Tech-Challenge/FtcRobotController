@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous.Tests;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -8,8 +9,8 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometry;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
-@Disabled
 @Autonomous(name= "tracktest")
+@Disabled
 public class tracktest extends LinearOpMode{
 final boolean debug = true;
 
