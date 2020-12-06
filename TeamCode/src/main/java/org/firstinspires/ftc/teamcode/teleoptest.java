@@ -15,7 +15,7 @@ public class teleoptest extends OpMode {
 
     @Override
     public void init() {
-        robot.init();
+        robot.init(hardwareMap);
 //        robot.setEncoders(robot.motors, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Set to REVERSE if using AndyMark motors
         robot.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);// Set to FORWARD if using AndyMark motors

@@ -3,8 +3,13 @@ package org.firstinspires.ftc.teamcode;
 public class teleConfigEx implements teleOpInterface {
     HardwareMapV2 robot;
     Drivetrain drivetrain;
+    double intakeTime;
 
-    public void a(boolean pressed) { if (pressed) {robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 1);} }
+    teleConfigEx (HardwareMapV2 robot) {
+        this.robot = robot;
+    }
+
+    public void a(boolean pressed) { if (pressed && System.currentTimeMillis()-intakeTime>=1000) {robot.intake.setPower((robot.intake.getPower() >= 0.1) ? 0 : 0.6); intakeTime = System.currentTimeMillis();} }
 
     public void b(boolean pressed) { if (pressed) {drivetrain.outtakeAll((robot.outtake.getPower() >= 0.1) ? 0 : 1);} }
 

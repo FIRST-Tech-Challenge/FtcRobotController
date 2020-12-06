@@ -5,7 +5,10 @@ public class teleConfigSamih implements teleOpInterface {
     Drivetrain drivetrain;
     double angle = 0;
     double outlimiter = 1f;
-    
+
+    teleConfigSamih(HardwareMapV2 robot){
+        this.robot = robot;
+    }
 
     public void updateTelemetryDM() {
 

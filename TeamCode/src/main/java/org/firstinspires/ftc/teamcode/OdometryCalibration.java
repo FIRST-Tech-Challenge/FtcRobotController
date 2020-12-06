@@ -22,7 +22,7 @@ public class OdometryCalibration extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.init();
+        robot.init(hardwareMap);
         robot.setEncoders(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.setEncoders(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("Odometry System Calibration Status", "Initialized Wheels");

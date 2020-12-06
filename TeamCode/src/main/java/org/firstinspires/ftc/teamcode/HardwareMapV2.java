@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class HardwareMapV2 {
-    DcMotor frontRight, frontLeft, backRight, backLeft, intake, outtake;
-    DcMotor leftVertical, rightVertical, horizontal;
+    public DcMotor frontRight = null, frontLeft = null, backRight = null, backLeft = null, intake = null, outtake = null;
+    public DcMotor leftVertical = null, rightVertical = null, horizontal = null;
 
-    CRServo conveyor;
-    Servo leftTilt, rightTilt;
+    public CRServo conveyor = null;
+    public Servo leftTilt = null, rightTilt = null;
     boolean odometry = false;
 
     ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake, outtake));
@@ -32,19 +32,22 @@ public class HardwareMapV2 {
 
     }
 
-    public void init () {
+    public void init (HardwareMap awhMap) {
+
+        hwMap = awhMap;
         frontLeft = hwMap.get(DcMotor.class, "front_left");
         frontRight = hwMap.get(DcMotor.class, "front_right");
         backRight = hwMap.get(DcMotor.class, "back_right");
         backLeft = hwMap.get(DcMotor.class, "back_left");
         intake = hwMap.get(DcMotor.class, "succ");
-        //outtake = hwMap.dcMotor.get("spit");
+        outtake = hwMap.get(DcMotor.class, "spit");
+
         if (odometry) {
             leftVertical = hwMap.dcMotor.get("left_vertical");
             rightVertical = hwMap.dcMotor.get("right_vertical");
             horizontal = hwMap.dcMotor.get("horizontal");
         }
-        //conveyor = hwMap.crservo.get("convey");
+        conveyor = hwMap.get(CRServo.class, "convey");
         leftTilt = hwMap.get(Servo.class, "left_tilt");
         rightTilt = hwMap.get(Servo.class, "right_tilt");
 
@@ -52,8 +55,8 @@ public class HardwareMapV2 {
         frontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         backRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        //outtake.setDirection(DcMotor.Direction.FORWARD);
+        intake.setDirection(DcMotor.Direction.REVERSE);
+        outtake.setDirection(DcMotor.Direction.FORWARD);
 
         if (odometry) {
             leftVertical.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -63,6 +66,8 @@ public class HardwareMapV2 {
         //conveyor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftTilt.setDirection(Servo.Direction.REVERSE);
         rightTilt.setDirection(Servo.Direction.FORWARD);
+        conveyor.setDirection(CRServo.Direction.FORWARD);
+
     }
 
     public void setEncoders(ArrayList<DcMotor> motors, DcMotor.RunMode mode){

@@ -15,6 +15,10 @@ public class teleConfigRohit implements teleOpInterface {
     static double outtakePower = 1.0;
     static double conveyorPower = 1.0;
 
+    teleConfigRohit(HardwareMapV2 robot){
+        this.robot = robot;
+    }
+
     public void a(boolean pressed) {
         if (pressed) {conveyorPower-=0.1;}
     }

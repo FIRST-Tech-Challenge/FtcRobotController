@@ -12,7 +12,7 @@ public class testAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.init();
+        robot.init(hardwareMap);
 
         telemetry.addData("Status", "Initializing Hardware");
         telemetry.update();

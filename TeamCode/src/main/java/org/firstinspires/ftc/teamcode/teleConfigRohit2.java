@@ -6,6 +6,9 @@ public class teleConfigRohit2 implements teleOpInterface {
     enum overrides{INTAKE, CONVEYOR, OUTTAKE, NONE}
     overrides currOverride;
     double limiter2, limiter1, outtakeC, outtakeW, intake = 1.0;
+    teleConfigRohit2(HardwareMapV2 robot){
+        this.robot = robot;
+    }
 
     public void a(boolean pressed) {
         //wheel out only

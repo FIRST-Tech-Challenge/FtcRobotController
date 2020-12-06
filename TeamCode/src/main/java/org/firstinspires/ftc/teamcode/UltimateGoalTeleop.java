@@ -53,9 +53,9 @@ public class UltimateGoalTeleop extends OpMode{
     MecanumDriveTrain vroom;
 
     /* Declare OpMode members. */
-    HardwareMapV2 robot; // use the class created to define a RoverRuckus's hardware
+    HardwareMapV2 robot = new HardwareMapV2(); // use the class created to define a RoverRuckus's hardware
 
-    teleOpInterface t = new teleConfigEx();
+    teleOpInterface t = new teleConfigEx(robot);
     ArrayList<Class<? extends teleOpInterface>> configs = new ArrayList<>();
     int index = 0;
     /*
@@ -67,8 +67,12 @@ public class UltimateGoalTeleop extends OpMode{
          * The init() method of the hardware class does all the work here
          */
 
-        robot.init();
-        robot.setEncoders(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.init(hardwareMap);
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Set to REVERSE if using AndyMark motors
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);// Set to FORWARD if using AndyMark motors
+        robot.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // initializing the variables
 
@@ -77,19 +81,13 @@ public class UltimateGoalTeleop extends OpMode{
 
         configs.add(teleConfigEx.class);
         configs.add(teleConfigRohit.class);
-        configs.add(teleConfigSamih.class);
+//        configs.add(teleConfigSamih.class);
         configs.add(teleConfigRohit2.class);
 
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Haddi", "Haddi");
         telemetry.update();
-
-        try {
-            changeConfig();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -165,7 +163,6 @@ public class UltimateGoalTeleop extends OpMode{
 
     public void changeConfig() throws InterruptedException {
         while (!gamepad2.x) {
-            Thread.sleep(100);
             if (gamepad2.dpad_down && index==(configs.size()-1)){index++;}
             if (gamepad2.dpad_up && index==0){index--;}
             for (Class<? extends teleOpInterface> t : configs){
@@ -174,13 +171,13 @@ public class UltimateGoalTeleop extends OpMode{
             telemetry.update();
         }
         if (configs.get(index).getName().equals(teleConfigEx.class.getName())){
-            t = new teleConfigEx();
+            t = new teleConfigEx(robot);
         }else if (configs.get(index).getName().equals(teleConfigRohit.class.getName())){
-            t = new teleConfigRohit();
-        }else if (configs.get(index).getName().equals(teleConfigSamih.class.getName())){
-            t = new teleConfigSamih();
+            t = new teleConfigRohit(robot);
+//        }else if (configs.get(index).getName().equals(teleConfigSamih.class.getName())){
+//            t = new teleConfigSamih(robot);
         }else if (configs.get(index).getName().equals(teleConfigRohit2.class.getName())){
-            t = new teleConfigRohit2();
+            t = new teleConfigRohit2(robot);
         }
     }
 
