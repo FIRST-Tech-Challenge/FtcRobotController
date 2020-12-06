@@ -141,13 +141,13 @@ public class OdometryTeleOp extends LinearOpMode{
         }
 
 
-        while (globalPositionUpdate.returnXCoordinate() > yPos && C == 1) {
+        while (globalPositionUpdate.returnYCoordinate() > yPos && C == 1) {
             robotStrafe(-1, 0);
         }
-        while (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
+        while (globalPositionUpdate.returnYCoordinate() < yPos && C == 1) {
             robotStrafe(1, 0);
         }
-        if (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
+        if (globalPositionUpdate.returnYCoordinate() < yPos && C == 1) {
             robot.completeStop();
             odometryNormalizeAngle();
             C = 2;

@@ -63,12 +63,67 @@ public class IMURobot {
     //Odometry encoder wheels
     DcMotor verticalRight, verticalLeft, horizontal;
 
+    private boolean usingOdometry;
+
     //The amount of encoder ticks for each inch the robot moves. This will change for each robot and needs to be changed here
     final double COUNTS_PER_INCH = 307.699557;
 
     //Hardware map names for the encoder wheels. Again, these will change for each robot and need to be updated below
 
     /**
+     * Constructor with odometry
+     * 
+     * @param motorFrontRight
+     * @param motorFrontLeft
+     * @param motorBackRight
+     * @param motorBackLeft
+     * @param verticalLeft
+     * @param verticalRight
+     * @param horizontal
+     * @param imu
+     * @param leftIntakeServo
+     * @param rightIntakeServo
+     * @param leftConveyor
+     * @param rightConveyor
+     * @param elevator
+     * @param flipper
+     * @param intake
+     * @param outtakeRight
+     * @param outtakeLeft
+     * @param opMode The Op Mode using the IMURobot object;
+     *                for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
+     */
+    
+    public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft, 
+                    DcMotor verticalLeft, DcMotor verticalRight, DcMotor horizontal,
+                    BNO055IMU imu, CRServo leftIntakeServo, CRServo rightIntakeServo,
+                    CRServo leftConveyor, CRServo rightConveyor, CRServo elevator, Servo flipper,
+                    CRServo intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
+        this.motorFrontRight = motorFrontRight;
+        this.motorFrontLeft = motorFrontLeft;
+        this.motorBackRight = motorBackRight;
+        this.motorBackLeft = motorBackLeft;
+        this.verticalRight = verticalRight;
+        this.verticalLeft = verticalLeft;
+        this.horizontal = horizontal;
+        this.imu = imu;
+        this.leftIntakeServo = leftIntakeServo;
+        this.rightIntakeServo = rightIntakeServo;
+        this.leftConveyor = leftConveyor;
+        this.rightConveyor = rightConveyor;
+        this.elevator = elevator;
+        this.flipper = flipper;
+        this.intake = intake;
+        this.outtakeRight = outtakeRight;
+        this.outtakeLeft = outtakeLeft;
+        this.opMode = opMode;
+        this.telemetry = opMode.telemetry;
+
+        usingOdometry = true;
+    }
+    
+    /**
+     * Constructor; no odometry
      *
      * @param motorFrontRight
      * @param motorFrontLeft
@@ -87,8 +142,6 @@ public class IMURobot {
      * @param opMode The Op Mode using the IMURobot object;
      *                for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
      */
-
-    OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
 
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
                     BNO055IMU imu, CRServo leftIntakeServo, CRServo rightIntakeServo,
@@ -110,61 +163,45 @@ public class IMURobot {
         this.outtakeLeft = outtakeLeft;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
+
+        usingOdometry = false;
     }
 
     /**
-     *
+     * Constructor, base only with odometry
+     * 
      * @param motorFrontRight
      * @param motorFrontLeft
      * @param motorBackRight
      * @param motorBackLeft
+     * @param verticalLeft
+     * @param verticalRight
+     * @param horizontal
      * @param imu
      * @param opMode The Op Mode using the IMURobot object;
      *                for access to the methods opModeIsActive, the exception InterruptedException, and telemetry
      */
-
-    public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                    BNO055IMU imu, CRServo leftIntakeServo,
-                    CRServo rightIntakeServo, LinearOpMode opMode){
+    
+    public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft, 
+                    DcMotor verticalLeft, DcMotor verticalRight, DcMotor horizontal,
+                    BNO055IMU imu, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
         this.motorBackLeft = motorBackLeft;
+        this.verticalRight = verticalRight;
+        this.verticalLeft = verticalLeft;
+        this.horizontal = horizontal;
         this.imu = imu;
-        this.leftIntakeServo = leftIntakeServo;
-        this.rightIntakeServo = rightIntakeServo;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
+
+        usingOdometry = true;
     }
 
     /**
-     * Constructor, no flimsy
-     * @param motorFrontRight
-     * @param motorFrontLeft
-     * @param motorBackRight
-     * @param motorBackLeft
-     * @param imu
-     * @param leftIntakeServo
-     * @param rightIntakeServo
-     * @param opMode
-     */
-    /* this one is duplicate of one above, and I didn't know if we wanted this still or not
-    public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                    BNO055IMU imu, Servo leftIntakeServo,
-                    Servo rightIntakeServo, LinearOpMode opMode){
-        this.motorFrontRight = motorFrontRight;
-        this.motorFrontLeft = motorFrontLeft;
-        this.motorBackRight = motorBackRight;
-        this.motorBackLeft = motorBackLeft;
-        this.imu = imu;
-        this.leftIntakeServo = leftIntakeServo;
-        this.rightIntakeServo = rightIntakeServo;
-        this.opMode = opMode;
-        this.telemetry = opMode.telemetry;
-    }
-*/
-    /**
-     *
+     * Constructor; base only, no odometry
+     * 
      * @param motorFrontRight The front right motor
      * @param motorFrontLeft The front left motor
      * @param motorBackRight The back right motor
@@ -182,6 +219,8 @@ public class IMURobot {
         this.imu = imu;
         this.opMode = opMode;
         this.telemetry = opMode.telemetry;
+
+        usingOdometry = false;
     }
 
     /**
@@ -223,6 +262,20 @@ public class IMURobot {
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        if(usingOdometry){
+
+            verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    
+            verticalLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            verticalRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            horizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
+            Thread positionThread = new Thread(globalPositionUpdate);
+            positionThread.start();
+        }
 
         setIMUParameters();
 
@@ -557,6 +610,40 @@ public class IMURobot {
         Thread.sleep(500);
         resetAngle();
         resetEncoders();
+    }
+
+    /**
+     * Use odometry to strafe to a position
+     * @param targetX X position to strafe to
+     * @param targetY Y position to strafe to
+     * @param power
+     */
+    public void driveToPos(double targetX, double targetY, double power){
+        //calculate angle
+        double currentX = globalPositionUpdate.returnXCoordinate();
+        double currentY = globalPositionUpdate.returnYCoordinate();
+        double currentTheta = globalPositionUpdate.returnOrientation();
+
+        double angle = Math.atan2(targetY - currentY, targetX - currentX) + Math.PI/4 + (currentTheta * Math.PI/180);
+        
+        //calculate powers
+        double leftPower = Math.cos(angle) * power;
+        double rightPower = Math.sin(angle) * power;
+
+        //strafe until position is reached
+        resetAngle();
+        while(Math.abs(targetY - globalPositionUpdate.returnYCoordinate()) > 0 && Math.abs(targetX - globalPositionUpdate.returnXCoordinate()) > 0 && opMode.opModeIsActive()){
+            telemetry.addData("Current X", globalPositionUpdate.returnXCoordinate());
+            telemetry.addData("Current Y", globalPositionUpdate.returnYCoordinate());
+            telemetry.update();
+            
+            double correction = getCorrection();
+            correctedTankStrafe(leftPower, rightPower, correction);
+        }
+        completeStop();
+        Thread.sleep(500);
+        resetAngle();
+
     }
 
     /**
