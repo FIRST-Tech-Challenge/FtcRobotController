@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -23,11 +24,10 @@ public class DriveTrain {
     LinearOpMode opMode;
     Timer timer;
     TimerTask increasePower;
-    private double wheelPower = 1;
-    private double wheelOnePower = 1;
-    private double wheelTwoPower = 1;
-    private double wheelThreePower = 1;
-    private double wheelFourPower = 1;
+    private double wheelOnePower = 0.8;
+    private double wheelTwoPower = 0.8;
+    private double wheelThreePower = 0.8;
+    private double wheelFourPower = 0.8;
     private double wheelOneRatio = 1;
     private double wheelTwoRatio = 1;
     private double wheelThreeRatio = 1;
@@ -59,28 +59,35 @@ public class DriveTrain {
     }
 
     public void goForward(double inches) {
+        double pCoeff = 0.15; //larger means more reactive
         double startPosition = 0;
         double endPosition = 0;
         showData("DRIVE_TRAIN_CAPTION", "Robot is moving forward");
         this.telemetry.update();
         startPosition = hera.motorOne.getCurrentPosition();
         endPosition = startPosition + (inches * INCH_TO_TICK); // How far you need to travel
-        hera.motorOne.setPower(wheelPower);
-        //hera.motorTwo.setPower(wheelPower);
-        hera.motorThree.setPower(wheelPower);
-        //hera.motorFour.setPower(wheelPower);
+        Orientation angles;
+        angles = hera.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        while(!this.opMode.isStopRequested() && hera.imu.isGyroCalibrated()) {
+            this.opMode.sleep(50);
+            this.opMode.idle();
+        }
+        double startingOrientation = angles.firstAngle;
         while (hera.motorOne.getCurrentPosition() < endPosition && this.opMode.opModeIsActive()) {
+            double error = startingOrientation - angles.firstAngle;
+            double steer = Range.clip(error*pCoeff, -1, 1);
+            wheelOnePower -=steer;
+            hera.motorOne.setPower(wheelOnePower);
+            hera.motorTwo.setPower(wheelTwoPower);
+            hera.motorThree.setPower(wheelThreePower);
+            hera.motorFour.setPower(wheelFourPower);
             showData("StartPosition", "" + startPosition);
             showData("EndPosition", "" + endPosition);
             showData("CurrentPosition", "" + hera.motorOne.getCurrentPosition());
-            do{
-                goStraight();
-            } while(!(this.wheelOneRatio == 1 && this.wheelThreeRatio == 1));
-
             showData("wheel one power", "" + hera.motorOne.getPower());
-            //showData("wheel two power", "" + hera.motorTwo.getPower());
+            showData("wheel two power", "" + hera.motorTwo.getPower());
             showData("wheel three power", "" + hera.motorThree.getPower());
-            //showData("wheel four power", "" + hera.motorFour.getPower());
+            showData("wheel four power", "" + hera.motorFour.getPower());
             showData("CurrentPosition", "" + hera.motorOne.getCurrentPosition());
             this.telemetry.update();
         }
@@ -96,10 +103,10 @@ public class DriveTrain {
         startPosition = hera.motorOne.getCurrentPosition();
         endPosition = startPosition - (inches * INCH_TO_TICK); // How far you need to travel
         while (hera.motorOne.getCurrentPosition() > endPosition && this.opMode.opModeIsActive()) {
-            hera.motorOne.setPower(-wheelPower);
-            hera.motorTwo.setPower(-wheelPower);
-            hera.motorThree.setPower(-wheelPower);
-            hera.motorFour.setPower(-wheelPower);
+            hera.motorOne.setPower(-wheelOnePower);
+            hera.motorTwo.setPower(-wheelTwoPower);
+            hera.motorThree.setPower(-wheelThreePower);
+            hera.motorFour.setPower(-wheelFourPower);
             showData("wheel one power", "" + hera.motorOne.getPower());
             showData("wheel two power", "" + hera.motorTwo.getPower());
             showData("wheel three power", "" + hera.motorThree.getPower());
@@ -121,10 +128,10 @@ public class DriveTrain {
         if (degreesToTurn < 0) {
             while ((angles.firstAngle > degreesToTurn) && this.opMode.opModeIsActive()) {
                 double generalPower = (degreesToTurn - angles.firstAngle)/(degreesToTurn);
-                hera.motorOne.setPower(generalPower * wheelPower);
-                hera.motorTwo.setPower(generalPower * wheelPower);
-                hera.motorThree.setPower(-generalPower * wheelPower);
-                hera.motorFour.setPower(-generalPower * wheelPower);
+                hera.motorOne.setPower(generalPower * wheelOnePower);
+                hera.motorTwo.setPower(generalPower * wheelTwoPower);
+                hera.motorThree.setPower(-generalPower * wheelThreePower);
+                hera.motorFour.setPower(-generalPower * wheelFourPower);
                 angles = hera.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 String turnInfo = "angles: " + angles.firstAngle + ", " + angles.secondAngle + ", " + angles.thirdAngle;
                 showData("Turning", turnInfo);
@@ -132,10 +139,10 @@ public class DriveTrain {
         } else {
             while ((angles.firstAngle < degreesToTurn) && this.opMode.opModeIsActive()) {
                 double generalPower = (degreesToTurn - angles.firstAngle)/degreesToTurn;
-                hera.motorOne.setPower(-generalPower * wheelPower);
-                hera.motorTwo.setPower(-generalPower * wheelPower);
-                hera.motorThree.setPower(generalPower * wheelPower);
-                hera.motorFour.setPower(generalPower * wheelPower);
+                hera.motorOne.setPower(-generalPower * wheelOnePower);
+                hera.motorTwo.setPower(-generalPower * wheelTwoPower);
+                hera.motorThree.setPower(generalPower * wheelThreePower);
+                hera.motorFour.setPower(generalPower * wheelFourPower);
                 angles = hera.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 telemetry.addData("degreesToTurn", degreesToTurn);
                 telemetry.update();
@@ -157,10 +164,10 @@ public class DriveTrain {
             showData("going Left", "Start Pos: " + startPosition);
             showData("going Left", "Current Pos: " + hera.motorOne.getCurrentPosition());
 
-            hera.motorOne.setPower(-wheelPower);
-            hera.motorTwo.setPower(wheelPower);
-            hera.motorThree.setPower(wheelPower);
-            hera.motorFour.setPower(-wheelPower);
+            hera.motorOne.setPower(-wheelOnePower);
+            hera.motorTwo.setPower(wheelTwoPower);
+            hera.motorThree.setPower(wheelThreePower);
+            hera.motorFour.setPower(-wheelFourPower);
         }
         this.stop();
     }
@@ -175,10 +182,10 @@ public class DriveTrain {
             showData("goRight", "start position is " + startPosition);
             showData("goRight", "end position is " + endPosition);
             showData("goRight", "current position is " + hera.motorFour.getCurrentPosition());
-            hera.motorOne.setPower(wheelPower);
-            hera.motorTwo.setPower(-wheelPower);
-            hera.motorThree.setPower(-wheelPower);
-            hera.motorFour.setPower(wheelPower);
+            hera.motorOne.setPower(wheelOnePower);
+            hera.motorTwo.setPower(-wheelTwoPower);
+            hera.motorThree.setPower(-wheelThreePower);
+            hera.motorFour.setPower(wheelFourPower);
         }
         this.stop();
     }

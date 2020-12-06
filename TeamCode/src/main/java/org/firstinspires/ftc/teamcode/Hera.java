@@ -53,25 +53,39 @@ public class Hera {
 //        driveTrain.turn(-90);
 //        driveTrain.goForward(30);
         double motorOneEndPos = 0;
+        double motorTwoEndPos = 0;
         double motorThreeEndPos = 0;
-        hwmap.motorOne.setPower(1);
-        hwmap.motorThree.setPower(1);
+        double motorFourEndPos = 0;
+        hwmap.motorOne.setPower(0.8);
+        hwmap.motorTwo.setPower(0.8);
+        hwmap.motorThree.setPower(0.8);
+        hwmap.motorFour.setPower(0.8);
         double motorOneStartPos = hwmap.motorOne.getCurrentPosition();
+        double motorTwoStartPos = hwmap.motorTwo.getCurrentPosition();
         double motorThreeStartPos = hwmap.motorThree.getCurrentPosition();
+        double motorFourStartPos = hwmap.motorFour.getCurrentPosition();
         int i = 0;
             while (i < 10 && this.opMode.opModeIsActive()) {
                 motorOneEndPos = hwmap.motorOne.getCurrentPosition();
+                motorTwoEndPos = hwmap.motorTwo.getCurrentPosition();
                 motorThreeEndPos = hwmap.motorThree.getCurrentPosition();
+                motorFourEndPos = hwmap.motorFour.getCurrentPosition();
                 i ++;
             }
         double motorOneDist = motorOneEndPos-motorOneStartPos;
         double motorOneSpeed =  motorOneDist/10;
+        double motorTwoDist = motorTwoEndPos-motorTwoStartPos;
+        double motorTwoSpeed = motorTwoDist/10;
         double motorThreeDist = motorThreeEndPos-motorThreeStartPos;
         double motorThreeSpeed = motorThreeDist/10;
-        Log.d("Motor Speeds,", motorOneSpeed + "," + motorThreeSpeed);
+        double motorFourDist = motorFourEndPos-motorFourStartPos;
+        double motorFourSpeed = motorFourDist/10;
+        Log.d("Motor Speeds,", motorOneSpeed + "," + motorTwoSpeed + "," + motorThreeSpeed + "," + motorFourSpeed);
         this.telemetry.addData("MotorOne Distance: ", motorOneDist);
+        this.telemetry.addData("MotorTwo Distance: ", motorTwoDist);
         this.telemetry.addData("MotorThree Distance: ", motorThreeDist);
-        this.telemetry.addData("Motor3 - Motor1", motorThreeDist-motorOneDist);
+        this.telemetry.addData("MotorFour Distance: ", motorFourDist);
+        //this.telemetry.addData("Motor3 - Motor1", motorThreeDist-motorOneDist);
         this.telemetry.addData("Number of Iterations", count);
         this.telemetry.update();
 
