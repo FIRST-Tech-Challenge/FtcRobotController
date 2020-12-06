@@ -60,11 +60,29 @@ public class LegacyCameraConnectionFragment extends Fragment {
                 public void onSurfaceTextureAvailable(
                         final SurfaceTexture texture, final int width, final int height) {
                     Log.d("Listener", "Starting texture listener");
+                    //This variable is required for the fix for the Android media center issue when the camera fails to initialize
+                    final TextureView.SurfaceTextureListener listener = this;
                     int index = getCameraId();
                     Log.d("cameraIndex", String.valueOf(index));
                     camera = Camera.open(index);
 
+                    camera.setErrorCallback(new Camera.ErrorCallback() {
+                        @Override
+                        public void onError(int i, Camera camera) {
+                            Log.e("Listener", String.format("Camera error %d. Width: %d, Height: %d", i, width, height));
+                            //Fix for the Android media center issue when the camera fails to initialize
+                            if (i == 100){
+                                Log.d("Listener", "Camera error is 100");
+                                stopCamera();
+                                Log.d("Listener", "Stopped and released the camera");
+                                listener.onSurfaceTextureAvailable(texture, width, height);
+                            }
+                        }
+                    });
+
                     try {
+//                        camera.stopPreview();
+//                        camera.release();
                         Camera.Parameters parameters = camera.getParameters();
                         List<String> focusModes = parameters.getSupportedFocusModes();
                         if (focusModes != null
