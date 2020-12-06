@@ -31,7 +31,7 @@ public class UltimateBot extends YellowBot {
     private static int SWING_LIFT_UP_POS = 160;
     private static int SWING_LIFT_WALL = 50;
     private static int STRAIGHT_UP = 70;
-    private static double SHOOT_SERVO = 0.4;
+    private static double SHOOT_SERVO = 0.5;
 
     private static double CAMERA_RIGHT_LINE = 0.35;
     private static double CAMERA_LEFT_LINE = 0.5;
@@ -181,9 +181,9 @@ public class UltimateBot extends YellowBot {
     public void shootServo() {
         ElapsedTime runtime = new ElapsedTime();
         if (shooterServo != null) {
-            shooterServo.setPosition(0.8);
+            shooterServo.setPosition(0.15);
             runtime.reset();
-            while (runtime.milliseconds() <= 200) {
+            while (runtime.milliseconds() <= 250) {
 
             }
             shooterServo.setPosition(SHOOT_SERVO);

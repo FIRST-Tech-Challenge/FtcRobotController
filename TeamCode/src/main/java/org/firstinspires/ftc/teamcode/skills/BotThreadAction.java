@@ -11,7 +11,6 @@ public class BotThreadAction implements Runnable {
     private LinearOpMode caller = null;
     private UltimateBot robot = null;
     private String function = "";
-    private boolean isRunning = true;
 
     public BotThreadAction(UltimateBot bot, Telemetry telemetry, String function, LinearOpMode caller) {
         robot = bot;
@@ -22,20 +21,14 @@ public class BotThreadAction implements Runnable {
 
     @Override
     public void run() {
-        while (isRunning) {
-            if (function.contains("wallclose")) {
-                robot.liftWallGrab();
-                break;
-            } else if (function.contains("wobbleback")) {
-                robot.backWobbleSwing();
-                break;
-            } else if (function.contains("wobbleforward")) {
-                robot.forwardWobbleSwing();
-                break;
-            } else if (function.contains("wobblewall")) {
-                robot.liftWobbleWall();
-                break;
-            }
+        if (function.contains("wallclose")) {
+            robot.liftWallGrab();
+        } else if (function.contains("wobbleback")) {
+            robot.backWobbleSwing();
+        } else if (function.contains("wobbleforward")) {
+            robot.forwardWobbleSwing();
+        } else if (function.contains("wobblewall")) {
+            robot.liftWobbleWall();
         }
     }
 }

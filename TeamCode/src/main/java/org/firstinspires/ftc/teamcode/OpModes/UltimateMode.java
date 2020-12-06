@@ -113,17 +113,6 @@ public class UltimateMode extends LinearOpMode {
 
                 // move swing
 
-//                if (gamepad1.dpad_up) {
-//                    robot.forwardWobbleSwing();
-//                } else if (gamepad1.dpad_down) {
-//                    robot.backWobbleSwing();
-//                } else if (gamepad1.dpad_left) {
-//                    robot.liftWobbleWall();
-//                } else if (gamepad1.x) {
-//                    robot.liftWallGrab();
-//                    changedclaw = !changedclaw;
-//                }
-
                 if (gamepad1.dpad_up) {
                     bta = new BotThreadAction(robot, telemetry, "wobbleforward", this);
                     btaThread = new Thread(bta);
