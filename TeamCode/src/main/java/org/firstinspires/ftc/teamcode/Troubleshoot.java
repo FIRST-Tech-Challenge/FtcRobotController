@@ -38,18 +38,26 @@ public class Troubleshoot extends LinearOpMode {
 
         claw = new TwoPosServo(
                 hardwareMap.get(Servo.class, "claw"),
-                0.5, 1.0);
+                0.5, 1);
         gear = new TwoPosServo(
                 hardwareMap.get(Servo.class, "gearbox"),
-                0.5, 1.0);
+                0.5, 1);
 
         waitForStart();
         while (opModeIsActive()) {
 
-            if (-gamepad2.right_stick_y > 0) {
-                lift.up(Math.abs(gamepad2.right_stick_y));
-            } else if (-gamepad2.right_stick_y < 0){
-                lift.down(Math.abs(gamepad2.right_stick_y));
+//            if (-gamepad2.right_stick_y > 0) {
+//                lift.up(Math.abs(gamepad2.right_stick_y));
+//            } else if (-gamepad2.right_stick_y < 0){
+//                lift.down(Math.abs(gamepad2.right_stick_y));
+//            } else {
+//                lift.rest();
+//            }
+
+            if (gamepad1.right_trigger > 0) {
+                lift.up(Math.abs(gamepad1.right_trigger));
+            } else if (gamepad1.left_trigger > 0){
+                lift.down(Math.abs(gamepad1.left_trigger));
             } else {
                 lift.rest();
             }
