@@ -30,7 +30,7 @@ public class WobbleGoal {
     private final int ticksForREST = 0;
     private final int ticksForGRAB = 940;
     private final int ticksForRAISE = 550;
-    private final int ticksForRELEASE = 815;
+    private final int ticksForRELEASE = 795;
     private final int ticksForAutonomousDrop = 950;
     private final int ticksForSTARTOFTELEEOP = 200;
     private final double wobbleGoalSpeed = 0.3;

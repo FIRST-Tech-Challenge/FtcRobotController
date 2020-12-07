@@ -345,10 +345,10 @@ public class Robot {
         shooter.shooterMotor.setPower(0.950);
         op.sleep(1000);
         for(int i=0;i<rings;i++){
-            shooter.shooterMotor.setPower(0.950);
+            shooter.shooterMotor.setPower(0.970);
             moveServo(false);
             if(i!=rings-1) {
-                moveAngle(9.65, 0, 0.5);
+                moveAngle(9.75, 0, 0.5);
                 turnInPlace(2,1.0);
             }
             moveServo(true);

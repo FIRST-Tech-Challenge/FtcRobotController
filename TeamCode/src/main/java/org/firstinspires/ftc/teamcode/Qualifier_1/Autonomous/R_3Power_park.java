@@ -40,8 +40,8 @@ public class R_3Power_park extends LinearOpMode {
             robot.moveWobbleGoalServo(true);
             robot.moveAngle(0,3.5, 0.7);
             robot.turnInPlace(0,0.5);
-            robot.moveAngle(15,22, 0.7);
-            robot.turnInPlace(2,1.0);
+            robot.moveAngle(14,22, 0.7);
+            robot.turnInPlace(0,1.0);
         }
         else if(rings==4) {
             robot.moveAngle(-25, -110,0.7);
@@ -51,8 +51,8 @@ public class R_3Power_park extends LinearOpMode {
             robot.turnInPlace(0,0.5);
             robot.moveAngle(2,39.5,0.7);
             robot.turnInPlace(0,1.0);
-            robot.moveAngle(39,2,0.7);
-            robot.turnInPlace(2,1.0);
+            robot.moveAngle(38,2,0.7);
+            robot.turnInPlace(0,1.0);
         }
         robot.shootRightPowerShot(3);
         if(rings!=4) {
@@ -65,7 +65,7 @@ public class R_3Power_park extends LinearOpMode {
                 robot.turnInPlace(0, 0.5);
                 robot.moveAngle(-15, 0, 0.5);
                 robot.wobbleGoalGoToPosition(WobbleGoal.Position.RELEASE);
-                robot.moveAngle(-35, -50, 0.5);
+                robot.moveAngle(-35, -52, 0.5);
                 robot.wobbleGoalGoToPosition(WobbleGoal.Position.DROP);
                 robot.moveAngle(15,0,0.5);
                 robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
@@ -79,7 +79,7 @@ public class R_3Power_park extends LinearOpMode {
                 robot.turnInPlace(0, 0.5);
                 robot.moveAngle(-25, 0, 0.5);
                 robot.wobbleGoalGoToPosition(WobbleGoal.Position.RELEASE);
-                robot.moveAngle(-10, -82, 0.5);
+                robot.moveAngle(-5, -82, 0.5);
                 robot.wobbleGoalGoToPosition(WobbleGoal.Position.DROP);
                 robot.moveAngle(10,0,0.4);
                 robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
