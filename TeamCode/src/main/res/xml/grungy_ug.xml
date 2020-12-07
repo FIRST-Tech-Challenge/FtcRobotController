@@ -22,7 +22,7 @@ SOFTWARE.
     <!-- Webcam name="webcam" serialNumber="7B2F4FD0" /> -->
 
     <!-- C310 with mount still attached -->
-    <!-- <Webcam name="webcam" serialNumber="8DED65C0" /> -->
+    <Webcam name="webcam" serialNumber="8DED65C0" />
 
     <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ2ATDI3" parentModuleAddress="4">
         <LynxModule name="Main Hub" port="4">
