@@ -30,11 +30,20 @@ import java.util.List;
  */
 public class Hardware {
 
+    //Represents the 6 possible goals to shoot rings at
+    public enum SelectedGoal
+    {
+
+        HIGHGOAL, MIDGOAL, LOWGOAL, POWERSHOTONE, POWERSHOTTWO, POWERSHOTTHREE
+
+    }
+
+    //Positions of the odometry wheels
     public ThreeTrackingWheelLocalizer odom = new ThreeTrackingWheelLocalizer(
             new ArrayList<>(Arrays.asList(
-                    new Pose2d(8.03, 0, Math.PI / 2),
-                    new Pose2d(0, 8.51, 0),
-                    new Pose2d(0, -8.51, 0)))) {
+                    new Pose2d(4.25, 0, Math.PI / 2),
+                    new Pose2d(0, 7.51, 0),
+                    new Pose2d(0, -7.51, 0)))) {
         @Override
         public List<Double> getWheelPositions() {
             ArrayList<Double> wheelPositions = new ArrayList<>(3);
@@ -47,13 +56,21 @@ public class Hardware {
 
     // Measurements and such kept as variables for ease of use
     // Ticks Per Rotation of an odometry wheel
-    private static final double ODOM_TICKS_PER_ROTATION = 1440;
+    private static final double ODOM_TICKS_PER_ROTATION = 2048;
     // Radius of an odometry wheel in cm
-    private static final double ODOM_WHEEL_RADIUS = 3.6 / 2.54;
+    private static final double ODOM_WHEEL_RADIUS = 1.37795;
     // Circumference of an odometry wheel in cm
     private static final double WHEEL_CIRCUM = 2.0 * Math.PI * ODOM_WHEEL_RADIUS;
     // Number of ticks in a centimeter using dimensional analysis
     private static final double ODOM_TICKS_PER_CM = ODOM_TICKS_PER_ROTATION / (WHEEL_CIRCUM);
+
+
+    //Distance from the center of the robot to the launch mechanism in inches.
+    private static final double distCenterToLaunch = 7;
+    //Gravitational constant used for calculating ring launch angle in inches per second squared
+    private static final double ringGravitationalConstant = -386.09;
+    //Radius of flyWheels in inches
+    private static final double flyWheelRadius = 1.5;
 
     // Robot physical location]
     public double x, y, theta;
@@ -80,6 +97,7 @@ public class Hardware {
 
     // Real world distance traveled by the wheels
     public double leftOdomTraveled, rightOdomTraveled, centerOdomTraveled;
+
 
     /**
      * Initialization of hardware
@@ -132,9 +150,9 @@ public class Hardware {
         bulkData = expansionHub.getBulkInputData();
 
         // Change in the distance (centimeters) since the last update for each odometer
-        double deltaLeftDist = -(getDeltaLeftTicks() / ODOM_TICKS_PER_CM) * 1.07;
-        double deltaRightDist = -(getDeltaRightTicks() / ODOM_TICKS_PER_CM) * 1.07;
-        double deltaCenterDist = -getDeltaCenterTicks() / ODOM_TICKS_PER_CM * 1.07;
+        double deltaLeftDist = -(getDeltaLeftTicks() / ODOM_TICKS_PER_CM);
+        double deltaRightDist = -(getDeltaRightTicks() / ODOM_TICKS_PER_CM);
+        double deltaCenterDist = -getDeltaCenterTicks() / ODOM_TICKS_PER_CM;
 
         // Update real world distance traveled by the odometry wheels, regardless of orientation
         leftOdomTraveled += deltaLeftDist;
@@ -150,6 +168,9 @@ public class Hardware {
 
     }
 
+    /**
+     * Resets the delta on all odometry encoders back to 0
+     * */
     private void resetDeltaTicks() {
         leftEncoderPos = bulkData.getMotorCurrentPosition(leftOdom);
         rightEncoderPos = bulkData.getMotorCurrentPosition(rightOdom);
@@ -193,4 +214,70 @@ public class Hardware {
         centerEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         centerEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
+    public double getLaunchedRingVelocity(){  return 0; }
+
+    /**
+     * Calculates an angle to launch rings at so they will hit a specified game target (assuming the robot turns to face the target)
+     *
+     * @param goal which of the targets to aim rings at
+     * @return an angle which, if rings are launched at when facing a target, will hit that target
+     * */
+    public double getFlyWheelAngle(SelectedGoal goal)
+    {
+
+        //set the x, y, and z of the target to shoot rings at
+        double zGoal=0;
+        double xGoal=0;
+        double yGoal=0;
+        switch(goal)
+        {
+
+            case LOWGOAL:
+                yGoal=0;
+                xGoal=36;
+                zGoal=17;
+                break;
+            case MIDGOAL:
+                yGoal=0;
+                xGoal=36;
+                zGoal=27.0625;
+                break;
+            case HIGHGOAL:
+                yGoal=0;
+                xGoal=36;
+                zGoal=35.875;
+                break;
+            case POWERSHOTONE:
+                yGoal=0;
+                xGoal=54;
+                zGoal=30.875;
+                break;
+            case POWERSHOTTWO:
+                yGoal=0;
+                xGoal=61.5;
+                zGoal=30.875;
+                break;
+            case POWERSHOTTHREE:
+                yGoal=0;
+                xGoal=69;
+                zGoal=30.875;
+                break;
+
+        }
+
+        //calculate what the distance from the launch mech to the goal will be after the robot has turned to face the goal
+        double distance = Math.sqrt(Math.pow(x-xGoal,2)+Math.pow(y-yGoal,2))-distCenterToLaunch;
+        //get the velocity of the ring
+        double velocity = getLaunchedRingVelocity();
+
+        //intermediate steps in the calculation to reuse for calculating both of the 2 possible launch angle
+        double vSquared = Math.pow(velocity,2);
+        double gx = ringGravitationalConstant*distance;
+        double sqrt = Math.sqrt(Math.pow(vSquared,2)-ringGravitationalConstant*(gx*distance+2*zGoal*vSquared));
+
+        return Math.atan((vSquared-sqrt)/gx);
+
+    }
+
 }
