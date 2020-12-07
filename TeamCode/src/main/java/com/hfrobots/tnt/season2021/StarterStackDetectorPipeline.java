@@ -19,24 +19,75 @@
 
 package com.hfrobots.tnt.season2021;
 
-import org.opencv.core.Core;
+import android.telecom.TelecomManager;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.util.ArrayList;
+
+import lombok.Builder;
+
+@Builder
 public class StarterStackDetectorPipeline extends OpenCvPipeline {
+
+    private final Telemetry telemetry;
+
+    private final GripPipelineHulls gripPipeline = new GripPipelineHulls();
+
+    enum WobbleDropZone {
+        A, B, C;
+    }
+
+    private final Mat displayMat = new Mat();
+
     @Override
     public Mat processFrame(Mat input) {
-        Mat inputHSV = new Mat();
-        Mat inputYCrCB = new Mat();
-        Mat inputCB = new Mat();
-        Mat hSVThresholded = new Mat();
+        //input.copyTo(displayMat);
 
-        Imgproc.cvtColor(input, inputYCrCB, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(inputYCrCB, inputCB,2);
+        gripPipeline.process(input);
 
-        Core.inRange(inputHSV,new Scalar(0,108,124), new Scalar(17,255,124),hSVThresholded);
-        return input;
+        gripPipeline.cvDilateOutput().copyTo(displayMat);
+
+        ArrayList<MatOfPoint> contours = gripPipeline.convexHullsOutput();
+
+        Imgproc.drawContours(displayMat, contours, -1, new Scalar(255, 30, 30), 2);
+
+        Rect largestRect = null;
+
+        for (MatOfPoint contour : contours) {
+            Rect boundingRect = Imgproc.boundingRect(contour);
+
+            if (largestRect == null) {
+                largestRect = boundingRect;
+                continue;
+            }
+
+            if (boundingRect.area() > largestRect.area()) {
+                largestRect = boundingRect;
+            }
+        }
+
+        if (largestRect != null) {
+            telemetry.addData("Vision", largestRect.width + " x " + largestRect.height);
+            Imgproc.rectangle(displayMat, largestRect.tl(), largestRect.br(), new Scalar(0, 0, 255), 2); // Draw rect
+        } else {
+            telemetry.addData("Vision", "No rings detected");
+        }
+
+        return displayMat;
+    }
+
+    private WobbleDropZone whichZone(Mat input) {
+        //use alpha build up ranges?
+        //outline to height method?
+        //average pixel val?
+
+        return WobbleDropZone.A;
     }
 }

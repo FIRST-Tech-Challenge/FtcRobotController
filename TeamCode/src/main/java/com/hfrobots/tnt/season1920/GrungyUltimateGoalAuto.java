@@ -34,8 +34,11 @@ import com.hfrobots.tnt.corelib.Constants;
 import com.hfrobots.tnt.corelib.drive.mecanum.RoadRunnerMecanumDriveREV;
 import com.hfrobots.tnt.corelib.drive.mecanum.TrajectoryFollowerState;
 import com.hfrobots.tnt.corelib.util.RealSimplerHardwareMap;
+import com.hfrobots.tnt.season2021.StarterStackDetectorPipeline;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.concurrent.TimeUnit;
 
@@ -131,6 +134,21 @@ public class GrungyUltimateGoalAuto extends OpMode {
         skystoneGrabber = new SkystoneGrabber(simplerHardwareMap);
 
         capstoneMechanism = new CapstoneMechanism(simplerHardwareMap, telemetry, ticker);
+    }
+
+    private com.hfrobots.tnt.corelib.vision.EasyOpenCvPipelineAndCamera pipelineAndCamera;
+
+    private void setupOpenCvCameraAndPipeline() {
+        OpenCvPipeline detector = StarterStackDetectorPipeline.builder().telemetry(telemetry).build();
+
+        com.hfrobots.tnt.corelib.vision.EasyOpenCvPipelineAndCamera.EasyOpenCvPipelineAndCameraBuilder pipelineBuilder =
+                com.hfrobots.tnt.corelib.vision.EasyOpenCvPipelineAndCamera.builder();
+
+        pipelineBuilder.hardwareMap(hardwareMap).telemetry(telemetry).openCvPipeline(detector);
+
+        pipelineAndCamera = pipelineBuilder.build();
+
+        pipelineAndCamera.createAndRunPipeline();
     }
 
     @Override
