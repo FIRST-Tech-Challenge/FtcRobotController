@@ -21,7 +21,6 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -30,9 +29,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.teamcode.util.AxesSigns;
-import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
@@ -41,28 +37,25 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.kA;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.kStatic;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
+public class MecanumDriveDeadWheelsEncoder extends MecanumDrive {
     //public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     //public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
-    //TestRobot Calibration Parameters
-    //public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
-    //public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
     //Main Robot Calibration Parameters
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(4.5, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(2, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
     //public static double LATERAL_MULTIPLIER = 1;
@@ -71,7 +64,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     //public static double LATERAL_MULTIPLIER = 60.0/52.0; //1;
 
     //Main Robot Calibration Parameters
-    public static double LATERAL_MULTIPLIER = 1.14988235294117; //1;//(60.0/25.0); //60.0/61.0;
+    public static double LATERAL_MULTIPLIER = (60.0/25.0); //60.0/61.0;
 
 
     public static double VX_WEIGHT = 1;
@@ -102,13 +95,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
-    private BNO055IMU imu;
+    //private BNO055IMU imu;
 
     private VoltageSensor batteryVoltageSensor;
 
     private Pose2d lastPoseOnTurn;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
+    public MecanumDriveDeadWheelsEncoder(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();
@@ -135,7 +128,7 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-
+        /* Deleting IMU since using dead wheel encoders
         // adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -146,14 +139,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         //  if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
         BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
+        */
 
-
-
-        //leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        //leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        //rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        //rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        //TestRobot Calibration Parameters
         leftFront = hardwareMap.get(DcMotorEx.class, "flmotor");
         leftRear = hardwareMap.get(DcMotorEx.class, "blmotor");
         rightRear = hardwareMap.get(DcMotorEx.class, "brmotor");
@@ -179,16 +166,13 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // reverse any motors using DcMotor.setDirection()
-        //TestRobot Calibration Parameters
-        //rightFront.setDirection(DcMotor.Direction.REVERSE);
-        //rightRear.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
 
 
         // use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        //setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
 
     }
 
@@ -416,8 +400,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        //return 0; /* Removed IMU */
-        return imu.getAngularOrientation().firstAngle;
+        return 0; /* Removed IMU */
+        //return imu.getAngularOrientation().firstAngle;
     }
 
     double getBatteryVoltage(HardwareMap hardwareMap) {

@@ -41,25 +41,22 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.kA;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.kStatic;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
+public class MecanumDriveDriveEncoders extends MecanumDrive {
     //public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     //public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
-    //TestRobot Calibration Parameters
-    //public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
-    //public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
     //Main Robot Calibration Parameters
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(4.5, 0, 0);
@@ -67,8 +64,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     //public static double LATERAL_MULTIPLIER = 1;
     //EDIT THIS FOR STRAFE TEST
-    //TestRobot Calibration Parameters
-    //public static double LATERAL_MULTIPLIER = 60.0/52.0; //1;
 
     //Main Robot Calibration Parameters
     public static double LATERAL_MULTIPLIER = 1.14988235294117; //1;//(60.0/25.0); //60.0/61.0;
@@ -89,7 +84,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private FtcDashboard dashboard;
     private NanoClock clock;
 
-    private Mode mode;
+    private SampleMecanumDrive.Mode mode;
 
     private PIDFController turnController;
     private MotionProfile turnProfile;
@@ -108,20 +103,20 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private Pose2d lastPoseOnTurn;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
-        super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+    public MecanumDriveDriveEncoders(HardwareMap hardwareMap) {
+        super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
 
         clock = NanoClock.system();
 
-        mode = Mode.IDLE;
+        mode = SampleMecanumDrive.Mode.IDLE;
 
         turnController = new PIDFController(HEADING_PID);
         turnController.setInputBounds(0, 2 * Math.PI);
 
-        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
+        constraints = new MecanumConstraints(DriveConstants.BASE_CONSTRAINTS, DriveConstants.TRACK_WIDTH);
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
@@ -135,24 +130,16 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-
         // adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-
         //  if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
         BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
 
-
-
-        //leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        //leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        //rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        //rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
         //TestRobot Calibration Parameters
         leftFront = hardwareMap.get(DcMotorEx.class, "flmotor");
         leftRear = hardwareMap.get(DcMotorEx.class, "blmotor");
@@ -168,20 +155,17 @@ public class SampleMecanumDrive extends MecanumDrive {
             motor.setMotorType(motorConfigurationType);
         }
 
-        if (RUN_USING_ENCODER) {
+        if (DriveConstants.RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
+        if (DriveConstants.RUN_USING_ENCODER && DriveConstants.MOTOR_VELO_PID != null) {
+            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, DriveConstants.MOTOR_VELO_PID);
         }
 
         // reverse any motors using DcMotor.setDirection()
-        //TestRobot Calibration Parameters
-        //rightFront.setDirection(DcMotor.Direction.REVERSE);
-        //rightRear.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
 
@@ -218,7 +202,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         );
 
         turnStart = clock.seconds();
-        mode = Mode.TURN;
+        mode = SampleMecanumDrive.Mode.TURN;
     }
 
     public void turn(double angle) {
@@ -228,7 +212,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void followTrajectoryAsync(Trajectory trajectory) {
         follower.followTrajectory(trajectory);
-        mode = Mode.FOLLOW_TRAJECTORY;
+        mode = SampleMecanumDrive.Mode.FOLLOW_TRAJECTORY;
     }
 
     public void followTrajectory(Trajectory trajectory) {
@@ -300,7 +284,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 DashboardUtil.drawRobot(fieldOverlay, newPose);
 
                 if (t >= turnProfile.duration()) {
-                    mode = Mode.IDLE;
+                    mode = SampleMecanumDrive.Mode.IDLE;
                     setDriveSignal(new DriveSignal());
                 }
 
@@ -321,7 +305,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 DashboardUtil.drawPoseHistory(fieldOverlay, poseHistory);
 
                 if (!follower.isFollowing()) {
-                    mode = Mode.IDLE;
+                    mode = SampleMecanumDrive.Mode.IDLE;
                     setDriveSignal(new DriveSignal());
                 }
 
@@ -342,7 +326,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public boolean isBusy() {
-        return mode != Mode.IDLE;
+        return mode != SampleMecanumDrive.Mode.IDLE;
     }
 
     public void setMode(DcMotor.RunMode runMode) {
@@ -392,7 +376,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public List<Double> getWheelPositions() {
         List<Double> wheelPositions = new ArrayList<>();
         for (DcMotorEx motor : motors) {
-            wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
+            wheelPositions.add(DriveConstants.encoderTicksToInches(motor.getCurrentPosition()));
         }
         return wheelPositions;
     }
@@ -401,7 +385,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public List<Double> getWheelVelocities() {
         List<Double> wheelVelocities = new ArrayList<>();
         for (DcMotorEx motor : motors) {
-            wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
+            wheelVelocities.add(DriveConstants.encoderTicksToInches(motor.getVelocity()));
         }
         return wheelVelocities;
     }

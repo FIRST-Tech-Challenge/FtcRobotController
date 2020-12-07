@@ -16,17 +16,13 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  * and op modes themselves.
  */
 @Config
-public class DriveConstants {
+public class DriveConstantsDeadWheelEncoder {
 
     /*
      * These are motor constants that should be listed online for your motors.
      */
     //public static final double TICKS_PER_REV = 1;
     //public static final double MAX_RPM = 1;
-
-    //TestRobot Calibration Parameters
-    //public static final double TICKS_PER_REV = 537.6;
-    //public static final double MAX_RPM = 312;
 
     //Main Robot Calibration Parameters
     public static final double TICKS_PER_REV = 383.6 ;
@@ -40,12 +36,9 @@ public class DriveConstants {
      * If using the built-in motor velocity PID, update MOTOR_VELO_PID with the tuned coefficients
      * from DriveVelocityPIDTuner.
      */
-    public static final boolean RUN_USING_ENCODER = true;
-    // public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
-    //TestRobot Calibration Parameters
-    //public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(11, 0, 0.5, 13.134);
+    public static final boolean RUN_USING_ENCODER = false;
     //public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(11, 0, 0.01, 14.7);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -59,19 +52,12 @@ public class DriveConstants {
     //public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
     //public static double TRACK_WIDTH = 1; // in
 
-    //TestRobot Calibration Parameters
-    //public static double WHEEL_RADIUS = 1.9685; // in
-    //EDIT THIS FOR STRAIGHT TEST
-    //public static double GEAR_RATIO = 0.5 *55.5/60.0; // output (wheel) speed / input (motor) speed
-    //EDIT THIS FOR TRACK WIDTH TUNER TEST
-    //public static double TRACK_WIDTH = 8.9;//9.4; // in
-
     //Main Robot Calibration Parameters
     public static double WHEEL_RADIUS = 1.8898;//1.8898; // in
     //EDIT THIS FOR STRAIGHT TEST
     public static double GEAR_RATIO = 1.0; // Test Robot : *55.5/60.0; // output (wheel) speed / input (motor) speed
     //EDIT THIS FOR TRACK WIDTH TUNER TEST
-    public static double TRACK_WIDTH = 15.64; //16.2;//16.1;// Test Robot : 10.75;//9.4; // in
+    public static double TRACK_WIDTH = 16.2;//16.1;// Test Robot : 10.75;//9.4; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -79,9 +65,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 1.0 / rpmToVelocity(MAX_RPM); //0.012;//0.011; //0.01360; //0.013102;//1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0.0;//0.0025;//0.0025; //0.00041;
-    public static double kStatic = 0.0;//0.029;//0.11011;//0.10183; //0.10739
+    public static double kV = 0.012;//0.011; //0.01360; //0.013102;//1.0 / rpmToVelocity(MAX_RPM);
+    public static double kA = 0.0025;//0.0025; //0.00041;
+    public static double kStatic = 0.029;//0.11011;//0.10183; //0.10739
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -119,11 +105,7 @@ public class DriveConstants {
             30.0, 30.0, 0.0,
             Math.toRadians(180.0), Math.toRadians(180.0), 0.0
     );*/
-    //TestRobot Calibration Parameters
-    /*public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            27.334275112574463, 27.334275112574463, 0.0,
-            Math.toRadians(333.22097872340424), Math.toRadians(333.22097872340424), 0.0
-    );*/
+
     //85% max velocity
     /*public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
             73.17330064499293, 73.17330064499293, 0.0,

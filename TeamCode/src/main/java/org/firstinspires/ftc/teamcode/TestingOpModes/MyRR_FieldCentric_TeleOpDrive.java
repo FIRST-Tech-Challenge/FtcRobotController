@@ -5,9 +5,9 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 
 
 /**
@@ -20,6 +20,15 @@ import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
  */
 @TeleOp(name = "TestOpMode : MyRR Field Centric TeleOp", group = "TestOpMode")
 public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
+
+    enum GAMEPAD_LOCATION {
+        RED_ALLIANCE,
+        BLUE_ALLIANCE,
+        AUDIENCE
+    }
+
+    Vector2d input = new Vector2d(0,0);
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
@@ -34,6 +43,18 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
        // drive.setPoseEstimate(PoseStorage.currentPose);
         drive.setPoseEstimate(new Pose2d(-68,24,Math.toRadians(0)));
 
+        GAMEPAD_LOCATION gamepadLocation = GAMEPAD_LOCATION.AUDIENCE;
+
+        //while (!(gamepad1.a || gamepad1.b || gamepad1.x)){
+        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
+        timer.reset();
+        while (timer.time() < 10) {
+            if (gamepad1.b) { gamepadLocation = GAMEPAD_LOCATION.RED_ALLIANCE; break;}
+            if (gamepad1.x) { gamepadLocation = GAMEPAD_LOCATION.BLUE_ALLIANCE;break;}
+            if (gamepad1.a) { gamepadLocation = GAMEPAD_LOCATION.AUDIENCE;break;}
+        }
+
+
         waitForStart();
 
         if (isStopRequested()) return;
@@ -42,12 +63,40 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
             // Read pose
             Pose2d poseEstimate = drive.getPoseEstimate();
 
+            //AMJAD 11/29/2020 CORRECT SIGNS FOR ALLIANCE AND AUDIENCE DRIVE
+
+            if (gamepadLocation == GAMEPAD_LOCATION.AUDIENCE) {
+
+                input = new Vector2d(
+                        -turboMode(getLeftStickY()) /* TODO : playingalliance modifier*/,
+                        -turboMode(getLeftStickX()) /* TODO : playingalliance modifier*/
+                ).rotated(-poseEstimate.getHeading());
+
+            };
+
+            if (gamepadLocation == GAMEPAD_LOCATION.RED_ALLIANCE) {
+
+                input = new Vector2d(
+                        turboMode(getLeftStickX()),
+                        -turboMode(getLeftStickY())
+                ).rotated(-poseEstimate.getHeading());
+
+
+            };
+
+            if (gamepadLocation == GAMEPAD_LOCATION.BLUE_ALLIANCE) {
+                input = new Vector2d(
+                        -turboMode(getLeftStickX()),
+                        turboMode(getLeftStickY())
+                ).rotated(-poseEstimate.getHeading());
+            };
+
             // Create a vector from the gamepad x/y inputs
             // Then, rotate that vector by the inverse of that heading
-            Vector2d input = new Vector2d(
+            /*Vector2d input = new Vector2d(
                     turboMode(getLeftStickY()),
                     turboMode(getLeftStickX())
-            ).rotated(-poseEstimate.getHeading());
+            ).rotated(-poseEstimate.getHeading());*/
 
             // Pass in the rotated input + right stick value for rotation
             // Rotation is not part of the rotated input thus must be passed in separately
@@ -55,7 +104,7 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
                     new Pose2d(
                             input.getX(),
                             input.getY(),
-                            turboMode(getRightStickX())
+                            -turboMode(getRightStickX())
                     )
             );
 
@@ -78,7 +127,7 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
      * @return gpGamepad1.left_stick_x
      */
     public double getLeftStickX() {
-        return -gamepad1.left_stick_x;
+        return gamepad1.left_stick_x;
     }
 
     /**
@@ -87,7 +136,7 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
      *
      * @return gpGamepad1.left_stick_y
      */
-    public double getLeftStickY() { return -gamepad1.left_stick_y; }
+    public double getLeftStickY() { return gamepad1.left_stick_y; }
 
     /**
      * Methods to get the value of gamepad Right stick X to keep turning.
@@ -97,7 +146,7 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
      * @return gpGamepad1.right_stick_x
      */
     public double getRightStickX() {
-        return -gamepad1.right_stick_x;
+        return gamepad1.right_stick_x;
     }
 
     /**

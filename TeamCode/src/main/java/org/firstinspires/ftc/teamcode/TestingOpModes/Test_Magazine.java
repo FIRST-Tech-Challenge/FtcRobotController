@@ -16,6 +16,7 @@ public class Test_Magazine extends LinearOpMode {
 
     HzGamepadClassic hzGamepadClassic;
 
+    //Magazine hzMagazine;
     Magazine hzMagazine;
 
     @Override
@@ -36,7 +37,7 @@ public class Test_Magazine extends LinearOpMode {
         //Run Robot based on Gamepad1 inputs
         while (opModeIsActive()) {
 
-            if (hzGamepadClassic.getButtonXPress()) {
+            /*if (hzGamepadClassic.getButtonXPress()) {
                 if (keyCount==0){
                     hzMagazine.turnMagazineBeaconOff();
                     keyCount++;
@@ -50,11 +51,11 @@ public class Test_Magazine extends LinearOpMode {
                     hzMagazine.turnMagazineBeaconWhite();
                     keyCount = 0;
                 }
-            }
+            }*/
 
-            if (hzGamepadClassic.getButtonAPress()) {
+            /*if (hzGamepadClassic.getButtonAPress()) {
                 hzMagazine.senseMagazineRingStatus();;
-            }
+            }*/
 
             if (hzGamepadClassic.getButtonBPress()){
                 hzMagazine.senseMagazinePosition();
@@ -82,42 +83,41 @@ public class Test_Magazine extends LinearOpMode {
     public void printDebugMessages(){
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
-        telemetry.addData("Timing","9:53");
-
+        telemetry.addData("3:38","11/29 ");
         //telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncher.launcherFlyWheelMotor.isBusy());
         //telemetry.addData("launcherRingPlungerServo.getPosition()", hzLauncher.launcherRingPlungerServo.getPosition());
 
-        telemetry.addData("getDistance(DistanceUnit.CM)",hzMagazine.magazine_distance);
+        //telemetry.addData("getDistance(DistanceUnit.CM)",hzMagazine.magazine_distance);
 
-        switch (hzMagazine.getMagazineRingCount()){
-            case MAGAZINE_RINGS_0:  {
+        /*switch (hzMagazine.getMagazineRingCount()){
+            case ZERO:  {
                 telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_0");
                 break;
             }
-            case MAGAZINE_RINGS_1:  {
+            case ONE:  {
                 telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_1");
                 break;
             }
-            case MAGAZINE_RINGS_2:  {
+            case TWO:  {
                 telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_2");
                 break;
             }
-            case MAGAZINE_RINGS_3:  {
+            case THREE:  {
                 telemetry.addData("hzMagazine.getMagazineRingCount()", "MAGAZINE_RINGS_3");
                 break;
             }
-        }
+        }*/
 
         switch (hzMagazine.getMagazinePosition()) {
-            case MAGAZINE_AT_LAUNCH: {
+            case AT_LAUNCH: {
                 telemetry.addData("hzMagazine.getMagazinePosition()", "MAGAZINE_AT_LAUNCH");
                 break;
             }
-            case MAGAZINE_AT_COLLECT: {
+            case AT_COLLECT: {
                 telemetry.addData("hzMagazine.getMagazinePosition()", "MAGAZINE_AT_COLLECT");
                 break;
             }
-            case MAGAZINE_AT_ERROR: {
+            case AT_ERROR: {
                 telemetry.addData("hzMagazine.getMagazinePosition()", "MAGAZINE_AT_ERROR");
                 break;
             }

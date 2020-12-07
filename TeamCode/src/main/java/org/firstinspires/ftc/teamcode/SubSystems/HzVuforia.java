@@ -43,6 +43,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefau
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.GameOpModes.HzAutonomous;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -382,7 +383,8 @@ public class HzVuforia {
         }
     }
 
-    public void runVuforiaTensorFlow() {
+    public HzAutonomous.TARGET_ZONE runVuforiaTensorFlow() {
+        HzAutonomous.TARGET_ZONE targetZoneDetected = HzAutonomous.TARGET_ZONE.UNKNOWN;
         if (tfod != null) {
               // getUpdatedRecognitions() will return null if no new information is available since
              // the last time that call was made.
@@ -393,6 +395,7 @@ public class HzVuforia {
                     // empty list.  no objects recognized.
                     //telemetry.addData("TFOD", "No items detected.");
                     //telemetry.addData("Target Zone", "A");
+                    targetZoneDetected = HzAutonomous.TARGET_ZONE.A;
                 } else {
                     // list is not empty.
                     // step through the list of recognitions and display boundary info.
@@ -407,17 +410,22 @@ public class HzVuforia {
                         // check label to see which target zone to go after.
                         if (recognition.getLabel().equals("Single")) {
                             //telemetry.addData("Target Zone", "B");
+                            targetZoneDetected =  HzAutonomous.TARGET_ZONE.B;
                         } else if (recognition.getLabel().equals("Quad")) {
                             //telemetry.addData("Target Zone", "C");
+                            targetZoneDetected =  HzAutonomous.TARGET_ZONE.C;
                         } else {
                             //telemetry.addData("Target Zone", "UNKNOWN");
+                            targetZoneDetected = HzAutonomous.TARGET_ZONE.UNKNOWN;
                         }
                     }
                 }
 
                 //telemetry.update();
+
             }
         }
+        return targetZoneDetected;
     }
 
     public void deactivateVuforiaTensorFlow(){

@@ -38,11 +38,11 @@ public class Test_Intake extends LinearOpMode {
             //TODO : AMJAD : Check if this logic works to keep motor running till Dpad_down is toggled.
             //May need to save state of last time button pressed and runmotor based on button last pressed state
             if (hzGamepadClassic.getDpad_downPress()) {
-                if(hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
+                if(hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.STOPPED) {
                     //if(gpMagazine.moveMagazineToCollect()) {
-                        hzIntake.runIntakeMotor(0.1);
+                        hzIntake.runIntakeMotor();
                     //}
-                } else if(hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
+                } else if(hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.RUNNING) {
                     hzIntake.stopIntakeMotor();
                 }
             }
@@ -51,8 +51,8 @@ public class Test_Intake extends LinearOpMode {
             //TODO : AMJAD : This probably works, since we want to run the Intake motor in reverse
             // only as long as te Dpad_up remains pressed (different from Dpad_down behavior, which is a toggle)
             if (hzGamepadClassic.getDpad_upPersistent()) {
-                hzIntake.reverseIntakeMotor(0.1);
-            } else if (hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING){
+                hzIntake.reverseIntakeMotor();
+            } else if (hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.REVERSING){
                 hzIntake.stopIntakeMotor();
             }
 
@@ -70,20 +70,20 @@ public class Test_Intake extends LinearOpMode {
     public void printDebugMessages(){
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
-
+        telemetry.addData("7:18","11/23");
         telemetry.addData("hzGamepad1.getDpad_downPress()", hzGamepadClassic.getDpad_downPress());
         telemetry.addData("hzGamepad1.getDpad_upPress()", hzGamepadClassic.getDpad_upPress());
         telemetry.addData("intakeMotor.isBusy()", hzIntake.intakeMotor.isBusy());
         switch (hzIntake.getIntakeState()){
-            case INTAKE_MOTOR_RUNNING : {
+            case RUNNING: {
                 telemetry.addData("hzIntake.getIntakeState()", "INTAKE_MOTOR_RUNNING");
                 break;
             }
-            case INTAKE_MOTOR_STOPPED: {
+            case STOPPED: {
                 telemetry.addData("hzIntake.getIntakeState()", "INTAKE_MOTOR_STOPPED");
                 break;
             }
-            case INTAKE_MOTOR_REVERSING: {
+            case REVERSING: {
                 telemetry.addData("hzIntake.getIntakeState()", "INTAKE_MOTOR_REVERSING");
                 break;
             }

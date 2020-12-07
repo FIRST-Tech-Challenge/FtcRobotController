@@ -17,28 +17,25 @@ public class Launcher {
     public Servo launcherRingPlungerServo;
     public DcMotor launcherFlyWheelMotor;
 
-    float arrayForHeight;
-    float arrayForDistance;
-    float launcherServoPosition;
     public double launcherMotorPower;
     public static final double FLYWHEEL_SUPPLY_MODE_SPEED = 0.1;
-    public static final double PLUNGER_LAUNCH_POSITION = 0.5; //TODO : AMJAD : Test and fix value
-    public static final double PLUNGER_REST_POSITION = 0.0; //TODO : AMJAD : Test and fix value
+    public static final double PLUNGER_LAUNCH_POSITION = 0.67;
+    public static final double PLUNGER_REST_POSITION = 0.84; //TODO : AMJAD : Test and fix value
 
     private boolean LauncherController;
 
     public enum LAUNCHER_FLYWHEEL_CONTROL {
-        FLYWHEEL_RUNNING_FOR_SUPPLY,
-        FLYWHEEL_RUNNING_FOR_TARGET,
-        FLYWHEEL_STOPPED
+        RUNNING_FOR_SUPPLY,
+        RUNNING_FOR_TARGET,
+        STOPPED
     }
 
-    public LAUNCHER_FLYWHEEL_CONTROL launcherState = LAUNCHER_FLYWHEEL_CONTROL.FLYWHEEL_STOPPED;
+    public LAUNCHER_FLYWHEEL_CONTROL launcherState = LAUNCHER_FLYWHEEL_CONTROL.STOPPED;
 
     public Launcher(HardwareMap hardwareMap) {
         //Parameter Initialization
         launcherRingPlungerServo = hardwareMap.servo.get("launch_servo");
-        launcherFlyWheelMotor = hardwareMap.dcMotor.get("launch_motor");
+        launcherFlyWheelMotor = hardwareMap.dcMotor.get("launch_backenc");
         launcherFlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //TODO : AMJAD : Test this.. May be Float is enough
         launcherFlyWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -53,13 +50,13 @@ public class Launcher {
         launcherFlyWheelMotor.setDirection(DcMotor.Direction.FORWARD);
         launcherFlyWheelMotor.setPower(launcherMotorPower);
         //TODO : AMJAD : Determine if velocity encoder needs to be run with PID control
-        launcherState = LAUNCHER_FLYWHEEL_CONTROL.FLYWHEEL_RUNNING_FOR_TARGET;
+        launcherState = LAUNCHER_FLYWHEEL_CONTROL.RUNNING_FOR_TARGET;
     }
 
     //stop flywheel motor
     public void stopFlyWheel() {
         launcherFlyWheelMotor.setPower(0.0);
-        launcherState = LAUNCHER_FLYWHEEL_CONTROL.FLYWHEEL_STOPPED;
+        launcherState = LAUNCHER_FLYWHEEL_CONTROL.STOPPED;
     }
 
     //run flywheel motor at speed determined by selected target and distance from target
@@ -67,7 +64,7 @@ public class Launcher {
         launcherFlyWheelMotor.setDirection(DcMotor.Direction.FORWARD);
         launcherFlyWheelMotor.setPower(launcherMotorPower);
         //TODO : AMJAD : Determine if velocity encoder needs to be run with PID control
-        launcherState = LAUNCHER_FLYWHEEL_CONTROL.FLYWHEEL_RUNNING_FOR_SUPPLY;
+        launcherState = LAUNCHER_FLYWHEEL_CONTROL.RUNNING_FOR_SUPPLY;
     }
 
     //run launcherRingPlungerServo to push Ring from magazine to Flywheel and retract to initial state
@@ -85,17 +82,6 @@ public class Launcher {
     public LAUNCHER_FLYWHEEL_CONTROL getLauncherState(){
         return launcherState;
     }
-
-    /*public void flywheelStatus(boolean dpadUpPressed, Magazine.MAGAZINE_POSITION magazinePos) {
-        if(magazinePos == Magazine.MAGAZINE_POSITION.MAGAZINE_AT_LAUNCH) {
-            if(dpadUpPressed) {
-                launcherFlyWheelMotor.setPower(FLYWHEEL_SUPPLY_MODE_SPEED);
-                //I don't know how to set the state to FLYWHEEL_RUNNING_FOR_SUPPLY.
-            }
-
-        }
-
-    }*/
 
 }
 

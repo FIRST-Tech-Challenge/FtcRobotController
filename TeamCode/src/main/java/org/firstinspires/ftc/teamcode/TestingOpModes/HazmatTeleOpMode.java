@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.SubSystems.ChassisClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
+import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
@@ -15,7 +15,7 @@ public class HazmatTeleOpMode extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepad hzGamepad;
+    HzGamepadClassic hzGamepad;
     ChassisClassic hzChassisClassic;
 
 
@@ -26,7 +26,7 @@ public class HazmatTeleOpMode extends LinearOpMode {
         //Instantiate Subsystems : Chassis, Arm, Intake, Gamepad1
         hzChassisClassic = new ChassisClassic(hardwareMap);
 
-        hzGamepad = new HzGamepad(gamepad1);
+        hzGamepad = new HzGamepadClassic(gamepad1,this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 

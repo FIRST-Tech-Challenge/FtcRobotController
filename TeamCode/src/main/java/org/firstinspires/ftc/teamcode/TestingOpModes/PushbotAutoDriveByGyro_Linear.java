@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.TestingOpModes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -41,7 +42,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.SubSystems.ChassisClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
+import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
 
 //import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 
@@ -79,14 +80,14 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
  */
 
 @Autonomous(name="TestOpMode : Pushbot: Auto Drive By IMU Gyro", group="TestOpMode")
-//@Disabled
+@Disabled
 public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     //HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
     //ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
 
-    HzGamepad hzGamepad;
+    HzGamepadClassic hzGamepad;
     ChassisClassic hzChassisClassic;
 
     // The IMU sensor object
@@ -124,7 +125,7 @@ public class PushbotAutoDriveByGyro_Linear extends LinearOpMode {
          */
         //robot.init(hardwareMap);
         hzChassisClassic = new ChassisClassic(hardwareMap);
-        hzGamepad = new HzGamepad(gamepad1);
+        hzGamepad = new HzGamepadClassic(gamepad1, this);
 
 
         //gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");

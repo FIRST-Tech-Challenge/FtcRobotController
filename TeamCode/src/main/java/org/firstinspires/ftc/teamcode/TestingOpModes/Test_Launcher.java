@@ -72,20 +72,20 @@ public class Test_Launcher extends LinearOpMode {
     public void printDebugMessages(){
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
-
+        telemetry.addData("7:24","11/23");
         telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncher.launcherFlyWheelMotor.isBusy());
         telemetry.addData("launcherRingPlungerServo.getPosition()", hzLauncher.launcherRingPlungerServo.getPosition());
 
         switch (hzLauncher.getLauncherState()){
-            case FLYWHEEL_RUNNING_FOR_TARGET:  {
+            case RUNNING_FOR_TARGET:  {
                 telemetry.addData("hzLauncher.getLauncherState()", "FLYWHEEL_RUNNING_FOR_SUPPLY");
                 break;
             }
-            case FLYWHEEL_RUNNING_FOR_SUPPLY:  {
+            case RUNNING_FOR_SUPPLY:  {
                 telemetry.addData("hzLauncher.getLauncherState()", "FLYWHEEL_RUNNING_FOR_SUPPLY");
                 break;
             }
-            case FLYWHEEL_STOPPED:  {
+            case STOPPED:  {
                 telemetry.addData("hzLauncher.getLauncherState()", "FLYWHEEL_STOPPED");
                 break;
             }

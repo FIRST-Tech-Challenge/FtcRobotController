@@ -8,46 +8,50 @@ public class Intake {
     public DcMotor intakeMotor = null;
 
     public enum INTAKE_MOTOR_STATE {
-        INTAKE_MOTOR_RUNNING,
-        INTAKE_MOTOR_STOPPED,
-        INTAKE_MOTOR_REVERSING
+        RUNNING,
+        STOPPED,
+        REVERSING
     }
-    public INTAKE_MOTOR_STATE intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED;
+
+    public INTAKE_MOTOR_STATE intakeMotorState = INTAKE_MOTOR_STATE.STOPPED;
+
+    public double intakePower = 0.8;
+    public double intakeReversePower = 0.5;
+
+    public enum INTAKE_BUTTON_STATE {
+        ON,
+        OFF
+    }
+    public INTAKE_BUTTON_STATE intakeButtonState;
 
     public Intake(HardwareMap hardwareMap) {
-        intakeMotor = hardwareMap.dcMotor.get("intake_motor");
+        intakeMotor = hardwareMap.dcMotor.get("intake_rightenc");
     }
 
     public void initIntake(){
 
     }
 
-    public void runIntakeMotor(double intakePower) {
-        if(intakeMotorState != INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
-            intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+    public void runIntakeMotor() {
+        if(intakeMotorState != INTAKE_MOTOR_STATE.RUNNING) {
+            intakeMotor.setDirection(DcMotor.Direction.REVERSE);
             intakeMotor.setPower(intakePower);
-            intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING;
+            intakeMotorState = INTAKE_MOTOR_STATE.RUNNING;
         }
     }
 
     public void stopIntakeMotor() {
-        if(intakeMotorState != INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
-            intakeMotor.setPower(0);
-            intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED;
+        if(intakeMotorState != INTAKE_MOTOR_STATE.STOPPED) {
+            intakeMotor.setPower(0.0);
+            intakeMotorState = INTAKE_MOTOR_STATE.STOPPED;
        }
     }
 
-    public void reverseIntakeMotor(double power) {
-        if(intakeMotorState != INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING) {
-            intakeMotor.setDirection((DcMotor.Direction.REVERSE));
-            intakeMotor.setPower(power);
-            intakeMotorState = INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING;
-        }
-    }
-
-    public void reverseIntake(boolean reverseIntakeFlag) {
-        if(reverseIntakeFlag) {
-            reverseIntakeMotor(0.5);
+    public void reverseIntakeMotor() {
+        if(intakeMotorState != INTAKE_MOTOR_STATE.REVERSING) {
+            intakeMotor.setDirection((DcMotor.Direction.FORWARD));
+            intakeMotor.setPower(intakeReversePower);
+            intakeMotorState = INTAKE_MOTOR_STATE.REVERSING;
         }
     }
 

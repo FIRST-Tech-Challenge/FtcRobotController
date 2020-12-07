@@ -1,144 +1,223 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.hardware.I2cDevice;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 public class LaunchController {
 
     public enum LAUNCH_MODE{
-        MODE_MANUAL,
-        MODE_AUTOMATED};
+        MANUAL,
+        AUTOMATED
+    };
+    public LAUNCH_MODE launchMode = LAUNCH_MODE.MANUAL;
 
     public enum LAUNCH_READINESS{
-        LAUNCH_READY,
-        LAUNCH_NOT_READY
+        READY,
+        NOT_READY
     };
+    public LAUNCH_READINESS launchReadiness = LAUNCH_READINESS.NOT_READY;
+
+    public enum LAUNCH_ACTIVATION{
+        ACTIVATED,
+        NOT_ACTIVATED
+    }
+    public LAUNCH_ACTIVATION launchActivation = LAUNCH_ACTIVATION.NOT_ACTIVATED;
 
     public enum ROBOT_ZONE{
-        ROBOT_IN_HIGH_GOAL_ZONE,
-        ROBOT_IN_MID_GOAL_ZONE,
-        ROBOT_IN_LOW_GOAL_ZONE,
-        ROBOT_IN_POWER_GOAL_ZONE
+        HIGH_GOAL_ZONE,
+        MID_GOAL_ZONE,
+        LOW_GOAL_ZONE,
+        POWER_GOAL_ZONE
     };
+    public ROBOT_ZONE robotZone = ROBOT_ZONE.HIGH_GOAL_ZONE;
 
     public enum LAUNCH_TARGET{
-        TARGET_HIGH_GOAL,
-        TARGET_MID_GOAL,
-        TARGET_LOW_GOAL,
-        TARGET_POWER_SHOT1,
-        TARGET_POWER_SHOT2,
-        TARGET_POWER_SHOT3
+        HIGH_GOAL,
+        MID_GOAL,
+        LOW_GOAL,
+        POWER_SHOT1,
+        POWER_SHOT2,
+        POWER_SHOT3
     };
+    public LAUNCH_TARGET lcTarget = LAUNCH_TARGET.HIGH_GOAL;
+    public Vector2d lcTargetVector = GameField.ORIGIN;
 
     public enum LAUNCHER_ALIGNMENT{
-        LAUNCHER_TARGET_ALIGNED,
-        LAUNCHER_TARGET_NOT_ALIGNED
+        TARGET_ALIGNED,
+        TARGET_NOT_ALIGNED
     };
+    public LAUNCHER_ALIGNMENT launcherAlignment = LAUNCHER_ALIGNMENT.TARGET_NOT_ALIGNED;
 
-    public ROBOT_ZONE robotZone = ROBOT_ZONE.ROBOT_IN_HIGH_GOAL_ZONE;
+    public double distanceFromTarget, lclaunchMotorPower, angleToTarget;
 
-    public double distanceFromTarget, launchMotorSpeed, angleToTarget;
+    public Servo launchControllerBeaconServo;
 
-    public LAUNCH_MODE launchMode = LAUNCH_MODE.MODE_AUTOMATED;
-    public LAUNCH_READINESS launchReadiness;
+    //TODO : AMJAD : Use servo to flag if beacon is not working
+    public static final double launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_AUTO = 0.2;
+    public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_AUTO = 0.4;
+    public static final double launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_MANUAL = 0.6;
+    public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL = 0.8;
+    public static final double launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE = 0.0;
 
-    public I2cDevice launchControllerColorBeacon;
-    public I2cDeviceSynch launchControllerColorBreader;
+    public Launcher lcLauncher;
+    public Intake lcIntake;
+    public Magazine lcMagazine;
+    public HzDrive lcDrive;
 
-    public LaunchController(HardwareMap hardwareMap) {
-        launchControllerColorBeacon = hardwareMap.i2cDevice.get("launch_beacon");
-        launchControllerColorBreader = new I2cDeviceSynchImpl(launchControllerColorBeacon, I2cAddr.create8bit(0x4c), false);
-        launchControllerColorBreader.engage();
+
+    public LaunchController(HardwareMap hardwareMap, Launcher lcLauncherPassed, Intake lcIntakePassed, Magazine lcMagazinePassed,
+                                 HzDrive lcDrivePassed){
+        lcLauncher = lcLauncherPassed;
+        lcMagazine = lcMagazinePassed;
+        lcIntake = lcIntakePassed;
+        lcDrive = lcDrivePassed;
+
+        launchControllerBeaconServo = hardwareMap.servo.get("launch_beacon_servo");
     }
 
-    public void turnlaunchControllerBeaconOff() {
-        launchControllerColorBreader.write8(4, 0);
-    }
+    public boolean activateLaunchReadinessState;
 
-    public void turnlaunchControllerBeaconRed() {
-        launchControllerColorBreader.write8(4, 1);
-    }
+    public LAUNCH_READINESS activateLaunchReadiness() {
+        launchActivation = LAUNCH_ACTIVATION.ACTIVATED;
 
-    public void turnlaunchControllerBeaconGreen() {
-        launchControllerColorBreader.write8(4, 2);
-    }
-
-    public void turnlaunchControllerBeaconYellow() {
-        launchControllerColorBreader.write8(4, 3);
-    }
-
-    public void turnlaunchControllerBeaconBlue() {
-        launchControllerColorBreader.write8(4, 4);
-    }
-
-    public void toggleModeManualAutomated() {
-        if (launchMode == LAUNCH_MODE.MODE_AUTOMATED) {
-            launchMode = LAUNCH_MODE.MODE_MANUAL;
-        } else {
-            launchMode = LAUNCH_MODE.MODE_AUTOMATED;
+        //lcMagazine.senseMagazinePosition();
+        if (lcIntake.intakeMotorState != Intake.INTAKE_MOTOR_STATE.STOPPED){
+            lcIntake.stopIntakeMotor();
         }
-    }
+        lcMagazine.moveMagazineToLaunchState = true;
 
-    //gpLauncherController.activateLaunchReadiness(gpLauncher, gpMagazine, gpVuforia);
-    //gpLauncherController.senseLaunchReadiness(gpLauncher, gpMagazine, gpVuforia);
-    //gpLauncherController.indicateLaunchReadiness();
 
-    /*
-    activateLaunchReadiness (makes robot ready for launch)
-        identifyCurrentLocation : Use Vuforia to determine robots' own current position and pose in the field. Vuforia functions returns the x,y,z, pose of the robot with respect to the tower goal for the current alliance color
-        setCurrentZone :  based on button pressed and current location of the robot on the field, set the robotCurrentZone state
-        Use senseMagazineStatus - Check if atleast 1 ring is in magazine - magazineRingCount
-        If MAGAZINE_AT_COLLECT, use moveMagazineToLaunch
-        determineLaunchTarget : Determine the launch target based on current zone of the robot and Y,X,A,B button pressed. Returns launchTargetSelected  [Logic : SW Team to come up with Math to determine if a point (current position) is inside a bounded polygon (zone)]
-        determineDistanceToTarget : Determine the distance from the launch target (from the location information)
-        determineFlyWheelSpeed : determine launcher motor speed and hence flywheel speed required to hit the target, and start the motor to rotate at the speed. (runFlyWheelToTarget) [Logic: Mechanical and game strategy team to come up with formula or table to determine the same TBD]
-        determineAngleToTarget : Determine the angle required to turn to face the launcher to the launch target. [Logic : SW team to come up wit Math. Remember that the precision required for goals is lower vs powershot due to width of the target] Set launcherTargetAlignment state, if the robot is aligned to target
-        If MODE_AUTOMATED, turnRobotToTarget : turn the robot to face the target based on angle determined. Ensure this function is on time out, or on a parallel thread where drivers can override, so that robot does not get locked in this function. (Driver has to manually turn the robot in MODE_AUTOMATED) [Priority : This is second priority after all other basic functionality is done]
+        if (lcMagazine.magazinePosition == Magazine.MAGAZINE_POSITION.AT_LAUNCH){
+            activateLaunchReadinessState = false;
+            launchReadiness = LAUNCH_READINESS.READY;
+        } else {
+            launchReadiness = LAUNCH_READINESS.NOT_READY;
+        }
 
-    senseLaunchReadiness : Verify all conditions are satisfied with states being checked and set launchReadiness state. The launch readiness state is used to enable the launch button.
-        magazinePosition : MAGAZINE_AT_LAUNCH
-        magazineRingCount : MAGAZINE_RINGS_1, MAGAZINE_RINGS_2, MAGAZINE_RINGS_3
-        flywheelStatus : FLYWHEEL_RUNNING_FOR_TARGET
-        In MODE_AUTOMATED : LAUNCHER_TARGET_ALIGNED. (In MODE_MANUAL, this is ignored)
-
-    indicateLaunchReadiness - Turn on launch ready indicator based on following condition
-        In MODE_AUTOMATED, if launchReadiness is  LAUNCH_READY, then turn on launch indicator. (Note, in this case, the Launch button being enabled and the launchReadiness indicator showing readiness  work the same.)
-        In MODE_MANUAL, if launchReadiness is  LAUNCH_READY, and LAUNCHER_TARGET_ALIGNED, then turn on launch indicator. (Note, in this case the launch button is enabled, even if the launcher is not aligned to target. However the indicator is on, only when the target is aligned. This serves as visual cue for the drivers to turn the robot manually and align the robot, but they can launch at any time they chose.
-
-     */
-
-    public void activateLaunchReadiness(Launcher gpLauncher, Magazine gpMagazine) {
         //gpVuforia.identifyCurrentLocation();
-        //gpVuforia.setCurrentZone();
-        gpMagazine.senseMagazineRingStatus();
-        gpMagazine.senseMagazinePosition();
-        if(!(gpMagazine.magazineRingCount == Magazine.MAGAZINE_RING_COUNT.MAGAZINE_RINGS_0)) {
-            gpMagazine.moveMagazineToLaunch();
-        } else {
-            launchReadiness = LAUNCH_READINESS.LAUNCH_NOT_READY;
-            return;
-        }
 
-        //determineLaunchTarget();
-        //determineDistanceToTarget();
-        //determineFlyWheelSpeed();
-        //determineAngleToTarget();
-        if(launchMode == LAUNCH_MODE.MODE_AUTOMATED) {
-            //turnRobotToTarget();
-        }
-
-        /****************/
-
+        determineLaunchTarget();
+        if (launchMode == LAUNCH_MODE.AUTOMATED)  turnRobotToTarget();
+        runLauncherByDistanceToTarget();
+        return launchReadiness;
     }
 
-    public void senseLaunchReadiness(Launcher gpLauncher, Magazine gpMagazine) {
+    public boolean deactivateLaunchReadinessState = false;
 
+    public void deactivateLaunchReadiness(){
+        launchActivation = LaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
+        lcLauncher.stopFlyWheel();
+        turnRobotToNormalControl();
+        deactivateLaunchReadinessState = false;
+    }
+
+    public void runLauncherByDistanceToTarget(){
+        getDistanceFromTarget();
+        setLaunchMotorPower();
+        lcLauncher.runFlyWheelToTarget(lclaunchMotorPower);
+    }
+
+    public void determineLaunchTarget(){
+        //determineLaunchTarget : Determine the launch target based on current zone of the robot
+        //and Y,X,A,B button pressed. Returns launchTargetSelected
+        if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+            switch (lcTarget) {
+                case HIGH_GOAL:
+                    lcDrive.drivePointToAlign = GameField.BLUE_TOWER_GOAL;
+                    lcTargetVector = GameField.BLUE_TOWER_GOAL;
+                    break;
+                case MID_GOAL:
+                    lcDrive.drivePointToAlign = GameField.RED_TOWER_GOAL;
+                    lcTargetVector = GameField.RED_TOWER_GOAL;
+                    break;
+                case LOW_GOAL:
+                    lcDrive.drivePointToAlign = GameField.BLUE_TOWER_GOAL;
+                    lcTargetVector = GameField.BLUE_TOWER_GOAL;
+                    break;
+                case POWER_SHOT1:
+                    lcDrive.drivePointToAlign = GameField.BLUE_POWERSHOT1;
+                    lcTargetVector = GameField.BLUE_POWERSHOT1;
+                    break;
+                case POWER_SHOT2:
+                    lcDrive.drivePointToAlign = GameField.BLUE_POWERSHOT2;
+                    lcTargetVector = GameField.BLUE_POWERSHOT2;
+                    break;
+                case POWER_SHOT3:
+                    lcDrive.drivePointToAlign = GameField.BLUE_POWERSHOT3;
+                    lcTargetVector = GameField.BLUE_POWERSHOT3;
+                    break;
+            }
+        }
+
+        if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
+            switch (lcTarget) {
+                case HIGH_GOAL:
+                    lcDrive.drivePointToAlign = GameField.RED_TOWER_GOAL;
+                    lcTargetVector = GameField.RED_TOWER_GOAL;
+                    break;
+                case MID_GOAL:
+                    lcDrive.drivePointToAlign = GameField.BLUE_TOWER_GOAL;
+                    lcTargetVector = GameField.BLUE_TOWER_GOAL;
+                    break;
+                case LOW_GOAL:
+                    lcDrive.drivePointToAlign = GameField.RED_TOWER_GOAL;
+                    lcTargetVector = GameField.RED_TOWER_GOAL;
+                    break;
+                case POWER_SHOT1:
+                    lcDrive.drivePointToAlign = GameField.RED_POWERSHOT1;
+                    lcTargetVector = GameField.RED_POWERSHOT1;
+                    break;
+                case POWER_SHOT2:
+                    lcDrive.drivePointToAlign = GameField.RED_POWERSHOT2;
+                    lcTargetVector = GameField.RED_POWERSHOT2;
+                    break;
+                case POWER_SHOT3:
+                    lcDrive.drivePointToAlign = GameField.RED_POWERSHOT3;
+                    lcTargetVector = GameField.RED_POWERSHOT3;
+                    break;
+            }
+        }
+    }
+
+    public void turnRobotToTarget(){
+        //If MODE_AUTOMATED, turnRobotToTarget : turn the robot to face the target based on angle determined. Ensure this function is on time out, or on a parallel thread where drivers can override, so that robot does not get locked in this function. (Driver has to manually turn the robot in MODE_AUTOMATED) [Priority : This is second priority after all other basic functionality is done]
+        if (getLaunchMode() == LAUNCH_MODE.AUTOMATED) {
+            lcDrive.driveMode = HzDrive.DriveMode.ALIGN_TO_POINT;
+            lcDrive.driveTrainPointFieldModes();
+        }
+    }
+
+    public void turnRobotToNormalControl(){
+        lcDrive.driveMode = HzDrive.DriveMode.NORMAL_CONTROL;
+        //lcDrive.driveTrainPointFieldModes();
+    }
+
+    public void senseLaunchReadiness() {
+        //TODO : AMJAD : UPDATE LOGIC FOR AUTOMATED MODE - CALCULATE IF ROBOT IS ALIGNED TO WITHIN 10%
+        //TODO : AMJAD : SENSE IF DISTANCE IS WITHING ACHIEVABLE LIMITS
+        launchReadiness = LAUNCH_READINESS.READY;
     }
 
     public void indicateLaunchReadiness() {
+        if (launchActivation == LAUNCH_ACTIVATION.ACTIVATED) {
+            if (launchReadiness == LAUNCH_READINESS.READY) {
+                if (getLaunchMode() == LAUNCH_MODE.AUTOMATED) {
+                    turnlaunchControllerBeaconGreen();
+                } else {
+                    turnlaunchControllerBeaconYellow();
+                }
+            } else {
+                if (getLaunchMode() == LAUNCH_MODE.MANUAL) {
+                    turnlaunchControllerBeaconRed();
+                } else {
+                    turnlaunchControllerBeaconBlue();
+                }
+            }
+        } else {
+            turnlaunchControllerBeaconOff();
+        }
 
     }
 
@@ -146,19 +225,31 @@ public class LaunchController {
         return robotZone;
     }
 
-    public void alignRobot(double angleGoal) {
-
+    public void getDistanceFromTarget() {
+        //Vector2d difference = lcDrive.drivePointToAlign.minus(lcDrive.poseEstimate.vec());
+        //distanceFromTarget = Math.sqrt(Math.pow(difference.getX(), 2) + Math.pow(difference.getY(), 2));
+        distanceFromTarget = lcTargetVector.distTo(lcDrive.poseEstimate.vec());
+        /*distanceFromTarget = Math.sqrt(Math.pow(lcTargetVector.getX()-lcTargetVector.getX(), 2)
+                + Math.pow(lcTargetVector.getY()-lcTargetVector.getY(), 2));*/
     }
 
-    public double getDistanceFromTarget() {
-        return distanceFromTarget;
-    }
+    public void setLaunchMotorPower() {
+        if (distanceFromTarget > 66 && distanceFromTarget < 138) {
+            switch (lcTarget) {
+                case POWER_SHOT1:
+                case POWER_SHOT2:
+                case POWER_SHOT3:
+                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.72, 0.80);
+                    break;
+                case HIGH_GOAL:
+                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.76, 0.84);
+                    break;
+            }
+        } else {
+            lclaunchMotorPower = 0.0;
+        }
 
-    public double getLaunchMotorSpeed() {
-        return launchMotorSpeed;
     }
-
-    public double getTargetAngle() {return angleToTarget;}
 
     public LAUNCH_MODE getLaunchMode(){
         return launchMode;
@@ -166,6 +257,34 @@ public class LaunchController {
 
     public void setLaunchReadyIndicator(LAUNCH_READINESS launchStatus) {
         launchReadiness = launchStatus;
+    }
+
+    public void turnlaunchControllerBeaconRed() {
+        launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_AUTO);
+    }
+
+    public void turnlaunchControllerBeaconGreen() {
+        launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_AUTO);
+    }
+
+    public void turnlaunchControllerBeaconYellow() {
+        launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_MANUAL);
+    }
+
+    public void turnlaunchControllerBeaconBlue() {
+        launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL);
+    }
+
+    public void turnlaunchControllerBeaconOff() {
+        launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE);
+    }
+
+    public void toggleModeManualAutomated() {
+        if (launchMode == LAUNCH_MODE.AUTOMATED) {
+            launchMode = LAUNCH_MODE.MANUAL;
+        } else {
+            launchMode = LAUNCH_MODE.AUTOMATED;
+        }
     }
 }
 

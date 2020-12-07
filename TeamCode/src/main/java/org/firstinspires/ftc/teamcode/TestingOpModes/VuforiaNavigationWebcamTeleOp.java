@@ -42,7 +42,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.SubSystems.ChassisClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
+import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +93,7 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
     //*****From : HazmatTeleOpMode
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepad hzGamepad;
+    HzGamepadClassic hzGamepad;
     ChassisClassic hzChassisClassic;
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
@@ -143,7 +143,7 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
         //Instantiate Subsystems : Chassis, Arm, Intake, Gamepad1
         hzChassisClassic = new ChassisClassic(hardwareMap);
 
-        hzGamepad = new HzGamepad(gamepad1);
+        hzGamepad = new HzGamepadClassic(gamepad1, this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 

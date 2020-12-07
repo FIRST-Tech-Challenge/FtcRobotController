@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
  */
 @TeleOp(name = "TestOpMode : MyRR Robot Centric TeleOp Drive", group = "TestOpMode")
 public class MyRR_RobotCentric_TeleOpDrive extends LinearOpMode {
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
@@ -32,6 +33,9 @@ public class MyRR_RobotCentric_TeleOpDrive extends LinearOpMode {
         drive.setPoseEstimate(PoseStorage.currentPose);
         //drive.setPoseEstimate(new Pose2d(0,24,Math.toRadians(0)));
 
+        telemetry.addData("7:43","11/23");
+        telemetry.update();
+
         waitForStart();
 
         if (isStopRequested()) return;
@@ -39,9 +43,9 @@ public class MyRR_RobotCentric_TeleOpDrive extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested()) {
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            turboMode(getLeftStickY()),
-                            turboMode(getLeftStickX()),
-                            turboMode(getRightStickX())                    )
+                            turboMode(-getLeftStickY()),
+                            turboMode(-getLeftStickX()),
+                            turboMode(getRightStickX()))
             );
 
             // Update everything. Odometry. Etc.
@@ -65,7 +69,7 @@ public class MyRR_RobotCentric_TeleOpDrive extends LinearOpMode {
      * @return gpGamepad1.left_stick_x
      */
     public double getLeftStickX() {
-        return -gamepad1.left_stick_x;
+        return gamepad1.left_stick_x;
     }
 
     /**
@@ -74,7 +78,7 @@ public class MyRR_RobotCentric_TeleOpDrive extends LinearOpMode {
      *
      * @return gpGamepad1.left_stick_y
      */
-    public double getLeftStickY() { return -gamepad1.left_stick_y; }
+    public double getLeftStickY() { return gamepad1.left_stick_y; }
 
     /**
      * Methods to get the value of gamepad Right stick X to keep turning.

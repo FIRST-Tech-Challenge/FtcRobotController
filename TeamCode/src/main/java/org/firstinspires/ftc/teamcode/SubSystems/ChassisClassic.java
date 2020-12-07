@@ -55,10 +55,10 @@ public class ChassisClassic {
      */
     public ChassisClassic(HardwareMap hardwareMap) {
         //Map DCMotors from configuration
-        frontLeft = hardwareMap.dcMotor.get("front_left_motor");
-        frontRight = hardwareMap.dcMotor.get("front_right_motor");
-        backLeft = hardwareMap.dcMotor.get("back_left_motor");
-        backRight = hardwareMap.dcMotor.get("back_right_motor");
+        frontLeft = hardwareMap.dcMotor.get("flmotor");
+        frontRight = hardwareMap.dcMotor.get("frmotor");
+        backLeft = hardwareMap.dcMotor.get("blmotor");
+        backRight = hardwareMap.dcMotor.get("brmotor");
 
         //Configure Robot to dimensions and modified for wheel type
         configureRobot();
@@ -211,58 +211,6 @@ public class ChassisClassic {
         backLeft.setPower(0.0);
         backRight.setPower(0.0);
     }
-
-
-
-    /** <TO-BE-UPDATED> AUTONOMOUS MOVE EXAMPLE
-     * Method to move chassis based on computed vector inputs for a set max_stop_distance.
-     * Till team color is identified below Chassis.
-     * To be used in Autonomous mode for moving by distance or turning by angle.
-     * Uses PID loop in motors to ensure motion without errors.
-     * @param max_stop_distance Max distance to stop
-     * @param strafeDirection 0 for forward or backward, 1 for right, -1 for left
-     * @param power to run motors
-     * @param callingOpMode passed for checking for isStopRequested()
-     */
-    /*public void runTill_ChassisRightColorSensorIsBlue(
-            double max_stop_distance,
-            double strafeDirection,
-            double power,
-            LinearOpMode callingOpMode){
-        setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        resetChassis();
-
-        //Max Total Rotations of wheel = distance / circumference of wheel
-        double targetRotations = max_stop_distance/(2*Math.PI*wheelRadius);
-
-        //set fwdbackdirection, +ve for forward and negative for backward
-        double fwdbackdirection = max_stop_distance /Math.abs(max_stop_distance);
-
-        while (!callingOpMode.isStopRequested() &&
-                !rightColorSensorIsBlue() &&
-                (Math.abs(backLeft.getCurrentPosition()) < Math.abs(ChassisMotorEncoderCount * targetRotations))
-              ) {
-            if(strafeDirection == 0) {
-                //Go forward or backward
-                frontLeft.setPower(fwdbackdirection*power);
-                frontRight.setPower(fwdbackdirection*power);
-                backLeft.setPower(fwdbackdirection*power);
-                backRight.setPower(fwdbackdirection*power);
-            } else {
-                frontLeft.setPower(strafeDirection* power);
-                frontRight.setPower(-strafeDirection* power);
-                backLeft.setPower(-strafeDirection* power);
-                backRight.setPower(strafeDirection* power);
-            }
-        }
-        setZeroBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //#TOBECHECKED TO AVOID JERK
-        frontLeft.setPower(0.0);
-        frontRight.setPower(0.0);
-        backLeft.setPower(0.0);
-        backRight.setPower(0.0);
-    }
-
-     */
 
     /**
      * Method to turn robot by 90 degrees

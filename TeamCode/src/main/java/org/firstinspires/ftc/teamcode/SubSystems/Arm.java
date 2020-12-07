@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Arm {
 
@@ -21,24 +22,32 @@ public class Arm {
 
     public Servo armGripServo;
 
-    public enum ARM_POSITIONS {
-        ARM_PARKED_POSITION,
-        ARM_DROP_WOBBLE_GOAL_POSITION,
-        ARM_HOLD_WOBBLE_GOAL_POSITION,
-        ARM_RING_POSITION
+    public enum ARM_POSITION {
+        PARKED,
+        HOLD_UP_WOBBLE_RING,
+        DROP_WOBBLE_RING,
+        PICK_WOBBLE,
+        PICK_RING
     }
 
-    public static int ARM_PARKED_POSITION_COUNT = 0; //TODO : AMJAD : Test and fix value
-    public static int ARM_DROP_WOBBLE_GOAL_POSITION_COUNT = 600 ; //TODO : AMJAD : Test and fix value
-    public static int ARM_HOLD_WOBBLE_GOAL_POSITION_COUNT = 800 ; //TODO : AMJAD : Test and fix value
-    public static int ARM_RING_POSITION_COUNT = 1000 ; //TODO : AMJAD : Test and fix value
+    public static int ARM_PARKED_POSITION_COUNT = 0;
+    public static int ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT = -250;//-350 ;
+    public static int ARM_DROP_WOBBLE_RING_POSITION_COUNT = -500 ;
+    public static int ARM_PICK_WOBBLE_POSITION_COUNT = -700 ;
+    public static int ARM_PICK_RING_POSITION_COUNT = -875 ;
 
-    public ARM_POSITIONS currentArmPosition = ARM_POSITIONS.ARM_PARKED_POSITION;
-    public int initialArmPositionCount;
+    public static double POWER_NO_WOBBLEGOAL = 0.3;
+    public static double POWER_WITH_WOBBLEGOAL = 0.6;
 
-    public enum GRIP_SERVO_STATE {OPENED, CLOSED};
+    public ARM_POSITION currentArmPosition = ARM_POSITION.PARKED;
+    public ARM_POSITION previousArmPosition = ARM_POSITION.PARKED;;
 
-    public static final double GRIP_OPEN = 0.2, GRIP_CLOSE = 0.7; //TODO : AMJAD : Test and fix value
+    public enum GRIP_SERVO_STATE {
+        OPENED,
+        CLOSED
+    };
+
+    public static final double GRIP_OPEN = 1.0, GRIP_CLOSE = 0.54;
 
     public GRIP_SERVO_STATE gripServoState = GRIP_SERVO_STATE.OPENED ;
 
@@ -49,13 +58,13 @@ public class Arm {
 
     LinearOpMode opModepassed;
 
-    public void initArm(LinearOpMode opModepassed1){
-        this.opModepassed = opModepassed1;
-        resetArm();
+    public void initArm(/*LinearOpMode opModepassed1*/){
+        //this.opModepassed = opModepassed1;
         armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        resetArm();
         moveArmParkedPosition();
-        turnArmBrakeModeOff();
+        turnArmBrakeModeOn();
         initGrip();
     }
 
@@ -72,7 +81,7 @@ public class Arm {
      */
     public void turnArmBrakeModeOn(){
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotor.setPower(0.0);
+        //armMotor.setPower(0.0);
     }
 
     /**
@@ -82,81 +91,145 @@ public class Arm {
      */
     public void turnArmBrakeModeOff(){
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        armMotor.setPower(0.0);
+        //armMotor.setPower(0.0);
     }
-
 
     /**
      * Method to run motor to set to the set position
      */
-    public void runArmToLevel() {
-        //armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //Turn Motors on
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        int sign = armMotor.getCurrentPosition() < armMotor.getTargetPosition() ? -1 : 1;
-        armMotor.setPower(sign * 0.2);
-        while(sign*(armMotor.getTargetPosition() - armMotor.getCurrentPosition()) < 0 ){
-            opModepassed.telemetry.addData("armMotor.getCurrentPosition()", armMotor.getTargetPosition());
-            opModepassed.telemetry.addData("armMotor.getCurrentPosition()", armMotor.getCurrentPosition());
-            opModepassed.telemetry.update();
+
+
+    public boolean runArmToLevelState = false;
+    public double motorPowerToRun = POWER_NO_WOBBLEGOAL;
+
+    public void runArmToLevel(double power){
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        int sign = armMotor.getCurrentPosition() < armMotor.getTargetPosition() ? 1 : -1;
+        if (runArmToLevelState = true && (sign*(armMotor.getCurrentPosition() - armMotor.getTargetPosition()) > 0 )) {
+            armMotor.setPower(0.0);
+            runArmToLevelState = false;
+            return;
+        } else {
+            if (!armMotor.isBusy()) {
+                armMotor.setPower(sign * power);
+            }
         }
     }
 
     public void moveArmParkedPosition() {
-        armMotor.setTargetPosition(ARM_PARKED_POSITION_COUNT);
-        runArmToLevel();
-        resetArm();
         turnArmBrakeModeOff();
-        currentArmPosition = ARM_POSITIONS.ARM_PARKED_POSITION;
+        armMotor.setTargetPosition(ARM_PARKED_POSITION_COUNT);
+        motorPowerToRun = POWER_NO_WOBBLEGOAL;
+        runArmToLevelState = true;
+        //runArmToLevel(POWER_NO_WOBBLEGOAL);
+        currentArmPosition = ARM_POSITION.PARKED;
     }
 
-    public void moveArmDropWobbleGoalPosition() {
-        armMotor.setTargetPosition(ARM_DROP_WOBBLE_GOAL_POSITION_COUNT);
-        runArmToLevel();
+    public void moveArmHoldUpWobbleRingPosition() {
         turnArmBrakeModeOn();
-        currentArmPosition = ARM_POSITIONS.ARM_DROP_WOBBLE_GOAL_POSITION;
+        armMotor.setTargetPosition(ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT);
+        motorPowerToRun = POWER_WITH_WOBBLEGOAL;
+        runArmToLevelState = true;
+        //runArmToLevel(POWER_WITH_WOBBLEGOAL);
+        currentArmPosition = ARM_POSITION.HOLD_UP_WOBBLE_RING;
     }
 
-    public void moveArmHoldWobbleRingPosition() {
-        armMotor.setTargetPosition(ARM_HOLD_WOBBLE_GOAL_POSITION_COUNT);
-        runArmToLevel();
+
+    public void moveArmDropWobbleRingPosition() {
         turnArmBrakeModeOn();
-        currentArmPosition = ARM_POSITIONS.ARM_HOLD_WOBBLE_GOAL_POSITION;
+        armMotor.setTargetPosition(ARM_DROP_WOBBLE_RING_POSITION_COUNT);
+        motorPowerToRun = POWER_NO_WOBBLEGOAL;
+        runArmToLevelState = true;
+        //runArmToLevel(POWER_NO_WOBBLEGOAL);
+        currentArmPosition = ARM_POSITION.DROP_WOBBLE_RING;
     }
 
-    public void moveArmRingPosition() {
-        armMotor.setTargetPosition(ARM_RING_POSITION_COUNT);
-        runArmToLevel();
+    public void moveArmPickWobblePosition() {
         turnArmBrakeModeOn();
-        currentArmPosition = ARM_POSITIONS.ARM_RING_POSITION;
+        armMotor.setTargetPosition(ARM_PICK_WOBBLE_POSITION_COUNT);
+        motorPowerToRun = POWER_NO_WOBBLEGOAL;
+        runArmToLevelState = true;
+        //runArmToLevel(POWER_NO_WOBBLEGOAL);
+        currentArmPosition = ARM_POSITION.PICK_WOBBLE;
     }
 
-    public int triggerPositionCount;
+    public void moveArmPickRingPosition() {
+        turnArmBrakeModeOn();
+        armMotor.setTargetPosition(ARM_PICK_RING_POSITION_COUNT);
+        motorPowerToRun = POWER_NO_WOBBLEGOAL;
+        runArmToLevelState = true;
+        //runArmToLevel(POWER_NO_WOBBLEGOAL);
+        currentArmPosition = ARM_POSITION.PICK_RING;
+    }
 
-    public void moveArmByTrigger(double triggerPosition, LinearOpMode opModepassed) {
-        if ((triggerPosition < 0.1) && (currentArmPosition!= ARM_POSITIONS.ARM_PARKED_POSITION)) {
-            moveArmParkedPosition();
-        } else if ((triggerPosition > 0.1) && (triggerPosition < 0.5) &&
-                (currentArmPosition!= ARM_POSITIONS.ARM_DROP_WOBBLE_GOAL_POSITION)) {
-            moveArmDropWobbleGoalPosition();
-        } else if ((triggerPosition > 0.5) && (triggerPosition < 0.9) &&
-                (currentArmPosition!= ARM_POSITIONS.ARM_HOLD_WOBBLE_GOAL_POSITION)) {
-            moveArmHoldWobbleRingPosition();
-        } else if ((triggerPosition > 0.9) &&
-                (currentArmPosition!= ARM_POSITIONS.ARM_RING_POSITION)) {
-            moveArmRingPosition();
+    public void moveArmByTrigger() {
+        if ((currentArmPosition== ARM_POSITION.PARKED)) {
+            previousArmPosition = currentArmPosition;
+            moveArmPickWobblePosition();
+            openGrip();
+            return;
         }
 
-        /*opModepassed.telemetry.addData("initialArmPositionCount", initialArmPositionCount);
-        opModepassed.telemetry.addData("armMotor.getCurrentPosition()", armMotor.getCurrentPosition());
-        opModepassed.telemetry.addData("triggerPosition", triggerPosition);
-        opModepassed.telemetry.addData("armGripServo.getCurrentPosition()", armGripServo.getPosition());
-        opModepassed.telemetry.update();
+        //To go to ring position, grip should be open and triggered again from pick position
+        if ((currentArmPosition== ARM_POSITION.PICK_WOBBLE)  &&
+                (getGripServoState() == GRIP_SERVO_STATE.OPENED)) {
+            previousArmPosition = currentArmPosition;
+            moveArmPickRingPosition();
+            return;
+        }
 
-         */
+        if ((currentArmPosition== ARM_POSITION.PICK_RING)  &&
+                (getGripServoState() == GRIP_SERVO_STATE.OPENED)) {
+            previousArmPosition = currentArmPosition;
+            closeGrip();
+            moveArmParkedPosition();
+            return;
+        }
+
+        // After closing grip in pick wobble or ring position - assumes holding of wobble goal is done
+        if ((currentArmPosition== ARM_POSITION.PICK_WOBBLE)  &&
+                (previousArmPosition == ARM_POSITION.PARKED) &&
+                (getGripServoState() == GRIP_SERVO_STATE.CLOSED)) {
+            previousArmPosition = currentArmPosition;
+            moveArmHoldUpWobbleRingPosition();
+            return;
+        }
+
+        // After closing grip in pick wobble or ring position - assumes holding of wobble goal is done
+        if ((currentArmPosition== ARM_POSITION.PICK_RING)  &&
+                (getGripServoState() == GRIP_SERVO_STATE.CLOSED)) {
+            previousArmPosition = currentArmPosition;
+            moveArmHoldUpWobbleRingPosition();
+            return;
+        }
+
+        if ((currentArmPosition== ARM_POSITION.HOLD_UP_WOBBLE_RING)  &&
+                (getGripServoState() == GRIP_SERVO_STATE.CLOSED)) {
+            previousArmPosition = currentArmPosition;
+            moveArmDropWobbleRingPosition();
+            return;
+        }
+
+        if ((currentArmPosition== ARM_POSITION.DROP_WOBBLE_RING)  &&
+                (getGripServoState() == GRIP_SERVO_STATE.OPENED)) {
+            previousArmPosition = currentArmPosition;
+            closeGrip();
+            moveArmParkedPosition();
+            return;
+        }
+
+        if ((currentArmPosition== ARM_POSITION.DROP_WOBBLE_RING)  &&
+                (getGripServoState() == GRIP_SERVO_STATE.CLOSED)) {
+            previousArmPosition = currentArmPosition;
+            moveArmHoldUpWobbleRingPosition();
+            return;
+        }
+
     }
 
-        //**** Grip Methods ****
+
+
+    //**** Grip Methods ****
     public void initGrip() {
         // On init close grip - In Autonomous mode, this will be used by drive to make robot hold the wobble goal
         armGripServo.setPosition(GRIP_CLOSE);
@@ -167,18 +240,20 @@ public class Arm {
     }
 
     public void openGrip() {
+        if((currentArmPosition!= ARM_POSITION.PARKED) &&
+                (currentArmPosition!= ARM_POSITION.HOLD_UP_WOBBLE_RING))  {
             armGripServo.setPosition(GRIP_OPEN);
             gripServoState = GRIP_SERVO_STATE.OPENED;
+        }
     }
 
     public void closeGrip() {
-            armGripServo.setPosition(GRIP_CLOSE);
-            gripServoState = GRIP_SERVO_STATE.CLOSED;
+        armGripServo.setPosition(GRIP_CLOSE);
+        gripServoState = GRIP_SERVO_STATE.CLOSED;
     }
 
     // grips ring with hand of the arm by running armRingGripServo
-
-    public ARM_POSITIONS getCurrentArmPosition() {
+    public ARM_POSITION getCurrentArmPosition() {
         return currentArmPosition;
     }
 
