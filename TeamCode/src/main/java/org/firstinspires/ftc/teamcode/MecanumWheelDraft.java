@@ -135,7 +135,7 @@ public class MecanumWheelDraft extends LinearOpMode {
 
 
             if (gamepad1.a){
-
+                goToHeading(0 );
 
             }
 
@@ -170,6 +170,90 @@ public class MecanumWheelDraft extends LinearOpMode {
     }
 
 
+
+
+    /*
+    Read the starting angle and store it in a variable. Drive in a while loop with a condition on when to stop.
+    Depending on the difference between the starting angle and the current angle,
+    add power to one set of wheels and remove power from the other. Something like:
+
+double error = 0.0;
+double startAngle = imu.getAngle();
+//or however u get ur angle while (!im there)
+{ error = someConstant * (startAngle - currentAngle);
+frontLeft.setPower(power+error); frontRight.setPower(power-error);
+backLeft.setPower(power+error); backRight.setPower(power-error) }
+
+Find someConstant experimentally,
+it sets how sensitive the system is.
+You may need to make the error negative somehow if the robot corrects the wrong way. Hope this helps!!
+     */
+
+ void goToHeading(double heading){
+
+
+        double targAngle = heading;
+        double error = 0;
+        double sensitivityConstant = 1; //change this to change how much the robot corrects
+        double local_power = .3;
+
+
+        while(opModeIsActive() && (gamepad1.a)){
+
+            Orientation currentOrient;
+            currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+            double currAngle = currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle);
+
+            double raw_error = targAngle - currAngle;
+            error = (sensitivityConstant * (targAngle - currAngle)) / 180;
+
+
+
+
+
+            double frontLeft = local_power + error;
+            double backLeft = local_power + error;
+            double frontRight = local_power - error;
+            double backRight = local_power - error;
+
+            if (raw_error <=0){
+                frontLeft = -frontLeft;
+                backLeft = -backLeft;
+                backRight= -backRight;
+                frontRight = -frontRight;
+            }
+
+
+
+            robot.frontLeftMotor.setPower(frontLeft);
+            robot.backLeftMotor.setPower(backLeft);
+            robot.frontRightMotor.setPower(frontRight);
+            robot.backRightMotor.setPower(backRight);
+
+            if (targAngle == currAngle){
+                robot.frontLeftMotor.setPower(0);
+                robot.backLeftMotor.setPower(0);
+                robot.frontRightMotor.setPower(0);
+                robot.backRightMotor.setPower(0);
+            }
+
+
+
+
+            telemetry.addData("front left", "%.2f", local_power + error);
+            telemetry.addData("back left", "%.2f", local_power + error);
+            telemetry.addData("front right", "%.2f", local_power - error);
+            telemetry.addData("back right", "%.2f", local_power - error);
+
+
+            telemetry.addData("raw error", raw_error);
+            telemetry.addData("error Output", "%.2f", error);
+            telemetry.update();
+
+
+        }
+ }
 
 
 
