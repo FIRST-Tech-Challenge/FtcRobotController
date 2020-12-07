@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "testAuto",group = "UltGoal")
-public class testAuto extends LinearOpMode {
+public class testAutoOdometry extends LinearOpMode {
     HardwareMapV2 robot;
     Drivetrain drivetrain;
     OdometryGlobalCoordinatePosition globalCoordinatePosition = new OdometryGlobalCoordinatePosition(100, 100, 90);
