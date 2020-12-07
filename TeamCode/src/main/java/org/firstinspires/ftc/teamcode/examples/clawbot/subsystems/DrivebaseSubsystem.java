@@ -7,7 +7,7 @@ import com.technototes.library.subsystem.drivebase.TankDrivebaseSubsystem;
 public class DrivebaseSubsystem extends TankDrivebaseSubsystem<Motor<?>> {
     //subsystem enums
     public enum DriveSpeed{
-        NORMAL(0.5), TURBO(1);
+        SNAIL(0.3), NORMAL(0.5), TURBO(1);
         double speed;
         DriveSpeed(double s){
             speed = s;
@@ -18,7 +18,7 @@ public class DrivebaseSubsystem extends TankDrivebaseSubsystem<Motor<?>> {
     }
     public DriveSpeed speed;
     public DrivebaseSubsystem(Motor l, Motor r) {
-        super(l, r);
+            super(l, r);
         speed = DriveSpeed.NORMAL;
     }
     //custom function to spin the robot

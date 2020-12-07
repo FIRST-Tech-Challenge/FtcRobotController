@@ -13,5 +13,6 @@ public class ToggleClawPositionCommand extends Command {
     @Override
     public void execute() {
         subsystem.setClawPosition(subsystem.position.invert());
+        //subsystem.setClawPosition(subsystem.position == ClawSubsystem.ClawPosition.OPEN ? ClawSubsystem.ClawPosition.CLOSED : ClawSubsystem.ClawPosition.OPEN);
     }
 }

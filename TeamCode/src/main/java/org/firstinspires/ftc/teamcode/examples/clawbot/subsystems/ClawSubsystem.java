@@ -24,6 +24,7 @@ public class ClawSubsystem extends ServoSubsystem {
         position = ClawPosition.OPEN;
     }
     public void setClawPosition(ClawPosition pos){
-        setPosition(position.getPosition());
+        setPosition(pos.getPosition());
+        position = pos;
     }
 }
