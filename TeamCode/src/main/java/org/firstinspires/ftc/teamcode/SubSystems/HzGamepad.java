@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import static org.firstinspires.ftc.teamcode.SubSystems.Intake.INTAKE_MOTOR_STATE.STOPPED;
-
 /**
  * Defenition of the HzGamepad Class <BR>
  *
@@ -37,7 +35,6 @@ public class HzGamepad {
     public LaunchController gpLaunchController;
     public Launcher gpLauncher;
     public Arm gpArm;
-    //public GameField gpGameField;
 
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
@@ -121,30 +118,49 @@ public class HzGamepad {
         if (gpMagazine.magazinePosition == Magazine.MAGAZINE_POSITION.AT_COLLECT){
             gpLauncher.stopFlyWheel();
         }
+
+        if (gpMagazine.moveMagazineToCollectState) {
+            gpMagazine.moveMagazineToCollect();
+        }
+
+        if (gpMagazine.moveMagazineToLaunchState){
+            gpMagazine.moveMagazineToLaunch();
+        }
+
     }
+
 
     public void runIntakeControl(){
 
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
         if (getDpad_downPress()) {
-            if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.STOPPED) {
-                gpLaunchController.deactivateLaunchReadiness();
-                if(gpMagazine.moveMagazineToCollect()) {
-                    gpIntake.runIntakeMotor();
-                }
+            if (gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.STOPPED) {
+                gpLaunchController.activateLaunchReadinessState = false;
+                gpLaunchController.deactivateLaunchReadinessState = true;
+                gpMagazine.moveMagazineToCollectState = true;
+                gpIntake.intakeButtonState = Intake.INTAKE_BUTTON_STATE.ON;
             } else if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.RUNNING) {
-                gpIntake.stopIntakeMotor();
+                gpIntake.intakeButtonState = Intake.INTAKE_BUTTON_STATE.OFF;
             }
+        }
+
+        if (gpIntake.intakeButtonState == Intake.INTAKE_BUTTON_STATE.ON &&
+                gpMagazine.magazinePosition == Magazine.MAGAZINE_POSITION.AT_COLLECT){
+            gpIntake.runIntakeMotor();
+        } else {
+            gpIntake.stopIntakeMotor();
         }
 
         //Reverse Intake motors and run - in case of stuck state)
         if (getDpad_upPersistent()) {
+            gpIntake.intakeButtonState = Intake.INTAKE_BUTTON_STATE.OFF;
             gpIntake.reverseIntakeMotor();
             //gpMagazine.shakeMagazine(100);
         } else if (gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.REVERSING){
             gpIntake.stopIntakeMotor();
         }
     }
+
 
     public void runLaunchController(){
         if (getStartPersistent() && getButtonYPress()) {
@@ -155,33 +171,41 @@ public class HzGamepad {
             //High, Middle, Low Goal
             if (getButtonYPress()) {
                 gpLaunchController.lcTarget = LaunchController.LAUNCH_TARGET.HIGH_GOAL;
-                gpLaunchController.activateLaunchReadiness();
+                gpLaunchController.activateLaunchReadinessState = true;
             }
 
             //Power Shot 1
             if (getButtonXPress()) {
                 gpLaunchController.lcTarget = LaunchController.LAUNCH_TARGET.POWER_SHOT1;
-                gpLaunchController.activateLaunchReadiness();
+                gpLaunchController.activateLaunchReadinessState = true;
             }
 
             //Power Shot 2
             if (getButtonBPress()) {
                 gpLaunchController.lcTarget = LaunchController.LAUNCH_TARGET.POWER_SHOT2;
-                gpLaunchController.activateLaunchReadiness();
+                gpLaunchController.activateLaunchReadinessState = true;
             }
 
             //Power Shot 3
             if (getButtonAPress()) {
                 gpLaunchController.lcTarget = LaunchController.LAUNCH_TARGET.POWER_SHOT3;
-                gpLaunchController.activateLaunchReadiness();
+                gpLaunchController.activateLaunchReadinessState = true;
             }
         }
 
         if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.ACTIVATED) {
             gpLaunchController.runLauncherByDistanceToTarget();
             if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
-                gpLaunchController.deactivateLaunchReadiness();
+                gpLaunchController.deactivateLaunchReadinessState = true;
             }
+        }
+
+        if (gpLaunchController.deactivateLaunchReadinessState) {
+            gpLaunchController.deactivateLaunchReadiness();
+        }
+
+        if (gpLaunchController.activateLaunchReadinessState) {
+            gpLaunchController.activateLaunchReadiness();
         }
 
         gpLaunchController.indicateLaunchReadiness();
@@ -198,10 +222,14 @@ public class HzGamepad {
     }
 
     public void runArm(){
-        //gpArm.moveArmByTrigger(getLeftTrigger());
         if (getLeftTriggerPress()) {
             gpArm.moveArmByTrigger();
         }
+
+        if (gpArm.runArmToLevelState) {
+            gpArm.runArmToLevel(gpArm.motorPowerToRun);
+        }
+
         //Toggle Arm Grip actions
         if (getLeftBumperPress()) {
             if(gpArm.getGripServoState() == Arm.GRIP_SERVO_STATE.OPENED) {

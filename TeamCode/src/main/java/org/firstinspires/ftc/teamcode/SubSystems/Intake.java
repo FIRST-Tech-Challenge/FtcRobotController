@@ -18,6 +18,12 @@ public class Intake {
     public double intakePower = 0.8;
     public double intakeReversePower = 0.5;
 
+    public enum INTAKE_BUTTON_STATE {
+        ON,
+        OFF
+    }
+    public INTAKE_BUTTON_STATE intakeButtonState;
+
     public Intake(HardwareMap hardwareMap) {
         intakeMotor = hardwareMap.dcMotor.get("intake_rightenc");
     }

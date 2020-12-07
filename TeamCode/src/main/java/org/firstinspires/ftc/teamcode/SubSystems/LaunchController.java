@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 public class LaunchController {
 
@@ -60,14 +61,9 @@ public class LaunchController {
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL = 0.8;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE = 0.0;
 
-    public static final double slopeOfPowerShot = 0.01;
-    public static final double slopeOfHighGoal = 0.011111;
-    public static double slopeOfGetLaunchMotorSpeed;
-
     public Launcher lcLauncher;
     public Intake lcIntake;
     public Magazine lcMagazine;
-    public GameField lcGameField;
     public HzDrive lcDrive;
 
 
@@ -81,13 +77,23 @@ public class LaunchController {
         launchControllerBeaconServo = hardwareMap.servo.get("launch_beacon_servo");
     }
 
+    public boolean activateLaunchReadinessState;
+
     public LAUNCH_READINESS activateLaunchReadiness() {
         launchActivation = LAUNCH_ACTIVATION.ACTIVATED;
 
-        lcMagazine.senseMagazinePosition();
-        lcIntake.stopIntakeMotor();
-        if (lcMagazine.moveMagazineToLaunch()); {
+        //lcMagazine.senseMagazinePosition();
+        if (lcIntake.intakeMotorState != Intake.INTAKE_MOTOR_STATE.STOPPED){
+            lcIntake.stopIntakeMotor();
+        }
+        lcMagazine.moveMagazineToLaunchState = true;
+
+
+        if (lcMagazine.magazinePosition == Magazine.MAGAZINE_POSITION.AT_LAUNCH){
+            activateLaunchReadinessState = false;
             launchReadiness = LAUNCH_READINESS.READY;
+        } else {
+            launchReadiness = LAUNCH_READINESS.NOT_READY;
         }
 
         //gpVuforia.identifyCurrentLocation();
@@ -95,14 +101,16 @@ public class LaunchController {
         determineLaunchTarget();
         if (launchMode == LAUNCH_MODE.AUTOMATED)  turnRobotToTarget();
         runLauncherByDistanceToTarget();
-        senseLaunchReadiness();
         return launchReadiness;
     }
+
+    public boolean deactivateLaunchReadinessState = false;
 
     public void deactivateLaunchReadiness(){
         launchActivation = LaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
         lcLauncher.stopFlyWheel();
         turnRobotToNormalControl();
+        deactivateLaunchReadinessState = false;
     }
 
     public void runLauncherByDistanceToTarget(){
@@ -226,28 +234,20 @@ public class LaunchController {
     }
 
     public void setLaunchMotorPower() {
-        switch (lcTarget) {
-            case POWER_SHOT1 :
-            case POWER_SHOT2 :
-            case POWER_SHOT3 :
-                slopeOfGetLaunchMotorSpeed = slopeOfPowerShot;
-                break;
-            case HIGH_GOAL:
-                slopeOfGetLaunchMotorSpeed = slopeOfHighGoal;
-                break;
-        }
-
-        if(distanceFromTarget > 66 && distanceFromTarget < 138) {
-            lclaunchMotorPower = slopeOfGetLaunchMotorSpeed * distanceFromTarget;
+        if (distanceFromTarget > 66 && distanceFromTarget < 138) {
+            switch (lcTarget) {
+                case POWER_SHOT1:
+                case POWER_SHOT2:
+                case POWER_SHOT3:
+                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.72, 0.80);
+                    break;
+                case HIGH_GOAL:
+                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.76, 0.84);
+                    break;
+            }
         } else {
             lclaunchMotorPower = 0.0;
         }
-
-        //TODO: REMOVED THIS CODE
-        /*if (lclaunchMotorPower == 0.0) {
-            lclaunchMotorPower = 0.75;
-        }*/
-
 
     }
 

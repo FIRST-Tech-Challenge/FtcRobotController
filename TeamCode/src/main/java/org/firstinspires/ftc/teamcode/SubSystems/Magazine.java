@@ -95,44 +95,34 @@ public class Magazine {
         return magazine_touch_sensors_state;
     }
 
-    public boolean moveMagazineToLaunch() {
-        senseMagazinePosition();
-        //senseMagazineRingStatus();
-        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        timer.reset();
-        if(magazinePosition != MAGAZINE_POSITION.AT_LAUNCH ) {
-            magazineServo.setPower(0.3);
-            //TODO : AMJAD : SET TIMER TO EXIT
-            while (!magazineLaunchTouchSensor.isPressed() /*&& timer.time() < 2000*/) { }
-            magazineServo.setPower(0.0);
-            magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
-        }
+    public boolean moveMagazineToCollectState = false;
 
-        if (magazinePosition == MAGAZINE_POSITION.AT_LAUNCH){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean moveMagazineToCollect() {
-        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        timer.reset();
-        if (magazinePosition != MAGAZINE_POSITION.AT_COLLECT) {
-            magazineServo.setPower(-0.2);
-            //TODO : AMJAD : SET TIMER TO EXIT
-            while (!magazineCollectTouchSensor.isPressed() /*&& timer.time() < 4000*/)  {
-            }
+    public void moveMagazineToCollect(){
+        if (magazineCollectTouchSensor.isPressed()) {
             magazineServo.setPower(0.0);
             magazinePosition = MAGAZINE_POSITION.AT_COLLECT;
+            moveMagazineToCollectState = false;
         }
 
-        if (magazinePosition == MAGAZINE_POSITION.AT_COLLECT){
-            return true;
-        } else {
-            return false;
+        if (magazinePosition != MAGAZINE_POSITION.AT_COLLECT) {
+            magazineServo.setPower(-0.3);
         }
     }
+
+    public boolean moveMagazineToLaunchState = false;
+
+    public void moveMagazineToLaunch() {
+        if (magazineLaunchTouchSensor.isPressed()) {
+            magazineServo.setPower(0.0);
+            magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
+            moveMagazineToLaunchState = false;
+        }
+
+        if (magazinePosition != MAGAZINE_POSITION.AT_LAUNCH) {
+            magazineServo.setPower(0.3);
+        }
+    }
+
 
     public MAGAZINE_POSITION getMagazinePosition(){
         senseMagazinePosition();

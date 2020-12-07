@@ -344,102 +344,11 @@ public class HzGamepadClassic {
         double turn = rightStickX;
         gpChassis.runByGamepadCommand(targetAngle, turn, power);
 
-        //****Magazine Actions****
-        /*gpMagazine.senseMagazineRingStatus();;
-        if (gpMagazine.isMagazineFull()) {
-            gpMagazine.moveMagazineToLaunch();
-            gpIntake.stopIntakeMotor();
-        }
-
-        if (gpMagazine.isMagazineEmpty()) {
-            gpMagazine.moveMagazineToCollect();
-            gpIntake.runIntakeMotor();
-        }*/
-
-        //****Intake Actions****
-        //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
-        if (getDpad_downPress()) {
-            if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.STOPPED) {
-                if(gpMagazine.moveMagazineToCollect()) {
-                    gpIntake.runIntakeMotor();
-                }
-            } else if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.RUNNING) {
-                gpIntake.stopIntakeMotor();
-            }
-        }
-
-        //Reverse Intake motors and run - in case of stuck state)
-        if (getDpad_upPersistent()) {
-            gpIntake.reverseIntakeMotor();
-        } else if (gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.REVERSING){
-            gpIntake.stopIntakeMotor();
-        }
-
-
-
-        //**** Launch Controller Actions ****
-                                                                                                              //Grip Arm Servos
-        //High, Middle, Low Goal
-        if (getButtonYPress()) {
-            //gpLauncherController.activateLaunchReadiness(gpLauncher, gpMagazine, gpVuforia);
-            //gpLauncherController.senseLaunchReadiness(gpLauncher, gpMagazine, gpVuforia);
-            //gpLauncherController.indicateLaunchReadiness();
-            double distance, speed, robotAngle;
-            gpLauncherController.getDistanceFromTarget();
-            gpLauncherController.setLaunchMotorPower();
-            gpLauncher.runFlyWheelToTarget(gpLauncher.launcherMotorPower);
-
-            if (gpLauncherController.getLaunchMode() == LaunchController.LAUNCH_MODE.AUTOMATED) {
-                //gpLauncherController.alignRobot(targetAngle);
-            }
-            gpLauncherController.setLaunchReadyIndicator(LaunchController.LAUNCH_READINESS.READY);
-
-        }
-
-        //Power Shot 1
-        if (getButtonXPress()) {
-
-        }
-
-        //Power Shot 2
-        if (getButtonBPress()) {
-
-        }
-
-        //Power Shot 3
-        if (getButtonAPress()) {
-
-        }
-
-
-        //**** Launcher Actions ****
-        //Launches Ring
-        if (getRightBumperPress()) {
-            //TODO : AMJAD : Launch Controller should be used to check if status is good to launch
-
-            //AMJAD : moveMagazinetoLaunch should not be called by right bumper,
-            //it is to be done either automatically, or by Y,X,A,B button press.
-            //gpMagazine.moveMagazineToLaunch();
-
-            //if (!gpMagazine.isMagazineEmpty()) {
-                gpLauncher.plungeRingToFlyWheel();
-            //}
-
-        }
-
-        //**** Arm Actions ****
-        //Arm Rotation
-        gpArm.moveArmByTrigger();
-
-        //Toggle Arm Grip actions
-        if (getLeftBumperPress()) {
-            if(gpArm.getGripServoState() == Arm.GRIP_SERVO_STATE.OPENED) {
-                gpArm.closeGrip();
-            }
-            if(gpArm.getGripServoState() == Arm.GRIP_SERVO_STATE.CLOSED) {
-                gpArm.openGrip();
-            }
-        }
+        //runMagazineControl();
+        //runIntakeControl();
+        //runLaunchController();
+        //runLauncher();
+        //runArm();
     }
 }
 

@@ -81,7 +81,7 @@ public class Arm {
      */
     public void turnArmBrakeModeOn(){
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotor.setPower(0.0);
+        //armMotor.setPower(0.0);
     }
 
     /**
@@ -91,59 +91,74 @@ public class Arm {
      */
     public void turnArmBrakeModeOff(){
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        armMotor.setPower(0.0);
+        //armMotor.setPower(0.0);
     }
 
     /**
      * Method to run motor to set to the set position
      */
-    public void runArmToLevel(double power) {
-        //armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //Turn Motors on
-        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-        timer.reset();
+
+
+    public boolean runArmToLevelState = false;
+    public double motorPowerToRun = POWER_NO_WOBBLEGOAL;
+
+    public void runArmToLevel(double power){
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         int sign = armMotor.getCurrentPosition() < armMotor.getTargetPosition() ? 1 : -1;
-        armMotor.setPower(sign * power);
-        while((sign*(armMotor.getCurrentPosition() - armMotor.getTargetPosition()) < 0 ) && timer.time() < 4){
-            //opModepassed.telemetry.addData("armMotor.getTargetPosition()", armMotor.getTargetPosition());
-            //opModepassed.telemetry.addData("armMotor.getCurrentPosition()", armMotor.getCurrentPosition());
-            //opModepassed.telemetry.update();
+        if (runArmToLevelState = true && (sign*(armMotor.getCurrentPosition() - armMotor.getTargetPosition()) > 0 )) {
+            armMotor.setPower(0.0);
+            runArmToLevelState = false;
+            return;
+        } else {
+            if (!armMotor.isBusy()) {
+                armMotor.setPower(sign * power);
+            }
         }
     }
 
     public void moveArmParkedPosition() {
-        armMotor.setTargetPosition(ARM_PARKED_POSITION_COUNT);
-        runArmToLevel(POWER_NO_WOBBLEGOAL);
         turnArmBrakeModeOff();
+        armMotor.setTargetPosition(ARM_PARKED_POSITION_COUNT);
+        motorPowerToRun = POWER_NO_WOBBLEGOAL;
+        runArmToLevelState = true;
+        //runArmToLevel(POWER_NO_WOBBLEGOAL);
         currentArmPosition = ARM_POSITION.PARKED;
     }
 
     public void moveArmHoldUpWobbleRingPosition() {
-        armMotor.setTargetPosition(ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT);
-        runArmToLevel(POWER_WITH_WOBBLEGOAL);
         turnArmBrakeModeOn();
+        armMotor.setTargetPosition(ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT);
+        motorPowerToRun = POWER_WITH_WOBBLEGOAL;
+        runArmToLevelState = true;
+        //runArmToLevel(POWER_WITH_WOBBLEGOAL);
         currentArmPosition = ARM_POSITION.HOLD_UP_WOBBLE_RING;
     }
 
 
     public void moveArmDropWobbleRingPosition() {
-        armMotor.setTargetPosition(ARM_DROP_WOBBLE_RING_POSITION_COUNT);
-        runArmToLevel(POWER_NO_WOBBLEGOAL);
         turnArmBrakeModeOn();
+        armMotor.setTargetPosition(ARM_DROP_WOBBLE_RING_POSITION_COUNT);
+        motorPowerToRun = POWER_NO_WOBBLEGOAL;
+        runArmToLevelState = true;
+        //runArmToLevel(POWER_NO_WOBBLEGOAL);
         currentArmPosition = ARM_POSITION.DROP_WOBBLE_RING;
     }
 
     public void moveArmPickWobblePosition() {
-        armMotor.setTargetPosition(ARM_PICK_WOBBLE_POSITION_COUNT);
-        runArmToLevel(POWER_NO_WOBBLEGOAL);
         turnArmBrakeModeOn();
+        armMotor.setTargetPosition(ARM_PICK_WOBBLE_POSITION_COUNT);
+        motorPowerToRun = POWER_NO_WOBBLEGOAL;
+        runArmToLevelState = true;
+        //runArmToLevel(POWER_NO_WOBBLEGOAL);
         currentArmPosition = ARM_POSITION.PICK_WOBBLE;
     }
 
     public void moveArmPickRingPosition() {
-        armMotor.setTargetPosition(ARM_PICK_RING_POSITION_COUNT);
-        runArmToLevel(POWER_NO_WOBBLEGOAL);
         turnArmBrakeModeOn();
+        armMotor.setTargetPosition(ARM_PICK_RING_POSITION_COUNT);
+        motorPowerToRun = POWER_NO_WOBBLEGOAL;
+        runArmToLevelState = true;
+        //runArmToLevel(POWER_NO_WOBBLEGOAL);
         currentArmPosition = ARM_POSITION.PICK_RING;
     }
 

@@ -221,8 +221,11 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
                 break;
             }
         }
+        telemetry.addData("hzMagazine.moveMagazineToLaunchState",hzMagazine.moveMagazineToLaunchState);
         telemetry.addData("magazineLaunchTouchSensor.getState():", hzMagazine.magazineLaunchTouchSensor.isPressed());
+        telemetry.addData("hzMagazine.moveMagazineToCollectState",hzMagazine.moveMagazineToCollectState);
         telemetry.addData("magazineCollectTouchSensor.getState():", hzMagazine.magazineCollectTouchSensor.isPressed());
+
 
         //********** Intake Debug *******
         //telemetry.addData("hzGamepad1.getDpad_downPress()", hzGamepad.getDpad_downPress());
@@ -245,6 +248,8 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
 
         //******* Launch Controller Debug ********
         telemetry.addData("hzLaunchController.launchMode : ", hzLaunchController.launchMode);
+        telemetry.addData("hzLaunchController.deactivateLaunchReadinessState :",hzLaunchController.deactivateLaunchReadinessState);
+        telemetry.addData("hzLaunchController.activateLaunchReadinessState :",hzLaunchController.activateLaunchReadinessState);
         telemetry.addData("hzLaunchController.launchReadiness : ", hzLaunchController.launchReadiness);
         telemetry.addData("hzLaunchController.launchActivation : ", hzLaunchController.launchActivation);
         telemetry.addData("hzLaunchController.lcTarget : ", hzLaunchController.lcTarget);
