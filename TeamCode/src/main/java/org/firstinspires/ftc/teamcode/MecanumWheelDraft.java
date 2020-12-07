@@ -26,6 +26,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.concurrent.TimeUnit;
+import java.util.Locale;
 
 
 @TeleOp(name = "Graham: Mecanum", group = "Opmode")
@@ -58,6 +59,10 @@ public class MecanumWheelDraft extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+
+            Orientation angles;
+
+            angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
 
             y = gamepad1.left_stick_y;
@@ -120,6 +125,9 @@ public class MecanumWheelDraft extends LinearOpMode {
                 telemetry.addData("front right", "%.2f", frontRight);
                 telemetry.addData("back left", "%.2f", backLeft);
                 telemetry.addData("back right", "%.2f", backRight);
+
+                telemetry.addData("current heading", formatAngle(angles.angleUnit, angles.firstAngle));
+
                 telemetry.update();
 
 
@@ -127,7 +135,6 @@ public class MecanumWheelDraft extends LinearOpMode {
 
 
             if (gamepad1.a){
-
 
 
             }
@@ -162,69 +169,17 @@ public class MecanumWheelDraft extends LinearOpMode {
         return returnPower;
     }
 
-  void maintainHeading(double pwr){
-
-        //Goal: Continue perfectly straight at the set pwr
-
-      //1: Get starting angle
-      //Loop
-        //A: Drive forward
-        //B: Check angle
-        //C: Find error
-        //D: Apply error change to wheel pwr
-
-        //1
-     Orientation startOrient =  robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-     double error = 0;
-
-     double targAng = startOrient.angleUnit.DEGREES.normalize(startOrient.firstAngle);
-
-     while(opModeIsActive()){
-
-
-         Orientation currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-         double currAng = currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle);;
-
-         error = targAng - currAng;
-
-         double frontLeft;
-         double frontRight;
-         double backLeft;
-         double backRight;
-         double max;
-         //scale the error so that it is a motor value and
-         //then scale it by a third of the power to make sure it
-         //doesn't dominate the movement
-         double r = -error / 180 * (pwr * 10);
-
-
-         // Normalize the values so none exceeds +/- 1.0
-         frontLeft = pwr + r ;
-         backLeft = -pwr + r ;
-         backRight = -pwr + r;
-         frontRight = pwr + r;
-         max = Math.max(Math.max(Math.abs(frontLeft), Math.abs(frontRight)), Math.max(Math.abs(frontRight), Math.abs(frontRight)));
-         if (max > 1.0) {
-             frontLeft = frontLeft / max;
-             frontRight = frontRight / max;
-             backLeft = backLeft / max;
-             backRight = backRight / max;
-         }
-
-         //send the power to the motors
-         robot.frontLeftMotor.setPower(frontLeft);
-         robot.backLeftMotor.setPower(backLeft); //Changing the order in which the wheels start
-         robot.backRightMotor.setPower(backRight);
-         robot.frontRightMotor.setPower(frontRight);
-
-
-     }
 
 
 
-  }
 
+    String formatAngle(AngleUnit angleUnit, double angle) {
+        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
+    }
+
+    String formatDegrees(double degrees) {
+        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
+    }
 
 
 
