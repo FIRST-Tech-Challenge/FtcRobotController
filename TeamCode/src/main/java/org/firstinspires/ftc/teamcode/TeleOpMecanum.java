@@ -47,7 +47,7 @@ import com.qualcomm.robotcore.util.Range;
 
 public class TeleOpMecanum extends LinearOpMode {
 
-    // Declare OpMode members..
+    // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor frontLeftMotor;
     private DcMotor backLeftMotor;
