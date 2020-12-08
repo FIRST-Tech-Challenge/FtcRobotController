@@ -121,7 +121,6 @@ public class Arm {
         armMotor.setTargetPosition(ARM_PARKED_POSITION_COUNT);
         motorPowerToRun = POWER_NO_WOBBLEGOAL;
         runArmToLevelState = true;
-        //runArmToLevel(POWER_NO_WOBBLEGOAL);
         currentArmPosition = ARM_POSITION.PARKED;
     }
 
@@ -130,7 +129,6 @@ public class Arm {
         armMotor.setTargetPosition(ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT);
         motorPowerToRun = POWER_WITH_WOBBLEGOAL;
         runArmToLevelState = true;
-        //runArmToLevel(POWER_WITH_WOBBLEGOAL);
         currentArmPosition = ARM_POSITION.HOLD_UP_WOBBLE_RING;
     }
 
@@ -140,7 +138,6 @@ public class Arm {
         armMotor.setTargetPosition(ARM_DROP_WOBBLE_RING_POSITION_COUNT);
         motorPowerToRun = POWER_NO_WOBBLEGOAL;
         runArmToLevelState = true;
-        //runArmToLevel(POWER_NO_WOBBLEGOAL);
         currentArmPosition = ARM_POSITION.DROP_WOBBLE_RING;
     }
 
@@ -149,7 +146,6 @@ public class Arm {
         armMotor.setTargetPosition(ARM_PICK_WOBBLE_POSITION_COUNT);
         motorPowerToRun = POWER_NO_WOBBLEGOAL;
         runArmToLevelState = true;
-        //runArmToLevel(POWER_NO_WOBBLEGOAL);
         currentArmPosition = ARM_POSITION.PICK_WOBBLE;
     }
 
@@ -158,7 +154,6 @@ public class Arm {
         armMotor.setTargetPosition(ARM_PICK_RING_POSITION_COUNT);
         motorPowerToRun = POWER_NO_WOBBLEGOAL;
         runArmToLevelState = true;
-        //runArmToLevel(POWER_NO_WOBBLEGOAL);
         currentArmPosition = ARM_POSITION.PICK_RING;
     }
 
@@ -233,9 +228,6 @@ public class Arm {
     public void initGrip() {
         // On init close grip - In Autonomous mode, this will be used by drive to make robot hold the wobble goal
         armGripServo.setPosition(GRIP_CLOSE);
-
-        // AMJAD : Changed hardware design to use on one servo for both wobble goal and grip
-        //armRingGripServo.setPosition(GRIP_CLOSE);
         gripServoState = GRIP_SERVO_STATE.CLOSED;
     }
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 2019 FIRST. All rights reserved.
+   /* Copyright (c) 2019 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
@@ -88,7 +87,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  */
 
 
-public class HzVuforia {
+public class HzVuforia2Cameras {
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
@@ -147,11 +146,7 @@ public class HzVuforia {
 
     public String visibleTargetName = "";
 
-    public Pose2d poseVuforia = new Pose2d (0,0,0);
-    public Pose2d vuforiaLeftCameraCorrection = new Pose2d( -3.75,-3.75, Math.PI);
-    public double vuforiaFirstAngle = 0;
-    public double vuforiaSecondAngle = 0;
-    public double vuforiaThirdAngle = 0;
+    public Pose2d poseVuforia;
 
     //Tensor Flow parameters
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
@@ -163,7 +158,7 @@ public class HzVuforia {
     /**
      * Initialize the Vuforia localization engine.
      */
-    public HzVuforia(HardwareMap hardwareMap) {
+    public HzVuforia2Cameras(HardwareMap hardwareMap) {
         /*
          * Retrieve the camera we are to use.
          */
@@ -293,7 +288,7 @@ public class HzVuforia {
         // Next, translate the camera lens to where it is on the robot.
         // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
         final float CAMERA_FORWARD_DISPLACEMENT  = 0.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot-center
-        final float CAMERA_VERTICAL_DISPLACEMENT = 6.75f * mmPerInch;   // eg: Camera is 8 Inches above ground
+        final float CAMERA_VERTICAL_DISPLACEMENT = 7.5f * mmPerInch;   // eg: Camera is 8 Inches above ground
         final float CAMERA_LEFT_DISPLACEMENT     = 0.0f *mmPerInch;     // eg: Camera is ON the robot's center line
 
         OpenGLMatrix robotFromCamera = OpenGLMatrix
@@ -350,12 +345,9 @@ public class HzVuforia {
                     //translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
 
             // express the rotation of the robot in degrees.
-            Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, RADIANS);
-            //telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-            vuforiaFirstAngle=rotation.firstAngle;
-            vuforiaSecondAngle=rotation.secondAngle;
-            vuforiaThirdAngle=rotation.thirdAngle;
-            poseVuforia = (new Pose2d(translation.get(0)/mmPerInch,translation.get(1) / mmPerInch, rotation.thirdAngle)).plus(vuforiaLeftCameraCorrection);
+            Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+            //telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle+90);
+            poseVuforia = new Pose2d(translation.get(0)/mmPerInch,translation.get(1) / mmPerInch, rotation.thirdAngle );
         }
         else {
             //telemetry.addData("Visible Target", "none");

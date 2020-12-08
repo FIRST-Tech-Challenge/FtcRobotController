@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.GameOpModes;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.SubSystems.Arm;
@@ -26,8 +25,8 @@ import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
  * <p>
  * See lines 42-57.
  */
-@TeleOp(name = "Hazmat TeleOp RR FieldCentric", group = "00-Teleop")
-public class HzTeleOpRRFieldCentric extends LinearOpMode {
+@TeleOp(name = "HzTeleOp RR Field-Viewforia", group = "00-Teleop")
+public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
@@ -41,7 +40,7 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
     public Launcher hzLauncher;
     public Arm hzArm;
 
-    public HzVuforia hzVuforia1;
+    public HzVuforia hzVuforia;
     public Pose2d startPose = GameField.ORIGIN_FIELD;
     //int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
     //TODO : Create another TeleOp for Red
@@ -60,7 +59,8 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
 
         initialConfiguration();
 
-        //hzVuforia1 = new HzVuforia(hardwareMap);
+        hzVuforia = new HzVuforia(hardwareMap);
+        hzVuforia.setupVuforiaNavigation();
 
         // We want to turn off velocity control for teleop
         // Velocity control per wheel is not necessary outside of motion profiled auto
@@ -76,19 +76,20 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
             hzDrive.getLocalizer().setPoseEstimate(startPose);
         }
 
+        //Activate Vuforia Navigation
+        hzVuforia.activateVuforiaNavigation();
+
+        //Run Vuforia Navigation
+        hzVuforia.runVuforiaNavigation();
+
         // Initiate Camera even before Start is pressed.
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (!isStopRequested()) {
+            //TODO : IS THIS THE REASON FOR CRASH WITHOUT STOP BEING HANDLED
             //Init is pressed at this time, and start is not pressed yet
-
-            //Activate Vuforia Navigation
-            //hzVuforia1.activateVuforiaNavigation();
-
-            //Run Vuforia Navigation
-            //hzVuforia1.runVuforiaNavigation();
 
             if(HzDEBUG_FLAG) {
                 printDebugMessages();
@@ -97,7 +98,7 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
 
             while (opModeIsActive()) {
 
-                //hzVuforia1.runVuforiaNavigation();
+                hzVuforia.runVuforiaNavigation();
 
                 hzGamepad.runByGamepad();
 
@@ -109,14 +110,14 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
             }
 
         }
-        //hzVuforia1.deactivateVuforiaNavigation();
+        hzVuforia.deactivateVuforiaNavigation();
         PoseStorage.poseSetInAutonomous = false;
     }
 
     public void initialConfiguration(){
         telemetry.setAutoClear(true);
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-        telemetry.addData("Compile time : ", "6:50 : 12/05");
+        telemetry.addData("Compile time : ", "6:50 : 12/07");
 
         //***** Select Alliance ******
         telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X, Audience:A)");
@@ -144,7 +145,7 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
         }
 
         telemetry.update();
-        sleep(1000);
+        sleep(500);
 
         //***** Select Start Pose ******
         timer.reset();
@@ -184,7 +185,7 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
             telemetry.update();
         }
         telemetry.update();
-        sleep(1000);
+        sleep(500);
     }
 
     /**
@@ -201,12 +202,15 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
         telemetry.addData("startPose : ", startPose);
 
         //****** Drive debug ******
-        telemetry.addData("Drive Mode : ", hzDrive.driveMode);
-        telemetry.addData("PoseEstimate :", hzDrive.poseEstimate);
+        telemetry.addData("hzDrive.driveMode : ", hzDrive.driveMode);
+        telemetry.addData("hzDrive.poseEstimate :", hzDrive.poseEstimate);
 
-        //telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
         // Print pose to telemetry
-        //telemetry.addData("PoseVuforia :",hzVuforia1.poseVuforia);
+        telemetry.addData("hzVuforia1.visibleTargetName : ", hzVuforia.visibleTargetName);
+        telemetry.addData("hzVuforia1.poseVuforia :", hzVuforia.poseVuforia);
+        //telemetry.addData("hzVuforia.vuforiaFirstAngle: %.3f°",Math.toDegrees(hzVuforia.vuforiaFirstAngle));
+        //telemetry.addData("hzVuforia.vuforiaSecondAngle: %.3f°",Math.toDegrees(hzVuforia.vuforiaSecondAngle));
+        //telemetry.addData("hzVuforia.vuforiaThirdAngle: %.3f°",Math.toDegrees(hzVuforia.vuforiaThirdAngle));
 
         //******* Magazine Debug ********
         switch (hzMagazine.getMagazinePosition()) {

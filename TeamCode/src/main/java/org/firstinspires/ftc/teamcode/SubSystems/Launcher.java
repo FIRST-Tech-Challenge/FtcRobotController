@@ -71,7 +71,7 @@ public class Launcher {
     public void plungeRingToFlyWheel() {
         launcherRingPlungerServo.setPosition(PLUNGER_LAUNCH_POSITION);
         try {
-            sleep(500);
+            sleep(250);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
