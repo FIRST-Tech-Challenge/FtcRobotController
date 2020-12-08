@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import static java.lang.StrictMath.abs;
 
@@ -48,6 +49,8 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         float turnPwr;
 
         double deadzone = 0.2;
+        double basePwrMult = 0.1;
+        double highPwrMult = 0.25;
 
         waitForStart();
         runtime.reset();
@@ -85,16 +88,21 @@ public class EXP_Teleop_wheels extends LinearOpMode {
                 rbPower -= turnPwr;
             }
 
+            lfPower = Range.clip(lfPower, -1, 1);
+            rfPower = Range.clip(rfPower, -1, 1);
+            lbPower = Range.clip(lbPower, -1, 1);
+            rbPower = Range.clip(rbPower, -1, 1);
+
             if (gamepad1.right_bumper){
-                lf.setPower(lfPower *0.5);
-                rf.setPower(rfPower *0.5);
-                lb.setPower(lbPower *0.5);
-                rb.setPower(rbPower *0.5);
+                lf.setPower(lfPower * highPwrMult);
+                rf.setPower(rfPower * highPwrMult);
+                lb.setPower(lbPower * highPwrMult);
+                rb.setPower(rbPower * highPwrMult);
             } else{
-                lf.setPower(lfPower *0.25);
-                rf.setPower(rfPower *0.25);
-                lb.setPower(lbPower *0.25);
-                rb.setPower(rbPower *0.25);
+                lf.setPower(lfPower * basePwrMult);
+                rf.setPower(rfPower * basePwrMult);
+                lb.setPower(lbPower * basePwrMult);
+                rb.setPower(rbPower * basePwrMult);
             }
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
