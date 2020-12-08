@@ -99,6 +99,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f),leftback (%.2f), rightback (%.2f)", lfPower, rfPower,lbPower ,rbPower);
+            telemetry.addData("Direction", "fw (%.2f), side (%.2f), turn (%.2f)", SFPwr, SSPwr, turnPwr);
             telemetry.update();
         }
     }
