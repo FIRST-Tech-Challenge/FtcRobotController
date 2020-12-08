@@ -82,12 +82,12 @@ public class HzGamepad {
         };
 
         if (gpDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
-            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE) { // Audience
+            /*if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE) { // Audience
                 gpDrive.gamepadInput = new Vector2d(
                         -turboMode(getLeftStickY()),
                         -turboMode(getLeftStickX())
                 ).rotated(-gpDrive.poseEstimate.getHeading());
-            }
+            }*/
 
             if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
                 gpDrive.gamepadInput = new Vector2d(

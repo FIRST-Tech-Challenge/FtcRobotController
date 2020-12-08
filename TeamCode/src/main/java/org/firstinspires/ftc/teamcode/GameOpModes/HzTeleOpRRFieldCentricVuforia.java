@@ -41,7 +41,7 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
     public Arm hzArm;
 
     public HzVuforia hzVuforia;
-    public Pose2d startPose = GameField.ORIGIN_FIELD;
+    public Pose2d startPose = GameField.BLUE_INNER_START_LINE;
     //int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
     //TODO : Create another TeleOp for Red
 
@@ -117,10 +117,10 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
     public void initialConfiguration(){
         telemetry.setAutoClear(true);
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-        telemetry.addData("Compile time : ", "6:50 : 12/07");
+        telemetry.addData("Compile time : ", "6:50 : 12/05");
 
         //***** Select Alliance ******
-        telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X, Audience:A)");
+        telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X)");
         telemetry.update();
 
         timer.reset();
@@ -135,11 +135,6 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
                 break;
             }
-            if (hzGamepad.getButtonAPress()) {
-                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.AUDIENCE;
-                telemetry.addData("Playing Alliance Selected : ", "AUDIENCE");
-                break;
-            }
             telemetry.addData("10s time : Default Alliance A : %.3f", timer.time());
             telemetry.update();
         }
@@ -151,11 +146,6 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
         timer.reset();
         telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
         while (timer.time() < 10) {
-            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE){
-                telemetry.addData("Default Start Pose : ", "ORIGIN_FIELD");
-                startPose = GameField.ORIGIN_FIELD;
-                break;
-            }
             if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
                     startPose = GameField.RED_INNER_START_LINE;
@@ -180,8 +170,7 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
                     break;
                 }
             }
-            telemetry.addData("Start Pose : ", "ORIGIN_FIELD");
-            telemetry.addData("10s Timer : Default Pose : ORIGIN_FIELD : %.3f", timer.time());
+            telemetry.addData("10s Timer : Default Pose : BLUE_INNER_START_LINE : %.3f", timer.time());
             telemetry.update();
         }
         telemetry.update();
@@ -262,6 +251,7 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
         telemetry.addData("hzLaunchController.lcTargetVector", hzLaunchController.lcTargetVector);
         telemetry.addData("hzLaunchController.distanceFromTarget : ", hzLaunchController.distanceFromTarget);
         telemetry.addData("hzLaunchController.lclaunchMotorPower : ", hzLaunchController.lclaunchMotorPower);
+        telemetry.addData("hzLauncher.launchMotorVelocity : ", hzLauncher.launchMotorVelocity);
         telemetry.addData("hzDrive.drivePointToAlign : ", hzDrive.drivePointToAlign);
 
         //******* Launcher Debug *********

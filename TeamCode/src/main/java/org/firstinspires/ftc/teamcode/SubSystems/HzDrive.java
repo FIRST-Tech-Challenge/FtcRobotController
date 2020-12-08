@@ -197,8 +197,12 @@ public class HzDrive extends MecanumDriveDriveEncoders {
         // Update the heading controller with our current heading
         headingController.update(poseEstimate.getHeading());
 
-        // Update he localizer
+        // Update the localizer
         getLocalizer().update();
+
+        //TODO : TRY UPDATING TO Vuforia POS estimate here.
+
+
 
         // Send telemetry packet off to dashboard
         FtcDashboard.getInstance().sendTelemetryPacket(packet);

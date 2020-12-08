@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -15,7 +16,8 @@ public class Launcher {
 
     //Object declaration
     public Servo launcherRingPlungerServo;
-    public DcMotor launcherFlyWheelMotor;
+    public DcMotorEx launcherFlyWheelMotor;
+    public double launchMotorVelocity;
 
     public double launcherMotorPower;
     public static final double FLYWHEEL_SUPPLY_MODE_SPEED = 0.1;
@@ -35,9 +37,17 @@ public class Launcher {
     public Launcher(HardwareMap hardwareMap) {
         //Parameter Initialization
         launcherRingPlungerServo = hardwareMap.servo.get("launch_servo");
-        launcherFlyWheelMotor = hardwareMap.dcMotor.get("launch_backenc");
-        launcherFlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //launcherFlyWheelMotor = hardwareMap.dcMotor.get("launch_backenc");
+        launcherFlyWheelMotor = hardwareMap.get(DcMotorEx.class, "launch_backenc");
+
+        //launcherFlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        launcherFlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //launcherFlyWheelMotor.setVelocityPIDFCoefficients(1.26, 0.126, 0, 12.6);
+        //launcherFlyWheelMotor.setPositionPIDFCoefficients(5.0);
+
         //TODO : AMJAD : Test this.. May be Float is enough
+
         launcherFlyWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
@@ -49,6 +59,7 @@ public class Launcher {
     public void runFlyWheelToTarget(double launcherMotorPower) {
         launcherFlyWheelMotor.setDirection(DcMotor.Direction.FORWARD);
         launcherFlyWheelMotor.setPower(launcherMotorPower);
+        launchMotorVelocity = launcherFlyWheelMotor.getVelocity();
         //TODO : AMJAD : Determine if velocity encoder needs to be run with PID control
         launcherState = LAUNCHER_FLYWHEEL_CONTROL.RUNNING_FOR_TARGET;
     }

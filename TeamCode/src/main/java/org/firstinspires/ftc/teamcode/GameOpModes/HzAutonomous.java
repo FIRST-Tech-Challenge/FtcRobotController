@@ -33,7 +33,7 @@ public class HzAutonomous extends LinearOpMode {
     public boolean HzDEBUG_FLAG = true;
 
     public HzGamepad hzGamepad;
-    public GameField hzGameField;
+    //public GameField hzGameField;
     //public SampleMecanumDrive hzDrive;
     public HzDrive hzDrive;
     public Magazine hzMagazine;
@@ -42,21 +42,15 @@ public class HzAutonomous extends LinearOpMode {
     public Launcher hzLauncher;
     public Arm hzArm;
 
-    public HzVuforia hzVuforia1;
-    public Pose2d startPose = hzGameField.ORIGIN_FIELD;
+    public HzVuforia hzVuforia;
+    public Pose2d startPose = GameField.BLUE_INNER_START_LINE;
 
     //int playingAlliance = 1; //1 for Red, -1 for Blue
     //int startLine = 1 ; //0 for inner, 1 for outer
     boolean parked = false ;
 
-    public enum TARGET_ZONE{
-        A,
-        B,
-        C,
-        UNKNOWN;
-    };
-
-    public TARGET_ZONE targetZone = TARGET_ZONE.A;
+    public GameField.TARGET_ZONE targetZone = GameField.TARGET_ZONE.A;
+    Vector2d targetZoneVector = GameField.TARGET_ZONE_A;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -70,7 +64,9 @@ public class HzAutonomous extends LinearOpMode {
         hzLaunchController = new LaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, hzDrive);
         hzGamepad = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
 
-        hzVuforia1 = new HzVuforia(hardwareMap);
+        hzVuforia = new HzVuforia(hardwareMap);
+
+
 
         initialConfiguration();
 
@@ -93,7 +89,9 @@ public class HzAutonomous extends LinearOpMode {
         // Initiate Camera even before Start is pressed.
         //waitForStart();
 
-        hzVuforia1.activateVuforiaTensorFlow();
+        hzVuforia.activateVuforiaTensorFlow();
+
+        hzDrive.getLocalizer().setPoseEstimate(startPose);
 
         if (isStopRequested()) return;
 
@@ -101,8 +99,19 @@ public class HzAutonomous extends LinearOpMode {
             //Init is pressed at this time, and start is not pressed yet
 
             //Run Vuforia Tensor Flow
-            targetZone = hzVuforia1.runVuforiaTensorFlow();
+            targetZone = hzVuforia.runVuforiaTensorFlow();
 
+            switch (targetZone) {
+                case A :
+                    targetZoneVector = GameField.TARGET_ZONE_A;
+                    break;
+                case B :
+                    targetZoneVector = GameField.TARGET_ZONE_B;
+                    break;
+                case C :
+                    targetZoneVector = GameField.TARGET_ZONE_C;
+                    break;
+            }
 
             if (HzDEBUG_FLAG) {
                 printDebugMessages();
@@ -111,12 +120,12 @@ public class HzAutonomous extends LinearOpMode {
 
             while (opModeIsActive() && !parked) {
 
-                hzVuforia1.deactivateVuforiaTensorFlow();
+                hzVuforia.deactivateVuforiaTensorFlow();
 
                 // Example spline path from SplineTest.java
                 // Make sure the start pose matches with the localizer's start pose
                 Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .splineTo(new Vector2d(45, 45), 0)
+                        .splineTo(new Vector2d(0, 0), 0)
                         .build();
 
                 hzDrive.followTrajectory(traj);
@@ -125,12 +134,11 @@ public class HzAutonomous extends LinearOpMode {
 
                 hzDrive.followTrajectory(
                         hzDrive.trajectoryBuilder(traj.end(), true)
-                                .splineTo(new Vector2d(15, 15), Math.toRadians(180))
+                                .splineTo(targetZoneVector, Math.toRadians(-90))
                                 .build()
                 );
 
                 //Move to Launching Position
-
 
                 parked = true;
 
@@ -146,7 +154,7 @@ public class HzAutonomous extends LinearOpMode {
         PoseStorage.currentPose = hzDrive.getPoseEstimate();
         PoseStorage.poseSetInAutonomous = true;
 
-        hzVuforia1.deactivateVuforiaTensorFlow();
+        hzVuforia.deactivateVuforiaTensorFlow();
     }
 
     public void initialConfiguration(){
@@ -155,7 +163,7 @@ public class HzAutonomous extends LinearOpMode {
         telemetry.addData("Compile time : ", "6:50 : 12/05");
 
         //***** Select Alliance ******
-        telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X, Audience:A)");
+        telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X)");
         telemetry.update();
 
         timer.reset();
@@ -170,27 +178,17 @@ public class HzAutonomous extends LinearOpMode {
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
                 break;
             }
-            if (hzGamepad.getButtonAPress()) {
-                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.AUDIENCE;
-                telemetry.addData("Playing Alliance Selected : ", "AUDIENCE");
-                break;
-            }
             telemetry.addData("10s time : Default Alliance A : %.3f", timer.time());
             telemetry.update();
         }
 
         telemetry.update();
-        sleep(1000);
+        sleep(500);
 
         //***** Select Start Pose ******
         timer.reset();
         telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
         while (timer.time() < 10) {
-            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE){
-                telemetry.addData("Default Start Pose : ", "ORIGIN_FIELD");
-                startPose = GameField.ORIGIN_FIELD;
-                break;
-            }
             if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
                     startPose = GameField.RED_INNER_START_LINE;
@@ -215,12 +213,11 @@ public class HzAutonomous extends LinearOpMode {
                     break;
                 }
             }
-            telemetry.addData("Start Pose : ", "ORIGIN_FIELD");
-            telemetry.addData("10s Timer : Default Pose : ORIGIN_FIELD : %.3f", timer.time());
+            telemetry.addData("10s Timer : Default Pose : BLUE_INNER_START_LINE : %.3f", timer.time());
             telemetry.update();
         }
         telemetry.update();
-        sleep(1000);
+        sleep(500);
     }
 
     /**

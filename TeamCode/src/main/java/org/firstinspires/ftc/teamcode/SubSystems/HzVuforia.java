@@ -149,6 +149,7 @@ public class HzVuforia {
 
     public Pose2d poseVuforia = new Pose2d (0,0,0);
     public Pose2d vuforiaLeftCameraCorrection = new Pose2d( -3.75,-3.75, Math.PI);
+    public Pose2d vuforiaRightCameraCorrection = new Pose2d( 3.75,3.75, Math.PI);
     public double vuforiaFirstAngle = 0;
     public double vuforiaSecondAngle = 0;
     public double vuforiaThirdAngle = 0;
@@ -167,7 +168,11 @@ public class HzVuforia {
         /*
          * Retrieve the camera we are to use.
          */
-        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+            webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        } else {
+            webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");//TODO : CORRECT TO 2 after connecting second Webcam
+        }
 
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -355,7 +360,11 @@ public class HzVuforia {
             vuforiaFirstAngle=rotation.firstAngle;
             vuforiaSecondAngle=rotation.secondAngle;
             vuforiaThirdAngle=rotation.thirdAngle;
-            poseVuforia = (new Pose2d(translation.get(0)/mmPerInch,translation.get(1) / mmPerInch, rotation.thirdAngle)).plus(vuforiaLeftCameraCorrection);
+            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                poseVuforia = (new Pose2d(translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, rotation.thirdAngle)).plus(vuforiaLeftCameraCorrection);
+            } else {
+                poseVuforia = (new Pose2d(translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, rotation.thirdAngle)).plus(vuforiaRightCameraCorrection);
+            }
         }
         else {
             //telemetry.addData("Visible Target", "none");
@@ -391,8 +400,8 @@ public class HzVuforia {
         }
     }
 
-    public HzAutonomous.TARGET_ZONE runVuforiaTensorFlow() {
-        HzAutonomous.TARGET_ZONE targetZoneDetected = HzAutonomous.TARGET_ZONE.UNKNOWN;
+    public GameField.TARGET_ZONE runVuforiaTensorFlow() {
+        GameField.TARGET_ZONE targetZoneDetected = GameField.TARGET_ZONE.UNKNOWN;
         if (tfod != null) {
               // getUpdatedRecognitions() will return null if no new information is available since
              // the last time that call was made.
@@ -403,7 +412,7 @@ public class HzVuforia {
                     // empty list.  no objects recognized.
                     //telemetry.addData("TFOD", "No items detected.");
                     //telemetry.addData("Target Zone", "A");
-                    targetZoneDetected = HzAutonomous.TARGET_ZONE.A;
+                    targetZoneDetected = GameField.TARGET_ZONE.A;
                 } else {
                     // list is not empty.
                     // step through the list of recognitions and display boundary info.
@@ -418,13 +427,13 @@ public class HzVuforia {
                         // check label to see which target zone to go after.
                         if (recognition.getLabel().equals("Single")) {
                             //telemetry.addData("Target Zone", "B");
-                            targetZoneDetected =  HzAutonomous.TARGET_ZONE.B;
+                            targetZoneDetected =  GameField.TARGET_ZONE.B;
                         } else if (recognition.getLabel().equals("Quad")) {
                             //telemetry.addData("Target Zone", "C");
-                            targetZoneDetected =  HzAutonomous.TARGET_ZONE.C;
+                            targetZoneDetected =  GameField.TARGET_ZONE.C;
                         } else {
                             //telemetry.addData("Target Zone", "UNKNOWN");
-                            targetZoneDetected = HzAutonomous.TARGET_ZONE.UNKNOWN;
+                            targetZoneDetected = GameField.TARGET_ZONE.UNKNOWN;
                         }
                     }
                 }

@@ -21,12 +21,24 @@ public class GameField {
     public static final Pose2d BLUE_OUTER_START_LINE =  new Pose2d(-68,48,Math.toRadians(0));
     public static final Pose2d RED_INNER_START_LINE =  new Pose2d(-68,-24,Math.toRadians(0));
     public static final Pose2d RED_OUTER_START_LINE =  new Pose2d(-68,-48,Math.toRadians(0));
-    public static final Pose2d ORIGIN_FIELD =  new Pose2d(0,0,Math.toRadians(0));
+    //public static final Pose2d ORIGIN_FIELD =  new Pose2d(0,0,Math.toRadians(0));
 
     public enum PLAYING_ALLIANCE{
         RED_ALLIANCE,
         BLUE_ALLIANCE,
-        AUDIENCE
     }
-    public static PLAYING_ALLIANCE playingAlliance = PLAYING_ALLIANCE.AUDIENCE;
+    public static PLAYING_ALLIANCE playingAlliance = PLAYING_ALLIANCE.BLUE_ALLIANCE;
+
+    public enum TARGET_ZONE{
+        A,
+        B,
+        C,
+        UNKNOWN;
+    };
+
+    public static final Vector2d TARGET_ZONE_A = new Vector2d(12,60);
+    public static final Vector2d TARGET_ZONE_B = new Vector2d(36,36);
+    public static final Vector2d TARGET_ZONE_C = new Vector2d(60,60);
+
+
 }

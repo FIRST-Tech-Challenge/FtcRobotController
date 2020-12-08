@@ -16,6 +16,7 @@ public class Test_Launcher extends LinearOpMode {
 
     HzGamepadClassic hzGamepadClassic;
     Launcher hzLauncher;
+    double powerLoop = 0.3;
 
     @Override
     public void runOpMode() {
@@ -46,7 +47,15 @@ public class Test_Launcher extends LinearOpMode {
 
             }
 
-            if (hzGamepadClassic.getButtonAPress()) {
+            //hzLauncher.launcherFlyWheelMotor.setVelocityPIDFCoefficients(1.26, 0.126, 0, 12.6);
+            //hzLauncher.launcherFlyWheelMotor.setPositionPIDFCoefficients(5.0);
+
+
+            if (hzGamepadClassic.getLeftBumperPress()) {
+                maxVelocityTest();
+            }
+
+            if (hzGamepadClassic.getButtonXPress()) {
                 hzLauncher.runFlyWheelToTarget(0.7);
             }
 
@@ -54,8 +63,16 @@ public class Test_Launcher extends LinearOpMode {
                 hzLauncher.stopFlyWheel();
             }
 
-            if (hzGamepadClassic.getButtonXPress()) {
-                hzLauncher.runFlyWheelToSupply(0.2);
+            if (powerLoop >1.0) powerLoop = 1.0;
+            if (powerLoop < 0.3) powerLoop = 0.3;
+            if (hzGamepadClassic.getButtonAPress()) {
+                powerLoop = powerLoop - 0.01;
+                hzLauncher.runFlyWheelToSupply(powerLoop);
+            }
+
+            if (hzGamepadClassic.getButtonYPress()) {
+                powerLoop = powerLoop + 0.01;
+                hzLauncher.runFlyWheelToSupply(powerLoop);
             }
 
             if(HzDEBUG_FLAG) {
@@ -63,6 +80,18 @@ public class Test_Launcher extends LinearOpMode {
                 telemetry.update();
             }
         }
+    }
+
+    double currentVelocity, maxVelocity = 0;
+
+    public void maxVelocityTest(){
+        hzLauncher.runFlyWheelToTarget(1.0);
+        currentVelocity = hzLauncher.launchMotorVelocity;
+
+        if (currentVelocity > currentVelocity) {
+            maxVelocity = currentVelocity;
+        }
+
     }
 
     /**
@@ -74,6 +103,10 @@ public class Test_Launcher extends LinearOpMode {
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
         telemetry.addData("7:24","11/23");
         telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncher.launcherFlyWheelMotor.isBusy());
+        telemetry.addData("Launch Motor Power", hzLauncher.launcherFlyWheelMotor.getPower());
+        telemetry.addData("Laucnch Motor Velocity", hzLauncher.launcherFlyWheelMotor.getVelocity());
+
+        telemetry.addData("launcher MaxVelocity : ",maxVelocity );
         telemetry.addData("launcherRingPlungerServo.getPosition()", hzLauncher.launcherRingPlungerServo.getPosition());
 
         switch (hzLauncher.getLauncherState()){
