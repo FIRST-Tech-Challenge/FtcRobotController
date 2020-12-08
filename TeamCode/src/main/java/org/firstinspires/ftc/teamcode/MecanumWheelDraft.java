@@ -135,11 +135,14 @@ public class MecanumWheelDraft extends LinearOpMode {
 
 
             if (gamepad1.a){
-                goToHeading(0 );
+                //goToHeading(0);
+                rotateToHeading(90);
 
             }
 
-
+            if (gamepad1.b){
+                blindRotateRight(.3);
+            }
 
 
         }
@@ -189,12 +192,12 @@ it sets how sensitive the system is.
 You may need to make the error negative somehow if the robot corrects the wrong way. Hope this helps!!
      */
 
- void goToHeading(double heading){
+ void goToHeading(double heading){   //kinda rotates, don't use this
 
 
         double targAngle = heading;
         double error = 0;
-        double sensitivityConstant = 1; //change this to change how much the robot corrects
+        double sensitivityConstant = .001; //change this to change how much the robot corrects
         double local_power = .3;
 
 
@@ -206,7 +209,7 @@ You may need to make the error negative somehow if the robot corrects the wrong 
             double currAngle = currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle);
 
             double raw_error = targAngle - currAngle;
-            error = (sensitivityConstant * (targAngle - currAngle)) / 180;
+            error = (sensitivityConstant * (targAngle - currAngle));
 
 
 
@@ -255,6 +258,87 @@ You may need to make the error negative somehow if the robot corrects the wrong 
         }
  }
 
+
+    void rotateToHeading(double heading){
+            // find current heading
+            //determine the error
+            //determine which way to rotate is quicker
+            //rotate until at heading
+        double targAngle = heading;
+
+        Orientation currentOrient;
+        currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double  currAngle = currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle);
+
+        //double raw_error = targAngle - currAngle;
+
+/*
+            while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) >= targAngle) && opModeIsActive()){
+                blindRotateRight(.3);
+            }
+
+            while((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) <= targAngle) && opModeIsActive()){
+                blindRotateLeft(.3);
+        }
+
+
+ */
+        blindRotateRight(.3);
+        while((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) >= targAngle) && opModeIsActive()){
+
+
+        }
+
+        blindRotateLeft(.3);
+        while((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) <= targAngle) && opModeIsActive()){
+
+        }
+
+
+        double raw_error = targAngle - currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle);
+
+        if ((Math.abs(raw_error) <= 5)){
+            stopDriving();
+            return;
+        }
+
+
+
+        telemetry.addData("raw error", targAngle - currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle));
+        telemetry.update();
+
+
+
+
+    }
+
+
+    void blindRotateRight(double pwr){
+            pwr = -pwr; // -pwr on all wheels turns right
+            // Set power on each wheel
+            robot.frontLeftMotor.setPower(pwr);
+            robot.frontRightMotor.setPower(pwr);
+            robot.backLeftMotor.setPower(pwr);
+            robot.backRightMotor.setPower(pwr);
+
+        }
+
+    void blindRotateLeft(double pwr){
+
+        robot.frontLeftMotor.setPower(pwr);
+        robot.frontRightMotor.setPower(pwr);
+        robot.backLeftMotor.setPower(pwr);
+        robot.backRightMotor.setPower(pwr);
+
+    }
+
+    void stopDriving(){
+        robot.frontLeftMotor.setPower(0);
+        robot.frontRightMotor.setPower(0);
+        robot.backLeftMotor.setPower(0);
+        robot.backRightMotor.setPower(0);
+    }
 
 
     String formatAngle(AngleUnit angleUnit, double angle) {
