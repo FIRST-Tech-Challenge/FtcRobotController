@@ -325,7 +325,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             @Override
             public void triggerMoved(EventManager source, Events.Side side, float current, float change) throws InterruptedException {
                 // 0.2 is a dead zone threshold for the trigger
-                if (current > 0.2 && chassis!=null) {
+                if (current > 0.2 && chassis!=null && source.getTrigger(Events.Side.LEFT)<0.2) {
                     if (source.isPressed(Button.DPAD_UP)) { // high goal
                         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
                     } else if (source.isPressed(Button.DPAD_RIGHT)) { // high goal
@@ -821,6 +821,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         telemetry.addLine().addData("A:Straight", "B:rotate Y:driveTo").setRetained(true);
         chassis.setupTelemetry(telemetry);
         setupTelemetryDiagnostics(telemetry);
+        setupTelemetry(telemetry);
+        if (shooter!=null)
+            shooter.setupTelemetry(telemetry);
+        // em.updateTelemetry(telemetry, 1000);
         // chassis.enableImuTelemetry();
         em.updateTelemetry(telemetry, 100);
         em.onButtonDown(new Events.Listener() {
@@ -834,6 +838,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.getTrigger(Events.Side.LEFT) > 0.5) {
                     chassis.auto_target_y += 10;
                 } else if (source.getTrigger(Events.Side.RIGHT) > 0.5) { // doPowerShots
+                    tZone = TargetZone.ZONE_A;
                     doPowerShots();
                 } else if (!source.isPressed(Button.START)) {
                     chassis.driveTo(auto_chassis_power, chassis.auto_target_x,  chassis.auto_target_y, auto_rotate_degree, true, 5);
@@ -1135,14 +1140,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // still need to change positions to be far left for blue side
         if(side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 25, 180, -45, true, 3);
+                chassis.driveTo(auto_chassis_power, 25, 180, -50, true, 3);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(auto_chassis_power, 25, 300, -55, true, 5);
+                chassis.driveTo(auto_chassis_power, 25, 300, -55, true, 6);
             } else {
                 return;
             }
+
         }
         if (comboGrabber!=null) {
             comboGrabber.releaseWobbleGoalCombo();
@@ -1168,10 +1174,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     public void doPowerShots() throws InterruptedException {
         if(tZone == TargetZone.ZONE_A) {
-            chassis.driveTo(auto_chassis_power, side(60), 165, -60, true, 5);
+            chassis.driveTo(auto_chassis_power, side(60), 165, chassis.odo_heading(), false, 5);
+        } else if (tZone==TargetZone.ZONE_C) {
+            chassis.driveTo(auto_chassis_power, side(60), 170, chassis.odo_heading(), false, 5);
         }
+
         shooter.shootOutByRpm(1260);
-        chassis.driveTo(.6, side(150), 170, 0, true,  3); // need to do something about this
+        chassis.driveTo(.6, side(150), 170, 0, false,  3); // need to do something about this
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
         //shoot
         autoShoot();
@@ -1196,9 +1205,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void getSecondWobbleGoal() throws InterruptedException {
         chassis.driveTo(auto_chassis_power, side(170), 37, 0, true,  5);
         if(startPos == StartPosition.OUT){
-            chassis.driveTo(auto_chassis_power, side(105), 30, 0, true,  3);
+            chassis.driveTo(auto_chassis_power, side(107), 30, 0, true,  3);
         } else {
-            chassis.driveTo(auto_chassis_power, side(45), 30, 0, true,  3);
+            chassis.driveTo(auto_chassis_power, side(47), 30, 0, true,  3);
         }
         //grab the wobble goal
         if (!simulation_mode) {
@@ -1217,7 +1226,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, side(80), 225, 0, false, 5);
 
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(.8, side(30), 23, 0, false, 5);
+                chassis.driveTo(.8, side(50), 60, 0, false, 5);
                 chassis.driveTo(auto_chassis_power, side(30), 285, 0, false, 5);
             } else {
                 return;

@@ -78,8 +78,8 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
     public final double CAM_MAX = 0.99;
     public final double CAM_INIT = 0.51;
     public final double CAM_BLUE_IN = 0.56;
-    public final double CAM_BLUE_OUT = 0.22;
-    public final double CAM_RED_IN = 0.22;
+    public final double CAM_BLUE_OUT = 0.29;
+    public final double CAM_RED_IN = 0.29;
     public final double CAM_RED_OUT = 0.56;
     public final double CAM_TELE_OP = 0.51;
 
