@@ -230,6 +230,8 @@ public class EXP_BLUE_Right_Line_Auto_HGWB extends BasicAutonomous {
                 elevator.Elevatoroff();
                 shooterStartUp(mShooterState, shooterStartUpTimeAllowed);
 
+
+
                 try {
                     shooter.shoot_N_rings(1);
                 } catch (InterruptedException e) {
@@ -251,6 +253,7 @@ public class EXP_BLUE_Right_Line_Auto_HGWB extends BasicAutonomous {
                 drivetime.reset();
                 // change gyroDrive(DRIVE_SPEED, -32.0, 10, 5);
                 gyroDrive(DRIVE_SPEED, -40, 20,3);
+                wobble.ArmContract();
                 //gyroTurn(TURN_SPEED,-20,3);
                 //gyroDrive(DRIVE_SPEED,-40,10,3);
                 break;
