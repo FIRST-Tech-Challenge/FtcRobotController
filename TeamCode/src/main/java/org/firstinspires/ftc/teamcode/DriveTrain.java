@@ -59,7 +59,7 @@ public class DriveTrain {
     }
 
     public void goForward(double inches) {
-        double pCoeff = 0.15; //larger means more reactive
+        double pCoeff = 0.1; //larger means more reactive
         double startPosition = 0;
         double endPosition = 0;
         showData("DRIVE_TRAIN_CAPTION", "Robot is moving forward");
@@ -68,19 +68,28 @@ public class DriveTrain {
         endPosition = startPosition + (inches * INCH_TO_TICK); // How far you need to travel
         Orientation angles;
         angles = hera.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        while(!this.opMode.isStopRequested() && hera.imu.isGyroCalibrated()) {
+        while(!this.opMode.isStopRequested() && !hera.imu.isGyroCalibrated()) {
+            showData("IMU Status", "Calibrating");
+            showData("gyro is calibrated", "" + hera.imu.isGyroCalibrated());
             this.opMode.sleep(50);
             this.opMode.idle();
         }
         double startingOrientation = angles.firstAngle;
         while (hera.motorOne.getCurrentPosition() < endPosition && this.opMode.opModeIsActive()) {
-            double error = startingOrientation - angles.firstAngle;
-            double steer = Range.clip(error*pCoeff, -1, 1);
-            wheelOnePower -=steer;
             hera.motorOne.setPower(wheelOnePower);
             hera.motorTwo.setPower(wheelTwoPower);
             hera.motorThree.setPower(wheelThreePower);
             hera.motorFour.setPower(wheelFourPower);
+            double error = startingOrientation - angles.firstAngle;
+            double steer = Range.clip(error*pCoeff, -1, 1);
+            if(steer > 0) {
+                wheelThreePower -= steer;
+                wheelFourPower -= steer;
+            }
+            if(steer > 0){
+                wheelOnePower -= steer;
+                wheelTwoPower -= steer;
+            }
             showData("StartPosition", "" + startPosition);
             showData("EndPosition", "" + endPosition);
             showData("CurrentPosition", "" + hera.motorOne.getCurrentPosition());
@@ -89,6 +98,9 @@ public class DriveTrain {
             showData("wheel three power", "" + hera.motorThree.getPower());
             showData("wheel four power", "" + hera.motorFour.getPower());
             showData("CurrentPosition", "" + hera.motorOne.getCurrentPosition());
+            showData("Initial Angle", "" + angles.firstAngle);
+            showData("error", "" + error);
+            showData("steer", "" + steer);
             this.telemetry.update();
         }
         this.stop();
