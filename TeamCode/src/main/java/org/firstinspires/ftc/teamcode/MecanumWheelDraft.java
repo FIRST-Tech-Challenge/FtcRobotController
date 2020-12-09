@@ -136,14 +136,9 @@ public class MecanumWheelDraft extends LinearOpMode {
 
             if (gamepad1.a){
                 //goToHeading(0);
-                rotateToHeading(90);
+                rotateToHeading(0);
 
             }
-
-            if (gamepad1.b){
-                blindRotateRight(.3);
-            }
-
 
         }
 
@@ -260,54 +255,36 @@ You may need to make the error negative somehow if the robot corrects the wrong 
 
 
     void rotateToHeading(double heading){
-            // find current heading
-            //determine the error
-            //determine which way to rotate is quicker
-            //rotate until at heading
-        double targAngle = heading;
 
         Orientation currentOrient;
         currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double currentAngle = currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle);
 
-        double  currAngle = currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle);
+        if (currentAngle > heading) {
 
-        //double raw_error = targAngle - currAngle;
+            blindRotateRight(.3);
+            while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) > heading) && opModeIsActive()) {
 
-/*
-            while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) >= targAngle) && opModeIsActive()){
-                blindRotateRight(.3);
+                currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
+                telemetry.update();
             }
-
-            while((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) <= targAngle) && opModeIsActive()){
-                blindRotateLeft(.3);
-        }
-
-
- */
-        blindRotateRight(.3);
-        while((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) >= targAngle) && opModeIsActive()){
-
-
-        }
-
-        blindRotateLeft(.3);
-        while((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) <= targAngle) && opModeIsActive()){
-
-        }
-
-
-        double raw_error = targAngle - currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle);
-
-        if ((Math.abs(raw_error) <= 5)){
             stopDriving();
-            return;
+
         }
+        if (currentAngle < heading) {
+            blindRotateLeft(.3);
+            while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) < heading) && opModeIsActive()) {
 
 
+                currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
+                telemetry.update();
 
-        telemetry.addData("raw error", targAngle - currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle));
-        telemetry.update();
 
+            }
+            stopDriving();
+        }
 
 
 
