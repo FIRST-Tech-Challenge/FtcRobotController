@@ -23,7 +23,7 @@ public class Shooter {
     private static final double ShooterSpeedfastright=.51; // 0.53
     //We are changing the speeds to see which speeds make the first ring in
     private static final double shooterSpeedslowleft=.4;
-    private static final double shooterSpeedslowright=.50;
+    private static final double shooterSpeedslowright=.45;
     private static final double jamClear=-.35;
     //Constants for stacker servos
     private static final double leftUp = 0.75; // .75 a little shy but ok due to hitting bolt
