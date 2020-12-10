@@ -259,10 +259,10 @@ public class HzLaunchController {
                 case POWER_SHOT1:
                 case POWER_SHOT2:
                 case POWER_SHOT3:
-                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.66, 0.76);
+                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.66, 0.74);
                     break;
                 case HIGH_GOAL:
-                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.70, 0.80);
+                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.70, 0.78);
                     break;
             }
         } else {
