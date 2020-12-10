@@ -113,7 +113,7 @@ public class HzMagazine {
 
     public void moveMagazineToLaunch() {
         if (magazineLaunchTouchSensor.isPressed()) {
-            magazineServo.setPower(0.0);
+            magazineServo.setPower(0.03);
             magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
             moveMagazineToLaunchState = false;
         }
