@@ -12,9 +12,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class Arm {
+public class HzArm {
 
     public DcMotor armMotor;
     //Gobilda 5202 Series Yellow Jacket Planetary Gear Motor (26.9:1 Ratio, 223 RPM, 3.3 - 5V Encoder)
@@ -51,7 +50,7 @@ public class Arm {
 
     public GRIP_SERVO_STATE gripServoState = GRIP_SERVO_STATE.OPENED ;
 
-    public Arm(HardwareMap hardwareMap) {
+    public HzArm(HardwareMap hardwareMap) {
         armMotor = hardwareMap.dcMotor.get("arm_rotate");
         armGripServo = hardwareMap.servo.get("arm_grip");
     }

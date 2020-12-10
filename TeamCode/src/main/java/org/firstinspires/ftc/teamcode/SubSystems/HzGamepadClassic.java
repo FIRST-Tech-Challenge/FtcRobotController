@@ -311,7 +311,7 @@ public class HzGamepadClassic {
     }
 
 
-    public void runByGamepadInputClassicChassis(ChassisClassic gpChassis) {
+    public void runByGamepadInputClassicChassis(HzChassisClassic gpChassis) {
 
         double leftStickX = turboMode(getLeftStickX());
         double leftStickY = turboMode(getLeftStickY());
@@ -333,7 +333,7 @@ public class HzGamepadClassic {
 
     }
 
-    public void runSubsystemByGamepadInput(ChassisClassic gpChassis, Arm gpArm, Intake gpIntake, Launcher gpLauncher, Magazine gpMagazine, LaunchController gpLauncherController) {
+    public void runSubsystemByGamepadInput(HzChassisClassic gpChassis, HzArm gpHzArm, HzIntake gpHzIntake, HzLauncher gpHzLauncher, HzMagazine gpHzMagazine, HzLaunchController gpLauncherController) {
 
         //**** Chassis Actions****
         double leftStickX = turboMode(getLeftStickX());

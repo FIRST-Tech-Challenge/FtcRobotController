@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
-public class Magazine {
+public class HzMagazine {
     //public ElapsedTime magazineTimer;
     public CRServo magazineServo;
 
@@ -40,7 +40,7 @@ public class Magazine {
         TS_ERROR
     }
 
-    public Magazine(HardwareMap hardwareMap) {
+    public HzMagazine(HardwareMap hardwareMap) {
         magazineServo = hardwareMap.crservo.get("mgz_servo");
             magazineLaunchTouchSensor = hardwareMap.touchSensor.get("mgz_launch_ts");
         magazineCollectTouchSensor = hardwareMap.touchSensor.get("mgz_collect_ts");

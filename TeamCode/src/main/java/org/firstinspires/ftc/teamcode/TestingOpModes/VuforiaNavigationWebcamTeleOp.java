@@ -41,7 +41,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.SubSystems.ChassisClassic;
+import org.firstinspires.ftc.teamcode.SubSystems.HzChassisClassic;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
 
 import java.util.ArrayList;
@@ -94,7 +94,7 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
     public boolean HzDEBUG_FLAG = true;
 
     HzGamepadClassic hzGamepad;
-    ChassisClassic hzChassisClassic;
+    HzChassisClassic hzChassisClassic;
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
@@ -141,7 +141,7 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
 
     @Override public void runOpMode() {
         //Instantiate Subsystems : Chassis, Arm, Intake, Gamepad1
-        hzChassisClassic = new ChassisClassic(hardwareMap);
+        hzChassisClassic = new HzChassisClassic(hardwareMap);
 
         hzGamepad = new HzGamepadClassic(gamepad1, this);
 

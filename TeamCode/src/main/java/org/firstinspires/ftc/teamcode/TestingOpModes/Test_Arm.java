@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.TestingOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.SubSystems.Arm;
+import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
 
 /**
@@ -16,13 +16,13 @@ public class Test_Arm extends LinearOpMode {
     public boolean HzDEBUG_FLAG = true;
 
     HzGamepadClassic hzGamepad;
-    Arm hzArm;
+    HzArm hzArm;
 
     public int keyCount = 0;
 
     @Override
     public void runOpMode() {
-        hzArm = new Arm(hardwareMap);
+        hzArm = new HzArm(hardwareMap);
         hzGamepad = new HzGamepadClassic(gamepad1,this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
@@ -64,9 +64,9 @@ public class Test_Arm extends LinearOpMode {
             }
             //Toggle Arm Grip actions
             if (hzGamepad.getLeftBumperPress()) {
-                if(hzArm.getGripServoState() == Arm.GRIP_SERVO_STATE.OPENED) {
+                if(hzArm.getGripServoState() == HzArm.GRIP_SERVO_STATE.OPENED) {
                     hzArm.closeGrip();
-                } else if(hzArm.getGripServoState() == Arm.GRIP_SERVO_STATE.CLOSED) {
+                } else if(hzArm.getGripServoState() == HzArm.GRIP_SERVO_STATE.CLOSED) {
                     hzArm.openGrip();
                 }
             }

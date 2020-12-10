@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.Intake;
+import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
@@ -15,11 +15,11 @@ public class Test_Intake extends LinearOpMode {
     public boolean HzDEBUG_FLAG = true;
 
     HzGamepadClassic hzGamepadClassic;
-    Intake hzIntake;
+    HzIntake hzIntake;
 
     @Override
     public void runOpMode() {
-        hzIntake = new Intake(hardwareMap);
+        hzIntake = new HzIntake(hardwareMap);
         hzGamepadClassic = new HzGamepadClassic(gamepad1,this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
@@ -38,11 +38,11 @@ public class Test_Intake extends LinearOpMode {
             //TODO : AMJAD : Check if this logic works to keep motor running till Dpad_down is toggled.
             //May need to save state of last time button pressed and runmotor based on button last pressed state
             if (hzGamepadClassic.getDpad_downPress()) {
-                if(hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.STOPPED) {
+                if(hzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.STOPPED) {
                     //if(gpMagazine.moveMagazineToCollect()) {
                         hzIntake.runIntakeMotor();
                     //}
-                } else if(hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.RUNNING) {
+                } else if(hzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
                     hzIntake.stopIntakeMotor();
                 }
             }
@@ -52,7 +52,7 @@ public class Test_Intake extends LinearOpMode {
             // only as long as te Dpad_up remains pressed (different from Dpad_down behavior, which is a toggle)
             if (hzGamepadClassic.getDpad_upPersistent()) {
                 hzIntake.reverseIntakeMotor();
-            } else if (hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.REVERSING){
+            } else if (hzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.REVERSING){
                 hzIntake.stopIntakeMotor();
             }
 

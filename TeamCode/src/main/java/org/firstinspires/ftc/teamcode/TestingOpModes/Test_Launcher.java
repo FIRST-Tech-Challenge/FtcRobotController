@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
+import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
@@ -15,12 +15,12 @@ public class Test_Launcher extends LinearOpMode {
     public boolean HzDEBUG_FLAG = true;
 
     HzGamepadClassic hzGamepadClassic;
-    Launcher hzLauncher;
+    HzLauncher hzLauncher;
     double powerLoop = 0.3;
 
     @Override
     public void runOpMode() {
-        hzLauncher = new Launcher(hardwareMap);
+        hzLauncher = new HzLauncher(hardwareMap);
         hzGamepadClassic = new HzGamepadClassic(gamepad1,this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");

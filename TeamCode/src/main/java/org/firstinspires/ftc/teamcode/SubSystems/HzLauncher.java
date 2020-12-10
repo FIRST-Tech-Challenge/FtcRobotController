@@ -12,7 +12,7 @@ import static java.lang.Thread.sleep;
 two motors). Speed on the flywheel is modifiable to reach different distances and
 height of target.
  */
-public class Launcher {
+public class HzLauncher {
 
     //Object declaration
     public Servo launcherRingPlungerServo;
@@ -21,8 +21,11 @@ public class Launcher {
 
     public double launcherMotorPower;
     public static final double FLYWHEEL_SUPPLY_MODE_SPEED = 0.1;
+    public static final double FLYWHEEL_NOMINAL_POWER_HIGH_GOAL = 0.70;
+    public static final double FLYWHEEL_NOMINAL_POWER_POWERSHOT = 0.66;
     public static final double PLUNGER_LAUNCH_POSITION = 0.67;
     public static final double PLUNGER_REST_POSITION = 0.84; //TODO : AMJAD : Test and fix value
+
 
     private boolean LauncherController;
 
@@ -34,7 +37,7 @@ public class Launcher {
 
     public LAUNCHER_FLYWHEEL_CONTROL launcherState = LAUNCHER_FLYWHEEL_CONTROL.STOPPED;
 
-    public Launcher(HardwareMap hardwareMap) {
+    public HzLauncher(HardwareMap hardwareMap) {
         //Parameter Initialization
         launcherRingPlungerServo = hardwareMap.servo.get("launch_servo");
         //launcherFlyWheelMotor = hardwareMap.dcMotor.get("launch_backenc");

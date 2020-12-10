@@ -14,30 +14,30 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 //import org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder;
 //import org.firstinspires.ftc.teamcode.drive.MecanumDriveDeadWheelsEncoder;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders;
-import org.firstinspires.ftc.teamcode.drive.MecanumDriveDriveEncoders;
+import org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDriveEncoders;
+import org.firstinspires.ftc.teamcode.drive.HzMecanumDriveDriveEncoders;
 
 
 
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 //public class HzDrive extends SampleMecanumDrive {
-public class HzDrive extends MecanumDriveDriveEncoders {
+public class HzDrive extends HzMecanumDriveDriveEncoders {
     //double DriveConstants_kV = DriveConstants.kV;
     //double DriveConstants_kV = DriveConstantsDeadWheelEncoder.kV;
-    double DriveConstants_kV = DriveConstantsDriveEncoders.kV;
+    double DriveConstants_kV = HzDriveConstantsDriveEncoders.kV;
 
     //double DriveConstants_TRACK_WIDTH = DriveConstants.TRACK_WIDTH;
     //double DriveConstants_TRACK_WIDTH = DriveConstantsDeadWheelEncoder.TRACK_WIDTH;
-    double DriveConstants_TRACK_WIDTH = DriveConstantsDriveEncoders.TRACK_WIDTH;
+    double DriveConstants_TRACK_WIDTH = HzDriveConstantsDriveEncoders.TRACK_WIDTH;
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as SampleMecanumDrive's heading controller
     //private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
     //private PIDFController headingController = new PIDFController(MecanumDriveDeadWheelsEncoder.HEADING_PID);
-    private PIDFController headingController = new PIDFController(MecanumDriveDriveEncoders.HEADING_PID);
+    private PIDFController headingController = new PIDFController(HzMecanumDriveDriveEncoders.HEADING_PID);
 
-    GameField hzGameField;
+    HzGameField hzGameField;
 
     enum DriveType {
         ROBOT_CENTRIC,

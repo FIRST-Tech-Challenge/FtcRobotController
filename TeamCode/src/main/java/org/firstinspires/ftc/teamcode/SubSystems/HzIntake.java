@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Intake {
+public class HzIntake {
 
     public DcMotor intakeMotor = null;
 
@@ -24,7 +24,7 @@ public class Intake {
     }
     public INTAKE_BUTTON_STATE intakeButtonState;
 
-    public Intake(HardwareMap hardwareMap) {
+    public HzIntake(HardwareMap hardwareMap) {
         intakeMotor = hardwareMap.dcMotor.get("intake_rightenc");
     }
 

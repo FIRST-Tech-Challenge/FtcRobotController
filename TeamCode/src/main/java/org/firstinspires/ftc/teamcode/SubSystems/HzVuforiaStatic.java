@@ -87,7 +87,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  */
 
 
-public class HzVuforia {
+public class HzVuforiaStatic {
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
@@ -119,51 +119,51 @@ public class HzVuforia {
     private static final float quadField  = 36 * mmPerInch;
 
     // Class Members
-    private OpenGLMatrix lastLocation = null;
-    private VuforiaLocalizer vuforia = null;
+    private static OpenGLMatrix lastLocation = null;
+    private static VuforiaLocalizer vuforia = null;
 
     /**
      * This is the webcam we are to use. As with other hardware devices such as motors and
      * servos, this device is identified using the robot configuration tool in the FTC application.
      */
-    WebcamName webcamName = null;
+    public static WebcamName webcamName = null;
 
-    public  boolean targetVisible = false;
-    private float phoneXRotate    = 0;
-    private float phoneYRotate    = 0;
-    private float phoneZRotate    = 0;
+    public static boolean targetVisible = false;
+    private static float phoneXRotate    = 0;
+    private static float phoneYRotate    = 0;
+    private static float phoneZRotate    = 0;
 
-    public VuforiaLocalizer.Parameters parameters;
+    public static VuforiaLocalizer.Parameters parameters;
 
-    public VuforiaTrackables targetsUltimateGoal;
-    public VuforiaTrackable blueTowerGoalTarget;
-    public VuforiaTrackable redTowerGoalTarget;
-    public VuforiaTrackable redAllianceTarget;
-    public VuforiaTrackable blueAllianceTarget;
-    public VuforiaTrackable frontWallTarget;
+    public static VuforiaTrackables targetsUltimateGoal;
+    public static VuforiaTrackable blueTowerGoalTarget;
+    public static VuforiaTrackable redTowerGoalTarget;
+    public static VuforiaTrackable redAllianceTarget;
+    public static VuforiaTrackable blueAllianceTarget;
+    public static VuforiaTrackable frontWallTarget;
 
-    public List<VuforiaTrackable> allTrackables;
+    public static List<VuforiaTrackable> allTrackables;
 
-    public String visibleTargetName = "";
+    public static String visibleTargetName = "";
 
-    public Pose2d poseVuforia = new Pose2d (0,0,0);
-    public Pose2d vuforiaLeftCameraCorrection = new Pose2d( -3.75,-3.75, Math.PI);
-    public Pose2d vuforiaRightCameraCorrection = new Pose2d( 3.75,3.75, Math.PI);
-    public double vuforiaFirstAngle = 0;
-    public double vuforiaSecondAngle = 0;
-    public double vuforiaThirdAngle = 0;
+    public static Pose2d poseVuforia = new Pose2d (0,0,0);
+    public static Pose2d vuforiaLeftCameraCorrection = new Pose2d( -3.75,-3.75, Math.PI);
+    public static Pose2d vuforiaRightCameraCorrection = new Pose2d( 3.75,3.75, Math.PI);
+    public static double vuforiaFirstAngle = 0;
+    public static double vuforiaSecondAngle = 0;
+    public static double vuforiaThirdAngle = 0;
 
     //Tensor Flow parameters
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
 
-    private TFObjectDetector tfod;
+    private static TFObjectDetector tfod;
 
     /**
      * Initialize the Vuforia localization engine.
      */
-    public HzVuforia(HardwareMap hardwareMap) {
+    public static void HzVuforiaStaticInit(HardwareMap hardwareMap) {
         /*
          * Retrieve the camera we are to use.
          */
@@ -201,7 +201,7 @@ public class HzVuforia {
     /**
      * Initialize the TensorFlow Object Detection engine.
      */
-    public void initTfod(HardwareMap hardwareMap) {
+    public static void initTfod(HardwareMap hardwareMap) {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -210,11 +210,11 @@ public class HzVuforia {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
-    public void setupVuforiaNavigation() {
+    public static void setupVuforiaNavigation() {
 
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
-        targetsUltimateGoal = this.vuforia.loadTrackablesFromAsset("UltimateGoal");
+        targetsUltimateGoal = vuforia.loadTrackablesFromAsset("UltimateGoal");
         blueTowerGoalTarget = targetsUltimateGoal.get(0);
         blueTowerGoalTarget.setName("Blue Tower Goal Target");
         redTowerGoalTarget = targetsUltimateGoal.get(1);
@@ -311,7 +311,7 @@ public class HzVuforia {
 
     }
 
-    public void activateVuforiaNavigation() {
+    public static void activateVuforiaNavigation() {
         // WARNING:
         // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
         // This sequence is used to enable the new remote DS Camera Preview feature to be used with this sample.
@@ -327,7 +327,7 @@ public class HzVuforia {
         targetsUltimateGoal.activate();
     }
 
-    public void runVuforiaNavigation() {
+    public static void runVuforiaNavigation() {
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
         for (VuforiaTrackable trackable : allTrackables) {
@@ -379,7 +379,7 @@ public class HzVuforia {
 
     }
 
-    public void activateVuforiaTensorFlow(){
+    public static void activateVuforiaTensorFlow(){
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
@@ -399,7 +399,7 @@ public class HzVuforia {
         }
     }
 
-    public HzGameField.TARGET_ZONE runVuforiaTensorFlow() {
+    public static HzGameField.TARGET_ZONE runVuforiaTensorFlow() {
         HzGameField.TARGET_ZONE targetZoneDetected = HzGameField.TARGET_ZONE.UNKNOWN;
         if (tfod != null) {
               // getUpdatedRecognitions() will return null if no new information is available since
@@ -444,7 +444,7 @@ public class HzVuforia {
         return targetZoneDetected;
     }
 
-    public void deactivateVuforiaTensorFlow(){
+    public static void deactivateVuforiaTensorFlow(){
         if (tfod != null) {
             tfod.shutdown();
         }

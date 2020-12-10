@@ -7,16 +7,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.SubSystems.Arm;
-import org.firstinspires.ftc.teamcode.SubSystems.GameField;
+import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
+import org.firstinspires.ftc.teamcode.SubSystems.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
 import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
-import org.firstinspires.ftc.teamcode.SubSystems.Intake;
-import org.firstinspires.ftc.teamcode.SubSystems.LaunchController;
-import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
-import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
-import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
+import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
+import org.firstinspires.ftc.teamcode.SubSystems.HzLaunchController;
+import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
+import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
 
 
 /**
@@ -27,7 +26,7 @@ import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
  * <p>
  * See lines 42-57.
  */
-@Autonomous(name = "Hazmat Red Autonomous Outer", group = "00-Autonomous")
+@Autonomous(name = "Hazmat Autonomous Outer", group = "00-Autonomous")
 public class HzAutonomous extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
@@ -36,32 +35,32 @@ public class HzAutonomous extends LinearOpMode {
     //public GameField hzGameField;
     //public SampleMecanumDrive hzDrive;
     public HzDrive hzDrive;
-    public Magazine hzMagazine;
-    public Intake hzIntake;
-    public LaunchController hzLaunchController;
-    public Launcher hzLauncher;
-    public Arm hzArm;
+    public HzMagazine hzMagazine;
+    public HzIntake hzIntake;
+    public HzLaunchController hzLaunchController;
+    public HzLauncher hzLauncher;
+    public HzArm hzArm;
 
     public HzVuforia hzVuforia;
-    public Pose2d startPose = GameField.BLUE_INNER_START_LINE;
+    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
 
     //int playingAlliance = 1; //1 for Red, -1 for Blue
     //int startLine = 1 ; //0 for inner, 1 for outer
     boolean parked = false ;
 
-    public GameField.TARGET_ZONE targetZone = GameField.TARGET_ZONE.A;
-    Vector2d targetZoneVector = GameField.TARGET_ZONE_A;
+    public HzGameField.TARGET_ZONE targetZone = HzGameField.TARGET_ZONE.A;
+    Vector2d targetZoneVector = HzGameField.TARGET_ZONE_A;
 
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
         hzDrive = new HzDrive(hardwareMap);
-        hzMagazine = new Magazine(hardwareMap);
-        hzIntake = new Intake(hardwareMap);
+        hzMagazine = new HzMagazine(hardwareMap);
+        hzIntake = new HzIntake(hardwareMap);
 
-        hzLauncher = new Launcher(hardwareMap);
-        hzArm = new Arm(hardwareMap);
-        hzLaunchController = new LaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, hzDrive);
+        hzLauncher = new HzLauncher(hardwareMap);
+        hzArm = new HzArm(hardwareMap);
+        hzLaunchController = new HzLaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, hzDrive);
         hzGamepad = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
 
         hzVuforia = new HzVuforia(hardwareMap);
@@ -103,13 +102,13 @@ public class HzAutonomous extends LinearOpMode {
 
             switch (targetZone) {
                 case A :
-                    targetZoneVector = GameField.TARGET_ZONE_A;
+                    targetZoneVector = HzGameField.TARGET_ZONE_A;
                     break;
                 case B :
-                    targetZoneVector = GameField.TARGET_ZONE_B;
+                    targetZoneVector = HzGameField.TARGET_ZONE_B;
                     break;
                 case C :
-                    targetZoneVector = GameField.TARGET_ZONE_C;
+                    targetZoneVector = HzGameField.TARGET_ZONE_C;
                     break;
             }
 
@@ -117,26 +116,64 @@ public class HzAutonomous extends LinearOpMode {
                 printDebugMessages();
                 telemetry.update();
             }
+            hzLaunchController.launchMode = HzLaunchController.LAUNCH_MODE.AUTOMATED;
 
             while (opModeIsActive() && !parked) {
 
                 hzVuforia.deactivateVuforiaTensorFlow();
 
-                // Example spline path from SplineTest.java
-                // Make sure the start pose matches with the localizer's start pose
-                Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .splineTo(new Vector2d(0, 0), 0)
-                        .build();
+                if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE &&
+                        startPose == HzGameField.BLUE_INNER_START_LINE &&
+                        targetZone == HzGameField.TARGET_ZONE.A){
+                    hzLauncher.runFlyWheelToTarget(hzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
+                    //Start Pose : (TBD, 48.5, ~-70deg)
+                    //Spline to (0,12,0)
+                    Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .splineTo(new Vector2d(0, 12), 0)
+                            .build();
 
-                hzDrive.followTrajectory(traj);
+                    hzDrive.followTrajectory(traj);
 
-                sleep(2000);
+                    //Launch ring to power shot 1,2,3, (automatic alignment)
+                    hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
+                    hzLaunchController.activateLaunchReadinessState = true;
+                    hzLaunchController.runLauncherByDistanceToTarget();
+                    hzLauncher.plungeRingToFlyWheel();
 
-                hzDrive.followTrajectory(
-                        hzDrive.trajectoryBuilder(traj.end(), true)
-                                .splineTo(targetZoneVector, Math.toRadians(-90))
-                                .build()
-                );
+                    hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
+                    hzLaunchController.activateLaunchReadinessState = true;
+                    hzLaunchController.runLauncherByDistanceToTarget();
+                    hzLauncher.plungeRingToFlyWheel();
+
+                    hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT3;
+                    hzLaunchController.activateLaunchReadinessState = true;
+                    hzLaunchController.runLauncherByDistanceToTarget();
+                    hzLauncher.plungeRingToFlyWheel();
+
+                    hzLaunchController.deactivateLaunchReadiness();
+
+                    //Spline to (!2,36,-90)
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .splineTo(new Vector2d(12, 36), -90)
+                            .build();
+                    hzDrive.followTrajectory(traj);
+
+                    //Drop wobble goal
+                    hzArm.moveArmDropWobbleRingPosition();
+                    hzArm.openGrip();
+                    sleep(1000);
+                    hzArm.moveArmParkedPosition();
+
+                    // Spline to (24,24,0)
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .splineTo(new Vector2d(24, 24), 0)
+                            .build();
+
+                    hzDrive.followTrajectory(traj);
+
+                }
+
+
 
                 //Move to Launching Position
 
@@ -151,8 +188,8 @@ public class HzAutonomous extends LinearOpMode {
         }
 
         // Transfer the current pose to PoseStorage so we can use it in TeleOp
-        PoseStorage.currentPose = hzDrive.getPoseEstimate();
-        PoseStorage.poseSetInAutonomous = true;
+        HzGameField.currentPose = hzDrive.getPoseEstimate();
+        HzGameField.poseSetInAutonomous = true;
 
         hzVuforia.deactivateVuforiaTensorFlow();
     }
@@ -169,12 +206,12 @@ public class HzAutonomous extends LinearOpMode {
         timer.reset();
         while (timer.time() < 10) {
             if (hzGamepad.getButtonBPress()) {
-                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
+                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE;
                 telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
                 break;
             }
             if (hzGamepad.getButtonXPress()) {
-                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
                 break;
             }
@@ -189,26 +226,26 @@ public class HzAutonomous extends LinearOpMode {
         timer.reset();
         telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
         while (timer.time() < 10) {
-            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
+            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = GameField.RED_INNER_START_LINE;
+                    startPose = HzGameField.RED_INNER_START_LINE;
                     telemetry.addData("Start Pose : ", "RED_INNER_START_LINE");
                     break;
                 }
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = GameField.RED_OUTER_START_LINE;
+                    startPose = HzGameField.RED_OUTER_START_LINE;
                     telemetry.addData("Start Pose : ", "RED_OUTER_START_LINE");
                     break;
                 }
             }
-            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = GameField.BLUE_INNER_START_LINE;
+                    startPose = HzGameField.BLUE_INNER_START_LINE;
                     telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
                     break;
                 }
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = GameField.BLUE_OUTER_START_LINE;
+                    startPose = HzGameField.BLUE_OUTER_START_LINE;
                     telemetry.addData("Start Pose : ", "BLUE_OUTER_START_LINE");
                     break;
                 }
@@ -228,7 +265,7 @@ public class HzAutonomous extends LinearOpMode {
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
 
-        telemetry.addData("GameField.playingAlliance : ", GameField.playingAlliance);
+        telemetry.addData("GameField.playingAlliance : ", HzGameField.playingAlliance);
         telemetry.addData("startPose : ", startPose);
 
         //****** Drive debug ******
@@ -356,3 +393,51 @@ public class HzAutonomous extends LinearOpMode {
 
     }
 }
+
+/*
+Turn command : drive.turn(Math.toRadians(ANGLE));
+
+Blue Alliance - Inner position-Target A
+    Start Pose : (TBD, 25, ~-70deg)
+    Spline to (0,12,0)
+    Launch ring to power shot 1,2,3, (automatic alignment)
+    Spline to (!2,36,-90)
+    Drop wobble goal
+    Spline to (24,24,0)
+
+Blue Alliance - Inner position-Target B
+    Start Pose : (TBD, 25, ~-70deg)
+    Launch ring to power shot 1,2,3, (automatic alignment)
+    spline to (12,36,180)
+    Drop wobble goal
+    Turn intake on
+    Straight to (-24,36,180)
+    Turn 180 deg
+    Launch to high goal
+    Move to (12,36,0)
+
+Blue Alliance - Inner position-Target C - Option 1
+    Start Pose : (TBD, 25, ~-70deg)
+    Launch ring to power shot 1,2,3, (automatic alignment)
+    Turn  to 145 deg
+    Turn Intake on
+    Straight to (-24,36,145)
+    Turn to 0
+    Launch to High goal x 3
+    Spline to (40,40,-145)
+    Drop Wobble goal
+    Spline to (24,24,0)
+
+Blue Alliance - Inner position-Target C - Option 2
+    Start Pose : (TBD, 25, ~-70deg)
+    Launch ring to power shot 1,2,3, (automatic alignment)
+    Spline to (40,40,-145)
+    Drop Wobble goal
+    Turn Intake on
+    Spline to (-24,36,180)
+    Turn to 0
+    Launch to High goal x 3
+    Spline to (24,24,0)
+
+
+ */
