@@ -652,16 +652,6 @@ public class YellowBot implements OdoBot {
                         (forward == false && (longReading <= slowdownMarkLong || shortReading <= slowdownMarkShort));
                 if (slowingDown) {
                     //slowing down
-                    telemetry.addData("longReading", longReading);
-                    telemetry.addData("shortReading", shortReading);
-                    telemetry.addData("leftLong", leftLong);
-                    telemetry.addData("longTarget", longTarget);
-                    telemetry.addData("realSpeedRF", realSpeedRF);
-                    telemetry.addData("realSpeedRB", realSpeedRB);
-                    telemetry.addData("realSpeedLF", realSpeedLF);
-                    telemetry.addData("realSpeedLB", realSpeedLB);
-                    telemetry.update();
-
                     cruising = false;
                     //stop course correction
                     locator.setTarget(null);
