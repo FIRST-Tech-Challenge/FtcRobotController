@@ -37,7 +37,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.bots.DummyBot;
 
 //Opmode for quick testing of motors
-@TeleOp(name="FooBar", group="Robot15173")
+@TeleOp(name="Crash Test Teleop", group="Robot15173")
 public class FooBar extends LinearOpMode
 {
     int i;
@@ -52,6 +52,7 @@ public class FooBar extends LinearOpMode
         {
             telemetry.addData("Loop count", i);
             telemetry.update();
+            i++;
             sleep(5);
         }
     }

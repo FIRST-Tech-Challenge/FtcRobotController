@@ -15,7 +15,7 @@ public abstract class AutoBase extends OdoBase {
         try {
             super.runOpMode();
             preStart();
-//            bot.initDetectorThread(this.getOpModeSide(), this);
+            bot.initDetectorThread(this.getOpModeSide(), this);
             telemetry.update();
             waitForStart();
             startLocator();
@@ -26,7 +26,7 @@ public abstract class AutoBase extends OdoBase {
             telemetry.update();
             sleep(5000);
         } finally {
-//            bot.stopDetection();
+            bot.stopDetection();
             bot.lightsOff();
         }
     }

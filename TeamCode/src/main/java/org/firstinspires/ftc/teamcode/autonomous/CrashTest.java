@@ -15,6 +15,7 @@ public class CrashTest extends AutoBase {
         {
             telemetry.addData("Loop count", i);
             telemetry.update();
+            i++;
             sleep(5);
         }
     }

@@ -125,7 +125,8 @@ public class UltimateMode extends LinearOpMode {
                     bta = new BotThreadAction(robot, telemetry, "wobblewall", this);
                     btaThread = new Thread(bta);
                     btaThread.start();
-                } else if (gamepad1.x) {
+                } else if (gamepad1.x && buttonpressable) {
+                    startdelay = runtime.milliseconds();
                     bta = new BotThreadAction(robot, telemetry, "wallclose", this);
                     btaThread = new Thread(bta);
                     btaThread.start();
