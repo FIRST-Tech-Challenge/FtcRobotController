@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
+import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
@@ -15,12 +16,14 @@ public class Test_Launcher extends LinearOpMode {
     public boolean HzDEBUG_FLAG = true;
 
     HzGamepadClassic hzGamepadClassic;
+    HzMagazine hzMagazine;
     HzLauncher hzLauncher;
     double powerLoop = 0.3;
 
     @Override
     public void runOpMode() {
         hzLauncher = new HzLauncher(hardwareMap);
+        hzMagazine = new HzMagazine(hardwareMap);
         hzGamepadClassic = new HzGamepadClassic(gamepad1,this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
@@ -33,6 +36,7 @@ public class Test_Launcher extends LinearOpMode {
         //Run Robot based on Gamepad1 inputs
         while (opModeIsActive()) {
             //**** Launcher Actions ****
+            hzMagazine.moveMagazineToLaunch();
             //Launches Ring
             if (hzGamepadClassic.getRightBumperPress()) {
                 //TODO : AMJAD : Launch Controller should be used to check if status is good to launch
@@ -49,7 +53,6 @@ public class Test_Launcher extends LinearOpMode {
 
             //hzLauncher.launcherFlyWheelMotor.setVelocityPIDFCoefficients(1.26, 0.126, 0, 12.6);
             //hzLauncher.launcherFlyWheelMotor.setPositionPIDFCoefficients(5.0);
-
 
             if (hzGamepadClassic.getLeftBumperPress()) {
                 maxVelocityTest();

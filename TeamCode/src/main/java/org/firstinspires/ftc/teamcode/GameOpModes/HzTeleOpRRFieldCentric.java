@@ -38,7 +38,7 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
     public HzArm hzArm;
 
     public HzVuforia hzVuforia1;
-    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
+    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
     //int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
     //TODO : Create another TeleOp for Red
 
@@ -157,7 +157,7 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
             }
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.BLUE_INNER_START_LINE;
+                    startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
                     telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
                     break;
                 }

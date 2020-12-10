@@ -103,13 +103,24 @@ public class HzLaunchController {
         //gpVuforia.identifyCurrentLocation();
 
         //TODO : IN MANUAL MODE DONT REPEND ON LOCATION AT ALL. FIX POWER TO A FIXED VALUE
-        determineLaunchTarget();
-        if (launchMode == LAUNCH_MODE.AUTOMATED)  {
+
+        if (launchMode == LAUNCH_MODE.AUTOMATED && launchReadiness == LAUNCH_READINESS.READY)  {
+            determineLaunchTarget();
             turnRobotToTarget();
+            runLauncherByDistanceToTarget();
         }
 
         //TODO : IN MANUAL MODE DONT REPEND ON LOCATION AT ALL. FIX POWER TO A FIXED VALUE
-        runLauncherByDistanceToTarget();
+        if (launchMode == LAUNCH_MODE.MANUAL && launchReadiness == LAUNCH_READINESS.READY) {
+            if (lcTarget == LAUNCH_TARGET.HIGH_GOAL){
+                lcHzLauncher.runFlyWheelToSupply(HzLauncher.FLYWHEEL_NOMINAL_POWER_HIGH_GOAL);
+            }
+            if (lcTarget == LAUNCH_TARGET.POWER_SHOT1 ||
+                    lcTarget ==LAUNCH_TARGET.POWER_SHOT2 ||
+                    lcTarget == LAUNCH_TARGET.POWER_SHOT3) {
+                lcHzLauncher.runFlyWheelToSupply(HzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
+            }
+        }
         return launchReadiness;
     }
 
@@ -248,10 +259,10 @@ public class HzLaunchController {
                 case POWER_SHOT1:
                 case POWER_SHOT2:
                 case POWER_SHOT3:
-                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.72, 0.80);
+                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.66, 0.76);
                     break;
                 case HIGH_GOAL:
-                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.76, 0.84);
+                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.70, 0.80);
                     break;
             }
         } else {

@@ -49,6 +49,9 @@ public class HzLauncher {
         //launcherFlyWheelMotor.setVelocityPIDFCoefficients(1.26, 0.126, 0, 12.6);
         //launcherFlyWheelMotor.setPositionPIDFCoefficients(5.0);
 
+        launcherFlyWheelMotor.setVelocityPIDFCoefficients(1.63835, 0.163835, 0, 16.3835);
+        launcherFlyWheelMotor.setPositionPIDFCoefficients(5.0);
+
         //TODO : AMJAD : Test this.. May be Float is enough
 
         launcherFlyWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

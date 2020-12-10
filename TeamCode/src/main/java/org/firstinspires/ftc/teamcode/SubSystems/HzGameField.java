@@ -17,11 +17,14 @@ public class HzGameField {
     public static final Vector2d RED_TOWER_GOAL = new Vector2d(72,-36);
 
     //Start Poses
-    public static final Pose2d BLUE_INNER_START_LINE =  new Pose2d(-68,25,Math.toRadians(0));
+    //public static final Pose2d BLUE_INNER_START_LINE =  new Pose2d(-68,25,Math.toRadians(-55));
+    public static final Pose2d BLUE_INNER_START_LINE =  new Pose2d(-58.5,30,Math.toRadians(-55));//Center of ther robot
     public static final Pose2d BLUE_OUTER_START_LINE =  new Pose2d(-68,48.5,Math.toRadians(0));
     public static final Pose2d RED_INNER_START_LINE =  new Pose2d(-68,-25,Math.toRadians(0));
     public static final Pose2d RED_OUTER_START_LINE =  new Pose2d(-68,-48.5,Math.toRadians(-70));
     //public static final Pose2d ORIGIN_FIELD =  new Pose2d(0,0,Math.toRadians(0));
+
+    public static final Pose2d BLUE_INNER_START_LINE_TELEOPTEST =  new Pose2d(-68,25,Math.toRadians(0));//Center of ther robot
 
     public enum PLAYING_ALLIANCE{
         RED_ALLIANCE,

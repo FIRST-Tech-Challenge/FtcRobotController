@@ -121,12 +121,13 @@ public class HzAutonomous extends LinearOpMode {
             while (opModeIsActive() && !parked) {
 
                 hzVuforia.deactivateVuforiaTensorFlow();
+                hzMagazine.moveMagazineToLaunch();
 
                 if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE &&
                         startPose == HzGameField.BLUE_INNER_START_LINE &&
                         targetZone == HzGameField.TARGET_ZONE.A){
                     hzLauncher.runFlyWheelToTarget(hzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
-                    //Start Pose : (TBD, 48.5, ~-70deg)
+                    //Start Pose : (TBD, 48.5, ~-55deg)
                     //Spline to (0,12,0)
                     Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                             .splineTo(new Vector2d(0, 12), 0)

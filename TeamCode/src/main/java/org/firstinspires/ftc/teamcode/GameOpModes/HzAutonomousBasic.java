@@ -1,19 +1,21 @@
 package org.firstinspires.ftc.teamcode.GameOpModes;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
+import org.firstinspires.ftc.teamcode.SubSystems.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
-import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLaunchController;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
 import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
+import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 
 
 /**
@@ -24,12 +26,14 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
  * <p>
  * See lines 42-57.
  */
-@TeleOp(name = "HzTeleOp RR Field-Viewforia", group = "00-Teleop")
-public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
+@Autonomous(name = "Hazmat Autonomous Basic test", group = "00-Autonomous")
+public class HzAutonomousBasic extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
     public HzGamepad hzGamepad;
+    //public GameField hzGameField;
+    //public SampleMecanumDrive hzDrive;
     public HzDrive hzDrive;
     public HzMagazine hzMagazine;
     public HzIntake hzIntake;
@@ -38,9 +42,14 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
     public HzArm hzArm;
 
     public HzVuforia hzVuforia;
-    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
-    //int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
-    //TODO : Create another TeleOp for Red
+    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
+
+    //int playingAlliance = 1; //1 for Red, -1 for Blue
+    //int startLine = 1 ; //0 for inner, 1 for outer
+    boolean parked = false ;
+
+    public HzGameField.TARGET_ZONE targetZone = HzGameField.TARGET_ZONE.A;
+    Vector2d targetZoneVector = HzGameField.TARGET_ZONE_A;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -54,64 +63,139 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
         hzLaunchController = new HzLaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, hzDrive);
         hzGamepad = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
 
+        //hzVuforia = new HzVuforia(hardwareMap);
+
         initialConfiguration();
 
-        hzVuforia = new HzVuforia(hardwareMap);
-        hzVuforia.setupVuforiaNavigation();
-
-        // We want to turn off velocity control for teleop
-        // Velocity control per wheel is not necessary outside of motion profiled auto
-        //hzDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // TODO : When implementing Autonomous Mode uncomment this section.
-        // Retrieve our pose from the PoseStorage.currentPose static field
-        // See AutoTransferPose.java for further details
-        //hzDrive.setPoseEstimate(PoseStorage.currentPose);
-        if ( HzGameField.poseSetInAutonomous == true) {
-            hzDrive.getLocalizer().setPoseEstimate(HzGameField.currentPose);
-        } else {
-            hzDrive.getLocalizer().setPoseEstimate(startPose);
-        }
-
-        //TODO : IF PROGRAM CRASHES GO MANUAL ALL THE TIME
-
-        //Activate Vuforia Navigation
-        //TODO : ACTIVATE VUFORIA NAVIGATION ON A THREAD SO THAT WAIT DOES NOT HAPPEN
-        hzVuforia.activateVuforiaNavigation();
-
-        //Run Vuforia Navigation
-        hzVuforia.runVuforiaNavigation();
+        /*
+        // Set initial pose
+        if (playingAlliance == 1)  { //Red
+            if (startLine == 0)   { //Inner Line
+                drive.setPoseEstimate(new Pose2d(-68,-24,Math.toRadians(0))); // Red Inner Start Line
+            } else  { //Outer Line
+                drive.setPoseEstimate(new Pose2d(-68,-48,Math.toRadians(0))); // Red Outer Start Line
+            }
+        } else  { // Blue
+            if (startLine == 0) { // Inner Line
+                drive.setPoseEstimate(new Pose2d(-68,24,Math.toRadians(0))); // Blue Inner Start Line
+            } else  { // Outer Line
+                drive.setPoseEstimate(new Pose2d(-68,48,Math.toRadians(0))); // Blue Outer Start Line
+            }
+        }*/
 
         // Initiate Camera even before Start is pressed.
-        waitForStart();
+        //waitForStart();
+
+        //hzVuforia.activateVuforiaTensorFlow();
+
+        hzDrive.getLocalizer().setPoseEstimate(startPose);
 
         if (isStopRequested()) return;
 
         while (!isStopRequested()) {
-            //TODO : IS THIS THE REASON FOR CRASH WITHOUT STOP BEING HANDLED
             //Init is pressed at this time, and start is not pressed yet
 
-            if(HzDEBUG_FLAG) {
+            //Run Vuforia Tensor Flow
+            //targetZone = hzVuforia.runVuforiaTensorFlow();
+
+            switch (targetZone) {
+                case A :
+                    targetZoneVector = HzGameField.TARGET_ZONE_A;
+                    break;
+                case B :
+                    targetZoneVector = HzGameField.TARGET_ZONE_B;
+                    break;
+                case C :
+                    targetZoneVector = HzGameField.TARGET_ZONE_C;
+                    break;
+            }
+
+            if (HzDEBUG_FLAG) {
                 printDebugMessages();
                 telemetry.update();
             }
+            hzLaunchController.launchMode = HzLaunchController.LAUNCH_MODE.AUTOMATED;
 
-            while (opModeIsActive()) {
+            while (opModeIsActive() && !parked) {
 
-                hzVuforia.runVuforiaNavigation();
+                //hzVuforia.deactivateVuforiaTensorFlow();
+                hzMagazine.moveMagazineToLaunch();
 
-                hzGamepad.runByGamepad();
+                if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE &&
+                        startPose == HzGameField.BLUE_INNER_START_LINE &&
+                        targetZone == HzGameField.TARGET_ZONE.A){
+                    //hzLauncher.runFlyWheelToTarget(hzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
+                    //Start Pose : (TBD, 48.5, ~-55deg)
+                    //Spline to (0,12,0)
+                    Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .splineTo(new Vector2d(0, 23), 0)
+                            .build();
 
-                if(HzDEBUG_FLAG) {
+                    hzDrive.followTrajectory(traj);
+
+
+                    //Launch ring to power shot 1,2,3, (automatic alignment)
+                    hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
+                    hzLaunchController.activateLaunchReadinessState = true;
+                    hzLaunchController.runLauncherByDistanceToTarget();
+                    hzLauncher.plungeRingToFlyWheel();
+                    /*
+
+                    hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
+                    hzLaunchController.activateLaunchReadinessState = true;
+                    hzLaunchController.runLauncherByDistanceToTarget();
+                    hzLauncher.plungeRingToFlyWheel();
+
+                    hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT3;
+                    hzLaunchController.activateLaunchReadinessState = true;
+                    hzLaunchController.runLauncherByDistanceToTarget();
+                    hzLauncher.plungeRingToFlyWheel();
+                    */
+
+                    hzLaunchController.deactivateLaunchReadiness();
+                    /*
+                    //Spline to (!2,36,-90)
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .splineTo(new Vector2d(12, 36), -90)
+                            .build();
+                    hzDrive.followTrajectory(traj);
+
+                    //Drop wobble goal
+                    hzArm.moveArmDropWobbleRingPosition();
+                    hzArm.openGrip();
+                    sleep(1000);
+                    hzArm.moveArmParkedPosition();
+
+                    // Spline to (24,24,0)
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .splineTo(new Vector2d(24, 24), 0)
+                            .build();
+
+                    hzDrive.followTrajectory(traj);
+                    */
+                }
+
+
+
+                //Move to Launching Position
+
+                parked = true;
+                HzGameField.currentPose = hzDrive.getPoseEstimate();
+                HzGameField.poseSetInAutonomous = true;
+
+                if (HzDEBUG_FLAG) {
                     printDebugMessages();
                     telemetry.update();
                 }
-
             }
 
         }
-        hzVuforia.deactivateVuforiaNavigation();
-        HzGameField.poseSetInAutonomous = false;
+
+        // Transfer the current pose to PoseStorage so we can use it in TeleOp
+        HzGameField.currentPose = hzDrive.getPoseEstimate();
+        HzGameField.poseSetInAutonomous = true;
+
+        hzVuforia.deactivateVuforiaTensorFlow();
     }
 
     public void initialConfiguration(){
@@ -160,7 +244,7 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
             }
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
+                    startPose = HzGameField.BLUE_INNER_START_LINE;
                     telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
                     break;
                 }
@@ -186,20 +270,16 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
 
         telemetry.addData("GameField.playingAlliance : ", HzGameField.playingAlliance);
-        telemetry.addData("GameField.poseSetInAutonomous : ", HzGameField.poseSetInAutonomous);
-        telemetry.addData("GameField.currentPose : ", HzGameField.currentPose);
         telemetry.addData("startPose : ", startPose);
 
         //****** Drive debug ******
-        telemetry.addData("hzDrive.driveMode : ", hzDrive.driveMode);
-        telemetry.addData("hzDrive.poseEstimate :", hzDrive.poseEstimate);
+        telemetry.addData("Drive Mode : ", hzDrive.driveMode);
+        telemetry.addData("PoseEstimate :", hzDrive.poseEstimate);
+        telemetry.addData("HzGameField.currentPose",HzGameField.currentPose);
 
+        //telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
         // Print pose to telemetry
-        telemetry.addData("hzVuforia1.visibleTargetName : ", hzVuforia.visibleTargetName);
-        telemetry.addData("hzVuforia1.poseVuforia :", hzVuforia.poseVuforia);
-        //telemetry.addData("hzVuforia.vuforiaFirstAngle: %.3f°",Math.toDegrees(hzVuforia.vuforiaFirstAngle));
-        //telemetry.addData("hzVuforia.vuforiaSecondAngle: %.3f°",Math.toDegrees(hzVuforia.vuforiaSecondAngle));
-        //telemetry.addData("hzVuforia.vuforiaThirdAngle: %.3f°",Math.toDegrees(hzVuforia.vuforiaThirdAngle));
+        //telemetry.addData("PoseVuforia :",hzVuforia1.poseVuforia);
 
         //******* Magazine Debug ********
         switch (hzMagazine.getMagazinePosition()) {
@@ -216,11 +296,8 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
                 break;
             }
         }
-        telemetry.addData("hzMagazine.moveMagazineToLaunchState",hzMagazine.moveMagazineToLaunchState);
         telemetry.addData("magazineLaunchTouchSensor.getState():", hzMagazine.magazineLaunchTouchSensor.isPressed());
-        telemetry.addData("hzMagazine.moveMagazineToCollectState",hzMagazine.moveMagazineToCollectState);
         telemetry.addData("magazineCollectTouchSensor.getState():", hzMagazine.magazineCollectTouchSensor.isPressed());
-
 
         //********** Intake Debug *******
         //telemetry.addData("hzGamepad1.getDpad_downPress()", hzGamepad.getDpad_downPress());
@@ -243,15 +320,12 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
 
         //******* Launch Controller Debug ********
         telemetry.addData("hzLaunchController.launchMode : ", hzLaunchController.launchMode);
-        telemetry.addData("hzLaunchController.deactivateLaunchReadinessState :",hzLaunchController.deactivateLaunchReadinessState);
-        telemetry.addData("hzLaunchController.activateLaunchReadinessState :",hzLaunchController.activateLaunchReadinessState);
         telemetry.addData("hzLaunchController.launchReadiness : ", hzLaunchController.launchReadiness);
         telemetry.addData("hzLaunchController.launchActivation : ", hzLaunchController.launchActivation);
         telemetry.addData("hzLaunchController.lcTarget : ", hzLaunchController.lcTarget);
         telemetry.addData("hzLaunchController.lcTargetVector", hzLaunchController.lcTargetVector);
         telemetry.addData("hzLaunchController.distanceFromTarget : ", hzLaunchController.distanceFromTarget);
         telemetry.addData("hzLaunchController.lclaunchMotorPower : ", hzLaunchController.lclaunchMotorPower);
-        telemetry.addData("hzLauncher.launchMotorVelocity : ", hzLauncher.launchMotorVelocity);
         telemetry.addData("hzDrive.drivePointToAlign : ", hzDrive.drivePointToAlign);
 
         //******* Launcher Debug *********
@@ -324,3 +398,51 @@ public class HzTeleOpRRFieldCentricVuforia extends LinearOpMode {
 
     }
 }
+
+/*
+Turn command : drive.turn(Math.toRadians(ANGLE));
+
+Blue Alliance - Inner position-Target A
+    Start Pose : (TBD, 25, ~-70deg)
+    Spline to (0,12,0)
+    Launch ring to power shot 1,2,3, (automatic alignment)
+    Spline to (!2,36,-90)
+    Drop wobble goal
+    Spline to (24,24,0)
+
+Blue Alliance - Inner position-Target B
+    Start Pose : (TBD, 25, ~-70deg)
+    Launch ring to power shot 1,2,3, (automatic alignment)
+    spline to (12,36,180)
+    Drop wobble goal
+    Turn intake on
+    Straight to (-24,36,180)
+    Turn 180 deg
+    Launch to high goal
+    Move to (12,36,0)
+
+Blue Alliance - Inner position-Target C - Option 1
+    Start Pose : (TBD, 25, ~-70deg)
+    Launch ring to power shot 1,2,3, (automatic alignment)
+    Turn  to 145 deg
+    Turn Intake on
+    Straight to (-24,36,145)
+    Turn to 0
+    Launch to High goal x 3
+    Spline to (40,40,-145)
+    Drop Wobble goal
+    Spline to (24,24,0)
+
+Blue Alliance - Inner position-Target C - Option 2
+    Start Pose : (TBD, 25, ~-70deg)
+    Launch ring to power shot 1,2,3, (automatic alignment)
+    Spline to (40,40,-145)
+    Drop Wobble goal
+    Turn Intake on
+    Spline to (-24,36,180)
+    Turn to 0
+    Launch to High goal x 3
+    Spline to (24,24,0)
+
+
+ */
