@@ -42,7 +42,7 @@ public class HzAutonomousBasic extends LinearOpMode {
     public HzArm hzArm;
 
     public HzVuforia hzVuforia;
-    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
+    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
 
     //int playingAlliance = 1; //1 for Red, -1 for Blue
     //int startLine = 1 ; //0 for inner, 1 for outer
@@ -119,10 +119,10 @@ public class HzAutonomousBasic extends LinearOpMode {
             while (opModeIsActive() && !parked) {
 
                 //hzVuforia.deactivateVuforiaTensorFlow();
-                hzMagazine.moveMagazineToLaunch();
+                //hzMagazine.moveMagazineToLaunch();
 
                 if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE &&
-                        startPose == HzGameField.BLUE_INNER_START_LINE &&
+                        startPose == HzGameField.BLUE_INNER_START_LINE_TELEOPTEST &&
                         targetZone == HzGameField.TARGET_ZONE.A){
                     //hzLauncher.runFlyWheelToTarget(hzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
                     //Start Pose : (TBD, 48.5, ~-55deg)
@@ -135,11 +135,11 @@ public class HzAutonomousBasic extends LinearOpMode {
 
 
                     //Launch ring to power shot 1,2,3, (automatic alignment)
-                    hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
+                    /*hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
                     hzLaunchController.activateLaunchReadinessState = true;
                     hzLaunchController.runLauncherByDistanceToTarget();
                     hzLauncher.plungeRingToFlyWheel();
-                    /*
+
 
                     hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
                     hzLaunchController.activateLaunchReadinessState = true;
@@ -150,10 +150,12 @@ public class HzAutonomousBasic extends LinearOpMode {
                     hzLaunchController.activateLaunchReadinessState = true;
                     hzLaunchController.runLauncherByDistanceToTarget();
                     hzLauncher.plungeRingToFlyWheel();
-                    */
 
                     hzLaunchController.deactivateLaunchReadiness();
-                    /*
+                    */
+
+                    sleep(1000);
+
                     //Spline to (!2,36,-90)
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                             .splineTo(new Vector2d(12, 36), -90)
@@ -172,7 +174,6 @@ public class HzAutonomousBasic extends LinearOpMode {
                             .build();
 
                     hzDrive.followTrajectory(traj);
-                    */
                 }
 
 
@@ -244,7 +245,7 @@ public class HzAutonomousBasic extends LinearOpMode {
             }
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.BLUE_INNER_START_LINE;
+                    startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
                     telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
                     break;
                 }
