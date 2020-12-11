@@ -86,8 +86,8 @@ public class Meet_2_Teleop_Exp extends OpMode {
     private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
 
     // Constants for perimeter targets
-    private static final float halfField = 72 * mmPerInch;
-    private static final float quadField  = 36 * mmPerInch;
+    private static final float halfField = 70.5f * mmPerInch;
+    private static final float quadField  = 35.5f * mmPerInch;
 
     // Class Members
     private OpenGLMatrix lastLocation = null;
