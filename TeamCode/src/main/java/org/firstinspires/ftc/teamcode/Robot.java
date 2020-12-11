@@ -8,7 +8,8 @@ import org.firstinspires.ftc.teamcode.subsystems.DrivebaseSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IndexSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WobbleArmSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WobbleClawSubsystem;
 
 /** Class for the subsystems on the robot
  *
@@ -30,7 +31,8 @@ public class Robot{
     public ShooterSubsystem shooterSubsystem;
 
     //wobble
-    public WobbleSubsystem wobbleSubsystem;
+    public WobbleClawSubsystem wobbleClawSubsystem;
+    public WobbleArmSubsystem wobbleArmSubsystem;
 
     public Robot(){
         hardware = new Hardware();
@@ -43,6 +45,7 @@ public class Robot{
 
         shooterSubsystem = new ShooterSubsystem(hardware.shooterMotor1, hardware.shooterMotor2);
 
-        wobbleSubsystem = new WobbleSubsystem(hardware.wobbleClawServo, hardware.wobbleArmServo);
+        wobbleClawSubsystem = new WobbleClawSubsystem(hardware.wobbleClawServo);
+        wobbleArmSubsystem = new WobbleArmSubsystem(hardware.wobbleArmServo);
     }
 }
