@@ -81,7 +81,7 @@ public class Turret{
 
     }
 
-    public void update(boolean isActive){
+    public void update(){
         //IMU Update
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         if (!initialized) {
@@ -117,7 +117,7 @@ public class Turret{
     }
     public void setActive(boolean active){
         this.active = active;
-        if(active == true)
+        if(active)
             if(motor.getMode() == DcMotor.RunMode.RUN_TO_POSITION) motor.setPower(.5);
         else
             motor.setPower(0);

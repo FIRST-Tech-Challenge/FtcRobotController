@@ -35,6 +35,7 @@ package org.firstinspires.ftc.teamcode.robots.UGBot;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -42,12 +43,8 @@ import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
-import org.firstinspires.ftc.teamcode.vision.SkystoneTargetInfo;
-import org.firstinspires.ftc.teamcode.vision.StonePos;
-import org.opencv.core.Mat;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
-import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
 import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
 
@@ -56,10 +53,10 @@ import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
  * TeleOp and Autonomous.
  */
 
-@TeleOp(name = "UltimateGoal_6832", group = "Challenge") // @Autonomous(...) is the other common choice
+@TeleOp(name = "UltimateGoal2_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
 @Config
-public class UG_6832 extends LinearOpMode {
+public class UG2_6832 extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -281,9 +278,11 @@ public class UG_6832 extends LinearOpMode {
         }
 
     };
-
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
 
         telemetry.addData("Status", "Initializing " + currentBot + "...");
         telemetry.addData("Status", "Hold right_trigger to enable debug mode");
@@ -308,18 +307,13 @@ public class UG_6832 extends LinearOpMode {
 
         robot.resetMotors(true);
         auto.visionProviderFinalized = false;
+    }
+        /*
+         * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+         */
+        @Override
+        public void init_loop() {
 
-        while (!isStarted()) { // Wait for the game to start (driver presses PLAY)
-
-
-            synchronized (this) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
-            }
 
             stateSwitch();
 
@@ -403,29 +397,41 @@ public class UG_6832 extends LinearOpMode {
 
             robot.updateSensors(active);
 
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+
         } // end of stuff that happens during Init, but before Start
 
         //
         // THIS SECTION EXECUTES ONCE RIGHT AFTER START IS PRESSED
         //
+        /*
+         * Code to run ONCE when the driver hits PLAY
+         */
+        @Override
+        public void start() {
+            runtime.reset();
 
-        if (auto.vp == null) {
-            auto.initDummyVisionProvider(); // this is blocking
+
+            if (auto.vp == null) {
+                auto.initDummyVisionProvider(); // this is blocking
+            }
+
+            auto.vp.reset();
+
+            robot.launcher.restart(.4, .5);
+
+            lastLoopClockTime = System.nanoTime();
         }
-
-        auto.vp.reset();
-
-        robot.launcher.restart(.4, .5);
-
-        lastLoopClockTime = System.nanoTime();
 
         //
         // END OF SECTION THAT EXECUTES ONCE RIGHT AFTER START IS PRESSED
         //
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
+    @Override
+    public void loop() {
+
 
             stateSwitch();
             if (active) {
@@ -475,8 +481,14 @@ public class UG_6832 extends LinearOpMode {
             lastLoopClockTime = loopClockTime;
 
             telemetry.update();
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+
         }
+
+    /*
+     * Code to run ONCE after the driver hits STOP
+     */
+    @Override
+    public void stop() {
     }
 
     public boolean driveStraight() {

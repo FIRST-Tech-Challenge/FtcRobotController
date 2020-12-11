@@ -428,7 +428,7 @@ public class PoseUG {
 
         articulate(articulation); // call the most recently requested articulation
         launcher.update();
-        turret.update(isActive);
+        turret.update();
 
         // we haven't worked out the trig of calculating displacement from any
         // driveMixer combination, so
@@ -484,12 +484,6 @@ public class PoseUG {
         return distRight.getDistance(DistanceUnit.METER);
     }
 
-    /**
-     * Stops all motors on the robot
-     */
-    // public void stopAll(){
-    // driveMixerTank(0,0);
-    // }
 
     /**
      * Drive forwards for a set power while maintaining an IMU heading using PID
