@@ -72,13 +72,13 @@ public class HzGamepad {
     public void runByGamepadRRDriveModes(/*HzDrive gpDrive, int playingAlliance*/) {
         gpDrive.poseEstimate = gpDrive.getPoseEstimate();
 
-        gpDrive.driveType = HzDrive.DriveType.FIELD_CENTRIC;
+        gpDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
 
         if (gpDrive.driveType == HzDrive.DriveType.ROBOT_CENTRIC){
             gpDrive.gamepadInput = new Vector2d(
                     -turboMode(getLeftStickY()) ,
                     -turboMode(getLeftStickX())
-            );//.rotated(-gpDrive.poseEstimate.getHeading());
+            );
         };
 
         if (gpDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
@@ -105,7 +105,7 @@ public class HzGamepad {
         }
         gpDrive.gamepadInputTurn = -turboMode(getRightStickX());
 
-        //TODO : AMJAD : LaunchController to be invoked here to invoke drive mode and point to align
+        //TODO   : AMJAD : LaunchController to be invoked here to invoke drive mode and point to align
         //drivePointToAlign = Target Vector;
         //drivePointToAlign = BLUE_TOWER_GOAL;
 
@@ -134,31 +134,50 @@ public class HzGamepad {
 
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
         if (getDpad_downPress()) {
-            if (gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.STOPPED) {
+            if (gpHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
                 gpHzLaunchController.activateLaunchReadinessState = false;
                 gpHzLaunchController.deactivateLaunchReadinessState = true;
                 gpHzMagazine.moveMagazineToCollectState = true;
                 gpHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.ON;
+                gpHzIntake.intakeReverseButtonState = HzIntake.INTAKE_REVERSE_BUTTON_STATE.OFF;
             } else if(gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
                 gpHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.OFF;
+            }
+        }
+
+        //Reverse Intake motors and run - in case of stuck state)
+        //if (getDpad_upPersistent()) {
+        if (getDpad_upPress()) {
+            if (gpHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.REVERSING){
+                gpHzLaunchController.activateLaunchReadinessState = false;
+                gpHzLaunchController.deactivateLaunchReadinessState = true;
+                gpHzMagazine.moveMagazineToCollectState = true;
+                gpHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.OFF;
+                gpHzIntake.intakeReverseButtonState = HzIntake.INTAKE_REVERSE_BUTTON_STATE.ON;
+                //.reverseIntakeMotor();
+                //gpMagazine.shakeMagazine(100);
+            } else if (gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.REVERSING){
+                //gpHzIntake.stopIntakeMotor();
+                gpHzIntake.intakeReverseButtonState = HzIntake.INTAKE_REVERSE_BUTTON_STATE.OFF;
             }
         }
 
         if (gpHzIntake.intakeButtonState == HzIntake.INTAKE_BUTTON_STATE.ON &&
                 gpHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_COLLECT){
             gpHzIntake.runIntakeMotor();
-        } else {
+        } else if (gpHzIntake.intakeButtonState == HzIntake.INTAKE_BUTTON_STATE.OFF &&
+                gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.RUNNING){
             gpHzIntake.stopIntakeMotor();
         }
 
-        //Reverse Intake motors and run - in case of stuck state)
-        if (getDpad_upPersistent()) {
-            gpHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.OFF;
-            gpHzIntake.reverseIntakeMotor();
-            //gpMagazine.shakeMagazine(100);
-        } else if (gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.REVERSING){
+        if (gpHzIntake.intakeReverseButtonState == HzIntake.INTAKE_REVERSE_BUTTON_STATE.ON) {
+                gpHzIntake.reverseIntakeMotor();
+        } else if ((gpHzIntake.intakeReverseButtonState == HzIntake.INTAKE_REVERSE_BUTTON_STATE.OFF &&
+                gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.REVERSING) ){
             gpHzIntake.stopIntakeMotor();
         }
+
+
     }
 
 

@@ -24,7 +24,7 @@ public class HzLauncher {
     public static final double FLYWHEEL_NOMINAL_POWER_HIGH_GOAL = 0.70;
     public static final double FLYWHEEL_NOMINAL_POWER_POWERSHOT = 0.66;
     public static final double PLUNGER_LAUNCH_POSITION = 0.67;
-    public static final double PLUNGER_REST_POSITION = 0.84; //TODO : AMJAD : Test and fix value
+    public static final double PLUNGER_REST_POSITION = 0.84;
 
 
     private boolean LauncherController;

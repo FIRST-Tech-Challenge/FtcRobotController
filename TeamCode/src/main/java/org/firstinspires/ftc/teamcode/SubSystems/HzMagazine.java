@@ -2,16 +2,9 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cDevice;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 public class HzMagazine {
@@ -113,13 +106,13 @@ public class HzMagazine {
 
     public void moveMagazineToLaunch() {
         if (magazineLaunchTouchSensor.isPressed()) {
-            magazineServo.setPower(0.03);
+            magazineServo.setPower(0.05);
             magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
             moveMagazineToLaunchState = false;
         }
 
         if (magazinePosition != MAGAZINE_POSITION.AT_LAUNCH) {
-            magazineServo.setPower(0.3);
+            magazineServo.setPower(0.4);
         }
     }
 
