@@ -45,8 +45,8 @@ public class Launcher {
     Servo intakeServoBack = null;
     Servo gripperSwivel = null;
 
-    SharpDistanceSensor gripLeftSharp;
-    SharpDistanceSensor gripRightSharp;
+    //SharpDistanceSensor gripLeftSharp;
+    //SharpDistanceSensor gripRightSharp;
 
     public static double gripLeftDist;
     public static double gripRightDist; //these hold the most recently updated values for the gripper distance sensors
@@ -228,8 +228,8 @@ public class Launcher {
 
 
     public void update(){
-        gripLeftDist = gripLeftSharp.getUnscaledDistance(); //remove these two lines if looking for raw voltage which goes up with proximity
-        gripRightDist = gripRightSharp.getUnscaledDistance();
+        //gripLeftDist = gripLeftSharp.getUnscaledDistance(); //remove these two lines if looking for raw voltage which goes up with proximity
+        //gripRightDist = gripRightSharp.getUnscaledDistance();
 
         updateGripper();
         updateBeltToElbow();
