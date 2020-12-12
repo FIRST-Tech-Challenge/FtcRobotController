@@ -71,7 +71,7 @@ public class HzGamepad {
     // RR Drive Train
     public void runByGamepadRRDriveModes(/*HzDrive gpDrive, int playingAlliance*/) {
 
-        if (HzVuforiaStatic.vuforiaState == HzVuforiaStatic.VUFORIA_STATE.NAVIGATION_ACTIVE &&
+        if (HzVuforiaStatic.vuforiaState == HzVuforiaStatic.VUFORIA_STATE.NAVIGATION_RUNNING &&
                 HzVuforiaStatic.targetVisible){
             gpDrive.setPoseEstimate(HzVuforiaStatic.poseVuforia);
         }
@@ -110,11 +110,6 @@ public class HzGamepad {
         }
         gpDrive.gamepadInputTurn = -turboMode(getRightStickX());
 
-        //TODO   : AMJAD : LaunchController to be invoked here to invoke drive mode and point to align
-        //drivePointToAlign = Target Vector;
-        //drivePointToAlign = BLUE_TOWER_GOAL;
-
-        //gpDrive.driveTrainFieldCentric();
         gpDrive.driveTrainPointFieldModes();
 
     }

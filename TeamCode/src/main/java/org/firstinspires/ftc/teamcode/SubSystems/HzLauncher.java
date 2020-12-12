@@ -48,7 +48,7 @@ public class HzLauncher {
     }
 
     public void initLauncher(){
-
+        launcherRingPlungerServo.setPosition(PLUNGER_REST_POSITION);
     }
 
     //run flywheel motor at speed determined by selected target and distance from target

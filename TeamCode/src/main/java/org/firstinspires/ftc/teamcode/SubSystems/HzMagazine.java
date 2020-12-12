@@ -49,6 +49,17 @@ public class HzMagazine {
     public void initMagazine(LinearOpMode opModepassed){
         this.opModepassed = opModepassed;
         senseMagazinePosition();
+        switch (magazinePosition){
+            case AT_LAUNCH:
+                moveMagazineTo = MOVE_MAGAZINE_TO.LAUNCH;
+                moveMagazineToLaunch1();
+                break;
+            case AT_COLLECT:
+            case AT_ERROR:
+                moveMagazineTo = MOVE_MAGAZINE_TO.COLLECT;
+                moveMagazineToCollect1();
+                break;
+        }
     }
 
     public void senseMagazinePosition(){
