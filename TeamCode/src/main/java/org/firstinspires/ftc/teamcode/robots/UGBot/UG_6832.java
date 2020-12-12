@@ -32,9 +32,12 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.robots.UGBot;
 
+import android.widget.Switch;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -42,12 +45,8 @@ import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
-import org.firstinspires.ftc.teamcode.vision.SkystoneTargetInfo;
-import org.firstinspires.ftc.teamcode.vision.StonePos;
-import org.opencv.core.Mat;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
-import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
 import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
 
@@ -59,7 +58,7 @@ import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
 @TeleOp(name = "UltimateGoal_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
 @Config
-public class UG_6832 extends LinearOpMode {
+public class UG_6832 extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -281,9 +280,11 @@ public class UG_6832 extends LinearOpMode {
         }
 
     };
-
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
 
         telemetry.addData("Status", "Initializing " + currentBot + "...");
         telemetry.addData("Status", "Hold right_trigger to enable debug mode");
@@ -308,18 +309,13 @@ public class UG_6832 extends LinearOpMode {
 
         robot.resetMotors(true);
         auto.visionProviderFinalized = false;
+    }
+        /*
+         * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+         */
+        @Override
+        public void init_loop() {
 
-        while (!isStarted()) { // Wait for the game to start (driver presses PLAY)
-
-
-            synchronized (this) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
-            }
 
             stateSwitch();
 
@@ -403,29 +399,41 @@ public class UG_6832 extends LinearOpMode {
 
             robot.updateSensors(active);
 
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+
         } // end of stuff that happens during Init, but before Start
 
         //
         // THIS SECTION EXECUTES ONCE RIGHT AFTER START IS PRESSED
         //
+        /*
+         * Code to run ONCE when the driver hits PLAY
+         */
+        @Override
+        public void start() {
+            runtime.reset();
 
-        if (auto.vp == null) {
-            auto.initDummyVisionProvider(); // this is blocking
+
+            if (auto.vp == null) {
+                auto.initDummyVisionProvider(); // this is blocking
+            }
+
+            auto.vp.reset();
+
+            robot.launcher.restart(.4, .5);
+
+            lastLoopClockTime = System.nanoTime();
         }
-
-        auto.vp.reset();
-
-        robot.launcher.restart(.4, .5);
-
-        lastLoopClockTime = System.nanoTime();
 
         //
         // END OF SECTION THAT EXECUTES ONCE RIGHT AFTER START IS PRESSED
         //
+    int autoState = 0;
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
+    @Override
+    public void loop() {
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
 
             stateSwitch();
             if (active) {
@@ -434,10 +442,31 @@ public class UG_6832 extends LinearOpMode {
                         joystickDrive();
                         break;
                     case 1: // teleop
-                        joystickDrive();
+                        if (auto.AutoFull.execute()) {
+                            active = false;
+                            state = 0;
+                        }
                         break;
                     case 2:
-                        robot.launcher.alignGripperForwardFacing();
+                        switch(autoState){
+                            case 0:
+                                if(robot.driveIMUDistanceWithReset(.5,robot.getHeading(),true,.5)){
+                                    autoState = 1;
+                                }
+                                break;
+                            case 1:
+                                robot.turret.rotateCardinalTurret(true);
+                                autoState = 2;
+                                break;
+                            case 2:
+                                if(robot.launcher.extendToMax()){
+                                    autoState = 3;
+                                }
+                                break;
+                            default:
+                                robot.stopAll();
+                                break;
+                        }
                         break;
                     case 4:
                         break;
@@ -475,8 +504,14 @@ public class UG_6832 extends LinearOpMode {
             lastLoopClockTime = loopClockTime;
 
             telemetry.update();
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+
         }
+
+    /*
+     * Code to run ONCE after the driver hits STOP
+     */
+    @Override
+    public void stop() {
     }
 
     public boolean driveStraight() {
@@ -535,16 +570,16 @@ public class UG_6832 extends LinearOpMode {
     int reverse = 1;
 
     private void joystickDrive() {
-        if (notdeadzone(gamepad2.left_stick_y)) {
-            robot.launcher.adjustElbowAngle(-gamepad2.left_stick_y);
-        }
-
-        if (notdeadzone(gamepad2.right_stick_y)) {
-            robot.launcher.adjustBelt(-gamepad2.right_stick_y);
-        }
-        if (notdeadzone(gamepad2.right_stick_x)) {
-            robot.turret.adjust(gamepad2.right_stick_x);
-        }
+//        if (notdeadzone(gamepad2.left_stick_y)) {
+//            robot.launcher.adjustElbowAngle(-gamepad2.left_stick_y);
+//        }
+//
+//        if (notdeadzone(gamepad2.right_stick_y)) {
+//            robot.launcher.adjustBelt(-gamepad2.right_stick_y);
+//        }
+//        if (notdeadzone(gamepad2.right_stick_x)) {
+//            robot.turret.adjust(gamepad2.right_stick_x);
+//        }
 
         if (!joystickDriveStarted) {
             robot.resetMotors(true);
@@ -567,74 +602,72 @@ public class UG_6832 extends LinearOpMode {
             pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
 
         if (nearZero(pwrFwd) && nearZero(pwrRot)) {
+            robot.driveMixerDiffSteer(0,0);
         } else {
             robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
         }
 
-        if (toggleAllowed(gamepad1.a, a, 1)) {
-//
-        }
-
-        if (toggleAllowed(gamepad1.x, x, 1)) {
-            robot.launcher.hookToggle();
-        }
-
+        //turret control
         if (toggleAllowed(gamepad1.b, b, 1)) {
-            robot.launcher.setElbowTargetPos(250,1);
-            robot.launcher.extendToPosition(1500, 1.0);
-        }
-
-        if (toggleAllowed(gamepad1.y, y, 1) && toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
-            robot.launcher.servoGripper.setPosition(servoNormalize(800));
-
-        }
-
-        // gamepad2 controls
-
-        if (toggleAllowed(gamepad2.a, a, 2)) {
-            robot.launcher.toggleGripper();
-        }
-
-        if (toggleAllowed(gamepad2.b, b, 2)) {
             robot.turret.rotateCardinalTurret(true);
         }
 
-        if (toggleAllowed(gamepad2.y, y, 2)) {
-//            robot.crane.toggleSwivel();
-            robot.launcher.setGripperSwivelRotation(robot.launcher.swivel_Front);
+        if (toggleAllowed(gamepad1.y, y, 1)) {
+            robot.driveIMUDistanceWithReset(.5,robot.getHeading(),true,.01);
         }
 
-        if (toggleAllowed(gamepad2.x, x, 2)) {
+        if (toggleAllowed(gamepad1.x, x, 1)) {
             robot.turret.rotateCardinalTurret(false);
         }
 
-        if (gamepad2.left_bumper) {
-            robot.launcher.swivelGripper(false);
-        }
+        if (notdeadzone(gamepad1.right_trigger))
+            robot.turret.rotateRight(gamepad1.right_trigger * 5);
 
-        if (gamepad2.right_bumper) {
-            robot.launcher.swivelGripper(true);
-        }
+        if (notdeadzone(gamepad1.left_trigger))
+            robot.turret.rotateLeft(gamepad1.left_trigger * 5);
 
-        if (toggleAllowed(gamepad2.dpad_up, dpad_up, 2)) {
-            robot.launcher.setElbowTargetPos(2501,1);
-            robot.launcher.extendToPosition(1500, 1.0);
+//        if (toggleAllowed(gamepad1.x, x, 1)) {
+//            robot.launcher.hookToggle();
+//        }
 
-        }
 
-        if (toggleAllowed(gamepad2.dpad_down, dpad_down, 2)) {
-            robot.launcher.setElbowTargetPos(350,1);
-            robot.launcher.extendToPosition(1200, 1.0);
-        }
+//        if (toggleAllowed(gamepad1.y, y, 1) && toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
+//            robot.launcher.servoGripper.setPosition(servoNormalize(800));
+//        }
 
-        // turret controls
-        if (notdeadzone(gamepad2.right_trigger))
-            robot.turret.rotateRight(gamepad2.right_trigger * 5);
-        // robot.articulate(PoseSkystone.Articulation.autoGrab);
+        // gamepad2 controls
 
-        if (notdeadzone(gamepad2.left_trigger))
-            robot.turret.rotateLeft(gamepad2.left_trigger * 5);
-        // robot.articulate(PoseSkystone.Articulation.yoinkStone);
+//        if (toggleAllowed(gamepad2.a, a, 2)) {
+//            robot.launcher.toggleGripper();
+//        }
+
+
+
+//        if (toggleAllowed(gamepad2.y, y, 2)) {
+//            robot.launcher.setGripperSwivelRotation(robot.launcher.swivel_Front);
+//        }
+
+//        if (gamepad2.left_bumper) {
+//            robot.launcher.swivelGripper(false);
+//        }
+//
+//        if (gamepad2.right_bumper) {
+//            robot.launcher.swivelGripper(true);
+//        }
+
+//        if (toggleAllowed(gamepad2.dpad_up, dpad_up, 2)) {
+//            robot.launcher.setElbowTargetPos(2501,1);
+//            robot.launcher.extendToPosition(1500, 1.0);
+//
+//        }
+//
+//        if (toggleAllowed(gamepad2.dpad_down, dpad_down, 2)) {
+//            robot.launcher.setElbowTargetPos(350,1);
+//            robot.launcher.extendToPosition(1200, 1.0);
+//        }
+
+
+
 
         robot.launcher.update();
         robot.turret.update();
@@ -786,11 +819,9 @@ public class UG_6832 extends LinearOpMode {
         telemetry.addLine().addData("Loop time", "%.0fms", () -> loopAvg / 1000000);
         telemetry.addLine().addData("Turret Heading", () -> robot.turret.getHeading());
         telemetry.addLine().addData("Turret Target`s", () -> robot.turret.getTurretTargetHeading());
-        telemetry.addLine().addData("Turret Current tower height: ", () -> robot.launcher.getCurrentTowerHeight());
         telemetry.addLine().addData("Turret Current angle ", () -> robot.turret.getHeading());
-        telemetry.addLine() .addData("left distance ", () -> robot.getDistLeftDist());
-        telemetry.addLine() .addData("right distance ", () -> robot.getDistRightDist());
-        telemetry.addLine() .addData("front distance ", () -> robot.getDistForwardDist());
+        telemetry.addLine().addData("driveIMUDistanceTarget", () -> robot.driveIMUDistanceTarget);
+
 
     }
 

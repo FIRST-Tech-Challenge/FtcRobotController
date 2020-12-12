@@ -90,7 +90,10 @@ public class Autonomous {
 
 
     public StateMachine AutoFull = getStateMachine(autoStage)
-
+            // open and align gripper for 1st skystone
+            .addState(() -> robot.driveIMUDistanceWithReset(.5,robot.getHeading(),true,.5))
+            .addSingleState(() -> robot.turret.rotateCardinalTurret(true))
+            .addState(() -> robot.launcher.extendToMax())
             .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

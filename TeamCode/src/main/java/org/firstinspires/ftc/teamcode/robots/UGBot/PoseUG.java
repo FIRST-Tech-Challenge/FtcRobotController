@@ -155,11 +155,11 @@ public class PoseUG {
 
     public enum Articulation { // serves as a desired robot articulation which may include related complex movements of the elbow, lift and supermanLeft
         inprogress, // currently in progress to a final articulation
-        manual, // target positions are all being manually overridden
+        manual // target positions are all being manually overridden
     }
 
     public enum RobotType {
-        BigWheel, Icarus, Minimech, TomBot;
+        BigWheel, Icarus, Minimech, TomBot, UGBot;
     }
 
     public RobotType currentBot;
@@ -551,7 +551,7 @@ public class PoseUG {
             return false;
         } // destination achieved
         else {
-            // stopAll();
+            //stopAll();
             driveMixerDiffSteer(0, 0);
             driveIMUDistanceInitialzed = false;
             return true;
