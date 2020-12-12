@@ -48,11 +48,9 @@ public class StarterStackDetectorPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        //input.copyTo(displayMat);
+        input.copyTo(displayMat);
 
         gripPipeline.process(input);
-
-        gripPipeline.cvDilateOutput().copyTo(displayMat);
 
         ArrayList<MatOfPoint> contours = gripPipeline.convexHullsOutput();
 
