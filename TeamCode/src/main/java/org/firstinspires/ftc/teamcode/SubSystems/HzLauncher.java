@@ -17,17 +17,13 @@ public class HzLauncher {
     //Object declaration
     public Servo launcherRingPlungerServo;
     public DcMotorEx launcherFlyWheelMotor;
-    public double launchMotorVelocity;
 
-    public double launcherMotorPower;
     public static final double FLYWHEEL_SUPPLY_MODE_SPEED = 0.1;
-    public static final double FLYWHEEL_NOMINAL_POWER_HIGH_GOAL = 0.70;
-    public static final double FLYWHEEL_NOMINAL_POWER_POWERSHOT = 0.66;
+    public static final double FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1560;
+    public static final double FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1500;
     public static final double PLUNGER_LAUNCH_POSITION = 0.67;
     public static final double PLUNGER_REST_POSITION = 0.84;
 
-
-    private boolean LauncherController;
 
     public enum LAUNCHER_FLYWHEEL_CONTROL {
         RUNNING_FOR_SUPPLY,
@@ -40,19 +36,13 @@ public class HzLauncher {
     public HzLauncher(HardwareMap hardwareMap) {
         //Parameter Initialization
         launcherRingPlungerServo = hardwareMap.servo.get("launch_servo");
-        //launcherFlyWheelMotor = hardwareMap.dcMotor.get("launch_backenc");
         launcherFlyWheelMotor = hardwareMap.get(DcMotorEx.class, "launch_backenc");
 
-        //launcherFlyWheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         launcherFlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //launcherFlyWheelMotor.setVelocityPIDFCoefficients(1.26, 0.126, 0, 12.6);
-        //launcherFlyWheelMotor.setPositionPIDFCoefficients(5.0);
-
         launcherFlyWheelMotor.setVelocityPIDFCoefficients(1.63835, 0.163835, 0, 16.3835);
+        launcherFlyWheelMotor.setVelocityPIDFCoefficients(5.0, 0.163835, 0, 16.3835);
         launcherFlyWheelMotor.setPositionPIDFCoefficients(5.0);
-
-        //TODO : AMJAD : Test this.. May be Float is enough
 
         launcherFlyWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
@@ -62,25 +52,24 @@ public class HzLauncher {
     }
 
     //run flywheel motor at speed determined by selected target and distance from target
-    public void runFlyWheelToTarget(double launcherMotorPower) {
+    public void runFlyWheelToTarget(double launcherMotorVelocity) {
         launcherFlyWheelMotor.setDirection(DcMotor.Direction.FORWARD);
-        launcherFlyWheelMotor.setPower(launcherMotorPower);
-        launchMotorVelocity = launcherFlyWheelMotor.getVelocity();
-        //TODO : AMJAD : Determine if velocity encoder needs to be run with PID control
+        launcherFlyWheelMotor.setVelocity(launcherMotorVelocity);
+        //launchMotorVelocity = launcherFlyWheelMotor.getVelocity();
         launcherState = LAUNCHER_FLYWHEEL_CONTROL.RUNNING_FOR_TARGET;
     }
 
     //stop flywheel motor
     public void stopFlyWheel() {
-        launcherFlyWheelMotor.setPower(0.0);
+        //launcherFlyWheelMotor.setPower(0.0);
+        launcherFlyWheelMotor.setVelocity(0);
         launcherState = LAUNCHER_FLYWHEEL_CONTROL.STOPPED;
     }
 
     //run flywheel motor at speed determined by selected target and distance from target
-    public void runFlyWheelToSupply(double launcherMotorPower) {
+    public void runFlyWheelToSupply(double launcherMotorVelocity) {
         launcherFlyWheelMotor.setDirection(DcMotor.Direction.FORWARD);
-        launcherFlyWheelMotor.setPower(launcherMotorPower);
-        //TODO : AMJAD : Determine if velocity encoder needs to be run with PID control
+        launcherFlyWheelMotor.setVelocity(launcherMotorVelocity);
         launcherState = LAUNCHER_FLYWHEEL_CONTROL.RUNNING_FOR_SUPPLY;
     }
 
@@ -92,7 +81,6 @@ public class HzLauncher {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //TODO : AMJAD : Test if there is sleep required in between actions
         launcherRingPlungerServo.setPosition(PLUNGER_REST_POSITION);
     }
 

@@ -70,7 +70,6 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
 
     public HzDrive(HardwareMap hardwareMap) {
         super(hardwareMap);
-        //hzGameField = hzGameFieldPassed;
 
     }
 
@@ -99,6 +98,7 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
 
     public void driveTrainPointFieldModes(){
         //poseEstimate = getPoseEstimate();
+        //TODO : TESTING VUFORIA RUNNING IN PARALLEL
 
         // Set input bounds for the heading controller
         // Automatically handles overflow
@@ -116,17 +116,6 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
 
         switch (driveMode) {
             case NORMAL_CONTROL:
-                // Switch into alignment mode if `a` is pressed
-                /*if (gpGamepad1.a) {
-                    driveMode = driveMode.ALIGN_TO_POINT;
-                }
-                // Convert gamepad input into desired pose velocity
-                driveDirection = new Pose2d(
-                        -turboMode(getLeftStickY()),
-                        -turboMode(getLeftStickX()),
-                        -turboMode(getRightStickX())
-                */
-
                 driveDirection = new Pose2d(
                         gamepadInput.getX(),
                         gamepadInput.getY(),
@@ -135,16 +124,9 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
                 break;
 
             case ALIGN_TO_POINT:
-                // Switch back into normal driver control mode if `b` is pressed
-                /*if (gpGamepad1.b) {
-                    driveMode = driveMode.NORMAL_CONTROL;
-                }*/
-
                 // Create a vector from the gamepad x/y inputs which is the field relative movement
                 // Then, rotate that vector by the inverse of that heading for field centric control
                 Vector2d fieldFrameInput = new Vector2d(
-                        //-turboMode(getLeftStickY()),
-                        //-turboMode(getLeftStickX())
                         gamepadInput.getX(),
                         gamepadInput.getY()
                 );

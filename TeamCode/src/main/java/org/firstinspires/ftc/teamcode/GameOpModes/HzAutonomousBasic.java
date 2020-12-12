@@ -199,17 +199,16 @@ public class HzAutonomousBasic extends LinearOpMode {
         hzVuforia.deactivateVuforiaTensorFlow();
     }
 
+
     public void initialConfiguration(){
         telemetry.setAutoClear(true);
-        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         telemetry.addData("Compile time : ", "6:50 : 12/05");
 
         //***** Select Alliance ******
         telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X)");
         telemetry.update();
 
-        timer.reset();
-        while (timer.time() < 10) {
+        while (!isStopRequested()) {
             if (hzGamepad.getButtonBPress()) {
                 HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE;
                 telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
@@ -220,7 +219,7 @@ public class HzAutonomousBasic extends LinearOpMode {
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
                 break;
             }
-            telemetry.addData("10s time : Default Alliance A : %.3f", timer.time());
+            //telemetry.addData("10s time : Default Alliance A :",);
             telemetry.update();
         }
 
@@ -228,9 +227,9 @@ public class HzAutonomousBasic extends LinearOpMode {
         sleep(500);
 
         //***** Select Start Pose ******
-        timer.reset();
+        //timer.reset();
         telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
-        while (timer.time() < 10) {
+        while (!isStopRequested()) {
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
                     startPose = HzGameField.RED_INNER_START_LINE;
@@ -255,7 +254,7 @@ public class HzAutonomousBasic extends LinearOpMode {
                     break;
                 }
             }
-            telemetry.addData("10s Timer : Default Pose : BLUE_INNER_START_LINE : %.3f", timer.time());
+            //telemetry.addData("10s Timer : Default Pose : BLUE_INNER_START_LINE : %.3f", timer.time());
             telemetry.update();
         }
         telemetry.update();

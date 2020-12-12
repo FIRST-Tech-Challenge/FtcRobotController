@@ -89,6 +89,17 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 public class HzVuforia {
 
+    public enum VUFORIA_STATE{
+        TFOD_INIT,
+        TFOD_ACTIVE,
+        TFOD_RUNNING,
+        NAVIGATION_INIT,
+        NAVIGATION_ACTIVE,
+        NAVIGATION_RUNNING,
+        INACTIVE
+    }
+    public VUFORIA_STATE vuforiaState = VUFORIA_STATE.INACTIVE;
+
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false  ;
@@ -168,9 +179,9 @@ public class HzVuforia {
          * Retrieve the camera we are to use.
          */
         if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-            webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+            webcamName = hardwareMap.get(WebcamName.class, "Webcam_l");
         } else {
-            webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");//TODO : CORRECT TO 2 after connecting second Webcam
+            webcamName = hardwareMap.get(WebcamName.class, "Webcam_r");
         }
 
         /*
@@ -208,6 +219,7 @@ public class HzVuforia {
         tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+        vuforiaState = VUFORIA_STATE.TFOD_INIT;
     }
 
     public void setupVuforiaNavigation() {
@@ -308,6 +320,7 @@ public class HzVuforia {
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
         }
+        vuforiaState = VUFORIA_STATE.NAVIGATION_INIT;
 
     }
 
@@ -325,9 +338,11 @@ public class HzVuforia {
         // Tap the preview window to receive a fresh image.
 
         targetsUltimateGoal.activate();
+        vuforiaState = VUFORIA_STATE.NAVIGATION_ACTIVE;
     }
 
     public void runVuforiaNavigation() {
+        vuforiaState = VUFORIA_STATE.NAVIGATION_RUNNING;
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
         for (VuforiaTrackable trackable : allTrackables) {
@@ -376,6 +391,7 @@ public class HzVuforia {
     public void deactivateVuforiaNavigation() {
         // Disable Tracking when we are done;
         targetsUltimateGoal.deactivate();
+        vuforiaState = VUFORIA_STATE.INACTIVE;
 
     }
 
@@ -386,6 +402,7 @@ public class HzVuforia {
          **/
         if (tfod != null) {
             tfod.activate();
+            vuforiaState = VUFORIA_STATE.TFOD_ACTIVE;
 
             // The TensorFlow software will scale the input images from the camera to a lower resolution.
             // This can result in lower detection accuracy at longer distances (> 55cm or 22").
@@ -400,6 +417,7 @@ public class HzVuforia {
     }
 
     public HzGameField.TARGET_ZONE runVuforiaTensorFlow() {
+        vuforiaState = VUFORIA_STATE.TFOD_RUNNING;
         HzGameField.TARGET_ZONE targetZoneDetected = HzGameField.TARGET_ZONE.UNKNOWN;
         if (tfod != null) {
               // getUpdatedRecognitions() will return null if no new information is available since
@@ -447,6 +465,7 @@ public class HzVuforia {
     public void deactivateVuforiaTensorFlow(){
         if (tfod != null) {
             tfod.shutdown();
+            vuforiaState = VUFORIA_STATE.INACTIVE;
         }
     }
 

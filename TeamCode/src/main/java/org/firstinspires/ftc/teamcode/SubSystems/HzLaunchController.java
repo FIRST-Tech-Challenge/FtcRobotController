@@ -51,6 +51,7 @@ public class HzLaunchController {
     public LAUNCHER_ALIGNMENT launcherAlignment = LAUNCHER_ALIGNMENT.TARGET_NOT_ALIGNED;
 
     public double distanceFromTarget, lclaunchMotorPower, angleToTarget;
+    public double lclaunchMotorVelocity;
 
     public Servo launchControllerBeaconServo;
 
@@ -90,7 +91,8 @@ public class HzLaunchController {
         if (lcHzIntake.intakeMotorState != HzIntake.INTAKE_MOTOR_STATE.STOPPED){
             lcHzIntake.stopIntakeMotor();
         }
-        lcHzMagazine.moveMagazineToLaunchState = true;
+        //lcHzMagazine.moveMagazineToLaunchState = true;
+        lcHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.LAUNCH;
 
 
         if (lcHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_LAUNCH){
@@ -113,12 +115,16 @@ public class HzLaunchController {
         //TODO : IN MANUAL MODE DONT REPEND ON LOCATION AT ALL. FIX POWER TO A FIXED VALUE
         if (launchMode == LAUNCH_MODE.MANUAL && launchReadiness == LAUNCH_READINESS.READY) {
             if (lcTarget == LAUNCH_TARGET.HIGH_GOAL){
-                lcHzLauncher.runFlyWheelToSupply(HzLauncher.FLYWHEEL_NOMINAL_POWER_HIGH_GOAL);
+                //lcHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_HIGH_GOAL);
+                lclaunchMotorVelocity = HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
+                lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
             }
             if (lcTarget == LAUNCH_TARGET.POWER_SHOT1 ||
                     lcTarget ==LAUNCH_TARGET.POWER_SHOT2 ||
                     lcTarget == LAUNCH_TARGET.POWER_SHOT3) {
-                lcHzLauncher.runFlyWheelToSupply(HzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
+                //lcHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
+                lclaunchMotorVelocity = HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
+                lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
             }
         }
         return launchReadiness;
@@ -135,8 +141,8 @@ public class HzLaunchController {
 
     public void runLauncherByDistanceToTarget(){
         getDistanceFromTarget();
-        setLaunchMotorPower();
-        lcHzLauncher.runFlyWheelToTarget(lclaunchMotorPower);
+        setLaunchMotorVelocity();
+        lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
     }
 
     public void determineLaunchTarget(){
@@ -253,20 +259,23 @@ public class HzLaunchController {
                 + Math.pow(lcTargetVector.getY()-lcTargetVector.getY(), 2));*/
     }
 
-    public void setLaunchMotorPower() {
+    public void setLaunchMotorVelocity() {
         if (distanceFromTarget > 66 && distanceFromTarget < 138) {
             switch (lcTarget) {
                 case POWER_SHOT1:
                 case POWER_SHOT2:
                 case POWER_SHOT3:
-                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.66, 0.74);
+                    //lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.66, 0.74);
+                    lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1550, 0.66, 1740);
                     break;
                 case HIGH_GOAL:
-                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.70, 0.78);
+                    //lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.70, 0.78);
+                    lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1560, 1640, 1830);
                     break;
             }
         } else {
-            lclaunchMotorPower = 0.0;
+            //lclaunchMotorPower = 0.0;
+            lclaunchMotorVelocity = 0;
         }
 
     }

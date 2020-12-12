@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
 /**
  * TeleOpMode for Team Hazmat<BR>
  */
-@TeleOp(name = "Test_Laucher", group = "Test")
+@TeleOp(name = "Test_Launcher", group = "Test")
 public class Test_Launcher extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
@@ -19,6 +19,7 @@ public class Test_Launcher extends LinearOpMode {
     HzMagazine hzMagazine;
     HzLauncher hzLauncher;
     double powerLoop = 0.3;
+    double velocityLoop = 1200;
 
     @Override
     public void runOpMode() {
@@ -36,7 +37,7 @@ public class Test_Launcher extends LinearOpMode {
         //Run Robot based on Gamepad1 inputs
         while (opModeIsActive()) {
             //**** Launcher Actions ****
-            hzMagazine.moveMagazineToLaunch();
+            hzMagazine.moveMagazineToLaunch1();
             //Launches Ring
             if (hzGamepadClassic.getRightBumperPress()) {
                 //TODO : AMJAD : Launch Controller should be used to check if status is good to launch
@@ -59,24 +60,38 @@ public class Test_Launcher extends LinearOpMode {
             }
 
             if (hzGamepadClassic.getButtonXPress()) {
-                hzLauncher.runFlyWheelToTarget(0.7);
+                //hzLauncher.runFlyWheelToTarget(0.7);
+                hzLauncher.runFlyWheelToTarget(1640);
             }
 
             if (hzGamepadClassic.getButtonBPress()) {
                 hzLauncher.stopFlyWheel();
             }
 
-            if (powerLoop >1.0) powerLoop = 1.0;
+            /*if (powerLoop >1.0) powerLoop = 1.0;
             if (powerLoop < 0.3) powerLoop = 0.3;
             if (hzGamepadClassic.getButtonAPress()) {
                 powerLoop = powerLoop - 0.01;
-                hzLauncher.runFlyWheelToSupply(powerLoop);
+                hzLauncher.runFlyWheelToTarget(powerLoop);
             }
 
             if (hzGamepadClassic.getButtonYPress()) {
                 powerLoop = powerLoop + 0.01;
-                hzLauncher.runFlyWheelToSupply(powerLoop);
+                hzLauncher.runFlyWheelToTarget(powerLoop);
+            }*/
+
+            if (velocityLoop >2340) velocityLoop = 2340;
+            if (velocityLoop < 1200) velocityLoop = 1200;
+            if (hzGamepadClassic.getButtonAPress()) {
+                velocityLoop = velocityLoop - 10;
+                hzLauncher.runFlyWheelToTarget(velocityLoop);
             }
+
+            if (hzGamepadClassic.getButtonYPress()) {
+                velocityLoop = velocityLoop + 10;
+                hzLauncher.runFlyWheelToTarget(velocityLoop);
+            }
+
 
             if(HzDEBUG_FLAG) {
                 printDebugMessages();
@@ -88,8 +103,9 @@ public class Test_Launcher extends LinearOpMode {
     double currentVelocity, maxVelocity = 0;
 
     public void maxVelocityTest(){
-        hzLauncher.runFlyWheelToTarget(1.0);
-        currentVelocity = hzLauncher.launchMotorVelocity;
+        //hzLauncher.runFlyWheelToTarget(1.0);
+        hzLauncher.launcherFlyWheelMotor.setPower(1.0);
+        currentVelocity = hzLauncher.launcherFlyWheelMotor.getVelocity();
 
         if (currentVelocity > currentVelocity) {
             maxVelocity = currentVelocity;
@@ -107,6 +123,7 @@ public class Test_Launcher extends LinearOpMode {
         telemetry.addData("7:24","11/23");
         telemetry.addData("launcherFlyWheelMotor.isBusy()", hzLauncher.launcherFlyWheelMotor.isBusy());
         telemetry.addData("Launch Motor Power", hzLauncher.launcherFlyWheelMotor.getPower());
+        telemetry.addData("velocityLoop: ", velocityLoop);
         telemetry.addData("Laucnch Motor Velocity", hzLauncher.launcherFlyWheelMotor.getVelocity());
 
         telemetry.addData("launcher MaxVelocity : ",maxVelocity );

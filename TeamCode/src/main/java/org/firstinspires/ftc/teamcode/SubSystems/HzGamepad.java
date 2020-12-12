@@ -70,6 +70,11 @@ public class HzGamepad {
 
     // RR Drive Train
     public void runByGamepadRRDriveModes(/*HzDrive gpDrive, int playingAlliance*/) {
+
+        if (HzVuforiaStatic.vuforiaState == HzVuforiaStatic.VUFORIA_STATE.NAVIGATION_ACTIVE &&
+                HzVuforiaStatic.targetVisible){
+            gpDrive.setPoseEstimate(HzVuforiaStatic.poseVuforia);
+        }
         gpDrive.poseEstimate = gpDrive.getPoseEstimate();
 
         gpDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
@@ -119,12 +124,23 @@ public class HzGamepad {
             gpHzLauncher.stopFlyWheel();
         }
 
-        if (gpHzMagazine.moveMagazineToCollectState) {
+        /*if (gpHzMagazine.moveMagazineToCollectState) {
+            gpHzMagazine.moveMagazineToLaunchState = false;
             gpHzMagazine.moveMagazineToCollect();
         }
 
         if (gpHzMagazine.moveMagazineToLaunchState){
+            gpHzMagazine.moveMagazineToCollectState = false;
             gpHzMagazine.moveMagazineToLaunch();
+        }*/
+
+        switch (gpHzMagazine.moveMagazineTo) {
+            case COLLECT:
+                gpHzMagazine.moveMagazineToCollect1();
+                break;
+            case LAUNCH:
+                gpHzMagazine.moveMagazineToLaunch1();
+                break;
         }
 
     }
@@ -137,7 +153,8 @@ public class HzGamepad {
             if (gpHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
                 gpHzLaunchController.activateLaunchReadinessState = false;
                 gpHzLaunchController.deactivateLaunchReadinessState = true;
-                gpHzMagazine.moveMagazineToCollectState = true;
+                //gpHzMagazine.moveMagazineToCollectState = true;
+                gpHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.COLLECT;
                 gpHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.ON;
                 gpHzIntake.intakeReverseButtonState = HzIntake.INTAKE_REVERSE_BUTTON_STATE.OFF;
             } else if(gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
@@ -151,7 +168,8 @@ public class HzGamepad {
             if (gpHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.REVERSING){
                 gpHzLaunchController.activateLaunchReadinessState = false;
                 gpHzLaunchController.deactivateLaunchReadinessState = true;
-                gpHzMagazine.moveMagazineToCollectState = true;
+                //gpHzMagazine.moveMagazineToCollectState = true;
+                gpHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.COLLECT;
                 gpHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.OFF;
                 gpHzIntake.intakeReverseButtonState = HzIntake.INTAKE_REVERSE_BUTTON_STATE.ON;
                 //.reverseIntakeMotor();
@@ -224,9 +242,9 @@ public class HzGamepad {
                 gpHzLaunchController.launchMode == HzLaunchController.LAUNCH_MODE.MANUAL) {
             //gpLaunchController.runLauncherByDistanceToTarget();
             if (gpHzLaunchController.lcTarget == HzLaunchController.LAUNCH_TARGET.HIGH_GOAL) {
-                gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_HIGH_GOAL);
+                gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL);
             } else {
-                gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
+                gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT);
             }
 
             if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {

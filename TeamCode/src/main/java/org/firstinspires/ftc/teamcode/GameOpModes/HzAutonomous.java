@@ -126,7 +126,7 @@ public class HzAutonomous extends LinearOpMode {
                 if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE &&
                         startPose == HzGameField.BLUE_INNER_START_LINE &&
                         targetZone == HzGameField.TARGET_ZONE.A){
-                    hzLauncher.runFlyWheelToTarget(hzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
+                    hzLauncher.runFlyWheelToTarget(hzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT);
                     //Start Pose : (TBD, 48.5, ~-55deg)
                     //Spline to (0,12,0)
                     Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -195,17 +195,16 @@ public class HzAutonomous extends LinearOpMode {
         hzVuforia.deactivateVuforiaTensorFlow();
     }
 
+
     public void initialConfiguration(){
         telemetry.setAutoClear(true);
-        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         telemetry.addData("Compile time : ", "6:50 : 12/05");
 
         //***** Select Alliance ******
         telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X)");
         telemetry.update();
 
-        timer.reset();
-        while (timer.time() < 10) {
+        while (!isStopRequested()) {
             if (hzGamepad.getButtonBPress()) {
                 HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE;
                 telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
@@ -216,7 +215,7 @@ public class HzAutonomous extends LinearOpMode {
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
                 break;
             }
-            telemetry.addData("10s time : Default Alliance A : %.3f", timer.time());
+            //telemetry.addData("10s time : Default Alliance A :",);
             telemetry.update();
         }
 
@@ -224,9 +223,9 @@ public class HzAutonomous extends LinearOpMode {
         sleep(500);
 
         //***** Select Start Pose ******
-        timer.reset();
+        //timer.reset();
         telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
-        while (timer.time() < 10) {
+        while (!isStopRequested()) {
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
                     startPose = HzGameField.RED_INNER_START_LINE;
@@ -241,7 +240,7 @@ public class HzAutonomous extends LinearOpMode {
             }
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.BLUE_INNER_START_LINE;
+                    startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
                     telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
                     break;
                 }
@@ -251,7 +250,7 @@ public class HzAutonomous extends LinearOpMode {
                     break;
                 }
             }
-            telemetry.addData("10s Timer : Default Pose : BLUE_INNER_START_LINE : %.3f", timer.time());
+            //telemetry.addData("10s Timer : Default Pose : BLUE_INNER_START_LINE : %.3f", timer.time());
             telemetry.update();
         }
         telemetry.update();
