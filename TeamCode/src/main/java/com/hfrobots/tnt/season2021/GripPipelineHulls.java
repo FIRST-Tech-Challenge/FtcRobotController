@@ -136,7 +136,8 @@ public class GripPipelineHulls {
 	 */
 	private void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val,
 	    Mat out) {
-		Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
+		//Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
+		Imgproc.cvtColor(input, out, Imgproc.COLOR_RGB2HSV);
 		Core.inRange(out, new Scalar(hue[0], sat[0], val[0]),
 			new Scalar(hue[1], sat[1], val[1]), out);
 	}

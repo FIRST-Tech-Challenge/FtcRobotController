@@ -314,7 +314,7 @@ public class GrungyUltimateGoalAuto extends OpMode {
 
 
         //3. strafe to the skystone (centered)
-        final Target target = Target.A;
+        final Target target = Target.B;
 
         State toTargetZone = new TrajectoryFollowerState("To skystone",
                 telemetry, driveBase, ticker, TimeUnit.SECONDS.toMillis(20 * 1000)) {
