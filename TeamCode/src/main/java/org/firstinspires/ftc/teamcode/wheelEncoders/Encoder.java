@@ -8,12 +8,13 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 //motor name is NEVEREST ORBITAL 20 GEARMOTOR (AM-3637)
 //537.6 clicks per revolution
 //each revolution is 38 mm in diameter(1.49606 inches)
+//lol no it isn't find the wheel diameter
 //537.6 clicks = 38mm(1.49606 inches)
 
 
 public class Encoder extends LinearOpMode {
 
-    DcMotor frontRight, frontLeft, backRight, backLeft;
+    static DcMotor frontRight, frontLeft, backRight, backLeft;
 
     @Override public void runOpMode() throws InterruptedException {
         frontLeft = hardwareMap.dcMotor.get("frontLeft");
@@ -33,7 +34,7 @@ public class Encoder extends LinearOpMode {
     }
 
     //sets power of each motor
-    public void setPower(int frontRightPower, int backRightPower,int frontLeftPower,int backLeftPower)
+    public static void setPower(int frontRightPower, int backRightPower,int frontLeftPower,int backLeftPower)
     {
         frontRight.setTargetPosition(frontRightPower);
         frontLeft.setTargetPosition(backRightPower);
@@ -42,12 +43,20 @@ public class Encoder extends LinearOpMode {
     }
 
     //stops driving
-    public void stopDriving()
+    public static void stopDriving()
     {
         frontRight.setPower(0);
         frontLeft.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
+    }
+
+    public static void goForward(double sec, double power){
+        frontRight.setPower(power);
+        frontLeft.setPower(power);
+        backRight.setPower(power);
+        backLeft.setPower(power);
+
     }
 }
 

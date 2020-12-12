@@ -15,7 +15,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@TeleOp
+//@TeleOp
 public class EasyOpenCV extends LinearOpMode {
     OpenCvInternalCamera phoneCam;
     SkystoneDeterminationPipeline pipeline;
@@ -55,6 +55,7 @@ public class EasyOpenCV extends LinearOpMode {
             sleep(50);
         }
     }
+
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
