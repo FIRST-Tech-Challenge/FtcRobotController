@@ -142,7 +142,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Intake", defaultReturn = "")
     public void intake() {
         if (intake != null) {
-            intake.setPower(0.7);
+            intake.setPower(0.9);
 //            intakeblack.setPower(-0.7);
         }
     }
@@ -166,7 +166,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Shooter", defaultReturn = "")
     public void shooter() {
         if (shooter != null) {
-            shooter.setPower(0.95);
+            shooter.setPower(0.9);
         }
     }
 
