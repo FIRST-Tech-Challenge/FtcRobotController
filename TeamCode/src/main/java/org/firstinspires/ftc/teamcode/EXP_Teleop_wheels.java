@@ -33,15 +33,16 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
 
-        lf.setDirection(DcMotor.Direction.FORWARD);
+        //left side needs to be reversed because the motors are upside down, forehead
+        lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
-        lb.setDirection(DcMotor.Direction.FORWARD);
+        lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
 
-        float lfPower = 0.0f;
-        float rfPower = 0.0f;
-        float lbPower = 0.0f;
-        float rbPower = 0.0f;
+        float lfPower;
+        float rfPower;
+        float lbPower;
+        float rbPower;
 
         float SFPwr;
         float SSPwr;
@@ -49,15 +50,20 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         float turnPwr;
 
         double deadzone = 0.2;
-        double basePwrMult = 0.1;
-        double highPwrMult = 0.25;
+        double basePwrMult = 0.25;
+        double highPwrMult = 0.5;
 
         waitForStart();
         runtime.reset();
 
         while (opModeIsActive()) {
+            //reset so it doesn't stack
+            lfPower = 0.0f;
+            rfPower = 0.0f;
+            lbPower = 0.0f;
+            rbPower = 0.0f;
 
-            //set directional energy according to gamepad1 left stick
+            //set directional energy according to gamepad1
 
             SFPwr = gamepad1.left_stick_y;
             SSPwr = gamepad1.left_stick_x;
