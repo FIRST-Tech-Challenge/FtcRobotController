@@ -573,11 +573,11 @@ public class Meet_2_Teleop_Exp extends OpMode {
         //========================================
         if (gamepad2.a) {
             drivetime.reset();
-            gyroTurn(TURN_SPEED *.5, 0, 2);
+            gyroTurn(TURN_SPEED *.25, 90, 10);
             getXDelta(XPOS);
             drivetime.reset();
             //gyroDrive(DRIVE_SPEED,Xdelta,0,3);
-            gyroDrive(DRIVE_SPEED, 10,0,2);
+            //gyroDrive(DRIVE_SPEED, 10,0,2);
             telemetry.addData("Delta X", Xdelta);
         }
         if (gamepad2.dpad_left) {
