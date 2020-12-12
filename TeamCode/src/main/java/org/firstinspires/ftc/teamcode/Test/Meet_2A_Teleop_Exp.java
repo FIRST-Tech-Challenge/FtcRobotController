@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.Test;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.Enums.RingCollectionState;
 import org.firstinspires.ftc.teamcode.Enums.ShooterState;
 import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
 import org.firstinspires.ftc.teamcode.Subsystems.Debouce;
+import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +29,10 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
+import static org.firstinspires.ftc.teamcode.Enums.DriveSpeedState.DRIVE_FAST;
+import static org.firstinspires.ftc.teamcode.Enums.DriveSpeedState.DRIVE_SLOW;
 
-@Autonomous(name="Meet 2A Teleop Exp", group="Test")
+@TeleOp(name="Meet 2A Teleop Exp", group="Test")
 //@Disabled // Leave disabled until ready to test
 
 // This opmode EXTENDS BasicAutonomous and actually does the same thing as BasicAutonomous
@@ -47,33 +51,35 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 //    X     B       X       X
 
 public class Meet_2A_Teleop_Exp extends BasicAutonomous {
+
+    public Drivetrain_v3 drivetrain  = new Drivetrain_v3(true);   // Use subsystem Drivetrain
     //private static final double extraRingShootTimeAllowed = 2; //  timer for shooting the single ring unique to this opMode
     //private static final double autoShootTimeAllowed = 4;//
     //private static final double autoRingCollectTimeAllowed = 0.6; // time allowed to let the single ring to get picked up
     //private static final double shooterStartUpTimeAllowed = 1.25;
     public static final double DRIVE_SPEED = 0.80;     // Nominal speed for better accuracy.
 
-    WobbleTargetZone Square = WobbleTargetZone.BLUE_A; // Default target zone
-    // STATE Definitions from the ENUM package
+
     RingCollectionState mRingCollectionState = RingCollectionState.OFF;
     ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition, this is needed to keep shooter on for a Linear Opmode
     RingCollectionState ringCollectorState;
     private Debouce mdebounce = new Debouce();
 
+
     private DriveSpeedState  currDriveState;
+
     //private RingCollectionState ringCollectorState;
 
-    private double drive;
-    private double turn;
-    private double left;
-    double right;
-    double max;
+
+
 
     // VuForia
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false  ;
+
+
 
     // New Key created in 2020
     private static final String VUFORIA_KEY = "AZYEAT//////AAABmVQTIdrDekmFijIfmSRrV0lMe8Ecw4JdEXCVLgGS4LYCWT6vjXm57dCd1kTEqxKQPvbsorc32jUUmotoZT/NHLZeL0XOP1d1WuRDkadO2zIdRhED9NPsq3fh36bkbz2stnDiIOXlrOaIEbNetPG6b4INIOJ7B8oauCAAYjTY4ycZj6hfkS8NSp2QqVyYSZ3+dRVZiSHSU+nWObQyZoT24wJGhAbH3Y9BI8JdlizcQGjGzlqLfzUS8fIiQlB+9AAAEUAKkyKqg0dIcSFB6Rj+MCQ3kPrJ8VpAxUGXZ84Zxa7CbtKn79+cmLbs18FIu706qObLUtZbbDCCDdSv6DlBVfzrkzgcC4WytmaogFryoGWN";
@@ -104,10 +110,18 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
     @Override
     public void runOpMode() {
+        double drive;
+        double turn;
+        double left;
+        double right;
+        double max;
+        double speedfactor = 0.5;
+
         /*
          * Retrieve the camera we are to use.
          */
         webcamName = hardwareMap.get(WebcamName.class, "Webcam 2");
+        currDriveState = DriveSpeedState.DRIVE_FAST; // initialize robot to FAST
 
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -293,86 +307,6 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
                 left /= max; // does this to stay within the limit and keeps the ratio the same
                 right /= max;
             }
-            ///////////////////////////////////////////////////////
-            // Gamepad 1 Buttons
-            ////////////////////////////////////////////////////////
-
-
-            if (gamepad1.left_bumper && ringCollectorState == RingCollectionState.OFF) {
-                shooter.flipperBackward();
-                shooter.stackerMoveToMidLoad();
-                ringCollectorState = RingCollectionState.COLLECT;
-                telemetry.addData("Collector State", ringCollectorState);
-                mdebounce.debounce(175); // need to pause for a few ms to let drive release the button
-
-            }
-            if (gamepad1.left_bumper && ringCollectorState == RingCollectionState.COLLECT) {
-                shooter.flipperBackward();
-                shooter.stackerMoveToMidLoad();
-                ringCollectorState = RingCollectionState.OFF;
-                telemetry.addData("Collector State", ringCollectorState);
-                mdebounce.debounce(175);
-            }
-
-
-            if (gamepad1.right_bumper && ringCollectorState == RingCollectionState.OFF) {
-                shooter.flipperBackward();
-                shooter.stackerMoveToReload();
-                ringCollectorState = RingCollectionState.EJECT;
-                telemetry.addData("Collector State", ringCollectorState);
-                mdebounce.debounce(175);
-
-            }
-
-            if (gamepad1.right_bumper && ringCollectorState == RingCollectionState.EJECT) {
-                shooter.flipperBackward();
-                shooter.stackerMoveToReload();
-                ringCollectorState = RingCollectionState.OFF;
-                telemetry.addData("Collector State", ringCollectorState);
-                mdebounce.debounce(175);
-
-            }
-
-            if (gamepad1.x) {
-                //shooter.shooterReload();
-                shooter.stackerMoveToReload();
-                telemetry.addData("Stacker Reset", "Complete ");
-
-            }
-            if (gamepad1.y) {
-                shooter.shootOneRingHigh();
-                //shooter.shootMiddleGoal();
-                ringCollectorState = RingCollectionState.OFF;
-
-                telemetry.addData("Shooter High", "Complete ");
-            }
-
-            if (gamepad1.a) {
-                shooter.shooterReload();
-                //shooter.shooterOff();
-                telemetry.addData("Shooter High", "Complete ");
-            }
-            if (gamepad1.b) {
-                shooter.stackerMoveToShoot();
-                ringCollectorState = RingCollectionState.OFF;
-                telemetry.addData("Stacker Ready to Shoot", "Complete ");
-            }
-            if (gamepad1.left_trigger > 0.25) {
-                shooter.flipperForward();
-                mdebounce.debounce(700);
-                telemetry.addData("Flipper Fwd", "Complete ");
-                shooter.flipperBackward();
-                mdebounce.debounce(700);
-            }
-            if (gamepad1.right_trigger > 0.25) {
-                //shooter.flipperBackward();
-                //telemetry.addData("Flipper Back", "Complete ");
-                shooter.shootonePowerShots();
-                telemetry.addData("SHooter Low for Power Shots", "Complete ");
-            }
-
-            // Gamepad 1 Bumpers - for Speed Control
-            // set-up drive speed states on bumpers
             if (gamepad1.left_stick_button)
             {
                 currDriveState = DriveSpeedState.DRIVE_FAST;
@@ -383,57 +317,44 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
             }
 
 
-            // Wobble Controls
+            switch(currDriveState) {
 
-            if (gamepad1.dpad_left) {
-                wobble.GripperOpen();
-                wobble.ArmExtend();
-                // wobble.resetWobble();
+                case DRIVE_FAST:
+                    telemetry.addData("Drive Speed",currDriveState);
+                    drivetrain.leftFront.setPower(left);
+                    drivetrain.rightFront.setPower(right);
+                    //leftFront.setPower(left);
+                    //rightFront.setPower(right);
 
-                telemetry.addData("Ready to rab Wobble", "Complete ");
+                    // Send telemetry message to signify robot running;
+                    telemetry.addData("left",  "%.2f", left);
+                    telemetry.addData("right", "%.2f", right);
+                    break;
+
+                case DRIVE_SLOW:
+                    telemetry.addData("Drive Speed",currDriveState);
+                    drivetrain.leftFront.setPower(left*speedfactor);
+                    drivetrain.rightFront.setPower(right*speedfactor);
+                    //leftFront.setPower(left*speedfactor);
+                    //rightFront.setPower(right*speedfactor);
+
+                    // Send telemetry message to signify robot running;
+                    telemetry.addData("left",  "%.2f", left);
+                    telemetry.addData("right", "%.2f", right);
+                    break;
             }
 
-            if (gamepad1.dpad_up){
 
-                wobble.GripperClose();
-
-                }
+            telemetry.update();
+        }// opmode while loop bracket
 
 
-                wobble.ArmCarryWobble();
-                //wobble.readyToGrabGoal();
-                telemetry.addData("Carrying Wobble", "Complete ");
-            }
-            if (gamepad1.dpad_right) {
-                wobble.GripperOpen();
-                wobble.ArmExtend();
-
-                telemetry.addData("Dropping Wobble", "Complete ");
-            }
-            if (gamepad1.dpad_down) {
-                wobble.ArmContract();
-                wobble.GripperOpen();
-                wobble.LiftLower();
-
-                telemetry.addData("Reset Wobble", "Complete ");
-            }
-            if (gamepad1.back){
-                wobble.LiftRise();
-            }
-
-        ///////////////////////////////////////////////////////
-        // Gamepad 1 Buttons
-        ////////////////////////////////////////////////////////
-
-
-        }
+        } // runopmode bracket
 
 
 
 
-
-    }
-
+    } // class bracket
 
 
 
