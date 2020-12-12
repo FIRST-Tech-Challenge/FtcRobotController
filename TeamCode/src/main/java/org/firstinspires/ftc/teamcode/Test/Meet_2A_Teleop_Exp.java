@@ -7,17 +7,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.Autonomous.BasicAutonomous;
 import org.firstinspires.ftc.teamcode.Enums.DriveSpeedState;
 import org.firstinspires.ftc.teamcode.Enums.RingCollectionState;
 import org.firstinspires.ftc.teamcode.Enums.ShooterState;
-import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
 import org.firstinspires.ftc.teamcode.Subsystems.Debouce;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain_v3;
 
@@ -29,26 +28,10 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
-import static org.firstinspires.ftc.teamcode.Enums.DriveSpeedState.DRIVE_FAST;
-import static org.firstinspires.ftc.teamcode.Enums.DriveSpeedState.DRIVE_SLOW;
 
 @TeleOp(name="Meet 2A Teleop Exp", group="Test")
 //@Disabled // Leave disabled until ready to test
 
-// This opmode EXTENDS BasicAutonomous and actually does the same thing as BasicAutonomous
-// The goal here was to extend a base class with all the methods and prove it works just the same.
-
-// Place robot on the right most blue line when facing the goal. Robot should be placed such that
-// as it drives straight ahead it will not hit the stack of rings. So basically center the robot on
-// the seam between the first and second floor tile. Which is an inch or to to the right of the blue line.
-
-
-// Alignment Position RH Blue Line when facing the goal
-//    X     B       X       X
-//    X     B       X       X
-//    X     B       X       X
-//    X     B       X       X
-//    X     B       X       X
 
 public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
@@ -62,24 +45,17 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
     RingCollectionState mRingCollectionState = RingCollectionState.OFF;
     ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition, this is needed to keep shooter on for a Linear Opmode
-    RingCollectionState ringCollectorState;
+    //RingCollectionState ringCollectorState;
     private Debouce mdebounce = new Debouce();
 
 
     private DriveSpeedState  currDriveState;
-
-    //private RingCollectionState ringCollectorState;
-
-
-
 
     // VuForia
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false  ;
-
-
 
     // New Key created in 2020
     private static final String VUFORIA_KEY = "AZYEAT//////AAABmVQTIdrDekmFijIfmSRrV0lMe8Ecw4JdEXCVLgGS4LYCWT6vjXm57dCd1kTEqxKQPvbsorc32jUUmotoZT/NHLZeL0XOP1d1WuRDkadO2zIdRhED9NPsq3fh36bkbz2stnDiIOXlrOaIEbNetPG6b4INIOJ7B8oauCAAYjTY4ycZj6hfkS8NSp2QqVyYSZ3+dRVZiSHSU+nWObQyZoT24wJGhAbH3Y9BI8JdlizcQGjGzlqLfzUS8fIiQlB+9AAAEUAKkyKqg0dIcSFB6Rj+MCQ3kPrJ8VpAxUGXZ84Zxa7CbtKn79+cmLbs18FIu706qObLUtZbbDCCDdSv6DlBVfzrkzgcC4WytmaogFryoGWN";
@@ -279,7 +255,7 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
         telemetry.addData("imu calib status", drivetrain.imu.getCalibrationStatus().toString());
         /** Wait for the game to begin */
 
-
+        mRingCollectionState = RingCollectionState.OFF;
         telemetry.update();
 
         /////////////////////////////////////////////////////////////////////////////////////////////
@@ -288,7 +264,36 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
 
         while (opModeIsActive()){
+            targetVisible = false;
+            for (VuforiaTrackable trackable : allTrackables) {
+                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+                    telemetry.addData("Visible Target", trackable.getName());
+                    targetVisible = true;
 
+                    // getUpdatedRobotLocation() will return null if no new information is available since
+                    // the last time that call was made, or if the trackable is not currently visible.
+                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+                    if (robotLocationTransform != null) {
+                        lastLocation = robotLocationTransform;
+                    }
+                    break;
+                }
+            }
+
+            // Provide feedback as to where the robot is located (if we know).
+            if (targetVisible) {
+                // express position (translation) of robot in inches.
+                VectorF translation = lastLocation.getTranslation();
+                telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+
+                // express the rotation of the robot in degrees.
+                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+                telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+            }
+            else {
+                telemetry.addData("Visible Target", "none");
+            }
             //========================================
             // GAME PAD 1
             //========================================
@@ -306,6 +311,80 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
             {
                 left /= max; // does this to stay within the limit and keeps the ratio the same
                 right /= max;
+
+                if (gamepad1.left_bumper && mRingCollectionState == RingCollectionState.OFF) {
+                    shooter.flipperBackward();
+                    shooter.stackerMoveToMidLoad();
+                    mRingCollectionState = RingCollectionState.COLLECT;
+                    telemetry.addData("Collector State", mRingCollectionState);
+                    //mdebounce.debounce(175); // need to pause for a few ms to let drive release the button
+
+                }
+                if (gamepad1.left_bumper && mRingCollectionState == RingCollectionState.COLLECT) {
+                    shooter.flipperBackward();
+                    shooter.stackerMoveToMidLoad();
+                    mRingCollectionState = RingCollectionState.OFF;
+                    telemetry.addData("Collector State", mRingCollectionState);
+                    //mdebounce.debounce(175);
+                }
+
+
+                if (gamepad1.right_bumper && mRingCollectionState == RingCollectionState.OFF) {
+                    shooter.flipperBackward();
+                    shooter.stackerMoveToReload();
+                    mRingCollectionState = RingCollectionState.EJECT;
+                    telemetry.addData("Collector State", mRingCollectionState);
+                    mdebounce.debounce(175);
+
+                }
+
+                if (gamepad1.right_bumper && mRingCollectionState == RingCollectionState.EJECT) {
+                    shooter.flipperBackward();
+                    shooter.stackerMoveToReload();
+                    mRingCollectionState = RingCollectionState.OFF;
+                    telemetry.addData("Collector State", mRingCollectionState);
+                    mdebounce.debounce(175);
+
+                }
+
+                if (gamepad1.x) {
+                    //shooter.shooterReload();
+                    shooter.stackerMoveToReload();
+                    telemetry.addData("Stacker Reset", "Complete ");
+
+                }
+                if (gamepad1.y) {
+                    shooter.shootOneRingHigh();
+                    //shooter.shootMiddleGoal();
+                    mRingCollectionState = RingCollectionState.OFF;
+
+                    telemetry.addData("Shooter High", "Complete ");
+                }
+
+                if (gamepad1.a) {
+                    shooter.shooterReload();
+                    //shooter.shooterOff();
+                    telemetry.addData("Shooter High", "Complete ");
+                }
+                if (gamepad1.b) {
+                    shooter.stackerMoveToShoot();
+                    mRingCollectionState = RingCollectionState.OFF;
+                    telemetry.addData("Stacker Ready to Shoot", "Complete ");
+                }
+                if (gamepad1.left_trigger > 0.25) {
+                    shooter.flipperForward();
+                    mdebounce.debounce(700);
+                    telemetry.addData("Flipper Fwd", "Complete ");
+                    shooter.flipperBackward();
+                    mdebounce.debounce(700);
+                }
+                if (gamepad1.right_trigger > 0.25) {
+                    //shooter.flipperBackward();
+                    //telemetry.addData("Flipper Back", "Complete ");
+                    shooter.shootonePowerShots();
+                    telemetry.addData("SHooter Low for Power Shots", "Complete ");
+                }
+
             }
             if (gamepad1.left_stick_button)
             {
@@ -315,8 +394,17 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
             {
                 currDriveState =  DriveSpeedState.DRIVE_SLOW;
             }
+            //========================================
+            // GAME PAD 2
+            //========================================
+            if (gamepad2.x) {
+                gyroTurn(TURN_SPEED,0,3);
 
+            }
 
+            //========================================
+            // Switch Cases
+            //========================================
             switch(currDriveState) {
 
                 case DRIVE_FAST:
@@ -342,6 +430,33 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
                     telemetry.addData("left",  "%.2f", left);
                     telemetry.addData("right", "%.2f", right);
                     break;
+            }
+            switch(mRingCollectionState) {
+
+                case OFF:
+                    telemetry.addData("Collector State",mRingCollectionState);
+                    intake.Intakeoff();;
+                    elevator.Elevatoroff();
+
+                    break;
+
+                case COLLECT:
+                    telemetry.addData("Collector State",mRingCollectionState);
+                    intake.Intakeon();;
+                    elevator.ElevatorSpeedfast();
+                    break;
+
+                case EJECT:
+                    telemetry.addData("Collector State",mRingCollectionState);
+                    intake.IntakeReverse();;
+                    elevator.Elevatorbackup();
+                    break;
+
+
+
+
+
+
             }
 
 
