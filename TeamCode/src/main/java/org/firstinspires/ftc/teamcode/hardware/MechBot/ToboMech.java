@@ -327,13 +327,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 // 0.2 is a dead zone threshold for the trigger
                 if (current > 0.2 && chassis!=null && source.getTrigger(Events.Side.LEFT)<0.2) {
                     if (source.isPressed(Button.DPAD_UP)) { // high goal
-                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
+                        if (source.isPressed(Button.BACK))
+                            doHighGoals();
+                        else
+                            rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
                     } else if (source.isPressed(Button.DPAD_RIGHT)) { // high goal
                         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R, false);
                     } else if (source.isPressed(Button.DPAD_LEFT)) { // high goal
                         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
                     } else if (source.isPressed(Button.DPAD_DOWN)) { // high goal
-                        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_M, false);
+                        if (source.isPressed(Button.BACK))
+                            doPowerShots();
+                        else rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_M, false);
                     }
                 }
             }
@@ -356,7 +361,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (shooter!=null)
                         shooter.shootSpeedInc();
                 } else if (source.getTrigger(Events.Side.LEFT)>0.2 && chassis!=null) { // shoot high goal using Vuforia (x,y)
-                    rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, true);
+                    rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
                 } else if (source.getTrigger(Events.Side.RIGHT)<0.2 && source.getTrigger(Events.Side.LEFT)<0.2) {
                     if (intake!=null)
                        intake.intakeInAuto();
@@ -1194,35 +1199,25 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //chassis.driveTo(.55, side(170), 170, 0, false,  2);
         //shoot
         autoShoot();
-        // sleep(500);
+        //sleep(500);
         shooter.shootOutByRpm(0);
-    } public void doHighGoals() throws InterruptedException {
+    }
+
+    public void doHighGoals() throws InterruptedException {
         if(tZone == TargetZone.ZONE_A) {
             chassis.driveTo(auto_chassis_power, side(60), 165, -60, true, 5);
         }
         shooter.shootOutByRpm(1200);
-        chassis.driveTo(.55, side(90), 180, 0, true,  2); // need to do something about this
+        chassis.driveTo(.55, side(90), 170, 0, true,  2); // need to do something about this
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
         //shoot
-        autoShoot();
-        //sleep(500);
-        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
-        //chassis.driveTo(.55, side(150), 170, 0, false,  2);
-        //shoot
-        autoShoot();
-        //sleep(500);
-        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
-        //chassis.driveTo(.55, side(170), 170, 0, false,  2);
-        //shoot
-        autoShoot();
-        // sleep(500);
+        for (int i=0; i<3; i++) {
+            autoShoot();
+            sleep(500);
+        }
         shooter.shootOutByRpm(0);
     }
-    public void shootGoal() throws InterruptedException {
-        chassis.driveTo(.55, side(90), 180, 0, false,  5);
-        //shoot
 
-    }
     public void getSecondWobbleGoal() throws InterruptedException {
         chassis.driveTo(auto_chassis_power, side(chassis.odo_x_pos_cm()), 37, 0, true,  5);
         if(startPos == StartPosition.OUT){
@@ -1372,7 +1367,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //    shooting_angle += (shooting_dist-200)*0.047;
         //}
         double rpm_shift = getShootingAngleErrorFromRPM(rpm);
-        shooting_angle -= rpm_shift;
+        shooting_angle += 3.5;
         try {
             if (Math.abs(chassis.odo_heading() - shooting_angle) > 0.6) {
                 chassis.rotateTo(0.35, shooting_angle);

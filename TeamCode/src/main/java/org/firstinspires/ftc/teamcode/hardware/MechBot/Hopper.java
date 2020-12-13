@@ -149,8 +149,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                HopperTimer.reset();
                 ringLifter.setPower(-1);
+                HopperTimer.reset();
                 return new Progress() {
                     @Override
                     public boolean isDone() {
@@ -172,17 +172,17 @@ public class Hopper extends Logger<Hopper> implements Configurable {
             @Override
             public Progress start() {
                 HopperTimer.reset();
-                ringLifter.setPower(0.6);
+                ringLifter.setPower(0.4);
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (HopperTimer.milliseconds()>=50);
+                        return (HopperTimer.milliseconds()>=40);
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                ringLifter.setPower(0);
+                ringLifter.setPower(0.0);
                 transferIsDown = false;
                 return new Progress() {
                     @Override
@@ -213,8 +213,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                HopperTimer.reset();
                 ringLifter.setPower(1);
+                HopperTimer.reset();
                 return new Progress() {
                     @Override
                     public boolean isDone() {
@@ -224,8 +224,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                HopperTimer.reset();
                 ringLifter.setPower(-0.5);
+                HopperTimer.reset();
                 return new Progress() {
                     @Override
                     public boolean isDone() {
@@ -251,8 +251,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                HopperTimer.reset();
                 ringLifter.setPower(-1);
+                HopperTimer.reset();
                 return new Progress() {
                     @Override
                     public boolean isDone() {
@@ -262,8 +262,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                HopperTimer.reset();
                 ringLifter.setPower(1);
+                HopperTimer.reset();
                 return new Progress() {
                     @Override
                     public boolean isDone() {
@@ -273,8 +273,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                HopperTimer.reset();
                 ringLifter.setPower(-0.5);
+                HopperTimer.reset();
                 return new Progress() {
                     @Override
                     public boolean isDone() {
