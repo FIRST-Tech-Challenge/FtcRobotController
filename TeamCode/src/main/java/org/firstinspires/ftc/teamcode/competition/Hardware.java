@@ -67,6 +67,9 @@ public class Hardware {
     // Drive train
     public DcMotorEx leftFront, rightFront, leftRear, rightRear;
 
+    //Intake
+    DcMotor intakeMotor;
+
     // Odometry hardware
     private DcMotorEx leftEncoder, rightEncoder, centerEncoder;
 
@@ -121,6 +124,9 @@ public class Hardware {
         leftOdom = (ExpansionHubMotor) hwMap.dcMotor.get("leftFront");
         rightOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightFront");
         centerOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightRear");
+
+        //Intake
+        intakeMotor = hwMap.dcMotor.get("intake");
 
 
     }
@@ -193,4 +199,16 @@ public class Hardware {
         centerEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         centerEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
+    /**
+     * Sets the power of the intake motor to a given power
+     * @param power motor power to which the intake motor will be set
+     * */
+    public void setIntakePower(double power)
+    {
+
+        intakeMotor.setPower(power);
+
+    }
+
 }
