@@ -1196,6 +1196,27 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         autoShoot();
         // sleep(500);
         shooter.shootOutByRpm(0);
+    } public void doHighGoals() throws InterruptedException {
+        if(tZone == TargetZone.ZONE_A) {
+            chassis.driveTo(auto_chassis_power, side(60), 165, -60, true, 5);
+        }
+        shooter.shootOutByRpm(1200);
+        chassis.driveTo(.55, side(90), 180, 0, true,  2); // need to do something about this
+        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
+        //shoot
+        autoShoot();
+        //sleep(500);
+        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
+        //chassis.driveTo(.55, side(150), 170, 0, false,  2);
+        //shoot
+        autoShoot();
+        //sleep(500);
+        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
+        //chassis.driveTo(.55, side(170), 170, 0, false,  2);
+        //shoot
+        autoShoot();
+        // sleep(500);
+        shooter.shootOutByRpm(0);
     }
     public void shootGoal() throws InterruptedException {
         chassis.driveTo(.55, side(90), 180, 0, false,  5);
