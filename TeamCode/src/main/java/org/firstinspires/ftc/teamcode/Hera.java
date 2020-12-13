@@ -46,13 +46,10 @@ public class Hera {
     }
     
 
-    public void forwardTurn(int count) {
-//        while(true) {
-//            driveTrain.goForward(10000000);
-//        }
-//        driveTrain.turn(-90);
+    public void forwardTurn() {
 //        driveTrain.goForward(30);
-       driveTrain.goForward(30);
+//        driveTrain.turn(-90);
+       driveTrain.goForward(300);
     }
 
 

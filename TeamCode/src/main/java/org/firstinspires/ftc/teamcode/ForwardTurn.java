@@ -10,10 +10,6 @@ public class ForwardTurn extends LinearOpMode
     public void runOpMode() throws InterruptedException {
         Hera hera = new Hera(telemetry, hardwareMap, this);
         waitForStart();
-        int counter = 1;
-        while(counter < 200 && opModeIsActive()) {
-            hera.forwardTurn(counter);
-            counter++;
-        }
+        hera.forwardTurn();
     }
 }
