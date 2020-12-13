@@ -1143,6 +1143,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void deliverFirstWobbleGoal () throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
+        if (hopper != null) {
+            hopper.transferUpCombo();
+        }
         if(side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 chassis.driveTo(auto_chassis_power, 25, 180, -50, true, 3);
@@ -1219,6 +1222,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public void getSecondWobbleGoal() throws InterruptedException {
+        if (hopper != null) {
+            hopper.transferDownCombo();
+        }
         chassis.driveTo(auto_chassis_power, side(chassis.odo_x_pos_cm()), 37, 0, true,  5);
         if(startPos == StartPosition.OUT){
             chassis.driveTo(auto_chassis_power, side(107), 30, 0, true,  3);
@@ -1233,7 +1239,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
     public void deliverSecondWobbleGoal() throws InterruptedException { // we may need to go around the other wobble goal
 
-        // neede to change positions
+        // need to change positions
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 // chassis.driveTo(.8, side(30), 40, 0, false, 2);
