@@ -31,6 +31,7 @@ public class MainTeleOp extends LinearOpMode {
 
             flickerPositon = Base.hopper.moveFlicker(gamepad1.b, flickerPositon, runtime);
 
+            Base.intake.suck(gamepad1.left_trigger);
             Base.shooter.shoot(gamepad1.x);
             Base.shooter.stop(gamepad1.y);
         }

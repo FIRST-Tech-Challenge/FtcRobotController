@@ -12,7 +12,7 @@ public class Intake extends RobotComponent {
     public Intake(robotBase BASE) {
         super(BASE);
 
-        //flyWheelShooter = base.getMapper().mapMotor("flyWheel");
+        flyWheelShooter = base.getMapper().mapMotor("flyWheel");
     }
 
     public void suck(double power){

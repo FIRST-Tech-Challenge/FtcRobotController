@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.internal.RobotComponent;
 import org.firstinspires.ftc.robotcontroller.internal.robotBase;
-
+/*
+@author Yahya ElGawady
+ */
 public class Shooter extends RobotComponent {
 
 

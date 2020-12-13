@@ -14,8 +14,9 @@ public class FullBase extends robotBase {
     public Shooter shooter;
     /*
     public WobbleArm wobbleArm;
-    public Intake intake;
     */
+    public Intake intake;
+
     private RobotComponent[] components = new RobotComponent[5];
 
     public FullBase(Telemetry telemetry, LinearOpMode opMode, HardwareMap hardwaremap) {
@@ -46,11 +47,11 @@ public class FullBase extends robotBase {
         //create wobbleArm
         wobbleArm = new WobbleArm(this);
         components[3] = wobbleArm;
+    */
 
         //create intake
         intake = new Intake (this);
         components[4] = intake;
-    */
     }
 
     @Override

@@ -19,8 +19,11 @@ public class Hopper extends RobotComponent {
     boolean positionUp = true;
 
     int timeToMoveIn = 500;
-    int OUT_POSITION = 1;
-    int IN_POSITION = 0;
+    double OUT_POSITION = .9;
+    double IN_POSITION = 0;
+
+    double initTime;
+
 
 
 
@@ -33,12 +36,12 @@ public class Hopper extends RobotComponent {
     public void setHopperPosition ( Position targetPositon) {
         switch (targetPositon){
             case COLLECT_POSITION:
-                hopperMover.setPosition(1);
+                hopperMover.setPosition(.65);
                 break;
 
             case INIT_POSITION:
             case TRANSFER_POSITION:
-                hopperMover.setPosition(.1);
+                hopperMover.setPosition(.825);
                 break;
         }
 
@@ -79,9 +82,12 @@ public class Hopper extends RobotComponent {
     }
     public boolean moveFlicker(boolean button, boolean hasHitFirst, ElapsedTime time) {
         if((button && !otherButtonIsHeld) || !hasHitFirst) {
-            otherButtonIsHeld = true;
+            if(otherButtonIsHeld == false) {
+                initTime = time.milliseconds();
+                otherButtonIsHeld = true;
+            }
             setFlickerPosition(flickerPosition.IN_POSITION);
-            if(Math.abs(-IN_POSITION) >= 0.1)
+            if(time.milliseconds()-initTime < 600)
                 return false;
             setFlickerPosition(flickerPosition.OUT_POSITION);
             if(!button){
