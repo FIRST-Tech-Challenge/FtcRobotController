@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Test;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -53,7 +54,7 @@ public class Meet_2_Teleop_Exp extends OpMode {
     public Shooter              shooter     = new Shooter();
     public Intake               intake      = new Intake();
     public Wobblegoal           wobble  = new Wobblegoal();
-    public Elevator elevator    = new Elevator();
+    public Elevator             elevator    = new Elevator();
     public ElapsedTime gripperCloseTimer = new ElapsedTime();
 
     public ElapsedTime          PIDtimer    = new ElapsedTime(); // PID loop timer

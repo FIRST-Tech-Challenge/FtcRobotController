@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Test;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -81,6 +82,12 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
 
+    double Xpos = 0;
+    double XposSnapShot;
+    double XShootPosition = 5;
+    double Xcorrection;
+
+
     @Override
     public void runOpMode() {
 
@@ -90,8 +97,7 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
         double right;
         double max;
         double speedfactor = 0.5;
-        double Xpos = 0;
-        double XposSnapShot;
+
 
         /*
          * Retrieve the camera we are to use.
@@ -220,10 +226,10 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
         // Gyro set-up
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = false;
+        parameters.mode                = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled      = false;
 
         // Init gyro parameters then calibrate
         drivetrain.imu.initialize(parameters);
@@ -253,7 +259,7 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
         waitForStart();
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        gyroTurn(TURN_SPEED,90,3);
+        //gyroTurn(TURN_SPEED,90,3);
         while (opModeIsActive()){
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
@@ -277,7 +283,8 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                Xpos = translation.get(0);
+                Xpos = translation.get(0)/ mmPerInch; // put X into a variable to use later
+                telemetry.addData("Check X in in", Xpos);
 
                 // express the rotation of the robot in degrees.
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
@@ -420,10 +427,19 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
             // GAME PAD 2
             //========================================
             if (gamepad2.x) {
-                //XposSnapShot = Xpos;
+
+                XposSnapShot = Xpos;
+                Xcorrection = XShootPosition -  XposSnapShot;
                 drivetime.reset();
-                gyroTurn(TURN_SPEED,0,3);
-                //gyroDrive(DRIVE_SPEED, XposSnapShot,0,3);
+
+                gyroTurn(TURN_SPEED *0.75,0,3);
+                drivetrain.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                drivetrain.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                drivetrain.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                drivetrain.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                gyroDrive(DRIVE_SPEED, Xcorrection,0,3);
+                drivetrain.leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                drivetrain.rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             }
 
@@ -478,12 +494,107 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
                     break;
             }
 
-
+            telemetry.addData("Xcorrectin", Xcorrection);
+            telemetry.addData("Xpos", Xpos);
+            telemetry.addData("Snapshot", XposSnapShot);
             telemetry.update();
         } // while active bracket
 
 
         } // runopmode bracket
+
+
+    public void gyroDrive ( double speed,
+                            double distance,
+                            double angle, double timeout) {
+
+        int     newLeftTarget;
+        int     newRightTarget;
+        int     moveCounts;
+        double  max;
+        double  error;
+        double  steer;
+        double  leftSpeed;
+        double  rightSpeed;
+        totalError = 0;
+        lasterror = 0;
+        telemetry.addData("gyroDrive Activated", "Complete");
+        // Ensure that the opmode is still active
+        // Use timeout in case robot gets stuck in mid path.
+        // Also a way to keep integral term from winding up to bad.
+        if (opModeIsActive() & drivetime.time() < timeout) {
+
+            // Determine new target position in ticks/ counts then pass to motor controller
+            moveCounts = (int)(distance * Drivetrain_v3.COUNTS_PER_INCH);
+            newLeftTarget = drivetrain.leftFront.getCurrentPosition() + moveCounts;
+            newRightTarget = drivetrain.rightFront.getCurrentPosition() + moveCounts;
+
+            // Set Target using the calculated umber of ticks/counts
+
+            drivetrain.leftFront.setTargetPosition(newLeftTarget);
+            drivetrain.rightFront.setTargetPosition(newRightTarget);
+            // Tell motor control to use encoders to go to target tick count.
+
+            drivetrain.leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drivetrain.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // start motion.
+            // Up to now this is all the same as a drive by encoder opmode.
+            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
+            drivetrain.leftFront.setPower(speed);
+            drivetrain.rightFront.setPower(speed);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            // once one motor gets to the target number of ticks it is no longer "busy"
+            // and isbusy in false causing the loop to end.
+            while (opModeIsActive() &&
+                    (drivetrain.leftFront.isBusy() && drivetrain.rightFront.isBusy())) {
+
+                // adjust relative speed based on heading error.
+                // Positive angle means drifting to the left so need to steer to the
+                // right to get back on track.
+                error = getError(angle);
+                steer = getSteer(error, Kp_DRIVE, Ki_DRIVE, Kd_DRIVE);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    steer *= -1.0;
+
+                leftSpeed = speed + steer;
+                rightSpeed = speed - steer;
+
+                // Normalize speeds if either one exceeds +/- 1.0;
+                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+                if (max > 1.0)
+                {
+                    leftSpeed /= max;
+                    rightSpeed /= max;
+                }
+
+                drivetrain.leftFront.setPower(leftSpeed);
+                drivetrain.rightFront.setPower(rightSpeed);
+
+                // Display drive status for the driver.
+                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                telemetry.addData("Target",  "%7d:%7d",      newLeftTarget,  newRightTarget);
+                telemetry.addData("Actual",  "%7d:%7d",      drivetrain.leftFront.getCurrentPosition(),
+                        drivetrain.rightFront.getCurrentPosition());
+                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                telemetry.update();
+
+
+            }
+
+            // Stop all motion;
+            drivetrain.leftFront.setPower(0);
+            drivetrain.rightFront.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            drivetrain.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            drivetrain.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+        drivetime.reset(); // reset the timer for the next function call
+    }
 
     /**
      *  Method to spin on central axis to point in a new direction.
