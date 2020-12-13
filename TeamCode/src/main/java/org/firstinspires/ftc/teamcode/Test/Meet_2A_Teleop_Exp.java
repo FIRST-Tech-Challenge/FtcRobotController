@@ -84,7 +84,7 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
     double Xpos = 0;
     double XposSnapShot;
-    double XShootPosition = 5;
+    double XShootPosition = 5;// inches
     double Xcorrection;
 
 
