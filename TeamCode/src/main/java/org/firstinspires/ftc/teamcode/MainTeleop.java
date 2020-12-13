@@ -101,7 +101,7 @@ public class MainTeleop extends LinearOpMode{
 
         double powerMod = 1.0;
         double intakeMod = 1.0;
-        double outtakeMod = 1.0;
+        double outtakeMod = 0.46;//0.46
 
         waitForStart();
 
@@ -133,27 +133,27 @@ public class MainTeleop extends LinearOpMode{
                 intakeMod = 1.0;
             }
 
-            //Release intake
-            if(gamepad1.x){
-                lowerIntake();
-            }
-            if(gamepad1.y){
-                raiseIntake();
-            }
-            if(gamepad1.dpad_up){
-                leftIntakeServo.setPower(0.1);
-                rightIntakeServo.setPower(0.1);
-                wait(100);
-                leftIntakeServo.setPower(0);
-                rightIntakeServo.setPower(0);
-            }
-            if(gamepad1.dpad_down){
-                leftIntakeServo.setPower(-0.1);
-                rightIntakeServo.setPower(-0.1);
-                wait(100);
-                leftIntakeServo.setPower(0);
-                rightIntakeServo.setPower(0);
-            }
+//            //Release intake
+//            if(gamepad1.x){
+//                lowerIntake();
+//            }
+//            if(gamepad1.y){
+//                raiseIntake();
+//            }
+//            if(gamepad1.dpad_up){
+//                leftIntakeServo.setPower(0.1);
+//                rightIntakeServo.setPower(0.1);
+//                wait(100);
+//                leftIntakeServo.setPower(0);
+//                rightIntakeServo.setPower(0);
+//            }
+//            if(gamepad1.dpad_down){
+//                leftIntakeServo.setPower(-0.1);
+//                rightIntakeServo.setPower(-0.1);
+//                wait(100);
+//                leftIntakeServo.setPower(0);
+//                rightIntakeServo.setPower(0);
+//            }
 
             double intakeSpeed = gamepad1.left_trigger * intakeMod;
             intake.setPower(intakeSpeed);
@@ -162,23 +162,23 @@ public class MainTeleop extends LinearOpMode{
 
             //Ring elevator
             //Run by a continuous servo; run continuous servo for some amount of time
-            if(gamepad2.x){
-                raiseElevator();
-            }
-
-            if(gamepad2.y){
-                lowerElevator();
-            }
-            if(gamepad2.dpad_left){
-                elevator.setPower(-0.1);
-                wait(100);
-                elevator.setPower(0);
-            }
-            if(gamepad2.dpad_right){
-                elevator.setPower(0.1);
-                wait(100);
-                elevator.setPower(0);
-            }
+//            if(gamepad2.x){
+//                raiseElevator();
+//            }
+//
+//            if(gamepad2.y){
+//                lowerElevator();
+//            }
+//            if(gamepad2.dpad_left){
+//                elevator.setPower(-0.1);
+//                wait(100);
+//                elevator.setPower(0);
+//            }
+//            if(gamepad2.dpad_right){
+//                elevator.setPower(0.1);
+//                wait(100);
+//                elevator.setPower(0);
+//            }
 
             //Ring flipper
             //Run by a servo, 1 is fully "flipped" position, 0 is fully "retracted" position
@@ -255,51 +255,51 @@ public class MainTeleop extends LinearOpMode{
 
     }
 
-    private void raiseElevator(){
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-
-        while(timer.milliseconds() < 200){
-            elevator.setPower(1);
-        }
-
-        elevator.setPower(0);
-    }
-
-    private void lowerElevator(){
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-
-        while(timer.milliseconds() < 200){
-            elevator.setPower(-1);
-        }
-
-        elevator.setPower(0);
-    }
-    private void raiseIntake(){
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-
-        while(timer.milliseconds() < 200){
-            leftIntakeServo.setPower(1);
-            rightIntakeServo.setPower(1);
-        }
-
-        leftIntakeServo.setPower(0);
-        rightIntakeServo.setPower(0);
-    }
-    private void lowerIntake(){
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-
-        while(timer.milliseconds() < 200){
-            leftIntakeServo.setPower(-1);
-            rightIntakeServo.setPower(-1);
-        }
-
-        leftIntakeServo.setPower(0);
-        rightIntakeServo.setPower(0);
-    }
+//    private void raiseElevator(){
+//        ElapsedTime timer = new ElapsedTime();
+//        timer.reset();
+//
+//        while(timer.milliseconds() < 200){
+//            elevator.setPower(1);
+//        }
+//
+//        elevator.setPower(0);
+//    }
+//
+//    private void lowerElevator(){
+//        ElapsedTime timer = new ElapsedTime();
+//        timer.reset();
+//
+//        while(timer.milliseconds() < 200){
+//            elevator.setPower(-1);
+//        }
+//
+//        elevator.setPower(0);
+//    }
+//    private void raiseIntake(){
+//        ElapsedTime timer = new ElapsedTime();
+//        timer.reset();
+//
+//        while(timer.milliseconds() < 200){
+//            leftIntakeServo.setPower(1);
+//            rightIntakeServo.setPower(1);
+//        }
+//
+//        leftIntakeServo.setPower(0);
+//        rightIntakeServo.setPower(0);
+//    }
+//    private void lowerIntake(){
+//        ElapsedTime timer = new ElapsedTime();
+//        timer.reset();
+//
+//        while(timer.milliseconds() < 200){
+//            leftIntakeServo.setPower(-1);
+//            rightIntakeServo.setPower(-1);
+//        }
+//
+//        leftIntakeServo.setPower(0);
+//        rightIntakeServo.setPower(0);
+//    }
     public void odometryNormalizeAngle(){
         while (globalPositionUpdate.returnOrientation() > 0){
             robot.turnCounterClockwise(1);
