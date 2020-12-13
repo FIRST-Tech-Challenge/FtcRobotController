@@ -200,14 +200,14 @@ public class Meet_2_Teleop_Exp extends OpMode {
     @Override
     public void start() {
 
-        BNO055IMU.Parameters parameters2 = new BNO055IMU.Parameters();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
-        parameters2.mode                = BNO055IMU.SensorMode.IMU;
-        parameters2.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters2.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters2.loggingEnabled      = false;
+        parameters.mode                = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled      = false;
 
-        drivetrain.imu.initialize(parameters2);
+        drivetrain.imu.initialize(parameters);
 
         // make sure the gyro is calibrated before continuing
         while (!drivetrain.imu.isGyroCalibrated())  {
@@ -225,22 +225,22 @@ public class Meet_2_Teleop_Exp extends OpMode {
          * If no camera monitor is desired, use the parameter-less constructor instead (commented out below).
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        VuforiaLocalizer.Parameters Vuparameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        Vuparameters.vuforiaLicenseKey = VUFORIA_KEY;
 
         /**
          * We also indicate which camera on the RC we wish to use.
          */
-        parameters.cameraName = webcamName;
+        Vuparameters.cameraName = webcamName;
 
         // Make sure extended tracking is disabled for this example.
-        parameters.useExtendedTracking = false;
+        Vuparameters.useExtendedTracking = false;
 
         //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        vuforia = ClassFactory.getInstance().createVuforia(Vuparameters);
 
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
@@ -336,7 +336,7 @@ public class Meet_2_Teleop_Exp extends OpMode {
 
         /**  Let all the trackable listeners know where the phone is.  */
         for (VuforiaTrackable trackable : allTrackables) {
-            ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
+            ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, Vuparameters.cameraDirection);
         }
 
         // WARNING:
@@ -571,10 +571,10 @@ public class Meet_2_Teleop_Exp extends OpMode {
         //========================================
         // GAME PAD 2 Mainly Wobble
         //========================================
-        if (gamepad2.a) {
+        if (gamepad2.x) {
             drivetime.reset();
             gyroTurn(TURN_SPEED *.25, 90, 10);
-            getXDelta(XPOS);
+            //getXDelta(XPOS);
             drivetime.reset();
             //gyroDrive(DRIVE_SPEED,Xdelta,0,3);
             //gyroDrive(DRIVE_SPEED, 10,0,2);

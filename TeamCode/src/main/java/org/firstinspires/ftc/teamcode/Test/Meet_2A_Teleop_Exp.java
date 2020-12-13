@@ -3,11 +3,16 @@ package org.firstinspires.ftc.teamcode.Test;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -78,12 +83,15 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
     @Override
     public void runOpMode() {
+
         double drive;
         double turn;
         double left;
         double right;
         double max;
         double speedfactor = 0.5;
+        double Xpos = 0;
+        double XposSnapShot;
 
         /*
          * Retrieve the camera we are to use.
@@ -97,22 +105,22 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
          * If no camera monitor is desired, use the parameter-less constructor instead (commented out below).
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        VuforiaLocalizer.Parameters Vuparameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        Vuparameters.vuforiaLicenseKey = VUFORIA_KEY;
 
         /**
          * We also indicate which camera on the RC we wish to use.
          */
-        parameters.cameraName = webcamName;
+        Vuparameters.cameraName = webcamName;
 
         // Make sure extended tracking is disabled for this example.
-        parameters.useExtendedTracking = false;
+        Vuparameters.useExtendedTracking = false;
 
         //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        vuforia = ClassFactory.getInstance().createVuforia(Vuparameters);
 
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
@@ -193,7 +201,7 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
         /**  Let all the trackable listeners know where the phone is.  */
         for (VuforiaTrackable trackable : allTrackables) {
-            ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
+            ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, Vuparameters.cameraDirection);
         }
 
 
@@ -210,15 +218,15 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
         shooter.shooterReload(); // reload = flipper back, stacker mostly down, shooter off
 
         // Gyro set-up
-        BNO055IMU.Parameters gyroparameters = new BNO055IMU.Parameters();
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 
-        gyroparameters.mode = BNO055IMU.SensorMode.IMU;
-        gyroparameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        gyroparameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        gyroparameters.loggingEnabled = false;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
 
         // Init gyro parameters then calibrate
-        drivetrain.imu.initialize(gyroparameters);
+        drivetrain.imu.initialize(parameters);
 
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
         // Encoder rest is handled in the Drivetrain init in Drivetrain class
@@ -245,7 +253,7 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
         waitForStart();
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-
+        gyroTurn(TURN_SPEED,90,3);
         while (opModeIsActive()){
             targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
@@ -269,6 +277,7 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+                Xpos = translation.get(0);
 
                 // express the rotation of the robot in degrees.
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
@@ -411,7 +420,10 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
             // GAME PAD 2
             //========================================
             if (gamepad2.x) {
+                //XposSnapShot = Xpos;
+                drivetime.reset();
                 gyroTurn(TURN_SPEED,0,3);
+                //gyroDrive(DRIVE_SPEED, XposSnapShot,0,3);
 
             }
 
@@ -473,7 +485,152 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
         } // runopmode bracket
 
+    /**
+     *  Method to spin on central axis to point in a new direction.
+     *  Move will stop if either of these conditions occur:
+     *  1) Move gets to the heading (angle)
+     *  2) Driver stops the opmode running.
+     *  3) Timeout time has elapsed - prevents getting stuck
+     *
+     * @param speed Desired speed of turn.
+     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative angle is required, add/subtract from current heading.
+     * @param timeout max time allotted to complete each call to gyroTurn
+     */
+    public void gyroTurn (  double speed, double angle, double timeout) {
+        totalError = 0;
+        lasterror = 0;
+        // keep looping while we are still active, and not on heading.
+        while (opModeIsActive() && !onHeading(speed, angle, Kp_TURN, Ki_TURN, Kd_TURN) && drivetime.time() < timeout) {
+            // Update telemetry & Allow time for other processes to run.
+            //onHeading(speed, angle, P_TURN_COEFF);
+            telemetry.update();
+        }
+        drivetime.reset(); // reset after we are done with the while loop
+    }
 
+    /**
+     *  Method to obtain & hold a heading for a finite amount of time
+     *  Move will stop once the requested time has elapsed
+     *
+     * @param speed      Desired speed of turn.
+     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative angle is required, add/subtract from current heading.
+     * @param holdTime   Length of time (in seconds) to hold the specified heading.
+     */
+    public void gyroHold( double speed, double angle, double holdTime) {
+
+        ElapsedTime holdTimer = new ElapsedTime();
+
+        // keep looping while we have time remaining.
+        holdTimer.reset();
+        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
+            // Update telemetry & Allow time for other processes to run.
+            onHeading(speed, angle, Kp_TURN, Ki_TURN, Kd_TURN);
+            telemetry.update();
+        }
+
+        // Stop all motion;
+        drivetrain.leftFront.setPower(0);
+        drivetrain.rightFront.setPower(0);
+    }
+
+    /**
+     * Perform one cycle of closed loop heading control.
+     *
+     * @param speed     Desired speed of turn.
+     * @param angle     Absolute Angle (in Degrees) relative to last gyro reset.
+     *                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                  If a relative angle is required, add/subtract from current heading.
+     *
+     * @return
+     */
+    public boolean onHeading(double speed, double angle, double P_TURN_COEFF , double I_TURN_COEFF, double D_TURN_COEFF) {
+        double   error ;
+        double   steer ;
+        boolean  onTarget = false ;
+        double leftSpeed;
+        double rightSpeed;
+
+        // determine turn power based on +/- error
+        error = getError(angle);
+
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
+            steer = 0.0;
+            leftSpeed  = 0.0;
+            rightSpeed = 0.0;
+            onTarget = true;
+        }
+        else {
+            steer = getSteer(error, P_TURN_COEFF , I_TURN_COEFF, D_TURN_COEFF);
+            rightSpeed  = -speed * steer;
+            leftSpeed   = -rightSpeed;
+        }
+
+        // Send desired speeds to motors.
+        drivetrain.leftFront.setPower(leftSpeed);
+        drivetrain.rightFront.setPower(rightSpeed);
+
+        // Display it for the driver.
+        telemetry.addData("Target", "%5.2f", angle);
+        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+
+        return onTarget;
+    }
+
+    /**
+     * getError determines the error between the target angle and the robot's current heading
+     * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
+     * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
+     *          +ve error means the robot should turn LEFT (CCW) to reduce error.
+     *
+     */
+    public double getError(double targetAngle) {
+
+        double robotError;
+
+        // calculate error in -179 to +180 range  (
+        // instantiate an angles object from the IMU
+        Orientation angles = drivetrain.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        // pull out the first angle which is the Z axis for heading and use to calculate the error
+        // Positive robot rotation is left so positive error means robot needs to turn right.
+        robotError = angles.firstAngle - targetAngle; //lastAngles.firstAngle;
+        telemetry.addData("Robot Error", robotError);
+        telemetry.addData("Target Angle", targetAngle);
+        while (robotError > 180)  robotError -= 360;
+        while (robotError <= -180) robotError += 360;
+        return robotError;
+    }
+
+    /**
+     * returns desired steering force.  +/- 1 range.  +ve = steer left
+     * @param error   Error angle in robot relative degrees
+     * @param PCoeff  Proportional Gain Coefficient
+     * @param ICoef Integration coefficient to apply to the area under the error-time curve
+     * @param DCoef Derivative coefficient to apply to the area under the error-time curve
+     * @return
+     */
+    public double getSteer(double error, double PCoeff, double ICoef, double DCoef) {
+        double errorP; // combined proportional error Kp*error
+        double errorI; // combined integral error Ki * cumulative error
+        double errorD; // combined derivative error Kd*change in error
+        double changeInError;
+
+        changeInError = error - lasterror; // for the integral term only. Cumulative error tracking
+        errorP = PCoeff * error;
+        totalError = totalError  + error * PIDtimer.time();
+        errorI = ICoef * totalError;
+        errorD = DCoef * (changeInError)/PIDtimer.time();
+        lasterror = error;
+        PIDtimer.reset();
+
+        //return Range.clip(error *(PCoeff+ICoef+DCoef), -1, 1);
+        return Range.clip((errorP + errorI + errorD),-1,1);
+
+    }
 
 
     } // class bracket
