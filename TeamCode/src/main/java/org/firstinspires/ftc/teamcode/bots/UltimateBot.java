@@ -16,8 +16,6 @@ import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
 public class UltimateBot extends YellowBot {
-    private static int SWINGVALUE = 280;
-    private static int MIDDLESWINGVALUE = 260;
     public DcMotor wobbleSwing = null;
     private Servo wobbleClaw = null;
     private Servo ringCamera = null;
@@ -27,7 +25,7 @@ public class UltimateBot extends YellowBot {
 //    private DcMotor intakeblack = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
-    private static int SWING_GROUND_POS = 250;
+    private static int SWING_GROUND_POS = 260;
     private static int SWING_LIFT_UP_POS = 160;
     private static int SWING_LIFT_WALL = 50;
     private static int STRAIGHT_UP = 70;
@@ -87,7 +85,7 @@ public class UltimateBot extends YellowBot {
 
         try {
             wobbleClaw = hwMap.get(Servo.class, "claw");
-            wobbleClaw.setPosition(1);
+            wobbleClaw.setPosition(0.5);
         } catch (Exception ex) {
             throw new Exception("Issues with wobbleClaw. Check the controller config", ex);
         }
@@ -208,7 +206,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Open Claw", defaultReturn = "")
     public void openWobbleClaw() {
         if (wobbleClaw != null) {
-            wobbleClaw.setPosition(1);
+            wobbleClaw.setPosition(0.5);
         }
     }
 
