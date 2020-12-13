@@ -29,11 +29,12 @@ import java.util.List;
 //    X     B       X       X
 
 public class EXP_BLUE_Right_Line_Auto_HGWB extends BasicAutonomous {
-    private static  final double       extraRingShootTimeAllowed    = 2; //  timer for shooting the single ring unique to this opMode
-    private static  final double       autoShootTimeAllowed = 4;//
-    private static final  double       autoRingCollectTimeAllowed = 0.6; // time allowed to let the single ring to get picked up
-    private static final double      shooterStartUpTimeAllowed = 1.25;
-    public static final double         DRIVE_SPEED             = 0.80;     // Nominal speed for better accuracy.
+    private static  final double        extraRingShootTimeAllowed   = 2; //  timer for shooting the single ring unique to this opMode
+    private static  final double        autoShootTimeAllowed        = 4;//
+    private static final  double        autoRingCollectTimeAllowed  = 0.6; // time allowed to let the single ring to get picked up
+    private static final double         shooterStartUpTimeAllowed   = 1.25;
+    public static final double          DRIVE_SPEED                 = 0.80;     // Nominal speed for better accuracy.
+
     @Override
     public void runOpMode() {
 
