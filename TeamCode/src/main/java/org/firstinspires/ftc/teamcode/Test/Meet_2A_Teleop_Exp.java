@@ -36,20 +36,12 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
     public Drivetrain_v3 drivetrain  = new Drivetrain_v3(true);   // Use subsystem Drivetrain
-    //private static final double extraRingShootTimeAllowed = 2; //  timer for shooting the single ring unique to this opMode
-    //private static final double autoShootTimeAllowed = 4;//
-    //private static final double autoRingCollectTimeAllowed = 0.6; // time allowed to let the single ring to get picked up
-    //private static final double shooterStartUpTimeAllowed = 1.25;
     public static final double DRIVE_SPEED = 0.80;     // Nominal speed for better accuracy.
-
+    private Debouce mdebounce = new Debouce();
+    private DriveSpeedState  currDriveState;
 
     RingCollectionState mRingCollectionState = RingCollectionState.OFF;
-    ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition, this is needed to keep shooter on for a Linear Opmode
-    //RingCollectionState ringCollectorState;
-    private Debouce mdebounce = new Debouce();
-
-
-    private DriveSpeedState  currDriveState;
+    //ShooterState mShooterState = ShooterState.STATE_SHOOTER_OFF; // default condition, this is needed to keep shooter on for a Linear Opmode
 
     // VuForia
 
@@ -215,13 +207,7 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
         intake.init(hardwareMap);
         elevator.init(hardwareMap);
 
-        // move implements to start position. Note, 18x18x18 inch cube has to be maintained
-        // until start is pressed. Position servos and motors here so human error and set-up is not
-        // as critical. Team needs to focus on robot alignment to the field.
-
         shooter.shooterReload(); // reload = flipper back, stacker mostly down, shooter off
-        // nothing here for wobble goal yet. Gravity will take care of most of it.
-        // the wobble gripper is automatically opened during the wobble init.
 
         // Gyro set-up
         BNO055IMU.Parameters gyroparameters = new BNO055IMU.Parameters();
@@ -238,7 +224,6 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
         // Encoder rest is handled in the Drivetrain init in Drivetrain class
 
         // Calibrate gyro
-
         telemetry.addData("Mode", "calibrating...");
         telemetry.update();
 
@@ -250,12 +235,10 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
         telemetry.addData(">", "Robot Ready.");    //
         telemetry.update();
-
         telemetry.addData("Mode", "waiting for start");
         telemetry.addData("imu calib status", drivetrain.imu.getCalibrationStatus().toString());
         /** Wait for the game to begin */
 
-        mRingCollectionState = RingCollectionState.OFF;
         telemetry.update();
 
         /////////////////////////////////////////////////////////////////////////////////////////////
@@ -307,29 +290,28 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
             // Normalize the values so neither exceed +/- 1.0
             max = Math.max(Math.abs(left), Math.abs(right));
-            if (max > 1.0)
-            {
+            if (max > 1.0) {
                 left /= max; // does this to stay within the limit and keeps the ratio the same
                 right /= max;
-
-                if (gamepad1.left_bumper && mRingCollectionState == RingCollectionState.OFF) {
+            }
+            if (gamepad1.left_bumper && mRingCollectionState == RingCollectionState.OFF) {
                     shooter.flipperBackward();
                     shooter.stackerMoveToMidLoad();
                     mRingCollectionState = RingCollectionState.COLLECT;
                     telemetry.addData("Collector State", mRingCollectionState);
-                    //mdebounce.debounce(175); // need to pause for a few ms to let drive release the button
+                    mdebounce.debounce(175); // need to pause for a few ms to let drive release the button
 
                 }
-                if (gamepad1.left_bumper && mRingCollectionState == RingCollectionState.COLLECT) {
+            if (gamepad1.left_bumper && mRingCollectionState == RingCollectionState.COLLECT) {
                     shooter.flipperBackward();
                     shooter.stackerMoveToMidLoad();
                     mRingCollectionState = RingCollectionState.OFF;
                     telemetry.addData("Collector State", mRingCollectionState);
-                    //mdebounce.debounce(175);
+                    mdebounce.debounce(175);
                 }
 
 
-                if (gamepad1.right_bumper && mRingCollectionState == RingCollectionState.OFF) {
+            if (gamepad1.right_bumper && mRingCollectionState == RingCollectionState.OFF) {
                     shooter.flipperBackward();
                     shooter.stackerMoveToReload();
                     mRingCollectionState = RingCollectionState.EJECT;
@@ -338,7 +320,7 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
                 }
 
-                if (gamepad1.right_bumper && mRingCollectionState == RingCollectionState.EJECT) {
+            if (gamepad1.right_bumper && mRingCollectionState == RingCollectionState.EJECT) {
                     shooter.flipperBackward();
                     shooter.stackerMoveToReload();
                     mRingCollectionState = RingCollectionState.OFF;
@@ -347,45 +329,45 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
 
                 }
 
-                if (gamepad1.x) {
+            if (gamepad1.x) {
                     //shooter.shooterReload();
                     shooter.stackerMoveToReload();
                     telemetry.addData("Stacker Reset", "Complete ");
 
                 }
-                if (gamepad1.y) {
+            if (gamepad1.y) {
                     shooter.shootOneRingHigh();
-                    //shooter.shootMiddleGoal();
+                  //shooter.shootMiddleGoal();
                     mRingCollectionState = RingCollectionState.OFF;
 
                     telemetry.addData("Shooter High", "Complete ");
                 }
 
-                if (gamepad1.a) {
+            if (gamepad1.a) {
                     shooter.shooterReload();
                     //shooter.shooterOff();
                     telemetry.addData("Shooter High", "Complete ");
                 }
-                if (gamepad1.b) {
+            if (gamepad1.b) {
                     shooter.stackerMoveToShoot();
                     mRingCollectionState = RingCollectionState.OFF;
                     telemetry.addData("Stacker Ready to Shoot", "Complete ");
                 }
-                if (gamepad1.left_trigger > 0.25) {
+            if (gamepad1.left_trigger > 0.25) {
                     shooter.flipperForward();
                     mdebounce.debounce(700);
-                    telemetry.addData("Flipper Fwd", "Complete ");
+                   telemetry.addData("Flipper Fwd", "Complete ");
                     shooter.flipperBackward();
                     mdebounce.debounce(700);
                 }
-                if (gamepad1.right_trigger > 0.25) {
+            if (gamepad1.right_trigger > 0.25) {
                     //shooter.flipperBackward();
                     //telemetry.addData("Flipper Back", "Complete ");
                     shooter.shootonePowerShots();
                     telemetry.addData("SHooter Low for Power Shots", "Complete ");
-                }
-
             }
+
+
             if (gamepad1.left_stick_button)
             {
                 currDriveState = DriveSpeedState.DRIVE_FAST;
@@ -394,6 +376,37 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
             {
                 currDriveState =  DriveSpeedState.DRIVE_SLOW;
             }
+
+            // Wobble Controls
+
+            if (gamepad1.dpad_left) {
+                wobble.GripperOpen();
+                wobble.ArmExtend();
+                telemetry.addData("Ready to rab Wobble", "Complete ");
+            }
+
+            if (gamepad1.dpad_up){
+                wobble.GripperClose();
+                sleep(500);
+                wobble.ArmCarryWobble();
+                telemetry.addData("Carrying Wobble", "Complete ");
+            }
+            if (gamepad1.dpad_right) {
+                wobble.GripperOpen();
+                wobble.ArmExtend();
+                telemetry.addData("Dropping Wobble", "Complete ");
+            }
+            if (gamepad1.dpad_down) {
+                wobble.ArmContract();
+                wobble.GripperOpen();
+                wobble.LiftLower();
+                telemetry.addData("Reset Wobble", "Complete ");
+            }
+            if (gamepad1.back){
+                wobble.LiftRise();
+            }
+
+
             //========================================
             // GAME PAD 2
             //========================================
@@ -451,17 +464,11 @@ public class Meet_2A_Teleop_Exp extends BasicAutonomous {
                     intake.IntakeReverse();;
                     elevator.Elevatorbackup();
                     break;
-
-
-
-
-
-
             }
 
 
             telemetry.update();
-        }// opmode while loop bracket
+        } // while active bracket
 
 
         } // runopmode bracket
