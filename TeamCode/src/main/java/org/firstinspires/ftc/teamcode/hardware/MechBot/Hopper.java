@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware.MechBot;
 
-import android.hardware.camera2.params.TonemapCurve;
-
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -31,7 +28,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     private AdjustableServo feeder;
     private CRServo ringLifter;
-    /*private*/ public TouchSensor magTouch;
+    /*private*/ public TouchSensor magLow;
+    /*private*/ public TouchSensor magHigh;
     public DistanceSensor rangetouch;
     private ElapsedTime HopperTimer = new ElapsedTime();
 
@@ -75,7 +73,8 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 logTag + ":hopper", logLevel
         );
         feeder.configure(configuration.getHardwareMap(), "feeder");
-        magTouch = configuration.getHardwareMap().get(TouchSensor.class, "touch");
+        magLow = configuration.getHardwareMap().get(TouchSensor.class, "magLow");
+        magHigh = configuration.getHardwareMap().get(TouchSensor.class, "magHigh");
 
         configuration.register(feeder);
         // servoInit();
@@ -91,7 +90,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     }
 
     public boolean touchingState() {
-        return magTouch.isPressed();
+        return magLow.isPressed();
     }
 
     public double rangeReading() {
@@ -155,7 +154,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (HopperTimer.seconds()>=1.5);
+                        return (HopperTimer.seconds()>=1.5 || magHigh.isPressed());
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
@@ -198,7 +197,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         // if (transferIsDown) return;
         double iniTime = System.currentTimeMillis();
         ringLifter.setPower(1);
-        while(!magTouch.isPressed() && (System.currentTimeMillis() - iniTime < 2500) ) {
+        while(!magLow.isPressed() && (System.currentTimeMillis() - iniTime < 2500) ) {
             sleep(5);
         }
         ringLifter.setPower(-0.5);
@@ -219,7 +218,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (magTouch.isPressed() || (HopperTimer.seconds()>=2.5));
+                        return (magLow.isPressed() || (HopperTimer.seconds()>=2.5));
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
@@ -268,7 +267,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (magTouch.isPressed() || (HopperTimer.seconds()>=2));
+                        return (magLow.isPressed() || (HopperTimer.seconds()>=2));
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
@@ -323,14 +322,25 @@ public class Hopper extends Logger<Hopper> implements Configurable {
             });
         }
 
-        if (magTouch != null) {
-            line.addData("Touch", "pressed=%s", new Func<String>() {
+        if (magLow != null) {
+            line.addData("TouchLow", "pressed=%s", new Func<String>() {
                 @Override
                 public String value() {
-                    return (magTouch.isPressed()?"Yes":"No");
+                    return (magLow.isPressed()?"Yes":"No");
                 }
             });
         }
+
+        if (magHigh != null) {
+            line.addData("TouchHigh", "pressed=%s", new Func<String>() {
+                @Override
+                public String value() {
+                    return (magHigh.isPressed()?"Yes":"No");
+                }
+            });
+        }
+
+
     }
 
 }
