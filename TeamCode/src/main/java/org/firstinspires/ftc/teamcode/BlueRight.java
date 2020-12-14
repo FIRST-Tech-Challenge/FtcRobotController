@@ -74,14 +74,19 @@ public class BlueRight extends OpMode {
               **************************/
             case 100:
                 //Lower Wobble Grabber
+                grabber.lowerGripper(.5);
                 stateMachineFlow++;
                 break;
             case 101:
                 //Grab wobble goal
+                grabber.gripperPosition(1);
                 stateMachineFlow++;
                 break;
             case 102:
                 //Drive forward, left, and forward into zone A
+                robot.linearDrive(.5,14);
+                robot.sideDrive(.5,10);
+                robot.linearDrive(.5,21);
                 stateMachineFlow++;
                 break;
             case 103:

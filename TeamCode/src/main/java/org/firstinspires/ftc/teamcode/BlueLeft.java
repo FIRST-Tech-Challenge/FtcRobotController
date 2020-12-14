@@ -189,8 +189,9 @@ public class BlueLeft extends OpMode {
                 break;
             case 202:
                 //Drive forward, to the right, and into zone B
+                robot.linearDrive(.5,14);
                 robot.sideDrive(.5,-10);
-                robot.linearDrive(.5,48);
+                robot.linearDrive(.5,34);
                 stateMachineFlow++;
                 break;
             case 203:
