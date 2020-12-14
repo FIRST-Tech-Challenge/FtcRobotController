@@ -182,7 +182,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                ringLifter.setPower(0.0);
+                ringLifter.setPower(-0.1);
                 transferIsDown = false;
                 return new Progress() {
                     @Override
