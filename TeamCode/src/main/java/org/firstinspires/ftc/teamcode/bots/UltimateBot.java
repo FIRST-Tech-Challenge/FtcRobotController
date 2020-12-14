@@ -85,7 +85,7 @@ public class UltimateBot extends YellowBot {
 
         try {
             wobbleClaw = hwMap.get(Servo.class, "claw");
-            wobbleClaw.setPosition(0.5);
+            wobbleClaw.setPosition(1);
         } catch (Exception ex) {
             throw new Exception("Issues with wobbleClaw. Check the controller config", ex);
         }
@@ -168,7 +168,7 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    @BotAction(displayName = "Move Shooter", defaultReturn = "")
+    @BotAction(displayName = "Move Shooter Peg", defaultReturn = "")
     public void shooterpeg() {
         if (shooter != null) {
             shooter.setPower(0.8);
@@ -179,7 +179,7 @@ public class UltimateBot extends YellowBot {
     public void shootServo() {
         ElapsedTime runtime = new ElapsedTime();
         if (shooterServo != null) {
-            shooterServo.setPosition(0.15);
+            shooterServo.setPosition(0.1);
             runtime.reset();
             while (runtime.milliseconds() <= 250) {
 
@@ -206,7 +206,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Open Claw", defaultReturn = "")
     public void openWobbleClaw() {
         if (wobbleClaw != null) {
-            wobbleClaw.setPosition(0.5);
+            wobbleClaw.setPosition(1);
         }
     }
 
