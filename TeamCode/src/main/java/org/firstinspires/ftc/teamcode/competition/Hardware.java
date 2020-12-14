@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 
 /**
  * This class is for setting up all the hardware components of the robot.
@@ -128,7 +130,7 @@ public class Hardware {
         centerEncoder = hwMap.get(DcMotorEx.class, "rightRear");
 
         // Rev Expansions DLC
-        expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 1");
+        expansionHub = hwMap.get(ExpansionHubEx.class, "Control Hub");
         leftOdom = (ExpansionHubMotor) hwMap.dcMotor.get("leftFront");
         rightOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightFront");
         centerOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightRear");
@@ -207,6 +209,33 @@ public class Hardware {
         centerEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         centerEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
+    /**
+     * Drives the robot with the front being a specific direction of the robot
+     *
+     * @param forward  The forward value input (left stick y)
+     * @param sideways The sideways value input (left stick x)
+     * @param rotation The rotation value input (right stick x)
+     */
+    public void drive(double forward, double sideways, double rotation) {
+        //adds all the inputs together to get the number to scale it by
+        double scale = abs(rotation) + abs(forward) + abs(sideways);
+
+        //scales the inputs when needed
+        if (scale > 1) {
+            forward /= scale;
+            rotation /= scale;
+            sideways /= scale;
+        }
+        //setting the motor powers to move
+        leftFront.setPower(forward - rotation - sideways);
+        leftRear.setPower(forward - rotation + sideways);
+        rightFront.setPower(forward + rotation + sideways);
+        rightRear.setPower(forward + rotation - sideways);
+        //Left Front = +Speed + Turn - Strafe      Right Front = +Speed - Turn + Strafe
+        //Left Rear  = +Speed + Turn + Strafe      Right Rear  = +Speed - Turn - Strafe
+    }
+
 
 
 }
