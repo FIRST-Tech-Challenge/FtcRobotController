@@ -243,25 +243,35 @@ public class Hardware {
         //Left Rear  = +Speed + Turn + Strafe      Right Rear  = +Speed - Turn - Strafe
     }
 
-
-
-
-    //Up and down left and right wobble goals
-    /*
-
-    WARNING CHANGE WOBBLE GOAL POSITIONS BEFORE RUNNING
-
-     */
-    public void leftWobbleGoalUp(){
+    /**
+    * Raise the left wobble goal grabber
+    */
+    public void leftWobbleGoalUp()
+    {
         leftWobbleGoal.setPosition(1);
     }
-    public void rightWobbleGoalUp(){
+
+    /**
+     * Raises the right wobble goal grabber
+     */
+    public void rightWobbleGoalUp()
+    {
         rightWobbleGoal.setPosition(1);
     }
-    public void leftWobbleGoalDown() {
+
+    /**
+     * Lowers left wobble goal grabber
+     */
+    public void leftWobbleGoalDown()
+    {
         leftWobbleGoal.setPosition(0);
     }
-    public void rightWobbleGoalDown(){
+
+    /**
+     * Lowers right wobble goal grabber
+     */
+    public void rightWobbleGoalDown()
+    {
         rightWobbleGoal.setPosition(0);
     }
 }
