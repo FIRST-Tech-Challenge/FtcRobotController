@@ -51,21 +51,13 @@ public class Hardware {
 
     // Measurements and such kept as variables for ease of use
     // Ticks Per Rotation of an odometry wheel
-    private static final double ODOM_TICKS_PER_ROTATION = 2048;
+    private static final double ODOM_TICKS_PER_ROTATION = 1440;
     // Radius of an odometry wheel in cm
-    private static final double ODOM_WHEEL_RADIUS = 1.37795;
+    private static final double ODOM_WHEEL_RADIUS = 3.6 / 2.54;
     // Circumference of an odometry wheel in cm
     private static final double WHEEL_CIRCUM = 2.0 * Math.PI * ODOM_WHEEL_RADIUS;
     // Number of ticks in a centimeter using dimensional analysis
     private static final double ODOM_TICKS_PER_CM = ODOM_TICKS_PER_ROTATION / (WHEEL_CIRCUM);
-
-
-    //Distance from the center of the robot to the launch mechanism in inches.
-    private static final double distCenterToLaunch = 7;
-    //Gravitational constant used for calculating ring launch angle in inches per second squared
-    private static final double ringGravitationalConstant = -386.09;
-    //Radius of flyWheels in inches
-    private static final double flyWheelRadius = 1.5;
 
     // Robot physical location]
     public double x, y, theta;
@@ -79,8 +71,13 @@ public class Hardware {
     // Drive train
     public DcMotorEx leftFront, rightFront, leftRear, rightRear;
 
+
     //Wobble Goal Lifter
     public Servo leftWobbleGoal, rightWobbleGoal;
+
+    //Intake
+    DcMotor intakeMotor;
+
 
     // Odometry hardware
     private DcMotorEx leftEncoder, rightEncoder, centerEncoder;
@@ -95,7 +92,6 @@ public class Hardware {
 
     // Real world distance traveled by the wheels
     public double leftOdomTraveled, rightOdomTraveled, centerOdomTraveled;
-
 
     /**
      * Initialization of hardware
@@ -142,6 +138,8 @@ public class Hardware {
         leftWobbleGoal = hwMap.servo.get("leftWobbleGoal");
         rightWobbleGoal = hwMap.servo.get("rightWobbleGoal");
 
+        //Intake
+        intakeMotor = hwMap.dcMotor.get("intake");
 
     }
 
@@ -216,6 +214,18 @@ public class Hardware {
         centerEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         centerEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
+    /**
+     * Sets the power of the intake motor to a given power
+     * @param power motor power to which the intake motor will be set
+     * */
+    public void setIntakePower(double power)
+    {
+
+        intakeMotor.setPower(power);
+
+    }
+
 
     /**
      * Drives the robot with the front being a specific direction of the robot
