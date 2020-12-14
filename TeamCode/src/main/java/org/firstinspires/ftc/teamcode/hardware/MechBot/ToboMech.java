@@ -1225,7 +1225,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (hopper != null) {
             hopper.transferDownCombo();
         }
-        chassis.driveTo(auto_chassis_power, side(chassis.odo_x_pos_cm()), 37, 0, true,  5);
+        chassis.driveTo(auto_chassis_power, side(chassis.odo_x_pos_cm()) + 10, 37, 0, true,  5);
         if(startPos == StartPosition.OUT){
             chassis.driveTo(auto_chassis_power, side(107), 30, 0, true,  3);
         } else {
