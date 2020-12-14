@@ -570,9 +570,9 @@ public class UG_6832 extends OpMode {
     int reverse = 1;
 
     private void joystickDrive() {
-//        if (notdeadzone(gamepad2.left_stick_y)) {
-//            robot.launcher.adjustElbowAngle(-gamepad2.left_stick_y);
-//        }
+        if (notdeadzone(gamepad1.right_stick_y)) {
+            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
+        }
 //
 //        if (notdeadzone(gamepad2.right_stick_y)) {
 //            robot.launcher.adjustBelt(-gamepad2.right_stick_y);
@@ -655,16 +655,16 @@ public class UG_6832 extends OpMode {
 //            robot.launcher.swivelGripper(true);
 //        }
 
-//        if (toggleAllowed(gamepad2.dpad_up, dpad_up, 2)) {
+//        if (toggleAllowed(gamepad1.dpad_up, dpad_up, 2)) {
 //            robot.launcher.setElbowTargetPos(2501,1);
 //            robot.launcher.extendToPosition(1500, 1.0);
-//
+////
 //        }
-//
-//        if (toggleAllowed(gamepad2.dpad_down, dpad_down, 2)) {
+////
+//        if (toggleAllowed(gamepad1.dpad_down, dpad_down, 2)) {
 //            robot.launcher.setElbowTargetPos(350,1);
 //            robot.launcher.extendToPosition(1200, 1.0);
-//        }
+//  }
 
 
 

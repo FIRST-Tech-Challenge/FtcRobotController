@@ -108,7 +108,7 @@ public class Launcher {
     public int elbowStart = 180; //put arm just under 18" from ground
     public int elbowLow = 300;
     public int elbowMinCalibration = -1340; //measure this by turning on the robot with the elbow fully opened and then physically push it down to the fully closed position and read the encoder value, dropping the minus sign
-    public int actualElbowMax = 1120;
+    public int actualElbowMax = 1465;
     public int elbowMid = (actualElbowMax + elbowMin)/2;
     public int elbowMaxSafetyOffset = 70; //makes sure that the robot doesn't try and extend to the elbow max exactly
 
@@ -816,10 +816,13 @@ public class Launcher {
     }
 
     public void adjustElbowAngle(double speed){
-        if(extendABob.getCurrentPosition() > 600 && speed < 0 && elbow.getCurrentPosition() > 290)
+        /*
+        if(extendABob.getCurrentPosition() > 600 && speed < 0) //&& elbow.getCurrentPosition() > 290)
             speed *= .8;
-        if(extendABob.getCurrentPosition() > 1000 && speed < 0 && elbow.getCurrentPosition() > 290)
+        if(extendABob.getCurrentPosition() > 1000 && speed < 0) //&& elbow.getCurrentPosition() > 290)
             speed *= .5;
+            */
+
         setElbowTargetPos(getElbowCurrentPos() + (int)(150 * speed));
 
 
