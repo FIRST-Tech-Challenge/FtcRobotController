@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 
 /**
  * This class is for setting up all the hardware components of the robot.
@@ -30,11 +32,13 @@ import java.util.List;
  */
 public class Hardware {
 
+
+    //Positions of the odometry wheels
     public ThreeTrackingWheelLocalizer odom = new ThreeTrackingWheelLocalizer(
             new ArrayList<>(Arrays.asList(
-                    new Pose2d(8.03, 0, Math.PI / 2),
-                    new Pose2d(0, 8.51, 0),
-                    new Pose2d(0, -8.51, 0)))) {
+                    new Pose2d(4.25, 0, Math.PI / 2),
+                    new Pose2d(0, 7.51, 0),
+                    new Pose2d(0, -7.51, 0)))) {
         @Override
         public List<Double> getWheelPositions() {
             ArrayList<Double> wheelPositions = new ArrayList<>(3);
@@ -47,13 +51,21 @@ public class Hardware {
 
     // Measurements and such kept as variables for ease of use
     // Ticks Per Rotation of an odometry wheel
-    private static final double ODOM_TICKS_PER_ROTATION = 1440;
+    private static final double ODOM_TICKS_PER_ROTATION = 2048;
     // Radius of an odometry wheel in cm
-    private static final double ODOM_WHEEL_RADIUS = 3.6 / 2.54;
+    private static final double ODOM_WHEEL_RADIUS = 1.37795;
     // Circumference of an odometry wheel in cm
     private static final double WHEEL_CIRCUM = 2.0 * Math.PI * ODOM_WHEEL_RADIUS;
     // Number of ticks in a centimeter using dimensional analysis
     private static final double ODOM_TICKS_PER_CM = ODOM_TICKS_PER_ROTATION / (WHEEL_CIRCUM);
+
+
+    //Distance from the center of the robot to the launch mechanism in inches.
+    private static final double distCenterToLaunch = 7;
+    //Gravitational constant used for calculating ring launch angle in inches per second squared
+    private static final double ringGravitationalConstant = -386.09;
+    //Radius of flyWheels in inches
+    private static final double flyWheelRadius = 1.5;
 
     // Robot physical location]
     public double x, y, theta;
@@ -83,6 +95,7 @@ public class Hardware {
 
     // Real world distance traveled by the wheels
     public double leftOdomTraveled, rightOdomTraveled, centerOdomTraveled;
+
 
     /**
      * Initialization of hardware
@@ -120,7 +133,7 @@ public class Hardware {
         centerEncoder = hwMap.get(DcMotorEx.class, "rightRear");
 
         // Rev Expansions DLC
-        expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 1");
+        expansionHub = hwMap.get(ExpansionHubEx.class, "Control Hub");
         leftOdom = (ExpansionHubMotor) hwMap.dcMotor.get("leftFront");
         rightOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightFront");
         centerOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightRear");
@@ -139,9 +152,9 @@ public class Hardware {
         bulkData = expansionHub.getBulkInputData();
 
         // Change in the distance (centimeters) since the last update for each odometer
-        double deltaLeftDist = -(getDeltaLeftTicks() / ODOM_TICKS_PER_CM) * 1.07;
-        double deltaRightDist = -(getDeltaRightTicks() / ODOM_TICKS_PER_CM) * 1.07;
-        double deltaCenterDist = -getDeltaCenterTicks() / ODOM_TICKS_PER_CM * 1.07;
+        double deltaLeftDist = -(getDeltaLeftTicks() / ODOM_TICKS_PER_CM);
+        double deltaRightDist = -(getDeltaRightTicks() / ODOM_TICKS_PER_CM);
+        double deltaCenterDist = -getDeltaCenterTicks() / ODOM_TICKS_PER_CM;
 
         // Update real world distance traveled by the odometry wheels, regardless of orientation
         leftOdomTraveled += deltaLeftDist;
@@ -157,6 +170,9 @@ public class Hardware {
 
     }
 
+    /**
+     * Resets the delta on all odometry encoders back to 0
+     * */
     private void resetDeltaTicks() {
         leftEncoderPos = bulkData.getMotorCurrentPosition(leftOdom);
         rightEncoderPos = bulkData.getMotorCurrentPosition(rightOdom);
@@ -200,6 +216,35 @@ public class Hardware {
         centerEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         centerEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
+    /**
+     * Drives the robot with the front being a specific direction of the robot
+     *
+     * @param forward  The forward value input (left stick y)
+     * @param sideways The sideways value input (left stick x)
+     * @param rotation The rotation value input (right stick x)
+     */
+    public void drive(double forward, double sideways, double rotation) {
+        //adds all the inputs together to get the number to scale it by
+        double scale = abs(rotation) + abs(forward) + abs(sideways);
+
+        //scales the inputs when needed
+        if (scale > 1) {
+            forward /= scale;
+            rotation /= scale;
+            sideways /= scale;
+        }
+        //setting the motor powers to move
+        leftFront.setPower(forward - rotation - sideways);
+        leftRear.setPower(forward - rotation + sideways);
+        rightFront.setPower(forward + rotation + sideways);
+        rightRear.setPower(forward + rotation - sideways);
+        //Left Front = +Speed + Turn - Strafe      Right Front = +Speed - Turn + Strafe
+        //Left Rear  = +Speed + Turn + Strafe      Right Rear  = +Speed - Turn - Strafe
+    }
+
+
+
 
     //Up and down left and right wobble goals
     /*
