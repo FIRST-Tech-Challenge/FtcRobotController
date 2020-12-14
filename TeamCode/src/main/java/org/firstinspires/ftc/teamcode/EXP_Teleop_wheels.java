@@ -23,6 +23,8 @@ public class EXP_Teleop_wheels extends LinearOpMode {
     private DcMotor lb = null;
     private DcMotor rb = null;
 
+    private DcMotor collector = null;
+
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -32,6 +34,8 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
+
+        collector = hardwareMap.get(DcMotor.class, "collector");
 
         //left side needs to be reversed because the motors are upside down, forehead
         lf.setDirection(DcMotor.Direction.REVERSE);
@@ -44,6 +48,8 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         float lbPower;
         float rbPower;
 
+        float collectPwr;
+
         float SFPwr;
         float SSPwr;
         //turnPwr: + clockwise, - counterclockwise
@@ -52,6 +58,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         double deadzone = 0.2;
         double basePwrMult = 0.25;
         double highPwrMult = 0.5;
+        double collectorPwrMult = 0.5;
 
         waitForStart();
         runtime.reset();
@@ -63,13 +70,13 @@ public class EXP_Teleop_wheels extends LinearOpMode {
             lbPower = 0.0f;
             rbPower = 0.0f;
 
+            collectPwr = 0.0f;
+
             //set directional energy according to gamepad1
 
             SFPwr = gamepad1.left_stick_y;
             SSPwr = gamepad1.left_stick_x;
-
             turnPwr = gamepad1.right_stick_x;
-
 
             //set the power vars according to directional energy
 
@@ -94,10 +101,19 @@ public class EXP_Teleop_wheels extends LinearOpMode {
                 rbPower -= turnPwr;
             }
 
+            //TODO put collector on gamepad2
+            //sticking with gamepad1 for ease of testing at this point
+            if(gamepad1.a){
+                collectPwr = 1;
+            }
+
+
             lfPower = Range.clip(lfPower, -1, 1);
             rfPower = Range.clip(rfPower, -1, 1);
             lbPower = Range.clip(lbPower, -1, 1);
             rbPower = Range.clip(rbPower, -1, 1);
+
+            collectPwr = Range.clip(collectPwr, 0, 1);
 
             if (gamepad1.right_bumper){
                 lf.setPower(lfPower * highPwrMult);
@@ -111,8 +127,10 @@ public class EXP_Teleop_wheels extends LinearOpMode {
                 rb.setPower(rbPower * basePwrMult);
             }
 
+            collector.setPower(collectPwr * collectorPwrMult);
+
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f),leftback (%.2f), rightback (%.2f)", lfPower, rfPower,lbPower ,rbPower);
+            telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f), leftback (%.2f), rightback (%.2f), collector (%.2f)", lfPower, rfPower,lbPower ,rbPower, collectPwr);
             telemetry.addData("Direction", "fw (%.2f), side (%.2f), turn (%.2f)", SFPwr, SSPwr, turnPwr);
             telemetry.update();
         }
