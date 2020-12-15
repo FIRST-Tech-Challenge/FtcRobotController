@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -43,6 +44,8 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
 
+        collector.setDirection(DcMotor.Direction.FORWARD);
+
         float lfPower;
         float rfPower;
         float lbPower;
@@ -55,10 +58,10 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         //turnPwr: + clockwise, - counterclockwise
         float turnPwr;
 
-        double deadzone = 0.2;
-        double basePwrMult = 0.25;
-        double highPwrMult = 0.5;
-        double collectorPwrMult = 0.5;
+        double deadzone = 0.1;
+        double basePwrMult = 0.5;
+        double highPwrMult = 0.75;
+        double collectorPwrMult = -1;
 
         waitForStart();
         runtime.reset();
@@ -81,10 +84,10 @@ public class EXP_Teleop_wheels extends LinearOpMode {
             //set the power vars according to directional energy
 
             if(abs(SFPwr) > deadzone){
-                lfPower += SFPwr;
-                rfPower += SFPwr;
-                lbPower += SFPwr;
-                rbPower += SFPwr;
+                lfPower -= SFPwr;
+                rfPower -= SFPwr;
+                lbPower -= SFPwr;
+                rbPower -= SFPwr;
             }
 
             if(abs(SSPwr) > deadzone){
@@ -104,9 +107,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
 
             //TODO put collector on gamepad2
             //sticking with gamepad1 for ease of testing at this point
-            if(gamepad1.a){
-                collectPwr = 1;
-            }
+            collectPwr = gamepad1.right_trigger;
 
 
             lfPower = Range.clip(lfPower, -1, 1);
@@ -131,7 +132,8 @@ public class EXP_Teleop_wheels extends LinearOpMode {
             collector.setPower(collectPwr * collectorPwrMult);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f), leftback (%.2f), rightback (%.2f), collector (%.2f)", lfPower, rfPower,lbPower ,rbPower, collectPwr);
+            telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f), leftback (%.2f), rightback (%.2f), collector (%.2f)", lfPower, rfPower, lbPower ,rbPower, collectPwr);
+            telemetry.addData("Power Multipliers", "normal (%.2f), sprint (%.2f), collector (%.2f)", basePwrMult, highPwrMult, collectorPwrMult);
             telemetry.addData("Direction", "fw (%.2f), side (%.2f), turn (%.2f)", SFPwr, SSPwr, turnPwr);
             telemetry.update();
         }
