@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
+
+//I Think this should work. I still need to test though.
 public class Caleb_drive extends LinearOpMode {
     private DcMotor frontLeft, backLeft, frontRight, backRight;
 
@@ -18,8 +17,8 @@ public class Caleb_drive extends LinearOpMode {
 
     }
 
-     @Override
-    public void init() {
+    // @Override
+    public void init7() {
         frontLeft = hardwareMap.dcMotor.get("front_left");
         backLeft = hardwareMap.dcMotor.get("back_left");
         frontRight = hardwareMap.dcMotor.get("front_right");
@@ -33,7 +32,7 @@ public class Caleb_drive extends LinearOpMode {
 
     boolean reverse = false;
 
-    @Override
+    //@Override
     public void handle() {
         double speed = gamepad1.right_trigger - gamepad1.left_trigger;
         double direction = gamepad1.left_stick_x;
@@ -136,7 +135,7 @@ public class Caleb_drive extends LinearOpMode {
         }
     }
 
-    public void stop() {
+    public void stop7 () {
         drive(0, 0);
     }
 
