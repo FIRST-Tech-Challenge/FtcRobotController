@@ -19,9 +19,7 @@
 
 package com.hfrobots.tnt.season2021;
 
-import com.ftc9929.corelib.control.NinjaGamePad;
 import com.hfrobots.tnt.corelib.vision.OpenCvTestTeleop;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -30,6 +28,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class VisionTest extends OpenCvTestTeleop {
     @Override
     protected OpenCvPipeline getPipeline() {
-        return StarterStackDetectorPipeline.builder().telemetry(telemetry).build();
+        StarterStackDetectorPipeline pipeline = StarterStackDetectorPipeline.builder().telemetry(telemetry).build();
+        pipeline.setStartLookingForRings(true);
+
+        return pipeline;
     }
 }
