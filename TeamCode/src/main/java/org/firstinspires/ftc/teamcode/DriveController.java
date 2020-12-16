@@ -199,6 +199,7 @@ public class DriveController {
         updateTracking(); //ADDED
 
         while (getDistanceTraveled() < cmDistance && /*System.currentTimeMillis() - startTime < DRIVE_TIMEOUT && */linearOpMode.opModeIsActive()) {
+            robot.updateBulkData();
             //slows down drive power in certain range
             if (cmDistance - getDistanceTraveled() < START_DRIVE_SLOWDOWN_AT_CM) {
                 speed = RobotUtil.scaleVal(cmDistance - getDistanceTraveled(), 0, START_DRIVE_SLOWDOWN_AT_CM, MIN_DRIVE_POWER, initalSpeed);
@@ -493,6 +494,7 @@ public class DriveController {
 
         double absHeadingDiff = robot.getRobotHeading().getDifference(targetAngle);
         while (absHeadingDiff > ALLOWED_MODULE_ROT_ERROR && linearOpMode.opModeIsActive() && iterations < MAX_ITERATIONS_ROBOT_ROTATE /*&& System.currentTimeMillis() - startTime < ROTATE_ROBOT_TIMEOUT*/) {
+            robot.updateBulkData();
             absHeadingDiff = robot.getRobotHeading().getDifference(targetAngle);
             double rotMag = RobotUtil.scaleVal(absHeadingDiff, 0, 25, 0, power); //was max power 1 - WAS 0.4 max power
 
@@ -521,10 +523,11 @@ public class DriveController {
         double moduleLeftDifference, moduleRightDifference;
         double startTime = System.currentTimeMillis();
         do {
+            robot.updateBulkData();
             moduleLeftDifference = moduleLeft.getCurrentOrientation().getDifference(direction.getAngle()); //was getRealAngle() (don't ask)
             moduleRightDifference = moduleRight.getCurrentOrientation().getDifference(direction.getAngle());
             moduleLeft.rotateModule(direction, fieldCentric);
-            moduleLeft.rotateModule(direction, fieldCentric);
+//            moduleLeft.rotateModule(direction, fieldCentric);
             moduleRight.rotateModule(direction, fieldCentric);
 
             linearOpMode.telemetry.addData("Rotating MODULES", "");

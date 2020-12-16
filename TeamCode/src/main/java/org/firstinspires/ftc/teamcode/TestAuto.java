@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
-import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "Diff Swerve Test Auto", group = "Linear Opmode")
 
@@ -26,30 +23,29 @@ public class TestAuto extends LinearOpMode {
         //simple sequence to demonstrate the three main autonomous primitives
 
         //rotate modules to face to the right
-       // robot.driveController.rotateModules(Vector2d.RIGHT, false,1000, this);
+        robot.driveController.rotateModules(Vector2d.RIGHT, false, 10000, this);
 
         //drive 20 cm to the right (while facing forward)
         //robot.driveController.drive(Vector2d.RIGHT, 200, .5, this);
-
 
 
         //robot.driveController.drive(Vector2d.RIGHT, 200, 1, this);
         //robot.driveController.updateUsingJoysticks(Vector2d.RIGHT.scale(Math.sqrt(2)), new Vector2d(0,0), false);
         //robot.driveController.updateAbsRotation(Vector2d.RIGHT.scale(Math.sqrt(2)), new Vector2d(0,0).scale(Math.sqrt(2)), 0.7);
 
-        robot.driveController.resetDistanceTraveled();
-        while (robot.driveController.getDistanceTraveled() < cmDistance && opModeIsActive()) {
-            //slows down drive power in certain range
-            robot.driveController.updateTracking();
-            robot.driveController.update(direction.normalize(speed), 0);
-
-            telemetry.addData("Driving robot", "");
-            telemetry.addData("Right Orientation", robot.driveController.moduleRight.getCurrentOrientation().getAngle());
-            telemetry.addData("Distance", robot.driveController.moduleRight.getDistanceTraveled());
-            telemetry.addData("Encoder", robot.driveController.moduleRight.motor1.getCurrentPosition());
-            telemetry.update();
-        }
-        robot.driveController.update(Vector2d.ZERO, 0);
+//        robot.driveController.resetDistanceTraveled();
+//        while (robot.driveController.getDistanceTraveled() < cmDistance && opModeIsActive()) {
+//            //slows down drive power in certain range
+//            robot.driveController.updateTracking();
+//            robot.driveController.update(direction.normalize(speed), 0);
+//
+//            telemetry.addData("Driving robot", "");
+//            telemetry.addData("Right Orientation", robot.driveController.moduleRight.getCurrentOrientation().getAngle());
+//            telemetry.addData("Distance", robot.driveController.moduleRight.getDistanceTraveled());
+//            telemetry.addData("Encoder", robot.driveController.moduleRight.motor1.getCurrentPosition());
+//            telemetry.update();
+//        }
+//        robot.driveController.update(Vector2d.ZERO, 0);
 
 
         //robot.driveController.moduleRight.updateTarget(Vector2d.BACKWARD, 0);
