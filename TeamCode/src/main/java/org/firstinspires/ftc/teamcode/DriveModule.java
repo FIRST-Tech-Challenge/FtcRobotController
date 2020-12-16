@@ -35,7 +35,7 @@ public class DriveModule {
     // a MODULE rev is when the orientation of the module changes by 360 degrees
     // a WHEEL rev is when the wheel drives a distance equal to its circumference
 
-    public final double TICKS_PER_MODULE_REV = 28 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
+    public final double TICKS_PER_MODULE_REV = 20 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
     public final double DEGREES_PER_TICK = 360/TICKS_PER_MODULE_REV;
 
     public final double TICKS_PER_WHEEL_REV = 28 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22 * (double)(14)/60; //ticks per WHEEL revolution
@@ -94,6 +94,7 @@ public class DriveModule {
         //set run mode to NOT use encoders for velocity PID regulation
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor1.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //motors will brake when zero power is applied (rather than coast)
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

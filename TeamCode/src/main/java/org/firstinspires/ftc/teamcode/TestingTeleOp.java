@@ -1,8 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TESTING TeleOp", group = "TeleOp")
+import org.openftc.revextensions2.ExpansionHubMotor;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.openftc.revextensions2.ExpansionHubMotor;
+
+import org.firstinspires.ftc.teamcode.Angle;
+
+
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TestingTeleOp", group = "TeleOp")
 public class TestingTeleOp extends OpMode {
     Robot robot;
     public final double DEADBAND_MAG_NORMAL = 0.1;
@@ -14,6 +26,9 @@ public class TestingTeleOp extends OpMode {
 
     double loopStartTime = 0;
     double loopEndTime = 0;
+
+    double startTime = 0;
+    double mathTime = 0;
 
     //hungry hippo (1 servo, 2 positions)
     //foundation grabber - latch (2 servos, 2 positions)
@@ -27,7 +42,7 @@ public class TestingTeleOp extends OpMode {
     Vector2d joystick1, joystick2;
 
     public void init() {
-        robot = new Robot(this, false, false);
+        robot = new Robot(this, true, false);
     }
 
     public void init_loop() {
@@ -37,29 +52,43 @@ public class TestingTeleOp extends OpMode {
         lastTime = getRuntime();
     }
 
+
     public void start () {
         if (willResetIMU) robot.initIMU();
+        startTime = System.currentTimeMillis();
     }
 
     public void loop() {
         loopStartTime = System.currentTimeMillis();
+        mathTime = (loopStartTime-startTime)/1000;
         telemetry.addData("OS loop time: ", loopEndTime - loopStartTime);
 
         robot.updateBulkData(); //read data once per loop, access it through robot class variable
         robot.driveController.updatePositionTracking(telemetry);
 
-        joystick1 = new Vector2d(gamepad1.left_stick_x, -gamepad1.left_stick_y); //LEFT joystick
+        joystick1 = new Vector2d(Math.cos(mathTime), Math.sin(mathTime)); //LEFT joystick
         joystick2 = new Vector2d(gamepad1.right_stick_x, -gamepad1.right_stick_y); //RIGHT joystick
         slowModeDrive = false;
 
         telemetry.addData("Robot Heading: ", robot.getRobotHeading());
+
         telemetry.addData("Joystick 2 Angle (180 heading mode): ", joystick2.getAngleDouble(Angle.AngleType.NEG_180_TO_180_HEADING));
         telemetry.addData("Heading to joystick difference: ", joystick2.getAngle().getDifference(robot.getRobotHeading()));
 
+        telemetry.addData("Left Orientation: ", robot.driveController.moduleLeft.getCurrentOrientation());
+        telemetry.addData("Right Orientation: ", robot.driveController.moduleRight.getCurrentOrientation());
+
+        telemetry.addData("StartTime: ", startTime);
+        telemetry.addData("MathTime: ", mathTime);
+
+
+
         //slow mode/range stuffs
         if (gamepad1.left_trigger > 0.1) {
-            joystick1 = joystick1.scale(0.3);
-            joystick2 = joystick2.scale(0.4); //was 0.3
+            // joystick1 = joystick1.scale(0.3);
+            // joystick2 = joystick2.scale(0.4); //was 0.3
+            joystick1 = joystick1.scale((1-Math.abs(gamepad1.left_trigger))*.75);
+            joystick2 = joystick2.scale(1-Math.abs(gamepad1.left_trigger));
             slowModeDrive = true;
         }
 

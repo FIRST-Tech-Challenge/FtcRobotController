@@ -40,13 +40,13 @@ public class SimpleTracking {
      * Constants used to calculate module and robot position and orientation.  These should be moved
      * to the robot constants class to avoid duplication with DriveModule
      */
-    private static final double TICKS_PER_MODULE_REV = 28 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
-    private static final double TICKS_PER_WHEEL_REV = 28 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22 * (double)(14)/60; //ticks per WHEEL revolution
+    private static final double TICKS_PER_MODULE_REV = 10 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22; //ticks per MODULE revolution
+    private static final double TICKS_PER_WHEEL_REV = 10 * (double)(60)/14 * (double)(48)/15 * (double)(82)/22 * (double)(14)/60; //ticks per WHEEL revolution
 
-    private static final double CM_WHEEL_DIAMETER = 3 * 2.54;
+    private static final double CM_WHEEL_DIAMETER = 2.5 * 2.54;
     private static final double CM_PER_WHEEL_REV = CM_WHEEL_DIAMETER * Math.PI;
 
-    public static final double WHEEL_BASE = 32.5; // distance between the wheel modules
+    public static final double WHEEL_BASE = 14*2.56; // distance between the wheel modules
 
 
     /*

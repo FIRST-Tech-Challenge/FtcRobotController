@@ -1,6 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.openftc.revextensions2.ExpansionHubMotor;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.openftc.revextensions2.ExpansionHubMotor;
+
+import org.firstinspires.ftc.teamcode.Angle;
+
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
 public class TeleOp extends OpMode {
@@ -37,6 +49,7 @@ public class TeleOp extends OpMode {
         lastTime = getRuntime();
     }
 
+
     public void start () {
         if (willResetIMU) robot.initIMU();
     }
@@ -53,13 +66,21 @@ public class TeleOp extends OpMode {
         slowModeDrive = false;
 
         telemetry.addData("Robot Heading: ", robot.getRobotHeading());
+
         telemetry.addData("Joystick 2 Angle (180 heading mode): ", joystick2.getAngleDouble(Angle.AngleType.NEG_180_TO_180_HEADING));
         telemetry.addData("Heading to joystick difference: ", joystick2.getAngle().getDifference(robot.getRobotHeading()));
 
+        telemetry.addData("Left Orientation: ", robot.driveController.moduleLeft.getCurrentOrientation());
+        telemetry.addData("Right Orientation: ", robot.driveController.moduleRight.getCurrentOrientation());
+
+
+
         //slow mode/range stuffs
         if (gamepad1.left_trigger > 0.1) {
-            joystick1 = joystick1.scale(0.3);
-            joystick2 = joystick2.scale(0.4); //was 0.3
+           // joystick1 = joystick1.scale(0.3);
+           // joystick2 = joystick2.scale(0.4); //was 0.3
+            joystick1 = joystick1.scale((1-Math.abs(gamepad1.left_trigger))*.75);
+            joystick2 = joystick2.scale(1-Math.abs(gamepad1.left_trigger));
             slowModeDrive = true;
         }
 
