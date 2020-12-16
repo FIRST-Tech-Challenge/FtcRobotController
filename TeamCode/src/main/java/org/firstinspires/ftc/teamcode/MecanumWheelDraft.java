@@ -145,7 +145,7 @@ public class MecanumWheelDraft extends LinearOpMode {
             }
 
             if(gamepad1.b){
-                strafeLeft(.3,targOrientMain);
+                blindRotateLeft(.175);
             }
 
         }
@@ -252,7 +252,6 @@ public class MecanumWheelDraft extends LinearOpMode {
 
         for (double i = .3; i > .1; i = i-.1) {
 
-
             blindRotateRight(i);
             while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) > heading) && opModeIsActive()) {
 
@@ -272,8 +271,29 @@ public class MecanumWheelDraft extends LinearOpMode {
                 telemetry.update();
             }
             stopDriving();
-
         }
+
+
+        blindRotateRight(.175);
+        while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) > heading) && opModeIsActive()) {
+
+            currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
+            telemetry.addData("target heading", heading);
+            telemetry.update();
+        }
+        stopDriving();
+
+        blindRotateLeft(.175);
+        while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) < heading) && opModeIsActive()) {
+
+            currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
+            telemetry.addData("target heading", heading);
+            telemetry.update();
+        }
+        stopDriving();
+
 
     }
 
