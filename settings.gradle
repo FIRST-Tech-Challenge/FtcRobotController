@@ -1,3 +1,5 @@
+include ':easyopencv1'
+include ':examples'
 include ':FtcRobotController'
 include ':DarbotsFtcLib'
 include ':TeamCode'
