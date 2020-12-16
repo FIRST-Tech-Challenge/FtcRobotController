@@ -36,6 +36,7 @@ import lombok.Setter;
 @Builder
 public class StarterStackDetectorPipeline extends OpenCvPipeline {
 
+    private static final String STACK_DETECTOR_TEL_CAPTION = "SDet";
     private final Telemetry telemetry;
 
     private final GripPipelineHulls gripPipeline = new GripPipelineHulls();
@@ -75,22 +76,52 @@ public class StarterStackDetectorPipeline extends OpenCvPipeline {
             }
         }
 
+        if (largestBoundingRect != null) {
+            Imgproc.rectangle(displayMat, largestBoundingRect.tl(), largestBoundingRect.br(), new Scalar(0, 0, 255), 2); // Draw rect
+        }
+
         if (startLookingForRings) {
             // How do we detect whether this is 0 rings, 1 ring or 4 rings?
 
             if (largestBoundingRect == null) {
                 // we found no rings
                 ringsDetected.set(RingsDetected.ZERO);
+
+                telemetry.addData(STACK_DETECTOR_TEL_CAPTION, "-> " + ringsDetected.get().toString());
             } else {
+                // Observed heights/widths using VisionTest OpMode
+                //
+                //          B
+                //       D  A  C
+                //          E
+                //
+                // S - Rings have a slant
+                // I - Rings are straight
+                //
+                // W x H in pixels table:
+                //
+                //      4 Rings     1 Ring      No Rings
+                // ----------------------------------------
+                // AI   71 x 54     68 x 30         --
+                // AS   71 x 50     --              --
+                // BI   66 x 43     64 x 25         --
+                // BS   68 x 45     --              --
+                // CI   72 x 56     68 x 31         --
+                // CS   78 x 54     --              --
+                // DI   70 x 51     68 x 27         --
+                // DS   76 x 52     --              --
+                // EI   70 x 56     72 x 31         --
+                // ES   80 x 53     --              --
+
                 // FIXME: The following if()s we talked about in our meeting, are height only
                 // We know the width, does it help us reject non-starter stacks?
 
                 int height = largestBoundingRect.height;
                 int width = largestBoundingRect.width;
 
-                if (height > 0 /* FIXME */ && height < 60 /* FIXME */) {
+                if (height > 20 && height < 35) {
                     ringsDetected.set(RingsDetected.ONE);
-                } else if (height > 60 /* FIXME */ && height < 200 /* FIXME */) {
+                } else if (height > 40 && height < 60) {
                     ringsDetected.set(RingsDetected.FOUR);
                 } else {
                     // we think we saw rings, but the height is off
@@ -99,11 +130,8 @@ public class StarterStackDetectorPipeline extends OpenCvPipeline {
                     ringsDetected.set(RingsDetected.SOME);
                 }
 
-                telemetry.addData("Largest ", largestBoundingRect.width + " x " + largestBoundingRect.height);
-                Imgproc.rectangle(displayMat, largestBoundingRect.tl(), largestBoundingRect.br(), new Scalar(0, 0, 255), 2); // Draw rect
+                telemetry.addData("SDet", largestBoundingRect.width + " x " + largestBoundingRect.height + " -> " + ringsDetected.get().toString());
             }
-
-            telemetry.addData("Detected", ringsDetected.get().toString());
         }
 
         return displayMat;
