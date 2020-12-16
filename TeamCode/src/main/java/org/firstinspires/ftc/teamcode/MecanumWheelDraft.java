@@ -140,7 +140,7 @@ public class MecanumWheelDraft extends LinearOpMode {
 
             if (gamepad1.a){
                 //goToHeading(0);
-                rotateToHeading(0);
+                rotateToHeading(90);
 
             }
 
@@ -268,27 +268,30 @@ You may need to make the error negative somehow if the robot corrects the wrong 
         currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double currentAngle = currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle);
 
+        for (double i = .3; i > .1; i = i-.1) {
 
 
-            blindRotateRight(.3);
+            blindRotateRight(i);
             while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) > heading) && opModeIsActive()) {
 
                 currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
+                telemetry.addData("target heading", heading);
                 telemetry.update();
             }
             stopDriving();
 
-        blindRotateLeft(.3);
-        while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) < heading) && opModeIsActive()) {
+            blindRotateLeft(i);
+            while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) < heading) && opModeIsActive()) {
 
-            currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
-            telemetry.update();
+                currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
+                telemetry.addData("target heading", heading);
+                telemetry.update();
+            }
+            stopDriving();
+
         }
-        stopDriving();
-
-
 
     }
 
