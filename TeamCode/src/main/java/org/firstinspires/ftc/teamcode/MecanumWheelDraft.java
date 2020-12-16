@@ -177,24 +177,6 @@ public class MecanumWheelDraft extends LinearOpMode {
 
 
 
-
-    /*
-    Read the starting angle and store it in a variable. Drive in a while loop with a condition on when to stop.
-    Depending on the difference between the starting angle and the current angle,
-    add power to one set of wheels and remove power from the other. Something like:
-
-double error = 0.0;
-double startAngle = imu.getAngle();
-//or however u get ur angle while (!im there)
-{ error = someConstant * (startAngle - currentAngle);
-frontLeft.setPower(power+error); frontRight.setPower(power-error);
-backLeft.setPower(power+error); backRight.setPower(power-error) }
-
-Find someConstant experimentally,
-it sets how sensitive the system is.
-You may need to make the error negative somehow if the robot corrects the wrong way. Hope this helps!!
-     */
-
  void goToHeading(double heading){   //kinda rotates, don't use this
 
 
