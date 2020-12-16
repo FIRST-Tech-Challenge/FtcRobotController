@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
@@ -128,11 +127,20 @@ public class HzAutonomousBasic extends LinearOpMode {
                     //Start Pose : (TBD, 48.5, ~-55deg)
                     //Spline to (0,12,0)
                     Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .splineTo(new Vector2d(0, 23), 0)
+                            .splineTo(new Vector2d(-8, 30), 0)
                             .build();
 
                     hzDrive.followTrajectory(traj);
 
+                    hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.HIGH_GOAL;
+                    hzLaunchController.activateLaunchReadinessState = true;
+                    hzLaunchController.activateLaunchReadiness();
+                    hzLaunchController.runLauncherByDistanceToTarget();
+                    hzLauncher.plungeRingToFlyWheel();
+                    sleep (250);
+                    hzLauncher.plungeRingToFlyWheel();
+                    sleep (250);
+                    hzLauncher.plungeRingToFlyWheel();
 
                     //Launch ring to power shot 1,2,3, (automatic alignment)
                     /*hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
@@ -154,15 +162,15 @@ public class HzAutonomousBasic extends LinearOpMode {
                     hzLaunchController.deactivateLaunchReadiness();
                     */
 
-                    sleep(1000);
+                    sleep(250);
 
                     //Spline to (!2,36,-90)
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .splineTo(new Vector2d(12, 36), -90)
+                            .splineTo(new Vector2d(30, 30), -90)
                             .build();
                     hzDrive.followTrajectory(traj);
 
-                    //Drop wobble goal
+/*                    //Drop wobble goal
                     hzArm.moveArmDropWobbleRingPosition();
                     hzArm.openGrip();
                     sleep(1000);
@@ -171,7 +179,7 @@ public class HzAutonomousBasic extends LinearOpMode {
                     // Spline to (24,24,0)
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                             .splineTo(new Vector2d(24, 24), 0)
-                            .build();
+                            .build();*/
 
                     hzDrive.followTrajectory(traj);
                 }
