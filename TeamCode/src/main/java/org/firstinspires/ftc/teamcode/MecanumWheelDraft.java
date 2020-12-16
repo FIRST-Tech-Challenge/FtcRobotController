@@ -55,6 +55,10 @@ public class MecanumWheelDraft extends LinearOpMode {
 
         double max;
 
+
+        Orientation targOrientMain;
+        targOrientMain = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -138,6 +142,10 @@ public class MecanumWheelDraft extends LinearOpMode {
                 //goToHeading(0);
                 rotateToHeading(0);
 
+            }
+
+            if(gamepad1.b){
+                strafeLeft(.3,targOrientMain);
             }
 
         }
@@ -260,7 +268,7 @@ You may need to make the error negative somehow if the robot corrects the wrong 
         currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double currentAngle = currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle);
 
-        if (currentAngle > heading) {
+
 
             blindRotateRight(.3);
             while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) > heading) && opModeIsActive()) {
@@ -271,22 +279,58 @@ You may need to make the error negative somehow if the robot corrects the wrong 
             }
             stopDriving();
 
+        blindRotateLeft(.3);
+        while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) < heading) && opModeIsActive()) {
+
+            currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
+            telemetry.update();
         }
-        if (currentAngle < heading) {
-            blindRotateLeft(.3);
-            while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) < heading) && opModeIsActive()) {
+        stopDriving();
 
 
-                currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
-                telemetry.update();
+
+    }
+
+    //Strafe Left - (used to strafe towards the center line for parking)
+    void strafeLeft(double pwr, Orientation target) {  //added int pwr to reduce initial power
+        //Get the current orientation
+        Orientation currOrient;
+        currOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        //Compare the current orientation to the target
+        double currAng = currOrient.angleUnit.DEGREES.normalize(currOrient.firstAngle);
+        double targAng = 0.0;  // target.angleUnit.DEGREES.normalize(target.firstAngle);
+        double error = targAng - currAng;
+        double frontLeft;
+        double frontRight;
+        double backLeft;
+        double backRight;
+        double max;
+        //scale the error so that it is a motor value and
+        //then scale it by a third of the power to make sure it
+        //doesn't dominate the movement
+        double r = -error / 180 * (pwr * 202);
 
 
-            }
-            stopDriving();
+        // Normalize the values so none exceeds +/- 1.0
+        frontLeft = -pwr + r ;
+        backLeft = pwr + r ;
+        backRight = pwr + r ;
+        frontRight = -pwr + r ;
+        max = Math.max(Math.max(Math.abs(frontLeft), Math.abs(frontRight)), Math.max(Math.abs(frontRight), Math.abs(frontRight)));
+        if (max > 1.0) {
+            frontLeft = frontLeft / max;
+            frontRight = frontRight / max;
+            backLeft = backLeft / max;
+            backRight = backRight / max;
         }
 
-
+        //send the power to the motors
+        robot.frontLeftMotor.setPower(frontLeft);
+        robot.backLeftMotor.setPower(backLeft); //Changing the order in which the wheels start
+        robot.backRightMotor.setPower(backRight);
+        robot.frontRightMotor.setPower(frontRight);
 
     }
 
