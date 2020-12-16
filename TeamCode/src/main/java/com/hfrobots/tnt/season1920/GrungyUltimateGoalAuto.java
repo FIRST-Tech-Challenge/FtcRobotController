@@ -29,6 +29,7 @@ import com.ftc9929.corelib.control.OnOffButton;
 import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.state.State;
 import com.ftc9929.corelib.state.StateMachine;
+import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
 import com.google.common.base.Ticker;
 import com.hfrobots.tnt.corelib.Constants;
 import com.hfrobots.tnt.corelib.drive.mecanum.RoadRunnerMecanumDriveREV;
@@ -38,9 +39,12 @@ import com.hfrobots.tnt.season2021.StarterStackDetectorPipeline;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.concurrent.TimeUnit;
+
+import lombok.NonNull;
 
 import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 
@@ -65,12 +69,8 @@ public class GrungyUltimateGoalAuto extends OpMode {
     private RoadRunnerMecanumDriveREV driveBase;
 
     private StateMachine stateMachine;
-
-    private enum ParkOrLane {
-        WALL,
-        NEUTRAL_SKYBRIDGE
-    }
-
+    private StarterStackDetectorPipeline starterStackDetectorPipeline;
+    
     // The routes our robot knows how to do
     private enum Routes {
         DEPOSIT_WOBBLE_GOAL("Deposit Wobble Goal");
@@ -101,14 +101,8 @@ public class GrungyUltimateGoalAuto extends OpMode {
 
     private DeliveryMechanism deliveryMechanism;
 
-    // Detector object
-    //private TntSkystoneDetector detector;
-
-    //private EasyOpenCvPipelineAndCamera pipelineAndCamera;
-
     private SkystoneGrabber skystoneGrabber;
 
-    //private ParkingSticks parkingSticks;
 
     private CapstoneMechanism capstoneMechanism;
 
@@ -134,17 +128,19 @@ public class GrungyUltimateGoalAuto extends OpMode {
         skystoneGrabber = new SkystoneGrabber(simplerHardwareMap);
 
         capstoneMechanism = new CapstoneMechanism(simplerHardwareMap, telemetry, ticker);
+
+        setupOpenCvCameraAndPipeline();
     }
 
     private com.hfrobots.tnt.corelib.vision.EasyOpenCvPipelineAndCamera pipelineAndCamera;
 
     private void setupOpenCvCameraAndPipeline() {
-        OpenCvPipeline detector = StarterStackDetectorPipeline.builder().telemetry(telemetry).build();
+        starterStackDetectorPipeline = StarterStackDetectorPipeline.builder().telemetry(telemetry).build();
 
         com.hfrobots.tnt.corelib.vision.EasyOpenCvPipelineAndCamera.EasyOpenCvPipelineAndCameraBuilder pipelineBuilder =
                 com.hfrobots.tnt.corelib.vision.EasyOpenCvPipelineAndCamera.builder();
 
-        pipelineBuilder.hardwareMap(hardwareMap).telemetry(telemetry).openCvPipeline(detector);
+        pipelineBuilder.hardwareMap(hardwareMap).telemetry(telemetry).openCvPipeline(starterStackDetectorPipeline);
 
         pipelineAndCamera = pipelineBuilder.build();
 
@@ -154,6 +150,7 @@ public class GrungyUltimateGoalAuto extends OpMode {
     @Override
     public void start() {
         super.start();
+        starterStackDetectorPipeline.setStartLookingForRings(true);
         foundationGripper.initPos();
     }
 
@@ -299,22 +296,43 @@ public class GrungyUltimateGoalAuto extends OpMode {
         A, B, C;
     }
 
+    private Target deliverToTarget = Target.A; // To start with
+
     protected void setupDeliverWobbleGoal() {
-        // Robot starts against wall, depot side of tape line
+        State detectorState = new StopwatchTimeoutSafetyState(
+                "Detecting starter stack",
+                telemetry,
+                Ticker.systemTicker(),
+                TimeUnit.SECONDS.toMillis(999) /* FIXME */) {
+            @Override
+            public State doStuffAndGetNextState() {
+                StarterStackDetectorPipeline.RingsDetected ringsDetected = starterStackDetectorPipeline.getRingsDetected();
 
-        //1. Find the skystone
+                // We do a switch here, rather than an if/else, why?
+                switch (ringsDetected) {
 
+                    case UNKNOWN:
+                        // Keep looking if not timed out, otherwise do what?
+                        return null; // FIXME - need to do something "special"
+                    case ZERO:
+                        // FIXME: Need to set correct target drop zone
+                        break;
+                    case FOUR:
+                        // FIXME: Need to set correct target drop zone
+                        break;
+                    case SOME:
+                        // FIXME: Need to set correct target drop zone
+                        break;
+                }
 
-        //State detectionState = new SkystoneDetectionState(pipelineAndCamera,
-        //        detector, telemetry, ticker);
+                return nextState;
+            }
 
-        //2. Drive straight to the quarry (-3 inches)
-        //
-        // Targets, A, B, C
+            @Override
+            public void liveConfigure(NinjaGamePad gamePad) {
 
-
-        //3. strafe to the skystone (centered)
-        final Target target = Target.B;
+            }
+        };
 
         State toTargetZone = new TrajectoryFollowerState("To skystone",
                 telemetry, driveBase, ticker, TimeUnit.SECONDS.toMillis(20 * 1000)) {
@@ -323,7 +341,7 @@ public class GrungyUltimateGoalAuto extends OpMode {
                 TrajectoryBuilder trajectoryBuilder = driveBase.trajectoryBuilder();
 
 
-                switch (target) {
+                switch (deliverToTarget) {
                     case A:
                             trajectoryBuilder.forward(58);
                         break;
@@ -353,7 +371,7 @@ public class GrungyUltimateGoalAuto extends OpMode {
             protected Trajectory createTrajectory() {
                 TrajectoryBuilder trajectoryBuilder = driveBase.trajectoryBuilder();
 
-                switch (target) {
+                switch (deliverToTarget) {
                     case A:
                         trajectoryBuilder.strafeLeft(22).forward(12);
                         break;
@@ -413,6 +431,7 @@ public class GrungyUltimateGoalAuto extends OpMode {
             }
         };
 
+        // FIXME: I think you're missing a new state, here!
         stateMachine.addSequential(toTargetZone);
         stateMachine.addSequential(ejectWobbleGoalState);
         stateMachine.addSequential(wobbleGoalWaitState);
