@@ -138,14 +138,17 @@ public class MecanumWheelDraft extends LinearOpMode {
             }
 
 
+
+
             if (gamepad1.a){
                 //goToHeading(0);
                 rotateToHeading(90);
 
             }
 
-            if(gamepad1.b){
-                blindRotateLeft(.175);
+
+            while((gamepad1.x) && opModeIsActive()){
+                strafeLeft(.5, robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
             }
 
         }
@@ -174,74 +177,6 @@ public class MecanumWheelDraft extends LinearOpMode {
         }
         return returnPower;
     }
-
-
-
- void goToHeading(double heading){   //kinda rotates, don't use this
-
-
-        double targAngle = heading;
-        double error = 0;
-        double sensitivityConstant = .001; //change this to change how much the robot corrects
-        double local_power = .3;
-
-
-        while(opModeIsActive() && (gamepad1.a)){
-
-            Orientation currentOrient;
-            currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-            double currAngle = currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle);
-
-            double raw_error = targAngle - currAngle;
-            error = (sensitivityConstant * (targAngle - currAngle));
-
-
-
-
-
-            double frontLeft = local_power + error;
-            double backLeft = local_power + error;
-            double frontRight = local_power - error;
-            double backRight = local_power - error;
-
-            if (raw_error <=0){
-                frontLeft = -frontLeft;
-                backLeft = -backLeft;
-                backRight= -backRight;
-                frontRight = -frontRight;
-            }
-
-
-
-            robot.frontLeftMotor.setPower(frontLeft);
-            robot.backLeftMotor.setPower(backLeft);
-            robot.frontRightMotor.setPower(frontRight);
-            robot.backRightMotor.setPower(backRight);
-
-            if (targAngle == currAngle){
-                robot.frontLeftMotor.setPower(0);
-                robot.backLeftMotor.setPower(0);
-                robot.frontRightMotor.setPower(0);
-                robot.backRightMotor.setPower(0);
-            }
-
-
-
-
-            telemetry.addData("front left", "%.2f", local_power + error);
-            telemetry.addData("back left", "%.2f", local_power + error);
-            telemetry.addData("front right", "%.2f", local_power - error);
-            telemetry.addData("back right", "%.2f", local_power - error);
-
-
-            telemetry.addData("raw error", raw_error);
-            telemetry.addData("error Output", "%.2f", error);
-            telemetry.update();
-
-
-        }
- }
 
 
     void rotateToHeading(double heading){
@@ -297,49 +232,6 @@ public class MecanumWheelDraft extends LinearOpMode {
 
     }
 
-    //Strafe Left - (used to strafe towards the center line for parking)
-    void strafeLeft(double pwr, Orientation target) {  //added int pwr to reduce initial power
-        //Get the current orientation
-        Orientation currOrient;
-        currOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        //Compare the current orientation to the target
-        double currAng = currOrient.angleUnit.DEGREES.normalize(currOrient.firstAngle);
-        double targAng = 0.0;  // target.angleUnit.DEGREES.normalize(target.firstAngle);
-        double error = targAng - currAng;
-        double frontLeft;
-        double frontRight;
-        double backLeft;
-        double backRight;
-        double max;
-        //scale the error so that it is a motor value and
-        //then scale it by a third of the power to make sure it
-        //doesn't dominate the movement
-        double r = -error / 180 * (pwr * 202);
-
-
-        // Normalize the values so none exceeds +/- 1.0
-        frontLeft = -pwr + r ;
-        backLeft = pwr + r ;
-        backRight = pwr + r ;
-        frontRight = -pwr + r ;
-        max = Math.max(Math.max(Math.abs(frontLeft), Math.abs(frontRight)), Math.max(Math.abs(frontRight), Math.abs(frontRight)));
-        if (max > 1.0) {
-            frontLeft = frontLeft / max;
-            frontRight = frontRight / max;
-            backLeft = backLeft / max;
-            backRight = backRight / max;
-        }
-
-        //send the power to the motors
-        robot.frontLeftMotor.setPower(frontLeft);
-        robot.backLeftMotor.setPower(backLeft); //Changing the order in which the wheels start
-        robot.backRightMotor.setPower(backRight);
-        robot.frontRightMotor.setPower(frontRight);
-
-    }
-
-
     void blindRotateRight(double pwr){
             pwr = -pwr; // -pwr on all wheels turns right
             // Set power on each wheel
@@ -367,6 +259,66 @@ public class MecanumWheelDraft extends LinearOpMode {
     }
 
 
+
+
+
+
+    void strafeLeft(double pwr, Orientation target) {  //added int pwr to reduce initial power
+        //Get the current orientation
+        Orientation currOrient;
+        currOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        //Compare the current orientation to the target
+        double currAng = currOrient.angleUnit.DEGREES.normalize(currOrient.firstAngle);
+        double targAng = 0.0;  // target.angleUnit.DEGREES.normalize(target.firstAngle);
+        double error = targAng - currAng;
+        double frontLeft, frontRight, backLeft, backRight, max;
+
+        //scale the error so that it is a motor value and
+        //then scale it by a third of the power to make sure it
+        //doesn't dominate the movement
+
+        double rChanger = 5;
+        double r = (-error / 180) / (pwr * rChanger);
+        //r = 0;
+
+        //rChanger of 10 makes it
+        //rChanger of 5 makes it
+
+        // Normalize the values so none exceeds +/- 1.0
+        frontLeft = pwr + r ;
+        backLeft = -pwr + r ;
+        backRight = -pwr + r ;
+        frontRight = pwr + r ;
+        max = Math.max(Math.max(Math.abs(frontLeft), Math.abs(frontRight)), Math.max(Math.abs(frontRight), Math.abs(frontRight)));
+        if (max > 1.0) {
+            frontLeft = frontLeft / max;
+            frontRight = frontRight / max;
+            backLeft = backLeft / max;
+            backRight = backRight / max;
+        }
+
+
+
+        telemetry.addData("front left", "%.2f", frontLeft);
+        telemetry.addData("front right", "%.2f", frontRight);
+        telemetry.addData("back left", "%.2f", backLeft);
+        telemetry.addData("back right", "%.2f", backRight);
+
+        telemetry.addData("current heading", formatAngle(currOrient.angleUnit, currOrient.firstAngle));
+
+        telemetry.update();
+
+        //send the power to the motors
+        robot.frontLeftMotor.setPower(frontLeft);
+        robot.backLeftMotor.setPower(backLeft); //Changing the order in which the wheels start
+        robot.backRightMotor.setPower(backRight);
+        robot.frontRightMotor.setPower(frontRight);
+    }
+
+
+
+
     String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
@@ -374,6 +326,8 @@ public class MecanumWheelDraft extends LinearOpMode {
     String formatDegrees(double degrees) {
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
     }
+
+
 
 
 
