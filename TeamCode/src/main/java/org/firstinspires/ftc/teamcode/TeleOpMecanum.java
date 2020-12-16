@@ -1,3 +1,4 @@
+
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -44,7 +45,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="TeleOp Mecanum", group="Test")
-
+@Disabled
 public class TeleOpMecanum extends LinearOpMode {
 
     // Declare OpMode members.
@@ -116,7 +117,7 @@ public class TeleOpMecanum extends LinearOpMode {
             if(gamepad2.y) {
                 shooterMotor.setPower(0);
             }
-            if(gamepad2.x) {
+            if (gamepad2.x) {
                 shooterServo.setPosition(0.35);
             } else {
                 shooterServo.setPosition(0);

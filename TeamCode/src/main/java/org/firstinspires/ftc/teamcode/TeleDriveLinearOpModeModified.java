@@ -8,16 +8,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-@TeleOp(name = "TeleDriveTestTankDriveModified", group = "")
+@TeleOp(name = "TeleDriveTeleOp", group = "")
 public class TeleDriveLinearOpModeModified extends LinearOpMode {
     private DatagramSocket socket;
     private boolean canRunGamepadThread;
     private Thread gamepadHandler;
-    private DcMotor motor1;
-    private DcMotor motor2;
-    private DcMotor motor3;
-    private DcMotor motor4;
-    private Servo servo1;
+    private DcMotor frontLeftMotor;
+    private DcMotor backLeftMotor;
+    private DcMotor frontRightMotor;
+    private DcMotor backRightMotor;
+    private DcMotor intakeMotor;
+    private DcMotor shooterMotor;
+    private DcMotor wobbleArmMotor;
+    private Servo shooterServo;
+    private Servo wobbleArmServo;
 
     private void startGamepadHandlerThread() {
         telemetry.setAutoClear(true);
@@ -331,54 +335,109 @@ public class TeleDriveLinearOpModeModified extends LinearOpMode {
 
 
         //CUSTOM CODE GOES HERE
-    motor1 = hardwareMap.get(DcMotor.class, "motor1");
-    motor2 = hardwareMap.get(DcMotor.class, "motor2");
-    motor3 = hardwareMap.get(DcMotor.class, "motor3");
-    servo1 = hardwareMap.get(Servo.class, "servo1");
-    motor4 = hardwareMap.get(DcMotor.class, "motor4");
+        frontRightMotor  = hardwareMap.get(DcMotor.class, "frontRightMotor");
+        backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
+        frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeftMotor");
+        backLeftMotor = hardwareMap.get(DcMotor.class, "backLeftMotor");
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
+        wobbleArmMotor = hardwareMap.get(DcMotor.class, "wobbleArmMotor");
+        shooterServo = hardwareMap.get(Servo.class, "shooterServo");
+        wobbleArmServo = hardwareMap.get(Servo.class, "wobbleArmServo");
 
-    motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    // You will have to determine which motor to reverse for your robot.
-    // In this example, the right motor was reversed so that positive
-    // applied power makes it move the robot in the forward direction.
-    motor1.setDirection(DcMotorSimple.Direction.REVERSE);
-    motor3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    motor3.setDirection(DcMotorSimple.Direction.REVERSE);
-    servo1.setDirection(Servo.Direction.FORWARD);
-    servo1.setPosition(0);
+
+        // Set drivetrain motors to brake when power is set to 0.
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Reverse left side drive train motors
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Reverse shooter motor so it goes in the correct direction
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Reverse wobble arm motor
+       // wobbleArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // Set wobble arm motor encoder to 0
+        wobbleArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Set wobble arm motor to use encoder
+        wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //Set servo position to 0
+        shooterServo.setPosition(0);
+        wobbleArmServo.setPosition(0);
+
     waitForStart();
     if (opModeIsActive()) {
       // Put run blocks here.
       while (opModeIsActive()) {
         // Put loop blocks here.
-        // The Y axis of a joystick ranges from -1 in its topmost position
-        // to +1 in its bottommost position. We negate this value so that
-        // the topmost position corresponds to maximum forward power.
-        motor1.setPower(-gamepad1.left_stick_y);
-        motor2.setPower(-gamepad1.right_stick_y);
-        if (gamepad2.right_bumper) {
-          motor3.setPower(1);
-        } else {
-          motor3.setPower(0);
-        }
-        if (gamepad2.b) {
-          motor4.setPower(-1);
-        }
-        if (gamepad2.y) {
-          motor4.setPower(0);
-        }
-        if (gamepad2.left_bumper) {
-          servo1.setPosition(0.35);
-        } else {
-          servo1.setPosition(0);
-        }
-        telemetry.addData("Left Pow", motor1.getPower());
-        telemetry.addData("Right Pow", motor2.getPower());
-        telemetry.update();
+          // Setup a variable for each drive wheel to save power level for telemetry
+          double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+          double x = gamepad1.left_stick_x * 1.5; // Counteract imperfect strafing;
+          double rx = gamepad1.right_stick_x;
+
+          frontLeftMotor.setPower(y + x + rx);
+          backLeftMotor.setPower(y - x + rx);
+          frontRightMotor.setPower(y - x - rx);
+          backRightMotor.setPower(y + x - rx);
+
+          if(gamepad1.x) {
+              frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+              backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+              frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+              backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+          } else {
+              frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+              backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+              frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+              backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+          }
+
+          //Set gamepad2 assignments
+
+          intakeMotor.setPower(gamepad2.right_trigger);
+          intakeMotor.setPower(gamepad1.right_trigger);
+
+          if(gamepad2.b) {
+              shooterMotor.setPower(-1);
+          }
+          if(gamepad2.y) {
+              shooterMotor.setPower(0);
+          }
+
+          if (gamepad2.dpad_right) {
+              wobbleArmMotor.setTargetPosition(230);
+              wobbleArmMotor.setPower(0.5);
+              sleep(500);
+              wobbleArmMotor.setPower(0);
+          }
+          if (gamepad2.dpad_left) {
+              wobbleArmMotor.setTargetPosition(50);
+              wobbleArmMotor.setPower(0.5);
+              sleep(500);
+              wobbleArmMotor.setPower(0);
+          }
+
+          if(gamepad2.x) {
+              shooterServo.setPosition(0.35);
+          } else {
+              shooterServo.setPosition(0);
+          }
+          if (gamepad2.dpad_up) {
+              wobbleArmServo.setPosition(0.35);
+          }
+          if (gamepad2.dpad_down) {
+              wobbleArmServo.setPosition(0.0);
+          }
       }
     }
-    // Reverse one of the drive motors.
+
         canRunGamepadThread = false;
         socket.close();
     }
