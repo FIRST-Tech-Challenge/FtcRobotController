@@ -59,7 +59,6 @@ public class DriveTrain {
     }
 
     public void goForward(double inches) {
-        double pCoeff = 0.1; //larger means more reactive
         double startPosition = 0;
         double endPosition = 0;
         showData("DRIVE_TRAIN_CAPTION", "Robot is moving forward");
