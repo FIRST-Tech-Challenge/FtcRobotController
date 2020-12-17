@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
 // Control Hub ADB Terminal Command for Reference
 // adb.exe connect 192.168.43.1:5555
+// /sdcard/FIRST/matchlogs/Match-0-Red-3.txt
 
 @TeleOp(name = "Ring Rec", group = "Robot15173")
 //@Disabled

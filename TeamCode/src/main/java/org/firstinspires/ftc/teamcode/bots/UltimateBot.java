@@ -16,8 +16,6 @@ import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
 public class UltimateBot extends YellowBot {
-    private static int SWINGVALUE = 280;
-    private static int MIDDLESWINGVALUE = 260;
     public DcMotor wobbleSwing = null;
     private Servo wobbleClaw = null;
     private Servo ringCamera = null;
@@ -27,7 +25,7 @@ public class UltimateBot extends YellowBot {
 //    private DcMotor intakeblack = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
-    private static int SWING_GROUND_POS = 250;
+    private static int SWING_GROUND_POS = 260;
     private static int SWING_LIFT_UP_POS = 160;
     private static int SWING_LIFT_WALL = 50;
     private static int STRAIGHT_UP = 70;
@@ -142,7 +140,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Intake", defaultReturn = "")
     public void intake() {
         if (intake != null) {
-            intake.setPower(0.7);
+            intake.setPower(0.9);
 //            intakeblack.setPower(-0.7);
         }
     }
@@ -166,11 +164,11 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Shooter", defaultReturn = "")
     public void shooter() {
         if (shooter != null) {
-            shooter.setPower(0.95);
+            shooter.setPower(0.9);
         }
     }
 
-    @BotAction(displayName = "Move Shooter", defaultReturn = "")
+    @BotAction(displayName = "Move Shooter Peg", defaultReturn = "")
     public void shooterpeg() {
         if (shooter != null) {
             shooter.setPower(0.8);
@@ -181,7 +179,7 @@ public class UltimateBot extends YellowBot {
     public void shootServo() {
         ElapsedTime runtime = new ElapsedTime();
         if (shooterServo != null) {
-            shooterServo.setPosition(0.15);
+            shooterServo.setPosition(0.1);
             runtime.reset();
             while (runtime.milliseconds() <= 250) {
 
