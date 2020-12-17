@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.bots;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,8 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class OutreachBot {
     public DcMotor leftDrive = null;
     public DcMotor rightDrive = null;
-    public DcMotor arm = null;
-    public Servo grabber = null;
+    public Servo steer = null;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -41,19 +41,13 @@ public class OutreachBot {
             throw new Exception("Issues accessing drive resources. Check the controller config", ex);
         }
 
-        try{
-            arm = hwMap.get(DcMotor.class, "arm");
-        }
-        catch (Exception ex) {
-            throw new Exception("Issues accessing arm. Check the controller config", ex);
-        }
 
         if (leftDrive != null) {
-            leftDrive.setDirection(DcMotor.Direction.FORWARD);
+            leftDrive.setDirection(DcMotor.Direction.REVERSE);
         }
 
         if (rightDrive != null) {
-            rightDrive.setDirection(DcMotor.Direction.REVERSE);
+            rightDrive.setDirection(DcMotor.Direction.FORWARD);
         }
 
         if (leftDrive != null && rightDrive != null) {
@@ -63,18 +57,11 @@ public class OutreachBot {
             rightDrive.setPower(0);
         }
 
-        if (arm != null){
-            arm.setDirection(DcMotor.Direction.REVERSE);
-            arm.setPower(0);
-        }
 
         // Servos
 
         try{
-            grabber = hwMap.get(Servo.class, "grabber");
-            if (grabber != null){
-                grabPos = this.grabber.getPosition();
-            }
+            steer = hwMap.get(Servo.class, "steer");
         }
         catch (Exception ex){
             throw new Exception("Issues accessing grabbing servo. Check the controller config", ex);
@@ -123,25 +110,8 @@ public class OutreachBot {
         }
     }
 
-    public void moveArm(double degrees){
-        if (arm != null ) {
-            double power = Range.clip(degrees,-1.0,1.0);
-
-            this.arm.setPower(power);
-
-        }
-    }
-
-    public void lock(){
-        if (grabber != null) {
-            this.grabber.setPosition(0.63);
-        }
-    }
-
-    public void unlock(){
-        if (grabber != null) {
-            this.grabber.setPosition(1);
-        }
+    public void steer(double power){
+        this.steer.setPosition(0.5 + power/2);
     }
 
 }

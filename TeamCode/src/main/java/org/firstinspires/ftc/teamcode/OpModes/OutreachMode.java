@@ -49,8 +49,8 @@ import org.firstinspires.ftc.teamcode.bots.OutreachBot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="SecondBot", group="Robot15173")
-@Disabled
+@TeleOp(name="Snowman", group="Robot15173")
+//@Disabled
 public class OutreachMode extends LinearOpMode{
 
     // Declare OpMode members.
@@ -78,35 +78,21 @@ public class OutreachMode extends LinearOpMode{
                 // POV Mode uses left stick to go forward, and right stick to turn.
                 // - This uses basic math to combine motions and is easier to drive straight.
                 double drive = gamepad1.left_stick_y;
-                if (Math.abs(drive) > 0) {
-                    robot.move(drive);
-                }
+                robot.move(drive);
+
 
                 ///pivot
-                boolean leftPivot = gamepad1.left_bumper;
-                boolean rightPivot = gamepad1.right_bumper;
-                if (leftPivot){
-                    robot.pivotLeft(1);
-                }
-                else if(rightPivot){
-                    robot.pivotRight(1);
-                }
+//                boolean leftPivot = gamepad1.left_bumper;
+//                boolean rightPivot = gamepad1.right_bumper;
+//                if (leftPivot){
+//                    robot.pivotLeft(1);
+//                }
+//                else if(rightPivot){
+//                    robot.pivotRight(1);
+//                }
 
-                // arm move
-                double arms = gamepad1.right_stick_y;
-                if (Math.abs(arms) > 0) {
-                    robot.moveArm(arms);
-                }
-
-                //lock grabber
-                boolean grab = gamepad1.left_stick_button;
-                boolean letgo = gamepad1.right_stick_button;
-                if (grab){
-                    robot.lock();
-                }
-                else if(letgo){
-                    robot.unlock();
-                }
+                double steer = gamepad1.right_stick_x;
+                this.robot.steer(steer);
 
                 telemetry.update();
             }
