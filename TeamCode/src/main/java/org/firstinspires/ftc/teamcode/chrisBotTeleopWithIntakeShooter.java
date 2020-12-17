@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="chrisBotTeleopWithIntakeShooter", group="chrisBot")
 //@Disabled
@@ -34,16 +35,20 @@ public class chrisBotTeleopWithIntakeShooter extends OpMode{
 
         // Intake code
         if (gamepad1.x) {
-            robot.intakeOn();
-        } else {
-            robot.intakeOff();
+            if (robot.intakeOn) {
+                robot.intakeOff();
+            } else {
+                robot.intakeOn();
+            }
         }
 
         // Shooter code
-        if (gamepad1.b) {
-            robot.shootOn();
-        } else {
-            robot.shootOff();
+        if (gamepad1.a) {
+            if (robot.shooterOn) {
+                robot.shootOff();
+            } else {
+                robot.shootOn();
+            }
         }
     }
 

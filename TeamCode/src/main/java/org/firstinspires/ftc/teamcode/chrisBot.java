@@ -64,13 +64,16 @@ public class chrisBot
     public static final double DRIVE_GEAR_REDUCTION    = (double)2/(double)3 ;     // This is < 1.0 if geared UP
     public static final double WHEEL_DIAMETER_INCHES   = 2.95276 ;     // For figuring circumference
     public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    public static final double DRIVE_SPEED = 0.7;
+    public static final double DRIVE_SPEED = 0.3;
     public static final double TURN_SPEED = 0.3;
 
     int FLTarget = 0;
     int FRTarget = 0;
     int BLTarget = 0;
     int BRTarget = 0;
+
+    public boolean shooterOn = false;
+    public boolean intakeOn = false;
 
     /** GYRO OBJECTS */
 
@@ -329,7 +332,7 @@ public class chrisBot
 
         // reset the timeout time and start motion.
         runtime.reset();
-        setAllPower(testPlatformHardware.DRIVE_SPEED);
+        setAllPower(DRIVE_SPEED);
 
         // keep looping while we are still active, and there is time left and motors are running.
         while (isBusy()) {
@@ -347,7 +350,7 @@ public class chrisBot
 
     // This overloaded method allows the robot to drive with encoders on a per wheel basis. It can be called with inches and with or without a drive speed.
     // This method can be used to strafe if used in combination with calculateInches().
-    public void wheelMecanumDrive(double[] inches, double timeoutS) {
+    public void wheelMecanumDrive(double[] inches, double speed, double timeoutS) {
         resetTargets();
 
         // Calculate the maximum number of inches any wheel is asked to drive
@@ -359,10 +362,10 @@ public class chrisBot
         }
 
         // Determine new target position, and pass to motor controller
-        FLTarget = motorFrontLeft.getCurrentPosition() + (int) (inches[0] * testPlatformHardware.COUNTS_PER_INCH);
-        FRTarget = motorFrontRight.getCurrentPosition() + (int) (inches[1] * testPlatformHardware.COUNTS_PER_INCH);
-        BLTarget = motorBackLeft.getCurrentPosition() + (int) (inches[2] * testPlatformHardware.COUNTS_PER_INCH);
-        BRTarget = motorBackRight.getCurrentPosition() + (int) (inches[3] * testPlatformHardware.COUNTS_PER_INCH);
+        FLTarget = motorFrontLeft.getCurrentPosition() + (int) (inches[0] * COUNTS_PER_INCH);
+        FRTarget = motorFrontRight.getCurrentPosition() + (int) (inches[1] * COUNTS_PER_INCH);
+        BLTarget = motorBackLeft.getCurrentPosition() + (int) (inches[2] * COUNTS_PER_INCH);
+        BRTarget = motorBackRight.getCurrentPosition() + (int) (inches[3] * COUNTS_PER_INCH);
 
         setTargets();
 
@@ -371,7 +374,7 @@ public class chrisBot
 
         // reset the timeout time and start motion.
         runtime.reset();
-        setAllPower(testPlatformHardware.DRIVE_SPEED);
+        setAllPower(DRIVE_SPEED);
 
         // keep looping while we are still active, and there is time left and motors are running.
         while ((runtime.seconds() < timeoutS) && isBusy()) {
@@ -385,7 +388,10 @@ public class chrisBot
 
     }
     public void wheelMecanumDrive(double[] inches) {
-        wheelMecanumDrive(inches, DRIVE_SPEED);
+        wheelMecanumDrive(inches, DRIVE_SPEED, 9999);
+    }
+
+    public void wheelMecanumDrive(double[] inches, double speed) { wheelMecanumDrive(inches, speed, 9999);
     }
 
     /** ATTACHMENT METHODS */
@@ -401,17 +407,20 @@ public class chrisBot
     public void shootOn(double power) {
         if(shooterExists) {
             motorShooter.setPower(power);
+            shooterOn = true;
         }
     }
 
     public void shootOn() {
         if(shooterExists) {
             motorShooter.setPower(1);
+            shooterOn = true;
         }
     }
     public void shootOff() {
         if(shooterExists) {
             motorShooter.setPower(0);
+            shooterOn = false;
         }
     }
 
@@ -419,18 +428,21 @@ public class chrisBot
     public void intakeOn(double power) {
         if(intakeExists) {
             motorIntake.setPower(power);
+            intakeOn = true;
         }
     }
 
     public void intakeOn() {
         if(intakeExists) {
             motorIntake.setPower(1);
+            intakeOn = true;
         }
     }
 
     public void intakeOff() {
         if(intakeExists) {
             motorIntake.setPower(0);
+            intakeOn = false;
         }
     }
 

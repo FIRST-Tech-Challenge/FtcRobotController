@@ -164,7 +164,7 @@ public class actualAutonV1 extends LinearOpMode {
         // (conditional) 4 rings: drive 48 inches forward to third foam tile
         // Calculate the number of inches to drive forward in one step
 
-        double inches = -36;
+        double inches = -48;
 
         if (oneRing) { inches += -24; }
         else if (fourRings) { inches += -48; }
@@ -187,7 +187,7 @@ public class actualAutonV1 extends LinearOpMode {
         if (oneRing) {
             telemetry.addLine("Moving into \"one-ring\" square...");
             telemetry.update();
-            robot.wheelMecanumDrive(robot.calculateInches(-24,0));
+            robot.wheelMecanumDrive(robot.calculateInches(-24,0), 0.7);
         }
 
         robot.dropGoal(); /* DUMMY METHOD */
@@ -203,7 +203,7 @@ public class actualAutonV1 extends LinearOpMode {
         else if(noRings) { robot.encoderDrive(-24); }
 
         if(!oneRing) {
-            robot.wheelMecanumDrive(robot.calculateInches(-24,0));
+            robot.wheelMecanumDrive(robot.calculateInches(-24,0), 0.7);
             telemetry.addLine("Moved over");
             telemetry.update();
         }
@@ -215,33 +215,31 @@ public class actualAutonV1 extends LinearOpMode {
         telemetry.addLine("Lining up with first Powershot target...");
         telemetry.update();
 
-        robot.wheelMecanumDrive(robot.calculateInches(-18,-40));
+        robot.wheelMecanumDrive(robot.calculateInches(-18,52),0.7);
 
         // Shoot first target
 
         telemetry.addLine("Shoot!");
         telemetry.update();
 
-        shoot();
+        robot.intakeOn();
+        robot.shootOn();
 
         pause(1000);
 
         // Repeat with other two targets
 
-        robot.motorIntake.setPower(1);
 
         for(int i : range(0,2)) {
             telemetry.addLine("Moving over...");
             telemetry.update();
-            robot.wheelMecanumDrive(robot.calculateInches(-7.5,0));
-            telemetry.addLine("Shoot!");
-            telemetry.update();
-            shoot();
+            robot.wheelMecanumDrive(robot.calculateInches(-7.5,0),0.7);
 
             pause(1000);
         }
 
-        robot.motorIntake.setPower(0);
+        robot.intakeOff();
+        robot.shootOff();
 
         // Drive forward to go over white line
 
@@ -261,12 +259,6 @@ public class actualAutonV1 extends LinearOpMode {
         robot.tfod.shutdown();
 
         sleep(60000);
-    }
-
-    private void shoot() {
-        robot.shootOn();
-        sleep(1000);
-        robot.shootOff();
     }
 
     private void pause(long ms) {
