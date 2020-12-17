@@ -366,7 +366,7 @@ public class TeleDriveLinearOpModeModified extends LinearOpMode {
         wobbleArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Set wobble arm motor to use encoder
-        wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleArmMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Set servo position to 0
         shooterServo.setPosition(0);
@@ -414,12 +414,14 @@ public class TeleDriveLinearOpModeModified extends LinearOpMode {
           if (gamepad2.dpad_right) {
               wobbleArmMotor.setTargetPosition(230);
               wobbleArmMotor.setPower(0.5);
+              wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
               sleep(500);
               wobbleArmMotor.setPower(0);
           }
           if (gamepad2.dpad_left) {
               wobbleArmMotor.setTargetPosition(50);
               wobbleArmMotor.setPower(0.5);
+              wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
               sleep(500);
               wobbleArmMotor.setPower(0);
           }
