@@ -362,7 +362,7 @@ public class TeleDriveLinearOpModeModified extends LinearOpMode {
         // Reverse wobble arm motor
        // wobbleArmMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // Set wobble arm motor encoder to 0
+        // Set wobble arm motor encoder to 0.
         wobbleArmMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Set wobble arm motor to use encoder
