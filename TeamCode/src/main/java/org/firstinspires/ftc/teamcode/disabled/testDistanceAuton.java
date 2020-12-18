@@ -35,11 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.disabled.testPlatformHardware;
 
 
 @Autonomous(name="testDistance", group="Zippo")
@@ -48,7 +44,7 @@ import java.util.ArrayList;
 public class testDistanceAuton extends LinearOpMode {
 
     /* Declare OpMode members. */
-    testPlatformHardware    robot   = new testPlatformHardware();
+    testPlatformHardware robot   = new testPlatformHardware();
     private ElapsedTime     runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = testPlatformHardware.COUNTS_PER_MOTOR_REV ;    // eg: TETRIX Motor Encoder

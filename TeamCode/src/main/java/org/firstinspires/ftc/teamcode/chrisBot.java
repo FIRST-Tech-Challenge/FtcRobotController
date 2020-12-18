@@ -3,27 +3,28 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.disabled.ringObject;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
@@ -215,6 +216,9 @@ public class chrisBot
 
         setAllPower(0);
 
+        // Start the logging of measured acceleration
+        imu.startAccelerationIntegration(new org.firstinspires.ftc.robotcore.external.navigation.Position(), new Velocity(), 1000);
+
         welcome();
 
     }
@@ -295,7 +299,9 @@ public class chrisBot
     // This method checks power levels to be safe and pushes them to the motors
     public void setPower(double flPower, double frPower, double blPower, double brPower)
     {
-        double[] powers = {flPower, frPower, blPower, brPower};
+        setPower(new double[]{flPower, frPower, blPower, brPower});
+    }
+    public void setPower(double[] powers) {
         // Check deadzones
         for (int i = 0; i < powers.length; i++) {
             if(powers[i] > 1) {
@@ -394,6 +400,90 @@ public class chrisBot
     public void wheelMecanumDrive(double[] inches, double speed) { wheelMecanumDrive(inches, speed, 9999);
     }
 
+    public void linearSlowEncoderDrive(double inches, double speed) {
+        double[] powers = {speed, speed, speed, speed};
+        int[] motorPositions = {motorFrontLeft.getCurrentPosition(), motorFrontRight.getCurrentPosition(), motorBackLeft.getCurrentPosition(), motorBackRight.getCurrentPosition()};
+        resetTargets();
+
+        // Determine new target position, and pass to motor controller
+        int countsToTravel = (int)(inches * COUNTS_PER_INCH);
+        FLTarget = motorFrontLeft.getCurrentPosition() + countsToTravel;
+        FRTarget = motorFrontRight.getCurrentPosition() + countsToTravel;
+        BLTarget = motorBackLeft.getCurrentPosition() + countsToTravel;
+        BRTarget = motorBackRight.getCurrentPosition() + countsToTravel;
+        int[] targets = {FLTarget, FRTarget, BLTarget, BRTarget};
+
+        setTargets();
+
+        // Turn On RUN_TO_POSITION
+        setAllMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+        runtime.reset();
+        setPower(powers);
+
+        // keep looping while we are still active, and there is time left and motors are running.
+        while (isBusy()) {
+            for(int i : range(0,4)) {
+                double power = powers[i]*(double)motorPositions[i]/(double)countsToTravel;
+                if (power < 0.05) {
+                    power = 0.05;
+                }
+                powers[i] = power;
+            }
+        }
+
+        // Stop all motion;
+        setAllPower(0);
+
+        // Turn off RUN_TO_POSITION
+        setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void halfGyroDrive(double inches) { halfGyroDrive(inches, DRIVE_SPEED); }
+
+    public void halfGyroDrive(double inches, double speed) {
+        double[] powers = {speed, speed, speed, speed};
+        resetTargets();
+
+        // Determine new target position, and pass to motor controller
+        int countsToTravel = (int)(inches * COUNTS_PER_INCH);
+        FLTarget = motorFrontLeft.getCurrentPosition() + countsToTravel;
+        FRTarget = motorFrontRight.getCurrentPosition() + countsToTravel;
+        BLTarget = motorBackLeft.getCurrentPosition() + countsToTravel;
+        BRTarget = motorBackRight.getCurrentPosition() + countsToTravel;
+
+        setTargets();
+
+        // Turn On RUN_TO_POSITION
+        setAllMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+        runtime.reset();
+        setPower(powers);
+
+        double angle = getOrientation().firstAngle;
+        double expectedAngle = angle;
+        viridianPID angleCorrector = new viridianPID(expectedAngle, angle);
+        double correction = 0;
+
+        // keep looping while we are still active, and there is time left and motors are running.
+        while (isBusy()) {
+            angle = getOrientation().firstAngle;
+            correction = angleCorrector.calcCorrection();
+            powers[0] = powers[0] + correction;
+            powers[1] = powers[1] - correction;
+            powers[2] = powers[2] + correction;
+            powers[3] = powers[3] - correction;
+        }
+
+        // Stop all motion;
+        setAllPower(0);
+
+        // Turn off RUN_TO_POSITION
+        setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     /** ATTACHMENT METHODS */
 
     // This method runs the motors in order to drop the Wobble Goal.
@@ -449,7 +539,7 @@ public class chrisBot
     /** SENSOR METHODS */
     public Orientation getOrientation() {
         // Code to get the gyro orientation goes here
-        return new Orientation();
+        return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
     /** VUFORIA METHODS */
@@ -620,6 +710,18 @@ public class chrisBot
         double r = Math.hypot(xInches, yInches);
         double robotAngle = Math.atan2(yInches, xInches) - Math.PI / 4;
         return new double[]{r * Math.cos(robotAngle), r * Math.sin(robotAngle), r * Math.sin(robotAngle), r * Math.cos(robotAngle)}; //fl,fr,bl,br
+    }
+    public static int[] range(int start, int end) {
+        if (end - start <= 0) {
+            return new int[]{};
+        }
+        else {
+            int[] arr = new int[end - start];
+            for(int i = start; i < end; i++) {
+                arr[i-start] = i;
+            }
+            return arr;
+        }
     }
 
     /** TELEMETRY METHODS */

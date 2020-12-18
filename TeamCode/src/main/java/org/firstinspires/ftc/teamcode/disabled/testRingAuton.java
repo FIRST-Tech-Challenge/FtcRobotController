@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.disabled;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -38,6 +38,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.disabled.ringObject;
+import org.firstinspires.ftc.teamcode.disabled.testPlatformHardware;
 
 import java.util.ArrayList;
 
@@ -48,7 +50,7 @@ import java.util.ArrayList;
 public class testRingAuton extends LinearOpMode {
 
     /* Declare OpMode members. */
-    testPlatformHardware    robot   = new testPlatformHardware();
+    testPlatformHardware robot   = new testPlatformHardware();
     private ElapsedTime     runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = testPlatformHardware.COUNTS_PER_MOTOR_REV ;    // eg: TETRIX Motor Encoder

@@ -38,19 +38,6 @@ public class actualAutonV1 extends LinearOpMode {
 
     chrisBot robot = new chrisBot();
 
-    public int[] range(int start, int end) {
-        if (end - start <= 0) {
-            return new int[]{};
-        }
-        else {
-            int[] arr = new int[end - start];
-            for(int i = start; i < end; i++) {
-                arr[i-start] = i;
-            }
-            return arr;
-        }
-    }
-
     WebcamName webcam;
 
     @Override
@@ -230,7 +217,7 @@ public class actualAutonV1 extends LinearOpMode {
         // Repeat with other two targets
 
 
-        for(int i : range(0,2)) {
+        for(int i : chrisBot.range(0,2)) {
             telemetry.addLine("Moving over...");
             telemetry.update();
             robot.wheelMecanumDrive(robot.calculateInches(-7.5,0),0.7);
