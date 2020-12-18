@@ -141,7 +141,6 @@ public class UltimateBot extends YellowBot {
     public void intake() {
         if (intake != null) {
             intake.setPower(0.9);
-//            intakeblack.setPower(-0.7);
         }
     }
 
@@ -149,7 +148,6 @@ public class UltimateBot extends YellowBot {
     public void intakeReverse() {
         if (intake != null) {
             intake.setPower(-0.7);
-//            intakeblack.setPower(0.7);
         }
     }
 
@@ -157,7 +155,6 @@ public class UltimateBot extends YellowBot {
     public void stopintake() {
         if (intake != null) {
             intake.setPower(0);
-//            intakeblack.setPower(0);
         }
     }
 
@@ -168,7 +165,7 @@ public class UltimateBot extends YellowBot {
         }
     }
 
-    @BotAction(displayName = "Move Shooter Peg", defaultReturn = "")
+    @BotAction(displayName = "Move Peg Shooter", defaultReturn = "")
     public void shooterpeg() {
         if (shooter != null) {
             shooter.setPower(0.8);

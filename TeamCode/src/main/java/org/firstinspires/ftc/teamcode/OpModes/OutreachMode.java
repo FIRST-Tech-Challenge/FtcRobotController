@@ -36,18 +36,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.teamcode.bots.OutreachBot;
 
-/**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
 
 @TeleOp(name="Snowman", group="Robot15173")
 //@Disabled
@@ -61,12 +49,13 @@ public class OutreachMode extends LinearOpMode{
     public void runOpMode() {
         try {
             try {
-                robot.init(this.hardwareMap, telemetry);
+                robot.init(this, this.hardwareMap, telemetry);
             }
             catch (Exception ex){
                 telemetry.addData("Init", ex.getMessage());
             }
 
+            telemetry.update();
 
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
@@ -78,29 +67,44 @@ public class OutreachMode extends LinearOpMode{
                 // POV Mode uses left stick to go forward, and right stick to turn.
                 // - This uses basic math to combine motions and is easier to drive straight.
                 double drive = gamepad1.left_stick_y;
-                robot.move(drive);
+                double turn = 0;
+                double ltrigger = gamepad1.left_trigger;
+                double rtrigger = gamepad1.right_trigger;
+                if (ltrigger > 0){
+                    turn = -ltrigger;
+                }
+                else if (rtrigger > 0){
+                    turn = rtrigger;
+                }
+
+                double strafe = gamepad1.right_stick_x;
 
 
-                ///pivot
-//                boolean leftPivot = gamepad1.left_bumper;
-//                boolean rightPivot = gamepad1.right_bumper;
-//                if (leftPivot){
-//                    robot.pivotLeft(1);
-//                }
-//                else if(rightPivot){
-//                    robot.pivotRight(1);
-//                }
+                if (Math.abs(strafe) > 0) {
+                    telemetry.addData("Strafing", "Left: %2f", strafe);
+                    telemetry.update();
+                    if (strafe < 0) {
+                        robot.strafeRight(Math.abs(strafe));
+                    } else {
+                        robot.strafeLeft(Math.abs(strafe));
+                    }
+                } else {
+                    robot.move(drive, turn);
+                }
 
-                double steer = gamepad1.right_stick_x;
-                this.robot.steer(steer);
+
 
                 telemetry.update();
             }
         }
-
         catch (Exception ex){
             telemetry.addData("Issues with the OpMode", ex.getMessage());
             telemetry.update();
+        }
+        finally {
+            if (robot != null){
+//                robot.getGyro().stopRecordingAcceleration();
+            }
         }
     }
 }
