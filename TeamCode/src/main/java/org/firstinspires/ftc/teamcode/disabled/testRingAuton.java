@@ -38,8 +38,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.disabled.ringObject;
-import org.firstinspires.ftc.teamcode.disabled.testPlatformHardware;
+import org.firstinspires.ftc.teamcode.ringObject;
 
 import java.util.ArrayList;
 

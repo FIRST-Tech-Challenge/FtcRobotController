@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.disabled;
+package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;

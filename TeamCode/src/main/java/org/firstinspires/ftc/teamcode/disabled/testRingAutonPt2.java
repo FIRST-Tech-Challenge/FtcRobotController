@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.chrisBot;
+import org.firstinspires.ftc.teamcode.ringObject;
 
 import java.util.ArrayList;
 

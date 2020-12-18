@@ -22,7 +22,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.disabled.ringObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -464,7 +463,7 @@ public class chrisBot
 
         double angle = getOrientation().firstAngle;
         double expectedAngle = angle;
-        viridianPID angleCorrector = new viridianPID(expectedAngle, angle);
+        PID angleCorrector = new PID(expectedAngle, angle);
         double correction = 0;
 
         // keep looping while we are still active, and there is time left and motors are running.

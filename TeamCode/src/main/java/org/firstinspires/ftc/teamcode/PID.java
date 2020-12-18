@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 /*
 This class implements a PID controller.
  */
-public class viridianPID {
+public class PID {
 
     ElapsedTime time = new ElapsedTime();
 
@@ -16,13 +16,13 @@ public class viridianPID {
     private double integralError = 0;
     private double lastTime;
 
-    public viridianPID() {
+    public PID() {
         expected = 0;
         actual = 0;
         time.reset();
     }
     // Use pointers
-    public viridianPID(double expected, double actual) {
+    public PID(double expected, double actual) {
         this.expected = expected;
         this.actual = actual;
         time.reset();
