@@ -59,8 +59,8 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         float turnPwr;
 
         double deadzone = 0.1;
-        double basePwrMult = 0.5;
-        double highPwrMult = 0.75;
+        double basePwrMult = 0.3;
+        double highPwrMult = 0.6;
         double collectorPwrMult = -1;
 
         waitForStart();
@@ -98,10 +98,10 @@ public class EXP_Teleop_wheels extends LinearOpMode {
             }
 
             if(abs(turnPwr) > deadzone){
-                lfPower += turnPwr;
-                rfPower -= turnPwr;
-                lbPower += turnPwr;
-                rbPower -= turnPwr;
+                lfPower -= turnPwr;
+                rfPower += turnPwr;
+                lbPower -= turnPwr;
+                rbPower += turnPwr;
             }
 
 
