@@ -60,9 +60,15 @@ public class HzAutoControl {
         runArm();
     }
 
+    public void setMagazineToCollect(){
+        acHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.COLLECT;
+        runAutoControl();
+    }
 
-
-
+    public void setMagazineToLaunch(){
+        acHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.LAUNCH;
+        runAutoControl();
+    }
 
     public void runMagazineControl(){
         if (acHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_COLLECT){
@@ -78,6 +84,16 @@ public class HzAutoControl {
                 break;
         }
 
+    }
+
+    public void setIntakeStart(){
+        autoIntakeState = AUTO_INTAKE_STATE.START;
+        runAutoControl();
+    }
+
+    public void setIntakeStop(){
+        autoIntakeState = AUTO_INTAKE_STATE.STOP;
+        runAutoControl();
     }
 
     enum AUTO_INTAKE_STATE{
@@ -122,6 +138,8 @@ public class HzAutoControl {
         }
     }
 
+
+
     enum AUTO_LAUNCH_TARGET {
         HIGH_GOAL,
         POWER_SHOT1,
@@ -130,6 +148,35 @@ public class HzAutoControl {
         OFF
     }
     AUTO_LAUNCH_TARGET autoLaunchtarget = AUTO_LAUNCH_TARGET.OFF;
+
+    public void setLaunchTargetHighGoal(){
+        autoLaunchtarget = AUTO_LAUNCH_TARGET.HIGH_GOAL;
+        runAutoControl();
+    }
+
+    public void setLaunchTargetPowerShot1(){
+        autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT1;
+        runAutoControl();
+        runAutoControl();
+    }
+
+    public void setLaunchTargetPowerShot2(){
+        autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT2;
+        runAutoControl();
+        runAutoControl();
+    }
+
+    public void setLaunchTargetPowerShot3(){
+        autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT3;
+        runAutoControl();
+        runAutoControl();
+    }
+
+    public void setLaunchTargetOff(){
+        autoLaunchtarget = AUTO_LAUNCH_TARGET.OFF;
+        runAutoControl();
+        runAutoControl();
+    }
 
     public void runLaunchController(){
 
@@ -197,6 +244,18 @@ public class HzAutoControl {
     }
 
     boolean autoRunLauncher = false;
+
+    public void setAutoRunLauncherTrue(){
+        autoRunLauncher = true;
+        runAutoControl();
+    }
+
+
+    public void setAutoRunLauncherFalse(){
+        autoRunLauncher = false;
+        runAutoControl();
+    }
+
     public void runLauncher(){
         if (autoRunLauncher) {
             if (acHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
@@ -214,6 +273,26 @@ public class HzAutoControl {
         PICK_WOBBLE,
     }
     AUTO_MOVE_ARM autoMoveArm = AUTO_MOVE_ARM.PARKED;
+
+    public void setAutoMoveArmParked(){
+        autoMoveArm = AUTO_MOVE_ARM.PARKED;
+        runAutoControl();
+    }
+
+    public void setAutoMoveArmHoldUpWobbleRong(){
+        autoMoveArm = AUTO_MOVE_ARM.HOLD_UP_WOBBLE_RING;
+        runAutoControl();
+    }
+
+    public void setAutoMoveArmDropWobbleRing(){
+        autoMoveArm = AUTO_MOVE_ARM.DROP_WOBBLE_RING;
+        runAutoControl();
+    }
+
+    public void setAutoMoveArmPickWobble(){
+        autoMoveArm = AUTO_MOVE_ARM.PICK_WOBBLE;
+        runAutoControl();
+    }
 
     public void runArm(){
         switch (autoMoveArm){
