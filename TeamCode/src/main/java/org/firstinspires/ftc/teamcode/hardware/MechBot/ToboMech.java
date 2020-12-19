@@ -1291,7 +1291,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
     public void autoGrabBottomWobbleGoal() throws InterruptedException {
         if (simulation_mode || chassis==null) return;
-        chassis.yMove(1, 0.20);
+        chassis.yMove(1, 0.30);
         sleep(200);
         if (comboGrabber!=null) {
             comboGrabber.grabWobbleGoalCombo(false);
