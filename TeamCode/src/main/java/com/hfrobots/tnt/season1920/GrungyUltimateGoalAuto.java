@@ -303,25 +303,33 @@ public class GrungyUltimateGoalAuto extends OpMode {
                 "Detecting starter stack",
                 telemetry,
                 Ticker.systemTicker(),
-                TimeUnit.SECONDS.toMillis(999) /* FIXME */) {
+                TimeUnit.SECONDS.toMillis(10)) {
             @Override
             public State doStuffAndGetNextState() {
                 StarterStackDetectorPipeline.RingsDetected ringsDetected = starterStackDetectorPipeline.getRingsDetected();
 
-                // We do a switch here, rather than an if/else, why?
                 switch (ringsDetected) {
 
                     case UNKNOWN:
-                        // Keep looking if not timed out, otherwise do what?
-                        return null; // FIXME - need to do something "special"
+                        // Keep looking if not timed out
+                        if (!isTimedOut()){
+                            return this;
+                        }
+
+                        deliverToTarget = Target.A;
+                        break;
                     case ZERO:
-                        // FIXME: Need to set correct target drop zone
+                        deliverToTarget = Target.A;
+                        break;
+                    case ONE:
+                        deliverToTarget = Target.B;
                         break;
                     case FOUR:
-                        // FIXME: Need to set correct target drop zone
+                        deliverToTarget = Target.C;
                         break;
                     case SOME:
-                        // FIXME: Need to set correct target drop zone
+                        //if we see ornge it is more likey we see beteen 1 and 4 and should lean towards 4
+                        deliverToTarget = Target.C;
                         break;
                 }
 
@@ -431,7 +439,7 @@ public class GrungyUltimateGoalAuto extends OpMode {
             }
         };
 
-        // FIXME: I think you're missing a new state, here!
+        stateMachine.addSequential(detectorState);
         stateMachine.addSequential(toTargetZone);
         stateMachine.addSequential(ejectWobbleGoalState);
         stateMachine.addSequential(wobbleGoalWaitState);
