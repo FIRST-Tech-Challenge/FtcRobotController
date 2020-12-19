@@ -414,6 +414,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (source.getTrigger(Events.Side.LEFT) > 0.3) {
                     if (cameraDetector !=null)
                         cameraDetector.dec_cam_pos();
+                } else if (source.isPressed(Button.RIGHT_BUMPER)) {
+                    autoIntakeRings(3);
                 }
             }
         }, new Button[]{Button.DPAD_RIGHT});
@@ -431,6 +433,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         intake.stop();
                     if (hopper!=null) hopper.transferShakeCombo();
                 }
+
             }
         }, new Button[]{Button.DPAD_LEFT});
 
@@ -1306,6 +1309,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
                 TaskManager.processTasks();
             }
+        }
+        chassis.stop();
+    }
+
+    public void autoIntakeRings(int n) throws InterruptedException {
+        if (simulation_mode || chassis==null) return;
+        intake.intakeIn();
+        for (int i = 0; i < n; i++) {
+            sleep(100);
+            chassis.yMove(1, 0.30);
+            sleep(200);
+            chassis.yMove(-1, 0.30);
         }
         chassis.stop();
     }
