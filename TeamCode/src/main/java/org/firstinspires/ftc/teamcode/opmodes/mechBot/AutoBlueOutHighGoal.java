@@ -16,8 +16,9 @@ import java.io.IOException;
 /**
  * Created by 28761 on 6/29/2019.
  */
-@Autonomous(name = "Blue In", group = "MechBot")
-public class AutoBlueIn extends LinearOpMode {
+//@Disabled
+@Autonomous(name = "Blue Out", group = "MechBot")
+public class AutoBlueOutHighGoal extends LinearOpMode {
     private ToboSigma.SkystoneLocation StoneLoc;
 
     protected static int LOG_LEVEL = Log.INFO;
@@ -34,6 +35,7 @@ public class AutoBlueIn extends LinearOpMode {
         telemetry.update();
 
         ToboMech robot = new ToboMech();
+        robot.useTfod = true;
         // robot.set_simulation_mode(true);
         robot.configureLogging("ToboMech", LOG_LEVEL);
         configuration = new Configuration(hardwareMap, robot.getName()).configureLogging("Config", LOG_LEVEL);
@@ -41,17 +43,16 @@ public class AutoBlueIn extends LinearOpMode {
 
         try {
             // configure robot and reset all hardware
+
             robot.configure(configuration, telemetry, Robot2.ProgramType.AUTO_BLUE);
             configuration.apply();
             robot.initSetup(Robot2.ProgramType.AUTO_BLUE, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(true);
             robot.showStatus();
-
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);
         }
-
         log.info("RoboMech Autonomous finished initialization (CPU_time = %.2f sec)", getRuntime());
 
         waitForStart();
@@ -65,16 +66,15 @@ public class AutoBlueIn extends LinearOpMode {
         if (opModeIsActive()) {
             try {
                 // write the program here
-                //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive())
+                //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive()
                 robot.detectPosition();
+                robot.doHighGoals();
                 robot.deliverFirstWobbleGoal();
-                if ((robot.runtimeAuto.seconds() < 20) && opModeIsActive()) {
-                    robot.doPowerShots();
-                    if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
-                        robot.getSecondWobbleGoal(false);
-                        robot.deliverSecondWobbleGoal();
-                    }
+                if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+                    robot.getSecondWobbleGoal(true);
+                    robot.deliverSecondWobbleGoal();
                 }
+
                 robot.park();
 
             } catch (Exception E) {

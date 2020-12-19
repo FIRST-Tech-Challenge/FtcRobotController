@@ -72,7 +72,7 @@ public class AutoRedOut extends LinearOpMode {
                 if ((robot.runtimeAuto.seconds() < 20) && opModeIsActive()) {
                     robot.doPowerShots();
                     if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
-                        robot.getSecondWobbleGoal();
+                        robot.getSecondWobbleGoal(false);
                         robot.deliverSecondWobbleGoal();
                     }
                 }

@@ -1234,12 +1234,20 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooter.shootOutByRpm(0);
     }
 
-    public void getSecondWobbleGoal() throws InterruptedException {
+    public void getSecondWobbleGoal(boolean shootHighGoal) throws InterruptedException {
         if (hopper != null) {
             hopper.transferDownCombo();
             TaskManager.processTasks();
         }
-        chassis.driveTo(auto_chassis_power, side(160), 40, 0, true,  5);
+        if (!shootHighGoal){
+            chassis.driveTo(auto_chassis_power, side(160), 40, 0, true,  5);
+        }
+        else{
+            if(tZone == TargetZone.ZONE_B){
+                chassis.driveTo(auto_chassis_power, side(30), 180, 0, true,  5);
+            }
+            chassis.driveTo(auto_chassis_power, side(30), 40, 0, true,  5);
+        }
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C) {
                 chassis.driveTo(auto_chassis_power, side(105), 30, 0, true, 3);
