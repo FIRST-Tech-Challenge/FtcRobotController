@@ -1234,7 +1234,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooter.shootOutByRpm(0);
     }
 
-    public void getSecondWobbleGoal(boolean shootHighGoal) throws InterruptedException {
+    public void getSecondWobbleGoal() throws InterruptedException {
         if (hopper != null) {
             hopper.transferDownCombo();
             TaskManager.processTasks();
@@ -1248,6 +1248,39 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
             chassis.driveTo(auto_chassis_power, side(30), 40, 0, true,  5);
         }
+        if(startPos == StartPosition.OUT){
+            if (tZone == TargetZone.ZONE_C) {
+                chassis.driveTo(auto_chassis_power, side(105), 30, 0, true, 3);
+            }
+            else {
+                chassis.driveTo(auto_chassis_power, side(109), 33, 0, true, 3);
+            }
+        } else {
+            chassis.driveTo(auto_chassis_power, side(47), 30, 0, true,  3);
+        }
+        while (!TaskManager.isComplete("Transfer Down Combo")) {
+            TaskManager.processTasks();
+        }
+        //grab the wobble goal
+        if (!simulation_mode) {
+
+            autoGrabBottomWobbleGoal();
+        }
+
+        // sleep(1000);
+    }
+    public void getSecondWobbleGoalAfterHighGoal() throws InterruptedException {
+        if (hopper != null) {
+            hopper.transferDownCombo();
+            TaskManager.processTasks();
+        }
+
+
+            if(tZone == TargetZone.ZONE_B){
+                chassis.driveTo(auto_chassis_power, side(30), 180, 0, true,  5);
+            }
+            chassis.driveTo(auto_chassis_power, side(30), 40, 0, true,  5);
+
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C) {
                 chassis.driveTo(auto_chassis_power, side(105), 30, 0, true, 3);
