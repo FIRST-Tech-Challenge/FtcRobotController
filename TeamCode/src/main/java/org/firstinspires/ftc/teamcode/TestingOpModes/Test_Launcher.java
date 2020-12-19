@@ -37,7 +37,7 @@ public class Test_Launcher extends LinearOpMode {
         //Run Robot based on Gamepad1 inputs
         while (opModeIsActive()) {
             //**** Launcher Actions ****
-            hzMagazine.moveMagazineToLaunch1();
+            hzMagazine.moveMagazineToLaunch();
             //Launches Ring
             if (hzGamepadClassic.getRightBumperPress()) {
                 //TODO : AMJAD : Launch Controller should be used to check if status is good to launch

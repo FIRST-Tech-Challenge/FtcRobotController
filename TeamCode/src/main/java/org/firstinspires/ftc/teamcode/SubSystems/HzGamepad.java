@@ -119,22 +119,12 @@ public class HzGamepad {
             gpHzLauncher.stopFlyWheel();
         }
 
-        /*if (gpHzMagazine.moveMagazineToCollectState) {
-            gpHzMagazine.moveMagazineToLaunchState = false;
-            gpHzMagazine.moveMagazineToCollect();
-        }
-
-        if (gpHzMagazine.moveMagazineToLaunchState){
-            gpHzMagazine.moveMagazineToCollectState = false;
-            gpHzMagazine.moveMagazineToLaunch();
-        }*/
-
         switch (gpHzMagazine.moveMagazineTo) {
             case COLLECT:
-                gpHzMagazine.moveMagazineToCollect1();
+                gpHzMagazine.moveMagazineToCollect();
                 break;
             case LAUNCH:
-                gpHzMagazine.moveMagazineToLaunch1();
+                gpHzMagazine.moveMagazineToLaunch();
                 break;
         }
 
@@ -148,7 +138,6 @@ public class HzGamepad {
             if (gpHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
                 gpHzLaunchController.activateLaunchReadinessState = false;
                 gpHzLaunchController.deactivateLaunchReadinessState = true;
-                //gpHzMagazine.moveMagazineToCollectState = true;
                 gpHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.COLLECT;
                 gpHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.ON;
                 gpHzIntake.intakeReverseButtonState = HzIntake.INTAKE_REVERSE_BUTTON_STATE.OFF;
@@ -163,14 +152,12 @@ public class HzGamepad {
             if (gpHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.REVERSING){
                 gpHzLaunchController.activateLaunchReadinessState = false;
                 gpHzLaunchController.deactivateLaunchReadinessState = true;
-                //gpHzMagazine.moveMagazineToCollectState = true;
+
                 gpHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.COLLECT;
                 gpHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.OFF;
                 gpHzIntake.intakeReverseButtonState = HzIntake.INTAKE_REVERSE_BUTTON_STATE.ON;
-                //.reverseIntakeMotor();
                 //gpMagazine.shakeMagazine(100);
             } else if (gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.REVERSING){
-                //gpHzIntake.stopIntakeMotor();
                 gpHzIntake.intakeReverseButtonState = HzIntake.INTAKE_REVERSE_BUTTON_STATE.OFF;
             }
         }

@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 public class HzMagazine {
-    //public ElapsedTime magazineTimer;
     public CRServo magazineServo;
 
     public TouchSensor magazineLaunchTouchSensor;
@@ -52,12 +51,12 @@ public class HzMagazine {
         switch (magazinePosition){
             case AT_LAUNCH:
                 moveMagazineTo = MOVE_MAGAZINE_TO.LAUNCH;
-                moveMagazineToLaunch1();
+                moveMagazineToLaunch();
                 break;
             case AT_COLLECT:
             case AT_ERROR:
                 moveMagazineTo = MOVE_MAGAZINE_TO.COLLECT;
-                moveMagazineToCollect1();
+                moveMagazineToCollect();
                 break;
         }
     }
@@ -111,21 +110,6 @@ public class HzMagazine {
         if (magazineCollectTouchSensor.isPressed()) {
             magazineServo.setPower(0.0);
             magazinePosition = MAGAZINE_POSITION.AT_COLLECT;
-            moveMagazineToCollectState = false;
-        } /*else {
-            magazineServo.setPower(-0.3);
-        }*/
-
-        if (magazinePosition != MAGAZINE_POSITION.AT_COLLECT) {
-            magazineServo.setPower(-0.3);
-        }
-    }
-
-    public void moveMagazineToCollect1(){
-        if (magazineCollectTouchSensor.isPressed()) {
-            magazineServo.setPower(0.0);
-            magazinePosition = MAGAZINE_POSITION.AT_COLLECT;
-            //moveMagazineToCollectState = false;
         } else {
             magazineServo.setPower(-0.3);
         }
@@ -138,28 +122,9 @@ public class HzMagazine {
         if (magazineLaunchTouchSensor.isPressed()) {
             magazineServo.setPower(0.0);
             magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
-            moveMagazineToLaunchState = false;
-        } /*else {
-            magazineServo.setPower(0.4);
-        }*/
-
-        if (magazinePosition != MAGAZINE_POSITION.AT_LAUNCH) {
-            magazineServo.setPower(0.4);
-        }
-    }
-
-    public void moveMagazineToLaunch1() {
-        if (magazineLaunchTouchSensor.isPressed()) {
-            magazineServo.setPower(0.0);
-            magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
-            //moveMagazineToLaunchState = false;
         } else {
             magazineServo.setPower(0.4);
         }
-
-        /*if (magazinePosition != MAGAZINE_POSITION.AT_LAUNCH) {
-            magazineServo.setPower(0.4);
-        }*/
     }
 
 
