@@ -1337,6 +1337,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         comboGrabber.grabberOpen();
         sleep(100);
         comboGrabber.armDown();
+        sleep(150);
         chassis.yMove(1, 0.30);
         sleep(200);
         if (comboGrabber!=null) {
