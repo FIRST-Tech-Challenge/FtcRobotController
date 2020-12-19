@@ -1258,8 +1258,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
 
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(.8, side(50), 60, 0, false, 5);
-                chassis.driveTo(auto_chassis_power, side(30), 285, 0, false, 5);
+                chassis.driveTo(.8, side(30), 60, 0, false, 5);
+                chassis.driveTo(auto_chassis_power + 0.2, side(30), 285, 0, false, 5);
             } else {
                 return;
             }
