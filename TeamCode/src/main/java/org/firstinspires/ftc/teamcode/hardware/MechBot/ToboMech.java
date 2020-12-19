@@ -415,7 +415,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (cameraDetector !=null)
                         cameraDetector.dec_cam_pos();
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
-                    autoIntakeRings(3);
+                    autoIntakeRings(1);
                 }
 
             }
@@ -1239,8 +1239,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             hopper.transferDownCombo();
             TaskManager.processTasks();
         }
-
-            chassis.driveTo(auto_chassis_power, side(160), 40, 0, true,  5);
+        chassis.driveTo(auto_chassis_power, side(160), 40, 0, true,  5);
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C) {
                 chassis.driveTo(auto_chassis_power, side(105), 30, 0, true, 3);
@@ -1354,13 +1353,22 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         for (int i = 0; i < n; i++) {
             sleep(100);
             chassis.yMove(1, 0.30);
-            sleep(200);
+            sleep(500);
             chassis.yMove(-1, 0.30);
         }
         chassis.stop();
         sleep(1000);
         hopper.transferShakeCombo();
         intake.stop();
+        if (n>1) {
+            // backup a little bit to prevent getting fourth ring
+            chassis.yMove(-1, 0.30);
+            sleep(100);
+            chassis.stop();
+            intake.intakeIn();
+            sleep(200);
+            intake.stop();
+        }
     }
 
     public void autoTransferWobbleGoal() throws InterruptedException {

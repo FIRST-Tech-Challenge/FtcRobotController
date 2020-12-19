@@ -224,12 +224,12 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                ringLifter.setPower(-0.5);
+                ringLifter.setPower(-0.1);
                 HopperTimer.reset();
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (HopperTimer.milliseconds()>=50);
+                        return (HopperTimer.milliseconds()>=40);
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
@@ -273,12 +273,12 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                ringLifter.setPower(-0.5);
+                ringLifter.setPower(-0.1);
                 HopperTimer.reset();
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (HopperTimer.milliseconds()>=50);
+                        return (HopperTimer.milliseconds()>=40);
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {

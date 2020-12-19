@@ -17,7 +17,7 @@ import java.io.IOException;
  * Created by 28761 on 6/29/2019.
  */
 //@Disabled
-@Autonomous(name = "Blue Out", group = "MechBot")
+@Autonomous(name = "Blue Out High Goal", group = "MechBot")
 public class AutoBlueOutHighGoal extends LinearOpMode {
     private ToboSigma.SkystoneLocation StoneLoc;
 
