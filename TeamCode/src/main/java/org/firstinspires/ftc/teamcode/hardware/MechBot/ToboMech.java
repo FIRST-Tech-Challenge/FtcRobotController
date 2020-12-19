@@ -1220,6 +1220,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public void doHighGoals() throws InterruptedException {
+        if (hopper != null) {
+            hopper.transferUpCombo();
+            TaskManager.processTasks();
+        }
         if(tZone == TargetZone.ZONE_A) {
             chassis.driveTo(auto_chassis_power, side(60), 165, -60, true, 5);
         }
