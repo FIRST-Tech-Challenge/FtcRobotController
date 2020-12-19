@@ -1250,11 +1250,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             TaskManager.processTasks();
         }
         shooter.shootOutByRpm(1200);
-        if (tZone == TargetZone.ZONE_B){
-            chassis.driveTo(.55, side(70), 170, 0, true,  2);
-        } else{
-            chassis.driveTo(.55, side(90), 170, 0, true,  2);
+        if (tZone == TargetZone.ZONE_B) {
+            chassis.driveTo(.55, side(60), 170, 0, true, 2);
         }
+            chassis.driveTo(.55, side(90), 170, 0, true,  2);
+
          // need to do something about this
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
         //shoot
@@ -1300,7 +1300,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
 
             if(tZone == TargetZone.ZONE_B){
-                chassis.driveTo(auto_chassis_power, side(70), 180, 0, true,  5);
+                chassis.driveTo(auto_chassis_power, side(55), 180, 0, true,  5);
             }
             chassis.driveTo(auto_chassis_power, side(70), 40, 0, true,  5);
 
