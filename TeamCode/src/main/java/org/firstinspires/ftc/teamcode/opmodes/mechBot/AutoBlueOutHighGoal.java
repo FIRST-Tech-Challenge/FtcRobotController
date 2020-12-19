@@ -69,7 +69,7 @@ public class AutoBlueOutHighGoal extends LinearOpMode {
                 //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive()
                 robot.detectPosition();
                 robot.doHighGoals();
-                robot.deliverFirstWobbleGoal();
+                robot.deliverFirstWobbleGoalAfterHighGoal();
                 if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
                     robot.getSecondWobbleGoalAfterHighGoal();
                     robot.deliverSecondWobbleGoal();
