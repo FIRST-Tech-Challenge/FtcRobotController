@@ -1241,6 +1241,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         //grab the wobble goal
         if (!simulation_mode) {
+
             autoGrabBottomWobbleGoal();
         }
 

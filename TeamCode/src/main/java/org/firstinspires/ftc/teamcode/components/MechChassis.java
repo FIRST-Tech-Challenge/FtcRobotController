@@ -664,9 +664,9 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         }
         if (autoDriveMode== AutoDriveMode.STOP) {
             // The following code is for error estimation, should be commented out in competition
-            sleep(200);
-            auto_dist_err = Math.hypot(odo_x_pos_cm() - target_x, odo_y_pos_cm() - target_y);
-            auto_degree_err = Math.abs(target_heading - odo_heading());
+            // sleep(200);
+            // auto_dist_err = Math.hypot(odo_x_pos_cm() - target_x, odo_y_pos_cm() - target_y);
+            // auto_degree_err = Math.abs(target_heading - odo_heading());
             //tl.addData("speed: ", odo_speed_cm());
             //tl.update();
         }
