@@ -1298,6 +1298,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (simulation_mode || chassis==null) return;
         comboGrabber.grabberOpen();
         sleep(100);
+        comboGrabber.armDown();
         chassis.yMove(1, 0.30);
         sleep(200);
         if (comboGrabber!=null) {
