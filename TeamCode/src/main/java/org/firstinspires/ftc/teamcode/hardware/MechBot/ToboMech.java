@@ -417,6 +417,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
                     autoIntakeRings(3);
                 }
+
             }
         }, new Button[]{Button.DPAD_RIGHT});
         em.onButtonDown(new Events.Listener() {
@@ -1323,6 +1324,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.yMove(-1, 0.30);
         }
         chassis.stop();
+        sleep(1000);
+        hopper.transferShakeCombo();
+        intake.stop();
     }
 
     public void autoTransferWobbleGoal() throws InterruptedException {
