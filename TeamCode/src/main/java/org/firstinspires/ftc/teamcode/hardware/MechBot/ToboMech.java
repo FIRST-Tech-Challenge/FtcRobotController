@@ -1173,7 +1173,36 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }
         //sleep(1000);
-}
+} public void deliverFirstWobbleGoalAfterHighGoal() throws InterruptedException {
+        // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
+        // still need to change positions to be far left for blue side
+        if (hopper != null) {
+            hopper.transferUpCombo();
+            TaskManager.processTasks();
+        }
+        if(side == ProgramType.AUTO_BLUE) {
+            if (tZone == TargetZone.ZONE_A) {//0
+                chassis.driveTo(auto_chassis_power, 28, 180, -45, true, 3);
+            } else if (tZone == TargetZone.ZONE_B) {//1
+                chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
+            } else if (tZone == TargetZone.ZONE_C) {//4
+                chassis.driveTo(auto_chassis_power+0.1, 10, 300, -40, true, 6);
+            } else {
+                return;
+            }
+
+        }
+        while (!TaskManager.isComplete("Transfer Up Combo")) {
+            TaskManager.processTasks();
+        }
+        if (comboGrabber!=null) {
+            comboGrabber.releaseWobbleGoalCombo();
+            while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
+                TaskManager.processTasks();
+            }
+        }
+        //sleep(1000);
+    }
 
     public void autoShoot() throws InterruptedException {
         if (shooter==null||hopper==null) return;
