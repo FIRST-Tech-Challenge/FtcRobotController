@@ -1176,10 +1176,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 } public void deliverFirstWobbleGoalAfterHighGoal() throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
-        if (hopper != null) {
-            hopper.transferUpCombo();
-            TaskManager.processTasks();
-        }
         if(side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 chassis.driveTo(auto_chassis_power, 28, 180, -45, true, 3);
@@ -1254,7 +1250,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             TaskManager.processTasks();
         }
         shooter.shootOutByRpm(1200);
-        chassis.driveTo(.55, side(90), 170, 0, true,  2); // need to do something about this
+        if (tZone == TargetZone.ZONE_B){
+            chassis.driveTo(.55, side(70), 170, 0, true,  2);
+        } else{
+            chassis.driveTo(.55, side(90), 170, 0, true,  2);
+        }
+         // need to do something about this
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
         //shoot
         for (int i=0; i<3; i++) {
