@@ -1192,7 +1192,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
 
         shooter.shootOutByRpm(1260);
-        chassis.driveTo(.6, side(150), 170, 0, false,  3); // need to do something about this
+        if (tZone == TargetZone.ZONE_C) {
+            chassis.driveTo(.6, side(130), 170, 0, false,  3);
+        }
+        else {
+            chassis.driveTo(.6, side(150), 170, 0, false, 3); // need to do something about this
+        }
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
         //shoot
         autoShoot();
