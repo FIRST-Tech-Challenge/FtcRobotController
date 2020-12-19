@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.vision.SkystoneVisionProvider;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.VisionProvider;
 
+import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
+
 /**
  * Class to keep all autonomous-related functions and state-machines in
  */
@@ -90,10 +92,19 @@ public class Autonomous {
 
 
     public StateMachine AutoFull = getStateMachine(autoStage)
-            // open and align gripper for 1st skystone
-            .addState(() -> robot.driveIMUDistanceWithReset(.5,robot.getHeading(),true,.5))
-            .addSingleState(() -> robot.turret.rotateCardinalTurret(true))
-            .addState(() -> robot.launcher.extendToMax())
+//            // open and align gripper for 1st skystone
+//            .addState(() -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),true,2.9))
+//            //.addState(() -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),true,1.8288))
+//            .addSingleState(() -> robot.turret.rotateCardinalTurret(true))
+//            .addState(() -> robot.launcher.toggleGripper())
+//            .addTimedState(3f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//            .addState(() -> robot.launcher.toggleGripper())
+//            .addTimedState(3f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//            .addState(() -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),false,1.2192))
+
+
+            .addSingleState(() -> robot.launcher.servoGripper.setPosition(servoNormalize(899)))
+            .addTimedState(3f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

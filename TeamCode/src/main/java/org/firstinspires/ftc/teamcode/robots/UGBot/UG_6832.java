@@ -612,6 +612,10 @@ public class UG_6832 extends OpMode {
             robot.turret.rotateCardinalTurret(true);
         }
 
+        if(toggleAllowed(gamepad1.a, a, 1)){
+            robot.launcher.toggleGripper();
+        }
+
         if (toggleAllowed(gamepad1.y, y, 1)) {
             robot.driveIMUDistanceWithReset(.5,robot.getHeading(),true,.01);
         }
@@ -707,6 +711,14 @@ public class UG_6832 extends OpMode {
         // on gamepad 1 for prematch setup
         if (notdeadzone(gamepad1.left_stick_x)) {
             robot.turret.adjust(gamepad1.left_stick_x);
+        }
+
+        if(toggleAllowed(gamepad1.a, a, 1)){
+            robot.launcher.toggleGripper();
+        }
+
+        if(toggleAllowed(gamepad1.b, b, 1)){
+            robot.launcher.setElbowTargetPos(400,1);
         }
     }
 

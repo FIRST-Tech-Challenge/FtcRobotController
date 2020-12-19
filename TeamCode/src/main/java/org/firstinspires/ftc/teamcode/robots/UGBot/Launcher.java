@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.robots.UGBot;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.util.PIDController;
-import org.firstinspires.ftc.teamcode.util.SharpDistanceSensor;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
 import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
-import static org.firstinspires.ftc.teamcode.vision.Config.SERVO_MAX;
 
 /**
  * Created by 2938061 on 11/10/2017.
@@ -231,7 +228,6 @@ public class Launcher {
         //gripLeftDist = gripLeftSharp.getUnscaledDistance(); //remove these two lines if looking for raw voltage which goes up with proximity
         //gripRightDist = gripRightSharp.getUnscaledDistance();
 
-        updateGripper();
         updateBeltToElbow();
 
         //
@@ -315,29 +311,6 @@ public class Launcher {
         return (int)(2.0/9 * ((belt+offset)-620)) ;
     }
 
-    int grabState = 2;
-    double grabTimer;
-
-    public void updateGripper() {
-        switch(grabState){
-            case 0:
-                servoGripper.setPosition(servoNormalize(SERVO_MAX));
-                //if(setElbowTargetPos(elbow.getCurrentPosition(),.2)) {
-                    grabTimer = futureTime(1);
-                    grabState++;
-                //}
-                break;
-
-            case 1:
-                if (System.nanoTime() >= grabTimer) {
-                    servoGripper.setPosition(servoNormalize(1700));
-                    grabState++;
-                }
-                break;
-
-        }
-
-    }
 
     public void changeTowerHeight(int newHeightAddition){
         if(currentTowerHeight > 0 || newHeightAddition > 0)
@@ -621,9 +594,14 @@ public class Launcher {
     public void setElbowActivePID(boolean isActive){elbowActivePID = isActive;}
     public void setExtendABobActivePID(boolean isActive){extendABobActivePID = isActive;}
 
+    boolean grabState = false;
 
     public boolean toggleGripper() {
-        grabState = 0;
+        grabState = !grabState;
+        if(grabState)
+            servoGripper.setPosition(servoNormalize(1500)); //open
+        else
+            servoGripper.setPosition(servoNormalize(899)); //closed
         return true;
     }
 
