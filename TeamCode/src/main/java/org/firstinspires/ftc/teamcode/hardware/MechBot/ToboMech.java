@@ -465,9 +465,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         if (comboGrabber!=null)
                             comboGrabber.sliderDown(source.isPressed(Button.BACK));
                     }
-                } else if(source.isPressed(Button.RIGHT_BUMPER)){
-                    if (comboGrabber!=null)
+                } else if(source.isPressed(Button.RIGHT_BUMPER)) {
+                    if (comboGrabber != null)
                         comboGrabber.armDownInc();
+                }  else if(source.isPressed(Button.BACK)){
+                    doHighGoals(3);
                 } else if (!source.isPressed((Button.START))){
                     if (hopper!=null) {
                         //hopper.feederAuto();
@@ -1204,9 +1206,16 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (shooter==null||hopper==null) return;
         double iniTime = System.currentTimeMillis();
         int target = shooter.getShooterSpeed();
+        // Stage-1 Make sure that rpm exceeds the target
+        while (target-shooter.getCurrentRPM()>0 &&(System.currentTimeMillis()-iniTime<1000)){
+            sleep(5);
+        }
+        sleep(50);
+        // Stage-2 make sure rpm difference is within 11 error range
         while (Math.abs(shooter.getCurrentRPM()-target)>11 && (System.currentTimeMillis()-iniTime<1000)) { // timeout 0.5 sec
             sleep(5);
         }
+        // Stage-3 make sure rpm difference is within 20 error range
         while (Math.abs(shooter.getCurrentRPM()-target)>20 && (System.currentTimeMillis()-iniTime<500)) { // timeout 5 sec
             sleep(5);
         }
@@ -1253,7 +1262,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (tZone == TargetZone.ZONE_B && numRings==3) {
             chassis.driveTo(.55, side(60), 170, 0, true, 2);
         }
-        chassis.driveTo(.55, side(90), 170, 0, true,  2);
+        if (tZone == TargetZone.UNKNOWN)
+            chassis.driveTo(.55, side(90), 170, 0, true,  2);
 
          // need to do something about this
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
