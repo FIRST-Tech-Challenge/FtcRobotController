@@ -34,8 +34,8 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     //private double robotEncoderWheelDistance = 15.20435 * DEFAULT_COUNTS_PER_INCH;
     // private double robotEncoderWheelDistance = 15.4317822 * DEFAULT_COUNTS_PER_INCH;
     // private double horizontalEncoderTickPerDegreeOffset = -86.84834;
-    private double robotEncoderWheelDistance = 14.466 * DEFAULT_COUNTS_PER_INCH;
-    private double horizontalEncoderTickPerDegreeOffset = -127.967;
+    private double robotEncoderWheelDistance = 14.5 * DEFAULT_COUNTS_PER_INCH;
+    private double horizontalEncoderTickPerDegreeOffset = 43.22;
 
     //Sleep time interval (milliseconds) for the position update thread
     private int sleepTime;
