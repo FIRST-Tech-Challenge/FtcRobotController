@@ -127,8 +127,8 @@ public class teleop extends OpMode
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
          leftFowardPower  = -gamepad1.left_stick_y ;
          rightReversePower = -gamepad1.right_stick_y ;
-         leftReversePower = -gamepad2.left_stick_y ;
-         rightFowardPower = -gamepad2.right_stick_y ;
+         leftReversePower = -gamepad2.left_stick_x ;
+         rightFowardPower = -gamepad2.right_stick_x ;
 
         // Send calculated power to wheels
         leftFoward.setPower(leftFowardPower);
