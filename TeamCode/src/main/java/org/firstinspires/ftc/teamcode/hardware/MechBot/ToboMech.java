@@ -1250,10 +1250,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             TaskManager.processTasks();
         }
         shooter.shootOutByRpm(1200);
-        if (tZone == TargetZone.ZONE_B) {
+        if (tZone == TargetZone.ZONE_B && numRings==3) {
             chassis.driveTo(.55, side(60), 170, 0, true, 2);
         }
-            chassis.driveTo(.55, side(90), 170, 0, true,  2);
+        chassis.driveTo(.55, side(90), 170, 0, true,  2);
 
          // need to do something about this
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
@@ -1334,10 +1334,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.driveTo(0.9, side(17), 165, -10, false, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 intake.intakeIn();
-                chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
+                chassis.driveTo(auto_chassis_power, side(90), 140, 0, false, 5);
                 intake.stop();
                 hopper.transferUpCombo();
                 TaskManager.processTasks();
+                doHighGoals(1);
+                hopper.transferDown();
+                TaskManager.processTasks();
+                chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(.8, side(30), 60, 0, false, 5);
                 chassis.driveTo(auto_chassis_power + 0.2, side(25), 300, 0, false, 5);
@@ -1350,10 +1354,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
                 TaskManager.processTasks();
             }
-        }
-        if(tZone==TargetZone.ZONE_B)
-        {
-            doHighGoals(1);
         }
         //sleep(1000);
     }
