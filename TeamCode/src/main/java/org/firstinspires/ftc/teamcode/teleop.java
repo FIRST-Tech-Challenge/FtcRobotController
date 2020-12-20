@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -80,8 +81,8 @@ public class teleop extends OpMode
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFoward.setDirection(DcMotor.Direction.FORWARD);
         rightReverse.setDirection(DcMotor.Direction.REVERSE);
-        leftReverse.setDirection(DcMotor.Direction.REVERSE);
-        rightFoward.setDirection(DcMotor.Direction.FORWARD);
+        leftReverse.setDirection(DcMotor.Direction.FORWARD);
+        rightFoward.setDirection(DcMotor.Direction.REVERSE);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
