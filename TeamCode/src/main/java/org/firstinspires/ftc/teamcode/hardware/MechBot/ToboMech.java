@@ -1207,13 +1207,19 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double iniTime = System.currentTimeMillis();
         int target = shooter.getShooterSpeed();
         // Stage-1 Make sure that rpm exceeds the target
-        while (target-shooter.getCurrentRPM()>0 &&(System.currentTimeMillis()-iniTime<1000)){
-            sleep(5);
+        if(target-shooter.getCurrentRPM()>0) {
+            while (target - shooter.getCurrentRPM() > 0 && (System.currentTimeMillis() - iniTime < 3000)) {
+                sleep(10);
+            }
+            sleep(200);
+            while (target - shooter.getCurrentRPM() < 0 && (System.currentTimeMillis() - iniTime < 1500)) {
+                sleep(10);
+            }
+            sleep(200);
         }
-        sleep(50);
         // Stage-2 make sure rpm difference is within 11 error range
         while (Math.abs(shooter.getCurrentRPM()-target)>11 && (System.currentTimeMillis()-iniTime<1000)) { // timeout 0.5 sec
-            sleep(5);
+            sleep(10);
         }
         // Stage-3 make sure rpm difference is within 20 error range
         while (Math.abs(shooter.getCurrentRPM()-target)>20 && (System.currentTimeMillis()-iniTime<500)) { // timeout 5 sec
@@ -1270,7 +1276,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shoot
         for (int i=0; i<numRings; i++) {
             autoShoot();
-            sleep(500);
+            //sleep(500);
         }
         shooter.shootOutByRpm(0);
     }

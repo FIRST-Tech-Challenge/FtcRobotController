@@ -35,7 +35,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
 
 
-    private final double FEEDER_IN = 0.5;
+    private final double FEEDER_IN = 0.45;
     private final double FEEDER_INIT = FEEDER_IN;
     private final double FEEDER_OUT = 0.9;
 
