@@ -1225,7 +1225,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(.6, side(130), 170, 0, false,  3);
         }
         else {
-            chassis.driveTo(.6, side(150), 170, 0, false, 3); // need to do something about this
+            chassis.driveTo(.6, side(150), 170, 0, false, 5); // need to do something about this
         }
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
         //shoot
@@ -1270,7 +1270,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             hopper.transferDownCombo();
             TaskManager.processTasks();
         }
-        chassis.driveTo(auto_chassis_power, side(160), 40, 0, true,  5);
+        chassis.driveTo(auto_chassis_power, side(165), 40, 0, true,  5);
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C) {
                 chassis.driveTo(auto_chassis_power, side(105), 30, 0, true, 3);
@@ -1334,8 +1334,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.driveTo(0.9, side(17), 165, -10, false, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 intake.intakeIn();
-                chassis.driveTo(auto_chassis_power, side(90), 140, 0, false, 5);
+                chassis.driveTo(auto_chassis_power, side(80), 140, 0, false, 5);
                 intake.stop();
+                shooter.shootOutByRpm(1200);
                 hopper.transferUpCombo();
                 TaskManager.processTasks();
                 doHighGoals(1);
