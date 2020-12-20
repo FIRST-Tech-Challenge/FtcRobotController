@@ -1262,7 +1262,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (tZone == TargetZone.ZONE_B && numRings==3) {
             chassis.driveTo(.55, side(60), 170, 0, true, 2);
         }
-        if (tZone == TargetZone.UNKNOWN)
+        if (tZone != TargetZone.UNKNOWN)
             chassis.driveTo(.55, side(90), 170, 0, true,  2);
 
          // need to do something about this
