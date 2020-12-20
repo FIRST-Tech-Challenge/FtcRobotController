@@ -328,7 +328,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (current > 0.2 && chassis!=null && source.getTrigger(Events.Side.LEFT)<0.2) {
                     if (source.isPressed(Button.DPAD_UP)) { // high goal
                         if (source.isPressed(Button.BACK))
-                            doHighGoals();
+                            doHighGoals(3);
                         else
                             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
                     } else if (source.isPressed(Button.DPAD_RIGHT)) { // high goal
@@ -1244,7 +1244,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooter.shootOutByRpm(0);
     }
 
-    public void doHighGoals() throws InterruptedException {
+    public void doHighGoals(int numRings) throws InterruptedException {
         if (hopper != null) {
             hopper.transferUpCombo();
             TaskManager.processTasks();
@@ -1258,7 +1258,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
          // need to do something about this
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
         //shoot
-        for (int i=0; i<3; i++) {
+        for (int i=0; i<numRings; i++) {
             autoShoot();
             sleep(500);
         }
@@ -1336,6 +1336,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 intake.intakeIn();
                 chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
                 intake.stop();
+                hopper.transferUpCombo();
+                TaskManager.processTasks();
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(.8, side(30), 60, 0, false, 5);
                 chassis.driveTo(auto_chassis_power + 0.2, side(25), 300, 0, false, 5);
@@ -1348,6 +1350,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
                 TaskManager.processTasks();
             }
+        }
+        if(tZone==TargetZone.ZONE_B)
+        {
+            doHighGoals(1);
         }
         //sleep(1000);
     }
@@ -1492,12 +1498,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double rpm_shift = getShootingAngleErrorFromRPM(rpm);
         shooting_angle += 3.5;
         try {
-            if (Math.abs(chassis.odo_heading() - shooting_angle) > 0.6) {
+            if (Math.abs(chassis.odo_heading() - shooting_angle) > 0.8) {
                 chassis.rotateTo(0.35, shooting_angle);
                 sleep(200);
                 int i=0;
                 while (Math.abs(chassis.odo_heading() - shooting_angle)>0.6 && i<3) {
-                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin, shooting_angle, false, 0.5);
+                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin, shooting_angle, false, 1);
                     i++;
                 }
                 //sleep(200);
