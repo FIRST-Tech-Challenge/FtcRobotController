@@ -82,6 +82,8 @@ public class Hardware {
     //Intake
     DcMotor intakeMotor;
 
+    //flywheelRotateServo
+    public CRServo flywheelRotateServoLeft;
 
     // Odometry hardware
     private DcMotorEx leftEncoder, rightEncoder, centerEncoder;
@@ -100,8 +102,6 @@ public class Hardware {
 
     // Real world distance traveled by the wheels
     public double leftOdomTraveled, rightOdomTraveled, centerOdomTraveled;
-
-
 
     /**
      * Initialization of hardware
@@ -156,6 +156,9 @@ public class Hardware {
         //Intake
         intakeMotor = hwMap.dcMotor.get("intake");
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        //flywheel rotating
+        flywheelRotateServoLeft = hwMap.crservo.get("flywheelRotateServoLeft");
 
 
     }
@@ -236,7 +239,7 @@ public class Hardware {
      * Sets the power of the fly wheels
      * @Param power power to run the fly wheels at
      * */
-    public void setFlyWhelPower(double power)
+    public void setFlyWheelPower(double power)
     {
 
         flywheelMotorLeft.setPower(power);
@@ -254,7 +257,6 @@ public class Hardware {
         intakeMotor.setPower(power);
 
     }
-
 
     /**
      * Drives the robot with the front being a specific direction of the robot
@@ -275,9 +277,9 @@ public class Hardware {
         }
         //setting the motor powers to move
         leftFront.setPower(forward - rotation - sideways);
-        leftRear.setPower(forward - rotation + sideways);
+        leftRear.setPower(forward + rotation - sideways);
         rightFront.setPower(forward + rotation + sideways);
-        rightRear.setPower(forward + rotation - sideways);
+        rightRear.setPower(forward - rotation + sideways);
         //Left Front = +Speed + Turn - Strafe      Right Front = +Speed - Turn + Strafe
         //Left Rear  = +Speed + Turn + Strafe      Right Rear  = +Speed - Turn - Strafe
     }

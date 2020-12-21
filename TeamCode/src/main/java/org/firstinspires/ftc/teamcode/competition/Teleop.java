@@ -39,6 +39,27 @@ public class Teleop extends LinearOpMode
              }
 
 
+            //sets flywheel power to the left trigger
+            robot.setFlyWheelPower(gamepad2.right_trigger);
+
+            //makes the flywheel rotation servo move with b and x
+            if(gamepad2.b){
+
+                robot.flywheelRotateServoLeft.setPower(1);
+
+            }
+
+            else if(gamepad2.x){
+
+                robot.flywheelRotateServoLeft.setPower(-1);
+
+            }
+
+            else {
+
+                robot.flywheelRotateServoLeft.setPower(0);
+
+            }
 
         }
 
