@@ -39,7 +39,6 @@ public class flywheels extends LinearOpMode{
 
             }
 
-            idle();
         }
 
 

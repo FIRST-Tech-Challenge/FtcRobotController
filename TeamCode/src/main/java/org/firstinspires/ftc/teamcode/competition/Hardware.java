@@ -81,11 +81,17 @@ public class Hardware {
     public ExpansionHubEx expansionHub;
     public ExpansionHubMotor leftOdom, rightOdom, centerOdom;
 
+    //Fly wheels
+    public DcMotor flywheelMotorLeft;
+    public DcMotor flywheelMotorRight;
+
     // Odometry encoder positions
     public int leftEncoderPos, centerEncoderPos, rightEncoderPos;
 
     // Real world distance traveled by the wheels
     public double leftOdomTraveled, rightOdomTraveled, centerOdomTraveled;
+
+
 
     /**
      * Initialization of hardware
@@ -127,6 +133,10 @@ public class Hardware {
         leftOdom = (ExpansionHubMotor) hwMap.dcMotor.get("leftFront");
         rightOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightFront");
         centerOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightRear");
+
+        //Flywheels
+        flywheelMotorLeft = hwMap.dcMotor.get("flywheelMotorLeft");
+        flywheelMotorRight = hwMap.dcMotor.get("flywheelMotorRight");
 
     }
 
@@ -199,4 +209,16 @@ public class Hardware {
         centerEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    /**
+     * Sets the power of the fly wheels
+     * @Param power power to run the fly wheels at
+     * */
+    public void setFlyWhelPower(double power)
+    {
+
+        flywheelMotorLeft.setPower(power);
+        flywheelMotorRight.setPower(power);
+
     }
+
+}
