@@ -52,10 +52,11 @@ public class LQR extends Application
     }
 
     /**
+     * Tests if the robot is within a circle of given radius and center
      * @param x the robot's x position
      * @param y the robot's y postition
      * @param r radius of circle
-     * @return boolean indicating if the robot is
+     * @return boolean indicating if the robot is within a circle of radius r
      * */
     public boolean robotInCircle(double x, double y, double r)
     {
@@ -115,9 +116,9 @@ public class LQR extends Application
 
         //run the motors
         robot.leftFront.setPower(d[0]/scale);
-        robot.rightFront.setPower(d[1]/scale);
+        robot.rightFront.setPower(-d[1]/scale);
         robot.leftRear.setPower(d[2]/scale);
-        robot.rightRear.setPower(d[3]/scale);
+        robot.rightRear.setPower(-d[3]/scale);
 
     }
 
