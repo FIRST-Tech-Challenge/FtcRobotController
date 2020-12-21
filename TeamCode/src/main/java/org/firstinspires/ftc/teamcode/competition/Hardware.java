@@ -3,10 +3,13 @@ package org.firstinspires.ftc.teamcode.competition;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -30,6 +33,7 @@ import static java.lang.Math.abs;
  * <p>
  * Note: 0, 0, 0 on the field is the robot in the blue depot with the intake facing the red depot
  */
+
 public class Hardware {
 
 
@@ -87,11 +91,17 @@ public class Hardware {
     public ExpansionHubEx expansionHub;
     public ExpansionHubMotor leftOdom, rightOdom, centerOdom;
 
+    //Fly wheels
+    public DcMotor flywheelMotorLeft;
+    public DcMotor flywheelMotorRight;
+
     // Odometry encoder positions
     public int leftEncoderPos, centerEncoderPos, rightEncoderPos;
 
     // Real world distance traveled by the wheels
     public double leftOdomTraveled, rightOdomTraveled, centerOdomTraveled;
+
+
 
     /**
      * Initialization of hardware
@@ -134,12 +144,18 @@ public class Hardware {
         rightOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightFront");
         centerOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightRear");
 
+
+        //Flywheels
+        flywheelMotorLeft = hwMap.dcMotor.get("flywheelMotorLeft");
+        flywheelMotorRight = hwMap.dcMotor.get("flywheelMotorRight");
+
         //Wobble goal Servo setup
         leftWobbleGoal = hwMap.servo.get("leftWobbleGoal");
         rightWobbleGoal = hwMap.servo.get("rightWobbleGoal");
 
         //Intake
         intakeMotor = hwMap.dcMotor.get("intake");
+
 
     }
 
@@ -216,6 +232,19 @@ public class Hardware {
     }
 
     /**
+     * Sets the power of the fly wheels
+     * @Param power power to run the fly wheels at
+     * */
+    public void setFlyWhelPower(double power)
+    {
+
+        flywheelMotorLeft.setPower(power);
+        flywheelMotorRight.setPower(power);
+
+    }
+
+}
+
      * Sets the power of the intake motor to a given power
      * @param power motor power to which the intake motor will be set
      * */
