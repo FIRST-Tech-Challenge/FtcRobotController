@@ -118,6 +118,7 @@ public class Hardware {
         leftFront.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         // When motors aren't receiving power, they will attempt to hold their position
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
         // left rear
         leftRear = hwMap.get(DcMotorEx.class, "leftRear");
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -125,7 +126,6 @@ public class Hardware {
         // right front
         rightFront = hwMap.get(DcMotorEx.class, "rightFront");
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // right rear
         rightRear = hwMap.get(DcMotorEx.class, "rightRear");
@@ -150,11 +150,12 @@ public class Hardware {
         flywheelMotorRight = hwMap.dcMotor.get("flywheelMotorRight");
 
         //Wobble goal Servo setup
-        leftWobbleGoal = hwMap.servo.get("leftWobbleGoal");
-        rightWobbleGoal = hwMap.servo.get("rightWobbleGoal");
+        //leftWobbleGoal = hwMap.servo.get("leftWobbleGoal");
+        //rightWobbleGoal = hwMap.servo.get("rightWobbleGoal");
 
         //Intake
         intakeMotor = hwMap.dcMotor.get("intake");
+        intakeMotor.setDirection(DcMotor.Direction.REVERSE);
 
 
     }

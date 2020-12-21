@@ -32,6 +32,12 @@ public class Teleop extends LinearOpMode
 
             robot.setIntakePower(gamepad1.right_trigger);
             //Setting power for intake to the right trigger
+             if (gamepad1.right_trigger<.01) {
+
+
+                 robot.setIntakePower(-gamepad1.left_trigger);
+             }
+
 
 
         }
