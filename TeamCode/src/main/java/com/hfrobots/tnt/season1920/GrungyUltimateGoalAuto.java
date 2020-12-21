@@ -357,9 +357,9 @@ public class GrungyUltimateGoalAuto extends OpMode {
                         trajectoryBuilder.forward(82);
 
                         if(currentAlliance == Constants.Alliance.RED) {
-                            trajectoryBuilder.strafeLeft(24);
+                            trajectoryBuilder.strafeLeft(28);
                         } else {
-                            trajectoryBuilder.strafeRight(24);
+                            trajectoryBuilder.strafeRight(24); //blue Needs testing
                         }
                         break;
                     case C:
