@@ -243,9 +243,8 @@ public class Hardware {
 
     }
 
-}
 
-     * Sets the power of the intake motor to a given power
+     /** Sets the power of the intake motor to a given power
      * @param power motor power to which the intake motor will be set
      * */
     public void setIntakePower(double power)
