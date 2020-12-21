@@ -29,7 +29,9 @@ public class Teleop extends LinearOpMode
             telemetry.addData("theta: ", robot.theta);
             telemetry.update();
 
+
             robot.setIntakePower(gamepad1.right_trigger);
+            //Setting power for intake to the right trigger
 
 
         }
