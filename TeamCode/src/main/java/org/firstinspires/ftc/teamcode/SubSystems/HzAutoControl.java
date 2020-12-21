@@ -53,11 +53,15 @@ public class HzAutoControl {
     }
 
     public void runAutoControl(){
-        runMagazineControl();
-        runIntakeControl();
-        runLaunchController();
-        runLauncher();
-        runArm();
+        int counter = 0;
+        while (counter < 5) {
+            runMagazineControl();
+            runIntakeControl();
+            runLaunchController();
+            runLauncher();
+            runArm();
+            counter++;
+        }
     }
 
     public void setMagazineToCollect(){
@@ -157,25 +161,25 @@ public class HzAutoControl {
     public void setLaunchTargetPowerShot1(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT1;
         runAutoControl();
-        runAutoControl();
+        //runAutoControl();
     }
 
     public void setLaunchTargetPowerShot2(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT2;
         runAutoControl();
-        runAutoControl();
+        //runAutoControl();
     }
 
     public void setLaunchTargetPowerShot3(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT3;
         runAutoControl();
-        runAutoControl();
+        //runAutoControl();
     }
 
     public void setLaunchTargetOff(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.OFF;
         runAutoControl();
-        runAutoControl();
+        //runAutoControl();
     }
 
     public void runLaunchController(){
@@ -245,13 +249,13 @@ public class HzAutoControl {
 
     boolean autoRunLauncher = false;
 
-    public void setAutoRunLauncherTrue(){
+    public void setRunLauncherTrue(){
         autoRunLauncher = true;
         runAutoControl();
     }
 
 
-    public void setAutoRunLauncherFalse(){
+    public void setRunLauncherFalse(){
         autoRunLauncher = false;
         runAutoControl();
     }
@@ -274,22 +278,22 @@ public class HzAutoControl {
     }
     AUTO_MOVE_ARM autoMoveArm = AUTO_MOVE_ARM.PARKED;
 
-    public void setAutoMoveArmParked(){
+    public void setMoveArmParked(){
         autoMoveArm = AUTO_MOVE_ARM.PARKED;
         runAutoControl();
     }
 
-    public void setAutoMoveArmHoldUpWobbleRong(){
+    public void setMoveArmHoldUpWobbleRong(){
         autoMoveArm = AUTO_MOVE_ARM.HOLD_UP_WOBBLE_RING;
         runAutoControl();
     }
 
-    public void setAutoMoveArmDropWobbleRing(){
+    public void setMoveArmDropWobbleRing(){
         autoMoveArm = AUTO_MOVE_ARM.DROP_WOBBLE_RING;
         runAutoControl();
     }
 
-    public void setAutoMoveArmPickWobble(){
+    public void setMoveArmPickWobble(){
         autoMoveArm = AUTO_MOVE_ARM.PICK_WOBBLE;
         runAutoControl();
     }

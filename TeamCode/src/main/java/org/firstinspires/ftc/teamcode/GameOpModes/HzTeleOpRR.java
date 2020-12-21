@@ -3,17 +3,16 @@ package org.firstinspires.ftc.teamcode.GameOpModes;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
+import org.firstinspires.ftc.teamcode.SubSystems.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
-import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLaunchController;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
 import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
+import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 
 
 /**
@@ -271,8 +270,9 @@ public class HzTeleOpRR extends LinearOpMode {
 
 
         //***** Arm Debug ****
-        //telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
-        //telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
+        telemetry.addData("armMotor.baseline", hzArm.baselineEncoderCount);
+        telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
+        telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
 
         switch (hzArm.getGripServoState()){
             case OPENED  : {

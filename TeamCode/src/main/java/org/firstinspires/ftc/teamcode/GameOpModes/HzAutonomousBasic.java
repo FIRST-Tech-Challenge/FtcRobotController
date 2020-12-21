@@ -5,8 +5,10 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
+import org.firstinspires.ftc.teamcode.SubSystems.HzAutoControl;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
@@ -16,6 +18,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
 import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
 import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 
+import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
+
 
 /**
  * This opmode demonstrates how one would implement field centric control using
@@ -24,6 +28,10 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
  * rotate the input vector by the current heading before passing it into the inverse kinematics.
  * <p>
  * See lines 42-57.
+ *
+ * setAutoMoveArmPickWobble()
+ * setAutoMoveArmDropWobbleRing()
+ *
  */
 @Autonomous(name = "Hazmat Autonomous Basic test", group = "00-Autonomous")
 public class HzAutonomousBasic extends LinearOpMode {
@@ -31,6 +39,7 @@ public class HzAutonomousBasic extends LinearOpMode {
     public boolean HzDEBUG_FLAG = true;
 
     public HzGamepad hzGamepad;
+    public HzAutoControl hzAutoControl;
     //public GameField hzGameField;
     //public SampleMecanumDrive hzDrive;
     public HzDrive hzDrive;
@@ -61,6 +70,7 @@ public class HzAutonomousBasic extends LinearOpMode {
         hzArm = new HzArm(hardwareMap);
         hzLaunchController = new HzLaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, hzDrive);
         hzGamepad = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
+        hzAutoControl = new HzAutoControl(hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
 
         //hzVuforia = new HzVuforia(hardwareMap);
 
@@ -114,8 +124,37 @@ public class HzAutonomousBasic extends LinearOpMode {
                 telemetry.update();
             }
             hzLaunchController.launchMode = HzLaunchController.LAUNCH_MODE.AUTOMATED;
+            /*
+            AUTONOMOUS COMMAND LIST
+            =======================
+            hzAutoControl.setMoveArmParked();
+            hzAutoControl.setMoveArmPickWobble();
+            hzAutoControl.setMoveArmHoldUpWobbleRong();
+            hzAutoControl.setMoveArmDropWobbleRing();
+
+            hzAutoControl.setMagazineToCollect();
+            hzAutoControl.setMagazineToLaunch();
+
+            hzAutoControl.setIntakeStart();
+            hzAutoControl.setIntakeStop();
+
+            hzAutoControl.setLaunchTargetHighGoal();
+            hzAutoControl.setLaunchTargetPowerShot1();
+            hzAutoControl.setLaunchTargetPowerShot2();
+            hzAutoControl.setLaunchTargetPowerShot3();
+            hzAutoControl.setLaunchTargetOff();
+
+            hzAutoControl.setRunLauncherTrue();
+            hzAutoControl.setRunLauncherFalse();
+
+            hzWait(time);
+        */
+
+            hzAutoControl.setMagazineToLaunch();
 
             while (opModeIsActive() && !parked) {
+
+
 
                 //hzVuforia.deactivateVuforiaTensorFlow();
                 //hzMagazine.moveMagazineToLaunch();
@@ -132,7 +171,18 @@ public class HzAutonomousBasic extends LinearOpMode {
 
                     hzDrive.followTrajectory(traj);
 
-                    hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.HIGH_GOAL;
+                    hzAutoControl.setLaunchTargetHighGoal();
+                    hzAutoControl.setRunLauncherTrue();
+                    hzWait(250);
+                    hzAutoControl.setRunLauncherTrue();
+                    hzWait(250);
+                    hzAutoControl.setRunLauncherTrue();
+                    hzWait(250);
+
+                    hzAutoControl.setLaunchTargetOff();
+                    hzAutoControl.setMagazineToCollect();
+
+                    /*hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.HIGH_GOAL;
                     hzLaunchController.activateLaunchReadinessState = true;
                     hzLaunchController.activateLaunchReadiness();
                     hzLaunchController.runLauncherByDistanceToTarget();
@@ -141,34 +191,17 @@ public class HzAutonomousBasic extends LinearOpMode {
                     hzLauncher.plungeRingToFlyWheel();
                     sleep (250);
                     hzLauncher.plungeRingToFlyWheel();
-
-                    //Launch ring to power shot 1,2,3, (automatic alignment)
-                    /*hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
-                    hzLaunchController.activateLaunchReadinessState = true;
-                    hzLaunchController.runLauncherByDistanceToTarget();
-                    hzLauncher.plungeRingToFlyWheel();
-
-
-                    hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
-                    hzLaunchController.activateLaunchReadinessState = true;
-                    hzLaunchController.runLauncherByDistanceToTarget();
-                    hzLauncher.plungeRingToFlyWheel();
-
-                    hzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT3;
-                    hzLaunchController.activateLaunchReadinessState = true;
-                    hzLaunchController.runLauncherByDistanceToTarget();
-                    hzLauncher.plungeRingToFlyWheel();
-
-                    hzLaunchController.deactivateLaunchReadiness();
                     */
-
-                    sleep(250);
 
                     //Spline to (!2,36,-90)
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                             .splineTo(new Vector2d(30, 30), -90)
                             .build();
                     hzDrive.followTrajectory(traj);
+
+                    hzAutoControl.setMoveArmDropWobbleRing();
+                    hzWait(500);
+                    hzAutoControl.setMoveArmParked();
 
 /*                    //Drop wobble goal
                     hzArm.moveArmDropWobbleRingPosition();
@@ -205,6 +238,12 @@ public class HzAutonomousBasic extends LinearOpMode {
         HzGameField.poseSetInAutonomous = true;
 
         hzVuforia.deactivateVuforiaTensorFlow();
+    }
+
+    public void hzWait(double time){
+        ElapsedTime timer = new ElapsedTime(MILLISECONDS);
+        timer.reset();
+        while (!isStopRequested() && timer.time() < time){}
     }
 
 
