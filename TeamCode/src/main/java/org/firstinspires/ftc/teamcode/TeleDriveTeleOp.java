@@ -9,7 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 @TeleOp(name = "TeleDriveTeleOp", group = "")
-public class TeleDriveLinearOpModeModified extends LinearOpMode {
+public class TeleDriveTeleOp extends LinearOpMode {
     private DatagramSocket socket;
     private boolean canRunGamepadThread;
     private Thread gamepadHandler;
