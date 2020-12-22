@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="teleop", group="Iterative Opmode")
-@Disabled
+//@Disabled
 public class teleop extends OpMode
 {
     // Declare OpMode members.
@@ -61,6 +61,7 @@ public class teleop extends OpMode
     private DcMotor rightReverse = null;
     private DcMotor leftReverse = null;
     private DcMotor rightFoward = null;
+    private DcMotor intake = null;
 
 
     /*
@@ -77,12 +78,14 @@ public class teleop extends OpMode
         rightReverse = hardwareMap.get(DcMotor.class, "right_reverse_drive");
         leftReverse = hardwareMap.get(DcMotor.class, "left_reverse_drive");
         rightFoward = hardwareMap.get(DcMotor.class, "right_foward_drive");
+        intake = hardwareMap.get(DcMotor.class, "intake_intial");
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFoward.setDirection(DcMotor.Direction.FORWARD);
         rightReverse.setDirection(DcMotor.Direction.REVERSE);
         leftReverse.setDirection(DcMotor.Direction.FORWARD);
         rightFoward.setDirection(DcMotor.Direction.REVERSE);
+        intake.setDirection(DcMotor.Direction.FORWARD);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
@@ -113,6 +116,7 @@ public class teleop extends OpMode
         double rightReversePower;
         double leftReversePower;
         double rightFowardPower;
+        double intakePower;
 
         // Choose to drive using either Tank Mode, or POV Mode
         // Comment out the method that's not used.  The default below is POV.
@@ -128,18 +132,20 @@ public class teleop extends OpMode
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
          leftFowardPower  = -gamepad1.left_stick_y ;
          rightReversePower = -gamepad1.right_stick_y ;
-         leftReversePower = -gamepad2.left_stick_x ;
-         rightFowardPower = -gamepad2.right_stick_x ;
+         leftReversePower = -gamepad1.left_stick_y ;
+         rightFowardPower = -gamepad1.right_stick_y ;
+         intakePower = -gamepad2.left_stick_y ;
 
         // Send calculated power to wheels
         leftFoward.setPower(leftFowardPower);
         rightReverse.setPower(rightReversePower);
         leftReverse.setPower(leftReversePower);
         rightFoward.setPower(rightFowardPower);
+        intake.setPower(intakePower);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftFowardPower, rightReversePower, leftReversePower, rightFowardPower);
+        telemetry.addData("Motors", "leftFoward (%.2f), rightReverse (%.2f), leftReverse (%.2f), intake (%.2f)", leftFowardPower, rightReversePower, leftReversePower, rightFowardPower, intakePower);
     }
 
     /*
