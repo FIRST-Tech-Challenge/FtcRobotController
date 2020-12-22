@@ -251,6 +251,8 @@ public class MecanumWheelDraft extends LinearOpMode {
 
     }
 
+
+
     void stopDriving(){
         robot.frontLeftMotor.setPower(0);
         robot.frontRightMotor.setPower(0);
@@ -265,18 +267,21 @@ public class MecanumWheelDraft extends LinearOpMode {
 
     void strafeLeft(double pwr, Orientation target) {  //added int pwr to reduce initial power
         //Get the current orientation
+
+        Orientation targetOrient;
+        targetOrient = target;
+        double targAng = targetOrient.angleUnit.DEGREES.normalize(target.firstAngle);;  // target.angleUnit.DEGREES.normalize(target.firstAngle);
+
+
+
         Orientation currOrient;
         currOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         //Compare the current orientation to the target
         double currAng = currOrient.angleUnit.DEGREES.normalize(currOrient.firstAngle);
-        double targAng = 0.0;  // target.angleUnit.DEGREES.normalize(target.firstAngle);
+
         double error = targAng - currAng;
         double frontLeft, frontRight, backLeft, backRight, max;
-
-        //scale the error so that it is a motor value and
-        //then scale it by a third of the power to make sure it
-        //doesn't dominate the movement
 
         double rChanger = 5;
         double r = (-error / 180) / (pwr * rChanger);
