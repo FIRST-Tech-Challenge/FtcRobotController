@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
-import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
+import org.firstinspires.ftc.teamcode.SubSystems.HzVuforiaStatic;
 import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLaunchController;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
@@ -26,8 +26,8 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
  * <p>
  * See lines 42-57.
  */
-@Autonomous(name = "Hazmat Autonomous Outer", group = "00-Autonomous")
-public class HzAutonomous extends LinearOpMode {
+@Autonomous(name = "Hazmat Autonomous Test", group = "00-Autonomous")
+public class HzAutonomousTest extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
@@ -41,7 +41,7 @@ public class HzAutonomous extends LinearOpMode {
     public HzLauncher hzLauncher;
     public HzArm hzArm;
 
-    public HzVuforia hzVuforia;
+    //public HzVuforia hzVuforia;
     public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
 
     //int playingAlliance = 1; //1 for Red, -1 for Blue
@@ -63,9 +63,8 @@ public class HzAutonomous extends LinearOpMode {
         hzLaunchController = new HzLaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, hzDrive);
         hzGamepad = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
 
-        hzVuforia = new HzVuforia(hardwareMap);
-
-
+        //HzVuforia = new HzVuforia(hardwareMap);
+        HzVuforiaStatic.HzVuforiaStaticInit(hardwareMap);
 
         initialConfiguration();
 
@@ -88,7 +87,7 @@ public class HzAutonomous extends LinearOpMode {
         // Initiate Camera even before Start is pressed.
         //waitForStart();
 
-        hzVuforia.activateVuforiaTensorFlow();
+        HzVuforiaStatic.activateVuforiaTensorFlow();
 
         hzDrive.getLocalizer().setPoseEstimate(startPose);
 
@@ -98,7 +97,7 @@ public class HzAutonomous extends LinearOpMode {
             //Init is pressed at this time, and start is not pressed yet
 
             //Run Vuforia Tensor Flow
-            targetZone = hzVuforia.runVuforiaTensorFlow();
+            targetZone = HzVuforiaStatic.runVuforiaTensorFlow();
 
             switch (targetZone) {
                 case A :
@@ -120,14 +119,13 @@ public class HzAutonomous extends LinearOpMode {
 
             while (opModeIsActive() && !parked) {
 
-                hzVuforia.deactivateVuforiaTensorFlow();
-                hzMagazine.moveMagazineToLaunch();
+                HzVuforiaStatic.deactivateVuforiaTensorFlow();
 
                 if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE &&
                         startPose == HzGameField.BLUE_INNER_START_LINE &&
                         targetZone == HzGameField.TARGET_ZONE.A){
                     hzLauncher.runFlyWheelToTarget(hzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT);
-                    //Start Pose : (TBD, 48.5, ~-55deg)
+                    //Start Pose : (TBD, 48.5, ~-70deg)
                     //Spline to (0,12,0)
                     Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                             .splineTo(new Vector2d(0, 12), 0)
@@ -174,9 +172,7 @@ public class HzAutonomous extends LinearOpMode {
 
                 }
 
-
-
-                //Move to Launching Position
+                //Move to Parked
 
                 parked = true;
 
@@ -192,7 +188,7 @@ public class HzAutonomous extends LinearOpMode {
         HzGameField.currentPose = hzDrive.getPoseEstimate();
         HzGameField.poseSetInAutonomous = true;
 
-        hzVuforia.deactivateVuforiaTensorFlow();
+        HzVuforiaStatic.deactivateVuforiaTensorFlow();
     }
 
 
@@ -257,6 +253,7 @@ public class HzAutonomous extends LinearOpMode {
         sleep(500);
     }
 
+
     /**
      * Method to add debug messages. Update as telemetry.addData.
      * Use public attributes or methods if needs to be called here.
@@ -272,9 +269,9 @@ public class HzAutonomous extends LinearOpMode {
         telemetry.addData("Drive Mode : ", hzDrive.driveMode);
         telemetry.addData("PoseEstimate :", hzDrive.poseEstimate);
 
-        //telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
+        //telemetry.addData("Visible Target : ", HzVuforia1.visibleTargetName);
         // Print pose to telemetry
-        //telemetry.addData("PoseVuforia :",hzVuforia1.poseVuforia);
+        //telemetry.addData("PoseVuforia :",HzVuforia1.poseVuforia);
 
         //******* Magazine Debug ********
         switch (hzMagazine.getMagazinePosition()) {

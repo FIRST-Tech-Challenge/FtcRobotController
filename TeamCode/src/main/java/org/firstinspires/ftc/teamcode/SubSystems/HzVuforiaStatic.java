@@ -27,10 +27,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.TestingOpModes;
+package org.firstinspires.ftc.teamcode.SubSystems;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -41,13 +41,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.SubSystems.HzChassisClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
@@ -86,19 +87,23 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  */
 
 
-@TeleOp(name="TestOpMode : Vuforia Nav Webcam TeleOp", group ="TestOpMode")
-//@Disabled
-public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
+public class HzVuforiaStatic {
 
-    //*****From : HazmatTeleOpMode
-    public boolean HzDEBUG_FLAG = true;
-
-    HzGamepadClassic hzGamepad;
-    HzChassisClassic hzChassisClassic;
+    public enum VUFORIA_STATE{
+        TFOD_INIT,
+        TFOD_ACTIVE,
+        TFOD_RUNNING,
+        NAVIGATION_INIT,
+        NAVIGATION_ACTIVE,
+        NAVIGATION_RUNNING,
+        INACTIVE
+    }
+    public static VUFORIA_STATE vuforiaState = VUFORIA_STATE.INACTIVE;
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false  ;
+
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -125,32 +130,59 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
     private static final float quadField  = 36 * mmPerInch;
 
     // Class Members
-    private OpenGLMatrix lastLocation = null;
-    private VuforiaLocalizer vuforia = null;
+    private static OpenGLMatrix lastLocation = null;
+    private static VuforiaLocalizer vuforia = null;
 
     /**
      * This is the webcam we are to use. As with other hardware devices such as motors and
      * servos, this device is identified using the robot configuration tool in the FTC application.
      */
-    WebcamName webcamName = null;
+    public static WebcamName webcamName = null;
 
-    private boolean targetVisible = false;
-    private float phoneXRotate    = 0;
-    private float phoneYRotate    = 0;
-    private float phoneZRotate    = 0;
+    public static boolean targetVisible = false;
+    private static float phoneXRotate    = 0;
+    private static float phoneYRotate    = 0;
+    private static float phoneZRotate    = 0;
 
-    @Override public void runOpMode() {
-        //Instantiate Subsystems : Chassis, Arm, Intake, Gamepad1
-        hzChassisClassic = new HzChassisClassic(hardwareMap);
+    public static VuforiaLocalizer.Parameters parameters;
 
-        hzGamepad = new HzGamepadClassic(gamepad1, this);
+    public static VuforiaTrackables targetsUltimateGoal;
+    public static VuforiaTrackable blueTowerGoalTarget;
+    public static VuforiaTrackable redTowerGoalTarget;
+    public static VuforiaTrackable redAllianceTarget;
+    public static VuforiaTrackable blueAllianceTarget;
+    public static VuforiaTrackable frontWallTarget;
 
-        telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
+    public static List<VuforiaTrackable> allTrackables;
 
+    public static String visibleTargetName = "";
+
+    public static Pose2d poseVuforia = new Pose2d (0,0,0);
+    public static Pose2d vuforiaLeftCameraCorrection = new Pose2d( -3.75,-3.75, Math.PI);
+    public static Pose2d vuforiaRightCameraCorrection = new Pose2d( 3.75,3.75, Math.PI);
+    public static double vuforiaFirstAngle = 0;
+    public static double vuforiaSecondAngle = 0;
+    public static double vuforiaThirdAngle = 0;
+
+    //Tensor Flow parameters
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Quad";
+    private static final String LABEL_SECOND_ELEMENT = "Single";
+
+    private static TFObjectDetector tfod;
+
+    /**
+     * Initialize the Vuforia localization engine.
+     */
+    public static void HzVuforiaStaticInit(HardwareMap hardwareMap) {
         /*
          * Retrieve the camera we are to use.
          */
-        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+            webcamName = hardwareMap.get(WebcamName.class, "Webcam_l");
+        } else {
+            webcamName = hardwareMap.get(WebcamName.class, "Webcam_r");
+        }
 
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -158,7 +190,7 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
          * If no camera monitor is desired, use the parameter-less constructor instead (commented out below).
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
@@ -174,23 +206,40 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        initTfod(hardwareMap);
+    }
+
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    public static void initTfod(HardwareMap hardwareMap) {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+        vuforiaState = VUFORIA_STATE.TFOD_INIT;
+    }
+
+    public static void setupVuforiaNavigation() {
 
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
-        VuforiaTrackables targetsUltimateGoal = this.vuforia.loadTrackablesFromAsset("UltimateGoal");
-        VuforiaTrackable blueTowerGoalTarget = targetsUltimateGoal.get(0);
+        targetsUltimateGoal = vuforia.loadTrackablesFromAsset("UltimateGoal");
+        blueTowerGoalTarget = targetsUltimateGoal.get(0);
         blueTowerGoalTarget.setName("Blue Tower Goal Target");
-        VuforiaTrackable redTowerGoalTarget = targetsUltimateGoal.get(1);
+        redTowerGoalTarget = targetsUltimateGoal.get(1);
         redTowerGoalTarget.setName("Red Tower Goal Target");
-        VuforiaTrackable redAllianceTarget = targetsUltimateGoal.get(2);
+        redAllianceTarget = targetsUltimateGoal.get(2);
         redAllianceTarget.setName("Red Alliance Target");
-        VuforiaTrackable blueAllianceTarget = targetsUltimateGoal.get(3);
+        blueAllianceTarget = targetsUltimateGoal.get(3);
         blueAllianceTarget.setName("Blue Alliance Target");
-        VuforiaTrackable frontWallTarget = targetsUltimateGoal.get(4);
+        frontWallTarget = targetsUltimateGoal.get(4);
         frontWallTarget.setName("Front Wall Target");
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+        allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(targetsUltimateGoal);
 
         /**
@@ -259,93 +308,165 @@ public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
 
         // Next, translate the camera lens to where it is on the robot.
         // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
-        final float CAMERA_FORWARD_DISPLACEMENT  = 3.75f * mmPerInch;   // eg: Camera is 4 Inches in front of robot-center
-        final float CAMERA_VERTICAL_DISPLACEMENT = 7.5f * mmPerInch;   // eg: Camera is 8 Inches above ground
+        final float CAMERA_FORWARD_DISPLACEMENT  = 0.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot-center
+        final float CAMERA_VERTICAL_DISPLACEMENT = 6.75f * mmPerInch;   // eg: Camera is 8 Inches above ground
         final float CAMERA_LEFT_DISPLACEMENT     = 0.0f *mmPerInch;     // eg: Camera is ON the robot's center line
 
         OpenGLMatrix robotFromCamera = OpenGLMatrix
-                    .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
-                    .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
+                .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
 
         /**  Let all the trackable listeners know where the phone is.  */
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
         }
+        vuforiaState = VUFORIA_STATE.NAVIGATION_INIT;
 
+    }
+
+    public static void activateVuforiaNavigation() {
         // WARNING:
         // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
         // This sequence is used to enable the new remote DS Camera Preview feature to be used with this sample.
         // CONSEQUENTLY do not put any driving commands in this loop.
         // To restore the normal opmode structure, just un-comment the following line:
 
-        //waitForStart();
+        // waitForStart();
 
         // Note: To use the remote camera preview:
         // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
         // Tap the preview window to receive a fresh image.
 
-        //Initialize on press of play
-        hzChassisClassic.initChassis();
-
         targetsUltimateGoal.activate();
-        while (!isStopRequested()) {
-            hzGamepad.runByGamepadInputClassicChassis(hzChassisClassic);
+        vuforiaState = VUFORIA_STATE.NAVIGATION_ACTIVE;
+    }
 
-            // check all the trackable targets to see which one (if any) is visible.
-            targetVisible = false;
-            for (VuforiaTrackable trackable : allTrackables) {
-                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    telemetry.addData("Visible Target", trackable.getName());
-                    targetVisible = true;
+    public static void runVuforiaNavigation() {
+        vuforiaState = VUFORIA_STATE.NAVIGATION_RUNNING;
+        // check all the trackable targets to see which one (if any) is visible.
+        targetVisible = false;
+        for (VuforiaTrackable trackable : allTrackables) {
+            if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+                //telemetry.addData("Visible Target", trackable.getName());
+                visibleTargetName = trackable.getName();
+                targetVisible = true;
 
-                    // getUpdatedRobotLocation() will return null if no new information is available since
-                    // the last time that call was made, or if the trackable is not currently visible.
-                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
-                    if (robotLocationTransform != null) {
-                        lastLocation = robotLocationTransform;
+                // getUpdatedRobotLocation() will return null if no new information is available since
+                // the last time that call was made, or if the trackable is not currently visible.
+                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+                if (robotLocationTransform != null) {
+                    lastLocation = robotLocationTransform;
                     }
-                    break;
-                }
+                break;
             }
-
-            // Provide feedback as to where the robot is located (if we know).
-            if (targetVisible) {
-                // express position (translation) of robot in inches.
-                VectorF translation = lastLocation.getTranslation();
-                telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-
-                // express the rotation of the robot in degrees.
-                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle+90);
-            }
-            else {
-                telemetry.addData("Visible Target", "none");
-            }
-
-            if (HzDEBUG_FLAG) {
-                //printDebugMessages();
-                telemetry.update();
-            }
-
         }
 
+        // Provide feedback as to where the robot is located (if we know).
+        if (targetVisible) {
+            // express position (translation) of robot in inches.
+            VectorF translation = lastLocation.getTranslation();
+            //telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                    //translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+
+            // express the rotation of the robot in degrees.
+            Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, RADIANS);
+            //telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+            vuforiaFirstAngle=rotation.firstAngle;
+            vuforiaSecondAngle=rotation.secondAngle;
+            vuforiaThirdAngle=rotation.thirdAngle;
+            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+                poseVuforia = (new Pose2d(translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, rotation.thirdAngle)).plus(vuforiaLeftCameraCorrection);
+            } else {
+                poseVuforia = (new Pose2d(translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, rotation.thirdAngle)).plus(vuforiaRightCameraCorrection);
+            }
+        }
+        else {
+            //telemetry.addData("Visible Target", "none");
+            visibleTargetName = "none";
+        }
+
+        //telemetry.update();
+     }
+
+    public static void deactivateVuforiaNavigation() {
         // Disable Tracking when we are done;
         targetsUltimateGoal.deactivate();
-    }
-
-    /**
-     * Method to add debug messages. Update as telemetry.addData.
-     * Use public attributes or methods if needs to be called here.
-     */
-    public void printDebugMessages(){
-        //telemetry.setAutoClear(true);
-        telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
-        telemetry.addData("backRightDrive.getCurrentPosition()", hzChassisClassic.backRight.getCurrentPosition());
-        telemetry.addData("backLeftDrive.getCurrentPosition()", hzChassisClassic.backLeft.getCurrentPosition());
-        telemetry.addData("frontRightDrive.getCurrentPosition()", hzChassisClassic.frontRight.getCurrentPosition());
-        telemetry.addData("frontLeftDrive.getCurrentPosition()", hzChassisClassic.frontLeft.getCurrentPosition());
-        telemetry.addData("hzGamepad1.getLeftTrigger()", hzGamepad.getLeftTrigger());
+        vuforiaState = VUFORIA_STATE.INACTIVE;
 
     }
+
+    public static void activateVuforiaTensorFlow(){
+        /**
+         * Activate TensorFlow Object Detection before we wait for the start command.
+         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
+         **/
+        if (tfod != null) {
+            tfod.activate();
+            vuforiaState = VUFORIA_STATE.TFOD_ACTIVE;
+
+            // The TensorFlow software will scale the input images from the camera to a lower resolution.
+            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
+            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
+            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
+            // should be set to the value of the images used to create the TensorFlow Object Detection model
+            // (typically 1.78 or 16/9).
+
+            // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
+            tfod.setZoom(2.5, 1.78);
+        }
+    }
+
+    public static HzGameField.TARGET_ZONE runVuforiaTensorFlow() {
+        vuforiaState = VUFORIA_STATE.TFOD_RUNNING;
+        HzGameField.TARGET_ZONE targetZoneDetected = HzGameField.TARGET_ZONE.UNKNOWN;
+        if (tfod != null) {
+              // getUpdatedRecognitions() will return null if no new information is available since
+             // the last time that call was made.
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                //telemetry.addData("# Object Detected", updatedRecognitions.size());
+                if (updatedRecognitions.size() == 0 ) {
+                    // empty list.  no objects recognized.
+                    //telemetry.addData("TFOD", "No items detected.");
+                    //telemetry.addData("Target Zone", "A");
+                    targetZoneDetected = HzGameField.TARGET_ZONE.A;
+                } else {
+                    // list is not empty.
+                    // step through the list of recognitions and display boundary info.
+                    int i = 0;
+                    for (Recognition recognition : updatedRecognitions) {
+                        //telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                        //telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                        //        recognition.getLeft(), recognition.getTop());
+                        //telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                        //        recognition.getRight(), recognition.getBottom());
+
+                        // check label to see which target zone to go after.
+                        if (recognition.getLabel().equals("Single")) {
+                            //telemetry.addData("Target Zone", "B");
+                            targetZoneDetected =  HzGameField.TARGET_ZONE.B;
+                        } else if (recognition.getLabel().equals("Quad")) {
+                            //telemetry.addData("Target Zone", "C");
+                            targetZoneDetected =  HzGameField.TARGET_ZONE.C;
+                        } else {
+                            //telemetry.addData("Target Zone", "UNKNOWN");
+                            targetZoneDetected = HzGameField.TARGET_ZONE.UNKNOWN;
+                        }
+                    }
+                }
+
+                //telemetry.update();
+
+            }
+        }
+        return targetZoneDetected;
+    }
+
+    public static void deactivateVuforiaTensorFlow(){
+        if (tfod != null) {
+            tfod.shutdown();
+            vuforiaState = VUFORIA_STATE.INACTIVE;
+        }
+    }
+
 }

@@ -2,20 +2,12 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cDevice;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-
-public class Magazine {
-    //public ElapsedTime magazineTimer;
+public class HzMagazine {
     public CRServo magazineServo;
 
     public TouchSensor magazineLaunchTouchSensor;
@@ -29,7 +21,13 @@ public class Magazine {
         AT_ERROR
     }
 
-    public MAGAZINE_POSITION magazinePosition = MAGAZINE_POSITION.AT_ERROR;
+    public enum MOVE_MAGAZINE_TO {
+        COLLECT,
+        LAUNCH
+    }
+    public MOVE_MAGAZINE_TO moveMagazineTo = MOVE_MAGAZINE_TO.COLLECT;
+
+    public MAGAZINE_POSITION magazinePosition = MAGAZINE_POSITION.AT_COLLECT;
     public boolean magazinePositionError = false;
 
     public enum MAGAZINE_TOUCH_SENSORS_STATE {
@@ -40,7 +38,7 @@ public class Magazine {
         TS_ERROR
     }
 
-    public Magazine(HardwareMap hardwareMap) {
+    public HzMagazine(HardwareMap hardwareMap) {
         magazineServo = hardwareMap.crservo.get("mgz_servo");
             magazineLaunchTouchSensor = hardwareMap.touchSensor.get("mgz_launch_ts");
         magazineCollectTouchSensor = hardwareMap.touchSensor.get("mgz_collect_ts");
@@ -50,6 +48,17 @@ public class Magazine {
     public void initMagazine(LinearOpMode opModepassed){
         this.opModepassed = opModepassed;
         senseMagazinePosition();
+        switch (magazinePosition){
+            case AT_LAUNCH:
+                moveMagazineTo = MOVE_MAGAZINE_TO.LAUNCH;
+                moveMagazineToLaunch();
+                break;
+            case AT_COLLECT:
+            case AT_ERROR:
+                moveMagazineTo = MOVE_MAGAZINE_TO.COLLECT;
+                moveMagazineToCollect();
+                break;
+        }
     }
 
     public void senseMagazinePosition(){
@@ -101,13 +110,11 @@ public class Magazine {
         if (magazineCollectTouchSensor.isPressed()) {
             magazineServo.setPower(0.0);
             magazinePosition = MAGAZINE_POSITION.AT_COLLECT;
-            moveMagazineToCollectState = false;
-        }
-
-        if (magazinePosition != MAGAZINE_POSITION.AT_COLLECT) {
+        } else {
             magazineServo.setPower(-0.3);
         }
     }
+
 
     public boolean moveMagazineToLaunchState = false;
 
@@ -115,11 +122,8 @@ public class Magazine {
         if (magazineLaunchTouchSensor.isPressed()) {
             magazineServo.setPower(0.0);
             magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
-            moveMagazineToLaunchState = false;
-        }
-
-        if (magazinePosition != MAGAZINE_POSITION.AT_LAUNCH) {
-            magazineServo.setPower(0.3);
+        } else {
+            magazineServo.setPower(0.4);
         }
     }
 

@@ -3,19 +3,16 @@ package org.firstinspires.ftc.teamcode.GameOpModes;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.SubSystems.Arm;
-import org.firstinspires.ftc.teamcode.SubSystems.GameField;
+import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
+import org.firstinspires.ftc.teamcode.SubSystems.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
+import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
+import org.firstinspires.ftc.teamcode.SubSystems.HzLaunchController;
+import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
+import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
 import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
-import org.firstinspires.ftc.teamcode.SubSystems.Intake;
-import org.firstinspires.ftc.teamcode.SubSystems.LaunchController;
-import org.firstinspires.ftc.teamcode.SubSystems.Launcher;
-import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
-import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
 
 
 /**
@@ -26,23 +23,21 @@ import org.firstinspires.ftc.teamcode.drive.advanced.PoseStorage;
  * <p>
  * See lines 42-57.
  */
-@TeleOp(name = "Hazmat TeleOp RR FieldCentric", group = "00-Teleop")
-public class HzTeleOpRRFieldCentric extends LinearOpMode {
+@TeleOp(name = "Hazmat TeleOp RR", group = "00-Teleop")
+public class HzTeleOpRR extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
     public HzGamepad hzGamepad;
-    //public GameField hzGameField;
-    //public SampleMecanumDrive hzDrive;
     public HzDrive hzDrive;
-    public Magazine hzMagazine;
-    public Intake hzIntake;
-    public LaunchController hzLaunchController;
-    public Launcher hzLauncher;
-    public Arm hzArm;
+    public HzMagazine hzMagazine;
+    public HzIntake hzIntake;
+    public HzLaunchController hzLaunchController;
+    public HzLauncher hzLauncher;
+    public HzArm hzArm;
 
     public HzVuforia hzVuforia1;
-    public Pose2d startPose = GameField.ORIGIN_FIELD;
+    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
     //int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
     //TODO : Create another TeleOp for Red
 
@@ -50,12 +45,12 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
         hzDrive = new HzDrive(hardwareMap);
-        hzMagazine = new Magazine(hardwareMap);
-        hzIntake = new Intake(hardwareMap);
+        hzMagazine = new HzMagazine(hardwareMap);
+        hzIntake = new HzIntake(hardwareMap);
 
-        hzLauncher = new Launcher(hardwareMap);
-        hzArm = new Arm(hardwareMap);
-        hzLaunchController = new LaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, hzDrive);
+        hzLauncher = new HzLauncher(hardwareMap);
+        hzArm = new HzArm(hardwareMap);
+        hzLaunchController = new HzLaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, hzDrive);
         hzGamepad = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
 
         initialConfiguration();
@@ -70,11 +65,13 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
         // Retrieve our pose from the PoseStorage.currentPose static field
         // See AutoTransferPose.java for further details
         //hzDrive.setPoseEstimate(PoseStorage.currentPose);
-        if ( PoseStorage.poseSetInAutonomous == true) {
-            hzDrive.getLocalizer().setPoseEstimate(PoseStorage.currentPose);
+        if ( HzGameField.poseSetInAutonomous == true) {
+            hzDrive.getLocalizer().setPoseEstimate(HzGameField.currentPose);
         } else {
             hzDrive.getLocalizer().setPoseEstimate(startPose);
         }
+
+        //TODO : IF PROGRAM CRASHES GO MANUAL ALL THE TIME
 
         // Initiate Camera even before Start is pressed.
         waitForStart();
@@ -110,81 +107,68 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
 
         }
         //hzVuforia1.deactivateVuforiaNavigation();
-        PoseStorage.poseSetInAutonomous = false;
+        HzGameField.poseSetInAutonomous = false;
     }
 
     public void initialConfiguration(){
         telemetry.setAutoClear(true);
-        ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
         telemetry.addData("Compile time : ", "6:50 : 12/05");
 
         //***** Select Alliance ******
-        telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X, Audience:A)");
+        telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X)");
         telemetry.update();
 
-        timer.reset();
-        while (timer.time() < 10) {
+        while (!isStopRequested()) {
             if (hzGamepad.getButtonBPress()) {
-                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.RED_ALLIANCE;
+                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE;
                 telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
                 break;
             }
             if (hzGamepad.getButtonXPress()) {
-                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
                 break;
             }
-            if (hzGamepad.getButtonAPress()) {
-                GameField.playingAlliance = GameField.PLAYING_ALLIANCE.AUDIENCE;
-                telemetry.addData("Playing Alliance Selected : ", "AUDIENCE");
-                break;
-            }
-            telemetry.addData("10s time : Default Alliance A : %.3f", timer.time());
+            //telemetry.addData("10s time : Default Alliance A :",);
             telemetry.update();
         }
 
         telemetry.update();
-        sleep(1000);
+        sleep(500);
 
         //***** Select Start Pose ******
-        timer.reset();
+        //timer.reset();
         telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
-        while (timer.time() < 10) {
-            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE){
-                telemetry.addData("Default Start Pose : ", "ORIGIN_FIELD");
-                startPose = GameField.ORIGIN_FIELD;
-                break;
-            }
-            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
+        while (!isStopRequested()) {
+            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = GameField.RED_INNER_START_LINE;
+                    startPose = HzGameField.RED_INNER_START_LINE;
                     telemetry.addData("Start Pose : ", "RED_INNER_START_LINE");
                     break;
                 }
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = GameField.RED_OUTER_START_LINE;
+                    startPose = HzGameField.RED_OUTER_START_LINE;
                     telemetry.addData("Start Pose : ", "RED_OUTER_START_LINE");
                     break;
                 }
             }
-            if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = GameField.BLUE_INNER_START_LINE;
+                    startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
                     telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
                     break;
                 }
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = GameField.BLUE_OUTER_START_LINE;
+                    startPose = HzGameField.BLUE_OUTER_START_LINE;
                     telemetry.addData("Start Pose : ", "BLUE_OUTER_START_LINE");
                     break;
                 }
             }
-            telemetry.addData("Start Pose : ", "ORIGIN_FIELD");
-            telemetry.addData("10s Timer : Default Pose : ORIGIN_FIELD : %.3f", timer.time());
+            //telemetry.addData("10s Timer : Default Pose : BLUE_INNER_START_LINE : %.3f", timer.time());
             telemetry.update();
         }
         telemetry.update();
-        sleep(1000);
+        sleep(500);
     }
 
     /**
@@ -195,7 +179,9 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
 
-        telemetry.addData("GameField.playingAlliance : ", GameField.playingAlliance);
+        telemetry.addData("GameField.playingAlliance : ", HzGameField.playingAlliance);
+        telemetry.addData("GameField.poseSetInAutonomous : ", HzGameField.poseSetInAutonomous);
+        telemetry.addData("GameField.currentPose : ", HzGameField.currentPose);
         telemetry.addData("startPose : ", startPose);
 
         //****** Drive debug ******
@@ -256,6 +242,9 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
         telemetry.addData("hzLaunchController.lcTargetVector", hzLaunchController.lcTargetVector);
         telemetry.addData("hzLaunchController.distanceFromTarget : ", hzLaunchController.distanceFromTarget);
         telemetry.addData("hzLaunchController.lclaunchMotorPower : ", hzLaunchController.lclaunchMotorPower);
+        telemetry.addData("hzLauncher.launcherFlyWheelMotor.getPower() : ", hzLauncher.launcherFlyWheelMotor.getPower());
+        telemetry.addData("hzLaunchController.lclaunchMotorVelocity : ", hzLaunchController.lclaunchMotorVelocity);
+        telemetry.addData("hzLauncher.launcherFlyWheelMotor.getVelocity() : ", hzLauncher.launcherFlyWheelMotor.getVelocity());
         telemetry.addData("hzDrive.drivePointToAlign : ", hzDrive.drivePointToAlign);
 
         //******* Launcher Debug *********
@@ -281,8 +270,9 @@ public class HzTeleOpRRFieldCentric extends LinearOpMode {
 
 
         //***** Arm Debug ****
-        //telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
-        //telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
+        telemetry.addData("armMotor.baseline", hzArm.baselineEncoderCount);
+        telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
+        telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
 
         switch (hzArm.getGripServoState()){
             case OPENED  : {

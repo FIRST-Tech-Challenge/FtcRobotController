@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.Magazine;
+import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
@@ -17,12 +17,12 @@ public class Test_Magazine extends LinearOpMode {
     HzGamepadClassic hzGamepadClassic;
 
     //Magazine hzMagazine;
-    Magazine hzMagazine;
+    HzMagazine hzMagazine;
 
     @Override
     public void runOpMode() {
 
-        hzMagazine = new Magazine(hardwareMap);
+        hzMagazine = new HzMagazine(hardwareMap);
 
         hzGamepadClassic = new HzGamepadClassic(gamepad1,this);
 

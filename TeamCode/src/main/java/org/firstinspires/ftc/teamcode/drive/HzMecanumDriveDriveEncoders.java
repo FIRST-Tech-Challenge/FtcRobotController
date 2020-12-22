@@ -41,20 +41,11 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDriveEncoders.kV;
-
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class MecanumDriveDriveEncoders extends MecanumDrive {
+public class HzMecanumDriveDriveEncoders extends MecanumDrive {
     //public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     //public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
@@ -103,7 +94,7 @@ public class MecanumDriveDriveEncoders extends MecanumDrive {
 
     private Pose2d lastPoseOnTurn;
 
-    public MecanumDriveDriveEncoders(HardwareMap hardwareMap) {
+    public HzMecanumDriveDriveEncoders(HardwareMap hardwareMap) {
         super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();

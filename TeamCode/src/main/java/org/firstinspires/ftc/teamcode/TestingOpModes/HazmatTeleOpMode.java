@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.TestingOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.SubSystems.ChassisClassic;
+import org.firstinspires.ftc.teamcode.SubSystems.HzChassisClassic;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
 
 /**
@@ -16,7 +16,7 @@ public class HazmatTeleOpMode extends LinearOpMode {
     public boolean HzDEBUG_FLAG = true;
 
     HzGamepadClassic hzGamepad;
-    ChassisClassic hzChassisClassic;
+    HzChassisClassic hzChassisClassic;
 
 
 
@@ -24,7 +24,7 @@ public class HazmatTeleOpMode extends LinearOpMode {
     public void runOpMode() {
 
         //Instantiate Subsystems : Chassis, Arm, Intake, Gamepad1
-        hzChassisClassic = new ChassisClassic(hardwareMap);
+        hzChassisClassic = new HzChassisClassic(hardwareMap);
 
         hzGamepad = new HzGamepadClassic(gamepad1,this);
 

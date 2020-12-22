@@ -37,20 +37,20 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder.kV;
+import static org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDeadWheelEncoder.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDeadWheelEncoder.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDeadWheelEncoder.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDeadWheelEncoder.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDeadWheelEncoder.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDeadWheelEncoder.kA;
+import static org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDeadWheelEncoder.kStatic;
+import static org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDeadWheelEncoder.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class MecanumDriveDeadWheelsEncoder extends MecanumDrive {
+public class HzMecanumDriveDeadWheelsEncoder extends MecanumDrive {
     //public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     //public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
@@ -101,7 +101,7 @@ public class MecanumDriveDeadWheelsEncoder extends MecanumDrive {
 
     private Pose2d lastPoseOnTurn;
 
-    public MecanumDriveDeadWheelsEncoder(HardwareMap hardwareMap) {
+    public HzMecanumDriveDeadWheelsEncoder(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();

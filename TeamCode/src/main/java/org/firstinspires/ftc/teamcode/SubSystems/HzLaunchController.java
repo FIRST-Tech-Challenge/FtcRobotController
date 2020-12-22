@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-public class LaunchController {
+public class HzLaunchController {
 
     public enum LAUNCH_MODE{
         MANUAL,
@@ -42,7 +42,7 @@ public class LaunchController {
         POWER_SHOT3
     };
     public LAUNCH_TARGET lcTarget = LAUNCH_TARGET.HIGH_GOAL;
-    public Vector2d lcTargetVector = GameField.ORIGIN;
+    public Vector2d lcTargetVector = HzGameField.ORIGIN;
 
     public enum LAUNCHER_ALIGNMENT{
         TARGET_ALIGNED,
@@ -51,6 +51,7 @@ public class LaunchController {
     public LAUNCHER_ALIGNMENT launcherAlignment = LAUNCHER_ALIGNMENT.TARGET_NOT_ALIGNED;
 
     public double distanceFromTarget, lclaunchMotorPower, angleToTarget;
+    public double lclaunchMotorVelocity;
 
     public Servo launchControllerBeaconServo;
 
@@ -61,17 +62,17 @@ public class LaunchController {
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL = 0.8;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE = 0.0;
 
-    public Launcher lcLauncher;
-    public Intake lcIntake;
-    public Magazine lcMagazine;
+    public HzLauncher lcHzLauncher;
+    public HzIntake lcHzIntake;
+    public HzMagazine lcHzMagazine;
     public HzDrive lcDrive;
 
 
-    public LaunchController(HardwareMap hardwareMap, Launcher lcLauncherPassed, Intake lcIntakePassed, Magazine lcMagazinePassed,
-                                 HzDrive lcDrivePassed){
-        lcLauncher = lcLauncherPassed;
-        lcMagazine = lcMagazinePassed;
-        lcIntake = lcIntakePassed;
+    public HzLaunchController(HardwareMap hardwareMap, HzLauncher lcHzLauncherPassed, HzIntake lcHzIntakePassed, HzMagazine lcHzMagazinePassed,
+                              HzDrive lcDrivePassed){
+        lcHzLauncher = lcHzLauncherPassed;
+        lcHzMagazine = lcHzMagazinePassed;
+        lcHzIntake = lcHzIntakePassed;
         lcDrive = lcDrivePassed;
 
         launchControllerBeaconServo = hardwareMap.servo.get("launch_beacon_servo");
@@ -82,14 +83,19 @@ public class LaunchController {
     public LAUNCH_READINESS activateLaunchReadiness() {
         launchActivation = LAUNCH_ACTIVATION.ACTIVATED;
 
-        //lcMagazine.senseMagazinePosition();
-        if (lcIntake.intakeMotorState != Intake.INTAKE_MOTOR_STATE.STOPPED){
-            lcIntake.stopIntakeMotor();
+        if (launchMode == LAUNCH_MODE.MANUAL)  {
+            turnRobotToNormalControl();
         }
-        lcMagazine.moveMagazineToLaunchState = true;
+
+        //lcMagazine.senseMagazinePosition();
+        if (lcHzIntake.intakeMotorState != HzIntake.INTAKE_MOTOR_STATE.STOPPED){
+            lcHzIntake.stopIntakeMotor();
+        }
+        //lcHzMagazine.moveMagazineToLaunchState = true;
+        lcHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.LAUNCH;
 
 
-        if (lcMagazine.magazinePosition == Magazine.MAGAZINE_POSITION.AT_LAUNCH){
+        if (lcHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_LAUNCH){
             activateLaunchReadinessState = false;
             launchReadiness = LAUNCH_READINESS.READY;
         } else {
@@ -98,84 +104,104 @@ public class LaunchController {
 
         //gpVuforia.identifyCurrentLocation();
 
-        determineLaunchTarget();
-        if (launchMode == LAUNCH_MODE.AUTOMATED)  turnRobotToTarget();
-        runLauncherByDistanceToTarget();
+        //TODO : IN MANUAL MODE DONT REPEND ON LOCATION AT ALL. FIX POWER TO A FIXED VALUE
+
+        if (launchMode == LAUNCH_MODE.AUTOMATED && launchReadiness == LAUNCH_READINESS.READY)  {
+            determineLaunchTarget();
+            turnRobotToTarget();
+            runLauncherByDistanceToTarget();
+        }
+
+        //TODO : IN MANUAL MODE DONT REPEND ON LOCATION AT ALL. FIX POWER TO A FIXED VALUE
+        if (launchMode == LAUNCH_MODE.MANUAL && launchReadiness == LAUNCH_READINESS.READY) {
+            if (lcTarget == LAUNCH_TARGET.HIGH_GOAL){
+                //lcHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_HIGH_GOAL);
+                lclaunchMotorVelocity = HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
+                lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
+            }
+            if (lcTarget == LAUNCH_TARGET.POWER_SHOT1 ||
+                    lcTarget ==LAUNCH_TARGET.POWER_SHOT2 ||
+                    lcTarget == LAUNCH_TARGET.POWER_SHOT3) {
+                //lcHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
+                lclaunchMotorVelocity = HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
+                lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
+            }
+        }
         return launchReadiness;
     }
 
     public boolean deactivateLaunchReadinessState = false;
 
     public void deactivateLaunchReadiness(){
-        launchActivation = LaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
-        lcLauncher.stopFlyWheel();
+        launchActivation = HzLaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
+        lcHzLauncher.stopFlyWheel();
         turnRobotToNormalControl();
         deactivateLaunchReadinessState = false;
     }
 
     public void runLauncherByDistanceToTarget(){
         getDistanceFromTarget();
-        setLaunchMotorPower();
-        lcLauncher.runFlyWheelToTarget(lclaunchMotorPower);
+        setLaunchMotorVelocity();
+        lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
     }
 
     public void determineLaunchTarget(){
         //determineLaunchTarget : Determine the launch target based on current zone of the robot
         //and Y,X,A,B button pressed. Returns launchTargetSelected
-        if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+        if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
             switch (lcTarget) {
                 case HIGH_GOAL:
-                    lcDrive.drivePointToAlign = GameField.BLUE_TOWER_GOAL;
-                    lcTargetVector = GameField.BLUE_TOWER_GOAL;
+                    lcDrive.drivePointToAlign = HzGameField.BLUE_TOWER_GOAL;
+                    lcTargetVector = HzGameField.BLUE_TOWER_GOAL;
                     break;
                 case MID_GOAL:
-                    lcDrive.drivePointToAlign = GameField.RED_TOWER_GOAL;
-                    lcTargetVector = GameField.RED_TOWER_GOAL;
+                    lcDrive.drivePointToAlign = HzGameField.RED_TOWER_GOAL;
+                    lcTargetVector = HzGameField.RED_TOWER_GOAL;
                     break;
                 case LOW_GOAL:
-                    lcDrive.drivePointToAlign = GameField.BLUE_TOWER_GOAL;
-                    lcTargetVector = GameField.BLUE_TOWER_GOAL;
+                    lcDrive.drivePointToAlign = HzGameField.BLUE_TOWER_GOAL;
+                    lcTargetVector = HzGameField.BLUE_TOWER_GOAL;
                     break;
                 case POWER_SHOT1:
-                    lcDrive.drivePointToAlign = GameField.BLUE_POWERSHOT1;
-                    lcTargetVector = GameField.BLUE_POWERSHOT1;
+                    lcDrive.drivePointToAlign = HzGameField.BLUE_POWERSHOT1;
+                    lcTargetVector = HzGameField.BLUE_POWERSHOT1;
                     break;
                 case POWER_SHOT2:
-                    lcDrive.drivePointToAlign = GameField.BLUE_POWERSHOT2;
-                    lcTargetVector = GameField.BLUE_POWERSHOT2;
+                    lcDrive.drivePointToAlign = HzGameField.BLUE_POWERSHOT2;
+                    lcTargetVector = HzGameField.BLUE_POWERSHOT2;
                     break;
                 case POWER_SHOT3:
-                    lcDrive.drivePointToAlign = GameField.BLUE_POWERSHOT3;
-                    lcTargetVector = GameField.BLUE_POWERSHOT3;
+                    lcDrive.drivePointToAlign = HzGameField.BLUE_POWERSHOT3;
+                    lcTargetVector = HzGameField.BLUE_POWERSHOT3;
                     break;
             }
         }
 
-        if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
+        if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
             switch (lcTarget) {
                 case HIGH_GOAL:
-                    lcDrive.drivePointToAlign = GameField.RED_TOWER_GOAL;
-                    lcTargetVector = GameField.RED_TOWER_GOAL;
+                    lcDrive.drivePointToAlign = HzGameField.RED_TOWER_GOAL;
+                    lcTargetVector = HzGameField.RED_TOWER_GOAL;
                     break;
                 case MID_GOAL:
-                    lcDrive.drivePointToAlign = GameField.BLUE_TOWER_GOAL;
-                    lcTargetVector = GameField.BLUE_TOWER_GOAL;
+                    lcDrive.drivePointToAlign = HzGameField.BLUE_TOWER_GOAL;
+                    lcTargetVector = HzGameField.BLUE_TOWER_GOAL;
                     break;
                 case LOW_GOAL:
-                    lcDrive.drivePointToAlign = GameField.RED_TOWER_GOAL;
-                    lcTargetVector = GameField.RED_TOWER_GOAL;
+                    lcDrive.drivePointToAlign = HzGameField.RED_TOWER_GOAL;
+                    lcTargetVector = HzGameField.RED_TOWER_GOAL;
                     break;
                 case POWER_SHOT1:
-                    lcDrive.drivePointToAlign = GameField.RED_POWERSHOT1;
-                    lcTargetVector = GameField.RED_POWERSHOT1;
+                    lcDrive.drivePointToAlign = HzGameField.RED_POWERSHOT1;
+                    lcTargetVector = HzGameField.RED_POWERSHOT1;
                     break;
                 case POWER_SHOT2:
-                    lcDrive.drivePointToAlign = GameField.RED_POWERSHOT2;
-                    lcTargetVector = GameField.RED_POWERSHOT2;
+                    lcDrive.drivePointToAlign = HzGameField.RED_POWERSHOT2;
+                    lcTargetVector = HzGameField.RED_POWERSHOT2;
                     break;
                 case POWER_SHOT3:
-                    lcDrive.drivePointToAlign = GameField.RED_POWERSHOT3;
-                    lcTargetVector = GameField.RED_POWERSHOT3;
+                    lcDrive.drivePointToAlign = HzGameField.RED_POWERSHOT3;
+                    lcTargetVector = HzGameField.RED_POWERSHOT3;
                     break;
             }
         }
@@ -233,20 +259,23 @@ public class LaunchController {
                 + Math.pow(lcTargetVector.getY()-lcTargetVector.getY(), 2));*/
     }
 
-    public void setLaunchMotorPower() {
+    public void setLaunchMotorVelocity() {
         if (distanceFromTarget > 66 && distanceFromTarget < 138) {
             switch (lcTarget) {
                 case POWER_SHOT1:
                 case POWER_SHOT2:
                 case POWER_SHOT3:
-                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.72, 0.80);
+                    //lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.66, 0.74);
+                    lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1550, 0.66, 1740);
                     break;
                 case HIGH_GOAL:
-                    lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.76, 0.84);
+                    //lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.70, 0.78);
+                    lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1560, 1640, 1830);
                     break;
             }
         } else {
-            lclaunchMotorPower = 0.0;
+            //lclaunchMotorPower = 0.0;
+            lclaunchMotorVelocity = 0;
         }
 
     }
