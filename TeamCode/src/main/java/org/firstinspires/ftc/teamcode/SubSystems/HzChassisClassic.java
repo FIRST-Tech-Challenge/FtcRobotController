@@ -25,7 +25,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * @ChassisAutoMethods : turnRobotByAngle()
  */
 
-public class ChassisClassic {
+public class HzChassisClassic {
 
     //Declare Chassis Motor and configurations
     public DcMotor frontLeft;
@@ -53,7 +53,7 @@ public class ChassisClassic {
      * Initialize Robot to right component modes. <BR>
      * @param hardwareMap HardwareMap to be setup on Hub1
      */
-    public ChassisClassic(HardwareMap hardwareMap) {
+    public HzChassisClassic(HardwareMap hardwareMap) {
         //Map DCMotors from configuration
         frontLeft = hardwareMap.dcMotor.get("flmotor");
         frontRight = hardwareMap.dcMotor.get("frmotor");

@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.TestingOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.SubSystems.Arm;
+import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
 
 /**
@@ -15,15 +15,15 @@ public class Test_Arm extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
-    HzGamepadClassic hzGamepadClassic;
-    Arm hzArm;
+    HzGamepadClassic hzGamepad;
+    HzArm hzArm;
 
     public int keyCount = 0;
 
     @Override
     public void runOpMode() {
-        hzArm = new Arm(hardwareMap);
-        hzGamepadClassic = new HzGamepadClassic(gamepad1,this);
+        hzArm = new HzArm(hardwareMap);
+        hzGamepad = new HzGamepadClassic(gamepad1,this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 
@@ -40,29 +40,33 @@ public class Test_Arm extends LinearOpMode {
             //Arm Rotation
             //COMMENT THIS LINE OUT TO TEST KEY PAD ONLY.
             //hzArm.moveArmByTrigger(hzGamepadClassic.getLeftTrigger(), this);
-            hzArm.moveArmByTrigger(hzGamepadClassic.getLeftTrigger());
 
-            if (hzGamepadClassic.getButtonYPress()) {
+
+            if (hzGamepad.getButtonYPress()) {
                 hzArm.moveArmParkedPosition();
-                }
-
-            if (hzGamepadClassic.getButtonBPress()) {
-                hzArm.moveArmDropWobbleGoalPosition();
             }
 
-            if (hzGamepadClassic.getButtonAPress()) {
-                hzArm.moveArmHoldWobbleRingPosition();
+            if (hzGamepad.getButtonBPress()) {
+                hzArm.moveArmHoldUpWobbleRingPosition();
             }
 
-            if (hzGamepadClassic.getButtonXPress()) {
-                hzArm.moveArmRingPosition();
+            if (hzGamepad.getButtonAPress()) {
+                hzArm.moveArmPickWobblePosition();
             }
 
+            if (hzGamepad.getButtonXPress()) {
+                hzArm.moveArmPickRingPosition();
+            }
+
+            //gpArm.moveArmByTrigger(getLeftTrigger());
+            if (hzGamepad.getLeftTriggerPress()) {
+                hzArm.moveArmByTrigger();
+            }
             //Toggle Arm Grip actions
-            if (hzGamepadClassic.getLeftBumperPress()) {
-                if(hzArm.getGripServoState() == Arm.GRIP_SERVO_STATE.OPENED) {
+            if (hzGamepad.getLeftBumperPress()) {
+                if(hzArm.getGripServoState() == HzArm.GRIP_SERVO_STATE.OPENED) {
                     hzArm.closeGrip();
-                } else if(hzArm.getGripServoState() == Arm.GRIP_SERVO_STATE.CLOSED) {
+                } else if(hzArm.getGripServoState() == HzArm.GRIP_SERVO_STATE.CLOSED) {
                     hzArm.openGrip();
                 }
             }
@@ -98,22 +102,27 @@ public class Test_Arm extends LinearOpMode {
         telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
 
         telemetry.addData("armGripServo.getCurrentPosition()", hzArm.armGripServo.getPosition());
+        telemetry.addData("hzGamepad.getLeftTriggerPress()", hzGamepad.getLeftTriggerPress());
 
         switch (hzArm.getCurrentArmPosition()){
-            case ARM_PARKED_POSITION : {
-                telemetry.addData("hzArm.getCurrentArmPosition()", "ARM_MOTOR_PARKED_POSITION");
+            case PARKED: {
+                telemetry.addData("hzArm.getCurrentArmPosition()", "PARKED");
                 break;
             }
-            case ARM_DROP_WOBBLE_GOAL_POSITION : {
-                telemetry.addData("hzArm.getCurrentArmPosition()", "ARM_DROP_WOBBLE_GOAL_POSITION");
+            case DROP_WOBBLE_RING: {
+                telemetry.addData("hzArm.getCurrentArmPosition()", "DROP_WOBBLE_RING");
                 break;
             }
-            case ARM_HOLD_WOBBLE_GOAL_POSITION : {
-                telemetry.addData("hzArm.getCurrentArmPosition()", "ARM_HOLD_WOBBLE_GOAL_POSITION");
+            case HOLD_UP_WOBBLE_RING: {
+                telemetry.addData("hzArm.getCurrentArmPosition()", "HOLD_UP_WOBBLE_RING");
                 break;
             }
-            case ARM_RING_POSITION : {
-                telemetry.addData("hzArm.getCurrentArmPosition()", "ARM_RING_POSITION");
+            case PICK_WOBBLE:{
+                telemetry.addData("hzArm.getCurrentArmPosition()", "PICK_WOBBLE");
+                break;
+            }
+            case PICK_RING: {
+                telemetry.addData("hzArm.getCurrentArmPosition()", "PICK_RING");
                 break;
             }
         }

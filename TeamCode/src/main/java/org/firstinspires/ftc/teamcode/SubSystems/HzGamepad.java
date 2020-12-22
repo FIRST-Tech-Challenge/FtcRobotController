@@ -28,14 +28,13 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class HzGamepad {
 
     //Create gamepad object reference to connect to gamepad1
-    public Gamepad gpGamepad1;
+    public Gamepad gpGamepad;
     public HzDrive gpDrive;
-    public Magazine gpMagazine;
-    public Intake gpIntake;
-    public LaunchController gpLaunchController;
-    public Launcher gpLauncher;
-    public Arm gpArm;
-    public GameField.PLAYING_ALLIANCE playingAlliance;
+    public HzMagazine gpHzMagazine;
+    public HzIntake gpHzIntake;
+    public HzLaunchController gpHzLaunchController;
+    public HzLauncher gpHzLauncher;
+    public HzArm gpHzArm;
 
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
@@ -45,36 +44,25 @@ public class HzGamepad {
      */
     public HzGamepad(Gamepad gamepadPassed,
                      HzDrive gpDrivePassed,
-                     Magazine gpMagazinePassed,
-                     Intake gpIntakePassed,
-                     LaunchController gpLaunchControllerPassed,
-                     Launcher gpLauncherPassed,
-                     Arm gpArmPassed) {
-        gpGamepad1 = gamepadPassed;
+                     HzMagazine gpHzMagazinePassed,
+                     HzIntake gpHzIntakePassed,
+                     HzLaunchController gpHzLaunchControllerPassed,
+                     HzLauncher gpHzLauncherPassed,
+                     HzArm gpHzArmPassed) {
+        gpGamepad = gamepadPassed;
         gpDrive = gpDrivePassed;
-        gpMagazine = gpMagazinePassed;
-        gpIntake = gpIntakePassed;
-        gpLaunchController = gpLaunchControllerPassed;
-        gpLauncher = gpLauncherPassed;
-        gpArm = gpArmPassed;
+        gpHzMagazine = gpHzMagazinePassed;
+        gpHzIntake = gpHzIntakePassed;
+        gpHzLaunchController = gpHzLaunchControllerPassed;
+        gpHzLauncher = gpHzLauncherPassed;
+        gpHzArm = gpHzArmPassed;
     }
 
     public void runByGamepad(){
-        /*    if(getLeftTrigger()>0.5){}*/
-        /*    if (getLeftBumperPress()) {}*/
-        /*    if (getRightBumperPress()) {}*/
-        /*    if (getButtonXPress()) {}*/
-        /*    if (getButtonBPress()){}*/
-        /*    if (getButtonAPress()){}*/
-        /*    if (getButtonYPress()){}*/
-        /*    if (getDpad_upPress()){}*/
-        /*    if (getDpad_downPress()){}*/
-
         runMagazineControl();
         runIntakeControl();
         runLaunchController();
         runLauncher();
-        //Run Drive based on gamePad Left stick and right stick
         runByGamepadRRDriveModes();
         runArm();
     }
@@ -82,159 +70,208 @@ public class HzGamepad {
 
     // RR Drive Train
     public void runByGamepadRRDriveModes(/*HzDrive gpDrive, int playingAlliance*/) {
+
+        if (HzVuforiaStatic.vuforiaState == HzVuforiaStatic.VUFORIA_STATE.NAVIGATION_RUNNING &&
+                HzVuforiaStatic.targetVisible){
+            gpDrive.setPoseEstimate(HzVuforiaStatic.poseVuforia);
+        }
         gpDrive.poseEstimate = gpDrive.getPoseEstimate();
 
-        gpDrive.driveType = HzDrive.DriveType.FIELD_CENTRIC;
+        gpDrive.driveType = HzDrive.DriveType.ROBOT_CENTRIC;
 
         if (gpDrive.driveType == HzDrive.DriveType.ROBOT_CENTRIC){
             gpDrive.gamepadInput = new Vector2d(
                     -turboMode(getLeftStickY()) ,
                     -turboMode(getLeftStickX())
-            );//.rotated(-gpDrive.poseEstimate.getHeading());
+            );
         };
 
         if (gpDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
-            if (playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE) { // Audience
+            /*if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE) { // Audience
                 gpDrive.gamepadInput = new Vector2d(
                         -turboMode(getLeftStickY()),
                         -turboMode(getLeftStickX())
-                );//.rotated(-gpDrive.poseEstimate.getHeading());
-            }
+                ).rotated(-gpDrive.poseEstimate.getHeading());
+            }*/
 
-            if (playingAlliance == GameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
+            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
                 gpDrive.gamepadInput = new Vector2d(
                         turboMode(getLeftStickX()),
                         -turboMode(getLeftStickY())
-                );//.rotated(-gpDrive.poseEstimate.getHeading());
-                };
+                ).rotated(-gpDrive.poseEstimate.getHeading());
+            };
 
-            if (playingAlliance == GameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
+            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) { // Blue Alliance
                 gpDrive.gamepadInput = new Vector2d(
                         -turboMode(getLeftStickX()),
                         turboMode(getLeftStickY())
-                );//.rotated(-gpDrive.poseEstimate.getHeading());
+                ).rotated(-gpDrive.poseEstimate.getHeading());
             };
-            gpDrive.gamepadInput.rotated(-gpDrive.poseEstimate.getHeading());
         }
         gpDrive.gamepadInputTurn = -turboMode(getRightStickX());
 
-        //TODO : AMJAD : LaunchController to be invoked here to invoke drive mode and point to align
-        //drivePointToAlign = Target Vector;
-        //drivePointToAlign = BLUE_TOWER_GOAL;
-
-        //gpDrive.driveTrainFieldCentric();
         gpDrive.driveTrainPointFieldModes();
 
     }
 
     public void runMagazineControl(){
-        //****Magazine Actions****
-        gpMagazine.senseMagazineRingStatus();;
-        if (gpMagazine.isMagazineFull()) {
-            gpIntake.stopIntakeMotor();
-            gpMagazine.moveMagazineToLaunch();
+        if (gpHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_COLLECT){
+            gpHzLauncher.stopFlyWheel();
         }
 
-        if (gpMagazine.isMagazineEmpty()) {
-            gpMagazine.moveMagazineToCollect();
-            gpIntake.runIntakeMotor(0.7);
+        switch (gpHzMagazine.moveMagazineTo) {
+            case COLLECT:
+                gpHzMagazine.moveMagazineToCollect();
+                break;
+            case LAUNCH:
+                gpHzMagazine.moveMagazineToLaunch();
+                break;
         }
 
     }
 
+
     public void runIntakeControl(){
+
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
         if (getDpad_downPress()) {
-            if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
-                if(gpMagazine.moveMagazineToCollect()) {
-                    gpIntake.runIntakeMotor(0.7);
-                }
-            } else if(gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
-                gpIntake.stopIntakeMotor();
+            if (gpHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
+                gpHzLaunchController.activateLaunchReadinessState = false;
+                gpHzLaunchController.deactivateLaunchReadinessState = true;
+                gpHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.COLLECT;
+                gpHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.ON;
+                gpHzIntake.intakeReverseButtonState = HzIntake.INTAKE_REVERSE_BUTTON_STATE.OFF;
+            } else if(gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
+                gpHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.OFF;
             }
         }
 
         //Reverse Intake motors and run - in case of stuck state)
-        if (getDpad_upPersistent()) {
-            gpIntake.reverseIntakeMotor(0.5);
-        } else if (gpIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING){
-            gpIntake.stopIntakeMotor();
-        }
-    }
+        //if (getDpad_upPersistent()) {
+        if (getDpad_upPress()) {
+            if (gpHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.REVERSING){
+                gpHzLaunchController.activateLaunchReadinessState = false;
+                gpHzLaunchController.deactivateLaunchReadinessState = true;
 
-    public void runLaunchController(){
-        //High, Middle, Low Goal
-        if (getButtonYPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_HIGH_GOAL);
-        }
-
-        //Power Shot 1
-        if (getButtonXPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_POWER_SHOT1);
-        }
-
-        //Power Shot 2
-        if (getButtonBPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_POWER_SHOT2);
-        }
-
-        //Power Shot 3
-        if (getButtonAPress()) {
-            gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED;
-            gpLaunchController.activateLaunchReadiness(LaunchController.LAUNCH_TARGET.TARGET_POWER_SHOT3);
-        }
-
-        if (gpLaunchController.launchActivation == LaunchController.LAUNCH_ACTIVATION.LAUNCH_ACTIVATED){
-            if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
-                gpLaunchController.launchActivation = LaunchController.LAUNCH_ACTIVATION.LAUNCH_NOT_ACTIVATED;
-                gpLaunchController.turnRobotToNormalControl();
+                gpHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.COLLECT;
+                gpHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.OFF;
+                gpHzIntake.intakeReverseButtonState = HzIntake.INTAKE_REVERSE_BUTTON_STATE.ON;
+                //gpMagazine.shakeMagazine(100);
+            } else if (gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.REVERSING){
+                gpHzIntake.intakeReverseButtonState = HzIntake.INTAKE_REVERSE_BUTTON_STATE.OFF;
             }
         }
 
-        gpLaunchController.indicateLaunchReadiness();
+        if (gpHzIntake.intakeButtonState == HzIntake.INTAKE_BUTTON_STATE.ON &&
+                gpHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_COLLECT){
+            gpHzIntake.runIntakeMotor();
+        } else if (gpHzIntake.intakeButtonState == HzIntake.INTAKE_BUTTON_STATE.OFF &&
+                gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.RUNNING){
+            gpHzIntake.stopIntakeMotor();
+        }
+
+        if (gpHzIntake.intakeReverseButtonState == HzIntake.INTAKE_REVERSE_BUTTON_STATE.ON) {
+                gpHzIntake.reverseIntakeMotor();
+        } else if ((gpHzIntake.intakeReverseButtonState == HzIntake.INTAKE_REVERSE_BUTTON_STATE.OFF &&
+                gpHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.REVERSING) ){
+            gpHzIntake.stopIntakeMotor();
+        }
+
+
+    }
+
+
+    public void runLaunchController(){
+        if (getStartPersistent() && getButtonYPress()) {
+            gpHzLaunchController.toggleModeManualAutomated();
+        }
+
+        if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED) {
+            //High, Middle, Low Goal
+            if (getButtonYPress()) {
+                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.HIGH_GOAL;
+                gpHzLaunchController.activateLaunchReadinessState = true;
+            }
+
+            //Power Shot 1
+            if (getButtonXPress()) {
+                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
+                gpHzLaunchController.activateLaunchReadinessState = true;
+            }
+
+            //Power Shot 2
+            if (getButtonBPress()) {
+                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
+                gpHzLaunchController.activateLaunchReadinessState = true;
+            }
+
+            //Power Shot 3
+            if (getButtonAPress()) {
+                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT3;
+                gpHzLaunchController.activateLaunchReadinessState = true;
+            }
+        }
+
+        if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
+                gpHzLaunchController.launchMode == HzLaunchController.LAUNCH_MODE.AUTOMATED) {
+            gpHzLaunchController.runLauncherByDistanceToTarget();
+            if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
+                gpHzLaunchController.deactivateLaunchReadinessState = true;
+            }
+        }
+
+        if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
+                gpHzLaunchController.launchMode == HzLaunchController.LAUNCH_MODE.MANUAL) {
+            //gpLaunchController.runLauncherByDistanceToTarget();
+            if (gpHzLaunchController.lcTarget == HzLaunchController.LAUNCH_TARGET.HIGH_GOAL) {
+                gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL);
+            } else {
+                gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT);
+            }
+
+            if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
+                gpHzLaunchController.deactivateLaunchReadinessState = true;
+            }
+        }
+
+        if (gpHzLaunchController.deactivateLaunchReadinessState) {
+            gpHzLaunchController.deactivateLaunchReadiness();
+        }
+
+        if (gpHzLaunchController.activateLaunchReadinessState) {
+            gpHzLaunchController.activateLaunchReadiness();
+        }
+
+        gpHzLaunchController.indicateLaunchReadiness();
 
     }
 
     public void runLauncher(){
         if (getRightBumperPress()) {
-            //TODO : AMJAD : Launch Controller should be used to check if status is good to launch
-
-            //AMJAD : moveMagazinetoLaunch should not be called by right bumper,
-            //it is to be done either automatically, or by Y,X,A,B button press.
-            //gpMagazine.moveMagazineToLaunch();
-
-            if (!gpMagazine.isMagazineEmpty()) {
-                gpLauncher.plungeRingToFlyWheel();
+            if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
+                    gpHzLaunchController.launchReadiness == HzLaunchController.LAUNCH_READINESS.READY) {
+                gpHzLauncher.plungeRingToFlyWheel();
             }
-
         }
     }
 
     public void runArm(){
-        gpArm.moveArmByTrigger(getLeftTrigger());
+        if (getLeftTriggerPress()) {
+            gpHzArm.moveArmByTrigger();
+        }
+
+        if (gpHzArm.runArmToLevelState) {
+            gpHzArm.runArmToLevel(gpHzArm.motorPowerToRun);
+        }
+
         //Toggle Arm Grip actions
         if (getLeftBumperPress()) {
-            if(gpArm.getGripServoState() == Arm.GRIP_SERVO_STATE.OPENED) {
-                gpArm.closeGrip();
-            } else if(gpArm.getGripServoState() == Arm.GRIP_SERVO_STATE.CLOSED) {
-                gpArm.openGrip();
+            if(gpHzArm.getGripServoState() == HzArm.GRIP_SERVO_STATE.OPENED) {
+                gpHzArm.closeGrip();
+            } else if(gpHzArm.getGripServoState() == HzArm.GRIP_SERVO_STATE.CLOSED) {
+                gpHzArm.openGrip();
             }
         }
-    }
-
-    // Classic Drive Train
-    public void runByGamepadInputClassicChassis(ChassisClassic gpChassisClassic) {
-        //Run Classic DriveTrain
-        double leftStickX = turboMode(getLeftStickX());
-        double leftStickY = turboMode(getLeftStickY());
-        double rightStickX = turboMode(getRightStickX());
-        double power = Math.hypot(leftStickX, leftStickY);
-        double targetAngle = Math.atan2(leftStickY, leftStickX);
-        double turn = rightStickX;
-        gpChassisClassic.runByGamepadCommand(targetAngle, turn, power);
     }
 
     //*********** KEY PAD MODIFIERS BELOW ***********
@@ -249,6 +286,7 @@ public class HzGamepad {
     boolean gp1LeftBumperLast = false;
     boolean gp1Dpad_upLast = false;
     boolean gp1Dpad_downLast = false;
+    boolean gp1LeftTriggerLast = false;
 
     /**
      * Method to convert linear map from gamepad1 stick input to a cubic map
@@ -288,7 +326,7 @@ public class HzGamepad {
      * @return gpGamepad1.left_stick_x
      */
     public double getLeftStickX() {
-        return gpGamepad1.left_stick_x;
+        return gpGamepad.left_stick_x;
     }
 
     /**
@@ -296,9 +334,9 @@ public class HzGamepad {
      * This is the method to apply any directional modifiers to match to the Y plane of robot.
      * For Hazmat Skystone Robot, Y direction needs to be inverted.
      *
-     * @return gpGamepad1.left_stick_y * (-1)
+     * @return gpGamepad1.left_stick_y
      */
-    public double getLeftStickY() { return gpGamepad1.left_stick_y; }
+    public double getLeftStickY() { return gpGamepad.left_stick_y; }
 
     /**
      * Methods to get the value of gamepad Right stick X to keep turning.
@@ -308,7 +346,7 @@ public class HzGamepad {
      * @return gpGamepad1.right_stick_x
      */
     public double getRightStickX() {
-        return gpGamepad1.right_stick_x;
+        return gpGamepad.right_stick_x;
     }
 
     /**
@@ -319,7 +357,7 @@ public class HzGamepad {
      * @return gpGamepad1.right_trigger
      */
     public double getRightTrigger() {
-        return gpGamepad1.right_trigger;
+        return gpGamepad.right_trigger;
     }
 
     /**
@@ -328,7 +366,16 @@ public class HzGamepad {
      * @return gpGamepad1.right_trigger
      */
     public double getLeftTrigger() {
-        return gpGamepad1.left_trigger;
+        return gpGamepad.left_trigger;
+    }
+
+    public boolean getLeftTriggerPress() {
+        boolean isPressedLeftTrigger = false;
+        if (!gp1LeftTriggerLast && (getLeftTrigger()>0.7)) {
+            isPressedLeftTrigger = true;
+        }
+        gp1LeftTriggerLast = (getLeftTrigger()>0.7);
+        return isPressedLeftTrigger;
     }
 
     /**
@@ -343,10 +390,10 @@ public class HzGamepad {
      */
     public boolean getLeftBumperPress() {
         boolean isPressedLeftBumper = false;
-        if (!gp1LeftBumperLast && gpGamepad1.left_bumper) {
+        if (!gp1LeftBumperLast && gpGamepad.left_bumper) {
             isPressedLeftBumper = true;
         }
-        gp1LeftBumperLast = gpGamepad1.left_bumper;
+        gp1LeftBumperLast = gpGamepad.left_bumper;
         return isPressedLeftBumper;
     }
 
@@ -362,10 +409,10 @@ public class HzGamepad {
      */
     public boolean getRightBumperPress() {
         boolean isPressedRightBumper = false;
-        if (!gp1RightBumperLast && gpGamepad1.right_bumper) {
+        if (!gp1RightBumperLast && gpGamepad.right_bumper) {
             isPressedRightBumper = true;
         }
-        gp1RightBumperLast = gpGamepad1.right_bumper;
+        gp1RightBumperLast = gpGamepad.right_bumper;
         return isPressedRightBumper;
     }
 
@@ -381,10 +428,10 @@ public class HzGamepad {
      */
     public boolean getButtonAPress() {
         boolean isPressedButtonA = false;
-        if (!gp1ButtonALast && gpGamepad1.a) {
+        if (!gp1ButtonALast && gpGamepad.a) {
             isPressedButtonA = true;
         }
-        gp1ButtonALast = gpGamepad1.a;
+        gp1ButtonALast = gpGamepad.a;
         return isPressedButtonA;
     }
 
@@ -400,10 +447,10 @@ public class HzGamepad {
      */
     public boolean getButtonYPress() {
         boolean isPressedButtonY = false;
-        if (!gp1ButtonYLast && gpGamepad1.y) {
+        if (!gp1ButtonYLast && gpGamepad.y) {
             isPressedButtonY = true;
         }
-        gp1ButtonYLast = gpGamepad1.y;
+        gp1ButtonYLast = gpGamepad.y;
         return isPressedButtonY;
     }
 
@@ -419,10 +466,10 @@ public class HzGamepad {
      */
     public boolean getButtonXPress() {
         boolean isPressedButtonX = false;
-        if (!gp1ButtonXLast && gpGamepad1.x) {
+        if (!gp1ButtonXLast && gpGamepad.x) {
             isPressedButtonX = true;
         }
-        gp1ButtonXLast = gpGamepad1.x;
+        gp1ButtonXLast = gpGamepad.x;
         return isPressedButtonX;
     }
 
@@ -438,10 +485,10 @@ public class HzGamepad {
      */
     public boolean getButtonBPress() {
         boolean isPressedButtonB = false;
-        if (!gp1ButtonBLast && gpGamepad1.b) {
+        if (!gp1ButtonBLast && gpGamepad.b) {
             isPressedButtonB = true;
         }
-        gp1ButtonBLast = gpGamepad1.b;
+        gp1ButtonBLast = gpGamepad.b;
         return isPressedButtonB;
     }
 
@@ -460,16 +507,16 @@ public class HzGamepad {
 
         isPressedDpad_up = false;
 
-        if (!gp1Dpad_upLast && gpGamepad1.dpad_up) {
+        if (!gp1Dpad_upLast && gpGamepad.dpad_up) {
             isPressedDpad_up = true;
         }
-        gp1Dpad_upLast = gpGamepad1.dpad_up;
+        gp1Dpad_upLast = gpGamepad.dpad_up;
         return isPressedDpad_up;
 
     }
 
     public boolean getDpad_upPersistent(){
-        return gpGamepad1.dpad_up;
+        return gpGamepad.dpad_up;
     }
 
     /**
@@ -486,12 +533,16 @@ public class HzGamepad {
         boolean isPressedDpad_down;
 
         isPressedDpad_down = false;
-        if (!gp1Dpad_downLast && gpGamepad1.dpad_down) {
+        if (!gp1Dpad_downLast && gpGamepad.dpad_down) {
             isPressedDpad_down = true;
         }
-        gp1Dpad_downLast = gpGamepad1.dpad_down;
+        gp1Dpad_downLast = gpGamepad.dpad_down;
         return isPressedDpad_down;
 
+    }
+
+    public boolean getStartPersistent(){
+        return gpGamepad.start;
     }
 
 

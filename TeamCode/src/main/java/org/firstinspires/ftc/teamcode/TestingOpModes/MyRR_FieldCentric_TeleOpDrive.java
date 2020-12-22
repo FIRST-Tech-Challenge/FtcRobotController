@@ -27,6 +27,8 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
         AUDIENCE
     }
 
+    Vector2d input = new Vector2d(0,0);
+
     @Override
     public void runOpMode() throws InterruptedException {
         // Initialize SampleMecanumDrive
@@ -61,9 +63,11 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
             // Read pose
             Pose2d poseEstimate = drive.getPoseEstimate();
 
+            //AMJAD 11/29/2020 CORRECT SIGNS FOR ALLIANCE AND AUDIENCE DRIVE
+
             if (gamepadLocation == GAMEPAD_LOCATION.AUDIENCE) {
 
-                Vector2d input = new Vector2d(
+                input = new Vector2d(
                         -turboMode(getLeftStickY()) /* TODO : playingalliance modifier*/,
                         -turboMode(getLeftStickX()) /* TODO : playingalliance modifier*/
                 ).rotated(-poseEstimate.getHeading());
@@ -72,27 +76,27 @@ public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
 
             if (gamepadLocation == GAMEPAD_LOCATION.RED_ALLIANCE) {
 
-                Vector2d input = new Vector2d(
-                        -turboMode(getLeftStickX()),
-                        turboMode(getLeftStickY())
+                input = new Vector2d(
+                        turboMode(getLeftStickX()),
+                        -turboMode(getLeftStickY())
                 ).rotated(-poseEstimate.getHeading());
 
 
             };
 
             if (gamepadLocation == GAMEPAD_LOCATION.BLUE_ALLIANCE) {
-                Vector2d input = new Vector2d(
-                        turboMode(getLeftStickX()),
+                input = new Vector2d(
+                        -turboMode(getLeftStickX()),
                         turboMode(getLeftStickY())
                 ).rotated(-poseEstimate.getHeading());
             };
 
             // Create a vector from the gamepad x/y inputs
             // Then, rotate that vector by the inverse of that heading
-            Vector2d input = new Vector2d(
+            /*Vector2d input = new Vector2d(
                     turboMode(getLeftStickY()),
                     turboMode(getLeftStickX())
-            ).rotated(-poseEstimate.getHeading());
+            ).rotated(-poseEstimate.getHeading());*/
 
             // Pass in the rotated input + right stick value for rotation
             // Rotation is not part of the rotated input thus must be passed in separately

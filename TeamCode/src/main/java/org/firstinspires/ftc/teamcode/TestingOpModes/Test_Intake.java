@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
-import org.firstinspires.ftc.teamcode.SubSystems.Intake;
+import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
 
 /**
  * TeleOpMode for Team Hazmat<BR>
@@ -15,11 +15,11 @@ public class Test_Intake extends LinearOpMode {
     public boolean HzDEBUG_FLAG = true;
 
     HzGamepadClassic hzGamepadClassic;
-    Intake hzIntake;
+    HzIntake hzIntake;
 
     @Override
     public void runOpMode() {
-        hzIntake = new Intake(hardwareMap);
+        hzIntake = new HzIntake(hardwareMap);
         hzGamepadClassic = new HzGamepadClassic(gamepad1,this);
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
@@ -38,11 +38,11 @@ public class Test_Intake extends LinearOpMode {
             //TODO : AMJAD : Check if this logic works to keep motor running till Dpad_down is toggled.
             //May need to save state of last time button pressed and runmotor based on button last pressed state
             if (hzGamepadClassic.getDpad_downPress()) {
-                if(hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_STOPPED) {
+                if(hzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.STOPPED) {
                     //if(gpMagazine.moveMagazineToCollect()) {
-                        hzIntake.runIntakeMotor(0.8);
+                        hzIntake.runIntakeMotor();
                     //}
-                } else if(hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_RUNNING) {
+                } else if(hzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
                     hzIntake.stopIntakeMotor();
                 }
             }
@@ -51,8 +51,8 @@ public class Test_Intake extends LinearOpMode {
             //TODO : AMJAD : This probably works, since we want to run the Intake motor in reverse
             // only as long as te Dpad_up remains pressed (different from Dpad_down behavior, which is a toggle)
             if (hzGamepadClassic.getDpad_upPersistent()) {
-                hzIntake.reverseIntakeMotor(0.8);
-            } else if (hzIntake.getIntakeState() == Intake.INTAKE_MOTOR_STATE.INTAKE_MOTOR_REVERSING){
+                hzIntake.reverseIntakeMotor();
+            } else if (hzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.REVERSING){
                 hzIntake.stopIntakeMotor();
             }
 
@@ -75,15 +75,15 @@ public class Test_Intake extends LinearOpMode {
         telemetry.addData("hzGamepad1.getDpad_upPress()", hzGamepadClassic.getDpad_upPress());
         telemetry.addData("intakeMotor.isBusy()", hzIntake.intakeMotor.isBusy());
         switch (hzIntake.getIntakeState()){
-            case INTAKE_MOTOR_RUNNING : {
+            case RUNNING: {
                 telemetry.addData("hzIntake.getIntakeState()", "INTAKE_MOTOR_RUNNING");
                 break;
             }
-            case INTAKE_MOTOR_STOPPED: {
+            case STOPPED: {
                 telemetry.addData("hzIntake.getIntakeState()", "INTAKE_MOTOR_STOPPED");
                 break;
             }
-            case INTAKE_MOTOR_REVERSING: {
+            case REVERSING: {
                 telemetry.addData("hzIntake.getIntakeState()", "INTAKE_MOTOR_REVERSING");
                 break;
             }
