@@ -30,7 +30,7 @@ public class HzArm {
         PICK_RING
     }
 
-    public static int baselineEncoderCount = 130;
+    public static int baselineEncoderCount = 0;//130;
     public static int ARM_PARKED_POSITION_COUNT = 0;
     public static int ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT = -250;//-350 ;
     public static int ARM_DROP_WOBBLE_RING_POSITION_COUNT = -500 ;
@@ -108,19 +108,12 @@ public class HzArm {
 
     public void runArmToLevel(double power){
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        /*int sign = armMotor.getCurrentPosition() < armMotor.getTargetPosition() ? 1 : -1; //Comment Aadi: sign logic is a bit confusing, more elaboration.
-        if (runArmToLevelState = true && (sign*(armMotor.getCurrentPosition() - armMotor.getTargetPosition()) > 0 )) {
-            armMotor.setPower(0.0); //Comment Aadi: The setPower should be 0.1 or 0.2
+        if (runArmToLevelState == true || armMotor.isBusy() == true){
+            armMotor.setPower(power);
             runArmToLevelState = false;
-            return;
         } else {
-            if (!armMotor.isBusy()) {
-                armMotor.setPower(sign * power);
-            }
-        }*/
-
-        armMotor.setPower(power);
-
+            armMotor.setPower(0.0);
+        }
     }
 
     public void moveArmParkedPosition() {
