@@ -306,7 +306,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 304:
                 //Back up behind shot line
-                robot.linearDrive(.5,-24);
+                robot.linearDrive(.5,-52);
                 stateMachineFlow++;
                 break;
             case 305:
