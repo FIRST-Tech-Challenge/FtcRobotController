@@ -4,9 +4,11 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.components.odometry.OdometryGlobalCoordinatePosition;
 import org.firstinspires.ftc.teamcode.support.CoreSystem;
 import org.firstinspires.ftc.teamcode.support.Logger;
@@ -130,6 +132,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private DcMotorEx motorBL;
     private DcMotorEx motorBR;
 
+    private DistanceSensor leftRangeSensor;
+
     // array contains the same wheel assemblies as above variables
     //  and is convenient to use when actions have to be performed on all 4
     public CombinedOrientationSensor orientationSensor;
@@ -153,7 +157,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double curHeading = 0;
     private boolean useScalePower = true;//
     private boolean setImuTelemetry = false;//unless debugging, don't set telemetry for imu
-    private boolean setRangeSensorTelemetry = false;//unless debugging, don't set telemetry for range sensor
+    private boolean setRangeSensorTelemetry = true; //unless debugging, don't set telemetry for range sensor
     private boolean useOdometry = true;
     private boolean normalizeMode = true;
     private boolean showEncoderDetail = false; // enable the chassis encoders
@@ -224,6 +228,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     public DcMotorEx verticalRightEncoder(){ return verticalRightEncoder; }
     public DcMotorEx horizontalEncoder(){ return horizontalEncoder; }
 
+
+
     public double getMecanumForwardRatio() {
         return mecanumForwardRatio;
     }
@@ -263,7 +269,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         init_y_cm = y;
         init_heading = heading;
         if (GPS!=null) {
-            GPS.set_init_pos(x,y,heading);
+            GPS.set_init_pos(x*odo_count_per_cm(),y*odo_count_per_cm(),heading);
         }
         auto_target_y = init_y_cm;
         auto_target_x = init_x_cm;
@@ -483,6 +489,10 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
         if (auto || setImuTelemetry) {
             configure_IMUs(configuration, noReset);
+        }
+
+        if ((auto || setRangeSensorTelemetry)) {
+            leftRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "leftRange");
         }
 
         // register chassis as configurable component
@@ -1036,7 +1046,15 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                         (simulation_mode?"Simulation":(getNormalizeMode()?"Normalized":"Speedy")));
             }
         });
-
+        if (leftRangeSensor != null) {
+            line.addData("rangeL", "%.1f", new Func<Double>() {
+                @Override
+                public Double value() {
+                    // return leftRangeSensor.getDistance(DistanceUnit.CM);
+                    return getDistance(SwerveChassis.Direction.LEFT);
+                }
+            });
+        }
         if (showEncoderDetail) {
             if (motorFL != null) {
                 line.addData("FL", "%d", new Func<Integer>() {
@@ -1095,6 +1113,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                     }
                 });
             }
+
         }
 
         // setupGPSTelemetry(telemetry);
@@ -1162,7 +1181,43 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         }
     }
 
-    public void setupEncoders(Telemetry telemetry) {
+    public void resetOdometry() throws InterruptedException {
+        double dist = getDistance(SwerveChassis.Direction.LEFT);
+        rotateTo(.35, 0, 2); // heading to 0
+        sleep(500);
+        if (dist>0) {
+            GPS.set_x_pos(dist+14); // left range sensor is 14 cm left of the robot center
+        }
+    }
+
+    public double getDistance(SwerveChassis.Direction direction) {
+        double dist = 0;
+        if (Thread.interrupted()) return dist;
+
+        int count = 0;
+        DistanceSensor rangeSensor;
+
+        switch (direction) {
+            case LEFT:
+                rangeSensor = leftRangeSensor;
+                break;
+            default:
+                rangeSensor = null;
+        }
+
+        if (rangeSensor == null)
+            return 0;
+        dist = rangeSensor.getDistance(DistanceUnit.CM);
+        while (dist > maxRange && (++count) < 5) {
+            dist = rangeSensor.getDistance(DistanceUnit.CM);
+        }
+        if (dist > maxRange)
+            dist = maxRange;
+        return dist;
+    }
+
+
+        public void setupEncoders(Telemetry telemetry) {
         Telemetry.Line line = telemetry.addLine();
         if (motorFL != null) {
             line.addData("FL", "%d", new Func<Integer>() {

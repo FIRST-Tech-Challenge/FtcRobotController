@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.components.odometry;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -146,6 +147,23 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         robotGlobalYCoordinatePosition = y;
     }
 
+    public void set_x_pos(double x) {
+//        horizontalEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        horizontalEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        verticalEncoderLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        verticalEncoderLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        verticalEncoderRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        verticalEncoderRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        robotOrientationRadians = Math.toRadians(0);
+//        initRadians = robotOrientationRadians;
+//        verticalRightEncoderWheelPosition = verticalLeftEncoderWheelPosition = normalEncoderWheelPosition = changeInRobotOrientation = 0;
+//        previousVerticalRightEncoderWheelPosition = previousVerticalLeftEncoderWheelPosition = prevNormalEncoderWheelPosition = 0;
+        robotGlobalXCoordinatePosition = x * DEFAULT_COUNTS_PER_INCH / 2.54;
+    }
+
+    public void set_y_pos(double y) {
+        robotGlobalYCoordinatePosition = y;
+    }
     public double leftYEncoder() { return verticalLeftEncoderWheelPosition; }
     public double rightYEncoder() { return verticalRightEncoderWheelPosition; }
     public double XEncoder() { return normalEncoderWheelPosition; }
