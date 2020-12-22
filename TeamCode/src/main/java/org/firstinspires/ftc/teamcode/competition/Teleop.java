@@ -29,14 +29,22 @@ public class Teleop extends LinearOpMode
             telemetry.addData("theta: ", robot.theta);
             telemetry.update();
 
+            if (gamepad1.right_trigger<.01) {
 
-            robot.setIntakePower(gamepad1.right_trigger);
+
+                robot.setIntakePower(-gamepad1.left_trigger);
+
+            }
+            else
+            {
+
+                robot.setIntakePower(gamepad1.right_trigger);
+
+            }
+
+
             //Setting power for intake to the right trigger
-             if (gamepad1.right_trigger<.01) {
 
-
-                 robot.setIntakePower(-gamepad1.left_trigger);
-             }
 
 
             //sets flywheel power to the left trigger

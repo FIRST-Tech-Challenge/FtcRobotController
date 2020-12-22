@@ -118,11 +118,12 @@ public class Hardware {
         leftFront.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         // When motors aren't receiving power, they will attempt to hold their position
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         // left rear
         leftRear = hwMap.get(DcMotorEx.class, "leftRear");
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         // right front
         rightFront = hwMap.get(DcMotorEx.class, "rightFront");
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -130,7 +131,6 @@ public class Hardware {
         // right rear
         rightRear = hwMap.get(DcMotorEx.class, "rightRear");
         rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRear.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Odometry encoder setup
@@ -279,7 +279,7 @@ public class Hardware {
         leftFront.setPower(forward - rotation - sideways);
         leftRear.setPower(forward + rotation - sideways);
         rightFront.setPower(forward + rotation + sideways);
-        rightRear.setPower(forward - rotation + sideways);
+        rightRear.setPower(forward + rotation - sideways);
         //Left Front = +Speed + Turn - Strafe      Right Front = +Speed - Turn + Strafe
         //Left Rear  = +Speed + Turn + Strafe      Right Rear  = +Speed - Turn - Strafe
     }
