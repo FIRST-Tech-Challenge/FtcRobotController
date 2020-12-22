@@ -51,10 +51,15 @@ public class LQRDrive extends LinearOpMode
         waitForStart();
 
 
-        while(!lqr.robotInCircle(24,24,.5)&&opModeIsActive())
+        while(!lqr.robotInCircle(24,0,.5)&&opModeIsActive())
         {
 
-            lqr.runLqrDrive(path,24,24,Math.PI/4);
+            for(double d:lqr.runLqrDrive(path,24,0,0))
+            {
+
+                telemetry.addData("x",d);
+
+            }
             robot.updatePositionRoadRunner();
             telemetry.addData("x: ", robot.x);
             telemetry.addData("y: ", robot.y);

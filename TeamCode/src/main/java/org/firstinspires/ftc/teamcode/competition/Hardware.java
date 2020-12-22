@@ -109,19 +109,19 @@ public class Hardware {
         leftFront.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         // When motors aren't receiving power, they will attempt to hold their position
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         // left rear
         leftRear = hwMap.get(DcMotorEx.class, "leftRear");
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         // right front
         rightFront = hwMap.get(DcMotorEx.class, "rightFront");
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // right rear
         rightRear = hwMap.get(DcMotorEx.class, "rightRear");
         rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRear.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Odometry encoder setup

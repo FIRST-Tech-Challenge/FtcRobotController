@@ -72,7 +72,7 @@ public class LQR extends Application
      * @param yGoal the y position (in inches) for the robot to move to on the field
      * @param thetaGoal the angular position (in degrees) for the robot to move to on the field
      * */
-    public void runLqrDrive(double[][][] path, double xGoal, double yGoal, double thetaGoal)
+    public double[] runLqrDrive(double[][][] path, double xGoal, double yGoal, double thetaGoal)
     {
 
         //get matrix for current angle
@@ -86,14 +86,14 @@ public class LQR extends Application
         byte sign = 1;
         double diff = thetaGoal-robot.theta;
         if(diff<0)
-            diff+=360;
-        if(diff>180)
+            diff+=2*Math.PI;
+        if(diff>Math.PI)
             sign=-1;
-        if(diff>180)
-            diff=360-diff;
+        if(diff>Math.PI)
+            diff=Math.PI*2-diff;
 
         //define state matrix
-        x = new double[]{-xGoal + robot.x,  -yGoal+robot.y, sign*(diff), 0,  0, 0};
+        x = new double[]{-xGoal + robot.x,  -yGoal+robot.y, thetaGoal-sign*(diff), 0,  0, 0};
 
         //multiply x by the gain matrix k
         double[] d = new double[k.length];
@@ -111,14 +111,15 @@ public class LQR extends Application
 
         //scale the motor power bellow 1
         double scale = 1;
-        if (Math.abs(d[0]) > 1 || Math.abs(d[1]) > 1 || Math.abs(d[2]) > 1 || Math.abs(d[3]) > 1)
-            scale = Math.max(Math.max(Math.abs(d[0]), Math.abs(d[1])), Math.max(Math.abs(d[2]), Math.abs(d[3])))/2;
+        if (Math.abs(d[0]) > .25 || Math.abs(d[1]) > .25 || Math.abs(d[2]) > .25 || Math.abs(d[3]) > .25)
+            scale = 4*Math.max(Math.max(Math.abs(d[0]), Math.abs(d[1])), Math.max(Math.abs(d[2]), Math.abs(d[3])))/2;
 
         //run the motors
         robot.leftFront.setPower(d[0]/scale);
-        robot.rightFront.setPower(-d[1]/scale);
+        robot.rightFront.setPower(d[1]/scale);
         robot.leftRear.setPower(d[2]/scale);
-        robot.rightRear.setPower(-d[3]/scale);
+        robot.rightRear.setPower(d[3]/scale);
+        return x;
 
     }
 
