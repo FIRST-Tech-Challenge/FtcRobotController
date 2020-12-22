@@ -145,7 +145,9 @@ public class teleop extends OpMode
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "leftFoward (%.2f), rightReverse (%.2f), leftReverse (%.2f), intake (%.2f)", leftFowardPower, rightReversePower, leftReversePower, rightFowardPower, intakePower);
+        telemetry.addData("Motors",
+                "leftForward (%.2f), rightReverse (%.2f), leftReverse (%.2f), rightForward (%.2f), intake (%.2f)",
+                        leftFowardPower,    rightReversePower,   leftReversePower,    rightFowardPower,   intakePower);
     }
 
     /*
