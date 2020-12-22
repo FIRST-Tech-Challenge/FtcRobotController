@@ -19,7 +19,7 @@ public class LQRDrive extends LinearOpMode
     public void runOpMode() throws InterruptedException
     {
 
-        Hardware robot = new Hardware();
+        final Hardware robot = new Hardware();
         LQR lqr = new LQR(robot);
         double[][][] path={{{}}};
         robot.init(hardwareMap);
@@ -48,19 +48,34 @@ public class LQRDrive extends LinearOpMode
         //telemetry.addData("test","test");
         //telemetry.update();
 
-        waitForStart();
-
-
-        while(!lqr.robotInCircle(24,0,.5)&&opModeIsActive())
+        Thread t = new Thread()
         {
 
-            for(double d:lqr.runLqrDrive(path,24,0,0))
+            @Override
+            public void run()
+            {
+
+                while(opModeIsActive())
+                    robot.updatePositionRoadRunner();
+
+            }
+
+        };
+
+        waitForStart();
+
+        t.start();
+
+        while(opModeIsActive())
+        {
+
+            for(double d:lqr.runLqrDrive(path,0,0,Math.PI/2))
             {
 
                 telemetry.addData("x",d);
 
             }
-            robot.updatePositionRoadRunner();
+
             telemetry.addData("x: ", robot.x);
             telemetry.addData("y: ", robot.y);
             telemetry.addData("theta: ", robot.theta);

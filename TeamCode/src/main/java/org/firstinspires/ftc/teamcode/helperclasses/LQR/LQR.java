@@ -61,7 +61,7 @@ public class LQR extends Application
     public boolean robotInCircle(double x, double y, double r)
     {
 
-        return Math.pow(y-robot.y,2)+Math.pow(x+robot.y,2)<Math.pow(r,2);
+        return Math.pow(y-robot.y,2)+Math.pow(x-robot.y,2)<Math.pow(r,2);
 
     }
 
@@ -93,7 +93,7 @@ public class LQR extends Application
             diff=Math.PI*2-diff;
 
         //define state matrix
-        x = new double[]{-xGoal + robot.x,  -yGoal+robot.y, thetaGoal-sign*(diff), 0,  0, 0};
+        x = new double[]{-xGoal + robot.x,  -yGoal+robot.y, -sign*(diff), 0,  0, 0};
 
         //multiply x by the gain matrix k
         double[] d = new double[k.length];
@@ -111,15 +111,15 @@ public class LQR extends Application
 
         //scale the motor power bellow 1
         double scale = 1;
-        if (Math.abs(d[0]) > .25 || Math.abs(d[1]) > .25 || Math.abs(d[2]) > .25 || Math.abs(d[3]) > .25)
-            scale = 4*Math.max(Math.max(Math.abs(d[0]), Math.abs(d[1])), Math.max(Math.abs(d[2]), Math.abs(d[3])))/2;
+        if (Math.abs(d[0]) > 1 || Math.abs(d[1]) > 1 || Math.abs(d[2]) > 1 || Math.abs(d[3]) > 1)
+            scale = Math.max(Math.max(Math.abs(d[0]), Math.abs(d[1])), Math.max(Math.abs(d[2]), Math.abs(d[3])));
 
         //run the motors
         robot.leftFront.setPower(d[0]/scale);
         robot.rightFront.setPower(d[1]/scale);
         robot.leftRear.setPower(d[2]/scale);
         robot.rightRear.setPower(d[3]/scale);
-        return x;
+        return new double[]{diff};
 
     }
 

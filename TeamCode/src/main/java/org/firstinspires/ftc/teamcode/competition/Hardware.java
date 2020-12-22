@@ -36,9 +36,9 @@ public class Hardware {
     //Positions of the odometry wheels
     public ThreeTrackingWheelLocalizer odom = new ThreeTrackingWheelLocalizer(
             new ArrayList<>(Arrays.asList(
-                    new Pose2d(4.25, 0, Math.PI / 2),
-                    new Pose2d(0, 6.75, 0),
-                    new Pose2d(0, -6.75, 0)))) {
+                    new Pose2d(4, 0, Math.PI / 2),
+                    new Pose2d(0, 6.59, 0),
+                    new Pose2d(0, -6.59, 0)))) {
         @Override
         public List<Double> getWheelPositions() {
             ArrayList<Double> wheelPositions = new ArrayList<>(3);
