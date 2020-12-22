@@ -21,6 +21,7 @@ package com.hfrobots.tnt.util;
 
 import com.ftc9929.corelib.control.DebouncedButton;
 import com.ftc9929.corelib.control.NinjaGamePad;
+import com.google.common.base.Stopwatch;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -28,6 +29,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * An OpMode that allows you to test any/all of the motors on a robot
@@ -58,6 +60,12 @@ public class MotorTester extends OpMode {
     private DebouncedButton dpadUp;
 
     private DebouncedButton dpadDown;
+
+    private double encoderClicksPerSec;
+
+    private int lastEncoderCount = 0;
+
+    private Stopwatch stopwatch = Stopwatch.createUnstarted();
 
     @Override
     public void init() {
@@ -117,9 +125,10 @@ public class MotorTester extends OpMode {
             return;
         }
 
+        int motorCurrentPosition = currentMotor.getCurrentPosition();
         if (runningToPosition) {
             if (Math.abs(
-                    currentMotor.getCurrentPosition() - targetPosition) >= 10) {
+                    motorCurrentPosition - targetPosition) >= 10) {
                 updateTelemetry(currentMotor, motorName, 0, DcMotor.ZeroPowerBehavior.BRAKE);
 
                 return;
@@ -131,7 +140,7 @@ public class MotorTester extends OpMode {
         float leftStickYPosition = -gamepad1.left_stick_y;
 
         if (aButton.getRise()) {
-            targetPosition = currentMotor.getCurrentPosition() + desiredPosition;
+            targetPosition = motorCurrentPosition + desiredPosition;
             currentMotor.setPower(1.0);
             currentMotor.setTargetPosition(targetPosition);
             runningToPosition = true;
@@ -149,16 +158,35 @@ public class MotorTester extends OpMode {
 
         currentMotor.setZeroPowerBehavior(powerBehavior);
 
+        if (!stopwatch.isRunning()) {
+            stopwatch.start();
+            lastEncoderCount = motorCurrentPosition;
+        }
+
+        long elapsedMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+
+        if (elapsedMs > 100) {
+            stopwatch.reset();
+            stopwatch.start();
+
+            int deltaEncoderCount = motorCurrentPosition - lastEncoderCount;
+            lastEncoderCount = motorCurrentPosition;
+
+            encoderClicksPerSec = (double)deltaEncoderCount / elapsedMs * TimeUnit.SECONDS.toMillis(1);
+
+        }
+
         updateTelemetry(currentMotor, motorName, leftStickYPosition, powerBehavior);
     }
 
     protected void updateTelemetry(DcMotor currentMotor, String motorName, float leftStickYPosition, DcMotor.ZeroPowerBehavior powerBehavior) {
         int currentPosition = currentMotor.getCurrentPosition();
 
-        telemetry.addData("motor ",  "%s - %s - pow %s - despos %s - curpos %s", motorName, powerBehavior,
+        telemetry.addData("motor ",  "%s - %s - pow %s - despos %s - curpos %s, perSec %s", motorName, powerBehavior,
                 Double.toString(leftStickYPosition),
                 Integer.toString(desiredPosition),
-                Integer.toString(currentPosition));
+                Integer.toString(currentPosition),
+                Double.toString(encoderClicksPerSec));
         updateTelemetry(telemetry);
     }
 }
