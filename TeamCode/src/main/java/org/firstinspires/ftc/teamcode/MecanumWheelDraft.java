@@ -278,7 +278,7 @@ public class MecanumWheelDraft extends LinearOpMode {
         double frontLeft, frontRight, backLeft, backRight, max;
 
 
-        while((gamepad1.x) && (opModeIsActive())){
+        while((opModeIsActive())){
 
             currOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             double currAng = currOrient.angleUnit.DEGREES.normalize(currOrient.firstAngle);
