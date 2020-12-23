@@ -60,10 +60,15 @@ public class Hardware {
     private static final double ODOM_TICKS_PER_ROTATION = 1440;
     // Radius of an odometry wheel in cm
     private static final double ODOM_WHEEL_RADIUS = 3.6 / 2.54;
+
+    private static final double ODOM_TICKS_PER_ROTATION = 2048*4;
+    // Radius of an odometry wheel in cm
+    private static final double ODOM_WHEEL_RADIUS = 0.688975;
+
     // Circumference of an odometry wheel in cm
     private static final double WHEEL_CIRCUM = 2.0 * Math.PI * ODOM_WHEEL_RADIUS;
     // Number of ticks in a centimeter using dimensional analysis
-    private static final double ODOM_TICKS_PER_CM = ODOM_TICKS_PER_ROTATION / (WHEEL_CIRCUM);
+    private static final double ODOM_TICKS_PER_IN = ODOM_TICKS_PER_ROTATION / (WHEEL_CIRCUM);
 
     // Robot physical location]
     public double x, y, theta;
@@ -191,9 +196,9 @@ public class Hardware {
         bulkData = expansionHub.getBulkInputData();
 
         // Change in the distance (centimeters) since the last update for each odometer
-        double deltaLeftDist = -(getDeltaLeftTicks() / ODOM_TICKS_PER_CM);
-        double deltaRightDist = -(getDeltaRightTicks() / ODOM_TICKS_PER_CM);
-        double deltaCenterDist = -getDeltaCenterTicks() / ODOM_TICKS_PER_CM;
+        double deltaLeftDist = -(getDeltaLeftTicks() / ODOM_TICKS_PER_IN);
+        double deltaRightDist = -(getDeltaRightTicks() / ODOM_TICKS_PER_IN);
+        double deltaCenterDist = -getDeltaCenterTicks() / ODOM_TICKS_PER_IN;
 
         // Update real world distance traveled by the odometry wheels, regardless of orientation
         leftOdomTraveled += deltaLeftDist;
@@ -244,7 +249,8 @@ public class Hardware {
         rightOdomTraveled = 0;
         leftOdomTraveled = 0;
         leftEncoderPos = 0;
-        rightEncoderPos = 0;
+
+       rightEncoderPos = 0;
         centerEncoderPos = 0;
 
         // Resets encoder values then sets them back to run without encoders because wheels and odometry are same pointer
