@@ -23,7 +23,7 @@ public class Teleop extends LinearOpMode
         {
 
             robot.updatePositionRoadRunner();
-            robot.drive(gamepad1.right_stick_y,gamepad1.right_stick_x,gamepad1.left_stick_x);
+            robot.drive(gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
             telemetry.addData("x: ", robot.x);
             telemetry.addData("y: ", robot.y);
             telemetry.addData("theta: ", robot.theta);

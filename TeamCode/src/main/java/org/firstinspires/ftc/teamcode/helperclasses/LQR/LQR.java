@@ -76,7 +76,7 @@ public class LQR extends Application
     {
 
         //get matrix for current angle
-        int fileLocation=(int) Math.abs(Math.round(robot.theta * 10));
+        int fileLocation=(int) Math.abs(Math.round(robot.theta * 1800/Math.PI));
         if(fileLocation==3600)
             fileLocation=0;
         double[][] k = path[fileLocation];
@@ -119,7 +119,7 @@ public class LQR extends Application
         robot.rightFront.setPower(d[1]/scale);
         robot.leftRear.setPower(d[2]/scale);
         robot.rightRear.setPower(d[3]/scale);
-        return new double[]{diff};
+        return x;
 
     }
 

@@ -36,9 +36,9 @@ public class Hardware {
     //Positions of the odometry wheels
     public ThreeTrackingWheelLocalizer odom = new ThreeTrackingWheelLocalizer(
             new ArrayList<>(Arrays.asList(
-                    new Pose2d(4, 0, Math.PI / 2),
-                    new Pose2d(0, 6.59, 0),
-                    new Pose2d(0, -6.59, 0)))) {
+                    new Pose2d(4.75, 0, Math.PI / 2),
+                    new Pose2d(0, 6.8, 0),
+                    new Pose2d(0, -6.8, 0)))) {
         @Override
         public List<Double> getWheelPositions() {
             ArrayList<Double> wheelPositions = new ArrayList<>(3);
@@ -60,7 +60,7 @@ public class Hardware {
     private static final double ODOM_TICKS_PER_IN = ODOM_TICKS_PER_ROTATION / (WHEEL_CIRCUM);
 
 
-    //Distance from the center of the robot to the launch mechanism in inches.
+    //Distance from the center of the t to the launch mechanism in inches.
     private static final double distCenterToLaunch = 7;
     //Gravitational constant used for calculating ring launch angle in inches per second squared
     private static final double ringGravitationalConstant = -386.09;

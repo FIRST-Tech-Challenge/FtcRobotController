@@ -69,7 +69,7 @@ public class LQRDrive extends LinearOpMode
         while(opModeIsActive())
         {
 
-            for(double d:lqr.runLqrDrive(path,0,0,Math.PI/2))
+            for(double d:lqr.runLqrDrive(path,24,24,70*Math.PI/180))
             {
 
                 telemetry.addData("x",d);
