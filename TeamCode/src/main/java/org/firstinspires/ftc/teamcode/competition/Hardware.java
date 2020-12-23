@@ -14,7 +14,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.helperclasses.ThreadPool;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
@@ -101,6 +103,12 @@ public class Hardware {
     public DcMotor flywheelMotorLeft;
     public DcMotor flywheelMotorRight;
 
+    //Servo to move rind from magazine into flywheels
+    public Servo flicker;
+
+    private boolean isFlickerMoving;
+    byte queuedFlicks = 0;
+
     // Odometry encoder positions
     public int leftEncoderPos, centerEncoderPos, rightEncoderPos;
 
@@ -165,8 +173,13 @@ public class Hardware {
         flywheelRotateServoLeft = hwMap.crservo.get("flywheelRotateServoLeft");
 
         //claw servos
-        clawServoLeft = hwMap.servo.get("clawServoLeft");
-        clawServoRight = hwMap.servo.get("clawServoRight");
+        //clawServoLeft = hwMap.servo.get("clawServoLeft");
+        //clawServoRight = hwMap.servo.get("clawServoRight");
+
+        flicker = hwMap.servo.get("flicker");
+
+        flicker.setPosition(1);
+
 
 
     }
@@ -337,5 +350,54 @@ public class Hardware {
     //lowers right claw
     public void clawServoRightDown() {clawServoLeft.setPosition(0);}
     */
+
+
+
+    public void flickRing()
+    {
+
+        if(!isFlickerMoving)
+        {
+
+            isFlickerMoving=true;
+            flicker.setPosition(0);
+            Thread wait = new Thread()
+            {
+
+                @Override
+                public void run()
+                {
+
+                    ElapsedTime e = new ElapsedTime();
+                    e.startTime();
+                    while(e.milliseconds()<75);
+                    flicker.setPosition(1);
+                    e = new ElapsedTime();
+                    e.startTime();
+                    while(e.milliseconds()<190);
+                    isFlickerMoving=false;
+                    if(queuedFlicks>0)
+                    {
+                        queuedFlicks--;
+                        flickRing();
+                    }
+
+                }
+
+            };
+            ThreadPool.pool.submit(wait);
+
+
+        }
+        else
+        {
+
+            if(queuedFlicks<2)
+                queuedFlicks++;
+
+        }
+
+
+    }
 
 }

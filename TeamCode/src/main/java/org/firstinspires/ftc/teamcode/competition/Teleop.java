@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.helperclasses.ThreadPool;
+
 @TeleOp(name = "Teleop", group = "DemoBot")
 public class Teleop extends LinearOpMode
 {
@@ -19,6 +21,11 @@ public class Teleop extends LinearOpMode
         Hardware robot = new Hardware();
         robot.init(hardwareMap);
         waitForStart();
+        boolean aPressed=false;
+        boolean yPressed=false;
+        boolean upPressed=false;
+        boolean downPressed=false;
+        double angleSpeed=1;
         while(opModeIsActive())
         {
 
@@ -27,6 +34,7 @@ public class Teleop extends LinearOpMode
             telemetry.addData("x: ", robot.x);
             telemetry.addData("y: ", robot.y);
             telemetry.addData("theta: ", robot.theta);
+            telemetry.addData("angle speed",angleSpeed);
             telemetry.update();
 
             if (gamepad1.right_trigger<.01) {
@@ -51,25 +59,81 @@ public class Teleop extends LinearOpMode
             robot.setFlyWheelPower(gamepad2.right_trigger);
 
             //makes the flywheel rotation servo move with b and x
-            if(gamepad2.b){
+            if(gamepad2.b)
+            {
 
-                robot.flywheelRotateServoLeft.setPower(1);
-
-            }
-
-            else if(gamepad2.x){
-
-                robot.flywheelRotateServoLeft.setPower(-1);
+                robot.flywheelRotateServoLeft.setPower(angleSpeed);
 
             }
 
-            else {
+            else if(gamepad2.x)
+            {
+
+                robot.flywheelRotateServoLeft.setPower(-angleSpeed);
+
+            }
+
+            else
+            {
 
                 robot.flywheelRotateServoLeft.setPower(0);
 
             }
 
+            if(gamepad2.a&&!aPressed)
+            {
+                robot.flickRing();
+                aPressed=true;
+            }
+            if(!gamepad2.a)
+            {
+
+                aPressed=false;
+
+            }
+            if(gamepad2.y&&!yPressed)
+            {
+                robot.flickRing();
+                robot.flickRing();
+                robot.flickRing();
+                yPressed=true;
+            }
+            if(!gamepad2.y)
+            {
+
+                yPressed=false;
+
+            }
+
+            if(gamepad2.dpad_up&&!upPressed)
+            {
+                if(angleSpeed<1)
+                    angleSpeed+=.1;
+                upPressed=true;
+            }
+            if(!gamepad2.dpad_up)
+            {
+
+                upPressed=false;
+
+            }
+
+            if(gamepad2.dpad_down&&!downPressed)
+            {
+                if(angleSpeed>.11)
+                    angleSpeed-=.1;
+                downPressed=true;
+            }
+            if(!gamepad2.dpad_down)
+            {
+
+                downPressed=false;
+
+            }
+
         }
+
+        ThreadPool.renewPool();
 
     }
 
