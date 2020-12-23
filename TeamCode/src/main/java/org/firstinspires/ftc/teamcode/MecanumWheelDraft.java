@@ -144,9 +144,16 @@ public class MecanumWheelDraft extends LinearOpMode {
                 rotateToHeading(90);
             }
 
-            //strafe along the currrent heading
-            while((gamepad1.x) && opModeIsActive()){
-                strafeLeft(.5, robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
+            if(gamepad1.x){
+                strafeLeft(.5, robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES) );
+            }
+
+            if(gamepad1.b){
+
+            }
+
+            if(gamepad1.y){
+                driveStraight(.3,robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
             }
 
         }
@@ -250,19 +257,6 @@ public class MecanumWheelDraft extends LinearOpMode {
     }
 
 
-
-    void stopDriving(){
-        robot.frontLeftMotor.setPower(0);
-        robot.frontRightMotor.setPower(0);
-        robot.backLeftMotor.setPower(0);
-        robot.backRightMotor.setPower(0);
-    }
-
-
-
-
-
-
     void strafeLeft(double pwr, Orientation target) {
 
         //orients
@@ -278,7 +272,7 @@ public class MecanumWheelDraft extends LinearOpMode {
         double frontLeft, frontRight, backLeft, backRight, max;
 
 
-        while((opModeIsActive())){
+        while((opModeIsActive()) && (gamepad1.x)){
 
             currOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             double currAng = currOrient.angleUnit.DEGREES.normalize(currOrient.firstAngle);
@@ -326,7 +320,82 @@ public class MecanumWheelDraft extends LinearOpMode {
 
     }
 
+    //void strafeRight
 
+
+    void driveStraight(double pwr, Orientation target){
+
+                //orients
+             Orientation targetOrient;
+             Orientation currOrient;
+
+             //converts the target heading to a double to use in error calculation
+            targetOrient = target;
+             double targAng = targetOrient.angleUnit.DEGREES.normalize(target.firstAngle);;  // target.angleUnit.DEGREES.normalize(target.firstAngle);
+
+            //rChanger changes the sensitivity of the R value
+            double rChanger = 10;
+            double frontLeft, frontRight, backLeft, backRight, max;
+
+            while((gamepad1.y) && (opModeIsActive())){
+
+                currOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                double currAng = currOrient.angleUnit.DEGREES.normalize(currOrient.firstAngle);
+
+                double error = targAng - currAng;
+
+
+                double r = (-error / 180) / (pwr /* * rChanger*/);
+                //r = 0;
+
+                // Normalize the values so none exceeds +/- 1.0
+                frontLeft = pwr + r ;
+                backLeft = pwr + r ;
+                backRight = pwr - r ;
+                frontRight = pwr - r ;
+
+                frontLeft = -frontLeft;
+                backLeft = -backLeft;
+
+                max = Math.max(Math.max(Math.abs(frontLeft), Math.abs(frontRight)), Math.max(Math.abs(frontRight), Math.abs(frontRight)));
+                if (max > 1.0) {
+                    frontLeft = frontLeft / max;
+                    frontRight = frontRight / max;
+                    backLeft = backLeft / max;
+                    backRight = backRight / max;
+                }
+
+
+
+                telemetry.addData("front left", "%.2f", frontLeft);
+                telemetry.addData("front right", "%.2f", frontRight);
+                telemetry.addData("back left", "%.2f", backLeft);
+                telemetry.addData("back right", "%.2f", backRight);
+
+                telemetry.addData("current heading", formatAngle(currOrient.angleUnit, currOrient.firstAngle));
+                telemetry.addData("target heading", formatAngle(targetOrient.angleUnit, targetOrient.firstAngle));
+
+                telemetry.update();
+
+                //send the power to the motors
+                robot.frontLeftMotor.setPower(frontLeft);
+                robot.backLeftMotor.setPower(backLeft);
+                robot.backRightMotor.setPower(backRight);
+                robot.frontRightMotor.setPower(frontRight);
+
+
+
+            }
+
+        }
+
+
+    void stopDriving(){
+        robot.frontLeftMotor.setPower(0);
+        robot.frontRightMotor.setPower(0);
+        robot.backLeftMotor.setPower(0);
+        robot.backRightMotor.setPower(0);
+    }
 
 
     String formatAngle(AngleUnit angleUnit, double angle) {
