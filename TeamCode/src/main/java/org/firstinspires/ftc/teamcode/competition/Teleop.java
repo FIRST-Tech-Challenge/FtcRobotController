@@ -25,17 +25,31 @@ public class Teleop extends LinearOpMode
         boolean yPressed=false;
         boolean upPressed=false;
         boolean downPressed=false;
+        double forward=1;
         double angleSpeed=1;
         while(opModeIsActive())
         {
 
             robot.updatePositionRoadRunner();
-            robot.drive(gamepad1.right_stick_y,gamepad1.right_stick_x,gamepad1.left_stick_x);
+            robot.drive(forward*gamepad1.left_stick_y,gamepad1.left_stick_x,gamepad1.right_stick_x);
             telemetry.addData("x: ", robot.x);
             telemetry.addData("y: ", robot.y);
             telemetry.addData("theta: ", robot.theta);
             telemetry.addData("angle speed",angleSpeed);
             telemetry.update();
+
+            if(gamepad1.dpad_up)
+            {
+
+                forward=1;
+
+            }
+            if(gamepad1.dpad_down)
+            {
+
+                forward=-1;
+
+            }
 
             if (gamepad1.right_trigger<.01) {
 
@@ -59,14 +73,14 @@ public class Teleop extends LinearOpMode
             robot.setFlyWheelPower(gamepad2.right_trigger);
 
             //makes the flywheel rotation servo move with b and x
-            if(gamepad2.b)
+            if(gamepad2.right_bumper)
             {
 
                 robot.flywheelRotateServoLeft.setPower(angleSpeed);
 
             }
 
-            else if(gamepad2.x)
+            else if(gamepad2.left_bumper)
             {
 
                 robot.flywheelRotateServoLeft.setPower(-angleSpeed);

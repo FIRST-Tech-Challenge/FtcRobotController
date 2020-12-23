@@ -298,7 +298,7 @@ public class Hardware {
         }
         //setting the motor powers to move
         leftFront.setPower(forward - rotation - sideways);
-        leftRear.setPower(forward + rotation - sideways);
+        leftRear.setPower(forward - rotation + sideways);
         rightFront.setPower(forward + rotation + sideways);
         rightRear.setPower(forward + rotation - sideways);
         //Left Front = +Speed + Turn - Strafe      Right Front = +Speed - Turn + Strafe
