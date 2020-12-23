@@ -29,8 +29,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.states.ForwardUntil;
 import org.firstinspires.ftc.teamcode.states.TurnUntilAngle;
 import org.firstinspires.ftc.teamcode.states.StrafeUntilClicks;
-import org.firstinspires.ftc.teamcode.states.CollectUntilDist;
-import org.firstinspires.ftc.teamcode.states.DispenseUntilDist;
+//import org.firstinspires.ftc.teamcode.states.CollectUntilDist;
+//import org.firstinspires.ftc.teamcode.states.DispenseUntilDist;
 import org.firstinspires.ftc.teamcode.states.SeekUntilColor;
 import org.firstinspires.ftc.teamcode.states.GrabFoundation;
 import org.firstinspires.ftc.teamcode.states.DragFoundationR;
@@ -57,8 +57,8 @@ public class Auto15 extends OpMode {
     public LinearStack states = new LinearStack(new OurState[] {
             // Phase 1
             // new LiftUntilTime(120, -1),
-            // new ForwardUntil(1000),
-            // new TurnUntilAngle(180),
+             new ForwardUntil(1000),
+             new TurnUntilAngle(180),
             // new ForwardUntil(-900),
             // new SeekUntilColor(),
             // new LinearStack(new OurState[] {
@@ -72,8 +72,8 @@ public class Auto15 extends OpMode {
             // new TurnUntilAngle(180),
             // new StrafeUntilClicks(3000),
             // new ForwardUntil(3000),
-            new GrabFoundation(),
-            new DragFoundationR(-180),
+            //new GrabFoundation(),
+            //new DragFoundationR(-180),
         }
     );
 

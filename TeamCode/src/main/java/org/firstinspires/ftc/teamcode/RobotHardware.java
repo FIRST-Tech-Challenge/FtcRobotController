@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Drive;
-import org.firstinspires.ftc.teamcode.Collect;
+//import org.firstinspires.ftc.teamcode.Collect;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -18,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class RobotHardware {
     public HardwareMap hardwareMap = null;
     public Drive d = null;
-    public Collect c = null;
+    //public Collect c = null;
     public DcMotor lift = null;
     public ColorSensor color = null;
     public Servo f = null;
@@ -37,11 +37,11 @@ public class RobotHardware {
             hardwareMap.get(DcMotor.class, "lbmotor")
         );
         
-        c = new Collect(
-          hardwareMap.get(DcMotor.class, "col_left"),
-          hardwareMap.get(DcMotor.class, "col_right"),
-          hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor")
-        );
+//        c = new Collect(
+//          hardwareMap.get(DcMotor.class, "col_left"),
+//          hardwareMap.get(DcMotor.class, "col_right"),
+//          hardwareMap.get(Rev2mDistanceSensor.class, "distance_sensor")
+//        );
         
         lastAngles = new Orientation();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
