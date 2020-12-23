@@ -137,7 +137,9 @@ public class MecanumWheelDraft extends LinearOpMode {
 
             }
 
-
+            //for strafing and drive forward function, pass this in to the function if you want it to follow the heading
+                //the robot was at when you called the function
+            // robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES
 
             //rotates to a heading of 90 degrees
             if (gamepad1.a){
@@ -161,6 +163,7 @@ public class MecanumWheelDraft extends LinearOpMode {
 
     }
 
+    //used for ramp up driving
     double getRampPower(double t, double a, double step) {
         double delta;
         double returnPower = 0;
@@ -183,7 +186,7 @@ public class MecanumWheelDraft extends LinearOpMode {
         return returnPower;
     }
 
-
+    //rotates to the given heading
     void rotateToHeading(double heading){
 
         Orientation currentOrient;
@@ -237,6 +240,8 @@ public class MecanumWheelDraft extends LinearOpMode {
 
     }
 
+
+    //just rotates to the right
     void blindRotateRight(double pwr){
             pwr = -pwr; // -pwr on all wheels turns right
             // Set power on each wheel
@@ -247,6 +252,7 @@ public class MecanumWheelDraft extends LinearOpMode {
 
         }
 
+    //just rotates to the left
     void blindRotateLeft(double pwr){
 
         robot.frontLeftMotor.setPower(pwr);
@@ -256,7 +262,7 @@ public class MecanumWheelDraft extends LinearOpMode {
 
     }
 
-
+    //strafes left at the heading it was called at
     void strafeLeft(double pwr, Orientation target) {
 
         //orients
@@ -322,7 +328,7 @@ public class MecanumWheelDraft extends LinearOpMode {
 
     //void strafeRight
 
-
+    //drives forward at the heading it was called at
     void driveStraight(double pwr, Orientation target){
 
                 //orients
@@ -389,7 +395,7 @@ public class MecanumWheelDraft extends LinearOpMode {
 
         }
 
-
+    //kills power ot all wheels
     void stopDriving(){
         robot.frontLeftMotor.setPower(0);
         robot.frontRightMotor.setPower(0);
