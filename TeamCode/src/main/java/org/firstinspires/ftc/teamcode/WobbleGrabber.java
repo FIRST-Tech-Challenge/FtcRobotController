@@ -49,6 +49,10 @@ public class WobbleGrabber {
         REVTouchBottom.setMode(DigitalChannel.Mode.INPUT);
     }
 
+    /**
+     * This method lowers the grabber at the given power until it comes into contact with a touch sensor.
+     * @param power
+     */
     public void lowerGripper(double power) {
         // if the digital channel returns true it's HIGH and the button is unpressed.
         if (REVTouchBottom.getState()) {
@@ -57,6 +61,11 @@ public class WobbleGrabber {
             gripWrist.setPower(0);
         }
     }
+
+    /**
+     * This method passes a position value to the grabber servo to open and close it.
+     * @param position
+     */
     public void gripperPosition(double position) {
         gripServo.setPosition(position);
     }

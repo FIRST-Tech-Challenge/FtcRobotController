@@ -41,7 +41,11 @@ public class MecanumDrive {
 
     }
 
-    /* Initialize standard Hardware interfaces */
+    /**
+     * Initialize the 4 motors on the robot. Set all to break on zero power, and set power to zero.
+     * Set all to run without encoders.
+     * @param ahwMap
+     */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
@@ -81,6 +85,12 @@ public class MecanumDrive {
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         */
     }
+
+    /**
+     * Initialize the REV IMU (Gyro sensor)
+     * Note: This needs to be calibrated.
+     * @param ahwMap
+     */
     public void initIMU(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
@@ -107,7 +117,7 @@ public class MecanumDrive {
         globalAngle = 0;
     }
 
-    public double getAngle() {
+    double getAngle() {
         // We experimentally determined the Z axis is the axis we want to use for heading angle.
         // We have to process the angle because the imu works in euler angles so the Z axis is
         // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
@@ -129,7 +139,7 @@ public class MecanumDrive {
         return globalAngle;
     }
 
-    void encoderDrive(double speed,
+    private void encoderDrive(double speed,
     double lBDis, double rBDis) {
         int newLBTarget;
         int newRBTarget;
@@ -185,7 +195,7 @@ public class MecanumDrive {
     } //end of encoder drive method
 
     //y = x diagonal move
-    void encoderDriveLfRb(double speed,
+    private void encoderDriveLfRb(double speed,
                         double distance) {
         int newLFTarget;
         int newRBTarget;
@@ -223,7 +233,7 @@ public class MecanumDrive {
     } //end of encoder driveLfRb method
 
     //y = -x diagonal move
-    void encoderDriveRfLb(double speed,
+    private void encoderDriveRfLb(double speed,
                         double distance) {
         int newRFTarget;
         int newLBTarget;
@@ -261,18 +271,37 @@ public class MecanumDrive {
 
     } //end of encoder driveRfLb method
 
+    /**
+     * Tank Drive.
+     * Note: The distance value controls the direction of motion
+     * @param speed
+     * @param distance
+     */
     public void linearDrive(double speed, double distance) {
         encoderDrive(speed, distance, distance);
     }
 
+    /**
+     * Primary side drive method.
+     * Uses only one encoder to try to limit variance.
+     * Note: The distance value controls the direction of motion
+     * @param speed
+     * @param distance
+     */
     public void sideDrive(double speed, double distance) {
         //negative distance = left
         oneSideEncoderDrive(speed,distance);
     }
+
+    /**
+     * Side drive method that uses all encoders.
+     * @param speed
+     * @param distance
+     */
     public void sideAllDrive(double speed, double distance){
         sideEncoderDrive(speed,distance);
     }
-    void sideEncoderDrive(double speed,
+    private void sideEncoderDrive(double speed,
                       double distance) {
         int newLBTarget;
         int newRBTarget;
@@ -326,7 +355,7 @@ public class MecanumDrive {
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     } //end of encoder drive method
-    void oneSideEncoderDrive(double speed,
+    private void oneSideEncoderDrive(double speed,
                           double distance) {
         //int newLBTarget;
         //int newRBTarget;
@@ -387,6 +416,13 @@ public class MecanumDrive {
 
     } //end of encoder drive method
 
+    /**
+     * This method controls diagonal motion.
+     * Note: Direction is controlled by both the distance and direction values
+     * @param speed
+     * @param distance
+     * @param direction
+     */
     public void diagonalDrive(double speed, double distance, DiagonalDirection direction) {
 
         if (distance > 0) {
@@ -447,16 +483,33 @@ public class MecanumDrive {
         leftFront.setPower(0);
     }
     //end internal gyro code
+
+    /**
+     * Static turn that uses the gyro sensor
+     * Note: Left is + degres, and right is - degrees.
+     * @param speed
+     * @param degrees
+     */
     public void gStatTurn(double speed, int degrees){
         rotate(degrees,speed);
         //left is + degrees
         //right is - degrees
     }
 
+    /**
+     * Determines the current facing of the robot.
+     * @return Current Angle on Gyro Sensor
+     */
     public double checkHeading(){
         return getAngle();
     }
 
+    /**
+     * Input for mecanum stick control
+     * @param speed
+     * @param direction
+     * @param rotation
+     */
     protected void MecanumController(double speed, double direction, double rotation) {
         final double v1 = speed * Math.cos(direction) + rotation;
         final double v2 = speed * Math.sin(direction) - rotation;
@@ -468,12 +521,8 @@ public class MecanumDrive {
         leftBack.setPower(v3);
         rightBack.setPower(v4);
     }
-    public int getLBencoder(){
-        return leftBack.getCurrentPosition();
-    }
-    public int getRBencoder(){
-        return rightBack.getCurrentPosition();
-    }
+    public int getLBencoder() { return leftBack.getCurrentPosition();}
+    public int getRBencoder() { return rightBack.getCurrentPosition();}
     public int getLFencoder() { return leftFront.getCurrentPosition();}
     public int getRFencoder() { return rightFront.getCurrentPosition();}
 }
