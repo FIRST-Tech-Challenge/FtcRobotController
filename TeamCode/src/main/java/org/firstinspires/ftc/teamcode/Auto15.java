@@ -18,27 +18,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+//import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
+//import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+//import com.qualcomm.robotcore.hardware.DcMotor;
+//import com.qualcomm.robotcore.hardware.DcMotorSimple;
+//import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.states.ForwardUntil;
 import org.firstinspires.ftc.teamcode.states.TurnUntilAngle;
-import org.firstinspires.ftc.teamcode.states.StrafeUntilClicks;
-//import org.firstinspires.ftc.teamcode.states.CollectUntilDist;
-//import org.firstinspires.ftc.teamcode.states.DispenseUntilDist;
-import org.firstinspires.ftc.teamcode.states.SeekUntilColor;
-import org.firstinspires.ftc.teamcode.states.GrabFoundation;
-import org.firstinspires.ftc.teamcode.states.DragFoundationR;
-import org.firstinspires.ftc.teamcode.states.LiftUntilTime;
-import org.firstinspires.ftc.teamcode.RobotHardware;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+//import org.firstinspires.ftc.teamcode.states.StrafeUntilClicks;
+////import org.firstinspires.ftc.teamcode.states.CollectUntilDist;
+////import org.firstinspires.ftc.teamcode.states.DispenseUntilDist;
+//import org.firstinspires.ftc.teamcode.states.SeekUntilColor;
+//import org.firstinspires.ftc.teamcode.states.GrabFoundation;
+//import org.firstinspires.ftc.teamcode.states.DragFoundationR;
+//import org.firstinspires.ftc.teamcode.states.LiftUntilTime;
+//import org.firstinspires.ftc.teamcode.RobotHardware;
+//
+//import java.text.SimpleDateFormat;
+//import java.util.Date;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
