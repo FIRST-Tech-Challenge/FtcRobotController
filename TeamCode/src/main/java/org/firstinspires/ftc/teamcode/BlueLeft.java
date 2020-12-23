@@ -84,7 +84,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 102:
                 //Drive forward into zone A
-                robot.linearDrive(.5,35);
+                robot.linearDrive(.5,50);
                 stateMachineFlow++;
                 break;
             case 103:
@@ -111,7 +111,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 106:
                 //Move right to be in line with goal
-                robot.sideDrive(.5,-10);
+                robot.sideDrive(.5,-20);
                 stateMachineFlow++;
                 break;
             case 107:
@@ -128,12 +128,17 @@ public class BlueLeft extends OpMode {
                 robot.linearDrive(.5,5);
                 stateMachineFlow++;
                 break;
+            case 110:
+                //Turn off shooter
+                shooter.shooterPower(0);
+                stateMachineFlow++;
+                break;
                 /*
                 End...
                  */
             case 150:
                 //Move right in line with first power shot
-                robot.sideDrive(.5,-12);
+                robot.sideDrive(.5,-40);
                 stateMachineFlow++;
                 break;
             case 151:
@@ -147,7 +152,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 153:
                 //Move right to second power shot
-                robot.sideDrive(.5,-2);
+                robot.sideDrive(.5,-4);
                 stateMachineFlow++;
                 break;
             case 154:
@@ -156,7 +161,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 155:
                 //Move right to third power shot
-                robot.sideDrive(.5,-2);
+                robot.sideDrive(.5,-4);
                 stateMachineFlow++;
                 break;
             case 156:
@@ -166,6 +171,11 @@ public class BlueLeft extends OpMode {
             case 157:
                 //Move forward onto the shot line
                 robot.linearDrive(.5,5);
+                stateMachineFlow++;
+                break;
+            case 158:
+                //Turn off shooter
+                shooter.shooterPower(0);
                 stateMachineFlow++;
                 break;
                 /*
@@ -189,9 +199,9 @@ public class BlueLeft extends OpMode {
                 break;
             case 202:
                 //Drive forward, to the right, and into zone B
-                robot.linearDrive(.5,14);
-                robot.sideDrive(.5,-10);
-                robot.linearDrive(.5,34);
+                robot.linearDrive(.5,5);
+                robot.sideDrive(.5,-20);
+                robot.linearDrive(.5,71);
                 stateMachineFlow++;
                 break;
             case 203:
@@ -201,7 +211,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 204:
                 //Back up behind shot line
-                robot.linearDrive(.5,-20);
+                robot.linearDrive(.5,-31);
                 stateMachineFlow++;
                 break;
             case 205:
@@ -217,8 +227,8 @@ public class BlueLeft extends OpMode {
                 }
                 break;
             case 206:
-                //Move to be in line with goal
-                robot.sideDrive(.5,-1);
+                //Move to be in line with goal (if needed)
+                //robot.sideDrive(.5,-1);
                 stateMachineFlow++;
                 break;
             case 207:
@@ -235,12 +245,17 @@ public class BlueLeft extends OpMode {
                 robot.linearDrive(.5,5);
                 stateMachineFlow++;
                 break;
+            case 210:
+                //Turn off shooter
+                shooter.shooterPower(0);
+                stateMachineFlow++;
+                break;
                 /*
                 End...
                  */
             case 250:
                 //Move right in line with first power shot
-                robot.sideDrive(.5,-5);
+                robot.sideDrive(.5,-16);
                 stateMachineFlow++;
                 break;
             case 251:
@@ -254,7 +269,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 253:
                 //Move right to second power shot
-                robot.sideDrive(.5,-2);
+                robot.sideDrive(.5,-4);
                 stateMachineFlow++;
                 break;
             case 254:
@@ -263,7 +278,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 255:
                 //Move right to third power shot
-                robot.sideDrive(.5,-2);
+                robot.sideDrive(.5,-4);
                 stateMachineFlow++;
                 break;
             case 256:
@@ -273,6 +288,11 @@ public class BlueLeft extends OpMode {
             case 257:
                 //Move forward onto the shot line
                 robot.linearDrive(.5,5);
+                stateMachineFlow++;
+                break;
+            case 258:
+                //Turn off shooter
+                shooter.shooterPower(0);
                 stateMachineFlow++;
                 break;
                 /*
@@ -296,7 +316,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 302:
                 //Drive forward into zone C
-                robot.linearDrive(.5,60);
+                robot.linearDrive(.5,100);
                 stateMachineFlow++;
                 break;
             case 303:
@@ -306,7 +326,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 304:
                 //Back up behind shot line
-                robot.linearDrive(.5,-52);
+                robot.linearDrive(.5,-55);
                 stateMachineFlow++;
                 break;
             case 305:
@@ -323,7 +343,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 306:
                 //Move right to be in line with goal
-                robot.sideDrive(.5,-10);
+                robot.sideDrive(.5,-20);
                 stateMachineFlow++;
                 break;
             case 307:
@@ -340,12 +360,17 @@ public class BlueLeft extends OpMode {
                 robot.linearDrive(.5,5);
                 stateMachineFlow++;
                 break;
+            case 310:
+                //Turn off shooter
+                shooter.shooterPower(0);
+                stateMachineFlow++;
+                break;
                 /*
                 End...
                  */
             case 350:
                 //Move right in line with first power shot
-                robot.sideDrive(.5,-12);
+                robot.sideDrive(.5,-40);
                 stateMachineFlow++;
                 break;
             case 351:
@@ -359,7 +384,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 353:
                 //Move right to second power shot
-                robot.sideDrive(.5,-2);
+                robot.sideDrive(.5,-4);
                 stateMachineFlow++;
                 break;
             case 354:
@@ -368,7 +393,7 @@ public class BlueLeft extends OpMode {
                 break;
             case 355:
                 //Move right to third power shot
-                robot.sideDrive(.5,-2);
+                robot.sideDrive(.5,-4);
                 stateMachineFlow++;
                 break;
             case 356:
@@ -378,6 +403,11 @@ public class BlueLeft extends OpMode {
             case 357:
                 //Move forward onto the shot line
                 robot.linearDrive(.5,5);
+                stateMachineFlow++;
+                break;
+            case 358:
+                //Turn off shooter
+                shooter.shooterPower(0);
                 stateMachineFlow++;
                 break;
                 /*
