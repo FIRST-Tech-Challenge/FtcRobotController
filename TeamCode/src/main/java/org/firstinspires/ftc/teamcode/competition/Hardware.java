@@ -85,6 +85,10 @@ public class Hardware {
     //flywheelRotateServo
     public CRServo flywheelRotateServoLeft;
 
+    //claw servos
+    public Servo clawServoLeft;
+    public Servo clawServoRight;
+
     // Odometry hardware
     private DcMotorEx leftEncoder, rightEncoder, centerEncoder;
 
@@ -159,6 +163,10 @@ public class Hardware {
 
         //flywheel rotating
         flywheelRotateServoLeft = hwMap.crservo.get("flywheelRotateServoLeft");
+
+        //claw servos
+        clawServoLeft = hwMap.servo.get("clawServoLeft");
+        clawServoRight = hwMap.servo.get("clawServoRight");
 
 
     }
@@ -315,4 +323,19 @@ public class Hardware {
     {
         rightWobbleGoal.setPosition(0);
     }
+
+    /*
+    //raises left claw
+    public void clawServoLeftUp() {clawServoLeft.setPosition(1);}
+
+    //lowers left claw
+    public void clawServoLeftDown() {clawServoLeft.setPosition(0);}
+
+    //raises right claw
+    public void clawServoRightUp() {clawServoRight.setPosition(1);}
+
+    //lowers right claw
+    public void clawServoRightDown() {clawServoLeft.setPosition(0);}
+    */
+
 }
