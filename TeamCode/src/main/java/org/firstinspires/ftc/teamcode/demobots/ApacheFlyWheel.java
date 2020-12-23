@@ -11,7 +11,7 @@ import static java.lang.Math.abs;
 /**
  * Demo Omnibot code for showing off the omnibot
  */
-@TeleOp(name = "ApacheFly", group = "DemoBot")
+@TeleOp(name = "ApacheFlyWheel", group = "DemoBot")
 public class ApacheFlyWheel extends OpMode {
 
     //drive train motors
