@@ -8,6 +8,7 @@
 package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,7 +18,8 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "Move2WobbleGoalsShootHighPark")
+@Autonomous(name = "Move2WobbleGoalsShootHighPark_1")
+@Disabled
 public class Move2WobbleGoalsShootHighPark extends LinearOpMode {
     @Override
     public void runOpMode() {

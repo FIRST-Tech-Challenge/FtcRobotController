@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Accesories.Shooter;
  * @since   2020-October-26
  *
  */
-@Autonomous(name= "Shooter Test Mid Goal")
+@Autonomous(name= "Shooter Test Mid Goal_1")
 @Disabled
 public class ShooterTestMidGoal extends LinearOpMode{
     //private Shooter shooter=null;

@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_2.Components.Accesories.Shooter;
  * @since   2020-October-26
  *
  */
-@Autonomous(name= "Shooter Test High Goal")
+@Autonomous(name= "Shooter Test High Goal ", group="Tests: ")
 @Disabled
 public class ShooterTestHighGoal extends LinearOpMode{
 //    private Shooter shooter=null;

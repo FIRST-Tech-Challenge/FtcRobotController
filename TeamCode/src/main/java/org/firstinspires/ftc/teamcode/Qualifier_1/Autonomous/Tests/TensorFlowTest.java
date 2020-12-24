@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 import java.awt.font.NumericShaper;
 import java.util.ArrayList;
 
-@Autonomous
+@Autonomous(name= "TensorFlowTest_1")
 @Disabled
 public class TensorFlowTest extends LinearOpMode {
 

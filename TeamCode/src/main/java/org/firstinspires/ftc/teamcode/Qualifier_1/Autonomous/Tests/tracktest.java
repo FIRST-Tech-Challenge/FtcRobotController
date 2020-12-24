@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometry;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
-@Autonomous(name= "tracktest")
+@Autonomous(name= "tracktest_1")
 @Disabled
 public class tracktest extends LinearOpMode{
 final boolean debug = true;

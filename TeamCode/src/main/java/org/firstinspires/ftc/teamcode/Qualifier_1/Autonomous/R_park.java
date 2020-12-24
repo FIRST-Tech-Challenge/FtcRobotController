@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
-@Autonomous(name = "Park")
+@Autonomous(name = "Park_1")
 @Disabled
 public class R_park extends LinearOpMode {
 
