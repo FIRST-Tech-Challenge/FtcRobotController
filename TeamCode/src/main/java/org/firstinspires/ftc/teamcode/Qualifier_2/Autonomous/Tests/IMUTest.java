@@ -20,16 +20,16 @@ public class IMUTest extends LinearOpMode {
 
         waitForStart();
 
-        robot.moveForward(48, 0.5);
+        robot.moveLeft(69, 0.75);
         sleep(1000);
         robot.turnInPlace(0, 0.5);
-        robot.moveBackward(48, 0.5);
-        sleep(1000);
-        robot.turnInPlace(0, 0.5);
-        robot.moveLeft(24, 0.5);
-        sleep(1000);
-        robot.turnInPlace(0, 0.5);
-        robot.moveRight(24, 0.5);
+//        robot.moveBackward(48, 0.5);
+//        sleep(1000);
+//        robot.turnInPlace(0, 0.5);
+//        robot.moveLeft(24, 0.5);
+//        sleep(1000);
+//        robot.turnInPlace(0, 0.5);
+        robot.moveRight(69, 0.75);
         sleep(1000);
         robot.turnInPlace(0, 0.5);
 
