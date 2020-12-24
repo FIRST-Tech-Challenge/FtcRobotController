@@ -21,23 +21,29 @@ import org.firstinspires.ftc.teamcode.Qualifier_2.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_2.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Qualifier_2.Robot;
 
-@Autonomous(name = "VuforiaTest")
-@Disabled
+@Autonomous(name="VuforiaTest ", group="Tests: ")
+//@Disabled
 public class VuforiaTest extends LinearOpMode {
 
 
     @Override
     public void runOpMode() {
 
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER);
+        telemetry.addData("beforerobot", 0);
+        telemetry.update();
+        Robot robot = new Robot(this, BasicChassis.ChassisType.IMU);
+        telemetry.addData("afterrobot", 0);
+        telemetry.update();
         ElapsedTime runtime = new ElapsedTime();
 
-        //AamodVuforia vuforiaB = new AamodVuforia(this, VuforiaLocalizer.CameraDirection.BACK);
-        //AamodVuforia vuforiaF = new AamodVuforia(this, VuforiaLocalizer.CameraDirection.FRONT);
-        VuforiaWebcam vuforiaWebcam = new VuforiaWebcam(this);
+//        VuforiaWebcam vuforiaWebcam = new VuforiaWebcam(this);
 
-        vuforiaWebcam.init(this);
-        vuforiaWebcam.start();
+        telemetry.addData("beforeinit", 0);
+        telemetry.update();
+        robot.vuforiaWebcam.init(this);
+        telemetry.addData("afterinit", 0);
+        telemetry.update();
+        robot.vuforiaWebcam.runVuforia();
 
         waitForStart();
 

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_2.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_2.Robot;
 
 @Disabled
-@Autonomous(name = "IMUTest")
+@Autonomous(name = "IMUTest ", group="Tests: ")
 public class IMUTest extends LinearOpMode {
     @Override
 

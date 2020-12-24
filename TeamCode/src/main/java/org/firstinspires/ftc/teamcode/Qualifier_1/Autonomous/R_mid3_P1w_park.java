@@ -8,7 +8,7 @@ package org.firstinspires.ftc.teamcode.Qualifier_1.Autonomous;
         import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometry;
         import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
-@Autonomous(name= "R_mid3_P1w_park")
+@Autonomous(name= "R_mid3_P1w_park_1")
 @Disabled
 public class R_mid3_P1w_park extends LinearOpMode {
     final boolean debug = true;

@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "CurrentTest")
+@Autonomous(name = "CurrentTest ", group="Tests: ")
 //@Disabled
 public class CurrentTest extends LinearOpMode {
 

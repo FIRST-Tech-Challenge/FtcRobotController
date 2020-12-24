@@ -25,8 +25,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
-@Autonomous(name = "CurrentTest")
-//@Disabled
+@Autonomous(name = "CurrentTest_1")
+@Disabled
 public class CurrentTest extends LinearOpMode {
 
     @Override

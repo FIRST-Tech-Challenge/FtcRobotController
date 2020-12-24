@@ -30,8 +30,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
  */
 
 
-@TeleOp(name = "Teleop ")
-//@Disabled
+@TeleOp(name = "Teleop_1")
+@Disabled
 public class Teleop extends LinearOpMode {
 
     // new version of runopmode that supports inplaceturn slowmode and can toggle slowmode on and off with one button - tested by aiden jonathan ma

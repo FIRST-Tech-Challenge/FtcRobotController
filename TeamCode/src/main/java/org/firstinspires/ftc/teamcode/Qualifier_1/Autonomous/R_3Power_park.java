@@ -10,7 +10,8 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Odometry;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
-@Autonomous(name= "R_3Power_park")//12.76-13.7
+@Autonomous(name= "R_3Power_park_1")//12.76-13.7
+@Disabled
 public class R_3Power_park extends LinearOpMode {
     final boolean debug= true;
     @Override

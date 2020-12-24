@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Vuforia
 import org.firstinspires.ftc.teamcode.Qualifier_1.Components.Navigations.Webcam_1;
 import org.firstinspires.ftc.teamcode.Qualifier_1.Robot;
 
-@Autonomous(name = "VuforiaTest")
+@Autonomous(name = "VuforiaTest_1")
 @Disabled
 public class VuforiaTest extends LinearOpMode {
 
