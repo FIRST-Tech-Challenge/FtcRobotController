@@ -19,9 +19,9 @@ public class RobotHardware {
     public HardwareMap hardwareMap = null;
     public Drive d = null;
     //public Collect c = null;
-    public DcMotor lift = null;
+    //public DcMotor lift = null;
     //public ColorSensor color = null;
-    public Servo f = null;
+    //public Servo f = null;
     public BNO055IMU imu = null;
     public Orientation lastAngles = null; // new Orientation();
     
@@ -53,9 +53,9 @@ public class RobotHardware {
         imu.initialize(parameters);
         globalangle = 0;
         
-        lift = hardwareMap.get(DcMotor.class, "liftmotor");
+        //lift = hardwareMap.get(DcMotor.class, "liftmotor");
         //color = hardwareMap.get(ColorSensor.class, "colorsensor");
-        f = hardwareMap.get(Servo.class, "foundation");
+        //f = hardwareMap.get(Servo.class, "foundation");
     }
     
     public void reset() {

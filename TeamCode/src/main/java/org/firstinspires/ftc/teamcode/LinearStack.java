@@ -29,12 +29,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.states.ForwardUntil;
 import org.firstinspires.ftc.teamcode.states.TurnUntilAngle;
-import org.firstinspires.ftc.teamcode.states.StrafeUntilClicks;
+//import org.firstinspires.ftc.teamcode.states.StrafeUntilClicks;
 //import org.firstinspires.ftc.teamcode.states.CollectUntilDist;
 //import org.firstinspires.ftc.teamcode.states.DispenseUntilDist;
 //import org.firstinspires.ftc.teamcode.states.SeekUntilColor;
-import org.firstinspires.ftc.teamcode.states.GrabFoundation;
-import org.firstinspires.ftc.teamcode.states.DragFoundationR;
+//import org.firstinspires.ftc.teamcode.states.GrabFoundation;
+//import org.firstinspires.ftc.teamcode.states.DragFoundationR;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 
 
