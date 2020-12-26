@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
-public class autoDeclerations {
+public class autoDeclarations {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFoward = null;
@@ -19,10 +19,9 @@ public class autoDeclerations {
     private DcMotor intake = null;
 
     //Constructor
-    public autoDeclerations() {}
-
+    public autoDeclarations() {}
+//Initialize standard Hardware interfaces
     public void init(HardwareMap hardwareMap) {
-            telemetry.addData("Status", "Initialized");
 
             // Initialize the hardware variables. Note that the strings used here as parameters
             // to 'get' must correspond to the names assigned during the robot configuration
@@ -59,4 +58,4 @@ public class autoDeclerations {
         }
 
     }
-}
+
