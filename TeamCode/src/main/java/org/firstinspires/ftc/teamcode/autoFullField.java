@@ -67,17 +67,17 @@ autoDeclarations robot = new autoDeclarations();
         robot.init(hardwareMap);
         //telemetry message
         telemetry.addData("Status", "Resetting Encoders");
-        leftFoward.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightReverse.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftReverse.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFoward.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftFoward.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.rightReverse.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftReverse.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.rightFoward.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftFoward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightReverse.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftReverse.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFoward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.leftFoward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.rightReverse.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.leftReverse.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.rightFoward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0", "Starting at %7d :%7d",
@@ -85,7 +85,7 @@ autoDeclarations robot = new autoDeclarations();
                 robot.rightReverse.getCurrentPosition(),
                 robot.leftReverse.getCurrentPosition(),
                 robot.rightFoward.getCurrentPosition(),
-                robot.intake.getCurrentPosition()),;
+                robot.intake.getCurrentPosition()),
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -97,27 +97,62 @@ autoDeclarations robot = new autoDeclarations();
         robot.intake.setPower(1); //Shoot rings
     }
 
-        leftFoward.setPower(0);
-        rightReverse.setPower(0);
-        leftReverse.setPower(0);
-        rightFoward.setPower(0);
-        intake.setPower(0);
+        robot.leftFoward.setPower(0);
+        robot.rightReverse.setPower(0);
+        robot.leftReverse.setPower(0);
+        robot.rightFoward.setPower(0);
+        robot.intake.setPower(0);
         //encoderDrive variable
     public void encoderDrive(double leftInches, double rightInches, double timeoutS) {
 int newLeftTarget;
 int newRightTarget;
 
+
 //Checking Opmode
 if(opModeIsActive()) {
-    newLeftTarget = robot.leftFoward.getCurrentPosition(),
-            newRightTarget robot.rightReverse.getCurrentPosition(),
-            newLeftTarget robot.leftReverse.getCurrentPosition(),
-            robot.rightFoward.getCurrentPosition(),
-            robot.intake.getCurrentPosition()),;
+    //Find the new position
+    newLeftTarget = robot.leftFoward.getCurrentPosition + (int)(leftInches*COUNTS_PER_MOTOR_REV);
+            newRightTarget = robot.rightReverse.getCurrentPosition() + (int)(rightInches*COUNTS_PER_MOTOR_REV);
+            newLeftTarget = robot.leftReverse.getCurrentPosition() + (int)(leftInches*COUNTS_PER_MOTOR_REV);
+            newRightTarget = robot.rightFoward.getCurrentPosition() + (int)(rightInches*COUNTS_PER_MOTOR_REV);
+
+            //Turn on RUN_TO_POSITION
+            robot.leftFoward.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    robot.rightReverse.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    robot.leftReverse.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    robot.rightFoward.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+    runtime.reset();
+    robot.leftFoward.setPower(Math.abs(speed));
+    robot.rightReverse.setPower(Math.abs(speed));
+    robot.leftReverse.setPower(Math.abs(speed));
+    robot.rightFoward.setPower(Math.abs(speed));
+
+    while(opModeIsActive() &&
+            (runtime.seconds() < timeoutS) &&
+            (robot.leftFoward.isBusy() || robot.rightReverse.isBusy() ||
+             robot.leftReverse.isBusy() || robot.rightFoward.isBusy())) {
+        telemetry.addData("Path1", "Running to %7d: %7d", newLeftTarget, newRightTarget);
+        telemetry.addData("Path2", "Running at %7d: %7d",
+                robot.leftFoward.getCurrentPosition(),
+                robot.rightReverse.getCurrentPosition(),
+                robot.leftReverse.getCurrentPosition(),
+                robot.rightFoward.getCurrentPosition());
+        telemetry.update();
+    }
 }
 
 
 
+        robot.leftFoward.setPower(0);
+        robot.rightReverse.setPower(0);
+        robot.leftReverse.setPower(0);
+        robot.rightFoward.setPower(0);
+        robot.intake.setPower(0);
 
+        robot.leftFoward.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.rightReverse.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.leftReverse.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.rightFoward.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
