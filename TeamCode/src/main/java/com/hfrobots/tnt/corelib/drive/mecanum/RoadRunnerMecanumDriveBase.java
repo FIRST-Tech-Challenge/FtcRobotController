@@ -77,7 +77,10 @@ public abstract class RoadRunnerMecanumDriveBase extends MecanumDrive {
     public RoadRunnerMecanumDriveBase(final DriveConstants driveConstants) {
         super(driveConstants.getKv(), driveConstants.getKa(), driveConstants.getKstatic(), driveConstants.getTrackWidth());
 
-        dashboard = FtcDashboard.getInstance();
+        if (false) { // TODO - eventually change this to be configurable
+            dashboard = FtcDashboard.getInstance();
+        }
+
         clock = NanoClock.system();
 
         mode = Mode.IDLE;
