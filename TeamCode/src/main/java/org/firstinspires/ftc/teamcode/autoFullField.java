@@ -53,32 +53,39 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class autoFullField extends autoDeclarations{
 
     //OpMode members
-
+autoDeclarations robot = new autoDeclarations();
     //Timer
     private ElapsedTime  runtime = new ElapsedTime();
 
     //Constants
-    static final double COUNTS_PER_MOTOR_REV = 1440; //Counts to rotations
+    static final double COUNTS_PER_MOTOR_REV = 1440; //Counts to rotations, testing later
     static final double DRIVE_GEAR_REDUCTION = 1.0; //If gears are added
     static final double WHEEL_DIAMETER_INCHES = 4.0; //Get wheel size later
-    static final double DRIVE_SPEED = 0.6;
-    static final double TURN_SPEED = 0.5;
 
     public void runOpMode() {
         //Initialize variables
         robot.init(hardwareMap);
         //telemetry message
-        telemetry.addData("Sataus", "Resetting Encoders");
-        robot.leftDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        telemetry.addData("Status", "Resetting Encoders");
+        leftFoward.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightReverse.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftReverse.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFoward.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFoward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightReverse.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftReverse.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFoward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0", "Starting at %7d :%7d",
-                robot.leftDrive.getCurrentPosition(),
-                robot.rightDrive.getCurrentPosition());
+                robot.leftFoward.getCurrentPosition(),
+                robot.rightReverse.getCurrentPosition(),
+                robot.leftReverse.getCurrentPosition(),
+                robot.rightFoward.getCurrentPosition(),
+                robot.intake.getCurrentPosition()),;
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -86,16 +93,30 @@ public class autoFullField extends autoDeclarations{
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED, 80, 80, 1.0);  //  Forward 80 Inches with 1 Sec timeout
-        robot.intake.setSpeed(100); //Shoot rings
+        encoderDrive(80, 80, 1.0);  //  Forward 80 Inches with 1 Sec timeout
+        robot.intake.setPower(1); //Shoot rings
     }
 
-     robot.leftDrive.setPower(0);
-     robot.rightDrive.setPower(0);
+        leftFoward.setPower(0);
+        rightReverse.setPower(0);
+        leftReverse.setPower(0);
+        rightFoward.setPower(0);
+        intake.setPower(0);
+        //encoderDrive variable
+    public void encoderDrive(double leftInches, double rightInches, double timeoutS) {
+int newLeftTarget;
+int newRightTarget;
 
-    // Turn off RUN_TO_POSITION
-     robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-     robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//Checking Opmode
+if(opModeIsActive()) {
+    newLeftTarget = robot.leftFoward.getCurrentPosition(),
+            newRightTarget robot.rightReverse.getCurrentPosition(),
+            newLeftTarget robot.leftReverse.getCurrentPosition(),
+            robot.rightFoward.getCurrentPosition(),
+            robot.intake.getCurrentPosition()),;
+}
+
+
 
 
     }
