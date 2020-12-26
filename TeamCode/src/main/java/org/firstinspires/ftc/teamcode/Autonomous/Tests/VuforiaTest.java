@@ -32,7 +32,7 @@ public class VuforiaTest extends LinearOpMode {
         Robot robot = new Robot(this, BasicChassis.ChassisType.IMU, false, true);
         telemetry.addData("afterrobot", 0);
         telemetry.update();
-        ElapsedTime runtime = new ElapsedTime();
+//        ElapsedTime runtime = new ElapsedTime();
 
 //        VuforiaWebcam vuforiaWebcam = new VuforiaWebcam(this);
 
@@ -41,7 +41,7 @@ public class VuforiaTest extends LinearOpMode {
 //        robot.vuforiaWebcam.init(this);
         telemetry.addData("afterinit", 0);
         telemetry.update();
-//        robot.vuforiaWebcam.runVuforia();
+        robot.runVuforia();
 
         waitForStart();
 

@@ -34,7 +34,7 @@ public class Robot {
     private RingDepositor ringDepositor = null;
     private Shooter shooter = null;
     private VuforiaWebcam vuforiaWebcam = null;
-    private TensorFlow tensorFlow = null; 
+    private TensorFlow tensorFlow = null;
 
     private double vuforiaX = 0;
     private double vuforiaY = 0;
@@ -69,7 +69,9 @@ public class Robot {
             shooter = new Shooter(op);
         }
 
-        tensorFlow.runTensorFlowWaitForStart();
+        if (objectDetectionNeeded) {
+            tensorFlow.runTensorFlowWaitForStart();
+        }
 
         // comment by victor
         // drivetrain.init(opMode);
@@ -204,6 +206,10 @@ public class Robot {
         if(isCorgi) {
             vuforiaWebcam.interrupt();
         }
+    }
+
+    public void runVuforia(){
+        vuforiaWebcam.runVuforia();
     }
 
     /**TensorFlow**/
