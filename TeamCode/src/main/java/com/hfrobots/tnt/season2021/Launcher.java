@@ -25,8 +25,10 @@ import lombok.NonNull;
 
 public class Launcher {
 
+    // GoBilda 1:1 positive power rotation CCW, max theoretical encoder/sec is 2800, measured is 2700
+
     public Launcher(@NonNull HardwareMap hardwareMap){
-        throw new RuntimeException("not implemted yet");
+        //throw new RuntimeException("not implemted yet");
     }
 
     public void stop() {

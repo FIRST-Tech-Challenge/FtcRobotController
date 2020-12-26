@@ -19,25 +19,36 @@
 
 package com.hfrobots.tnt.season2021;
 
+import android.util.Log;
+
 import com.ftc9929.corelib.control.NinjaGamePad;
 import com.ftc9929.corelib.control.OnOffButton;
 import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.state.State;
 import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Ticker;
+import com.google.common.collect.Lists;
 import com.hfrobots.tnt.corelib.drive.ExtendedDcMotor;
 import com.hfrobots.tnt.corelib.drive.PidController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import lombok.Builder;
 import lombok.NonNull;
 import lombok.Setter;
 
+import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
+
 public class ScoringMechanism {
+
+    public static final long LAUNCHER_TO_SPEED_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(2);
 
     private Launcher launcher;
     private Intake intake;
@@ -45,24 +56,87 @@ public class ScoringMechanism {
     private RangeInput intakeVelocity;
     private OnOffButton launchTrigger;
 
-    public ScoringMechanism(HardwareMap hardwareMap) {
+    private State currentState;
 
+    @Builder
+    private ScoringMechanism(HardwareMap hardwareMap,
+                            RangeInput intakeVelocity,
+                            OnOffButton launchTrigger,
+                            Telemetry telemetry,
+                            Ticker ticker) {
         launcher = new Launcher(hardwareMap);
         intake = new Intake(hardwareMap);
 
+        this.intakeVelocity = intakeVelocity;
+        this.launchTrigger = launchTrigger;
+
+        IdleState idleState = new IdleState(telemetry);
+        IntakeMoving intakeMoving = new IntakeMoving(telemetry);
+        idleState.setIntakeMoving(intakeMoving);
+        intakeMoving.setIdleState(idleState);
+
+        PreloadRings preloadRings = new PreloadRings(telemetry);
+        idleState.setPreloadRings(preloadRings);
+
+        LauncherToSpeed launcherToSpeed = new LauncherToSpeed(telemetry, ticker);
+
+        LauncherReady launcherReady = new LauncherReady(telemetry);
+
+        // MM - Remove Me for Kids to Look Into
+        launcherToSpeed.setLauncherReady(launcherReady);
+
+        FeedRingIntoLauncher feedRingIntoLauncher = new FeedRingIntoLauncher();
+
+        DelayBeforeFeedingAgain delayBeforeFeedingAgain = new DelayBeforeFeedingAgain();
+
+        // because of circular dependencies during construction, we need to post-check
+        // that all of the transitions have been setup correctly
+
+        for (ReadyCheckable checkMe : readyCheckables) {
+            checkMe.checkReady();
+        }
+
+        currentState = idleState;
+    }
+
+    public void periodicTask() {
+        if (currentState != null) {
+            State nextState = currentState.doStuffAndGetNextState();
+
+            if (nextState != currentState) {
+                // We've changed states alert the driving team, log for post-match analysis
+                //telemetry.addData("00-State", "From %s to %s", currentState, nextState);
+                Log.d(LOG_TAG, String.format("State transition from %s to %s", currentState.getClass()
+                        + "(" + currentState.getName() + ")", nextState.getClass() + "(" + nextState.getName() + ")"));
+            }
+
+            currentState = nextState;
+        } else {
+            Log.e(LOG_TAG, "No state machine setup!");
+        }
+    }
+
+    @VisibleForTesting
+    State getCurrentState() {
+        return currentState;
+    }
+
+    List<ReadyCheckable> readyCheckables = Lists.newArrayList();
+
+    interface ReadyCheckable {
+        void checkReady();
     }
 
     class IdleState extends NotDebuggableState {
         // Intake: Not Moving 
         // Launcher: Not Moving
 
-
         // Transitions - operator requests intake move, operator requests launch of rings
         @Setter
-        private IntakeMoving intakeMoving;
+        IntakeMoving intakeMoving;
 
         @Setter
-        private PreloadRings preloadRings;
+        PreloadRings preloadRings;
 
         protected IdleState(Telemetry telemetry) {
             super("Scoring Idle", telemetry);
@@ -73,13 +147,19 @@ public class ScoringMechanism {
             launcher.stop();
             intake.stop();
 
-            if (intakeVelocity.getPosition() != 0){
+            if (intakeVelocity.getPosition() != 0) {
                 return intakeMoving;
             } else if (launchTrigger.isPressed()) {
                 return preloadRings;
             }
 
             return this;
+        }
+
+        @Override
+        public void checkReady() {
+            Preconditions.checkNotNull(intakeMoving);
+            Preconditions.checkNotNull(preloadRings);
         }
     }
 
@@ -99,13 +179,26 @@ public class ScoringMechanism {
 
         @Override
         public State doStuffAndGetNextState() {
-            if (intakeVelocity.getPosition() >0) {
+            if (intakeVelocity.getPosition() > 0) {
                 intake.intake(intakeVelocity.getPosition());
-            } else if(intakeVelocity.getPosition() <0) {
+            } else if (intakeVelocity.getPosition() < 0) {
                 intake.outtake(intakeVelocity.getPosition());
             }
 
             return idleState;
+        }
+
+        public boolean isIntaking() {
+            return intake.isIntaking();
+        }
+
+        public boolean isOuttaking() {
+            return intake.isOuttaking();
+        }
+
+        @Override
+        public void checkReady() {
+            Preconditions.checkNotNull(idleState);
         }
     }
 
@@ -123,9 +216,14 @@ public class ScoringMechanism {
         public State doStuffAndGetNextState() {
             return null;
         }
+
+        @Override
+        public void checkReady() {
+            //Preconditions.checkNotNull(idleState);
+        }
     }
 
-    class LauncherToSpeed extends StopwatchTimeoutSafetyState {
+    class LauncherToSpeed extends StopwatchTimeoutSafetyState implements ReadyCheckable {
         // Intake:Not Moving 
         // Launcher: Moving - accelerate to target velocity, PID (velocity)
 
@@ -146,13 +244,20 @@ public class ScoringMechanism {
 
         protected ExtendedDcMotor motor;
 
-        public LauncherToSpeed(Telemetry telemetry, Ticker ticker){
-            super("Launcher to Speed",telemetry, ticker, TimeUnit.SECONDS.toMillis(2));
+        public LauncherToSpeed(Telemetry telemetry, Ticker ticker) {
+            super("Launcher to Speed",telemetry, ticker, LAUNCHER_TO_SPEED_TIMEOUT_MILLIS);
 
             pid = PidController.builder().setKp(kP).setkI(kI).setkF(kF).setAllowOscillation(true)
                     .setTolerance(encoderClicksPerSec*.03).build();
             pid.setAbsoluteSetPoint(true);
             pid.setTarget(encoderClicksPerSec, 0);
+
+            readyCheckables.add(this);
+        }
+
+        @Override
+        public void checkReady() {
+            Preconditions.checkNotNull(launcherReady);
         }
 
         @Override
@@ -203,11 +308,16 @@ public class ScoringMechanism {
         }
     }
 
-    class LauncherReady extends NotDebuggableState{
+    class LauncherReady extends NotDebuggableState {
         //FIX ME
 
-        protected LauncherReady(@NonNull String name, Telemetry telemetry) {
-            super(name, telemetry);
+        protected LauncherReady(Telemetry telemetry) {
+            super("Launcher ready", telemetry);
+        }
+
+        @Override
+        public void checkReady() {
+
         }
 
         @Override
@@ -243,10 +353,11 @@ public class ScoringMechanism {
     // implementation
     //
 
-    abstract class NotDebuggableState extends State {
+    abstract class NotDebuggableState extends State implements ReadyCheckable {
 
         protected NotDebuggableState(@NonNull String name, Telemetry telemetry) {
             super(name, telemetry);
+            readyCheckables.add(this);
         }
 
         @Override

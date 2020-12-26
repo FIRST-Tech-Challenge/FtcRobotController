@@ -19,39 +19,9 @@
 
 package com.hfrobots.tnt.season2021;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.ftc9929.testing.fakes.util.FakeHardwareMapFactory;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Intake {
-    public static final float INTAKE_POWER = 1;
-
-    public static final float OUTTAKE_POWER = -1;
-
-    // NR-3.7 Orbital: positive voltage rotation CCW, encoder/sec 3400
-    private final DcMotorEx intakeMotor;
-
-    public Intake(HardwareMap hardwareMap){
-        intakeMotor = hardwareMap.get(DcMotorEx.class,"intakeMotor");
-
-    }
-
-    public void intake(float speed){
-        intakeMotor.setPower(INTAKE_POWER * Math.abs(speed));
-    }
-
-    public void outtake(float speed){
-        intakeMotor.setPower(OUTTAKE_POWER * Math.abs(speed));
-    }
-
-    public void stop() {
-        intakeMotor.setPower(0);
-    }
-
-    public boolean isIntaking() {
-        return Math.signum(intakeMotor.getPower()) == Math.signum(INTAKE_POWER);
-    }
-
-    public boolean isOuttaking() {
-        return Math.signum(intakeMotor.getPower()) == Math.signum(OUTTAKE_POWER);
-    }
+public class UltimateGoalTestConstants {
+    static final HardwareMap HARDWARE_MAP = FakeHardwareMapFactory.getFakeHardwareMap("ultimategoal.xml");
 }

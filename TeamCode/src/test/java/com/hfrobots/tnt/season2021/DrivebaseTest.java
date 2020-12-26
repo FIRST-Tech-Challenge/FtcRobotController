@@ -29,8 +29,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class DrivebaseTest {
-    HardwareMap hardwareMap;
-
     FakeDcMotorEx leftFront;
     FakeDcMotorEx leftRear;
     FakeDcMotorEx rightFront;
@@ -38,16 +36,15 @@ public class DrivebaseTest {
 
     @Before
     public void setup() {
-        hardwareMap = FakeHardwareMapFactory.getFakeHardwareMap("ugoal.xml");
-        leftFront = (FakeDcMotorEx) hardwareMap.get(DcMotorEx.class, "leftFrontDriveMotor");
-        leftRear = (FakeDcMotorEx) hardwareMap.get(DcMotorEx.class, "leftRearDriveMotor");
-        rightFront = (FakeDcMotorEx) hardwareMap.get(DcMotorEx.class, "rightFrontDriveMotor");
-        rightRear = (FakeDcMotorEx) hardwareMap.get(DcMotorEx.class, "rightRearDriveMotor");
+        leftFront = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "leftFrontDriveMotor");
+        leftRear = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "leftRearDriveMotor");
+        rightFront = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "rightFrontDriveMotor");
+        rightRear = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "rightRearDriveMotor");
     }
 
     @Test
     public void happyPath(){
-        Drivebase drivebase = new Drivebase(hardwareMap);
+        Drivebase drivebase = new Drivebase(UltimateGoalTestConstants.HARDWARE_MAP);
         drivebase.driveCartesian(1, 0 ,0, false);
 
         // What does strafing look like?
