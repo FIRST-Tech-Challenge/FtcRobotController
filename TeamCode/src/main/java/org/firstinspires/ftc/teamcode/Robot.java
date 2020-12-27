@@ -11,11 +11,9 @@ import org.firstinspires.ftc.teamcode.Components.Accesories.Shooter;
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.Chassis;
-import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
-import org.firstinspires.ftc.teamcode.Components.IMUChassis;
+import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
 import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Components.ObjectDetection.TensorFlow;
-import org.firstinspires.ftc.teamcode.Components.OdometryChassis;
 
 public class Robot {
 
@@ -50,17 +48,8 @@ public class Robot {
         RingDepositor.Position currentRingDepositorPosition = RingDepositor.Position.REST;
         runtime = new ElapsedTime();
 
-        //TODO: Warren, consider using a factory pattern here. Robot doesn't need to know the different types of Chassis that are available.
         //This link has a easy to understand explanation. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
-        if(chassisType==BasicChassis.ChassisType.ENCODER){
-            drivetrain = new EncoderChassis(op);
-        }
-        else if(chassisType==BasicChassis.ChassisType.IMU){
-            drivetrain = new IMUChassis(op);
-        }
-        else if(chassisType==BasicChassis.ChassisType.ODOMETRY){
-            drivetrain = new OdometryChassis(op);
-        }
+        drivetrain= ChassisFactory.getChassis(chassisType,op);
 
         //TODO: Aamod and everyone, there is possibly a bug here. Can any one point out?
         vuforiaWebcam = new VuforiaWebcam(op);
