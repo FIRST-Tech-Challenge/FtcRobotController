@@ -51,13 +51,13 @@ import java.util.Date;
 // * or add a @Disabled annotation to prevent this OpMode from being added to the Driver Station
 // */
 @Autonomous
-public class AutoNew extends OpMode {
+public class AutoNewer extends OpMode {
     /* Declare OpMode members. */
     public RobotHardware robotHardware = new RobotHardware();
     public LinearStack states = new LinearStack(new OurState[] {
             // Phase 1
             // new LiftUntilTime(120, -1),
-            new ForwardUntil(100),
+            new ForwardUntil(1500),
             new TurnUntilAngle(180),
             // new ForwardUntil(-900),
             // new SeekUntilColor(),
