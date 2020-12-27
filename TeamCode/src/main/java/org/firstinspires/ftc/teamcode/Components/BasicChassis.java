@@ -13,39 +13,37 @@ public abstract class BasicChassis {
 
     //TODO Warren: Use the explicit right access modifier. Default is not the right one here.
     //initialize motor
-    public DcMotorEx motorLeftFront;
-    public DcMotorEx motorRightFront;
-    public DcMotorEx motorLeftBack;
-    public DcMotorEx motorRightBack;
+    protected DcMotorEx motorLeftFront;
+    protected DcMotorEx motorRightFront;
+    protected DcMotorEx motorLeftBack;
+    protected DcMotorEx motorRightBack;
 
     //TODO Warren: Use right access modifiers.
     // Initialize Encoder Variables
-    public final double robot_diameter = Math.sqrt(619.84);
-    public final double wheel_diameter = 3.93701;
-    public double[] encoder = new double[4];
-    public double xpos = 0;
-    public double ypos = 0;
+    protected final double robot_diameter = Math.sqrt(619.84);
+    protected final double wheel_diameter = 3.93701;
+    protected double[] encoder = new double[4];
+    protected double xpos = 0;
+    protected double ypos = 0;
 
     //TODO Warren: Use right access modifiers.
     // these encoder variables vary depending on chassis type
-    public final double counts_per_motor_goBilda = 383.6;
-    public final double counts_per_inch = 2 * (counts_per_motor_goBilda / (wheel_diameter * Math.PI));
+    protected final double counts_per_motor_goBilda = 383.6;
+    protected final double counts_per_inch = 2 * (counts_per_motor_goBilda / (wheel_diameter * Math.PI));
     //TODO Warren: Ununsed property?
     /* local OpMode members. */
     //TODO Warren, do we need these as properties of this class?
     //Do we need to
-    public LinearOpMode op = null;
-    private HardwareMap hardwareMap = null;
+    protected LinearOpMode op = null;
 
     public BasicChassis(LinearOpMode opMode) {
         op = opMode;
-        hardwareMap = op.hardwareMap;
         //lastAngles  = new Orientation();
         // Chassis motors
-        motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
-        motorRightFront = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
-        motorLeftBack = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
-        motorRightBack = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
+        motorLeftFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
+        motorRightFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
+        motorLeftBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
+        motorRightBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightBack");
 
         // Chassis Motors
         motorLeftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

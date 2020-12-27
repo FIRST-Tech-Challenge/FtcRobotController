@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Components.ObjectDetection.TensorFlow;
 public class Robot {
 
     private LinearOpMode op = null;
-    final boolean isCorgi = false;
+    final boolean isCorgi = true;
 
     // Hardware Objects
     private BasicChassis drivetrain = null;

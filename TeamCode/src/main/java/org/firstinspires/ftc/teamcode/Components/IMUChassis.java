@@ -28,7 +28,6 @@ import static java.lang.Math.sqrt;
 public class IMUChassis extends BasicChassis {
 
     /* local OpMode members. */
-    private LinearOpMode op = null;
 
     private BNO055IMU imu;
     private Orientation             lastAngles = new Orientation();
