@@ -32,6 +32,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
+//TODO Aamod: Looks like another version.. Delete this if we are not using.
 public class Webcam_1 extends Thread {
     private OpMode op;
 

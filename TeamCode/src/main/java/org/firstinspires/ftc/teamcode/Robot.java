@@ -19,7 +19,10 @@ import org.firstinspires.ftc.teamcode.Components.OdometryChassis;
 
 public class Robot {
 
+    //TODO: Nikhil, can we delete this?
 //    Shooter shooter = new Shooter();
+
+    //TODO: Siddharth & Aiden, can we delete this?
 //    WobbleGoal wobbleGoal = new WobbleGoal();
 
     private LinearOpMode op = null;
@@ -46,6 +49,9 @@ public class Robot {
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
         RingDepositor.Position currentRingDepositorPosition = RingDepositor.Position.REST;
         runtime = new ElapsedTime();
+
+        //TODO: Warren, consider using a factory pattern here. Robot doesn't need to know the different types of Chassis that are available.
+        //This link has a easy to understand explanation. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
         if(chassisType==BasicChassis.ChassisType.ENCODER){
             drivetrain = new EncoderChassis(op);
         }
@@ -55,12 +61,16 @@ public class Robot {
         else if(chassisType==BasicChassis.ChassisType.ODOMETRY){
             drivetrain = new OdometryChassis(op);
         }
+
+        //TODO: Aamod and everyone, there is possibly a bug here. Can any one point out?
         vuforiaWebcam = new VuforiaWebcam(op);
         if(objectDetectionNeeded){
             tensorFlow = new TensorFlow(op);
         } else if (vuforiaNAVIGATIONneeded) {
             vuforiaWebcam.init(op);
         }
+
+
         if(isCorgi) {
             intake = new Intake(op);
             wobbleGoal = new WobbleGoal(op);
@@ -69,16 +79,21 @@ public class Robot {
             shooter = new Shooter(op);
         }
 
+        //TODO: Aamond why does this need to be here? Can this be at the same loction where you instantiating the TensroFlow?
         if (objectDetectionNeeded) {
             tensorFlow.runTensorFlowWaitForStart();
         }
 
+        //TODO: Warren, clean up the below if not needed any more.
         // comment by victor
         // drivetrain.init(opMode);
 //        if(!isCorgi) {
 //            //vuforiaWebcam.init(opMode); //conflicts with TensorFlow
 //        }
     }
+
+
+
     public void moveVuforiaWebcam(double x, double y, double endAngle) {
         if(!isCorgi) {
             getVuforiaPosition();
@@ -151,6 +166,7 @@ public class Robot {
     public void moveForward(double distance, double power) {
         drivetrain.moveForward(distance, power);
     }
+
     public void moveBackward(double distance, double power) {
         drivetrain.moveBackward(distance, power);
     }
@@ -214,10 +230,13 @@ public class Robot {
 
     /**TensorFlow**/
 
+    //TODO: Aamod, why do we need to expose this as a method. Can the constructor of this class initialize this when ring detection is needed?
+    //TODO: Aamod, also look at the TODOs in TensorFlow class.
     public void initTensorFlow() {
         tensorFlow.initTensorFlow();
     }
 
+    //TODO: Aamond, do we need these 3 methods. Can the robot just expose getNumberOfRings, which will runTensorFlow and then getNumberOfRings from TensorFlow?
     public void runTensorFlow () {
         tensorFlow.runTensorFlow();
     }
@@ -240,6 +259,7 @@ public class Robot {
     /**
      * wobble goal methods
      */
+    //TODO: Siddharth & Aiden, can we start method name with a verb?
     public WobbleGoal.Position wobbleGoalGoToPosition(WobbleGoal.Position p){
         if(isCorgi) {
             wobbleGoal.goToPosition(p);
@@ -247,6 +267,7 @@ public class Robot {
         return (p);
     }
 
+    //TODO: Siddharth & Aiden, can we be consistent and crate another WobbleGoal.Position for teleop start position?
     public void teleopStartPosition(){
         if (isCorgi) {
             wobbleGoal.teleopStartPosition();
@@ -269,13 +290,16 @@ public class Robot {
         wobbleGoal.moveWobbleGoalServo(direction);
     }
 
+
     // ring depositor
+    //TODO: <owner>, can we start method name with a verb?
     public void ringDepositorGoToPosition(RingDepositor.Position p){
         if(isCorgi) {
             ringDepositor.goToPosition(p);
         }
     }
 
+    //TODO: <owner> , can we start method name with a verb?
     public void ringDepositorSmartDeposit(){
         ringDepositor.smartDeposit();
     }
@@ -312,7 +336,7 @@ public class Robot {
     }
 
     //shooter
-
+    //TODO: <owner>, why do have the business logic of shooeter motor in Robot? Can this be moved to Shooter class, like some of the other methods?
     public void moveShooterMotor(int distance, int power) {
         double sleepTime = (distance / 1 * 1000);
 
@@ -334,6 +358,8 @@ public class Robot {
     public void shootHighGoal(int rings) {
         shooter.shootHighGoal(rings);
     }
+
+    //TODO: <owner>, why do have the business logic of shooeter motor in Robot? Can this be moved to Shooter class, like some of the other methods?
     public void shootLeftPowerShot(int rings) {
         shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter.shooterMotor.setVelocity(10000.0);

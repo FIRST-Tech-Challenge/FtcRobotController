@@ -14,6 +14,8 @@ public class EncoderChassis extends BasicChassis {
     double[] encoder = new double[4];
     double xpos = 0;
     double ypos = 0;
+
+    //TODO Warren: Should we just make the op of BasicChassis protected rather storing one more refernce here?
     private LinearOpMode op = null;
     public EncoderChassis(LinearOpMode opMode) {
         super(opMode);

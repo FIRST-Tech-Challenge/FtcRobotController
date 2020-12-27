@@ -21,13 +21,17 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.FRONT;
 
+//TODO: Aamod, are we not using this class yet? We should add test code to demonstrate usage of this class.
 public class Vuforia extends Thread{
     private OpMode op;
     private double xpos, ypos, angle;
+
+    //TODO Aamod: unused property of class?
     private String trackable;
 
     private boolean targetVisible = false;
 
+    //TODO Aamod: unused property of class?
     private VuforiaTrackables targetsSkystone;
     private List<VuforiaTrackable> allTrackables = new ArrayList<>();
 
@@ -39,6 +43,8 @@ public class Vuforia extends Thread{
 
     public Vuforia(OpMode opMode, VuforiaLocalizer.CameraDirection camera_direction) {
         op = opMode;
+
+        //TODO Aamod: we don't seem to be using the camera_direction? What is the intent here?
         VuforiaLocalizer.CameraDirection CAMERA_CHOICE = camera_direction;
     }
 
@@ -55,6 +61,8 @@ public class Vuforia extends Thread{
         final float quarterField = 36 * mmPerInch;
         final float mmTargetHeight = 5.75f * mmPerInch;
 
+
+        //TODO: Aamod, do we need this here? Can we just do parameters.cameraDirection = BACK ?
         // Use back camera
         final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
 
