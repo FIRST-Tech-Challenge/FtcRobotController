@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.Components.Accesories.RingDepositor;
 import org.firstinspires.ftc.teamcode.Components.Accesories.Shooter;
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
-import org.firstinspires.ftc.teamcode.Components.Chassis;
 import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
 import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Components.ObjectDetection.TensorFlow;
@@ -26,7 +25,7 @@ public class Robot {
     private LinearOpMode op = null;
     private HardwareMap hardwareMap = null;
     private ElapsedTime runtime = null;
-    final boolean isCorgi = Chassis.isCorgi;
+    final boolean isCorgi = false;
 
     // Hardware Objects
     private BasicChassis drivetrain = null;
@@ -48,6 +47,7 @@ public class Robot {
         RingDepositor.Position currentRingDepositorPosition = RingDepositor.Position.REST;
         runtime = new ElapsedTime();
 
+        //TODO: Warren, consider using a factory pattern here. Robot doesn't need to know the different types of Chassis that are available.
         //This link has a easy to understand explanation. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
         drivetrain= ChassisFactory.getChassis(chassisType,op);
 
