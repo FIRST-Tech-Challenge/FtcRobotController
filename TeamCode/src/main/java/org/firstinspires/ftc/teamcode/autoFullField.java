@@ -48,12 +48,8 @@ autoDeclarations robot = new autoDeclarations();
     //Timer
     private ElapsedTime  runtime = new ElapsedTime();
 
-    //Constants
-    static final double COUNTS_PER_MOTOR_REV = 1440; //Counts to rotations, testing later
-    static final double DRIVE_GEAR_REDUCTION = 1.0; //If gears are added
-    static final double WHEEL_DIAMETER_INCHES = 4.0; //Wheel size
-    static final double CIRCUMFERENCE = Math.PI*WHEEL_DIAMETER_INCHES; //Circumference of wheel
-    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV*DRIVE_GEAR_REDUCTION)/ CIRCUMFERENCE; //Converting counts to inches
+
+
 
     public void runOpMode() {
         //Initialize variables
@@ -85,57 +81,20 @@ autoDeclarations robot = new autoDeclarations();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(80, 80, 1.0);  //  Forward 80 Inches with 1 Sec timeout
+        encoderDrive(0.5, 80, 80, 1.0);  //  Forward 80 Inches with 1 Sec timeout
         robot.intake.setPower(1); //Shoot rings
     }
-        //encoderDrive variable
-    public void encoderDrive(double leftInches, double rightInches, double timeoutS) {
-int newLeftTarget;
-int newRightTarget;
-
-
-//Checking Opmode
-if(opModeIsActive()) {
-    //Find the new position
-    newLeftTarget = robot.leftFoward.getCurrentPosition() + (int)(leftInches*COUNTS_PER_INCH);
-            newRightTarget = robot.rightReverse.getCurrentPosition() + (int)(rightInches*COUNTS_PER_INCH);
-            newLeftTarget = robot.leftReverse.getCurrentPosition() + (int)(leftInches*COUNTS_PER_INCH);
-            newRightTarget = robot.rightFoward.getCurrentPosition() + (int)(rightInches*COUNTS_PER_INCH);
-
-            //Turn on RUN_TO_POSITION
-            robot.leftFoward.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    robot.rightReverse.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    robot.leftReverse.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    robot.rightFoward.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-    runtime.reset();
-    robot.leftFoward.setPower(Math.abs(speed));
-    robot.rightReverse.setPower(Math.abs(speed));
-    robot.leftReverse.setPower(Math.abs(speed));
-    robot.rightFoward.setPower(Math.abs(speed));
-
-    while(opModeIsActive() &&
-            (runtime.seconds() < timeoutS) &&
-            (robot.leftFoward.isBusy() || robot.rightReverse.isBusy() ||
-             robot.leftReverse.isBusy() || robot.rightFoward.isBusy())) {
-        telemetry.addData("Path1", "Running to %7d: %7d", newLeftTarget, newRightTarget);
-        telemetry.addData("Path2", "Running at %7d: %7d",
-                robot.leftFoward.getCurrentPosition(),
-                robot.rightReverse.getCurrentPosition(),
-                robot.leftReverse.getCurrentPosition(),
-                robot.rightFoward.getCurrentPosition());
-        telemetry.update();
-    }
-}
 
 
 
+        //Stop
         robot.leftFoward.setPower(0);
         robot.rightReverse.setPower(0);
         robot.leftReverse.setPower(0);
         robot.rightFoward.setPower(0);
         robot.intake.setPower(0);
 
+        //Turn off RUN_TO_POSITION
         robot.leftFoward.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightReverse.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.leftReverse.setMode(DcMotor.RunMode.RUN_TO_POSITION);
