@@ -248,7 +248,9 @@ public class Robot {
     }
 
     public void teleopStartPosition(){
-        wobbleGoal.teleopStartPosition();
+        if (isCorgi) {
+            wobbleGoal.teleopStartPosition();
+        }
     }
 
     public void printCurrentWobbleGoalLocation(){
@@ -364,19 +366,15 @@ public class Robot {
         shooter.shooterMotor.setPower(0);
     }
 
-    public void shootMidGoal(int distance) {
-        shooter.shootMidGoal(distance);
-    }
-
-    public void shootLowGoal(int distance) {
-        shooter.shootLowGoal(distance);
-    }
-
     public void moveServo(boolean direction) {
-        shooter.moveServo(direction);
+        if (isCorgi) {
+            shooter.moveServo(direction);
+        }
     }
 
     public void shootGoalTeleop(int direction, int power) {
-        shooter.shootGoalTeleop(direction, power);
+        if (isCorgi) {
+            shooter.shootGoalTeleop(direction, power);
+        }
     }
 }
