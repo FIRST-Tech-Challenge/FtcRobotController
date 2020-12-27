@@ -19,12 +19,7 @@ import org.firstinspires.ftc.teamcode.Components.OdometryChassis;
 
 public class Robot {
 
-//    Shooter shooter = new Shooter();
-//    WobbleGoal wobbleGoal = new WobbleGoal();
-
     private LinearOpMode op = null;
-    private HardwareMap hardwareMap = null;
-    private ElapsedTime runtime = null;
     final boolean isCorgi = Chassis.isCorgi;
 
     // Hardware Objects
@@ -42,25 +37,26 @@ public class Robot {
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean objectDetectionNeeded, boolean vuforiaNAVIGATIONneeded ) {
         op = opMode;
-        hardwareMap = op.hardwareMap;
-        WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
-        RingDepositor.Position currentRingDepositorPosition = RingDepositor.Position.REST;
-        runtime = new ElapsedTime();
-        if(chassisType==BasicChassis.ChassisType.ENCODER){
-            drivetrain = new EncoderChassis(op);
-        }
-        else if(chassisType==BasicChassis.ChassisType.IMU){
-            drivetrain = new IMUChassis(op);
-        }
-        else if(chassisType==BasicChassis.ChassisType.ODOMETRY){
-            drivetrain = new OdometryChassis(op);
-        }
+//        if(chassisType==BasicChassis.ChassisType.ENCODER){
+//            drivetrain = new EncoderChassis(op);
+//        }
+//        else if(chassisType==BasicChassis.ChassisType.IMU){
+//            drivetrain = new IMUChassis(op);
+//        }
+//        else if(chassisType==BasicChassis.ChassisType.ODOMETRY){
+//            drivetrain = new OdometryChassis(op);
+//        }
         vuforiaWebcam = new VuforiaWebcam(op);
         if(objectDetectionNeeded){
             tensorFlow = new TensorFlow(op);
-        } else if (vuforiaNAVIGATIONneeded) {
+        }
+        if(vuforiaNAVIGATIONneeded){
             vuforiaWebcam.init(op);
         }
+        if(objectDetectionNeeded && vuforiaNAVIGATIONneeded){
+
+        }
+
         if(isCorgi) {
             intake = new Intake(op);
             wobbleGoal = new WobbleGoal(op);
@@ -79,6 +75,7 @@ public class Robot {
 //            //vuforiaWebcam.init(opMode); //conflicts with TensorFlow
 //        }
     }
+
     public void moveVuforiaWebcam(double x, double y, double endAngle) {
         if(!isCorgi) {
             getVuforiaPosition();
@@ -209,7 +206,8 @@ public class Robot {
     }
 
     public void runVuforia(){
-        vuforiaWebcam.runVuforia();
+        vuforiaWebcam.run();
+//        vuforiaWebcam.runVuforia(); //TODO: 12/27
     }
 
     /**TensorFlow**/

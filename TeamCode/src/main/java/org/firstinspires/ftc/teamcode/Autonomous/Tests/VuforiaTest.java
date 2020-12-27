@@ -41,7 +41,8 @@ public class VuforiaTest extends LinearOpMode {
 //        robot.vuforiaWebcam.init(this);
         telemetry.addData("afterinit", 0);
         telemetry.update();
-        robot.runVuforia();
+        robot.startVuforia();
+//        robot.runVuforia();
 
         waitForStart();
 

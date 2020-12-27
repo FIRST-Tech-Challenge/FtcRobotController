@@ -136,7 +136,6 @@ public class VuforiaWebcam extends Thread {
 
         // Activate Vuforia Tracking
         targetsUltimateGoal.activate();
-
     }
 
     @Override
@@ -189,43 +188,43 @@ public class VuforiaWebcam extends Thread {
 
     public double getVuforiaAngle2() {
         return vuforiaAngle;
-    } //TODO: 12/24
+    }
 
     public String getVuforiaTrackable() {
         return trackable;
     }
 
-    public void runVuforia() {
-        while (!isInterrupted()) {
-            targetVisible = false;
-            // Look for Trackable, Update Robot Location if Possible
-            for (VuforiaTrackable trackable : allTrackables) {
-                if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
-                    op.telemetry.addData("Visible Target ", trackable.getName());
-                    targetVisible = true;
-
-                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
-                    if (robotLocationTransform != null) {
-                        lastLocation = robotLocationTransform;
-                    }
-                    break;
-                }
-            }
-
-            // Return Location Data (Last Known Location)
-            if (targetVisible) {
-                VectorF translation = lastLocation.getTranslation();
-                op.telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                xpos = translation.get(0) / mmPerInch;
-                ypos = translation.get(1) / mmPerInch;
-                angle = rotation.thirdAngle;
-            }
-            else {
-                op.telemetry.addData("Visible Target", "none");
-            }
-            op.telemetry.update();
-        }
-    }
+//    public void runVuforia() {  //TODO: 12/27
+//        while (!isInterrupted()) {  //TODO: 12/27
+//            targetVisible = false;
+//            // Look for Trackable, Update Robot Location if Possible
+//            for (VuforiaTrackable trackable : allTrackables) {
+//                if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+//                    op.telemetry.addData("Visible Target ", trackable.getName());
+//                    targetVisible = true;
+//
+//                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
+//                    if (robotLocationTransform != null) {
+//                        lastLocation = robotLocationTransform;
+//                    }
+//                    break;
+//                }
+//            }
+//
+//            // Return Location Data (Last Known Location)
+//            if (targetVisible) {
+//                VectorF translation = lastLocation.getTranslation();
+//                op.telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+//                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+//                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+//                xpos = translation.get(0) / mmPerInch;
+//                ypos = translation.get(1) / mmPerInch;
+//                angle = rotation.thirdAngle;
+//            }
+//            else {
+//                op.telemetry.addData("Visible Target", "none");
+//            }
+//            op.telemetry.update();
+//        } //TODO: 12/27
+//    }  //TODO: 12/27
 }
