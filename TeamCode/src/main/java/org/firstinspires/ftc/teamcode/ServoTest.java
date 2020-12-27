@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotor;
+
 
 @TeleOp(name="Servo Test", group="Linear Opmode")
 
@@ -37,11 +35,11 @@ public class ServoTest extends LinearOpMode {
                 clawButtonIsDown = false;
             }
 
-            if (gamepad1.y && !gearboxButtonIsDown) {
-                clawButtonIsDown = true;
+            if (gamepad1.x && !gearboxButtonIsDown) {
+                gearboxButtonIsDown = true;
                 gear.nextPos();
-            } else if (!gamepad1.y) {
-                clawButtonIsDown = false;
+            } else if (!gamepad1.x) {
+                gearboxButtonIsDown = false;
             }
 
             telemetry.addData("Motor Power", gamepad1.left_stick_y);
