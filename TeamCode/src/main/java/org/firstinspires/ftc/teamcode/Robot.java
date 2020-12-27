@@ -54,7 +54,7 @@ public class Robot {
             vuforiaWebcam.init(op);
         }
         if(objectDetectionNeeded && vuforiaNAVIGATIONneeded){
-
+            throw new RuntimeException("They both can't be true.");
         }
 
         if(isCorgi) {
