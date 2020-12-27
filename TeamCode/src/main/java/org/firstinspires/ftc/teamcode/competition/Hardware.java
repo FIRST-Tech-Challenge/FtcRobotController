@@ -3,15 +3,20 @@ package org.firstinspires.ftc.teamcode.competition;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.helperclasses.ThreadPool;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
@@ -79,6 +84,20 @@ public class Hardware {
     // Drive train
     public DcMotorEx leftFront, rightFront, leftRear, rightRear;
 
+
+    //Wobble Goal Lifter
+    public Servo leftWobbleGoal, rightWobbleGoal;
+
+    //Intake
+    DcMotor intakeMotor;
+
+    //flywheelRotateServo
+    public CRServo flywheelRotateServoLeft;
+
+    //claw servos
+    public Servo clawServoLeft;
+    public Servo clawServoRight;
+
     // Odometry hardware
     private DcMotorEx leftEncoder, rightEncoder, centerEncoder;
 
@@ -86,6 +105,16 @@ public class Hardware {
     public RevBulkData bulkData;
     public ExpansionHubEx expansionHub;
     public ExpansionHubMotor leftOdom, rightOdom, centerOdom;
+
+    //Fly wheels
+    public DcMotorEx flywheelMotorLeft;
+    public DcMotorEx flywheelMotorRight;
+
+    //Servo to move rind from magazine into flywheels
+    public Servo flicker;
+
+    private boolean isFlickerMoving;
+    byte queuedFlicks = 0;
 
     // Odometry encoder positions
     public int leftEncoderPos, centerEncoderPos, rightEncoderPos;
@@ -118,10 +147,12 @@ public class Hardware {
         // right front
         rightFront = hwMap.get(DcMotorEx.class, "rightFront");
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // right rear
         rightRear = hwMap.get(DcMotorEx.class, "rightRear");
         rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Odometry encoder setup
@@ -134,6 +165,30 @@ public class Hardware {
         leftOdom = (ExpansionHubMotor) hwMap.dcMotor.get("leftFront");
         rightOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightFront");
         centerOdom = (ExpansionHubMotor) hwMap.dcMotor.get("rightRear");
+
+
+        //Flywheels
+        flywheelMotorLeft = hwMap.get(DcMotorEx.class,"flywheelMotorLeft");
+        flywheelMotorRight = hwMap.get(DcMotorEx.class,"flywheelMotorRight");
+
+        //Wobble goal Servo setup
+        //leftWobbleGoal = hwMap.servo.get("leftWobbleGoal");
+        //rightWobbleGoal = hwMap.servo.get("rightWobbleGoal");
+
+        //Intake
+        intakeMotor = hwMap.dcMotor.get("intake");
+        intakeMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        //flywheel rotating
+        flywheelRotateServoLeft = hwMap.crservo.get("flywheelRotateServoLeft");
+
+        //claw servos
+        //clawServoLeft = hwMap.servo.get("clawServoLeft");
+        //clawServoRight = hwMap.servo.get("clawServoRight");
+
+        flicker = hwMap.servo.get("flicker");
+
+        flicker.setPosition(1);
 
 
 
@@ -213,6 +268,29 @@ public class Hardware {
     }
 
     /**
+     * Sets the power of the fly wheels
+     * @Param power power to run the fly wheels at
+     * */
+    public void setFlyWheelPower(double power)
+    {
+
+        flywheelMotorLeft.setPower(power);
+        flywheelMotorRight.setPower(power);
+
+    }
+
+
+     /** Sets the power of the intake motor to a given power
+     * @param power motor power to which the intake motor will be set
+     * */
+    public void setIntakePower(double power)
+    {
+
+        intakeMotor.setPower(power);
+
+    }
+
+    /**
      * Drives the robot with the front being a specific direction of the robot
      *
      * @param forward  The forward value input (left stick y)
@@ -238,6 +316,99 @@ public class Hardware {
         //Left Rear  = +Speed + Turn + Strafe      Right Rear  = +Speed - Turn - Strafe
     }
 
+    /**
+    * Raise the left wobble goal grabber
+    */
+    public void leftWobbleGoalUp()
+    {
+        leftWobbleGoal.setPosition(1);
+    }
 
+    /**
+     * Raises the right wobble goal grabber
+     */
+    public void rightWobbleGoalUp()
+    {
+        rightWobbleGoal.setPosition(1);
+    }
+
+    /**
+     * Lowers left wobble goal grabber
+     */
+    public void leftWobbleGoalDown()
+    {
+        leftWobbleGoal.setPosition(0);
+    }
+
+    /**
+     * Lowers right wobble goal grabber
+     */
+    public void rightWobbleGoalDown()
+    {
+        rightWobbleGoal.setPosition(0);
+    }
+
+    /*
+    //raises left claw
+    public void clawServoLeftUp() {clawServoLeft.setPosition(1);}
+
+    //lowers left claw
+    public void clawServoLeftDown() {clawServoLeft.setPosition(0);}
+
+    //raises right claw
+    public void clawServoRightUp() {clawServoRight.setPosition(1);}
+
+    //lowers right claw
+    public void clawServoRightDown() {clawServoLeft.setPosition(0);}
+    */
+
+
+
+    public void flickRing()
+    {
+
+        if(!isFlickerMoving)
+        {
+
+            isFlickerMoving=true;
+            flicker.setPosition(0);
+            Thread wait = new Thread()
+            {
+
+                @Override
+                public void run()
+                {
+
+                    ElapsedTime e = new ElapsedTime();
+                    e.startTime();
+                    while(e.milliseconds()<75);
+                    flicker.setPosition(1);
+                    e = new ElapsedTime();
+                    e.startTime();
+                    while(e.milliseconds()<200);
+                    isFlickerMoving=false;
+                    if(queuedFlicks>0)
+                    {
+                        queuedFlicks--;
+                        flickRing();
+                    }
+
+                }
+
+            };
+            ThreadPool.pool.submit(wait);
+
+
+        }
+        else
+        {
+
+            if(queuedFlicks<2)
+                queuedFlicks++;
+
+        }
+
+
+    }
 
 }
