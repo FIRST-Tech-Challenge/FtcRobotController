@@ -146,6 +146,7 @@ public class autoDeclarations extends LinearOpMode {
                 // Tell the driver that initialization is complete.
                 telemetry.addData("Status", "Initialized");
             }
+
         }
 
 
