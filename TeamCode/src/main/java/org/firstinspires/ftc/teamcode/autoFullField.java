@@ -1,25 +1,16 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -50,7 +41,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name="fullFieldAutoUlt2020", group="Pushbot")
-public class autoFullField extends autoDeclarations{
+public class autoFullField extends LinearOpMode{
 
     //OpMode members
 autoDeclarations robot = new autoDeclarations();
@@ -60,7 +51,9 @@ autoDeclarations robot = new autoDeclarations();
     //Constants
     static final double COUNTS_PER_MOTOR_REV = 1440; //Counts to rotations, testing later
     static final double DRIVE_GEAR_REDUCTION = 1.0; //If gears are added
-    static final double WHEEL_DIAMETER_INCHES = 4.0; //Get wheel size later
+    static final double WHEEL_DIAMETER_INCHES = 4.0; //Wheel size
+    static final double CIRCUMFERENCE = Math.PI*WHEEL_DIAMETER_INCHES; //Circumference of wheel
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV*DRIVE_GEAR_REDUCTION)/ CIRCUMFERENCE; //Converting counts to inches
 
     public void runOpMode() {
         //Initialize variables
@@ -80,13 +73,12 @@ autoDeclarations robot = new autoDeclarations();
         robot.intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0", "Starting at %7d :%7d",
+        telemetry.addData("Path0", "Starting at %7d :%7d :%7d :%7d",
                 robot.leftFoward.getCurrentPosition(),
                 robot.rightReverse.getCurrentPosition(),
                 robot.leftReverse.getCurrentPosition(),
-                robot.rightFoward.getCurrentPosition(),
-                robot.intake.getCurrentPosition()),
-        telemetry.update();
+                robot.rightFoward.getCurrentPosition());
+                telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -96,12 +88,6 @@ autoDeclarations robot = new autoDeclarations();
         encoderDrive(80, 80, 1.0);  //  Forward 80 Inches with 1 Sec timeout
         robot.intake.setPower(1); //Shoot rings
     }
-
-        robot.leftFoward.setPower(0);
-        robot.rightReverse.setPower(0);
-        robot.leftReverse.setPower(0);
-        robot.rightFoward.setPower(0);
-        robot.intake.setPower(0);
         //encoderDrive variable
     public void encoderDrive(double leftInches, double rightInches, double timeoutS) {
 int newLeftTarget;
@@ -111,10 +97,10 @@ int newRightTarget;
 //Checking Opmode
 if(opModeIsActive()) {
     //Find the new position
-    newLeftTarget = robot.leftFoward.getCurrentPosition + (int)(leftInches*COUNTS_PER_MOTOR_REV);
-            newRightTarget = robot.rightReverse.getCurrentPosition() + (int)(rightInches*COUNTS_PER_MOTOR_REV);
-            newLeftTarget = robot.leftReverse.getCurrentPosition() + (int)(leftInches*COUNTS_PER_MOTOR_REV);
-            newRightTarget = robot.rightFoward.getCurrentPosition() + (int)(rightInches*COUNTS_PER_MOTOR_REV);
+    newLeftTarget = robot.leftFoward.getCurrentPosition() + (int)(leftInches*COUNTS_PER_INCH);
+            newRightTarget = robot.rightReverse.getCurrentPosition() + (int)(rightInches*COUNTS_PER_INCH);
+            newLeftTarget = robot.leftReverse.getCurrentPosition() + (int)(leftInches*COUNTS_PER_INCH);
+            newRightTarget = robot.rightFoward.getCurrentPosition() + (int)(rightInches*COUNTS_PER_INCH);
 
             //Turn on RUN_TO_POSITION
             robot.leftFoward.setMode(DcMotor.RunMode.RUN_TO_POSITION);
