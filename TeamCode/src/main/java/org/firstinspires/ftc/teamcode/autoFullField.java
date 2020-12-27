@@ -3,10 +3,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-
-package org.firstinspires.ftc.robotcontroller.external.samples;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -81,23 +77,9 @@ autoDeclarations robot = new autoDeclarations();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(0.5, 80, 80, 1.0);  //  Forward 80 Inches with 1 Sec timeout
+        robot.encoderDrive(0.5, 80, 80, 1.0);  //  Forward 80 Inches with 1 Sec timeout
         robot.intake.setPower(1); //Shoot rings
-    }
 
 
-
-        //Stop
-        robot.leftFoward.setPower(0);
-        robot.rightReverse.setPower(0);
-        robot.leftReverse.setPower(0);
-        robot.rightFoward.setPower(0);
-        robot.intake.setPower(0);
-
-        //Turn off RUN_TO_POSITION
-        robot.leftFoward.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.rightReverse.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.leftReverse.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.rightFoward.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
