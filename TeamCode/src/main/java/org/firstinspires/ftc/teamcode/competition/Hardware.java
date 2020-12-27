@@ -61,9 +61,6 @@ public class Hardware {
     // Radius of an odometry wheel in cm
     private static final double ODOM_WHEEL_RADIUS = 3.6 / 2.54;
 
-    private static final double ODOM_TICKS_PER_ROTATION = 2048*4;
-    // Radius of an odometry wheel in cm
-    private static final double ODOM_WHEEL_RADIUS = 0.688975;
 
     // Circumference of an odometry wheel in cm
     private static final double WHEEL_CIRCUM = 2.0 * Math.PI * ODOM_WHEEL_RADIUS;
@@ -105,8 +102,8 @@ public class Hardware {
     public ExpansionHubMotor leftOdom, rightOdom, centerOdom;
 
     //Fly wheels
-    public DcMotor flywheelMotorLeft;
-    public DcMotor flywheelMotorRight;
+    public DcMotorEx flywheelMotorLeft;
+    public DcMotorEx flywheelMotorRight;
 
     //Servo to move rind from magazine into flywheels
     public Servo flicker;
@@ -163,8 +160,8 @@ public class Hardware {
 
 
         //Flywheels
-        flywheelMotorLeft = hwMap.dcMotor.get("flywheelMotorLeft");
-        flywheelMotorRight = hwMap.dcMotor.get("flywheelMotorRight");
+        flywheelMotorLeft = hwMap.get(DcMotorEx.class,"flywheelMotorLeft");
+        flywheelMotorRight = hwMap.get(DcMotorEx.class,"flywheelMotorRight");
 
         //Wobble goal Servo setup
         //leftWobbleGoal = hwMap.servo.get("leftWobbleGoal");
@@ -380,7 +377,7 @@ public class Hardware {
                     flicker.setPosition(1);
                     e = new ElapsedTime();
                     e.startTime();
-                    while(e.milliseconds()<190);
+                    while(e.milliseconds()<200);
                     isFlickerMoving=false;
                     if(queuedFlicks>0)
                     {

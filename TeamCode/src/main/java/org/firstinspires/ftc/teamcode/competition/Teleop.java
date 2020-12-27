@@ -36,6 +36,8 @@ public class Teleop extends LinearOpMode
             telemetry.addData("y: ", robot.y);
             telemetry.addData("theta: ", robot.theta);
             telemetry.addData("angle speed",angleSpeed);
+            telemetry.addData("Left Speed", robot.flywheelMotorLeft.getVelocity());
+            telemetry.addData("Right Speed", robot.flywheelMotorRight.getVelocity());
             telemetry.update();
 
             if(gamepad1.dpad_up)
@@ -94,7 +96,7 @@ public class Teleop extends LinearOpMode
 
             }
 
-            if(gamepad2.a&&!aPressed)
+            if(gamepad2.a&&!aPressed&&(Math.abs(robot.flywheelMotorLeft.getVelocity())>20||gamepad2.x))
             {
                 robot.flickRing();
                 aPressed=true;
@@ -105,10 +107,9 @@ public class Teleop extends LinearOpMode
                 aPressed=false;
 
             }
-            if(gamepad2.y&&!yPressed)
+            if(gamepad2.y&&!yPressed&&(Math.abs(robot.flywheelMotorLeft.getVelocity())>20||gamepad2.x))
             {
-                robot.flickRing();
-                robot.flickRing();
+                robot.queuedFlicks=2;
                 robot.flickRing();
                 yPressed=true;
             }
