@@ -24,9 +24,15 @@ public class RingDepositor {
     }
 
     private LinearOpMode op = null;
+
+    //TODO <owner> : Do we need to store the reference to hardware map here?
     private HardwareMap hardwareMap = null;
+
     private DcMotor ringDepositorMotor = null;
-    Servo ringClampServo = null;
+
+    //TODO <owner> : What is the right access modifier here?
+    private Servo ringClampServo = null;
+
     private final int ticksForREST = 0;
     private final int ticksForFLOOR = 908 ;
     private final double ringDepositorSpeed = 0.25;
@@ -76,6 +82,8 @@ public class RingDepositor {
         ringDepositorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+
+    //TODO: <owner> : Can we start the method name with a verb?
     public void smartDeposit(){
         ringDepositorMotor.setTargetPosition(ticksForFLOOR);
         ringDepositorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

@@ -10,6 +10,9 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
+
+//TODO: Warren & Aamod, something to think about, we can come up with common interface or abstrat class for navigation.
+//Both odometry and Vuforia are eventully tyring to give the location and angle of the robot on the field.
 public class Odometry {
     DcMotorEx odom1;
     DcMotorEx odom2;
@@ -21,8 +24,15 @@ public class Odometry {
     double xpos = 0;
     double ypos = 0;
     private LinearOpMode op = null;
+
+    //TODO <owner> : Do we need to store the reference to hardware map here?
     private HardwareMap hardwareMap = null;
+
+    //TODO <owner> : Do we need this??
     private ElapsedTime period = new ElapsedTime();
+
+
+    //TODO: Warren, why is this not in a constructor?
     public void init(LinearOpMode opMode) {
 
         op = opMode;

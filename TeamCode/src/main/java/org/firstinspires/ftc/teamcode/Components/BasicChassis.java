@@ -10,24 +10,33 @@ public abstract class BasicChassis {
     public enum ChassisType {
         ENCODER,IMU,ODOMETRY
     }
+
+    //TODO Warren: Use the explicit right access modifier. Default is not the right one here.
     //initialize motor
-    DcMotorEx motorLeftFront;
-    DcMotorEx motorRightFront;
-    DcMotorEx motorLeftBack;
-    DcMotorEx motorRightBack;
+    public DcMotorEx motorLeftFront;
+    public DcMotorEx motorRightFront;
+    public DcMotorEx motorLeftBack;
+    public DcMotorEx motorRightBack;
 
+    //TODO Warren: Use right access modifiers.
     // Initialize Encoder Variables
-    final double robot_diameter = Math.sqrt(619.84);
-    final double wheel_diameter = 3.93701;
+    public final double robot_diameter = Math.sqrt(619.84);
+    public final double wheel_diameter = 3.93701;
+    public double[] encoder = new double[4];
+    public double xpos = 0;
+    public double ypos = 0;
 
+    //TODO Warren: Use right access modifiers.
     // these encoder variables vary depending on chassis type
-    final double counts_per_motor_goBilda = 383.6;
-    final double counts_per_inch = 2 * (counts_per_motor_goBilda / (wheel_diameter * Math.PI));
-    final double counts_per_degree = counts_per_inch * robot_diameter * Math.PI / 360;
-
+    public final double counts_per_motor_goBilda = 383.6;
+    public final double counts_per_inch = 2 * (counts_per_motor_goBilda / (wheel_diameter * Math.PI));
+    //TODO Warren: Ununsed property?
     /* local OpMode members. */
-    private LinearOpMode op = null;
+    //TODO Warren, do we need these as properties of this class?
+    //Do we need to
+    public LinearOpMode op = null;
     private HardwareMap hardwareMap = null;
+
     public BasicChassis(LinearOpMode opMode) {
         op = opMode;
         hardwareMap = op.hardwareMap;

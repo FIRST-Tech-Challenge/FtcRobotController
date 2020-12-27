@@ -21,9 +21,15 @@ public class WobbleGoal {
 
     //declaring the op mode
     private LinearOpMode op;
+
+    //TODO <owner> : Do we need to store the reference to hardware map here?
     private HardwareMap hardwareMap = null;
+
     private DcMotor wobbleGoalMotor = null;
-    Servo wobbleGoalServo = null;
+
+    //TODO <owner> : What is the right access modifier here?
+    private Servo wobbleGoalServo = null;
+
     private final int ticksForREST = 0;
     private final int ticksForGRAB = 940;
     private final int ticksForRAISE = 550;
@@ -81,6 +87,7 @@ public class WobbleGoal {
 //        op.sleep(2000);
     }
 
+    //TODO: Siddharth & Aiden, can this folded into above gotoPosition method?
     public void teleopStartPosition(){
         wobbleGoalMotor.setTargetPosition(ticksForSTARTOFTELEEOP);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

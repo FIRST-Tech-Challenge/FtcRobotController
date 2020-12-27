@@ -35,10 +35,13 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
+//TODO: Aamod, this looks like this is a better version of Vuforia. If so, delete the other class.
 public class VuforiaWebcam extends Thread {
     private OpMode op;
     private double xpos, ypos, angle;
     private double vuforiaAngle = 90.0;
+
+    //TODO: Aamod, what is the purpose of this? Doesn't look like this is being used anywhere.
     private String trackable;
 
     private boolean targetVisible = false;
@@ -68,6 +71,7 @@ public class VuforiaWebcam extends Thread {
         final float quarterField = 36 * mmPerInch;
         final float mmTargetHeight = 5.75f * mmPerInch;
 
+        //TODO: Aamod, unused variable.
         // Use back camera
         final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
 
@@ -194,37 +198,39 @@ public class VuforiaWebcam extends Thread {
         return trackable;
     }
 
-//    public void runVuforia() {  //TODO: 12/27
-//        while (!isInterrupted()) {  //TODO: 12/27
-//            targetVisible = false;
-//            // Look for Trackable, Update Robot Location if Possible
-//            for (VuforiaTrackable trackable : allTrackables) {
-//                if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
-//                    op.telemetry.addData("Visible Target ", trackable.getName());
-//                    targetVisible = true;
-//
-//                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
-//                    if (robotLocationTransform != null) {
-//                        lastLocation = robotLocationTransform;
-//                    }
-//                    break;
-//                }
-//            }
-//
-//            // Return Location Data (Last Known Location)
-//            if (targetVisible) {
-//                VectorF translation = lastLocation.getTranslation();
-//                op.telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-//                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-//                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-//                xpos = translation.get(0) / mmPerInch;
-//                ypos = translation.get(1) / mmPerInch;
-//                angle = rotation.thirdAngle;
-//            }
-//            else {
-//                op.telemetry.addData("Visible Target", "none");
-//            }
-//            op.telemetry.update();
-//        } //TODO: 12/27
-//    }  //TODO: 12/27
+
+    //TODO: Aamod, hmm.. I don't think this is the right way of running a thread. We should rely on the run method.
+    public void runVuforia() {
+        while (!isInterrupted()) {
+            targetVisible = false;
+            // Look for Trackable, Update Robot Location if Possible
+            for (VuforiaTrackable trackable : allTrackables) {
+                if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+                    op.telemetry.addData("Visible Target ", trackable.getName());
+                    targetVisible = true;
+
+                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
+                    if (robotLocationTransform != null) {
+                        lastLocation = robotLocationTransform;
+                    }
+                    break;
+                }
+            }
+
+            // Return Location Data (Last Known Location)
+            if (targetVisible) {
+                VectorF translation = lastLocation.getTranslation();
+                op.telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+                xpos = translation.get(0) / mmPerInch;
+                ypos = translation.get(1) / mmPerInch;
+                angle = rotation.thirdAngle;
+            }
+            else {
+                op.telemetry.addData("Visible Target", "none");
+            }
+            op.telemetry.update();
+        }
+    }
 }
