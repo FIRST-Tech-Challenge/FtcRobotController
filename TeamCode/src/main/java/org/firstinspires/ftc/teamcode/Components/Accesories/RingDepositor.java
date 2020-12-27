@@ -31,7 +31,7 @@ public class RingDepositor {
     private DcMotor ringDepositorMotor = null;
 
     //TODO <owner> : What is the right access modifier here?
-    Servo ringClampServo = null;
+    private Servo ringClampServo = null;
 
     private final int ticksForREST = 0;
     private final int ticksForFLOOR = 908 ;

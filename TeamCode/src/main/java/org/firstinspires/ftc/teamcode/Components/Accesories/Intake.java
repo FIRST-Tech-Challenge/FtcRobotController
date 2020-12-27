@@ -18,7 +18,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake {
 
     //TODO <owner> : Do we need to store the reference to LinearOpMode here? Unless you want to use this to show some telemetry data, we don't need store a reference.
-    private LinearOpMode op = null;
 
     //TODO <owner> : Do we need to store the reference to hardware map here?
     private HardwareMap hardwareMap = null;
@@ -29,8 +28,7 @@ public class Intake {
 
     // initialization of intakeMotor
     public Intake(LinearOpMode opMode){
-        op = opMode;
-        hardwareMap = op.hardwareMap;
+        hardwareMap = opMode.hardwareMap;
 
         intakeMotor = hardwareMap.dcMotor.get("IntakeMotor");
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

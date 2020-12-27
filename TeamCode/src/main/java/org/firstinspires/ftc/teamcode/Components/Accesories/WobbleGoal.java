@@ -28,7 +28,7 @@ public class WobbleGoal {
     private DcMotor wobbleGoalMotor = null;
 
     //TODO <owner> : What is the right access modifier here?
-    Servo wobbleGoalServo = null;
+    private Servo wobbleGoalServo = null;
 
     private final int ticksForREST = 0;
     private final int ticksForGRAB = 940;
