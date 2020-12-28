@@ -41,9 +41,9 @@ public class Hardware {
     //Positions of the odometry wheels
     public ThreeTrackingWheelLocalizer odom = new ThreeTrackingWheelLocalizer(
             new ArrayList<>(Arrays.asList(
-                    new Pose2d(4.75, 0, Math.PI / 2),
-                    new Pose2d(0, 6.8, 0),
-                    new Pose2d(0, -6.8, 0)))) {
+                    new Pose2d(4.58, 0, -Math.PI / 2),
+                    new Pose2d(0, 6.55, 0),
+                    new Pose2d(0, -6.55, 0)))) {
         @Override
         public List<Double> getWheelPositions() {
             ArrayList<Double> wheelPositions = new ArrayList<>(3);
@@ -147,12 +147,10 @@ public class Hardware {
         // right front
         rightFront = hwMap.get(DcMotorEx.class, "rightFront");
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // right rear
         rightRear = hwMap.get(DcMotorEx.class, "rightRear");
         rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRear.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Odometry encoder setup

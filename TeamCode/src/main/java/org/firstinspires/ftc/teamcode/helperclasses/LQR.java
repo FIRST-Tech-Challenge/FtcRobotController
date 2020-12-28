@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.helperclasses.LQR;
+package org.firstinspires.ftc.teamcode.helperclasses;
 
 import android.app.Application;
 import android.content.Context;
@@ -93,7 +93,7 @@ public class LQR extends Application
             diff=Math.PI*2-diff;
 
         //define state matrix
-        x = new double[]{-xGoal + robot.x,  -yGoal+robot.y, -sign*(diff), 0,  0, 0};
+        x = new double[]{-xGoal + robot.x,  yGoal-robot.y, -sign*(diff), 0,  0, 0};
 
         //multiply x by the gain matrix k
         double[] d = new double[k.length];

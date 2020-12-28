@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.competition.Hardware;
-import org.firstinspires.ftc.teamcode.helperclasses.LQR.LQR;
+import org.firstinspires.ftc.teamcode.helperclasses.LQR;
 
 import java.io.File;
 import java.util.Scanner;
