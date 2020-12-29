@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.Enums.RingCollectionState;
 import org.firstinspires.ftc.teamcode.Enums.ShooterState;
@@ -10,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Enums.WobbleTargetZone;
 import java.util.List;
 
 @Autonomous(name="Blue_Left_Line_HGWB", group="Test")
-
+@Disabled
 // This opmode EXTENDS BASICAUTONOMOUS and actually does the same thing as BasicAutonomous
 // The goal here was to extend a base class with all the methods and prove it works just the same.
 
