@@ -151,7 +151,7 @@ public class MecanumWheelDraft extends LinearOpMode {
             }
 
             if(gamepad1.b){
-
+               // robot.backRightMotor.setPower(.75);
             }
 
             if(gamepad1.y){
@@ -274,7 +274,7 @@ public class MecanumWheelDraft extends LinearOpMode {
         double targAng = targetOrient.angleUnit.DEGREES.normalize(target.firstAngle);;  // target.angleUnit.DEGREES.normalize(target.firstAngle);
 
         //rChanger changes the sensitivity of the R value
-        double rChanger = 10;
+        double rChanger = .5;
         double frontLeft, frontRight, backLeft, backRight, max;
 
 
@@ -288,12 +288,17 @@ public class MecanumWheelDraft extends LinearOpMode {
 
             double r = (-error / 180) / (rChanger);
             //r = 0;
+            //r=-r;
+
+
+
 
             // Normalize the values so none exceeds +/- 1.0
             frontLeft = pwr + r ;
             backLeft = -pwr + r ;
             backRight = -pwr + r ;
             frontRight = pwr + r ;
+
             max = Math.max(Math.max(Math.abs(frontLeft), Math.abs(frontRight)), Math.max(Math.abs(frontRight), Math.abs(frontRight)));
             if (max > 1.0) {
                 frontLeft = frontLeft / max;
