@@ -41,7 +41,7 @@ public class Hopper extends RobotComponent {
 
             case INIT_POSITION:
             case TRANSFER_POSITION:
-                hopperMover.setPosition(.825);
+                hopperMover.setPosition(.83);
                 break;
         }
 

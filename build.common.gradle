@@ -106,5 +106,10 @@ repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
+    jcenter()
 }
 apply from: 'build.release.gradle'
+
+dependencies {
+    implementation 'org.openftc:easyopencv:1.4.3'
+}

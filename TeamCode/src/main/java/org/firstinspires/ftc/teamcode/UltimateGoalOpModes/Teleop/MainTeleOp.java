@@ -14,7 +14,7 @@ public class MainTeleOp extends LinearOpMode {
     boolean flickerPositon =true;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         Base = new FullBase(telemetry,this, hardwareMap);
         telemetry.addData("Status", "Initialized");
         telemetry.update();
