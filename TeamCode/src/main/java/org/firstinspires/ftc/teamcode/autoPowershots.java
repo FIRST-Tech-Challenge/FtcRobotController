@@ -36,8 +36,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 
 
-@Autonomous(name = "RightFieldAutoUlt2020", group = "Pushbot")
-public class autoRightHalf extends LinearOpMode {
+@Autonomous(name = "PowershotsUlt2020", group = "Pushbot")
+public class autoPowershots extends LinearOpMode {
 
     //OpMode members
     autoDeclarations robot = new autoDeclarations();
@@ -75,12 +75,15 @@ public class autoRightHalf extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        robot.encoderDrive(0.5, 22.75, 22.75, 1.0);  //  Forward 22.75 Inches with 1 Sec timeout
-        robot.turnDrive(0.5, -90, 1.0); //Turn coutner clockwise 90 degrees
-        robot.encoderDrive(0.5, 70.75, 70.75, 1.0);  //  Forward 70.75 Inches with 1 Sec timeout
-        robot.intake.setPower(1); //Shoot rings
+        robot.encoderDrive(0.5, 70.75, 70.75, 1.0);  //  Forward 22.75 Inches with 1 Sec timeout
+        robot.turnDrive(0.5, -3.63, 1.0); //Turn counter clockwise 90 degrees
+        robot.intake.setPower(0.5);//Shoot ring
+        robot.turnDrive(0.5, -5.98, 1.0); //Turn counter clockwise 90 degrees
+        robot.intake.setPower(0.5);//Shoot ring
+        robot.turnDrive(0.5, -5.98, 1.0); //Turn counter clockwise 90 degrees
+        robot.intake.setPower(0.5);//Shoot ring
+
 
 
     }
 }
-
