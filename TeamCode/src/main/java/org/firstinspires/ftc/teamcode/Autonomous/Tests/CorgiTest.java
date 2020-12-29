@@ -1,14 +1,9 @@
 /**
- * This test program tests the six chassis motors and the servo.
- *
- * Everyone should run this code when you arrive at the garage to make sure the robot is working properly.
- *
- * Everyone should also run it before leaving to make sure the robot is not broken.
- *
+ * This is the test program for Corgi.
  *
  * @author Sai
- * @version 2.0
- * @since 11/16/2020
+ * @version 1.0
+ * @since 12/28/2020
  * @status finished
  */
 
@@ -18,12 +13,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "CurrentTest ", group="Tests: ")
+@Autonomous(name = "CorgiTest ", group="Tests: ")
 //@Disabled
-public class CurrentTest extends LinearOpMode {
+public class CorgiTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -37,6 +33,7 @@ public class CurrentTest extends LinearOpMode {
         Servo shooter_Servo;
         DcMotor ringDepositorMotor;
         Servo ringClampServo;
+        Servo wobbleGoalServo;
 
 
         motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
@@ -48,6 +45,7 @@ public class CurrentTest extends LinearOpMode {
         shooter_Servo = (Servo) hardwareMap.servo.get("ShooterServo");
         ringDepositorMotor = (DcMotor) hardwareMap.dcMotor.get("RingDepositorMotor");
         ringClampServo = (Servo) hardwareMap.servo.get("RingClampServo");
+        wobbleGoalServo = (Servo) hardwareMap.servo.get("WobbleGoalServo");
 
 
         // All Motors
@@ -59,9 +57,9 @@ public class CurrentTest extends LinearOpMode {
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ringDepositorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorLeftFront.setDirection(DcMotor.Direction.FORWARD);
+        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftBack.setDirection(DcMotor.Direction.FORWARD);
+        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
         ShooterMotor.setDirection(DcMotor.Direction.FORWARD);
         wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -70,6 +68,7 @@ public class CurrentTest extends LinearOpMode {
         //Servos
         shooter_Servo.setPosition(-0.5);
         ringClampServo.setPosition(0);
+        wobbleGoalServo.setPosition(0);
 
         // reset encoder count kept by left motor.
         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -197,7 +196,7 @@ public class CurrentTest extends LinearOpMode {
         sleep(200);
         ringDepositorMotor.setPower(0);
 
-        //Tests Intake Servo
+        //Tests Ring Clamp Servo
         ringClampServo.setPosition(1);
         telemetry.addData("Moving Ring Clamp Servo", 1);
         telemetry.update();
@@ -205,5 +204,11 @@ public class CurrentTest extends LinearOpMode {
         ringClampServo.setPosition(0);
         telemetry.addData("Moving Ring Clamp Servo", 0);
         telemetry.update();
+
+        //Wobble Goal Servo
+        wobbleGoalServo.setPosition(1);
+        sleep(1000);
+        wobbleGoalServo.setPosition(0);
+        sleep(2000);
     }
 }
