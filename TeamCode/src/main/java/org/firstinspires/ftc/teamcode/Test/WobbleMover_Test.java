@@ -50,7 +50,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Wobblegoal;
  */
 
 @TeleOp(name="Wobble Mover Test", group="Linear Opmode")
-@Disabled
+//@Disabled
 public class WobbleMover_Test extends LinearOpMode {
 
     // Declare OpMode members.
@@ -111,6 +111,14 @@ public class WobbleMover_Test extends LinearOpMode {
             if (gamepad2.right_trigger > 0.25) {
                 wobble.LiftLower();
                 telemetry.addData("Lifting Slide", "Complete ");
+            }
+            if (gamepad1.left_trigger > 0.25) {
+                wobble.lowerWobbleClamp();
+                telemetry.addData("Lifting Wobble Clamp", "Complete ");
+            }
+            if (gamepad1.right_trigger > 0.25) {
+                wobble.raiseWobbleClamp();
+                telemetry.addData("Lowering Wobble Clamp", "Complete ");
             }
 
         }

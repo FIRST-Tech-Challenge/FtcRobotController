@@ -40,7 +40,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 @TeleOp(name="Meet 2 Teleop EXP", group="Teleop")
-//@Disabled
+@Disabled
 public class Meet_2_Teleop_Exp extends OpMode {
 
 
