@@ -19,11 +19,11 @@ public class Shooter {
 
     //
     //Constants for shooter motors
-    private static final double ShooterSpeedfastleft=.45; // 0.47 reset after meet 1 to improve consistiencey
-    private static final double ShooterSpeedfastright=.51; // 0.53
+    private static final double ShooterSpeedfastleft=.58; // 0.45 reset after meet 1 to improve consistiencey
+    private static final double ShooterSpeedfastright=.30; // 0.51
     //We are changing the speeds to see which speeds make the first ring in
-    private static final double shooterSpeedslowleft=.4;
-    private static final double shooterSpeedslowright=.45;
+    private static final double shooterSpeedslowleft=.52;
+    private static final double shooterSpeedslowright=.30;
     private static final double jamClear=-.35;
     //Constants for stacker servos
     private static final double leftUp = 0.75; // .75 a little shy but ok due to hitting bolt

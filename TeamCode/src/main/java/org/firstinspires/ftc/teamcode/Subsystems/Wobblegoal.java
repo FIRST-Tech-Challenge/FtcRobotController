@@ -13,10 +13,11 @@ public class Wobblegoal {
     //public Servo WobbleExtend=null;
     public DcMotor WobbleExtend = null;
     public Servo WobbleGrip=null;
+    public Servo WobbleBaseClamp = null;
 
     //Constants
     private static final double     LIFTSPEED   =   0.65;
-    private static final double     LIFTUP      =   14 ; //Number is in inches
+    private static final double     LIFTUP      =   14.5 ; //Number is in inches
     private static final int        LIFTDOWN    =   0;
     private static final double     GRIPPERINIT  = 0.35;
     private static final double     GRIPPEROPEN =   0.3;
@@ -27,11 +28,16 @@ public class Wobblegoal {
     private static final double     EXTENDSPEED =   .5;
     private static final int        TICKS_PER_LIFT_IN = 76; // determined experimentally
     private static final int        LIFT_HEIGHT_HIGH = (int) (LIFTUP * TICKS_PER_LIFT_IN); // converts to ticks
+   public static final double     BASECLAMPUP =   0.75;
+   public static final double     BASECLAMPDOWN=   0.35;
+
 
     public void init(HardwareMap hwMap)  {
         WobbleLift=hwMap.get(DcMotor.class,"LiftWobble");
         WobbleExtend=hwMap.get(DcMotor.class,"ArmExtend");
         WobbleGrip=hwMap.get(Servo.class,"Gripper");
+        WobbleBaseClamp=hwMap.get(Servo.class,"Base Clamp");
+
         //Positive=up and Negative=down
         WobbleLift.setDirection(DcMotor.Direction.FORWARD);
         WobbleExtend.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -41,6 +47,7 @@ public class Wobblegoal {
         WobbleLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         WobbleExtend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         WobbleGrip.setPosition(GRIPPERINIT);
+        WobbleBaseClamp.setPosition(BASECLAMPUP);
 
     }
 
@@ -71,19 +78,33 @@ public class Wobblegoal {
         WobbleExtend.setTargetPosition(ARMEXTEND);
         WobbleExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         WobbleExtend.setPower(EXTENDSPEED);
+        lowerWobbleClamp();
 
     }
     public void ArmContract() {
-
+        raiseWobbleClamp();
         WobbleExtend.setTargetPosition(ARMCONTRACT);
         WobbleExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         WobbleExtend.setPower(EXTENDSPEED);
+        GripperOpen();
     }
     public void ArmCarryWobble() {
-
+        raiseWobbleClamp();
         WobbleExtend.setTargetPosition(ARMCARRY);
         WobbleExtend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         WobbleExtend.setPower(EXTENDSPEED);
+    }
+
+    public void raiseWobbleClamp() {
+
+        WobbleBaseClamp.setPosition(BASECLAMPUP);
+
+    }
+
+    public void lowerWobbleClamp() {
+
+        WobbleBaseClamp.setPosition(BASECLAMPDOWN);
+
     }
 
     ///// Multi Function methods to be called by the Opmodes
