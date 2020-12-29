@@ -18,12 +18,12 @@ public class HardwareMapV2 {
     public DcMotor leftVertical = null, rightVertical = null, horizontal = null;
 
     public CRServo conveyor = null;
-    public Servo leftTilt = null, rightTilt = null;
+    public Servo leftTilt = null, rightTilt = null, wobble = null;
     boolean odometry = false;
 
     ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake, outtake));
     ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(leftVertical, rightVertical, horizontal));
-    ArrayList<? extends HardwareDevice> servos = new ArrayList<>(Arrays.asList(conveyor, leftTilt, rightTilt));
+    ArrayList<? extends HardwareDevice> servos = new ArrayList<>(Arrays.asList(conveyor, leftTilt, rightTilt, wobble));
 
     ModernRoboticsI2cGyro realgyro1;
     HardwareMap hwMap = null;
@@ -50,6 +50,7 @@ public class HardwareMapV2 {
         conveyor = hwMap.get(CRServo.class, "convey");
         leftTilt = hwMap.get(Servo.class, "left_tilt");
         rightTilt = hwMap.get(Servo.class, "right_tilt");
+        wobble = hwMap.get(Servo.class, "wobble");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         frontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
@@ -67,9 +68,11 @@ public class HardwareMapV2 {
         leftTilt.setDirection(Servo.Direction.REVERSE);
         rightTilt.setDirection(Servo.Direction.FORWARD);
         conveyor.setDirection(CRServo.Direction.REVERSE);
+        wobble.setDirection(Servo.Direction.FORWARD);
 
         rightTilt.setPosition(0.5);
         leftTilt.setPosition(0.5);
+        wobble.setPosition(0.0);
 
     }
 

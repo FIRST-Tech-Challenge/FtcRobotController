@@ -62,15 +62,15 @@ public class Drivetrain {
         }else if(direct == tiltDirect.DOWN && pos != 0){
             pos--;
         }
-        tilt((pos==0) ? 0.0 : (pos==1) ? 0.5 : 1.0);
+        tilt((pos==0) ? 0.35 : (pos==1) ? 0.5 : 0.7);
     }
     public void incrementtilt(double amount){
         incrementtilt(amount, amount);
     }
 
     public void incrementtilt(double amountRT, double amountLT){
-        amountLT = (robot.leftTilt.getPosition()+amountLT<0 || robot.leftTilt.getPosition()+amountLT>1.0) ? robot.leftTilt.getPosition() : amountLT;
-        amountRT = (robot.rightTilt.getPosition()+amountRT<0 || robot.rightTilt.getPosition()+amountRT>1.0) ? robot.rightTilt.getPosition() : amountRT;
+        amountLT = (robot.leftTilt.getPosition()+amountLT<0 || robot.leftTilt.getPosition()+amountLT>1.0) ? 0 : amountLT;
+        amountRT = (robot.rightTilt.getPosition()+amountRT<0 || robot.rightTilt.getPosition()+amountRT>1.0) ? 0 : amountRT;
         robot.leftTilt.setPosition(robot.leftTilt.getPosition()+amountLT);
         robot.rightTilt.setPosition(robot.rightTilt.getPosition()+amountRT);
     }

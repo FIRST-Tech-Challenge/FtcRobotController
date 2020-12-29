@@ -76,7 +76,7 @@ public class teleConfigRohit implements teleOpInterface {
                     drivetrain.tiltpos((up) ? Drivetrain.tiltDirect.UP : Drivetrain.tiltDirect.DOWN);
                     break;
                 case INCREMENT:
-                    drivetrain.tilt(robot.leftTilt.getPosition() + ((up) ? 0.1 : -0.1));
+                    drivetrain.incrementtilt((up) ? 0.01 : -0.01);
                     break;
             }
             wait = false;
@@ -112,9 +112,7 @@ public class teleConfigRohit implements teleOpInterface {
     }
 
     @Override
-    public void loop() {
-        drivetrain.outtakeAll(conveyorPower, outtakePower);
-    }
+    public void loop() {}
 
     public String getName() {
         return "teleConfigRohit";

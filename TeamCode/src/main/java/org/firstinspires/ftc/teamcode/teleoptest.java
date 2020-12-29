@@ -15,13 +15,16 @@ public class teleoptest extends OpMode {
 
     @Override
     public void init() {
+        telemetry.addData("What", "Do u want");
+        telemetry.update();
         robot.init(hardwareMap);
 //        robot.setEncoders(robot.motors, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Set to REVERSE if using AndyMark motors
-        robot.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);// Set to FORWARD if using AndyMark motors
-        robot.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        robot.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Set to REVERSE if using AndyMark motors
+//        robot.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);// Set to FORWARD if using AndyMark motors
+//        robot.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        robot.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        robot.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.setEncoders(robot.motors, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         vroom = new MecanumDriveTrain(robot, gamepad1,telemetry);
 
         telemetry.addData("Haddi", "Haddi");

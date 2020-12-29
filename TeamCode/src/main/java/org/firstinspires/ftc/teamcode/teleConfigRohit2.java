@@ -6,6 +6,7 @@ public class teleConfigRohit2 implements teleOpInterface {
     enum overrides{INTAKE, CONVEYOR, OUTTAKE, NONE}
     overrides currOverride;
     double limiter2, limiter1, outtakeC, outtakeW, intake = 1.0;
+    double intakeTime, outtakeTime, xTime, yTime, dTime, button, dpad;
     teleConfigRohit2(HardwareMapV2 robot){
         this.robot = robot;
         drivetrain = new Drivetrain(robot);
@@ -13,65 +14,73 @@ public class teleConfigRohit2 implements teleOpInterface {
 
     public void a(boolean pressed) {
         //wheel out only
-        if (pressed) {
+        if (pressed && System.currentTimeMillis()-button>=500) {
             outtakeC = 0.0;
             outtakeW = 0.0;
             intake = 0.0;
             currOverride = overrides.OUTTAKE;
+            button = System.currentTimeMillis();
         }
     }
 
     public void b(boolean pressed) {
         //Intake Synchronous
-        if (pressed) {
+        if (pressed && System.currentTimeMillis()-button>=500) {
             outtakeC = 0.0;
             outtakeW = 0.0;
             intake = 1.0;
             currOverride = overrides.NONE;
+            button = System.currentTimeMillis();
         }
     }
 
     public void x(boolean pressed) {
     //intake only
-        if (pressed) {
+        if (pressed && System.currentTimeMillis()-button>=500) {
             outtakeC = 0.0;
             outtakeW = 0.0;
             intake = 0.0;
             currOverride = overrides.INTAKE;
+            button = System.currentTimeMillis();
         }
     }
 
     public void y(boolean pressed) {
         //outtake synchronous
-        if (pressed){
+        if (pressed && System.currentTimeMillis()-button>=500){
             outtakeC = 1.0;
             outtakeW = 1.0;
             intake = 0.0;
             currOverride = overrides.NONE;
+            button = System.currentTimeMillis();
         }
     }
 
     public void dd(boolean pressed) {
-        if (pressed) {
+        if (pressed && System.currentTimeMillis()-dpad>=500) {
             drivetrain.tiltpos(Drivetrain.tiltDirect.DOWN);
         }
     }
 
     public void dp(boolean pressed) {
-        if (pressed) {
+        if (pressed && System.currentTimeMillis()-dpad>=500) {
             drivetrain.tiltpos(Drivetrain.tiltDirect.UP);
+            dpad = System.currentTimeMillis();
         }
     }
 
     public void dl(boolean pressed) {
-        if (pressed) {
-            drivetrain.tilt(robot.leftTilt.getPosition()-0.1);
+        if (pressed && System.currentTimeMillis()-dpad>=500) {
+            drivetrain.incrementtilt(-0.01);
+            dpad = System.currentTimeMillis();
+
         }
     }
 
     public void dr(boolean pressed) {
-        if (pressed) {
-            drivetrain.tilt(robot.leftTilt.getPosition()+0.1);
+        if (pressed && System.currentTimeMillis()-dpad>=500) {
+            drivetrain.incrementtilt(0.01);
+            dpad = System.currentTimeMillis();
         }
     }
 

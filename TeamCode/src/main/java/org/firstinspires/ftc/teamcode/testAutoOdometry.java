@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "testAuto",group = "UltGoal")
+@Autonomous(name = "testAutoOdometry",group = "UltGoal")
 public class testAutoOdometry extends LinearOpMode {
     HardwareMapV2 robot;
     Drivetrain drivetrain;

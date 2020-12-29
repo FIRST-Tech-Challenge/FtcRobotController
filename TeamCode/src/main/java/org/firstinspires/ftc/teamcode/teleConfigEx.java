@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 public class teleConfigEx implements teleOpInterface {
     HardwareMapV2 robot;
     Drivetrain drivetrain;
-    double intakeTime, outtakeTime, xTime, yTime;
+    double intakeTime, outtakeTime, xTime, yTime, dTime;
     double perfectval = 0.35;
 
     teleConfigEx (HardwareMapV2 robot) {
@@ -26,11 +26,17 @@ public class teleConfigEx implements teleOpInterface {
     }
 
     public void dd(boolean pressed) {
-
+        if (pressed && System.currentTimeMillis()-dTime>=500) {
+            robot.wobble.setPosition(0.0);
+            dTime = System.currentTimeMillis();
+        }
     }
 
     public void dp(boolean pressed) {
-
+        if (pressed && System.currentTimeMillis()-dTime>=500) {
+            robot.wobble.setPosition(1.0);
+            dTime = System.currentTimeMillis();
+        }
     }
 
     public void dl(boolean pressed) {
@@ -83,6 +89,7 @@ public class teleConfigEx implements teleOpInterface {
         telemetryDM.put("test","test");
         telemetryDM.put("Left Tilt", String.valueOf(robot.leftTilt.getPosition()));
         telemetryDM.put("Right Tilt", String.valueOf(robot.rightTilt.getPosition()));
+        telemetryDM.put("Wobble", String.valueOf(robot.wobble.getPosition()));
     }
 
     public void loop() {
