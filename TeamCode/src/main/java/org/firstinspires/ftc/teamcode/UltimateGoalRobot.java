@@ -6,32 +6,31 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-
 import org.firstinspires.ftc.teamcode.RobotUtilities.MovementVars;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
 import java.util.List;
 
-import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
-import static java.lang.Math.max;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
-import static java.lang.Math.toRadians;
 
 /**
- *Created by 12090 STEM Punk
+ *Created by 7592 Roarbots
  */
-public class HardwareOmnibotDrive
+public class UltimateGoalRobot
 {
     /* Public OpMode members. */
     public final static double STRAFE_MULTIPLIER = 1.5;
@@ -51,25 +50,39 @@ public class HardwareOmnibotDrive
     public final static String FRONT_RIGHT_MOTOR = "FrontRight";
     public final static String REAR_LEFT_MOTOR = "RearLeft";
     public final static String REAR_RIGHT_MOTOR = "RearRight";
-    public final static String LEFT_INTAKE = "LeftIntake";
-    public final static String RIGHT_INTAKE = "RightIntake";
-    public final static String EXTENDER = "Extender";
+    public final static String INTAKE_MOTOR = "Intake";
+    public final static String WOBBLE_MOTOR = "Wobble";
+    public final static String SHOOTER_MOTOR = "Shooter";
+    public final static String EMPTY_MOTOR = "Empty";
+    public final static String CLAW_SERVO = "Claw";
+    public final static String FLAP_SERVO = "Flap";
+    public final static String INJECTOR_SERVO = "Injector";
+
     // We need both hubs here because one has the motors, and the other has the
     // odometry encoders.
-    public final static String HUB1 = "Expansion Hub 2";
-    public final static String HUB2 = "Expansion Hub 3";
+    public final static String CTRL_HUB = "Control Hub 1";
+    public final static String EX_HUB = "Expansion Hub 3";
 
     List<LynxModule> allHubs;
 
     // These motors have the odometry encoders attached
-    protected DcMotorEx leftIntake = null;
-    protected DcMotorEx rightIntake = null;
-    protected DcMotorEx extender = null;
+    protected DcMotorEx intake = null;
+    protected DcMotorEx wobble = null;
+    protected DcMotorEx empty = null;
 
+    // Other motors
     protected DcMotorEx frontLeft = null;
     protected DcMotorEx frontRight = null;
     protected DcMotorEx rearLeft = null;
     protected DcMotorEx rearRight = null;
+    protected DcMotorEx shooter = null;
+
+    // Servos
+    protected Servo flap = null;
+    protected Servo claw = null;
+    protected Servo injector = null;
+
+    // Sensors
     protected BNO055IMU imu = null;
 
     // Tracking variables
@@ -78,10 +91,19 @@ public class HardwareOmnibotDrive
     protected double rearLeftMotorPower = 0.0;
     protected double frontRightMotorPower = 0.0;
     protected double rearRightMotorPower = 0.0;
+    protected double shooterMotorPower = 0.0;
+    protected double intakeMotorPower = 0.0;
+    protected double wobbleMotorPower = 0.0;
+
     public boolean defaultInputShaping = true;
     protected boolean imuRead = false;
     protected double imuValue = 0.0;
     protected double strafeMultiplier = STRAFE_MULTIPLIER;
+
+    // Servo Timer variables
+    private ElapsedTime clawTimer;
+    private ElapsedTime flapTimer;
+    private ElapsedTime injectTimer;
 
     public static boolean encodersReset = false;
     public boolean forceReset = false;
@@ -90,20 +112,16 @@ public class HardwareOmnibotDrive
     /* local OpMode members. */
     protected HardwareMap hwMap  =  null;
 
-    /* Constructor */
-    public HardwareOmnibotDrive(){
-    }
-
     /**
      * If the motion value is less than the threshold, the controller will be
      * considered at rest
      */
-    protected static float joystickDeadzone = 0.00f;
+    protected static float joystickDeadzone = 0.07f;
     private static final float MAX_MOTION_RANGE = 1.0f;
     private static final float MIN_MOTION_RANGE = (float)MIN_DRIVE_RATE;
 
     // Used to clean up the slop in the joysticks.
-    protected static float cleanMotionValues(float number) {
+    public static float cleanMotionValues(float number) {
         // apply deadzone
         if (number < joystickDeadzone && number > -joystickDeadzone) return 0.0f;
         // apply trim
@@ -118,19 +136,6 @@ public class HardwareOmnibotDrive
         return number;
     }
 
-    public int getLeftEncoderWheelPosition() {
-        // This is to compensate for GF having a negative left.
-        return -leftIntake.getCurrentPosition();
-    }
-
-    public int getRightEncoderWheelPosition() {
-        return rightIntake.getCurrentPosition();
-    }
-
-    public int getStrafeEncoderWheelPosition() {
-        return extender.getCurrentPosition();
-    }
-
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
@@ -141,20 +146,15 @@ public class HardwareOmnibotDrive
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
-        // Motor: Lifter, RightIntake, Extender, LeftIntake
-        // Encoder: Lifter, LeftEncoder, CenterEncoder, RightEncoder
-//        expansionHub1 = hwMap.get(ExpansionHubEx.class, HUB1);
-        // RearRight, RearLeft, FrontLeft, FrontRight
-//        expansionHub2 = hwMap.get(ExpansionHubEx.class, HUB2);
-
         // Define and Initialize Motors
         frontLeft = hwMap.get(DcMotorEx.class, FRONT_LEFT_MOTOR);
         frontRight = hwMap.get(DcMotorEx.class, FRONT_RIGHT_MOTOR);
         rearLeft = hwMap.get(DcMotorEx.class, REAR_LEFT_MOTOR);
         rearRight = hwMap.get(DcMotorEx.class, REAR_RIGHT_MOTOR);
-        leftIntake = hwMap.get(DcMotorEx.class, LEFT_INTAKE);
-        rightIntake = hwMap.get(DcMotorEx.class, RIGHT_INTAKE);
-        extender = hwMap.get(DcMotorEx.class, EXTENDER);
+        intake = hwMap.get(DcMotorEx.class, INTAKE_MOTOR);
+        wobble = hwMap.get(DcMotorEx.class, WOBBLE_MOTOR);
+        empty = hwMap.get(DcMotorEx.class, EMPTY_MOTOR);
+        shooter = hwMap.get(DcMotorEx.class, SHOOTER_MOTOR);
 
 
         frontLeft.setDirection(DcMotor.Direction.FORWARD);
@@ -165,17 +165,34 @@ public class HardwareOmnibotDrive
         // Set all motors to zero power
         setAllDriveZero();
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rearLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rearRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rearLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rearRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wobble.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        empty.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Set the stop mode
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rearLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rearRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        wobble.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        empty.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        flap = hwMap.get(Servo.class, FLAP_SERVO);
+        injector = hwMap.get(Servo.class, INJECTOR_SERVO);
+        claw = hwMap.get(Servo.class, CLAW_SERVO);
+
+        clawTimer = new ElapsedTime();
+        flapTimer = new ElapsedTime();
+        injectTimer = new ElapsedTime();
         // Let's try to tweak the PIDs
 //		frontLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10,
 //                3, 0, 12, MotorControlAlgorithm.PIDF));
@@ -187,6 +204,19 @@ public class HardwareOmnibotDrive
 //                3, 0, 12, MotorControlAlgorithm.PIDF));
 
         initIMU();
+    }
+
+    public int getLeftEncoderWheelPosition() {
+        // This is to compensate for GF having a negative left.
+        return -intake.getCurrentPosition();
+    }
+
+    public int getRightEncoderWheelPosition() {
+        return wobble.getCurrentPosition();
+    }
+
+    public int getStrafeEncoderWheelPosition() {
+        return empty.getCurrentPosition();
     }
 
     public void setInputShaping(boolean inputShapingEnabled) {
@@ -212,6 +242,7 @@ public class HardwareOmnibotDrive
         for (LynxModule module : allHubs) {
             module.clearBulkCache();
         }
+        // The IMU is handled separately because it uses I2C which is not part of the bulk read.
         imuRead = false;
     }
 
@@ -225,6 +256,27 @@ public class HardwareOmnibotDrive
         }
 
         return imuValue;
+    }
+
+    public void setShooterMotorPower(double power) {
+        if (Math.abs(power - shooterMotorPower) > 0.005) {
+            shooterMotorPower = power;
+            shooter.setPower(power);
+        }
+    }
+
+    public void setIntakeMotorPower(double power) {
+        if (Math.abs(power - intakeMotorPower) > 0.005) {
+            intakeMotorPower = power;
+            intake.setPower(power);
+        }
+    }
+
+    public void setWobbleMotorPower(double power) {
+        if (Math.abs(power - wobbleMotorPower) > 0.005) {
+            wobbleMotorPower = power;
+            wobble.setPower(power);
+        }
     }
 
     public void setFrontLeftMotorPower(double power)
@@ -346,14 +398,15 @@ public class HardwareOmnibotDrive
         int encoderCount = frontLeft.getCurrentPosition();
 
         // The Odometry Encoders
-        extender.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightIntake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobble.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        empty.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rearLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rearRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shooter.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        rearLeft.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        rearRight.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        frontLeft.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
         while((encoderCount != 0) && (sleepTime < 1000)) {
             try {
@@ -365,14 +418,15 @@ public class HardwareOmnibotDrive
         }
 
         // The Odometry Encoders
-        extender.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightIntake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wobble.setMode(RunMode.RUN_WITHOUT_ENCODER);
+        empty.setMode(RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(RunMode.RUN_WITHOUT_ENCODER);
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rearLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rearRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooter.setMode(RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(RunMode.RUN_USING_ENCODER);
+        rearLeft.setMode(RunMode.RUN_USING_ENCODER);
+        rearRight.setMode(RunMode.RUN_USING_ENCODER);
     }
 
     /**
@@ -558,6 +612,132 @@ public class HardwareOmnibotDrive
         setFrontRightMotorPower(tr_power_raw);
         setRearRightMotorPower(br_power_raw);
         setRearLeftMotorPower(bl_power_raw);
+    }
+
+    /** Grab activity closes or opens the wobble arm claw. **/
+    public final static double CLAW_TIME = 500.0;
+    public final static double CLAW_CLOSED = 0.10;
+    public final static double CLAW_OPEN = 0.25;
+    public boolean clawClosed = false;
+    public enum GRABBING {
+        IDLE,
+        CLOSING
+    }
+
+    public GRABBING grabState = GRABBING.IDLE;
+    public void startClawToggle() {
+        if(grabState == GRABBING.IDLE) {
+            if(clawClosed) {
+                claw.setPosition(CLAW_OPEN);
+            } else {
+                claw.setPosition(CLAW_CLOSED);
+            }
+            clawTimer.reset();
+            grabState = GRABBING.CLOSING;
+        }
+    }
+
+    public void performClawToggle() {
+        switch(grabState) {
+            case CLOSING:
+                if(clawTimer.milliseconds() >= CLAW_TIME) {
+                    grabState = GRABBING.IDLE;
+                    clawClosed = !clawClosed;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    /** Inject activity pushes a disk into the shooter and resets the injector. **/
+    public final static double INJECTOR_FIRE_TIME = 200.0;
+    public final static double INJECTOR_RESET_TIME = 200.0;
+    public final static double INJECTOR_HOME_TIME = 100.0;
+    public final static double INJECTOR_HOME = 0.512;
+    public final static double INJECTOR_RESET = 0.450;
+    public final static double INJECTOR_FIRE = 0.750;
+    public enum INJECTING {
+        IDLE,
+        FIRING,
+        RESETTING,
+        HOMING
+    }
+
+    public INJECTING injectState = INJECTING.IDLE;
+    public void startInjecting() {
+        if(injectState == INJECTING.IDLE) {
+            injector.setPosition(INJECTOR_FIRE);
+            injectTimer.reset();
+            injectState = INJECTING.FIRING;
+        }
+    }
+
+    public void performInjecting() {
+        switch(injectState) {
+            case FIRING:
+                if(injectTimer.milliseconds() >= INJECTOR_FIRE_TIME) {
+                    injector.setPosition(INJECTOR_RESET);
+                    injectTimer.reset();
+                    injectState = INJECTING.RESETTING;
+                }
+                break;
+            case RESETTING:
+                if(injectTimer.milliseconds() >= INJECTOR_RESET_TIME) {
+                    injector.setPosition(INJECTOR_HOME);
+                    injectTimer.reset();
+                    injectState = INJECTING.HOMING;
+                }
+                break;
+            case HOMING:
+                if(injectTimer.milliseconds() >= INJECTOR_HOME_TIME) {
+                    injectState = INJECTING.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    /** In case we want to create a short cut to fire 3 as quickly as possible. **/
+    public enum TRIPLE_INJECTING {
+        IDLE,
+        FIRING_ONE,
+        FIRING_TWO,
+        FIRING_THREE
+    }
+    public TRIPLE_INJECTING tripleInjectState = TRIPLE_INJECTING.IDLE;
+    public void startTripleInjecting() {
+        if (tripleInjectState == TRIPLE_INJECTING.IDLE) {
+            startInjecting();
+        }
+    }
+
+    public void performTripleInjecting() {
+        switch(tripleInjectState) {
+            case FIRING_ONE:
+                if(injectState == INJECTING.IDLE) {
+                    tripleInjectState = TRIPLE_INJECTING.FIRING_TWO;
+                    startInjecting();
+                }
+                break;
+            case FIRING_TWO:
+                if(injectState == INJECTING.IDLE) {
+                    tripleInjectState = TRIPLE_INJECTING.FIRING_THREE;
+                    startInjecting();
+                }
+                break;
+            case FIRING_THREE:
+                if(injectState == INJECTING.IDLE) {
+                    tripleInjectState = TRIPLE_INJECTING.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
     }
 }
 

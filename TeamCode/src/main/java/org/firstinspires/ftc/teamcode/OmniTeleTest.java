@@ -12,7 +12,7 @@ import static java.lang.Math.toRadians;
  * Created by Ethan on 12/2/2016.
  */
 
-@TeleOp(name="Omni: TeleOpTesty", group ="TeleOp")
+//@TeleOp(name="Omni: TeleOpTesty", group ="TeleOp")
 public class OmniTeleTest extends OmniAutoXYBase {
 
     public OmniTeleTest() {
