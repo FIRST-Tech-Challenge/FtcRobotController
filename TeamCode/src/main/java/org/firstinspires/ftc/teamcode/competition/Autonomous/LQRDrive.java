@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.competition.Hardware;
 import org.firstinspires.ftc.teamcode.helperclasses.LQR;
@@ -20,9 +21,10 @@ public class LQRDrive extends LinearOpMode
     {
 
         final Hardware robot = new Hardware();
+        robot.init(hardwareMap);
         LQR lqr = new LQR(robot);
         double[][][] path={{{}}};
-        robot.init(hardwareMap);
+
         try
         {
 
@@ -66,22 +68,53 @@ public class LQRDrive extends LinearOpMode
 
         t.start();
 
-        while(opModeIsActive())
+        ElapsedTime e = new ElapsedTime();
+        e.startTime();
+
+        while(opModeIsActive()&&!lqr.robotInCircle(-52,0,1.5))
         {
 
-            for(double d:lqr.runLqrDrive(path,24,24,70*Math.PI/180))
+            for(double d:lqr.runLqrDrive(path,-52,0,Math.PI*19.9/10))
             {
 
                 telemetry.addData("x",d);
 
             }
-
+            robot.flywheelRotateServoLeft.setPosition(.2);
             telemetry.addData("x: ", robot.x);
             telemetry.addData("y: ", robot.y);
             telemetry.addData("theta: ", robot.theta);
             telemetry.update();
 
         }
+        robot.drive(0,0,0);
+        e.reset();
+        e.startTime();
+        while(e.seconds()<1&&opModeIsActive()){robot.setFlyWheelPower(1);}
+        robot.queuedFlicks=2;
+        robot.flickRing();
+        e.reset();
+        e.startTime();
+        while(e.seconds()<1&&opModeIsActive()){robot.setFlyWheelPower(1);}
+        robot.setFlyWheelPower(0);
+        while(opModeIsActive()&&!lqr.robotInCircle(-66,6,1))
+        {
+
+            for(double d:lqr.runLqrDrive(path,-66,6,0))
+            {
+
+                telemetry.addData("x",d);
+
+            }
+            ;
+            telemetry.addData("x: ", robot.x);
+            telemetry.addData("y: ", robot.y);
+            telemetry.addData("theta: ", robot.theta);
+            telemetry.update();
+
+        }
+
+
         /*while(!lqr.robotInCircle(24,48,.5))
         {
 

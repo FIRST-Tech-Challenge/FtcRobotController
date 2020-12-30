@@ -61,7 +61,7 @@ public class LQR extends Application
     public boolean robotInCircle(double x, double y, double r)
     {
 
-        return Math.pow(y-robot.y,2)+Math.pow(x-robot.y,2)<Math.pow(r,2);
+        return Math.pow(y-robot.y,2)+Math.pow(x-robot.x,2)<Math.pow(r,2);
 
     }
 

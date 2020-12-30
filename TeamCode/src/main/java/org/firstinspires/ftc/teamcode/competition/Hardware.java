@@ -41,9 +41,9 @@ public class Hardware {
     //Positions of the odometry wheels
     public ThreeTrackingWheelLocalizer odom = new ThreeTrackingWheelLocalizer(
             new ArrayList<>(Arrays.asList(
-                    new Pose2d(4.58, 0, -Math.PI / 2),
-                    new Pose2d(0, 6.55, 0),
-                    new Pose2d(0, -6.55, 0)))) {
+                    new Pose2d(-4.58, 0, -Math.PI / 2),
+                    new Pose2d(0, 6.33, 0),
+                    new Pose2d(0, -6.33, 0)))) {
         @Override
         public List<Double> getWheelPositions() {
             ArrayList<Double> wheelPositions = new ArrayList<>(3);
@@ -66,7 +66,7 @@ public class Hardware {
 
 
     //Distance from the center of the t to the launch mechanism in inches.
-    private static final double distCenterToLaunch = 7;
+    public static final double distCenterToLaunch = 8;
     //Gravitational constant used for calculating ring launch angle in inches per second squared
     private static final double ringGravitationalConstant = -386.09;
     //Radius of flyWheels in inches
@@ -114,7 +114,7 @@ public class Hardware {
     public Servo flicker;
 
     private boolean isFlickerMoving;
-    byte queuedFlicks = 0;
+    public byte queuedFlicks = 0;
 
     // Odometry encoder positions
     public int leftEncoderPos, centerEncoderPos, rightEncoderPos;
@@ -179,6 +179,7 @@ public class Hardware {
 
         //flywheel rotating
         flywheelRotateServoLeft = hwMap.servo.get("flywheelRotateServoLeft");
+        flywheelRotateServoLeft.setPosition(1);
 
         //claw servos
         //clawServoLeft = hwMap.servo.get("clawServoLeft");
