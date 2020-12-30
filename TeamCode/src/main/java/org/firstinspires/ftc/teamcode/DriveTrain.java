@@ -22,8 +22,6 @@ public class DriveTrain {
     Telemetry telemetry;
     HardwareInnov8Hera hera;
     LinearOpMode opMode;
-    Timer timer;
-    TimerTask increasePower;
     private double wheelOnePower = 0.4;
     private double wheelTwoPower = 0.4;
     private double wheelThreePower = 0.4;
@@ -32,16 +30,6 @@ public class DriveTrain {
     private double wheelTwoRatio = 1;
     private double wheelThreeRatio = 1;
     private double wheelFourRatio = 1;
-    private int counter = 1;
-    private double sumOfMotorOneDist;
-    private double sumOfMotorTwoDist;
-    private double sumOfMotorThreeDist;
-    private double sumOfMotorFourDist;
-    private double avgMotorOneDist;
-    private double avgMotorTwoDist;
-    private double avgMotorThreeDist;
-    private double avgMotorFourDist;
-    private double baseline = 0;
     public static double INCH_TO_TICK = (360/6); // The number of encoder ticks per inch for our wheels
     public static double SIDE_INCH_TO_TICK = (360/6); // The number of encoder ticks for one inch while travelling sideways, change later
     public DriveTrain(Telemetry telemetry, HardwareInnov8Hera hera, LinearOpMode opMode) {
@@ -67,12 +55,6 @@ public class DriveTrain {
         endPosition = startPosition + (inches * INCH_TO_TICK); // How far you need to travel
         Orientation angles;
         angles = hera.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-//        while(!this.opMode.isStopRequested() && !hera.imu.isGyroCalibrated()) {
-//            showData("IMU Status", "Calibrating");
-//            showData("gyro is calibrated", "" + hera.imu.isGyroCalibrated());
-//            this.opMode.sleep(50);
-//            this.opMode.idle();
-//        }
         double startingOrientation = angles.firstAngle;
         double error = 0;
         double steer = 0;
@@ -240,39 +222,6 @@ public class DriveTrain {
         hera.motorThree.setPower(y - x - rx);
         hera.motorFour.setPower(y + x - rx);
 
-    }
-
-    // Put powers in the range of -1 to 1 only if they aren't already (not
-    // checking would cause us to always drive at full speed)
-    public void goStraight() {
-        showData("DRIVE_TRAIN_CAPTION", "Balancing power");
-        double wheelOneStartPos = hera.motorOne.getCurrentPosition();
-        //double wheelTwoStartPos = hera.motorTwo.getCurrentPosition();
-        double wheelThreeStartPos = hera.motorThree.getCurrentPosition();
-        //double wheelFourStartPos = hera.motorFour.getCurrentPosition();
-        showData("wheelThreeStartPos", "" + wheelThreeStartPos);
-        double wheelOneEndPos = 0;
-        //double wheelTwoEndPos = 0;
-        double wheelThreeEndPos = 0;
-        //double wheelFourEndPos = 0;
-        while(hera.motorThree.getCurrentPosition() < wheelThreeStartPos + 100){
-            showData("goStraight", "in the while loop");
-        }
-        wheelOneEndPos = Math.abs(hera.motorOne.getCurrentPosition() - wheelOneStartPos);
-        //wheelTwoEndPos = Math.abs(hera.motorTwo.getCurrentPosition() - wheelTwoStartPos);
-        wheelThreeEndPos = Math.abs(hera.motorThree.getCurrentPosition() - wheelThreeStartPos);
-        //wheelFourEndPos = Math.abs(hera.motorFour.getCurrentPosition() - wheelFourStartPos);
-        showData("wheelEndPos's", "" + wheelOneEndPos + ", " + wheelThreeEndPos);
-        if(this.counter == 1) {
-            baseline = Math.min(wheelOneEndPos, wheelThreeEndPos);
-            showData("baseline calc: ", "" + wheelOneEndPos + ", " + wheelThreeEndPos);
-            showData("baseline: ", "" + baseline);
-        }
-        this.counter++;
-        double wheelOneDiff = wheelOneEndPos - baseline;
-        //double wheelTwoDiff = wheelTwoEndPos - baseline;
-        double wheelThreeDiff = wheelThreeEndPos - baseline;
-        //double wheelFourDiff
     }
 
     // Print data to both telemetry and log
