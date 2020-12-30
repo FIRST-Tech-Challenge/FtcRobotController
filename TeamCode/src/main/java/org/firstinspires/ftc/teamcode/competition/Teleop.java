@@ -34,7 +34,7 @@ public class Teleop extends LinearOpMode
         boolean autoAim=false;
         boolean slowDrive = false;
         double forward=1;
-        double angleSpeed=1;
+        double angleSpeed=.2;
         double servoPosition =0;
 
 
@@ -54,7 +54,8 @@ public class Teleop extends LinearOpMode
             {
 
                 byte sign = 1;
-                double diff = robot.theta-Math.atan((54-robot.y)/(9-robot.x))*.8;
+                double diff = robot.theta-Math.atan((50
+                        -robot.y)/(9-robot.x))*.8;
                 if(diff<0)
                     diff+=2*Math.PI;
                 if(diff>Math.PI)
@@ -78,6 +79,7 @@ public class Teleop extends LinearOpMode
             telemetry.addData("angle speed",angleSpeed);
             telemetry.addData("Left Speed", robot.flywheelMotorLeft.getVelocity());
             telemetry.addData("Right Speed", robot.flywheelMotorRight.getVelocity());
+            telemetry.addData("Angle Servo",servoPosition);
             telemetry.update();
 
             if(gamepad1.a&&!a1Pressed)

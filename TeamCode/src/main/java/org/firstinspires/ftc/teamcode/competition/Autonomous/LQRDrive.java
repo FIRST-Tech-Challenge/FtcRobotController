@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.competition.Hardware;
+import org.firstinspires.ftc.teamcode.helperclasses.HelperMethods;
 import org.firstinspires.ftc.teamcode.helperclasses.LQR;
 
 import java.io.File;
@@ -71,16 +72,16 @@ public class LQRDrive extends LinearOpMode
         ElapsedTime e = new ElapsedTime();
         e.startTime();
 
-        while(opModeIsActive()&&!lqr.robotInCircle(-52,0,1.5))
+        while(opModeIsActive()&&!lqr.robotInCircle(-52,-1,.3))
         {
 
-            for(double d:lqr.runLqrDrive(path,-52,0,Math.PI*19.9/10))
+            for(double d:lqr.runLqrDrive(path,-52,-1,Math.PI*19.5/10))
             {
 
                 telemetry.addData("x",d);
 
             }
-            robot.flywheelRotateServoLeft.setPosition(.2);
+            robot.flywheelRotateServoLeft.setPosition(0);
             telemetry.addData("x: ", robot.x);
             telemetry.addData("y: ", robot.y);
             telemetry.addData("theta: ", robot.theta);
@@ -90,9 +91,14 @@ public class LQRDrive extends LinearOpMode
         robot.drive(0,0,0);
         e.reset();
         e.startTime();
-        while(e.seconds()<1&&opModeIsActive()){robot.setFlyWheelPower(1);}
-        robot.queuedFlicks=2;
-        robot.flickRing();
+        while(e.seconds()<1.5&&opModeIsActive()){robot.setFlyWheelPower(1);}
+        for(int i = 0; i<3; i++)
+        {
+            robot.flickRing();
+            e.reset();
+            e.startTime();
+            while(e.seconds()<.5&&opModeIsActive()){}
+        }
         e.reset();
         e.startTime();
         while(e.seconds()<1&&opModeIsActive()){robot.setFlyWheelPower(1);}
