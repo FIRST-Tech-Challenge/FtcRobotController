@@ -163,6 +163,7 @@ public class UltimateGoalTeleOp extends OpMode {
 		// ********************************************************************
         if(!circleHeld && circlePressed)
         {
+            robot.startClawToggle();
             circleHeld = true;
         } else if(!circlePressed) {
             circleHeld = false;
@@ -170,6 +171,7 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!triangleHeld && trianglePressed)
         {
+            robot.startInjecting();
             triangleHeld = true;
         } else if(!trianglePressed) {
             triangleHeld = false;
@@ -210,6 +212,7 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!rightBumperHeld && rightBumperPressed)
         {
+            robot.startTripleInjecting();
             rightBumperHeld = true;
         } else if(!rightBumperPressed) {
             rightBumperHeld = false;
