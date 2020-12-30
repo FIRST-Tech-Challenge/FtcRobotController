@@ -43,6 +43,9 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     private boolean transferIsDown = true;
     private ElapsedTime runtime = new ElapsedTime();
 
+    public boolean getTransferIsDown(){
+        return transferIsDown;
+    }
     @Override
     public String getUniqueName() {
         return "hopper";

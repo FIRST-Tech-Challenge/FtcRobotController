@@ -369,8 +369,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
                 } else if (source.getTrigger(Events.Side.RIGHT)<0.2 && source.getTrigger(Events.Side.LEFT)<0.2) {
                     if (intake!=null){
-                        if(hopper!=null)
-                            hopper.transferDown();
+                        if(hopper!=null && !hopper.getTransferIsDown())
+                            hopper.transferDownCombo();
                         intake.intakeInAuto();
                     }
                 }
