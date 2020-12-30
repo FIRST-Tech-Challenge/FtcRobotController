@@ -92,7 +92,7 @@ public class Hardware {
     DcMotor intakeMotor;
 
     //flywheelRotateServo
-    public CRServo flywheelRotateServoLeft;
+    public Servo flywheelRotateServoLeft;
 
     //claw servos
     public Servo clawServoLeft;
@@ -178,7 +178,7 @@ public class Hardware {
         intakeMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //flywheel rotating
-        flywheelRotateServoLeft = hwMap.crservo.get("flywheelRotateServoLeft");
+        flywheelRotateServoLeft = hwMap.servo.get("flywheelRotateServoLeft");
 
         //claw servos
         //clawServoLeft = hwMap.servo.get("clawServoLeft");
