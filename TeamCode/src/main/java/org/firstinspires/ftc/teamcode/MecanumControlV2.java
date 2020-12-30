@@ -115,9 +115,9 @@ public class MecanumControlV2 extends OpMode {
         if (gamepad2.dpad_right) {
             intake.intakeLatch.setPosition(.5);
         }else if (gamepad2.dpad_left) {
-            intake.intakeLatch.setPosition(0);
+            intake.intakeLatch.setPosition(1);
         }
         //Control intake and transition
-        intake.intakePower(gamepad2.left_stick_y);
+        intake.intakePower(-gamepad2.left_stick_y);
     }
 }

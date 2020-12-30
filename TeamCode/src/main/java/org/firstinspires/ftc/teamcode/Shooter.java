@@ -50,7 +50,7 @@ public class Shooter {
      * @param power
      */
     public void shooterPower(double power) {
-        leftShooter.setPower(power);
+        leftShooter.setPower(-power);
         rightShooter.setPower(power);
     }
 }
