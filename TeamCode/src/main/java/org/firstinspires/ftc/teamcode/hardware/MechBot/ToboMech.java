@@ -368,8 +368,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.getTrigger(Events.Side.LEFT)>0.2 && chassis!=null) { // shoot high goal using Vuforia (x,y)
                     rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
                 } else if (source.getTrigger(Events.Side.RIGHT)<0.2 && source.getTrigger(Events.Side.LEFT)<0.2) {
-                    if (intake!=null)
-                       intake.intakeInAuto();
+                    if (intake!=null){
+                        if(hopper!=null)
+                            hopper.transferDown();
+                        intake.intakeInAuto();
+                    }
                 }
             }
         }, new Button[]{Button.DPAD_UP});
