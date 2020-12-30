@@ -260,7 +260,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
                 // Left joystick for forward/backward and turn
                 if (Math.abs(currentY)>MIN_STICK_VAL) { // car mode
-                    chassis.carDrive(currentY*Math.abs(currentY) * normalizeRatio, right_x);
+                    chassis.carDrive(currentY*Math.abs(currentY) * normalizeRatio * chassis.powerScale(), right_x);
                 }else if (Math.abs(currentX) > MIN_STICK_VAL) {
                     chassis.turn((currentX > 0 ? 1 : -1), Math.abs(currentX * currentX) * chassis.powerScale()*normalizeRatio);
                 } else if (Math.abs(currentY)>MIN_STICK_VAL) {
@@ -375,6 +375,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
             }
         }, new Button[]{Button.DPAD_UP});
+
+        em.onButtonDown(new Events.Listener() {
+            @Override
+            public void buttonDown(EventManager source, Button button) throws InterruptedException {
+                chassis.toggleSlowMode();
+            }
+        }, new Button[]{Button.LEFT_STICK});
 
         em.onButtonDown(new Events.Listener() {
             @Override

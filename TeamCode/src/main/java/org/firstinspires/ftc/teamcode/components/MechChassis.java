@@ -19,14 +19,11 @@ import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.List;
 
-import static com.qualcomm.hardware.lynx.commands.core.LynxInjectDataLogHintCommand.charset;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
-import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Thread.sleep;
 
@@ -120,6 +117,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
     private double maxRange = 127; // max range sensor detectable
     private double defaultScale = 1.0;
+    private double slowModeScale = 0.45;
     private double mecanumForwardRatio = 0.8;
     public double chassisAligmentPower = 0.20;
     public double chassisAligmentPowerMin = 0.13;
@@ -161,6 +159,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private boolean useOdometry = true;
     private boolean normalizeMode = true;
     private boolean showEncoderDetail = false; // enable the chassis encoders
+    private boolean slowMode = false;
 
     private String simEvents="";
     public FileOutputStream simOS;
@@ -185,6 +184,10 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             case CONTINUE: setAutoDriveMode(AutoDriveMode.CONTINUE_NO_CORRECTION); break;
             case CONTINUE_NO_CORRECTION: setAutoDriveMode(AutoDriveMode.STOP); break;
         }
+    }
+
+    public void toggleSlowMode(){
+        slowMode = !slowMode;
     }
 
     public AutoDriveMode getAutoDriveMode() { return autoDriveMode;}
@@ -337,7 +340,11 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     public double getFront_ratio() { return front_ratio; }
     public double getBack_ratio() { return back_ratio; }
 
-    public double powerScale() { return defaultScale; }
+    public double powerScale() {
+        if(slowMode)
+            return slowModeScale;
+        return defaultScale;
+    }
     public double getDefaultScale() {
         return defaultScale;
     }
@@ -1042,7 +1049,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         line.addData("Pwr/Scale/Mode", new Func<String>() {
             @Override
             public String value() {
-                return String.format("%.2f / %.1f / %s", motorFL.getPower(), getDefaultScale(),
+                return String.format("%.2f / %.1f / %s", motorFL.getPower(), powerScale(),
                         (simulation_mode?"Simulation":(getNormalizeMode()?"Normalized":"Speedy")));
             }
         });
