@@ -11,6 +11,7 @@ public class MecanumControlV2 extends OpMode {
 
     MecanumDrive robot = new MecanumDrive();
     Shooter shooter    = new Shooter();
+    Intake  intake     = new Intake();
 
     double driveSpeed;
     double turnSpeed;
@@ -29,6 +30,7 @@ public class MecanumControlV2 extends OpMode {
     public void init() {
         robot.init(hardwareMap);
         shooter.init(hardwareMap);
+        intake.init(hardwareMap);
 
         msStuckDetectInit = 18000;
         msStuckDetectLoop = 18000;
@@ -77,37 +79,45 @@ public class MecanumControlV2 extends OpMode {
             robot.rightBack.setPower(-turnSpeed);
         }
         //Turn shooter on
-        if (gamepad1.a && !isShooterOn) {
+        if (gamepad2.a && !isShooterOn) {
             isShooterOn = true;
-        }else if (!gamepad1.a && isShooterOn) {
+        }else if (!gamepad2.a && isShooterOn) {
             isShooterOff = false;
             shooter.shooterPower(shooterPower);
         }
         //Turn shooter off
-        if (gamepad1.a && !isShooterOff) {
+        if (gamepad2.a && !isShooterOff) {
             isShooterOn = false;
-        }else if (!gamepad1.a && !isShooterOn) {
+        }else if (!gamepad2.a && !isShooterOn) {
             isShooterOff = true;
             shooter.shooterPower(0);
         }
         //Change shooter power
-        if (gamepad1.dpad_up) {
+        if (gamepad2.dpad_up) {
             wasPowerIncreased = true;
-        }else if (!gamepad1.dpad_up && wasPowerIncreased) {
+        }else if (!gamepad2.dpad_up && wasPowerIncreased) {
             shooterPower -= .05;
             if (shooterPower <= -1.04) {
                 shooterPower = -.7;
             }
             wasPowerIncreased = false;
         }
-        if (gamepad1.dpad_down) {
+        if (gamepad2.dpad_down) {
             wasPowerDecreased = true;
-        }else if (!gamepad1.dpad_down && wasPowerDecreased) {
+        }else if (!gamepad2.dpad_down && wasPowerDecreased) {
             shooterPower += .05;
             if (shooterPower >= -.66) {
                 shooterPower = -1;
             }
             wasPowerDecreased = false;
         }
+        //Control intake latch servo
+        if (gamepad2.dpad_right) {
+            intake.intakeLatch.setPosition(.5);
+        }else if (gamepad2.dpad_left) {
+            intake.intakeLatch.setPosition(0);
+        }
+        //Control intake and transition
+        intake.intakePower(gamepad2.left_stick_y);
     }
 }

@@ -176,14 +176,36 @@ public class MoveTest extends OpMode{
                 stateMachineFlow++;
                 break;
             case 16:
+                //wait 3 seconds
+                while (3 > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 17:
+                //turn 90 degrees to the right
+                robot.gStatTurn(.5,-90);
+                stateMachineFlow++;
+                break;
+            case 18:
+                //wait 3 seconds
+                while (3 > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 19:
+                //turn 90 degrees to the left
+                robot.gStatTurn(.5,90);
+                stateMachineFlow++;
+                break;
+            case 20:
                 //wait 5 seconds then stop
                 while (5 > runtime.time() - time) {
 
                 }
                 stateMachineFlow++;
                 break;
-            case 17:
-                stop();
         }
     }
 }

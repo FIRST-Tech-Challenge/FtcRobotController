@@ -10,12 +10,10 @@ public class WobbleGrabber {
     //This class will include methods for opening and closing gripper & moving the arm up and down
 
     /*Public OpMode Members.*/
-    public DcMotor gripWrist  = null;
+    public Servo gripWrist  = null;
     public Servo gripServo = null;
 
     HardwareMap hwMap = null;
-
-    DigitalChannel REVTouchBottom;
 
     /* Constructor */
     public WobbleGrabber() {
@@ -28,38 +26,20 @@ public class WobbleGrabber {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        gripWrist = hwMap.get(DcMotor.class, "grip_wrist");
+        gripWrist = hwMap.get(Servo.class, "grip_wrist");
         gripServo = hwMap.get(Servo.class, "grip_servo");
-        //define motor direction
-        gripWrist.setDirection(DcMotor.Direction.REVERSE);
 
-        gripWrist.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //Set initial positions of servos
+        gripWrist.setPosition(.5);
+        gripServo.setPosition(0);
 
-        // Set all motors to zero power
-        gripWrist.setPower(0);
-
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-        gripWrist.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Define and initialize ALL installed sensors
-        REVTouchBottom = hwMap.get(DigitalChannel.class, "Bottom_Touch");
-
-        // set the digital channel to input.
-        REVTouchBottom.setMode(DigitalChannel.Mode.INPUT);
     }
 
     /**
-     * This method lowers the grabber at the given power until it comes into contact with a touch sensor.
-     * @param power
+     * This method lowers the grabber
      */
-    public void lowerGripper(double power) {
-        // if the digital channel returns true it's HIGH and the button is unpressed.
-        if (REVTouchBottom.getState()) {
-            gripWrist.setPower(power);//May need to be fixed for direction
-            while (REVTouchBottom.getState());
-            gripWrist.setPower(0);
-        }
+    public void lowerGripper() {
+        gripWrist.setPosition(.5);
     }
 
     /**

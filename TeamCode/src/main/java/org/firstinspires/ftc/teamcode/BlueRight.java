@@ -74,7 +74,7 @@ public class BlueRight extends OpMode {
               **************************/
             case 100:
                 //Lower Wobble Grabber
-                grabber.lowerGripper(.5);
+                grabber.lowerGripper();
                 stateMachineFlow++;
                 break;
             case 101:
@@ -180,7 +180,7 @@ public class BlueRight extends OpMode {
              **************************/
             case 200:
                 //Lower wobble grabber
-                grabber.lowerGripper(.5);
+                grabber.lowerGripper();
                 stateMachineFlow++;
                 break;
             case 201:
@@ -286,7 +286,7 @@ public class BlueRight extends OpMode {
                  **************************/
             case 300:
                 //Lower Wobble Grabber
-                grabber.lowerGripper(.5);
+                grabber.lowerGripper();
                 stateMachineFlow++;
                 break;
             case 301:
