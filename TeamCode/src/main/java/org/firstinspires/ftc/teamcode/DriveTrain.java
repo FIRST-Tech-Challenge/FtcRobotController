@@ -255,7 +255,7 @@ public class DriveTrain {
         //double wheelTwoEndPos = 0;
         double wheelThreeEndPos = 0;
         //double wheelFourEndPos = 0;
-        while(hera.motorThree.getCurrentPosition() < wheelThreeStartPos + 50){
+        while(hera.motorThree.getCurrentPosition() < wheelThreeStartPos + 100){
             showData("goStraight", "in the while loop");
         }
         wheelOneEndPos = Math.abs(hera.motorOne.getCurrentPosition() - wheelOneStartPos);
@@ -263,64 +263,16 @@ public class DriveTrain {
         wheelThreeEndPos = Math.abs(hera.motorThree.getCurrentPosition() - wheelThreeStartPos);
         //wheelFourEndPos = Math.abs(hera.motorFour.getCurrentPosition() - wheelFourStartPos);
         showData("wheelEndPos's", "" + wheelOneEndPos + ", " + wheelThreeEndPos);
-        showData("wheelCurrentPos's", "" + hera.motorThree.getCurrentPosition() + ", " + hera.motorOne.getCurrentPosition());
         if(this.counter == 1) {
             baseline = Math.min(wheelOneEndPos, wheelThreeEndPos);
             showData("baseline calc: ", "" + wheelOneEndPos + ", " + wheelThreeEndPos);
             showData("baseline: ", "" + baseline);
         }
-        sumOfMotorOneDist += wheelOneEndPos;
-        //sumOfMotorTwoDist += wheelTwoEndPos;
-        sumOfMotorThreeDist += wheelThreeEndPos;
-        //sumOfMotorFourDist += wheelFourEndPos;
-        avgMotorOneDist = sumOfMotorOneDist/counter;
-        //avgMotorTwoDist = sumOfMotorTwoDist/counter;
-        avgMotorThreeDist = sumOfMotorThreeDist/counter;
-        //avgMotorFourDist = sumOfMotorFourDist/counter;
-        showData("counter", "" + counter);
-        counter++;
-        //showData("wheelTwoDistance: ", "" + wheelTwoEndPos);
-        //showData("wheelFourDistance: ", "" + wheelFourEndPos);
-
-        if(baseline !=0){
-            if(Math.abs(avgMotorOneDist - baseline) <= 0.5) {
-                wheelOneRatio = 1;
-            }
-            else{
-                wheelOneRatio = avgMotorOneDist/baseline;
-            }
-            //wheelTwoRatio = avgMotorTwoDist/baseline;
-            if(Math.abs(avgMotorThreeDist - baseline) <= 0.5){
-                wheelThreeRatio = 1;
-            }
-            else {
-                wheelThreeRatio = avgMotorThreeDist / baseline;
-            }
-            //wheelFourRatio = avgMotorFourDist/baseline;
-            showData("Ratios", "" + wheelOneRatio + ", " + wheelThreeRatio);
-        }
-        wheelOnePower /= wheelOneRatio;
-        //wheelTwoPower /= wheelTwoRatio;
-        wheelThreePower /= wheelThreeRatio;
-        //wheelFourPower /= wheelFourPower;
-        if(wheelOnePower>1){
-            wheelOnePower = 1;
-            hera.motorOne.setPower(wheelOnePower);
-        }
-        else {
-            hera.motorOne.setPower(wheelOnePower);
-        }
-        //hera.motorTwo.setPower(wheelTwoPower);
-        if(wheelThreePower > 1){
-            wheelThreePower = 1;
-            hera.motorThree.setPower(wheelThreePower);
-        }
-        else {
-            hera.motorThree.setPower(wheelThreePower);
-        }
-        //hera.motorFour.setPower(wheelFourPower);
-        showData("Powers" , "" + wheelOnePower + ", " + wheelThreePower);
-        showData("All the Data", "" + baseline +", " + avgMotorOneDist + ", " + avgMotorThreeDist);
+        this.counter++;
+        double wheelOneDiff = wheelOneEndPos - baseline;
+        //double wheelTwoDiff = wheelTwoEndPos - baseline;
+        double wheelThreeDiff = wheelThreeEndPos - baseline;
+        //double wheelFourDiff
     }
 
     // Print data to both telemetry and log
