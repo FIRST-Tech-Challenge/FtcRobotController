@@ -285,10 +285,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     return; // avoid conflicting drives
                 double left_x = source.getStick(Events.Side.LEFT, Events.Axis.X_ONLY);
                 // right joystick for free crabbing
-                if (Math.abs(left_x)>MIN_STICK_VAL && Math.abs(currentY)>MIN_STICK_VAL) {
-                    // car drive
-                    chassis.carDrive(currentY*Math.abs(currentY)*normalizeRatio, left_x);
-                } else if (Math.abs(currentX)+Math.abs(currentY)>MIN_STICK_VAL) {
+                if (Math.abs(left_x)>MIN_STICK_VAL) {
+                    if (Math.abs(currentY)>MIN_STICK_VAL+0.4) {
+                        // car drive
+                        chassis.carDrive(currentY * Math.abs(currentY) * normalizeRatio, left_x);
+                    } else { // turn over-write free style
+                        chassis.turn((left_x > 0 ? 1 : -1), Math.abs(left_x * left_x) * chassis.powerScale()*normalizeRatio);
+                    }
+                } else if (Math.abs(currentX)+Math.abs(currentY)>MIN_STICK_VAL) { // free style
                     movingAngle = Math.toDegrees(Math.atan2(currentX, currentY));
 
                     if(!chassis.getNormalizeMode()) {
