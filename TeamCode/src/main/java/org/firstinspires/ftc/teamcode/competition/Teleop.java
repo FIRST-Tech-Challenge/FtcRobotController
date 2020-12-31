@@ -35,7 +35,8 @@ public class Teleop extends LinearOpMode
         boolean slowDrive = false;
         double forward=1;
         double angleSpeed=.2;
-        double servoPosition =0;
+        double servoPosition =1;
+        double savedPosition = 1;
 
 
         double driveSpeed=1;
@@ -74,38 +75,11 @@ public class Teleop extends LinearOpMode
             telemetry.addData("x: ", robot.x);
             telemetry.addData("y: ", robot.y);
             telemetry.addData("theta: ", robot.theta);
-            telemetry.addData("Auto Aim",autoAim);
-            telemetry.addData("Slow Drive",slowDrive);
             telemetry.addData("angle speed",angleSpeed);
             telemetry.addData("Left Speed", robot.flywheelMotorLeft.getVelocity());
             telemetry.addData("Right Speed", robot.flywheelMotorRight.getVelocity());
-            telemetry.addData("Angle Servo",servoPosition);
             telemetry.update();
 
-            if(gamepad1.a&&!a1Pressed)
-            {
-                autoAim=!autoAim;
-                a1Pressed=true;
-            }
-            if(!gamepad1.a)
-            {
-
-                a1Pressed=false;
-
-            }
-            if(gamepad1.b&&!b1Pressed&&!gamepad1.start)
-            {
-                slowDrive=!slowDrive;
-                b1Pressed=true;
-            }
-            if(!gamepad1.b)
-            {
-
-                b1Pressed=false;
-
-            }
-
-            //flip direction of drive when dpad buttons are pressed
             if(gamepad1.dpad_up)
             {
 
@@ -119,9 +93,7 @@ public class Teleop extends LinearOpMode
 
             }
 
-            //intake or outtake rings
-            if (gamepad1.right_trigger<.01)
-            {
+            if (gamepad1.right_trigger<.01) {
 
 
                 robot.setIntakePower(-gamepad1.left_trigger);
@@ -191,6 +163,20 @@ public class Teleop extends LinearOpMode
             {
 
                 y2Pressed=false;
+
+            }
+            if(gamepad2.left_trigger>.01)
+            {
+
+                savedPosition=servoPosition;
+
+            }
+
+            if(gamepad2.b)
+            {
+
+
+                servoPosition=savedPosition;
 
             }
 
