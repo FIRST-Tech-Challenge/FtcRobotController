@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.lib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.lib.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.lib.geometry.Translation2d;
-import org.firstinspires.ftc.teamcode.team10515.SkystoneRobot;
+import org.firstinspires.ftc.teamcode.team10515.UltimateGoalRobot;
 import org.firstinspires.ftc.teamcode.team10515.states.IState;
 
 import static org.firstinspires.ftc.teamcode.team10515.Robot.getD1;
@@ -18,13 +18,13 @@ import static org.firstinspires.ftc.teamcode.team10515.Robot.getRobotLength;
 import static org.firstinspires.ftc.teamcode.team10515.Robot.getWheelRadius;
 
 public class RobotStateEstimator implements ISubsystem {
-    private SkystoneRobot skystoneRobot;
+    private UltimateGoalRobot skystoneRobot;
     private BNO055IMU imu;
     private volatile Pose2d pose;
     private volatile Pose2d lastPose;
     private Pose2d velocityPose;
 
-    public RobotStateEstimator(SkystoneRobot skystoneRobot, BNO055IMU imu, Pose2d initialPose) {
+    public RobotStateEstimator(UltimateGoalRobot skystoneRobot, BNO055IMU imu, Pose2d initialPose) {
         setSkystoneRobot(skystoneRobot);
         setImu(imu);
         setPose(initialPose);
@@ -166,11 +166,11 @@ public class RobotStateEstimator implements ISubsystem {
         this.velocityPose = velocityPose;
     }
 
-    public SkystoneRobot getSkystoneRobot() {
+    public UltimateGoalRobot getSkystoneRobot() {
         return skystoneRobot;
     }
 
-    public void setSkystoneRobot(SkystoneRobot skystoneRobot) {
+    public void setSkystoneRobot(UltimateGoalRobot skystoneRobot) {
         this.skystoneRobot = skystoneRobot;
     }
 

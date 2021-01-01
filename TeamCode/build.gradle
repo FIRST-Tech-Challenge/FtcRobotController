@@ -20,4 +20,6 @@ repositories {
 
 dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'org.openftc:rev-extensions-2:1.2'
+    implementation 'org.ejml:ejml-all:0.39'
 }

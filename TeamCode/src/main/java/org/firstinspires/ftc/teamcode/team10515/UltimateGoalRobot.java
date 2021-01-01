@@ -14,11 +14,18 @@ import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
 import org.firstinspires.ftc.teamcode.team10515.control.StackTracker;
 import org.firstinspires.ftc.teamcode.team10515.states.FeederExtensionStateMachine;
 import org.firstinspires.ftc.teamcode.team10515.states.FeederStoneGripperStateMachine;
+import org.firstinspires.ftc.teamcode.team10515.states.FlickerStateMachine;
 import org.firstinspires.ftc.teamcode.team10515.states.FlywheelStateMachine;
 import org.firstinspires.ftc.teamcode.team10515.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.team10515.subsystems.EndGameExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.team10515.subsystems.ExpansionHubs;
+import org.firstinspires.ftc.teamcode.team10515.subsystems.Feeder;
+import org.firstinspires.ftc.teamcode.team10515.subsystems.FlickerSubsystem;
+import org.firstinspires.ftc.teamcode.team10515.subsystems.FlywheelSubsystem;
+import org.firstinspires.ftc.teamcode.team10515.subsystems.ForkliftSubsystem;
+import org.firstinspires.ftc.teamcode.team10515.subsystems.FoundationSubsystem;
 import org.firstinspires.ftc.teamcode.team10515.subsystems.RobotStateEstimator;
+import org.firstinspires.ftc.teamcode.team10515.subsystems.ShooterSubsystem;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.ExpansionHubServo;
@@ -51,8 +58,14 @@ public abstract class UltimateGoalRobot extends Robot {
     private ExpansionHubs expansionHubs;
     private RobotStateEstimator robotStateEstimator;
     private Drive drive;
+    private FlywheelSubsystem flywheels;
+    private Feeder feeder;
+    private FoundationSubsystem foundationSubsystem;
     private EndGameExtensionSubsystem endGameExtensionSubsystem;
     private StackTracker stackTracker;
+    private FlickerSubsystem flicker;
+    private ShooterSubsystem shooterMotors;
+    private ForkliftSubsystem forklift;
 
     @Override
     public void init() {
@@ -66,29 +79,30 @@ public abstract class UltimateGoalRobot extends Robot {
                 new RevMotor((ExpansionHubMotor)(hardwareMap.get("RL")), true, true, true, true, Motor.GOBILDA_435_RPM.getENCODER_TICKS_PER_REVOLUTION(), getWheelDiameter(), 2d),
                 new RevMotor((ExpansionHubMotor)(hardwareMap.get("FL")), true, true, true, true, Motor.GOBILDA_435_RPM.getENCODER_TICKS_PER_REVOLUTION(), getWheelDiameter(), 2d),
                 new RevMotor((ExpansionHubMotor)(hardwareMap.get("RR")), false, true, true, false, Motor.GOBILDA_435_RPM.getENCODER_TICKS_PER_REVOLUTION(), getWheelDiameter(), 2d),
-                new RevMotor((ExpansionHubMotor)(hardwareMap.get("FR")), false, true, true, false, Motor.GOBILDA_435_RPM.getENCODER_TICKS_PER_REVOLUTION(), getWheelDiameter(), 2d),
-                new RevMotor((ExpansionHubMotor)(hardwareMap.get("INL")), true, false, false, false),
-                new RevMotor((ExpansionHubMotor)(hardwareMap.get("INR")), false, false, false, true),
-                new RevMotor((ExpansionHubMotor)(hardwareMap.get("LL")), true, true, false, true, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION(), 38d / 25.4d),
-                new RevMotor((ExpansionHubMotor)(hardwareMap.get("LR")), false, true, false, false, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION(), 38d / 25.4d)
+                new RevMotor((ExpansionHubMotor)(hardwareMap.get("Shooter")), false, true, true, false, Motor.GOBILDA_435_RPM.getENCODER_TICKS_PER_REVOLUTION(), getWheelDiameter(), 2d),
+//                new RevMotor((ExpansionHubMotor)(hardwareMap.get("INL")), true, false, false, false),
+//                new RevMotor((ExpansionHubMotor)(hardwareMap.get("INR")), false, false, false, true),
+//                new RevMotor((ExpansionHubMotor)(hardwareMap.get("LL")), true, true, false, true, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION(), 38d / 25.4d),
+//                new RevMotor((ExpansionHubMotor)(hardwareMap.get("LR")), false, true, false, false, Motor.GOBILDA_312_RPM.getENCODER_TICKS_PER_REVOLUTION(), 38d / 25.4d)
         });
 
-        setServos(new RevServo[] {
-                new RevServo((ExpansionHubServo)(hardwareMap.get("FSL"))),
-                new RevServo((ExpansionHubServo)(hardwareMap.get("FSR"))),
-                new RevServo((ExpansionHubServo)(hardwareMap.get("OL"))),
-                new RevServo((ExpansionHubServo)(hardwareMap.get("OR"))),
-                new RevServo((ExpansionHubServo)(hardwareMap.get("SG"))),
-                new RevServo((ExpansionHubServo)(hardwareMap.get("CS"))),
-                new RevServo((ExpansionHubServo)(hardwareMap.get("EXT")))
-        });
+//        setServos(new RevServo[] {
+//                new RevServo((ExpansionHubServo)(hardwareMap.get("FSL"))),
+//                new RevServo((ExpansionHubServo)(hardwareMap.get("FSR"))),
+//                new RevServo((ExpansionHubServo)(hardwareMap.get("OL"))),
+//                new RevServo((ExpansionHubServo)(hardwareMap.get("OR"))),
+//                new RevServo((ExpansionHubServo)(hardwareMap.get("F"))),
+//                new RevServo((ExpansionHubServo)(hardwareMap.get("CS"))),
+//                new RevServo((ExpansionHubServo)(hardwareMap.get("EXT")))
+//        });
 
-        setLights((hardwareMap.get(RevBlinkinLedDriver.class, "blinkin")));
+//        setLights((hardwareMap.get(RevBlinkinLedDriver.class, "blinkin")));
         //Yogesh commented this
       //  setRobotStateEstimator(new RobotStateEstimator(this, hardwareMap.get(BNO055IMU.class, "imu"), new Pose2d()));
-        setDrive(new Drive(getRobotStateEstimator(), getMotors()[0], getMotors()[1], getMotors()[2], getMotors()[3]));
+//        setDrive(new Drive(getRobotStateEstimator(), getMotors()[0], getMotors()[1], getMotors()[2], getMotors()[3]));
         setStackTracker(new StackTracker());
-        setEndGameExtensionSubsystem(new EndGameExtensionSubsystem(getServos()[6]));
+//        setEndGameExtensionSubsystem(new EndGameExtensionSubsystem(getServos()[6]));
+        setShooterMotors(new ShooterSubsystem(getMotors()[3]));
         setMatchRuntime(new TimeProfiler(false));
     }
 
@@ -166,6 +180,14 @@ public abstract class UltimateGoalRobot extends Robot {
         this.drive = drive;
     }
 
+    public Feeder getFeeder() {
+        return feeder;
+    }
+
+    public void setFeeder(Feeder feeder) {
+        this.feeder = feeder;
+    }
+
     public StackTracker getStackTracker() {
         return stackTracker;
     }
@@ -174,6 +196,25 @@ public abstract class UltimateGoalRobot extends Robot {
         this.stackTracker = stackTracker;
     }
 
+    public FlywheelSubsystem getFlywheels() {
+        return flywheels;
+    }
+
+    public void setFlywheels(FlywheelSubsystem flywheels) {
+        this.flywheels = flywheels;
+    }
+
+    public ShooterSubsystem getShooter() { return shooterMotors; }
+
+    public void setShooterMotors(ShooterSubsystem shooterMotors){ this.shooterMotors = shooterMotors; }
+
+    public FoundationSubsystem getFoundationSubsystem() {
+        return foundationSubsystem;
+    }
+
+    public void setFoundationSubsystem(FoundationSubsystem foundationSubsystem) {
+        this.foundationSubsystem = foundationSubsystem;
+    }
 
     public EndGameExtensionSubsystem getEndGameExtensionSubsystem() {
         return endGameExtensionSubsystem;
@@ -181,6 +222,14 @@ public abstract class UltimateGoalRobot extends Robot {
 
     public void setEndGameExtensionSubsystem(EndGameExtensionSubsystem endGameExtensionSubsystem) {
         this.endGameExtensionSubsystem = endGameExtensionSubsystem;
+    }
+
+    public FlickerSubsystem getFlickerSubsystem(){
+        return flicker;
+    }
+
+    public ForkliftSubsystem getForkliftSubsystem() {
+        return forklift;
     }
 
     public static RevBlinkinLedDriver getLights() {
