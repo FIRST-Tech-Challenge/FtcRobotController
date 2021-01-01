@@ -27,7 +27,7 @@ public class UltimateGoalTeleOp extends OpMode {
         telemetry.addLine("Calling robot.init");
         updateTelemetry(telemetry);
         robot.init(hardwareMap);
-//        robot.disableDriveEncoders();
+        robot.disableDriveEncoders();
         robot.setInputShaping(true);
         telemetry.addLine("Ready");
         updateTelemetry(telemetry);
@@ -83,6 +83,8 @@ public class UltimateGoalTeleOp extends OpMode {
     private boolean leftBumper2Pressed;
     private boolean rightBumper2Pressed;
     private boolean fingersUp = true;
+    private double rightTriggerPower;
+    private double leftTriggerPower;
     private double yPower;
     private double xPower;
     private double spin;
@@ -120,6 +122,8 @@ public class UltimateGoalTeleOp extends OpMode {
         //right joystick is for rotation
         gyroAngle = robot.readIMU();
 
+        leftTriggerPower = gamepad1.left_trigger;
+        rightTriggerPower = gamepad1.right_trigger;
         yPower = -HardwareOmnibot.cleanMotionValues(gamepad1.left_stick_y);
         xPower = HardwareOmnibot.cleanMotionValues(gamepad1.left_stick_x);
         // GF used the angle system where rotating left was positive, so have to reverse the sign
@@ -302,6 +306,13 @@ public class UltimateGoalTeleOp extends OpMode {
             leftBumper2Held = false;
         }
 
+        if(rightTriggerPower >= 0.05) {
+            robot.setWobbleMotorPower(rightTriggerPower);
+        } else if(leftTriggerPower >= 0.05) {
+            robot.setWobbleMotorPower(-leftTriggerPower);
+        } else {
+            robot.setWobbleMotorPower(0.0);
+        }
         // If the activity is not performing, it will be idle and return.
         performActivities();
 // Can use this for shoot alignment
@@ -311,8 +322,11 @@ public class UltimateGoalTeleOp extends OpMode {
                     spinMultiplier * spin, driverAngle, robot.defaultInputShaping);
 //        }
 
-      telemetry.addData("Offset Angle: ", driverAngle);
-
+        telemetry.addData("Offset Angle: ", driverAngle);
+        telemetry.addData("FL Motor Velocity: ", robot.frontLeft.getVelocity());
+        telemetry.addData("FR Motor Velocity: ", robot.frontRight.getVelocity());
+        telemetry.addData("RL Motor Velocity: ", robot.rearLeft.getVelocity());
+        telemetry.addData("RR Motor Velocity: ", robot.rearRight.getVelocity());
         telemetry.addData("Left Encoder: ", robot.getLeftEncoderWheelPosition());
         telemetry.addData("Strafe Encoder: ", robot.getStrafeEncoderWheelPosition());
         telemetry.addData("Right Encoder: ", robot.getRightEncoderWheelPosition());
