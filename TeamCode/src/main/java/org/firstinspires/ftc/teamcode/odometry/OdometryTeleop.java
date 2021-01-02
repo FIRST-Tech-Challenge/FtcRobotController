@@ -24,7 +24,7 @@ public class OdometryTeleop extends LinearOpMode {
 
     //Hardware map names for the encoder wheels. Again, these will change for each robot and need to be updated below
     //String rfName = "FR", rbName = "BR", lfName = "FL", lbName = "BL";
-    String verticalLeftEncoderName = "LftOdometry", verticalRightEncoderName = "Intake", horizontalEncoderName = "CntrOdometry";
+    String verticalLeftEncoderName = "FL", verticalRightEncoderName = "BL", horizontalEncoderName = "BR";
 
     @Override
     public void runOpMode() throws InterruptedException {

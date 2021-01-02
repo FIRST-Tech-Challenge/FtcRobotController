@@ -19,8 +19,7 @@ public class MyOdometryOpmode extends LinearOpMode {
 
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
     String rfName = "FR", rbName = "BR", lfName = "FL", lbName = "BL";
-    String verticalLeftEncoderName = "LftOdometry", verticalRightEncoderName = "Intake", horizontalEncoderName = "CntrOdometry";
-
+    String verticalLeftEncoderName = "FL", verticalRightEncoderName = "BL", horizontalEncoderName = "BR";
     OdometryGlobalCoordinatePosition globalPositionUpdate;
 
     @Override

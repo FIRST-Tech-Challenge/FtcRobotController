@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.shooter.ShooterPID1Encoder;
 
-
 @TeleOp(name="Shooter RPM with Helper", group="Linear Opmode")
+
 //@Disabled
 public class ShooterRPMWithHelper extends LinearOpMode {
 
-private ShooterPID1Encoder shooterControls = new ShooterPID1Encoder();
+    private ShooterPID1Encoder shooterControls = new ShooterPID1Encoder();
 
     @Override
     public void runOpMode() {
@@ -31,8 +31,8 @@ private ShooterPID1Encoder shooterControls = new ShooterPID1Encoder();
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            shooterControls.readController(gamepad1);
-            shooterControls.whileOpModeIsActive();
+            shooterControls.readController(gamepad2);
+            shooterControls.whileOpModeIsActive(this);
 
             shooterControls.addTelemetry(telemetry);
             telemetry.update();
@@ -41,3 +41,4 @@ private ShooterPID1Encoder shooterControls = new ShooterPID1Encoder();
         shooterControls.stop();
     }
 }
+

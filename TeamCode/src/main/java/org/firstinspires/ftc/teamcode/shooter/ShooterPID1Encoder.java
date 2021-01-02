@@ -27,16 +27,17 @@ public class ShooterPID1Encoder {
     public double _measuredTicksPerSecond = 0.0;
     public double _measuredRPM = 0.0;
     public double _currentPower = 0.0;
-    public boolean _yButtonPressed = false;
-    public boolean _aButtonPressed = false;
+    public boolean _dpadUp = false;
+    public boolean _dpadDown = false;
 
-    public static final double MOTOR_TICKS_PER_REVOLUTION = 103.6;
+
+    public static final double MOTOR_TICKS_PER_REVOLUTION = 28;
     public static final double SECONDS_PER_MINUTE = 60;
-    public static final double EXTERNAL_GEAR_RATIO = 3.0 / 1.0;
+    public static final double EXTERNAL_GEAR_RATIO = 1.0 / 1.0;
     public static final double MIN_RPM = 0.0;
-    public static final double MAX_RPM = (1780 * EXTERNAL_GEAR_RATIO);
-    public static final double RPM_LIMIT = MAX_RPM * 0.9;
-    public final double RPM_INCREMENT = 50;
+    public static final double MAX_RPM = (6000 * EXTERNAL_GEAR_RATIO);
+    public static final double RPM_LIMIT = MAX_RPM * 0.8;
+    public final double RPM_INCREMENT = 200;
 
     public static final double RPM_TO_TICKS_PER_SECOND (double rpm) {
         return (rpm * MOTOR_TICKS_PER_REVOLUTION) / (SECONDS_PER_MINUTE * EXTERNAL_GEAR_RATIO);
@@ -52,9 +53,9 @@ public class ShooterPID1Encoder {
     public double _D = 0.0;
 
     public boolean initialize(LinearOpMode op){
-        _primaryMotor = (DcMotorEx)op.hardwareMap.get(DcMotor.class, "ShootRgt");
+        _primaryMotor = (DcMotorEx)op.hardwareMap.get(DcMotor.class, "RedMotor");
         if (_primaryMotor == null) {
-            op.telemetry.addData("Primary Motor", "Null");
+            op.telemetry.addData("Red Motor", "Null");
             return false;
         }
         _primaryMotor.setPower(0.0);
@@ -62,9 +63,9 @@ public class ShooterPID1Encoder {
         _primaryMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         _primaryMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        _secondaryMotor = (DcMotorEx)op.hardwareMap.get(DcMotor.class, "ShootLft");
+        _secondaryMotor = (DcMotorEx)op.hardwareMap.get(DcMotor.class, "BlueMotor");
         if (_secondaryMotor == null) {
-            op.telemetry.addData("Secondary Motor", "Null");
+            op.telemetry.addData("Blue Motor", "Null");
             return false;
         }
         _secondaryMotor.setPower(0.0);
@@ -93,7 +94,8 @@ public class ShooterPID1Encoder {
         _targetTicksPerSecond = RPM_TO_TICKS_PER_SECOND(_targetRPM);
     }
 
-    public void whileOpModeIsActive () {
+    public void whileOpModeIsActive (LinearOpMode op) {
+        this.readController(op.gamepad2);
         double currentTime = _runtime.seconds();
         double deltaTime = currentTime - _lastTime;
         if (deltaTime < 0.1) {
@@ -127,15 +129,15 @@ public class ShooterPID1Encoder {
     public void readController (Gamepad gamepad) {
         double newRPM = _targetRPM;
 
-        if (!_yButtonPressed && gamepad.y) {
+        if (!_dpadUp && gamepad.dpad_up) {
             newRPM = Range.clip(newRPM + RPM_INCREMENT, MIN_RPM, RPM_LIMIT);
             this.setByRPM(newRPM);
-        } else if (!_aButtonPressed && gamepad.a) {
+        } else if (!_dpadDown && gamepad.dpad_down) {
             newRPM = Range.clip(newRPM - RPM_INCREMENT, MIN_RPM, RPM_LIMIT);
             this.setByRPM(newRPM);
         }
-        _yButtonPressed = gamepad.y;
-        _aButtonPressed = gamepad.a;
+        _dpadUp = gamepad.dpad_up;
+        _dpadDown = gamepad.dpad_down;
     }
 
     public void addTelemetry (Telemetry telemetry) {
@@ -145,5 +147,4 @@ public class ShooterPID1Encoder {
         telemetry.addData("Measured TPS", "%.03f tps", _measuredTicksPerSecond);
         telemetry.addData("Power", "%.03f %%", _currentPower);
     }
-
 }

@@ -30,8 +30,7 @@ public class OdometryCalibration extends LinearOpMode {
 
     //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
     String rfName = "FR", rbName = "BR", lfName = "FL", lbName = "BL";
-    String verticalLeftEncoderName = "LftOdometry", verticalRightEncoderName = "Intake", horizontalEncoderName = "CntrOdometry";
-
+    String verticalLeftEncoderName = "FL", verticalRightEncoderName = "BL", horizontalEncoderName = "BR";
     final double PIVOT_SPEED = 0.5;
 
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE

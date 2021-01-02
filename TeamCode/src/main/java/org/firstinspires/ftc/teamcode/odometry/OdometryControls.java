@@ -20,8 +20,7 @@ public class OdometryControls {
 
     //Hardware map names for the encoder wheels. Again, these will change for each robot and need to be updated below
     //String rfName = "FR", rbName = "BR", lfName = "FL", lbName = "BL";
-    String verticalLeftEncoderName = "LftOdometry", verticalRightEncoderName = "Intake", horizontalEncoderName = "CntrOdometry";
-
+    String verticalLeftEncoderName = "FL", verticalRightEncoderName = "BL", horizontalEncoderName = "BR";
     //OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
 
     public void initialize(LinearOpMode op) {
