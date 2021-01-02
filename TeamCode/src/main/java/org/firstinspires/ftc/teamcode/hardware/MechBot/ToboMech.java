@@ -430,7 +430,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (cameraDetector !=null)
                         cameraDetector.dec_cam_pos();
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
-                    autoIntakeRings(1);
+                    autoIntakeRings(3);
                 }
 
             }
@@ -1420,23 +1420,26 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     public void autoIntakeRings(int n) throws InterruptedException {
         if (simulation_mode || chassis==null) return;
+        chassis.yMove(1, 0.8);
+        sleep(200);
+        chassis.stop();
+        chassis.yMove(1, -0.2);
+        sleep(200);
+        chassis.yMove(1, 0.2);
         intake.intakeIn();
         for (int i = 0; i < n; i++) {
-            sleep(100);
-            chassis.yMove(1, 0.30);
-            sleep(500);
-            chassis.yMove(-1, 0.30);
+            sleep(600);
         }
         chassis.stop();
-        sleep(1000);
-        hopper.transferShakeCombo();
+        //sleep(1000);
+        //hopper.transferShakeCombo();
         intake.stop();
         if (n>1) {
             // backup a little bit to prevent getting fourth ring
-            chassis.yMove(-1, 0.30);
-            sleep(100);
-            chassis.stop();
-            intake.intakeIn();
+            //chassis.yMove(-1, 0.30);
+            //sleep(100);
+            //chassis.stop();
+            intake.intakeOut();
             sleep(200);
             intake.stop();
         }
