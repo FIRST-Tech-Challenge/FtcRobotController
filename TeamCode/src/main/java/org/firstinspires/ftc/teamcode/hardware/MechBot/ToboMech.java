@@ -1257,6 +1257,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         else {
             chassis.driveTo(.6, side(150), 170, 0, false, 5); // need to do something about this
         }
+//        if (tZone == TargetZone.ZONE_C) { // temporarily disable the shooting
+//            shooter.shootOutByRpm(0);
+//            return;
+//        }
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
         //shoot
         autoShoot();
@@ -1412,7 +1416,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         sleep(100);
         comboGrabber.armDown();
         sleep(150);
-        chassis.yMove(1, 0.30);
+        chassis.yMove(1, 0.50);
         sleep(200);
         if (comboGrabber!=null) {
             comboGrabber.grabWobbleGoalCombo(false);

@@ -119,7 +119,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double defaultScale = 1.0;
     private double slowModeScale = 0.45;
     private double mecanumForwardRatio = 0.8;
-    public double chassisAligmentPower = 0.20;
+    public double chassisAligmentPower = 0.27;
     public double chassisAligmentPowerMin = 0.13;
     private double init_x_cm = 0.0;
     private double init_y_cm = 0.0;
