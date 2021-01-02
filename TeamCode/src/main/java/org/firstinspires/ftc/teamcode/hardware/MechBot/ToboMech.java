@@ -370,7 +370,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.getTrigger(Events.Side.RIGHT)<0.2 && source.getTrigger(Events.Side.LEFT)<0.2) {
                     if (intake!=null){
                         if(hopper!=null && !hopper.getTransferIsDown())
-                            hopper.transferDownCombo();
+                            hopper.hopperDownCombo();
                         intake.intakeInAuto();
                     }
                 }
@@ -396,7 +396,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (source.isPressed(Button.RIGHT_BUMPER)) {
                     if (shooter!=null)
                         shooter.stop();
-                    hopper.transferDownCombo();
+                    hopper.hopperDownCombo();
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (shooter!=null)
                         shooter.shootSpeedDec();
@@ -1298,7 +1298,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     public void getSecondWobbleGoal() throws InterruptedException {
         if (hopper != null) {
-            hopper.transferDownCombo();
+            hopper.hopperDownCombo();
             TaskManager.processTasks();
         }
         chassis.driveTo(auto_chassis_power, side(165), 40, 0, true,  5);
@@ -1325,7 +1325,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
     public void getSecondWobbleGoalAfterHighGoal() throws InterruptedException {
         if (hopper != null) {
-            hopper.transferDownCombo();
+            hopper.hopperDownCombo();
             TaskManager.processTasks();
         }
 
