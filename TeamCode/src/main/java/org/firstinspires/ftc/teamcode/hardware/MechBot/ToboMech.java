@@ -361,7 +361,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
                     if (intake!=null)
                         intake.stop();
-                    if (hopper!=null) hopper.transferUpCombo();
+                    if (hopper!=null) hopper.hopperUpCombo();
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (shooter!=null)
                         shooter.shootSpeedInc();
@@ -1165,7 +1165,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
         if (hopper != null) {
-            hopper.transferUpCombo();
+            hopper.hopperUpCombo();
             TaskManager.processTasks();
         }
         if(side == ProgramType.AUTO_BLUE) {
@@ -1276,7 +1276,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     public void doHighGoals(int numRings) throws InterruptedException {
         if (hopper != null) {
-            hopper.transferUpCombo();
+            hopper.hopperUpCombo();
             TaskManager.processTasks();
         }
         shooter.shootOutByRpm(1200);
@@ -1368,7 +1368,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, side(80), 140, 0, false, 5);
                 intake.stop();
                 shooter.shootOutByRpm(1200);
-                hopper.transferUpCombo();
+                hopper.hopperUpCombo();
                 TaskManager.processTasks();
                 doHighGoals(1);
                 hopper.transferDown();

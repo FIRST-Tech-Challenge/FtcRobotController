@@ -215,6 +215,12 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         transferDownCombo();
     }
 
+    public void hopperUpCombo() throws InterruptedException {
+        if (ringLifter == null) return;
+        ringLifter.setPower(-1);
+        transferUpCombo();
+    }
+
     public void transferDownCombo() throws InterruptedException {
         if (ringLifter == null) return;
         final String taskName = "Transfer Down Combo";
@@ -233,7 +239,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                ringLifter.setPower(-0.1);
+                ringLifter.setPower(-0.2);
                 HopperTimer.reset();
                 return new Progress() {
                     @Override
