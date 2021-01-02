@@ -73,10 +73,10 @@ public class MecanumControlV2 extends OpMode {
         }
         //control of turning
         if (gamepad1.right_stick_x != 0 && driveSpeed == 0) {
-            robot.leftFront.setPower(turnSpeed);
-            robot.leftBack.setPower(turnSpeed);
-            robot.rightFront.setPower(-turnSpeed);
-            robot.rightBack.setPower(-turnSpeed);
+            robot.leftFront.setPower(-turnSpeed);
+            robot.leftBack.setPower(-turnSpeed);
+            robot.rightFront.setPower(turnSpeed);
+            robot.rightBack.setPower(turnSpeed);
         }
         //Turn shooter on
         if (gamepad2.a && !isShooterOn) {
@@ -97,8 +97,8 @@ public class MecanumControlV2 extends OpMode {
             wasPowerIncreased = true;
         }else if (!gamepad2.dpad_up && wasPowerIncreased) {
             shooterPower -= .05;
-            if (shooterPower <= -1.04) {
-                shooterPower = -.7;
+            if (shooterPower <= -.99) {
+                shooterPower = -.65;
             }
             wasPowerIncreased = false;
         }
@@ -106,8 +106,8 @@ public class MecanumControlV2 extends OpMode {
             wasPowerDecreased = true;
         }else if (!gamepad2.dpad_down && wasPowerDecreased) {
             shooterPower += .05;
-            if (shooterPower >= -.66) {
-                shooterPower = -1;
+            if (shooterPower >= -.61) {
+                shooterPower = -.95;
             }
             wasPowerDecreased = false;
         }
