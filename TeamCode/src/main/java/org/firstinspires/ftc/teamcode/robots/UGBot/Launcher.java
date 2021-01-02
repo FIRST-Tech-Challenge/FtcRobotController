@@ -460,17 +460,6 @@ public class Launcher {
         return true;
     }
 
-    public boolean grabStone(){
-        servoGripper.setPosition(servoNormalize(servoGripperClosed));
-
-        //gripperState = 1;
-        return true;
-    }
-    public boolean ejectStone(){
-        servoGripper.setPosition(servoNormalize(servoGripperOpen));
-        //gripperState = 2;
-        return true;
-    }
     public boolean setGripperPos(boolean open){
         if(open)
             servoGripper.setPosition(servoNormalize(servoGripperOpen));

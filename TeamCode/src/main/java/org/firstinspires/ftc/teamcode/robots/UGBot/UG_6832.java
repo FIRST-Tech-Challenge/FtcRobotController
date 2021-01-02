@@ -616,10 +616,6 @@ public class UG_6832 extends OpMode {
             robot.launcher.toggleGripper();
         }
 
-        if (toggleAllowed(gamepad1.y, y, 1)) {
-            robot.driveIMUDistanceWithReset(.5,robot.getHeading(),true,.01);
-        }
-
         if (toggleAllowed(gamepad1.x, x, 1)) {
             robot.turret.rotateCardinalTurret(false);
         }

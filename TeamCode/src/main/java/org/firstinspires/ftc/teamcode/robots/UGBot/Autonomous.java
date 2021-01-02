@@ -103,7 +103,9 @@ public class Autonomous {
 //            .addState(() -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),false,1.2192))
 
 
-            .addSingleState(() -> robot.launcher.servoGripper.setPosition(servoNormalize(899)))
+            .addSingleState(() -> robot.launcher.toggleGripper())
+            .addTimedState(3f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addSingleState(() -> robot.launcher.toggleGripper())
             .addTimedState(3f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
@@ -114,9 +116,16 @@ public class Autonomous {
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     private StateMachine.Builder getStateMachine(Stage stage) {
-        return
-                StateMachine.builder().stateSwitchAction(() -> robot.launcher.setGripperPos(robot.launcher.toggleGripper())) // resetMotors(true)
-                .stateEndAction(() -> robot.turret.maintainHeadingTurret(false)).stage(stage);
+//        return
+//                StateMachine.builder()
+//                        .stateSwitchAction(() -> robot.launcher.setGripperPos(robot.launcher.toggleGripper()))
+//                        .stateEndAction(() -> robot.turret.maintainHeadingTurret(false)).stage(stage);
+
+            return StateMachine.builder()
+                    .stateSwitchAction(() -> robot.resetMotors(true))
+                    .stateEndAction(() -> {})
+                    .stage(stage);
+
     }
 
     public void deinitVisionProvider() {
