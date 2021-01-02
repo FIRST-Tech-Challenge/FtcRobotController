@@ -1174,7 +1174,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(auto_chassis_power+0.1, 10, 300, -40, true, 6);
+                chassis.driveTo(1.0, 10, 300, -40, true, 6);
             } else {
                 return;
             }
@@ -1247,12 +1247,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if(tZone == TargetZone.ZONE_A) {
             chassis.driveTo(auto_chassis_power, side(60), 165, chassis.odo_heading(), false, 5);
         } else if (tZone==TargetZone.ZONE_C) {
-            chassis.driveStraight(auto_chassis_power + 0.2, -100, chassis.odo_heading()+10, 5);
+            chassis.driveStraight(1.0, -100, chassis.odo_heading()+10, 5);
         }
 
         shooter.shootOutByRpm(1260);
         if (tZone == TargetZone.ZONE_C) {
-            chassis.driveTo(.6, side(130), 170, 0, false,  3);
+            chassis.driveTo(1.0, side(130), 170, 0, false,  3);
         }
         else {
             chassis.driveTo(.6, side(150), 170, 0, false, 5); // need to do something about this
@@ -1270,7 +1270,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //chassis.driveTo(.55, side(170), 170, 0, false,  2);
         //shoot
         autoShoot();
-        sleep(500);
+        sleep(200);
         shooter.shootOutByRpm(0);
     }
 
@@ -1301,10 +1301,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             hopper.hopperDownCombo();
             TaskManager.processTasks();
         }
-        chassis.driveTo(auto_chassis_power, side(165), 40, 0, true,  5);
+        if (tZone == TargetZone.ZONE_C) {
+            chassis.driveTo(1.0, side(165), 40, 0, true,  5);
+        }
+        else {
+            chassis.driveTo(auto_chassis_power, side(165), 40, 0, true, 5);
+        }
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C) {
-                chassis.driveTo(auto_chassis_power, side(105), 30, 0, true, 3);
+                chassis.driveTo(1.0, side(105), 30, 0, true, 3);
             }
             else {
                 chassis.driveTo(auto_chassis_power, side(109), 33, 0, true, 3);
@@ -1375,8 +1380,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 TaskManager.processTasks();
                 chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(.8, side(30), 60, 0, false, 5);
-                chassis.driveTo(auto_chassis_power + 0.2, side(25), 300, 0, false, 5);
+                //chassis.driveTo(.8, side(30), 60, 0, false, 5);
+                chassis.driveTo(1.0, side(25), 300, 0, false, 5);
             } else {
                 return;
             }
@@ -1393,7 +1398,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (tZone==TargetZone.ZONE_A){
             chassis.driveTo(auto_chassis_power+0.2, side(110), 165, 0, false, 2);
         }
-        chassis.driveTo(auto_chassis_power + 0.2, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 210, chassis.getCurHeading(), false,  2);
+        chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 210, chassis.getCurHeading(), false,  2);
     }
     public double side( double x){
         if (side == ProgramType.AUTO_RED){
