@@ -1397,8 +1397,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         //sleep(1000);
     }
-    public void autoShootHighGoal(int n)
-    {
+    public void autoShootHighGoal(int n) throws InterruptedException {
         shooter.shootOutByRpm(1200);
         hopper.hopperUpCombo();
         TaskManager.processTasks();
