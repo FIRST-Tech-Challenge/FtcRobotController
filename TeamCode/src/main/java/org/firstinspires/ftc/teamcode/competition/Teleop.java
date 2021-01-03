@@ -36,8 +36,11 @@ public class Teleop extends LinearOpMode
         double forward=1;
         double angleSpeed=.2;
         double servoPosition =1;
-        double savedPosition = 1;
+        double savedPosition = .41;
 
+        double leftSub = 0;
+        double rightSub = 0;
+        double centerSub=0;
 
         double driveSpeed=1;
         while(opModeIsActive())
@@ -55,8 +58,7 @@ public class Teleop extends LinearOpMode
             {
 
                 byte sign = 1;
-                double diff = robot.theta-Math.atan((50
-                        -robot.y)/(9-robot.x))*.8;
+                double diff = robot.theta-Math.atan((50+robot.y)/(9-robot.x))*.8;
                 if(diff<0)
                     diff+=2*Math.PI;
                 if(diff>Math.PI)
@@ -75,11 +77,50 @@ public class Teleop extends LinearOpMode
             telemetry.addData("x: ", robot.x);
             telemetry.addData("y: ", robot.y);
             telemetry.addData("theta: ", robot.theta);
+            telemetry.addData("Auto Aim",autoAim);
+            telemetry.addData("Slow Drive",slowDrive);
             telemetry.addData("angle speed",angleSpeed);
+            telemetry.addData("odom left",(robot.odom.getWheelPositions().get(1)-leftSub)*2048*4/0.688975/Math.PI/2);
+            telemetry.addData("odom right",(robot.odom.getWheelPositions().get(2)-rightSub)*2048*4/0.688975/Math.PI/2);
+            telemetry.addData("odom center",(robot.odom.getWheelPositions().get(0)-centerSub)*2048*4/0.688975/Math.PI/2);
             telemetry.addData("Left Speed", robot.flywheelMotorLeft.getVelocity());
             telemetry.addData("Right Speed", robot.flywheelMotorRight.getVelocity());
+            telemetry.addData("Angle Servo",servoPosition);
             telemetry.update();
 
+            if(gamepad1.x)
+            {
+
+                leftSub=robot.odom.getWheelPositions().get(1);
+                rightSub = robot.odom.getWheelPositions().get(2);
+                centerSub = robot.odom.getWheelPositions().get(0);
+
+            }
+
+            if(gamepad1.a&&!a1Pressed)
+            {
+                autoAim=!autoAim;
+                a1Pressed=true;
+            }
+            if(!gamepad1.a)
+            {
+
+                a1Pressed=false;
+
+            }
+            if(gamepad1.b&&!b1Pressed&&!gamepad1.start)
+            {
+                slowDrive=!slowDrive;
+                b1Pressed=true;
+            }
+            if(!gamepad1.b)
+            {
+
+                b1Pressed=false;
+
+            }
+
+            //flip direction of drive when dpad buttons are pressed
             if(gamepad1.dpad_up)
             {
 
@@ -93,7 +134,9 @@ public class Teleop extends LinearOpMode
 
             }
 
-            if (gamepad1.right_trigger<.01) {
+            //intake or outtake rings
+            if (gamepad1.right_trigger<.01)
+            {
 
 
                 robot.setIntakePower(-gamepad1.left_trigger);
@@ -115,23 +158,13 @@ public class Teleop extends LinearOpMode
             robot.setFlyWheelPower(gamepad2.right_trigger);
 
             //makes the flywheel rotation servo move with b and x
-            if(gamepad2.right_bumper)
-            {
+            if(Math.abs(gamepad2.left_stick_y)>.03)
+            servoPosition+=gamepad2.left_stick_y*angleSpeed/20;
 
-                servoPosition+=angleSpeed/20;
-
-            }
-
-            else if(gamepad2.left_bumper)
-            {
-
-                servoPosition-=angleSpeed/20;
-
-            }
             if(servoPosition>1)
                 servoPosition=1;
-            else if(servoPosition<0)
-                servoPosition=0;
+            else if(servoPosition<.17)
+                servoPosition=.17;
 
 
 

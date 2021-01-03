@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.helperclasses.LQR;
 import java.io.File;
 import java.util.Scanner;
 
-@Autonomous(name = "LQR Test", group = "Auto")
+@Autonomous(name = "Scrimmage Auto", group = "Auto")
 public class LQRDrive extends LinearOpMode
 {
 
@@ -24,7 +24,49 @@ public class LQRDrive extends LinearOpMode
         final Hardware robot = new Hardware();
         robot.init(hardwareMap);
         LQR lqr = new LQR(robot);
+        /*
+        *
+0 0 0 1 0 0
+0 0 0 0 1 0
+0 0 0 0 0 1
+0 0 0 0 0 0
+0 0 0 0 0 0
+0 0 0 0 0 0
+
+7 0 0 0 0 0
+0 7 0 0 0 0
+0 0 45 0 0 0
+0 0 0 .0005 0 0
+0 0 0 0 .0005 0
+0 0 0 0 0 .0005
+
+10 0 0 0
+0 10 0 0
+0 0 10 0
+0 0 0 10     *
+        * */
         double[][][] path={{{}}};
+        /*
+0 0 0 1 0 0
+0 0 0 0 1 0
+0 0 0 0 0 1
+0 0 0 0 0 0
+0 0 0 0 0 0
+0 0 0 0 0 0
+
+.35 0 0 0 0 0
+0 .35 0 0 0 0
+0 0 15 0 0 0
+0 0 0 .1 0 0
+0 0 0 0 .1 0
+0 0 0 0 0 .1
+
+150 0 0 0
+0 150 0 0
+0 0 150 0
+0 0 0 150
+        * */
+        double[][][] wobble={{{}}};
 
         try
         {
@@ -37,6 +79,8 @@ public class LQRDrive extends LinearOpMode
             //split the file into individual matrices
             String[] data = content.split("\r\n\r\n");
             path = lqr.loadPath("/lqrTestData.txt");
+            wobble = lqr.loadPath("/wobble.txt");
+
             telemetry.addData("test",content.substring(0,60)+"\n\n\n\n\n\n"+data[0]+"\n\n\n"+path[0][0][0]);
             telemetry.update();
 
@@ -70,24 +114,48 @@ public class LQRDrive extends LinearOpMode
         t.start();
 
         ElapsedTime e = new ElapsedTime();
-        e.startTime();
 
-        while(opModeIsActive()&&!lqr.robotInCircle(-52,-1,.3))
+        while(opModeIsActive()&&!lqr.robotInCircle(-58,1.1,5))
         {
 
-            for(double d:lqr.runLqrDrive(path,-52,-1,Math.PI*19.5/10))
+            for(double d[]:lqr.runLqrDrive(wobble,-58,1.1,6.24))
             {
 
                 telemetry.addData("x",d);
 
             }
-            robot.flywheelRotateServoLeft.setPosition(0);
+            robot.flywheelRotateServoLeft.setPosition(.6);
+            telemetry.addData("x: ", robot.x);
+            telemetry.addData("y: ", robot.y);
+            telemetry.addData("theta: ", robot.theta);
+            telemetry.addData("x velocity",robot.xVelocity);
+            telemetry.addData("y velocity",robot.yVelocity);
+            telemetry.addData("theta velocity",robot.thetaVelocity);
+            telemetry.update();
+
+        }
+
+        while(opModeIsActive()&&!lqr.robotInCircle(-58,-2,.4))
+        {
+
+            for(double d[]:lqr.runLqrDrive(path,-58,-2,6.24))
+            {
+
+                int i=0;
+                for(double d1:d)
+                    telemetry.addData("k"+i,d1);
+                i++;
+
+            }
+            robot.flywheelRotateServoLeft.setPosition(.41);
             telemetry.addData("x: ", robot.x);
             telemetry.addData("y: ", robot.y);
             telemetry.addData("theta: ", robot.theta);
             telemetry.update();
 
         }
+
+        e.startTime();
         robot.drive(0,0,0);
         e.reset();
         e.startTime();
@@ -103,10 +171,10 @@ public class LQRDrive extends LinearOpMode
         e.startTime();
         while(e.seconds()<1&&opModeIsActive()){robot.setFlyWheelPower(1);}
         robot.setFlyWheelPower(0);
-        while(opModeIsActive()&&!lqr.robotInCircle(-66,6,1))
+        while(opModeIsActive()&&!lqr.robotInCircle(-66,-4,1))
         {
 
-            for(double d:lqr.runLqrDrive(path,-66,6,0))
+            for(double d[]:lqr.runLqrDrive(path,-66,-4,0))
             {
 
                 telemetry.addData("x",d);

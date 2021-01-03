@@ -42,8 +42,8 @@ public class Hardware {
     public ThreeTrackingWheelLocalizer odom = new ThreeTrackingWheelLocalizer(
             new ArrayList<>(Arrays.asList(
                     new Pose2d(-4.58, 0, -Math.PI / 2),
-                    new Pose2d(0, 6.33, 0),
-                    new Pose2d(0, -6.33, 0)))) {
+                    new Pose2d(0, 6.485, 0),
+                    new Pose2d(0, -6.485, 0)))) {
         @Override
         public List<Double> getWheelPositions() {
             ArrayList<Double> wheelPositions = new ArrayList<>(3);
@@ -74,6 +74,11 @@ public class Hardware {
 
     // Robot physical location]
     public double x, y, theta;
+
+    //Robot velocity
+    public double xVelocity, yVelocity, thetaVelocity;
+
+    public ElapsedTime e;
 
     // Map from hardware name to physical address
     private HardwareMap hwMap;
@@ -121,6 +126,8 @@ public class Hardware {
 
     // Real world distance traveled by the wheels
     public double leftOdomTraveled, rightOdomTraveled, centerOdomTraveled;
+
+    double lastTime = 0;
 
 
     /**
@@ -179,7 +186,7 @@ public class Hardware {
 
         //flywheel rotating
         flywheelRotateServoLeft = hwMap.servo.get("flywheelRotateServoLeft");
-        flywheelRotateServoLeft.setPosition(1);
+        flywheelRotateServoLeft.setPosition(.95);
 
         //claw servos
         //clawServoLeft = hwMap.servo.get("clawServoLeft");
@@ -189,7 +196,8 @@ public class Hardware {
 
         flicker.setPosition(1);
 
-
+        e = new ElapsedTime();
+        e.startTime();
 
     }
 
@@ -197,7 +205,15 @@ public class Hardware {
      * Method for updating the position of the robot using roadrunner
      */
     public void updatePositionRoadRunner() {
-        bulkData = expansionHub.getBulkInputData();
+        try
+        {
+            bulkData = expansionHub.getBulkInputData();
+        }catch(Exception e)
+        {
+
+            return;
+
+        }
 
         // Change in the distance (centimeters) since the last update for each odometer
         double deltaLeftDist = -(getDeltaLeftTicks() / ODOM_TICKS_PER_IN);
@@ -205,14 +221,31 @@ public class Hardware {
         double deltaCenterDist = -getDeltaCenterTicks() / ODOM_TICKS_PER_IN;
 
         // Update real world distance traveled by the odometry wheels, regardless of orientation
-        leftOdomTraveled += deltaLeftDist;
-        rightOdomTraveled += deltaRightDist;
-        centerOdomTraveled += deltaCenterDist;
 
+        leftOdomTraveled += deltaLeftDist*1;
+
+        if(deltaRightDist<0)
+            rightOdomTraveled += deltaRightDist*1;
+        else
+            rightOdomTraveled += deltaRightDist;
+        centerOdomTraveled += deltaCenterDist;
+        double lastX = x;
+        double lastY = y;
+        double lastTheta = theta;
+        double thisTime = e.seconds();
         odom.update();
         theta = odom.getPoseEstimate().component3();
         x = odom.getPoseEstimate().component1();
         y = odom.getPoseEstimate().component2();
+        if(thisTime-lastTime>.15)
+        {
+
+            xVelocity = (x - lastX ) / (thisTime-lastTime);
+            yVelocity = (y - lastY) / (thisTime-lastTime);
+            thetaVelocity = (lastTheta - theta) / (thisTime-lastTime);
+            lastTime = thisTime;
+
+        }
 
         resetDeltaTicks();
 

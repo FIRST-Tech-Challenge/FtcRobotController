@@ -72,11 +72,11 @@ public class LQR extends Application
      * @param yGoal the y position (in inches) for the robot to move to on the field
      * @param thetaGoal the angular position (in degrees) for the robot to move to on the field
      * */
-    public double[] runLqrDrive(double[][][] path, double xGoal, double yGoal, double thetaGoal)
+    public double[][] runLqrDrive(double[][][] path, double xGoal, double yGoal, double thetaGoal)
     {
 
         //get matrix for current angle
-        int fileLocation=(int) Math.abs(Math.round(robot.theta * 1800/Math.PI));
+        int fileLocation=(int) Math.abs(Math.round((Math.PI*2-robot.theta) * 1800/Math.PI));
         if(fileLocation==3600)
             fileLocation=0;
         double[][] k = path[fileLocation];
@@ -93,7 +93,7 @@ public class LQR extends Application
             diff=Math.PI*2-diff;
 
         //define state matrix
-        x = new double[]{-xGoal + robot.x,  yGoal-robot.y, -sign*(diff), 0,  0, 0};
+        x = new double[]{-xGoal + robot.x,  yGoal-robot.y, -sign*(diff), -robot.xVelocity/8,  -robot.yVelocity/8, -robot.thetaVelocity/8};
 
         //multiply x by the gain matrix k
         double[] d = new double[k.length];
@@ -119,7 +119,7 @@ public class LQR extends Application
         robot.rightFront.setPower(d[1]/scale);
         robot.leftRear.setPower(d[2]/scale);
         robot.rightRear.setPower(d[3]/scale);
-        return x;
+        return k;
 
     }
 
