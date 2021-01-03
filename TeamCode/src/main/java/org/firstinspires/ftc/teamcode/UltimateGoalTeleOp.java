@@ -46,7 +46,7 @@ public class UltimateGoalTeleOp extends OpMode {
     private final double MAX_SPIN = 1.0;
     private double speedMultiplier = MAX_SPEED;
     private double spinMultiplier = MAX_SPIN;
-    private boolean xHeld = false;
+    private boolean crossHeld = false;
     private boolean circleHeld = false;
     private boolean triangleHeld = false;
     private boolean upHeld = false;
@@ -55,7 +55,7 @@ public class UltimateGoalTeleOp extends OpMode {
     private boolean rightHeld = false;
     private boolean leftBumperHeld = false;
     private boolean rightBumperHeld = false;
-    private boolean x2Held = false;
+    private boolean cross2Held = false;
     private boolean circle2Held = false;
     private boolean triangle2Held = false;
     private boolean square2Held = false;
@@ -65,14 +65,14 @@ public class UltimateGoalTeleOp extends OpMode {
     private boolean right2Held = false;
     private boolean leftBumper2Held = false;
     private boolean rightBumper2Held = false;
-    private boolean xPressed;
+    private boolean crossPressed;
     private boolean circlePressed;
     private boolean trianglePressed;
     private boolean leftPressed;
     private boolean rightPressed;
     private boolean leftBumperPressed;
     private boolean rightBumperPressed;
-    private boolean x2Pressed;
+    private boolean cross2Pressed;
     private boolean circle2Pressed;
     private boolean triangle2Pressed;
     private boolean square2Pressed;
@@ -94,13 +94,12 @@ public class UltimateGoalTeleOp extends OpMode {
     private boolean aligning = false;
 
     @Override
-    public void start()
-    {
+    public void start() {
         robot.resetEncoders();
 
         //give MyPosition our current positions so that it saves the last positions of the wheels
         //this means we won't teleport when we start the match. Just in case, run this twice
-        for(int i = 0; i < 2 ; i ++){
+        for(int i = 0; i < 2 ; i ++) {
             robot.resetReads();
             MyPosition.initialize(robot.getLeftEncoderWheelPosition(),
                     robot.getRightEncoderWheelPosition(),
@@ -124,19 +123,22 @@ public class UltimateGoalTeleOp extends OpMode {
 
         leftTriggerPower = gamepad1.left_trigger;
         rightTriggerPower = gamepad1.right_trigger;
-        yPower = -HardwareOmnibot.cleanMotionValues(gamepad1.left_stick_y);
-        xPower = HardwareOmnibot.cleanMotionValues(gamepad1.left_stick_x);
+        yPower = -gamepad1.left_stick_y;
+        xPower = gamepad1.left_stick_x;
+//        yPower = -HardwareOmnibot.cleanMotionValues(gamepad1.left_stick_y);
+//        xPower = HardwareOmnibot.cleanMotionValues(gamepad1.left_stick_x);
         // GF used the angle system where rotating left was positive, so have to reverse the sign
         // of the joystick.
-        spin = -HardwareOmnibot.cleanMotionValues(gamepad1.right_stick_x);
-        xPressed = gamepad1.x;
+        spin = gamepad1.right_stick_x;
+//        spin = -HardwareOmnibot.cleanMotionValues(gamepad1.right_stick_x);
+        crossPressed = gamepad1.cross;
         circlePressed = gamepad1.circle;
         trianglePressed = gamepad1.triangle;
 		rightPressed = gamepad1.dpad_right;
 		leftPressed = gamepad1.dpad_left;
 		leftBumperPressed = gamepad1.left_bumper;
         rightBumperPressed = gamepad1.right_bumper;
-        circle2Pressed = gamepad2.circle;
+        cross2Pressed = gamepad2.cross;
         circle2Pressed = gamepad2.circle;
         triangle2Pressed = gamepad2.triangle;
         square2Pressed = gamepad2.square;
@@ -165,37 +167,33 @@ public class UltimateGoalTeleOp extends OpMode {
 		// ********************************************************************
 		// DRIVER JOYSTICK
 		// ********************************************************************
-        if(!circleHeld && circlePressed)
-        {
+        if(!circleHeld && circlePressed) {
             robot.startClawToggle();
             circleHeld = true;
         } else if(!circlePressed) {
             circleHeld = false;
         }
 
-        if(!triangleHeld && trianglePressed)
-        {
+        if(!triangleHeld && trianglePressed) {
             robot.startInjecting();
             triangleHeld = true;
         } else if(!trianglePressed) {
             triangleHeld = false;
         }
 
-        if(!xHeld && xPressed)
-        {
-            xHeld = true;
-			if(robot.intakeMotorPower != 0.0) {
-			    robot.setIntakeMotorPower(1.0);
+        if(!crossHeld && crossPressed) {
+            crossHeld = true;
+			if(robot.shooterMotorPower != UltimateGoalRobot.SHOOT_POWER) {
+			    robot.setShooterMotorPower(UltimateGoalRobot.SHOOT_POWER);
 			} else {
-				robot.setIntakeMotorPower(0.0);
+				robot.setShooterMotorPower(0.0);
 			}
-        } else if(!xPressed) {
-            xHeld = false;
+        } else if(!crossPressed) {
+            crossHeld = false;
         }
 
         // This can be used for shoot alignment.
-        if(!rightHeld && rightPressed)
-        {
+        if(!rightHeld && rightPressed) {
             if(!aligning) {
 //                aligning = robot.startStackAligning();
             } else {
@@ -207,112 +205,106 @@ public class UltimateGoalTeleOp extends OpMode {
             rightHeld = false;
         }
 
-        if(!leftHeld && leftPressed)
-        {
+        if(!leftHeld && leftPressed) {
             leftHeld = true;
         } else if(!leftPressed) {
             leftHeld = false;
         }
 
-        if(!rightBumperHeld && rightBumperPressed)
-        {
-            robot.startTripleInjecting();
+        if(!rightBumperHeld && rightBumperPressed) {
+            if(robot.intakeMotorPower != 0.0) {
+                robot.setIntakeMotorPower(0.0);
+            } else {
+                robot.setIntakeMotorPower(1.0);
+            }
             rightBumperHeld = true;
         } else if(!rightBumperPressed) {
             rightBumperHeld = false;
         }
 
-        if(!leftBumperHeld && leftBumperPressed)
-        {
+        if(!leftBumperHeld && leftBumperPressed) {
+            if(robot.intakeMotorPower != 0.0) {
+                robot.setIntakeMotorPower(0.0);
+            } else {
+                robot.setIntakeMotorPower(-1.0);
+            }
             leftBumperHeld = true;
-        } else if (leftBumperHeld && !leftBumperPressed) {
+        } else if(!leftBumperPressed) {
             leftBumperHeld = false;
         }
-        else if(!leftBumperPressed) {
-            leftBumperHeld = false;
+
+        if(rightTriggerPower >= 0.05) {
+            robot.setWobbleMotorPower(-rightTriggerPower);
+        } else if(leftTriggerPower >= 0.05) {
+            robot.setWobbleMotorPower(leftTriggerPower);
+        } else {
+            robot.setWobbleMotorPower(0.0);
         }
 
 		// ********************************************************************
 		// OPERATOR JOYSTICK
 		// ********************************************************************
 		// This was unassigned (fingers up/down)
-        if(!square2Held && square2Pressed)
-        {
+        if(!square2Held && square2Pressed) {
             square2Held = true;
         } else if(!square2Pressed) {
             square2Held = false;
         }
 
-        if(!x2Held && x2Pressed)
-        {
-            x2Held = true;
-        } else if(!x2Pressed) {
-            x2Held = false;
+        if(!cross2Held && cross2Pressed) {
+            cross2Held = true;
+        } else if(!cross2Pressed) {
+            cross2Held = false;
         }
 
-        if(!circle2Held && circle2Pressed)
-        {
+        if(!circle2Held && circle2Pressed) {
             circle2Held = true;
         } else if(!circle2Pressed) {
             circle2Held = false;
         }
 
-        if(!triangle2Held && triangle2Pressed)
-        {
+        if(!triangle2Held && triangle2Pressed) {
             triangle2Held = true;
         } else if(!triangle2Pressed) {
             triangle2Held = false;
         }
 
-        if(!left2Held && left2Pressed)
-        {
+        if(!left2Held && left2Pressed) {
             left2Held = true;
         } else if (!left2Pressed) {
             left2Held = false;
         }
 
-        if(!right2Held && right2Pressed)
-        {
+        if(!right2Held && right2Pressed) {
             right2Held = true;
         } else if (!right2Pressed) {
             right2Held = false;
         }
 
-        if(!up2Held && up2Pressed)
-        {
+        if(!up2Held && up2Pressed) {
             up2Held = true;
         } else if (!up2Pressed) {
 			up2Held = false;
 		}
 
-        if(!down2Held && down2Pressed)
-        {
+        if(!down2Held && down2Pressed) {
             down2Held = true;
         } else if (!down2Pressed) {
 			down2Held = false;
 		}
 
-        if(!rightBumper2Held && rightBumper2Pressed)
-        {
+        if(!rightBumper2Held && rightBumper2Pressed) {
             rightBumper2Held = true;
         } else if(!rightBumper2Pressed) {
             rightBumper2Held = false;
         }
 
-        if(!leftBumper2Held && leftBumper2Pressed)
-        {
+        if(!leftBumper2Held && leftBumper2Pressed) {
             leftBumper2Held = true;
         } else if(!leftBumper2Pressed) {
             leftBumper2Held = false;
         }
 
-        if(rightTriggerPower >= 0.05) {
-            robot.setWobbleMotorPower(rightTriggerPower);
-        } else if(leftTriggerPower >= 0.05) {
-            robot.setWobbleMotorPower(-leftTriggerPower);
-        } else {
-            robot.setWobbleMotorPower(0.0);
-        }
         // If the activity is not performing, it will be idle and return.
         performActivities();
 // Can use this for shoot alignment
@@ -323,6 +315,7 @@ public class UltimateGoalTeleOp extends OpMode {
 //        }
 
         telemetry.addData("Offset Angle: ", driverAngle);
+        telemetry.addData("Shooter Velocity: ", robot.shooter.getVelocity());
         telemetry.addData("FL Motor Velocity: ", robot.frontLeft.getVelocity());
         telemetry.addData("FR Motor Velocity: ", robot.frontRight.getVelocity());
         telemetry.addData("RL Motor Velocity: ", robot.rearLeft.getVelocity());
