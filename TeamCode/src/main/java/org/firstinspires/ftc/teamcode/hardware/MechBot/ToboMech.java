@@ -1448,15 +1448,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         sleep(100);
         comboGrabber.armDown();
         sleep(150);
-        chassis.yMove(1, 0.60);
-        sleep(350);
+        chassis.yMove(1, 0.50);
+        sleep(400);
         if (comboGrabber!=null) {
             comboGrabber.grabWobbleGoalCombo(false);
             while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
                 TaskManager.processTasks();
             }
         }
-        chassis.stop();
+        //chassis.stop();
     }
 
     public void autoIntakeRings(int n) throws InterruptedException {
