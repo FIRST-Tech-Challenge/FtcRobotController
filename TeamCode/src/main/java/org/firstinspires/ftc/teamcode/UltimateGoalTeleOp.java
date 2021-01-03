@@ -36,7 +36,7 @@ public class UltimateGoalTeleOp extends OpMode {
     @Override
     public void init_loop() {
         telemetry.addLine("Press X on driver controller to reset encoders.");
-        if(gamepad1.x) {
+        if(gamepad1.cross) {
             robot.forceReset = true;
         }
     }
