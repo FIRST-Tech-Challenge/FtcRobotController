@@ -33,6 +33,7 @@ import static java.lang.Math.sqrt;
 public class UltimateGoalRobot
 {
     /* Public OpMode members. */
+    public final static double SHOOT_POWER = 0.53;
     public final static double STRAFE_MULTIPLIER = 1.5;
     public final static double SLOW_STRAFE_MULTIPLIER = 1.5;
     public final static double MIN_FOUNDATION_SPIN_RATE = 0.19;
@@ -141,6 +142,7 @@ public class UltimateGoalRobot
         // Save reference to Hardware map
         hwMap = ahwMap;
 
+        // The hubs are used for resetting reads for bulk reads.
         allHubs = hwMap.getAll(LynxModule.class);
         for (LynxModule module : allHubs) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -161,6 +163,10 @@ public class UltimateGoalRobot
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         rearLeft.setDirection(DcMotor.Direction.FORWARD);
         rearRight.setDirection(DcMotor.Direction.FORWARD);
+        shooter.setDirection(DcMotor.Direction.REVERSE);
+        wobble.setDirection(DcMotor.Direction.FORWARD);
+        intake.setDirection(DcMotor.Direction.FORWARD);
+        empty.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
         setAllDriveZero();
@@ -186,13 +192,20 @@ public class UltimateGoalRobot
         wobble.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         empty.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        // Define and initialize servos
         flap = hwMap.get(Servo.class, FLAP_SERVO);
         injector = hwMap.get(Servo.class, INJECTOR_SERVO);
         claw = hwMap.get(Servo.class, CLAW_SERVO);
 
+        injector.setPosition(INJECTOR_HOME);
+        claw.setPosition(CLAW_CLOSED);
+        flap.setPosition(FLAP_POWERSHOT);
+
+        // Define and initialize timers.
         clawTimer = new ElapsedTime();
         flapTimer = new ElapsedTime();
         injectTimer = new ElapsedTime();
+
         // Let's try to tweak the PIDs
 //		frontLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10,
 //                3, 0, 12, MotorControlAlgorithm.PIDF));
@@ -618,6 +631,8 @@ public class UltimateGoalRobot
     public final static double CLAW_TIME = 500.0;
     public final static double CLAW_CLOSED = 0.10;
     public final static double CLAW_OPEN = 0.25;
+    public final static double FLAP_POWERSHOT = 0.620;
+    public final static double FLAP_HIGH_GOAL = 0.340;
     public boolean clawClosed = false;
     public enum GRABBING {
         IDLE,
@@ -657,7 +672,7 @@ public class UltimateGoalRobot
     public final static double INJECTOR_HOME_TIME = 100.0;
     public final static double INJECTOR_HOME = 0.512;
     public final static double INJECTOR_RESET = 0.450;
-    public final static double INJECTOR_FIRE = 0.750;
+    public final static double INJECTOR_FIRE = 0.800;
     public enum INJECTING {
         IDLE,
         FIRING,
