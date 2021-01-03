@@ -1551,7 +1551,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //    shooting_angle += (shooting_dist-200)*0.047;
         //}
         double rpm_shift = getShootingAngleErrorFromRPM(rpm);
-        shooting_angle += 3.5;
+        shooting_angle += 2.0;
         try {
             if (Math.abs(chassis.odo_heading() - shooting_angle) > 0.8) {
                 chassis.rotateTo(0.35, shooting_angle);
