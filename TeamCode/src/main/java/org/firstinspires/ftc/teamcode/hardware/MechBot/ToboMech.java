@@ -1284,10 +1284,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             TaskManager.processTasks();
         }
         shooter.shootOutByRpm(1200);
-        if (tZone == TargetZone.ZONE_B && numRings==3) {
+        if (tZone == TargetZone.ZONE_B|| tZone == TargetZone.ZONE_C && numRings==3) {
             chassis.driveTo(.55, side(60), 170, 0, true, 2);
         }
-        if (tZone != TargetZone.UNKNOWN)
+        else if (tZone != TargetZone.UNKNOWN)
             chassis.driveTo(.55, side(90), 170, 0, true,  2);
 
          // need to do something about this
