@@ -92,21 +92,24 @@ public class Autonomous {
 
 
     public StateMachine AutoFull = getStateMachine(autoStage)
-//            // open and align gripper for 1st skystone
-//            .addState(() -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),true,2.9))
-//            //.addState(() -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),true,1.8288))
-//            .addSingleState(() -> robot.turret.rotateCardinalTurret(true))
-//            .addState(() -> robot.launcher.toggleGripper())
-//            .addTimedState(3f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-//            .addState(() -> robot.launcher.toggleGripper())
-//            .addTimedState(3f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-//            .addState(() -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),false,1.2192))
+            .addMineralState(ugStateProvider,
+                    () -> robot.driveIMUDistanceWithReset(.7,0,true,2.9),
+                    () -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),true,2.3),
+                    () -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),true,1.87))
 
+            .addMineralState(ugStateProvider,
+                    () -> robot.turret.rotateCardinalTurret(true),
+                    () -> robot.turret.rotateCardinalTurret(false),
+                    () -> robot.turret.rotateCardinalTurret(true))
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(() -> robot.launcher.toggleGripper())
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
-            .addSingleState(() -> robot.launcher.toggleGripper())
-            .addTimedState(3f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addSingleState(() -> robot.launcher.toggleGripper())
-            .addTimedState(3f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addMineralState(ugStateProvider,
+                    () -> robot.driveIMUDistanceWithReset(.7,0,false,1),
+                    () -> robot.driveIMUDistanceWithReset(.5,0,false,.5),
+                    () -> true)
+            .addState(() -> robot.driveIMUDistanceWithReset(.2,180,true,0))
             .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

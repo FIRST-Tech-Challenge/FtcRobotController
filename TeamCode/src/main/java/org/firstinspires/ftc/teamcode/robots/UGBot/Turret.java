@@ -148,9 +148,10 @@ public class Turret{
     }
 
 
-    public void rotateCardinalTurret(boolean right){
+    public boolean rotateCardinalTurret(boolean right){
 
         setTurntableAngle(nextCardinal(getHeading(),right,10));
+        return true;
     }
 
     public void stopAll() {

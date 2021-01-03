@@ -330,20 +330,6 @@ public class UG_6832 extends OpMode {
                 if (robot.articulation == PoseUG.Articulation.manual)
                     joystickDrivePregameMode();
 
-                // old calibraton sequence todo-
-//                if (toggleAllowed(gamepad1.b, b, 1)) {
-//                    calibrateInitStageMethod(false);
-//                }
-//
-//                // blue alliance
-//                if (toggleAllowed(gamepad1.x, x, 1)) {
-//                    calibrateInitStageMethod(true);
-//                }
-                //resets the headings of the turret and chassis to initial values - press only after careful alignment perpendicular to alliance wall
-                if (toggleAllowed(gamepad1.y, y, 1)) {
-                    robot.setHeadingAlliance();
-                }
-
                 if (toggleAllowed(gamepad1.a, a, 1)) {
                     robot.setHeadingBase(90.0);
                 }
@@ -702,6 +688,10 @@ public class UG_6832 extends OpMode {
         if (toggleAllowed(gamepad1.left_bumper, left_bumper, 1)) {
             robot.turret.rotateCardinalTurret(false);
 
+        }
+
+        if (notdeadzone(gamepad1.right_stick_y)) {
+            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
         }
         // fine adjustment of turret - this is on gamepad2 right stick in teleop - but
         // on gamepad 1 for prematch setup
