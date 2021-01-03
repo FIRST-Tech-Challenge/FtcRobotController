@@ -1285,10 +1285,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         shooter.shootOutByRpm(1200);
         if (tZone == TargetZone.ZONE_B|| tZone == TargetZone.ZONE_C && numRings==3) {
-            chassis.driveTo(.55, side(60), 170, 0, true, 2);
+            chassis.driveTo(.6, side(55), 170, 0, true, 2);
         }
         else if (tZone != TargetZone.UNKNOWN)
-            chassis.driveTo(.55, side(90), 170, 0, true,  2);
+            chassis.driveTo(.6, side(90), 170, 0, true,  2);
+
+        while (!TaskManager.isComplete("Transfer Up Combo")) {
+            TaskManager.processTasks();
+        }
 
          // need to do something about this
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
@@ -1404,7 +1408,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         doHighGoals(n);
         hopper.transferDown();
         TaskManager.processTasks();
-        chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
     }
     public void park() throws InterruptedException {
         if (tZone==TargetZone.ZONE_A){
