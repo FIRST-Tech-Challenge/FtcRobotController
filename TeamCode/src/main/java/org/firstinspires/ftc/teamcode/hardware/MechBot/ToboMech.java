@@ -1376,15 +1376,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 intake.intakeIn();
                 chassis.driveTo(auto_chassis_power, side(80), 140, 0, false, 5);
                 intake.stop();
-                shooter.shootOutByRpm(1200);
-                hopper.hopperUpCombo();
-                TaskManager.processTasks();
-                doHighGoals(1);
-                hopper.transferDown();
-                TaskManager.processTasks();
+                autoShootHighGoal(1);
                 chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
+                chassis.driveTo(1.0, side(90), 123, 0, false, 5);
+                autoIntakeRings(3);
+                chassis.driveTo(1.0, side(90), 140, 0, false, 5);
+                autoShootHighGoal(3);
                 chassis.driveTo(1.0, side(25), 300, 0, false, 5);
             } else {
                 return;
@@ -1397,6 +1396,16 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }
         //sleep(1000);
+    }
+    public void autoShootHighGoal(int n)
+    {
+        shooter.shootOutByRpm(1200);
+        hopper.hopperUpCombo();
+        TaskManager.processTasks();
+        doHighGoals(n);
+        hopper.transferDown();
+        TaskManager.processTasks();
+        chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
     }
     public void park() throws InterruptedException {
         if (tZone==TargetZone.ZONE_A){
