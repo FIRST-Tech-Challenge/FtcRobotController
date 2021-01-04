@@ -1246,12 +1246,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (shooter==null||hopper==null) return;
         double iniTime = System.currentTimeMillis();
         int target = shooter.getShooterSpeed();
-        shooter.shootOutByRpm(target-100);
+        shooter.shootOutByRpm(target-120);
         // Stage-2 make sure rpm difference is within 20 error range
         while (Math.abs(shooter.getCurrentRPM()-target)>20 && (System.currentTimeMillis()-iniTime<500)) { // timeout 5 sec
             sleep(5);
         }
-        shooter.shootOutByRpm(target);
+        shooter.shootOutByRpm(target-50);
         hopper.feederAuto();
     }
 
@@ -1461,7 +1461,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     public void autoIntakeRings(int n) throws InterruptedException {
         if (simulation_mode || chassis==null) return;
-        chassis.yMove(1, 0.8);
+        chassis.yMove(1, 1.0);
         sleep(200);
         chassis.stop();
         chassis.yMove(1, -0.2);
@@ -1481,7 +1481,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             //sleep(100);
             //chassis.stop();
             intake.intakeOut();
-            sleep(200);
+            sleep(400);
             intake.stop();
         }
     }
