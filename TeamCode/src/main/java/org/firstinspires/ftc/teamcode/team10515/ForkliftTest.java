@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.team10515.control.EnhancedGamepad;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static java.lang.System.currentTimeMillis;
@@ -13,7 +14,9 @@ import static org.firstinspires.ftc.teamcode.team10515.Robot.setEnhancedGamepad1
 @TeleOp(name = "Wobble Goal/Servo Test", group = "Test")
 
 public class ForkliftTest extends OpMode {
-    public double servoPos = 0;
+//    public double servoPos = 0;
+
+    public double forkliftPower = 0;
 
     public long currentTime = 0;
     public long lastTimeA = 0;
@@ -25,6 +28,11 @@ public class ForkliftTest extends OpMode {
     public boolean toggle = true;
 
     UGMapTest robot = new UGMapTest();
+
+    static final double COUNTS_PER_MOTOR_REV = 134.4;
+    static final double DRIVE_GEAR_REDUCTION = 2;
+    static final double WHEEL_DIAMETER_INCHES = 10.25 * 2; // Wobble Goal Mover Height
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV*DRIVE_GEAR_REDUCTION)/(WHEEL_DIAMETER_INCHES*Math.PI);
 
     @Override
     public void start(){
@@ -49,6 +57,7 @@ public class ForkliftTest extends OpMode {
     @Override
     public void loop() {
         //Trial 1
+        /*
         if (getEnhancedGamepad1().isA() && btnPressedA.milliseconds() > 250) {
             telemetry.addLine("a pressed");
             servoPos += 0.01;
@@ -74,10 +83,32 @@ public class ForkliftTest extends OpMode {
                 servoPos = 0.5;
             }
         }
+         */
 
-        robot.forkliftServo.setPosition(servoPos);
+//        int target = robot.forkliftMotor.getCurrentPosition() + (int) (0.5 * WHEEL_DIAMETER_INCHES * Math.PI);
+        int target = robot.forkliftMotor.getCurrentPosition() + (int)(0.75*COUNTS_PER_MOTOR_REV);
+        telemetry.addLine("Running to: " + target);
 
-        telemetry.addLine("Servo Position: " + servoPos);
+        robot.forkliftMotor.setTargetPosition(target);
+
+        robot.forkliftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.forkliftMotor.setPower(0.4);
+
+        while(robot.forkliftMotor.isBusy() && !(getEnhancedGamepad1().isA())){
+            telemetry.addLine("Running");
+        }
+
+        robot.forkliftMotor.setPower(0);
+
+        while(!(getEnhancedGamepad1().isA())){
+            telemetry.addLine("Waiting for user input (press A to run again)");
+        }
+
+//        robot.forkliftMotor.setPower(forkliftPower);
+
+        telemetry.addLine("Forklift Power: " + forkliftPower);
+        telemetry.addLine("Current Position: " + robot.forkliftMotor.getCurrentPosition());
 
     }
 }

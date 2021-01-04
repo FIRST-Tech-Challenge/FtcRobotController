@@ -4,20 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.lib.drivers.Motor;
-import org.firstinspires.ftc.teamcode.lib.drivers.RevMotor;
-import org.firstinspires.ftc.teamcode.lib.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.team10515.control.EnhancedGamepad;
 import org.firstinspires.ftc.teamcode.team10515.control.ShooterPhysics;
-import org.firstinspires.ftc.teamcode.team10515.subsystems.Drive;
-
-import org.firstinspires.ftc.teamcode.team10515.Robot;
 
 import static java.lang.System.currentTimeMillis;
-import static org.firstinspires.ftc.teamcode.team10515.Robot.getEnhancedGamepad1;
 import static org.firstinspires.ftc.teamcode.team10515.Robot.setEnhancedGamepad1;
-
-import org.firstinspires.ftc.teamcode.lib.util.TimeUtil;
 
 
 @TeleOp(name = "Shooter Test", group = "Test")
@@ -128,8 +119,8 @@ public class ShooterTest extends OpMode{
         // Trial 4
         shooterSpeed = shooterPhysics.getShooterSpeed(1.444625, 0.9, 1);
 
-        robot.FR.setPower(shooterSpeed);
-        robot.FL.setPower(shooterSpeed);
+        robot.Shooter1.setPower(shooterSpeed);
+        robot.Shooter2.setPower(shooterSpeed);
 
         telemetry.addLine("Shooter speed: " + shooterSpeed);
         telemetry.addLine("Shooter angle: " + shooterPhysics.getShooterAngle(1.444625, 0.9));

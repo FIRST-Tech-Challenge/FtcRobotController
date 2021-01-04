@@ -2,20 +2,21 @@ package org.firstinspires.ftc.teamcode.team10515;
 
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 //import org.firstinspires.ftc.teamcode.lib.drivers.RevServo;
 import org.firstinspires.ftc.teamcode.team10515.subsystems.ForkliftSubsystem;
 import org.firstinspires.ftc.teamcode.team10515.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.team10515.subsystems.FlywheelSubsystem;
 
 public class UGMapTest
 {
 
-    public DcMotor FR = null;  //FrontRight
-    public DcMotor FL = null;  //FrontLeft
+    public DcMotor Shooter1 = null;  //FrontRight
+    public DcMotor Shooter2 = null;  //FrontLeft
 //    public DcMotor RR = null;  //RearRight
 //    public DcMotor RL = null;  //RearLeft
 //    public DcMotor LL = null;  //LiftLeft
@@ -23,16 +24,18 @@ public class UGMapTest
 //    public DcMotor INR = null;  //Intake
 //    public DcMotor INL = null;  //Intake
     //public DcMotor  AA = null;  //AccessArm
-    public Servo forkliftServo = null; //Wobble goal
+    public DcMotor forkliftMotor = null; //Wobble goal
+    public DcMotor intakeMotor = null;
 
     public BNO055IMU imu = null;
 
 
-    static private final String FRONTRIGHT       = "Shooter 1";
-    static private final String FRONTLEFT      = "Shooter 2";
+    static private final String SHOOTER_1 = "Shooter 1";
+    static private final String SHOOTER_2 = "Shooter 2";
 //    static private final String REARRIGHT      = "RR";
 //    static private final String REARLEFT       = "RL";
-    static private final String FORKLIFTSERVO  = "Forklift Servo";
+    static private final String FORKLIFTMOTOR  = "Forklift Motor";
+    static private final String INTAKEMOTOR = "Intake Motor";
 
 
     //static private final String  DEPOSITLIFT    = "DL";
@@ -40,7 +43,8 @@ public class UGMapTest
 //    static final String  IMU_SENSOR = "imu";
 
     private ShooterSubsystem shooterMotors;
-    private ForkliftSubsystem forkliftServos;
+    private ForkliftSubsystem forkliftMotorSub;
+    private FlywheelSubsystem intakeMotorSub;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -55,17 +59,22 @@ public class UGMapTest
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        FL      = hwMap.dcMotor.get(FRONTLEFT);
-        FR      = hwMap.dcMotor.get(FRONTRIGHT);
+        Shooter2 = hwMap.dcMotor.get(SHOOTER_2);
+        Shooter1 = hwMap.dcMotor.get(SHOOTER_1);
 //        RL      = hwMap.dcMotor.get(REARLEFT);
 //        RR      = hwMap.dcMotor.get(REARRIGHT);
 
         //AA      = hwMap.dcMotor.get(ACCESSARM);
 
-        forkliftServo = hwMap.servo.get(FORKLIFTSERVO);
+//        forkliftServo = hwMap.servo.get(FORKLIFTSERVO);
 
-        FL.setDirection(DcMotor.Direction.REVERSE);
-        FR.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor = hwMap.dcMotor.get(INTAKEMOTOR);
+        forkliftMotor = hwMap.dcMotor.get(FORKLIFTMOTOR);
+
+        Shooter2.setDirection(DcMotor.Direction.REVERSE);
+        Shooter1.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        forkliftMotor.setDirection(DcMotor.Direction.FORWARD);
 //        RL.setDirection(DcMotor.Direction.REVERSE);
 //        RR.setDirection(DcMotor.Direction.FORWARD);
         //AA.setDirection(DcMotor.Direction.REVERSE);
@@ -73,8 +82,10 @@ public class UGMapTest
 
 
         //set motor power behaviour
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Shooter2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Shooter1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        forkliftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        RL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        RR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //AA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -84,9 +95,12 @@ public class UGMapTest
 //        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        RL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        RR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        forkliftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Shooter2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Shooter1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // TODO: Change to RUN_WITH_ENCODER
+        forkliftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        RL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        RR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //INL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -109,9 +123,13 @@ public class UGMapTest
     }
     public ShooterSubsystem getShooter() { return shooterMotors; }
 
-    public ForkliftSubsystem getForkliftServos() {
-        return forkliftServos;
+    public ForkliftSubsystem getForkliftMotor() {
+        return forkliftMotorSub;
     }
 
     public void setShooterMotors(ShooterSubsystem shooterMotors){ this.shooterMotors = shooterMotors; }
+
+    public FlywheelSubsystem getIntakeMotorSub(){
+        return intakeMotorSub;
+    }
 }
