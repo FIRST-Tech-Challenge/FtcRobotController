@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Blue_Left", group="Competition")
 public class BlueLeft extends OpMode {
@@ -14,6 +15,9 @@ public class BlueLeft extends OpMode {
     RingCamera    camera  = new RingCamera();
 
     RingNumber ringNumber = RingNumber.ZERO;
+
+    private double waitTime;
+    private ElapsedTime runtime = new ElapsedTime();
 
     //Can be used to choose whether we shoot power shots or in the high goal
     Boolean powerShot = false;
@@ -54,6 +58,8 @@ public class BlueLeft extends OpMode {
                     //Zero rings is our default case. In the event that the object recognition fails, we will assume zero.
                     ringNumber = RingNumber.ZERO;
                 }
+                telemetry.addData("Ring Count",ringNumber);
+                telemetry.update();
                 stateMachineFlow++;
                 break;
             case 1:
@@ -73,23 +79,35 @@ public class BlueLeft extends OpMode {
              *
               **************************/
             case 100:
-                //Lower Wobble Grabber
-                grabber.lowerGripper();
-                stateMachineFlow++;
-                break;
-            case 101:
-                //Grab wobble goal
-                grabber.gripperPosition(1);
-                stateMachineFlow++;
-                break;
-            case 102:
                 //Drive forward into zone A
                 robot.linearDrive(.5,50);
                 stateMachineFlow++;
                 break;
-            case 103:
+            case 101:
+                //Lower Wobble Grabber
+                grabber.lowerGripper();
+                waitTime = 1;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 102:
                 //Release wobble goal
                 grabber.gripperPosition(0);
+                stateMachineFlow++;
+                break;
+            case 103:
+                //Raise wobble grabber
+                grabber.gripWrist.setPosition(.75);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
                 stateMachineFlow++;
                 break;
             case 104:
@@ -121,6 +139,14 @@ public class BlueLeft extends OpMode {
                 break;
             case 108:
                 //Shoot rings into the goal
+                intake.intakePower(-1);
+                waitTime = 3;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                intake.intakePower(0);
                 stateMachineFlow++;
                 break;
             case 109:
@@ -147,7 +173,8 @@ public class BlueLeft extends OpMode {
                 stateMachineFlow++;
                 break;
             case 152:
-                //Shoot first power shot
+                //Turn on intake and shoot first power shot
+                intake.intakePower(-1);
                 stateMachineFlow++;
                 break;
             case 153:
@@ -156,24 +183,16 @@ public class BlueLeft extends OpMode {
                 stateMachineFlow++;
                 break;
             case 154:
-                //Shoot second power shot
+                //Turn off intake
+                intake.intakePower(0);
                 stateMachineFlow++;
                 break;
             case 155:
-                //Move right to third power shot
-                robot.sideDrive(.5,-4);
-                stateMachineFlow++;
-                break;
-            case 156:
-                //Shoot third power shot
-                stateMachineFlow++;
-                break;
-            case 157:
                 //Move forward onto the shot line
                 robot.linearDrive(.5,5);
                 stateMachineFlow++;
                 break;
-            case 158:
+            case 156:
                 //Turn off shooter
                 shooter.shooterPower(0);
                 stateMachineFlow++;
@@ -188,25 +207,37 @@ public class BlueLeft extends OpMode {
              *
              **************************/
             case 200:
-                //Lower wobble grabber
-                grabber.lowerGripper();
-                stateMachineFlow++;
-                break;
-            case 201:
-                //Grab wobble goal
-                grabber.gripperPosition(1);
-                stateMachineFlow++;
-                break;
-            case 202:
                 //Drive forward, to the right, and into zone B
                 robot.linearDrive(.5,5);
                 robot.sideDrive(.5,-20);
                 robot.linearDrive(.5,71);
                 stateMachineFlow++;
                 break;
-            case 203:
+            case 201:
+                //Lower wobble grabber
+                grabber.lowerGripper();
+                waitTime = 1;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 202:
                 //Release wobble goal
                 grabber.gripperPosition(0);
+                stateMachineFlow++;
+                break;
+            case 203:
+                //Raise wobber grabber
+                grabber.gripWrist.setPosition(.75);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
                 stateMachineFlow++;
                 break;
             case 204:
@@ -238,6 +269,14 @@ public class BlueLeft extends OpMode {
                 break;
             case 208:
                 //Shoot rings into the goal
+                intake.intakePower(-1);
+                waitTime = 3;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                intake.intakePower(0);
                 stateMachineFlow++;
                 break;
             case 209:
@@ -264,7 +303,8 @@ public class BlueLeft extends OpMode {
                 stateMachineFlow++;
                 break;
             case 252:
-                //Shoot first power shot
+                //Turn on intake and shoot first power shot
+                intake.intakePower(-1);
                 stateMachineFlow++;
                 break;
             case 253:
@@ -273,24 +313,16 @@ public class BlueLeft extends OpMode {
                 stateMachineFlow++;
                 break;
             case 254:
-                //Shoot second power shot
+                //Turn off intake
+                intake.intakePower(0);
                 stateMachineFlow++;
                 break;
             case 255:
-                //Move right to third power shot
-                robot.sideDrive(.5,-4);
-                stateMachineFlow++;
-                break;
-            case 256:
-                //Shoot third power shot
-                stateMachineFlow++;
-                break;
-            case 257:
                 //Move forward onto the shot line
                 robot.linearDrive(.5,5);
                 stateMachineFlow++;
                 break;
-            case 258:
+            case 256:
                 //Turn off shooter
                 shooter.shooterPower(0);
                 stateMachineFlow++;
@@ -305,23 +337,35 @@ public class BlueLeft extends OpMode {
                  *
                  **************************/
             case 300:
-                //Lower Wobble Grabber
-                grabber.lowerGripper();
-                stateMachineFlow++;
-                break;
-            case 301:
-                //Grab wobble goal
-                grabber.gripperPosition(1);
-                stateMachineFlow++;
-                break;
-            case 302:
                 //Drive forward into zone C
                 robot.linearDrive(.5,100);
                 stateMachineFlow++;
                 break;
-            case 303:
+            case 301:
+                //Lower Wobble Grabber
+                grabber.lowerGripper();
+                waitTime = 1;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 302:
                 //Release wobble goal
                 grabber.gripperPosition(0);
+                stateMachineFlow++;
+                break;
+            case 303:
+                //Raise wobble grabber
+                grabber.gripWrist.setPosition(.75);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
                 stateMachineFlow++;
                 break;
             case 304:
@@ -353,6 +397,14 @@ public class BlueLeft extends OpMode {
                 break;
             case 308:
                 //Shoot rings into the goal
+                intake.intakePower(-1);
+                waitTime = 3;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                intake.intakePower(0);
                 stateMachineFlow++;
                 break;
             case 309:
@@ -379,7 +431,8 @@ public class BlueLeft extends OpMode {
                 stateMachineFlow++;
                 break;
             case 352:
-                //Shoot first power shot
+                //Turn on intake and shoot first power shot
+                intake.intakePower(-1);
                 stateMachineFlow++;
                 break;
             case 353:
@@ -388,24 +441,16 @@ public class BlueLeft extends OpMode {
                 stateMachineFlow++;
                 break;
             case 354:
-                //Shoot second power shot
+                //Turn off intake
+                intake.intakePower(0);
                 stateMachineFlow++;
                 break;
             case 355:
-                //Move right to third power shot
-                robot.sideDrive(.5,-4);
-                stateMachineFlow++;
-                break;
-            case 356:
-                //Shoot third power shot
-                stateMachineFlow++;
-                break;
-            case 357:
                 //Move forward onto the shot line
                 robot.linearDrive(.5,5);
                 stateMachineFlow++;
                 break;
-            case 358:
+            case 356:
                 //Turn off shooter
                 shooter.shooterPower(0);
                 stateMachineFlow++;

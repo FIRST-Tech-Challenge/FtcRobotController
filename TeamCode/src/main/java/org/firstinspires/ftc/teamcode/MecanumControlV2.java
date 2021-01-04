@@ -9,9 +9,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class MecanumControlV2 extends OpMode {
 
-    MecanumDrive robot = new MecanumDrive();
-    Shooter shooter    = new Shooter();
-    Intake  intake     = new Intake();
+    MecanumDrive robot    = new MecanumDrive();
+    Shooter shooter       = new Shooter();
+    Intake  intake        = new Intake();
+    WobbleGrabber grabber = new WobbleGrabber();
 
     double driveSpeed;
     double turnSpeed;
@@ -31,6 +32,7 @@ public class MecanumControlV2 extends OpMode {
         robot.init(hardwareMap);
         shooter.init(hardwareMap);
         intake.init(hardwareMap);
+        grabber.init(hardwareMap);
 
         msStuckDetectInit = 18000;
         msStuckDetectLoop = 18000;
@@ -71,6 +73,7 @@ public class MecanumControlV2 extends OpMode {
         if (turnSpeed == 0) {
             robot.MecanumController(driveSpeed,direction,0);
         }
+
         //control of turning
         if (gamepad1.right_stick_x != 0 && driveSpeed == 0) {
             robot.leftFront.setPower(-turnSpeed);
@@ -78,6 +81,7 @@ public class MecanumControlV2 extends OpMode {
             robot.rightFront.setPower(turnSpeed);
             robot.rightBack.setPower(turnSpeed);
         }
+
         //Turn shooter on
         if (gamepad2.a && !isShooterOn) {
             isShooterOn = true;
@@ -111,13 +115,29 @@ public class MecanumControlV2 extends OpMode {
             }
             wasPowerDecreased = false;
         }
+
         //Control intake latch servo
         if (gamepad2.dpad_right) {
             intake.intakeLatch.setPosition(.5);
         }else if (gamepad2.dpad_left) {
             intake.intakeLatch.setPosition(1);
         }
+
         //Control intake and transition
         intake.intakePower(-gamepad2.left_stick_y);
+
+        //Control grabber wrist
+        if (gamepad1.dpad_left) {
+            grabber.gripWrist.setPosition(.35);
+        }else if (gamepad1.dpad_right) {
+            grabber.gripWrist.setPosition(.72);
+        }
+
+        //Control grabber servo
+        if (gamepad1.dpad_down) {
+            grabber.gripperPosition(1);
+        }else if (gamepad1.dpad_up) {
+            grabber.gripperPosition(.45);
+        }
     }
 }
