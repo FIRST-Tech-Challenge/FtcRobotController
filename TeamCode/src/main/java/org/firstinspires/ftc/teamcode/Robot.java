@@ -34,8 +34,6 @@ public class Robot {
 
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean objectDetectionNeeded, boolean vuforiaNAVIGATIONneeded ) {
         op = opMode;
-
-        //TODO: Warren, consider using a factory pattern here. Robot doesn't need to know the different types of Chassis that are available.
         //This link has a easy to understand explanation. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
         drivetrain= ChassisFactory.getChassis(chassisType,op);
 
@@ -61,13 +59,6 @@ public class Robot {
         if (objectDetectionNeeded) {
             tensorFlow.runTensorFlowWaitForStart();
         }
-
-        //TODO: Warren, clean up the below if not needed any more.
-        // comment by victor
-        // drivetrain.init(opMode);
-//        if(!isCorgi) {
-//            //vuforiaWebcam.init(opMode); //conflicts with TensorFlow
-//        }
     }
 
     public void moveVuforiaWebcam(double x, double y, double endAngle) {

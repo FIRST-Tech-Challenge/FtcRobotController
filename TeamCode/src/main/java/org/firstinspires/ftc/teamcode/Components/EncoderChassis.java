@@ -34,14 +34,14 @@ public class EncoderChassis extends BasicChassis {
         data[2]=getAngle();
         xpos += x*cos(data[2]*PI/180)+y*sin(data[2]*PI/180);
         ypos += y*cos(data[2]*PI/180)-x*sin(data[2]*PI/180);
-        /*op.telemetry.addData("LeftFront", motorLeftFront.getCurrentPosition());
+        op.telemetry.addData("LeftFront", motorLeftFront.getCurrentPosition());
         op.telemetry.addData("RightFront", motorRightFront.getCurrentPosition());
         op.telemetry.addData("LeftBack", motorLeftBack.getCurrentPosition());
         op.telemetry.addData("RightBack", motorRightBack.getCurrentPosition());
         op.telemetry.addData("xpos", xpos);
         op.telemetry.addData("ypos", ypos);
         op.telemetry.addData("angle", getAngle());
-        op.telemetry.update();*/
+        op.telemetry.update();
         data[0] = xpos;
         data[1] = ypos;
         data[2] = getAngle();

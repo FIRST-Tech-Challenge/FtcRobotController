@@ -25,12 +25,10 @@ public class RingDepositor {
 
     private LinearOpMode op = null;
 
-    //TODO <owner> : Do we need to store the reference to hardware map here?
-    private HardwareMap hardwareMap = null;
+
 
     private DcMotor ringDepositorMotor = null;
 
-    //TODO <owner> : What is the right access modifier here?
     private Servo ringClampServo = null;
 
     private final int ticksForREST = 0;
@@ -40,10 +38,9 @@ public class RingDepositor {
     public RingDepositor(LinearOpMode opMode) {
         //setting the opmode & hardwareMap
         this.op = opMode;
-        hardwareMap = op.hardwareMap;
 
         ringDepositorMotor = (DcMotor) opMode.hardwareMap.get("RingDepositorMotor");
-        ringClampServo = hardwareMap.servo.get("RingClampServo");
+        ringClampServo = op.hardwareMap.servo.get("RingClampServo");
         ringDepositorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ringDepositorMotor.setDirection(DcMotor.Direction.FORWARD);
         ringDepositorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

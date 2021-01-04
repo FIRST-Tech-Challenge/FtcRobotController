@@ -22,13 +22,9 @@ public class WobbleGoal {
     //declaring the op mode
     private LinearOpMode op;
 
-    //TODO <owner> : Do we need to store the reference to hardware map here?
-    private HardwareMap hardwareMap = null;
+    protected DcMotor wobbleGoalMotor = null;
 
-    private DcMotor wobbleGoalMotor = null;
-
-    //TODO <owner> : What is the right access modifier here?
-    private Servo wobbleGoalServo = null;
+    protected Servo wobbleGoalServo = null;
 
     private final int ticksForREST = 0;
     private final int ticksForGRAB = 940;
@@ -42,11 +38,10 @@ public class WobbleGoal {
     public WobbleGoal(LinearOpMode opMode) {
         //setting the opmode
         this.op = opMode;
-        hardwareMap = op.hardwareMap;
 
         //getting the motor & servo from the hardware map
         wobbleGoalMotor = (DcMotor) opMode.hardwareMap.get("wobbleGoalMotor");
-        wobbleGoalServo = hardwareMap.servo.get("WobbleGoalServo");
+        wobbleGoalServo =op.hardwareMap.servo.get("WobbleGoalServo");
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
         wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

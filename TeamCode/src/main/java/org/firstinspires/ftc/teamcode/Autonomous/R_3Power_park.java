@@ -13,7 +13,7 @@ public class R_3Power_park extends LinearOpMode {
     final boolean debug= true;
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.IMU, true, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
         ElapsedTime runtime = new ElapsedTime();
 
         int rings = robot.getNumberOfRings();

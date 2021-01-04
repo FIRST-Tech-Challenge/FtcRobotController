@@ -15,27 +15,22 @@ import com.qualcomm.robotcore.hardware.Servo;
  *
  */
 public class Shooter {
-    private LinearOpMode op = null;
+    protected LinearOpMode op = null;
 
-    //TODO <owner> : Do we need to store the reference to hardware map here?
-    private HardwareMap hardwareMap = null;
 
-    //TODO <owner> : Is there a good reason for this to be public?
     public DcMotorEx shooterMotor;
 
-    //TODO <owner> : What is the right access modifier here?
     Servo shooter_Servo;
-    private double speedTopGoal = 1;//will get changed when testing
-    private double speedMediumGoal=0.5;//will get changed when testing
-    private double speedLowGoal=0.5;//will get changed when testing
-    private int distance;
+    protected double speedTopGoal = 1;//will get changed when testing
+    protected double speedMediumGoal=0.5;//will get changed when testing
+    protected double speedLowGoal=0.5;//will get changed when testing
+    protected int distance;
 
     public Shooter(LinearOpMode opMode){
         op = opMode;
-        hardwareMap = op.hardwareMap;
 
-        shooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
-        shooter_Servo=hardwareMap.servo.get("ShooterServo");
+        shooterMotor = (DcMotorEx) op.hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
+        shooter_Servo=op.hardwareMap.servo.get("ShooterServo");
         shooterMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         shooter_Servo.setPosition(1.0);
     }

@@ -10,30 +10,20 @@ public abstract class BasicChassis {
     public enum ChassisType {
         ENCODER,IMU,ODOMETRY
     }
-
-    //TODO Warren: Use the explicit right access modifier. Default is not the right one here.
     //initialize motor
     protected DcMotorEx motorLeftFront;
     protected DcMotorEx motorRightFront;
     protected DcMotorEx motorLeftBack;
     protected DcMotorEx motorRightBack;
 
-    //TODO Warren: Use right access modifiers.
-    // Initialize Encoder Variables
     protected final double robot_diameter = Math.sqrt(619.84);
     protected final double wheel_diameter = 3.93701;
     protected double[] encoder = new double[4];
     protected double xpos = 0;
     protected double ypos = 0;
 
-    //TODO Warren: Use right access modifiers.
-    // these encoder variables vary depending on chassis type
     protected final double counts_per_motor_goBilda = 383.6;
     protected final double counts_per_inch = 2 * (counts_per_motor_goBilda / (wheel_diameter * Math.PI));
-    //TODO Warren: Ununsed property?
-    /* local OpMode members. */
-    //TODO Warren, do we need these as properties of this class?
-    //Do we need to
     protected LinearOpMode op = null;
 
     public BasicChassis(LinearOpMode opMode) {

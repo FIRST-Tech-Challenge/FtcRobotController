@@ -25,23 +25,15 @@ public class Odometry {
     double ypos = 0;
     private LinearOpMode op = null;
 
-    //TODO <owner> : Do we need to store the reference to hardware map here?
-    private HardwareMap hardwareMap = null;
 
-    //TODO <owner> : Do we need this??
-    private ElapsedTime period = new ElapsedTime();
-
-
-    //TODO: Warren, why is this not in a constructor?
-    public void init(LinearOpMode opMode) {
+    public Odometry(LinearOpMode opMode) {
 
         op = opMode;
-        hardwareMap = op.hardwareMap;
 
         // Chassis encoders
-        odom1 = (DcMotorEx) hardwareMap.dcMotor.get("motorRightFront");
-        odom3 = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftBack");
-        odom2 = (DcMotorEx) hardwareMap.dcMotor.get("motorRightBack");
+        odom1 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
+        odom3 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
+        odom2 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightBack");
         // reset encoder count.
         odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

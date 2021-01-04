@@ -17,12 +17,10 @@ public class R_mid3_park extends LinearOpMode {
     public void runOpMode(){
 
         Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
-        Odometry odom = new Odometry();
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
 
-        odom.init(this);
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
         waitForStart();

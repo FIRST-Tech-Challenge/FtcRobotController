@@ -4,11 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.EncoderChassis;
+import org.firstinspires.ftc.teamcode.Components.Navigations.Odometry;
+import org.firstinspires.ftc.teamcode.Components.OdometryChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
 
 
-//TODO: Warren, what is the purpose of this class and why is it here?
 @Autonomous(name= "track")
 public class track extends LinearOpMode{
 
@@ -16,8 +17,8 @@ public class track extends LinearOpMode{
     @Override
     public void runOpMode(){
 
-        Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
-        EncoderChassis odom = new EncoderChassis(this);
+        Robot robot=new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
+        OdometryChassis odom = new OdometryChassis(this);
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
