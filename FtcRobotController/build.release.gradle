@@ -1,10 +1,10 @@
 dependencies {
-    implementation 'org.firstinspires.ftc:Inspection:6.0.1'
-    implementation 'org.firstinspires.ftc:Blocks:6.0.1'
-    implementation 'org.firstinspires.ftc:RobotCore:6.0.1'
-    implementation 'org.firstinspires.ftc:RobotServer:6.0.1'
-    implementation 'org.firstinspires.ftc:OnBotJava:6.0.1'
-    implementation 'org.firstinspires.ftc:Hardware:6.0.1'
-    implementation 'org.firstinspires.ftc:FtcCommon:6.0.1'
+    implementation 'org.firstinspires.ftc:Inspection:6.1.1'
+    implementation 'org.firstinspires.ftc:Blocks:6.1.1'
+    implementation 'org.firstinspires.ftc:RobotCore:6.1.1'
+    implementation 'org.firstinspires.ftc:RobotServer:6.1.1'
+    implementation 'org.firstinspires.ftc:OnBotJava:6.1.1'
+    implementation 'org.firstinspires.ftc:Hardware:6.1.1'
+    implementation 'org.firstinspires.ftc:FtcCommon:6.1.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 }
