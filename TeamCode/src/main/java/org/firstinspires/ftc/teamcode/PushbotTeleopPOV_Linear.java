@@ -52,7 +52,7 @@ import org.firstinspires.ftc.teamcode.HardwareBaymax;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Pushbot: Teleop POV Coach", group="Pushbot")
+@TeleOp(name="Pushbot: Teleop POV Coach 20210104", group="Pushbot")
 //@Disabled
 public class PushbotTeleopPOV_Linear extends LinearOpMode {
 
