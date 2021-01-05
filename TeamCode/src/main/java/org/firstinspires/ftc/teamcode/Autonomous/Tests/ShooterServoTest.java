@@ -13,11 +13,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.Shooter;
+import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Robot;
 
 @Autonomous(name= "ShooterServoTest ", group="Tests: ")
 @Disabled
 public class ShooterServoTest extends LinearOpMode{
-    private Shooter shooter=null;
+    Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
 
     @Override
     public void runOpMode() {
@@ -28,6 +30,6 @@ public class ShooterServoTest extends LinearOpMode{
 
 
         waitForStart();
-        shooter.moveServoPosition(1.0);
+        robot.moveServo(true);
     }
 }

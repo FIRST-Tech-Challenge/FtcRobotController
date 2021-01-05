@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 /**
  * Ultimate Goal Accessory
  *
@@ -20,21 +22,61 @@ public class Shooter {
 
     public DcMotorEx shooterMotor;
 
-    Servo shooter_Servo;
-    protected double speedTopGoal = 1;//will get changed when testing
-    protected double speedMediumGoal=0.5;//will get changed when testing
-    protected double speedLowGoal=0.5;//will get changed when testing
-    protected int distance;
+    public Servo shooter_Servo;
 
-    public Shooter(LinearOpMode opMode){
+    //velocity
+    protected double highGoalVelocity = 1850;
+    protected double middleGoalVelocity = 1600;
+    protected double lowGoalVelocity = 1500;
+
+    public Shooter(LinearOpMode opMode) {
         op = opMode;
 
         shooterMotor = (DcMotorEx) op.hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
-        shooter_Servo=op.hardwareMap.servo.get("ShooterServo");
-        shooterMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        shooter_Servo = op.hardwareMap.servo.get("ShooterServo");
+        shooterMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        shooterMotor.setVelocityPIDFCoefficients(57, 0, 0, 17);
         shooter_Servo.setPosition(1.0);
     }
 
+    public void setVelocity(double velocity, int distance) {
+        shooterMotor.setVelocity(velocity);
+        shooterMotor.setTargetPosition(distance);
+
+    }
+
+    public void stopShooter() {
+        shooterMotor.setVelocity(0);
+    }
+
+    public double getRPM() {
+        double ticksPerSecond = shooterMotor.getVelocity();
+        double rotationsPerSecond = ticksPerSecond / 28;
+        double rotationsPerMinute = rotationsPerSecond * 60;
+        return rotationsPerMinute;
+    }
+
+
+    public void shoot(double speed, int distance, int rings) {
+        op.telemetry.addData("speed: ", getRPM());
+        op.telemetry.update();
+        op.sleep(3000);
+        setVelocity(speed, distance);
+        if (shooterMotor.getVelocity() > 0) {
+            op.sleep(100);
+            op.telemetry.clear();
+            op.telemetry.addData("status", getRPM());
+            op.telemetry.update();
+        }
+        for (int i = 0; i < rings; i++) {
+            moveServo(false);
+            moveServo(true);
+        }
+
+        if (shooterMotor.getTargetPosition()>=distance){
+            stopShooter();
+        }
+    }
 
 
     public void moveServo(boolean direction) {
@@ -49,75 +91,33 @@ public class Shooter {
     }
 
 
-    public void moveServoPosition(double pushPosition) {
-        op.telemetry.addData("claw position :", pushPosition);
-        op.telemetry.update();
-        shooter_Servo.setPosition(pushPosition);
-        op.sleep(2000);
-    }
-
-    public void shootGoalTeleop(int distance, int power){
-        double sleepTime = (distance / speedTopGoal * 1000);
-
-        shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-
-        shooterMotor.setTargetPosition(distance);
-
-        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        shooterMotor.setTargetPosition(distance);
-        shooterMotor.setPower(power);
-        if(shooterMotor.getCurrentPosition()==distance){
-            shooterMotor.setPower(0);
-        }
-
+    public void shootGoalTeleop(int distance) {
+        setVelocity(highGoalVelocity, distance);
     }
 
     public void shootHighGoal(int rings) {
-        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooterMotor.setPower(speedTopGoal);
+        shoot(highGoalVelocity, 1000, 3);
         op.sleep(1000);
-        for(int i=0;i<rings;i++){
-            moveServo(false);
-            moveServo(true);
-        }
-        shooterMotor.setPower(0);
     }
 
-    public void shootMidGoal(int rings){
-        shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooterMotor.setPower(speedMediumGoal);
-        //while (shooterMotor.isBusy()) {
+    public void shootMidGoal(int rings) {
+        shoot(highGoalVelocity, 1000, 3);
         op.sleep(1000);
-        for(int i=0;i<rings;i++){
+        for (int i = 0; i < rings; i++) {
             moveServo(false);
             moveServo(true);
         }
-        shooterMotor.setPower(0);
+
     }
 
-    public void shootLowGoal(int  distance){
-        this.distance=distance;
-        double sleepTime = (distance / speedLowGoal * 1000);
-        shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-
-        shooterMotor.setTargetPosition(distance);
-
-        shooterMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        shooterMotor.setPower(speedLowGoal);
-
-        while (shooterMotor.isBusy()) {
-            op.sleep(1000);
-            moveServo(false);
-            moveServo(true);
-            moveServo(false);
-            moveServo(true);
+    public void shootLowGoal(int rings) {
+        shoot(highGoalVelocity, 1000, 3);
+        op.sleep(1000);
+        for (int i = 0; i < rings; i++) {
             moveServo(false);
             moveServo(true);
         }
-        shooterMotor.setPower(0);
-    }
 
+    }
 
 }

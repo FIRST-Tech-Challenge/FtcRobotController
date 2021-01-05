@@ -303,6 +303,49 @@ public class Robot {
     }
 
     //shooter
+
+
+    public void moveServo(boolean direction) {
+        if (isCorgi) {
+            shooter.moveServo(direction);
+        }
+    }
+
+    public void shootHighGoal(int rings) {
+        shooter.shootHighGoal(rings);
+    }
+
+    public void shootMiddleGoal(int rings){
+        shooter.shootMidGoal(rings);
+    }
+
+    public void shootLowGoal(int rings){
+        shooter.shootMidGoal(rings);
+    }
+
+
+
+    public void shootGoalTeleop(int distance) {
+        if (isCorgi) {
+            shooter.shootGoalTeleop(distance);
+        }
+    }
+
+    public void stopShooter(){
+        shooter.stopShooter();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     //TODO: <owner>, why do have the business logic of shooeter motor in Robot? Can this be moved to Shooter class, like some of the other methods?
     public void moveShooterMotor(int distance, int power) {
         double sleepTime = (distance / 1 * 1000);
@@ -322,9 +365,6 @@ public class Robot {
 
     }
 
-    public void shootHighGoal(int rings) {
-        shooter.shootHighGoal(rings);
-    }
 
     //TODO: <owner>, why do have the business logic of shooeter motor in Robot? Can this be moved to Shooter class, like some of the other methods?
     public void shootLeftPowerShot(int rings) {
@@ -359,15 +399,7 @@ public class Robot {
         shooter.shooterMotor.setPower(0);
     }
 
-    public void moveServo(boolean direction) {
-        if (isCorgi) {
-            shooter.moveServo(direction);
-        }
-    }
 
-    public void shootGoalTeleop(int direction, int power) {
-        if (isCorgi) {
-            shooter.shootGoalTeleop(direction, power);
-        }
-    }
+
+
 }

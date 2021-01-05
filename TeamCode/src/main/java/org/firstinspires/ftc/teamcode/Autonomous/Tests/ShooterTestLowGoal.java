@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.Shooter;
+import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Robot;
 
 
 /**
@@ -23,14 +25,12 @@ public class ShooterTestLowGoal extends LinearOpMode{
     public void runOpMode(){
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
-        Shooter shooter = null;
-        shooter = new Shooter(this);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
 
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
-        shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         waitForStart();
-        shooter.shootLowGoal(200000);
+        robot.shootLowGoal(200000);
 
     }
 
