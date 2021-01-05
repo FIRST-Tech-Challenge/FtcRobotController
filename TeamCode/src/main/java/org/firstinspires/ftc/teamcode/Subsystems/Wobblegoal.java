@@ -21,6 +21,7 @@ public class Wobblegoal {
     private static final int        LIFTDOWN    =   0;
     private static final double     GRIPPERINIT  = 0.35;
     private static final double     GRIPPEROPEN =   0.3;
+    private static final double     GRIPPERSUPEROPEN =   0.01;
     private static final double     GRIPPERCLOSE=   0.8;
     private static final int        ARMEXTEND   =   35; //32-33 is good ticks
     private static final int        ARMCONTRACT =   0; // ticks
@@ -28,7 +29,7 @@ public class Wobblegoal {
     private static final double     EXTENDSPEED =   .5;
     private static final int        TICKS_PER_LIFT_IN = 76; // determined experimentally
     private static final int        LIFT_HEIGHT_HIGH = (int) (LIFTUP * TICKS_PER_LIFT_IN); // converts to ticks
-   public static final double     BASECLAMPUP =   0.75;
+    public static final double     BASECLAMPUP =   0.75;
    public static final double     BASECLAMPDOWN=   0.35;
 
 
@@ -65,6 +66,12 @@ public class Wobblegoal {
     public void GripperOpen()  {
 
         WobbleGrip.setPosition(GRIPPEROPEN);
+
+    }
+
+    public void GripperSuperOpen()  {
+
+        WobbleGrip.setPosition(GRIPPERSUPEROPEN);
 
     }
     public void GripperClose() {

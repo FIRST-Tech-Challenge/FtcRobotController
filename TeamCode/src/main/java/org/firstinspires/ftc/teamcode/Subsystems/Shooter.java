@@ -26,7 +26,7 @@ public class Shooter {
     private static final double shooterSpeedslowright=.30;
     private static final double jamClear=-.35;
     //Constants for stacker servos
-    private static final double leftUp = 0.75; // .75 a little shy but ok due to hitting bolt
+    private static final double leftUp = 0.70; // .75 a little shy but ok due to hitting bolt // was 0.75
     private static final double leftBack = .4; //good at 0.4;
     private static final double rightUp = (1-leftUp);
     private static final double rightBack = (1-leftBack);
