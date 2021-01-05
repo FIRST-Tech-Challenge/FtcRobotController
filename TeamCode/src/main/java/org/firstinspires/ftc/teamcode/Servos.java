@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -19,7 +20,7 @@ public class Servos extends LinearOpMode {
     private DcMotor rf = null;
     private DcMotor lb = null;
     private DcMotor rb = null;
-    private Servo collector = null;
+    private CRServo collector = null;
 
     @Override
     public void runOpMode() {
@@ -30,15 +31,16 @@ public class Servos extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
-        collector = hardwareMap.get(Servo.class, "collector");
+
+        collector = hardwareMap.get(CRServo.class, "collector");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
-        collector.setDirection(Servo.Direction.FORWARD);
+        collector.setDirection(CRServo.Direction.FORWARD);
 
-        collector.setPosition(0);
+        //collector.setPosition(0);
         double cPower = 0;
 
         waitForStart();
@@ -50,7 +52,7 @@ public class Servos extends LinearOpMode {
             double rfPower;
             double lbPower;
             double rbPower;
-            double cPos;
+            //double cPos;
 
             lfPower = 0.0f ;
             rfPower = 0.0f ;
@@ -113,17 +115,21 @@ public class Servos extends LinearOpMode {
                 rb.setPower(rbPower *0.25);
             }
 
-            cPos = collector.getPosition();
+            //cPos = collector.getPosition();
             if(gamepad2.a){
-                cPower= (cPos+5);
+                cPower = 1;
             }
-            if(gamepad2.b){
-                cPower = (cPos-5);
+            else if(gamepad2.b){
+                cPower = -1;
             }
-            collector.setPosition(cPower);
+            else {
+                cPower = 0;
+            }
+            collector.setPower(cPower);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f),leftback (%.2f), rightback (%.2f)", lfPower, rfPower,lbPower ,rbPower);
+            telemetry.addData("Servos", "power (%.2f)", cPower);
             telemetry.update();
         }
     }
