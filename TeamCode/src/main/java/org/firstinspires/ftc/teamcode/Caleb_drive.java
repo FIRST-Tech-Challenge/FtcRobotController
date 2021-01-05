@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import static java.lang.StrictMath.abs;
 
 
-@TeleOp(name="Teleop_wheels", group="Teleop")
+@TeleOp(name="Caleb_drive", group="Teleop")
 //@Disabled
 public class Caleb_drive extends LinearOpMode {
 
@@ -47,13 +47,13 @@ public class Caleb_drive extends LinearOpMode {
             double lbPower;
             double rbPower;
             double collectorPower;
-            double mult;
+            double multiply;
 
             lfPower = 0.0f ;
             rfPower = 0.0f ;
             lbPower = 0.0f ;
             rbPower = 0.0f ;
-            mult = 1/(1-gamepad1.right_trigger)*(1-gamepad1.left_trigger)*0.25;
+            multiply = 1/(1-gamepad1.right_trigger)*(1-gamepad1.left_trigger)*0.25;
 
             collectorPower = gamepad2.left_stick_y;
             collecter.setPower(collectorPower);
@@ -102,10 +102,10 @@ public class Caleb_drive extends LinearOpMode {
             }
 
 
-            lf.setPower(lfPower * mult);
-            rf.setPower(rfPower * mult);
-            lb.setPower(lbPower * mult);
-            rb.setPower(rbPower * mult);
+            lf.setPower(lfPower * multiply);
+            rf.setPower(rfPower * multiply);
+            lb.setPower(lbPower * multiply);
+            rb.setPower(rbPower * multiply);
 
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
