@@ -19,8 +19,7 @@ public class Servos extends LinearOpMode {
     private DcMotor rf = null;
     private DcMotor lb = null;
     private DcMotor rb = null;
-    //private DcMotor collecter = null;
-    private Servo collector;
+    private Servo collector = null;
 
     @Override
     public void runOpMode() {
@@ -31,14 +30,16 @@ public class Servos extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
-        //collecter = hardwareMap.get(DcMotor.class, "collecter");
         collector = hardwareMap.get(Servo.class, "collector");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
-        //collecter.setDirection(DcMotor.Direction.FORWARD);
+        collector.setDirection(Servo.Direction.FORWARD);
+
+        collector.setPosition(0);
+        double cPower = 0;
 
         waitForStart();
         runtime.reset();
@@ -49,15 +50,13 @@ public class Servos extends LinearOpMode {
             double rfPower;
             double lbPower;
             double rbPower;
-            //double collectorPower;
+            double cPos;
 
             lfPower = 0.0f ;
             rfPower = 0.0f ;
             lbPower = 0.0f ;
             rbPower = 0.0f ;
 
-            //collectorPower = gamepad2.left_stick_y;
-            //collecter.setPower(collectorPower);
 
             if (abs(gamepad1.left_stick_y) < 0.2 && abs(gamepad1.left_stick_x) > 0.2){
                 lfPower = -gamepad1.left_stick_x;
@@ -113,6 +112,15 @@ public class Servos extends LinearOpMode {
                 lb.setPower(lbPower *0.25);
                 rb.setPower(rbPower *0.25);
             }
+
+            cPos = collector.getPosition();
+            if(gamepad2.a){
+                cPower= (cPos+5);
+            }
+            if(gamepad2.b){
+                cPower = (cPos-5);
+            }
+            collector.setPosition(cPower);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f),leftback (%.2f), rightback (%.2f)", lfPower, rfPower,lbPower ,rbPower);
