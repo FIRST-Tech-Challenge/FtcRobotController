@@ -15,7 +15,7 @@ public class SciLift extends LinearOpMode {
     motor.setDirection(DcMotor.Direction.REVERSE);
     //resetting the encoder. used in autonomous to control the lift motor.
     motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    //motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
   }
 
   //there are two "up" and two "down" functions.
