@@ -29,6 +29,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.states.ForwardUntil;
 import org.firstinspires.ftc.teamcode.states.MoveClaw;
 import org.firstinspires.ftc.teamcode.states.MoveArm;
+import org.firstinspires.ftc.teamcode.states.MoveGearbox;
 import org.firstinspires.ftc.teamcode.states.TurnUntilAngle;
 //import org.firstinspires.ftc.teamcode.states.StrafeUntilClicks;
 ////import org.firstinspires.ftc.teamcode.states.CollectUntilDist;
@@ -58,7 +59,8 @@ public class AutoNewer extends OpMode {
     public RobotHardware robotHardware = new RobotHardware();
     public LinearStack states = new LinearStack(new OurState[] {
             // Phase 1
-            new MoveArm(1000)
+            new MoveGearbox("mesh")
+            //new MoveArm(1000)
             //new MoveClaw("open"),
             //new MoveClaw("close")
             // new LiftUntilTime(120, -1),
