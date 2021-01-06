@@ -1226,7 +1226,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double iniTime = System.currentTimeMillis();
         int target = shooter.getShooterSpeed();
         // Stage-1 Make sure that rpm exceeds the target
-        if(target-shooter.getCurrentRPM()>0) {
+        if(target-shooter.getCurrentRPM()<target - 200) {
             while (target - shooter.getCurrentRPM() > 0 && (System.currentTimeMillis() - iniTime < 3000)) {
                 sleep(10);
             }
@@ -1237,11 +1237,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             sleep(200);
         }
         // Stage-2 make sure rpm difference is within 11 error range
-        while (Math.abs(shooter.getCurrentRPM()-target)>11 && (System.currentTimeMillis()-iniTime<1000)) { // timeout 0.5 sec
-            sleep(10);
-        }
-        // Stage-3 make sure rpm difference is within 20 error range
-        while (Math.abs(shooter.getCurrentRPM()-target)>20 && (System.currentTimeMillis()-iniTime<500)) { // timeout 5 sec
+       // while (Math.abs(shooter.getCurrentRPM()-target)>11 && (System.currentTimeMillis()-iniTime<1000)) { // timeout 0.5 sec
+         //   sleep(10);
+        //}
+        // Stage-3 make sure rpm difference is within 11 error range
+        while (Math.abs(shooter.getCurrentRPM()-target)>11 && (System.currentTimeMillis()-iniTime<500)) { // timeout 5 sec
             sleep(5);
         }
         hopper.feederAuto();
@@ -1251,8 +1251,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double iniTime = System.currentTimeMillis();
         int target = shooter.getShooterSpeed();
         shooter.shootOutByRpm(target-120);
-        // Stage-2 make sure rpm difference is within 20 error range
-        while (Math.abs(shooter.getCurrentRPM()-target)>20 && (System.currentTimeMillis()-iniTime<500)) { // timeout 5 sec
+        // Stage-2 make sure rpm difference is within 11 error range
+        while (Math.abs(shooter.getCurrentRPM()-target)>11 && (System.currentTimeMillis()-iniTime<500)) { // timeout 5 sec
             sleep(5);
         }
         shooter.shootOutByRpm(target-50);
@@ -1303,7 +1303,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (tZone == TargetZone.ZONE_B|| tZone == TargetZone.ZONE_C && numRings==3) {
             chassis.driveTo(.6, side(55), 170, 0, true, 2);
         }
-        else if (tZone != TargetZone.UNKNOWN)
+        else  if (tZone != TargetZone.UNKNOWN)
             chassis.driveTo(.6, side(90), 170, 0, true,  2);
 
         while (!TaskManager.isComplete("Transfer Up Combo")) {
@@ -1315,14 +1315,17 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shoot
         for (int i=0; i<numRings; i++) {
             if (i==0) {
-                autoShoot();
+                autoShootFast();
             }
             else {
                 autoShootFast();
             }
             //sleep(500);
         }
-        shooter.shootOutByRpm(0);
+        if(tZone==TargetZone.UNKNOWN)
+            shooter.shootOutByRpm(1200); // for teleop keep the shooter at 1200
+        else
+            shooter.shootOutByRpm(0);
     }
 
     public void getSecondWobbleGoal() throws InterruptedException {
