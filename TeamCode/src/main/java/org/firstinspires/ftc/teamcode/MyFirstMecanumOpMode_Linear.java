@@ -30,10 +30,10 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
 //        servoTest = hardwareMap.get(Servo.class, "servoTest");
 
 
-        leftFrontMotor = hardwareMap.dcMotor.get("motorFrontLeft");
-        rightFrontMotor = hardwareMap.dcMotor.get("motorFrontRight");
-        leftRearMotor = hardwareMap.dcMotor.get("motorBackLeft");
-        rightRearMotor = hardwareMap.dcMotor.get("motorBackRight");
+        leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
+        rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
+        leftRearMotor = hardwareMap.dcMotor.get("backLeft");
+        rightRearMotor = hardwareMap.dcMotor.get("backRight");
 
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);

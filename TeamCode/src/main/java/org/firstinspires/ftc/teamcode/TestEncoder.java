@@ -41,26 +41,26 @@ public class TestEncoder extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-        frontLeft.setPower(.1);
+        frontLeft.setPower(.2);
         while (runtime.seconds()<2.0){
             updateTelemetry();
         }
         frontLeft.setPower(0);
         runtime.reset();
-        frontRight.setPower(.1);
+        frontRight.setPower(.2);
         while (runtime.seconds()<2.0){
             updateTelemetry();
         }
         frontRight.setPower(0);
 
         runtime.reset();
-        backLeft.setPower(.1);
+        backLeft.setPower(.2);
         while (runtime.seconds()<2.0){
             updateTelemetry();
         }
         backLeft.setPower(0);
         runtime.reset();
-        backRight.setPower(0.1);
+        backRight.setPower(0.2);
         while (runtime.seconds()<2.0){
             updateTelemetry();
         }
@@ -73,7 +73,7 @@ public class TestEncoder extends LinearOpMode {
         telemetry.addData("Target Front Left Motor Position", frontLeft.getCurrentPosition());
         telemetry.addData("Target Front Right Motor Position", frontRight.getCurrentPosition());
         telemetry.addData("Target Back Left Motor Position", backLeft.getCurrentPosition());
-        telemetry.addData("Target Front Left Motor Position", backRight.getCurrentPosition());
+        telemetry.addData("Target Back Right Motor Position", backRight.getCurrentPosition());
         telemetry.update();
     }
 }
