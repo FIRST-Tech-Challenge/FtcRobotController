@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
 
 public class RobotClass {
@@ -47,21 +48,36 @@ public class RobotClass {
         this.telemetry = telemetry;
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+       // parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
         this.opmode = opmode;
 
+
+    }
+
+    public void testGyro(){
+        while(opmode.opModeIsActive()){
+            Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+            telemetry.addData("gravity",imu.getGravity().toString());
+            telemetry.addData("1",angles.firstAngle);
+            telemetry.addData("2", angles.secondAngle);
+            telemetry.addData("3", angles.thirdAngle);
+            telemetry.update();
+        }
     }
     public double getAngleFromGyro() {
+
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
         return angles.firstAngle;
     }
     public double relegateTargetAngle(double targetAngle) {
@@ -84,7 +100,7 @@ public class RobotClass {
         telemetry.addData("Target Front Left Motor Position", leftCurrent);
         telemetry.addData("Target Front Right Motor Position", rightCurrent);
         telemetry.addData("Target Back Left Motor Position", backLeftCurrent);
-        telemetry.addData("Target Front Left Motor Position", backRightCurrent);
+        telemetry.addData("Target Back Right Motor Position", backRightCurrent);
         telemetry.update();
 //        try {
 //
@@ -125,7 +141,7 @@ public class RobotClass {
             telemetry.addData("Target Front Left Motor Position", frontLeft.getCurrentPosition());
             telemetry.addData("Target Front Right Motor Position", frontRight.getCurrentPosition());
             telemetry.addData("Target Back Left Motor Position", backLeft.getCurrentPosition());
-            telemetry.addData("Target Front Left Motor Position", backRight.getCurrentPosition());
+            telemetry.addData("Target Back Right Motor Position", backRight.getCurrentPosition());
             telemetry.update();
         }
         frontLeft.setPower(0);
@@ -136,7 +152,7 @@ public class RobotClass {
         telemetry.addData("Target Front Left Motor Position", toPositionLeft);
         telemetry.addData("Target Front Right Motor Position", toPositionRight);
         telemetry.addData("Target Back Left Motor Position", toPositionbackLeft);
-        telemetry.addData("Target Front Left Motor Position", toPositionbackLeft);
+        telemetry.addData("Target Back Right Motor Position", toPositionbackLeft);
         telemetry.update();
 
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -360,11 +376,17 @@ public class RobotClass {
         double targetAngle = getAngleFromGyro() + angle;
 
         relegateTargetAngle(targetAngle);
-        
-        while (getAngleFromGyro() < targetAngle) {
-            telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
-            telemetry.update();
-            
+
+        if (targetAngle > 0) {
+            while (getAngleFromGyro() > targetAngle) {
+                telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
+                telemetry.update();
+            }
+        } else if (targetAngle < 0) {
+            while (getAngleFromGyro() < targetAngle) {
+                telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
+                telemetry.update();
+            }
         }
 
         frontLeft.setPower(0);

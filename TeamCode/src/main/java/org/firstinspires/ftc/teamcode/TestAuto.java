@@ -13,7 +13,7 @@
 //    @Override
 //    public void runOpMode() throws InterruptedException {
 //
-//        robot= new RobotClass(hardwareMap, telemetry);
+//        robot= new RobotClass(hardwareMap, telemetry, this);
 //
 //        waitForStart();
 //
