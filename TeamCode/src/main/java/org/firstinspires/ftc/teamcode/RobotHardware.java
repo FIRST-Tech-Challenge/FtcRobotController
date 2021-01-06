@@ -21,7 +21,7 @@ public class RobotHardware {
     //public Collect c = null;
     //public DcMotor lift = null;
     //public ColorSensor color = null;
-    //public Servo f = null;
+    public Servo f = null;
     public BNO055IMU imu = null;
     public Orientation lastAngles = null; // new Orientation();
     
@@ -55,7 +55,7 @@ public class RobotHardware {
         
         //lift = hardwareMap.get(DcMotor.class, "liftmotor");
         //color = hardwareMap.get(ColorSensor.class, "colorsensor");
-        //f = hardwareMap.get(Servo.class, "foundation");
+        f = hardwareMap.get(Servo.class, "claw");
     }
     
     public void reset() {

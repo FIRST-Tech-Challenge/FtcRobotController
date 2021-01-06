@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.FlickJr;
 // import org.firstinspires.ftc.teamcode.Foundation;
 import org.firstinspires.ftc.teamcode.TwoPosServo;
 import org.firstinspires.ftc.teamcode.Claw;
-
+@Disabled
 @TeleOp(name="15317 Claw Teleop", group="Linear Opmode")
 
 public class Teleop15317 extends LinearOpMode {

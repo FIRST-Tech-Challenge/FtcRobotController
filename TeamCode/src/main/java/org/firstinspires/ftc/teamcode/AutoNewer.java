@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.states.ForwardUntil;
+import org.firstinspires.ftc.teamcode.states.MoveClaw;
 import org.firstinspires.ftc.teamcode.states.TurnUntilAngle;
 //import org.firstinspires.ftc.teamcode.states.StrafeUntilClicks;
 ////import org.firstinspires.ftc.teamcode.states.CollectUntilDist;
@@ -56,9 +57,11 @@ public class AutoNewer extends OpMode {
     public RobotHardware robotHardware = new RobotHardware();
     public LinearStack states = new LinearStack(new OurState[] {
             // Phase 1
+            new MoveClaw("open"),
+            new MoveClaw("close")
             // new LiftUntilTime(120, -1),
-            new ForwardUntil(1500),
-            new TurnUntilAngle(180),
+            //new ForwardUntil(1500),
+            //new TurnUntilAngle(180),
             // new ForwardUntil(-900),
             // new SeekUntilColor(),
             // new LinearStack(new OurState[] {
