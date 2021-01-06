@@ -195,6 +195,72 @@ public class MecanumDrive {
 
     } //end of encoder drive method
 
+    /**
+     * Encoder Drive Method that uses only the front encoders
+     * @param speed
+     * @param lBDis
+     * @param rBDis
+     */
+    private void frontEncoderDrive(double speed,
+                              double lBDis, double rBDis) {
+        //int newLBTarget;
+        //int newRBTarget;
+        int newLFTarget;
+        int newRFTarget;
+
+        //leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Determine new target position, and pass to motor controller
+        //newLBTarget = leftBack.getCurrentPosition() + (int) (lBDis * COUNTS_PER_INCH);
+        //newRBTarget = rightBack.getCurrentPosition() + (int) (rBDis * COUNTS_PER_INCH);
+        newLFTarget = leftFront.getCurrentPosition() + (int) (lBDis * COUNTS_PER_INCH);
+        newRFTarget = rightFront.getCurrentPosition() + (int) (rBDis * COUNTS_PER_INCH);
+        //leftBack.setTargetPosition(newLBTarget);
+        //rightBack.setTargetPosition(newRBTarget);
+        leftFront.setTargetPosition(newLFTarget);
+        rightFront.setTargetPosition(newRFTarget);
+
+        // Turn On RUN_TO_POSITION
+        //leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // start motion.
+        if (lBDis > 0) {
+            leftBack.setPower(Math.abs(speed));
+            rightBack.setPower(Math.abs(speed));
+        } else if (lBDis < 0) {
+            leftBack.setPower(-Math.abs(speed));
+            rightBack.setPower(-Math.abs(speed));
+        }
+        leftFront.setPower(Math.abs(speed));
+        rightFront.setPower(Math.abs(speed));
+
+        while (leftFront.isBusy() && rightFront.isBusy());
+
+        // Stop all motion;
+        leftBack.setPower(0);
+        rightBack.setPower(0);
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+
+        // Turn off RUN_TO_POSITION
+        //leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+    } //end of front encoder drive method
+
     //y = x diagonal move
     private void encoderDriveLfRb(double speed,
                         double distance) {
@@ -202,34 +268,34 @@ public class MecanumDrive {
         int newRBTarget;
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Determine new target position, and pass to motor controller
         newLFTarget = leftFront.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
-        newRBTarget = rightBack.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
+        //newRBTarget = rightBack.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
         leftFront.setTargetPosition(newLFTarget);
-        rightFront.setTargetPosition(newRBTarget);
+        //rightFront.setTargetPosition(newRBTarget);
 
         // Turn On RUN_TO_POSITION
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // start motion.
         leftFront.setPower(Math.abs(speed));
         rightBack.setPower(Math.abs(speed));
 
-        while (leftFront.isBusy() && rightBack.isBusy()) ;
+        while (leftFront.isBusy()) ;
 
         // Stop all motion;
         leftFront.setPower(0);
-        rightBack.setPower(0);
+        //rightBack.setPower(0);
 
         // Turn off RUN_TO_POSITION
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     } //end of encoder driveLfRb method
 
@@ -283,6 +349,16 @@ public class MecanumDrive {
     }
 
     /**
+     * Tank drive method that uses only the front two encoders to tell distance traveled
+     * in an attempt to run for consistently
+     * @param speed
+     * @param distance
+     */
+    public void frontLinearDrive(double speed, double distance) {
+        frontEncoderDrive(speed, distance, distance);
+    }
+
+    /**
      * Primary side drive method.
      * Uses only one encoder to try to limit variance.
      * Note: The distance value controls the direction of motion
@@ -290,7 +366,7 @@ public class MecanumDrive {
      * @param distance
      */
     public void sideDrive(double speed, double distance) {
-        //negative distance = left
+        //negative distance = right
         oneSideEncoderDrive(speed,distance);
     }
 

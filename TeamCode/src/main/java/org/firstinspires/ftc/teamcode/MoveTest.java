@@ -40,7 +40,7 @@ public class MoveTest extends OpMode{
                 break;
             case 1:
                 //move forward
-                robot.linearDrive(.5,20);
+                robot.frontLinearDrive(.5,-20);
                 telemetry.addData("Rf",robot.getRFencoder());
                 telemetry.addData("Lf",robot.getLFencoder());
                 telemetry.addData("Rb",robot.getRBencoder());
@@ -58,7 +58,7 @@ public class MoveTest extends OpMode{
                 break;
             case 3:
                 //move backwards
-                robot.linearDrive(.5,-20);
+                robot.frontLinearDrive(.5,20);
                 telemetry.addData("Rf",robot.getRFencoder());
                 telemetry.addData("Lf",robot.getLFencoder());
                 telemetry.addData("Rb",robot.getRBencoder());
@@ -76,7 +76,7 @@ public class MoveTest extends OpMode{
                 break;
             case 5:
                 //move right
-                robot.sideDrive(.5,20);
+                robot.sideDrive(.5,-20);
                 //telemetry.addData("Rf",robot.getRFencoder());
                 telemetry.addData("Lf",robot.getLFencoder());
                 //telemetry.addData("Rb",robot.getRBencoder());
@@ -94,7 +94,7 @@ public class MoveTest extends OpMode{
                 break;
             case 7:
                 //move left
-                robot.sideDrive(.5,-20);
+                robot.sideDrive(.5,20);
                 //telemetry.addData("Rf",robot.getRFencoder());
                 telemetry.addData("Lf",robot.getLFencoder());
                 //telemetry.addData("Rb",robot.getRBencoder());
@@ -112,7 +112,7 @@ public class MoveTest extends OpMode{
                 break;
             case 9:
                 //up and to the right
-                robot.diagonalDrive(.5,20, DiagonalDirection.RIGHT);
+                robot.diagonalDrive(.5,-20, DiagonalDirection.RIGHT);
                 //telemetry.addData("Rf",robot.getRFencoder());
                 telemetry.addData("Lf",robot.getLFencoder());
                 telemetry.addData("Rb",robot.getRBencoder());
@@ -130,7 +130,7 @@ public class MoveTest extends OpMode{
                 break;
             case 11:
                 //down and to the left
-                robot.diagonalDrive(.5,-20, DiagonalDirection.LEFT);
+                robot.diagonalDrive(.5,20, DiagonalDirection.LEFT);
                 //telemetry.addData("Rf",robot.getRFencoder());
                 telemetry.addData("Lf",robot.getLFencoder());
                 telemetry.addData("Rb",robot.getRBencoder());
@@ -148,7 +148,7 @@ public class MoveTest extends OpMode{
                 break;
             case 13:
                 //up and to the left
-                robot.diagonalDrive(.5, 20, DiagonalDirection.LEFT);
+                robot.diagonalDrive(.5, -20, DiagonalDirection.LEFT);
                 telemetry.addData("Rf",robot.getRFencoder());
                 //telemetry.addData("Lf",robot.getLFencoder());
                 //telemetry.addData("Rb",robot.getRBencoder());
@@ -166,7 +166,7 @@ public class MoveTest extends OpMode{
                 break;
             case 15:
                 //down and to the right
-                robot.diagonalDrive(.5, -20, DiagonalDirection.RIGHT);
+                robot.diagonalDrive(.5, 20, DiagonalDirection.RIGHT);
                 telemetry.addData("Rf",robot.getRFencoder());
                 //telemetry.addData("Lf",robot.getLFencoder());
                 //telemetry.addData("Rb",robot.getRBencoder());

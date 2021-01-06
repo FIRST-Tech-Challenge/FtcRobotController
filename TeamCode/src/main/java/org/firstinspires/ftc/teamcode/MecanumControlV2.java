@@ -101,7 +101,7 @@ public class MecanumControlV2 extends OpMode {
             wasPowerIncreased = true;
         }else if (!gamepad2.dpad_up && wasPowerIncreased) {
             shooterPower -= .05;
-            if (shooterPower <= -.99) {
+            if (shooterPower <= -1.04) {
                 shooterPower = -.65;
             }
             wasPowerIncreased = false;
@@ -111,7 +111,7 @@ public class MecanumControlV2 extends OpMode {
         }else if (!gamepad2.dpad_down && wasPowerDecreased) {
             shooterPower += .05;
             if (shooterPower >= -.61) {
-                shooterPower = -.95;
+                shooterPower = -1;
             }
             wasPowerDecreased = false;
         }
