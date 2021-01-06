@@ -537,6 +537,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.getTrigger(Events.Side.RIGHT) > 0.3){
                     if (hopper!=null)
                         hopper.transferUp();
+                    else if (source.isPressed(Button.BACK)) {
+                        if (hopper!= null)
+                            hopper.holderAuto();
+                    }
                 }
             }
         }, new Button[]{Button.Y});

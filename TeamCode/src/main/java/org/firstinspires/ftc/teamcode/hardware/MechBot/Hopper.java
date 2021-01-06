@@ -27,6 +27,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     final private CoreSystem core;
 
     private AdjustableServo feeder;
+    private AdjustableServo holder;
     private CRServo ringLifter;
     /*private*/ public TouchSensor magLow;
     /*private*/ public TouchSensor magHigh;
@@ -39,7 +40,12 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     private final double FEEDER_INIT = FEEDER_IN;
     private final double FEEDER_OUT = 0.9;
 
+    private final double HOLDER_IN = 0.5;
+    private final double HOLDER_INIT = FEEDER_IN;
+    private final double HOLDER_OUT = 0.9;
+
     private boolean feederIsIn = true;
+    private boolean holderIsIn = true;
     private boolean transferIsDown = true;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -76,10 +82,17 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 logTag + ":hopper", logLevel
         );
         feeder.configure(configuration.getHardwareMap(), "feeder");
+        holder = new AdjustableServo(0, 1).configureLogging(
+                logTag + ":hopper", logLevel
+        );
+        holder.configure(configuration.getHardwareMap(), "holder");
+
+        configuration.register(feeder);
+        configuration.register(holder);
+
         magLow = configuration.getHardwareMap().get(TouchSensor.class, "magLow");
         magHigh = configuration.getHardwareMap().get(TouchSensor.class, "magHigh");
 
-        configuration.register(feeder);
         // servoInit();
       // configuration.register(this);
     }
@@ -88,6 +101,9 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         ringLifter.setPower(0);
         feeder.setPosition(FEEDER_INIT);
         feederIsIn = false;
+
+        holder.setPosition(HOLDER_INIT);
+        holderIsIn = true;
         //hookUp();
         // configuration.register(this);
     }
@@ -114,6 +130,23 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         feederOut();
         sleep(300);
         feederIn();
+    }
+
+    public void holderIn() {
+        holder.setPosition(FEEDER_IN);
+        holderIsIn = true;
+    }
+
+    public void holderOut() {
+        holder.setPosition(FEEDER_OUT);
+        holderIsIn = false;
+    }
+
+    public void holderAuto() throws InterruptedException {
+        if(holderIsIn)
+            holderOut();
+        else
+            holderIn();
     }
 
     public void transferUp(){
@@ -333,6 +366,15 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 @Override
                 public Double value() {
                     return feeder.getPosition();
+                }
+            });
+        }
+
+        if (holder != null) {
+            line.addData("Holder", "pos=%.2f", new Func<Double>() {
+                @Override
+                public Double value() {
+                    return holder.getPosition();
                 }
             });
         }
