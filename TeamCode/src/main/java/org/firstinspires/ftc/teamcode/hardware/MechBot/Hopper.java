@@ -133,12 +133,12 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     }
 
     public void holderIn() {
-        holder.setPosition(FEEDER_IN);
+        holder.setPosition(HOLDER_IN);
         holderIsIn = true;
     }
 
     public void holderOut() {
-        holder.setPosition(FEEDER_OUT);
+        holder.setPosition(HOLDER_OUT);
         holderIsIn = false;
     }
 
