@@ -285,13 +285,18 @@ public class MecanumDrive {
 
         // start motion.
         leftFront.setPower(Math.abs(speed));
-        rightBack.setPower(Math.abs(speed));
+        if (distance > 0) {
+            rightBack.setPower(Math.abs(speed));
+        } else if (distance < 0) {
+            rightBack.setPower(-Math.abs(speed));
+        }
+
 
         while (leftFront.isBusy()) ;
 
         // Stop all motion;
         leftFront.setPower(0);
-        //rightBack.setPower(0);
+        rightBack.setPower(0);
 
         // Turn off RUN_TO_POSITION
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -502,13 +507,13 @@ public class MecanumDrive {
      */
     public void diagonalDrive(double speed, double distance, DiagonalDirection direction) {
 
-        if (distance > 0) {
+        if (distance < 0) {
             if (direction == DiagonalDirection.LEFT) {
                 encoderDriveRfLb(speed, distance);
             } else if (direction == DiagonalDirection.RIGHT) {
                 encoderDriveLfRb(speed, distance);
             }
-        } else if (distance < 0) {
+        } else if (distance > 0) {
             if (direction == DiagonalDirection.LEFT) {
                 encoderDriveLfRb(speed, distance);
             } else if (direction == DiagonalDirection.RIGHT) {
