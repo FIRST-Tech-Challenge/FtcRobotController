@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -12,20 +13,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * Ultimate Goal Accessory
  *
  * @author  Nikhil
- * @version 1.0
+ * @version 2.0
  * @since   2020-October-26
  *
  */
 public class Shooter {
     protected LinearOpMode op = null;
 
-
+//TODO Make private when warren removes his function from robot class @author
     public DcMotorEx shooterMotor;
 
-    public Servo shooter_Servo;
+    Servo shooter_Servo;
 
-    //velocity
-    protected double highGoalVelocity = 1850;
+    //TODO adjust based on testing
+    protected double highGoalVelocity = 1675;
     protected double middleGoalVelocity = 1600;
     protected double lowGoalVelocity = 1500;
 
@@ -39,17 +40,20 @@ public class Shooter {
         shooter_Servo.setPosition(1.0);
     }
 
-    public void setVelocity(double velocity, int distance) {
+    private void setVelocity(double velocity, int distance) {
+        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterMotor.setVelocity(velocity);
         shooterMotor.setTargetPosition(distance);
 
     }
 
     public void stopShooter() {
+        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterMotor.setVelocity(0);
+        shooterMotor.setTargetPosition(0);
     }
 
-    public double getRPM() {
+    private double getRPM() {
         double ticksPerSecond = shooterMotor.getVelocity();
         double rotationsPerSecond = ticksPerSecond / 28;
         double rotationsPerMinute = rotationsPerSecond * 60;
@@ -58,10 +62,12 @@ public class Shooter {
 
 
     public void shoot(double speed, int distance, int rings) {
+        ElapsedTime runtime = new ElapsedTime();
         op.telemetry.addData("speed: ", getRPM());
         op.telemetry.update();
-        op.sleep(3000);
+        op.sleep(100);
         setVelocity(speed, distance);
+        op.sleep(1500);
         if (shooterMotor.getVelocity() > 0) {
             op.sleep(100);
             op.telemetry.clear();
@@ -72,10 +78,10 @@ public class Shooter {
             moveServo(false);
             moveServo(true);
         }
-
-        if (shooterMotor.getTargetPosition()>=distance){
+        if(op.getRuntime()>3){
             stopShooter();
         }
+
     }
 
 
@@ -96,28 +102,18 @@ public class Shooter {
     }
 
     public void shootHighGoal(int rings) {
-        shoot(highGoalVelocity, 1000, 3);
-        op.sleep(1000);
+        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shoot(highGoalVelocity, 1, 3);
     }
 
     public void shootMidGoal(int rings) {
-        shoot(highGoalVelocity, 1000, 3);
-        op.sleep(1000);
-        for (int i = 0; i < rings; i++) {
-            moveServo(false);
-            moveServo(true);
-        }
+        shoot(middleGoalVelocity, 1000, 3);
 
     }
 
     public void shootLowGoal(int rings) {
-        shoot(highGoalVelocity, 1000, 3);
-        op.sleep(1000);
-        for (int i = 0; i < rings; i++) {
-            moveServo(false);
-            moveServo(true);
+        shoot(lowGoalVelocity, 1000, 3);
         }
 
     }
 
-}

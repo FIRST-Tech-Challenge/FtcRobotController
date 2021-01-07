@@ -306,9 +306,7 @@ public class Robot {
 
 
     public void moveServo(boolean direction) {
-        if (isCorgi) {
             shooter.moveServo(direction);
-        }
     }
 
     public void shootHighGoal(int rings) {
@@ -326,9 +324,7 @@ public class Robot {
 
 
     public void shootGoalTeleop(int distance) {
-        if (isCorgi) {
             shooter.shootGoalTeleop(distance);
-        }
     }
 
     public void stopShooter(){

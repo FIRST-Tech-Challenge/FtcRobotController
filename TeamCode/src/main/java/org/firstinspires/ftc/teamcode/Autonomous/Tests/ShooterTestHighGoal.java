@@ -32,10 +32,11 @@ public class ShooterTestHighGoal extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        while(opModeIsActive()){
+
             robot.shootHighGoal(3);
 
-        }
+
+
 
 
 
