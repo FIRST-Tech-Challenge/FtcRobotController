@@ -19,7 +19,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 import java.util.Locale;
 
-@Autonomous(name="Mechanum AutoOp", group="Iterative Opmode")
+@Autonomous(name="Gyro Autonomous", group="4100")
 public class Gyro_Auto extends LinearOpMode
 {
     // Declare OpMode members.
@@ -93,7 +93,7 @@ public class Gyro_Auto extends LinearOpMode
         }else if(tempDeg < -180){
             tempDeg += 360;
         }
-        telemetry.addData("Heading", aquireHeading());
+        telemetry.addData("Heading", tempDeg);
         telemetry.update();
         sleep(50);
         return tempDeg;
