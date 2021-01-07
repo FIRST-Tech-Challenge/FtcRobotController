@@ -118,6 +118,13 @@ public class BluePower extends OpMode{
                 robot.frontLinearDrive(.5,-6);
                 stateMachineFlow++;
                 break;
+            case 11:
+                intake.lowerIntake();
+                stateMachineFlow++;
+                break;
+            default:
+                stop();
+                break;
 
         }
     }
