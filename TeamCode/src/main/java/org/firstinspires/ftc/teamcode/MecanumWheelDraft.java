@@ -280,6 +280,11 @@ public class MecanumWheelDraft extends LinearOpMode {
 
         while((opModeIsActive()) && (gamepad1.x)){
 
+            //gamepad.x is here as that is the button I've been pressing to test this function
+            //if you want to have this run properly, you'll need to replace gamepad.x with some other qualifier t
+            // that will stop the while loop at some point, some way
+
+
             currOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             double currAng = currOrient.angleUnit.DEGREES.normalize(currOrient.firstAngle);
 
@@ -349,6 +354,12 @@ public class MecanumWheelDraft extends LinearOpMode {
             double frontLeft, frontRight, backLeft, backRight, max;
 
             while((gamepad1.y) && (opModeIsActive())){
+
+                //gamepad.y is here as that is the button I've been pressing to test this function
+                //if you want to have this run properly, you'll need to replace gamepad.y
+                // for example, if you want this function to run for 5 seconds, you can create a timer and put that time
+                // test in the while loop
+
 
                 currOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
                 double currAng = currOrient.angleUnit.DEGREES.normalize(currOrient.firstAngle);
