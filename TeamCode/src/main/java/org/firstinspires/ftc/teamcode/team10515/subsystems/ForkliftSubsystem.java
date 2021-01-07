@@ -1,17 +1,18 @@
 package org.firstinspires.ftc.teamcode.team10515.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.lib.drivers.RevServo;
 import org.firstinspires.ftc.teamcode.team10515.states.ForkliftStateMachine;
 
 public class ForkliftSubsystem implements ISubsystem<ForkliftStateMachine, ForkliftStateMachine.State> {
     private static ForkliftStateMachine forkliftStateMachine;
-    private RevServo forkliftServoL;
-    private RevServo forkliftServoR;
+    private DcMotor forkliftMotor;
 
-    public ForkliftSubsystem(/*RevServo servo1, RevServo servo2*/){
+    public ForkliftSubsystem(){
         setForkliftStateMachine(new ForkliftStateMachine());
-        setServo(forkliftServoL, forkliftServoR);
+        setMotor(forkliftMotor);
     }
 
     @Override
@@ -47,24 +48,19 @@ public class ForkliftSubsystem implements ISubsystem<ForkliftStateMachine, Forkl
     @Override
     public void update(double dt) {
         getStateMachine().update(dt);
-        getServoL().setPosition(getState().getPosition());
-        getServoR().setPosition(getState().getPosition());
+        getForkliftMotor().setPower(getState().getPosition());
     }
 
-    public RevServo getServoL(){
-        return forkliftServoL;
+    public DcMotor getForkliftMotor(){
+        return forkliftMotor;
     }
 
     public static void setForkliftStateMachine(ForkliftStateMachine forkliftStateMachine){
         ForkliftSubsystem.forkliftStateMachine = forkliftStateMachine;
     }
 
-    public RevServo getServoR(){
-        return forkliftServoR;
+    public void setMotor(DcMotor motor){
+        this.forkliftMotor = motor;
     }
 
-    public void setServo(RevServo servoL, RevServo servoR){
-        this.forkliftServoL = servoL;
-        this.forkliftServoR = servoR;
-    }
 }
