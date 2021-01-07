@@ -19,18 +19,39 @@ public class basicauto extends UGBase {
     public void runOpMode() {
         robot.init(hardwareMap);
 
-        //  initVuforia();
-
+        initVuforia();
         telemetry.addData("Status: ", "Ready to run");    //
         telemetry.update();
         //String position = getSkyStonePosition();
 
         waitForStart();
-        move_forward(0.5,45);
-        move_sideways_rampup(0,0.5,40,16,false);
-        //shoot
-        move_right(0.5,20);
-        move_forward(0.5,20);
+        UGCV.numRings numRings = getRingsUsingImage(true);
+        telemetry.addData("", numRings);
+        telemetry.update();
+//        if (numRings == UGVuforia.ringPos.NONE){
+//            move_forward(0.5,45);
+//            //shoot
+//            move_left(0.5,20);
+//            move_forward(0.5,20);
+//        }
+//        else if (numRings == UGVuforia.ringPos.ONE){
+//            move_forward(0.5,15);
+//            //shoot
+//            move_left(0.5,20);
+//            move_forward(0.5,20);
+//            move_right(0.5,20);
+//            move_forward(0.6,35);
+//            move_back(0.6,25);
+//        }
+//        else{
+//            move_forward(0.5,15);
+//            //shoot
+//            move_left(0.5,20);
+//            move_forward(0.5,40);
+//            move_back(0.6,25);
+//
+//        }
+
 
     }
 }

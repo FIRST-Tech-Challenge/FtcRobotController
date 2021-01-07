@@ -16,12 +16,6 @@ public class UGMap
     public DcMotor FL = null;  //FrontLeft
     public DcMotor RR = null;  //RearRight
     public DcMotor RL = null;  //RearLeft
-    public DcMotor LL = null;  //LiftLeft
-    public DcMotor LR = null;  //LiftRight
-    public DcMotor INR = null;  //Intake
-    public DcMotor INL = null;  //Intake
-    //public DcMotor  AA = null;  //AccessArm
-
 
     public BNO055IMU imu = null;
 
@@ -54,9 +48,6 @@ public class UGMap
         FR      = hwMap.dcMotor.get(FRONTRIGHT);
         RL      = hwMap.dcMotor.get(REARLEFT);
         RR      = hwMap.dcMotor.get(REARRIGHT);
-
-        //AA      = hwMap.dcMotor.get(ACCESSARM);
-
 
 
         FL.setDirection(DcMotor.Direction.REVERSE);

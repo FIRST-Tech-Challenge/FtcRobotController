@@ -9,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -724,12 +723,11 @@ public abstract class UGBase extends LinearOpMode {
 
         return highest_ticks_traveled / ticks_per_inch;
     }
-
-    public UGVuforia.skystonePos getSkystoneUsingImage(boolean red){
+    public UGCV.numRings getRingsUsingImage(boolean red){
         //initVuforia();
 
-        UGVuforia STVuforia = new UGVuforia(vuforia);
-        UGVuforia.skystonePos position = UGVuforia.skystonePos.CENTER;
+        UGCV STVuforia = new UGCV(vuforia);
+        UGCV.numRings position = UGCV.numRings.ZERO;
 
         position = STVuforia.GetPosition(true, red);
         return position;
