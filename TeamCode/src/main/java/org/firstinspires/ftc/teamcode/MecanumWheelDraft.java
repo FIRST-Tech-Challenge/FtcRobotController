@@ -336,9 +336,9 @@ public class MecanumWheelDraft extends LinearOpMode {
 
     }
 
-    //void strafeRight
 
     //drives forward at the heading it was called at
+    // for example, calling this when the robot is at 60 heading, it will go to that heading, even if it gets knocked off course
     void driveStraight(double pwr, Orientation target){
 
                 //orients
