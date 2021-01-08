@@ -11,7 +11,6 @@ public class IntakeStopCommand extends Command {
         this.addRequirements(subsystem);
 
     }
-
     @Override
     public void execute() {
         subsystem.stop();

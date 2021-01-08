@@ -32,8 +32,8 @@ public class Hardware implements Loggable {
     public EncodedMotor<DcMotor> shooterMotor2;
 
     //wobble
-    public Servo wobbleClawServo;
-    public Servo wobbleArmServo;
+    public Servo wobbleServo1;
+    public Servo wobbleServo2;
 
     public Hardware(){
 
@@ -51,7 +51,7 @@ public class Hardware implements Loggable {
         shooterMotor1 = new EncodedMotor<>("shooter1");
         shooterMotor2 = new EncodedMotor<>("shooter2");
 
-        wobbleArmServo = new Servo("arm");
-        wobbleClawServo = new Servo("claw");
+        wobbleServo1 = new Servo("wobble1");
+        wobbleServo2 = new Servo("wobble2");
     }
 }

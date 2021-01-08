@@ -4,13 +4,16 @@ import com.technototes.library.hardware.servo.Servo;
 import com.technototes.library.subsystem.Subsystem;
 import com.technototes.library.subsystem.motor.EncodedMotorSubsystem;
 import com.technototes.library.subsystem.servo.ServoSubsystem;
+import com.technototes.logger.Logger;
+import com.technototes.logger.Stated;
 
 
-/** Wobble goal manipulator subsystem
+/** Wobble goal claw subsystem
  *
  */
-public class WobbleClawSubsystem extends ServoSubsystem {
+public class WobbleClawSubsystem extends ServoSubsystem implements Stated<WobbleClawSubsystem.ClawPosition> {
     public Servo clawServo;
+
     //claw position enum
     public enum ClawPosition {
         OPEN(0), CLOSED(1);
@@ -28,7 +31,9 @@ public class WobbleClawSubsystem extends ServoSubsystem {
             return this == OPEN ? CLOSED : OPEN;
         }
     }
+
     public ClawPosition position;
+
     public WobbleClawSubsystem(Servo claw){
         super(claw);
         clawServo = claw;
@@ -46,8 +51,8 @@ public class WobbleClawSubsystem extends ServoSubsystem {
 
     }
 
-    public ClawPosition getClawPosition(){
+    @Override
+    public ClawPosition getState() {
         return position;
     }
-    //TODO
 }

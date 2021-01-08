@@ -30,9 +30,6 @@ public class Robot{
     //shooter
     public ShooterSubsystem shooterSubsystem;
 
-    //wobble
-    public WobbleClawSubsystem wobbleClawSubsystem;
-    public WobbleArmSubsystem wobbleArmSubsystem;
 
     public Robot(){
         hardware = new Hardware();
@@ -45,7 +42,5 @@ public class Robot{
 
         shooterSubsystem = new ShooterSubsystem(hardware.shooterMotor1, hardware.shooterMotor2);
 
-        wobbleClawSubsystem = new WobbleClawSubsystem(hardware.wobbleClawServo);
-        wobbleArmSubsystem = new WobbleArmSubsystem(hardware.wobbleArmServo);
     }
 }
