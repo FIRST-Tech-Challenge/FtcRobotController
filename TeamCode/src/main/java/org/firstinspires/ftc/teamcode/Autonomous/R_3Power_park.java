@@ -16,6 +16,7 @@ public class R_3Power_park extends LinearOpMode {
         Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
         ElapsedTime runtime = new ElapsedTime();
 
+        //TODO: warren, this should be getNumberOfRingsAndWaitForStart
         int rings = robot.getNumberOfRings();
 
 //        waitForStart();

@@ -191,21 +191,14 @@ public class Robot {
         }
     }
 
-    public void runVuforia(){
-        vuforiaWebcam.run();
-//        vuforiaWebcam.runVuforia(); //TODO: 12/27
-    }
-
     /**TensorFlow**/
 
-    //TODO: Aamod, why do we need to expose this as a method. Can the constructor of this class initialize this when ring detection is needed?
-    //TODO: Aamod, also look at the TODOs in TensorFlow class.
-    public void initTensorFlow() {
+    public void initTensorFlow() { //This needs to be here, because it is used in the TensorFlow test program
         tensorFlow.initTensorFlow();
     }
 
-    //TODO: Aamond, do we need these 3 methods. Can the robot just expose getNumberOfRings, which will runTensorFlow and then getNumberOfRings from TensorFlow?
-    public void runTensorFlow () {
+    //TODO: Aamod, do we need these 3 methods. Can the robot just expose getNumberOfRings, which will runTensorFlow and then getNumberOfRings from TensorFlow?
+    public void runTensorFlow () { //This needs to be here, because it is used in the TensorFlow test program
         tensorFlow.runTensorFlow();
     }
 
@@ -218,7 +211,7 @@ public class Robot {
         return tensorFlow.getNumberOfRings();
     }
 
-    public int getNumberOfRings() {
+    public int getNumberOfRings() { //This needs to be here, because it is used in the TensorFlow test program
         return tensorFlow.getNumberOfRings();
     }
 
