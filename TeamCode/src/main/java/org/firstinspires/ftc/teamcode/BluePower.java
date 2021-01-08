@@ -63,7 +63,7 @@ public class BluePower extends OpMode{
                 stateMachineFlow++;
                 break;
             case 3:
-                grabber.gripWrist.setPosition(.76);
+                grabber.gripWrist.setPosition(.79);
                 waitTime = 1;
                 runtime.reset();
                 time = runtime.time();
@@ -77,7 +77,7 @@ public class BluePower extends OpMode{
                 stateMachineFlow++;
                 break;
             case 5:
-                shooter.shooterPower(-.8);
+                shooter.shooterPower(-.825);
                 waitTime = 1;
                 runtime.reset();
                 time = runtime.time();
@@ -98,7 +98,13 @@ public class BluePower extends OpMode{
                 stateMachineFlow++;
                 break;
             case 7:
-                robot.sideDrive(.45,-7);
+                robot.sideDrive(.45,-8);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
                 stateMachineFlow++;
                 break;
             case 8:

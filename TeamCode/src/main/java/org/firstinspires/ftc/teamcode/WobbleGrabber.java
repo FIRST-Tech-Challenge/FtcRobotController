@@ -30,7 +30,7 @@ public class WobbleGrabber {
         gripServo = hwMap.get(Servo.class, "grip_servo");
 
         //Set initial positions of servos
-        gripWrist.setPosition(.78);
+        gripWrist.setPosition(.79);
         gripServo.setPosition(1);
 
     }
