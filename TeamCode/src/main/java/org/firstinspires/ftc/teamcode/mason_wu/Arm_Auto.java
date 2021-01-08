@@ -36,7 +36,7 @@ public class Arm_Auto extends LinearOpMode {
 
     //other variables
     int cycle = 1;
-    final double HAND_CLOSE_POSITION = 0.0;
+    final double HAND_CLOSE_POSITION = 0.7;
     final double HAND_OPEN_POSITION = 0.0;
 
     @Override
@@ -76,7 +76,7 @@ public class Arm_Auto extends LinearOpMode {
         while (opModeIsActive()) {
              if(cycle == 1) {
                  //arm moves down with a power of 0.4 for 1000 milliseconds
-                 armMotion(false, 0.4, 1000);
+                 armMotion(false, 0.5, 1000);
                  sleep(500);
                  //hand(grabber) opens
                  handMotion(false);

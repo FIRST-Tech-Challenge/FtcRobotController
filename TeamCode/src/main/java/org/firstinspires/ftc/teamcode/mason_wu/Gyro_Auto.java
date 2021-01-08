@@ -76,19 +76,19 @@ public class Gyro_Auto extends LinearOpMode
 
         if (opModeIsActive()) {
             //drive straight with a power of 0.4 for 5000 milliseconds, allowing a margin of error of 1 degree
-            driveStraight(1.0,0.4,5000);
+            driveStraight(1.0,0.4,2500);
             sleep(500);
             //turn to 120 degrees with a power of 0.4
             turnToAngle(120,1.0,0.4);
             sleep(500);
             //drive straight with power of 0.4 for 2500 milliseconds, allowing a margin of error of 1 degree
-            driveStraight(1.0,0.4,2500);
+            driveStraight(1.0,0.4,1250);
             sleep(500);
             //turn 90 degrees in counterclockwise direction with a power of 0.4
             turnAtAngle(false,90.0,1.0,0.4);
             sleep(500);
             //drive straight with a power of 0.4 for 4330 milliseconds, allowing a margin of error of 1 degree
-            driveStraight(1.0,0.4,4330);
+            driveStraight(1.0,0.4,2165);
             sleep(500);
         }
     }
