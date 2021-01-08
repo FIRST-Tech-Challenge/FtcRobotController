@@ -35,7 +35,7 @@ public class LQRDrive extends LinearOpMode
 
 7 0 0 0 0 0
 0 7 0 0 0 0
-0 0 45 0 0 0
+0 0 245 0 0 0
 0 0 0 .0005 0 0
 0 0 0 0 .0005 0
 0 0 0 0 0 .0005
@@ -68,6 +68,28 @@ public class LQRDrive extends LinearOpMode
         * */
         double[][][] wobble={{{}}};
 
+        /*
+        *
+0 0 0 1 0 0
+0 0 0 0 1 0
+0 0 0 0 0 1
+0 0 0 0 0 0
+0 0 0 0 0 0
+0 0 0 0 0 0
+
+.2 0 0 0 0 0
+0 .5 0 0 0 0
+0 0 15 0 0 0
+0 0 0 .1 0 0
+0 0 0 0 .1 0
+0 0 0 0 0 .1
+
+150 0 0 0
+0 150 0 0
+0 0 150 0
+0 0 0 150
+        * */
+        double[][][] park = {{{}}};
         try
         {
 
@@ -80,6 +102,7 @@ public class LQRDrive extends LinearOpMode
             String[] data = content.split("\r\n\r\n");
             path = lqr.loadPath("/lqrTestData.txt");
             wobble = lqr.loadPath("/wobble.txt");
+            park = lqr.loadPath("/park.txt");
 
             telemetry.addData("test",content.substring(0,60)+"\n\n\n\n\n\n"+data[0]+"\n\n\n"+path[0][0][0]);
             telemetry.update();
@@ -115,10 +138,10 @@ public class LQRDrive extends LinearOpMode
 
         ElapsedTime e = new ElapsedTime();
 
-        while(opModeIsActive()&&!lqr.robotInCircle(-58,1.1,5))
+        while(opModeIsActive()&&!lqr.robotInCircle(-58,5.5,5))
         {
 
-            for(double d[]:lqr.runLqrDrive(wobble,-58,1.1,6.24))
+            for(double d[]:lqr.runLqrDrive(wobble,-58,5.5,0))
             {
 
                 telemetry.addData("x",d);
@@ -135,10 +158,10 @@ public class LQRDrive extends LinearOpMode
 
         }
 
-        while(opModeIsActive()&&!lqr.robotInCircle(-58,-2,.4))
+        while(opModeIsActive()&&!lqr.robotInCircle(-58,-2.65,.4))
         {
 
-            for(double d[]:lqr.runLqrDrive(path,-58,-2,6.24))
+            for(double d[]:lqr.runLqrDrive(path,-58,-2.65,0))
             {
 
                 int i=0;
@@ -147,7 +170,7 @@ public class LQRDrive extends LinearOpMode
                 i++;
 
             }
-            robot.flywheelRotateServoLeft.setPosition(.41);
+            robot.flywheelRotateServoLeft.setPosition(.6);
             telemetry.addData("x: ", robot.x);
             telemetry.addData("y: ", robot.y);
             telemetry.addData("theta: ", robot.theta);
@@ -171,10 +194,10 @@ public class LQRDrive extends LinearOpMode
         e.startTime();
         while(e.seconds()<1&&opModeIsActive()){robot.setFlyWheelPower(1);}
         robot.setFlyWheelPower(0);
-        while(opModeIsActive()&&!lqr.robotInCircle(-66,-4,1))
+        while(opModeIsActive()&&!lqr.robotInCircle(-67.5,-8,1))
         {
 
-            for(double d[]:lqr.runLqrDrive(path,-66,-4,0))
+            for(double d[]:lqr.runLqrDrive(park,-67.5,-8,0))
             {
 
                 telemetry.addData("x",d);

@@ -36,7 +36,7 @@ public class Teleop extends LinearOpMode
         double forward=1;
         double angleSpeed=.2;
         double servoPosition =1;
-        double savedPosition = .41;
+        double savedPosition = .405;
 
         double leftSub = 0;
         double rightSub = 0;
