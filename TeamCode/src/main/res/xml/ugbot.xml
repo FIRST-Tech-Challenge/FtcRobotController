@@ -26,4 +26,5 @@
 
         </LynxModule>
     </LynxUsbDevice>
+    <Webcam name="Webcam 1" serialNumber="BFD5985F" />
 </Robot>

@@ -36,7 +36,7 @@ public class Autonomous {
     public boolean enableTelemetry = false;
     public static final Class<? extends VisionProvider>[] visionProviders = VisionProviders.visionProviders;
     public static final Viewpoint viewpoint = Viewpoint.WEBCAM;
-    public int ugState = 1;
+    public int ugState = 0;
     private MineralStateProvider ugStateProvider = () -> ugState;
 
     // staging and timer variables
@@ -92,24 +92,26 @@ public class Autonomous {
 
 
     public StateMachine AutoFull = getStateMachine(autoStage)
-            .addMineralState(ugStateProvider,
-                    () -> robot.driveIMUDistanceWithReset(.7,0,true,2.9),
-                    () -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),true,2.3),
-                    () -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),true,1.87))
+            .addTimedState(3f, () -> sample(),  () -> telemetry.addData("DELAY", "DONE"))
 
-            .addMineralState(ugStateProvider,
-                    () -> robot.turret.rotateCardinalTurret(true),
-                    () -> robot.turret.rotateCardinalTurret(false),
-                    () -> robot.turret.rotateCardinalTurret(true))
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.launcher.toggleGripper())
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-
-            .addMineralState(ugStateProvider,
-                    () -> robot.driveIMUDistanceWithReset(.7,0,false,1),
-                    () -> robot.driveIMUDistanceWithReset(.5,0,false,.5),
-                    () -> true)
-            .addState(() -> robot.driveIMUDistanceWithReset(.2,180,true,0))
+//            .addMineralState(ugStateProvider,
+//                    () -> robot.driveIMUDistanceWithReset(.7,0,true,2.9),
+//                    () -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),true,2.3),
+//                    () -> robot.driveIMUDistanceWithReset(.7,robot.getHeading(),true,1.87))
+//
+//            .addMineralState(ugStateProvider,
+//                    () -> robot.turret.rotateCardinalTurret(true),
+//                    () -> robot.turret.rotateCardinalTurret(false),
+//                    () -> robot.turret.rotateCardinalTurret(true))
+//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//            .addState(() -> robot.launcher.toggleGripper())
+//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//
+//            .addMineralState(ugStateProvider,
+//                    () -> robot.driveIMUDistanceWithReset(.7,0,false,1),
+//                    () -> robot.driveIMUDistanceWithReset(.5,0,false,.5),
+//                    () -> true)
+//            .addState(() -> robot.driveIMUDistanceWithReset(.2,180,true,0))
             .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,6 +149,7 @@ public class Autonomous {
             robot.ledSystem.setColor(LEDSystem.Color.CALM);
             vp = visionProviders[visionProviderState].newInstance();
              vp.initializeVision(robot.hwMap, viewpoint);
+            telemetry.addData("It doesn't even matter", "how hard you try");
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }

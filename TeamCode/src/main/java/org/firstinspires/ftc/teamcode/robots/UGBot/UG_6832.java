@@ -818,7 +818,7 @@ public class UG_6832 extends OpMode {
         telemetry.addLine().addData("Turret Heading", () -> robot.turret.getHeading());
         telemetry.addLine().addData("Turret Target`s", () -> robot.turret.getTurretTargetHeading());
         telemetry.addLine().addData("Turret Current angle ", () -> robot.turret.getHeading());
-        telemetry.addLine().addData("driveIMUDistanceTarget", () -> robot.driveIMUDistanceTarget);
+
 
 
     }
