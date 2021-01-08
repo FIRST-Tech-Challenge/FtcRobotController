@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -18,6 +19,8 @@ public class Troubleshoot extends LinearOpMode {
     private TwoPosServo gear;
     private boolean clawButtonIsDown = false; // controls the claw servo button press
     private boolean gearboxButtonIsDown = false; // controls the gearbox servo button press
+
+    private Sensors sensors;
 
 
     @Override
@@ -42,6 +45,10 @@ public class Troubleshoot extends LinearOpMode {
         gear = new TwoPosServo(
                 hardwareMap.get(Servo.class, "gearbox"),
                 0.5, 1);
+
+        sensors = new Sensors(
+                hardwareMap.get(Rev2mDistanceSensor.class, "dist")
+        );
 
         waitForStart();
         while (opModeIsActive()) {
@@ -96,6 +103,7 @@ public class Troubleshoot extends LinearOpMode {
             telemetry.addData("rf", d.getPowerrf());
             telemetry.addData("rb", d.getPowerrb());
             telemetry.addData("Lift", lift.getClicks());
+            telemetry.addData("Dist sensor!", sensors.getDistanceFront());
             telemetry.update();
 
         }
