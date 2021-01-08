@@ -159,6 +159,16 @@ public class Robot {
         drivetrain.moveAngle2(distance, angle, turn);
     }*/
 
+    /**Navigation**/
+
+    public void runNavigation() {
+        Thread vuforia = new Thread(new VuforiaWebcam(op));
+//        Thread odometry = new Thread(new Odometry(op));
+
+//        odometry.start();
+        //This is where we write the code that uses Vuforia to override Odometry
+    }
+
 
     /**Vuforia**/
 
