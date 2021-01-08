@@ -57,7 +57,7 @@ public class Arm_Auto extends LinearOpMode {
 
         //PLEASE SET THE DIRECTION AND POSITION HERE
 
-        Arm.setDirection(DcMotor.Direction.FORWARD);
+        Arm.setDirection(DcMotor.Direction.REVERSE);
 //        Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Hand.setPosition(HAND_CLOSE_POSITION);
 
@@ -75,29 +75,38 @@ public class Arm_Auto extends LinearOpMode {
 
         while (opModeIsActive()) {
              if(cycle == 1) {
-                 //arm moves up
-                 armMotion(true, 0.3, 800);
-                 sleep(200);
-                 //arm moves down
-                 armMotion(false, 0.3, 800);
+                 //arm moves down with a power of 0.4 for 1000 milliseconds
+                 armMotion(false, 0.4, 1000);
+                 sleep(500);
+                 //hand(grabber) opens
+                 handMotion(false);
+                 sleep(1000);
+                 //arm moves up with a power of 0.4 for 1000 milliseconds
+                 armMotion(true, 0.4, 1000);
+                 sleep(500);
+                 //hand(grabber) closes
+                 handMotion(true);
              }
-             //handMotion(true);
             telemetry.addData("Hand Position:", Hand.getPosition());
             telemetry.update();
             cycle++;
-
         }
     }
 
     boolean armMotion(boolean moveUp, double power, double timeInterval){
         ElapsedTime armTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        int Upfactor = -1;
+        int upFactor = -1;
         if(!moveUp){
-            Upfactor = 1;
+            upFactor = 1;
         }
         while(armTime.milliseconds() <= timeInterval) {
-            Arm.setPower(Math.abs(power)*(Upfactor));
+            if(armTime.milliseconds()<= timeInterval-300) {
+                power -= upFactor * 0.02;
+            }
+            Arm.setPower(Math.abs(power)*(upFactor));
+            sleep(20);
         }
+        Arm.setPower(0);
         return true;
     }
 

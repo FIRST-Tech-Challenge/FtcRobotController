@@ -75,13 +75,29 @@ public class Gyro_Auto extends LinearOpMode
         waitForStart();
 
         if (opModeIsActive()) {
-            ElapsedTime t = new ElapsedTime(ElapsedTime.Resolution.SECONDS);
-
-            while(t.seconds()<=15){
-                driveStraight(5,0.3);
-            }
+            //drive straight with a power of 0.4 for 5000 milliseconds, allowing a margin of error of 1 degree
+            driveStraight(1.0,0.4,5000);
+            sleep(500);
+            //turn to 120 degrees with a power of 0.4
+            turnToAngle(120,1.0,0.4);
+            sleep(500);
+            //drive straight with power of 0.4 for 2500 milliseconds, allowing a margin of error of 1 degree
+            driveStraight(1.0,0.4,2500);
+            sleep(500);
+            //turn 90 degrees in counterclockwise direction with a power of 0.4
+            turnAtAngle(false,90.0,1.0,0.4);
+            sleep(500);
+            //drive straight with a power of 0.4 for 4330 milliseconds, allowing a margin of error of 1 degree
+            driveStraight(1.0,0.4,4330);
+            sleep(500);
         }
+    }
 
+    void stopMotion(){
+        LF.setPower(0);
+        RF.setPower(0);
+        LB.setPower(0);
+        RB.setPower(0);
     }
 
     double aquireHeading(){
@@ -95,106 +111,111 @@ public class Gyro_Auto extends LinearOpMode
         }
         telemetry.addData("Heading", tempDeg);
         telemetry.update();
-        sleep(50);
+        sleep(20);
         return tempDeg;
     }
-    void driveStraight (double range, double power) throws InterruptedException{
-        double currentAngle = aquireHeading();
-        double LF_power = power;
-        double LB_power = power;
-        double RF_power = power;
-        double RB_power = power;
-        if(currentAngle<(-1*range)){
-            RF_power += 0.1;
-            RB_power += 0.1;
-            LF_power -= 0.1;
-            LB_power -= 0.1;
+    void driveStraight (double margin, double power, double timeInterval) throws InterruptedException{
+        ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        final double currentAngle = aquireHeading();
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+        while(driveTime.milliseconds() < timeInterval) {
+            double tempAngle = aquireHeading();
+            LF_power = power;
+            LB_power = power;
+            RF_power = power;
+            RB_power = power;
+            if (tempAngle < currentAngle -1 * margin) {
+                RF_power += 0.1;
+                RB_power += 0.1;
+                LF_power -= 0.1;
+                LB_power -= 0.1;
+            } else if (tempAngle > currentAngle + (margin)) {
+                RF_power -= 0.1;
+                RB_power -= 0.1;
+                LF_power += 0.1;
+                LB_power += 0.1;
+            }
+            RF_power = Range.clip(RF_power, -1, 1);
+            RB_power = Range.clip(RB_power, -1, 1);
+            LF_power = Range.clip(LF_power, -1, 1);
+            LB_power = Range.clip(LB_power, -1, 1);
+            LF.setPower(LF_power);
+            RF.setPower(RF_power);
+            LB.setPower(LB_power);
+            RB.setPower(RB_power);
+            telemetry.addData("RF_power", RF_power);
+            telemetry.addData("RB_power", RB_power);
+            telemetry.addData("LF_power", LF_power);
+            telemetry.addData("LB_power", LB_power);
+            telemetry.update();
         }
-        else if(currentAngle>(range)){
-            RF_power -= 0.1;
-            RB_power -= 0.1;
-            LF_power += 0.1;
-            LB_power += 0.1;
+        stopMotion();
+    }
+    //make a turn that based on the current heading in a certain direction and angle
+    void turnAtAngle (boolean isClockwise, double degree, double margin, double power){
+        int angleFactor = -1;
+        if(!isClockwise){
+            angleFactor = 1;
         }
-        RF_power = Range.clip(RF_power,-1,1);
-        RB_power = Range.clip(RB_power,-1,1);
-        LF_power = Range.clip(LF_power,-1,1);
-        LB_power = Range.clip(LB_power,-1,1);
-        LF.setPower(LF_power);
-        RF.setPower(RF_power);
-        LB.setPower(LB_power);
-        RB.setPower(RB_power);
-        telemetry.addData("RF_power", RF_power);
-        telemetry.addData("LF_power", LF_power);
-        telemetry.addData("RB_power", RB_power);
-        telemetry.addData("LB_power", LB_power);
-        telemetry.update();
+        final double currentAngle = aquireHeading();
+        double targetAngle = currentAngle + degree * angleFactor;
+        if(targetAngle >= 180){
+            targetAngle -= 360;
+        }else if(targetAngle < -180){
+            targetAngle += 360;
+        }
+        turnToAngle(targetAngle, margin, power);
+        stopMotion();
     }
 
-    // void composeTelemetry() {
-
-    //        // At the beginning of each telemetry update, grab a bunch of data
-    //        // from the IMU that we will then display in separate lines.
-    //        telemetry.addAction(new Runnable() { @Override public void run()
-    //                {
-    //                // Acquiring the angles is relatively expensive; we don't want
-    //                // to do that in each of the three items that need that info, as that's
-    //                // three times the necessary expense.
-    //                angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-    //                gravity  = imu.getGravity();
-    //                }
-    //            });
-
-    //        telemetry.addLine()
-    //            .addData("status", new Func<String>() {
-    //                @Override public String value() {
-    //                    return imu.getSystemStatus().toShortString();
-    //                    }
-    //                })
-    //            .addData("calib", new Func<String>() {
-    //                @Override public String value() {
-    //                    return imu.getCalibrationStatus().toString();
-    //                    }
-    //                });
-
-    //        telemetry.addLine()
-    //            .addData("heading", new Func<String>() {
-    //                @Override public String value() {
-    //                    return formatAngle(angles.angleUnit, angles.firstAngle);
-    //                    }
-    //                })
-    //            .addData("roll", new Func<String>() {
-    //                @Override public String value() {
-    //                    return formatAngle(angles.angleUnit, angles.secondAngle);
-    //                    }
-    //                })
-    //            .addData("pitch", new Func<String>() {
-    //                @Override public String value() {
-    //                    return formatAngle(angles.angleUnit, angles.thirdAngle);
-    //                    }
-    //                });
-
-    //        telemetry.addLine()
-    //            .addData("grvty", new Func<String>() {
-    //                @Override public String value() {
-    //                    return gravity.toString();
-    //                    }
-    //                })
-    //            .addData("mag", new Func<String>() {
-    //                @Override public String value() {
-    //                    return String.format(Locale.getDefault(), "%.3f",
-    //                            Math.sqrt(gravity.xAccel*gravity.xAccel
-    //                                    + gravity.yAccel*gravity.yAccel
-    //                                    + gravity.zAccel*gravity.zAccel));
-    //                    }
-    //                });
-    //    }
-
-    //    String formatAngle(AngleUnit angleUnit, double angle) {
-    //        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    //    }
-
-    //    String formatDegrees(double degrees){
-    //        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    //    }
+    //make a turn TO a certain angle
+    void turnToAngle (double targetAngle, double margin, double power){
+        int angleFactor = 0;
+        final double currentAngle = aquireHeading();
+        if(currentAngle - targetAngle > 0){
+            if(currentAngle - targetAngle < 180){
+                //cw
+                angleFactor = -1;
+            }
+            //ccw
+            angleFactor = 1;
+        }
+        else{
+            if(targetAngle - currentAngle < 180){
+                //ccw
+                angleFactor = 1;
+            }
+            //cw
+            angleFactor = -1;
+        }
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+        double tempAngle = currentAngle;
+        while (!((tempAngle < targetAngle + margin)&&(tempAngle > targetAngle - margin))){
+            tempAngle = aquireHeading();
+            RF_power = angleFactor * power;
+            RB_power = angleFactor * power;
+            LF_power = -1 * angleFactor * power;
+            LB_power = -1 * angleFactor * power;
+            RF_power = Range.clip(RF_power, -1, 1);
+            RB_power = Range.clip(RB_power, -1, 1);
+            LF_power = Range.clip(LF_power, -1, 1);
+            LB_power = Range.clip(LB_power, -1, 1);
+            LF.setPower(LF_power);
+            RF.setPower(RF_power);
+            LB.setPower(LB_power);
+            RB.setPower(RB_power);
+            telemetry.addData("RF_power", RF_power);
+            telemetry.addData("RB_power", RB_power);
+            telemetry.addData("LF_power", LF_power);
+            telemetry.addData("LB_power", LB_power);
+            telemetry.update();
+        }
+        stopMotion();
+    }
 }
