@@ -1416,7 +1416,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
                 chassis.driveTo(1.0, side(90), 123, 0, false, 5);
                 autoIntakeRings(3);
-                chassis.driveTo(1.0, side(90), 140, 0, false, 5);
+                chassis.driveTo(1.0, side(90), 160, 0, false, 5);
                 autoShootHighGoal(3);
                 chassis.driveTo(1.0, side(3), 280, 0, false, 5);
             } else {
