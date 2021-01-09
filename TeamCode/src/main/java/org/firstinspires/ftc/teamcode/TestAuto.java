@@ -2,15 +2,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import org.firstinspires.ftc.teamcode.SLAM;
 
 @Autonomous(name = "Diff Swerve Test Auto", group = "Linear Opmode")
 
 public class TestAuto extends LinearOpMode {
     Robot robot;
     public boolean willResetIMU = true;
-    double cmDistance = 2;
-    double speed = 0.5;
-    Vector2d direction = new Vector2d(0,1);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -23,11 +21,25 @@ public class TestAuto extends LinearOpMode {
         //simple sequence to demonstrate the three main autonomous primitives
 
         //rotate modules to face to the right
-        robot.driveController.rotateModules(Vector2d.RIGHT, false, 10000, this);
+        //robot.driveController.rotateModules(Vector2d.RIGHT, false, 10000, this);
 
         //drive 20 cm to the right (while facing forward)
-        //robot.driveController.drive(Vector2d.RIGHT, 200, .5, this);
-
+        //robot.driveController.drive(Vector2d.FORWARD, 100 , 1, this);
+        //robot.driveController.rotateRobot(Angle.RIGHT, this);
+        robot.driveController.rotateModules(Vector2d.FORWARD, false, 2000, this);
+        sleep(500);
+        robot.driveController.rotateModules(Vector2d.LEFT, false, 2000, this);
+        sleep(500);
+        robot.driveController.rotateModules(Vector2d.BACKWARD, false, 2000, this);
+        sleep(500);
+        robot.driveController.rotateModules(Vector2d.RIGHT, false, 2000, this);
+        sleep(500);
+        robot.driveController.rotateModules(Vector2d.FORWARD, false, 2000, this);
+        robot.driveController.drive(Vector2d.FORWARD, 50 , .5, this);
+        robot.driveController.drive(Vector2d.UNIT_CIRCLE_60, 50 , .5, this);
+        robot.driveController.drive(Vector2d.RIGHT, 50 , .5, this);
+        robot.driveController.drive(Vector2d.UNIT_CIRCLE_120, 50 , .5, this);
+        robot.driveController.rotateModules(Vector2d.FORWARD, false, 2000, this);
 
         //robot.driveController.drive(Vector2d.RIGHT, 200, 1, this);
         //robot.driveController.updateUsingJoysticks(Vector2d.RIGHT.scale(Math.sqrt(2)), new Vector2d(0,0), false);
@@ -57,8 +69,4 @@ public class TestAuto extends LinearOpMode {
         //robot.driveController.rotateRobot(Angle.RIGHT, this);
     }
 
-    private Angle getCurrentOrientation() {
-        double rawAngle = (double)(robot.driveController.moduleLeft.motor1.getCurrentPosition() + robot.driveController.moduleLeft.motor2.getCurrentPosition()/2.0);//motor2-motor1 makes ccw positive (?)
-        return new Angle(rawAngle, Angle.AngleType.ZERO_TO_360_HEADING);
-    }
 }

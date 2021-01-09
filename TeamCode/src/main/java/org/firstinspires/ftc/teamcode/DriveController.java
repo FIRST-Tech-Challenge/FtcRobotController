@@ -1,9 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Transform2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.spartronics4915.lib.T265Camera;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.DriveModule.RotateModuleMode.DO_NOT_ROTATE_MODULES;
 import static org.firstinspires.ftc.teamcode.DriveModule.RotateModuleMode.ROTATE_MODULES;
 
@@ -35,7 +43,7 @@ public class DriveController {
     public final double ALLOWED_ROBOT_ROT_ERROR = 5; //was 3
 
     //distance from target when power scaling will begin
-    public final double START_DRIVE_SLOWDOWN_AT_CM = 15;
+    public final double START_DRIVE_SLOWDOWN_AT_CM = 50;
 
     //maximum number of times the robot will try to correct its heading when rotating
     public final int MAX_ITERATIONS_ROBOT_ROTATE = 2;
@@ -125,6 +133,7 @@ public class DriveController {
     public void update(Vector2d translationVector, double rotationMagnitude) {
         moduleLeft.updateTarget(translationVector, rotationMagnitude);
         moduleRight.updateTarget(translationVector, rotationMagnitude);
+        updateSLAMNav();
     }
     public void updateAbsRotation(Vector2d translationVector, Vector2d joystick2, double scaleFactor) {
         Angle targetAngle = joystick2.getAngle(); //was + .convertAngle(Angle.AngleType.NEG_180_TO_180_HEADING)
@@ -140,50 +149,9 @@ public class DriveController {
     //AUTONOMOUS METHODS
     //do NOT call in a loop
 
-    public void driveTurnModules(double targetTurn) {
-
-        while (Math.abs(moduleRight.getCurrentOrientation().getAngle()) < targetTurn) {
-
-            moduleRight.updateTracking();
-            moduleLeft.updateTracking();
-
-            robot.telemetry.addData("Right: ", moduleRight.getCurrentOrientation());
-            robot.telemetry.addData("Left: ", moduleLeft.getCurrentOrientation());
-            robot.telemetry.update();
-
-
-            if (Math.abs(moduleRight.getCurrentOrientation().getAngle()) > targetTurn) {
-
-                moduleRight.motor1.setPower(-1);
-                moduleRight.motor2.setPower(-1);
-
-                moduleLeft.motor1.setPower(-1);
-                moduleLeft.motor2.setPower(-1);
-
-            }
-            else {
-                moduleRight.motor1.setPower(1);
-                moduleRight.motor2.setPower(1);
-
-                moduleLeft.motor1.setPower(1);
-                moduleLeft.motor2.setPower(1);
-
-            }
-
-        }
-        moduleRight.motor1.setPower(0);
-        moduleRight.motor2.setPower(0);
-
-        moduleLeft.motor1.setPower(0);
-        moduleLeft.motor2.setPower(0);
-
-
-
-    }
-
     //speed should be scalar from 0 to 1
     public void drive(Vector2d direction, double cmDistance, double speed, boolean fixModules, boolean alignModules, LinearOpMode linearOpMode) {
-        cmDistance = cmDistance/2.0; //BAD :(
+        cmDistance = cmDistance; //BAD :(
         double initalSpeed = speed;
 
         alignModules = true;
@@ -200,6 +168,8 @@ public class DriveController {
 
         while (getDistanceTraveled() < cmDistance && /*System.currentTimeMillis() - startTime < DRIVE_TIMEOUT && */linearOpMode.opModeIsActive()) {
             robot.updateBulkData();
+            updateSLAMNav();
+            updateTracking();
             //slows down drive power in certain range
             if (cmDistance - getDistanceTraveled() < START_DRIVE_SLOWDOWN_AT_CM) {
                 speed = RobotUtil.scaleVal(cmDistance - getDistanceTraveled(), 0, START_DRIVE_SLOWDOWN_AT_CM, MIN_DRIVE_POWER, initalSpeed);
@@ -209,6 +179,10 @@ public class DriveController {
             update(direction.normalize(Math.abs(speed)), 0); //added ABS for DEBUGGING
 
             linearOpMode.telemetry.addData("Driving robot", "");
+            linearOpMode.telemetry.addData("Distance Traveled", getDistanceTraveled());
+            linearOpMode.telemetry.addData("CM Distance", cmDistance);
+            linearOpMode.telemetry.addData("SLAM Pos", translationSLAM);
+            linearOpMode.telemetry.addData("SLAM Rot", rotationSLAM);
             linearOpMode.telemetry.update();
 
             updatePositionTracking(robot.telemetry); //update position tracking
@@ -323,6 +297,7 @@ public class DriveController {
             //at the end, all three speeds will be min speed (different for each)
             //in between, the speeds will scale linearly depending on distance from target position
             robot.updateBulkData();
+            updateSLAMNav();
             updatePositionTracking(linearOpMode.telemetry);
 
             Vector2d translationDirection = robotPosition.getDirectionTo(targetPosition);
@@ -495,6 +470,7 @@ public class DriveController {
         double absHeadingDiff = robot.getRobotHeading().getDifference(targetAngle);
         while (absHeadingDiff > ALLOWED_MODULE_ROT_ERROR && linearOpMode.opModeIsActive() && iterations < MAX_ITERATIONS_ROBOT_ROTATE /*&& System.currentTimeMillis() - startTime < ROTATE_ROBOT_TIMEOUT*/) {
             robot.updateBulkData();
+            updateSLAMNav();
             absHeadingDiff = robot.getRobotHeading().getDifference(targetAngle);
             double rotMag = RobotUtil.scaleVal(absHeadingDiff, 0, 25, 0, power); //was max power 1 - WAS 0.4 max power
 
@@ -524,6 +500,8 @@ public class DriveController {
         double startTime = System.currentTimeMillis();
         do {
             robot.updateBulkData();
+            updateSLAMNav();
+            updateTracking();
             moduleLeftDifference = moduleLeft.getCurrentOrientation().getDifference(direction.getAngle()); //was getRealAngle() (don't ask)
             moduleRightDifference = moduleRight.getCurrentOrientation().getDifference(direction.getAngle());
             moduleLeft.rotateModule(direction, fieldCentric);
@@ -615,5 +593,29 @@ public class DriveController {
     public void resetEncoders() {
         moduleRight.resetEncoders();
         moduleLeft.resetEncoders();
+    }
+
+    T265Camera slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);;
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
+    final int robotRadius = 9; // inches
+    TelemetryPacket packet = new TelemetryPacket();
+    Canvas field = packet.fieldOverlay();
+    T265Camera.CameraUpdate up;
+    Translation2d translationSLAM;
+    Rotation2d rotationSLAM;
+
+    public void updateSLAMNav() {
+        // We divide by 0.0254 to convert meters to inches
+        up = slamra.getLastReceivedCameraUpdate();
+        translationSLAM = new Translation2d(up.pose.getTranslation().getX() / 0.0254, up.pose.getTranslation().getY() / 0.0254);
+        rotationSLAM = up.pose.getRotation();
+
+        field.strokeCircle(translationSLAM.getX(), translationSLAM.getY(), robotRadius);
+        double arrowX = rotationSLAM.getCos() * robotRadius, arrowY = rotationSLAM.getSin() * robotRadius;
+        double x1 = translationSLAM.getX() + arrowX  / 2, y1 = translationSLAM.getY() + arrowY / 2;
+        double x2 = translationSLAM.getX() + arrowX, y2 = translationSLAM.getY() + arrowY;
+        field.strokeLine(x1, y1, x2, y2);
+
+        dashboard.sendTelemetryPacket(packet);
     }
 }

@@ -62,7 +62,7 @@ public class TeleOp extends OpMode {
         robot.driveController.updatePositionTracking(telemetry);
 
         joystick1 = new Vector2d(gamepad1.left_stick_x, -gamepad1.left_stick_y); //LEFT joystick
-        joystick2 = new Vector2d(gamepad1.right_stick_x, -gamepad1.right_stick_y); //RIGHT joystick
+        joystick2 = new Vector2d(gamepad1.right_stick_x+((gamepad1.right_stick_x/Math.abs(gamepad1.right_stick_x))*0.1), -gamepad1.right_stick_y); //RIGHT joystick
         slowModeDrive = false;
 
         telemetry.addData("Robot Heading: ", robot.getRobotHeading());

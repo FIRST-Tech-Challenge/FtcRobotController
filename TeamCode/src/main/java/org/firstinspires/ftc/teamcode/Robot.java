@@ -147,7 +147,7 @@ public class Robot {
 class Constants {
 
     //TODO Define these constants
-    final static double WHEEL_DIAMETER = 2.54*2.5, TICKS_PER_ROTATION = 24;
+    final static double WHEEL_DIAMETER = 2.5, TICKS_PER_ROTATION = 1014;
     final static double INCHES_PER_ROTATION = Math.PI * WHEEL_DIAMETER;
     final static double TICKS_PER_INCH = TICKS_PER_ROTATION / INCHES_PER_ROTATION;
     final static double DEGREES_THRESHOLD = 2;
