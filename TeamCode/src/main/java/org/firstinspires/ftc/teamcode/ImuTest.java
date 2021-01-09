@@ -68,6 +68,7 @@ public class ImuTest extends LinearOpMode
     // State used for updating telemetry
     Orientation angles;
     Acceleration gravity;
+  //  Velocity velocity;
 
     //----------------------------------------------------------------------------------------------
     // Main logic
@@ -122,6 +123,7 @@ public class ImuTest extends LinearOpMode
             // three times the necessary expense.
             angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             gravity  = imu.getGravity();
+ //           velocity = imu.getVelocity();
         }
         });
 
@@ -168,6 +170,24 @@ public class ImuTest extends LinearOpMode
                                         + gravity.zAccel*gravity.zAccel));
                     }
                 });
+
+//        telemetry.addLine()
+//                .addData("velocity", new Func<String>() {
+//                    @Override public String value() {
+//                        return velocity.toString();
+//                    }
+////                })
+////                .addData("accely", new Func<String>() {k
+////                    @Override public String value() {
+////                        return formatAngle(angles.angleUnit, angles.secondAngle);
+////                    }
+////                })
+////                .addData("accelz", new Func<String>() {
+////                    @Override public String value() {
+////                        return formatAngle(angles.angleUnit, angles.thirdAngle);
+////                    }
+//                });
+        telemetry.addData("velocity", imu.getVelocity());
     }
 
     //----------------------------------------------------------------------------------------------
