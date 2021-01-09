@@ -23,7 +23,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name="Minimum Blue", group ="Blue")
+//@Autonomous(name="Minimum Blue", group ="Blue")
 public class OmniAutoMinBlue extends OmniAutoXYBase
 {
     @Override

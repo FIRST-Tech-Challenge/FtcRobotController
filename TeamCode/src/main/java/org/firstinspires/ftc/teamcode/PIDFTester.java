@@ -16,7 +16,7 @@ import java.util.List;
  * Created by STEM Punk on 2/23/2020.
  */
 
-@TeleOp(name="Omni: PIDFTester", group ="TeleOp")
+//@TeleOp(name="Omni: PIDFTester", group ="TeleOp")
 public class PIDFTester extends OpMode {
 
     private double driverAngle = 0.0;

@@ -50,7 +50,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name="GoalDetector", group ="Test")
+//@TeleOp(name="GoalDetector", group ="Test")
 public class RedTowerGoalTracker2 extends LinearOpMode
 {
     OpenCvInternalCamera camera;

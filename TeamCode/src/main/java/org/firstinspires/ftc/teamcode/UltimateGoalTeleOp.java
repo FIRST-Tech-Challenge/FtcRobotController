@@ -72,6 +72,8 @@ public class UltimateGoalTeleOp extends OpMode {
     private boolean rightPressed;
     private boolean leftBumperPressed;
     private boolean rightBumperPressed;
+    private boolean upPressed;
+    private boolean downPressed;
     private boolean cross2Pressed;
     private boolean circle2Pressed;
     private boolean triangle2Pressed;
@@ -92,6 +94,7 @@ public class UltimateGoalTeleOp extends OpMode {
     private ElapsedTime loopTime = new ElapsedTime();
     private boolean runWithEncoders = true;
     private boolean aligning = false;
+    private double flapAngle = UltimateGoalRobot.FLAP_HIGH_GOAL;
 
     @Override
     public void start() {
@@ -105,7 +108,7 @@ public class UltimateGoalTeleOp extends OpMode {
                     robot.getRightEncoderWheelPosition(),
                     robot.getStrafeEncoderWheelPosition());
         }
-//        MyPosition.setPosition(335.915, 83.14436, Math.toRadians(180.0));
+        MyPosition.setPosition(0.0, 0.0, Math.toRadians(0.0));
     }
 
     @Override
@@ -138,6 +141,8 @@ public class UltimateGoalTeleOp extends OpMode {
 		leftPressed = gamepad1.dpad_left;
 		leftBumperPressed = gamepad1.left_bumper;
         rightBumperPressed = gamepad1.right_bumper;
+        upPressed = gamepad1.dpad_up;
+        downPressed = gamepad1.dpad_down;
         cross2Pressed = gamepad2.cross;
         circle2Pressed = gamepad2.circle;
         triangle2Pressed = gamepad2.triangle;
@@ -158,7 +163,7 @@ public class UltimateGoalTeleOp extends OpMode {
             // 180 CW.  This code normalizes that to 0 to 360 CCW from the Y Axis
             //robot.resetGyro();
             // This was -90, but needed to be oriented 90 degrees from actual angle.
-            driverAngle = toDegrees(atan2(yPower, xPower))- 0.0 - robot.readIMU();
+            driverAngle = toDegrees(atan2(yPower, xPower))- 90.0 - robot.readIMU();
             xPower = 0.0;
             yPower = 0.0;
             spin = 0.0;
@@ -241,6 +246,19 @@ public class UltimateGoalTeleOp extends OpMode {
             robot.setWobbleMotorPower(0.0);
         }
 
+        if(!upHeld && upPressed) {
+            robot.setShooterFlapHighGoal();
+            upHeld = true;
+        } else if (!upPressed) {
+            upHeld = false;
+        }
+
+        if(!downHeld && downPressed) {
+            robot.setShooterFlapPowerShot();
+            downHeld = true;
+        } else if (!downPressed) {
+            downHeld = false;
+        }
 		// ********************************************************************
 		// OPERATOR JOYSTICK
 		// ********************************************************************
@@ -282,12 +300,26 @@ public class UltimateGoalTeleOp extends OpMode {
         }
 
         if(!up2Held && up2Pressed) {
+            if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
+                robot.highGoalOffset -= 0.002;
+                robot.setShooterFlapHighGoal();
+            } else {
+                robot.highGoalOffset -= 0.002;
+                robot.setShooterFlapPowerShot();
+            }
             up2Held = true;
         } else if (!up2Pressed) {
 			up2Held = false;
 		}
 
         if(!down2Held && down2Pressed) {
+            if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
+                robot.highGoalOffset += 0.002;
+                robot.setShooterFlapHighGoal();
+            } else {
+                robot.highGoalOffset += 0.002;
+                robot.setShooterFlapPowerShot();
+            }
             down2Held = true;
         } else if (!down2Pressed) {
 			down2Held = false;
@@ -311,10 +343,11 @@ public class UltimateGoalTeleOp extends OpMode {
 //        if(robot.stackAlignmentState == HardwareOmnibot.StackAlignActivity.IDLE) {
             aligning = false;
             robot.drive(speedMultiplier * xPower, speedMultiplier * yPower,
-                    spinMultiplier * spin, driverAngle, robot.defaultInputShaping);
+                    spinMultiplier * spin, driverAngle - 90.0, robot.defaultInputShaping);
 //        }
 
         telemetry.addData("Offset Angle: ", driverAngle);
+        telemetry.addData("Flap Position: ", flapAngle);
         telemetry.addData("Shooter Velocity: ", robot.shooter.getVelocity());
         telemetry.addData("FL Motor Velocity: ", robot.frontLeft.getVelocity());
         telemetry.addData("FR Motor Velocity: ", robot.frontRight.getVelocity());

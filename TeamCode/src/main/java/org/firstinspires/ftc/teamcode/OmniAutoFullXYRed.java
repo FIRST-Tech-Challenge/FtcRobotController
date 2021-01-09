@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 /**
  * Created by 12090 STEM Punk
  */
-@Autonomous(name="Full Red", group ="Red")
+//@Autonomous(name="Full Red", group ="Red")
 public class OmniAutoFullXYRed extends OmniAutoFullXY
 {
     // Sets the points in the image to detect the skystone.

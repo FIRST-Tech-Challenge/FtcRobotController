@@ -29,7 +29,7 @@ import org.opencv.core.Point;
 /**
  * Created by 12090 STEM Punk
  */
-@Autonomous(name="Coop Red", group ="Red")
+//@Autonomous(name="Coop Red", group ="Red")
 public class OmniAutoCoopXYRed extends OmniAutoCoopXY
 {
     // Sets the points in the image to detect the skystone.

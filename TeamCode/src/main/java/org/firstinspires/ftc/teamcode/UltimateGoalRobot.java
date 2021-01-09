@@ -33,7 +33,7 @@ import static java.lang.Math.sqrt;
 public class UltimateGoalRobot
 {
     /* Public OpMode members. */
-    public final static double SHOOT_POWER = 0.53;
+    public final static double SHOOT_POWER = 0.47;
     public final static double STRAFE_MULTIPLIER = 1.5;
     public final static double SLOW_STRAFE_MULTIPLIER = 1.5;
     public final static double MIN_FOUNDATION_SPIN_RATE = 0.19;
@@ -58,6 +58,16 @@ public class UltimateGoalRobot
     public final static String CLAW_SERVO = "Claw";
     public final static String FLAP_SERVO = "Flap";
     public final static String INJECTOR_SERVO = "Injector";
+
+    public enum FLAP_POSITION {
+        POWERSHOT,
+        HIGH_GOAL
+    }
+    public FLAP_POSITION flapPosition;
+    public final static double FLAP_POWERSHOT = 0.620;
+    public double powerShotOffset = 0.0;
+    public final static double FLAP_HIGH_GOAL = 0.525;
+    public double highGoalOffset = 0.0;
 
     // We need both hubs here because one has the motors, and the other has the
     // odometry encoders.
@@ -199,7 +209,8 @@ public class UltimateGoalRobot
 
         injector.setPosition(INJECTOR_HOME);
         claw.setPosition(CLAW_CLOSED);
-        flap.setPosition(FLAP_POWERSHOT);
+        clawClosed = true;
+        setShooterFlapPowerShot();
 
         // Define and initialize timers.
         clawTimer = new ElapsedTime();
@@ -269,6 +280,16 @@ public class UltimateGoalRobot
         }
 
         return imuValue;
+    }
+
+    public void setShooterFlapPowerShot() {
+        flap.setPosition(FLAP_POWERSHOT + powerShotOffset);
+        flapPosition = FLAP_POSITION.POWERSHOT;
+    }
+
+    public void setShooterFlapHighGoal() {
+        flap.setPosition(FLAP_HIGH_GOAL + highGoalOffset);
+        flapPosition = FLAP_POSITION.POWERSHOT;
     }
 
     public void setShooterMotorPower(double power) {
@@ -629,10 +650,8 @@ public class UltimateGoalRobot
 
     /** Grab activity closes or opens the wobble arm claw. **/
     public final static double CLAW_TIME = 500.0;
-    public final static double CLAW_CLOSED = 0.10;
-    public final static double CLAW_OPEN = 0.25;
-    public final static double FLAP_POWERSHOT = 0.620;
-    public final static double FLAP_HIGH_GOAL = 0.340;
+    public final static double CLAW_CLOSED = 0.165;
+    public final static double CLAW_OPEN = 0.40;
     public boolean clawClosed = false;
     public enum GRABBING {
         IDLE,
@@ -667,7 +686,7 @@ public class UltimateGoalRobot
     }
 
     /** Inject activity pushes a disk into the shooter and resets the injector. **/
-    public final static double INJECTOR_FIRE_TIME = 200.0;
+    public final static double INJECTOR_FIRE_TIME = 300.0;
     public final static double INJECTOR_RESET_TIME = 200.0;
     public final static double INJECTOR_HOME_TIME = 100.0;
     public final static double INJECTOR_HOME = 0.512;
