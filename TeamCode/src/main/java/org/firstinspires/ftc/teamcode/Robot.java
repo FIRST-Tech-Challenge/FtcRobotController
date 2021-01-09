@@ -163,9 +163,10 @@ public class Robot {
 
     public void runNavigation() {
         Thread vuforia = new Thread(new VuforiaWebcam(op));
-//        Thread odometry = new Thread(new Odometry(op));
+        Thread odometry = new Thread(new Odometry(op));
 
-//        odometry.start();
+        odometry.start();
+        vuforia.start();
         //This is where we write the code that uses Vuforia to override Odometry
     }
 
