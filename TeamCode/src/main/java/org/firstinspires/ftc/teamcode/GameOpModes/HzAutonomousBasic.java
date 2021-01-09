@@ -239,8 +239,6 @@ public class HzAutonomousBasic extends LinearOpMode {
     }
 
     public void runAutoBlueInnerTargetAHighGoal(){
-        //Start Pose : (TBD, 48.5, ~-55deg)
-        //Spline to (0,12,0)
         hzAutoControl.setMagazineToLaunch();
         hzAutoControl.setLaunchTargetHighGoal();
         Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -250,7 +248,7 @@ public class HzAutonomousBasic extends LinearOpMode {
         hzDrive.followTrajectory(traj);
 
         hzAutoControl.setMagazineToLaunch();
-        hzWait(200);
+        hzWait(300);
         hzAutoControl.setRunLauncherTrue();
         hzWait(350);
         hzAutoControl.setRunLauncherTrue();
