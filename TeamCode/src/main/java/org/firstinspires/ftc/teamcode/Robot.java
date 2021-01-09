@@ -364,8 +364,6 @@ public class Robot {
 
     }
 
-
-    //TODO: <owner>, why do have the business logic of shooeter motor in Robot? Can this be moved to Shooter class, like some of the other methods?
     public void shootLeftPowerShot(int rings) {
         shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter.shooterMotor.setVelocity(10000.0);
