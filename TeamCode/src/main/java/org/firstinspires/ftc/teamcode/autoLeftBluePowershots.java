@@ -84,6 +84,5 @@ public class autoLeftBluePowershots extends LinearOpMode {
         robot.intake.setPower(1.0);//Shoot ring
 
 
-
     }
 }

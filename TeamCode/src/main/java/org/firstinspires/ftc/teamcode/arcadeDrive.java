@@ -32,12 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -45,15 +41,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * The names of OpModes appear on the menu of the FTC Driver Station.
  * When an selection is made from the menu, the corresponding OpMode
  * class is instantiated on the Robot Controller and executed.
- *
+ * <p>
  * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
  * It includes all the skeletal structure that all iterative OpModes contain.
- *
+ * <p>
  * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="arcadeDrive", group="Iterative Opmode")
+@TeleOp(name = "arcadeDrive", group = "Iterative Opmode")
 
 public class arcadeDrive extends OpMode {
     // Declare OpMode members.
@@ -64,13 +60,6 @@ public class arcadeDrive extends OpMode {
     public DcMotor leftReverse = null;
     public DcMotor rightFoward = null;
     public DcMotor intake = null;
-
-    //Constants
-    final double COUNTS_PER_MOTOR_REV = 1440; //Counts to rotations, testing later
-    final double DRIVE_GEAR_REDUCTION = 1.0; //If gears are added
-    final double WHEEL_DIAMETER_INCHES = 4.0; //Wheel size
-    final double CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER_INCHES; //Circumference of wheel
-
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -144,36 +133,28 @@ public class arcadeDrive extends OpMode {
         }
         return degree;
     }
+
     //This function converts the degrees into the power needed for the motors
-    public void motorPower(double angle, double forwardPower, double sidePower, double turnPower)
-    {
-        if(Math.abs(forwardPower) > 0.05 && Math.abs(turnPower) > 0.05 && Math.abs(sidePower) < 0.05)
-        {
-            if(turnPower > 0)
-            {
+    public void motorPower(double angle, double forwardPower, double sidePower, double turnPower) {
+        if (Math.abs(forwardPower) > 0.05 && Math.abs(turnPower) > 0.05 && Math.abs(sidePower) < 0.05) {
+            if (turnPower > 0) {
                 leftReverse.setPower(forwardPower);
                 leftFoward.setPower(forwardPower);
                 rightReverse.setPower(0);
                 rightFoward.setPower(0);
-            }
-            else if(turnPower < 0)
-            {
+            } else if (turnPower < 0) {
                 leftReverse.setPower(0);
                 leftFoward.setPower(0);
                 rightReverse.setPower(forwardPower);
                 rightFoward.setPower(forwardPower);
             }
 
-        }
-        else if (Math.abs(turnPower) > 0.05 && Math.abs(forwardPower) < 0.05 && Math.abs(sidePower) < 0.05)
-        {
+        } else if (Math.abs(turnPower) > 0.05 && Math.abs(forwardPower) < 0.05 && Math.abs(sidePower) < 0.05) {
             leftFoward.setPower(-turnPower);
             leftReverse.setPower(-turnPower);
             rightFoward.setPower(turnPower);
             rightReverse.setPower(turnPower);
-        }
-        else
-        {
+        } else {
             double leftFrontPower;
             double rightFrontPower;
             double leftBackPower;
@@ -189,11 +170,11 @@ public class arcadeDrive extends OpMode {
             } else {
                 power = 0;
             }
-
-            leftFrontPower = (power * Math.sin(radians + (Math.PI / 4)));
-            rightFrontPower = (power * Math.cos(radians + (Math.PI / 4)));
-            leftBackPower = (power * Math.cos(radians + (Math.PI / 4)));
-            rightBackPower = (power * Math.sin(radians + (Math.PI / 4)));
+            double fortyFiveDegrees = radians + (Math.PI / 4);
+            leftFrontPower = (power * Math.sin(fortyFiveDegrees));
+            rightFrontPower = (power * Math.cos(fortyFiveDegrees));
+            leftBackPower = (power * Math.cos(fortyFiveDegrees));
+            rightBackPower = (power * Math.sin(fortyFiveDegrees));
 
 
             leftFoward.setPower(-leftFrontPower);
@@ -219,7 +200,6 @@ public class arcadeDrive extends OpMode {
         double turn = gamepad1.right_stick_x;
 
 
-
         forwardPower = Range.clip(forwardBackward, -1.0, 1.0);
         sidePower = Range.clip(sideWays, -1.0, 1.0);
         turnPower = Range.clip(turn, -1.0, 1.0);
@@ -234,7 +214,7 @@ public class arcadeDrive extends OpMode {
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors", "degrees (%.2f)", degrees);
-        telemetry.addData("Path2",  "Running at %7d :%7d",
+        telemetry.addData("Path2", "Running at %7d :%7d",
                 leftFoward.getCurrentPosition(),
                 rightFoward.getCurrentPosition());
         telemetry.update();

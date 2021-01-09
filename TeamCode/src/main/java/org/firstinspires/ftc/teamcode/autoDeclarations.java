@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.*;
 public class autoDeclarations extends LinearOpMode {
 
     //runOpMode
-    public void runOpMode(){
+    public void runOpMode() {
     }
 
     // Declare OpMode members.
