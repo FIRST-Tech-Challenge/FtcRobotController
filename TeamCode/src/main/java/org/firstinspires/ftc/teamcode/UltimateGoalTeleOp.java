@@ -27,7 +27,8 @@ public class UltimateGoalTeleOp extends OpMode {
         telemetry.addLine("Calling robot.init");
         updateTelemetry(telemetry);
         robot.init(hardwareMap);
-        robot.disableDriveEncoders();
+//        robot.disableDriveEncoders();
+        robot.setShooterFlapHighGoal();
         robot.setInputShaping(true);
         telemetry.addLine("Ready");
         updateTelemetry(telemetry);
