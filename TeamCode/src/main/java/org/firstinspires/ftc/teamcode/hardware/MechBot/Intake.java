@@ -40,7 +40,7 @@ public class Intake extends Logger<Intake>  {
 
     public void configure(Configuration configuration, boolean auto) {
         intake1 = configuration.getHardwareMap().get(DcMotorEx.class, "intake1");
-        intake1.setDirection(DcMotorSimple.Direction.REVERSE);
+        // intake1.setDirection(DcMotorSimple.Direction.REVERSE);
         // intake2 = configuration.getHardwareMap().get(DcMotorEx.class, "intake2");
         init();
       // configuration.register(this);
