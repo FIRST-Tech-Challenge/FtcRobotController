@@ -27,16 +27,13 @@ import static java.lang.Math.sqrt;
 public class OdometryChassis extends BasicChassis {
     private Odometry odometry = null;
     DcMotorEx odom1;
-    DcMotorEx odom2;//F68.7,68.9,68.7,68.5,68.7
-    DcMotorEx odom3;//B69.0,69.1,68.8,69.1,68.9
-                    //L44.8,44.8,45.1,44.9,45.0 //124864,122615,124848,122521
-                    //R45.3,45.4,45.4,45.4,45.4 //125929,124610,125647,124404
-    int[] odomconst = {-1,1,-1};
+    DcMotorEx odom2;
+    DcMotorEx odom3;
+    int[] odomconst = {-2,2,-1};
     double ticks_per_inch = (8640*2.54/38*Math.PI)*72/76;//
     double robot_diameter = sqrt(619.84);
     double[] odom = new double[3];
-    double xpos = 0;
-    double ypos = 0;
+    double xpos,ypos,angle;
     private LinearOpMode op = null;
     private BNO055IMU imu;
     private Orientation             lastAngles = new Orientation();
@@ -90,30 +87,6 @@ public class OdometryChassis extends BasicChassis {
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
     }
-
-    public double[] track() {
-        double[] data = {0, 0, 0};
-        double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
-        odom[0] += odomconst[0]*diff[0];
-        odom[1] += odomconst[1]*diff[1];
-        odom[2] += odomconst[2]*diff[2];
-        double x =  cos((getAngle() * Math.PI / 180));
-        double y = sin((getAngle() * Math.PI / 180));
-        xpos += y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch;
-        ypos += x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch;
-        op.telemetry.addData("odom1",odomconst[0]*odom1.getCurrentPosition());
-        op.telemetry.addData("odom2",odomconst[1]*odom2.getCurrentPosition());
-        op.telemetry.addData("odom3",odomconst[2]*odom3.getCurrentPosition());
-        op.telemetry.addData("x",xpos);
-        op.telemetry.addData("y",ypos);
-        op.telemetry.addData("angle",getAngle());
-        op.telemetry.update();
-        data[0] = -xpos;
-        data[1] = ypos;
-        data[2] = getAngle();
-        return data;
-    }
-
     public double getAngle() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         //op.telemetry.addData("first angle: ", (int)angles.firstAngle);
@@ -132,7 +105,29 @@ public class OdometryChassis extends BasicChassis {
 
         return -globalAngle;
     }
-
+    public double[] track() {
+        double data[]={0,0,0};
+        double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
+        odom[0] += odomconst[0]*diff[0];
+        odom[1] += odomconst[1]*diff[1];
+        odom[2] += odomconst[2]*diff[2];
+        double x =  cos((getAngle() * Math.PI / 180));
+        double y = sin((getAngle() * Math.PI / 180));
+        xpos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*-1;
+        ypos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
+        angle=getAngle();
+        op.telemetry.addData("x",xpos);
+        op.telemetry.addData("y",ypos);
+        op.telemetry.addData("odom1",odomconst[0]*odom1.getCurrentPosition());
+        op.telemetry.addData("odom2",odomconst[1]*odom2.getCurrentPosition());
+        op.telemetry.addData("odom3",odomconst[2]*odom3.getCurrentPosition());
+        op.telemetry.addData("angle",getAngle());
+        op.telemetry.update();
+        data[0]=xpos;
+        data[1]=ypos;
+        data[2]=angle;
+        return data;
+    }
     public void turnInPlace(double target, double power) {
         motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -204,7 +199,7 @@ public class OdometryChassis extends BasicChassis {
         double[] currentPosition = track();
         double[] target_position = {0, 0, 0};
         double anglecorrection;
-        double x=sin(getAngle()*PI/180)*distance+currentPosition[0],y=cos(getAngle()*PI/180)*distance+currentPosition[1];
+        double x=sin(getAngle()*PI/180)*distance,y=cos(getAngle()*PI/180)*distance;
         moveAngle(x,y,power);
     }
 
@@ -217,7 +212,7 @@ public class OdometryChassis extends BasicChassis {
         double[] currentPosition = track();
         double[] target_position = {0, 0, 0};
         double anglecorrection;
-        double x=-sin(getAngle()*PI/180)*distance+currentPosition[0],y=-cos(getAngle()*PI/180)*distance+currentPosition[1];
+        double x=-sin(getAngle()*PI/180)*distance,y=-cos(getAngle()*PI/180)*distance;
         moveAngle(x,y,power);
     }
 
@@ -226,8 +221,9 @@ public class OdometryChassis extends BasicChassis {
         double[] currentPosition = track();
         double[] target_position = {0, 0, 0};
         double anglecorrection;
-        double x=cos(getAngle()*PI/180)*distance+currentPosition[0],y=sin(getAngle()*PI/180)*distance+currentPosition[1];
+        double x=-cos(getAngle()*PI/180)*distance,y=-sin(getAngle()*PI/180)*distance;
         moveAngle(x,y,power);
+
     }
 
     public void moveLeft(double distance, double power) {
@@ -235,7 +231,7 @@ public class OdometryChassis extends BasicChassis {
         double[] currentPosition = track();
         double[] target_position = {0, 0, 0};
         double anglecorrection;
-        double x=-cos(getAngle()*PI/180)*distance+currentPosition[0],y=-sin(getAngle()*PI/180)*distance+currentPosition[1];
+        double x=cos(getAngle()*PI/180)*distance,y=sin(getAngle()*PI/180)*distance;
         moveAngle(x,y,power);
     }
 
@@ -322,7 +318,7 @@ public class OdometryChassis extends BasicChassis {
         }
         turnInPlace(startAngle, 0.5);*/
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
-        motorRightFront.setDirection(DcMotor.Direction.REVERSE);
+        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
         motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
         motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -332,7 +328,7 @@ public class OdometryChassis extends BasicChassis {
         double startAngle = getAngle();
         double[] currentPosition = track();
         double[] target_position = {0, 0, 0};
-        double anglecorrection;
+        double anglecorrection,startx=x,starty=y;
         target_position[0] = currentPosition[0] + x;
         target_position[1] = currentPosition[1] + y;
         target_position[2] = currentPosition[2];
@@ -350,10 +346,7 @@ public class OdometryChassis extends BasicChassis {
             op.telemetry.update();
             op.telemetry.update();*/
             if (difference < 5) {
-                power *= difference / 10;
-                if (abs(power) < 0.2) {
-                    power = 0.2;
-                }
+                power *= difference / 5;
             }
             x = target_position[0] - currentPosition[0];
             y = target_position[1] - currentPosition[1];
@@ -361,7 +354,7 @@ public class OdometryChassis extends BasicChassis {
             anglePower[0] = sin(angleInRadians - PI / 4);
             anglePower[1] = sin(angleInRadians + PI / 4);
             anglecorrection = (currentPosition[2] - target_position[2]) * 0.01;
-            if (difference > 10) {
+            if (difference > 5) {
                 if (abs(anglePower[1]) > abs(anglePower[0])) {
                     anglePower[1] *= abs(1 / anglePower[1]);
                     anglePower[0] *= abs(1 / anglePower[1]);
@@ -370,6 +363,11 @@ public class OdometryChassis extends BasicChassis {
                     anglePower[0] *= abs(1 / anglePower[0]);
                 }
             }
+            while(abs(power)<0.3){
+                power*=2;
+            }
+            op.telemetry.addData("xt",startx);
+            op.telemetry.addData("yt",starty);
             motorRightBack.setPower(power * anglePower[1] + anglecorrection);
             motorRightFront.setPower(power * anglePower[0] + anglecorrection);
             motorLeftBack.setPower(power * anglePower[0] - anglecorrection);
