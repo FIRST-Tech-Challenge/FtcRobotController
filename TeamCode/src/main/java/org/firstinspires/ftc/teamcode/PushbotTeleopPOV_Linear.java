@@ -104,11 +104,12 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
             }
             else
             {
-                leftfront = -strife;
-                rightfront = strife;
-                leftback = strife;
-                rightback = -strife;
+                leftfront = strife+drive;
+                rightfront = -strife+drive;
+                leftback = -strife+drive;
+                rightback = strife+drive;
             }
+
 
             // Normalize the values so neither exceed +/- 1.0
             max = Math.max(Math.abs(leftfront), Math.abs(rightfront));
