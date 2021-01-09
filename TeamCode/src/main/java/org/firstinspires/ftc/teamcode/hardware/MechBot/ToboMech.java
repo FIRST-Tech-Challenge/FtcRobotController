@@ -1418,7 +1418,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 autoIntakeRings(3);
                 chassis.driveTo(1.0, side(90), 140, 0, false, 5);
                 autoShootHighGoal(3);
-                chassis.driveTo(1.0, side(13), 290, 0, false, 5);
+                chassis.driveTo(1.0, side(13), 280, 0, false, 5);
             } else {
                 return;
             }
@@ -1462,7 +1462,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         comboGrabber.armDown();
         sleep(150);
         chassis.yMove(1, 0.50);
-        sleep(400);
+        sleep(200);
+        chassis.yMove(1, 0.10);
         if (comboGrabber!=null) {
             comboGrabber.grabWobbleGoalCombo(false);
             while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
