@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 public class HzLaunchController {
 
@@ -265,12 +264,12 @@ public class HzLaunchController {
                 case POWER_SHOT1:
                 case POWER_SHOT2:
                 case POWER_SHOT3:
-                    //lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.66, 0.74);
-                    lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1550, 0.66, 1740);
+                    //lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1550, 0.66, 1740);
+                    lclaunchMotorVelocity = HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
                     break;
                 case HIGH_GOAL:
-                    //lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.70, 0.78);
-                    lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1560, 1640, 1830);
+                    //lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1560, 1640, 1830);
+                    lclaunchMotorVelocity = HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
                     break;
             }
         } else {

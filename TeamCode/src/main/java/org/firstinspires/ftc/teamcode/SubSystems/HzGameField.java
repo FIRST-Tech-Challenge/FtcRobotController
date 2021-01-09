@@ -7,7 +7,8 @@ public class HzGameField {
     // Declare a target vector you'd like your bot to align with
     // Can be any x/y coordinate of your choosing
     public static final Vector2d ORIGIN = new Vector2d(0,0);
-    public static final Vector2d BLUE_TOWER_GOAL = new Vector2d(72,36);
+    //public static final Vector2d BLUE_TOWER_GOAL = new Vector2d(72,36);
+    public static final Vector2d BLUE_TOWER_GOAL = new Vector2d(72,42);
     public static final Vector2d BLUE_POWERSHOT1 = new Vector2d(72,17.75);
     public static final Vector2d BLUE_POWERSHOT2 = new Vector2d(72,10.25);
     public static final Vector2d BLUE_POWERSHOT3 = new Vector2d(72,2.75);
@@ -19,7 +20,7 @@ public class HzGameField {
     //Start Poses
     //public static final Pose2d BLUE_INNER_START_LINE =  new Pose2d(-68,25,Math.toRadians(-55));
     public static final Pose2d BLUE_INNER_START_LINE =  new Pose2d(-55,20,Math.toRadians(-55));//Center of ther robot
-    public static final Pose2d BLUE_OUTER_START_LINE =  new Pose2d(-55,50,Math.toRadians(55));
+    public static final Pose2d BLUE_OUTER_START_LINE =  new Pose2d(-55,52,Math.toRadians(55));
     public static final Pose2d RED_INNER_START_LINE =  new Pose2d(-55,-22,Math.toRadians(55));
     public static final Pose2d RED_OUTER_START_LINE =  new Pose2d(-55,-52,Math.toRadians(-55));
     //public static final Pose2d ORIGIN_FIELD =  new Pose2d(0,0,Math.toRadians(0));
