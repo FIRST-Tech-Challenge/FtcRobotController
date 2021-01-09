@@ -20,4 +20,7 @@ repositories {
 
 dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+//    implementation 'com.arcrobotics:ftclib:vision:0.1.1.0' // current vision version
+    implementation 'com.arcrobotics:ftclib:1.2.0-beta' // current core version
+    implementation 'org.openftc:easyopencv:1.4.3'
 }
