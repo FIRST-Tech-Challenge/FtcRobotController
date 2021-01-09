@@ -95,21 +95,22 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
             strife = gamepad1.left_stick_x;
 
             // Combine drive and turn for blended motion.
-            if (strife == 0)
-            {
-                leftfront = drive + turn;
-                rightfront = drive - turn;
-                leftback = drive + turn;
-                rightback = drive - turn;
-            }
-            else if (strife > 0)
+//            if (strife == 0)
+//            {
+//                leftfront = drive + turn;
+//                rightfront = drive - turn;
+//                leftback = drive + turn;
+//                rightback = drive - turn;
+//            }
+//
+            if (strife >=0)
             {
                 leftfront = drive + strife+turn;
                 rightfront = drive-strife-turn;
                 leftback = drive-strife+turn;
                 rightback = drive + strife-turn;
             }
-            else if (strife < 0)
+            else if (strife <= 0)
             {
                 leftfront = drive + strife+turn;
                 rightfront = drive-strife-turn;
@@ -126,14 +127,14 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
 
 
             // Normalize the values so neither exceed +/- 1.0
-            max = Math.max(Math.abs(leftfront), Math.abs(rightfront));
-            if (max > 1.0)
-            {
-                leftfront /= max;
-                rightfront /= max;
-                leftback /= max;
-                rightback /= max;
-            }
+//            max = Math.max(Math.abs(leftfront), Math.abs(rightfront));
+//            if (max > 1.0)
+//            {
+//                leftfront /= max;
+//                rightfront /= max;
+//                leftback /= max;
+//                rightback /= max;
+//            }
 
             // Output the safe vales to the motor drives.
             robot.leftfrontDrive.setPower(leftfront*0.5);
