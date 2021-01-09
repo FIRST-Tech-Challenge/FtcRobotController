@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="Gradle: org.firstinspires.ftc:RobotCore:6.0.1@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0482513baccc32f6fbd2547409ec7d7a/jetified-RobotCore-6.0.1/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0482513baccc32f6fbd2547409ec7d7a/jetified-RobotCore-6.0.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0482513baccc32f6fbd2547409ec7d7a/jetified-RobotCore-6.0.1/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0482513baccc32f6fbd2547409ec7d7a/jetified-RobotCore-6.0.1/jars/libs/androidx-rs.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0482513baccc32f6fbd2547409ec7d7a/jetified-RobotCore-6.0.1/jars/libs/gson-2.8.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0482513baccc32f6fbd2547409ec7d7a/jetified-RobotCore-6.0.1/jars/libs/gson-extras-0.2.1.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0482513baccc32f6fbd2547409ec7d7a/jetified-RobotCore-6.0.1/jars/libs/slf4j-api-1.7.26.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0482513baccc32f6fbd2547409ec7d7a/jetified-RobotCore-6.0.1/jars/libs/slf4j-handroid-1.7.27.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0482513baccc32f6fbd2547409ec7d7a/jetified-RobotCore-6.0.1/jars/libs/Vuforia.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.firstinspires.ftc/RobotCore/6.0.1/ac144b864ef513d92e6352d37c4ea51faf00ba0a/RobotCore-6.0.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.firstinspires.ftc/RobotCore/6.0.1/7c7a8f922874021b4d485549264d404f2411bbc0/RobotCore-6.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
