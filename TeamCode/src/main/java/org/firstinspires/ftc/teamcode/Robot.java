@@ -8,13 +8,12 @@ import org.firstinspires.ftc.teamcode.subsystems.DrivebaseSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IndexSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.WobbleArmSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.WobbleClawSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
 
 /** Class for the subsystems on the robot
  *
  */
-public class Robot{
+public class Robot implements Loggable {
     public Hardware hardware;
 
     //drivebase
@@ -30,6 +29,9 @@ public class Robot{
     //shooter
     public ShooterSubsystem shooterSubsystem;
 
+    //wobble
+    @Log(name = "Wobble", index = 1, color = Color.RED)
+    public WobbleSubsystem wobbleSubsystem;
 
     public Robot(){
         hardware = new Hardware();
@@ -41,6 +43,8 @@ public class Robot{
         intakeSubsystem = new IntakeSubsystem(hardware.intakeMotor);
 
         shooterSubsystem = new ShooterSubsystem(hardware.shooterMotor1, hardware.shooterMotor2);
+
+        wobbleSubsystem =  new WobbleSubsystem(hardware.wobbleServo1, hardware.wobbleServo2);
 
     }
 }

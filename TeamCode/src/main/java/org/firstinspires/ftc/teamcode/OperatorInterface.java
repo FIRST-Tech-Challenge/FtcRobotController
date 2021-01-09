@@ -28,6 +28,8 @@ public class OperatorInterface {
      */
     public CommandButton intakeMainButton, intakeSpitButton;
 
+    public CommandButton wobbleClawButton, wobbleArmButton;
+
     public OperatorInterface(CommandGamepad driver, CommandGamepad codriver, Robot r){
 
         //instantiate objects
@@ -44,7 +46,7 @@ public class OperatorInterface {
 
         //drive command
         CommandScheduler.getInstance().scheduleJoystick(new DriveCommand(robot.drivebaseSubsystem, driverGamepad.leftStick, driverGamepad.rightStick), ()->true);
-
+    
 
     }
 }

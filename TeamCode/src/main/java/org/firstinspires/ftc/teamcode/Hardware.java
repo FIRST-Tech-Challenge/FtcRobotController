@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.technototes.library.hardware.motor.EncodedMotor;
 import com.technototes.library.hardware.motor.EncodedMotorGroup;
@@ -32,8 +33,8 @@ public class Hardware implements Loggable {
     public EncodedMotor<DcMotor> shooterMotor2;
 
     //wobble
-    public Servo wobbleServo1;
-    public Servo wobbleServo2;
+    public Motor<CRServo> wobbleServo1;
+    public Motor<CRServo> wobbleServo2;
 
     public Hardware(){
 
@@ -51,7 +52,7 @@ public class Hardware implements Loggable {
         shooterMotor1 = new EncodedMotor<>("shooter1");
         shooterMotor2 = new EncodedMotor<>("shooter2");
 
-        wobbleServo1 = new Servo("wobble1");
-        wobbleServo2 = new Servo("wobble2");
+        wobbleServo1 = new Motor<>("wobble1");
+        wobbleServo2 = new Motor<>("wobble2");
     }
 }
