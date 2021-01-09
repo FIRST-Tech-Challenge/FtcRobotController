@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.RC;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TensorflowIntegration implements VisionProvider {
@@ -17,7 +18,7 @@ public class TensorflowIntegration implements VisionProvider {
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
 
-    private List<Recognition> cacheRecognitions = null;
+    private List<Recognition> cacheRecognitions = new ArrayList<Recognition>();
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
      * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
@@ -111,7 +112,7 @@ public class TensorflowIntegration implements VisionProvider {
         } else {
             // list is not empty.
             // step through the list of recognitions and display boundary info.
-            for (Recognition recognition : updatedRecognitions) {
+            for (Recognition recognition : cacheRecognitions) {
                 // convert label to StackHeight
                 if (recognition.getLabel().equals("Single")) {
                     return StackHeight.ONE;
