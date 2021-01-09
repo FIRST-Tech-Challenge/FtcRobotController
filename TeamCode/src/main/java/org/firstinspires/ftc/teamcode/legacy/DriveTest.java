@@ -1,11 +1,14 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.legacy;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name="Drive Test", group="Linear Opmode")
+import org.firstinspires.ftc.teamcode.Drive;
 
+@TeleOp(name="Drive Test", group="Linear Opmode")
+@Disabled
 public class DriveTest extends LinearOpMode {
 
     //creating objects for all of the different parts

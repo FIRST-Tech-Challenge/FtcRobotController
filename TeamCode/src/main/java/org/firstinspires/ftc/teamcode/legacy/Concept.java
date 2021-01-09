@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.legacy;
 
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -60,7 +60,7 @@ import java.io.File;
  */
 
 @TeleOp(name="Concept: Sound Files", group="Concept")
-
+@Disabled
 public class Concept extends LinearOpMode {
 
     // Point to sound files on the phone's drive

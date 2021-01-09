@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name="Troubleshoot", group="Linear Opmode")
+@TeleOp(name="Teleop2021", group="Linear Opmode")
 
-public class Troubleshoot extends LinearOpMode {
+public class Teleop2021 extends LinearOpMode {
 
     //creating objects for all of the different parts
     private SciLift lift;
