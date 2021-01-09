@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLaunchController;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
 import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
+import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 import org.firstinspires.ftc.teamcode.SubSystems.HzVuforiaStatic;
 
 
@@ -38,7 +39,8 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
     public HzArm hzArm;
 
     //public HzVuforia hzVuforia;
-    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
+    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
+    public HzVuforiaStatic.ACTIVE_WEBCAM activeWebcam = HzVuforiaStatic.ACTIVE_WEBCAM.LEFT;
     //int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
     //TODO : Create another TeleOp for Red
 
@@ -57,7 +59,7 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
         initialConfiguration();
 
         //hzVuforia = new HzVuforia(hardwareMap);
-        HzVuforiaStatic.HzVuforiaStaticInit(hardwareMap);
+        HzVuforiaStatic.HzVuforiaStaticInit(hardwareMap, activeWebcam);
         HzVuforiaStatic.setupVuforiaNavigation();
 
         // We want to turn off velocity control for teleop
@@ -152,23 +154,27 @@ public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
                     startPose = HzGameField.RED_INNER_START_LINE;
+                    activeWebcam = HzVuforiaStatic.ACTIVE_WEBCAM.RIGHT;
                     telemetry.addData("Start Pose : ", "RED_INNER_START_LINE");
                     break;
                 }
                 if (hzGamepad.getButtonAPress()) {
                     startPose = HzGameField.RED_OUTER_START_LINE;
+                    activeWebcam = HzVuforiaStatic.ACTIVE_WEBCAM.LEFT;
                     telemetry.addData("Start Pose : ", "RED_OUTER_START_LINE");
                     break;
                 }
             }
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
+                    startPose = HzGameField.BLUE_INNER_START_LINE;
+                    activeWebcam = HzVuforiaStatic.ACTIVE_WEBCAM.RIGHT;
                     telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
                     break;
                 }
                 if (hzGamepad.getButtonAPress()) {
                     startPose = HzGameField.BLUE_OUTER_START_LINE;
+                    activeWebcam = HzVuforiaStatic.ACTIVE_WEBCAM.LEFT;
                     telemetry.addData("Start Pose : ", "BLUE_OUTER_START_LINE");
                     break;
                 }

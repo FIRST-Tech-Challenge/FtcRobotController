@@ -104,6 +104,10 @@ public class HzVuforiaStatic {
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false  ;
 
+    public enum ACTIVE_WEBCAM{
+        LEFT,
+        RIGHT,
+    }
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -174,11 +178,12 @@ public class HzVuforiaStatic {
     /**
      * Initialize the Vuforia localization engine.
      */
-    public static void HzVuforiaStaticInit(HardwareMap hardwareMap) {
+    public static void HzVuforiaStaticInit(HardwareMap hardwareMap, ACTIVE_WEBCAM activeWebcam) {
         /*
          * Retrieve the camera we are to use.
          */
-        if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+        //if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+        if (activeWebcam == HzVuforiaStatic.ACTIVE_WEBCAM.LEFT){
             webcamName = hardwareMap.get(WebcamName.class, "Webcam_l");
         } else {
             webcamName = hardwareMap.get(WebcamName.class, "Webcam_r");

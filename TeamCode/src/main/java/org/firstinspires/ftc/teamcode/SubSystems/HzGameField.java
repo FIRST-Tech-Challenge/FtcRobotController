@@ -18,14 +18,15 @@ public class HzGameField {
 
     //Start Poses
     //public static final Pose2d BLUE_INNER_START_LINE =  new Pose2d(-68,25,Math.toRadians(-55));
-    public static final Pose2d BLUE_INNER_START_LINE =  new Pose2d(-58.5,30,Math.toRadians(-55));//Center of ther robot
-    public static final Pose2d BLUE_OUTER_START_LINE =  new Pose2d(-68,48.5,Math.toRadians(0));
-    public static final Pose2d RED_INNER_START_LINE =  new Pose2d(-68,-25,Math.toRadians(0));
-    public static final Pose2d RED_OUTER_START_LINE =  new Pose2d(-68,-48.5,Math.toRadians(-70));
+    public static final Pose2d BLUE_INNER_START_LINE =  new Pose2d(-55,20,Math.toRadians(-55));//Center of ther robot
+    public static final Pose2d BLUE_OUTER_START_LINE =  new Pose2d(-55,50,Math.toRadians(55));
+    public static final Pose2d RED_INNER_START_LINE =  new Pose2d(-55,-22,Math.toRadians(55));
+    public static final Pose2d RED_OUTER_START_LINE =  new Pose2d(-55,-52,Math.toRadians(-55));
     //public static final Pose2d ORIGIN_FIELD =  new Pose2d(0,0,Math.toRadians(0));
 
-    public static final Pose2d BLUE_INNER_START_LINE_TELEOPTEST =  new Pose2d(-62.5,22,Math.toRadians(0));//Center of the robot
+    //public static final Pose2d BLUE_INNER_START_LINE_TELEOPTEST =  new Pose2d(-62.5,22,Math.toRadians(0));//Center of the robot
 
+    public static final Pose2d calibPoint = new Pose2d(0,9,Math.toRadians(0));
 
     public enum PLAYING_ALLIANCE{
         RED_ALLIANCE,
@@ -40,9 +41,13 @@ public class HzGameField {
         UNKNOWN;
     };
 
-    public static final Vector2d TARGET_ZONE_A = new Vector2d(12,60);
-    public static final Vector2d TARGET_ZONE_B = new Vector2d(36,36);
-    public static final Vector2d TARGET_ZONE_C = new Vector2d(60,60);
+    public static final Vector2d BLUE_TARGET_ZONE_A = new Vector2d(12,60);
+    public static final Vector2d BLUE_TARGET_ZONE_B = new Vector2d(36,36);
+    public static final Vector2d BLUE_TARGET_ZONE_C = new Vector2d(60,60);
+
+    public static final Vector2d RED_TARGET_ZONE_A = new Vector2d(12,-60);
+    public static final Vector2d RED_TARGET_ZONE_B = new Vector2d(36,-36);
+    public static final Vector2d RED_TARGET_ZONE_C = new Vector2d(60,-60);
 
     //Static fields to pass Pos from Autonomous to TeleOp
     public static boolean poseSetInAutonomous = false;

@@ -313,13 +313,27 @@ public class HzAutoControl {
             case PICK_WOBBLE:
                 acHzArm.moveArmPickWobblePosition();
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
-                acHzArm.openGrip();
+                //acHzArm.openGrip();
                 break;
             case DROP_WOBBLE_RING:
                 acHzArm.moveArmDropWobbleRingPosition();
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
-                acHzArm.openGrip();
+                //acHzArm.openGrip();
         }
+    }
+
+    public void setArmGripClose(){
+
+    }
+
+    public void runOpenGrip(){
+        acHzArm.openGrip();
+        runAutoControl();
+    }
+
+    public void runCloseGrip(){
+        acHzArm.closeGrip();
+        runAutoControl();
     }
 
 }

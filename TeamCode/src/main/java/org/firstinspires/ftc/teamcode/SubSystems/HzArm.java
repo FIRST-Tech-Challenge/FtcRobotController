@@ -38,7 +38,7 @@ public class HzArm {
     public static int ARM_PICK_RING_POSITION_COUNT = -900 ;
 
     public static double POWER_NO_WOBBLEGOAL = 0.3;
-    public static double POWER_WITH_WOBBLEGOAL = 0.6;
+    public static double POWER_WITH_WOBBLEGOAL = 0.3;
 
     public ARM_POSITION currentArmPosition = ARM_POSITION.PARKED;
     public ARM_POSITION previousArmPosition = ARM_POSITION.PARKED;;
