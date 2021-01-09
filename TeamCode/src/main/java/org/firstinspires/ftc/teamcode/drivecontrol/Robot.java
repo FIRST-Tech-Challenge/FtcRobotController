@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.breakout.BreakoutMotor;
+import org.firstinspires.ftc.teamcode.breakout.BreakoutServo;
 import org.firstinspires.ftc.teamcode.misc.DataLogger;
 import org.firstinspires.ftc.teamcode.misc.SCARAController;
 import org.openftc.revextensions2.ExpansionHubEx;
@@ -18,6 +20,15 @@ import org.openftc.revextensions2.RevBulkData;
 public class Robot {
     public DriveController driveController;
     BNO055IMU imu;
+    BreakoutServo pusherThing = new BreakoutServo();
+    BreakoutServo boxLifter = new BreakoutServo();
+    BreakoutServo claw = new BreakoutServo();
+
+    BreakoutMotor arm = new BreakoutMotor();
+    BreakoutMotor lift = new BreakoutMotor();
+    BreakoutMotor flywheel = new BreakoutMotor();
+    BreakoutMotor intake = new BreakoutMotor();
+
     Telemetry telemetry;
     HardwareMap hardwareMap;
     OpMode opMode;
@@ -42,7 +53,17 @@ public class Robot {
         this.telemetry = opMode.telemetry;
         this.opMode = opMode;
         driveController = new DriveController(this, startingPosition, debuggingMode);
+
         imu = opMode.hardwareMap.get(BNO055IMU.class, "imu 1");
+
+//        claw.set(opMode.hardwareMap.servo.get("claw"));
+        pusherThing.set(opMode.hardwareMap.servo.get("pusherThing"));
+        boxLifter.set(opMode.hardwareMap.servo.get("boxLifter"));
+
+//        arm.set(opMode.hardwareMap.dcMotor.get("arm"));
+//        lift.set(opMode.hardwareMap.dcMotor.get("lift"));
+        flywheel.set(opMode.hardwareMap.dcMotor.get("flywheel"));
+        intake.set(opMode.hardwareMap.dcMotor.get("intake"));
 
 
         //bulk data
@@ -67,6 +88,76 @@ public class Robot {
     public void updateBulkData() {
         bulkData1 = expansionHub1.getBulkInputData();
         //bulkData2 = expansionHub2.getBulkInputData();
+    }
+
+    /**
+     * Claw positions, open and closed
+     */
+    public static class ClawPos {
+        static double OPEN = 0.83d; //TODO figure values
+        static double CLOSED = 1.0d;
+    }
+
+    /**
+     * Sets claw position to open or closed based on the boolean input.
+     *
+     * @param open Boolean variable to open/close the claw.
+     */
+    public void setClaw(boolean open) {
+        if (open) {
+            claw.setPosition(ClawPos.OPEN);
+        } else {
+            claw.setPosition(ClawPos.CLOSED);
+        }
+    }
+
+    public static class BoxLifterPos {
+        static double OPEN = 0.83d; //TODO figure values
+        static double CLOSED = 1.0d;
+    }
+
+    /**
+     * Sets claw position to open or closed based on the boolean input.
+     *
+     * @param open Boolean variable to open/close the claw.
+     */
+    public void setBoxLifter(boolean open) {
+        if (open) {
+            boxLifter.setPosition(BoxLifterPos.OPEN);
+        } else {
+            boxLifter.setPosition(BoxLifterPos.CLOSED);
+        }
+    }
+
+    public static class PusherThingPos {
+        static double OPEN = 0.83d; //TODO figure values
+        static double CLOSED = 1.0d;
+    }
+
+    /**
+     * Sets claw position to open or closed based on the boolean input.
+     *
+     * @param open Boolean variable to open/close the claw.
+     */
+    public void setPusherThing(boolean open) {
+        if (open) {
+            pusherThing.setPosition(PusherThingPos.OPEN);
+        } else {
+            pusherThing.setPosition(PusherThingPos.CLOSED);
+        }
+    }
+
+    public void setArmPower(float power) {
+        arm.setPower(power);
+    }
+    public void setLiftPower(float power) {
+        lift.setPower(power);
+    }
+    public void setFlywheelPower(float power) {
+        flywheel.setPower(power);
+    }
+    public void setIntakePower(float power) {
+        intake.setPower(power);
     }
 
     public void initIMU() {
@@ -137,6 +228,7 @@ public class Robot {
     }
 
 }
+
 class Constants {
 
     //TODO Define these constants
