@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
+import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Test Tracking", group = "TeleOp")
 public class TestTracking extends OpMode {

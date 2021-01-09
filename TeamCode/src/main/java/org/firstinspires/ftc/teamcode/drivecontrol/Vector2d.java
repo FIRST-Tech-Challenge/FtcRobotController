@@ -1,13 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.drivecontrol;
 
 //credit: this class is based on code from FRC 5818 (https://github.com/Team5818/DiffSwerve)
-
-import java.util.Vector;
 
 public class Vector2d {
 
     //Vector constants
-    final static Vector2d FORWARD = new Vector2d(0, 1),
+    public final static Vector2d FORWARD = new Vector2d(0, 1),
             BACKWARD = new Vector2d(0, -1),
             LEFT = new Vector2d(-1, 0),
             RIGHT = new Vector2d(1, 0),

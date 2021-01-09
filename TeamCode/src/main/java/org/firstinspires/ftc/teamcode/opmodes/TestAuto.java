@@ -1,8 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.SLAM;
+
+import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
+import org.firstinspires.ftc.teamcode.drivecontrol.Vector2d;
 
 @Autonomous(name = "Diff Swerve Test Auto", group = "Linear Opmode")
 

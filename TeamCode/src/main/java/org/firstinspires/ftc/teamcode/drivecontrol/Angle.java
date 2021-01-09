@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.drivecontrol;
 
 //this class allows you to avoid dealing with angle conversions!
 //different angle types are input into program and required for calculations (ex. IMU reading, vector math...)
@@ -37,7 +37,7 @@ public class Angle {
 
 
     //see top for type definitions
-    enum AngleType {
+    public enum AngleType {
         ZERO_TO_360_CARTESIAN, ZERO_TO_360_HEADING, NEG_180_TO_180_CARTESIAN, NEG_180_TO_180_HEADING
     }
 

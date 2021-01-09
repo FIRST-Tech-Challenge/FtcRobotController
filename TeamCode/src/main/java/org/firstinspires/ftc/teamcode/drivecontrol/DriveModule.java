@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.drivecontrol;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.misc.DataLogger;
 import org.openftc.revextensions2.ExpansionHubMotor;
 
 public class DriveModule {
@@ -14,8 +15,8 @@ public class DriveModule {
     DataLogger dataLogger;
 
     //module specific drive motors
-    ExpansionHubMotor motor1; //top motor
-    ExpansionHubMotor motor2; //bottom motor
+    public ExpansionHubMotor motor1; //top motor
+    public ExpansionHubMotor motor2; //bottom motor
 
     double lastM1Encoder;
     double lastM2Encoder;

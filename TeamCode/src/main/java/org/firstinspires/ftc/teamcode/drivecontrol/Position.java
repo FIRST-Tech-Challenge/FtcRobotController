@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.drivecontrol;
 
 public class Position {
     //stores an absolute position on field

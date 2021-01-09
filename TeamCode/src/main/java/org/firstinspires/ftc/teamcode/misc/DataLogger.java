@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.misc;
 
 /**
  * Created by Olavi Kamppari on 9/9/2015.

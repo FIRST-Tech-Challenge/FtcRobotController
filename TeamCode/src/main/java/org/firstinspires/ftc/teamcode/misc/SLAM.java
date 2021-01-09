@@ -1,42 +1,26 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.misc;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.spartronics4915.lib.T265Camera;
 
-import java.util.List;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
-@Disabled
-@Autonomous(name="Test T265", group="Iterative Opmode")
-public class PositionTracking extends LinearOpMode
-{
-    // We treat this like a singleton because there should only ever be one object per camera
-    private static T265Camera slamra = null;
-
+public class SLAM {
+    T265Camera slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
-
-    @Override
-    public void runOpMode() throws InterruptedException {
-
-        waitForStart();
-        slamra.start();
-
-        slamra.stop();
-
-    }
     final int robotRadius = 9; // inches
     TelemetryPacket packet = new TelemetryPacket();
     Canvas field = packet.fieldOverlay();
-    T265Camera.CameraUpdate up = null;
-    Translation2d translation = null;
-    Rotation2d rotation = null;
+    T265Camera.CameraUpdate up;
+    Translation2d translation;
+    Rotation2d rotation;
+
     public void updateSLAMNav() {
         // We divide by 0.0254 to convert meters to inches
         up = slamra.getLastReceivedCameraUpdate();
@@ -51,18 +35,4 @@ public class PositionTracking extends LinearOpMode
 
         dashboard.sendTelemetryPacket(packet);
     }
-
-    public double getRobotPosition(String xy) {
-        updateSLAMNav();
-        if (xy.equalsIgnoreCase("x")) {
-            return translation.getX() / 0.0254;
-        }
-        else {
-            if (xy.equalsIgnoreCase("y")) {
-                return translation.getY() / 0.0254;
-            }
-        }
-            return 0;
-    }
-
 }

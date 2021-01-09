@@ -1,29 +1,22 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.drivecontrol;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import static org.firstinspires.ftc.teamcode.Constants.*;
-
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.misc.DataLogger;
+import org.firstinspires.ftc.teamcode.misc.SCARAController;
 import org.openftc.revextensions2.ExpansionHubEx;
-import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
 
 public class Robot {
-    DriveController driveController;
+    public DriveController driveController;
     BNO055IMU imu;
     Telemetry telemetry;
     HardwareMap hardwareMap;
@@ -34,7 +27,7 @@ public class Robot {
     //   DistanceSensor backRangeSensor;
 
     //BULK DATA (RevExtensions2)
-    RevBulkData bulkData1;
+    public RevBulkData bulkData1;
    // RevBulkData bulkData2;
     ExpansionHubEx expansionHub1;
    // ExpansionHubEx expansionHub2;

@@ -1,14 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tracking;
 
 /*
  * Basic tracking of robot position and orientation
  */
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-import java.lang.reflect.Field;
+import org.firstinspires.ftc.teamcode.drivecontrol.Angle;
+import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
 
 public class SimpleTracking {
 

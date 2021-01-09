@@ -1,7 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.drivecontrol.Robot;
+import org.firstinspires.ftc.teamcode.tracking.SimplePathFollow;
+import org.firstinspires.ftc.teamcode.tracking.SimpleTracking;
 
 @Autonomous(name="Test Primitives", group="Linear Opmode")
 
