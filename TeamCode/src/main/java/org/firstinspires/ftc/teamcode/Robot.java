@@ -81,10 +81,10 @@ public class Robot {
         Right_Rear_Wheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Left_Front_Wheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Left_Rear_Wheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+ */
         Right_Front_Wheel.setDirection(DcMotorSimple.Direction.REVERSE);
         Right_Rear_Wheel.setDirection(DcMotorSimple.Direction.REVERSE);
- */
+
     }
 
     public void Stop(){
@@ -142,7 +142,7 @@ public class Robot {
         Left_Front_Wheel.setPower(0);
         Right_Front_Wheel.setPower(power * -1);
         Right_Rear_Wheel.setPower(0);
-        Left_Rear_Wheel.setPower(power);
+        Left_Rear_Wheel.setPower(power * -1);
 
     }
 

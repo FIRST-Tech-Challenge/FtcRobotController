@@ -34,8 +34,12 @@ public class TeleOps extends LinearOpMode {
     public DcMotor Left_Front_Wheel;
     public DcMotor Right_Rear_Wheel;
     public DcMotor Left_Rear_Wheel;
+    public Servo claw;
+    public TouchSensor armButtonBot;
+    public DcMotor Arm;
+    public TouchSensor armButtonTop;
 
-    private Robot robot;
+    //private Robot robot;
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
@@ -54,18 +58,27 @@ public class TeleOps extends LinearOpMode {
         Left_Front_Wheel = hardwareMap.get(DcMotor.class, "Left_Front_Wheel");
         Right_Rear_Wheel = hardwareMap.get(DcMotor.class, "Right_Rear_Wheel");
         Right_Front_Wheel = hardwareMap.get(DcMotor.class, "Right_Front_Wheel");
+        claw = hardwareMap.get(Servo.class, "claw");
+        armButtonBot = hardwareMap.get(TouchSensor.class, "armButtonBot");
+        Arm = hardwareMap.get(DcMotor.class, "Arm");
+        armButtonTop = hardwareMap.get(TouchSensor.class, "armButtonTop");
 
-        robot = new Robot();
+        /*robot = new Robot();
         robot.Init(hardwareMap, telemetry, false);
-        rightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
+         */
 
 
         waitForStart();
+        Right_Front_Wheel.setDirection(DcMotorSimple.Direction.REVERSE);
+        Left_Rear_Wheel.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                //This one takes care of Forward , Reverse, Right and Left
+
+                // lift,picker,shooter, and pusher programs
+                //lift
                 if (gamepad2.a && !liftButtonBot.isPressed()) {
                     while (!liftButtonBot.isPressed()) {
                         liftservo.setPower(-1);
@@ -78,17 +91,20 @@ public class TeleOps extends LinearOpMode {
                 } else {
                     liftservo.setPower(0);
                 }
+                //picker
                 if (gamepad2.x && liftButtonBot.isPressed()) {
                     picker.setPower(1);
                 }
                 if (gamepad2.b) {
                     picker.setPower(0);
                 }
+                //pusher
                 if (gamepad2.left_bumper && liftButtonTop.isPressed()) {
                     pusher.setPosition(1);
                     sleep(500);
                     pusher.setPosition(-1);
                 }
+                //shooter
                 if (liftButtonTop.isPressed()) {
                     leftShooter.setPower(1);
                     rightShooter.setPower(1);
@@ -96,8 +112,84 @@ public class TeleOps extends LinearOpMode {
                     leftShooter.setPower(0);
                     rightShooter.setPower(0);
                 }
+                // arm and claw program
+                //claw
+                if (gamepad2.dpad_right) {
+                    claw.setPosition(-1);
+                }
+                if (gamepad2.dpad_left) {
+                    claw.setPosition(1);
+                }
+                //arm
+                if (gamepad2.dpad_down && !armButtonBot.isPressed()) {
+                    Arm.setPower(0.5);
+                } else if (gamepad2.dpad_up && !armButtonTop.isPressed()) {
+                    Arm.setPower(-0.5);
+                } else {
+                    Arm.setPower(0);
+                }
+                //base programming
+                //front back left right
+                if (Math.abs(gamepad1.left_stick_y) > Math.abs(gamepad1.left_stick_x)) {
+                    if (gamepad1.left_stick_y < 0) {
+                        Forward(Math.abs(gamepad1.left_stick_y));
+                    } else if (gamepad1.left_stick_y > 0) {
+                        Reverse(Math.abs(gamepad1.left_stick_y));
+                    }
+                } else if (Math.abs(gamepad1.left_stick_y) < Math.abs(gamepad1.left_stick_x)) {
+                    if (gamepad1.left_stick_x > 0) {
+                        Right(Math.abs(gamepad1.left_stick_x));
+                    } else if (gamepad1.left_stick_x < 0) {
+                        Left(Math.abs(gamepad1.left_stick_x));
+                    }
+                } else {
+                    if (Math.abs(gamepad1.left_stick_y) == 0 && Math.abs(gamepad1.left_stick_y) == 0) {
+                        Stop();
+                    }
+                }
+                //diagonally left up , right down, left down, right up
+                if (gamepad1.right_stick_x < 0 && gamepad1.right_stick_y < 0) {
+                    if (Math.abs(gamepad1.right_stick_x) >= Math.abs(gamepad1.right_stick_y)) {
+                        Diagonally_Left_Up(Math.abs(gamepad1.right_stick_x));
+                    } else {
+                        Diagonally_Left_Up(Math.abs(gamepad1.right_stick_y));
+                    }
+                } else if (gamepad1.right_stick_x < 0 && gamepad1.right_stick_y > 0) {
+                    if (Math.abs(gamepad1.right_stick_x) >= Math.abs(gamepad1.right_stick_y)) {
+                        Diagonally_Left_Down(Math.abs(gamepad1.right_stick_y));
+                    } else {
+                        Diagonally_Left_Down(Math.abs(gamepad1.right_stick_y));
+                    }
+                } else if (gamepad1.right_stick_x > 0 && gamepad1.right_stick_y < 0) {
+                    if (Math.abs(gamepad1.right_stick_x) >= Math.abs(gamepad1.right_stick_y)) {
+                        Diagonally_RIght_Up(Math.abs(gamepad1.right_stick_x));
+                    } else {
+                        Diagonally_RIght_Up(Math.abs(gamepad1.right_stick_y));
+                    }
+                } else if (gamepad1.right_stick_x > 0 && gamepad1.right_stick_y > 0) {
+                    if (Math.abs(gamepad1.right_stick_x) >= Math.abs(gamepad1.right_stick_y)) {
+                        Diagonally_RIght_Down(Math.abs(gamepad1.right_stick_y));
+                    } else {
+                        Diagonally_RIght_Down(Math.abs(gamepad1.right_stick_y));
+                    }
+                } else {
+                    if (gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0) {
+                        Stop();
+                    }
+                }
+                // slide left slide right
+                if (gamepad1.right_trigger <= 1 && gamepad1.right_trigger > 0) {
+                    Slide_Right(gamepad1.right_trigger);
+                } else if (gamepad1.left_trigger <= 1 && gamepad1.left_trigger > 0) {
+                    Slide_Left(gamepad1.left_trigger);
+                } else {
+                    Stop();
+                }
+
+
             }
-                if (Math.abs(gamepad1.left_stick_y) > Math.abs((gamepad1.left_stick_x))) {
+
+                /*if (Math.abs(gamepad1.left_stick_y) > Math.abs((gamepad1.left_stick_x))) {
                     if (gamepad1.left_stick_y < 0) {
                         robot.Forward(Math.abs(gamepad1.left_stick_y));
                     } else if (gamepad1.left_stick_y > 0) {
@@ -154,13 +246,89 @@ public class TeleOps extends LinearOpMode {
                     robot.Slide_Left(gamepad1.left_trigger);
                 } else {
                     robot.Stop();
-                }
+                } */
 
 
-            }
-
-            telemetry.update();
         }
+
+        telemetry.update();
     }
 
+    // all of our base movement functions
+    private void Stop() {
+        Left_Front_Wheel.setPower(0);
+        Right_Front_Wheel.setPower(0);
+        Left_Rear_Wheel.setPower(0);
+        Right_Rear_Wheel.setPower(0);
+    }
 
+    private void Reverse(double power) {
+        Left_Front_Wheel.setPower(power * -1);
+        Right_Front_Wheel.setPower(power * -1);
+        Left_Rear_Wheel.setPower(power * -1);
+        Right_Rear_Wheel.setPower(power * -1);
+    }
+
+    private void Forward(float power) {
+        Left_Front_Wheel.setPower(power);
+        Right_Front_Wheel.setPower(power);
+        Left_Rear_Wheel.setPower(power);
+        Right_Rear_Wheel.setPower(power);
+    }
+
+    private void Left(float power) {
+        Left_Front_Wheel.setPower(power * -1);
+        Right_Front_Wheel.setPower(power);
+        Left_Rear_Wheel.setPower(power * -1);
+        Right_Rear_Wheel.setPower(power);
+    }
+
+    private void Right(float power) {
+        Left_Front_Wheel.setPower(power);
+        Right_Front_Wheel.setPower(power * -1);
+        Left_Rear_Wheel.setPower(power);
+        Right_Rear_Wheel.setPower(power * -1);
+    }
+
+    private void Diagonally_RIght_Up(float power) {
+        Left_Front_Wheel.setPower(power);
+        Right_Front_Wheel.setPower(0);
+        Left_Rear_Wheel.setPower(0);
+        Right_Rear_Wheel.setPower(power);
+    }
+
+    private void Diagonally_Left_Down(float power) {
+        Left_Front_Wheel.setPower(power * -1);
+        Right_Front_Wheel.setPower(0);
+        Left_Rear_Wheel.setPower(0);
+        Right_Rear_Wheel.setPower(power * -1);
+    }
+
+    private void Diagonally_Left_Up(float power) {
+        Left_Front_Wheel.setPower(0);
+        Right_Front_Wheel.setPower(power);
+        Left_Rear_Wheel.setPower(power);
+        Right_Rear_Wheel.setPower(0);
+    }
+
+    private void Diagonally_RIght_Down(float power) {
+        Left_Front_Wheel.setPower(0);
+        Right_Front_Wheel.setPower(power * -1);
+        Left_Rear_Wheel.setPower(power * -1);
+        Right_Rear_Wheel.setPower(0);
+    }
+
+    private void Slide_Left(float power) {
+        Left_Front_Wheel.setPower(power*-1);
+        Right_Front_Wheel.setPower(power);
+        Left_Rear_Wheel.setPower(power);
+        Right_Rear_Wheel.setPower(power*-1 );
+    }
+
+    private void Slide_Right(float power) {
+        Left_Front_Wheel.setPower(power);
+        Right_Front_Wheel.setPower(power*-1);
+        Left_Rear_Wheel.setPower(power*-1);
+        Right_Rear_Wheel.setPower(power);
+    }
+}
