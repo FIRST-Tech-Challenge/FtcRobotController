@@ -52,7 +52,7 @@ import org.firstinspires.ftc.teamcode.HardwareBaymax;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Madilyn Gemperline:SUPER STAR!!! :) 20210108", group="Pushbot")
+@TeleOp(name="Coach 20210108", group="Pushbot")
 //@Disabled
 public class PushbotTeleopPOV_Linear extends LinearOpMode {
 
@@ -102,12 +102,26 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
                 leftback = drive + turn;
                 rightback = drive - turn;
             }
+            else if (strife > 0)
+            {
+                leftfront = drive + strife;
+                rightfront = drive-strife;
+                leftback = drive-strife;
+                rightback = drive + strife;
+            }
+            else if (strife < 0)
+            {
+                leftfront = drive + strife;
+                rightfront = drive-strife;
+                leftback = drive-strife;
+                rightback = drive+strife;
+            }
             else
             {
-                leftfront = strife+drive;
-                rightfront = -strife+drive;
-                leftback = -strife+drive;
-                rightback = strife+drive;
+                leftfront = 0;
+                rightfront = 0;
+                leftback = 0;
+                rightback = 0;
             }
 
 
@@ -154,6 +168,7 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
 
             telemetry.addData("leftback",  "%.2f", leftback);
             telemetry.addData("rightback", "%.2f", rightback);
+            telemetry.addData(  "strife", "%.2f", strife);
             telemetry.update();
 
             // Pace this loop so jaw action is reasonable speed.
