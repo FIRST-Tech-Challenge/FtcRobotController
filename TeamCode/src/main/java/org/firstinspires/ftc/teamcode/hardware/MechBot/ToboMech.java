@@ -1024,6 +1024,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public void initAfterStart() {
+        shooter.shootOutByRpm(1240);
        if (comboGrabber!=null && tZone!=TargetZone.UNKNOWN) // during autonomous
            comboGrabber.armUp();
        initializeGPSThread();
@@ -1209,9 +1210,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
 
         }
-        while (!TaskManager.isComplete("Transfer Up Combo")) {
-            TaskManager.processTasks();
-        }
+
         if (comboGrabber!=null) {
             comboGrabber.releaseWobbleGoalCombo();
             while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
@@ -1398,7 +1397,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
         // sleep(1000);
     }
-    public void deliverSecondWobbleGoal() throws InterruptedException { // we may need to go around the other wobble goal
+    public void deliverSecondWobbleGoalAndShootBonusRings() throws InterruptedException { // we may need to go around the other wobble goal
 
         // need to change positions
         if (side == ProgramType.AUTO_BLUE) {
@@ -1406,12 +1405,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 // chassis.driveTo(.8, side(30), 40, 0, false, 2);
                 chassis.driveTo(0.9, side(17), 165, -10, false, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
+                shooter.shootOutByRpm(1240);
                 intake.intakeIn();
                 chassis.driveTo(auto_chassis_power, side(80), 140, 0, false, 5);
                 intake.stop();
                 autoShootHighGoal(1);
                 chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
             } else if (tZone == TargetZone.ZONE_C) {//4
+                shooter.shootOutByRpm(1240);
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
                 chassis.driveTo(1.0, side(90), 123, 0, false, 5);
                 autoIntakeRings(3);
