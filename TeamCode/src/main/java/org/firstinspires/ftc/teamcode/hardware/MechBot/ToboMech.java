@@ -1218,7 +1218,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }
         if (tZone == TargetZone.ZONE_C) {
-            chassis.rawRotateTo(0.6, 0, true, 0.5);
+            chassis.rawRotateTo(0.3, -5, true, 0.5);
         }
 
         //sleep(1000);
