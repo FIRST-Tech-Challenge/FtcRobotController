@@ -19,11 +19,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class MainTeleop extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
-    private CRServo leftConveyor, rightConveyor, elevator, intake;
-    private DcMotor outtakeRight, outtakeLeft;
-    private Servo flipper;
+    private CRServo leftConveyor, rightConveyor, intake;
+    private DcMotor outtakeRight, outtakeLeft, wobbleArm;
+    private Servo flipper, wobbleClaw;
 
-    private CRServo leftIntakeServo, rightIntakeServo;
 
     private BNO055IMU imu;
 
@@ -61,22 +60,19 @@ public class MainTeleop extends LinearOpMode{
         leftConveyor = hardwareMap.crservo.get("leftConveyor");
         rightConveyor = hardwareMap.crservo.get("rightConveyor");
 
-        //elevator and flipper
-        elevator = hardwareMap.crservo.get("elevator");
+        //wobble and flipper
+        wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
+        wobbleClaw = hardwareMap.servo.get("wobbleClaw");
         flipper = hardwareMap.servo.get("flipper");
 
         //launcher
         outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
         outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
 
-        //lifting and lowering intake
-        leftIntakeServo = hardwareMap.crservo.get("LIrelease");
-        rightIntakeServo = hardwareMap.crservo.get("RIrelease");
-
         //Encoders
         verticalLeft = hardwareMap.dcMotor.get("leftOdometry");
-        verticalRight = hardwareMap.dcMotor.get("rightOdometry");
-        horizontal = hardwareMap.dcMotor.get("outtakeRight");
+        verticalRight = hardwareMap.dcMotor.get("FR");
+        horizontal = hardwareMap.dcMotor.get("BL");
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -85,23 +81,24 @@ public class MainTeleop extends LinearOpMode{
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 
+        leftConveyor.setDirection(CRServo.Direction.REVERSE);
+
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //reverse one of the outtakes
-        outtakeLeft.setDirection(DcMotor.Direction.REVERSE);
 
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-                imu, leftIntakeServo, rightIntakeServo, leftConveyor, rightConveyor, elevator, flipper, intake,
+                imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
                 outtakeRight, outtakeLeft, this);
 
         robot.setupRobot();//calibrate IMU, set any required parameters
 
         double powerMod = 1.0;
         double intakeMod = 1.0;
-        double outtakeMod = 0.46;//0.46
+        double outtakeMod = .46;
+        double wobbleMod = .3;
 
         waitForStart();
 
@@ -120,8 +117,6 @@ public class MainTeleop extends LinearOpMode{
             }
 
             //stuff to program still
-            //click a button to move in position to launch at goals and (another for) power shot***
-            //stuff for wobble
 
             //everything intake
             /*
@@ -132,89 +127,59 @@ public class MainTeleop extends LinearOpMode{
             }else{
                 intakeMod = 1.0;
             }
-
-//            //Release intake
-//            if(gamepad1.x){
-//                lowerIntake();
-//            }
-//            if(gamepad1.y){
-//                raiseIntake();
-//            }
-//            if(gamepad1.dpad_up){
-//                leftIntakeServo.setPower(0.1);
-//                rightIntakeServo.setPower(0.1);
-//                wait(100);
-//                leftIntakeServo.setPower(0);
-//                rightIntakeServo.setPower(0);
-//            }
-//            if(gamepad1.dpad_down){
-//                leftIntakeServo.setPower(-0.1);
-//                rightIntakeServo.setPower(-0.1);
-//                wait(100);
-//                leftIntakeServo.setPower(0);
-//                rightIntakeServo.setPower(0);
-//            }
-
             double intakeSpeed = gamepad1.left_trigger * intakeMod;
             intake.setPower(intakeSpeed);
             rightConveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
             leftConveyor.setPower(intakeSpeed);
 
-            //Ring elevator
-            //Run by a continuous servo; run continuous servo for some amount of time
-//            if(gamepad2.x){
-//                raiseElevator();
-//            }
-//
-//            if(gamepad2.y){
-//                lowerElevator();
-//            }
-//            if(gamepad2.dpad_left){
-//                elevator.setPower(-0.1);
-//                wait(100);
-//                elevator.setPower(0);
-//            }
-//            if(gamepad2.dpad_right){
-//                elevator.setPower(0.1);
-//                wait(100);
-//                elevator.setPower(0);
-//            }
+
 
             //Ring flipper
             //Run by a servo, 1 is fully "flipped" position, 0 is fully "retracted" position
             //Hold down b button to flip ring out
-            while(gamepad2.b && flipper.getPosition() <= 1){
-                flipper.setPosition(flipper.getPosition() + 0.01);
+            if(gamepad2.b){
+                flipper.setPosition(1);
             }
 
-            while(!gamepad2.b && flipper.getPosition() >= 0){
-                flipper.setPosition(flipper.getPosition() - 0.01);
+            if(gamepad2.a){
+                flipper.setPosition(0);
             }
 
             telemetry.addData("flipper position", flipper.getPosition());
 
 
             //everything outtake/launch
-            /*
-            Ability to test a variety of outtake motor speeds from 1 to 0
-            */
-            if(gamepad2.dpad_up){
-                if(outtakeMod != 1.0){
-                    outtakeMod += 0.1;
-                }
-            }
-            if(gamepad2.dpad_down){
-                if(outtakeMod != 0.0){
-                    outtakeMod -= 0.1;
-                }
-            }
+
             //Sending data on power of outtake, outtake motor RPM, and tangential velocity of outtake wheel to telemetry
+
+            if(gamepad2.right_bumper){
+                outtakeMod = .41;
+            }else{
+                outtakeMod = .46;
+            }
             double outtakePower = (gamepad2.right_trigger * outtakeMod);
             outtakeLeft.setPower(outtakePower);
             outtakeRight.setPower(outtakePower);
 
             double outtakeRPM = outtakePower * OUTTAKE_MOTOR_RPM * OUTTAKE_GEAR_RATIO;
             double outtakeWheelVelocity = (outtakeRPM * 2 * Math.PI * OUTTAKE_WHEEL_RADIUS_M)/60;
+
+            //everything wobble
+
+            if(gamepad2.left_bumper){
+                wobbleMod = 1.0;
+            }else{
+                wobbleMod = .3;
+            }
+            wobbleArm.setPower(gamepad2.left_stick_y * wobbleMod );
+
+            if(gamepad2.x){
+                wobbleClaw.setPosition(0);
+            }
+
+            if(gamepad2.y){
+                wobbleClaw.setPosition(1);
+            }
 
 
             //everything driving
@@ -255,51 +220,7 @@ public class MainTeleop extends LinearOpMode{
 
     }
 
-//    private void raiseElevator(){
-//        ElapsedTime timer = new ElapsedTime();
-//        timer.reset();
-//
-//        while(timer.milliseconds() < 200){
-//            elevator.setPower(1);
-//        }
-//
-//        elevator.setPower(0);
-//    }
-//
-//    private void lowerElevator(){
-//        ElapsedTime timer = new ElapsedTime();
-//        timer.reset();
-//
-//        while(timer.milliseconds() < 200){
-//            elevator.setPower(-1);
-//        }
-//
-//        elevator.setPower(0);
-//    }
-//    private void raiseIntake(){
-//        ElapsedTime timer = new ElapsedTime();
-//        timer.reset();
-//
-//        while(timer.milliseconds() < 200){
-//            leftIntakeServo.setPower(1);
-//            rightIntakeServo.setPower(1);
-//        }
-//
-//        leftIntakeServo.setPower(0);
-//        rightIntakeServo.setPower(0);
-//    }
-//    private void lowerIntake(){
-//        ElapsedTime timer = new ElapsedTime();
-//        timer.reset();
-//
-//        while(timer.milliseconds() < 200){
-//            leftIntakeServo.setPower(-1);
-//            rightIntakeServo.setPower(-1);
-//        }
-//
-//        leftIntakeServo.setPower(0);
-//        rightIntakeServo.setPower(0);
-//    }
+
     public void odometryNormalizeAngle(){
         while (globalPositionUpdate.returnOrientation() > 0){
             robot.turnCounterClockwise(1);

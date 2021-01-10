@@ -32,15 +32,14 @@ public class IMURobot {
     public CRServo intake;
     public DcMotor outtakeLeft;
     public DcMotor outtakeRight;
+    private DcMotor wobbleArm;
 
     private CRServo leftConveyor;
     private CRServo rightConveyor;
-    private CRServo elevator;
 
     //Declare servos
-    private CRServo leftIntakeServo;
-    private CRServo rightIntakeServo;
     private Servo flipper;
+    private Servo wobbleClaw;
 
     //Declare the IMU
     private BNO055IMU imu;
@@ -68,7 +67,7 @@ public class IMURobot {
     //The amount of encoder ticks for each inch the robot moves. This will change for each robot and needs to be changed here
     final double COUNTS_PER_INCH = 307.699557;
 
-    //Hardware map names for the encoder wheels. Again, these will change for each robot and need to be updated below
+    private OdometryGlobalCoordinatePosition globalPositionUpdate;
 
     /**
      * Constructor with odometry
@@ -81,11 +80,10 @@ public class IMURobot {
      * @param verticalRight
      * @param horizontal
      * @param imu
-     * @param leftIntakeServo
-     * @param rightIntakeServo
+     * @param wobbleArm
+     * @param wobbleClaw
      * @param leftConveyor
      * @param rightConveyor
-     * @param elevator
      * @param flipper
      * @param intake
      * @param outtakeRight
@@ -96,8 +94,8 @@ public class IMURobot {
     
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft, 
                     DcMotor verticalLeft, DcMotor verticalRight, DcMotor horizontal,
-                    BNO055IMU imu, CRServo leftIntakeServo, CRServo rightIntakeServo,
-                    CRServo leftConveyor, CRServo rightConveyor, CRServo elevator, Servo flipper,
+                    BNO055IMU imu, DcMotor wobbleArm, Servo wobbleClaw,
+                    CRServo leftConveyor, CRServo rightConveyor, Servo flipper,
                     CRServo intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
@@ -107,11 +105,10 @@ public class IMURobot {
         this.verticalLeft = verticalLeft;
         this.horizontal = horizontal;
         this.imu = imu;
-        this.leftIntakeServo = leftIntakeServo;
-        this.rightIntakeServo = rightIntakeServo;
+        this.wobbleArm = wobbleArm;
+        this.wobbleClaw = wobbleClaw;
         this.leftConveyor = leftConveyor;
         this.rightConveyor = rightConveyor;
-        this.elevator = elevator;
         this.flipper = flipper;
         this.intake = intake;
         this.outtakeRight = outtakeRight;
@@ -130,11 +127,10 @@ public class IMURobot {
      * @param motorBackRight
      * @param motorBackLeft
      * @param imu
-     * @param leftIntakeServo
-     * @param rightIntakeServo
+     * @param wobbleArm
+     * @param wobbleClaw
      * @param leftConveyor
      * @param rightConveyor
-     * @param elevator
      * @param flipper
      * @param intake
      * @param outtakeRight
@@ -144,19 +140,18 @@ public class IMURobot {
      */
 
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                    BNO055IMU imu, CRServo leftIntakeServo, CRServo rightIntakeServo,
-                    CRServo leftConveyor, CRServo rightConveyor, CRServo elevator, Servo flipper,
+                    BNO055IMU imu, DcMotor wobbleArm, Servo wobbleClaw,
+                    CRServo leftConveyor, CRServo rightConveyor, Servo flipper,
                     CRServo intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
         this.motorBackLeft = motorBackLeft;
         this.imu = imu;
-        this.leftIntakeServo = leftIntakeServo;
-        this.rightIntakeServo = rightIntakeServo;
+        this.wobbleArm = wobbleArm;
+        this.wobbleClaw = wobbleClaw;
         this.leftConveyor = leftConveyor;
         this.rightConveyor = rightConveyor;
-        this.elevator = elevator;
         this.flipper = flipper;
         this.intake = intake;
         this.outtakeRight = outtakeRight;
@@ -618,7 +613,7 @@ public class IMURobot {
      * @param targetY Y position to strafe to
      * @param power
      */
-    public void driveToPos(double targetX, double targetY, double power){
+    public void driveToPos(double targetX, double targetY, double power) throws InterruptedException{
         //calculate angle
         double currentX = globalPositionUpdate.returnXCoordinate();
         double currentY = globalPositionUpdate.returnYCoordinate();
@@ -693,9 +688,6 @@ public class IMURobot {
         intake.setPower(-1);
     }
 
-    /*public void releaseIntake() {
-        leftIntakeServo.setPosition(1);
-        rightIntakeServo.setPosition(0);
-    }*/
+
 
 }

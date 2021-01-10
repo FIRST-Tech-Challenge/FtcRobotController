@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -22,6 +23,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
@@ -44,6 +46,9 @@ public class StarterStackDetectorTest extends LinearOpMode
     private DcMotor motorBackRight;
     private DcMotor motorBackLeft;
 
+    private DcMotor wobbleArm;
+    private Servo wobbleClaw;
+
     final double COUNTS_PER_INCH = 307.699557;
 
     //Odometry encoder wheels
@@ -55,8 +60,7 @@ public class StarterStackDetectorTest extends LinearOpMode
     //Declare imu
     private BNO055IMU imu;
 
-    IMURobot robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-            imu, this);
+    private IMURobot robot;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -66,9 +70,12 @@ public class StarterStackDetectorTest extends LinearOpMode
         motorBackRight = hardwareMap.dcMotor.get("BR");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
 
+        wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
+        wobbleClaw = hardwareMap.servo.get("wobbleClaw");
+
         verticalLeft = hardwareMap.dcMotor.get("leftOdometry");
-        verticalRight = hardwareMap.dcMotor.get("rightOdometry");
-        horizontal = hardwareMap.dcMotor.get("outtakeRight");
+        verticalRight = hardwareMap.dcMotor.get("FR");
+        horizontal = hardwareMap.dcMotor.get("BL");
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -81,7 +88,8 @@ public class StarterStackDetectorTest extends LinearOpMode
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Create an IMURobot object that we will use to run the robot
-
+        robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
+            imu, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
         /*
@@ -93,10 +101,8 @@ public class StarterStackDetectorTest extends LinearOpMode
          * single-parameter constructor instead (commented out below)
          */
 
-        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
-
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
         // OR...  Do Not Activate the Camera Monitor View
         //phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
@@ -121,38 +127,56 @@ public class StarterStackDetectorTest extends LinearOpMode
 
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
-        int stackThreshold = 300;
+        int stackThreshold = 60;
 
-        int stack = mainPipeline.ycontours.size();
 
-        if(stack == 0){
-            targetZone = 1;
+            int stack = mainPipeline.ycontours.size();
 
-        }else if(stack >= 1 && mainPipeline.stackHeight > stackThreshold){
-            targetZone = 3;
+            if (mainPipeline.stackHeight < 20) {
+                targetZone = 1;
 
-        }else if(stack >= 1 && mainPipeline.stackHeight < stackThreshold){
-            targetZone = 2;
+            } else if (mainPipeline.stackHeight > 60) {
+                targetZone = 3;
 
-        }
+            } else {
+                targetZone = 2;
 
-        telemetry.addData("Stack Height: ", mainPipeline.stackHeight);
-        telemetry.addData("tz: ", targetZone);
-        telemetry.update();
+            }
+
+            telemetry.addData("Stack Height: ", mainPipeline.stackHeight);
+            telemetry.addData("tz: ", targetZone);
+            telemetry.update();
+
+
 
         switch(targetZone){
             case 1:
-                odometryDriveToPos(100,100);
+                robot.gyroTurn(15, .5);
+                robot.gyroDriveCm(-.5, 180);
+                dropWobble();
+                robot.gyroTurn(-45, .5);
+                robot.gyroDriveCm(-.25, 60);
+                //odometryDriveToPos(100,100);
                 break;
             case 2:
-                odometryDriveToPos(100,100);
+                robot.gyroDriveCm(-.5, 210);
+                dropWobble();
+                robot.gyroDriveCm(.25, 60);
+                //odometryDriveToPos(100,100);
                 break;
             case 3:
-                odometryDriveToPos(100,100);
+                robot.gyroTurn(10, .5);
+                robot.gyroDriveCm(-.5, 180);
+                robot.gyroTurn(-10, .5);
+                robot.gyroDriveCm(-.5, 60);
+                dropWobble();
+                robot.gyroDriveCm(.25, 60);
+                //odometryDriveToPos(100,100);
                 break;
             default:
                 break;
         }
+
         globalPositionUpdate.stop();
 
 
@@ -275,6 +299,24 @@ public class StarterStackDetectorTest extends LinearOpMode
         //Use the correction to adjust robot power so robot faces straight
         robot.correctedTankStrafe(leftPower, rightPower, correction);
         //}
+    }
+
+    public void dropWobble(){
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+
+        while(timer.milliseconds() < 1000){
+            wobbleArm.setPower(-.1);
+        }
+        wobbleArm.setPower(0);
+
+        wobbleClaw.setPosition(1);
+
+        timer.reset();
+        while(timer.milliseconds() < 1000){
+            wobbleArm.setPower(.1);
+        }
+        wobbleArm.setPower(0);
     }
 
 }
