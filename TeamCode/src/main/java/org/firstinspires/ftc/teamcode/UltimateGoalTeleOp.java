@@ -95,7 +95,6 @@ public class UltimateGoalTeleOp extends OpMode {
     private ElapsedTime loopTime = new ElapsedTime();
     private boolean runWithEncoders = true;
     private boolean aligning = false;
-    private double flapAngle = UltimateGoalRobot.FLAP_HIGH_GOAL;
 
     @Override
     public void start() {
@@ -124,6 +123,7 @@ public class UltimateGoalTeleOp extends OpMode {
         //left joystick is for moving
         //right joystick is for rotation
         gyroAngle = robot.readIMU();
+//        gyroAngle = 90;
 
         leftTriggerPower = gamepad1.left_trigger;
         rightTriggerPower = gamepad1.right_trigger;
@@ -181,7 +181,11 @@ public class UltimateGoalTeleOp extends OpMode {
         }
 
         if(!triangleHeld && trianglePressed) {
-            robot.startInjecting();
+            if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
+                robot.startTripleInjecting();
+            } else {
+                robot.startInjecting();
+            }
             triangleHeld = true;
         } else if(!trianglePressed) {
             triangleHeld = false;
@@ -189,11 +193,7 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!crossHeld && crossPressed) {
             crossHeld = true;
-			if(robot.shooterMotorPower != UltimateGoalRobot.SHOOT_POWER) {
-			    robot.setShooterMotorPower(UltimateGoalRobot.SHOOT_POWER);
-			} else {
-				robot.setShooterMotorPower(0.0);
-			}
+            robot.toggleShooter();
         } else if(!crossPressed) {
             crossHeld = false;
         }
@@ -277,6 +277,8 @@ public class UltimateGoalTeleOp extends OpMode {
         }
 
         if(!circle2Held && circle2Pressed) {
+            // Enable the velocity checks again.
+            robot.disableVelocityCheck = true;
             circle2Held = true;
         } else if(!circle2Pressed) {
             circle2Held = false;
@@ -305,7 +307,7 @@ public class UltimateGoalTeleOp extends OpMode {
                 robot.highGoalOffset -= 0.002;
                 robot.setShooterFlapHighGoal();
             } else {
-                robot.highGoalOffset -= 0.002;
+                robot.powerShotOffset -= 0.002;
                 robot.setShooterFlapPowerShot();
             }
             up2Held = true;
@@ -318,7 +320,7 @@ public class UltimateGoalTeleOp extends OpMode {
                 robot.highGoalOffset += 0.002;
                 robot.setShooterFlapHighGoal();
             } else {
-                robot.highGoalOffset += 0.002;
+                robot.powerShotOffset += 0.002;
                 robot.setShooterFlapPowerShot();
             }
             down2Held = true;
@@ -348,7 +350,7 @@ public class UltimateGoalTeleOp extends OpMode {
 //        }
 
         telemetry.addData("Offset Angle: ", driverAngle);
-        telemetry.addData("Flap Position: ", flapAngle);
+        telemetry.addData("Flap Position: ", robot.flapAngle);
         telemetry.addData("Shooter Velocity: ", robot.shooter.getVelocity());
         telemetry.addData("FL Motor Velocity: ", robot.frontLeft.getVelocity());
         telemetry.addData("FR Motor Velocity: ", robot.frontRight.getVelocity());

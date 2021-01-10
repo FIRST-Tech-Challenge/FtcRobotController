@@ -34,6 +34,9 @@ public class UltimateGoalRobot
 {
     /* Public OpMode members. */
     public final static double SHOOT_POWER = 0.47;
+    public final static double SHOOT_VELOCITY = 1120;
+    public final static double SHOOT_VELOCITY_ERROR = 20;
+    public final static double THROTTLE_TIMEOUT = 7000;
     public final static double STRAFE_MULTIPLIER = 1.5;
     public final static double SLOW_STRAFE_MULTIPLIER = 1.5;
     public final static double MIN_FOUNDATION_SPIN_RATE = 0.19;
@@ -68,6 +71,7 @@ public class UltimateGoalRobot
     public double powerShotOffset = 0.0;
     public final static double FLAP_HIGH_GOAL = 0.525;
     public double highGoalOffset = 0.0;
+    public double flapAngle;
 
     // We need both hubs here because one has the motors, and the other has the
     // odometry encoders.
@@ -102,7 +106,7 @@ public class UltimateGoalRobot
     protected double rearLeftMotorPower = 0.0;
     protected double frontRightMotorPower = 0.0;
     protected double rearRightMotorPower = 0.0;
-    protected double shooterMotorPower = 0.0;
+    protected double shooterMotorTargetVelocity = 0;
     protected double intakeMotorPower = 0.0;
     protected double wobbleMotorPower = 0.0;
 
@@ -174,6 +178,8 @@ public class UltimateGoalRobot
         rearLeft.setDirection(DcMotor.Direction.FORWARD);
         rearRight.setDirection(DcMotor.Direction.FORWARD);
         shooter.setDirection(DcMotor.Direction.REVERSE);
+
+        // Changing these values affect the direction of the encoder reads.
         wobble.setDirection(DcMotor.Direction.FORWARD);
         intake.setDirection(DcMotor.Direction.FORWARD);
         empty.setDirection(DcMotor.Direction.REVERSE);
@@ -283,19 +289,24 @@ public class UltimateGoalRobot
     }
 
     public void setShooterFlapPowerShot() {
-        flap.setPosition(FLAP_POWERSHOT + powerShotOffset);
+        flapAngle = FLAP_POWERSHOT + powerShotOffset;
+        flap.setPosition(flapAngle);
         flapPosition = FLAP_POSITION.POWERSHOT;
     }
 
     public void setShooterFlapHighGoal() {
-        flap.setPosition(FLAP_HIGH_GOAL + highGoalOffset);
-        flapPosition = FLAP_POSITION.POWERSHOT;
+        flapAngle = FLAP_HIGH_GOAL + highGoalOffset;
+        flap.setPosition(flapAngle);
+        flapPosition = FLAP_POSITION.HIGH_GOAL;
     }
 
-    public void setShooterMotorPower(double power) {
-        if (Math.abs(power - shooterMotorPower) > 0.005) {
-            shooterMotorPower = power;
-            shooter.setPower(power);
+    public void toggleShooter() {
+        if(shooterMotorTargetVelocity != SHOOT_VELOCITY) {
+            shooter.setVelocity(SHOOT_VELOCITY);
+            shooterMotorTargetVelocity = SHOOT_VELOCITY;
+        } else {
+            shooter.setVelocity(0);
+            shooterMotorTargetVelocity = 0;
         }
     }
 
@@ -685,15 +696,21 @@ public class UltimateGoalRobot
         }
     }
 
-    /** Inject activity pushes a disk into the shooter and resets the injector. **/
+    /** Inject activity pushes a disk into the shooter and resets th
+     * e injector. **/
     public final static double INJECTOR_FIRE_TIME = 300.0;
     public final static double INJECTOR_RESET_TIME = 200.0;
     public final static double INJECTOR_HOME_TIME = 100.0;
+    public final static double SHOOTER_THROTTLE_DELAY = 500.0;
     public final static double INJECTOR_HOME = 0.512;
     public final static double INJECTOR_RESET = 0.450;
     public final static double INJECTOR_FIRE = 0.800;
+    public final static int VELOCITY_SUCCESS_CHECKS = 3;
+    public boolean disableVelocityCheck = false;
+    public int sequentialStableVelocityChecks = 0;
     public enum INJECTING {
         IDLE,
+        THROTTLING_UP,
         FIRING,
         RESETTING,
         HOMING
@@ -702,14 +719,51 @@ public class UltimateGoalRobot
     public INJECTING injectState = INJECTING.IDLE;
     public void startInjecting() {
         if(injectState == INJECTING.IDLE) {
-            injector.setPosition(INJECTOR_FIRE);
+            // If the shooter isn't on, fire it up.
+            if(shooterMotorTargetVelocity != SHOOT_VELOCITY) {
+                toggleShooter();
+            }
+            sequentialStableVelocityChecks = 0;
             injectTimer.reset();
-            injectState = INJECTING.FIRING;
+            injectState = INJECTING.THROTTLING_UP;
         }
     }
 
     public void performInjecting() {
         switch(injectState) {
+            case THROTTLING_UP:
+                boolean throttledUp = false;
+                // If the stable velocity isn't working, just wait for a small timer.
+                // Will have to reset the velocity check by driver input.
+                if(disableVelocityCheck) {
+                    if(injectTimer.milliseconds() >= SHOOTER_THROTTLE_DELAY) {
+                        throttledUp = true;
+                    }
+                } else {
+                    // This means we can not reach target velocity, so disable
+                    // velocity targeting and just use a timer in the future.
+                    if(injectTimer.milliseconds() > THROTTLE_TIMEOUT) {
+                        disableVelocityCheck = true;
+                        throttledUp = true;
+                    } else {
+                        // Verify this loop is at target velocity.
+                        if(Math.abs(shooter.getVelocity() - SHOOT_VELOCITY) <= SHOOT_VELOCITY_ERROR) {
+                            sequentialStableVelocityChecks++;
+                            if(sequentialStableVelocityChecks >= VELOCITY_SUCCESS_CHECKS) {
+                                throttledUp = true;
+                            }
+                        } else {
+                            sequentialStableVelocityChecks = 0;
+                        }
+                    }
+
+                }
+                if(throttledUp) {
+                    injector.setPosition(INJECTOR_FIRE);
+                    injectTimer.reset();
+                    injectState = INJECTING.FIRING;
+                }
+                break;
             case FIRING:
                 if(injectTimer.milliseconds() >= INJECTOR_FIRE_TIME) {
                     injector.setPosition(INJECTOR_RESET);
@@ -746,6 +800,7 @@ public class UltimateGoalRobot
     public void startTripleInjecting() {
         if (tripleInjectState == TRIPLE_INJECTING.IDLE) {
             startInjecting();
+            tripleInjectState = TRIPLE_INJECTING.FIRING_ONE;
         }
     }
 
