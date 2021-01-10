@@ -332,7 +332,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (current > 0.2 && chassis!=null && source.getTrigger(Events.Side.LEFT)<0.2) {
                     if (source.isPressed(Button.DPAD_UP)) { // high goal
                         if (source.isPressed(Button.BACK))
-                            doHighGoals(3);
+                            doHighGoals(3, true);
                         else
                             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
                     } else if (source.isPressed(Button.DPAD_RIGHT)) { // high goal
@@ -484,7 +484,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (comboGrabber != null)
                         comboGrabber.armDownInc();
                 }  else if(source.isPressed(Button.BACK)){
-                    doHighGoals(3);
+                    doHighGoals(3, true);
                 } else if (!source.isPressed((Button.START))){
                     if (hopper!=null) {
                         //hopper.feederAuto();
@@ -1298,18 +1298,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooter.shootOutByRpm(0);
     }
 
-    public void doHighGoals(int numRings) throws InterruptedException {
+    public void doHighGoals(int numRings, boolean keepPos) throws InterruptedException {
         if (hopper != null) {
             hopper.hopperUpCombo();
             TaskManager.processTasks();
         }
         shooter.shootOutByRpm(1240);
-        if (tZone == TargetZone.ZONE_B|| tZone == TargetZone.ZONE_C && numRings==3) {
-            chassis.driveTo(.6, side(55), 170, 0, true, 2);
+        if(!keepPos) {
+            if (tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C && numRings == 3) {
+                chassis.driveTo(.6, side(55), 170, 0, true, 2);
+            } else if (tZone != TargetZone.UNKNOWN)
+                chassis.driveTo(.6, side(90), 170, 0, true, 2);
         }
-        else  if (tZone != TargetZone.UNKNOWN)
-            chassis.driveTo(.6, side(90), 170, 0, true,  2);
-
         while (!TaskManager.isComplete("Transfer Up Combo")) {
             TaskManager.processTasks();
         }
@@ -1409,15 +1409,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 intake.intakeIn();
                 chassis.driveTo(auto_chassis_power, side(80), 140, 0, false, 5);
                 intake.stop();
-                autoShootHighGoal(1);
+                autoShootHighGoal(1, false);
                 chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 shooter.shootOutByRpm(1240);
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
                 chassis.driveTo(1.0, side(90), 123, 0, false, 5);
                 autoIntakeRings(3);
-                chassis.driveTo(1.0, side(90), 160, 0, false, 5);
-                autoShootHighGoal(3);
+                chassis.driveTo(1.0, side(90), 170, 0, false, 5);
+                autoShootHighGoal(3, true);
                 chassis.driveTo(1.0, side(3), 280, 0, false, 5);
             } else {
                 return;
@@ -1431,11 +1431,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         //sleep(1000);
     }
-    public void autoShootHighGoal(int n) throws InterruptedException {
+    public void autoShootHighGoal(int n, boolean keepPos) throws InterruptedException {
         shooter.shootOutByRpm(1240);
         hopper.hopperUpCombo();
         TaskManager.processTasks();
-        doHighGoals(n);
+        doHighGoals(n, keepPos);
         hopper.transferDown();
         TaskManager.processTasks();
     }
