@@ -38,7 +38,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     private final double FEEDER_IN = 0.45;
     private final double FEEDER_INIT = FEEDER_IN;
-    private final double FEEDER_OUT = 0.9;
+    private final double FEEDER_OUT = 0.92;
 
     private final double HOLDER_IN = 0.5;
     private final double HOLDER_INIT = FEEDER_IN;
@@ -128,7 +128,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     public void feederAuto() throws InterruptedException {
         feederOut();
-        sleep(300);
+        sleep(350);
         feederIn();
     }
 
