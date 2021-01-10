@@ -40,6 +40,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -68,7 +69,8 @@ public class ImuTest extends LinearOpMode
     // State used for updating telemetry
     Orientation angles;
     Acceleration gravity;
-  //  Velocity velocity;
+    Velocity velocity;
+    Position position;
 
     //----------------------------------------------------------------------------------------------
     // Main logic
@@ -85,7 +87,7 @@ public class ImuTest extends LinearOpMode
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        //parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
@@ -123,7 +125,8 @@ public class ImuTest extends LinearOpMode
             // three times the necessary expense.
             angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             gravity  = imu.getGravity();
- //           velocity = imu.getVelocity();
+            velocity = imu.getVelocity();
+            position = imu.getPosition();
         }
         });
 
@@ -171,23 +174,41 @@ public class ImuTest extends LinearOpMode
                     }
                 });
 
-//        telemetry.addLine()
-//                .addData("velocity", new Func<String>() {
+        telemetry.addLine()
+                .addData("velocity", new Func<String>() {
+                    @Override public String value() {
+                        Velocity v = velocity.toUnit(DistanceUnit.INCH);
+                        return v.toString();
+                    }
+//                })
+//                .addData("accely", new Func<String>() {k
 //                    @Override public String value() {
-//                        return velocity.toString();
+//                        return formatAngle(angles.angleUnit, angles.secondAngle);
 //                    }
-////                })
-////                .addData("accely", new Func<String>() {k
-////                    @Override public String value() {
-////                        return formatAngle(angles.angleUnit, angles.secondAngle);
-////                    }
-////                })
-////                .addData("accelz", new Func<String>() {
-////                    @Override public String value() {
-////                        return formatAngle(angles.angleUnit, angles.thirdAngle);
-////                    }
-//                });
-        telemetry.addData("velocity", imu.getVelocity());
+//                })
+//                .addData("accelz", new Func<String>() {
+//                    @Override public String value() {
+//                        return formatAngle(angles.angleUnit, angles.thirdAngle);
+//                    }
+                });
+        telemetry.addLine()
+                .addData("position", new Func<String>() {
+                    @Override public String value() {
+                        Position p = position.toUnit(DistanceUnit.INCH);
+                        return p.toString();
+                    }
+//                })
+//                .addData("accely", new Func<String>() {k
+//                    @Override public String value() {
+//                        return formatAngle(angles.angleUnit, angles.secondAngle);
+//                    }
+//                })
+//                .addData("accelz", new Func<String>() {
+//                    @Override public String value() {
+//                        return formatAngle(angles.angleUnit, angles.thirdAngle);
+//                    }
+                });
+//        telemetry.addData("velocity", imu.getVelocity());
     }
 
     //----------------------------------------------------------------------------------------------
@@ -200,7 +221,6 @@ public class ImuTest extends LinearOpMode
 
     String formatDegrees(double degrees){
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-
 
     }
 }
