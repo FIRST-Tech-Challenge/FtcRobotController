@@ -61,7 +61,7 @@ public class Collect extends LinearOpMode {
 ////  }
 
   public boolean getTouch() {
-          return touch.getState();
+    return touch.getState();
   }
 
   public void runOpMode() {
