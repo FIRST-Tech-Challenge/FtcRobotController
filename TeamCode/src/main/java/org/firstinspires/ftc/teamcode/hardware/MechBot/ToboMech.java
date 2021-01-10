@@ -1306,9 +1306,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooter.shootOutByRpm(1240);
         if(!keepPos) {
             if (tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C && numRings == 3) {
-                chassis.driveTo(.6, side(55), 170, 0, true, 2);
+                chassis.driveTo(.55, side(55), 170, 0, true, 2);
             } else if (tZone != TargetZone.UNKNOWN)
-                chassis.driveTo(.6, side(90), 170, 0, true, 2);
+                chassis.driveTo(.55, side(90), 170, 0, true, 2);
         }
         while (!TaskManager.isComplete("Transfer Up Combo")) {
             TaskManager.processTasks();
