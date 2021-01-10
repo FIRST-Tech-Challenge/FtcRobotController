@@ -558,7 +558,6 @@ public class DriveController {
     }
 
     public void resetDistanceTraveled() {
-        previousRobotDistanceTraveled = robotDistanceTraveled;
         robotDistanceTraveled = 0;
 
         moduleRight.resetDistanceTraveled();

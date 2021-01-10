@@ -11,6 +11,14 @@ public class Log {
 
     }
 
+    public void addField(double d) {
+
+    }
+
+    public void addField(boolean b) {
+
+    }
+
     public void newLine() {
 
     }

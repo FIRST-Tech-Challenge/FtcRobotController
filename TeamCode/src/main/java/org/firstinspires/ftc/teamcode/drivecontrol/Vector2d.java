@@ -5,7 +5,8 @@ package org.firstinspires.ftc.teamcode.drivecontrol;
 public class Vector2d {
 
     //Vector constants
-    public final static Vector2d FORWARD = new Vector2d(0, 1),
+    public final static Vector2d
+            FORWARD = new Vector2d(0, 1),
             BACKWARD = new Vector2d(0, -1),
             LEFT = new Vector2d(-1, 0),
             RIGHT = new Vector2d(1, 0),
