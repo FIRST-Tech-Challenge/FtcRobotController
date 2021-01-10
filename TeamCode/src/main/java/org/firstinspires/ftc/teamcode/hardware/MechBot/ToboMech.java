@@ -472,7 +472,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     }
                 } else if (source.getTrigger(Events.Side.RIGHT) > 0.3){
                     if (hopper!=null)
-                        hopper.transferDown();
+                        hopper.hopperDownCombo();
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
                     if (!source.isPressed(Button.Y) && (topWobbleGoalGrabber!=null))
                         topWobbleGoalGrabber.grabberAuto();
@@ -1370,11 +1370,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             TaskManager.processTasks();
         }
 
-
-            if(tZone == TargetZone.ZONE_B){
-                chassis.driveTo(auto_chassis_power, side(50), 170, 0, true,  5);
-            }
-            chassis.driveTo(.99, side(70), 40, 0, true,  5);
+        if(tZone == TargetZone.ZONE_B){
+            chassis.driveTo(auto_chassis_power, side(50), 170, 0, true,  5);
+        }
+        chassis.driveTo(.99, side(70), 40, 0, true,  5);
 
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C || tZone == TargetZone.ZONE_B) {
@@ -1418,7 +1417,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 autoIntakeRings(3);
                 chassis.driveTo(1.0, side(90), 170, 0, false, 5);
                 autoShootHighGoal(3, true);
-                chassis.driveTo(1.0, side(3), 280, 0, false, 5);
+                chassis.driveTo(1.0, side(3), 285, 0, false, 5);
             } else {
                 return;
             }
@@ -1436,7 +1435,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         hopper.hopperUpCombo();
         TaskManager.processTasks();
         doHighGoals(n, keepPos);
-        hopper.transferDown();
+        hopper.hopperDownCombo();
         TaskManager.processTasks();
     }
     public void park() throws InterruptedException {
@@ -1447,6 +1446,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 225, chassis.getCurHeading(), false,  2);
         } else{
             chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 210, chassis.getCurHeading(), false,  2);
+        }
+        while (!TaskManager.isComplete("Transfer Down Combo")) {
+            TaskManager.processTasks();
         }
     }
     public double side( double x){
@@ -1480,7 +1482,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.stop();
         chassis.yMove(1, -0.2);
         sleep(200);
-        chassis.yMove(1, 0.2);
+        chassis.yMove(1, 0.15);
         intake.intakeIn();
         for (int i = 0; i < n; i++) {
             sleep(600);
