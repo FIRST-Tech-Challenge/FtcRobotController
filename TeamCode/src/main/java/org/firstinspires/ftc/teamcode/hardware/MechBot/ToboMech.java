@@ -69,6 +69,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double webcam_offset_y = -14.2;
     public double shooting_dist = 0;
     public double shooting_angle = 0;
+    public double shooterAngleOffset = 3.0;
 
 
     public double auto_rotate_degree = 0;
@@ -1602,7 +1603,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //    shooting_angle += (shooting_dist-200)*0.047;
         //}
         double rpm_shift = getShootingAngleErrorFromRPM(rpm);
-        shooting_angle += 2.0;
+        shooting_angle += shooterAngleOffset;
         try {
             if (Math.abs(chassis.odo_heading() - shooting_angle) > 0.8) {
                 chassis.rotateTo(0.35, shooting_angle);
