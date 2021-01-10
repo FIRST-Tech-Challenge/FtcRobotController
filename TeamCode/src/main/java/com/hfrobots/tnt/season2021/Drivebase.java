@@ -39,8 +39,8 @@ public class Drivebase extends OpenLoopMecanumKinematics {
         leftFrontDriveMotor = hardwareMap.get(DcMotorEx.class, "leftFrontDriveMotor");
         leftRearDriveMotor = hardwareMap.get(DcMotorEx.class, "leftRearDriveMotor");
 
-        leftFrontDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRearDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFrontDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRearDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
 
