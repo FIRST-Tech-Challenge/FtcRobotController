@@ -71,30 +71,25 @@ public class TeleOps extends LinearOpMode {
         waitForStart();
         Right_Front_Wheel.setDirection(DcMotorSimple.Direction.REVERSE);
         Left_Rear_Wheel.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightShooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftShooter.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                // lift,picker,shooter, and pusher programs
-                //lift
+                //lift up
                 if (gamepad2.a && !liftButtonBot.isPressed()) {
-                    while (!liftButtonBot.isPressed()) {
-                        liftservo.setPower(-1);
-                    }
-                } else if (gamepad2.y && !liftButtonTop.isPressed()) {
-                    while (!liftButtonTop.isPressed()) {
-                        liftservo.setPower(1);
-                        picker.setPower(0);
-                    }
-                } else {
-                    liftservo.setPower(0);
+                    Move_Lift_Down_Continuous();
                 }
-                //picker
+                //lift down
+                if (gamepad2.y && !liftButtonTop.isPressed()) {
+                    Move_Lift_Up_Continuous();
+                }
+                //picker on
                 if (gamepad2.x && liftButtonBot.isPressed()) {
                     picker.setPower(1);
                 }
+                //picker off
                 if (gamepad2.b) {
                     picker.setPower(0);
                 }
@@ -106,13 +101,11 @@ public class TeleOps extends LinearOpMode {
                 }
                 //shooter
                 if (liftButtonTop.isPressed()) {
-                    leftShooter.setPower(1);
-                    rightShooter.setPower(1);
+                    Shooter_Start();
                 } else {
-                    leftShooter.setPower(0);
-                    rightShooter.setPower(0);
+                    Shooter_Stop();
                 }
-                // arm and claw program
+
                 //claw
                 if (gamepad2.dpad_right) {
                     claw.setPosition(-1);
@@ -144,7 +137,7 @@ public class TeleOps extends LinearOpMode {
                     }
                 } else {
                     if (Math.abs(gamepad1.left_stick_y) == 0 && Math.abs(gamepad1.left_stick_y) == 0) {
-                        Stop();
+                        StopBase();
                     }
                 }
                 //diagonally left up , right down, left down, right up
@@ -174,7 +167,7 @@ public class TeleOps extends LinearOpMode {
                     }
                 } else {
                     if (gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0) {
-                        Stop();
+                        StopBase();
                     }
                 }
                 // slide left slide right
@@ -183,71 +176,11 @@ public class TeleOps extends LinearOpMode {
                 } else if (gamepad1.left_trigger <= 1 && gamepad1.left_trigger > 0) {
                     Slide_Left(gamepad1.left_trigger);
                 } else {
-                    Stop();
+                    StopBase();
                 }
 
 
             }
-
-                /*if (Math.abs(gamepad1.left_stick_y) > Math.abs((gamepad1.left_stick_x))) {
-                    if (gamepad1.left_stick_y < 0) {
-                        robot.Forward(Math.abs(gamepad1.left_stick_y));
-                    } else if (gamepad1.left_stick_y > 0) {
-                        robot.Reverse(Math.abs(gamepad1.left_stick_y));
-                    }
-                } else if (Math.abs(gamepad1.left_stick_y) < Math.abs((gamepad1.left_stick_x))) {
-                    if (gamepad1.left_stick_x > 0) {
-
-                        robot.Right(Math.abs(gamepad1.left_stick_x));
-                    } else if (gamepad1.left_stick_x < 0) {
-                        robot.Left(Math.abs(gamepad1.left_stick_x));
-                    }
-                } else {
-                    if (gamepad1.left_stick_x == 0 && gamepad1.left_stick_y == 0) {
-                        robot.Stop();
-                    }
-                }
-
-                //This one takes care of Diagonal Right Up , Diagonal Right Down, Diagonal Left Up, Diagonal Left Down
-                if (gamepad1.right_stick_x < 0 && gamepad1.right_stick_y < 0) {
-                    if (Math.abs(gamepad1.right_stick_x) >= Math.abs(gamepad1.right_stick_y)) {
-                        robot.Diagonal_Left_Up(Math.abs(gamepad1.right_stick_x));
-                    } else {
-                        robot.Diagonal_Left_Up(Math.abs(gamepad1.right_stick_y));
-                    }
-                } else if (gamepad1.right_stick_x < 0 && gamepad1.right_stick_y > 0) {
-                    if (Math.abs(gamepad1.right_stick_x) >= Math.abs(gamepad1.right_stick_y)) {
-                        robot.Diagonal_Left_Down(Math.abs(gamepad1.right_stick_x));
-                    } else {
-                        robot.Diagonal_Left_Down(Math.abs(gamepad1.right_stick_y));
-                    }
-                } else if (gamepad1.right_stick_x > 0 && gamepad1.right_stick_y < 0) {
-                    if (Math.abs(gamepad1.right_stick_x) >= Math.abs(gamepad1.right_stick_y)) {
-                        robot.Diagonal_Right_Up(Math.abs(gamepad1.right_stick_x));
-                    } else {
-                        robot.Diagonal_Right_Up(Math.abs(gamepad1.right_stick_y));
-                    }
-                } else if (gamepad1.right_stick_x > 0 && gamepad1.right_stick_y > 0) {
-                    if (Math.abs(gamepad1.right_stick_x) >= Math.abs(gamepad1.right_stick_y)) {
-                        robot.Diagonal_Right_Down(Math.abs(gamepad1.right_stick_x));
-                    } else {
-                        robot.Diagonal_Right_Down(Math.abs(gamepad1.right_stick_y));
-                    }
-                } else {
-                    if (gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0) {
-                        robot.Stop();
-                    }
-                }
-
-                //Slide Code is Here
-                if (gamepad1.right_trigger <= 1 && gamepad1.right_trigger > 0) {
-                    robot.Slide_Right(gamepad1.right_trigger);
-                } else if (gamepad1.left_trigger <= 1 && gamepad1.left_trigger > 0) {
-                    robot.Slide_Left(gamepad1.left_trigger);
-                } else {
-                    robot.Stop();
-                } */
-
 
         }
 
@@ -255,7 +188,7 @@ public class TeleOps extends LinearOpMode {
     }
 
     // all of our base movement functions
-    private void Stop() {
+    private void StopBase() {
         Left_Front_Wheel.setPower(0);
         Right_Front_Wheel.setPower(0);
         Left_Rear_Wheel.setPower(0);
@@ -330,5 +263,29 @@ public class TeleOps extends LinearOpMode {
         Right_Front_Wheel.setPower(power*-1);
         Left_Rear_Wheel.setPower(power*-1);
         Right_Rear_Wheel.setPower(power);
+    }
+    private void Move_Lift_Up_Continuous(){
+        StopBase();
+        while (!liftButtonTop.isPressed()) {
+            liftservo.setPower(1);
+            picker.setPower(0);
+
+        }
+        liftservo.setPower(0);
+    }
+    private void Move_Lift_Down_Continuous(){
+        StopBase();
+        while (!liftButtonBot.isPressed()) {
+            liftservo.setPower(-1);
+        }
+        liftservo.setPower(0);
+    }
+    private void Shooter_Start(){
+        leftShooter.setPower(1);
+        rightShooter.setPower(1);
+    }
+    private void Shooter_Stop(){
+        leftShooter.setPower(0);
+        rightShooter.setPower(0);
     }
 }
