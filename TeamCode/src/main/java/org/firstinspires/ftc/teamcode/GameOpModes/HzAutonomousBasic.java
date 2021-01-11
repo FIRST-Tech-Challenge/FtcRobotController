@@ -33,15 +33,13 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  * setAutoMoveArmDropWobbleRing()
  *
  */
-@Autonomous(name = "Hazmat Autonomous Basic test", group = "00-Autonomous"/*, preselectTeleOp = "Hazmat TeleOp RR"*/)
+@Autonomous(name = "Hazmat Autonomous Basic test", group = "00-Autonomous" /*, preselectTeleOp = "Hazmat TeleOp RR"*/)
 public class HzAutonomousBasic extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
     public HzGamepad hzGamepad;
     public HzAutoControl hzAutoControl;
-    //public GameField hzGameField;
-    //public SampleMecanumDrive hzDrive;
     public HzDrive hzDrive;
     public HzMagazine hzMagazine;
     public HzIntake hzIntake;
@@ -56,7 +54,6 @@ public class HzAutonomousBasic extends LinearOpMode {
     boolean autonomousStarted = false;
 
     public HzGameField.TARGET_ZONE targetZone = HzGameField.TARGET_ZONE.A;
-    Vector2d targetZoneVector = HzGameField.BLUE_TARGET_ZONE_A;
     public HzVuforia.ACTIVE_WEBCAM activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
 
     @Override
@@ -96,33 +93,6 @@ public class HzAutonomousBasic extends LinearOpMode {
             //Run Vuforia Tensor Flow
             targetZone = hzVuforia.runVuforiaTensorFlow();
 
-            /*if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE){
-                switch (targetZone) {
-                    case A :
-                        targetZoneVector = HzGameField.BLUE_TARGET_ZONE_A;
-                        break;
-                    case B :
-                        targetZoneVector = HzGameField.BLUE_TARGET_ZONE_B;
-                        break;
-                    case C :
-                        targetZoneVector = HzGameField.BLUE_TARGET_ZONE_C;
-                        break;
-                }
-            } else { //(HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE)
-                switch (targetZone) {
-                    case A :
-                        targetZoneVector = HzGameField.RED_TARGET_ZONE_A;
-                        break;
-                    case B :
-                        targetZoneVector = HzGameField.RED_TARGET_ZONE_B;
-                        break;
-                    case C :
-                        targetZoneVector = HzGameField.RED_TARGET_ZONE_C;
-                        break;
-                }
-            }*/
-
-
             if (HzDEBUG_FLAG) {
                 printDebugMessages();
                 telemetry.update();
@@ -153,8 +123,6 @@ public class HzAutonomousBasic extends LinearOpMode {
 
             hzWait(time);
         */
-
-
 
             while (opModeIsActive() && !parked) {
 
@@ -232,10 +200,6 @@ public class HzAutonomousBasic extends LinearOpMode {
                 hzDrive.followTrajectory(traj);
                 break;
             case B:
-                /*traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .splineToSplineHeading(new Pose2d(27,43,Math.toRadians(-45)),Math.toRadians(0))
-                        .build();
-                hzDrive.followTrajectory(traj);*/
                 break;
             case C:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -246,7 +210,7 @@ public class HzAutonomousBasic extends LinearOpMode {
 
         }
 
-        hzAutoControl.setMoveArmDropWobbleRing();
+        hzAutoControl.setMoveArmDropWobbleAutonoumous();
         hzWait(1000);
         hzAutoControl.runOpenGrip();
         hzWait(300);
@@ -306,7 +270,7 @@ public class HzAutonomousBasic extends LinearOpMode {
 
         }
 
-        hzAutoControl.setMoveArmDropWobbleRing();
+        hzAutoControl.setMoveArmDropWobbleAutonoumous();
         hzWait(1000);
         hzAutoControl.runOpenGrip();
         hzWait(500);

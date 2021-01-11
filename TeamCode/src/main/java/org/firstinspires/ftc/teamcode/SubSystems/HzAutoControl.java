@@ -273,7 +273,7 @@ public class HzAutoControl {
     public enum AUTO_MOVE_ARM {
         PARKED,
         HOLD_UP_WOBBLE_RING,
-        DROP_WOBBLE_RING,
+        DROP_WOBBLE_AUTONOMOUS,
         PICK_WOBBLE,
     }
     AUTO_MOVE_ARM autoMoveArm = AUTO_MOVE_ARM.PARKED;
@@ -283,13 +283,13 @@ public class HzAutoControl {
         runAutoControl();
     }
 
-    public void setMoveArmHoldUpWobbleRong(){
+    public void setMoveArmHoldUpWobbleRing(){
         autoMoveArm = AUTO_MOVE_ARM.HOLD_UP_WOBBLE_RING;
         runAutoControl();
     }
 
-    public void setMoveArmDropWobbleRing(){
-        autoMoveArm = AUTO_MOVE_ARM.DROP_WOBBLE_RING;
+    public void setMoveArmDropWobbleAutonoumous(){
+        autoMoveArm = AUTO_MOVE_ARM.DROP_WOBBLE_AUTONOMOUS;
         runAutoControl();
     }
 
@@ -306,24 +306,20 @@ public class HzAutoControl {
                 acHzArm.closeGrip();
                 break;
             case HOLD_UP_WOBBLE_RING:
+                acHzArm.closeGrip();
                 acHzArm.moveArmHoldUpWobbleRingPosition();
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
-                acHzArm.closeGrip();
                 break;
             case PICK_WOBBLE:
                 acHzArm.moveArmPickWobblePosition();
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
-                //acHzArm.openGrip();
+                acHzArm.openGrip();
                 break;
-            case DROP_WOBBLE_RING:
-                acHzArm.moveArmDropWobbleRingPosition();
+            case DROP_WOBBLE_AUTONOMOUS:
+                acHzArm.moveArmDropWobbleAutonomousPosition();
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
                 //acHzArm.openGrip();
         }
-    }
-
-    public void setArmGripClose(){
-
     }
 
     public void runOpenGrip(){
@@ -335,5 +331,6 @@ public class HzAutoControl {
         acHzArm.closeGrip();
         runAutoControl();
     }
+
 
 }
