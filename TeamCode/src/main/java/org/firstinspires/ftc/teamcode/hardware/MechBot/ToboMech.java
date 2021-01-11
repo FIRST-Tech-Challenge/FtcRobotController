@@ -1264,7 +1264,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         while (Math.abs(shooter.getCurrentRPM()-target)>11 && (System.currentTimeMillis()-iniTime<500)) { // timeout 5 sec
             sleep(5);
         }
-        shooter.shootOutByRpm(target-50);
+        shooter.shootOutByRpm(target-60);
         hopper.feederAuto();
     }
 
