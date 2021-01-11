@@ -70,7 +70,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_dist = 0;
     public double shooting_angle = 0;
     public double shooterAngleOffset = 3.0;
-    final public double WARM_UP_RPM = 1240;
+    final public double WARM_UP_RPM = 1300;
     public double shooting_rpm = WARM_UP_RPM;
 
     public double auto_rotate_degree = 0;
@@ -685,7 +685,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         line.addData(" | Shooting (dist,angle,rpm) =", new Func<String>() {
             @Override
             public String value() {
-                return String.format("(%1.0f,%1.0f, %1.0f)\n", shooting_dist, shooting_angle);
+                return String.format("(%1.0f,%1.0f,%1.0f)\n", shooting_dist, shooting_angle,shooting_rpm);
             }
         });
         if (useVuforia && (cameraDetector!=null)) {
