@@ -33,7 +33,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  * setAutoMoveArmDropWobbleRing()
  *
  */
-@Autonomous(name = "Hazmat Autonomous Basic test", group = "00-Autonomous")
+@Autonomous(name = "Hazmat Autonomous Basic test", group = "00-Autonomous"/*, preselectTeleOp = "Hazmat TeleOp RR"*/)
 public class HzAutonomousBasic extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
