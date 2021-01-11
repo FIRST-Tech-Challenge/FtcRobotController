@@ -43,6 +43,7 @@ public class VuforiaWebcam extends Thread {
     private double vuforiaAngle = 90.0;
 
     //TODO: Aamod, what is the purpose of this? Doesn't look like this is being used anywhere.
+    //It is used on line 193 for debugging purposes. This is why it isn't currently in use.
     private String trackable;
 
     private boolean targetVisible = false;

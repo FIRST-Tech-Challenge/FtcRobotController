@@ -73,6 +73,7 @@ public class TensorFlow {
     }
 
     //TODO Aamod: Duplciate code. Constructor is already doing this.
+    //I need it, because it is used in TensorFlowTest
     public void initTensorFlow() {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
