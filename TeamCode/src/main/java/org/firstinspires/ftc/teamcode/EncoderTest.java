@@ -24,10 +24,10 @@ public class EncoderTest extends LinearOpMode {
   //      );
 
         d = new Drive(
-                hardwareMap.get(DcMotor.class, "rbmotor"),
- //               hardwareMap.get(DcMotor.class, "rfmotor"),
- //               hardwareMap.get(DcMotor.class, "lfmotor"),
- //               hardwareMap.get(DcMotor.class, "lbmotor")
+               hardwareMap.get(DcMotor.class, "rbmotor"),
+               hardwareMap.get(DcMotor.class, "rfmotor"),
+               hardwareMap.get(DcMotor.class, "lfmotor"),
+               hardwareMap.get(DcMotor.class, "lbmotor")
         );
 
         waitForStart();
@@ -63,7 +63,10 @@ public class EncoderTest extends LinearOpMode {
 //             telemetry.addData("Ly", gamepad1.left_stick_y);
 //             telemetry.addData("Lx", gamepad1.left_stick_x);
 //             telemetry.addData("Rx", gamepad1.right_stick_x);
-            telemetry.addData("Clicks: ", d.getClickslf());
+            telemetry.addData("Clickslf: ", d.getClickslf());
+             telemetry.addData("Clicksrf: ", d.getClicksrf());
+             telemetry.addData("Clicksrb: ", d.getClicksrb());
+             telemetry.addData("Clickslb: ", d.getClickslb());
 //             telemetry.addData("lf", d.getPowerlf());
 //             telemetry.addData("lb", d.getPowerlb());
 //             telemetry.addData("rf", d.getPowerrf());
