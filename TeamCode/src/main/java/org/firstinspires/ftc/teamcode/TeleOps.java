@@ -271,7 +271,7 @@ public class TeleOps extends LinearOpMode {
             picker.setPower(0);
 
         }
-        liftservo.setPower(0);
+        liftservo.setPower(0.2);
     }
     private void Move_Lift_Down_Continuous(){
         StopBase();
