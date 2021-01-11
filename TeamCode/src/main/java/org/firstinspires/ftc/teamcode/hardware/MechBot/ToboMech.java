@@ -1641,7 +1641,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double  getRpmFromVelocity(double velocity){
         double a = 225.686;
         double b = -35.9631;
-        return a*velocity+b;
+        double ideal_rpm = a*velocity+b;
+        double real_rpm = (int)ideal_rpm/20 * 20;
+        double error = ideal_rpm - real_rpm;
+        if (error > 10){
+            real_rpm += 20;
+        }
+        return real_rpm;
     }
 
     public  double getVelocityToShoot(double dHorizontal, double dVertical){
