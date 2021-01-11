@@ -101,11 +101,6 @@ public class Drive extends LinearOpMode {
     return powerlf;
   }
 
-  //we're only using one encoder to read the robot's position in autonomous.
-  public double getClickslf() {
-    return motorlf.getCurrentPosition();
-  }
-
   public double getPowerlb() {
     double lb = motorlb.getPower();
 
@@ -123,6 +118,24 @@ public class Drive extends LinearOpMode {
 
     return powerrb;
   }
+  
+    //We were only using one encoder to read the robot's position in autonomous. Changed to include all 4 motors for testing.
+  public double getClickslf() {
+    return motorlf.getCurrentPosition();
+  }
+ 
+  public double getClickslb() {
+    return motorlb.getCurrentPosition();
+  }
+
+  public double getClicksrf() {
+    return motorrf.getCurrentPosition();
+  }
+  
+  public double getClicksrb() {
+    return motorrb.getCurrentPosition();
+  }
+  
 
   //this function just compares all of the powers and returns the largest value.
   public double findMax(double lf,double lb,double rf,double rb) {
