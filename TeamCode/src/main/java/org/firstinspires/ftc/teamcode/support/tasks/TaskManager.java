@@ -44,6 +44,13 @@ public class TaskManager {
         return true;
     }
 
+    public static boolean isEmpty() {
+        if (currentTask!=null || taskQueue.isEmpty()==false) {
+            return false;
+        }
+        return true;
+    }
+
     public static void processTasks() {
         if (currentTaskProgress!=null) {
             // there's a task currently being executed
