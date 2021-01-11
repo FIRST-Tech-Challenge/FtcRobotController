@@ -70,7 +70,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_dist = 0;
     public double shooting_angle = 0;
     public double shooterAngleOffset = 3.0;
-
+    final public double WARM_UP_RPM = 1240;
+    public double shooting_rpm = WARM_UP_RPM;
 
     public double auto_rotate_degree = 0;
 
@@ -681,10 +682,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (Thread.currentThread().isInterrupted()) return;
         if (chassis==null) return;
         Telemetry.Line line = telemetry.addLine();
-        line.addData(" | Shooting (dist,angle) =", new Func<String>() {
+        line.addData(" | Shooting (dist,angle,rpm) =", new Func<String>() {
             @Override
             public String value() {
-                return String.format("(%1.0f,%1.0f)\n", shooting_dist, shooting_angle);
+                return String.format("(%1.0f,%1.0f, %1.0f)\n", shooting_dist, shooting_angle);
             }
         });
         if (useVuforia && (cameraDetector!=null)) {
@@ -1025,7 +1026,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public void initAfterStart() {
-        shooter.shootOutByRpm(1240);
+        shooter.shootOutByRpm(WARM_UP_RPM);
        if (comboGrabber!=null && tZone!=TargetZone.UNKNOWN) // during autonomous
            comboGrabber.armUp();
        initializeGPSThread();
@@ -1308,7 +1309,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             hopper.hopperUpCombo();
             TaskManager.processTasks();
         }
-        shooter.shootOutByRpm(1240);
+        shooter.shootOutByRpm(WARM_UP_RPM);
         if(!keepPos) {
             if (tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C && numRings == 3) {
                 chassis.driveTo(.55, side(50), 170, 0, true, 2);
@@ -1332,7 +1333,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             //sleep(500);
         }
         if(tZone==TargetZone.UNKNOWN)
-            shooter.shootOutByRpm(1240); // for teleop keep the shooter at 1240
+            shooter.shootOutByRpm(WARM_UP_RPM); // for teleop keep the shooter at WARM_UP_RPM
         else
             shooter.shootOutByRpm(0);
     }
@@ -1379,7 +1380,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(auto_chassis_power, side(50), 170, 0, true,  5);
         }
         if(tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C){
-            shooter.shootOutByRpm(1240);
+            shooter.shootOutByRpm(WARM_UP_RPM);
         }
         chassis.driveTo(.99, side(70), 40, 0, true,  5);
 
@@ -1413,14 +1414,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 // chassis.driveTo(.8, side(30), 40, 0, false, 2);
                 chassis.driveTo(0.9, side(17), 165, -10, false, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                shooter.shootOutByRpm(1240);
+                shooter.shootOutByRpm(WARM_UP_RPM);
                 intake.intakeIn();
                 chassis.driveTo(auto_chassis_power, side(80), 140, 0, false, 5);
                 intake.stop();
                 autoShootHighGoal(1, false);
                 chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                shooter.shootOutByRpm(1240);
+                shooter.shootOutByRpm(WARM_UP_RPM);
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
                 chassis.driveTo(1.0, side(90), 123, 0, false, 5);
                 autoIntakeRings(3, true);
@@ -1440,7 +1441,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //sleep(1000);
     }
     public void autoShootHighGoal(int n, boolean keepPos) throws InterruptedException {
-        shooter.shootOutByRpm(1240);
+        shooter.shootOutByRpm(WARM_UP_RPM);
         hopper.hopperUpCombo();
         TaskManager.processTasks();
         doHighGoals(n, keepPos);
@@ -1595,6 +1596,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooting_dist = Math.hypot(dx,dy);
         double v = getVelocityToShoot(shooting_dist, target_height);
         double rpm = getRpmFromVelocity(v);
+        shooting_rpm = rpm;
         shooter.shootOutByRpm(rpm);
         // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
         shooting_angle = Math.toDegrees(Math.atan2(target_x - chassis.odo_x_pos_cm() - shooter_offset, target_y - chassis.odo_y_pos_cm()));
