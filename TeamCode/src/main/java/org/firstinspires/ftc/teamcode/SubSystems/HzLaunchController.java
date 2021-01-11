@@ -52,14 +52,15 @@ public class HzLaunchController {
     public double distanceFromTarget, lclaunchMotorPower, angleToTarget;
     public double lclaunchMotorVelocity;
 
-    public Servo launchControllerBeaconServo;
+    //public Servo launchControllerBeaconServo;
 
     //TODO : AMJAD : Use servo to flag if beacon is not working
-    public static final double launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_AUTO = 0.2;
+    /*public static final double launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_AUTO = 0.2;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_AUTO = 0.4;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_MANUAL = 0.6;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL = 0.8;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE = 0.0;
+     */
 
     public HzLauncher lcHzLauncher;
     public HzIntake lcHzIntake;
@@ -74,7 +75,7 @@ public class HzLaunchController {
         lcHzIntake = lcHzIntakePassed;
         lcDrive = lcDrivePassed;
 
-        launchControllerBeaconServo = hardwareMap.servo.get("launch_beacon_servo");
+        //launchControllerBeaconServo = hardwareMap.servo.get("launch_beacon_servo");
     }
 
     public boolean activateLaunchReadinessState;
@@ -219,9 +220,7 @@ public class HzLaunchController {
         //lcDrive.driveTrainPointFieldModes();
     }
 
-    public void senseLaunchReadiness() {
-        //TODO : AMJAD : UPDATE LOGIC FOR AUTOMATED MODE - CALCULATE IF ROBOT IS ALIGNED TO WITHIN 10%
-        //TODO : AMJAD : SENSE IF DISTANCE IS WITHING ACHIEVABLE LIMITS
+    /*public void senseLaunchReadiness() {
         launchReadiness = LAUNCH_READINESS.READY;
     }
 
@@ -244,7 +243,7 @@ public class HzLaunchController {
             turnlaunchControllerBeaconOff();
         }
 
-    }
+    }*/
 
     public ROBOT_ZONE getRobotZone() {
         return robotZone;
@@ -283,7 +282,7 @@ public class HzLaunchController {
         return launchMode;
     }
 
-    public void setLaunchReadyIndicator(LAUNCH_READINESS launchStatus) {
+    /*public void setLaunchReadyIndicator(LAUNCH_READINESS launchStatus) {
         launchReadiness = launchStatus;
     }
 
@@ -305,7 +304,7 @@ public class HzLaunchController {
 
     public void turnlaunchControllerBeaconOff() {
         launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE);
-    }
+    }*/
 
     public void toggleModeManualAutomated() {
         if (launchMode == LAUNCH_MODE.AUTOMATED) {

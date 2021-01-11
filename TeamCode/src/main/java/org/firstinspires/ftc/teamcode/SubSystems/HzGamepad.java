@@ -242,7 +242,7 @@ public class HzGamepad {
             gpHzLaunchController.activateLaunchReadiness();
         }
 
-        gpHzLaunchController.indicateLaunchReadiness();
+        //gpHzLaunchController.indicateLaunchReadiness();
 
     }
 

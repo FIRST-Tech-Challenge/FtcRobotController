@@ -52,8 +52,6 @@ public class HzAutonomousBasic extends LinearOpMode {
     public HzVuforia hzVuforia;
     public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
 
-    //int playingAlliance = 1; //1 for Red, -1 for Blue
-    //int startLine = 1 ; //0 for inner, 1 for outer
     boolean parked = false ;
     boolean autonomousStarted = false;
 
@@ -84,7 +82,7 @@ public class HzAutonomousBasic extends LinearOpMode {
 
         hzDrive.getLocalizer().setPoseEstimate(startPose);
 
-        hzAutoControl.runOpenGrip();
+        hzIntake.setIntakeReleaseHold();
         hzAutoControl.setMagazineToLaunch();
 
         telemetry.addData("Waiting for start to be pressed.","Robot is ready!");
@@ -98,7 +96,7 @@ public class HzAutonomousBasic extends LinearOpMode {
             //Run Vuforia Tensor Flow
             targetZone = hzVuforia.runVuforiaTensorFlow();
 
-            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE){
+            /*if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE){
                 switch (targetZone) {
                     case A :
                         targetZoneVector = HzGameField.BLUE_TARGET_ZONE_A;
@@ -122,7 +120,7 @@ public class HzAutonomousBasic extends LinearOpMode {
                         targetZoneVector = HzGameField.RED_TARGET_ZONE_C;
                         break;
                 }
-            }
+            }*/
 
 
             if (HzDEBUG_FLAG) {
@@ -170,34 +168,17 @@ public class HzAutonomousBasic extends LinearOpMode {
                         autonomousStarted = true;
                         runAutoBlueOuterHighGoal();
                     }
-                } else { //if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE)
+                } else { //HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE
                     if (startPose == HzGameField.RED_INNER_START_LINE ) {
-                        switch (targetZone){
-                            case A :
-                                //runAutoRedInnerTargetA();
-                                break;
-                            case B :
-                                //runAutoRedInnerTargetB();
-                                break;
-                            case C:
-                                //runAutoRedInnerTargetC();
-                                break;
-                        }
+                        autonomousStarted = true;
+                        //runAutoRedInnerHighGoal();
                     } else if (startPose == HzGameField.RED_OUTER_START_LINE ) {
-                        switch (targetZone){
-                            case A :
-                                //runAutoRedOuterTargetA();
-                                break;
-                            case B :
-                                //runAutoRedOuterTargetB();
-                                break;
-                            case C:
-                                //runAutoRedOuterTargetC();
-                                break;
-                        }
+                        autonomousStarted = true;
+                        //runAutoRedOuterHighGoal();
                     }
-
                 }
+
+                hzIntake.setIntakeReleaseOpen();
 
                 //Move to Launching Position
                 parked = true;
@@ -215,8 +196,6 @@ public class HzAutonomousBasic extends LinearOpMode {
         // Transfer the current pose to PoseStorage so we can use it in TeleOp
         HzGameField.currentPose = hzDrive.getPoseEstimate();
         HzGameField.poseSetInAutonomous = true;
-
-        //hzVuforia.deactivateVuforiaTensorFlow();
     }
 
     public void runAutoBlueInnerHighGoal(){
@@ -305,11 +284,6 @@ public class HzAutonomousBasic extends LinearOpMode {
         hzAutoControl.setLaunchTargetOff();
         hzAutoControl.setMagazineToCollect();
 
-        /*traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(46,22,Math.toRadians(-45)))
-                .build();
-        hzDrive.followTrajectory(traj);
-        */
         switch (targetZone){
             case A:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -337,6 +311,10 @@ public class HzAutonomousBasic extends LinearOpMode {
         hzAutoControl.runOpenGrip();
         hzWait(500);
         hzAutoControl.setMoveArmParked();
+
+        hzIntake.setIntakeReleaseOpen();
+        hzAutoControl.setIntakeStart();
+        hzWait(1000);
 
         // Spline to (24,24,0)
         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())

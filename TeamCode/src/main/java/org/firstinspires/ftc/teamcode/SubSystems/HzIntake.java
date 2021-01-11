@@ -2,10 +2,15 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class HzIntake {
 
     public DcMotor intakeMotor = null;
+    public Servo intakeRelease = null;
+
+    public static final double INTAKE_RELEASE_HOLD = 0.6;
+    public static final double INTAKE_RELEASE_OPEN = 0.35;
 
     public enum INTAKE_MOTOR_STATE {
         RUNNING,
@@ -34,6 +39,7 @@ public class HzIntake {
 
     public HzIntake(HardwareMap hardwareMap) {
         intakeMotor = hardwareMap.dcMotor.get("intake_rightenc");
+        intakeRelease = hardwareMap.servo.get("intake_release_servo");
     }
 
     public void initIntake(){
@@ -61,6 +67,14 @@ public class HzIntake {
             intakeMotor.setPower(intakeReversePower);
             intakeMotorState = INTAKE_MOTOR_STATE.REVERSING;
         }
+    }
+
+    public void setIntakeReleaseHold(){
+        intakeRelease.setPosition(INTAKE_RELEASE_HOLD);
+    }
+
+    public void setIntakeReleaseOpen(){
+        intakeRelease.setPosition(INTAKE_RELEASE_OPEN);
     }
 
     public INTAKE_MOTOR_STATE getIntakeState() {

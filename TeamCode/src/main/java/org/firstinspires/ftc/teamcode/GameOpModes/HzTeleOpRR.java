@@ -71,6 +71,7 @@ public class HzTeleOpRR extends LinearOpMode {
         }
 
         //TODO : IF PROGRAM CRASHES GO MANUAL ALL THE TIME
+        hzIntake.setIntakeReleaseOpen();
 
         // Initiate Camera even before Start is pressed.
         waitForStart();

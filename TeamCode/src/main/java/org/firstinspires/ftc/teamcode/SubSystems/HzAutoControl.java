@@ -243,7 +243,7 @@ public class HzAutoControl {
             acHzLaunchController.activateLaunchReadiness();
         }
 
-        acHzLaunchController.indicateLaunchReadiness();
+        //acHzLaunchController.indicateLaunchReadiness();
 
     }
 
