@@ -124,20 +124,28 @@ public class MecanumControlV2 extends OpMode {
         }
 
         //Control intake and transition
-        intake.intakePower(-gamepad2.left_stick_y);
+        if (gamepad2.left_bumper) {
+            //independent control
+            intake.intake.setPower(-gamepad2.right_stick_y);
+            intake.transition.setPower(-gamepad2.left_stick_y);
+        }else {
+            //synchronous control
+            intake.intake.setPower(-gamepad2.left_stick_y);
+            intake.transition.setPower(-gamepad2.left_stick_y);
+        }
 
         //Control grabber wrist
         if (gamepad1.dpad_left) {
-            grabber.gripWrist.setPosition(.35);
+            grabber.gripWrist.setPosition(.77);
         }else if (gamepad1.dpad_right) {
-            grabber.gripWrist.setPosition(.79);
+            grabber.gripWrist.setPosition(.27);
         }
 
         //Control grabber servo
         if (gamepad1.dpad_down) {
-            grabber.gripperPosition(1);
+            grabber.gripperPosition(.7);
         }else if (gamepad1.dpad_up) {
-            grabber.gripperPosition(.45);
+            grabber.gripperPosition(0);
         }
     }
 }
