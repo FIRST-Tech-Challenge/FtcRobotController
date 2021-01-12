@@ -83,13 +83,13 @@ public class Chassis_Auto extends LinearOpMode
                                   rotateAtAngle (boolean isClockwise, double degree, double margin, double power)
                                   rotateToAngle (double targetAngle, double margin, double power)
              */
-            driveStraight(true,1.0,0.4,2000);
+            driveStraight(true,1.0,0.4,1500);
             stopMotion(100);
-            drivePerpendicularly(true,1.0,0.4,2000);
+            drivePerpendicularly(true,1.0,0.4,1500);
             stopMotion(100);
-            driveStraight(false,1.0,0.4,2000);
+            driveStraight(false,1.0,0.4,1500);
             stopMotion(100);
-            drivePerpendicularly(false,1.0,0.4,2000);
+            drivePerpendicularly(false,1.0,0.4,1500);
             stopMotion(100);
         }
     }
