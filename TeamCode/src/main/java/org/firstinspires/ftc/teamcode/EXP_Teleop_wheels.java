@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,7 +16,7 @@ import static java.lang.StrictMath.abs;
 // i have no idea if this will work but if it does i'll take it
 
 @TeleOp(name="Experimental_Teleop_wheels", group="Teleop")
-//@Disabled
+@Disabled
 public class EXP_Teleop_wheels extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

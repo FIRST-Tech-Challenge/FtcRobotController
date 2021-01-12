@@ -15,7 +15,7 @@ import static java.lang.StrictMath.abs;
 
 
 @TeleOp(name="GeneralTeleop", group="Teleop")
-//@Disabled
+@Disabled
 public class GeneralTeleop extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

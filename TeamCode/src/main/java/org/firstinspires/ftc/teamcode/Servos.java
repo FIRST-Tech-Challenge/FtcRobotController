@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -12,7 +13,7 @@ import static java.lang.StrictMath.abs;
 
 
 @TeleOp(name="Servos", group="Teleop")
-//@Disabled
+@Disabled
 public class Servos extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();

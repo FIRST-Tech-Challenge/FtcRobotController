@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,7 +11,7 @@ import static java.lang.StrictMath.abs;
 
 
 @TeleOp(name="Caleb_drive", group="Teleop")
-//@Disabled
+@Disabled
 public class Caleb_drive extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
