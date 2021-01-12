@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.GameOpModes;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLaunchController;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
 import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
-import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 import org.firstinspires.ftc.teamcode.SubSystems.HzVuforiaStatic;
 
 
@@ -25,6 +24,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzVuforiaStatic;
  * <p>
  * See lines 42-57.
  */
+@Disabled
 @TeleOp(name = "HzTeleOp RR Viewforia Static", group = "00-Teleop")
 public class HzTeleOpRRVuforiaStatic extends LinearOpMode {
 

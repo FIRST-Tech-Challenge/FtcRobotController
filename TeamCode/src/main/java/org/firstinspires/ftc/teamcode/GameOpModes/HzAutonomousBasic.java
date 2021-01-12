@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.GameOpModes;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -33,7 +32,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  * setAutoMoveArmDropWobbleRing()
  *
  */
-@Autonomous(name = "Hazmat Autonomous Basic test", group = "00-Autonomous" /*, preselectTeleOp = "Hazmat TeleOp RR"*/)
+@Autonomous(name = "Hazmat Autonomous Basic test", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp RR")
 public class HzAutonomousBasic extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
@@ -214,6 +213,7 @@ public class HzAutonomousBasic extends LinearOpMode {
         hzWait(1000);
         hzAutoControl.runOpenGrip();
         hzWait(300);
+        hzAutoControl.setMoveArmHoldUpWobbleRing();
         hzAutoControl.setMoveArmParked();
 
         // Spline to (24,24,0)
@@ -282,9 +282,21 @@ public class HzAutonomousBasic extends LinearOpMode {
 
         // Spline to (24,24,0)
         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-5,36,Math.toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(-12,36,Math.toRadians(-180)))
+                .lineToLinearHeading(new Pose2d(-20,36,Math.toRadians(-180)))
+                .build();
+        hzDrive.followTrajectory(traj);
+
+
+
+        // Spline to (24,24,0)
+        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(-48,22,Math.toRadians(-90)))
                 .build();
         hzDrive.followTrajectory(traj);
+
+        hzAutoControl.setIntakeStop();
 
         hzWait(5000);
 
