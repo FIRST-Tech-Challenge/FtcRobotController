@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.drivecontrol;
 
-public class Utilities {
+public class RobotUtilities {
     public static double scaleDouble(double input, double maxInputVal, double minInputVal, double maxOutputVal, double minOutputVal) {
         if (input > maxInputVal) {
             input = maxInputVal;

@@ -10,11 +10,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Robot {
     private final boolean debug;
 
-    private Pos position;
+    private Position position;
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
 
-    private Drive drive;
+    private DriveController driveController;
 
     // Declared Motors
     DcMotor arm;
@@ -28,8 +28,8 @@ public class Robot {
     Servo claw;
 
     // Declared Modules
-    Module leftModule;
-    Module rightModule;
+    WheelModule leftWheelModule;
+    WheelModule rightWheelModule;
 
     // Declared IMU
     BNO055IMU imu;
@@ -42,7 +42,7 @@ public class Robot {
         return hardwareMap.servo.get(id);
     }
 
-    public Robot(boolean debug, Pos startingPos, Telemetry telemetry, HardwareMap hardwareMap) {
+    public Robot(boolean debug, Position startingPos, Telemetry telemetry, HardwareMap hardwareMap) {
         this.debug = debug;
 
         this.position = startingPos;
@@ -61,12 +61,29 @@ public class Robot {
         claw = getServo("claw");
 
         // Module setting
-        leftModule = new Module(Drive.ModuleSide.LEFT, getMotor("topLeft"), getMotor("bottomLeft"), telemetry);
-        leftModule = new Module(Drive.ModuleSide.RIGHT, getMotor("topRight"), getMotor("bottomRight"), telemetry);
+        leftWheelModule = new WheelModule(DriveController.ModuleSide.LEFT, getMotor("topLeft"), getMotor("bottomLeft"), telemetry);
+        leftWheelModule = new WheelModule(DriveController.ModuleSide.RIGHT, getMotor("topRight"), getMotor("bottomRight"), telemetry);
 
         // IMU setting
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        this.drive = new Drive(this.debug, position, leftModule, rightModule, imu, telemetry);
+        this.driveController = new DriveController(this.debug, position, leftWheelModule, rightWheelModule, imu, telemetry);
+    }
+
+    public void updateDrivePositionTracking() {
+        driveController.updatePositionTracking();
+    }
+
+    public void updateUsingJoysticks(Vector2D j1, Vector2D j2) {
+        driveController.updateUsingJoysticks(j1, j2);
+    }
+
+    public void initIMU() {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+
+        imu.initialize(parameters);
     }
 }

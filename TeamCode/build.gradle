@@ -44,3 +44,11 @@ allprojects {
         jcenter()
     }
 }
+
+// todo made me add this to build, don't know if necessary
+android {
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+}

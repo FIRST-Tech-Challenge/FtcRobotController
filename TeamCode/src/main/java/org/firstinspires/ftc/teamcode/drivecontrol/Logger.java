@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.drivecontrol;
 
-public class Log {
+public class Logger {
     private String filename;
 
-    public Log(String filename) {
+    public Logger(String filename) {
         this.filename = filename;
     }
 
+    // TODO: all of this
     public void addField(String name) {
 
     }

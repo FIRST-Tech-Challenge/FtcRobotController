@@ -11,9 +11,9 @@ import com.spartronics4915.lib.T265Camera;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import static old.DriveModule.RotateModuleMode.DO_NOT_ROTATE_MODULES;
+import static old.DriveModule.RotateModuleMode.ROTATE_MODULES;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.teamcode.drivecontrol.DriveModule.RotateModuleMode.DO_NOT_ROTATE_MODULES;
-import static org.firstinspires.ftc.teamcode.drivecontrol.DriveModule.RotateModuleMode.ROTATE_MODULES;
 
 enum ModuleSide {LEFT, RIGHT}
 

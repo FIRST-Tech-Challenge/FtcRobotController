@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode.drivecontrol;
 
-public class Pos {
+public class Position {
     private double x;
     private double y;
     private double heading;
 
-    public Pos(double x, double y) {
+    public Position(double x, double y) {
         this.x = x;
         this.y = y;
     }

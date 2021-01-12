@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Module {
-    private boolean debug;
-    private Log log;
+public class WheelModule {
+    private final boolean debug;
+    private Logger logger;
 
-    private Drive.ModuleSide side;
+    private final DriveController.ModuleSide side;
 
     enum ModuleRotationMode {
         ROTATION_ENABLED, ROTATION_DISABLED
@@ -17,11 +17,11 @@ public class Module {
 
     private ModuleRotationMode rotationMode;
 
-    private DcMotor topMotor;
-    private DcMotor bottomMotor;
+    private final DcMotor topMotor;
+    private final DcMotor bottomMotor;
 
-    private Telemetry telemetry;
-    private Vector2D positionVector;
+    private final Telemetry telemetry;
+    private final Vector2D positionVector;
     public double positionChange;
 
     private final Vector2D TOP_MOTOR_VECTOR = new Vector2D(1/Math.sqrt(2), 1/Math.sqrt(2));
@@ -29,7 +29,7 @@ public class Module {
     public static final double MAX_POWER = 1.0;
     public static final double MAX_ANGLE = 60;
     public static final double ORIENTATION_ERROR_MARGIN = 5;
-    public static final double ROT_ADVANTAGE = 1.7; //TODO: Tune
+    public static final double ROT_ADVANTAGE = 1.7; // TODO: Tune
     public static final double TICKS_PER_MODULE_REV = 1014;
     public static final double DEGREES_PER_TICK = 360/TICKS_PER_MODULE_REV;
     public static final double TICKS_PER_WHEEL_REV = 1 * TICKS_PER_MODULE_REV * 18/60; //ticks per WHEEL revolution
@@ -44,7 +44,7 @@ public class Module {
     private double lastTopEncoder = 0;
     private double lastBottomEncoder = 0;
 
-    public Module(boolean debug, Drive.ModuleSide side, DcMotor topMotor, DcMotor bottomMotor, Telemetry telemetry) {
+    public WheelModule(boolean debug, DriveController.ModuleSide side, DcMotor topMotor, DcMotor bottomMotor, Telemetry telemetry) {
         this.debug = debug;
 
         this.side = side;
@@ -55,7 +55,7 @@ public class Module {
 
         this.telemetry = telemetry;
 
-        if (side == Drive.ModuleSide.RIGHT) {
+        if (side == DriveController.ModuleSide.RIGHT) {
             positionVector = new Vector2D((double)18/2, 0); //points from robot center to right module
         } else {
             positionVector = new Vector2D((double)-18/2, 0); //points from robot center to left module
@@ -68,26 +68,26 @@ public class Module {
         bottomMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         if (debug) {
-            log = new Log(side + "ModuleLog");
-            log.addField("Trans Vector FC X");
-            log.addField("Trans Vector FC Y");
-            log.addField("Rot Vector X");
-            log.addField("Rot Vector Y");
-            log.addField("Target Vector X");
-            log.addField("Target Vector Y");
-            log.addField("Module Orientation");
-            log.addField("Reversed");
-            log.addField("Power Vector X (TRANS)");
-            log.addField("Power Vector Y (ROT)");
-            log.addField("Motor 1 Power");
-            log.addField("Motor 2 Power");
-            log.addField("Motor 1 Encoder");
-            log.addField("Motor 2 Encoder");
-            log.newLine();
+            logger = new Logger(side + "ModuleLog");
+            logger.addField("Trans Vector FC X");
+            logger.addField("Trans Vector FC Y");
+            logger.addField("Rot Vector X");
+            logger.addField("Rot Vector Y");
+            logger.addField("Target Vector X");
+            logger.addField("Target Vector Y");
+            logger.addField("Module Orientation");
+            logger.addField("Reversed");
+            logger.addField("Power Vector X (TRANS)");
+            logger.addField("Power Vector Y (ROT)");
+            logger.addField("Motor 1 Power");
+            logger.addField("Motor 2 Power");
+            logger.addField("Motor 1 Encoder");
+            logger.addField("Motor 2 Encoder");
+            logger.newLine();
         }
     }
 
-    public Module(Drive.ModuleSide side, DcMotor topMotor, DcMotor bottomMotor, Telemetry telemetry) {
+    public WheelModule(DriveController.ModuleSide side, DcMotor topMotor, DcMotor bottomMotor, Telemetry telemetry) {
         this(false, side, topMotor, bottomMotor, telemetry);
     }
 
@@ -110,14 +110,14 @@ public class Module {
         goToTarget(targetVector, directionMultiplier, heading);
 
         if (debug) {
-            log.addField(rotatedTranslationVector.getX());
-            log.addField(rotatedTranslationVector.getY());
-            log.addField(rotationVector.getX());
-            log.addField(rotationVector.getY());
-            log.addField(targetVector.getX());
-            log.addField(targetVector.getY());
-            log.addField(heading);
-            log.addField(reversed);
+            logger.addField(rotatedTranslationVector.getX());
+            logger.addField(rotatedTranslationVector.getY());
+            logger.addField(rotationVector.getX());
+            logger.addField(rotationVector.getY());
+            logger.addField(targetVector.getX());
+            logger.addField(targetVector.getY());
+            logger.addField(heading);
+            logger.addField(reversed);
 
             telemetry.addData(side + " REVERSED: ", reversed);
             telemetry.addData(side + " Trans Vec FC: ", rotatedTranslationVector);
@@ -138,8 +138,8 @@ public class Module {
         Vector2D powerVector = new Vector2D(moveComponent, pivotComponent);
 
         if (debug) {
-            log.addField(powerVector.getX());
-            log.addField(powerVector.getY());
+            logger.addField(powerVector.getX());
+            logger.addField(powerVector.getY());
         }
 
         setMotorPowers(powerVector);
@@ -148,7 +148,7 @@ public class Module {
             telemetry.addData(side + " Target Vector Angle: ", target.getAngle());
             telemetry.addData(side + " Power Vector: ", powerVector);
             telemetry.addData(side + " Current orientation: ", heading);
-            log.newLine();
+            logger.newLine();
         }
     }
 
@@ -259,7 +259,7 @@ public class Module {
 
         double startAngle = ((lastTopEncoder + lastBottomEncoder)/2.0 * DEGREES_PER_TICK) % 360;
         double finalAngle = ((topEncoder + bottomEncoder)/2.0 * DEGREES_PER_TICK) % 360;
-        double averageAngle = Math.toRadians(getAverageAngle(startAngle, finalAngle)); //was 180 heading TODO check
+        double averageAngle = Math.toRadians(getAverageAngle(startAngle, finalAngle)); // TODO: check
 
         double startingPosition = (lastTopEncoder - lastBottomEncoder)/2.0  * CM_PER_TICK;
         double finalPosition = (topEncoder - bottomEncoder)/2.0 * CM_PER_TICK;
@@ -286,7 +286,7 @@ public class Module {
 
     public double getAverageAngle(double startAngle, double finalAngle) {
         double raw = startAngle - finalAngle;
-        double diff = 0;
+        double diff;
         if (raw > 180) {
             diff = 360 - raw;
             if (finalAngle > startAngle) {
@@ -311,7 +311,7 @@ public class Module {
     }
 
     public void rotateModule (Vector2D direction, boolean fieldCentric, double heading) {
-        Vector2D directionVector = direction.rotateTo(heading); //was converted robot heading
+        Vector2D directionVector = direction.rotateTo(heading);
 
         if (reversed) {
             directionVector = directionVector.reflect();
@@ -320,9 +320,9 @@ public class Module {
 
         Vector2D powerVector;
         if (fieldCentric) {
-            powerVector = new Vector2D(0, getPivotComponent(directionVector, getCurrentOrientation())); //order important here
+            powerVector = new Vector2D(0, getPivotComponent(directionVector, getCurrentOrientation()));
         } else {
-            powerVector = new Vector2D(0, getPivotComponent(direction, getCurrentOrientation())); //order important here
+            powerVector = new Vector2D(0, getPivotComponent(direction, getCurrentOrientation()));
         }
         setMotorPowers(powerVector);
 
