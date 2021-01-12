@@ -19,8 +19,8 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
 import java.util.Locale;
 
-@Autonomous(name="Gyro Autonomous", group="4100")
-public class Gyro_Auto extends LinearOpMode
+@Autonomous(name="Chassis Autonomous", group="4100")
+public class Chassis_Auto extends LinearOpMode
 {
     // Declare OpMode members.
     private DcMotor shooter = null;
@@ -75,21 +75,22 @@ public class Gyro_Auto extends LinearOpMode
         waitForStart();
 
         if (opModeIsActive()) {
-            //drive straight with a power of 0.4 for 5000 milliseconds, allowing a margin of error of 1 degree
-            driveStraight(1.0,0.4,2500);
-            sleep(500);
-            //turn to 120 degrees with a power of 0.4
-            turnToAngle(120,1.0,0.4);
-            sleep(500);
-            //drive straight with power of 0.4 for 2500 milliseconds, allowing a margin of error of 1 degree
-            driveStraight(1.0,0.4,1250);
-            sleep(500);
-            //turn 90 degrees in counterclockwise direction with a power of 0.4
-            turnAtAngle(false,90.0,1.0,0.4);
-            sleep(500);
-            //drive straight with a power of 0.4 for 4330 milliseconds, allowing a margin of error of 1 degree
-            driveStraight(1.0,0.4,2165);
-            sleep(500);
+            /*
+            plan the motion of chassis here:
+                available method: stopMotion(long timeInterval)
+                                  driveStraight(double margin, double power, double timeInterval)
+                                  drivePerpendicularly(boolean isLeft, double margin, double power, double timeInterval)
+                                  rotateAtAngle (boolean isClockwise, double degree, double margin, double power)
+                                  rotateToAngle (double targetAngle, double margin, double power)
+             */
+            driveStraight(true,1.0,0.4,2000);
+            stopMotion(100);
+            drivePerpendicularly(true,1.0,0.4,2000);
+            stopMotion(100);
+            driveStraight(false,1.0,0.4,2000);
+            stopMotion(100);
+            drivePerpendicularly(false,1.0,0.4,2000);
+            stopMotion(100);
         }
     }
 
@@ -100,39 +101,57 @@ public class Gyro_Auto extends LinearOpMode
         RB.setPower(0);
     }
 
-    double aquireHeading(){
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        double heading = angles.firstAngle;
-        double tempDeg = heading % 360;
+    void stopMotion(long timeInterval){
+        stopMotion();
+        sleep(timeInterval);
+    }
+
+    double normalizeAngle(double angle){
+        double tempDeg = angle % 360;
         if(tempDeg >= 180){
             tempDeg -= 360;
         }else if(tempDeg < -180){
             tempDeg += 360;
         }
-        telemetry.addData("Heading", tempDeg);
-        telemetry.update();
-        sleep(20);
         return tempDeg;
     }
-    void driveStraight (double margin, double power, double timeInterval) throws InterruptedException{
+
+    double aquireHeading(){
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double heading = angles.firstAngle;
+        double tempHead = normalizeAngle(heading);
+        telemetry.addData("Heading", tempHead);
+        telemetry.update();
+        sleep(20);
+        return tempHead;
+    }
+
+    void driveStraight (boolean isForward, double margin, double power, double timeInterval) throws InterruptedException{
         ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         final double currentAngle = aquireHeading();
+        int straightFactor = -1;
+        double targetAngle = currentAngle - 180;
+        if(isForward){
+            straightFactor = 1;
+            targetAngle = currentAngle;
+        }
+        targetAngle = normalizeAngle(targetAngle);
         double LF_power;
         double LB_power;
         double RF_power;
         double RB_power;
         while(driveTime.milliseconds() < timeInterval) {
             double tempAngle = aquireHeading();
-            LF_power = power;
-            LB_power = power;
-            RF_power = power;
-            RB_power = power;
-            if (tempAngle < currentAngle -1 * margin) {
+            LF_power = straightFactor * power;
+            LB_power = straightFactor * power;
+            RF_power = straightFactor * power;
+            RB_power = straightFactor * power;
+            if (tempAngle < normalizeAngle(targetAngle -1 * margin)) {
                 RF_power += 0.1;
                 RB_power += 0.1;
                 LF_power -= 0.1;
                 LB_power -= 0.1;
-            } else if (tempAngle > currentAngle + (margin)) {
+            } else if (tempAngle > normalizeAngle(targetAngle + (margin))) {
                 RF_power -= 0.1;
                 RB_power -= 0.1;
                 LF_power += 0.1;
@@ -154,25 +173,68 @@ public class Gyro_Auto extends LinearOpMode
         }
         stopMotion();
     }
+
+    void drivePerpendicularly(boolean isLeft, double margin, double power, double timeInterval){
+        ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        final double currentAngle = aquireHeading();
+        int perpendicularFactor = -1;
+        if(isLeft){
+            perpendicularFactor = 1;
+        }
+        double targetAngle = normalizeAngle(currentAngle + 90 * perpendicularFactor);
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+        while(driveTime.milliseconds() < timeInterval) {
+            double tempAngle = aquireHeading();
+            LF_power = -1 * perpendicularFactor * power;
+            LB_power = perpendicularFactor * power;
+            RF_power = perpendicularFactor * power;
+            RB_power = -1 * perpendicularFactor * power;
+            if (tempAngle < normalizeAngle(targetAngle - 1 * margin)) {
+                RF_power += perpendicularFactor * 0.1;
+                RB_power -= perpendicularFactor * 0.1;
+                LF_power += perpendicularFactor * 0.1;
+                LB_power -= perpendicularFactor * 0.1;
+            } else if (tempAngle > normalizeAngle(targetAngle + (margin))) {
+                RF_power -= perpendicularFactor * 0.1;
+                RB_power += perpendicularFactor * 0.1;
+                LF_power -= perpendicularFactor * 0.1;
+                LB_power += perpendicularFactor * 0.1;
+            }
+            RF_power = Range.clip(RF_power, -1, 1);
+            RB_power = Range.clip(RB_power, -1, 1);
+            LF_power = Range.clip(LF_power, -1, 1);
+            LB_power = Range.clip(LB_power, -1, 1);
+            LF.setPower(LF_power);
+            RF.setPower(RF_power);
+            LB.setPower(LB_power);
+            RB.setPower(RB_power);
+            telemetry.addData("RF_power", RF_power);
+            telemetry.addData("RB_power", RB_power);
+            telemetry.addData("LF_power", LF_power);
+            telemetry.addData("LB_power", LB_power);
+            telemetry.update();
+        }
+        stopMotion();
+    }
+
+
     //make a turn that based on the current heading in a certain direction and angle
-    void turnAtAngle (boolean isClockwise, double degree, double margin, double power){
+    void rotateAtAngle (boolean isClockwise, double degree, double margin, double power){
         int angleFactor = -1;
         if(!isClockwise){
             angleFactor = 1;
         }
         final double currentAngle = aquireHeading();
-        double targetAngle = currentAngle + degree * angleFactor;
-        if(targetAngle >= 180){
-            targetAngle -= 360;
-        }else if(targetAngle < -180){
-            targetAngle += 360;
-        }
-        turnToAngle(targetAngle, margin, power);
+        double targetAngle = normalizeAngle(currentAngle + degree * angleFactor);
+        rotateToAngle(targetAngle, margin, power);
         stopMotion();
     }
 
     //make a turn TO a certain angle
-    void turnToAngle (double targetAngle, double margin, double power){
+    void rotateToAngle (double targetAngle, double margin, double power){
         int angleFactor = 0;
         final double currentAngle = aquireHeading();
         if(currentAngle - targetAngle > 0){
