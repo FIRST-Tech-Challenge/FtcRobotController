@@ -132,7 +132,10 @@ public class MecanumWheelDraft extends LinearOpMode {
 
                 telemetry.addData("current heading", formatAngle(angles.angleUnit, angles.firstAngle));
 
+                telemetry.addData("back distance", robot.backDistance.getDistance(DistanceUnit.MM));
+
                 telemetry.update();
+
 
 
             }

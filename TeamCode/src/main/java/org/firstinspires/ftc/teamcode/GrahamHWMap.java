@@ -13,6 +13,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+
+
 
 /**
  * This is NOT an opmode.
@@ -27,6 +31,8 @@ public class GrahamHWMap {
     public DcMotor  backLeftMotor    = null;
     public DcMotor  backRightMotor   = null;
 
+
+    public DistanceSensor backDistance = null;
 
 
     public BNO055IMU imu;
@@ -50,7 +56,7 @@ public class GrahamHWMap {
         backLeftMotor   = hwMap.dcMotor.get("BL"); // H1 2
         backRightMotor  = hwMap.dcMotor.get("BR"); // H1 3
 
-
+        backDistance = hwMap.get(DistanceSensor.class, "bsr"); //hub2 port 1
 
 
         frontLeftMotor.setPower(0);
