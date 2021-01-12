@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import static java.lang.StrictMath.abs;
@@ -22,6 +21,7 @@ public class Final_Teleop extends LinearOpMode {
     private DcMotor lb = null;
     private DcMotor rb = null;
     private CRServo collector = null;
+    private DcMotor spindoctor = null;
 
     @Override
     public void runOpMode() {
@@ -32,16 +32,16 @@ public class Final_Teleop extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
-
         collector = hardwareMap.get(CRServo.class, "collector");
+        spindoctor = hardwareMap.get(DcMotor.class, "spin");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
         collector.setDirection(CRServo.Direction.FORWARD);
+        spindoctor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        //collector.setPosition(0);
         double cPower = 0;
 
         waitForStart();
@@ -53,7 +53,7 @@ public class Final_Teleop extends LinearOpMode {
             double rfPower;
             double lbPower;
             double rbPower;
-            //double cPos;
+            double spinPower;
 
             lfPower = 0.0f;
             rfPower = 0.0f;
@@ -110,15 +110,22 @@ public class Final_Teleop extends LinearOpMode {
                 rb.setPower(rbPower * 0.25);
             }
 
-            //cPos = collector.getPosition();
-            if (gamepad2.a) {
+            if (gamepad2.right_trigger >= 0.2) {
                 cPower = 1;
-            } else if (gamepad2.b) {
+            } else if (gamepad2.left_trigger >= 0.2) {
                 cPower = -1;
             } else {
                 cPower = 0;
             }
+            if (gamepad2.a) {
+                spinPower = 1;
+            } else if (gamepad2.b) {
+                spinPower = -1;
+            } else {
+                spinPower = 0;
+            }
             collector.setPower(cPower);
+            spindoctor.setPower(spinPower);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f),leftback (%.2f), rightback (%.2f)", lfPower, rfPower, lbPower, rbPower);
