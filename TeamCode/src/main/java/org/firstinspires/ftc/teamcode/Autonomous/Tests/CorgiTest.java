@@ -57,9 +57,9 @@ public class CorgiTest extends LinearOpMode {
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         ringDepositorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
+        motorLeftFront.setDirection(DcMotor.Direction.FORWARD);
         motorRightFront.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
+        motorLeftBack.setDirection(DcMotor.Direction.FORWARD);
         motorRightBack.setDirection(DcMotor.Direction.FORWARD);
         ShooterMotor.setDirection(DcMotor.Direction.FORWARD);
         wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
