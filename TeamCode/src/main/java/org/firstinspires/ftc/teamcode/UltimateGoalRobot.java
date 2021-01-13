@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MovementVars;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
@@ -668,6 +669,17 @@ public class UltimateGoalRobot
         setRearLeftMotorPower(bl_power_raw);
     }
 
+    // This function keeps a running tab on how many loops the shooter has been at target
+    // velocity.
+    public void updateShooterStability() {
+        // Verify this loop is at target velocity.
+        if(Math.abs(shooter.getVelocity() - SHOOT_VELOCITY) <= SHOOT_VELOCITY_ERROR) {
+            sequentialStableVelocityChecks++;
+        } else {
+            sequentialStableVelocityChecks = 0;
+        }
+    }
+
     /** Grab activity closes or opens the wobble arm claw. **/
     public final static double CLAW_TIME = 500.0;
     public final static double CLAW_CLOSED = 0.165;
@@ -756,13 +768,8 @@ public class UltimateGoalRobot
                         throttledUp = true;
                     } else {
                         // Verify this loop is at target velocity.
-                        if(Math.abs(shooter.getVelocity() - SHOOT_VELOCITY) <= SHOOT_VELOCITY_ERROR) {
-                            sequentialStableVelocityChecks++;
-                            if(sequentialStableVelocityChecks >= VELOCITY_SUCCESS_CHECKS) {
-                                throttledUp = true;
-                            }
-                        } else {
-                            sequentialStableVelocityChecks = 0;
+                        if(sequentialStableVelocityChecks >= VELOCITY_SUCCESS_CHECKS) {
+                            throttledUp = true;
                         }
                     }
 
@@ -836,6 +843,78 @@ public class UltimateGoalRobot
             default:
                 break;
         }
+    }
+
+    /** Moves to the specified location and shoots 1 ring for powershot and 3 for high goal. **/
+    protected WayPoint shootingDestination;
+    public enum SHOT_ALIGNMENT_STATE {
+        IDLE,
+        DRIVE_TO_POSITION,
+        ANGLE_ALIGNMENT,
+        FIRE
+    }
+    public SHOT_ALIGNMENT_STATE shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
+    public FLAP_POSITION shotFlapTarget;
+    public void startShotAligning(WayPoint alignmentCoordinates, FLAP_POSITION targetFlap) {
+        if (shotAlignmentState == SHOT_ALIGNMENT_STATE.IDLE) {
+            shootingDestination = alignmentCoordinates;
+            shotFlapTarget = targetFlap;
+            // If the shooter isn't on, fire it up.
+            if(shooterMotorTargetVelocity != SHOOT_VELOCITY) {
+                toggleShooter();
+            }
+            // Make sure shooter flap is in the right position.
+            if(shotFlapTarget == FLAP_POSITION.POWERSHOT) {
+                setShooterFlapPowerShot();
+            } else {
+                setShooterFlapHighGoal();
+            }
+            driveToXY(shootingDestination.x, shootingDestination.y, shootingDestination.angle, MIN_DRIVE_MAGNITUDE,
+                    1.0, 0.014, 2.0, false);
+            shotAlignmentState = SHOT_ALIGNMENT_STATE.DRIVE_TO_POSITION;
+        }
+    }
+
+    public void performShotAligning() {
+        switch(shotAlignmentState) {
+            case DRIVE_TO_POSITION:
+                if(driveToXY(shootingDestination.x, shootingDestination.y, shootingDestination.angle, MIN_DRIVE_MAGNITUDE,
+                        1.0, 0.014, 2.0, false)) {
+                    // We have reached the position, need to rotate to angle.
+                    rotateToAngle(shootingDestination.angle, false, true);
+                    shotAlignmentState = SHOT_ALIGNMENT_STATE.ANGLE_ALIGNMENT;
+                }
+                break;
+            case ANGLE_ALIGNMENT:
+                if(rotateToAngle(shootingDestination.angle, false, false)) {
+                    if(shotFlapTarget == FLAP_POSITION.POWERSHOT) {
+                        startInjecting();
+                    } else {
+                        startTripleInjecting();
+                    }
+                    shotAlignmentState = SHOT_ALIGNMENT_STATE.FIRE;
+                }
+                break;
+            case FIRE:
+                if(shotFlapTarget == FLAP_POSITION.POWERSHOT) {
+                    if(injectState == INJECTING.IDLE) {
+                        shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
+                    }
+                } else {
+                    if(tripleInjectState == TRIPLE_INJECTING.IDLE) {
+                        shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
+                    }
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    public void stopShotAligning() {
+        shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
+        injector.setPosition(INJECTOR_HOME);
     }
 }
 

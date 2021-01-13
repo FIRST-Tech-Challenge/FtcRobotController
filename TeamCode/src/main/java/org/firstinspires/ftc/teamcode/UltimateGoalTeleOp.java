@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
 import static java.lang.Math.atan2;
@@ -18,9 +19,11 @@ import static java.lang.Math.toDegrees;
 public class UltimateGoalTeleOp extends OpMode {
 
     public UltimateGoalRobot robot = new UltimateGoalRobot();
-    public UltimateGoalTeleOp() {
-        msStuckDetectInit = 10000;
-    }
+    protected boolean aligning = false;
+    protected WayPoint HIGH_GOAL = new WayPoint(100, 100, 95.0, 1.0);
+    protected WayPoint POWERSHOT_RIGHT = new WayPoint(95, 100, 95.0, 1.0);
+    protected WayPoint POWERSHOT_CENTER = new WayPoint(90, 100, 95.0, 1.0);
+    protected WayPoint POWERSHOT_LEFT = new WayPoint(85, 100, 95.0, 1.0);
 
     @Override
     public void init() {
@@ -95,10 +98,8 @@ public class UltimateGoalTeleOp extends OpMode {
     private double yPower;
     private double xPower;
     private double spin;
-    private double gyroAngle;
     private ElapsedTime loopTime = new ElapsedTime();
     private boolean runWithEncoders = true;
-    private boolean aligning = false;
 
     @Override
     public void start() {
@@ -126,13 +127,10 @@ public class UltimateGoalTeleOp extends OpMode {
 
         //left joystick is for moving
         //right joystick is for rotation
-        gyroAngle = robot.readIMU();
-//        gyroAngle = 90;
-
-        leftTriggerPower = gamepad1.left_trigger;
-        rightTriggerPower = gamepad1.right_trigger;
         yPower = -gamepad1.left_stick_y;
         xPower = gamepad1.left_stick_x;
+        leftTriggerPower = gamepad1.left_trigger;
+        rightTriggerPower = gamepad1.right_trigger;
 //        yPower = -HardwareOmnibot.cleanMotionValues(gamepad1.left_stick_y);
 //        xPower = HardwareOmnibot.cleanMotionValues(gamepad1.left_stick_x);
         // GF used the angle system where rotating left was positive, so have to reverse the sign
@@ -205,10 +203,11 @@ public class UltimateGoalTeleOp extends OpMode {
         // This can be used for shoot alignment.
         if(!rightHeld && rightPressed) {
             if(!aligning) {
-//                aligning = robot.startStackAligning();
+                robot.startShotAligning(POWERSHOT_RIGHT, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+                aligning = true;
             } else {
-//                robot.stopStackAligning();
                 aligning = false;
+                robot.stopShotAligning();
             }
             rightHeld = true;
         } else if(!rightPressed) {
@@ -216,9 +215,42 @@ public class UltimateGoalTeleOp extends OpMode {
         }
 
         if(!leftHeld && leftPressed) {
+            if(!aligning) {
+                robot.startShotAligning(POWERSHOT_LEFT, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+                aligning = true;
+            } else {
+                aligning = false;
+                robot.stopShotAligning();
+            }
             leftHeld = true;
         } else if(!leftPressed) {
             leftHeld = false;
+        }
+
+        if(!downHeld && downPressed) {
+            if(!aligning) {
+                robot.startShotAligning(POWERSHOT_CENTER, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+                aligning = true;
+            } else {
+                aligning = false;
+                robot.stopShotAligning();
+            }
+            downHeld = true;
+        } else if (!downPressed) {
+            downHeld = false;
+        }
+
+        if(!upHeld && upPressed) {
+            if(!aligning) {
+                robot.startShotAligning(POWERSHOT_CENTER, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                aligning = true;
+            } else {
+                aligning = false;
+                robot.stopShotAligning();
+            }
+            upHeld = true;
+        } else if (!upPressed) {
+            upHeld = false;
         }
 
         if(!rightBumperHeld && rightBumperPressed) {
@@ -251,19 +283,6 @@ public class UltimateGoalTeleOp extends OpMode {
             robot.setWobbleMotorPower(0.0);
         }
 
-        if(!upHeld && upPressed) {
-            robot.setShooterFlapHighGoal();
-            upHeld = true;
-        } else if (!upPressed) {
-            upHeld = false;
-        }
-
-        if(!downHeld && downPressed) {
-            robot.setShooterFlapPowerShot();
-            downHeld = true;
-        } else if (!downPressed) {
-            downHeld = false;
-        }
 		// ********************************************************************
 		// OPERATOR JOYSTICK
 		// ********************************************************************
@@ -346,16 +365,16 @@ public class UltimateGoalTeleOp extends OpMode {
 
         // If the activity is not performing, it will be idle and return.
         performActivities();
-// Can use this for shoot alignment
-//        if(robot.stackAlignmentState == HardwareOmnibot.StackAlignActivity.IDLE) {
+        if(robot.shotAlignmentState == UltimateGoalRobot.SHOT_ALIGNMENT_STATE.IDLE) {
             aligning = false;
             robot.drive(speedMultiplier * xPower, speedMultiplier * yPower,
                     spinMultiplier * spin, driverAngle - 90.0, robot.defaultInputShaping);
-//        }
+        }
 
         telemetry.addData("Offset Angle: ", driverAngle);
         telemetry.addData("Flap Position: ", robot.flapAngle);
         telemetry.addData("Shooter Velocity: ", robot.shooter.getVelocity());
+        telemetry.addData("Shooter Stability: ", robot.sequentialStableVelocityChecks);
         telemetry.addData("FL Motor Velocity: ", robot.frontLeft.getVelocity());
         telemetry.addData("FR Motor Velocity: ", robot.frontRight.getVelocity());
         telemetry.addData("RL Motor Velocity: ", robot.rearLeft.getVelocity());
@@ -366,7 +385,10 @@ public class UltimateGoalTeleOp extends OpMode {
         telemetry.addData("Y Power: ", yPower);
         telemetry.addData("X Power: ", xPower);
         telemetry.addData("Spin: ", spin);
-        telemetry.addData("Gyro Angle: ", gyroAngle);
+        // This prevents us from reading the IMU every loop if we aren't in driver centric.
+        if(!robot.disableDriverCentric) {
+            telemetry.addData("Gyro Angle: ", robot.readIMU());
+        }
         telemetry.addData("World X Position: ", MyPosition.worldXPosition);
         telemetry.addData("World Y Position: ", MyPosition.worldYPosition);
         telemetry.addData("World Angle: ", Math.toDegrees(MyPosition.worldAngle_rad));
@@ -382,5 +404,7 @@ public class UltimateGoalTeleOp extends OpMode {
         robot.performClawToggle();
         robot.performInjecting();
         robot.performTripleInjecting();
+        robot.performShotAligning();
+        robot.updateShooterStability();
     }
 }
