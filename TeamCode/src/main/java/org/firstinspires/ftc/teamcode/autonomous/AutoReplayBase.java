@@ -25,7 +25,13 @@ public class AutoReplayBase extends AutoBase {
         Class<?> klass = this.getClass();
         Autonomous annotation =  klass.getAnnotation(Autonomous.class);
         if (annotation != null && annotation.group().equals("playback")){
-            return annotation.name();
+            String fullName = annotation.name();
+            int numOfDashes = fullName.length() - fullName.replace("-", "").length();
+            if (numOfDashes > 1){
+                int last = fullName.lastIndexOf("-");
+                fullName = fullName.substring(0, last);
+            }
+            return fullName;
         }
         return "";
     }

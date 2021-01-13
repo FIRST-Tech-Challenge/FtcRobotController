@@ -19,6 +19,7 @@ public class AutoRoute implements Serializable, Cloneable {
     private int startX;
     private int startY;
     private long lastRunTime = 0;
+    private String description;
 
     public String serialize() {
         return SimpleGson.getInstance().toJson(this);
@@ -35,6 +36,7 @@ public class AutoRoute implements Serializable, Cloneable {
         cloned.setStartY(this.getStartY());
         cloned.setSelected(this.isSelected());
         cloned.setTemp(this.isTemp());
+        cloned.setDescription(this.getDescription());
         for(int i = 0; i < steps.size(); i++){
             cloned.steps.add(this.steps.get(i));
         }
@@ -116,6 +118,14 @@ public class AutoRoute implements Serializable, Cloneable {
 
     public void setLastRunTime(long lastRunTime) {
         this.lastRunTime = lastRunTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
 
