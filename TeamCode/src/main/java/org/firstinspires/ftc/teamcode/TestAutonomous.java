@@ -8,15 +8,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @Autonomous
 
 public class TestAutonomous extends LinearOpMode{
-    DcMotor ramp;
+    DcMotor rampLeft;
+    DcMotor rampRight;
 
     public void runOpMode() {
 
         //Setting up
-        double AOA = 15;
+        double AngleOfAttack = 15;
         telemetry.addData("Status", "Initialized");
-        telemetry.addData("Ramp AOA", AOA);
-        ramp = hardwareMap.get(DcMotor.class, "frontLeft");
+        telemetry.addData("Ramp AOA", AngleOfAttack);
+        rampLeft = hardwareMap.get(DcMotor.class, "rampLeft");
+        rampRight = hardwareMap.get(DcMotor.class, "rampRight");
 
         waitForStart();
 
@@ -29,8 +31,10 @@ public class TestAutonomous extends LinearOpMode{
         move(1);
     }
 
-    public void move (double power) {
-        ramp.setPower(power);
+    public void move (float power) {
+        rampRight.setPower(power);
+        rampLeft.setPower(power);
+
 
     }
 }
