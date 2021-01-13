@@ -32,8 +32,7 @@ public class EncoderTest extends LinearOpMode {
                hardwareMap.get(DcMotor.class, "rbmotor")
         );
 
-        d.motorlf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        d.motorlb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
 
         waitForStart();
         while (opModeIsActive()) {
@@ -56,8 +55,7 @@ public class EncoderTest extends LinearOpMode {
 
             if (gamepad1.y && !clawButtonIsDown) {
                 clawButtonIsDown = true;
-                d.motorlf.setTargetPosition(1200);
-                d.motorlb.setTargetPosition(300);
+                d.setthepos();
             } else if (!gamepad1.y) {
                 clawButtonIsDown = false;
             }
