@@ -56,12 +56,12 @@ public class Drive extends LinearOpMode {
     motorlf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     motorlf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
   }
-  public void setthepos() {
-    motorlf.setTargetPosition(1200);
-    motorlb.setTargetPosition(300);
-    motorlf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    motorlb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-  }
+//  public void setthepos() {
+//    motorlf.setTargetPosition(1200);
+//    motorlb.setTargetPosition(300);
+//    motorlf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//    motorlb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//  }
 
   public void setPower(double Ly, double Lx, double Rx, double Trigger) {
     //using the three controller inputs, we calculate the powers
