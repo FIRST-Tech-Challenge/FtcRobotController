@@ -111,7 +111,7 @@ public class LynxModuleUtil {
         if (outdatedModules.size() > 0) {
             StringBuilder msgBuilder = new StringBuilder();
             msgBuilder.append("One or more of the attached Lynx modules has outdated firmware\n");
-            msgBuilder.append(Misc.formatInvariant("Mandatory minimum firmware version: %s\n",
+            msgBuilder.append(Misc.formatInvariant("Mandatory minimum firmware version for Road Runner: %s\n",
                     MIN_VERSION.toString()));
             for (Map.Entry<String, LynxFirmwareVersion> entry : outdatedModules.entrySet()) {
                 msgBuilder.append(Misc.formatInvariant(
