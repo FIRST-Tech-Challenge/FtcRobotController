@@ -130,12 +130,10 @@ public class Chassis_Auto extends LinearOpMode
         ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         final double currentAngle = aquireHeading();
         int straightFactor = -1;
-        double targetAngle = currentAngle - 180;
         if(isForward){
             straightFactor = 1;
-            targetAngle = currentAngle;
         }
-        targetAngle = normalizeAngle(targetAngle);
+        double targetAngle = currentAngle;
         double LF_power;
         double LB_power;
         double RF_power;
