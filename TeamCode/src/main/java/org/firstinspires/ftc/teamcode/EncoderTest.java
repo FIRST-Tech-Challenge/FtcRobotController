@@ -12,6 +12,8 @@ public class EncoderTest extends LinearOpMode {
 //    private SciLift lift;
 
     private Drive d;
+    private boolean clawButtonIsDown = false; // controls the claw servo button press
+
 
 
     @Override
@@ -49,12 +51,20 @@ public class EncoderTest extends LinearOpMode {
 //                 lift.rest();
 //             }
 
-//             d.setPower(
-//                  gamepad1.left_stick_y,
-//                  gamepad1.left_stick_x,
-//                  gamepad1.right_stick_x,
-// //                  gamepad1.right_trigger
-//               );
+            if (gamepad1.y && !clawButtonIsDown) {
+                clawButtonIsDown = true;
+                d.motorlf.setTargetPosition(1200);
+                d.motorlb.setTargetPosition(300);
+            } else if (!gamepad1.y) {
+                clawButtonIsDown = false;
+            }
+
+//            d.setPower(
+//                gamepad1.left_stick_y,
+//                gamepad1.left_stick_x,
+//                gamepad1.right_stick_x,
+////                gamepad1.right_trigger
+//            );
 
 
 //             telemetry.addData("Status", "Run Time: ");
