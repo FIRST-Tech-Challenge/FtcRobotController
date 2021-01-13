@@ -57,10 +57,10 @@ public class Drive extends LinearOpMode {
     motorlf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
   }
   public void setthepos() {
-    motorlf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    motorlb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     motorlf.setTargetPosition(1200);
     motorlb.setTargetPosition(300);
+    motorlf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    motorlb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
   }
 
   public void setPower(double Ly, double Lx, double Rx, double Trigger) {
