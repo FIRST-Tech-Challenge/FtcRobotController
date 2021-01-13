@@ -130,7 +130,7 @@ public class MecanumWheelDraft extends LinearOpMode {
                 telemetry.addData("back left", "%.2f", backLeft);
                 telemetry.addData("back right", "%.2f", backRight);
 
-                telemetry.addData("current heading", formatAngle(angles.angleUnit, angles.firstAngle));
+                //telemetry.addData("current heading", formatAngle(angles.angleUnit, angles.firstAngle));
 
                 telemetry.addData("back distance", robot.backDistance.getDistance(DistanceUnit.MM));
 
@@ -154,15 +154,14 @@ public class MecanumWheelDraft extends LinearOpMode {
             }
 
             if(gamepad1.b){
-               // robot.backRightMotor.setPower(.75);
+                driveStraightTime(.3,robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES),2000);
             }
 
             if(gamepad1.y){
-                driveStraight(.3,robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES));
+                driveStraightDistance(.3,robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES), 1000);
             }
 
         }
-
 
     }
 
@@ -220,28 +219,32 @@ public class MecanumWheelDraft extends LinearOpMode {
         }
 
 
-        blindRotateRight(.175);
-        while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) > heading) && opModeIsActive()) {
 
-            currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
-            telemetry.addData("target heading", heading);
-            telemetry.update();
+            blindRotateRight(.175);
+            while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) > heading) && opModeIsActive()) {
+
+                currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
+                telemetry.addData("target heading", heading);
+                telemetry.update();
+            }
+            stopDriving();
+
+
+
+
+            blindRotateLeft(.175);
+            while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) < heading) && opModeIsActive()) {
+                currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
+                telemetry.addData("target heading", heading);
+                telemetry.update();
+            }
+            stopDriving();
         }
-        stopDriving();
-
-        blindRotateLeft(.175);
-        while ((currentOrient.angleUnit.DEGREES.normalize(currentOrient.firstAngle) < heading) && opModeIsActive()) {
-
-            currentOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            telemetry.addData("current heading", formatAngle(currentOrient.angleUnit, currentOrient.firstAngle));
-            telemetry.addData("target heading", heading);
-            telemetry.update();
-        }
-        stopDriving();
 
 
-    }
+
 
 
     //just rotates to the right
@@ -265,6 +268,8 @@ public class MecanumWheelDraft extends LinearOpMode {
 
     }
 
+
+
     //strafes left at the heading it was called at
     void strafeLeft(double pwr, Orientation target) {
 
@@ -277,7 +282,7 @@ public class MecanumWheelDraft extends LinearOpMode {
         double targAng = targetOrient.angleUnit.DEGREES.normalize(target.firstAngle);;  // target.angleUnit.DEGREES.normalize(target.firstAngle);
 
         //rChanger changes the sensitivity of the R value
-        double rChanger = .5;
+        double rChanger = 10;
         double frontLeft, frontRight, backLeft, backRight, max;
 
 
@@ -294,11 +299,16 @@ public class MecanumWheelDraft extends LinearOpMode {
             double error = targAng - currAng;
 
 
-            double r = (-error / 180) / (rChanger);
+            double r = (-error / 180) / (rChanger * pwr);
+            //double r = (-error/180);
             //r = 0;
             //r=-r;
 
-
+            if ((r < .07) && (r > 0)) {
+                r = .07;
+            } else if ((r > -.07) && (r < 0)) {
+                r = -.07;
+            }
 
 
             // Normalize the values so none exceeds +/- 1.0
@@ -306,6 +316,19 @@ public class MecanumWheelDraft extends LinearOpMode {
             backLeft = -pwr + r ;
             backRight = -pwr + r ;
             frontRight = pwr + r ;
+
+            //original
+            // +    +
+            // -    +
+            // -    +
+            // +    +
+
+
+            //strafe right
+            // -    +
+            // +    +
+            // +    +
+            // -    +
 
             max = Math.max(Math.max(Math.abs(frontLeft), Math.abs(frontRight)), Math.max(Math.abs(frontRight), Math.abs(frontRight)));
             if (max > 1.0) {
@@ -321,6 +344,8 @@ public class MecanumWheelDraft extends LinearOpMode {
             telemetry.addData("front right", "%.2f", frontRight);
             telemetry.addData("back left", "%.2f", backLeft);
             telemetry.addData("back right", "%.2f", backRight);
+
+            telemetry.addData("error", error);
 
             telemetry.addData("current heading", formatAngle(currOrient.angleUnit, currOrient.firstAngle));
             telemetry.addData("target heading", formatAngle(targetOrient.angleUnit, targetOrient.firstAngle));
@@ -340,28 +365,36 @@ public class MecanumWheelDraft extends LinearOpMode {
     }
 
 
+
+    //kills power ot all wheels
+    void stopDriving(){
+        robot.frontLeftMotor.setPower(0);
+        robot.frontRightMotor.setPower(0);
+        robot.backLeftMotor.setPower(0);
+        robot.backRightMotor.setPower(0);
+    }
+
     //drives forward at the heading it was called at
     // for example, calling this when the robot is at 60 heading, it will go to that heading, even if it gets knocked off course
-    void driveStraight(double pwr, Orientation target){
+    void driveStraightTime(double pwr, Orientation target, double desiredTime){
 
                 //orients
              Orientation targetOrient;
              Orientation currOrient;
 
+
+             double lastTime = runtime.milliseconds();
+
              //converts the target heading to a double to use in error calculation
-            targetOrient = target;
+             targetOrient = target;
              double targAng = targetOrient.angleUnit.DEGREES.normalize(target.firstAngle);;  // target.angleUnit.DEGREES.normalize(target.firstAngle);
 
             //rChanger changes the sensitivity of the R value
             double rChanger = 10;
             double frontLeft, frontRight, backLeft, backRight, max;
 
-            while((gamepad1.y) && (opModeIsActive())){
+            while(((runtime.milliseconds() < lastTime + desiredTime) && (opModeIsActive()))){
 
-                //gamepad.y is here as that is the button I've been pressing to test this function
-                //if you want to have this run properly, you'll need to replace gamepad.y
-                // for example, if you want this function to run for 5 seconds, you can create a timer and put that time
-                // test in the while loop
 
 
                 currOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -414,12 +447,84 @@ public class MecanumWheelDraft extends LinearOpMode {
 
         }
 
-    //kills power ot all wheels
-    void stopDriving(){
-        robot.frontLeftMotor.setPower(0);
-        robot.frontRightMotor.setPower(0);
-        robot.backLeftMotor.setPower(0);
-        robot.backRightMotor.setPower(0);
+    //drives straight for a desired distanced based off of the back distance sensor
+    void driveStraightDistance(double pwr, Orientation target, double desiredDistance){
+
+        //orients
+        Orientation targetOrient;
+        Orientation currOrient;
+
+
+        //converts the target heading to a double to use in error calculation
+        targetOrient = target;
+        double targAng = targetOrient.angleUnit.DEGREES.normalize(target.firstAngle);;  // target.angleUnit.DEGREES.normalize(target.firstAngle);
+
+        //rChanger changes the sensitivity of the R value
+        double rChanger = 10;
+        double frontLeft, frontRight, backLeft, backRight, max;
+
+        while(((robot.backDistance.getDistance(DistanceUnit.MM) < desiredDistance) && (opModeIsActive()))){
+
+            currOrient = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            double currAng = currOrient.angleUnit.DEGREES.normalize(currOrient.firstAngle);
+
+            double error = targAng - currAng;
+
+
+            double r = (-error / 180) / (pwr /* * rChanger*/);
+            //r = 0;
+
+            // Normalize the values so none exceeds +/- 1.0
+            frontLeft = pwr + r ;
+            backLeft = pwr + r ;
+            backRight = pwr - r ;
+            frontRight = pwr - r ;
+
+            frontLeft = -frontLeft;
+            backLeft = -backLeft;
+
+            max = Math.max(Math.max(Math.abs(frontLeft), Math.abs(frontRight)), Math.max(Math.abs(frontRight), Math.abs(frontRight)));
+            if (max > 1.0) {
+                frontLeft = frontLeft / max;
+                frontRight = frontRight / max;
+                backLeft = backLeft / max;
+                backRight = backRight / max;
+            }
+
+
+
+            telemetry.addData("front left", "%.2f", frontLeft);
+            telemetry.addData("front right", "%.2f", frontRight);
+            telemetry.addData("back left", "%.2f", backLeft);
+            telemetry.addData("back right", "%.2f", backRight);
+
+            telemetry.addData("current heading", formatAngle(currOrient.angleUnit, currOrient.firstAngle));
+            telemetry.addData("target heading", formatAngle(targetOrient.angleUnit, targetOrient.firstAngle));
+
+            telemetry.update();
+
+            //send the power to the motors
+            robot.frontLeftMotor.setPower(frontLeft);
+            robot.backLeftMotor.setPower(backLeft);
+            robot.backRightMotor.setPower(backRight);
+            robot.frontRightMotor.setPower(frontRight);
+
+
+
+        }
+
+    }
+
+
+
+
+
+    void pretendDriveForwardBackDistance(){
+
+
+
+
+
     }
 
 
