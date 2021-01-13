@@ -242,7 +242,7 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!upHeld && upPressed) {
             if(!aligning) {
-                robot.startShotAligning(POWERSHOT_CENTER, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                robot.startShotAligning(HIGH_GOAL, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
                 aligning = true;
             } else {
                 aligning = false;
