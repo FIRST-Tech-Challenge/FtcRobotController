@@ -1,24 +1,47 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.playmaker.RobotHardware;
 
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
+
 public abstract class UltimateGoalHardware extends RobotHardware {
+
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Quad";
+    private static final String LABEL_SECOND_ELEMENT = "Single";
+
+    public enum UltimateGoalStartingPosition  {
+        LEFT,
+        RIGHT
+    }
+
+    public enum WobbleGoalDestination {
+        A,
+        B,
+        C
+    }
 
     public DcMotor frontLeft;
     public DcMotor frontRight;
     public DcMotor backLeft;
     public DcMotor backRight;
 
-    public DcMotor shooterLeft;
-    public DcMotor shooterRight;
+    public DcMotor shooter;
     public DcMotor collector;
     public DcMotor escalator;
 
-    public Servo wobbleGoalHolder;
+    public DcMotor wobbleGoalHolder;
+    public CRServo wobbleServo;
 
     public final static double COUNTS_PER_ENCODER_REV = 8192;
     public final static double WHEEL_DIAMETER_IN = 4;
@@ -27,17 +50,39 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     public void initializeHardware() {
         frontLeft = this.initializeDevice(DcMotor.class, "frontLeft");
         frontRight = this.initializeDevice(DcMotor.class, "frontRight");
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft = this.initializeDevice(DcMotor.class, "backLeft");
         backRight = this.initializeDevice(DcMotor.class, "backRight");
-        shooterLeft = this.initializeDevice(DcMotor.class, "shooterLeft");
-        shooterRight = this.initializeDevice(DcMotor.class, "shooterRight");
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter = this.initializeDevice(DcMotor.class, "shooter");
         collector = this.initializeDevice(DcMotor.class, "collector");
         collector.setDirection(DcMotorSimple.Direction.REVERSE);
         escalator = this.initializeDevice(DcMotor.class, "escalator");
         //.setDirection(DcMotorSimple.Direction.REVERSE);
-        wobbleGoalHolder = this.initializeDevice(Servo.class, "wobble");
+        wobbleGoalHolder = this.initializeDevice(DcMotor.class, "wobble");
+        wobbleServo = this.initializeDevice(CRServo.class, "wobbleServo");
+
+//        wobbleGoalLeftClaw = this.initializeDevice(Servo.class, "leftClaw");
+//        wobbleGoalLeftClaw.scaleRange(0.375, 0.55);
+//        wobbleGoalRightClaw = this.initializeDevice(Servo.class, "rightClaw");
+//        wobbleGoalRightClaw.scaleRange(0.8,0.95);
 
         this.initializeOmniDrive(frontLeft, frontRight, backLeft, backRight);
         this.omniDrive.setCountsPerInch((Math.PI*WHEEL_DIAMETER_IN)/COUNTS_PER_ENCODER_REV);
+    }
+
+    @Override
+    public void initializeLocalizer() {
+        super.initializeLocalizer();
+        this.localizer.loadUltimateGoalTrackables(this);
+        this.localizer.setCameraMatrix(this,
+                new Position(DistanceUnit.INCH, 9.5, 0, 0, 0),
+                new Orientation(EXTRINSIC, YZX, DEGREES, -90, 0, 0, 0));
+    }
+
+    @Override
+    public void initTfod() {
+        super.initTfod();
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 }

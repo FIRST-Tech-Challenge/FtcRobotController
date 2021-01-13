@@ -36,4 +36,9 @@ public class WaitForeverAction implements Action {
     public String progressString() {
         return "Will never complete!";
     }
+
+    @Override
+    public Object getActionResult() {
+        return null;
+    }
 }

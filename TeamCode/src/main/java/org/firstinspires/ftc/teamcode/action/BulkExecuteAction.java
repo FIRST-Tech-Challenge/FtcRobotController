@@ -43,4 +43,9 @@ public class BulkExecuteAction implements Action {
     public String progressString() {
         return null;
     }
+
+    @Override
+    public Object getActionResult() {
+        return null;
+    }
 }

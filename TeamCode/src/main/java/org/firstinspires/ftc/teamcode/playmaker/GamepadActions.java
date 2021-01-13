@@ -140,5 +140,4 @@ public class GamepadActions {
         GamepadButtonState state = getStateFor(type, button);
         return state.toggle;
     }
-
 }

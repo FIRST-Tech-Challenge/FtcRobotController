@@ -5,8 +5,8 @@ import asyncio
 import json
 import pathlib
 
-CONTROL_HUB_URL = "http://localhost:8080"
-CONTROL_HUB_WSURL = "ws://localhost:8081"
+CONTROL_HUB_URL = "http://192.168.43.1:8080"
+CONTROL_HUB_WSURL = "ws://192.168.43.1:8081"
 CONTROL_HUB_REFERER = CONTROL_HUB_URL + "/java/editor.html"
 CONTROL_HUB_UPLOAD_URL = CONTROL_HUB_URL + "/java/file/upload"
 SRC_DIRECTORY = pathlib.Path("TeamCode/src/main/java/org/firstinspires/ftc/teamcode")

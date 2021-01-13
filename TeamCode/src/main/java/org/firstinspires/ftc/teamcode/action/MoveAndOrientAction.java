@@ -1,19 +1,21 @@
 package org.firstinspires.ftc.teamcode.action;
 
+import com.qualcomm.robotcore.robot.Robot;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.playmaker.Action;
 import org.firstinspires.ftc.teamcode.playmaker.Localizer;
 import org.firstinspires.ftc.teamcode.playmaker.RobotHardware;
+import org.firstinspires.ftc.teamcode.playmaker.Localizer.RobotTransform;
 
 public class MoveAndOrientAction implements Action {
 
     double startingAngle;
     private double overallDistanceToTarget;
     private double overallAngularDifference;
-    private Position finalPosition;
-    private double targetHeading;
+    private RobotTransform transform;
     private double power;
 
     private final double DISTANCE_TOLERANCE = 1;
@@ -22,10 +24,15 @@ public class MoveAndOrientAction implements Action {
     private final double DISTANCE_UNTIL_SCALE_DOWN = 8;
     private final DistanceUnit DISTANCE_SCALE_DOWN_UNIT = DistanceUnit.INCH;
 
+    public MoveAndOrientAction(DistanceUnit unit, double x, double y, double heading, double power) {
+        Position pos = new Position(unit, x, y, 0, 0);
+        RobotTransform transform = new RobotTransform(pos, heading);
+        this.transform = transform;
+        this.power = power;
+    }
 
-    public MoveAndOrientAction(Position finalPosition, double heading, double power) {
-        this.finalPosition = finalPosition;
-        this.targetHeading = heading;
+    public MoveAndOrientAction(RobotTransform transform, double power) {
+        this.transform = transform;
         this.power = power;
     }
 
@@ -48,10 +55,10 @@ public class MoveAndOrientAction implements Action {
         Orientation currentOrientation = currentEstimatedOrientation.orientation;
         Position inches = currentPosition.toUnit(DistanceUnit.INCH);
         double currentHeading = currentOrientation.thirdAngle;
-        double currentDistanceToTarget = Localizer.distance(currentPosition, finalPosition, DistanceUnit.INCH);
+        double currentDistanceToTarget = Localizer.distance(currentPosition, transform.position, DistanceUnit.INCH);
 
-        double angularDifferenceBetweenPositions = Localizer.atan2(currentPosition, finalPosition);
-        double angularDifferenceToTargetHeading = Localizer.angularDifference(currentHeading, targetHeading);
+        double angularDifferenceBetweenPositions = Localizer.atan2(currentPosition, transform.position);
+        double angularDifferenceToTargetHeading = Localizer.angularDifference(currentHeading, transform.heading);
         double angDiffBetweenForwardAndTargetPos = Localizer.angularDifference(currentHeading, angularDifferenceBetweenPositions);
 
         hardware.telemetry.addData("current pos", "%.1f %.1f %.1f", inches.x, inches.y, inches.z);
@@ -65,7 +72,7 @@ public class MoveAndOrientAction implements Action {
 
 
         double  movePower;
-        if (Localizer.distance(currentPosition, finalPosition, DISTANCE_SCALE_DOWN_UNIT) <= DISTANCE_UNTIL_SCALE_DOWN) {
+        if (Localizer.distance(currentPosition, transform.position, DISTANCE_SCALE_DOWN_UNIT) <= DISTANCE_UNTIL_SCALE_DOWN) {
             movePower = 0.3;
         } else {
             movePower = power;
@@ -73,8 +80,8 @@ public class MoveAndOrientAction implements Action {
 
         hardware.omniDrive.move(movePower, Math.toRadians(angDiffBetweenForwardAndTargetPos), angularDifferenceToTargetHeading/180);
 
-        boolean withinDistanceTolerance = Localizer.distance(currentPosition, finalPosition, DISTANCE_TOLERANCE_UNIT) <= DISTANCE_TOLERANCE;
-        boolean withinHeadingTolerance = Localizer.angularDifference(currentHeading, targetHeading) <= HEADING_TOLERANCE;
+        boolean withinDistanceTolerance = Localizer.distance(currentPosition, transform.position, DISTANCE_TOLERANCE_UNIT) <= DISTANCE_TOLERANCE;
+        boolean withinHeadingTolerance = Localizer.angularDifference(currentHeading, transform.heading) <= HEADING_TOLERANCE;
         return withinDistanceTolerance && withinHeadingTolerance;
     }
 
@@ -85,6 +92,11 @@ public class MoveAndOrientAction implements Action {
 
     @Override
     public String progressString() {
+        return null;
+    }
+
+    @Override
+    public Object getActionResult() {
         return null;
     }
 }

@@ -20,9 +20,10 @@ public interface Action {
      */
     boolean doAction(RobotHardware hardware);
 
+    Object getActionResult();
+
     Double progress();
 
     String progressString();
-
 
 }

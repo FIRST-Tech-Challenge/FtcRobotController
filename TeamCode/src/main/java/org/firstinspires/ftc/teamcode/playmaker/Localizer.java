@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.playmaker;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -85,6 +86,16 @@ public class Localizer {
         }
     }
 
+    static public class RobotTransform {
+        public Position position;
+        public double heading;
+
+        public RobotTransform(Position position, double heading) {
+            this.position = position;
+            this.heading = heading;
+        }
+    }
+
 
     /**
      * Return the robot's estimated location on the field.
@@ -95,8 +106,15 @@ public class Localizer {
      */
 
     public EstimatedPosition estimatePosition() {
-        boolean newVuforiaInfo = lastVuforiaTransform.acquisitionTime >= latestAcquisitionTime;
-        boolean newEncodersInfo = lastEncoderPosition.acquisitionTime >= latestAcquisitionTime;
+        boolean newVuforiaInfo = false;
+        boolean newEncodersInfo = false;
+        if (lastVuforiaTransform != null) {
+            newVuforiaInfo = lastVuforiaTransform.acquisitionTime >= latestAcquisitionTime;
+        }
+        if (lastEncoderPosition != null) {
+            newEncodersInfo = lastEncoderPosition.acquisitionTime >= latestAcquisitionTime;
+        }
+
         if (newVuforiaInfo) {
             VectorF translation = lastVuforiaTransform.transform.getTranslation();
             float x = translation.get(0);
@@ -133,9 +151,10 @@ public class Localizer {
     } //meeep
 
     public void telemetry(Telemetry telemetry) {
-        Position position = estimatePosition().position;
+        EstimatedPosition estimatedPosition = estimatePosition();
         EstimatedOrientation orientation = estimateOrientation();
-        if (position != null) {
+        if (estimatedPosition != null) {
+            Position position = estimatedPosition.position.toUnit(DistanceUnit.INCH);
             telemetry.addData("Loc. Position", String.format("%.1f, %.1f, %.1f", position.x, position.y, position.z));
         } else {
             telemetry.addData("Loc. Position", "unknown");
@@ -209,7 +228,8 @@ public class Localizer {
      * @param cameraRotation Rotation of the camera relative to the robot's forward direction
      */
     public void setCameraMatrix(RobotHardware hardware, Position cameraOffset, Orientation cameraRotation) {
-        this.cameraMatrix = OpenGLMatrix.translation((float) cameraOffset.x, (float) cameraOffset.y, (float) cameraOffset.z);
+        Position cameraOffsetMM = cameraOffset.toUnit(DistanceUnit.MM);
+        this.cameraMatrix = OpenGLMatrix.translation((float) cameraOffsetMM.x, (float) cameraOffsetMM.y, (float) cameraOffsetMM.z);
         this.cameraMatrix = this.cameraMatrix.multiplied(cameraRotation.getRotationMatrix());
         for (VuforiaTrackable trackable : vuforiaTrackables) {
             VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener) trackable.getListener();
@@ -390,6 +410,21 @@ public class Localizer {
     //endregion
 
     //region Static Methods
+
+    public static Position mirrorPositionOverTeamLine(Position position) {
+        position.x = -position.x;
+        return position;
+    }
+
+    public static RobotTransform[] mirrorTransformsOverTeamLine(RobotTransform[] transforms) {
+        RobotTransform[] new_transforms = new RobotTransform[transforms.length];
+        for (int i = 0; i < new_transforms.length; i++) {
+            RobotTransform transform = transforms[i];
+            new_transforms[i] = new RobotTransform(mirrorPositionOverTeamLine(transform.position), transform.heading);
+        }
+        return new_transforms;
+    }
+
     /**
      * Compute the XY distance between two Positions
      * @param a Position 1

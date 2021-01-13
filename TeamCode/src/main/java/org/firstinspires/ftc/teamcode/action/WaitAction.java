@@ -41,4 +41,9 @@ public class WaitAction implements Action {
         String totalTime = String.format("%.3f", time/1000.0);
         return String.format("%s/%ss", elapsedTime, totalTime);
     }
+
+    @Override
+    public Object getActionResult() {
+        return null;
+    }
 }

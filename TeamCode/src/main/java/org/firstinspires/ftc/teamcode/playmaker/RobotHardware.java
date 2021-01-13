@@ -19,6 +19,11 @@ public abstract class RobotHardware extends OpMode {
         AUTONOMOUS
     }
 
+    public enum Team {
+        RED,
+        BLUE
+    }
+
     private ExecutionMode executionMode = ExecutionMode.TELEOP;
 
     public static final String vuforiaKey = "ActI1F//////AAABmS42p5yOnkGis4OjI6bXOlAnHWRg28DHHDgR3ja8s8s9yCGhUmk3wfLPYxAOtfsiSVSi97uAosw46Pu3KQNf7fSqrMOT/PUcG2zW3Lq8tnJHTe/uwhwWgvnwOlrgEovZPA0uhwQ/uHH2zr/U2mFMYOQTTAk6ovbCjARxN+HfP6XWCDHDQ4dhOK+joRlA8u0HqXPzm6uBQWBgCyUno8aESPLQu3QGgEWUWm1tEhUny4rgQXC19nH160f7EGy+YoTR6YAD37xQQxnzP58wHmrX7+cBuiwkai9+g65R3pfBYprNpeRunzEml6m+a792ypI/niKew1VWPSgQSHaE1Ix8+c6uCvqySjcu5mZ1g3/pnU2j";
@@ -27,6 +32,7 @@ public abstract class RobotHardware extends OpMode {
     public TFObjectDetector tfod;
     public WebcamName webcamName;
     public boolean initVuforia = true;
+    public boolean initTfod = true;
 
     // Executors
     public AutonomousExecutor autonomousExecutor;
@@ -65,7 +71,15 @@ public abstract class RobotHardware extends OpMode {
             telemetry.addData("Robot Hardware", "VUFORIA INIT FAILED, WEBCAM NULL");
             return;
         }
+
         vuforiaParameters = new VuforiaLocalizer.Parameters();
+
+//        try {
+//            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+//            vuforiaParameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+//        } catch (Exception e) {
+//            vuforiaParameters = new VuforiaLocalizer.Parameters();
+//        }
 
         vuforiaParameters.vuforiaLicenseKey = vuforiaKey;
 
@@ -73,6 +87,7 @@ public abstract class RobotHardware extends OpMode {
          * We also indicate which camera on the RC we wish to use.
          */
         vuforiaParameters.cameraName = webcamName;
+        vuforiaParameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
 
         // Make sure extended tracking is disabled for this example.
         vuforiaParameters.useExtendedTracking = false;
@@ -80,6 +95,19 @@ public abstract class RobotHardware extends OpMode {
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(vuforiaParameters);
 
+    }
+
+    public void initTfod() {
+        TFObjectDetector.Parameters tfodParameters;
+        try {
+            int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                    "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        } catch (Exception e) {
+            tfodParameters = new TFObjectDetector.Parameters();
+        }
+        tfodParameters.minResultConfidence = 0.8f;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
     }
 
     public void initializeLocalizer() {
@@ -92,8 +120,9 @@ public abstract class RobotHardware extends OpMode {
 
     @Override
     public void init() {
-        this.initializeLocalizer();
         if (initVuforia) initializeVuforia();
+        if (initTfod) initTfod();
+        this.initializeLocalizer();
         this.initializeHardware();
         this.gamepadActions = new GamepadActions();
     }
