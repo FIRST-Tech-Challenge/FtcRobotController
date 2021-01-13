@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -122,6 +124,7 @@ public class UltimateGoalRobot
 
     public static boolean encodersReset = false;
     public boolean forceReset = false;
+    public boolean disableDriverCentric = false;
 
     public double xAngle, yAngle, zAngle;
     /* local OpMode members. */
@@ -224,7 +227,9 @@ public class UltimateGoalRobot
         injectTimer = new ElapsedTime();
 
         // Let's try to tweak the PIDs
-//		frontLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10,
+        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(200,
+                3, 0, 0, MotorControlAlgorithm.PIDF));
+//		  frontLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10,
 //                3, 0, 12, MotorControlAlgorithm.PIDF));
 //        frontRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10,
 //                3, 0, 12, MotorControlAlgorithm.PIDF));
@@ -380,7 +385,11 @@ public class UltimateGoalRobot
      * @param angleOffset - The offset from the gyro to run at, such as drive compensation
      */
     public void drive(double xPower, double yPower, double spin, double angleOffset, boolean inputShaping) {
-        double gyroAngle = readIMU() + angleOffset;
+        double gyroAngle = angleOffset;
+        if(!disableDriverCentric) {
+            gyroAngle += readIMU();
+        }
+
         double joystickMagnitude = sqrt(xPower*xPower + yPower*yPower);
         double driveAngle = atan2(yPower, xPower);
         double robotDriveAngle = driveAngle - Math.toRadians(gyroAngle) + Math.toRadians(90);

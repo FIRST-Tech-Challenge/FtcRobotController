@@ -37,8 +37,12 @@ public class UltimateGoalTeleOp extends OpMode {
     @Override
     public void init_loop() {
         telemetry.addLine("Press X on driver controller to reset encoders.");
+        telemetry.addLine("Press O on driver controller to disable Driver Centric Mode.");
         if(gamepad1.cross) {
             robot.forceReset = true;
+        }
+        if(gamepad1.circle) {
+            robot.disableDriverCentric = true;
         }
     }
 
