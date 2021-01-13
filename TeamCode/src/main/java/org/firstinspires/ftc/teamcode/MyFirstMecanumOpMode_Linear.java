@@ -46,7 +46,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
         wobbleGoalExtendMotor = hardwareMap.dcMotor.get("wobbleExtendo");
         wobbleGoalRaiseMotor = hardwareMap.dcMotor.get("wobbleLift");
-        wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip`");
+        wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         intakeOne = hardwareMap.crservo.get("intakeServoOne");
         intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
 
@@ -96,14 +96,15 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             rightRearMotor.setPower(rightRearPower);
 
             if (gamepad2.left_trigger >= .87) {
-                wobbleGoalRaiseMotor.setPower(.1);
+                wobbleGoalRaiseMotor.setPower(.2);
             } else {
                 wobbleGoalRaiseMotor.setPower(0);
             }
 
             if (gamepad2.left_bumper == true) {
-                wobbleGoalRaiseMotor.setPower(-.3);
+                wobbleGoalRaiseMotor.setPower(-.6);
             } else {
+                wobbleGoalRaiseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 wobbleGoalRaiseMotor.setPower(0);
             }
 
@@ -114,16 +115,21 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             }
 
             if (gamepad2.right_bumper == true) {
-                wobbleGoalExtendMotor.setPower(-.2);
+                wobbleGoalExtendMotor.setPower(-.5);
             } else {
                 wobbleGoalExtendMotor.setPower(0);
             }
-
+            if (gamepad2.a) {
+                intakeOne.setPower(0.9);
+            }
+            if (gamepad2.b) {
+                intakeOne.setPower(-0.9);
+            }
             if (gamepad2.y) {
                 if (!yPressed) {
                     yPressed = true;
                     if (yOpen) {
-                        wobbleGoalGrippyThing.setPosition(0.3);
+                        wobbleGoalGrippyThing.setPosition(0.2);
 
                         yOpen = false;
                     } else {
