@@ -48,22 +48,22 @@ public class OutreachBot {
             telemetry.addData("Init", "Drive");
 
             if (backLeft != null) {
-                backLeft.setDirection(DcMotor.Direction.FORWARD);
+                backLeft.setDirection(DcMotor.Direction.REVERSE);
                 backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             if (backRight != null) {
-                backRight.setDirection(DcMotor.Direction.REVERSE);
+                backRight.setDirection(DcMotor.Direction.FORWARD);
                 backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             if (frontLeft != null) {
-                frontLeft.setDirection(DcMotor.Direction.FORWARD);
+                frontLeft.setDirection(DcMotor.Direction.REVERSE);
                 frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             if (frontRight != null) {
-                frontRight.setDirection(DcMotor.Direction.REVERSE);
+                frontRight.setDirection(DcMotor.Direction.FORWARD);
                 frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
         } catch (Exception ex) {

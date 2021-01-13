@@ -38,7 +38,7 @@ public class RingDetector implements Runnable{
     private ArrayList<AutoDot> namedCoordinates = new ArrayList<>();
 
     private static AutoDot zoneA = new AutoDot("A", 75, 75, -1, AutoRoute.NAME_RED);
-    private static AutoDot zoneB = new AutoDot("B", 62, 105, -1, AutoRoute.NAME_RED);
+    private static AutoDot zoneB = new AutoDot("B", 60, 105, -1, AutoRoute.NAME_RED);
     private static AutoDot zoneC = new AutoDot("C", 75, 120, -1, AutoRoute.NAME_RED);
 
     public RingDetector(HardwareMap hMap, String side, LinearOpMode caller, ArrayList<AutoDot> namedCoordinates, Led led, Telemetry t) throws Exception {

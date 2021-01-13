@@ -17,12 +17,12 @@ import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
 public class UltimateBot extends YellowBot {
     public DcMotor wobbleSwing = null;
-    private Servo wobbleClaw = null;
+    private Servo wobbleClaw1 = null;
+    private Servo wobbleClaw2 = null;
     private Servo ringCamera = null;
     private Servo shooterServo = null;
     private DcMotor intake = null;
     private DcMotor shooter = null;
-//    private DcMotor intakeblack = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
     private static int SWING_GROUND_POS = 260;
@@ -65,15 +65,6 @@ public class UltimateBot extends YellowBot {
             throw new Exception("Issues with intake. Check the controller config", ex);
         }
 
-//        try {
-//            intake = hwMap.get(DcMotor.class, "blackintake");
-//            intake.setDirection(DcMotor.Direction.FORWARD);
-//            intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//            intake.setPower(0);
-//        } catch (Exception ex) {
-//            throw new Exception("Issues with intake. Check the controller config", ex);
-//        }
-
         try {
             shooter = hwMap.get(DcMotor.class, "shooter");
             shooter.setDirection(DcMotor.Direction.REVERSE);
@@ -84,10 +75,17 @@ public class UltimateBot extends YellowBot {
         }
 
         try {
-            wobbleClaw = hwMap.get(Servo.class, "claw");
-            wobbleClaw.setPosition(1);
+            wobbleClaw1 = hwMap.get(Servo.class, "claw1");
+            wobbleClaw1.setPosition(1);
         } catch (Exception ex) {
-            throw new Exception("Issues with wobbleClaw. Check the controller config", ex);
+            throw new Exception("Issues with wobbleClaw1. Check the controller config", ex);
+        }
+
+        try {
+            wobbleClaw2 = hwMap.get(Servo.class, "claw2");
+            wobbleClaw2.setPosition(0);
+        } catch (Exception ex) {
+            throw new Exception("Issues with wobbleClaw2. Check the controller config", ex);
         }
 
         try {
@@ -117,20 +115,6 @@ public class UltimateBot extends YellowBot {
         return position;
     }
 
-
-    public double getClawPosition() {
-        return wobbleClaw.getPosition();
-    }
-
-    public double getCameraPosition() {
-        return ringCamera.getPosition();
-    }
-
-
-    public void moveWobbleClaw(double position) {
-        double p = Range.clip(position, -1.0, 1.0);
-        wobbleClaw.setPosition(p);
-    }
 
     public void moveRingCamera(double position) {
         double p = Range.clip(position, -1.0, 1.0);
@@ -194,16 +178,18 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Close Claw", defaultReturn = "")
     public void closeWobbleClaw() {
-        if (wobbleClaw != null) {
-            wobbleClaw.setPosition(0);
+        if ((wobbleClaw1 != null) && (wobbleClaw2 != null)) {
+            wobbleClaw1.setPosition(0);
+            wobbleClaw2.setPosition(1);
         }
 
     }
 
     @BotAction(displayName = "Open Claw", defaultReturn = "")
     public void openWobbleClaw() {
-        if (wobbleClaw != null) {
-            wobbleClaw.setPosition(1);
+        if ((wobbleClaw1 != null) && (wobbleClaw2 != null)) {
+            wobbleClaw1.setPosition(1);
+            wobbleClaw2.setPosition(0);
         }
     }
 

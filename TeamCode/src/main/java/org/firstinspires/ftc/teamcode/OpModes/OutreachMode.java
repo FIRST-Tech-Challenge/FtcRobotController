@@ -66,18 +66,18 @@ public class OutreachMode extends LinearOpMode{
 
                 // POV Mode uses left stick to go forward, and right stick to turn.
                 // - This uses basic math to combine motions and is easier to drive straight.
-                double drive = gamepad1.left_stick_y;
+                double drive = gamepad1.left_stick_y*0.75;
                 double turn = 0;
                 double ltrigger = gamepad1.left_trigger;
                 double rtrigger = gamepad1.right_trigger;
                 if (ltrigger > 0){
-                    turn = -ltrigger;
+                    turn = -ltrigger*0.75;
                 }
                 else if (rtrigger > 0){
-                    turn = rtrigger;
+                    turn = rtrigger*0.75;
                 }
 
-                double strafe = gamepad1.right_stick_x;
+                double strafe = gamepad1.right_stick_x*0.75;
 
 
                 if (Math.abs(strafe) > 0) {
