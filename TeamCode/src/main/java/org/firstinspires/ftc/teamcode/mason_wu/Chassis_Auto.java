@@ -83,14 +83,14 @@ public class Chassis_Auto extends LinearOpMode
                                   rotateAtAngle (boolean isClockwise, double degree, double margin, double power)
                                   rotateToAngle (double targetAngle, double margin, double power)
              */
-            driveStraight(true,1.0,0.4,1500);
+            driveStraight(true,1.0,0.4,2000);
             stopMotion(100);
-            drivePerpendicularly(true,1.0,0.4,1500);
+            rotateToAngle (90.0,  1.0,  0.4);
             stopMotion(100);
-            driveStraight(false,1.0,0.4,1500);
-            stopMotion(100);
-            drivePerpendicularly(false,1.0,0.4,1500);
-            stopMotion(100);
+            driveStraight(true,1.0,0.4,1000);
+            stopMotion(1000);
+            rotateToAngle (0.0,  1.0,  0.4);
+            stopMotion(1000);
         }
     }
 
@@ -191,15 +191,15 @@ public class Chassis_Auto extends LinearOpMode
             RF_power = perpendicularFactor * power;
             RB_power = -1 * perpendicularFactor * power;
             if (tempAngle < normalizeAngle(targetAngle - 1 * margin)) {
-                RF_power += perpendicularFactor * 0.1;
-                RB_power -= perpendicularFactor * 0.1;
-                LF_power += perpendicularFactor * 0.1;
-                LB_power -= perpendicularFactor * 0.1;
+                RF_power += perpendicularFactor * 0.05;
+                RB_power -= perpendicularFactor * 0.05;
+                LF_power += perpendicularFactor * 0.05;
+                LB_power -= perpendicularFactor * 0.05;
             } else if (tempAngle > normalizeAngle(targetAngle + (margin))) {
-                RF_power -= perpendicularFactor * 0.1;
-                RB_power += perpendicularFactor * 0.1;
-                LF_power -= perpendicularFactor * 0.1;
-                LB_power += perpendicularFactor * 0.1;
+                RF_power -= perpendicularFactor * 0.05;
+                RB_power += perpendicularFactor * 0.05;
+                LF_power -= perpendicularFactor * 0.05;
+                LB_power += perpendicularFactor * 0.05;
             }
             RF_power = Range.clip(RF_power, -1, 1);
             RB_power = Range.clip(RB_power, -1, 1);
