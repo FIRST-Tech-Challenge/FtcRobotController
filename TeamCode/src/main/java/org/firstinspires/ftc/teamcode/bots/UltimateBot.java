@@ -26,6 +26,7 @@ public class UltimateBot extends YellowBot {
 
     private SwingPosition swingPosition = SwingPosition.Init;
     private static int SWING_GROUND_POS = 260;
+    private static int AUTO_DROP = 200;
     private static int SWING_LIFT_UP_POS = 160;
     private static int SWING_LIFT_WALL = 50;
     private static int STRAIGHT_UP = 70;
@@ -90,7 +91,7 @@ public class UltimateBot extends YellowBot {
 
         try {
             ringCamera = hwMap.get(Servo.class, "camera");
-            ringCamera.setPosition(CAMERA_RIGHT_LINE);
+//            ringCamera.setPosition(CAMERA_RIGHT_LINE);
         } catch (Exception ex) {
             throw new Exception("Issues with ringCamera. Check the controller config", ex);
         }
@@ -152,7 +153,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Peg Shooter", defaultReturn = "")
     public void shooterpeg() {
         if (shooter != null) {
-            shooter.setPower(0.8);
+            shooter.setPower(0.85);
         }
     }
 
@@ -235,6 +236,26 @@ public class UltimateBot extends YellowBot {
             }
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             wobbleSwing.setTargetPosition(SWING_GROUND_POS);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wobbleSwing.setPower(0.6);
+            boolean stop = false;
+            while (!stop) {
+                stop = wobbleSwing.isBusy() == false;
+            }
+            this.swingPosition = SwingPosition.Ground;
+            wobbleSwing.setPower(0);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
+    @BotAction(displayName = "Auto Wobble Drop", defaultReturn = "")
+    public void wobbleAutoDrop() {
+        if (wobbleSwing != null) {
+            if (this.getSwingPosition() == SwingPosition.Ground) {
+                return;
+            }
+            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobbleSwing.setTargetPosition(AUTO_DROP);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wobbleSwing.setPower(0.6);
             boolean stop = false;
