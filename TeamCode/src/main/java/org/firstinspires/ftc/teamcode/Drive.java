@@ -42,8 +42,14 @@ public class Drive extends LinearOpMode {
     motorrb = rb;
     motorrb.setDirection(DcMotor.Direction.REVERSE);
 
-//    motorlf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//    motorlf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    motorlf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    motorlf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    motorlb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    motorlb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    motorrf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    motorrf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    motorrb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    motorrb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
   }
 
   public void resetEncoderlf() {
@@ -134,6 +140,16 @@ public class Drive extends LinearOpMode {
   
   public double getClicksrb() {
     return motorrb.getCurrentPosition();
+  }
+
+  public double getClicksAvg() {
+    double a = motorlf.getCurrentPosition();
+    double b = motorlb.getCurrentPosition();
+    double c = motorrf.getCurrentPosition();
+//    double d = motorrb.getCurrentPosition(); TODO fix rb motor
+    double quotient = a + b + c;
+    quotient = quotient / 3;
+    return quotient;
   }
   
 

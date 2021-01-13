@@ -24,10 +24,10 @@ public class EncoderTest extends LinearOpMode {
   //      );
 
         d = new Drive(
-               hardwareMap.get(DcMotor.class, "rbmotor"),
-               hardwareMap.get(DcMotor.class, "rfmotor"),
                hardwareMap.get(DcMotor.class, "lfmotor"),
-               hardwareMap.get(DcMotor.class, "lbmotor")
+               hardwareMap.get(DcMotor.class, "lbmotor"),
+               hardwareMap.get(DcMotor.class, "rfmotor"),
+               hardwareMap.get(DcMotor.class, "rbmotor")
         );
 
         waitForStart();
@@ -67,6 +67,7 @@ public class EncoderTest extends LinearOpMode {
              telemetry.addData("Clicksrf: ", d.getClicksrf());
              telemetry.addData("Clicksrb: ", d.getClicksrb());
              telemetry.addData("Clickslb: ", d.getClickslb());
+            telemetry.addData("ClicksAvg: ", d.getClicksAvg());
 //             telemetry.addData("lf", d.getPowerlf());
 //             telemetry.addData("lb", d.getPowerlb());
 //             telemetry.addData("rf", d.getPowerrf());
