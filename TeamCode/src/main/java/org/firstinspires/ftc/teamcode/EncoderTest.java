@@ -32,6 +32,9 @@ public class EncoderTest extends LinearOpMode {
                hardwareMap.get(DcMotor.class, "rbmotor")
         );
 
+        d.motorlf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        d.motorlb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         waitForStart();
         while (opModeIsActive()) {
 
