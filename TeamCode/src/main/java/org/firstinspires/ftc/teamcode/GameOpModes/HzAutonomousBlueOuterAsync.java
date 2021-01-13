@@ -32,8 +32,8 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  * setAutoMoveArmDropWobbleRing()
  *
  */
-@Autonomous(name = "Hazmat Autonomous", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp RR")
-public class HzAutonomousBasic extends LinearOpMode {
+@Autonomous(name = "Hazmat Blue Outer Autonomous", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp RR")
+public class HzAutonomousBlueOuterAsync extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
@@ -68,13 +68,19 @@ public class HzAutonomousBasic extends LinearOpMode {
         hzGamepad = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
         hzAutoControl = new HzAutoControl(hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
 
-        initialConfiguration();
+        //initialConfiguration();
+        HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+        startPose = HzGameField.BLUE_OUTER_START_LINE;
+        activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
+        hzAutoControl.autoLaunchAim = HzAutoControl.AutoLaunchAim.HIGHGOAL;
+
         hzVuforia = new HzVuforia(hardwareMap, activeWebcam);
 
         // Initiate Camera even before Start is pressed.
         //waitForStart();
 
         hzVuforia.activateVuforiaTensorFlow();
+        boolean vuforiaTensorFlowActivated = true;
 
         hzDrive.getLocalizer().setPoseEstimate(startPose);
 
@@ -97,58 +103,20 @@ public class HzAutonomousBasic extends LinearOpMode {
                 telemetry.update();
             }
             hzLaunchController.launchMode = HzLaunchController.LAUNCH_MODE.MANUAL;
-            /*
-            AUTONOMOUS COMMAND LIST
-            =======================
-            hzAutoControl.setMoveArmParked();
-            hzAutoControl.setMoveArmPickWobble();
-            hzAutoControl.setMoveArmHoldUpWobbleRong();
-            hzAutoControl.setMoveArmDropWobbleRing();
 
-            hzAutoControl.setMagazineToCollect();
-            hzAutoControl.setMagazineToLaunch();
+            buildAutoBlueOuterTrajectory();
 
-            hzAutoControl.setIntakeStart();
-            hzAutoControl.setIntakeStop();
-
-            hzAutoControl.setLaunchTargetHighGoal();
-            hzAutoControl.setLaunchTargetPowerShot1();
-            hzAutoControl.setLaunchTargetPowerShot2();
-            hzAutoControl.setLaunchTargetPowerShot3();
-            hzAutoControl.setLaunchTargetOff();
-
-            hzAutoControl.setRunLauncherTrue();
-            hzAutoControl.setRunLauncherFalse();
-
-            hzWait(time);
-        */
 
             while (opModeIsActive() && !parked) {
-
-                hzVuforia.deactivateVuforiaTensorFlow();
-
-                if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                    if (startPose == HzGameField.BLUE_INNER_START_LINE ) {
-                        autonomousStarted = true;
-                        runAutoBlueInnerHighGoal();
-                    } else if (startPose == HzGameField.BLUE_OUTER_START_LINE ) {
-                        autonomousStarted = true;
-                        runAutoBlueOuterHighGoal();
-                    }
-                } else { //HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE
-                    if (startPose == HzGameField.RED_INNER_START_LINE ) {
-                        autonomousStarted = true;
-                        //runAutoRedInnerHighGoal();
-                    } else if (startPose == HzGameField.RED_OUTER_START_LINE ) {
-                        autonomousStarted = true;
-                        //runAutoRedOuterHighGoal();
-                    }
+                if (vuforiaTensorFlowActivated == true) {
+                    hzVuforia.deactivateVuforiaTensorFlow();
+                    vuforiaTensorFlowActivated = false;
                 }
+                autonomousStarted = true;
+                runAutoBlueOuterHighGoal();
+                hzDrive.update();
 
-                hzIntake.setIntakeReleaseOpen();
-
-                //Move to Launching Position
-                parked = true;
+                //Move to Launching Positio
                 HzGameField.currentPose = hzDrive.getPoseEstimate();
                 HzGameField.poseSetInAutonomous = true;
 
@@ -160,150 +128,282 @@ public class HzAutonomousBasic extends LinearOpMode {
 
         }
 
+        hzIntake.setIntakeReleaseOpen();
+
         // Transfer the current pose to PoseStorage so we can use it in TeleOp
         HzGameField.currentPose = hzDrive.getPoseEstimate();
         HzGameField.poseSetInAutonomous = true;
     }
 
-    public void runAutoBlueInnerHighGoal(){
-        hzAutoControl.setMagazineToLaunch();
-        hzAutoControl.setLaunchTargetHighGoal();
-        Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .splineToLinearHeading(new Pose2d(-10,14,Math.toRadians(10)),Math.toRadians(0))
-                .build();
-        hzDrive.followTrajectory(traj);
+    enum AutoStepState {
+        INITIATE,
+        TRAJ_LAUNCH_RINGS_HIGHGOAL,
+        LAUNCH_RINGS_HIGHGOAL,
+        TRAJ_LAUNCH_RING_POWERSHOT1,
+        LAUNCH_RINGS_POWERSHOT1,
+        TRAJ_LAUNCH_RING_POWERSHOT2,
+        LAUNCH_RINGS_POWERSHOT2,
+        TRAJ_LAUNCH_RING_POWERSHOT3,
+        LAUNCH_RINGS_POWERSHOT3,
+        //TRAJ_SAFE_POSITION_BEFORE_WOBBLE_TARGET_DROP,
+        TRAJ_WOBBLE_DROP_POSITION,
+        DROP_WOBBLE_GOAL_ON_TARGET,
+        //TRAJ_SAFE_POSITION_BEFORE_PICK_RINGS,
+        START_INTAKE,
+        TRAJ_PICK_RINGS_FROM_TARGET_MARK,
+        TRAJ_TURN_TO_HIGH_GOAL,
+        LAUNCH_RINGS_HIGHGOAL_SECOND,
+        TRAJ_SAFE_POSITION_BEFORE_PARK,
+        TRAJ_PARK,
+        END,
+        IDLE
+    }
+    AutoStepState currentAutoStepState = AutoStepState.INITIATE;
 
-        hzAutoControl.setMagazineToLaunch();
-        hzAutoControl.setLaunchTargetHighGoal();
-        hzWait(500);
-        hzAutoControl.setRunLauncherTrue();
-        hzWait(350);
-        hzAutoControl.setRunLauncherTrue();
-        hzWait(350);
-        hzAutoControl.setRunLauncherTrue();
-        hzWait(200);
+    Trajectory trajLaunchRingsHighGoal;
+    Trajectory trajLaunchRingPowershot1;
+    //Trajectory trajLaunchRingPowershot2;
+    //Trajectory trajLaunchRingPowershot3;
+    //Trajectory trajSafe_Position_Before_Wobble_Target_Drop;
+    Trajectory trajWobbleDropPosition;
+    //Trajectory trajSafe_Position_Before_Pick_Rings;
+    Trajectory trajPickRingsFromTargetMark;
+    Trajectory trajTurnToHighGoal;
+    Trajectory trajSafePostionBeforePark;
+    Trajectory trajPark;
 
-        hzAutoControl.setLaunchTargetOff();
-        hzAutoControl.setMagazineToCollect();
+    Pose2d lastPose = startPose;
+    double tuneAnglePowershot12 = Math.toRadians(-10);
+    double tuneAnglePowershot23 = Math.toRadians(-10);
 
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(46,22,Math.toRadians(-45)))
-                .build();
-        hzDrive.followTrajectory(traj);
 
-        switch (targetZone){
-            case A:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(27,43,Math.toRadians(-45)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                break;
-            case B:
-                break;
-            case C:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(55,43,Math.toRadians(-90)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                break;
-
+    public void buildAutoBlueOuterTrajectory(){
+        if (hzAutoControl.autoLaunchAim == HzAutoControl.AutoLaunchAim.HIGHGOAL) {
+            trajLaunchRingsHighGoal = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    .lineToSplineHeading(new Pose2d(-10, 50, Math.toRadians(-10)))
+                    .build();
+            lastPose = trajLaunchRingsHighGoal.end();
+        } else { //hzAutoControl.autoLaunchAim == HzAutoControl.AutoLaunchAim.POWERSHOT
+            trajLaunchRingPowershot1 = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    .lineToSplineHeading(new Pose2d(-10, 50, Math.toRadians(-10)))
+                    .build();
+            lastPose = trajLaunchRingPowershot1.end();
+            //Turn to Powershot2
+            lastPose = lastPose.plus(new Pose2d(0, 0, tuneAnglePowershot12));
+            //Turn to Powershot3
+            lastPose = lastPose.plus(new Pose2d(0, 0, tuneAnglePowershot23));
         }
 
-        hzAutoControl.setMoveArmDropWobbleAutonoumous();
-        hzWait(1000);
-        hzAutoControl.runOpenGrip();
-        hzWait(300);
-        hzAutoControl.setMoveArmHoldUpWobbleRing();
-        hzAutoControl.setMoveArmParked();
-
-        // Spline to (24,24,0)
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(55,16,Math.toRadians(-45)))
-                .build();
-        hzDrive.followTrajectory(traj);
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(12, 15, Math.toRadians(0)))
-                .build();
-        hzDrive.followTrajectory(traj);
-    }
-
-    public void runAutoBlueOuterHighGoal(){
-        hzAutoControl.setMagazineToLaunch();
-        hzAutoControl.setLaunchTargetHighGoal();
-        Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(-10,50,Math.toRadians(-10)))
-                .build();
-        hzDrive.followTrajectory(traj);
-
-        hzAutoControl.setMagazineToLaunch();
-        hzAutoControl.setLaunchTargetHighGoal();
-        hzWait(500);
-        hzAutoControl.setRunLauncherTrue();
-        hzWait(350);
-        hzAutoControl.setRunLauncherTrue();
-        hzWait(350);
-        hzAutoControl.setRunLauncherTrue();
-        hzWait(200);
-
-        hzAutoControl.setLaunchTargetOff();
-        hzAutoControl.setMagazineToCollect();
-
         switch (targetZone){
             case A:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                trajWobbleDropPosition = hzDrive.trajectoryBuilder(lastPose)
                         .lineToSplineHeading(new Pose2d(-10,48,Math.toRadians(-135)))
                         .build();
-                hzDrive.followTrajectory(traj);
+                lastPose = trajWobbleDropPosition.end();
+                trajPickRingsFromTargetMark = hzDrive.trajectoryBuilder(lastPose)
+                        .lineToLinearHeading(new Pose2d(-5,36,Math.toRadians(-180)))
+                        .build();
+                lastPose = trajPickRingsFromTargetMark.end();
                 break;
             case B:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                trajWobbleDropPosition = hzDrive.trajectoryBuilder(lastPose)
                         .lineToSplineHeading(new Pose2d(15,48,Math.toRadians(135)))
                         .build();
-                hzDrive.followTrajectory(traj);
+                lastPose = trajWobbleDropPosition.end();
+                trajPickRingsFromTargetMark = hzDrive.trajectoryBuilder(lastPose)
+                        .lineToLinearHeading(new Pose2d(-5,36,Math.toRadians(-180)))
+                        .lineToLinearHeading(new Pose2d(-12,36,Math.toRadians(-180)))
+                        .build();
+                lastPose = trajPickRingsFromTargetMark.end();
+                trajTurnToHighGoal = hzDrive.trajectoryBuilder(lastPose)
+                        .lineToLinearHeading(new Pose2d(-5,36,Math.toRadians(-180)))
+                        .build();
+                lastPose = trajTurnToHighGoal.end();
+
                 break;
             case C:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                trajWobbleDropPosition = hzDrive.trajectoryBuilder(lastPose)
                         .lineToSplineHeading(new Pose2d(35,50,Math.toRadians(-135)))
                         .build();
-                hzDrive.followTrajectory(traj);
+                lastPose = trajWobbleDropPosition.end();
+                trajPickRingsFromTargetMark = hzDrive.trajectoryBuilder(lastPose)
+                        .lineToLinearHeading(new Pose2d(-5,36,Math.toRadians(-180)))
+                        .lineToLinearHeading(new Pose2d(-12,36,Math.toRadians(-180)))
+                        .lineToLinearHeading(new Pose2d(-20,36,Math.toRadians(-180)))
+                        .build();
+                lastPose = trajPickRingsFromTargetMark.end();
+                trajTurnToHighGoal = hzDrive.trajectoryBuilder(lastPose)
+                        .lineToLinearHeading(new Pose2d(-5,36,Math.toRadians(-180)))
+                        .build();
+                lastPose = trajTurnToHighGoal.end();
                 break;
-
         }
 
-        hzAutoControl.setMoveArmDropWobbleAutonoumous();
-        hzWait(1000);
-        hzAutoControl.runOpenGrip();
-        hzWait(500);
-        hzAutoControl.setMoveArmParked();
 
-        hzIntake.setIntakeReleaseOpen();
-        hzAutoControl.setIntakeStart();
-        hzWait(1000);
-
-        // Spline to (24,24,0)
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-5,36,Math.toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(-12,36,Math.toRadians(-180)))
-                .lineToLinearHeading(new Pose2d(-20,36,Math.toRadians(-180)))
-                .build();
-        hzDrive.followTrajectory(traj);
-
-
-
-        // Spline to (24,24,0)
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+        trajSafePostionBeforePark =  hzDrive.trajectoryBuilder(lastPose)
                 .lineToLinearHeading(new Pose2d(-48,22,Math.toRadians(-90)))
                 .build();
-        hzDrive.followTrajectory(traj);
+        lastPose = trajSafePostionBeforePark.end();
 
-        hzAutoControl.setIntakeStop();
-
-        hzWait(5000);
-
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+        trajPark = hzDrive.trajectoryBuilder(lastPose)
                 .lineToSplineHeading(new Pose2d(12, 0, Math.toRadians(0)))
                 .build();
-        hzDrive.followTrajectory(traj);
+    }
+
+
+    public void runAutoBlueOuterHighGoal(){
+
+        switch(currentAutoStepState) {
+            case INITIATE:
+                hzAutoControl.setMagazineToLaunch();
+                hzAutoControl.setLaunchTargetHighGoal();
+                currentAutoStepState = AutoStepState.TRAJ_LAUNCH_RINGS_HIGHGOAL;
+                break;
+
+            case TRAJ_LAUNCH_RINGS_HIGHGOAL:
+                if (!hzDrive.isBusy()) {
+                    hzDrive.followTrajectoryAsync(trajLaunchRingsHighGoal);
+                    currentAutoStepState = AutoStepState.TRAJ_LAUNCH_RINGS_HIGHGOAL;
+                }
+                break;
+
+            case LAUNCH_RINGS_HIGHGOAL:
+                hzAutoControl.setMagazineToLaunch();
+                hzAutoControl.setLaunchTargetHighGoal();
+                hzWait(500);
+                hzAutoControl.setRunLauncherTrue();
+                hzWait(350);
+                hzAutoControl.setRunLauncherTrue();
+                hzWait(350);
+                hzAutoControl.setRunLauncherTrue();
+                hzWait(200);
+                hzAutoControl.setLaunchTargetOff();
+                hzAutoControl.setMagazineToCollect();
+                currentAutoStepState = AutoStepState.TRAJ_WOBBLE_DROP_POSITION;
+                break;
+
+            case TRAJ_LAUNCH_RING_POWERSHOT1:
+                if (!hzDrive.isBusy()) {
+                    hzDrive.followTrajectoryAsync(trajLaunchRingPowershot1);
+                    currentAutoStepState = AutoStepState.LAUNCH_RINGS_POWERSHOT1;
+                }
+                break;
+
+            case LAUNCH_RINGS_POWERSHOT1:
+                hzAutoControl.setMagazineToLaunch();
+                hzAutoControl.setLaunchTargetPowerShot1();
+                hzWait(500);
+                hzAutoControl.setRunLauncherTrue();
+                currentAutoStepState = AutoStepState.TRAJ_LAUNCH_RING_POWERSHOT2;
+                break;
+
+            case TRAJ_LAUNCH_RING_POWERSHOT2:
+                if (!hzDrive.isBusy()) {
+                    hzDrive.turnAsync(tuneAnglePowershot12);
+                    currentAutoStepState = AutoStepState.LAUNCH_RINGS_POWERSHOT2;
+                }
+                break;
+            case LAUNCH_RINGS_POWERSHOT2:
+                hzAutoControl.setMagazineToLaunch();
+                hzAutoControl.setLaunchTargetPowerShot1();
+                hzWait(500);
+                hzAutoControl.setRunLauncherTrue();
+                currentAutoStepState = AutoStepState.TRAJ_LAUNCH_RING_POWERSHOT3;
+                break;
+
+            case TRAJ_LAUNCH_RING_POWERSHOT3:
+                if (!hzDrive.isBusy()) {
+                    hzDrive.turnAsync(tuneAnglePowershot23);
+                    currentAutoStepState = AutoStepState.LAUNCH_RINGS_POWERSHOT3;
+                }
+                break;
+            case LAUNCH_RINGS_POWERSHOT3:
+                hzAutoControl.setMagazineToLaunch();
+                hzAutoControl.setLaunchTargetPowerShot1();
+                hzWait(500);
+                hzAutoControl.setRunLauncherTrue();
+                currentAutoStepState = AutoStepState.TRAJ_WOBBLE_DROP_POSITION;
+                break;
+
+            case TRAJ_WOBBLE_DROP_POSITION:
+                if (!hzDrive.isBusy()) {
+                    hzDrive.followTrajectoryAsync(trajWobbleDropPosition);
+                    currentAutoStepState = AutoStepState.DROP_WOBBLE_GOAL_ON_TARGET;
+                }
+                break;
+
+            case DROP_WOBBLE_GOAL_ON_TARGET:
+                hzAutoControl.setMoveArmDropWobbleAutonoumous();
+                hzWait(1000);
+                hzAutoControl.runOpenGrip();
+                hzWait(500);
+                hzAutoControl.setMoveArmParked();
+                currentAutoStepState = AutoStepState.START_INTAKE;
+                break;
+
+            case START_INTAKE:
+                hzIntake.setIntakeReleaseOpen();
+                hzAutoControl.setIntakeStart();
+                currentAutoStepState = AutoStepState.TRAJ_PICK_RINGS_FROM_TARGET_MARK;
+                break;
+
+            case TRAJ_PICK_RINGS_FROM_TARGET_MARK:
+                if (!hzDrive.isBusy()) {
+                    hzDrive.followTrajectoryAsync(trajPickRingsFromTargetMark);
+                    if (targetZone == HzGameField.TARGET_ZONE.A){
+                        currentAutoStepState = AutoStepState.TRAJ_SAFE_POSITION_BEFORE_PARK;
+                    } else {
+                        currentAutoStepState = AutoStepState.TRAJ_TURN_TO_HIGH_GOAL;
+                    }
+                }
+                break;
+
+            case TRAJ_TURN_TO_HIGH_GOAL:
+                if (!hzDrive.isBusy()) {
+                    hzDrive.followTrajectoryAsync(trajTurnToHighGoal);
+                    currentAutoStepState = AutoStepState.DROP_WOBBLE_GOAL_ON_TARGET;
+                }
+                break;
+
+            case LAUNCH_RINGS_HIGHGOAL_SECOND:
+                hzAutoControl.setMagazineToLaunch();
+                hzAutoControl.setLaunchTargetHighGoal();
+                hzWait(500);
+                hzAutoControl.setRunLauncherTrue();
+                hzWait(350);
+                hzAutoControl.setRunLauncherTrue();
+                hzWait(350);
+                hzAutoControl.setRunLauncherTrue();
+                hzWait(200);
+                hzAutoControl.setLaunchTargetOff();
+                hzAutoControl.setMagazineToCollect();
+                currentAutoStepState = AutoStepState.TRAJ_SAFE_POSITION_BEFORE_PARK;
+                break;
+
+            case TRAJ_SAFE_POSITION_BEFORE_PARK:
+                if (!hzDrive.isBusy()) {
+                    hzDrive.followTrajectoryAsync(trajSafePostionBeforePark);
+                    currentAutoStepState = AutoStepState.DROP_WOBBLE_GOAL_ON_TARGET;
+                }
+                break;
+
+            case TRAJ_PARK:
+                if (!hzDrive.isBusy()) {
+                    hzDrive.followTrajectoryAsync(trajPark);
+                    currentAutoStepState = AutoStepState.END;
+                }
+                break;
+
+            case END:
+                hzAutoControl.setIntakeStop();
+                hzIntake.setIntakeReleaseOpen();
+                currentAutoStepState = AutoStepState.IDLE;
+                break;
+
+            case IDLE:
+                parked = true;
+                break;
+        }
     }
 
 
@@ -311,72 +411,6 @@ public class HzAutonomousBasic extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);
         timer.reset();
         while (!isStopRequested() && timer.time() < time){}
-    }
-
-
-    public void initialConfiguration(){
-        telemetry.setAutoClear(true);
-        telemetry.addData("Compile time : ", "6:50 : 12/05");
-
-        //***** Select Alliance ******
-        telemetry.addData("Enter PLaying Alliance :", "(Red:B, Blue:X)");
-        telemetry.update();
-
-        while (!isStopRequested()) {
-            if (hzGamepad.getButtonBPress()) {
-                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE;
-                telemetry.addData("Playing Alliance Selected : ", "RED_ALLIANCE");
-                break;
-            }
-            if (hzGamepad.getButtonXPress()) {
-                HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
-                telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
-                break;
-            }
-            //telemetry.addData("10s time : Default Alliance A :",);
-            telemetry.update();
-        }
-
-        telemetry.update();
-        sleep(500);
-
-        //***** Select Start Pose ******
-        //timer.reset();
-        telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
-        while (!isStopRequested()) {
-            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
-                if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.RED_INNER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
-                    telemetry.addData("Start Pose : ", "RED_INNER_START_LINE");
-                    break;
-                }
-                if (hzGamepad.getButtonYPress()) {
-                    startPose = HzGameField.RED_OUTER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
-                    telemetry.addData("Start Pose : ", "RED_OUTER_START_LINE");
-                    break;
-                }
-            }
-            if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
-                if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.BLUE_INNER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
-                    telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
-                    break;
-                }
-                if (hzGamepad.getButtonYPress()) {
-                    startPose = HzGameField.BLUE_OUTER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
-                    telemetry.addData("Start Pose : ", "BLUE_OUTER_START_LINE");
-                    break;
-                }
-            }
-            //telemetry.addData("10s Timer : Default Pose : BLUE_INNER_START_LINE : %.3f", timer.time());
-            telemetry.update();
-        }
-        telemetry.update();
-        sleep(500);
     }
 
     /**
@@ -390,6 +424,8 @@ public class HzAutonomousBasic extends LinearOpMode {
 
         telemetry.addData("GameField.playingAlliance : ", HzGameField.playingAlliance);
         telemetry.addData("startPose : ", startPose);
+        telemetry.addData("currentAutoStepState : ", currentAutoStepState);
+        telemetry.addData("lastPose : ", lastPose);
 
         //****** Drive debug ******
         telemetry.addData("Drive Mode : ", hzDrive.driveMode);

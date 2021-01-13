@@ -32,6 +32,12 @@ public class HzAutoControl {
     public HzLauncher acHzLauncher;
     public HzArm acHzArm;
 
+    public enum AutoLaunchAim {
+        HIGHGOAL,
+        POWERSHOT
+    }
+    public AutoLaunchAim autoLaunchAim = AutoLaunchAim.HIGHGOAL;
+
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
      * Assign the gamepad1 given in OpMode to the gamepad used here.

@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.TestingOpModes;
 
 import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ReadWriteFile;
@@ -99,7 +100,7 @@ import java.util.Locale;
  */
 @SuppressWarnings("JavadocReference")
 @TeleOp(name = "TestOpMode : Sensor: BNO055 IMU Calibration", group = "TestOpMode")
-//@Disabled                            // Uncomment this to add to the opmode list
+@Disabled                            // Uncomment this to add to the opmode list
 public class SensorBNO055IMUCalibration extends LinearOpMode
     {
     //----------------------------------------------------------------------------------------------
