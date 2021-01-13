@@ -6,7 +6,7 @@ Secrets are things like api keys that you don't want to be made public.
 
 ## Creating the FTC Secrets Class
 
-When using a library like Vuforia where there is an api key you need to keep it hiden. This can be done with the following steps.
+When using a library like Vuforia where there is an api key you need to keep it hidden. This can be done with the following steps.
 
 ### **Step 1**
 Create a file in the folder called `ftcsecrets.java` **it must be called exactly this**.
