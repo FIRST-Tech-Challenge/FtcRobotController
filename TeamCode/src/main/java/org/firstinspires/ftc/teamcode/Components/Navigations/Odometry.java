@@ -18,7 +18,6 @@ import static java.lang.Math.sqrt;
 
 
 //TODO: Warren & Aamod, something to think about, we can come up with common interface or abstrat class for navigation.
-//Both odometry and Vuforia are eventully tyring to give the location and angle of the robot on the field.
 public class Odometry extends Thread {
     DcMotorEx odom1;
     DcMotorEx odom2;
@@ -71,22 +70,17 @@ public class Odometry extends Thread {
         op.sleep(500);
     }
     public void run() {
-        double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
-        odom[0] += odomconst[0]*diff[0];
-        odom[1] += odomconst[1]*diff[1];
-        odom[2] += odomconst[2]*diff[2];
-        double x =  cos((getAngle() * Math.PI / 180));
-        double y = sin((getAngle() * Math.PI / 180));
-        xpos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*-1;
-        ypos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
-        angle=getAngle();
-        op.telemetry.addData("x",xpos);
-        op.telemetry.addData("y",ypos);
-        op.telemetry.addData("odom1",odomconst[0]*odom1.getCurrentPosition());
-        op.telemetry.addData("odom2",odomconst[1]*odom2.getCurrentPosition());
-        op.telemetry.addData("odom3",odomconst[2]*odom3.getCurrentPosition());
-        op.telemetry.addData("angle",getAngle());
-        op.telemetry.update();
+        while(!isInterrupted()) {
+            double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
+            odom[0] += odomconst[0]*diff[0];
+            odom[1] += odomconst[1]*diff[1];
+            odom[2] += odomconst[2]*diff[2];
+            double x =  cos((getAngle() * Math.PI / 180));
+            double y = sin((getAngle() * Math.PI / 180));
+            xpos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*-1;
+            ypos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
+            angle=getAngle();
+        }
     }
     public double getAngle() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);

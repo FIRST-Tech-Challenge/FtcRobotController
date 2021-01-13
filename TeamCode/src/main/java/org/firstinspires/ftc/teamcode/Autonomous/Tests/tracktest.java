@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.Navigations.Odometry;
+import org.firstinspires.ftc.teamcode.Components.OdometryChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
 
@@ -16,7 +17,6 @@ final boolean debug = true;
     public void runOpMode(){
 
         Robot robot=new Robot(this, BasicChassis.ChassisType.ODOMETRY, false ,false);
-
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
         telemetry.addData("Status", "InitComplete, Ready to Start");
@@ -72,12 +72,14 @@ final boolean debug = true;
         telemetry.update();
         sleep(1000);*/
         //while(!isStopRequested()){
-           /* robot.moveAngle(0,72,0.5);
-            robot.moveAngle(0,-72,0.5);
-        robot.moveForward(24,0.5);
-        robot.moveBackward(24,0.5);*/
-        robot.moveRight(24,0.1);
-        robot.moveLeft(24,0.5);
+           robot.moveAngle(0,72,0.5);
+           robot.moveAngle(0,-72,0.5);
+           robot.moveAngle(48,0,0.5);
+           robot.moveAngle(-48,0,0.5);
+           //robot.moveRight(48,0.5);
+           //robot.moveLeft(48,0.5);
+        //robot.moveForward(24,0.5);
+        //robot.moveBackward(24,0.5);
         //}
         stop();
     }

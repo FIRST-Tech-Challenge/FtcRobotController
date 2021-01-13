@@ -17,7 +17,7 @@ public class track extends LinearOpMode{
     @Override
     public void runOpMode(){
 
-        Robot robot=new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
+        //Robot robot=new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
         OdometryChassis odom = new OdometryChassis(this);
 
         telemetry.addData("Status", "Ready to go");
