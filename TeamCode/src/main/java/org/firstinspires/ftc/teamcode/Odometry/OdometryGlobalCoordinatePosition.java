@@ -115,6 +115,11 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     {
         return (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
     }
+
+    public int GetHorizontalEncoderPosition()
+    {
+        return (horizontalEncoder.getCurrentPosition()*normalEncoderPositionMultiplier);
+    }
     /**
      * Stops the position update thread
      */
