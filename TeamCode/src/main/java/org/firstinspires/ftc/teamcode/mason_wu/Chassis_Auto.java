@@ -52,7 +52,7 @@ public class Chassis_Auto extends LinearOpMode
         RB.setDirection(DcMotor.Direction.FORWARD);
 
         shooter.setDirection(DcMotor.Direction.REVERSE);
-        spanker.setPosition(0.4);
+        spanker.setPosition(0.85);
 
 
         // Tell the driver that initialization is complete.
@@ -83,14 +83,23 @@ public class Chassis_Auto extends LinearOpMode
                                   rotateAtAngle (boolean isClockwise, double degree, double margin, double power)
                                   rotateToAngle (double targetAngle, double margin, double power)
              */
-            driveStraight(true,1.0,0.4,1500);
+
+            // code below drives and positions for shooting
+            driveStraight(true,1.0,-0.6,1120);
             stopMotion(100);
-            drivePerpendicularly(true,1.0,0.4,1500);
+            rotateToAngle(90.0,1.0,0.2);
             stopMotion(100);
-            driveStraight(false,1.0,0.4,1500);
+            driveStraight(true,1.0,-0.6,420);
             stopMotion(100);
-            drivePerpendicularly(false,1.0,0.4,1500);
+            rotateToAngle(0.0,1.0,0.2);
             stopMotion(100);
+            // need code for shooting here
+
+            // code below would drive forward to drop wobble and then park
+            driveStraight(true,1.0,-0.6,475);
+            stopMotion(100);
+            // need code to drop wobble here
+            driveStraight(true,1.0,0.6,350);
         }
     }
 
