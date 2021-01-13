@@ -66,13 +66,14 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
          */
 
         //Create and start GlobalCoordinatePosition thread to constantly update the global coordinate positions\
-        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
+        OdometryGlobalCoordinatePosition globalPositionUpdate = new OdometryGlobalCoordinatePosition(
+                verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
-        globalPositionUpdate.reverseRightEncoder();
-        globalPositionUpdate.reverseLeftEncoder();
-         //globalPositionUpdate.reverseNormalEncoder();
+        // globalPositionUpdate.reverseRightEncoder();
+        // globalPositionUpdate.reverseLeftEncoder();
+        // globalPositionUpdate.reverseNormalEncoder();
 
         while(opModeIsActive()){
             //Display Global (x, y, theta) coordinates
@@ -80,9 +81,9 @@ public class GlobalCoordinatePositionUpdateSample extends LinearOpMode {
             telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
 
-            telemetry.addData("Vertical left encoder position", verticalLeft.getCurrentPosition());
-            telemetry.addData("Vertical right encoder position", verticalRight.getCurrentPosition());
-            telemetry.addData("Horizontal encoder position", horizontal.getCurrentPosition());
+            telemetry.addData("Vertical left encoder position", globalPositionUpdate.verticalLeftEncoderWheelPosition);
+            telemetry.addData("Vertical right encoder position", globalPositionUpdate.verticalRightEncoderWheelPosition);
+            telemetry.addData("Horizontal encoder position", globalPositionUpdate.normalEncoderWheelPosition);
 
             telemetry.addData("Thread Active", positionThread.isAlive());
             telemetry.update();
