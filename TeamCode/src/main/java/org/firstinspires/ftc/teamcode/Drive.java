@@ -42,8 +42,8 @@ public class Drive extends LinearOpMode {
     motorrb = rb;
     motorrb.setDirection(DcMotor.Direction.REVERSE);
 
-    motorlf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    motorlf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//    motorlf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//    motorlf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
   }
 
   public void resetEncoderlf() {
