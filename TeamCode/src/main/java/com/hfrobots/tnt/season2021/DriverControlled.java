@@ -24,7 +24,7 @@ import com.google.common.base.Ticker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-@TeleOp(name = "TeleOp-UG")
+@TeleOp(name = "00 UltGoal TeleOp")
 public class DriverControlled extends OpMode {
 
     private Drivebase drivebase;
