@@ -20,24 +20,39 @@
 package com.hfrobots.tnt.season2021;
 
 import com.ftc9929.corelib.control.NinjaGamePad;
+import com.google.common.base.Ticker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 @TeleOp(name = "TeleOp-UG")
 public class DriverControlled extends OpMode {
 
-
     private Drivebase drivebase;
+
     private DriverControls driverControls;
+
+    private OperatorControls operatorControls;
 
     @Override
     public void init() {
         drivebase = new Drivebase(hardwareMap);
-        driverControls = DriverControls.builder().driversGamepad(new NinjaGamePad(gamepad1)).kinematics(drivebase).build();
+
+        driverControls = DriverControls.builder()
+                .driversGamepad(new NinjaGamePad(gamepad1))
+                .kinematics(drivebase).build();
+
+        ScoringMechanism scoringMechanism = ScoringMechanism.builder()
+                .hardwareMap(hardwareMap)
+                .telemetry(telemetry)
+                .ticker(Ticker.systemTicker()).build();
+
+        operatorControls = OperatorControls.builder().operatorGamepad(new NinjaGamePad(gamepad2))
+                .scoringMechanism(scoringMechanism).build();
     }
 
     @Override
     public void loop() {
         driverControls.periodicTask();
+        operatorControls.periodicTask();
     }
 }
