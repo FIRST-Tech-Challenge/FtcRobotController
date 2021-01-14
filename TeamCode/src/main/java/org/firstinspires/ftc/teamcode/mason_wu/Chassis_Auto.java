@@ -23,23 +23,31 @@ import java.util.Locale;
 public class Chassis_Auto extends LinearOpMode
 {
     // Declare OpMode members.
-    private DcMotor shooter = null;
-    private Servo spanker = null;
+    private DcMotor Arm = null;
+    private Servo Hand = null;
+    private DcMotor Intake = null;
+    private DcMotor Shooter = null;
+    private Servo Spanker = null;
     private DcMotor LF = null;
     private DcMotor RF = null;
     private DcMotor LB = null;
     private DcMotor RB = null;
 
     BNO055IMU imu;
-    Orientation angles;
+    final double HAND_CLOSE_POSITION = 0.8;
+    final double HAND_OPEN_POSITION = 0.0;
 
     @Override
     public void runOpMode() throws InterruptedException
     {
 
         // Initialize the hardware variables.
-        spanker = hardwareMap.get(Servo.class,"spanker");
-        shooter = hardwareMap.get(DcMotor.class, "shooter");
+        Hand = hardwareMap.get(Servo.class, "hand");
+        Arm = hardwareMap.get(DcMotor.class, "arm");
+
+        Intake = hardwareMap.get(DcMotor.class, "intake");
+        Spanker = hardwareMap.get(Servo.class,"spanker");
+        Shooter = hardwareMap.get(DcMotor.class, "shooter");
 
         LF  = hardwareMap.get(DcMotor.class, "LF");
         RF = hardwareMap.get(DcMotor.class, "RF");
@@ -51,8 +59,13 @@ public class Chassis_Auto extends LinearOpMode
         LB.setDirection(DcMotor.Direction.REVERSE);
         RB.setDirection(DcMotor.Direction.FORWARD);
 
-        shooter.setDirection(DcMotor.Direction.REVERSE);
-        spanker.setPosition(0.85);
+        Arm.setDirection(DcMotor.Direction.REVERSE);
+        Hand.setPosition(HAND_CLOSE_POSITION);
+        //armMotion(true, 0.8, 400);
+
+        Shooter.setDirection(DcMotor.Direction.REVERSE);
+        Intake.setDirection(DcMotor.Direction.REVERSE);
+        Spanker.setPosition(0.85);
 
 
         // Tell the driver that initialization is complete.
@@ -94,11 +107,19 @@ public class Chassis_Auto extends LinearOpMode
             rotateToAngle(0.0,1.0,0.2);
             stopMotion(100);
             // need code for shooting here
-
+            
             // code below would drive forward to drop wobble and then park
             driveStraight(true,1.0,-0.6,475);
             stopMotion(100);
             // need code to drop wobble here
+            armMotion(false, 0.8, 300);
+            sleep(250);
+            handMotion(false);
+            sleep(250);
+            armMotion(true, 0.8, 400);
+            sleep(250);
+            handMotion(true);
+            sleep(250);
             driveStraight(true,1.0,0.6,350);
         }
     }
@@ -290,5 +311,33 @@ public class Chassis_Auto extends LinearOpMode
             telemetry.update();
         }
         stopMotion();
+    }
+    boolean armMotion(boolean moveUp, double power, double timeInterval){
+        ElapsedTime armTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        int upFactor = -1;
+        if(!moveUp){
+            upFactor = 1;
+        }
+        while(armTime.milliseconds() <= timeInterval) {
+            if(armTime.milliseconds()<= timeInterval-300) {
+                power -= upFactor * 0.02;
+            }
+            Arm.setPower(Math.abs(power)*(upFactor));
+            sleep(20);
+        }
+        Arm.setPower(0);
+        return true;
+    }
+
+    boolean handMotion(boolean close){
+        if(close) {
+            Hand.setPosition(HAND_CLOSE_POSITION);
+        }
+        else{
+            Hand.setPosition(HAND_OPEN_POSITION);
+        }
+        telemetry.addData("Hand Position:", Hand.getPosition());
+        telemetry.update();
+        return true;
     }
 }
