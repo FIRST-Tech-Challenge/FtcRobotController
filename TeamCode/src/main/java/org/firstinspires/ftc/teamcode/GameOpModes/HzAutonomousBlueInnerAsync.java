@@ -32,8 +32,8 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  * setAutoMoveArmDropWobbleRing()
  *
  */
-@Autonomous(name = "Hazmat Blue Outer Autonomous", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp RR")
-public class HzAutonomousBlueOuterAsync extends LinearOpMode {
+@Autonomous(name = "Hazmat Blue Inner Autonomous", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp RR")
+public class HzAutonomousBlueInnerAsync extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
@@ -70,11 +70,13 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
 
         //initialConfiguration();
         HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
-        startPose = HzGameField.BLUE_OUTER_START_LINE;
-        activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
+        startPose = HzGameField.BLUE_INNER_START_LINE;
+        activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
         hzAutoControl.autoLaunchAim = HzAutoControl.AutoLaunchAim.HIGHGOAL;
         //hzAutoControl.autoLaunchAim = HzAutoControl.AutoLaunchAim.POWERSHOT;
+        hzAutoControl.pickRingFromTargetMarker = true;
         hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = true;
+
 
         hzVuforia = new HzVuforia(hardwareMap, activeWebcam);
 
@@ -106,7 +108,7 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
             }
             hzLaunchController.launchMode = HzLaunchController.LAUNCH_MODE.MANUAL;
 
-            buildAutoBlueOuterTrajectory();
+            buildAutoBlueInnerTrajectory();
 
 
             while (opModeIsActive() && !parked) {
@@ -115,7 +117,7 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
                     vuforiaTensorFlowActivated = false;
                 }
                 autonomousStarted = true;
-                runAutoBlueOuter();
+                runAutoBlueInner();
                 hzDrive.update();
 
                 //Move to Launching Positio
@@ -147,7 +149,7 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
         LAUNCH_RINGS_POWERSHOT2,
         TRAJ_LAUNCH_RING_POWERSHOT3,
         LAUNCH_RINGS_POWERSHOT3,
-        //TRAJ_SAFE_POSITION_BEFORE_WOBBLE_TARGET_DROP,
+        TRAJ_SAFE_POSITION_BEFORE_WOBBLE_TARGET_DROP,
         TRAJ_WOBBLE_DROP_POSITION,
         DROP_WOBBLE_GOAL_ON_TARGET,
         TRAJ_SAFE_POSITION_AFTER_WOBBLE_TARGET_DROP,
@@ -168,7 +170,7 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
     Trajectory trajLaunchRingPowershot1;
     //Trajectory trajLaunchRingPowershot2;
     //Trajectory trajLaunchRingPowershot3;
-    //Trajectory trajSafePositionBeforeWobbleTargetDrop;
+    Trajectory trajSafePositionBeforeWobbleTargetDrop;
     Trajectory trajWobbleDropPosition;
     Trajectory trajSafePositionAfterWobbleTargetDrop;
     Trajectory trajParkWithoutPickRing;
@@ -183,15 +185,15 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
     double tuneAnglePowershot23 = Math.toRadians(-10);
 
 
-    public void buildAutoBlueOuterTrajectory(){
+    public void buildAutoBlueInnerTrajectory(){
         if (hzAutoControl.autoLaunchAim == HzAutoControl.AutoLaunchAim.HIGHGOAL) {
             trajLaunchRingsHighGoal = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(-10, 50, Math.toRadians(-10)))
+                    .splineToLinearHeading(new Pose2d(-10,14,Math.toRadians(10)),Math.toRadians(0))
                     .build();
             lastPose = trajLaunchRingsHighGoal.end();
         } else { //hzAutoControl.autoLaunchAim == HzAutoControl.AutoLaunchAim.POWERSHOT
             trajLaunchRingPowershot1 = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineToSplineHeading(new Pose2d(-10, 50, Math.toRadians(-20)))
+                    .splineToLinearHeading(new Pose2d(-10,14,Math.toRadians(0)),Math.toRadians(0))
                     .build();
             lastPose = trajLaunchRingPowershot1.end();
             //Turn to Powershot2
@@ -200,10 +202,15 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
             lastPose = lastPose.plus(new Pose2d(0, 0, tuneAnglePowershot23));
         }
 
+        trajSafePositionBeforeWobbleTargetDrop = hzDrive.trajectoryBuilder(lastPose)
+                .lineToSplineHeading(new Pose2d(46,22,Math.toRadians(-45)))
+                .build();
+        lastPose = trajSafePositionBeforeWobbleTargetDrop.end();
+
         switch (targetZone){
             case A:
                 trajWobbleDropPosition = hzDrive.trajectoryBuilder(lastPose)
-                        .lineToSplineHeading(new Pose2d(-10,48,Math.toRadians(-135)))
+                        .lineToSplineHeading(new Pose2d(27,43,Math.toRadians(-45)))
                         .build();
                 lastPose = trajWobbleDropPosition.end();
                 /*trajPickRingsFromTargetMark = hzDrive.trajectoryBuilder(lastPose)
@@ -211,17 +218,18 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
                         .build();
                 lastPose = trajPickRingsFromTargetMark.end();*/
                 trajSafePositionAfterWobbleTargetDrop = hzDrive.trajectoryBuilder(lastPose)
-                        .lineToSplineHeading(new Pose2d(36, 36, Math.toRadians(0)))
+                        .lineToLinearHeading(new Pose2d(55,16,Math.toRadians(-45)))
                         .build();
                 lastPose = trajSafePositionAfterWobbleTargetDrop.end();
                 trajParkWithoutPickRing = hzDrive.trajectoryBuilder(lastPose)
-                        .lineToSplineHeading(new Pose2d(12, 36, Math.toRadians(0)))
+                        .lineToSplineHeading(new Pose2d(12, 15, Math.toRadians(0)))
                         .build();
                 lastPose = trajParkWithoutPickRing.end();
                 break;
+
             case B:
                 trajWobbleDropPosition = hzDrive.trajectoryBuilder(lastPose)
-                        .lineToSplineHeading(new Pose2d(15,48,Math.toRadians(135)))
+                        .lineToSplineHeading(new Pose2d(46,22,Math.toRadians(-45)))
                         .build();
                 lastPose = trajWobbleDropPosition.end();
                 if (hzAutoControl.pickRingFromTargetMarker == true) {
@@ -237,7 +245,7 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
                         lastPose = trajTurnToHighGoal.end();
                     }
                     trajSafePostionBeforePark =  hzDrive.trajectoryBuilder(lastPose)
-                            .lineToLinearHeading(new Pose2d(-48,22,Math.toRadians(-90)))
+                            .lineToLinearHeading(new Pose2d(55,16,Math.toRadians(-45)))
                             .build();
                     lastPose = trajSafePostionBeforePark.end();
                     trajPark = hzDrive.trajectoryBuilder(lastPose)
@@ -245,11 +253,11 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
                             .build();
                 } else {
                     trajSafePositionAfterWobbleTargetDrop = hzDrive.trajectoryBuilder(lastPose)
-                            .lineToSplineHeading(new Pose2d(36, 36, Math.toRadians(0)))
+                            .lineToLinearHeading(new Pose2d(55,16,Math.toRadians(-45)))
                             .build();
                     lastPose = trajSafePositionAfterWobbleTargetDrop.end();
                     trajParkWithoutPickRing = hzDrive.trajectoryBuilder(lastPose)
-                            .lineToSplineHeading(new Pose2d(12, 36, Math.toRadians(0)))
+                            .lineToSplineHeading(new Pose2d(12, 15, Math.toRadians(0)))
                             .build();
                     lastPose = trajParkWithoutPickRing.end();
                 }
@@ -257,7 +265,7 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
 
             case C:
                 trajWobbleDropPosition = hzDrive.trajectoryBuilder(lastPose)
-                        .lineToSplineHeading(new Pose2d(35,50,Math.toRadians(-135)))
+                        .lineToSplineHeading(new Pose2d(55,43,Math.toRadians(-90)))
                         .build();
                 lastPose = trajWobbleDropPosition.end();
                 if (hzAutoControl.pickRingFromTargetMarker == true) {
@@ -282,11 +290,11 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
                             .build();
                 } else {
                     trajSafePositionAfterWobbleTargetDrop = hzDrive.trajectoryBuilder(lastPose)
-                            .lineToSplineHeading(new Pose2d(36, 36, Math.toRadians(0)))
+                            .lineToSplineHeading(new Pose2d(12, 15, Math.toRadians(0)))
                             .build();
                     lastPose = trajSafePositionAfterWobbleTargetDrop.end();
                     trajParkWithoutPickRing = hzDrive.trajectoryBuilder(lastPose)
-                            .lineToSplineHeading(new Pose2d(12, 36, Math.toRadians(0)))
+                            .lineToSplineHeading(new Pose2d(12, 15, Math.toRadians(0)))
                             .build();
                     lastPose = trajParkWithoutPickRing.end();
                 }
@@ -295,7 +303,7 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
     }
 
 
-    public void runAutoBlueOuter(){
+    public void runAutoBlueInner(){
 
         switch(currentAutoStepState) {
             case INITIATE:
@@ -323,7 +331,7 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
                 hzWait(200);
                 hzAutoControl.setLaunchTargetOff();
                 hzAutoControl.setMagazineToCollect();
-                currentAutoStepState = AutoStepState.TRAJ_WOBBLE_DROP_POSITION;
+                currentAutoStepState = AutoStepState.TRAJ_SAFE_POSITION_BEFORE_WOBBLE_TARGET_DROP;
                 break;
 
             case TRAJ_LAUNCH_RING_POWERSHOT1:
@@ -347,7 +355,6 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
                     currentAutoStepState = AutoStepState.LAUNCH_RINGS_POWERSHOT2;
                 }
                 break;
-
             case LAUNCH_RINGS_POWERSHOT2:
                 hzAutoControl.setMagazineToLaunch();
                 hzAutoControl.setLaunchTargetPowerShot1();
@@ -368,7 +375,14 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
                 hzAutoControl.setLaunchTargetPowerShot1();
                 hzWait(500);
                 hzAutoControl.setRunLauncherTrue();
-                currentAutoStepState = AutoStepState.TRAJ_WOBBLE_DROP_POSITION;
+                currentAutoStepState = AutoStepState.TRAJ_SAFE_POSITION_BEFORE_WOBBLE_TARGET_DROP;
+                break;
+
+            case TRAJ_SAFE_POSITION_BEFORE_WOBBLE_TARGET_DROP:
+                if (!hzDrive.isBusy()) {
+                    hzDrive.followTrajectoryAsync(trajSafePositionBeforeWobbleTargetDrop);
+                    currentAutoStepState = AutoStepState.TRAJ_WOBBLE_DROP_POSITION;
+                }
                 break;
 
             case TRAJ_WOBBLE_DROP_POSITION:

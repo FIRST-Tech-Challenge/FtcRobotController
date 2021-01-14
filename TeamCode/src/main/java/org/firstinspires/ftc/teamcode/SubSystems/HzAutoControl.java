@@ -38,6 +38,9 @@ public class HzAutoControl {
     }
     public AutoLaunchAim autoLaunchAim = AutoLaunchAim.HIGHGOAL;
 
+    public boolean pickRingFromTargetMarker = false;
+    public boolean launchRingsPickedFromTargetMarkerToHighGoal = false;
+
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
      * Assign the gamepad1 given in OpMode to the gamepad used here.
