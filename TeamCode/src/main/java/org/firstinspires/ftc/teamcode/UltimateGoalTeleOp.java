@@ -275,39 +275,45 @@ public class UltimateGoalTeleOp extends OpMode {
             leftBumperHeld = false;
         }
 
-        if(rightTriggerPower >= 0.05) {
-            robot.setWobbleMotorPower(-rightTriggerPower);
-        } else if(leftTriggerPower >= 0.05) {
-            robot.setWobbleMotorPower(leftTriggerPower);
-        } else {
-            robot.setWobbleMotorPower(0.0);
-        }
+        // This allows to reset claw, remove!!!
+//        if(robot.disableDriverCentric) {
+            if (rightTriggerPower >= 0.05) {
+                robot.setWobbleMotorPower(-rightTriggerPower);
+            } else if (leftTriggerPower >= 0.05) {
+                robot.setWobbleMotorPower(leftTriggerPower);
+            } else {
+                robot.setWobbleMotorPower(0.0);
+            }
+  //      }
 
 		// ********************************************************************
 		// OPERATOR JOYSTICK
 		// ********************************************************************
 		// This was unassigned (fingers up/down)
         if(!square2Held && square2Pressed) {
+            robot.startReleaseGrabWobbleGoal();
             square2Held = true;
         } else if(!square2Pressed) {
             square2Held = false;
         }
 
         if(!cross2Held && cross2Pressed) {
+            robot.startReleaseStowArm();
             cross2Held = true;
         } else if(!cross2Pressed) {
             cross2Held = false;
         }
 
         if(!circle2Held && circle2Pressed) {
-            // Enable the velocity checks again.
-            robot.disableVelocityCheck = true;
+            robot.startStowedToReleaseWobbleGoal();
             circle2Held = true;
         } else if(!circle2Pressed) {
             circle2Held = false;
         }
 
         if(!triangle2Held && triangle2Pressed) {
+            // Enable the velocity checks again.
+            robot.disableVelocityCheck = false;
             triangle2Held = true;
         } else if(!triangle2Pressed) {
             triangle2Held = false;
@@ -405,6 +411,9 @@ public class UltimateGoalTeleOp extends OpMode {
         robot.performInjecting();
         robot.performTripleInjecting();
         robot.performShotAligning();
+        robot.performStowedToReleaseWobbleGoal();
+        robot.performReleaseGrabWobbleGoal();
+        robot.performReleaseStowArm();
         robot.updateShooterStability();
     }
 }
