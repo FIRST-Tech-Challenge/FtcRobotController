@@ -95,18 +95,14 @@ public class Mecanum_TeleOp extends LinearOpMode {
 
             if(gamepad1.left_bumper) {
                 intake.setPower(0.75);
+            } else if(gamepad1.x) {
+               intake.setPower(-0.75);
             } else {
-                intake.setPower(0.0);
+              intake.setPower(0.0);
             }
 
-//            if(gamepad1.x) {
-//               intake.setPower(-1.0);
-//           } else {
-//              intake.setPower(0.0);
-//        }
-
             if(gamepad1.right_trigger == 1) {
-                spanker.setPosition(0.65);
+                spanker.setPosition(0.55);
             } else {
                 spanker.setPosition(0.85);
             }

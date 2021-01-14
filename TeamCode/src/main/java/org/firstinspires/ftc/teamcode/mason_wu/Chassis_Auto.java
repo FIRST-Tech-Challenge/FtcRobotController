@@ -107,11 +107,19 @@ public class Chassis_Auto extends LinearOpMode
             rotateToAngle(0.0,1.0,0.2);
             stopMotion(100);
             // need code for shooting here
-            
-            // code below would drive forward to drop wobble and then park
+            Shooter.setPower(1.0);
+            sleep(1000);
+            for (int i = 0; i < 3; i++) {
+                Spanker.setPosition(0.55);
+                sleep(500);
+                Spanker.setPosition(0.85);
+                sleep(500);
+            }
+            Shooter.setPower(0.0);
+            // code below would drive forward to drop wobble
             driveStraight(true,1.0,-0.6,475);
             stopMotion(100);
-            // need code to drop wobble here
+            // drops wobble here
             armMotion(false, 0.8, 300);
             sleep(250);
             handMotion(false);
@@ -120,7 +128,7 @@ public class Chassis_Auto extends LinearOpMode
             sleep(250);
             handMotion(true);
             sleep(250);
-            driveStraight(true,1.0,0.6,350);
+            driveStraight(true,1.0,0.6,250);
         }
     }
 
