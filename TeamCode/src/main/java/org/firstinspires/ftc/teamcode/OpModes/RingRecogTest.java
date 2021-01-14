@@ -22,7 +22,7 @@ import java.util.List;
 // adb.exe connect 192.168.43.1:5555
 
 @TeleOp(name = "Ring Rec Thread", group = "Robot15173")
-//@Disabled
+@Disabled
 public class RingRecogTest extends LinearOpMode {
 
     // Declare OpMode members.

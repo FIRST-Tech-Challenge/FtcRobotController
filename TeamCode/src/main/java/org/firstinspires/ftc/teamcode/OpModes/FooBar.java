@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.bots.DummyBot;
 
 //Opmode for quick testing of motors
 @TeleOp(name="Crash Test Teleop", group="Robot15173")
+@Disabled
 public class FooBar extends LinearOpMode
 {
     int i;

@@ -38,7 +38,7 @@ import org.firstinspires.ftc.teamcode.bots.OutreachBot;
 
 
 @TeleOp(name="Snowman", group="Robot15173")
-//@Disabled
+@Disabled
 public class OutreachMode extends LinearOpMode{
 
     // Declare OpMode members.

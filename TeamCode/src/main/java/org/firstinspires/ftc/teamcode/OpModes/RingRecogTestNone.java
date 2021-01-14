@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.skills.Led;
@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.skills.RingDetector;
 // /sdcard/FIRST/matchlogs/Match-0-Red-3.txt
 
 @TeleOp(name = "Ring Rec", group = "Robot15173")
-//@Disabled
+@Disabled
 public class RingRecogTestNone extends LinearOpMode {
 
     // Declare OpMode members.
