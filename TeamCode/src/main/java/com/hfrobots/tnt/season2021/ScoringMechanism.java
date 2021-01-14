@@ -53,7 +53,10 @@ public class ScoringMechanism {
     private Launcher launcher;
     private Intake intake;
 
+    @Setter
     private RangeInput intakeVelocity;
+
+    @Setter
     private OnOffButton launchTrigger;
 
     private State currentState;
