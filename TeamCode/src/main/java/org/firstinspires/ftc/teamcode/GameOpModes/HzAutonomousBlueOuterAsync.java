@@ -68,13 +68,13 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
         hzGamepad = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
         hzAutoControl = new HzAutoControl(hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
 
-        //initialConfiguration();
-        HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
-        startPose = HzGameField.BLUE_OUTER_START_LINE;
-        activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
-        hzAutoControl.autoLaunchAim = HzAutoControl.AutoLaunchAim.HIGHGOAL;
+        selectGamePlan();
+        //HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+        //startPose = HzGameField.BLUE_OUTER_START_LINE;
+        //activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
+        //hzAutoControl.autoLaunchAim = HzAutoControl.AutoLaunchAim.HIGHGOAL;
         //hzAutoControl.autoLaunchAim = HzAutoControl.AutoLaunchAim.POWERSHOT;
-        hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = true;
+        //hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = true;
 
         hzVuforia = new HzVuforia(hardwareMap, activeWebcam);
 
@@ -485,6 +485,74 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
         while (!isStopRequested() && timer.time() < time){}
     }
 
+    public void selectGamePlan(){
+        telemetry.setAutoClear(true);
+        telemetry.addData("Compile time : ", "4:11 :: 1/14");
+
+        //***** Select Alliance ******
+
+        HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
+        startPose = HzGameField.BLUE_INNER_START_LINE;
+        activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
+
+        while (!isStopRequested()) {
+            telemetry.addData("Playing Alliance :", HzGameField.playingAlliance);
+            telemetry.addData("startPose : ", startPose);
+            telemetry.addData("activeWebcam : ",activeWebcam);
+            telemetry.addData("Please select launch target : ", "(B) for High Goal, (X) for Powershot");
+            if (hzGamepad.getButtonBPress()) {
+                hzAutoControl.autoLaunchAim = HzAutoControl.AutoLaunchAim.HIGHGOAL;
+                telemetry.addData("hzAutoControl.autoLaunchAim : ", hzAutoControl.autoLaunchAim);
+                break;
+            }
+            if (hzGamepad.getButtonXPress()) {
+                hzAutoControl.autoLaunchAim = HzAutoControl.AutoLaunchAim.POWERSHOT;
+                telemetry.addData("hzAutoControl.autoLaunchAim : ", hzAutoControl.autoLaunchAim);
+                break;
+            }
+            //telemetry.addData("10s time : Default Alliance A :",);
+            telemetry.update();
+            hzWait(200);
+        }
+
+        while (!isStopRequested()) {
+            telemetry.addData("Playing Alliance :", HzGameField.playingAlliance);
+            telemetry.addData("startPose : ", startPose);
+            telemetry.addData("activeWebcam : ",activeWebcam);
+            telemetry.addData("hzAutoControl.autoLaunchAim : ", hzAutoControl.autoLaunchAim);
+            telemetry.addData("Please select option for Picking rings from target markers and launching : ", "");
+            telemetry.addData("    (A):","Park after Wobble Goal (No ring Pick)");
+            telemetry.addData("    (Y):","Pick rings after Wobble Goal and park (No launching)");
+            telemetry.addData("    (X):","Pick rings and launch after Wobble Goal, and park");
+            if (hzGamepad.getButtonAPress()) {
+                hzAutoControl.pickRingFromTargetMarker = false;
+                hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = false;
+                telemetry.addData("hzAutoControl.pickRingFromTargetMarker : ", hzAutoControl.pickRingFromTargetMarker);
+                telemetry.addData("hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal  : ", hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal);
+                break;
+            }
+            if (hzGamepad.getButtonYPress()) {
+                hzAutoControl.pickRingFromTargetMarker = true;
+                hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = false;
+                telemetry.addData("hzAutoControl.pickRingFromTargetMarker : ", hzAutoControl.pickRingFromTargetMarker);
+                telemetry.addData("hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal  : ", hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal);
+                break;
+            }
+            if (hzGamepad.getButtonXPress()) {
+                hzAutoControl.pickRingFromTargetMarker = true;
+                hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = true;
+                telemetry.addData("hzAutoControl.pickRingFromTargetMarker : ", hzAutoControl.pickRingFromTargetMarker);
+                telemetry.addData("hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal  : ", hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal);
+                break;
+            }
+            telemetry.update();
+        }
+
+        telemetry.update();
+        sleep(200);
+    }
+
+
     /**
      * Method to add debug messages. Update as telemetry.addData.
      * Use public attributes or methods if needs to be called here.
@@ -492,10 +560,15 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
     public void printDebugMessages(){
         telemetry.setAutoClear(true);
         telemetry.addData("HzDEBUG_FLAG is : ", HzDEBUG_FLAG);
-        telemetry.addData("autonomousStarted : ", autonomousStarted);
 
-        telemetry.addData("GameField.playingAlliance : ", HzGameField.playingAlliance);
+
+        telemetry.addData("Playing Alliance :", HzGameField.playingAlliance);
         telemetry.addData("startPose : ", startPose);
+        telemetry.addData("activeWebcam : ",activeWebcam);
+        telemetry.addData("hzAutoControl.autoLaunchAim : ", hzAutoControl.autoLaunchAim);
+        telemetry.addData("hzAutoControl.pickRingFromTargetMarker : ", hzAutoControl.pickRingFromTargetMarker);
+        telemetry.addData("hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal  : ", hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal);
+        telemetry.addData("autonomousStarted : ", autonomousStarted);
         telemetry.addData("currentAutoStepState : ", currentAutoStepState);
         telemetry.addData("lastPose : ", lastPose);
 

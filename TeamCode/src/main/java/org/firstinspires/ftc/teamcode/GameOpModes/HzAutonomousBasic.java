@@ -376,7 +376,7 @@ public class HzAutonomousBasic extends LinearOpMode {
             telemetry.update();
         }
         telemetry.update();
-        sleep(500);
+        //sleep(500);
     }
 
     /**

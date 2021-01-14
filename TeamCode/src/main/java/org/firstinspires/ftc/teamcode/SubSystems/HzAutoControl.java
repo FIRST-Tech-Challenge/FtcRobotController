@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+
 /**
  * Defenition of the HzGamepad Class <BR>
  *
@@ -38,6 +40,7 @@ public class HzAutoControl {
     }
     public AutoLaunchAim autoLaunchAim = AutoLaunchAim.HIGHGOAL;
 
+    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
     public boolean pickRingFromTargetMarker = false;
     public boolean launchRingsPickedFromTargetMarkerToHighGoal = false;
 
