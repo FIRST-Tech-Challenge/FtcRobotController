@@ -5,7 +5,6 @@ public class Navigation {
     private static double yPosition;
     private static double angle;
     private static boolean inVuforia = false;
-    double pos[] = {xPosition,yPosition,angle};
 
     public static synchronized void editDistance(double changeX, double changeY) {
         xPosition+=changeX;
@@ -33,7 +32,14 @@ public class Navigation {
     }
 
     public double[] getPosition(){
+        double pos[] = {xPosition,yPosition,angle};
         return pos;
+    }
+
+    public void setPosition(double x, double y, double newAngle){
+        xPosition = x;
+        yPosition = y;
+        angle = newAngle;
     }
 
     public static void setAngle(double newAngle) {

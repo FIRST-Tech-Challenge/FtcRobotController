@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
+import static org.firstinspires.ftc.teamcode.Components.Navigations.Navigation.*;
 
 
 //TODO: Warren & Aamod, something to think about, we can come up with common interface or abstrat class for navigation.
@@ -71,14 +72,14 @@ public class Odometry extends Thread {
     }
     public void run() {
         while(!isInterrupted()) {
-            if(true) {//getInVuforia
+            if(getInVuforia()) {//getInVuforia
                 double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
                 odom[0] += odomconst[0]*diff[0];
                 odom[1] += odomconst[1]*diff[1];
                 odom[2] += odomconst[2]*diff[2];
                 double x =  cos((getAngle() * Math.PI / 180));
                 double y = sin((getAngle() * Math.PI / 180));
-                xpos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1;
+                setXposition((y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1);
                 ypos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
                 angle=getAngle();
             }
