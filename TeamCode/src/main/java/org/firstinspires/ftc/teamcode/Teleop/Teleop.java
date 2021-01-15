@@ -119,7 +119,7 @@ public class Teleop extends LinearOpMode {
             if (shooter != 0) {
                 robot.shootGoalTeleop(1000);
             } else {
-                robot.shootGoalTeleop(1000);
+                robot.stopShooter();
             }
 
             /**Speed Mode**/

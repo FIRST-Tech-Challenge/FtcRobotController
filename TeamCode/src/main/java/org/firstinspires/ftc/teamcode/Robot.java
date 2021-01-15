@@ -332,6 +332,10 @@ public class Robot {
             shooter.shootGoalTeleop(distance);
     }
 
+    public void shootPowershot(int distance){
+        shooter.shootPowershot(distance);
+    }
+
     public void stopShooter(){
         shooter.stopShooter();
     }
