@@ -35,6 +35,11 @@ public class Navigation {
         return angle;
     }
 
+    public double[] getPosition(){
+        double pos[] = {xPosition,yPosition,angle};
+        return pos;
+    }
+
     public static void setAngle(double newAngle) {
         angle = newAngle;
     }

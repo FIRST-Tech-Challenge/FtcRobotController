@@ -68,7 +68,6 @@ public class Odometry extends Thread {
         op.telemetry.addData("Mode", "waiting for start");
         op.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         op.telemetry.update();
-        op.sleep(500);
     }
     public void run() {
         while(!isInterrupted()) {
