@@ -78,7 +78,6 @@ public class OdometryChassis extends BasicChassis {
         op.telemetry.addData("Mode", "waiting for start");
         op.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         op.telemetry.update();
-        op.sleep(500);
     }
 
     public void stopAllMotors() {
@@ -103,7 +102,7 @@ public class OdometryChassis extends BasicChassis {
 
         lastAngles = angles;
 
-        return -globalAngle;
+        return globalAngle;
     }
     public double[] track() {
         double data[]={0,0,0};
