@@ -119,8 +119,12 @@ public class Chassis_Auto extends LinearOpMode {
                                   rotateToAngle (double targetAngle, double margin, double power)
              */
 
+            String visionResult = objectDetection();
+            telemetry.addLine("Result from Object Detection:" + visionResult);
+            telemetry.update();
+
             //code below is for SINGLE ring scenario
-            if(objectDetection().equals("Single")) {
+            if(visionResult.equals("Single")) {
                 // code below drives and positions for shooting
                 driveStraight(true, 1.0, -0.6, 1120);
                 stopMotion(100);
@@ -156,7 +160,7 @@ public class Chassis_Auto extends LinearOpMode {
             }
 
             //code below is for QUAD rings scenario
-            else if(objectDetection().equals("Quad")) {
+            else if(visionResult.equals("Quad")) {
 
             }
 
