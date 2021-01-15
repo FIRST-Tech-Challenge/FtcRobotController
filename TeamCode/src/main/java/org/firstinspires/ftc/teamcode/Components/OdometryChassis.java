@@ -103,7 +103,7 @@ public class OdometryChassis extends BasicChassis {
 
         lastAngles = angles;
 
-        return -globalAngle;
+        return globalAngle;
     }
     public double[] track() {
         double data[]={0,0,0};
