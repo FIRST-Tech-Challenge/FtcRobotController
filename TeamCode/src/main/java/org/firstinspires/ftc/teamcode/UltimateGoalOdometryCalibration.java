@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
@@ -10,13 +9,14 @@ import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
 
 /**
  * Created by 7592 Roarbots.
  */
 
-@TeleOp(name="UltimateGoal: TeleOp", group ="TeleOp")
-public class UltimateGoalTeleOp extends OpMode {
+@TeleOp(name="UltimateGoal: OdometryCalTeleOp", group ="TeleOp")
+public class UltimateGoalOdometryCalibration extends OpMode {
 
     public UltimateGoalRobot robot = new UltimateGoalRobot();
     protected boolean aligning = false;
@@ -45,6 +45,7 @@ public class UltimateGoalTeleOp extends OpMode {
         }
     }
 
+    private WayPoint calibrationTarget = new WayPoint(0, 0, toRadians(90), 0.5);
     private double driverAngle = 0.0;
     private final double MAX_SPEED = 1.0;
     private final double MAX_SPIN = 1.0;
@@ -109,7 +110,7 @@ public class UltimateGoalTeleOp extends OpMode {
                     robot.getRightEncoderWheelPosition(),
                     robot.getStrafeEncoderWheelPosition());
         }
-        MyPosition.setPosition(0.0, 0.0, Math.toRadians(0.0));
+        MyPosition.setPosition(0.0, 0.0, toRadians(90.0));
     }
 
     @Override
@@ -172,18 +173,12 @@ public class UltimateGoalTeleOp extends OpMode {
 		// DRIVER JOYSTICK
 		// ********************************************************************
         if(!circleHeld && circlePressed) {
-            robot.startClawToggle();
             circleHeld = true;
         } else if(!circlePressed) {
             circleHeld = false;
         }
 
         if(!triangleHeld && trianglePressed) {
-            if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
-                robot.startTripleInjecting();
-            } else {
-                robot.startInjecting();
-            }
             triangleHeld = true;
         } else if(!trianglePressed) {
             triangleHeld = false;
@@ -191,7 +186,6 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!crossHeld && crossPressed) {
             crossHeld = true;
-            robot.toggleShooter();
         } else if(!crossPressed) {
             crossHeld = false;
         }
@@ -199,11 +193,12 @@ public class UltimateGoalTeleOp extends OpMode {
         // This can be used for shoot alignment.
         if(!rightHeld && rightPressed) {
             if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.powerShotRight, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+                calibrationTarget.x += 100.0;
+                robot.startOdometryCal(calibrationTarget);
                 aligning = true;
             } else {
                 aligning = false;
-                robot.stopShotAligning();
+                robot.stopOdometryCal();
             }
             rightHeld = true;
         } else if(!rightPressed) {
@@ -212,11 +207,12 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!leftHeld && leftPressed) {
             if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.powerShotLeft, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+                calibrationTarget.x -= 100.0;
+                robot.startOdometryCal(calibrationTarget);
                 aligning = true;
             } else {
                 aligning = false;
-                robot.stopShotAligning();
+                robot.stopOdometryCal();
             }
             leftHeld = true;
         } else if(!leftPressed) {
@@ -225,11 +221,12 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!downHeld && downPressed) {
             if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.powerShotCenter, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+                calibrationTarget.y -= 100.0;
+                robot.startOdometryCal(calibrationTarget);
                 aligning = true;
             } else {
                 aligning = false;
-                robot.stopShotAligning();
+                robot.stopOdometryCal();
             }
             downHeld = true;
         } else if (!downPressed) {
@@ -238,11 +235,12 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!upHeld && upPressed) {
             if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.highGoal, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                calibrationTarget.y += 100.0;
+                robot.startOdometryCal(calibrationTarget);
                 aligning = true;
             } else {
                 aligning = false;
-                robot.stopShotAligning();
+                robot.stopOdometryCal();
             }
             upHeld = true;
         } else if (!upPressed) {
@@ -250,22 +248,12 @@ public class UltimateGoalTeleOp extends OpMode {
         }
 
         if(!rightBumperHeld && rightBumperPressed) {
-            if(robot.intakeMotorPower != 0.0) {
-                robot.setIntakeMotorPower(0.0);
-            } else {
-                robot.setIntakeMotorPower(1.0);
-            }
             rightBumperHeld = true;
         } else if(!rightBumperPressed) {
             rightBumperHeld = false;
         }
 
         if(!leftBumperHeld && leftBumperPressed) {
-            if(robot.intakeMotorPower != 0.0) {
-                robot.setIntakeMotorPower(0.0);
-            } else {
-                robot.setIntakeMotorPower(-1.0);
-            }
             leftBumperHeld = true;
         } else if(!leftBumperPressed) {
             leftBumperHeld = false;
@@ -287,21 +275,18 @@ public class UltimateGoalTeleOp extends OpMode {
 		// ********************************************************************
 		// This was unassigned (fingers up/down)
         if(!square2Held && square2Pressed) {
-            robot.startReleaseGrabWobbleGoal();
             square2Held = true;
         } else if(!square2Pressed) {
             square2Held = false;
         }
 
         if(!cross2Held && cross2Pressed) {
-            robot.startReleaseStowArm();
             cross2Held = true;
         } else if(!cross2Pressed) {
             cross2Held = false;
         }
 
         if(!circle2Held && circle2Pressed) {
-            robot.startStowedToReleaseWobbleGoal();
             circle2Held = true;
         } else if(!circle2Pressed) {
             circle2Held = false;
@@ -328,26 +313,12 @@ public class UltimateGoalTeleOp extends OpMode {
         }
 
         if(!up2Held && up2Pressed) {
-            if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
-                robot.highGoalOffset -= 0.002;
-                robot.setShooterFlapHighGoal();
-            } else {
-                robot.powerShotOffset -= 0.002;
-                robot.setShooterFlapPowerShot();
-            }
             up2Held = true;
         } else if (!up2Pressed) {
 			up2Held = false;
 		}
 
         if(!down2Held && down2Pressed) {
-            if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
-                robot.highGoalOffset += 0.002;
-                robot.setShooterFlapHighGoal();
-            } else {
-                robot.powerShotOffset += 0.002;
-                robot.setShooterFlapPowerShot();
-            }
             down2Held = true;
         } else if (!down2Pressed) {
 			down2Held = false;
@@ -367,7 +338,7 @@ public class UltimateGoalTeleOp extends OpMode {
 
         // If the activity is not performing, it will be idle and return.
         performActivities();
-        if(robot.shotAlignmentState == UltimateGoalRobot.SHOT_ALIGNMENT_STATE.IDLE) {
+        if(robot.odometryCalState == UltimateGoalRobot.ODOMETRY_CAL_STATE.IDLE) {
             aligning = false;
             robot.drive(speedMultiplier * xPower, speedMultiplier * yPower,
                     spinMultiplier * spin, driverAngle - 90.0, robot.defaultInputShaping);
@@ -403,13 +374,7 @@ public class UltimateGoalTeleOp extends OpMode {
 //        robot.stopGroundEffects();
     }
     protected void performActivities() {
-        robot.performClawToggle();
-        robot.performInjecting();
-        robot.performTripleInjecting();
-        robot.performShotAligning();
-        robot.performStowedToReleaseWobbleGoal();
-        robot.performReleaseGrabWobbleGoal();
-        robot.performReleaseStowArm();
+        robot.performOdometryCal();
         robot.updateShooterStability();
     }
 }

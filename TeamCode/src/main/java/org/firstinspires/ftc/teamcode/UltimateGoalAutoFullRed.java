@@ -21,108 +21,73 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 import org.opencv.core.Point;
 
 /**
- * Created by 12090 STEM Punk
+ * Created by 7592 RoarBots
  */
-//@Autonomous(name="Full Red", group ="Red")
+@Autonomous(name="Full Red", group ="Ultimate Goal Red")
 public class UltimateGoalAutoFullRed extends UltimateGoalAutoFull
 {
-    // Sets the points in the image to detect the skystone.
-    @Override
-    public void setVisionPoints() {
-    }
-
-    protected double skystoneX = 271.5463;
-    protected double skystone1Y = 61.66;
-    protected double skystone2Y = skystone1Y + 20.32;
-    protected double skystone3Y = skystone2Y + 20.32;
-    protected double skystone4Y = skystone3Y + 20.32;
-    protected double skystone5Y = skystone4Y + 20.32;
-    protected double skystone6Y = skystone5Y + 20.32;
-    protected double runLaneX = 266.5831;
-
-    protected double attackAngle = Math.toRadians(225.0);
-    protected double runAngle = Math.toRadians(270.0);
-
+    protected static final double REGULAR_SPEED = 0.5;
     @Override
     public void setAutoWayPoints() {
         // Robot starting location
-        startLocation = new WayPoint(335.915, 83.14436, Math.toRadians(180.0), 0.0);
+        startLocation = new WayPoint(180.85308, 22.86, Math.toRadians(90.0), 0.0);
 
-        // small pull away from wall to rotate robot without hitting.
-        distanceFromWall = new WayPoint(325.915, 83.14436, Math.toRadians(180.0), 0.5);
+        // These waypoints maneuver the robot around the starting ring stack.
+        aroundStartingStack1 = new WayPoint(194.49542, 89.47404, Math.toRadians(90.0), REGULAR_SPEED);
+        aroundStartingStack2 = new WayPoint(194.49542, 149.7584, Math.toRadians(90.0), REGULAR_SPEED);
 
-        // Get the robot under the bridge to do foundation
-        buildSiteUnderBridge = new WayPoint(runLaneX, 235.9901, runAngle, 1.0);
+        // The powershots
+        powerShotFirst = new WayPoint(104.06888, 178.94808, Math.toRadians(95.0), REGULAR_SPEED);
+        UltimateGoalRobot.powerShotRight = powerShotFirst;
+        powerShotSecond = new WayPoint(89.47404, 178.94808, Math.toRadians(95.0), REGULAR_SPEED);
+        UltimateGoalRobot.powerShotCenter = powerShotSecond;
+        powerShotThird = new WayPoint(74.8792, 178.94808, Math.toRadians(95.0), REGULAR_SPEED);
+        UltimateGoalRobot.powerShotLeft = powerShotThird;
 
-        snuggleFoundation = new WayPoint(238.0663, 315.755, Math.toRadians(360.0), 0.3);
-        grabFoundation = new WayPoint(232.0663, 315.755, Math.toRadians(360), 0.1);
-        pullFoundation = new WayPoint(275.3956, 281.206, Math.toRadians(300), 1.0);
-        pushFoundation = new WayPoint(275.3956, 277.785, runAngle, 0.7);
+        // Pickup the second wobble goal.
+        wobble2Pickup = new WayPoint(97.70872, 83.14436, Math.toRadians(85.0), REGULAR_SPEED);
 
-        // Might be able to use buildSiteUnderBridge for this.
-        buildSiteDodgingPartner = new WayPoint(runLaneX + 5, 271.206, runAngle, 0.7);
+        // Collect the starting ring stack.
+        collectStartingStack = new WayPoint(126.8984, 97.70872, Math.toRadians(85.0), REGULAR_SPEED);
 
-        // Same as buildSiteReadyToRun but facing towards center of the field.
-        buildSiteEjectingStone = new WayPoint(runLaneX, 224.9901, Math.toRadians(180.0), 0.7);
+        // Shoot the collected rings in the high goal.
+        highGoal = new WayPoint(164.35324, 187.18276, Math.toRadians(95.0), REGULAR_SPEED);
+        UltimateGoalRobot.highGoal = highGoal;
 
-        // Need to tweak this down so the robot is parked while waiting with
-        // just intake wheels.  Calculated is 225.9901, start at 235.9901 for safety
-        buildSiteReadyToRun = new WayPoint(runLaneX, 224.9901, runAngle, 0.7);
-        quarryUnderBridge = new WayPoint(runLaneX, 185.26, runAngle, 0.7);
-        foundationDeposit = new WayPoint(runLaneX, 297.785, runAngle, 1.0);
-        park = new WayPoint(runLaneX, 204.3875, runAngle, 1.0);
+        park = new WayPoint(149.7584, 210.04276, Math.toRadians(110.0), REGULAR_SPEED);
     }
 
     // Sets all the route points for executing the autonomous.
     @Override
-    public void setSkystoneValues(int position) {
-        // The location specific skystone collection values.
+    public void setRandomizationPosition(int position) {
+        // The location specific collection values.
         switch(position) {
             case 1:
-                // Skystone position 1 specific coordinates
-                positionToGrabSkystone1 = new WayPoint(skystoneX, skystone1Y, attackAngle, 1.0);
-                grabSkystone1 = new WayPoint(skystoneX - 20.0, skystone1Y - 20.0, attackAngle, 1.0);
-                pullBackSkystone1 = new WayPoint(runLaneX, skystone1Y - 20.0, attackAngle, 0.5);
-                // Skystone position 4 specific coordinates
-                positionToGrabSkystone2 = new WayPoint(skystoneX, skystone4Y, attackAngle, 1.0);
-                grabSkystone2 = new WayPoint(skystoneX - 20.0, skystone4Y - 20.0, attackAngle, 1.0);
-                pullBackSkystone2 = new WayPoint(runLaneX, skystone4Y - 20.0, runAngle, 0.5);
-                // Stretch goals
-                positionToGrabMundanestone1 = new WayPoint(skystoneX, skystone3Y, attackAngle, 1.0);
-                grabMundanestone1 = new WayPoint(skystoneX - 20.0, skystone3Y - 20.0, attackAngle, 1.0);
-                pullBackMundanestone1 = new WayPoint(runLaneX, skystone3Y - 20.0, runAngle, 0.5);
+                // To deposit the first wobble goal, set by vision.
+                targetZone1 = new WayPoint(210.04276, 210.04276, Math.toRadians(120.0), REGULAR_SPEED);
+
+                // Deliver the second wobble goal.
+                targetZone2 = new WayPoint(195.44792, 195.44792, Math.toRadians(120.0), REGULAR_SPEED);
                 break;
             case 2:
-                // Skystone position 2 specific coordinates
-                positionToGrabSkystone1 = new WayPoint(skystoneX, skystone2Y, attackAngle, 1.0);
-                grabSkystone1 = new WayPoint(skystoneX - 20.0, skystone2Y - 20.0, attackAngle, 1.0);
-                pullBackSkystone1 = new WayPoint(runLaneX, skystone2Y - 20.0, runAngle, 0.5);
-                // Skystone position 5 specific coordinates
-                positionToGrabSkystone2 = new WayPoint(skystoneX, skystone5Y, attackAngle, 1.0);
-                grabSkystone2 = new WayPoint(skystoneX - 20.0, skystone5Y - 20.0, attackAngle, 1.0);
-                pullBackSkystone2 = new WayPoint(runLaneX, skystone5Y - 20.0, runAngle, 0.5);
-                // Stretch goals
-                positionToGrabMundanestone1 = new WayPoint(skystoneX - 5.0, skystone4Y + 5.0, attackAngle, 1.0);
-                grabMundanestone1 = new WayPoint(skystoneX - 15.0, skystone4Y - 15.0, attackAngle, 1.0);
-                pullBackMundanestone1 = new WayPoint(runLaneX, skystone4Y - 20.0, runAngle, 0.5);
+                // To deposit the first wobble goal, set by vision.
+                targetZone1 = new WayPoint(149.7584, 270.32712, Math.toRadians(120.0), REGULAR_SPEED);
+
+                // Deliver the second wobble goal.
+                targetZone2 = new WayPoint(135.16356, 255.73228, Math.toRadians(120.0), REGULAR_SPEED);
                 break;
             case 3:
-                // Skystone position 3 specific coordinates
-                positionToGrabSkystone1 = new WayPoint(skystoneX, skystone3Y, attackAngle, 1.0);
-                grabSkystone1 = new WayPoint(skystoneX - 20.0, skystone3Y - 20.0, attackAngle, 1.0);
-                pullBackSkystone1 = new WayPoint(runLaneX, skystone3Y - 20.0, runAngle, 0.5);
-                // Skystone position 6 specific coordinates
-                positionToGrabSkystone2 = new WayPoint(skystoneX, skystone6Y, attackAngle, 1.0);
-                grabSkystone2 = new WayPoint(skystoneX - 20.0, skystone6Y - 20.0, attackAngle, 1.0);
-                pullBackSkystone2 = new WayPoint(runLaneX, skystone6Y - 30.0, runAngle, 0.5);
-                // Stretch goals
-                positionToGrabMundanestone1 = new WayPoint(skystoneX - 10.0, skystone1Y + 10.0, attackAngle, 1.0);
-                grabMundanestone1 = new WayPoint(skystoneX - 10.0, skystone1Y - 10.0, attackAngle, 1.0);
-                pullBackMundanestone1 = new WayPoint(runLaneX, skystone1Y - 20.0, attackAngle, 0.5);
+                // To deposit the first wobble goal, set by vision.
+                targetZone1 = new WayPoint(210.04276, 330.61148, Math.toRadians(120.0), REGULAR_SPEED);
+
+                // Deliver the second wobble goal.
+                targetZone2 = new WayPoint(195.44792, 316.01664, Math.toRadians(120.0), REGULAR_SPEED);
                 break;
         }
     }

@@ -14,7 +14,7 @@ public class MyPosition {
     // Make bigger to make distance shorter
 //    public static double moveScalingFactor = 4.15584064; //STEM Punk
 //    public static double moveScalingFactor = 1.461037725; Ultimate Goal Math Starting Point
-    public static double moveScalingFactor = 1.461037725;
+    public static double moveScalingFactor = 1.581037725;
 
 //    public static double auxScalingFactor = 4.08827586;
 // Make bigger to make distance shorter
@@ -24,14 +24,19 @@ public class MyPosition {
 //    public static double turnScalingFactor = 39.0;
 //    public static double turnScalingFactor = 11.6928621;
 //    public static double turnScalingFactor = 10.2897186;
-    // 10.49 goes less than 0 cw
-    // 10.4999 goes than 0 cw
-    // 10.5 goes more than 0 cw
-    // 10.525 goes more than 0 cw
-    // 10.7 goes more than 0
-//    public static double turnScalingFactor = 10.4999; //STEM Punk
+
+
+    // 3.691371094 +1.8 degrees
+    // 3.721371094 +2
+    // 3.761371094 +3 degrees
+    // 3.811371094 +2.25 degrees
+    // 3.814371094 +3.8
+    // 3.819371094 +4.2
+    // 3.851371094 +4.75
+    // 3.891371094 +4 degrees
+    //    public static double turnScalingFactor = 10.4999; //STEM Punk
 //    public static double turnScalingFactor = 3.691371094; Ultimate Goal Math Starting Point
-    public static double turnScalingFactor = 3.691371094;
+    public static double turnScalingFactor = 3.651371094;
     public static double auxPredictionScalingFactor = 0.92;
 
 
@@ -145,7 +150,7 @@ public class MyPosition {
 //        double wheelLeftTotal = currPos_l-wheelLeftInitialReading;
 
         double worldAngleLast = worldAngle_rad;
-        worldAngle_rad = -AngleWrap(((wheelLeftTotal-wheelRightTotal)*turnScalingFactor/100000.0) + lastResetAngle);
+        worldAngle_rad = AngleWrap(((wheelLeftTotal-wheelRightTotal)*turnScalingFactor/100000.0) + lastResetAngle);
 
         //get the predicted amount the straif will go
         double tracker_a_prediction = Math.toDegrees(angleIncrement)*(auxPredictionScalingFactor/10.0);

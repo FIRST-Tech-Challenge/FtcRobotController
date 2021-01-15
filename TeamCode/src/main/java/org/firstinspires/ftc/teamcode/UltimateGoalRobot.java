@@ -79,11 +79,6 @@ public class UltimateGoalRobot
     public double highGoalOffset = 0.0;
     public double flapAngle;
 
-    // We need both hubs here because one has the motors, and the other has the
-    // odometry encoders.
-    public final static String CTRL_HUB = "Control Hub 1";
-    public final static String EX_HUB = "Expansion Hub 3";
-
     LynxModule controlHub;
     LynxModule expansionHub;
 
@@ -131,6 +126,11 @@ public class UltimateGoalRobot
     public static boolean encodersReset = false;
     public boolean forceReset = false;
     public boolean disableDriverCentric = false;
+
+    public static WayPoint highGoal = new WayPoint(164.35324, 187.18276, 95.0, 0.5);
+    public static WayPoint powerShotRight = new WayPoint(104.06888, 187.18276, 95.0, 0.5);
+    public static WayPoint powerShotCenter = new WayPoint(89.47404, 187.18276, 95.0, 0.5);
+    public static WayPoint powerShotLeft = new WayPoint(74.8792, 187.18276, 95.0, 0.5);
 
     public double xAngle, yAngle, zAngle;
     /* local OpMode members. */
@@ -553,7 +553,7 @@ public class UltimateGoalRobot
         double driveSpeed;
         double turnSpeed = Math.toDegrees(deltaAngle) * errorMultiplier;
         // Have to convert from world angles to robot centric angles.
-        double robotDriveAngle = driveAngle - MyPosition.worldAngle_rad + Math.toRadians(90);
+        double robotDriveAngle = driveAngle - MyPosition.worldAngle_rad + Math.toRadians(-90);
 
         // This will allow us to do multi-point routes without huge slowdowns.
         // Such use cases will be changing angles, or triggering activities at
@@ -705,10 +705,10 @@ public class UltimateGoalRobot
     /** Inject activity pushes a disk into the shooter and resets th
      * e injector. **/
     public final static double INJECTOR_FIRE_TIME = 300.0;
-    public final static double INJECTOR_RESET_TIME = 200.0;
-    public final static double INJECTOR_HOME_TIME = 100.0;
+    public final static double INJECTOR_RESET_TIME = 400.0;
+    public final static double INJECTOR_HOME_TIME = 300.0;
     public final static double SHOOTER_THROTTLE_DELAY = 500.0;
-    public final static double INJECTOR_HOME = 0.512;
+    public final static double INJECTOR_HOME = 0.55;
     public final static double INJECTOR_RESET = 0.450;
     public final static double INJECTOR_FIRE = 0.800;
     public final static int VELOCITY_SUCCESS_CHECKS = 3;
@@ -729,7 +729,6 @@ public class UltimateGoalRobot
             if(shooterMotorTargetVelocity != SHOOT_VELOCITY) {
                 toggleShooter();
             }
-            sequentialStableVelocityChecks = 0;
             injectTimer.reset();
             injectState = INJECTING.THROTTLING_UP;
         }
@@ -900,6 +899,40 @@ public class UltimateGoalRobot
     public void stopShotAligning() {
         shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
         injector.setPosition(INJECTOR_HOME);
+    }
+
+
+    public enum ODOMETRY_CAL_STATE {
+        IDLE,
+        MOVING
+    }
+    public ODOMETRY_CAL_STATE odometryCalState = ODOMETRY_CAL_STATE.IDLE;
+    public WayPoint calibrationDestination;
+    public void startOdometryCal(WayPoint calDestination) {
+        if(odometryCalState == ODOMETRY_CAL_STATE.IDLE) {
+            calibrationDestination = calDestination;
+            driveToXY(calibrationDestination.x, calibrationDestination.y, calibrationDestination.angle, MIN_DRIVE_MAGNITUDE,
+                    0.5, 0.014, 2.0, false);
+            odometryCalState = ODOMETRY_CAL_STATE.MOVING;
+        }
+    }
+    public void performOdometryCal() {
+        switch(odometryCalState) {
+            case MOVING:
+                if (driveToXY(calibrationDestination.x, calibrationDestination.y, calibrationDestination.angle, MIN_DRIVE_MAGNITUDE,
+                        0.5, 0.014, 2.0, false)) {
+                    // We have reached the position, need to rotate to angle.
+                    odometryCalState = ODOMETRY_CAL_STATE.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    public void stopOdometryCal() {
+        odometryCalState = ODOMETRY_CAL_STATE.IDLE;
     }
 
     public enum STOWED_RELEASE_STATE {

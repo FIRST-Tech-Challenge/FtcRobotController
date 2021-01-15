@@ -21,6 +21,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 import org.opencv.core.Core;
@@ -42,20 +44,12 @@ import java.util.List;
  */
 public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
 {
-    // Coordinates for the vision pipeline to be overriden in the alliance classes.
-    protected int stonePosition = 1;
-    public static int position = 0;
-    protected enum TARGET_ZONE {
-        A,
-        B,
-        C
-    }
-    protected TARGET_ZONE targetZone = TARGET_ZONE.A;
+    protected int randomizationPosition = 1;
 
-    OpenCvCamera phoneCam;
+    // This allows us to set waypoints per alliance and potentially position.
     public abstract void setAutoWayPoints();
-    public abstract void setSkystoneValues(int position);
-    public abstract void setVisionPoints();
+    // This sets the waypoints for randomization specific after match start.
+    public abstract void setRandomizationPosition(int position);
 
     @Override
     public void runOpMode() {
@@ -70,14 +64,7 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
          **/
         if (tfod != null) {
             tfod.activate();
-
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 16/9).
-//            tfod.setZoom(2.5, 16.0/9.0);
+            tfod.setZoom(1.5, 16.0/9.0);
         }
 
         telemetry.addLine("Calling robot.init");
@@ -99,13 +86,14 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                 if (updatedRecognitions != null) {
                     telemetry.addData("# Object Detected", updatedRecognitions.size());
+                    telemetry.addData("Randomization Position: ", randomizationPosition);
                     // step through the list of recognitions and display boundary info.
                     int i = 0;
                     for (Recognition recognition : updatedRecognitions) {
                         if (recognition.getLabel().equals(LABEL_FIRST_ELEMENT)) {
-                            targetZone = TARGET_ZONE.C;
+                            randomizationPosition = 3;
                         } else {
-                            targetZone = TARGET_ZONE.B;
+                            randomizationPosition = 2;
                         }
                         telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
                         telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
@@ -117,16 +105,15 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
                 }
             }
         }
-//        waitForStart();
 
         // In case Stop was pressed.
         if(opModeIsActive()) {
             autoTimer.reset();
-            telemetry.addData("Target Zone: ", targetZone);
+            telemetry.addData("Target Zone: ", randomizationPosition);
             telemetry.update();
 
             // This sets up everything for the auto to run.
-            setSkystoneValues(stonePosition);
+            setRandomizationPosition(randomizationPosition);
 
             //give MyPosition our current positions so that it saves the last positions of the wheels
             //this means we won't teleport when we start the match. Just in case, run this twice
@@ -141,86 +128,117 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
             robot.resetReads();
             MyPosition.setPosition(startLocation.x, startLocation.y, startLocation.angle);
 
-            // Start moving intake out, should be done by the time driving is done.
-//        robot.startExtendingIntake();
-//        robot.moveLift(HardwareOmnibot.LiftPosition.STOWED);
+            // Lets drive by time for now.
+            double headingAngle = 0.0;
+            double driveAngle = 225.0;
+            double drivePower = 0.5;
+            driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1150, true, true);
 
-            driveToWayPoint(distanceFromWall, true, false);
-            driveToWayPoint(positionToGrabSkystone1, false, false);
-
-            // Start the intake spinning
-//        robot.startIntake(false);
-
-            // Make sure we are at the right angle
-            rotateToWayPointAngle(positionToGrabSkystone1, false);
-//        while (!robot.intakeExtended() && opModeIsActive()) {
-//                updatePosition();
-//        }
-            driveToWayPoint(grabSkystone1, false, false);
-            driveToWayPoint(pullBackSkystone1, true, false);
-
-            // Stop the intake
-//        robot.stopIntake();
-
-            // Help line up to go under bridge
-            driveToWayPoint(quarryUnderBridge, true, false);
-
-            // Drive under the bridge with our skystone.
-            driveToWayPoint(buildSiteUnderBridge, true, false);
-
-            // If we didn't collect a stone, no sense placing it.
-//        if (robot.stonePresent()) {
-//            if(!skipThis) {
-//                robot.liftTargetHeight = HardwareOmnibot.LiftPosition.STONE_AUTO;
-//                robot.startStoneStacking();
-//            }
-//        }
-
-            // Drive into foundation to grab it
-            driveToWayPoint(snuggleFoundation, false, false);
-            rotateToWayPointAngle(snuggleFoundation, false);
-
-            driveToWayPoint(grabFoundation, true, false);
-            autoTaskTimer.reset();
-            while (autoTaskTimer.milliseconds() < 500 && opModeIsActive()) {
-                updatePosition();
+            driveAngle = 200.0;
+            headingAngle = 7.0;
+            driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 950, true, true);
+            robot.setShooterFlapPowerShot();
+            robot.startInjecting();
+            while(!isStopRequested() && (robot.injectState != UltimateGoalRobot.INJECTING.IDLE)) {
+                sleep(15);
+                performRobotActions();
             }
-            autoTaskTimer.reset();
-//        robot.fingersDown();
-//        while (autoTaskTimer.milliseconds() < robot.FINGER_ROTATE_TIME && opModeIsActive()) {
-//            updatePosition();
-//        }
 
-            // Pull and rotate the foundation.
-            driveToWayPoint(pullFoundation, false, true);
-            rotateToWayPointAngle(pushFoundation, true);
+            driveAngle = 90.0;
+            headingAngle = 7.0;
+            driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 350, true, true);
+            robot.startInjecting();
+            while(!isStopRequested() && (robot.injectState != UltimateGoalRobot.INJECTING.IDLE)) {
+                sleep(15);
+                performRobotActions();
+            }
 
-            // Release the foundation.
-//        robot.fingersUp();
-            autoTaskTimer.reset();
-//        while (autoTaskTimer.milliseconds() < robot.FINGER_ROTATE_TIME && opModeIsActive()) {
-//            updatePosition();
-//        }
-
-            driveToWayPoint(buildSiteDodgingPartner, true, false);
-
-            // Drive back to collect second skystone.
-            collectStoneFoundation(positionToGrabSkystone2, grabSkystone2, pullBackSkystone2, true);
-
-            // Drive back to collect first mundanestone.
-            collectStoneFoundation(positionToGrabMundanestone1, grabMundanestone1, pullBackMundanestone1, false);
-
-            // Finish auto by parking.
-            driveToWayPoint(buildSiteReadyToRun, false, false);
-            // Make sure the lift is down before going under bridge
-//        while (robot.stackStone != HardwareOmnibot.StackActivities.IDLE && opModeIsActive()) {
-//            updatePosition();
-//        }
-            driveToWayPoint(park, false, false);
+            driveAngle = 90.0;
+            headingAngle = 7.0;
+            driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 350, true, true);
+            robot.startInjecting();
+            while(!isStopRequested() && (robot.injectState != UltimateGoalRobot.INJECTING.IDLE)) {
+                sleep(15);
+                performRobotActions();
+            }
         }
 
         if (tfod != null) {
             tfod.shutdown();
+        }
+    }
+
+    /**
+     * @param destinationAngle - The target angle to reach, between 0.0 and 360.0
+     * @param gyroReading      - The current angle of the robot
+     * @return The minumum angle to travel to get to the destination angle
+     */
+    private double deltaAngle(double destinationAngle, double gyroReading) {
+        double result = 0.0;
+        double leftResult = 0.0;
+        double rightResult = 0.0;
+
+        if (gyroReading > destinationAngle) {
+            leftResult = gyroReading - destinationAngle;
+            rightResult = 360.0 - gyroReading + destinationAngle;
+        } else {
+            leftResult = gyroReading + 360.0 - destinationAngle;
+            rightResult = destinationAngle - gyroReading;
+        }
+
+        if (leftResult < rightResult) {
+            result = -leftResult;
+        } else {
+            result = rightResult;
+        }
+
+        return result;
+    }
+
+    /**
+     * @param speed        - The driving power
+     * @param rotateSpeed  - The rotational speed to correct heading errors
+     * @param driveAngle   - The angle of movement to drive the robot
+     * @param headingAngle - The heading angle to hold while driving
+     */
+    public void driveAtHeading(double speed, double rotateSpeed, double driveAngle, double headingAngle) {
+        double xPower = 0.0;
+        double yPower = 0.0;
+        double deltaAngle = 0.0;
+        final double SAME_ANGLE = 1;
+        double gyroReading = robot.readIMU();
+        deltaAngle = deltaAngle(headingAngle, gyroReading);
+
+        if (Math.abs(deltaAngle) > SAME_ANGLE) {
+            if (deltaAngle > 0.0) {
+                rotateSpeed = -rotateSpeed;
+            }
+        } else {
+            rotateSpeed = 0.0;
+        }
+
+        xPower = speed * Math.cos(Math.toRadians(driveAngle));
+        yPower = speed * Math.sin(Math.toRadians(driveAngle));
+        robot.drive(xPower, yPower, rotateSpeed, 0.0, false);
+    }
+
+    /**
+     * @param speed        - The driving power
+     * @param rotateSpeed  - The rotational speed to correct heading errors
+     * @param driveAngle   - The angle of movement to drive the robot
+     * @param headingAngle - The heading angle to hold while driving
+     */
+    public void driveAtHeadingForTime(double speed, double rotateSpeed, double driveAngle, double headingAngle, int driveTime, boolean stopWhenDone, boolean progressActivities) {
+        double endTime = timer.milliseconds() + driveTime;
+        while (!isStopRequested() && (timer.milliseconds() <= endTime) && (!isStopRequested())) {
+            robot.resetReads();
+            driveAtHeading(speed, rotateSpeed, driveAngle, headingAngle);
+            if(progressActivities) {
+                performRobotActions();
+            }
+        }
+        if(stopWhenDone) {
+            robot.setAllDriveZero();
         }
     }
 }
