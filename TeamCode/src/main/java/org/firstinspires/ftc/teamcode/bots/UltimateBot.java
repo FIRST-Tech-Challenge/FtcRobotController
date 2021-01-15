@@ -25,10 +25,10 @@ public class UltimateBot extends YellowBot {
     private DcMotor shooter = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
-    private static int SWING_GROUND_POS = 255;
+    private static int SWING_GROUND_POS = 245;
     private static int AUTO_DROP = 190;
     private static int SWING_LIFT_UP_POS = 160;
-    private static int SWING_LIFT_WALL = 70;
+    private static int SWING_LIFT_WALL = 60;
     private static int STRAIGHT_UP = 70;
     private static double SHOOT_SERVO = 0.5;
 
@@ -180,8 +180,8 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Close Claw", defaultReturn = "")
     public void closeWobbleClaw() {
         if ((wobbleClaw1 != null) && (wobbleClaw2 != null)) {
-            wobbleClaw1.setPosition(0.3);
-            wobbleClaw2.setPosition(0.7);
+            wobbleClaw1.setPosition(0.25);
+            wobbleClaw2.setPosition(0.75);
         }
 
     }
