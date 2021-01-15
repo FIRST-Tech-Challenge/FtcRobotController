@@ -12,13 +12,13 @@ public class MyPosition {
 
     //    public static double moveScalingFactor = 4.1146937;
     // Make bigger to make distance shorter
-//    public static double moveScalingFactor = 4.15584064; STEM Punk
+//    public static double moveScalingFactor = 4.15584064; //STEM Punk
 //    public static double moveScalingFactor = 1.461037725; Ultimate Goal Math Starting Point
     public static double moveScalingFactor = 1.461037725;
 
 //    public static double auxScalingFactor = 4.08827586;
 // Make bigger to make distance shorter
-//    public static double auxScalingFactor = 4.12915862; STEM Punk
+//    public static double auxScalingFactor = 4.12915862; //STEM Punk
 //    public static double auxScalingFactor = 1.451657327; Ultimate Goal Math Starting Point
     public static double auxScalingFactor = 1.451657327;
 //    public static double turnScalingFactor = 39.0;
@@ -29,7 +29,7 @@ public class MyPosition {
     // 10.5 goes more than 0 cw
     // 10.525 goes more than 0 cw
     // 10.7 goes more than 0
-//    public static double turnScalingFactor = 10.4999; STEM Punk
+//    public static double turnScalingFactor = 10.4999; //STEM Punk
 //    public static double turnScalingFactor = 3.691371094; Ultimate Goal Math Starting Point
     public static double turnScalingFactor = 3.691371094;
     public static double auxPredictionScalingFactor = 0.92;

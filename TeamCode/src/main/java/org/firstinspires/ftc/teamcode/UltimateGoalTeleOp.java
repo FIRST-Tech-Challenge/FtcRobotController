@@ -377,7 +377,7 @@ public class UltimateGoalTeleOp extends OpMode {
                     spinMultiplier * spin, driverAngle - 90.0, robot.defaultInputShaping);
         }
 
-        telemetry.addData("Offset Angle: ", driverAngle);
+        telemetry.addData( "Offset Angle: ", driverAngle);
         telemetry.addData("Flap Position: ", robot.flapAngle);
         telemetry.addData("Shooter Velocity: ", robot.shooter.getVelocity());
         telemetry.addData("Shooter Stability: ", robot.sequentialStableVelocityChecks);

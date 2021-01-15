@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MovementVars;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.atan2;
@@ -64,6 +65,8 @@ public class UltimateGoalRobot
     public final static String CLAW_SERVO = "Claw";
     public final static String FLAP_SERVO = "Flap";
     public final static String INJECTOR_SERVO = "Injector";
+    public String hub1;
+    public String hub2;
 
     public enum FLAP_POSITION {
         POWERSHOT,
@@ -81,7 +84,8 @@ public class UltimateGoalRobot
     public final static String CTRL_HUB = "Control Hub 1";
     public final static String EX_HUB = "Expansion Hub 3";
 
-    List<LynxModule> allHubs;
+    LynxModule controlHub;
+    LynxModule expansionHub;
 
     // These motors have the odometry encoders attached
     protected DcMotorEx intake = null;
@@ -132,38 +136,18 @@ public class UltimateGoalRobot
     /* local OpMode members. */
     protected HardwareMap hwMap  =  null;
 
-    /**
-     * If the motion value is less than the threshold, the controller will be
-     * considered at rest
-     */
-    protected static float joystickDeadzone = 0.07f;
-    private static final float MAX_MOTION_RANGE = 1.0f;
-    private static final float MIN_MOTION_RANGE = (float)MIN_DRIVE_RATE;
-
-    // Used to clean up the slop in the joysticks.
-    public static float cleanMotionValues(float number) {
-        // apply deadzone
-        if (number < joystickDeadzone && number > -joystickDeadzone) return 0.0f;
-        // apply trim
-        if (number >  MAX_MOTION_RANGE) return  MAX_MOTION_RANGE;
-        if (number < -MAX_MOTION_RANGE) return -MAX_MOTION_RANGE;
-        // scale values "between deadzone and trim" to be "between Min range and Max range"
-        if (number > 0)
-            number = (float) Range.scale(number, joystickDeadzone, MAX_MOTION_RANGE, MIN_MOTION_RANGE, MAX_MOTION_RANGE);
-        else
-            number = (float)Range.scale(number, -joystickDeadzone, -MAX_MOTION_RANGE, -MIN_MOTION_RANGE, -MAX_MOTION_RANGE);
-
-        return number;
-    }
-
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
         // The hubs are used for resetting reads for bulk reads.
-        allHubs = hwMap.getAll(LynxModule.class);
-        for (LynxModule module : allHubs) {
+        for (LynxModule module : hwMap.getAll(LynxModule.class)) {
+            if(module.isParent()) {
+                controlHub = module;
+            } else {
+                expansionHub = module;
+            }
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
@@ -246,7 +230,7 @@ public class UltimateGoalRobot
 
     public int getLeftEncoderWheelPosition() {
         // This is to compensate for GF having a negative left.
-        return -intake.getCurrentPosition();
+        return intake.getCurrentPosition();
     }
 
     public int getRightEncoderWheelPosition() {
@@ -277,9 +261,8 @@ public class UltimateGoalRobot
     }
 
     public void resetReads() {
-        for (LynxModule module : allHubs) {
-            module.clearBulkCache();
-        }
+        //controlHub.clearBulkCache();
+        expansionHub.clearBulkCache();
         // The IMU is handled separately because it uses I2C which is not part of the bulk read.
         imuRead = false;
     }

@@ -3,17 +3,37 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
 /**
- * Created by 12090 STEM Punk
+ * Created by 7592 RoarBots
  */
-public abstract class UltimateGoalAuto extends LinearOpMode {
+public abstract class UltimateGoalAutoBase extends LinearOpMode {
+    protected static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    protected static final String LABEL_FIRST_ELEMENT = "Quad";
+    protected static final String LABEL_SECOND_ELEMENT = "Single";
+    private static final String VUFORIA_KEY = "ATaHrPr/////AAAAGYhG118G0EZgjFy6T7Snt3otqlgNSultuXDM66X1x1QK3ov5GUJcqL/9RTkdWkDlZDRxBKTAWm/szD7VmJteuQd2WfAk1t8qraapAsr2b4H5k5r4IpIO0UZghwNqhUqfZnCYl3e9tmmuocgZlfLXt4Xw+IAGxZ5e9MaQLR5lTv9/aFO1/CnH9/8jvnSq5NGeLrCHA6BtvqS30sAv7NYX8gz79MHaNiGZvyrUXZslbp2HHkehCocBbc080NrnYCouuUCqIbaMFl4ei8/ViSvdvtJDks4ox5KynBth4HaLHYpYkK3T2XJ1dBab6KfrWn6dm8ug7tfHTy68wLqWev7IWB0oPcqGOY+bZiz343VteHzk";
+    /**
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * localization engine.
+     */
+    protected VuforiaLocalizer vuforia;
+
+    /**
+     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
+     * Detection engine.
+     */
+    protected TFObjectDetector tfod;
 
     protected ElapsedTime timer;
 
-    public static float mmPerInch = UltimateGoalAuto.MM_PER_INCH;
+    public static float MM_PER_INCH = (float)25.4;
+    public static float mmPerInch = UltimateGoalAutoBase.MM_PER_INCH;
     public static float mmBotWidth = 18 * mmPerInch;            // ... or whatever is right for your robot
     public static float mmFTCFieldWidth = (12 * 12 - 2) * mmPerInch;   // the FTC field is ~11'10" center-to-center of the glass panels
     protected boolean skipThis = false;
@@ -89,38 +109,19 @@ public abstract class UltimateGoalAuto extends LinearOpMode {
     protected ElapsedTime autoTimer = new ElapsedTime();
     protected ElapsedTime autoTaskTimer = new ElapsedTime();
 
-    HardwareOmnibot robot = new HardwareOmnibot();
-
-    // Default to 4" wheels
-    private static double myWheelSize = 4.0;
-    // Default to 40:1 motors
-    private static double myMotorRatio = 19.2;
-
-    // 20:1 motor = 560
-    // 40:1 motor = 1120
-    // 60:1 motor = 1680
-    private static final double encoderClicksPerRev = 28;
-    private static double clicksPerCm = (myMotorRatio * encoderClicksPerRev) / (Math.PI * myWheelSize * 2.54);
-
-    public static final float MM_PER_INCH = 25.4f;
+    UltimateGoalRobot robot = new UltimateGoalRobot();
 
 	// Have to set this when we start motions
 	public boolean liftIdle = true;
 
     /**
-     * @param newWheelSize  - The size of the wheels, used to calculate encoder clicks per inch
-     * @param newMotorRatio - The motor gearbox ratio, used to calculate encoder clicks per inch
      */
-    public void setupRobotParameters(double newWheelSize, double newMotorRatio) {
+    public void setupRobotParameters() {
         robot.init(hardwareMap);
         timer = new ElapsedTime();
 
         robot.resetEncoders();
         robot.setInputShaping(false);
-        myWheelSize = newWheelSize;
-        myMotorRatio = newMotorRatio;
-
-        clicksPerCm = (myMotorRatio * encoderClicksPerRev) / (Math.PI * myWheelSize * 2.54);
     }
 
     public void collectStoneFoundation(WayPoint positionToGrabStone, WayPoint grabStone,
@@ -142,15 +143,15 @@ public abstract class UltimateGoalAuto extends LinearOpMode {
             // supposed to be close enough to score parking.
             driveToWayPointMindingLift(buildSiteReadyToRun);
             // Make sure the lift is down before going under bridge
-            while (robot.stackStone != HardwareOmnibot.StackActivities.IDLE && opModeIsActive()) {
-                updatePosition();
-            }
+//            while (robot.stackStone != HardwareOmnibot.StackActivities.IDLE && opModeIsActive()) {
+//                updatePosition();
+//            }
 
             // Go under the bridge
             driveToWayPoint(quarryUnderBridge, true, false);
 
             // Start the intake spinning
-            robot.startIntake(false);
+//            robot.startIntake(false);
 
             // Make sure we are at the right angle
             driveToWayPoint(positionToGrabStone, false, false);
@@ -161,27 +162,27 @@ public abstract class UltimateGoalAuto extends LinearOpMode {
             driveToWayPoint(quarryUnderBridge, true, false);
 
             // Stop the intake
-            robot.stopIntake();
+  //          robot.stopIntake();
             // Drive under the bridge with our skystone.  buildSiteUnderBridge should be far enough to
             // score delivery points.
             driveToWayPoint(buildSiteUnderBridge, true, false);
 
             // Start the second skystone deposit
 //            if (robot.stonePresent()) {
-                if (!skipThis) {
-                    robot.liftTargetHeight = HardwareOmnibot.LiftPosition.STONE_AUTO;
-                    robot.startStoneStacking();
-                }
+//                if (!skipThis) {
+//                    robot.liftTargetHeight = HardwareOmnibot.LiftPosition.STONE_AUTO;
+//                    robot.startStoneStacking();
+//                }
 //            }
             if (moveFoundation) {
                 driveToWayPoint(pushFoundation, true, true);
             }
             driveToWayPoint(foundationDeposit, false, false);
             // Make sure we have released the skystone before leaving
-            while ((robot.liftState != HardwareOmnibot.LiftActivity.IDLE ||
-                    robot.releaseState != HardwareOmnibot.ReleaseActivity.IDLE) && opModeIsActive()) {
-                updatePosition();
-            }
+//            while ((robot.liftState != HardwareOmnibot.LiftActivity.IDLE ||
+//                    robot.releaseState != HardwareOmnibot.ReleaseActivity.IDLE) && opModeIsActive()) {
+//                updatePosition();
+//            }
 //        } else {
 //            if (moveFoundation) {
 //                driveToWayPoint(pushFoundation, true, true);
@@ -195,15 +196,15 @@ public abstract class UltimateGoalAuto extends LinearOpMode {
         // supposed to be close enough to score parking.
         driveToWayPointMindingLift(buildSiteReadyToRun);
         // Make sure the lift is down before going under bridge
-        while (robot.stackStone != HardwareOmnibot.StackActivities.IDLE && opModeIsActive()) {
-            updatePosition();
-        }
+//        while (robot.stackStone != HardwareOmnibot.StackActivities.IDLE && opModeIsActive()) {
+//            updatePosition();
+//        }
 
         // Go under the bridge
         driveToWayPoint(quarryUnderBridge, true, false);
 
         // Start the intake spinning
-        robot.startIntake(false);
+//        robot.startIntake(false);
 
         // Make sure we are at the right angle
         driveToWayPoint(positionToGrabStone, false, false);
@@ -214,7 +215,7 @@ public abstract class UltimateGoalAuto extends LinearOpMode {
         driveToWayPoint(quarryUnderBridge, true, false);
 
         // Stop the intake
-        robot.stopIntake();
+//        robot.stopIntake();
         // Drive under the bridge with our skystone.  buildSiteUnderBridge should be far enough to
         // score delivery points.
         driveToWayPoint(buildSiteUnderBridge, false, false);
@@ -233,13 +234,13 @@ public abstract class UltimateGoalAuto extends LinearOpMode {
     }
 
     protected void performRobotActions() {
-        robot.performExtendingIntake();
-        robot.performStowing();
-        robot.performLifting();
-        robot.performReleasing();
-        robot.performStoneStacking();
-        robot.performEjecting();
-        liftIdle = robot.stackStone == HardwareOmnibot.StackActivities.IDLE;
+//        robot.performExtendingIntake();
+//        robot.performStowing();
+//        robot.performLifting();
+//        robot.performReleasing();
+//        robot.performStoneStacking();
+//        robot.performEjecting();
+//        liftIdle = robot.stackStone == HardwareOmnibot.StackActivities.IDLE;
     }
 
     protected void driveToWayPoint(WayPoint destination, boolean passThrough, boolean pullingFoundation) {
@@ -275,5 +276,34 @@ public abstract class UltimateGoalAuto extends LinearOpMode {
         while(!robot.rotateToAngle(destination.angle, pullingFoundation, false) && opModeIsActive()) {
             updatePosition();
         }
+    }
+    /**
+     * Initialize the Vuforia localization engine.
+     */
+    protected void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    protected void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minResultConfidence = 0.8f;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 }
