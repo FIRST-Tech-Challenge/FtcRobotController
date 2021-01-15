@@ -323,7 +323,7 @@ public class Robot {
     }
 
     public void shootLowGoal(int rings){
-        shooter.shootMidGoal(rings);
+        shooter.shootLowGoal(rings);;
     }
 
 
