@@ -126,15 +126,14 @@ public class Chassis_Auto extends LinearOpMode {
             //code below is for SINGLE ring scenario
             if(visionResult.equals("Single")) {
                 // code below drives and positions for shooting
-                driveStraight(true, 1.0, -0.6, 1120);
+                driveStraight(true, 1.0, -0.6, 1150);
                 stopMotion(100);
                 rotateToAngle(90.0, 1.0, 0.2);
                 stopMotion(100);
-                driveStraight(true, 1.0, -0.6, 420);
+                driveStraight(true, 1.0, -0.6, 400);
                 stopMotion(100);
                 rotateToAngle(0.0, 1.0, 0.2);
                 stopMotion(100);
-                // need code for shooting here
                 Shooter.setPower(1.0);
                 sleep(1000);
                 for (int i = 0; i < 3; i++) {
@@ -161,12 +160,82 @@ public class Chassis_Auto extends LinearOpMode {
 
             //code below is for QUAD rings scenario
             else if(visionResult.equals("Quad")) {
+                driveStraight(true, 1.0, -0.6, 1150);
+                stopMotion(100);
+                rotateToAngle(90.0, 1.0, 0.2);
+                stopMotion(100);
+                driveStraight(true, 1.0, -0.6, 400);
+                stopMotion(100);
+                rotateToAngle(0.0, 1.0, 0.2);
+                stopMotion(100);
+                Shooter.setPower(1.0);
+                sleep(1000);
+                for (int i = 0; i < 3; i++) {
+                    Spanker.setPosition(0.55);
+                    sleep(500);
+                    Spanker.setPosition(0.85);
+                    sleep(500);
+                }
+                Shooter.setPower(0.0);
+                // code below would drive forward and turn to drop wobble
+                driveStraight(true, 1.0, -0.6, 975);
+                stopMotion(100);
+                rotateToAngle(90.0, 1.0, 0.2);
+                stopMotion(100);
+                driveStraight(true, 1.0, -0.6, 200);
+                stopMotion(100);
+                // drops wobble here
+                armMotion(false, 0.8, 300);
+                sleep(250);
+                handMotion(false);
+                sleep(250);
+                armMotion(true, 0.8, 400);
+                sleep(250);
+                handMotion(true);
+                sleep(250);
+                rotateToAngle(0.0, 1.0, 0.2);
+                sleep(250);
+                driveStraight(true, 1.0, 0.6, 475);
 
             }
 
-            //code below is for ZERO ring scenario
-            else {
 
+        //code below is for ZERO ring scenario
+            else {
+                driveStraight(true, 1.0, -0.6, 1150);
+                stopMotion(100);
+                rotateToAngle(90.0, 1.0, 0.2);
+                stopMotion(100);
+                driveStraight(true, 1.0, -0.6, 400);
+                stopMotion(100);
+                rotateToAngle(0.0, 1.0, 0.2);
+                stopMotion(100);
+                // need code for shooting here
+                Shooter.setPower(1.0);
+                sleep(1000);
+                for (int i = 0; i < 3; i++) {
+                    Spanker.setPosition(0.55);
+                    sleep(500);
+                    Spanker.setPosition(0.85);
+                    sleep(500);
+                }
+                Shooter.setPower(0.0);
+                sleep(100);
+                rotateToAngle(90.0, 1.0, 0.2);
+                sleep(100);
+                driveStraight(true, 1.0, -0.6, 250);
+                sleep(100);
+                armMotion(false, 0.8, 300);
+                sleep(250);
+                handMotion(false);
+                sleep(250);
+                armMotion(true, 0.8, 400);
+                sleep(250);
+                handMotion(true);
+                sleep(250);
+                rotateToAngle(0, 1.0, 0.2);
+                sleep(100);
+                driveStraight(true, 1.0, -0.6, 250);
             }
         }
     }
