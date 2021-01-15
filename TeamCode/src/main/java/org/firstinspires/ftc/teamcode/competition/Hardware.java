@@ -37,6 +37,17 @@ import static java.lang.Math.abs;
  */
 public class Hardware {
 
+    public enum SelectedGoal
+    {
+
+        HIGHGOAL,
+        MIDGOAL,
+        LOWGOAL,
+        POWERSHOTONE,
+        POWERSHOTTWO,
+        POWERSHOTTHREE
+
+    }
 
     //Positions of the odometry wheels
     public ThreeTrackingWheelLocalizer odom = new ThreeTrackingWheelLocalizer(
@@ -444,15 +455,13 @@ public class Hardware {
     }
 
 
-    public double getLaunchedRingVelocity(){  return 0; }
-
     /**
      * Calculates an angle to launch rings at so they will hit a specified game target (assuming the robot turns to face the target)
      *
      * @param goal which of the targets to aim rings at
-     * @return an angle which, if rings are launched at when facing a target, will hit that target
+     * @return An array containing two double. The first double being angle which, if rings are launched at with the correct velocity when facing a target, will hit that target at the top of their parabola, and the second double being said velocity.
      * */
-    public double getFlyWheelAngle(SelectedGoal goal)
+    public double[] getFlyWheelAngle(SelectedGoal goal)
     {
 
         //set the x, y, and z of the target to shoot rings at
@@ -497,15 +506,11 @@ public class Hardware {
 
         //calculate what the distance from the launch mech to the goal will be after the robot has turned to face the goal
         double distance = Math.sqrt(Math.pow(x-xGoal,2)+Math.pow(y-yGoal,2))-distCenterToLaunch;
-        //get the velocity of the ring
-        double velocity = getLaunchedRingVelocity();
+        //return the angle to launch rings
+        double angle = Math.atan(4/3*zGoal/distance);
+        double velocity = distance/Math.cos(angle)*Math.sqrt(ringGravitationalConstant/(2*(distance*Math.tan(angle)-zGoal)));
 
-        //intermediate steps in the calculation to reuse for calculating both of the 2 possible launch angle
-        double vSquared = Math.pow(velocity,2);
-        double gx = ringGravitationalConstant*distance;
-        double sqrt = Math.sqrt(Math.pow(vSquared,2)-ringGravitationalConstant*(gx*distance+2*zGoal*vSquared));
-
-        return Math.atan((vSquared-sqrt)/gx);
+        return new double[]{angle,velocity};
 
     }
 
