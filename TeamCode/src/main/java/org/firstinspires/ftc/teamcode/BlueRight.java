@@ -22,7 +22,7 @@ public class BlueRight extends OpMode {
     RingNumber ringNumber = RingNumber.ZERO;
 
     //Can be used to choose whether we shoot power shots or in the high goal
-    Boolean powerShot = false;
+    Boolean powerShot = true;
 
     private double waitTime;
     private ElapsedTime runtime = new ElapsedTime();
@@ -40,7 +40,7 @@ public class BlueRight extends OpMode {
 
         stateMachineFlow = 0;
     }
-    public void initLoop() {
+    public void init_loop() {
         if (gamepad2.dpad_up) {
             powerShot = true;
         }if (gamepad2.dpad_down) {
@@ -55,13 +55,14 @@ public class BlueRight extends OpMode {
         switch(stateMachineFlow) {
             case 0:
                 //Drive into place to check number of rings
-                robot.linearDrive(.5,-32);
-                waitTime = .5;
+                robot.linearDrive(.5,-34);
+                waitTime = 1;
                 runtime.reset();
                 time = runtime.time();
                 while (waitTime > runtime.time() - time) {
 
                 }
+                intake.lowerIntake();
                 stateMachineFlow++;
                 break;
             case 1:
@@ -96,12 +97,12 @@ public class BlueRight extends OpMode {
               **************************/
             case 100:
                 //Drive forward
-                robot.linearDrive(.5,-44);
+                robot.linearDrive(.5,-42);
                 stateMachineFlow++;
                 break;
             case 101:
                 //Drive left into zone A
-                robot.sideDrive(.5,26);
+                robot.sideDrive(.4,28);
                 stateMachineFlow++;
                 break;
             case 102:
@@ -157,7 +158,7 @@ public class BlueRight extends OpMode {
                 break;
             case 107:
                 //Move right to be in line with goal
-                robot.sideDrive(.5, -4);
+                robot.sideDrive(.4, -4);
                 stateMachineFlow++;
                 break;
             case 108:
@@ -194,12 +195,12 @@ public class BlueRight extends OpMode {
                  */
             case 150:
                 //Move right in line with first power shot
-                robot.sideDrive(.5,-26);
+                robot.sideDrive(.4,-26);
                 stateMachineFlow++;
                 break;
             case 151:
                 //Turn on the shooter
-                shooter.shooterPower(-.825);
+                shooter.shooterPower(-.85);
                 waitTime = 1;
                 runtime.reset();
                 time = runtime.time();
@@ -244,7 +245,7 @@ public class BlueRight extends OpMode {
                 break;
             case 156:
                 //Move forward onto the shot line
-                robot.linearDrive(.5,5);
+                robot.linearDrive(.5,-5);
                 stateMachineFlow++;
                 break;
                 /*
@@ -258,7 +259,7 @@ public class BlueRight extends OpMode {
              **************************/
             case 200:
                 //Drive forward to zone B
-                robot.linearDrive(.5,-96);
+                robot.linearDrive(.5,-94);
                 stateMachineFlow++;
                 break;
             case 201:
@@ -416,7 +417,7 @@ public class BlueRight extends OpMode {
                  **************************/
             case 300:
                 //Drive forward
-                robot.linearDrive(.5,-120);
+                robot.linearDrive(.5,-118);
                 stateMachineFlow++;
                 break;
             case 301:

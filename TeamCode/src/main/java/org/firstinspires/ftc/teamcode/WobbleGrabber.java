@@ -31,7 +31,7 @@ public class WobbleGrabber {
 
         //Set initial positions of servos
         gripWrist.setPosition(.27);
-        gripServo.setPosition(.7);
+        gripServo.setPosition(.77);
 
     }
 

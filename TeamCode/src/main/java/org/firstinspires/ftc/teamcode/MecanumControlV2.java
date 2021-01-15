@@ -143,7 +143,7 @@ public class MecanumControlV2 extends OpMode {
 
         //Control grabber servo
         if (gamepad1.dpad_down) {
-            grabber.gripperPosition(.7);
+            grabber.gripperPosition(.77);
         }else if (gamepad1.dpad_up) {
             grabber.gripperPosition(0);
         }
