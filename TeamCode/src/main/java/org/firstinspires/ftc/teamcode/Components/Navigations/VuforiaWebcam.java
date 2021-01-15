@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.firstinspires.ftc.teamcode.key;
+import static org.firstinspires.ftc.teamcode.Components.Navigations.Navigation.*;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
@@ -42,7 +43,6 @@ public class VuforiaWebcam extends Thread {
     private double xpos, ypos, angle;
     private double vuforiaAngle = 90.0;
 
-    //TODO: Aamod, what is the purpose of this? Doesn't look like this is being used anywhere.
     //It is used on line 193 for debugging purposes. This is why it isn't currently in use.
     private String trackable;
 
@@ -160,13 +160,17 @@ public class VuforiaWebcam extends Thread {
 
             // Return Location Data (Last Known Location)
             if (targetVisible) {
+//                setInVuforia(true);
                 VectorF translation = lastLocation.getTranslation();
                 op.telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+//                setXposition(translation.get(0) / mmPerInch);
+//                setYposition(translation.get(1) / mmPerInch);
                 xpos = translation.get(0) / mmPerInch;
                 ypos = translation.get(1) / mmPerInch;
                 angle = rotation.thirdAngle;
+//                setInVuforia(false);
                 op.telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
             }
             else {

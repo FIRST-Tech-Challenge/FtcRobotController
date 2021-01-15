@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Components.Navigations;
 
+import org.firstinspires.ftc.teamcode.Components.Navigations.Odometry;
+import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
+
 public class Navigation {
     private static double xPosition;
     private static double yPosition;
@@ -23,7 +26,7 @@ public class Navigation {
         return yPosition;
     }
 
-    public static void getYposition(double newValue){
+    public static void setYposition(double newValue){
         yPosition = newValue;
     }
 
@@ -55,4 +58,15 @@ public class Navigation {
         return inVuforia;
     }
 
+
+    public void navigate() {
+//        Thread vuforia = new Thread(new VuforiaWebcam(op));
+//        Thread odometry = new Thread(new Odometry(op));
+
+//        odometry.start();
+//        vuforia.start();
+        while (true) {
+
+        }
+    }
 }

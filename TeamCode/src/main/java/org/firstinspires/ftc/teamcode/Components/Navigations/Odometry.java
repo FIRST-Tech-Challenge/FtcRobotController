@@ -79,9 +79,9 @@ public class Odometry extends Thread {
                 odom[2] += odomconst[2]*diff[2];
                 double x =  cos((getAngle() * Math.PI / 180));
                 double y = sin((getAngle() * Math.PI / 180));
-                setXposition((y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1);
-                ypos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
-                angle=getAngle();
+                setXposition(getXposition()+(y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1);
+                setYposition(getYposition()+ (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1);
+                setAngle(getAngle());
             }
         }
     }
