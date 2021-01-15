@@ -239,7 +239,7 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
                     lastPose = trajPickRingsFromTargetMark.end();
                     if (hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal == true) {
                         trajTurnToHighGoal = hzDrive.trajectoryBuilder(lastPose)
-                                .lineToLinearHeading(new Pose2d(-5, 36, Math.toRadians(-180)))
+                                .lineToLinearHeading(new Pose2d(-5, 36, Math.toRadians(0)))
                                 .build();
                         lastPose = trajTurnToHighGoal.end();
                     }
@@ -276,7 +276,7 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
                     lastPose = trajPickRingsFromTargetMark.end();
                     if (hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal == true) {
                         trajTurnToHighGoal = hzDrive.trajectoryBuilder(lastPose)
-                                .lineToLinearHeading(new Pose2d(-5, 36, Math.toRadians(-180)))
+                                .lineToLinearHeading(new Pose2d(-5, 36, Math.toRadians(0)))
                                 .build();
                         lastPose = trajTurnToHighGoal.end();
                     }
@@ -307,14 +307,19 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
         switch(currentAutoStepState) {
             case INITIATE:
                 hzAutoControl.setMagazineToLaunch();
-                hzAutoControl.setLaunchTargetHighGoal();
-                currentAutoStepState = AutoStepState.TRAJ_LAUNCH_RINGS_HIGHGOAL;
+                if (hzAutoControl.autoLaunchAim == HzAutoControl.AutoLaunchAim.HIGHGOAL) {
+                    hzAutoControl.setLaunchTargetHighGoal();
+                    currentAutoStepState = AutoStepState.TRAJ_LAUNCH_RINGS_HIGHGOAL;
+                } else {
+                    hzAutoControl.setLaunchTargetPowerShot1();
+                    currentAutoStepState = AutoStepState.TRAJ_LAUNCH_RING_POWERSHOT1;
+                }
                 break;
 
             case TRAJ_LAUNCH_RINGS_HIGHGOAL:
                 if (!hzDrive.isBusy()) {
                     hzDrive.followTrajectoryAsync(trajLaunchRingsHighGoal);
-                    currentAutoStepState = AutoStepState.TRAJ_LAUNCH_RINGS_HIGHGOAL;
+                    currentAutoStepState = AutoStepState.LAUNCH_RINGS_HIGHGOAL;
                 }
                 break;
 
@@ -356,7 +361,7 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
                 break;
             case LAUNCH_RINGS_POWERSHOT2:
                 hzAutoControl.setMagazineToLaunch();
-                hzAutoControl.setLaunchTargetPowerShot1();
+                hzAutoControl.setLaunchTargetPowerShot2();
                 hzWait(500);
                 hzAutoControl.setRunLauncherTrue();
                 currentAutoStepState = AutoStepState.TRAJ_LAUNCH_RING_POWERSHOT3;
@@ -371,7 +376,7 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
 
             case LAUNCH_RINGS_POWERSHOT3:
                 hzAutoControl.setMagazineToLaunch();
-                hzAutoControl.setLaunchTargetPowerShot1();
+                hzAutoControl.setLaunchTargetPowerShot3();
                 hzWait(500);
                 hzAutoControl.setRunLauncherTrue();
                 currentAutoStepState = AutoStepState.TRAJ_SAFE_POSITION_BEFORE_WOBBLE_TARGET_DROP;
@@ -431,14 +436,10 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
             case TRAJ_PICK_RINGS_FROM_TARGET_MARK:
                 if (!hzDrive.isBusy()) {
                     hzDrive.followTrajectoryAsync(trajPickRingsFromTargetMark);
-                    if (targetZone == HzGameField.TARGET_ZONE.A){
-                        currentAutoStepState = AutoStepState.TRAJ_SAFE_POSITION_BEFORE_PARK;
+                    if (hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal == true){
+                        currentAutoStepState = AutoStepState.TRAJ_TURN_TO_HIGH_GOAL;
                     } else {
-                        if (hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal == true){
-                            currentAutoStepState = AutoStepState.TRAJ_TURN_TO_HIGH_GOAL;
-                        } else {
-                            currentAutoStepState = AutoStepState.TRAJ_SAFE_POSITION_BEFORE_PARK;
-                        }
+                        currentAutoStepState = AutoStepState.TRAJ_SAFE_POSITION_BEFORE_PARK;
                     }
                 }
                 break;
@@ -446,7 +447,7 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
             case TRAJ_TURN_TO_HIGH_GOAL:
                 if (!hzDrive.isBusy()) {
                     hzDrive.followTrajectoryAsync(trajTurnToHighGoal);
-                    currentAutoStepState = AutoStepState.DROP_WOBBLE_GOAL_ON_TARGET;
+                    currentAutoStepState = AutoStepState.LAUNCH_RINGS_HIGHGOAL_SECOND;
                 }
                 break;
 
@@ -468,7 +469,7 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
             case TRAJ_SAFE_POSITION_BEFORE_PARK:
                 if (!hzDrive.isBusy()) {
                     hzDrive.followTrajectoryAsync(trajSafePostionBeforePark);
-                    currentAutoStepState = AutoStepState.DROP_WOBBLE_GOAL_ON_TARGET;
+                    currentAutoStepState = AutoStepState.TRAJ_PARK;
                 }
                 break;
 
@@ -506,7 +507,7 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
 
         HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
         startPose = HzGameField.BLUE_INNER_START_LINE;
-        activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
+        activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
 
         while (!isStopRequested()) {
             telemetry.addData("Playing Alliance :", HzGameField.playingAlliance);

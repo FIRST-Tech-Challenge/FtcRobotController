@@ -197,18 +197,21 @@ public class HzGamepad {
             if (getButtonXPress()) {
                 gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
                 gpHzLaunchController.activateLaunchReadinessState = true;
+                gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_LEFT;
             }
 
             //Power Shot 2
             if (getButtonBPress()) {
                 gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
                 gpHzLaunchController.activateLaunchReadinessState = true;
+                gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_RIGHT;
             }
 
             //Power Shot 3
             if (getButtonAPress()) {
                 gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT3;
                 gpHzLaunchController.activateLaunchReadinessState = true;
+                gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_CENTER;
             }
         }
 

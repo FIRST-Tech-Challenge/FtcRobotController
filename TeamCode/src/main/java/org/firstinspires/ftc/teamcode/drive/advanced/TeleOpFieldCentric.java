@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.advanced;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * See lines 42-57.
  */
 @TeleOp(name = "TestAdvanced:TeleOpFieldCentric", group = "TestAdvanced")
+@Disabled
 public class TeleOpFieldCentric extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

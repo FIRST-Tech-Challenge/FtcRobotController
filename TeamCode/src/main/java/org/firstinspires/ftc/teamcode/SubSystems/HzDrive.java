@@ -6,20 +6,17 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-//import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-//import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-
-//import org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder;
-//import org.firstinspires.ftc.teamcode.drive.MecanumDriveDeadWheelsEncoder;
 
 import org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDriveEncoders;
 import org.firstinspires.ftc.teamcode.drive.HzMecanumDriveDriveEncoders;
-
-
-
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
+
+//import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+//import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+//import org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder;
+//import org.firstinspires.ftc.teamcode.drive.MecanumDriveDeadWheelsEncoder;
 
 //public class HzDrive extends SampleMecanumDrive {
 public class HzDrive extends HzMecanumDriveDriveEncoders {
@@ -58,6 +55,15 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
                 return NORMAL_CONTROL;
         }
     }
+
+    enum AugmentedControl {
+        NONE,
+        TURN_CENTER,
+        TURN_DELTA_LEFT,
+        TURN_DELTA_RIGHT
+    }
+
+    public AugmentedControl augmentedControl = AugmentedControl.NONE;
 
     public DriveMode driveMode = DriveMode.NORMAL_CONTROL; //Default initializer
     public static double DRAWING_TARGET_RADIUS = 2;
@@ -121,6 +127,24 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
                         gamepadInput.getY(),
                         gamepadInputTurn
                 );
+
+                switch (augmentedControl){
+                    case NONE :
+                        augmentedControl = AugmentedControl.NONE;
+                        break;
+                    case TURN_CENTER:
+                        turnAsync(Angle.normDelta(Math.toRadians(0) - poseEstimate.getHeading()));
+                        augmentedControl = AugmentedControl.NONE;
+                        break;
+                    case TURN_DELTA_LEFT:
+                        turnAsync(Angle.normDelta(Math.toRadians(-5)));
+                        augmentedControl = AugmentedControl.NONE;
+                        break;
+                    case TURN_DELTA_RIGHT:
+                        turnAsync(Angle.normDelta(Math.toRadians(5)));
+                        augmentedControl = AugmentedControl.NONE;
+                        break;
+                }
                 break;
 
             case ALIGN_TO_POINT:

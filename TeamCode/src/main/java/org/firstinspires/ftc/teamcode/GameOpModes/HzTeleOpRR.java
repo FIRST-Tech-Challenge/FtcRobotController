@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLaunchController;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
 import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
-import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 
 
 /**
@@ -36,7 +35,7 @@ public class HzTeleOpRR extends LinearOpMode {
     public HzLauncher hzLauncher;
     public HzArm hzArm;
 
-    public HzVuforia hzVuforia1;
+    //public HzVuforia hzVuforia1;
     public Pose2d startPose = HzGameField.calibPoint;
     //int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
 
