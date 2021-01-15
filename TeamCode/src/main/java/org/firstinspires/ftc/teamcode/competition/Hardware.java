@@ -72,8 +72,8 @@ public class Hardware {
     //Radius of flyWheels in inches
     private static final double flyWheelRadius = 1.5;
 
-    // Robot physical location]
-    public double x, y, theta;
+    // Robot physical location
+    public static double x, y, theta;
 
     //Robot velocity
     public double xVelocity, yVelocity, thetaVelocity;
@@ -194,10 +194,15 @@ public class Hardware {
 
         flicker = hwMap.servo.get("flicker");
 
-        flicker.setPosition(1);
-
         e = new ElapsedTime();
         e.startTime();
+
+    }
+
+    public void initServos()
+    {
+
+        flicker.setPosition(1);
 
     }
 
@@ -222,12 +227,8 @@ public class Hardware {
 
         // Update real world distance traveled by the odometry wheels, regardless of orientation
 
-        leftOdomTraveled += deltaLeftDist*1;
-
-        if(deltaRightDist<0)
-            rightOdomTraveled += deltaRightDist*1;
-        else
-            rightOdomTraveled += deltaRightDist;
+        leftOdomTraveled += deltaLeftDist;
+        rightOdomTraveled += deltaRightDist;
         centerOdomTraveled += deltaCenterDist;
         double lastX = x;
         double lastY = y;
@@ -308,6 +309,18 @@ public class Hardware {
 
         flywheelMotorLeft.setPower(power);
         flywheelMotorRight.setPower(power);
+
+    }
+
+    /**
+     * Sets the velocity of the fly wheels
+     * @Param velocity velocity to run the fly wheels at in RPM (RPM of the motor with not including gearing)
+     * */
+    public void setFlyWheelVelocity(double velocity)
+    {
+
+        flywheelMotorLeft.setPower(velocity);
+        flywheelMotorRight.setPower(velocity);
 
     }
 
