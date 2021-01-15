@@ -323,13 +323,17 @@ public class Robot {
     }
 
     public void shootLowGoal(int rings){
-        shooter.shootMidGoal(rings);
+        shooter.shootLowGoal(rings);;
     }
 
 
 
     public void shootGoalTeleop(int distance) {
             shooter.shootGoalTeleop(distance);
+    }
+
+    public void shootPowershot(int distance){
+        shooter.shootPowershot(distance);
     }
 
     public void stopShooter(){

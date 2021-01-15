@@ -29,6 +29,7 @@ public class Shooter {
     protected double highGoalVelocity = 1675;
     protected double middleGoalVelocity = 1600;
     protected double lowGoalVelocity = 1500;
+    protected double powershotVelocity = 1725;
 
     public Shooter(LinearOpMode opMode) {
         op = opMode;
@@ -115,5 +116,8 @@ public class Shooter {
         shoot(lowGoalVelocity, 1000, 3);
         }
 
+    public void shootPowershot (int rings){
+    shoot(powershotVelocity, 1000, 3);
     }
+}
 
