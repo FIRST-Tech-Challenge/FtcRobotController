@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.RingDepositor;
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
-import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Robot;
 
 /**
  * Teleop w/ drivetrain, shooter(still in testing), and wobblegoal
@@ -20,14 +20,14 @@ import org.firstinspires.ftc.teamcode.Components.BasicChassis;
  *
  * @author  Nathan
  * @version 1.0
- * @since   2020-November-11
+ * @since   2020-Jan-13
  *
  */
 
 
-@TeleOp(name = "Teleop ")
+@TeleOp(name = "OneGPTeleop ")
 //@Disabled
-public class Teleop extends LinearOpMode {
+public class OneGPTeleop extends LinearOpMode {
 
     // new version of runopmode that supports inplaceturn slowmode and can toggle slowmode on and off with one button - tested by aiden jonathan ma
     public void runOpMode() {
@@ -73,14 +73,10 @@ public class Teleop extends LinearOpMode {
             boolean smart_depo = gamepad1.left_bumper;
 //            float start_intake = gamepad1.right_trigger;
 //            float stop_intake = gamepad1.left_trigger;
-            boolean wobble_goal_servo = gamepad1.x;
+            boolean wobble_goal_servo = gamepad1.y;
             boolean slow = gamepad1.a;
-            boolean b_button = gamepad1.b;
-            boolean y_button2 = gamepad2.y;
-            boolean b_button2 = gamepad2.b;
-            boolean a_button2 = gamepad2.a;
-            boolean servo = gamepad2.x;
-            float shooter = gamepad2.right_trigger;
+            boolean shooter_servo = gamepad1.x;
+            float shooter = gamepad1.right_trigger;
 
             angleInRadian = Math.atan2(left_stick_y, left_stick_x);
             angleInDegree = Math.toDegrees(angleInRadian);
@@ -97,7 +93,7 @@ public class Teleop extends LinearOpMode {
 //            } else {
 //                moveServo = false;
 //            }
-            if (servo){
+            if (shooter_servo){
                 telemetry.addData("Servo", " SERVO Forward and Backward");
                 telemetry.update();
                 robot.moveServo(false);
