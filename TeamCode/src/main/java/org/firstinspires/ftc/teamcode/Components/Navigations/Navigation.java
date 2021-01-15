@@ -23,7 +23,7 @@ public class Navigation {
         return yPosition;
     }
 
-    public static void getYposition(double newValue){
+    public static void setYposition(double newValue){
         yPosition = newValue;
     }
 
