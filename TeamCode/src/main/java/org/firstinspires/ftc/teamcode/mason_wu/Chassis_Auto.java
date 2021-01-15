@@ -164,6 +164,29 @@ public class Chassis_Auto extends LinearOpMode
         return tempHead;
     }
 
+    void displayVoltageEncoderValue(){
+        try {
+            double volt = hardwareMap.voltageSensor.get("Motor Controller 1").getVoltage();
+            telemetry.addData("Motor Voltage: ", volt);
+            telemetry.update();
+        } catch(Exception e){
+            telemetry.addLine("Unable to find voltage value");
+        }
+        try{
+            double LFEnc = LF.getCurrentPosition();
+            double RFEnc = RF.getCurrentPosition();
+            double LBEnc = LB.getCurrentPosition();
+            double RBEnc = RB.getCurrentPosition();
+            telemetry.addData("LF Encoder Value: ", LFEnc);
+            telemetry.addData("RF Encoder Value: ", RFEnc);
+            telemetry.addData("LB Encoder Value: ", LBEnc);
+            telemetry.addData("RB Encoder Value: ", RBEnc);
+            telemetry.addData("Average Encoder Value: ", (LFEnc + LBEnc + RFEnc + RBEnc)/4.0);
+        } catch(Exception e){
+            telemetry.addLine("Unable to find encoder value");
+        }
+    }
+
     void driveStraight (boolean isForward, double margin, double power, double timeInterval) throws InterruptedException{
         ElapsedTime driveTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         final double currentAngle = aquireHeading();
@@ -208,6 +231,7 @@ public class Chassis_Auto extends LinearOpMode
             telemetry.update();
         }
         stopMotion();
+        displayVoltageEncoderValue();
     }
 
     void drivePerpendicularly(boolean isLeft, double margin, double power, double timeInterval){
@@ -254,6 +278,7 @@ public class Chassis_Auto extends LinearOpMode
             telemetry.update();
         }
         stopMotion();
+        displayVoltageEncoderValue();
     }
 
 
@@ -267,6 +292,7 @@ public class Chassis_Auto extends LinearOpMode
         double targetAngle = normalizeAngle(currentAngle + degree * angleFactor);
         rotateToAngle(targetAngle, margin, power);
         stopMotion();
+        displayVoltageEncoderValue();
     }
 
     //make a turn TO a certain angle
@@ -319,6 +345,7 @@ public class Chassis_Auto extends LinearOpMode
             telemetry.update();
         }
         stopMotion();
+        displayVoltageEncoderValue();
     }
     boolean armMotion(boolean moveUp, double power, double timeInterval){
         ElapsedTime armTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
