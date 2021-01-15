@@ -1,0 +1,52 @@
+package org.firstinspires.ftc.teamcode.Components.Navigations;
+
+public class Navigation {
+    private static double xPosition;
+    private static double yPosition;
+    private static double angle;
+    private static boolean inVuforia = false;
+    double pos[] = {xPosition,yPosition,angle};
+
+    public static synchronized void editDistance(double changeX, double changeY) {
+        xPosition+=changeX;
+        yPosition+=changeY;
+    }
+
+    public static double getXposition(){
+        return xPosition;
+    }
+
+    public static void setXposition(double newValue){
+        xPosition=newValue;
+    }
+
+    public static double getYposition(){
+        return yPosition;
+    }
+
+    public static void getYposition(double newValue){
+        yPosition = newValue;
+    }
+
+    public static double getAngle() {
+        return angle;
+    }
+
+    public double[] getPosition(){
+        return pos;
+    }
+
+    public static void setAngle(double newAngle) {
+        angle = newAngle;
+    }
+
+    public static boolean getInVuforia() {
+        return inVuforia;
+    }
+
+    public static boolean setInVuforia(boolean set) {
+        inVuforia = set;
+        return inVuforia;
+    }
+
+}

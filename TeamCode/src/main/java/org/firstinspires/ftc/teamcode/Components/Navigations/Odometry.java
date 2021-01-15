@@ -19,17 +19,18 @@ import static java.lang.Math.sqrt;
 
 //TODO: Warren & Aamod, something to think about, we can come up with common interface or abstrat class for navigation.
 public class Odometry extends Thread {
+    private Odometry odometry = null;
     DcMotorEx odom1;
     DcMotorEx odom2;
     DcMotorEx odom3;
-    int[] odomconst = {-2,2,-1};
-    double ticks_per_inch = (8640*2.54/38*Math.PI)*72/76;//
+    int[] odomconst = {1,1,1};
+    double ticks_per_inch = (8640*2.54/38*Math.PI)*72/76;
     double robot_diameter = sqrt(619.84);
     double[] odom = new double[3];
     double xpos,ypos,angle;
     private LinearOpMode op = null;
     private BNO055IMU imu;
-    private Orientation lastAngles = new Orientation();
+    private Orientation             lastAngles = new Orientation();
     private double globalAngle, power = .30, correction;
 
     public Odometry(LinearOpMode opMode) {
@@ -67,19 +68,20 @@ public class Odometry extends Thread {
         op.telemetry.addData("Mode", "waiting for start");
         op.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         op.telemetry.update();
-        op.sleep(500);
     }
     public void run() {
         while(!isInterrupted()) {
-            double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
-            odom[0] += odomconst[0]*diff[0];
-            odom[1] += odomconst[1]*diff[1];
-            odom[2] += odomconst[2]*diff[2];
-            double x =  cos((getAngle() * Math.PI / 180));
-            double y = sin((getAngle() * Math.PI / 180));
-            xpos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*-1;
-            ypos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
-            angle=getAngle();
+            if(true) {//getInVuforia
+                double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
+                odom[0] += odomconst[0]*diff[0];
+                odom[1] += odomconst[1]*diff[1];
+                odom[2] += odomconst[2]*diff[2];
+                double x =  cos((getAngle() * Math.PI / 180));
+                double y = sin((getAngle() * Math.PI / 180));
+                xpos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1;
+                ypos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
+                angle=getAngle();
+            }
         }
     }
     public double getAngle() {
@@ -98,6 +100,6 @@ public class Odometry extends Thread {
 
         lastAngles = angles;
 
-        return -globalAngle;
+        return globalAngle;
     }
 }
