@@ -171,6 +171,7 @@ public class Chassis_Auto extends LinearOpMode
             telemetry.update();
         } catch(Exception e){
             telemetry.addLine("Unable to find voltage value");
+            telemetry.update();
         }
         try{
             double LFEnc = LF.getCurrentPosition();
@@ -182,8 +183,10 @@ public class Chassis_Auto extends LinearOpMode
             telemetry.addData("LB Encoder Value: ", LBEnc);
             telemetry.addData("RB Encoder Value: ", RBEnc);
             telemetry.addData("Average Encoder Value: ", (LFEnc + LBEnc + RFEnc + RBEnc)/4.0);
+            telemetry.update();
         } catch(Exception e){
             telemetry.addLine("Unable to find encoder value");
+            telemetry.update();
         }
     }
 
@@ -229,6 +232,7 @@ public class Chassis_Auto extends LinearOpMode
             telemetry.addData("LF_power", LF_power);
             telemetry.addData("LB_power", LB_power);
             telemetry.update();
+            displayVoltageEncoderValue();
         }
         stopMotion();
         displayVoltageEncoderValue();
