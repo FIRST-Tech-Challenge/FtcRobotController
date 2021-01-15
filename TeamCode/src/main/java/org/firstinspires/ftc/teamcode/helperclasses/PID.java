@@ -33,7 +33,7 @@ public class PID {
     }
 
     /**
-     * Updates the PID controller, this should be called every before the controller is used
+     * Updates the PID controller, this should be called every update before the controller is used
      *
      * @param error the error of the controller
      */
