@@ -7,9 +7,9 @@ import com.technototes.library.subsystem.motor.MotorSubsystem;
 import com.technototes.library.subsystem.servo.ServoSubsystem;
 import com.technototes.logger.Stated;
 
-public class WobbleSubsystem extends MotorSubsystem<Motor<?>> implements Stated<String> {
-    public Motor servo1;
-    public Motor servo2;
+public class WobbleSubsystem extends ServoSubsystem implements Stated<String> {
+    public Servo servo1;
+    public Servo servo2;
 
     public enum ArmPosition{
         RAISED(1), LOWERED(-1);
@@ -37,7 +37,8 @@ public class WobbleSubsystem extends MotorSubsystem<Motor<?>> implements Stated<
     public ClawPosition clawPosition;
     //(a+b)/2=armpos    (a-b+1)/2=clawpos
     //
-    public WobbleSubsystem(Motor<CRServo> s1, Motor<CRServo> s2){
+    public WobbleSubsystem(Servo s1, Servo s2){
+        super(s1, s2);
         servo1 = s1;
         servo2 = s2;
         armPosition = ArmPosition.LOWERED;
