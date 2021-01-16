@@ -86,22 +86,22 @@ public class YellowBot implements OdoBot {
 
             if (backLeft != null) {
                 backLeft.setDirection(DcMotor.Direction.FORWARD);
-                backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             if (backRight != null) {
                 backRight.setDirection(DcMotor.Direction.REVERSE);
-                backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             if (frontLeft != null) {
                 frontLeft.setDirection(DcMotor.Direction.FORWARD);
-                frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             if (frontRight != null) {
                 frontRight.setDirection(DcMotor.Direction.REVERSE);
-                frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             stop();
@@ -652,6 +652,16 @@ public class YellowBot implements OdoBot {
                         (forward == false && (longReading <= slowdownMarkLong || shortReading <= slowdownMarkShort));
                 if (slowingDown) {
                     //slowing down
+                    telemetry.addData("longReading", longReading);
+                    telemetry.addData("shortReading", shortReading);
+                    telemetry.addData("leftLong", leftLong);
+                    telemetry.addData("longTarget", longTarget);
+                    telemetry.addData("realSpeedRF", realSpeedRF);
+                    telemetry.addData("realSpeedRB", realSpeedRB);
+                    telemetry.addData("realSpeedLF", realSpeedLF);
+                    telemetry.addData("realSpeedLB", realSpeedLB);
+                    telemetry.update();
+
                     cruising = false;
                     //stop course correction
                     locator.setTarget(null);

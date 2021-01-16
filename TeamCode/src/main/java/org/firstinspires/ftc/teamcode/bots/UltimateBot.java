@@ -61,7 +61,7 @@ public class UltimateBot extends YellowBot {
         try {
             intake = hwMap.get(DcMotor.class, "intake");
             intake.setDirection(DcMotor.Direction.FORWARD);
-            intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             intake.setPower(0);
         } catch (Exception ex) {
             throw new Exception("Issues with intake. Check the controller config", ex);
@@ -70,7 +70,7 @@ public class UltimateBot extends YellowBot {
         try {
             shooter = hwMap.get(DcMotor.class, "shooter");
             shooter.setDirection(DcMotor.Direction.REVERSE);
-            shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             shooter.setPower(0);
         } catch (Exception ex) {
             throw new Exception("Issues with shooter. Check the controller config", ex);
