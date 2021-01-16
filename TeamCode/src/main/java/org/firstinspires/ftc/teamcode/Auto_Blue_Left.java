@@ -22,8 +22,7 @@ public class Auto_Blue_Left extends LinearOpMode {
     private DcMotorEx collector;
     private Servo sensorArm;
     private Servo pushover;
-    private DcMotor spindoctor1;
-    private DcMotor spindoctor2;
+    private DcMotor spindoctor;
     double distance;
 
     @Override
@@ -36,8 +35,7 @@ public class Auto_Blue_Left extends LinearOpMode {
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
         collector = hardwareMap.get(DcMotorEx.class, "collector");
-        spindoctor1 = hardwareMap.get(DcMotorEx.class, "spindoctor1");
-        spindoctor2 = hardwareMap.get(DcMotorEx.class, "spindoctor2");
+        spindoctor = hardwareMap.get(DcMotorEx.class, "spindoctor");
         sensorArm = hardwareMap.get(Servo.class, "sensorArm");
         pushover = hardwareMap.get(Servo.class, "pushover");
 
@@ -46,8 +44,7 @@ public class Auto_Blue_Left extends LinearOpMode {
         lb.setDirection(DcMotor.Direction.FORWARD);
         rb.setDirection(DcMotor.Direction.FORWARD);
         collector.setDirection(DcMotor.Direction.FORWARD);
-        spindoctor1.setDirection(DcMotor.Direction.FORWARD);
-        spindoctor2.setDirection(DcMotor.Direction.REVERSE);
+        spindoctor.setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
         runtime.reset();
@@ -56,8 +53,7 @@ public class Auto_Blue_Left extends LinearOpMode {
             if (distance <= 1.0){
 
                 // Autonomous A: four rings
-                spindoctor1.setPower(0);
-                spindoctor2.setPower(0);
+                spindoctor.setPower(0);
                 collector.setPower(0);
                 lf.setPower(0);
                 rf.setPower(0);
@@ -70,8 +66,7 @@ public class Auto_Blue_Left extends LinearOpMode {
             }else {
 
                 // check for Autonomous B
-                spindoctor1.setPower(0);
-                spindoctor2.setPower(0);
+                spindoctor.setPower(0);
                 collector.setPower(0);
                 lf.setPower(0);
                 rf.setPower(0);
@@ -81,11 +76,10 @@ public class Auto_Blue_Left extends LinearOpMode {
                 pushover.setPosition(0);
                 sleep(1000);
 
-                if (distance <= 1.0){
+                if (distance < 1.0){
 
                     // Autonomous B: one ring
-                    spindoctor1.setPower(0);
-                    spindoctor2.setPower(0);
+                    spindoctor.setPower(0);
                     collector.setPower(0);
                     lf.setPower(0);
                     rf.setPower(0);
@@ -98,8 +92,7 @@ public class Auto_Blue_Left extends LinearOpMode {
                 }else {
 
                     //Autonomous C: no rings
-                    spindoctor1.setPower(0);
-                    spindoctor2.setPower(0);
+                    spindoctor.setPower(0);
                     collector.setPower(0);
                     lf.setPower(0);
                     rf.setPower(0);
