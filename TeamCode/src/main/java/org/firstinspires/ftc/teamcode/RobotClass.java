@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,6 +24,9 @@ public class RobotClass {
     private DcMotor backLeft;
     private DcMotor backRight;
     private double ticks = 537;//537
+    private CRServo continuous1;
+    private CRServo continuous2;
+    private CRServo continuous3;
     BNO055IMU imu;
 
     public Telemetry telemetry;
@@ -34,6 +39,9 @@ public class RobotClass {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
+        continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
+        continuous2 = hardwareMap.get(CRServo.class, "cRServo2");
+        continuous3 = hardwareMap.get(CRServo.class, "cRServo3");
 
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -56,7 +64,7 @@ public class RobotClass {
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu1");
         imu.initialize(parameters);
 
         this.opmode = opmode;
@@ -314,14 +322,14 @@ public class RobotClass {
         telemetry.addData("Gyro Angle", getAngleFromGyro());
         telemetry.update();
         }
-    public void pivotRight (double speed, double angle) throws InterruptedException {
+    public void pivotRight (double speed, double angle) {
         telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
         telemetry.update();
 
-        frontLeft.setPower(-speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(-speed);
-        backRight.setPower(speed);
+        frontLeft.setPower(speed);
+        frontRight.setPower(-speed);
+        backLeft.setPower(speed);
+        backRight.setPower(-speed);
 
         double targetAngle = getAngleFromGyro() - angle;
 
@@ -364,7 +372,7 @@ public class RobotClass {
         telemetry.addData("Completed Gyro Angle: ", getAngleFromGyro());
         telemetry.update();
     }
-    public void pivotLeft (double speed, double angle) throws InterruptedException {
+    public void pivotLeft (double speed, double angle) {
         telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
         telemetry.update();
 
@@ -397,10 +405,10 @@ public class RobotClass {
         telemetry.addData("Middle Gyro Angle: ", getAngleFromGyro());
         telemetry.update();
 
-        frontLeft.setPower(-speed*.5);
-        frontRight.setPower(speed*.5);
-        backLeft.setPower(-speed*.5);
-        backRight.setPower(speed*.5);
+        frontLeft.setPower(speed*.5);
+        frontRight.setPower(-speed*.5);
+        backLeft.setPower(speed*.5);
+        backRight.setPower(-speed*.5);
         while (getAngleFromGyro() < angle) {
             
             telemetry.addData("Correcting Gyro Angle: ", getAngleFromGyro());
@@ -459,7 +467,7 @@ public class RobotClass {
 
         stopMotors();
     }
-    public void mecanumWitchcraft (double degree, double time) throws InterruptedException {
+    public void mecanumWitchcraft (double degree, double time) {
         double x = java.lang.Math.cos(degree);
         double y = java.lang.Math.sin(degree);
 
@@ -552,9 +560,16 @@ public class RobotClass {
         backLeft.setPower(Math.abs(-speed));
         backRight.setPower(Math.abs(speed));
 
+
+    }
+    public void testServo1 (double speed, double duration) {
+        continuous1.setPower(speed);
+
+        for (int num = 0; num < duration; num ++) {
+            //LAUGHTER
+            telemetry.addData("LAUGHTER: Now ", num);
+            telemetry.update();
+        }
+        continuous1.setPower(0);
     }
     }
-
-
-
-
