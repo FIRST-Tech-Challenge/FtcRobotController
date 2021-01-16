@@ -111,26 +111,43 @@ public class UltimateMode extends LinearOpMode {
                     robot.openWobbleClaw();
                 }
 
-                // move swing
+                // move swing thread
+//                if (gamepad1.dpad_up) {
+//                    bta = new BotThreadAction(robot, telemetry, "wobbleforward", this);
+//                    btaThread = new Thread(bta);
+//                    btaThread.start();
+//                } else if (gamepad1.dpad_down) {
+//                    bta = new BotThreadAction(robot, telemetry, "wobbleback", this);
+//                    btaThread = new Thread(bta);
+//                    btaThread.start();
+//                } else if (gamepad1.dpad_left) {
+//                    bta = new BotThreadAction(robot, telemetry, "wobblewall", this);
+//                    btaThread = new Thread(bta);
+//                    btaThread.start();
+//                } else if (gamepad1.x && buttonpressable) {
+//                    startdelay = runtime.milliseconds();
+//                    bta = new BotThreadAction(robot, telemetry, "wallclose", this);
+//                    btaThread = new Thread(bta);
+//                    btaThread.start();
+//                    changedclaw = !changedclaw;
+//                }
 
-                if (gamepad1.dpad_up) {
-                    bta = new BotThreadAction(robot, telemetry, "wobbleforward", this);
-                    btaThread = new Thread(bta);
-                    btaThread.start();
-                } else if (gamepad1.dpad_down) {
-                    bta = new BotThreadAction(robot, telemetry, "wobbleback", this);
-                    btaThread = new Thread(bta);
-                    btaThread.start();
+
+                // wobble swing regular
+                if (gamepad1.dpad_up && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    robot.groundWobbleTeleop();
+                } else if (gamepad1.dpad_down && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    robot.backWobbleSwing();
                 } else if (gamepad1.dpad_left) {
-                    bta = new BotThreadAction(robot, telemetry, "wobblewall", this);
-                    btaThread = new Thread(bta);
-                    btaThread.start();
+                    robot.wobbleLittleUp();
                 } else if (gamepad1.x && buttonpressable) {
                     startdelay = runtime.milliseconds();
-                    bta = new BotThreadAction(robot, telemetry, "wallclose", this);
-                    btaThread = new Thread(bta);
-                    btaThread.start();
+                    robot.liftWallGrab();
                     changedclaw = !changedclaw;
+                } else if (gamepad1.y) {
+                    robot.wobbleLittleDown();
                 }
 
                 // move intake
