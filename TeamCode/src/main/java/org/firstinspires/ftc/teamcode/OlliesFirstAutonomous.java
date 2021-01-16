@@ -16,19 +16,19 @@ public class OlliesFirstAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        try {
-            robot.testGyro();
-            robot.forward(0.1, 8);
-           // robot.pivotLeft(.5, 90);
-          //  robot.turnRight(.5, 90);
-        }catch (Exception e){
+        robot.pivotLeft(.7,90);
+        telemetry.addData("pivot left complete",0);
+        telemetry.update();
+        robot.pivotRight(.7,90);
+        telemetry.addData("pivot right complete",0);
+        telemetry.update();
+        robot.strafeRight(.7,5);
+        telemetry.addData("strafe right complete",0);
+        telemetry.update();
+        robot.mecanumWitchcraft(76,2);
+        telemetry.addData("mecanum stuff complete",0);
+        telemetry.update();
 
-        }
-//        try {
-//            wait(30_000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
 
     }
 }
