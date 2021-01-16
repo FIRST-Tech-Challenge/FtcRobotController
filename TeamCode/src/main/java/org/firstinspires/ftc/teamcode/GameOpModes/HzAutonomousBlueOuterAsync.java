@@ -243,6 +243,7 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
                     trajPark = hzDrive.trajectoryBuilder(lastPose)
                             .lineToSplineHeading(new Pose2d(12, 0, Math.toRadians(0)))
                             .build();
+                    lastPose = trajPark.end();
                 } else {
                     trajSafePositionAfterWobbleTargetDrop = hzDrive.trajectoryBuilder(lastPose)
                             .lineToSplineHeading(new Pose2d(36, 36, Math.toRadians(0)))
@@ -280,6 +281,7 @@ public class HzAutonomousBlueOuterAsync extends LinearOpMode {
                     trajPark = hzDrive.trajectoryBuilder(lastPose)
                             .lineToSplineHeading(new Pose2d(12, 0, Math.toRadians(0)))
                             .build();
+                    lastPose = trajPark.end();
                 } else {
                     trajSafePositionAfterWobbleTargetDrop = hzDrive.trajectoryBuilder(lastPose)
                             .lineToSplineHeading(new Pose2d(36, 36, Math.toRadians(0)))

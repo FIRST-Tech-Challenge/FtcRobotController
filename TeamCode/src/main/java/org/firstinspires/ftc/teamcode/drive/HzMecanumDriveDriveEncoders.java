@@ -57,7 +57,7 @@ public class HzMecanumDriveDriveEncoders extends MecanumDrive {
     //EDIT THIS FOR STRAFE TEST
 
     //Main Robot Calibration Parameters
-    public static double LATERAL_MULTIPLIER = 1.14988235294117; //1;//(60.0/25.0); //60.0/61.0;
+    public static double LATERAL_MULTIPLIER = 1.22;//59.5/61.08;//1.14988235294117; //1;//(60.0/25.0); //60.0/61.0;
 
 
     public static double VX_WEIGHT = 1;

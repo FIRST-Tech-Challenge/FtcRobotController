@@ -247,7 +247,7 @@ public class HzVuforia {
             // (typically 1.78 or 16/9).
 
             // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
-            tfod.setZoom(2.0, 16.0/9.0);
+            tfod.setZoom(1.5, 16.0/9.0);
             updatedRecognitions = tfod.getUpdatedRecognitions();
         }
     }

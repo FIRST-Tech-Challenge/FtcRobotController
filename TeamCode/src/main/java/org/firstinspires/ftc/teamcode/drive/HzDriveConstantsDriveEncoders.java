@@ -55,7 +55,7 @@ public class HzDriveConstantsDriveEncoders {
     //Main Robot Calibration Parameters
     public static double WHEEL_RADIUS = 1.8898;//1.8898; // in
     //EDIT THIS FOR STRAIGHT TEST
-    public static double GEAR_RATIO = 1.0; // Test Robot : *55.5/60.0; // output (wheel) speed / input (motor) speed
+    public static double GEAR_RATIO = 1.055;//1.0; // Test Robot : *55.5/60.0; // output (wheel) speed / input (motor) speed
     //EDIT THIS FOR TRACK WIDTH TUNER TEST
     public static double TRACK_WIDTH = 15.64; //16.2;//16.1;// Test Robot : 10.75;//9.4; // in
 

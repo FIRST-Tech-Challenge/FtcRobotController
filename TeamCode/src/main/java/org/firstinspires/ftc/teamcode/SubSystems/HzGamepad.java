@@ -211,7 +211,11 @@ public class HzGamepad {
             if (getButtonAPress()) {
                 gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT3;
                 gpHzLaunchController.activateLaunchReadinessState = true;
-                gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_CENTER;
+                if (gpDrive.augmentedControl == HzDrive.AugmentedControl.NONE){
+                    gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_CENTER;
+                } else {
+                    gpDrive.augmentedControl = HzDrive.AugmentedControl.NONE;
+                };
             }
         }
 
