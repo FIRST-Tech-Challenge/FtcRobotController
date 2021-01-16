@@ -71,8 +71,8 @@ public class Teleop extends LinearOpMode {
             float right_stick_x = -gamepad1.right_stick_x;
             boolean move_wobble_goal_arm = gamepad1.right_bumper;
             boolean smart_depo = gamepad1.left_bumper;
-//            float start_intake = gamepad1.right_trigger;
-//            float stop_intake = gamepad1.left_trigger;
+            float start_intake = gamepad1.right_trigger;
+            float stop_intake = gamepad1.left_trigger;
             boolean wobble_goal_servo = gamepad1.x;
             boolean slow = gamepad1.a;
             boolean b_button = gamepad1.b;
@@ -201,11 +201,11 @@ public class Teleop extends LinearOpMode {
             }
 
             //intake
-//            if(start_intake == 1.00){
-//                robot.startIntake();
-//            } else if (stop_intake == 1.00){
-//                robot.stopIntake();
-//            }
+            if(start_intake == 1.00){
+                robot.startIntake();
+            } else if (stop_intake == 1.00){
+                robot.stopIntake();
+            }
 
         }
         idle();
