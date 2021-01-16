@@ -119,4 +119,9 @@ public class RingCamera {
         }
         return i;
     }
+
+    public void decativate() {
+        tfod.shutdown();
+        tfod.deactivate();
+    }
 }
