@@ -1219,7 +1219,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }
         if (tZone == TargetZone.ZONE_C) {
-            chassis.rawRotateTo(0.3, -5, true, 0.5);
+            chassis.rawRotateTo(0.3, -2.5, true, 0.5);
         }
 
         //sleep(1000);
@@ -1647,6 +1647,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public  double getVelocityToShoot(double dHorizontal, double dVertical){
         // (dx, dy) is the location delta from the target to the the robot
         // height is the target height to hit
+
+        //unit conversion - meters, inches, centimeters
         dHorizontal = dHorizontal/ 100.;
         dVertical  = dVertical /100.- 0.381;
         double shooterAngle = 31;
@@ -1654,8 +1656,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 /Math.cos(Math.toRadians(shooterAngle)))*dHorizontal*dHorizontal
                 /(dHorizontal*Math.tan(Math.toRadians(shooterAngle))-dVertical);
         if (vSquared < 0){ return -1;}
-
-
         return Math.sqrt(vSquared);
     }
     public double getShootingAngleErrorFromRPM(double rpm){

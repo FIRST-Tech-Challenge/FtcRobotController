@@ -46,8 +46,9 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
 
     private int verticalLeftEncoderPositionMultiplier = 1;
-    private int verticalRightEncoderPositionMultiplier = 1;
+    private double verticalRightEncoderPositionMultiplier = 1.18;
     private int normalEncoderPositionMultiplier = 1;
+
 
     public void set_orientationSensor(CombinedOrientationSensor val) {
         orientationSensor = val;
@@ -79,7 +80,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
      */
     private void globalCoordinatePositionUpdate(){
         //Get Current Positions
-        verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
+        verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition()* verticalLeftEncoderPositionMultiplier);
         verticalRightEncoderWheelPosition = (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
         normalEncoderWheelPosition = (horizontalEncoder.getCurrentPosition()*normalEncoderPositionMultiplier);
 
