@@ -126,7 +126,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Intake", defaultReturn = "")
     public void intake() {
         if (intake != null) {
-            intake.setPower(0.9);
+            intake.setPower(0.95);
         }
     }
 
