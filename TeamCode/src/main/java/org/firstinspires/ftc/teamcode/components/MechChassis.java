@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.hardware.Adjustable;
 import org.firstinspires.ftc.teamcode.support.hardware.Configurable;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
+import org.firstinspires.ftc.teamcode.support.tasks.Task;
 import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
 
 import java.io.FileOutputStream;
@@ -24,6 +25,7 @@ import java.util.List;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
+import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Thread.sleep;
 
@@ -640,6 +642,9 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                 desiredDegree = Math.toDegrees(Math.atan2(target_x - cur_x, target_y - cur_y));
             }
             if (Thread.interrupted()) break;
+            if (!TaskManager.isEmpty()) {
+                TaskManager.processTasks();
+            }
             //move
             motorPowers = angleMove(desiredDegree, powerUsed, true,
                     (autoDriveMode== AutoDriveMode.CONTINUE_NO_CORRECTION?desiredDegree:target_heading));
