@@ -51,6 +51,134 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
     // This sets the waypoints for randomization specific after match start.
     public abstract void setRandomizationPosition(int position);
 
+    public void shootPowershots() {
+        // Lets drive by time for now.
+        double headingAngle = 0.0;
+        double driveAngle = 225.0;
+        double drivePower = 0.5;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1150, true, true);
+
+        driveAngle = 200.0;
+        headingAngle = 7.0;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 950, true, true);
+        robot.setShooterFlapPowerShot();
+        robot.startInjecting();
+        while(!isStopRequested() && (robot.injectState != UltimateGoalRobot.INJECTING.IDLE)) {
+            sleep(15);
+            performRobotActions();
+        }
+
+        driveAngle = 90.0;
+        headingAngle = 7.0;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 350, true, true);
+        robot.startInjecting();
+        while(!isStopRequested() && (robot.injectState != UltimateGoalRobot.INJECTING.IDLE)) {
+            sleep(15);
+            performRobotActions();
+        }
+
+        driveAngle = 90.0;
+        headingAngle = 7.0;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 350, true, true);
+        robot.startInjecting();
+        while(!isStopRequested() && (robot.injectState != UltimateGoalRobot.INJECTING.IDLE)) {
+            sleep(15);
+            performRobotActions();
+        }
+    }
+
+    public void shootHighGoal(){
+        // Lets drive by time for now.
+        double headingAngle = 0.0;
+        double driveAngle = 225.0;
+        double drivePower = 0.3;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1100, true, true);
+
+        driveAngle = 200.0;
+        headingAngle = 5.0;
+        drivePower = 0.3;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1800, true, true);
+
+        driveAngle = 90.0;
+        headingAngle = 5.0;
+        drivePower = 0.3;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1400, true, true);
+
+        robot.setShooterFlapHighGoal();
+        robot.startTripleInjecting();
+        while(!isStopRequested() && (robot.tripleInjectState != UltimateGoalRobot.TRIPLE_INJECTING.IDLE)) {
+            sleep(15);
+            performRobotActions();
+        }
+        robot.toggleShooter();
+    }
+
+    public void dropWobbleTargetZoneA() {
+        double headingAngle = 0.0;
+        double driveAngle = 160.0;
+        double drivePower = 0.5;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1100, true, true);
+        robot.startStowedToReleaseWobbleGoal();
+        while(!isStopRequested() && (robot.stowedReleaseState != UltimateGoalRobot.STOWED_RELEASE_STATE.IDLE)) {
+            sleep(15);
+            performRobotActions();
+        }
+        headingAngle = 0.0;
+        driveAngle = 300.0;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 700, true, true);
+        robot.startStowArm();
+        while(!isStopRequested() && (robot.stowArmState != UltimateGoalRobot.STOW_ARM_STATE.IDLE)) {
+            sleep(15);
+            performRobotActions();
+        }
+    }
+
+    public void dropWobbleTargetZoneB() {
+        double headingAngle = 0.0;
+        double driveAngle = 197.0;
+        double drivePower = 0.5;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1800, true, true);
+        robot.startStowedToReleaseWobbleGoal();
+        while(!isStopRequested() && (robot.stowedReleaseState != UltimateGoalRobot.STOWED_RELEASE_STATE.IDLE)) {
+            sleep(15);
+            performRobotActions();
+        }
+        headingAngle = 0.0;
+        driveAngle = 330.0;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1250, true, true);
+        robot.startStowArm();
+        while(!isStopRequested() && (robot.stowArmState != UltimateGoalRobot.STOW_ARM_STATE.IDLE)) {
+            sleep(15);
+            performRobotActions();
+        }
+    }
+
+    public void dropWobbleTargetZoneC() {
+        double headingAngle = 45.0;
+        double driveAngle = 160.0;
+        double drivePower = 0.5;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1100, true, true);
+        headingAngle = 45.0;
+        driveAngle = 180.0;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1150, true, true);
+        robot.startStowedToReleaseWobbleGoal();
+        while(!isStopRequested() && (robot.stowedReleaseState != UltimateGoalRobot.STOWED_RELEASE_STATE.IDLE)) {
+            sleep(15);
+            performRobotActions();
+        }
+        headingAngle = 45.0;
+        driveAngle = 300.0;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 700, true, true);
+        headingAngle = 0.0;
+        driveAngle = 0.0;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1000, true, true);
+        robot.startStowArm();
+        while(!isStopRequested() && (robot.stowArmState != UltimateGoalRobot.STOW_ARM_STATE.IDLE)) {
+            sleep(15);
+            performRobotActions();
+        }
+    }
+
     @Override
     public void runOpMode() {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
@@ -128,38 +256,13 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
             robot.resetReads();
             MyPosition.setPosition(startLocation.x, startLocation.y, startLocation.angle);
 
-            // Lets drive by time for now.
-            double headingAngle = 0.0;
-            double driveAngle = 225.0;
-            double drivePower = 0.5;
-            driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1150, true, true);
-
-            driveAngle = 200.0;
-            headingAngle = 7.0;
-            driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 950, true, true);
-            robot.setShooterFlapPowerShot();
-            robot.startInjecting();
-            while(!isStopRequested() && (robot.injectState != UltimateGoalRobot.INJECTING.IDLE)) {
-                sleep(15);
-                performRobotActions();
-            }
-
-            driveAngle = 90.0;
-            headingAngle = 7.0;
-            driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 350, true, true);
-            robot.startInjecting();
-            while(!isStopRequested() && (robot.injectState != UltimateGoalRobot.INJECTING.IDLE)) {
-                sleep(15);
-                performRobotActions();
-            }
-
-            driveAngle = 90.0;
-            headingAngle = 7.0;
-            driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 350, true, true);
-            robot.startInjecting();
-            while(!isStopRequested() && (robot.injectState != UltimateGoalRobot.INJECTING.IDLE)) {
-                sleep(15);
-                performRobotActions();
+            shootHighGoal();
+            if(randomizationPosition == 1) {
+                dropWobbleTargetZoneA();
+            } else if(randomizationPosition == 2) {
+                dropWobbleTargetZoneB();
+            } else {
+                dropWobbleTargetZoneC();
             }
         }
 

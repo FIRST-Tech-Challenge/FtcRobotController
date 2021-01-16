@@ -37,7 +37,6 @@ import static java.lang.Math.sqrt;
 public class UltimateGoalRobot
 {
     /* Public OpMode members. */
-    public final static double SHOOT_POWER = 0.47;
     public final static double SHOOT_VELOCITY = 1120;
     public final static double SHOOT_VELOCITY_ERROR = 20;
     public final static double THROTTLE_TIMEOUT = 7000;
@@ -75,7 +74,7 @@ public class UltimateGoalRobot
     public FLAP_POSITION flapPosition;
     public final static double FLAP_POWERSHOT = 0.620;
     public double powerShotOffset = 0.0;
-    public final static double FLAP_HIGH_GOAL = 0.525;
+    public final static double FLAP_HIGH_GOAL = 0.517;
     public double highGoalOffset = 0.0;
     public double flapAngle;
 
@@ -711,7 +710,7 @@ public class UltimateGoalRobot
     public final static double INJECTOR_HOME = 0.55;
     public final static double INJECTOR_RESET = 0.450;
     public final static double INJECTOR_FIRE = 0.800;
-    public final static int VELOCITY_SUCCESS_CHECKS = 3;
+    public final static int VELOCITY_SUCCESS_CHECKS = 6;
     public boolean disableVelocityCheck = false;
     public int sequentialStableVelocityChecks = 0;
     public enum INJECTING {
@@ -941,12 +940,12 @@ public class UltimateGoalRobot
         RELEASE_WOBBLE
     }
     public STOWED_RELEASE_STATE stowedReleaseState = STOWED_RELEASE_STATE.IDLE;
-    protected static final double STOW_RELEASE_TIME = 2000.0;
+    protected static final double STOW_RELEASE_TIME = 3000.0;
     public void startStowedToReleaseWobbleGoal() {
         if(stowedReleaseState == STOWED_RELEASE_STATE.IDLE) {
             stowedReleaseState = STOWED_RELEASE_STATE.LOWER_ARM;
             wobbleTimer.reset();
-            setWobbleMotorPower(1.0);
+            setWobbleMotorPower(0.7);
         }
     }
 
@@ -962,6 +961,35 @@ public class UltimateGoalRobot
             case RELEASE_WOBBLE:
                 if (grabState == GRABBING.IDLE) {
                     stowedReleaseState = STOWED_RELEASE_STATE.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    public enum STOW_ARM_STATE {
+        IDLE,
+        STOW_ARM
+    }
+    public STOW_ARM_STATE stowArmState = STOW_ARM_STATE.IDLE;
+    protected static final double STOW_ARM_TIME = 2950.0;
+    public void startStowArm() {
+        if(stowArmState == STOW_ARM_STATE.IDLE) {
+            stowArmState = STOW_ARM_STATE.STOW_ARM;
+            wobbleTimer.reset();
+            startClawToggle();
+            setWobbleMotorPower(-0.7);
+        }
+    }
+
+    public void performStowArm() {
+        switch(stowArmState) {
+            case STOW_ARM:
+                if (wobbleTimer.milliseconds() >= STOW_ARM_TIME) {
+                    setWobbleMotorPower(0.0);
+                    stowArmState = STOW_ARM_STATE.IDLE;
                 }
                 break;
             case IDLE:
@@ -1013,7 +1041,7 @@ public class UltimateGoalRobot
     }
     public RELEASE_STOW_STATE releaseStowState = RELEASE_STOW_STATE.IDLE;
     protected static final double LOWER_ARM_TIME = 450.0;
-    protected static final double STOW_ARM_TIME = 500.0;
+    protected static final double STOW_RELEASE_ARM_TIME = 500.0;
     public void startReleaseStowArm() {
         if(releaseStowState == RELEASE_STOW_STATE.IDLE) {
             releaseStowState = RELEASE_STOW_STATE.RELEASE_WOBBLE;
@@ -1038,7 +1066,7 @@ public class UltimateGoalRobot
                 }
                 break;
             case STOW_ARM:
-                if(wobbleTimer.milliseconds() >= STOW_ARM_TIME) {
+                if(wobbleTimer.milliseconds() >= STOW_RELEASE_ARM_TIME) {
                     setWobbleMotorPower(0.0);
                     releaseStowState = RELEASE_STOW_STATE.IDLE;
                 }
