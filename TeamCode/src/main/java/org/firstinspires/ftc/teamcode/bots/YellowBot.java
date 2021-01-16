@@ -86,22 +86,22 @@ public class YellowBot implements OdoBot {
 
             if (backLeft != null) {
                 backLeft.setDirection(DcMotor.Direction.FORWARD);
-                backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
             if (backRight != null) {
                 backRight.setDirection(DcMotor.Direction.REVERSE);
-                backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
             if (frontLeft != null) {
                 frontLeft.setDirection(DcMotor.Direction.FORWARD);
-                frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
             if (frontRight != null) {
                 frontRight.setDirection(DcMotor.Direction.REVERSE);
-                frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
             stop();
