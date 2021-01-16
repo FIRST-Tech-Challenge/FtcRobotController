@@ -26,6 +26,7 @@ public class UltimateBot extends YellowBot {
 
     private SwingPosition swingPosition = SwingPosition.Init;
     private static int SWING_GROUND_POS = 245;
+    private static int SWING_GROUND_POS_TELEOP = 220;
     private static int AUTO_DROP = 190;
     private static int SWING_LIFT_UP_POS = 160;
     private static int SWING_LIFT_WALL = 60;
@@ -157,6 +158,13 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+    @BotAction(displayName = "Move Slower Shooter", defaultReturn = "")
+    public void shooterslower() {
+        if (shooter != null) {
+            shooter.setPower(0.8);
+        }
+    }
+
     @BotAction(displayName = "Shoot", defaultReturn = "")
     public void shootServo() {
         ElapsedTime runtime = new ElapsedTime();
@@ -223,6 +231,26 @@ public class UltimateBot extends YellowBot {
                 stop = wobbleSwing.isBusy() == false;
             }
             this.swingPosition = SwingPosition.Init;
+            wobbleSwing.setPower(0);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
+    @BotAction(displayName = "Wobble Ground Teleop", defaultReturn = "")
+    public void groundWobbleTeleop() {
+        if (wobbleSwing != null) {
+            if (this.getSwingPosition() == SwingPosition.Ground) {
+                return;
+            }
+            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            wobbleSwing.setTargetPosition(SWING_GROUND_POS_TELEOP);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            wobbleSwing.setPower(0.6);
+            boolean stop = false;
+            while (!stop) {
+                stop = wobbleSwing.isBusy() == false;
+            }
+            this.swingPosition = SwingPosition.Ground;
             wobbleSwing.setPower(0);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
