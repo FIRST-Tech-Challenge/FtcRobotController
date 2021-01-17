@@ -24,6 +24,8 @@ public class GamepadActions {
         dpad_down,
         start,
         back,
+        bumper_left,
+        bumper_right
     }
 
     private class GamepadButtonState {
@@ -106,6 +108,8 @@ public class GamepadActions {
         updateValuesForButton(GamepadButtons.dpad_down, gamepad1.dpad_down, gamepad2.dpad_down);
         updateValuesForButton(GamepadButtons.start, gamepad1.start, gamepad2.start);
         updateValuesForButton(GamepadButtons.back, gamepad1.back, gamepad2.back);
+        updateValuesForButton(GamepadButtons.bumper_left, gamepad1.left_bumper, gamepad2.left_bumper);
+        updateValuesForButton(GamepadButtons.bumper_right, gamepad1.right_bumper, gamepad2.right_bumper);
     }
 
     /**
