@@ -1546,7 +1546,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         for (int i = 0; i < n; i++) {
             sleep(650);
             if(i+2==n)
-                chassis.yMove(1, 0.05);
+                chassis.stop();
         }
         chassis.stop();
         //sleep(1000);
