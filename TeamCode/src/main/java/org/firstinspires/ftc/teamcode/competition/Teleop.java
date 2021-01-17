@@ -44,6 +44,7 @@ public class Teleop extends LinearOpMode
         double centerSub=0;
 
         double driveSpeed=1;
+        robot.resetOdometry(-9,-9,0);
         while(opModeIsActive())
         {
 
@@ -59,7 +60,7 @@ public class Teleop extends LinearOpMode
             {
 
                 byte sign = 1;
-                double diff = Hardware.theta-Math.atan((46+Hardware.y)/(135-Hardware.x));
+                double diff = Hardware.theta-Math.atan((36+9+Hardware.y)/(144+Hardware.x));
                 if(diff<0)
                     diff+=2*Math.PI;
                 if(diff>Math.PI)
@@ -75,6 +76,7 @@ public class Teleop extends LinearOpMode
             }
             else
                 robot.drive(forward*driveSpeed*gamepad1.left_stick_y,driveSpeed*gamepad1.left_stick_x,driveSpeed*gamepad1.right_stick_x);
+            double[] autoLaunch = robot.getFlyWheelAngle(Hardware.SelectedGoal.HIGHGOAL);
             telemetry.addData("x: ", Hardware.x);
             telemetry.addData("y: ", Hardware.y);
             telemetry.addData("theta: ", Hardware.theta);
@@ -87,6 +89,7 @@ public class Teleop extends LinearOpMode
             telemetry.addData("Left Speed", robot.flywheelMotorLeft.getVelocity());
             telemetry.addData("Right Speed", robot.flywheelMotorRight.getVelocity());
             telemetry.addData("Angle Servo",servoPosition);
+            telemetry.addData("Auto Angle",autoLaunch[0]*180/Math.PI);
             telemetry.update();
 
             if(gamepad1.x)
@@ -98,7 +101,7 @@ public class Teleop extends LinearOpMode
 
             }
 
-            if(gamepad1.a&&!a1Pressed)
+            if(gamepad1.a&&!a1Pressed&&!gamepad1.start)
             {
                 autoAim=!autoAim;
                 a1Pressed=true;
@@ -156,21 +159,25 @@ public class Teleop extends LinearOpMode
 
 
             //sets flywheel power to the left trigger
-            robot.setFlyWheelPower(gamepad2.right_trigger);
+            if(!gamepad2.right_bumper)
+                robot.setFlyWheelPower(gamepad2.right_trigger);
 
             //makes the flywheel rotation servo move with b and x
             if(Math.abs(gamepad2.left_stick_y)>.03)
-            servoPosition+=gamepad2.left_stick_y*angleSpeed/30;
+            servoPosition-=gamepad2.left_stick_y*angleSpeed/30;
 
-            if(servoPosition>1)
-                servoPosition=1;
+            if(gamepad2.left_bumper)
+                servoPosition=1+((autoLaunch[0]*180/Math.PI-3.1634748)/-68.3652519934);
+            if(gamepad2.right_bumper)
+                robot.setFlyWheelVelocity(autoLaunch[1]*10.0267614*1.06);
+            if(servoPosition>.9)
+                servoPosition=.9;
             else if(servoPosition<.17)
                 servoPosition=.17;
 
 
 
             robot.flywheelRotateServoLeft.setPosition(servoPosition);
-
 
 
             //launch a single ring if a is pressed and the flywheels are moving
