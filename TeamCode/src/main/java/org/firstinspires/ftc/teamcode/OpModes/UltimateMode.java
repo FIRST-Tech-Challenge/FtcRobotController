@@ -51,7 +51,7 @@ public class UltimateMode extends LinearOpMode {
     boolean changedshooter = false;
     boolean intakeReverse = false;
     boolean buttonpressable = true;
-    double delaytime = 300;
+    double delaytime = 200;
     double startdelay = 0;
     double grabdelay = 0;
     private BotThreadAction bta = null;

@@ -26,15 +26,18 @@ public class UltimateBot extends YellowBot {
 
     private SwingPosition swingPosition = SwingPosition.Init;
     private static int SWING_GROUND_POS = 210;
-    private static int SWING_GROUND_POS_TELEOP = 220;
+    private static int SWING_GROUND_POS_TELEOP = 228;
     private static int AUTO_DROP = 190;
     private static int SWING_LIFT_UP_POS = 120;
-    private static int SWING_LIFT_WALL = 95;
+    private static int SWING_LIFT_WALL = 90;
     private static int STRAIGHT_UP = 70;
-    private static int AUTO_WAY_BACK = -35;
+    private static int AUTO_WAY_BACK = -38;
     private static double SHOOT_SERVO = 0.5;
 
-    private static int TIMEOUT = 1000;
+    private static int TIMEOUT = 2500;
+    private static int TIMEOUT_LONGER = 3000;
+    private static int TIMEOUT_SHORTER = 1500;
+
 
     private static double CAMERA_RIGHT_LINE = 0.35;
     private static double CAMERA_LEFT_LINE = 0.5;
@@ -156,14 +159,14 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Peg Shooter", defaultReturn = "")
     public void shooterpeg() {
         if (shooter != null) {
-            shooter.setPower(0.81);
+            shooter.setPower(0.76);
         }
     }
 
     @BotAction(displayName = "Move Slower Shooter", defaultReturn = "")
     public void shooterslower() {
         if (shooter != null) {
-            shooter.setPower(0.75);
+            shooter.setPower(0.73);
         }
     }
 
@@ -190,8 +193,8 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Close Claw", defaultReturn = "")
     public void closeWobbleClaw() {
         if ((wobbleClaw1 != null) && (wobbleClaw2 != null)) {
-            wobbleClaw1.setPosition(0.20);
-            wobbleClaw2.setPosition(0.8);
+            wobbleClaw1.setPosition(0.23);
+            wobbleClaw2.setPosition(0.77);
         }
 
     }
@@ -221,14 +224,16 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Wobble Little Up", defaultReturn = "")
     public void wobbleLittleUp() {
         if (wobbleSwing != null) {
+            ElapsedTime runtime = new ElapsedTime();
+            runtime.reset();
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            int upPosition = wobbleSwing.getCurrentPosition() - 25;
+            int upPosition = wobbleSwing.getCurrentPosition() - 35;
             wobbleSwing.setTargetPosition(upPosition);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.9);
+            wobbleSwing.setPower(0.95);
             boolean stop = false;
             while (!stop) {
-                stop = wobbleSwing.isBusy() == false;
+                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT_SHORTER);
             }
             wobbleSwing.setPower(0);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -239,14 +244,16 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Wobble Little Down", defaultReturn = "")
     public void wobbleLittleDown() {
         if (wobbleSwing != null) {
+            ElapsedTime runtime = new ElapsedTime();
+            runtime.reset();
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            int downPosition = wobbleSwing.getCurrentPosition() + 25;
+            int downPosition = wobbleSwing.getCurrentPosition() + 40;
             wobbleSwing.setTargetPosition(downPosition);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.9);
+            wobbleSwing.setPower(0.95);
             boolean stop = false;
             while (!stop) {
-                stop = wobbleSwing.isBusy() == false;
+                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT_SHORTER);
             }
             wobbleSwing.setPower(0);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -256,6 +263,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Init WobbleSwing", defaultReturn = "")
     public void backWobbleSwing() {
         ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
         if (wobbleSwing != null) {
             if (this.getSwingPosition() == SwingPosition.Init) {
                 return;
@@ -277,6 +285,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Wobble Way Back", defaultReturn = "")
     public void wobbleWayBack() {
         ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
         if (wobbleSwing != null) {
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             wobbleSwing.setTargetPosition(AUTO_WAY_BACK);
@@ -284,7 +293,7 @@ public class UltimateBot extends YellowBot {
             wobbleSwing.setPower(0.8);
             boolean stop = false;
             while (!stop) {
-                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT);
+                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT_LONGER);
             }
             wobbleSwing.setPower(0);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -294,12 +303,14 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Wobble Ground Teleop", defaultReturn = "")
     public void groundWobbleTeleop() {
         ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
         if (wobbleSwing != null) {
             if (this.getSwingPosition() == SwingPosition.Ground) {
                 return;
             }
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setTargetPosition(SWING_GROUND_POS_TELEOP);
+            int groundPosition = wobbleSwing.getCurrentPosition() + 175;
+            wobbleSwing.setTargetPosition(groundPosition);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wobbleSwing.setPower(0.6);
             boolean stop = false;
@@ -316,6 +327,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Place Wobble", defaultReturn = "")
     public void forwardWobbleSwing() {
         ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
         if (wobbleSwing != null) {
             if (this.getSwingPosition() == SwingPosition.Ground) {
                 return;
@@ -347,7 +359,7 @@ public class UltimateBot extends YellowBot {
             wobbleSwing.setPower(0.6);
             boolean stop = false;
             while (!stop) {
-                stop = wobbleSwing.isBusy() == false;
+                stop = !wobbleSwing.isBusy();
             }
             this.swingPosition = SwingPosition.Ground;
             wobbleSwing.setPower(0);
@@ -364,7 +376,7 @@ public class UltimateBot extends YellowBot {
             wobbleSwing.setPower(0.7);
             boolean stop = false;
             while (!stop) {
-                stop = wobbleSwing.isBusy() == false;
+                stop = !wobbleSwing.isBusy();
             }
             this.swingPosition = SwingPosition.LiftUp;
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -378,18 +390,19 @@ public class UltimateBot extends YellowBot {
     public void liftWobbleWall() {
         if (wobbleSwing != null) {
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setTargetPosition(SWING_LIFT_WALL);
+            int wallPosition = wobbleSwing.getCurrentPosition() - 160;
+            wobbleSwing.setTargetPosition(wallPosition);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wobbleSwing.setPower(0.7);
             boolean stop = false;
             while (!stop) {
-                stop = wobbleSwing.isBusy() == false;
+                stop = !wobbleSwing.isBusy();
             }
             this.swingPosition = SwingPosition.LiftUp;
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             wobbleSwing.setPower(0);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            wobbleSwing.setPower(-0.01);
+            wobbleSwing.setPower(-0.015);
         }
     }
 
