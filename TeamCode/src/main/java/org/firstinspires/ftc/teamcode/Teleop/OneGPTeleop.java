@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.RingDepositor;
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
-import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Robot;
 
 /**
  * Teleop w/ drivetrain, shooter(still in testing), and wobblegoal
@@ -20,14 +20,14 @@ import org.firstinspires.ftc.teamcode.Components.BasicChassis;
  *
  * @author  Nathan
  * @version 1.0
- * @since   2020-November-11
+ * @since   2020-Jan-13
  *
  */
 
 
-@TeleOp(name = "Teleop ")
+@TeleOp(name = "OneGPTeleop ")
 //@Disabled
-public class Teleop extends LinearOpMode {
+public class OneGPTeleop extends LinearOpMode {
 
     // new version of runopmode that supports inplaceturn slowmode and can toggle slowmode on and off with one button - tested by aiden jonathan ma
     public void runOpMode() {
@@ -44,8 +44,10 @@ public class Teleop extends LinearOpMode {
         boolean isSlow = false;
         boolean currSlow = false;
         boolean slowMode = false;
-//        boolean ring_clamp_is_up = true;
-//        boolean move_ring_clamp = true;
+        boolean moveServo = true;
+        boolean servoIsMoved = true;
+        boolean ring_clamp_is_up = true;
+        boolean move_ring_clamp = true;
         boolean wobble_goal_servo_is_up = true;
         boolean move_wobble_goal_servo = true;
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
@@ -68,24 +70,47 @@ public class Teleop extends LinearOpMode {
             float left_stick_x = -gamepad1.left_stick_x;
             float right_stick_x = -gamepad1.right_stick_x;
             boolean move_wobble_goal_arm = gamepad1.right_bumper;
-//            boolean smart_depo = gamepad1.left_bumper;
-            float start_transfer_sys = gamepad1.right_trigger;
-            float stop_transfer_sys = gamepad1.left_trigger;
-            boolean wobble_goal_servo = gamepad1.x;
+            boolean smart_depo = gamepad1.left_bumper;
+//            float start_intake = gamepad1.right_trigger;
+//            float stop_intake = gamepad1.left_trigger;
+            boolean wobble_goal_servo = gamepad1.y;
             boolean slow = gamepad1.a;
-            boolean servo = gamepad2.x;
-            float shooter = gamepad2.right_trigger;
+            boolean shooter_servo = gamepad1.x;
+            float shooter = gamepad1.right_trigger;
 
             angleInRadian = Math.atan2(left_stick_y, left_stick_x);
             angleInDegree = Math.toDegrees(angleInRadian);
 
             /**Shooter**/
-            if (servo){
+//            if (servo) {
+//                moveServo = true;
+//
+//                if (servoIsMoved) {
+//                    servoIsMoved = false;
+//                } else if (servoIsMoved == false) {
+//                    servoIsMoved = true;
+//                }
+//            } else {
+//                moveServo = false;
+//            }
+            if (shooter_servo){
                 telemetry.addData("Servo", " SERVO Forward and Backward");
                 telemetry.update();
                 robot.moveServo(false);
                 robot.moveServo(true);
             }
+
+//            if (moveServo) {
+//                if (servoIsMoved) {
+//                    telemetry.addData("Servo", " SERVO FORTH x button");
+//                    telemetry.update();
+//                    robot.moveServo(true);
+//                } else if (servoIsMoved == false) {
+//                    telemetry.addData("Servo", " SERVO BACK x button");
+//                    telemetry.update();
+//                    robot.moveServo(false);
+//                }
+//            }
 
             if (shooter != 0) {
                 robot.shootGoalTeleop(1000);
@@ -167,18 +192,16 @@ public class Teleop extends LinearOpMode {
             }
 
             // ring depositor
-//            if (smart_depo){
-//                robot.ringDepositorSmartDeposit();
-//            }
-
-            //transfer system
-            if(start_transfer_sys == 1.00){
-                robot.startIntake();
-                robot.startTransfer();
-            } else if (stop_transfer_sys == 1.00){
-                robot.stopIntake();
-                robot.stopTransfer();
+            if (smart_depo){
+                robot.ringDepositorSmartDeposit();
             }
+
+            //intake
+//            if(start_intake == 1.00){
+//                robot.startIntake();
+//            } else if (stop_intake == 1.00){
+//                robot.stopIntake();
+//            }
 
         }
         idle();
