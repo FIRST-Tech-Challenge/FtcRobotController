@@ -28,11 +28,13 @@ public class UltimateBot extends YellowBot {
     private static int SWING_GROUND_POS = 210;
     private static int SWING_GROUND_POS_TELEOP = 220;
     private static int AUTO_DROP = 190;
-    private static int SWING_LIFT_UP_POS = 140;
+    private static int SWING_LIFT_UP_POS = 120;
     private static int SWING_LIFT_WALL = 95;
     private static int STRAIGHT_UP = 70;
     private static int AUTO_WAY_BACK = -35;
     private static double SHOOT_SERVO = 0.5;
+
+    private static int TIMEOUT = 1000;
 
     private static double CAMERA_RIGHT_LINE = 0.35;
     private static double CAMERA_LEFT_LINE = 0.5;
@@ -147,14 +149,14 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Shooter", defaultReturn = "")
     public void shooter() {
         if (shooter != null) {
-            shooter.setPower(0.87);
+            shooter.setPower(0.85);
         }
     }
 
     @BotAction(displayName = "Move Peg Shooter", defaultReturn = "")
     public void shooterpeg() {
         if (shooter != null) {
-            shooter.setPower(0.8);
+            shooter.setPower(0.81);
         }
     }
 
@@ -253,6 +255,7 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Init WobbleSwing", defaultReturn = "")
     public void backWobbleSwing() {
+        ElapsedTime runtime = new ElapsedTime();
         if (wobbleSwing != null) {
             if (this.getSwingPosition() == SwingPosition.Init) {
                 return;
@@ -263,7 +266,7 @@ public class UltimateBot extends YellowBot {
             wobbleSwing.setPower(0.6);
             boolean stop = false;
             while (!stop) {
-                stop = wobbleSwing.isBusy() == false;
+                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT);
             }
             this.swingPosition = SwingPosition.Init;
             wobbleSwing.setPower(0);
@@ -273,15 +276,15 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Wobble Way Back", defaultReturn = "")
     public void wobbleWayBack() {
+        ElapsedTime runtime = new ElapsedTime();
         if (wobbleSwing != null) {
-
             wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             wobbleSwing.setTargetPosition(AUTO_WAY_BACK);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wobbleSwing.setPower(0.8);
             boolean stop = false;
             while (!stop) {
-                stop = wobbleSwing.isBusy() == false;
+                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT);
             }
             wobbleSwing.setPower(0);
             wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -290,6 +293,7 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Wobble Ground Teleop", defaultReturn = "")
     public void groundWobbleTeleop() {
+        ElapsedTime runtime = new ElapsedTime();
         if (wobbleSwing != null) {
             if (this.getSwingPosition() == SwingPosition.Ground) {
                 return;
@@ -301,7 +305,7 @@ public class UltimateBot extends YellowBot {
             boolean stop = false;
             while (!stop) {
                 int position = wobbleSwing.getCurrentPosition();
-                stop = position >= SWING_GROUND_POS_TELEOP || !wobbleSwing.isBusy();
+                stop = position >= SWING_GROUND_POS_TELEOP || !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT);
             }
             this.swingPosition = SwingPosition.Ground;
             wobbleSwing.setPower(0);
@@ -311,6 +315,7 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Place Wobble", defaultReturn = "")
     public void forwardWobbleSwing() {
+        ElapsedTime runtime = new ElapsedTime();
         if (wobbleSwing != null) {
             if (this.getSwingPosition() == SwingPosition.Ground) {
                 return;
@@ -321,7 +326,7 @@ public class UltimateBot extends YellowBot {
             wobbleSwing.setPower(0.6);
             boolean stop = false;
             while (!stop) {
-                stop = wobbleSwing.isBusy() == false;
+                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT);
             }
             this.swingPosition = SwingPosition.Ground;
             wobbleSwing.setPower(0);
