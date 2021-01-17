@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -61,6 +62,7 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         //.setDirection(DcMotorSimple.Direction.REVERSE);
         wobbleGoalHolder = this.initializeDevice(DcMotor.class, "wobble");
         wobbleServo = this.initializeDevice(CRServo.class, "wobbleServo");
+        revIMU = this.hardwareMap.get(BNO055IMU.class, "imu");
 
 //        wobbleGoalLeftClaw = this.initializeDevice(Servo.class, "leftClaw");
 //        wobbleGoalLeftClaw.scaleRange(0.375, 0.55);
@@ -68,12 +70,13 @@ public abstract class UltimateGoalHardware extends RobotHardware {
 //        wobbleGoalRightClaw.scaleRange(0.8,0.95);
 
         this.initializeOmniDrive(frontLeft, frontRight, backLeft, backRight);
-        this.omniDrive.setCountsPerInch((Math.PI*WHEEL_DIAMETER_IN)/COUNTS_PER_ENCODER_REV);
+        this.omniDrive.setCountsPerInch(COUNTS_PER_ENCODER_REV/(Math.PI*WHEEL_DIAMETER_IN));
     }
 
     @Override
     public void initializeLocalizer() {
         super.initializeLocalizer();
+        this.localizer.calibrateIMUAndSetWorldOffset(revIMU, 90);
         this.localizer.loadUltimateGoalTrackables(this);
         this.localizer.setCameraMatrix(this,
                 new Position(DistanceUnit.INCH, 9.5, 0, 0, 0),

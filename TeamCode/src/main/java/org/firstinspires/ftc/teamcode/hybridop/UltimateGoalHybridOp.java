@@ -26,7 +26,8 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
         // region Gamepad 1
 
-        omniDrive.dpadMove(gamepad1, 1f, false);
+        omniDrive.dpadMove(gamepad1, 0.5f, false);
+
 
         if (gamepadActions.isFirstPress(GamepadActions.GamepadType.TWO, GamepadActions.GamepadButtons.dpad_up)) {
             double newPower = spinnerPower + spinner_increment;
@@ -88,5 +89,9 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
     @Override
     public void run_loop() {
         this.localizer.telemetry(telemetry);
+        telemetry.addData("FL", frontLeft.getCurrentPosition());
+        telemetry.addData("FR", frontRight.getCurrentPosition());
+        telemetry.addData("BL", backLeft.getCurrentPosition());
+        telemetry.addData("BR", backRight.getCurrentPosition());
     }
 }

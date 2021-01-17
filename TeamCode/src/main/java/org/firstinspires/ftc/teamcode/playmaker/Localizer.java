@@ -50,6 +50,7 @@ public class Localizer {
 
     public boolean vuforiaOverwritesOtherLocations = true;
     public boolean vuforiaOverwritesOtherOrientations = true;
+    Telemetry telemetry;
 
     public void setLatestAcquisitionTime() {
         this.latestAcquisitionTime = System.nanoTime();
@@ -70,7 +71,7 @@ public class Localizer {
     public class EstimatedPosition {
         public PositionSource source;
         public Position position;
-        public EstimatedPosition(PositionSource soruce, Position position) {
+        public EstimatedPosition(PositionSource source, Position position) {
             this.source = source;
             this.position = position;
 
@@ -104,6 +105,10 @@ public class Localizer {
      * Z: height of the robot off ground, though not relevant for this game.
      * @return The robot's estimated position
      */
+
+    public Localizer(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
 
     public EstimatedPosition estimatePosition() {
         boolean newVuforiaInfo = false;
@@ -155,6 +160,7 @@ public class Localizer {
         EstimatedOrientation orientation = estimateOrientation();
         if (estimatedPosition != null) {
             Position position = estimatedPosition.position.toUnit(DistanceUnit.INCH);
+            telemetry.addData("Loc. Position Source", estimatedPosition.source.toString());
             telemetry.addData("Loc. Position", String.format("%.1f, %.1f, %.1f", position.x, position.y, position.z));
         } else {
             telemetry.addData("Loc. Position", "unknown");
@@ -168,8 +174,15 @@ public class Localizer {
             telemetry.addData("Loc. Orientation", "unknown");
         }
 
+        if (imuToWorldRotation != null) {
+            telemetry.addData("IMU World Angle Offset", imuToWorldRotation);
+        } else {
+            telemetry.addData("IMU World Angle Offset", "not set");
+        }
+
         if (lastRawIMUOrientation != null) {
             Orientation rotation = lastRawIMUOrientation;
+
             telemetry.addData("Raw IMU. Orientation", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
         } else {
             telemetry.addData("Raw IMU. Orientation", "unknown");
@@ -337,11 +350,11 @@ public class Localizer {
         int currentBackRight = hardware.omniDrive.backRight.getCurrentPosition();
 
         // Perform location estimation if there's delta information to work with
-        if (!(lastFrontLeft == null
-                || lastFrontRight == null
-                || lastBackLeft == null
-                || lastBackRight == null
-                || lastEncoderOrientation == null)) {
+        if (lastFrontLeft != null
+                && lastFrontRight != null
+                && lastBackLeft != null
+                && lastBackRight != null
+                && lastEncoderOrientation != null) {
 
             // Get position deltas
             int deltaFrontLeft = currentFrontLeft - lastFrontLeft;
@@ -350,14 +363,15 @@ public class Localizer {
             int deltaBackRight = currentBackRight - lastBackRight;
 
             // Get robot centric delta measurements
-            double countsPerMM = hardware.omniDrive.getCountsPerUnit(DistanceUnit.MM);
-            double xRobotRelMovement = (1/Math.sqrt(2))*(countsPerMM)*(deltaFrontLeft+deltaBackRight-deltaFrontRight-deltaBackLeft);
-            double yRobotRelMovement = (1/Math.sqrt(2))*(countsPerMM)*(deltaFrontLeft+deltaFrontRight+deltaBackLeft+deltaBackRight);
+            double mmPerCount = 1.0/hardware.omniDrive.getCountsPerUnit(DistanceUnit.MM);
+            telemetry.addData("CPMM", mmPerCount);
+            double xRobotRelMovement = (1/Math.sqrt(2))*(mmPerCount)*(deltaFrontLeft+deltaBackRight-deltaFrontRight-deltaBackLeft);
+            double yRobotRelMovement = (1/Math.sqrt(2))*(mmPerCount)*(deltaFrontLeft+deltaFrontRight+deltaBackLeft+deltaBackRight);
 
             // Translate robot-centric movements into field deltas and apply
             double robotHeading = lastIMUOrientation.thirdAngle;
-            double fieldXMovement = -((yRobotRelMovement*Math.cos(robotHeading)) - (yRobotRelMovement*Math.sin(robotHeading)));
-            double fieldYMovement = -((xRobotRelMovement*Math.sin(robotHeading)) + (xRobotRelMovement*Math.cos(robotHeading)));
+            double fieldXMovement = -((xRobotRelMovement*Math.cos(robotHeading)) - (yRobotRelMovement*Math.sin(robotHeading)));
+            double fieldYMovement = -((xRobotRelMovement*Math.sin(robotHeading)) + (yRobotRelMovement*Math.cos(robotHeading)));
             double lastX = lastEncoderPosition.x;
             double lastY = lastEncoderPosition.y;
             lastEncoderPosition = new Position(DistanceUnit.MM, lastX + fieldXMovement, lastY + fieldYMovement, 0, System.nanoTime());
@@ -385,12 +399,22 @@ public class Localizer {
 
     public boolean attemptIMUToWorldCalibration(BNO055IMU imu) {
         if (lastVuforiaTransform != null && imu.isGyroCalibrated()) {
-            Orientation vuforiaRotation = Orientation.getOrientation(lastVuforiaTransform.transform, EXTRINSIC, XYZ, DEGREES);
-            Orientation imuRotation = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES);
-            imuToWorldRotation = Localizer.angularDifference(vuforiaRotation.thirdAngle, imuRotation.thirdAngle);
             return true;
         }
         return false;
+    }
+
+    public boolean calibrateIMUAndSetWorldOffset(BNO055IMU imu, double startingHeading) {
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        boolean successful = imu.initialize(parameters);
+        this.setIMUToWorldOffset(imu, startingHeading);
+        return successful;
+    }
+
+    public void setIMUToWorldOffset(BNO055IMU imu, double startingHeading) {
+        Orientation imuRotation = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES);
+        imuToWorldRotation = Localizer.angularDifference(startingHeading, imuRotation.thirdAngle);
     }
 
     public Double getImuToWorldRotation() {
@@ -452,7 +476,7 @@ public class Localizer {
     }
 
     public static double mod(double x, double n) {
-        return (x % n) - (x < 0 ? n : 0);
+        return (((x % n) + n) % n);
     }
 
     public static float mod(float x, float n) {

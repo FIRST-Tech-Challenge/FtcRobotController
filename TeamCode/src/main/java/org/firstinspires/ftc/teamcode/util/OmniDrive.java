@@ -39,7 +39,7 @@ public class OmniDrive {
 
     public Double getCountsPerUnit(DistanceUnit unit) {
         if (countsPerInch != null) {
-            unit.fromInches(countsPerInch);
+            return this.countsPerInch/unit.fromInches(1);
         }
         return null;
     }

@@ -111,7 +111,7 @@ public abstract class RobotHardware extends OpMode {
     }
 
     public void initializeLocalizer() {
-        this.localizer = new Localizer();
+        this.localizer = new Localizer(this.telemetry);
     }
 
     public void initializeOmniDrive(DcMotor frontLeft, DcMotor frontRight, DcMotor backLeft, DcMotor backRight) {
@@ -120,10 +120,10 @@ public abstract class RobotHardware extends OpMode {
 
     @Override
     public void init() {
+        this.initializeHardware();
         if (initVuforia) initializeVuforia();
         if (initTfod) initTfod();
         this.initializeLocalizer();
-        this.initializeHardware();
         this.gamepadActions = new GamepadActions();
     }
 
