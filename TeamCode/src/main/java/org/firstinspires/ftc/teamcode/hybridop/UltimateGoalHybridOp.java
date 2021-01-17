@@ -1,16 +1,22 @@
 package org.firstinspires.ftc.teamcode.hybridop;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.hardware.UltimateGoalHardware;
 import org.firstinspires.ftc.teamcode.playmaker.GamepadActions;
 import org.firstinspires.ftc.teamcode.playmaker.HybridOp;
+import org.firstinspires.ftc.teamcode.playmaker.Localizer;
 
-@TeleOp(name="Ultimate Goal Tele Op")
+@TeleOp(name = "Ultimate Goal Tele Op")
 public class UltimateGoalHybridOp extends UltimateGoalHardware implements HybridOp {
 
+    float omniDrivePower = 0.5f;
     double spinnerPower = 1;
-    double spinner_increment = 0.05;
+    double largeSpinnerIncrement = 0.05;
+    double smallSpinnerIncrement = 0.005;
+    boolean slowMode = false;
+    float slowModeMultiplier = 0.25f;
 
     long prevTime = System.nanoTime();
     int prevPos;
@@ -22,62 +28,97 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
     @Override
     public void teleop_loop() {
-        telemetry.addData("spinner power", String.format("%.2f", spinnerPower));
+        telemetry.addData("spinner power", spinnerPower);
 
-        // region Gamepad 1
+        // region slowmode {...}
+        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.bumper_right)) {
+            slowMode = true;
+        } else {
+            slowMode = false;
+        }
 
-        omniDrive.dpadMove(gamepad1, 0.5f, false);
+        if (shooter.getPower() > 0) {
+            slowMode = true;
+        }
+        // endregion
 
+        omniDrive.dpadMove(gamepad1, slowMode ? omniDrivePower * slowModeMultiplier : omniDrivePower, false);
 
-        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.TWO, GamepadActions.GamepadButtons.dpad_up)) {
-            double newPower = spinnerPower + spinner_increment;
+        // region shooter {...}
+        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.dpad_up)) {
+            double newPower = spinnerPower + largeSpinnerIncrement;
             if (newPower <= 1) {
                 spinnerPower = newPower;
             }
         }
 
-        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.TWO, GamepadActions.GamepadButtons.dpad_right)) {
-            double newPower = spinnerPower + .005;
+        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.dpad_right)) {
+            double newPower = spinnerPower + smallSpinnerIncrement;
             if (newPower <= 1) {
                 spinnerPower = newPower;
             }
         }
 
 
-
-        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.TWO, GamepadActions.GamepadButtons.dpad_down)) {
-            double newPower = spinnerPower - spinner_increment;
+        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.dpad_down)) {
+            double newPower = spinnerPower - largeSpinnerIncrement;
             if (newPower >= 0) {
                 spinnerPower = newPower;
             }
         }
 
-        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.TWO, GamepadActions.GamepadButtons.dpad_left)) {
-            double newPower = spinnerPower - .005;
+        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.dpad_left)) {
+            double newPower = spinnerPower - smallSpinnerIncrement;
             if (newPower >= 0) {
                 spinnerPower = newPower;
             }
         }
 
-        if (gamepadActions.isToggled(GamepadActions.GamepadType.TWO, GamepadActions.GamepadButtons.b)) {
+        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.y)) {
             shooter.setPower(-spinnerPower);
         } else {
             shooter.setPower(0);
         }
+        // endregion
 
-        if (gamepad2.a) {
+        if (gamepad2.b) {
             escalator.setPower(1);
         } else {
             escalator.setPower(0);
         }
 
-        if (gamepad2.y) {
+        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.a)) {
             collector.setPower(1);
         } else {
             collector.setPower(0);
         }
 
-        //endregion
+        // Reverse power if holding {a} (because David said so...)
+        if (gamepad1.a) {
+            collector.setPower(-collector.getPower());
+        }
+
+
+        // region wobbleGoal {...}
+        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.x)) {
+            wobbleGoalHolder.setTargetPosition(0);
+        } else {
+            wobbleGoalHolder.setTargetPosition(1);
+        }
+
+        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.bumper_right)) {
+            wobbleServo.setPosition(0);
+        } else {
+            wobbleServo.setPosition(1);
+        }
+        // endregion
+
+
+        // Collector should not run if shooter is running
+        if (shooter.getPower() > 0) {
+            collector.setPower(0);
+        }
+
     }
 
     @Override
@@ -89,9 +130,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
     @Override
     public void run_loop() {
         this.localizer.telemetry(telemetry);
-        telemetry.addData("FL", frontLeft.getCurrentPosition());
-        telemetry.addData("FR", frontRight.getCurrentPosition());
-        telemetry.addData("BL", backLeft.getCurrentPosition());
-        telemetry.addData("BR", backRight.getCurrentPosition());
+        telemetry.addData("Wheel Positions: ", String.format("FL:%f, FR:%f, BL:%f, BR:%f", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition()));
+        telemetry.addData("Shooter Power: ", shooter.getPower());
     }
 }
