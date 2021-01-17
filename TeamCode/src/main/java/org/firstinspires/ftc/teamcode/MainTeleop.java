@@ -155,7 +155,7 @@ public class MainTeleop extends LinearOpMode{
             if(gamepad2.right_bumper){
                 outtakeMod = .41;
             }else{
-                outtakeMod = .46;
+                outtakeMod = .44;
             }
             double outtakePower = (gamepad2.right_trigger * outtakeMod);
             outtakeLeft.setPower(outtakePower);
