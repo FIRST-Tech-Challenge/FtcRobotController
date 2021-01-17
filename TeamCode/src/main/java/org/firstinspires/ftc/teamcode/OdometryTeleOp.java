@@ -38,7 +38,7 @@ public class OdometryTeleOp extends LinearOpMode{
 
 
         //Encoders
-        verticalLeft = hardwareMap.dcMotor.get("leftOdometry");
+        verticalLeft = hardwareMap.dcMotor.get("FL");
         verticalRight = hardwareMap.dcMotor.get("FR");
         horizontal = hardwareMap.dcMotor.get("BL");
 
