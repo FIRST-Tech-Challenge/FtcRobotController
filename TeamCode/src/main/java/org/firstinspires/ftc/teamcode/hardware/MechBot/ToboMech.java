@@ -1433,7 +1433,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C){
-                chassis.driveTo(.8, side(100), 35, 0, false, 3);
+                chassis.driveTo(.8, side(102), 35, 0, false, 3);
             } else if (tZone == TargetZone.ZONE_B){
                 chassis.driveTo(auto_chassis_power, side(105), 30, 0, true, 3);
             }            else {
