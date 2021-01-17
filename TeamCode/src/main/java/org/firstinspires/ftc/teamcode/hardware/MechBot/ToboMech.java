@@ -1219,8 +1219,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
 
         if (comboGrabber!=null) {
-            comboGrabber.releaseWobbleGoalFastCombo();
-            while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
+            comboGrabber.releaseWobbleGoalCombo();
+            while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
                 TaskManager.processTasks();
             }
             comboGrabber.initWobbleGoalCombo();
