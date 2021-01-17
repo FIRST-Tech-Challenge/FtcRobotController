@@ -44,10 +44,8 @@ public class Teleop extends LinearOpMode {
         boolean isSlow = false;
         boolean currSlow = false;
         boolean slowMode = false;
-        boolean moveServo = true;
-        boolean servoIsMoved = true;
-        boolean ring_clamp_is_up = true;
-        boolean move_ring_clamp = true;
+//        boolean ring_clamp_is_up = true;
+//        boolean move_ring_clamp = true;
         boolean wobble_goal_servo_is_up = true;
         boolean move_wobble_goal_servo = true;
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
@@ -70,15 +68,11 @@ public class Teleop extends LinearOpMode {
             float left_stick_x = -gamepad1.left_stick_x;
             float right_stick_x = -gamepad1.right_stick_x;
             boolean move_wobble_goal_arm = gamepad1.right_bumper;
-            boolean smart_depo = gamepad1.left_bumper;
-            float start_intake = gamepad1.right_trigger;
-            float stop_intake = gamepad1.left_trigger;
+//            boolean smart_depo = gamepad1.left_bumper;
+            float start_transfer_sys = gamepad1.right_trigger;
+            float stop_transfer_sys = gamepad1.left_trigger;
             boolean wobble_goal_servo = gamepad1.x;
             boolean slow = gamepad1.a;
-            boolean b_button = gamepad1.b;
-            boolean y_button2 = gamepad2.y;
-            boolean b_button2 = gamepad2.b;
-            boolean a_button2 = gamepad2.a;
             boolean servo = gamepad2.x;
             float shooter = gamepad2.right_trigger;
 
@@ -86,35 +80,12 @@ public class Teleop extends LinearOpMode {
             angleInDegree = Math.toDegrees(angleInRadian);
 
             /**Shooter**/
-//            if (servo) {
-//                moveServo = true;
-//
-//                if (servoIsMoved) {
-//                    servoIsMoved = false;
-//                } else if (servoIsMoved == false) {
-//                    servoIsMoved = true;
-//                }
-//            } else {
-//                moveServo = false;
-//            }
             if (servo){
                 telemetry.addData("Servo", " SERVO Forward and Backward");
                 telemetry.update();
                 robot.moveServo(false);
                 robot.moveServo(true);
             }
-
-//            if (moveServo) {
-//                if (servoIsMoved) {
-//                    telemetry.addData("Servo", " SERVO FORTH x button");
-//                    telemetry.update();
-//                    robot.moveServo(true);
-//                } else if (servoIsMoved == false) {
-//                    telemetry.addData("Servo", " SERVO BACK x button");
-//                    telemetry.update();
-//                    robot.moveServo(false);
-//                }
-//            }
 
             if (shooter != 0) {
                 robot.shootGoalTeleop(1000);
@@ -196,15 +167,17 @@ public class Teleop extends LinearOpMode {
             }
 
             // ring depositor
-            if (smart_depo){
-                robot.ringDepositorSmartDeposit();
-            }
+//            if (smart_depo){
+//                robot.ringDepositorSmartDeposit();
+//            }
 
-            //intake
-            if(start_intake == 1.00){
+            //transfer system
+            if(start_transfer_sys == 1.00){
                 robot.startIntake();
-            } else if (stop_intake == 1.00){
+                robot.startTransfer();
+            } else if (stop_transfer_sys == 1.00){
                 robot.stopIntake();
+                robot.stopTransfer();
             }
 
         }

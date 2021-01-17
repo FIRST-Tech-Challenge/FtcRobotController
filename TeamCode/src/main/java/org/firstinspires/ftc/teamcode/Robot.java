@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Components.Accesories.Intake;
 import org.firstinspires.ftc.teamcode.Components.Accesories.RingDepositor;
 import org.firstinspires.ftc.teamcode.Components.Accesories.Shooter;
+import org.firstinspires.ftc.teamcode.Components.Accesories.Transfer;
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
@@ -23,8 +24,9 @@ public class Robot {
     // Hardware Objects
     private BasicChassis drivetrain = null;
     private Intake intake = null;
+    private Transfer transfer = null;
     private WobbleGoal wobbleGoal = null;
-    private RingDepositor ringDepositor = null;
+//    private RingDepositor ringDepositor = null;
     private Shooter shooter = null;
     private VuforiaWebcam vuforiaWebcam = null;
     private TensorFlow tensorFlow = null;
@@ -51,9 +53,9 @@ public class Robot {
 
         if(isCorgi) {
             intake = new Intake(op);
+            transfer = new Transfer(op);
             wobbleGoal = new WobbleGoal(op);
-            ringDepositor = new RingDepositor(op);
-            intake = new Intake(op);
+//            ringDepositor = new RingDepositor(op);
             shooter = new Shooter(op);
         }
 
@@ -265,34 +267,34 @@ public class Robot {
 
     // ring depositor
     //TODO: <owner>, can we start method name with a verb?
-    public void ringDepositorGoToPosition(RingDepositor.Position p){
-        if(isCorgi) {
-            ringDepositor.goToPosition(p);
-        }
-    }
-
-    //TODO: <owner> , can we start method name with a verb?
-    public void ringDepositorSmartDeposit(){
-        ringDepositor.smartDeposit();
-    }
-
-    public void printCurrentRingDepositorLocation() {
-        if(isCorgi) {
-            ringDepositor.printCurrentLocation();
-        }
-    }
-
-    public void stopRingDepositor(){
-        if(isCorgi) {
-            ringDepositor.stop();
-        }
-    }
-
-    public void moveRingClamp(boolean direction) {
-        if(isCorgi) {
-            ringDepositor.moveRingClamp(direction);
-        }
-    }
+//    public void ringDepositorGoToPosition(RingDepositor.Position p){
+//        if(isCorgi) {
+//            ringDepositor.goToPosition(p);
+//        }
+//    }
+//
+//    //TODO: <owner> , can we start method name with a verb?
+//    public void ringDepositorSmartDeposit(){
+//        ringDepositor.smartDeposit();
+//    }
+//
+//    public void printCurrentRingDepositorLocation() {
+//        if(isCorgi) {
+//            ringDepositor.printCurrentLocation();
+//        }
+//    }
+//
+//    public void stopRingDepositor(){
+//        if(isCorgi) {
+//            ringDepositor.stop();
+//        }
+//    }
+//
+//    public void moveRingClamp(boolean direction) {
+//        if(isCorgi) {
+//            ringDepositor.moveRingClamp(direction);
+//        }
+//    }
 
     // intake
     public void startIntake(){
@@ -304,6 +306,19 @@ public class Robot {
     public void stopIntake(){
         if(isCorgi) {
             intake.stopIntake();
+        }
+    }
+
+    //transfer
+    public void startTransfer(){
+        if(isCorgi) {
+            transfer.startTransfer();
+        }
+    }
+
+    public void stopTransfer() {
+        if (isCorgi) {
+            transfer.stopTransfer();
         }
     }
 
