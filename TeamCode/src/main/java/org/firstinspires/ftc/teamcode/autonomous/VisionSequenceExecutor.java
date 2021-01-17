@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.hardware.UltimateGoalHardware;
 import org.firstinspires.ftc.teamcode.hardware.VisionHardware;
 import org.firstinspires.ftc.teamcode.playmaker.ActionSequence;
 import org.firstinspires.ftc.teamcode.playmaker.Autonomous;
+import org.firstinspires.ftc.teamcode.playmaker.Localizer;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "vision sequence")
 public class VisionSequenceExecutor extends VisionHardware implements Autonomous {
@@ -19,6 +20,11 @@ public class VisionSequenceExecutor extends VisionHardware implements Autonomous
     @Override
     public void run_loop() {
 
+    }
+
+    @Override
+    public Localizer.RobotTransform getStartingTransform() {
+        return null;
     }
 
     @Override

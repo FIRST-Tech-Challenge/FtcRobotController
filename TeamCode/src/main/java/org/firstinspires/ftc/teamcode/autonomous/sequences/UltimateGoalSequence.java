@@ -5,7 +5,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.action.DetectRingsAction;
 import org.firstinspires.ftc.teamcode.action.IfActionResult;
 import org.firstinspires.ftc.teamcode.action.MoveAlongPathAction;
-import org.firstinspires.ftc.teamcode.action.ReleaseWobbleGoalAction;
 import org.firstinspires.ftc.teamcode.hardware.UltimateGoalHardware;
 import org.firstinspires.ftc.teamcode.playmaker.ActionSequence;
 import org.firstinspires.ftc.teamcode.playmaker.Localizer;
@@ -86,7 +85,7 @@ public class UltimateGoalSequence extends ActionSequence {
                 new MoveAlongPathAction(ringTransforms[2], ROBOT_SPEED, FOLLOW_PATH_METHOD),
                 null));
 
-        addAction(new ReleaseWobbleGoalAction());
+        //addAction(new ReleaseWobbleGoalAction());
 
     }
 }

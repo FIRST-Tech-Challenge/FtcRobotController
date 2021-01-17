@@ -60,29 +60,39 @@ public class MoveAndOrientAction implements Action {
         double angularDifferenceBetweenPositions = Localizer.atan2(currentPosition, transform.position);
         double angularDifferenceToTargetHeading = Localizer.angularDifference(currentHeading, transform.heading);
         double angDiffBetweenForwardAndTargetPos = Localizer.angularDifference(currentHeading, angularDifferenceBetweenPositions);
+        double distanceToTargetIn = Localizer.distance(currentPosition, transform.position, DISTANCE_TOLERANCE_UNIT);
 
         hardware.telemetry.addData("current pos", "%.1f %.1f %.1f", inches.x, inches.y, inches.z);
         hardware.telemetry.addData("current heading", currentHeading);
         hardware.telemetry.addData("dist to target", currentDistanceToTarget);
         hardware.telemetry.addData("ang between pos", angularDifferenceBetweenPositions);
 
-
         hardware.telemetry.addData("ang to target heading", angularDifferenceToTargetHeading);
         hardware.telemetry.addData("ang forward to target", angDiffBetweenForwardAndTargetPos);
+        hardware.telemetry.addData("Distance to target", distanceToTargetIn);
+
 
 
         double  movePower;
         if (Localizer.distance(currentPosition, transform.position, DISTANCE_SCALE_DOWN_UNIT) <= DISTANCE_UNTIL_SCALE_DOWN) {
-            movePower = 0.3;
+            movePower = 0.4;
         } else {
             movePower = power;
         }
 
-        hardware.omniDrive.move(movePower, Math.toRadians(angDiffBetweenForwardAndTargetPos), angularDifferenceToTargetHeading/180);
+
 
         boolean withinDistanceTolerance = Localizer.distance(currentPosition, transform.position, DISTANCE_TOLERANCE_UNIT) <= DISTANCE_TOLERANCE;
-        boolean withinHeadingTolerance = Localizer.angularDifference(currentHeading, transform.heading) <= HEADING_TOLERANCE;
-        return withinDistanceTolerance && withinHeadingTolerance;
+        boolean withinHeadingTolerance = Math.abs(Localizer.angularDifference(currentHeading, transform.heading)) <= HEADING_TOLERANCE;
+        if (withinDistanceTolerance && withinHeadingTolerance) {
+            hardware.omniDrive.stopDrive();
+            return true;
+        } else if (withinDistanceTolerance) {
+            hardware.omniDrive.rotateRight(angularDifferenceToTargetHeading > 0 ? 0.275 : -0.275);
+        } else {
+            hardware.omniDrive.move(movePower, Math.toRadians(angDiffBetweenForwardAndTargetPos), angularDifferenceToTargetHeading/180);
+        }
+        return false;
     }
 
     @Override

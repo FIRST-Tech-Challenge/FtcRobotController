@@ -1,9 +1,20 @@
 package org.firstinspires.ftc.teamcode.action;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.teamcode.playmaker.Action;
 import org.firstinspires.ftc.teamcode.playmaker.RobotHardware;
 
-public class ReleaseWobbleGoalAction implements Action {
+public class SetServoAction implements Action {
+
+    String servoName;
+    double position;
+    public SetServoAction(String servoName, double position) {
+        this.servoName = servoName;
+        this.position = position;
+    }
+
 
     @Override
     public void init(RobotHardware hardware) {
@@ -12,7 +23,11 @@ public class ReleaseWobbleGoalAction implements Action {
 
     @Override
     public boolean doAction(RobotHardware hardware) {
-        return false;
+        Servo servo = hardware.hardwareMap.get(Servo.class, servoName);
+        if (servo != null) {
+            servo.setPosition(position);
+        }
+        return true;
     }
 
     @Override

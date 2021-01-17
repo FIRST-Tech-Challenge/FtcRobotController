@@ -134,6 +134,10 @@ public abstract class RobotHardware extends OpMode {
     public void initializeForAutonomous(Autonomous autonomous) {
         this.executionMode = ExecutionMode.AUTONOMOUS;
         this.autonomousExecutor = new AutonomousExecutor(autonomous, this);
+        Localizer.RobotTransform startingTransform = autonomous.getStartingTransform();
+        if (startingTransform != null) {
+            this.localizer.setRobotStart(revIMU, startingTransform.position, startingTransform.heading);
+        }
     }
 
     /**
@@ -151,9 +155,16 @@ public abstract class RobotHardware extends OpMode {
     public abstract void run_loop();
 
     @Override
+    public void init_loop() {
+        this.localizer.updateRobotTransform(this, revIMU);
+        this.localizer.telemetry();
+    }
+
+    @Override
     public void loop() {
         // Update robot location
         this.localizer.updateRobotTransform(this, revIMU);
+        this.localizer.telemetry();
 
         // Update gamepad actions
         gamepadActions.update(gamepad1, gamepad2);

@@ -20,6 +20,7 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
+    public static final double SHOOTER_POWER = 0.5535;
 
     public enum UltimateGoalStartingPosition  {
         LEFT,
@@ -42,7 +43,7 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     public DcMotor escalator;
 
     public DcMotor wobbleGoalHolder;
-    public CRServo wobbleServo;
+    public Servo wobbleServo;
 
     public final static double COUNTS_PER_ENCODER_REV = 8192;
     public final static double WHEEL_DIAMETER_IN = 4;
@@ -56,13 +57,18 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         backRight = this.initializeDevice(DcMotor.class, "backRight");
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter = this.initializeDevice(DcMotor.class, "shooter");
+        shooter.setDirection(DcMotorSimple.Direction.REVERSE);
         collector = this.initializeDevice(DcMotor.class, "collector");
         collector.setDirection(DcMotorSimple.Direction.REVERSE);
         escalator = this.initializeDevice(DcMotor.class, "escalator");
         //.setDirection(DcMotorSimple.Direction.REVERSE);
         wobbleGoalHolder = this.initializeDevice(DcMotor.class, "wobble");
-        wobbleServo = this.initializeDevice(CRServo.class, "wobbleServo");
+        wobbleServo = this.initializeDevice(Servo.class, "wobbleServo");
+        wobbleServo.setPosition(0);
         revIMU = this.hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        revIMU.initialize(parameters);
 
 //        wobbleGoalLeftClaw = this.initializeDevice(Servo.class, "leftClaw");
 //        wobbleGoalLeftClaw.scaleRange(0.375, 0.55);
@@ -76,7 +82,8 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     @Override
     public void initializeLocalizer() {
         super.initializeLocalizer();
-        this.localizer.calibrateIMUAndSetWorldOffset(revIMU, 90);
+        //this.localizer.setRobotStart(revIMU, 90);
+        this.localizer.encodersXScaleFactor = 40.0/48.0; // ANTI JANK
         this.localizer.loadUltimateGoalTrackables(this);
         this.localizer.setCameraMatrix(this,
                 new Position(DistanceUnit.INCH, 9.5, 0, 0, 0),
