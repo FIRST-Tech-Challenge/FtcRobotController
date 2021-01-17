@@ -58,29 +58,29 @@ public class R_3Power_park extends LinearOpMode {
             if (rings == 0) {
                 robot.turnInPlace(0, 1.0);
                 robot.moveAngle(10, 45.5, 0.7);
-                robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
+                robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 sleep(250);
                 robot.turnInPlace(0, 0.5);
                 robot.moveAngle(-15, 0, 0.5);
-                robot.wobbleGoalGoToPosition(WobbleGoal.Position.RAISE);
+                robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
                 robot.moveAngle(-35, -55, 0.5);
-                robot.wobbleGoalGoToPosition(WobbleGoal.Position.DROP);
+                robot.moveWobbleGoalToPosition(WobbleGoal.Position.DROP);
                 sleep(1500);
-                robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
+                robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
                 robot.moveAngle(15, 0, 0.7);
             }
             if (rings == 1) {
                 robot.turnInPlace(0, 1.0);
                 robot.moveAngle(15, 45, 0.8);
-                robot.wobbleGoalGoToPosition(WobbleGoal.Position.GRAB);
+                robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 sleep(250);
                 robot.turnInPlace(0, 0.5);
                 robot.moveAngle(-15, 0, 0.5);
-                robot.wobbleGoalGoToPosition(WobbleGoal.Position.RAISE);
+                robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
                 robot.moveAngle(-10, -82, 0.5);
-                robot.wobbleGoalGoToPosition(WobbleGoal.Position.DROP);
+                robot.moveWobbleGoalToPosition(WobbleGoal.Position.DROP);
                 robot.moveAngle(5,0,0.25);
-                robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
+                robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
                 robot.moveAngle(7, 5, 0.7);
                 robot.moveAngle(0, 15, 0.7);
 
@@ -89,7 +89,7 @@ public class R_3Power_park extends LinearOpMode {
         else{
             robot.moveAngle(0,-15,0.5);
         }
-        robot.wobbleGoalGoToPosition(WobbleGoal.Position.REST);
+        robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
         stop();
     }
 

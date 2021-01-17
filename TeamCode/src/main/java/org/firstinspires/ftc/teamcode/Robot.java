@@ -234,8 +234,7 @@ public class Robot {
     /**
      * wobble goal methods
      */
-    //TODO: Siddharth & Aiden, can we start method name with a verb?
-    public WobbleGoal.Position wobbleGoalGoToPosition(WobbleGoal.Position p){
+    public WobbleGoal.Position moveWobbleGoalToPosition(WobbleGoal.Position p){
         if(isCorgi) {
             wobbleGoal.goToPosition(p);
         }
