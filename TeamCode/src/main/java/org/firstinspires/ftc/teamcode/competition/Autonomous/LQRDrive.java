@@ -23,6 +23,7 @@ public class LQRDrive extends LinearOpMode
 
         final Hardware robot = new Hardware();
         robot.init(hardwareMap);
+        robot.resetOdometry(0,0,0);
         LQR lqr = new LQR(robot);
         /*
         *
@@ -141,16 +142,11 @@ public class LQRDrive extends LinearOpMode
         while(opModeIsActive()&&!lqr.robotInCircle(-58,5.5,5))
         {
 
-            for(double d[]:lqr.runLqrDrive(wobble,-58,5.5,0))
-            {
-
-                telemetry.addData("x",d);
-
-            }
-            robot.flywheelRotateServoLeft.setPosition(.6);
-            telemetry.addData("x: ", robot.x);
-            telemetry.addData("y: ", robot.y);
-            telemetry.addData("theta: ", robot.theta);
+            lqr.runLqrDrive(wobble,-58,5.5,0);
+            robot.flywheelRotateServoLeft.setPosition(.389);
+            telemetry.addData("x: ", Hardware.x);
+            telemetry.addData("y: ", Hardware.y);
+            telemetry.addData("theta: ", Hardware.theta);
             telemetry.addData("x velocity",robot.xVelocity);
             telemetry.addData("y velocity",robot.yVelocity);
             telemetry.addData("theta velocity",robot.thetaVelocity);
@@ -158,22 +154,14 @@ public class LQRDrive extends LinearOpMode
 
         }
 
-        while(opModeIsActive()&&!lqr.robotInCircle(-58,-2.65,.4))
+        while(opModeIsActive()&&!lqr.robotInCircle(-58,-2.75,.4))
         {
 
-            for(double d[]:lqr.runLqrDrive(path,-58,-2.65,0))
-            {
-
-                int i=0;
-                for(double d1:d)
-                    telemetry.addData("k"+i,d1);
-                i++;
-
-            }
-            robot.flywheelRotateServoLeft.setPosition(.6);
-            telemetry.addData("x: ", robot.x);
-            telemetry.addData("y: ", robot.y);
-            telemetry.addData("theta: ", robot.theta);
+            lqr.runLqrDrive(path,-58,-2.75,0);
+            robot.flywheelRotateServoLeft.setPosition(.405);
+            telemetry.addData("x: ", Hardware.x);
+            telemetry.addData("y: ", Hardware.y);
+            telemetry.addData("theta: ", Hardware.theta);
             telemetry.update();
 
         }
@@ -182,31 +170,34 @@ public class LQRDrive extends LinearOpMode
         robot.drive(0,0,0);
         e.reset();
         e.startTime();
-        while(e.seconds()<1.5&&opModeIsActive()){robot.setFlyWheelPower(1);}
-        for(int i = 0; i<3; i++)
+        while(e.seconds()<1.5&&opModeIsActive()){robot.setFlyWheelVelocity(2500);}
+        for(int i = 0; i<4; i++)
         {
             robot.flickRing();
             e.reset();
             e.startTime();
-            while(e.seconds()<.5&&opModeIsActive()){}
+            while(e.seconds()<.7&&opModeIsActive())
+            {
+                robot.setFlyWheelVelocity(2500);
+                robot.flywheelRotateServoLeft.setPosition(.405);
+                telemetry.addData("vel",robot.flywheelMotorLeft.getVelocity());
+                telemetry.addData("x: ", Hardware.x);
+                telemetry.addData("y: ", Hardware.y);
+                telemetry.addData("theta: ", Hardware.theta);
+                telemetry.update();
+            }
         }
         e.reset();
         e.startTime();
-        while(e.seconds()<1&&opModeIsActive()){robot.setFlyWheelPower(1);}
+        while(e.seconds()<1&&opModeIsActive()){robot.setFlyWheelVelocity(2500);}
         robot.setFlyWheelPower(0);
         while(opModeIsActive()&&!lqr.robotInCircle(-67.5,-8,1))
         {
 
-            for(double d[]:lqr.runLqrDrive(park,-67.5,-8,0))
-            {
-
-                telemetry.addData("x",d);
-
-            }
-            ;
-            telemetry.addData("x: ", robot.x);
-            telemetry.addData("y: ", robot.y);
-            telemetry.addData("theta: ", robot.theta);
+            lqr.runLqrDrive(park,-67.5,-8,0);
+            telemetry.addData("x: ", Hardware.x);
+            telemetry.addData("y: ", Hardware.y);
+            telemetry.addData("theta: ", Hardware.theta);
             telemetry.update();
 
         }

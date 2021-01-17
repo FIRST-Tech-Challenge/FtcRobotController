@@ -25,6 +25,7 @@ public class Teleop extends LinearOpMode
         Hardware robot = new Hardware();
         robot.init(hardwareMap);
         waitForStart();
+        robot.initServos();
         boolean a2Pressed=false;
         boolean a1Pressed = true;
         boolean y2Pressed=false;
@@ -58,7 +59,7 @@ public class Teleop extends LinearOpMode
             {
 
                 byte sign = 1;
-                double diff = robot.theta-Math.atan((50+robot.y)/(9-robot.x))*.8;
+                double diff = Hardware.theta-Math.atan((46+Hardware.y)/(135-Hardware.x));
                 if(diff<0)
                     diff+=2*Math.PI;
                 if(diff>Math.PI)
@@ -74,9 +75,9 @@ public class Teleop extends LinearOpMode
             }
             else
                 robot.drive(forward*driveSpeed*gamepad1.left_stick_y,driveSpeed*gamepad1.left_stick_x,driveSpeed*gamepad1.right_stick_x);
-            telemetry.addData("x: ", robot.x);
-            telemetry.addData("y: ", robot.y);
-            telemetry.addData("theta: ", robot.theta);
+            telemetry.addData("x: ", Hardware.x);
+            telemetry.addData("y: ", Hardware.y);
+            telemetry.addData("theta: ", Hardware.theta);
             telemetry.addData("Auto Aim",autoAim);
             telemetry.addData("Slow Drive",slowDrive);
             telemetry.addData("angle speed",angleSpeed);
@@ -159,7 +160,7 @@ public class Teleop extends LinearOpMode
 
             //makes the flywheel rotation servo move with b and x
             if(Math.abs(gamepad2.left_stick_y)>.03)
-            servoPosition+=gamepad2.left_stick_y*angleSpeed/20;
+            servoPosition+=gamepad2.left_stick_y*angleSpeed/30;
 
             if(servoPosition>1)
                 servoPosition=1;
