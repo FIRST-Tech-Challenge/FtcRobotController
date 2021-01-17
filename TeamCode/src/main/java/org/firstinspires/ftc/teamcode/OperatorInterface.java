@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.technototes.library.command.CommandScheduler;
+import com.technototes.library.command.ConditionalCommand;
 import com.technototes.library.control.gamepad.CommandButton;
 import com.technototes.library.control.gamepad.CommandGamepad;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.commands.drivebase.DriveCommand;
 import org.firstinspires.ftc.teamcode.commands.intake.IntakeInCommand;
 import org.firstinspires.ftc.teamcode.commands.intake.IntakeOutCommand;
 import org.firstinspires.ftc.teamcode.commands.intake.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.subsystems.IndexSubsystem;
 
 /** Class for driver controls
  *
@@ -40,7 +42,8 @@ public class OperatorInterface {
         intakeSpitButton = driverGamepad.x;
 
         //intake commands
-        intakeMainButton.whenToggled(new IntakeInCommand(robot.intakeSubsystem))
+        //TODO command.asConditional(BooleanSupplier condition)
+        intakeMainButton.whenToggled(new ConditionalCommand(robot.indexSubsystem::isFull, new IntakeInCommand(robot.intakeSubsystem)))
                 .whenInverseToggled(new IntakeStopCommand(robot.intakeSubsystem));
         intakeSpitButton.whenPressed(new IntakeOutCommand(robot.intakeSubsystem));
 

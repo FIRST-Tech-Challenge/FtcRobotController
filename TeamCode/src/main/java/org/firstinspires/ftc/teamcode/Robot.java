@@ -38,7 +38,7 @@ public class Robot implements Loggable {
 
         drivebaseSubsystem = new DrivebaseSubsystem(hardware.flDriveMotor, hardware.frDriveMotor, hardware.rlDriveMotor, hardware.rrDriveMotor, hardware.imu);
 
-        indexSubsystem = new IndexSubsystem(hardware.indexMotor);
+        //indexSubsystem = new IndexSubsystem(hardware.indexMotor);
 
         intakeSubsystem = new IntakeSubsystem(hardware.intakeMotor);
 
