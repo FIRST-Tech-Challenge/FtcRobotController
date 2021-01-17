@@ -173,7 +173,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             sliderStop();
             return;
         }
-        pos = Math.min(pos+50, SLIDER_POS_MAX);
+        pos = Math.min(pos+100, SLIDER_POS_MAX);
         slider.setTargetPosition(pos);
         slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slider.setVelocity(SLIDER_SPEED);
@@ -189,7 +189,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             sliderStop();
             return;
         }
-        pos=Math.max(pos-50,SLIDER_POS_INIT);
+        pos=Math.max(pos-100,SLIDER_POS_INIT);
         slider.setTargetPosition(pos);
         slider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slider.setVelocity(-SLIDER_SPEED);
@@ -282,13 +282,29 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return moveArm(ARM_UP);
+                grabberClose();return moveArm(ARM_INIT);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
                 return moveGrabber(GRABBER_CLOSE);
             }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return slideToPos(SLIDER_POS_INIT);
+            }}, taskName);
+    }
+
+    public void initWobbleGoalCombo() { // put wobble goal to init position
+        final String taskName = "init Wobble Goal Combo";
+        if (!TaskManager.isComplete(taskName)) return;
+        grabberClose();
+        moveArm(ARM_INIT);
+        TaskManager.add(new Task() {
+                @Override
+                public Progress start() { return slideToPos(SLIDER_POS_INIT);
+                }}, taskName);
     }
 
     public void collectRingCombo(){

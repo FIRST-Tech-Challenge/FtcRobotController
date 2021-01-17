@@ -36,7 +36,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     // private double robotEncoderWheelDistance = 15.4317822 * DEFAULT_COUNTS_PER_INCH;
     // private double horizontalEncoderTickPerDegreeOffset = -86.84834;
     private double robotEncoderWheelDistance = 14.5 * DEFAULT_COUNTS_PER_INCH;
-    private double horizontalEncoderTickPerDegreeOffset = 43.22;
+    private double horizontalEncoderTickPerDegreeOffset = 84.26;
 
     //Sleep time interval (milliseconds) for the position update thread
     private int sleepTime;
@@ -45,9 +45,9 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
     private File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
 
-    private int verticalLeftEncoderPositionMultiplier = 1;
-    private double verticalRightEncoderPositionMultiplier = 1.18;
-    private int normalEncoderPositionMultiplier = 1;
+    private double verticalLeftEncoderPositionMultiplier = 1;  // 0.8680555556;;
+    private double verticalRightEncoderPositionMultiplier = 1; // 1.152;
+    private double normalEncoderPositionMultiplier = 1;
 
 
     public void set_orientationSensor(CombinedOrientationSensor val) {

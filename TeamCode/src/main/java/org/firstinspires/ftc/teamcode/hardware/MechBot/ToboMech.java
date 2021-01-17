@@ -70,7 +70,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_dist = 0;
     public double shooting_angle = 0;
     public double shooterAngleOffset = 3.0;
-    final public double WARM_UP_RPM = 1300;
+    final public double WARM_UP_RPM = 1340;
     public double shooting_rpm = WARM_UP_RPM;
 
     public double auto_rotate_degree = 0;
@@ -354,7 +354,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
                 if (chassis!=null && source.isPressed(Button.BACK) && source.isPressed(Button.START)) {
-                    chassis.resetOdometry();
+                    chassis.resetOdometry(false);
                     // calibration mode. Only uncomment when testing new motors with chassis wheels suspended
                     // chassis.setupEncoders(telemetry);
 //                    chassis.freeStyle(1.0, 1.0, 1.0, 1.0, true);
@@ -475,18 +475,20 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.getTrigger(Events.Side.RIGHT) > 0.3){
                     if (hopper!=null)
                         hopper.hopperDownCombo();
-                } else if(source.isPressed(Button.LEFT_BUMPER)){
-                    if (!source.isPressed(Button.Y) && (topWobbleGoalGrabber!=null))
+                } else if(source.isPressed(Button.LEFT_BUMPER)) {
+                    if (!source.isPressed(Button.Y) && (topWobbleGoalGrabber != null)) {
                         topWobbleGoalGrabber.grabberAuto();
-                    else {
-                        if (comboGrabber!=null)
+                    } else if (source.isPressed(Button.BACK)) {
+                        doHighGoals(3, true);
+                    } else {
+                        if (comboGrabber != null)
                             comboGrabber.sliderDown(source.isPressed(Button.BACK));
                     }
                 } else if(source.isPressed(Button.RIGHT_BUMPER)) {
                     if (comboGrabber != null)
                         comboGrabber.armDownInc();
                 }  else if(source.isPressed(Button.BACK)){
-                    doHighGoals(3, true);
+                    doHighGoalsSemi();
                 } else if (!source.isPressed((Button.START))){
                     if (hopper!=null) {
                         //hopper.feederAuto();
@@ -565,11 +567,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
 
                 if(source.getTrigger(Events.Side.LEFT) > 0.3){
-                    if (comboGrabber!=null)
+                    if (comboGrabber!=null) {
                         comboGrabber.releaseWobbleGoalCombo();
+                    }
                 } else if(source.isPressed(Button.LEFT_BUMPER)){
-                    if (comboGrabber!=null)
+                    if (comboGrabber!=null) {
                         comboGrabber.releaseWobbleGoalCombo();
+                    }
                 } else if(source.isPressed(Button.BACK)){
                     endGameGrabCombo();
                 }
@@ -1305,11 +1309,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public void doHighGoals(int numRings, boolean keepPos) throws InterruptedException {
+        shooter.shootOutByRpm(WARM_UP_RPM);
+
         if (hopper != null) {
             hopper.hopperUpCombo();
             TaskManager.processTasks();
         }
-        shooter.shootOutByRpm(WARM_UP_RPM);
+        if (intake!=null)
+            intake.stop();
         if(!keepPos) {
             if (tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C && numRings == 3) {
                 chassis.driveTo(.55, side(50), 170, 0, true, 2);
@@ -1330,12 +1337,50 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             else {
                 autoShootFast();
             }
-            //sleep(500);
+            sleep(200);
         }
         if(tZone==TargetZone.UNKNOWN)
             shooter.shootOutByRpm(WARM_UP_RPM); // for teleop keep the shooter at WARM_UP_RPM
         else
             shooter.shootOutByRpm(0);
+    }
+
+    public void doHighGoalsSemi() throws InterruptedException {
+        shooter.shootOutByRpm(1400);
+        if (hopper != null) {
+            hopper.hopperUpCombo();
+            TaskManager.processTasks();
+        }
+        if (intake!=null)
+            intake.stop();
+        while (!TaskManager.isComplete("Transfer Up Combo")) {
+            TaskManager.processTasks();
+        }
+
+        // need to do something about this
+        double heading = 0;
+        if (Math.abs(chassis.odo_heading() - heading) > 1) {
+            chassis.rotateTo(0.3, heading);
+            sleep(100);
+            int i=0;
+            while (Math.abs(chassis.odo_heading() - shooting_angle)>1 && i<1) {
+                chassis.rawRotateTo(chassis.chassisAligmentPowerMin, shooting_angle, false, 0.5);
+                i++;
+            }
+            //sleep(200);
+        }
+        chassis.resetOdometry(true); // use rangeSensor to correct Odometry
+        //shoot
+        for (int i=0; i<3; i++) {
+            if (i==0) {
+                autoShoot();
+            }
+            else {
+                autoShootFast();
+            }
+            sleep(200);
+        }
+        shooter.shootOutByRpm(1400);
     }
 
     public void getSecondWobbleGoal() throws InterruptedException {

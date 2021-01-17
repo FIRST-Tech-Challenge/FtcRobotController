@@ -156,7 +156,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double servoCorrection;   // latest correction applied to leading wheels' servos to correct heading deviation
     private double curHeading = 0;
     private boolean useScalePower = true;//
-    private boolean setImuTelemetry = false;//unless debugging, don't set telemetry for imu
+    private boolean setImuTelemetry = true;//unless debugging, don't set telemetry for imu
     private boolean setRangeSensorTelemetry = true; //unless debugging, don't set telemetry for range sensor
     private boolean useOdometry = true;
     private boolean normalizeMode = true;
@@ -211,7 +211,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     DcMotorEx verticalRightEncoder;
     DcMotorEx horizontalEncoder;
     OdometryGlobalCoordinatePosition GPS;
-    final double ODO_COUNTS_PER_INCH = 303.7;
+    final double ODO_COUNTS_PER_INCH = 303.71;
     final double ODO_COUNTS_PER_CM = ODO_COUNTS_PER_INCH / 2.54;
 
     String rfName = "motorFR" , lfName = "motorFL";
@@ -1193,11 +1193,13 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         }
     }
 
-    public void resetOdometry() throws InterruptedException {
+    public void resetOdometry(boolean keepPos) throws InterruptedException {
+        if (!keepPos) {
+            rotateTo(.35, 0, 2); // heading to 0
+            sleep(500);
+        }
         double dist = getDistance(SwerveChassis.Direction.LEFT);
-        rotateTo(.35, 0, 2); // heading to 0
-        sleep(500);
-        if (dist>0) {
+        if (dist>0 && dist<110) {
             GPS.set_x_pos(dist+14); // left range sensor is 14 cm left of the robot center
         }
     }

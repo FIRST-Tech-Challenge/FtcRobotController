@@ -32,10 +32,12 @@ public class OdometryCalibration extends LinearOpMode {
     String verticalLeftEncoderName = rbName, verticalRightEncoderName = lfName, horizontalEncoderName = rfName;
 
     final double PIVOT_SPEED = 0.4;
+    final double LEFT_ENC_RATIO = 0.8680555556;
+    final double RIGHT_ENC_RATIO = 1.152;
 
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
     // final double COUNTS_PER_INCH = 307.699557;
-    final double COUNTS_PER_INCH = 303.7;
+    final double COUNTS_PER_INCH = 303.712;
     ElapsedTime timer = new ElapsedTime();
 
     double horizontalTickOffset = 0;
@@ -103,7 +105,8 @@ public class OdometryCalibration extends LinearOpMode {
         Since the left encoder is also mapped to a drive motor, the encoder value needs to be reversed with the negative sign in front
         THIS MAY NEED TO BE CHANGED FOR EACH ROBOT
        */
-        double encoderDifference = Math.abs(verticalLeft.getCurrentPosition()) + (Math.abs(verticalRight.getCurrentPosition()*1.18));
+        double encoderDifference = Math.abs(verticalLeft.getCurrentPosition())*LEFT_ENC_RATIO +
+                (Math.abs(verticalRight.getCurrentPosition()*RIGHT_ENC_RATIO));
         // if (ggConfig) encoderDifference *= -1.0;
 
         double verticalEncoderTickOffsetPerDegree = encoderDifference/angle;
@@ -124,8 +127,10 @@ public class OdometryCalibration extends LinearOpMode {
 
             //Display raw values
             telemetry.addData("IMU Angle", getZAngle());
-            telemetry.addData("Vertical Left Position", verticalLeft.getCurrentPosition());
-            telemetry.addData("Vertical Right Normalized Position", verticalRight.getCurrentPosition() * 1.18);
+            telemetry.addData("Vertical Left Position (ratioed)", "%2d/%2.0f",
+                    verticalLeft.getCurrentPosition(),verticalLeft.getCurrentPosition()*LEFT_ENC_RATIO);
+            telemetry.addData("Vertical Right Position (ratioed)", "%2d/%2.0f",
+                    verticalRight.getCurrentPosition(), verticalRight.getCurrentPosition()*RIGHT_ENC_RATIO);
             telemetry.addData("Vertical Right Position", verticalRight.getCurrentPosition());
             telemetry.addData("Horizontal Position", horizontal.getCurrentPosition());
             telemetry.addData("Vertical Encoder Offset", verticalEncoderTickOffsetPerDegree);
