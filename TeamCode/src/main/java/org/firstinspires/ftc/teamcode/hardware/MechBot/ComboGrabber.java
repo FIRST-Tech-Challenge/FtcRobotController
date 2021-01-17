@@ -296,6 +296,35 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             }}, taskName);
     }
 
+    public void releaseWobbleGoalFastCombo() {
+        final String taskName = "release Wobble Goal Fast Combo";
+        if (!TaskManager.isComplete(taskName)) return;
+        if (slider.getCurrentPosition()>SLIDER_POS_HIGH) {
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    return slideToPos(SLIDER_POS_HIGH);
+                }}, taskName);
+        }
+        if (isGrabFromBottom) {
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    return slideToPos(SLIDER_POS_INIT);
+                }}, taskName);
+        }
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return moveArm(ARM_DOWN);
+            }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return moveGrabber(GRABBER_OPEN);
+            }}, taskName);
+    }
+
     public void initWobbleGoalCombo() { // put wobble goal to init position
         final String taskName = "init Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;

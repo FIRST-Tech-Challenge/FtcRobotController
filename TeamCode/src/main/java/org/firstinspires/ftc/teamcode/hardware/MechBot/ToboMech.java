@@ -1195,10 +1195,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             TaskManager.processTasks();
         }
         if (comboGrabber!=null) {
-            comboGrabber.releaseWobbleGoalCombo();
-            while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
+            comboGrabber.releaseWobbleGoalFastCombo();
+            while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
                 TaskManager.processTasks();
             }
+            comboGrabber.initWobbleGoalCombo();
         }
         //sleep(1000);
 } public void deliverFirstWobbleGoalAfterHighGoal() throws InterruptedException {
@@ -1218,10 +1219,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
 
         if (comboGrabber!=null) {
-            comboGrabber.releaseWobbleGoalCombo();
-            while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
+            comboGrabber.releaseWobbleGoalFastCombo();
+            while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
                 TaskManager.processTasks();
             }
+            comboGrabber.initWobbleGoalCombo();
         }
         if (tZone == TargetZone.ZONE_C) {
             chassis.rawRotateTo(0.3, -2.5, true, 0.5);
@@ -1478,10 +1480,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }
         if (comboGrabber!=null) {
-            comboGrabber.releaseWobbleGoalCombo();
-            while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
+            comboGrabber.releaseWobbleGoalFastCombo();
+            while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
                 TaskManager.processTasks();
             }
+            comboGrabber.initWobbleGoalCombo();
         }
         //sleep(1000);
     }
@@ -1544,7 +1547,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         chassis.yMove(1, 0.19);
         intake.intakeIn();
         for (int i = 0; i < n; i++) {
-            sleep(650);
+            sleep(750);
             if(i+2==n)
                 chassis.stop();
         }
