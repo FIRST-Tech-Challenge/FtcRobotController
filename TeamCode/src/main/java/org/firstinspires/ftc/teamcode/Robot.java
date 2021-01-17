@@ -2,11 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.Intake;
-import org.firstinspires.ftc.teamcode.Components.Accesories.RingDepositor;
 import org.firstinspires.ftc.teamcode.Components.Accesories.Shooter;
 import org.firstinspires.ftc.teamcode.Components.Accesories.Transfer;
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
@@ -26,7 +23,6 @@ public class Robot {
     private Intake intake = null;
     private Transfer transfer = null;
     private WobbleGoal wobbleGoal = null;
-//    private RingDepositor ringDepositor = null;
     private Shooter shooter = null;
     private VuforiaWebcam vuforiaWebcam = null;
     private TensorFlow tensorFlow = null;
@@ -55,7 +51,6 @@ public class Robot {
             intake = new Intake(op);
             transfer = new Transfer(op);
             wobbleGoal = new WobbleGoal(op);
-//            ringDepositor = new RingDepositor(op);
             shooter = new Shooter(op);
         }
 
@@ -263,37 +258,6 @@ public class Robot {
     public void moveWobbleGoalServo(boolean direction){
         wobbleGoal.moveWobbleGoalServo(direction);
     }
-
-    // ring depositor
-    //TODO: <owner>, can we start method name with a verb?
-//    public void ringDepositorGoToPosition(RingDepositor.Position p){
-//        if(isCorgi) {
-//            ringDepositor.goToPosition(p);
-//        }
-//    }
-//
-//    //TODO: <owner> , can we start method name with a verb?
-//    public void ringDepositorSmartDeposit(){
-//        ringDepositor.smartDeposit();
-//    }
-//
-//    public void printCurrentRingDepositorLocation() {
-//        if(isCorgi) {
-//            ringDepositor.printCurrentLocation();
-//        }
-//    }
-//
-//    public void stopRingDepositor(){
-//        if(isCorgi) {
-//            ringDepositor.stop();
-//        }
-//    }
-//
-//    public void moveRingClamp(boolean direction) {
-//        if(isCorgi) {
-//            ringDepositor.moveRingClamp(direction);
-//        }
-//    }
 
     // intake
     public void startIntake(){
