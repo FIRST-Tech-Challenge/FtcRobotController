@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Components.Accesories.RingDepositor;
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
@@ -44,12 +43,9 @@ public class TwoGPTeleop extends LinearOpMode {
         boolean isSlow = false;
         boolean currSlow = false;
         boolean slowMode = false;
-//        boolean ring_clamp_is_up = true;
-//        boolean move_ring_clamp = true;
         boolean wobble_goal_servo_is_up = true;
         boolean move_wobble_goal_servo = true;
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
-        RingDepositor.Position currentRingDepositorPosition = RingDepositor.Position.REST;
 
         telemetry.addData("Status", "Ready to go");
         telemetry.update();
@@ -68,7 +64,6 @@ public class TwoGPTeleop extends LinearOpMode {
             float left_stick_x = -gamepad1.left_stick_x;
             float right_stick_x = -gamepad1.right_stick_x;
             boolean move_wobble_goal_arm = gamepad1.right_bumper;
-//            boolean smart_depo = gamepad1.left_bumper;
             float start_transfer_sys = gamepad1.right_trigger;
             float stop_transfer_sys = gamepad1.left_trigger;
             boolean wobble_goal_servo = gamepad1.x;
@@ -165,11 +160,6 @@ public class TwoGPTeleop extends LinearOpMode {
                     robot.moveWobbleGoalServo(false);
                 }
             }
-
-            // ring depositor
-//            if (smart_depo){
-//                robot.ringDepositorSmartDeposit();
-//            }
 
             //transfer system
             if(start_transfer_sys == 1.00){
