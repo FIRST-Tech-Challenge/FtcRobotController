@@ -108,7 +108,7 @@ public class TensorflowIntegration implements VisionProvider {
             cacheRecognitions = updatedRecognitions;
         }
         if (cacheRecognitions.size() == 0 ) {
-            return StackHeight.NONE_FOUND;
+            return StackHeight.ZERO;
         } else {
             // list is not empty.
             // step through the list of recognitions and display boundary info.
@@ -123,7 +123,7 @@ public class TensorflowIntegration implements VisionProvider {
                 }
             }
         }
-        return StackHeight.NONE_FOUND;
+        return StackHeight.ZERO;
     }
 
     @Override
