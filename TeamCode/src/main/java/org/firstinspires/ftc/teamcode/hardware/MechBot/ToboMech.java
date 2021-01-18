@@ -1392,11 +1392,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
         // need to do something about this
         double heading = 0;
-        if (Math.abs(chassis.odo_heading() - heading) > 1) {
-            chassis.rotateTo(0.3, heading);
+        if (Math.abs(chassis.odo_heading() - heading) > 0.8) {
+            if (Math.abs(chassis.odo_heading() - heading) > 10)
+                chassis.rotateTo(0.3, heading);
             sleep(100);
             int i=0;
-            while (Math.abs(chassis.odo_heading() - shooting_angle)>1 && i<1) {
+            while (Math.abs(chassis.odo_heading() - shooting_angle)>1 && i<2) {
                 chassis.rawRotateTo(chassis.chassisAligmentPowerMin, shooting_angle, false, 0.5);
                 i++;
             }

@@ -128,7 +128,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     public void feederAuto() throws InterruptedException {
         feederOut();
-        sleep(400);
+        sleep(250);
         feederIn();
     }
 
