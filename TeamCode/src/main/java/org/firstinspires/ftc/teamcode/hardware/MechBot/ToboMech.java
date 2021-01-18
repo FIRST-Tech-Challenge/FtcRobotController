@@ -265,7 +265,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (Math.abs(currentY) > MIN_STICK_VAL) { // car mode
                     chassis.carDrive(currentY * Math.abs(currentY) * normalizeRatio * chassis.powerScale(), right_x);
                 } else if (Math.abs(currentX) > MIN_STICK_VAL) {
-                    chassis.turn((currentX > 0 ? 1 : -1), Math.abs(currentX * currentX) * chassis.powerScale() * normalizeRatio);
+                    chassis.turn((currentX > 0 ? 1 : -1), 0.6 * Math.abs(currentX * currentX) * chassis.powerScale() * normalizeRatio);
                 } else if (Math.abs(currentY) > MIN_STICK_VAL) {
                     chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(currentY * currentY) * chassis.powerScale() * normalizeRatio);
                 } else {
@@ -293,7 +293,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         // car drive
                         chassis.carDrive(currentY * Math.abs(currentY) * normalizeRatio, left_x);
                     } else { // turn over-write free style
-                        chassis.turn((left_x > 0 ? 1 : -1), Math.abs(left_x * left_x) * chassis.powerScale() * normalizeRatio);
+                        chassis.turn((left_x > 0 ? 1 : -1), 0.6 * Math.abs(left_x * left_x) * chassis.powerScale() * normalizeRatio);
                     }
                 } else if (Math.abs(currentX) + Math.abs(currentY) > MIN_STICK_VAL) { // free style
                     movingAngle = Math.toDegrees(Math.atan2(currentX, currentY));
@@ -335,9 +335,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (current > 0.2 && chassis != null && source.getTrigger(Events.Side.LEFT) < 0.2) {
                     if (source.isPressed(Button.DPAD_UP)) { // high goal
                         if (source.isPressed(Button.BACK))
-                            doHighGoalsAndPowerShots(3, 0, true);
-                        else
                             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
+                        else
+                            doHighGoalsAndPowerShots(3, 0, true);
                     } else if (source.isPressed(Button.DPAD_RIGHT)) { // high goal
                         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R, false);
                     } else if (source.isPressed(Button.DPAD_LEFT)) { // high goal
@@ -1393,9 +1393,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // need to do something about this
         double heading = 0;
         if (Math.abs(chassis.odo_heading() - heading) > 0.8) {
-            if (Math.abs(chassis.odo_heading() - heading) > 10)
+            if (Math.abs(chassis.odo_heading() - heading) > 10) {
                 chassis.rotateTo(0.3, heading);
-            sleep(100);
+                sleep(100);
+            }
             int i=0;
             while (Math.abs(chassis.odo_heading() - shooting_angle)>1 && i<2) {
                 chassis.rawRotateTo(chassis.chassisAligmentPowerMin, shooting_angle, false, 0.5);
@@ -1554,7 +1555,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         comboGrabber.grabberOpen();
         sleep(100);
         comboGrabber.armDown();
-        sleep(150);
+        sleep(250);
         chassis.yMove(1, 0.50);
         sleep(200);
         chassis.yMove(1, 0.10);
