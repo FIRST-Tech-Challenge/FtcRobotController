@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.DcMotorSimple;
 //import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -30,7 +31,6 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     CRServo intakeTwo = null;
 
 
-
     @Override
     public void runOpMode() {
 //        imu = hardwareMap.get(Gyroscope.class, "imu");
@@ -54,6 +54,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
         rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
+        intakeTwo.setDirection(CRServo.Direction.REVERSE);
 
         boolean yPressed = false;
         boolean yOpen = true;
@@ -121,27 +122,30 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             }
             if (gamepad2.a) {
                 intakeOne.setPower(0.9);
-            }
-            if (gamepad2.b) {
-                intakeOne.setPower(-0.9);
-            }
-            if (gamepad2.y) {
-                if (!yPressed) {
-                    yPressed = true;
-                    if (yOpen) {
-                        wobbleGoalGrippyThing.setPosition(0.2);
+                intakeTwo.setPower(0.9);
 
-                        yOpen = false;
-                    } else {
-                        wobbleGoalGrippyThing.setPosition(.9);
-                        yOpen = true;
+
+                if (gamepad2.b) {
+                    intakeTwo.setPower(-0.9);
+                    intakeOne.setPower(-0.9);
+                }
+                if (gamepad2.y) {
+                    if (!yPressed) {
+                        yPressed = true;
+                        if (yOpen) {
+                            wobbleGoalGrippyThing.setPosition(0.2);
+
+                            yOpen = false;
+                        } else {
+                            wobbleGoalGrippyThing.setPosition(.9);
+                            yOpen = true;
+                        }
+                    }
+                } else {
+                    if (yPressed) {
+                        yPressed = false;
                     }
                 }
-            } else {
-                if (yPressed) {
-                    yPressed = false;
-                }
-
             }
         }
     }

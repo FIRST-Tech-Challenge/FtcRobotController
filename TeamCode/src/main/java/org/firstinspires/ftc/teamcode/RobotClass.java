@@ -25,8 +25,6 @@ public class RobotClass {
     private DcMotor backRight;
     private double ticks = 537;//537
     private CRServo continuous1;
-    private CRServo continuous2;
-    private CRServo continuous3;
     BNO055IMU imu;
 
     public Telemetry telemetry;
@@ -40,8 +38,6 @@ public class RobotClass {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
         continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
-        continuous2 = hardwareMap.get(CRServo.class, "cRServo2");
-        continuous3 = hardwareMap.get(CRServo.class, "cRServo3");
 
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -562,14 +558,20 @@ public class RobotClass {
 
 
     }
-    public void testServo1 (double speed, double duration) {
+    public void testServo1 (double speed) {
         continuous1.setPower(speed);
 
-        for (int num = 0; num < duration; num ++) {
-            //LAUGHTER
-            telemetry.addData("LAUGHTER: Now ", num);
-            telemetry.update();
+        while (true){
+            //laughter
         }
-        continuous1.setPower(0);
+
+//        for (int num = 0; num < duration; num ++) {
+//            //LAUGHTER
+//            telemetry.addData("LAUGHTER: Now ", num);
+//            telemetry.update();
+
     }
     }
+/*
+
+ */

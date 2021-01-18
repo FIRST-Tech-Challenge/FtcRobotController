@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name="testAuto")
+@Autonomous(name="testServo")
 public class ContinuousServoAutonomous extends LinearOpMode {
 
     RobotClass robot;
@@ -14,7 +14,7 @@ public class ContinuousServoAutonomous extends LinearOpMode {
         robot= new RobotClass(hardwareMap, telemetry, this);
 
         waitForStart();
-        robot.testServo1(.9,500);
+        robot.testServo1(.5);
 
     }
 }
