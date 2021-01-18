@@ -505,6 +505,13 @@ public class PoseUG {
         return driveIMUDistance(pwr,  targetAngle,  forward,  targetMeters);
     }
 
+    public boolean driveGenericPIDDistanceWithReset(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
+        if (!driveIMUDistanceInitialzed) {
+            resetMotors(false);
+        }
+        return driveGenericPIDDistance(pwr, targetVal, currentVal, forward, targetMeters);
+    }
+
     public boolean driveIMUUntilDistanceWithReset(double pwr, double targetAngle, boolean forward, double targetMeters) {
         if (!driveIMUDistanceInitialzed) {
             resetMotors(false);
@@ -548,6 +555,39 @@ public class PoseUG {
         if (Math.abs(driveIMUDistanceTarget) > Math.abs(getAverageTicks())) {
             // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
             driveIMU(kpDrive, kiDrive, kdDrive, pwr, targetAngle, false);
+            return false;
+        } // destination achieved
+        else {
+            //stopAll();
+            driveMixerDiffSteer(0, 0);
+            driveIMUDistanceInitialzed = false;
+            return true;
+        }
+    }
+
+    public boolean driveGenericPIDDistance(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
+
+        if (!driveIMUDistanceInitialzed) {
+            // set what direction the robot is supposed to be moving in for the purpose of
+            // the field position calculator
+
+            // calculate the target position of the drive motors
+            driveIMUDistanceTarget = (long) Math.abs((targetMeters * forwardTPM)) + Math.abs(getAverageTicks());
+            driveIMUDistanceInitialzed = true;
+        }
+
+        if (!forward) {
+            moveMode = moveMode.backward;
+            targetMeters = -targetMeters;
+            pwr = -pwr;
+        } else
+            moveMode = moveMode.forward;
+
+        // if this statement is true, then the robot has not achieved its target
+        // position
+        if (Math.abs(driveIMUDistanceTarget) > Math.abs(getAverageTicks())) {
+            // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
+            movegenericPIDMixer(kpDrive,kiDrive,kdDrive,pwr,0,currentVal,targetVal);
             return false;
         } // destination achieved
         else {
@@ -962,6 +1002,46 @@ public class PoseUG {
         drivePID.setInputRange(0, 360);
         drivePID.setContinuous();
         drivePID.setInput(currentAngle);
+
+        // calculates the angular correction to apply
+        double correction = drivePID.performPID();
+
+        // performs the drive with the correction applied
+        driveMixerMec(pwrFwd, pwrStf, correction);
+
+        // logging section that can be reactivated for debugging
+        /*
+         * ArrayList toUpdate = new ArrayList(); toUpdate.add((PID.m_deltaTime));
+         * toUpdate.add(Double.valueOf(PID.m_error)); toUpdate.add(new
+         * Double(PID.m_totalError)); toUpdate.add(new Double(PID.pwrP));
+         * toUpdate.add(new Double(PID.pwrI)); toUpdate.add(new Double(PID.pwrD));
+         */
+        /*
+         * logger.UpdateLog(Long.toString(System.nanoTime()) + "," +
+         * Double.toString(PID.m_deltaTime) + "," + Double.toString(pose.getOdometer())
+         * + "," + Double.toString(PID.m_error) + "," +
+         * Double.toString(PID.m_totalError) + "," + Double.toString(PID.pwrP) + "," +
+         * Double.toString(PID.pwrI) + "," + Double.toString(PID.pwrD) + "," +
+         * Double.toString(correction)); motorLeft.setPower(pwr + correction);
+         * motorRight.setPower(pwr - correction);
+         */
+    }
+
+    public void movegenericPIDMixer(double Kp, double Ki, double Kd, double pwrFwd, double pwrStf, double currentVal, double targetVal) {
+        // if (pwr>0) PID.setOutputRange(pwr-(1-pwr),1-pwr);
+        // else PID.setOutputRange(pwr - (-1 - pwr),-1-pwr);
+
+        // initialization of the PID calculator's output range, target value and
+        // multipliers
+        drivePID.setOutputRange(-.5, .5);
+        drivePID.setIntegralCutIn(cutout);
+        drivePID.setPID(Kp, Ki, Kd);
+        drivePID.setSetpoint(targetVal);
+        drivePID.enable();
+
+        // initialization of the PID calculator's input range and current value
+        drivePID.setContinuous();
+        drivePID.setInput(currentVal);
 
         // calculates the angular correction to apply
         double correction = drivePID.performPID();

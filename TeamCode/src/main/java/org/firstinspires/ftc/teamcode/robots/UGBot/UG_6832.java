@@ -330,10 +330,6 @@ public class UG_6832 extends OpMode {
                 if (robot.articulation == PoseUG.Articulation.manual)
                     joystickDrivePregameMode();
 
-                if (toggleAllowed(gamepad1.a, a, 1)) {
-                    robot.setHeadingBase(90.0);
-                }
-
             }
 
             else { // if inactive we are in configuration mode
@@ -404,6 +400,8 @@ public class UG_6832 extends OpMode {
             }
 
             auto.vp.reset();
+
+
 
             robot.launcher.restart(.4, .5);
 
@@ -517,6 +515,7 @@ public class UG_6832 extends OpMode {
                 if (toggleAllowed(gamepad1.y, y, 1)) {
                     robot.resetMotors(true);
                 }
+
 
                 if (toggleAllowed(gamepad1.a, a, 1)) {
                     tpmtuningstage++;
@@ -706,6 +705,10 @@ public class UG_6832 extends OpMode {
         if(toggleAllowed(gamepad1.b, b, 1)){
             robot.launcher.setElbowTargetPos(400,1);
         }
+
+        if(toggleAllowed(gamepad1.y, y, 1)){
+            robot.setPoseHeading(0);
+        }
     }
 
     private void logTurns(double target) {
@@ -818,8 +821,8 @@ public class UG_6832 extends OpMode {
         telemetry.addLine().addData("Turret Heading", () -> robot.turret.getHeading());
         telemetry.addLine().addData("Turret Target`s", () -> robot.turret.getTurretTargetHeading());
         telemetry.addLine().addData("Turret Current angle ", () -> robot.turret.getHeading());
-
-
+        telemetry.addLine() .addData("right distance ", () -> robot.getDistRightDist());
+        telemetry.addLine() .addData("right distance ", () -> (Math.acos(robot.getDistRightDist() / 0.4572)));
 
     }
 
