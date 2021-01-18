@@ -1,24 +1,32 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robot_utilities.GamePadController;
+import org.firstinspires.ftc.robot_utilities.Vals;
 
 @TeleOp(name = "EchoOp")
 public class EchoOp extends OpMode {
+    private GamePadController gamepad;
     private Motor driveLeft, driveRight;
-    private Motor intake1, intake2;
     private Motor flywheel;
-    private Motor hitter;
-    private double speedModifier = 1;
+    private Servo hitter;
+    private Motor intake1, intake2;
+
     private double intakeSpeed = 0;
-    private double flyWheelToggle = 0;
-    private double flyWheelDirection = -1;
-    private boolean pressedB = false;
+    private double flywheelSpeed = 0;
 
     @Override
     public void init() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        gamepad = new GamePadController(gamepad1);
+
         driveLeft = new Motor(hardwareMap, "dl");
         driveRight = new Motor(hardwareMap, "dr");
         driveLeft.setRunMode(Motor.RunMode.VelocityControl);
@@ -33,15 +41,12 @@ public class EchoOp extends OpMode {
         intake1.setVeloCoefficients(0.05, 0, 0);
         intake2.setVeloCoefficients(0.05, 0, 0);
 
-        flywheel = new Motor(hardwareMap, "fw");
+        flywheel = new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE);
         flywheel.setRunMode(Motor.RunMode.VelocityControl);
+        flywheel.setVeloCoefficients(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
         flywheel.setFeedforwardCoefficients(0, 0.03);
-        flywheel.setVeloCoefficients(40, 0.1, 0);
 
-        hitter = new Motor(hardwareMap, "h");
-        hitter.setRunMode(Motor.RunMode.PositionControl);
-        hitter.setPositionCoefficient(0.004);
-        hitter.setPositionTolerance(13.6);
+        hitter = hardwareMap.servo.get("sv");
     }
 
     @Override
@@ -59,35 +64,27 @@ public class EchoOp extends OpMode {
             intakeSpeed = 0;
         }
 
-        if(gamepad1.b) {
-            pressedB = true;
-        } else if(pressedB) {
-            if(flyWheelToggle != 0) {
+        if(gamepad.isARelease()) {
+            Vals.flywheel_direction *= -1;
+        }
+
+        if(gamepad.isBRelease()) {
+            if(flywheelSpeed != 0) {
                 flywheel.setRunMode(Motor.RunMode.RawPower);
-                flyWheelToggle = 0;
+//                flywheelRunMode = "RAW";
+                flywheelSpeed = 0;
             } else {
                 flywheel.setRunMode(Motor.RunMode.VelocityControl);
-                flywheel.setFeedforwardCoefficients(0, 0.03);
-                flywheel.setVeloCoefficients(40, 0.1, 0);
-                flyWheelToggle = 1;
+//                flywheelRunMode = "VelocityControl";
+                flywheelSpeed = Vals.flywheel_speed;
             }
-            pressedB = false;
         }
 
         if(gamepad1.left_bumper) {
-            hitter.setTargetPosition(150);
-            if(!hitter.atTargetPosition()) {
-                hitter.set(0.7);
-            } else {
-                hitter.set(0);
-            }
-        } else {
-            hitter.setTargetPosition(0);
-            if(!hitter.atTargetPosition()) {
-                hitter.set(0.7);
-            } else {
-                hitter.set(0);
-            }
+            hitter.setPosition(Vals.hitter_end);
+        }
+        else {
+            hitter.setPosition(Vals.hitter_start);
         }
 
         driveLeft.set(leftSpeed);
@@ -96,10 +93,14 @@ public class EchoOp extends OpMode {
         intake1.set(intakeSpeed);
         intake2.set(intakeSpeed);
 
-        flywheel.set(flyWheelToggle * flyWheelDirection * 0.42);
+        flywheel.set(Vals.flywheel_direction * flywheelSpeed);
 
 
         telemetry.addData("Flywheel Speed", flywheel.get());
+        telemetry.addData("Flywheel Set Speed", flywheelSpeed);
+        telemetry.addData("Flywheel Velocity", flywheel.encoder.getRawVelocity());
+        telemetry.addData("Flywheel Position", flywheel.getCurrentPosition());
+        telemetry.addData("Hitter Position", hitter.getPosition());
         telemetry.addData("Left Speed", leftSpeed);
         telemetry.addData("Right Speed", rightSpeed);
         telemetry.addData("Intake Speed", intakeSpeed);

@@ -47,3 +47,4 @@ public class VisionTest extends LinearOpMode {
         stop();
     }
 }
+

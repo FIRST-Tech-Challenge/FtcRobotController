@@ -44,7 +44,7 @@ public class FlyWheelTuner extends OpMode {
 
 
 
-    FtcDashboard dashboard = FtcDashboard.getInstance();
+//    FtcDashboard dashboard = FtcDashboard.getInstance();
 
     private enum KChoice {
         KP,
