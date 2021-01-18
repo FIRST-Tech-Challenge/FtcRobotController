@@ -56,8 +56,8 @@ public class BlueRight extends OpMode {
             high = -.9;
             over13V = true;
         }if (gamepad2.dpad_left) {
-            power = -.88;
-            high = -.935;
+            power = -.875;
+            high = -.93;
             over13V = false;
         }
         telemetry.addData("Over 13 Volts", over13V);
@@ -191,7 +191,24 @@ public class BlueRight extends OpMode {
             case 109:
                 //Shoot rings into the goal
                 intake.intakePower(1);
+                waitTime = .3;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                intake.intakePower(0);
                 waitTime = 1;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 110:
+                intake.intakePower(1);
+                waitTime = .5;
                 runtime.reset();
                 time = runtime.time();
                 while (waitTime > runtime.time() - time) {
@@ -201,7 +218,7 @@ public class BlueRight extends OpMode {
                 shooter.shooterPower(0);
                 stateMachineFlow++;
                 break;
-            case 110:
+            case 111:
                 //Drive forward onto shot line
                 robot.linearDrive(.5,-5);
                 stateMachineFlow++;
@@ -228,7 +245,7 @@ public class BlueRight extends OpMode {
             case 152:
                 //Shoot first power shot
                 intake.intakePower(1);
-                waitTime = .5;
+                waitTime = .3;
                 runtime.reset();
                 time = runtime.time();
                 while (waitTime > runtime.time() - time) {
@@ -240,6 +257,12 @@ public class BlueRight extends OpMode {
             case 153:
                 //Move right to second power shot
                 robot.sideDrive(.4,-6);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
                 stateMachineFlow++;
                 break;
             case 154:
@@ -349,7 +372,24 @@ public class BlueRight extends OpMode {
             case 208:
                 //Shoot rings into the goal
                 intake.intakePower(1);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                intake.intakePower(0);
                 waitTime = 1;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 209:
+                intake.intakePower(1);
+                waitTime = .5;
                 runtime.reset();
                 time = runtime.time();
                 while (waitTime > runtime.time() - time) {
@@ -359,7 +399,7 @@ public class BlueRight extends OpMode {
                 shooter.shooterPower(0);
                 stateMachineFlow++;
                 break;
-            case 209:
+            case 210:
                 //Drive forward onto shot line
                 robot.linearDrive(.5,-5);
                 stateMachineFlow++;
@@ -369,7 +409,7 @@ public class BlueRight extends OpMode {
                  */
             case 250:
                 //Move right in line with first power shot
-                robot.sideDrive(.4,-4);
+                robot.sideDrive(.4,-2);
                 stateMachineFlow++;
                 break;
             case 251:
@@ -398,6 +438,12 @@ public class BlueRight extends OpMode {
             case 253:
                 //Move right to second power shot
                 robot.sideDrive(.4,-6);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
                 stateMachineFlow++;
                 break;
             case 254:
@@ -511,7 +557,24 @@ public class BlueRight extends OpMode {
             case 309:
                 //Shoot rings into the goal
                 intake.intakePower(1);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                intake.intakePower(0);
                 waitTime = 1;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 310:
+                intake.intakePower(1);
+                waitTime = .5;
                 runtime.reset();
                 time = runtime.time();
                 while (waitTime > runtime.time() - time) {
@@ -521,7 +584,7 @@ public class BlueRight extends OpMode {
                 shooter.shooterPower(0);
                 stateMachineFlow++;
                 break;
-            case 310:
+            case 311:
                 //Drive forward onto shot line
                 robot.linearDrive(.5,-5);
                 stateMachineFlow++;
@@ -531,7 +594,7 @@ public class BlueRight extends OpMode {
                  */
             case 350:
                 //Move right in line with first power shot
-                robot.sideDrive(.4,-31);
+                robot.sideDrive(.4,-29);
                 stateMachineFlow++;
                 break;
             case 351:
@@ -560,6 +623,12 @@ public class BlueRight extends OpMode {
             case 353:
                 //Move right to second power shot
                 robot.sideDrive(.4,-7);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
                 stateMachineFlow++;
                 break;
             case 354:
