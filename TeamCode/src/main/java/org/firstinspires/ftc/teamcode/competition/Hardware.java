@@ -442,7 +442,7 @@ public class Hardware {
                     flicker.setPosition(1);
                     e = new ElapsedTime();
                     e.startTime();
-                    while(e.milliseconds()<200);
+                    while(e.milliseconds()<220);
                     isFlickerMoving=false;
                     if(queuedFlicks>0)
                     {

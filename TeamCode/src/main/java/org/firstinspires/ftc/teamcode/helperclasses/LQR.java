@@ -42,6 +42,8 @@ public class LQR extends Application
     double lastX = 0;
     double lastY = 0;
 
+    public static double[][][] path;
+
     Hardware robot;
 
     public LQR(Hardware robot)
