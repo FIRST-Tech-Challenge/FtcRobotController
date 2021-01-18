@@ -52,7 +52,7 @@ public class R_3Power_park extends LinearOpMode {
             robot.moveAngle(39,2,0.7);
             robot.turnInPlace(2,1.0);
         }
-        robot.shootRightPowerShot(3);
+        robot.shootLeftPowerShot(3);
         if(rings!=4) {
 
             if (rings == 0) {

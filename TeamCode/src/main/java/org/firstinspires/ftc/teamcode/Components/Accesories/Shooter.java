@@ -20,12 +20,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class Shooter {
     protected LinearOpMode op = null;
 
-//TODO Make private when warren removes his function from robot class @author
-    public DcMotorEx shooterMotor;
+    private DcMotorEx shooterMotor;
 
     Servo shooter_Servo;
 
-    //TODO adjust based on testing
     protected double highGoalVelocity = 1675;
     protected double middleGoalVelocity = 1600;
     protected double lowGoalVelocity = 1500;
@@ -41,7 +39,7 @@ public class Shooter {
         shooter_Servo.setPosition(1.0);
     }
 
-    private void setVelocity(double velocity, int distance) {
+    public void setVelocity(double velocity, int distance) {
         shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterMotor.setVelocity(velocity);
         shooterMotor.setTargetPosition(distance);
@@ -54,7 +52,7 @@ public class Shooter {
         shooterMotor.setTargetPosition(0);
     }
 
-    private double getRPM() {
+    public double getRPM() {
         double ticksPerSecond = shooterMotor.getVelocity();
         double rotationsPerSecond = ticksPerSecond / 28;
         double rotationsPerMinute = rotationsPerSecond * 60;

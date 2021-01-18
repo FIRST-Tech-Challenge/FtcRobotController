@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.Intake;
 import org.firstinspires.ftc.teamcode.Components.Accesories.Shooter;
@@ -329,55 +330,51 @@ public class Robot {
 
 
 
-    //TODO: <owner>, why do have the business logic of shooeter motor in Robot? Can this be moved to Shooter class, like some of the other methods?
-    public void moveShooterMotor(int distance, int power) {
-        double sleepTime = (distance / 1 * 1000);
 
-        shooter.shooterMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-
-        shooter.shooterMotor.setTargetPosition(distance);
-
-        shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        shooter.shooterMotor.setTargetPosition(distance);
-        shooter.shooterMotor.setPower(power);
-        if (shooter.shooterMotor.getCurrentPosition() == distance) {
-            shooter.shooterMotor.setPower(0);
-        }
-
-
-    }
 
     public void shootLeftPowerShot(int rings) {
-        shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooter.shooterMotor.setVelocity(10000.0);
-        shooter.shooterMotor.setPower(1.0);
-        op.sleep(1000);
-        for(int i=0;i<rings;i++){
+        ElapsedTime runtime = new ElapsedTime();
+        op.telemetry.addData("speed: ", shooter.getRPM());
+        op.telemetry.update();
+        op.sleep(100);
+        shooter.setVelocity(1725, 1000);
+        op.sleep(1500);
+        if (shooter.getRPM()*28/60 > 0) {
+            op.sleep(100);
+            op.telemetry.clear();
+            op.telemetry.addData("status", shooter.getRPM());
+            op.telemetry.update();
+        }
+        for (int i = 0; i < rings; i++) {
             moveServo(false);
-            if(i!=rings-1) {
-                moveAngle(-10, 0, 0.5);
-                turnInPlace(0,1.0);
-            }
+            moveAngle(-9.6,0,0.5);
             moveServo(true);
         }
-        shooter.shooterMotor.setPower(0);
+        if(op.getRuntime()>3){
+            stopShooter();
+        }
     }
     public void shootRightPowerShot(int rings) {
-        shooter.shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooter.shooterMotor.setVelocityPIDFCoefficients(38,0,0,17);
-        shooter.shooterMotor.setPower(0.950);
-        op.sleep(1000);
-        for(int i=0;i<rings;i++){
-            shooter.shooterMotor.setPower(0.950);
+        ElapsedTime runtime = new ElapsedTime();
+        op.telemetry.addData("speed: ", shooter.getRPM());
+        op.telemetry.update();
+        op.sleep(100);
+        shooter.setVelocity(1725, 1000);
+        op.sleep(1500);
+        if (shooter.getRPM()*28/60 > 0) {
+            op.sleep(100);
+            op.telemetry.clear();
+            op.telemetry.addData("status", shooter.getRPM());
+            op.telemetry.update();
+        }
+        for (int i = 0; i < rings; i++) {
             moveServo(false);
-            if(i!=rings-1) {
-                moveAngle(9.6, -0.8, 0.5);
-                turnInPlace(3,1.0);
-            }
+            moveAngle(9.6,0,0.5);
             moveServo(true);
         }
-        shooter.shooterMotor.setPower(0);
+        if(op.getRuntime()>3){
+            stopShooter();
+        }
     }
 
 

@@ -102,7 +102,7 @@ public class OdometryChassis extends BasicChassis {
 
         lastAngles = angles;
 
-        return globalAngle;
+        return -globalAngle;
     }
     public double[] track() {
         double data[]={0,0,0};
@@ -117,9 +117,9 @@ public class OdometryChassis extends BasicChassis {
         angle=getAngle();
         op.telemetry.addData("x",xpos);
         op.telemetry.addData("y",ypos);
-        //op.telemetry.addData("odom1",odomconst[0]*odom1.getCurrentPosition());
-        //op.telemetry.addData("odom2",odomconst[1]*odom2.getCurrentPosition());
-        //op.telemetry.addData("odom3",odomconst[2]*odom3.getCurrentPosition());
+        op.telemetry.addData("odom1",odomconst[0]*odom1.getCurrentPosition());
+        op.telemetry.addData("odom2",odomconst[1]*odom2.getCurrentPosition());
+        op.telemetry.addData("odom3",odomconst[2]*odom3.getCurrentPosition());
         op.telemetry.addData("angle",angle);
         op.telemetry.update();
         data[0]=xpos;
@@ -346,10 +346,10 @@ public class OdometryChassis extends BasicChassis {
             while(abs(power)<0.3){
                 power*=0.3/power;
             }
-            motorRightBack.setPower(power * anglePower[1] + anglecorrection);
+            /*motorRightBack.setPower(power * anglePower[1] + anglecorrection);
             motorRightFront.setPower(power * anglePower[0] + anglecorrection);
             motorLeftBack.setPower(power * anglePower[0] - anglecorrection);
-            motorLeftFront.setPower(power * anglePower[1] - anglecorrection);
+            motorLeftFront.setPower(power * anglePower[1] - anglecorrection);*/
             difference = abs(sqrt((x) * (x) + (y) * (y)));
             //op.telemetry.addData("x", x);
             //op.telemetry.addData("y", y);
