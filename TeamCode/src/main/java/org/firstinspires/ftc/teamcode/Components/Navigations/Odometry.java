@@ -18,7 +18,6 @@ import static java.lang.Math.sqrt;
 import static org.firstinspires.ftc.teamcode.Components.Navigations.Navigation.*;
 
 
-//TODO: Warren & Aamod, something to think about, we can come up with common interface or abstrat class for navigation.
 public class Odometry extends Thread {
     private Odometry odometry = null;
     DcMotorEx odom1;
