@@ -71,7 +71,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_dist = 0;
     public double shooting_angle = 0;
     public double shooterAngleOffset = 3.0;
-    final public double WARM_UP_RPM = 1340;
+    final public double WARM_UP_RPM = 1320;
     public double shooting_rpm = WARM_UP_RPM;
 
     public double auto_rotate_degree = 0;
@@ -341,6 +341,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     } else if (source.isPressed(Button.DPAD_RIGHT)) { // high goal
                         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R, false);
                     } else if (source.isPressed(Button.DPAD_LEFT)) { // high goal
+                        if (source.isPressed(Button.BACK))
+                            doHighGoalsAndPowerShots(1, 2, true);
+                        else
                         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
                     } else if (source.isPressed(Button.DPAD_DOWN)) { // high goal
                         if (source.isPressed(Button.BACK))
