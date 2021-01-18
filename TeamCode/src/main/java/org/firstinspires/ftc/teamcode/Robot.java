@@ -173,7 +173,7 @@ public class Robot {
     /**Vuforia**/
 
     public double getVuforiaAngle() {
-        if(isCorgi) { //TODO: aamod 11/24
+        if(isCorgi) {
             return vuforiaWebcam.getVuforiaAngle();
         }
         return 0;
@@ -187,7 +187,7 @@ public class Robot {
     }
 
     public void getVuforiaPosition() {
-        if(isCorgi) { //TODO: aamod 11/24
+        if(isCorgi) {
             vuforiaX = vuforiaWebcam.getVuforiaX();
             vuforiaY = vuforiaWebcam.getVuforiaY();
             double vuforiaAngle = vuforiaWebcam.getVuforiaAngle2();
@@ -195,33 +195,19 @@ public class Robot {
             robotAngle = (robotAngle > 180 ? robotAngle - 360 : robotAngle);
         }
     }
-    public void stopVuforiaTF() { //TODO: aamod 11/24
+    public void stopVuforiaTF() {
         if(isCorgi) {
             vuforiaWebcam.interrupt();
         }
     }
 
-    /**TensorFlow**/
-
-    public void initTensorFlow() { //This needs to be here, because it is used in the TensorFlow test program
-        tensorFlow.initTensorFlow();
-    }
-
-    //TODO: Aamod, do we need these 3 methods. Can the robot just expose getNumberOfRings, which will runTensorFlow and then getNumberOfRings from TensorFlow?
-    public void runTensorFlow () { //This needs to be here, because it is used in the TensorFlow test program
-        tensorFlow.runTensorFlow();
-    }
-
+    /**TensorFlow/Ring Detection**/
     public void stopRingDetection () {
         tensorFlow.stopTensorFlow();
     }
 
     public int getRingsAndWaitForStart(){
         tensorFlow.runTensorFlowWaitForStart();
-        return tensorFlow.getNumberOfRings();
-    }
-
-    public int getNumberOfRings() { //This needs to be here, because it is used in the TensorFlow test program
         return tensorFlow.getNumberOfRings();
     }
 
