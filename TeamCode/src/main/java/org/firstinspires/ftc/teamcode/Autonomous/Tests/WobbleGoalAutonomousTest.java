@@ -10,19 +10,24 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
+import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Robot;
 
 @Autonomous (name = "WobbleGoalAutonomous ", group="Tests: ")
-@Disabled
+
 public class WobbleGoalAutonomousTest extends LinearOpMode {
 
     public void runOpMode(){
         DcMotor motor = (DcMotor) hardwareMap.dcMotor.get ("wobbleGoalMotor");
-        WobbleGoal wobbleGoal;
-        wobbleGoal = new WobbleGoal(this);
-
-        //wobbleGoal.liftingPosition();
+        Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
+        ElapsedTime runtime = new ElapsedTime();
+        telemetry.addData("Init", "Complete");
+        telemetry.update();
+        waitForStart();
+        robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
 
     }
 }

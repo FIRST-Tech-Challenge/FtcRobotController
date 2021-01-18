@@ -26,10 +26,11 @@ public class WobbleGoal {
 
     protected Servo wobbleGoalServo = null;
 
+    protected Servo wobbleGoalServoClaw = null;
+
     private final int ticksForREST = 0;
-    private final int ticksForGRAB = 940;
-    private final int ticksForRAISE = 550;
-    private final int ticksForRELEASE = 815;
+    private final int ticksForGRAB = 540;
+    private final int ticksForRAISE = 300;
     private final int ticksForAutonomousDrop = 950;
     private final int ticksForSTARTOFTELEEOP = 200;
     private final double wobbleGoalSpeed = 0.3;
@@ -41,12 +42,14 @@ public class WobbleGoal {
 
         //getting the motor & servo from the hardware map
         wobbleGoalMotor = (DcMotor) opMode.hardwareMap.get("wobbleGoalMotor");
-        wobbleGoalServo =op.hardwareMap.servo.get("WobbleGoalServo");
+        wobbleGoalServo = op.hardwareMap.servo.get("WobbleGoalServo");
+        wobbleGoalServoClaw = op.hardwareMap.servo.get("wobbleGoalServoClaw");
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
         wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wobbleGoalServo.setPosition(0);
+        wobbleGoalServoClaw.setPosition(1);
 
     }
 
@@ -59,8 +62,6 @@ public class WobbleGoal {
             i = ticksForGRAB;
         } else if (p == Position.RAISE) {
             i = ticksForRAISE;
-        } else if (p == Position.RELEASE) {
-            i = ticksForRELEASE;
         } else if (p == Position.DROP) {
             i = ticksForAutonomousDrop;
         } else {
@@ -110,6 +111,20 @@ public class WobbleGoal {
         op.telemetry.addData(" Wobble Goal Position: ", direction);
         op.telemetry.update();
         op.sleep(500);
+    }
+
+    public void moveWobbleGoalClaw(boolean direction) {
+        if (direction){
+            wobbleGoalServoClaw.setPosition(1);
+            op.sleep(1000);
+            op.telemetry.addData(" Wobble Goal Claw: ", "open");
+        } else {
+            wobbleGoalServoClaw.setPosition(0.5);
+            op.sleep(1000);
+            op.telemetry.addData(" Wobble Goal Claw: ", "closed");
+
+        }
+        op.telemetry.update();
     }
 }
 
