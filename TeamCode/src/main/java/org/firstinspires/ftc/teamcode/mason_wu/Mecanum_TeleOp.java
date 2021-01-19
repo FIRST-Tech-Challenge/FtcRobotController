@@ -21,6 +21,7 @@ public class Mecanum_TeleOp extends LinearOpMode {
     private DcMotor intake = null;
     private Servo spanker = null;
     private DcMotor arm = null;
+    private Servo hand = null;
 
     double rotate = 0;
     double speed = 0.5;
@@ -44,6 +45,7 @@ public class Mecanum_TeleOp extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
         spanker = hardwareMap.get(Servo.class,"spanker");
         arm = hardwareMap.get(DcMotor.class, "arm");
+        hand = hardwareMap.get(Servo.class, "hand");
 
         shooter.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotor.Direction.REVERSE);
