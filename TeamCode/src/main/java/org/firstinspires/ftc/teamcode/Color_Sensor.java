@@ -24,7 +24,7 @@ public class Color_Sensor extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        sensorColor = hardwareMap.get(ColorSensor.class, "CDsensor");
+        //sensorColor = hardwareMap.get(ColorSensor.class, "CDsensor");
         sensorDistance = hardwareMap.get(DistanceSensor.class, "sensor_color_distance");
 
         float hsvValues[] = {0F, 0F, 0F};
