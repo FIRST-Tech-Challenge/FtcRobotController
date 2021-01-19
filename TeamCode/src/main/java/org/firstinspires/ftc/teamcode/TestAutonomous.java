@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class TestAutonomous extends LinearOpMode{
     DcMotor rampLeft;
     DcMotor rampRight;
+    DcMotor frontLeft;
+    DcMotor frontRight;
 
     public void runOpMode() {
 
@@ -19,22 +21,16 @@ public class TestAutonomous extends LinearOpMode{
         telemetry.addData("Ramp AOA", AngleOfAttack);
         rampLeft = hardwareMap.get(DcMotor.class, "rampLeft");
         rampRight = hardwareMap.get(DcMotor.class, "rampRight");
+        frontLeft = hardwareMap.get(DcMotor.class, "rampLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "rampRight");
 
         waitForStart();
 
-        /*frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontLeft.setMode(DcMotor.RunMode. STOP_AND_RESET_ENCODER);
 
-        frontLeft.setTargetPosition();*/
-
-        move(1);
-    }
-
-    public void move (float power) {
-        rampRight.setPower(power);
-        rampLeft.setPower(power);
-
+        //frontLeft.setTargetPosition();
 
     }
 }
