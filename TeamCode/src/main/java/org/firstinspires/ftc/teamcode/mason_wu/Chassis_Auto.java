@@ -124,7 +124,7 @@ public class Chassis_Auto extends LinearOpMode {
             telemetry.update();
 
             //code below is for SINGLE ring scenario
-            if(visionResult.equals("Single")) {
+            if(visionResult.toLowerCase().equals("single")) {
                 // code below drives and positions for shooting
                 driveStraight(true, 1.0, -0.6, 1150);
                 stopMotion(100);
@@ -159,7 +159,7 @@ public class Chassis_Auto extends LinearOpMode {
             }
 
             //code below is for QUAD rings scenario
-            else if(visionResult.equals("Quad")) {
+            else if(visionResult.toLowerCase().equals("quad")) {
                 driveStraight(true, 1.0, -0.6, 1150);
                 stopMotion(100);
                 rotateToAngle(90.0, 1.0, 0.2);
@@ -343,7 +343,6 @@ public class Chassis_Auto extends LinearOpMode {
             displayVoltageEncoderValue();
         }
         stopMotion();
-        displayVoltageEncoderValue();
     }
 
     void drivePerpendicularly(boolean isLeft, double margin, double power, double timeInterval) {
@@ -390,7 +389,6 @@ public class Chassis_Auto extends LinearOpMode {
             telemetry.update();
         }
         stopMotion();
-        displayVoltageEncoderValue();
     }
 
 
@@ -404,7 +402,6 @@ public class Chassis_Auto extends LinearOpMode {
         double targetAngle = normalizeAngle(currentAngle + degree * angleFactor);
         rotateToAngle(targetAngle, margin, power);
         stopMotion();
-        displayVoltageEncoderValue();
     }
 
     //make a turn TO a certain angle
@@ -454,7 +451,6 @@ public class Chassis_Auto extends LinearOpMode {
             telemetry.update();
         }
         stopMotion();
-        displayVoltageEncoderValue();
     }
 
     boolean armMotion(boolean moveUp, double power, double timeInterval) {
@@ -515,28 +511,30 @@ public class Chassis_Auto extends LinearOpMode {
 
     private String objectDetection() {
         //Single/Quad
-        if (tfod != null) {
-            // getUpdatedRecognitions() will return null if no new information is available since
-            // the last time that call was made.
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if (updatedRecognitions != null) {
-                telemetry.addData("# Object Detected", updatedRecognitions.size());
-                // step through the list of recognitions and display boundary info.
-                int i = 0;
-                String label = null;
-                for (Recognition recognition : updatedRecognitions) {
-                    label = recognition.getLabel();
-                    telemetry.addData(String.format("label (%d)", i), label);
-                    telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                            recognition.getLeft(), recognition.getTop());
-                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                            recognition.getRight(), recognition.getBottom());
+        ElapsedTime recogTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        String label = null;
+        while(recogTime.milliseconds() <= 1500.0) {
+            if (tfod != null) {
+                // getUpdatedRecognitions() will return null if no new information is available since
+                // the last time that call was made.
+                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                if (updatedRecognitions != null) {
+                    telemetry.addData("# Object Detected", updatedRecognitions.size());
+                    // step through the list of recognitions and display boundary info.
+                    int i = 0;
+                    for (Recognition recognition : updatedRecognitions) {
+                        label = recognition.getLabel();
+                        telemetry.addData(String.format("label (%d)", i), label);
+                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                recognition.getLeft(), recognition.getTop());
+                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                recognition.getRight(), recognition.getBottom());
+                    }
+                    telemetry.update();
                 }
-                telemetry.update();
-                return label;
             }
         }
-        return null;
+        return label;
     }
 
 }
