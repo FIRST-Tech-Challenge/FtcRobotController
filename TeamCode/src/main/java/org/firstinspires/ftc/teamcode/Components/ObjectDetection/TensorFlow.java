@@ -73,7 +73,7 @@ public class TensorFlow {
     }
 
     //TODO Aamod: Duplciate code. Constructor is already doing this.
-    //I need it, because it is used in TensorFlowTest
+    //The initTensorFlow method is needed, because it is used in TensorFlowTest
     public void initTensorFlow() {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
@@ -163,7 +163,7 @@ public class TensorFlow {
         int arraySize = 11;
         ArrayList<Integer> NumberOfRings = new ArrayList<Integer>(arraySize);
 
-        initTensorFlow();
+//        initTensorFlow();
 
         for (int index = 0; index<arraySize; index++) {
             runTensorFlow();

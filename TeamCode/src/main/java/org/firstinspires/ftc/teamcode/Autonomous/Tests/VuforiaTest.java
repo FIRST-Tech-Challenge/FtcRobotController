@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Robot;
 
 @Autonomous(name="VuforiaTest ", group="Tests: ")
@@ -47,6 +48,14 @@ public class VuforiaTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))>=24.5 && VuforiaWebcam.isTargetVisible()==true){
+                telemetry.addData("goodDistance", Math.hypot(VuforiaWebcam.getVuforiaX(),VuforiaWebcam.getVuforiaY()));
+            }
+
+            if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))<24.5 && VuforiaWebcam.isTargetVisible()==true){
+                telemetry.addData("Too far", Math.hypot(VuforiaWebcam.getVuforiaX(),VuforiaWebcam.getVuforiaY()));
+            }
+
             //Webcam
 
 //            while (opModeIsActive()) {
