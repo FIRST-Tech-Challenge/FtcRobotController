@@ -43,10 +43,6 @@ public class OneGPTeleop extends LinearOpMode {
         boolean isSlow = false;
         boolean currSlow = false;
         boolean slowMode = false;
-        boolean moveServo = true;
-        boolean servoIsMoved = true;
-        boolean ring_clamp_is_up = true;
-        boolean move_ring_clamp = true;
         boolean wobble_goal_servo_is_up = true;
         boolean move_wobble_goal_servo = true;
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
@@ -67,10 +63,9 @@ public class OneGPTeleop extends LinearOpMode {
             float left_stick_y = -gamepad1.left_stick_y;
             float left_stick_x = -gamepad1.left_stick_x;
             float right_stick_x = -gamepad1.right_stick_x;
-            boolean move_wobble_goal_arm = gamepad1.right_bumper;
-//            float start_intake = gamepad1.right_trigger;
-//            float stop_intake = gamepad1.left_trigger;
-            boolean wobble_goal_servo = gamepad1.y;
+            boolean move_wobble_goal_arm = gamepad1.left_bumper;
+            boolean start_transfer_sys = gamepad1.right_bumper;
+//            boolean wobble_goal_servo = gamepad1.y;
             boolean slow = gamepad1.a;
             boolean shooter_servo = gamepad1.x;
             float shooter = gamepad1.right_trigger;
@@ -79,35 +74,12 @@ public class OneGPTeleop extends LinearOpMode {
             angleInDegree = Math.toDegrees(angleInRadian);
 
             /**Shooter**/
-//            if (servo) {
-//                moveServo = true;
-//
-//                if (servoIsMoved) {
-//                    servoIsMoved = false;
-//                } else if (servoIsMoved == false) {
-//                    servoIsMoved = true;
-//                }
-//            } else {
-//                moveServo = false;
-//            }
             if (shooter_servo){
                 telemetry.addData("Servo", " SERVO Forward and Backward");
                 telemetry.update();
                 robot.moveServo(false);
                 robot.moveServo(true);
             }
-
-//            if (moveServo) {
-//                if (servoIsMoved) {
-//                    telemetry.addData("Servo", " SERVO FORTH x button");
-//                    telemetry.update();
-//                    robot.moveServo(true);
-//                } else if (servoIsMoved == false) {
-//                    telemetry.addData("Servo", " SERVO BACK x button");
-//                    telemetry.update();
-//                    robot.moveServo(false);
-//                }
-//            }
 
             if (shooter != 0) {
                 robot.shootGoalTeleop(1000);
@@ -164,36 +136,38 @@ public class OneGPTeleop extends LinearOpMode {
                 currentWobbleGoalPosition = nextWobbleGoalPosition;
             }
 
-            if (wobble_goal_servo) {
-                move_wobble_goal_servo = true;
-
-                if (wobble_goal_servo_is_up) {
-                    wobble_goal_servo_is_up = false;
-                } else if (!wobble_goal_servo_is_up) {
-                    wobble_goal_servo_is_up = true;
-                }
-            } else {
-                move_wobble_goal_servo = false;
-            }
-
-            if (move_wobble_goal_servo) {
-                if (wobble_goal_servo_is_up) {
-                    telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
-                    telemetry.update();
-                    robot.moveWobbleGoalServo(true);
-                } else if (!wobble_goal_servo_is_up) {
-                    telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
-                    telemetry.update();
-                    robot.moveWobbleGoalServo(false);
-                }
-            }
-
-            //intake
-//            if(start_intake == 1.00){
-//                robot.startIntake();
-//            } else if (stop_intake == 1.00){
-//                robot.stopIntake();
+//            if (wobble_goal_servo) {
+//                move_wobble_goal_servo = true;
+//
+//                if (wobble_goal_servo_is_up) {
+//                    wobble_goal_servo_is_up = false;
+//                } else if (!wobble_goal_servo_is_up) {
+//                    wobble_goal_servo_is_up = true;
+//                }
+//            } else {
+//                move_wobble_goal_servo = false;
 //            }
+//
+//            if (move_wobble_goal_servo) {
+//                if (wobble_goal_servo_is_up) {
+//                    telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
+//                    telemetry.update();
+//                    robot.moveWobbleGoalServo(true);
+//                } else if (!wobble_goal_servo_is_up) {
+//                    telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
+//                    telemetry.update();
+//                    robot.moveWobbleGoalServo(false);
+//                }
+//            }
+
+            //transfer system
+            if(start_transfer_sys){
+                robot.startIntake();
+                robot.startTransfer();
+            } else if (!start_transfer_sys){
+                robot.stopIntake();
+                robot.stopTransfer();
+            }
 
         }
         idle();

@@ -64,8 +64,7 @@ public class TwoGPTeleop extends LinearOpMode {
             float left_stick_x = -gamepad1.left_stick_x;
             float right_stick_x = -gamepad1.right_stick_x;
             boolean move_wobble_goal_arm = gamepad1.right_bumper;
-            float start_transfer_sys = gamepad1.right_trigger;
-            float stop_transfer_sys = gamepad1.left_trigger;
+            boolean start_transfer_sys = gamepad1.right_bumper;
             boolean wobble_goal_servo = gamepad1.x;
             boolean slow = gamepad1.a;
             boolean servo = gamepad2.x;
@@ -162,10 +161,10 @@ public class TwoGPTeleop extends LinearOpMode {
             }
 
             //transfer system
-            if(start_transfer_sys == 1.00){
+            if(start_transfer_sys){
                 robot.startIntake();
                 robot.startTransfer();
-            } else if (stop_transfer_sys == 1.00){
+            } else if (!start_transfer_sys){
                 robot.stopIntake();
                 robot.stopTransfer();
             }
