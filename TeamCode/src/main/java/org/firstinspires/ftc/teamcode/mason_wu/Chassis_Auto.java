@@ -97,13 +97,6 @@ public class Chassis_Auto extends LinearOpMode {
         imu.initialize(parameters);
         telemetry.addData("Gyro Calibration Status", imu.getCalibrationStatus().toString());
 
-        //Initializing vision
-        initVuforia();
-        initTfod();
-        if (tfod != null) {
-            tfod.activate();
-        }
-
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
@@ -122,7 +115,7 @@ public class Chassis_Auto extends LinearOpMode {
             String visionResult = objectDetection();
             telemetry.addLine("Result from Object Detection:" + visionResult);
             telemetry.update();
-
+            sleep(3000);
             //code below is for ZERO ring scenario
             if(visionResult == null) {
                 driveStraight(true, 1.0, -0.6, 1150);
@@ -514,13 +507,23 @@ public class Chassis_Auto extends LinearOpMode {
         tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+
     }
 
     private String objectDetection() {
+        //Initializing vision
+        initVuforia();
+        initTfod();
+        if (tfod != null) {
+            tfod.activate();
+        }
+
+        telemetry.addLine("Op Mode Is Active?" + opModeIsActive());
+        sleep(1000);
         //Single/Quad
         ElapsedTime recogTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         String label = null;
-        while(recogTime.milliseconds() <= 1500.0) {
+        while(recogTime.milliseconds() <= 3000.0) {
             if (tfod != null) {
                 // getUpdatedRecognitions() will return null if no new information is available since
                 // the last time that call was made.

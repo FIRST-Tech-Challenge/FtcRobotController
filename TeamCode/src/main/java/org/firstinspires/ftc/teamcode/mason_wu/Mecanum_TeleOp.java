@@ -122,9 +122,9 @@ public class Mecanum_TeleOp extends LinearOpMode {
             }
 
             if(gamepad1.left_trigger == 1) {
-                spanker.setPosition(0.8);
+                hand.setPosition(0.8);
             } else {
-                spanker.setPosition(0);
+                hand.setPosition(0);
             }
 
             telemetry.addData("Front Motors", "LF (%.2f), RF (%.2f)", LFPower, RFPower);
