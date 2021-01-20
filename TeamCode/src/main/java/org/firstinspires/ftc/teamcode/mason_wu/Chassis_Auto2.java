@@ -26,8 +26,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name="Chassis Autonomous BLUE", group="4100")
-public class Chassis_Auto extends LinearOpMode {
+@Autonomous(name="Chassis Autonomous RED", group="4100")
+public class Chassis_Auto2 extends LinearOpMode {
     // Declare OpMode members.
     private DcMotor Arm = null;
     private Servo Hand = null;
@@ -163,7 +163,7 @@ public class Chassis_Auto extends LinearOpMode {
             if (visionResult == null) {
                 driveStraight(true, 1.0, -0.6, 1050);
                 stopMotion(100);
-                rotateToAngle(90.0, 1.0, 0.2);
+                rotateToAngle(-90.0, 1.0, 0.2);
                 stopMotion(100);
                 driveStraight(true, 1.0, -0.6, 400);
                 stopMotion(100);
@@ -180,7 +180,7 @@ public class Chassis_Auto extends LinearOpMode {
                 }
                 Shooter.setPower(0.0);
                 sleep(100);
-                rotateToAngle(90.0, 1.0, 0.2);
+                rotateToAngle(-90.0, 1.0, 0.2);
                 sleep(100);
                 driveStraight(true, 1.0, -0.6, 250);
                 sleep(100);
@@ -202,7 +202,7 @@ public class Chassis_Auto extends LinearOpMode {
                 // code below drives and positions for shooting
                 driveStraight(true, 1.0, -0.6, 1050);
                 stopMotion(100);
-                rotateToAngle(90.0, 1.0, 0.2);
+                rotateToAngle(-90.0, 1.0, 0.2);
                 stopMotion(100);
                 driveStraight(true, 1.0, -0.6, 400);
                 stopMotion(100);
@@ -236,7 +236,7 @@ public class Chassis_Auto extends LinearOpMode {
             else if (visionResult.toLowerCase().equals("quad")) {
                 driveStraight(true, 1.0, -0.6, 1050);
                 stopMotion(100);
-                rotateToAngle(90.0, 1.0, 0.2);
+                rotateToAngle(-90.0, 1.0, 0.2);
                 stopMotion(100);
                 driveStraight(true, 1.0, -0.6, 400);
                 stopMotion(100);
@@ -254,7 +254,7 @@ public class Chassis_Auto extends LinearOpMode {
                 // code below would drive forward and turn to drop wobble
                 driveStraight(true, 1.0, -0.6, 975);
                 stopMotion(100);
-                rotateToAngle(90.0, 1.0, 0.2);
+                rotateToAngle(-90.0, 1.0, 0.2);
                 stopMotion(100);
                 driveStraight(true, 1.0, -0.6, 200);
                 stopMotion(100);
