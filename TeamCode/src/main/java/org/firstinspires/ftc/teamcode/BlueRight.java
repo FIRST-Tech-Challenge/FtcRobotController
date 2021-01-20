@@ -25,7 +25,7 @@ public class BlueRight extends OpMode {
     Boolean powerShot = true;
 
     //Choose shooter power-level
-    boolean over13V = true;
+    boolean highVoltage = true;
     double power = -.825;
     double high  = -.9;
 
@@ -46,6 +46,8 @@ public class BlueRight extends OpMode {
         stateMachineFlow = 0;
     }
     public void init_loop() {
+        //Choose whether or not we shoot power shots
+        //input the relative change of the battery to determine the power of the shooter
         if (gamepad2.dpad_up) {
             powerShot = true;
         }if (gamepad2.dpad_down) {
@@ -54,13 +56,13 @@ public class BlueRight extends OpMode {
         if (gamepad2.dpad_right) {
             power = -.825;
             high = -.9;
-            over13V = true;
+            highVoltage = true;
         }if (gamepad2.dpad_left) {
             power = -.875;
             high = -.93;
-            over13V = false;
+            highVoltage = false;
         }
-        telemetry.addData("Over 13 Volts", over13V);
+        telemetry.addData("Over 13 Volts", highVoltage);
         telemetry.addData("Power Shot", powerShot);
         telemetry.update();
     }
