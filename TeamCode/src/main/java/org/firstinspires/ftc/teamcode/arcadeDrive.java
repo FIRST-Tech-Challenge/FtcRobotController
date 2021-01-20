@@ -125,99 +125,30 @@ public class arcadeDrive extends OpMode {
         runtime.reset();
     }
 
-    //This function converts the points from the joysticks to degrees
-    public double driveAngle(double x, double y) {
-        double degree = (((Math.atan2(y, x)) * 180 / Math.PI)) + 90;
-        if (degree > 180) {
-            degree -= 360;
-        }
-        return degree;
-    }
-
-    //This function converts the degrees into the power needed for the motors
-    public void motorPower(double angle, double forwardPower, double sidePower, double turnPower) {
-        if (Math.abs(forwardPower) > 0.05 && Math.abs(turnPower) > 0.05 && Math.abs(sidePower) < 0.05) {
-            if (turnPower > 0) {
-                leftReverse.setPower(forwardPower);
-                leftFoward.setPower(forwardPower);
-                rightReverse.setPower(0);
-                rightFoward.setPower(0);
-            } else if (turnPower < 0) {
-                leftReverse.setPower(0);
-                leftFoward.setPower(0);
-                rightReverse.setPower(forwardPower);
-                rightFoward.setPower(forwardPower);
-            }
-
-        } else if (Math.abs(turnPower) > 0.05 && Math.abs(forwardPower) < 0.05 && Math.abs(sidePower) < 0.05) {
-            leftFoward.setPower(-turnPower);
-            leftReverse.setPower(-turnPower);
-            rightFoward.setPower(turnPower);
-            rightReverse.setPower(turnPower);
-        } else {
-            double leftFrontPower;
-            double rightFrontPower;
-            double leftBackPower;
-            double rightBackPower;
-            double power;
-
-            double radians = (angle * (Math.PI / 180)); //This is to the radians out of the degrees to use the equation
-
-            if (Math.abs(forwardPower) >= Math.abs(sidePower)) {
-                power = (Math.abs(forwardPower)); // To determine the power it should use
-            } else if (Math.abs(forwardPower) <= Math.abs(sidePower)) {
-                power = (Math.abs(sidePower)); // To determine the power it should use
-            } else {
-                power = 0;
-            }
-            double fortyFiveDegrees = radians + (Math.PI / 4);
-            leftFrontPower = (power * Math.sin(fortyFiveDegrees));
-            rightFrontPower = (power * Math.cos(fortyFiveDegrees));
-            leftBackPower = (power * Math.cos(fortyFiveDegrees));
-            rightBackPower = (power * Math.sin(fortyFiveDegrees));
-
-
-            leftFoward.setPower(-leftFrontPower);
-            rightFoward.setPower(-rightFrontPower);
-            leftReverse.setPower(-leftBackPower);
-            rightReverse.setPower(-rightBackPower);
-        }
-
-    }
-
-
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
-        double forwardPower;
-        double sidePower;
-        double turnPower;
+        
+        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        //hypotonuse: distance of stick from center
+        double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+        //Angle of stick: shifted 45 degrees
+        double rightX = gamepad1.right_stick_x;
+        //Speed control
 
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
-        double forwardBackward = gamepad1.left_stick_y;
-        double sideWays = gamepad1.left_stick_x;
-        double turn = gamepad1.right_stick_x;
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
+        final double v3 = r * Math.sin(robotAngle) + rightX;
+        final double v4 = r * Math.cos(robotAngle) - rightX;
+        //Finding power
 
+        leftFoward.setPower(v1);
+        rightFoward.setPower(v2);
+        leftReverse.setPower(v3);
+        rightReverse.setPower(v4);
+        //set power
 
-        forwardPower = Range.clip(forwardBackward, -1.0, 1.0);
-        sidePower = Range.clip(sideWays, -1.0, 1.0);
-        turnPower = Range.clip(turn, -1.0, 1.0);
-
-
-        double degrees = driveAngle(sideWays, forwardBackward);
-
-        // calls upon the function  motorpower to set the powers of the motor based on the input of your joysticks on your controller 1
-        motorPower(degrees, forwardPower, sidePower, turnPower);
-
-
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors", "degrees (%.2f)", degrees);
-        telemetry.addData("Path2", "Running at %7d :%7d",
-                leftFoward.getCurrentPosition(),
-                rightFoward.getCurrentPosition());
-        telemetry.update();
     }
 
+
 }
+
