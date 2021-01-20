@@ -97,6 +97,22 @@ public class Chassis_Auto extends LinearOpMode {
         imu.initialize(parameters);
         telemetry.addData("Gyro Calibration Status", imu.getCalibrationStatus().toString());
 
+        //Initializing vision
+        initVuforia();
+        initTfod();
+        if (tfod != null) {
+            tfod.activate();
+            // The TensorFlow software will scale the input images from the camera to a lower resolution.
+            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
+            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
+            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
+            // should be set to the value of the images used to create the TensorFlow Object Detection model
+            // (typically 1.78 or 16/9).
+
+            // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
+            //tfod.setZoom(2.5, 1.78);
+        }
+
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
@@ -511,13 +527,6 @@ public class Chassis_Auto extends LinearOpMode {
     }
 
     private String objectDetection() {
-        //Initializing vision
-        initVuforia();
-        initTfod();
-        if (tfod != null) {
-            tfod.activate();
-        }
-
         telemetry.addLine("Op Mode Is Active?" + opModeIsActive());
         sleep(1000);
         //Single/Quad
