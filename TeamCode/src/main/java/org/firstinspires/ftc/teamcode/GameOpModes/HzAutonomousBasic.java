@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.GameOpModes;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -168,14 +169,22 @@ public class HzAutonomousBasic extends LinearOpMode {
     public void runAutoBlueInnerHighGoal(){
         hzAutoControl.setMagazineToLaunch();
         hzAutoControl.setLaunchTargetHighGoal();
+
         Trajectory traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .splineToLinearHeading(new Pose2d(-10,14,Math.toRadians(10)),Math.toRadians(0))
+                .lineTo(new Vector2d(-30,14))
+                .build();
+        hzDrive.followTrajectory(traj);
+
+        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                .splineToLinearHeading(new Pose2d(-10,14,Math.toRadians(15)),Math.toRadians(0))
                 .build();
         hzDrive.followTrajectory(traj);
 
         hzAutoControl.setMagazineToLaunch();
+        hzWait(1000);
         hzAutoControl.setLaunchTargetHighGoal();
-        hzWait(500);
+        hzAutoControl.setMagazineToLaunch();
+        hzWait(350);
         hzAutoControl.setRunLauncherTrue();
         hzWait(350);
         hzAutoControl.setRunLauncherTrue();
@@ -186,13 +195,12 @@ public class HzAutonomousBasic extends LinearOpMode {
         hzAutoControl.setLaunchTargetOff();
         hzAutoControl.setMagazineToCollect();
 
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(46,22,Math.toRadians(-45)))
-                .build();
-        hzDrive.followTrajectory(traj);
-
         switch (targetZone){
             case A:
+                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                        .lineToSplineHeading(new Pose2d(46,22,Math.toRadians(-45)))
+                        .build();
+                hzDrive.followTrajectory(traj);
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                         .lineToSplineHeading(new Pose2d(27,43,Math.toRadians(-45)))
                         .build();
@@ -217,14 +225,77 @@ public class HzAutonomousBasic extends LinearOpMode {
         hzAutoControl.setMoveArmParked();
 
         // Spline to (24,24,0)
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+        /*traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(55,16,Math.toRadians(-45)))
                 .build();
         hzDrive.followTrajectory(traj);
         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                 .lineToSplineHeading(new Pose2d(12, 15, Math.toRadians(0)))
                 .build();
+        hzDrive.followTrajectory(traj);*/
+
+        hzIntake.setIntakeReleaseOpen();
+        hzAutoControl.setIntakeStart();
+        hzWait(500);
+
+        // Spline to (24,24,0)
+        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-10,36,Math.toRadians(-180)))
+                .build();
         hzDrive.followTrajectory(traj);
+
+        hzWait(300);
+
+        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-20,36,Math.toRadians(-180)))
+                .build();
+        hzDrive.followTrajectory(traj);
+
+        hzWait(300);
+
+        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-36,36,Math.toRadians(-180)))
+                .build();
+        hzDrive.followTrajectory(traj);
+
+        hzWait(300);
+
+        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-5, 36, Math.toRadians(0)))
+                .build();
+        hzDrive.followTrajectory(traj);
+
+        hzAutoControl.setIntakeStop();
+
+        hzAutoControl.setMagazineToLaunch();
+        hzWait(1000);
+        hzAutoControl.setLaunchTargetHighGoal();
+        hzAutoControl.setMagazineToLaunch();
+        hzWait(350);
+        hzAutoControl.setRunLauncherTrue();
+        hzWait(350);
+        hzAutoControl.setRunLauncherTrue();
+        hzWait(350);
+        hzAutoControl.setRunLauncherTrue();
+        hzWait(200);
+        hzAutoControl.setLaunchTargetOff();
+        hzAutoControl.setMagazineToCollect();
+
+
+
+        // Spline to (24,24,0)
+        /*traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                .lineToLinearHeading(new Pose2d(-48,22,Math.toRadians(-90)))
+                .build();
+        hzDrive.followTrajectory(traj);*/
+
+        //hzWait(5000);
+
+        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                .lineToSplineHeading(new Pose2d(12, 36, Math.toRadians(0)))
+                .build();
+        hzDrive.followTrajectory(traj);
+
     }
 
     public void runAutoBlueOuterHighGoal(){
@@ -347,13 +418,13 @@ public class HzAutonomousBasic extends LinearOpMode {
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
                     startPose = HzGameField.RED_INNER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
+                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
                     telemetry.addData("Start Pose : ", "RED_INNER_START_LINE");
                     break;
                 }
                 if (hzGamepad.getButtonYPress()) {
                     startPose = HzGameField.RED_OUTER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
+                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
                     telemetry.addData("Start Pose : ", "RED_OUTER_START_LINE");
                     break;
                 }
@@ -361,13 +432,13 @@ public class HzAutonomousBasic extends LinearOpMode {
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
                     startPose = HzGameField.BLUE_INNER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
+                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
                     telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
                     break;
                 }
                 if (hzGamepad.getButtonYPress()) {
                     startPose = HzGameField.BLUE_OUTER_START_LINE;
-                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
+                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
                     telemetry.addData("Start Pose : ", "BLUE_OUTER_START_LINE");
                     break;
                 }
