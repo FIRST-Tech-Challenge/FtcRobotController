@@ -128,12 +128,39 @@ public class Chassis_Auto extends LinearOpMode {
                                   rotateToAngle (double targetAngle, double margin, double power)
              */
 
-            String visionResult = objectDetection();
+            String visionResult = null;
+            ElapsedTime recogTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+
+            while (opModeIsActive() && recogTime.milliseconds() <= 8000.0) {
+                if (tfod != null) {
+                    // getUpdatedRecognitions() will return null if no new information is available since
+                    // the last time that call was made.
+                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                    if (updatedRecognitions != null) {
+                        telemetry.addData("# Object Detected", updatedRecognitions.size());
+                        // step through the list of recognitions and display boundary info.
+                        int i = 0;
+                        for (Recognition recognition : updatedRecognitions) {
+                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                    recognition.getLeft(), recognition.getTop());
+                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                    recognition.getRight(), recognition.getBottom());
+                            visionResult = recognition.getLabel();
+                        }
+                        telemetry.update();
+                    }
+                }
+            }
+            if (tfod != null) {
+                tfod.shutdown();
+            }
+
             telemetry.addLine("Result from Object Detection:" + visionResult);
             telemetry.update();
             sleep(3000);
             //code below is for ZERO ring scenario
-            if(visionResult == null) {
+            if (visionResult == null) {
                 driveStraight(true, 1.0, -0.6, 1150);
                 stopMotion(100);
                 rotateToAngle(90.0, 1.0, 0.2);
@@ -171,7 +198,7 @@ public class Chassis_Auto extends LinearOpMode {
             }
 
             //code below is for SINGLE ring scenario
-            else if(visionResult.toLowerCase().equals("single")) {
+            else if (visionResult.toLowerCase().equals("single")) {
                 // code below drives and positions for shooting
                 driveStraight(true, 1.0, -0.6, 1150);
                 stopMotion(100);
@@ -206,7 +233,7 @@ public class Chassis_Auto extends LinearOpMode {
             }
 
             //code below is for QUAD rings scenario
-            else if(visionResult.toLowerCase().equals("quad")) {
+            else if (visionResult.toLowerCase().equals("quad")) {
                 driveStraight(true, 1.0, -0.6, 1150);
                 stopMotion(100);
                 rotateToAngle(90.0, 1.0, 0.2);
@@ -244,9 +271,7 @@ public class Chassis_Auto extends LinearOpMode {
                 sleep(250);
                 driveStraight(true, 1.0, 0.6, 475);
 
-            }
-
-            else{
+            } else {
                 telemetry.addLine("Fail to recognize");
                 telemetry.update();
                 sleep(2000);
@@ -526,34 +551,5 @@ public class Chassis_Auto extends LinearOpMode {
 
     }
 
-    private String objectDetection() {
-        telemetry.addLine("Op Mode Is Active?" + opModeIsActive());
-        sleep(1000);
-        //Single/Quad
-        ElapsedTime recogTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-        String label = null;
-        while(recogTime.milliseconds() <= 3000.0) {
-            if (tfod != null) {
-                // getUpdatedRecognitions() will return null if no new information is available since
-                // the last time that call was made.
-                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                if (updatedRecognitions != null) {
-                    telemetry.addData("# Object Detected", updatedRecognitions.size());
-                    // step through the list of recognitions and display boundary info.
-                    int i = 0;
-                    for (Recognition recognition : updatedRecognitions) {
-                        label = recognition.getLabel();
-                        telemetry.addData(String.format("label (%d)", i), label);
-                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                recognition.getLeft(), recognition.getTop());
-                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                recognition.getRight(), recognition.getBottom());
-                    }
-                    telemetry.update();
-                }
-            }
-        }
-        return label;
-    }
 
 }
