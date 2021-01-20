@@ -106,7 +106,7 @@ public class TensorFlowObjectDetectionWebcam extends LinearOpMode {
             // (typically 1.78 or 16/9).
 
             // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
-            //tfod.setZoom(2.5, 1.78);
+            tfod.setZoom(2.5, 1.78);
         }
 
         /** Wait for the game to begin */
