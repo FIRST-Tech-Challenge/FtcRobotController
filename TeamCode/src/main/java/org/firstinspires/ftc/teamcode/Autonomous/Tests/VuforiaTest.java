@@ -47,14 +47,14 @@ public class VuforiaTest extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
+        /*while (opModeIsActive()) {
             if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))>=24.5 && VuforiaWebcam.isTargetVisible()==true){
                 telemetry.addData("goodDistance", Math.hypot(VuforiaWebcam.getVuforiaX(),VuforiaWebcam.getVuforiaY()));
             }
 
             if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))<24.5 && VuforiaWebcam.isTargetVisible()==true){
                 telemetry.addData("Too far", Math.hypot(VuforiaWebcam.getVuforiaX(),VuforiaWebcam.getVuforiaY()));
-            }
+            }*/
 
             //Webcam
 
@@ -86,6 +86,6 @@ public class VuforiaTest extends LinearOpMode {
 //                telemetry.update();
 //            }
 //            vuforiaWebcam.interrupt();
-        }
+//        }
     }
 }

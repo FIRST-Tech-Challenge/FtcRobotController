@@ -72,10 +72,12 @@ final boolean debug = true;
         telemetry.update();
         sleep(1000);*/
         //while(!isStopRequested()){
-           robot.moveAngle(0,72,0.5);
-           robot.moveAngle(0,-72,0.5);
-           robot.moveAngle(48,0,0.5);
-           robot.moveAngle(-48,0,0.5);
+        robot.moveAngle(0,72,0.5);
+        robot.moveAngle(0,-72,0.5);
+        robot.moveAngle(48,0,0.5);
+        robot.moveAngle(-48,0,0.5);
+        robot.moveAngle(48,48,0.5);
+        robot.moveAngle(-48,-48,0.5);
            //robot.moveRight(48,0.5);
            //robot.moveLeft(48,0.5);
         //robot.moveForward(24,0.5);
