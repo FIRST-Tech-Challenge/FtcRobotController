@@ -50,10 +50,10 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         intakeOne = hardwareMap.crservo.get("intakeServoOne");
         intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
 
-        leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
         intakeTwo.setDirection(CRServo.Direction.REVERSE);
 
         boolean yPressed = false;
