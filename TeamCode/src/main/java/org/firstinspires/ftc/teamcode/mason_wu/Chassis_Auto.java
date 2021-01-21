@@ -40,7 +40,7 @@ public class Chassis_Auto extends LinearOpMode {
     private DcMotor RB = null;
 
     BNO055IMU imu;
-    final double HAND_CLOSE_POSITION = 0.6;
+    final double HAND_CLOSE_POSITION = 0.9;
     final double HAND_OPEN_POSITION = 0.0;
 
     //Vuforia setup for vision

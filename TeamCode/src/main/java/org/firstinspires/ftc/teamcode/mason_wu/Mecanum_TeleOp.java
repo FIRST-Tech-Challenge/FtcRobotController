@@ -122,7 +122,7 @@ public class Mecanum_TeleOp extends LinearOpMode {
             }
 
             if(gamepad1.left_trigger == 1) {
-                hand.setPosition(0.8);
+                hand.setPosition(0.9);
             } else {
                 hand.setPosition(0);
             }
