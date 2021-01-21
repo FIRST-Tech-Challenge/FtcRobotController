@@ -182,8 +182,8 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
     Trajectory trajPark;
 
     Pose2d lastPose = startPose;
-    double tuneAnglePowershot12 = Math.toRadians(-5);
-    double tuneAnglePowershot23 = Math.toRadians(-5);
+    double turnAnglePowershot12 = Math.toRadians(-5);
+    double turnAnglePowershot23 = Math.toRadians(-5);
 
 
     public void buildAutoBlueInnerTrajectory(){
@@ -201,9 +201,9 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
                     .build();
             lastPose = trajLaunchRingPowershot1.end();
             //Turn to Powershot2
-            lastPose = lastPose.plus(new Pose2d(0, 0, tuneAnglePowershot12));
+            lastPose = lastPose.plus(new Pose2d(0, 0, turnAnglePowershot12));
             //Turn to Powershot3
-            lastPose = lastPose.plus(new Pose2d(0, 0, tuneAnglePowershot23));
+            lastPose = lastPose.plus(new Pose2d(0, 0, turnAnglePowershot23));
         }
 
 
@@ -394,7 +394,7 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
 
             case TRAJ_LAUNCH_RING_POWERSHOT2:
                 if (!hzDrive.isBusy()) {
-                    hzDrive.turnAsync(tuneAnglePowershot12);
+                    hzDrive.turnAsync(turnAnglePowershot12);
                     currentAutoStepState = AutoStepState.LAUNCH_RINGS_POWERSHOT2;
                 }
                 break;
@@ -410,7 +410,7 @@ public class HzAutonomousBlueInnerAsync extends LinearOpMode {
 
             case TRAJ_LAUNCH_RING_POWERSHOT3:
                 if (!hzDrive.isBusy()) {
-                    hzDrive.turnAsync(tuneAnglePowershot23);
+                    hzDrive.turnAsync(turnAnglePowershot23);
                     currentAutoStepState = AutoStepState.LAUNCH_RINGS_POWERSHOT3;
                 }
                 break;
