@@ -96,6 +96,12 @@ public class RobotHardware {
       return deltaAngle;
     }
     
+    public RobotStatus update() {
+        // get data from Vuforia
+        RobotStatus r = RobotStatus(0, 0, 0); // x, y, heading
+        return r;
+    }
+    
 }
 
 
