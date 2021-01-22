@@ -130,17 +130,17 @@ public class teleop extends OpMode {
 
         // Tank Mode uses one stick to control each wheel.
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        leftFowardPower = -gamepad1.left_stick_y;
-        rightReversePower = -gamepad1.right_stick_y;
-        leftReversePower = -gamepad1.left_stick_y;
-        rightFowardPower = -gamepad1.right_stick_y;
+        leftFowardPower = gamepad1.left_stick_y;
+        rightReversePower = gamepad1.right_stick_y;
+        leftReversePower = gamepad1.left_stick_y;
+        rightFowardPower = gamepad1.right_stick_y;
         //intakePower = -gamepad2.left_stick_y ;
 
         // Send calculated power to wheels
-        leftFoward.setPower(leftFowardPower);
-        rightReverse.setPower(rightReversePower);
-        leftReverse.setPower(leftReversePower);
-        rightFoward.setPower(rightFowardPower);
+        leftFoward.setPower(-leftFowardPower);
+        rightReverse.setPower(-rightReversePower);
+        leftReverse.setPower(-leftReversePower);
+        rightFoward.setPower(-rightFowardPower);
         //intake.setPower(intakePower);
 
         // Show the elapsed game time and wheel power.

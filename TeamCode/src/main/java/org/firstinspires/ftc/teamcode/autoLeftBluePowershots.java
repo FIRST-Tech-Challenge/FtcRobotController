@@ -36,7 +36,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 
 
-@Autonomous(name = "RedRightPowershotsUlt2020", group = "Pushbot")
+@Autonomous(name = "LeftBluePowershotsUlt2020", group = "Pushbot")
 public class autoLeftBluePowershots extends LinearOpMode {
 
     //OpMode members
