@@ -105,7 +105,7 @@ public class HzAutonomousBasic extends LinearOpMode {
             }
             hzLaunchController.launchMode = HzLaunchController.LAUNCH_MODE.MANUAL;
 
-            while (opModeIsActive() && !parked) {
+            while (opModeIsActive() && !isStopRequested() && !parked) {
 
                 hzVuforia.deactivateVuforiaTensorFlow();
 
@@ -156,12 +156,14 @@ public class HzAutonomousBasic extends LinearOpMode {
         if (hzAutoControl.autoLaunchAim == HzAutoControl.AutoLaunchAim.HIGHGOAL) {
             hzAutoControl.setLaunchTargetHighGoal();
             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineTo(new Vector2d(-40,6))
+                    //.lineTo(new Vector2d(-40,6))
+                    .lineToLinearHeading(new Pose2d(-40,6,Math.toRadians(45)))
                     .build();
             hzDrive.followTrajectory(traj);
-
+            hzAutoControl.setMagazineToLaunch();
             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .splineToLinearHeading(new Pose2d(-10,14,Math.toRadians(15)),Math.toRadians(0))
+                    //.splineToLinearHeading(new Pose2d(-10,14,Math.toRadians(15)),Math.toRadians(0))
+                    .lineToLinearHeading(new Pose2d(-10,14,Math.toRadians(10)))
                     .build();
             hzDrive.followTrajectory(traj);
 
@@ -169,13 +171,13 @@ public class HzAutonomousBasic extends LinearOpMode {
         } else {
             hzAutoControl.setLaunchTargetPowerShot1();
             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                    .lineTo(new Vector2d(-30,14))
+                    .lineTo(new Vector2d(-40,6))
                     .build();
             hzDrive.followTrajectory(traj);
             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                     .splineToLinearHeading(new Pose2d(-10,14,Math.toRadians(5)),Math.toRadians(0))
                     .build();
-            hzDrive.followTrajectoryAsync(traj);
+            hzDrive.followTrajectory(traj);
 
             //Set turn angles prior to launching
             turnAnglePowershot12 = Math.toRadians(-5);
@@ -198,6 +200,10 @@ public class HzAutonomousBasic extends LinearOpMode {
                 break;
 
             case B:
+                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                        .lineToSplineHeading(new Pose2d(46,22,Math.toRadians(-45)))
+                        .build();
+                hzDrive.followTrajectory(traj);
                 break;
             case C:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -273,7 +279,7 @@ public class HzAutonomousBasic extends LinearOpMode {
                 hzDrive.followTrajectory(traj);
             } else {
                 traj =  hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-54,16,Math.toRadians(-45)))
+                        .lineToLinearHeading(new Pose2d(-50,16,Math.toRadians(-45)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -370,8 +376,10 @@ public class HzAutonomousBasic extends LinearOpMode {
         hzAutoControl.setMagazineToLaunch();
         hzWait(350);
         hzAutoControl.setRunLauncherTrue();
+        hzAutoControl.setMagazineToLaunch();
         hzWait(350);
         hzAutoControl.setRunLauncherTrue();
+        hzAutoControl.setMagazineToLaunch();
         hzWait(350);
         hzAutoControl.setRunLauncherTrue();
         hzWait(350);
@@ -381,7 +389,8 @@ public class HzAutonomousBasic extends LinearOpMode {
     }
 
     public void launch3RingsToPowerShots(){
-
+        hzAutoControl.setMagazineToLaunch();
+        hzWait(750);
         hzAutoControl.setLaunchTargetPowerShot1();
         hzAutoControl.setMagazineToLaunch();
         hzWait(350);
@@ -389,7 +398,8 @@ public class HzAutonomousBasic extends LinearOpMode {
 
         hzDrive.turnAsync(turnAnglePowershot12);
         if (!hzDrive.isBusy()) {
-            hzWait(500);
+            hzAutoControl.setMagazineToLaunch();
+            hzWait(350);
             hzAutoControl.setRunLauncherTrue();
         }
 
@@ -397,7 +407,8 @@ public class HzAutonomousBasic extends LinearOpMode {
         //hzAutoControl.setMagazineToLaunch();
         //hzAutoControl.setLaunchTargetPowerShot1();
         if (!hzDrive.isBusy()) {
-            hzWait(500);
+            hzAutoControl.setMagazineToLaunch();
+            hzWait(350);
             hzAutoControl.setRunLauncherTrue();
         }
 
@@ -419,7 +430,9 @@ public class HzAutonomousBasic extends LinearOpMode {
     public void hzWait(double time){
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);
         timer.reset();
-        while (!isStopRequested() && timer.time() < time){}
+        while (!isStopRequested() && timer.time() < time){
+            hzAutoControl.runAutoControl();
+        }
     }
 
 

@@ -104,26 +104,26 @@ public class HzMagazine {
         return magazine_touch_sensors_state;
     }
 
-    public boolean moveMagazineToCollectState = false;
+    //public boolean moveMagazineToCollectState = false;
 
     public void moveMagazineToCollect(){
         if (magazineCollectTouchSensor.isPressed()) {
             magazineServo.setPower(0.0);
             magazinePosition = MAGAZINE_POSITION.AT_COLLECT;
         } else {
-            magazineServo.setPower(-0.3);
+            magazineServo.setPower(-0.7);
         }
     }
 
 
-    public boolean moveMagazineToLaunchState = false;
+    //public boolean moveMagazineToLaunchState = false;
 
     public void moveMagazineToLaunch() {
         if (magazineLaunchTouchSensor.isPressed()) {
             magazineServo.setPower(0.0);
             magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
         } else {
-            magazineServo.setPower(0.4);
+            magazineServo.setPower(0.7);
         }
     }
 

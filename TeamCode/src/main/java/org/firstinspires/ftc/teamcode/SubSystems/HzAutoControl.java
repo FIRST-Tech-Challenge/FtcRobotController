@@ -66,7 +66,7 @@ public class HzAutoControl {
 
     public void runAutoControl(){
         int counter = 0;
-        while (counter < 10) {
+        while (counter < 5) {
             runMagazineControl();
             runIntakeControl();
             runLaunchController();
