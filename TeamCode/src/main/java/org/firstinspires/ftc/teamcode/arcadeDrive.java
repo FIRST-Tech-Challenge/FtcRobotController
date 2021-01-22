@@ -127,11 +127,11 @@ public class arcadeDrive extends OpMode {
 
     @Override
     public void loop() {
-        
+
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-        //hypotonuse: distance of stick from center
+        //hypotenuse: distance of stick from center
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-        //Angle of stick: shifted 45 degrees
+        //Angle of stick: shifted -45 degrees
         double rightX = gamepad1.right_stick_x;
         //Speed control
 
@@ -139,7 +139,11 @@ public class arcadeDrive extends OpMode {
         final double v2 = r * Math.sin(robotAngle) - rightX;
         final double v3 = r * Math.sin(robotAngle) + rightX;
         final double v4 = r * Math.cos(robotAngle) - rightX;
-        //Finding power
+        /* Finding power
+        Front motors: positive speed
+        Back motors: negative speed
+
+         */
 
         leftFoward.setPower(v1);
         rightFoward.setPower(v2);
