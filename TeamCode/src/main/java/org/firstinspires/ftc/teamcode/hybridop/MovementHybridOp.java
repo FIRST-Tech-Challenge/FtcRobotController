@@ -23,7 +23,6 @@ public class MovementHybridOp extends MovementHardware implements HybridOp {
 
     @Override
     public void run_loop() {
-        this.localizer.telemetry(telemetry);
         if (this.gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.a)) {
             this.hybridOpExecutor.executeActionSequence(movementActionSequence, true, true);
         }

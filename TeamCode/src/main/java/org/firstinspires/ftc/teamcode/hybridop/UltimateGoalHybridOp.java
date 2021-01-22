@@ -18,8 +18,8 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
     boolean slowMode = false;
     float slowModeMultiplier = 0.25f;
 
-    long prevTime = System.nanoTime();
-    int prevPos;
+    long prevTime = System.currentTimeMillis();
+    int prevPos = 0;
 
     @Override
     public void autonomous_loop() {
@@ -74,8 +74,8 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
             }
         }
 
-        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.y)) {
-            shooter.setPower(-spinnerPower);
+        if (gamepadActions.isToggled(GamepadActions.GamepadType.TWO, GamepadActions.GamepadButtons.b)) {
+            shooter.setPower(spinnerPower);
         } else {
             shooter.setPower(0);
         }
@@ -129,8 +129,18 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
     @Override
     public void run_loop() {
-        this.localizer.telemetry(telemetry);
-        telemetry.addData("Wheel Positions: ", String.format("FL:%f, FR:%f, BL:%f, BR:%f", frontLeft.getCurrentPosition(), frontRight.getCurrentPosition(), backLeft.getCurrentPosition(), backRight.getCurrentPosition()));
-        telemetry.addData("Shooter Power: ", shooter.getPower());
+        this.localizer.telemetry();
+        long current_time = System.currentTimeMillis();
+        int current_pos = shooter.getCurrentPosition();
+        int deltaPos = current_pos - prevPos;
+        long deltaTime = current_time - prevTime;
+        prevPos = current_pos;
+        prevTime = current_time;
+        double rpm = (deltaPos/28.0) / (deltaTime) * (1000*60);
+        telemetry.addData("RPM", rpm);
+        telemetry.addData("FL", frontLeft.getCurrentPosition());
+        telemetry.addData("FR", frontRight.getCurrentPosition());
+        telemetry.addData("BL", backLeft.getCurrentPosition());
+        telemetry.addData("BR", backRight.getCurrentPosition());
     }
 }

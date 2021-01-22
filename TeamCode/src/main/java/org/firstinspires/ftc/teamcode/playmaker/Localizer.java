@@ -48,6 +48,9 @@ public class Localizer {
     private static final float halfField = 72 * mmPerInch;
     private static final float quadField  = 36 * mmPerInch;
 
+    public double encodersXScaleFactor = 1;
+    public double encodersYScaleFactor = 1;
+
     public boolean vuforiaOverwritesOtherLocations = true;
     public boolean vuforiaOverwritesOtherOrientations = true;
     Telemetry telemetry;
@@ -155,7 +158,7 @@ public class Localizer {
         return null;
     } //meeep
 
-    public void telemetry(Telemetry telemetry) {
+    public void telemetry() {
         EstimatedPosition estimatedPosition = estimatePosition();
         EstimatedOrientation orientation = estimateOrientation();
         if (estimatedPosition != null) {
@@ -364,16 +367,16 @@ public class Localizer {
 
             // Get robot centric delta measurements
             double mmPerCount = 1.0/hardware.omniDrive.getCountsPerUnit(DistanceUnit.MM);
-            telemetry.addData("CPMM", mmPerCount);
-            double xRobotRelMovement = (1/Math.sqrt(2))*(mmPerCount)*(deltaFrontLeft+deltaBackRight-deltaFrontRight-deltaBackLeft);
-            double yRobotRelMovement = (1/Math.sqrt(2))*(mmPerCount)*(deltaFrontLeft+deltaFrontRight+deltaBackLeft+deltaBackRight);
+            double xRobotRelMovement = encodersXScaleFactor*(mmPerCount/4)*(deltaFrontLeft+deltaBackRight-deltaFrontRight-deltaBackLeft);
+            double yRobotRelMovement = encodersYScaleFactor*(mmPerCount/4)*(deltaFrontLeft+deltaFrontRight+deltaBackLeft+deltaBackRight);
 
             // Translate robot-centric movements into field deltas and apply
-            double robotHeading = lastIMUOrientation.thirdAngle;
+            double robotHeading = Math.toRadians(lastIMUOrientation.thirdAngle);
             double fieldXMovement = -((xRobotRelMovement*Math.cos(robotHeading)) - (yRobotRelMovement*Math.sin(robotHeading)));
             double fieldYMovement = -((xRobotRelMovement*Math.sin(robotHeading)) + (yRobotRelMovement*Math.cos(robotHeading)));
-            double lastX = lastEncoderPosition.x;
-            double lastY = lastEncoderPosition.y;
+            Position lastMMPosition = lastEncoderPosition.toUnit(DistanceUnit.MM);
+            double lastX = lastMMPosition.x;
+            double lastY = lastMMPosition.y;
             lastEncoderPosition = new Position(DistanceUnit.MM, lastX + fieldXMovement, lastY + fieldYMovement, 0, System.nanoTime());
         }
 
@@ -404,12 +407,9 @@ public class Localizer {
         return false;
     }
 
-    public boolean calibrateIMUAndSetWorldOffset(BNO055IMU imu, double startingHeading) {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        boolean successful = imu.initialize(parameters);
+    public void setRobotStart(BNO055IMU imu, Position startingPosition, double startingHeading) {
+        this.lastEncoderPosition = startingPosition;
         this.setIMUToWorldOffset(imu, startingHeading);
-        return successful;
     }
 
     public void setIMUToWorldOffset(BNO055IMU imu, double startingHeading) {
