@@ -1,12 +1,32 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <Robot type="FirstInspires-FTC">
     <!-- REV -->
-    <LynxUsbDevice name="Expansion Hub Portal 1" serialNumber="DQ1NXDE5" parentModuleAddress="1">
+    <LynxUsbDevice parentModuleAddress="173" serialNumber="(embedded)" name="Control Hub Portal 1">
+
         <LynxModule name="Expansion Hub 1" port="1">
-            <!-- add devices here -->
-            <RevRobotics20HDHexMotor name="motor1" port="1" />
+
+            <RevRobotics20HDHexMotor name="m0" port="0"/>
+            <RevRobotics20HDHexMotor name="m1" port="1"/>
+            <RevRobotics20HDHexMotor name="m2" port="2"/>
+            <RevRobotics20HDHexMotor name="m3" port="3"/>
+
+            <LynxEmbeddedIMU name="imu" port="0" bus="0"/>
+
+            <Servo name="[wobble arm Servo}" port="5"/>
+            <Servo name="[wobble grab Servo}" port="4"/>
+        </LynxModule>
+
+        <LynxModule name="Control Hub" port="173">
+
+            <RevRobotics20HDHexMotor name="omniX" port="2"/>
+            <RevRobotics20HDHexMotor name="intakeMotor" port="3"/> <!-- omni Y -->
+
+            <LynxEmbeddedIMU name="imu 1" port="0" bus="0"/>
+
+            <Servo name="[launcher Servo}" port="0"/>
+            <RevRobotics20HDHexMotor name="[launcher motor front]" port="0"/>
+            <RevRobotics20HDHexMotor name="[launcher motor back]" port="1"/>
+
         </LynxModule>
     </LynxUsbDevice>
 </Robot>
-
-    <!-- I need to commit this change in ftcRobotController -->
