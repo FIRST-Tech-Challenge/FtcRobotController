@@ -89,7 +89,7 @@ public class AutoNewer extends OpMode {
     public void init() {
         robotHardware.build(hardwareMap);
         telemetry.addData("Status", "Initialized");
-        states.init(robotHardware);
+        states.init();
     }
 
     /*
@@ -97,6 +97,7 @@ public class AutoNewer extends OpMode {
      */
     @Override
     public void init_loop() {
+       // robotHardware.init(); // build this
         states.init_loop();
     }
 
@@ -105,6 +106,7 @@ public class AutoNewer extends OpMode {
      */
     @Override
     public void start() {
+        // robotHardware.start();
         states.start();
     }
 
@@ -113,8 +115,9 @@ public class AutoNewer extends OpMode {
      */
     @Override
     public void loop() {
+        // RobotStatus r = robotHardware.update(); // update state of robot based on sensor input
+        // states.loop(r);
         states.loop();
-
     }
 
     /*
@@ -123,5 +126,6 @@ public class AutoNewer extends OpMode {
     @Override
     public void stop() {
         states.stop();
+        // robotHardware.stop();
     }
 }
