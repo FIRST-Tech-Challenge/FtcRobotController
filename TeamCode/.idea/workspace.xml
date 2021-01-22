@@ -7,13 +7,29 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="ProjectId" id="1jyEWhHn3QJvatWvkcDioTrHUbq" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
@@ -35,9 +51,10 @@
       <screen x="0" y="0" width="1920" height="1170" />
     </state>
     <state x="808" y="474" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1920.1170@0.0.1920.1170" timestamp="1604768013345" />
-    <state x="740" y="340" key="FileChooserDialogImpl" timestamp="1604768160770">
-      <screen x="0" y="0" width="1920" height="1170" />
+    <state x="740" y="302" key="FileChooserDialogImpl" timestamp="1611109331546">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state x="740" y="302" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1611109331546" />
     <state x="740" y="340" key="FileChooserDialogImpl/0.0.1920.1170@0.0.1920.1170" timestamp="1604768160770" />
     <state x="656" y="409" key="com.intellij.ide.util.TipDialog" timestamp="1604768178429">
       <screen x="0" y="0" width="1920" height="1170" />

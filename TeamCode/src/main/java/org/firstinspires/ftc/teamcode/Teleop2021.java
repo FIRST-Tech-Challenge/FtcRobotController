@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName; //for "eyes" init
+
 @TeleOp(name="Teleop2021", group="Linear Opmode")
 
 public class Teleop2021 extends LinearOpMode {
@@ -22,6 +24,8 @@ public class Teleop2021 extends LinearOpMode {
 
     private Sensors sensors;
 
+    private Eyes eyes;
+
 
     @Override
     public void runOpMode() {
@@ -33,10 +37,10 @@ public class Teleop2021 extends LinearOpMode {
         );
 
         d = new Drive(
-                hardwareMap.get(DcMotor.class, "rbmotor"),
-                hardwareMap.get(DcMotor.class, "rfmotor"),
                 hardwareMap.get(DcMotor.class, "lfmotor"),
-                hardwareMap.get(DcMotor.class, "lbmotor")
+                hardwareMap.get(DcMotor.class, "lbmotor"),
+                hardwareMap.get(DcMotor.class, "rfmotor"),
+                hardwareMap.get(DcMotor.class, "rbmotor")
         );
 
         claw = new TwoPosServo(
@@ -48,6 +52,10 @@ public class Teleop2021 extends LinearOpMode {
 
         sensors = new Sensors(
                 hardwareMap.get(Rev2mDistanceSensor.class, "dist")
+        );
+
+        eyes = new Eyes(
+                hardwareMap.get(WebcamName.class, "Webcam 1")
         );
 
         waitForStart();
@@ -79,6 +87,7 @@ public class Teleop2021 extends LinearOpMode {
             if (gamepad1.y && !clawButtonIsDown) {
                 clawButtonIsDown = true;
                 claw.nextPos();
+                eyes.trackPosition();
             } else if (!gamepad1.y) {
                 clawButtonIsDown = false;
             }
@@ -104,6 +113,12 @@ public class Teleop2021 extends LinearOpMode {
             telemetry.addData("rb", d.getPowerrb());
             telemetry.addData("Lift", lift.getClicks());
             telemetry.addData("Dist sensor!", sensors.getDistanceFront());
+            if (eyes.isTargetVisible()) {
+                telemetry.addData("Vuf translation", eyes.getTranslation());
+                telemetry.addData("Vuf rotation", eyes.getRotation());
+            } else {
+                telemetry.addData("Visible Target", "none");
+            }
             telemetry.update();
 
         }

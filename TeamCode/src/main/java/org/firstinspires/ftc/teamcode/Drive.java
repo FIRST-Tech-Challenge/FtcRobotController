@@ -44,12 +44,24 @@ public class Drive extends LinearOpMode {
 
     motorlf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     motorlf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    motorlb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    motorlb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    motorrf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    motorrf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    motorrb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    motorrb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
   }
 
   public void resetEncoderlf() {
     motorlf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     motorlf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
   }
+//  public void setthepos() {
+//    motorlf.setTargetPosition(1200);
+//    motorlb.setTargetPosition(300);
+//    motorlf.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//    motorlb.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//  }
 
   public void setPower(double Ly, double Lx, double Rx, double Trigger) {
     //using the three controller inputs, we calculate the powers
@@ -101,11 +113,6 @@ public class Drive extends LinearOpMode {
     return powerlf;
   }
 
-  //we're only using one encoder to read the robot's position in autonomous.
-  public double getClickslf() {
-    return motorlf.getCurrentPosition();
-  }
-
   public double getPowerlb() {
     double lb = motorlb.getPower();
 
@@ -123,6 +130,34 @@ public class Drive extends LinearOpMode {
 
     return powerrb;
   }
+  
+    //We were only using one encoder to read the robot's position in autonomous. Changed to include all 4 motors for testing.
+  public double getClickslf() {
+    return motorlf.getCurrentPosition();
+  }
+ 
+  public double getClickslb() {
+    return motorlb.getCurrentPosition();
+  }
+
+  public double getClicksrf() {
+    return motorrf.getCurrentPosition();
+  }
+  
+  public double getClicksrb() {
+    return motorrb.getCurrentPosition();
+  }
+
+  public double getClicksAvg() {
+    double a = motorlf.getCurrentPosition();
+    double b = motorlb.getCurrentPosition();
+    double c = motorrf.getCurrentPosition();
+//    double d = motorrb.getCurrentPosition(); TODO fix rb motor
+    double quotient = a + b + c;
+    quotient = quotient / 3;
+    return quotient;
+  }
+  
 
   //this function just compares all of the powers and returns the largest value.
   public double findMax(double lf,double lb,double rf,double rb) {

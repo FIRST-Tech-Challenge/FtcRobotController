@@ -59,13 +59,13 @@ public class AutoNewer extends OpMode {
     public RobotHardware robotHardware = new RobotHardware();
     public LinearStack states = new LinearStack(new OurState[] {
             // Phase 1
-            new MoveGearbox("mesh")
+            //new MoveGearbox("mesh")
             //new MoveArm(1000)
             //new MoveClaw("open"),
             //new MoveClaw("close")
             // new LiftUntilTime(120, -1),
             //new ForwardUntil(1500),
-            //new TurnUntilAngle(180),
+            new TurnUntilAngle(90),
             // new ForwardUntil(-900),
             // new SeekUntilColor(),
             // new LinearStack(new OurState[] {
