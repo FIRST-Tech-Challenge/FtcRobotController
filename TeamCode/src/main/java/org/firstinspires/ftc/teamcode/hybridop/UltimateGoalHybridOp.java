@@ -101,15 +101,15 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
         // region wobbleGoal {...}
         if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.x)) {
-            wobbleGoalHolder.setTargetPosition(0);
-        } else {
             wobbleGoalHolder.setTargetPosition(1);
+        } else {
+            wobbleGoalHolder.setTargetPosition(0);
         }
 
         if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.bumper_right)) {
-            wobbleServo.setPosition(0);
-        } else {
             wobbleServo.setPosition(1);
+        } else {
+            wobbleServo.setPosition(0);
         }
         // endregion
 
