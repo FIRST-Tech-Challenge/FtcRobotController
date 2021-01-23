@@ -26,7 +26,7 @@ public class HzGameField {
     //public static final Pose2d ORIGIN_FIELD =  new Pose2d(0,0,Math.toRadians(0));
 
     public static final Pose2d BLUE_INNER_START_LINE =  new Pose2d(-57,26,Math.toRadians(90));//Center of ther robot
-    public static final Pose2d BLUE_OUTER_START_LINE =  new Pose2d(-60,44,Math.toRadians(-90));
+    public static final Pose2d BLUE_OUTER_START_LINE =  new Pose2d(-57,44,Math.toRadians(-90));
     public static final Pose2d RED_INNER_START_LINE =  new Pose2d(-55,-22,Math.toRadians(55));
     public static final Pose2d RED_OUTER_START_LINE =  new Pose2d(-55,-52,Math.toRadians(-55));
 

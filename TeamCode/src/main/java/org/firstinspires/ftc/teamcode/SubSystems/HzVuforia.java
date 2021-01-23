@@ -224,7 +224,7 @@ public class HzVuforia {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.minResultConfidence = 0.75f;//0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
         vuforiaState = VUFORIA_STATE.TFOD_INIT;
@@ -247,7 +247,7 @@ public class HzVuforia {
             // (typically 1.78 or 16/9).
 
             // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
-            tfod.setZoom(1.5, 16.0/9.0);
+            tfod.setZoom(1.75, 16.0/9.0);
             updatedRecognitions = tfod.getUpdatedRecognitions();
         }
     }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TestingOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.BatteryChecker;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.util.BatteryChecker;
  *  Expected behavior.. trigger will pull arm back to park all the time.. To test only key pad, comment out trigger line.
  */
 @TeleOp(name = "Test_Battery", group = "Test")
+@Disabled
 public class Test_ExpansionHub extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;

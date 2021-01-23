@@ -110,6 +110,15 @@ public class HzGamepad {
         }
         gpDrive.gamepadInputTurn = -turboMode(getRightStickX());
 
+        if (getButtonXPress()) {
+            gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_LEFT;
+        }
+
+        //Power Shot 2
+        if (getButtonBPress()) {
+            gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_RIGHT;
+        }
+
         gpDrive.driveTrainPointFieldModes();
 
     }
@@ -194,22 +203,22 @@ public class HzGamepad {
             }
 
             //Power Shot 1
-            if (getButtonXPress()) {
-                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
-                gpHzLaunchController.activateLaunchReadinessState = true;
+            /*if (getButtonXPress()) {
+                //gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
+                //gpHzLaunchController.activateLaunchReadinessState = true;
                 gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_LEFT;
             }
 
             //Power Shot 2
             if (getButtonBPress()) {
-                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
-                gpHzLaunchController.activateLaunchReadinessState = true;
+                //gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT3;
+                //gpHzLaunchController.activateLaunchReadinessState = true;
                 gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_RIGHT;
-            }
+            }*/
 
             //Power Shot 3
             if (getButtonAPress()) {
-                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT3;
+                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
                 gpHzLaunchController.activateLaunchReadinessState = true;
                 if (gpDrive.augmentedControl == HzDrive.AugmentedControl.NONE){
                     gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_CENTER;
@@ -222,7 +231,8 @@ public class HzGamepad {
         if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
                 gpHzLaunchController.launchMode == HzLaunchController.LAUNCH_MODE.AUTOMATED) {
             gpHzLaunchController.runLauncherByDistanceToTarget();
-            if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
+            //if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
+            if (getButtonYPress() || getButtonAPress()) {
                 gpHzLaunchController.deactivateLaunchReadinessState = true;
             }
         }
@@ -232,13 +242,26 @@ public class HzGamepad {
             //gpLaunchController.runLauncherByDistanceToTarget();
             if (gpHzLaunchController.lcTarget == HzLaunchController.LAUNCH_TARGET.HIGH_GOAL) {
                 gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL);
-            } else {
+                if (getButtonYPress()) {
+                    gpHzLaunchController.deactivateLaunchReadinessState = true;
+                }
+                if (getButtonAPress()) {
+                    gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
+                }
+            } else { //gpHzLaunchController.lcTarget == HzLaunchController.LAUNCH_TARGET.POWER_SHOT2
                 gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT);
+                if (getButtonAPress()) {
+                    gpHzLaunchController.deactivateLaunchReadinessState = true;
+                }
+                if (getButtonYPress()) {
+                    gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.HIGH_GOAL;
+                }
             }
 
-            if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
+            //if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
+            /*if (getButtonYPress() || getButtonAPress()) {
                 gpHzLaunchController.deactivateLaunchReadinessState = true;
-            }
+            }*/
         }
 
         if (gpHzLaunchController.deactivateLaunchReadinessState) {

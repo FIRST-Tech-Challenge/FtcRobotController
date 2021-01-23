@@ -395,7 +395,7 @@ public class HzMecanumDriveDriveEncoders extends MecanumDrive {
         return imu.getAngularOrientation().firstAngle;
     }
 
-    double getBatteryVoltage(HardwareMap hardwareMap) {
+    public double getBatteryVoltage(HardwareMap hardwareMap) {
         double result = Double.POSITIVE_INFINITY;
         for (VoltageSensor sensor : hardwareMap.voltageSensor) {
             double voltage = sensor.getVoltage();

@@ -19,8 +19,8 @@ public class HzLauncher {
     public DcMotorEx launcherFlyWheelMotor;
 
     public static final double FLYWHEEL_SUPPLY_MODE_SPEED = 0.1;
-    public static final double FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1530;//1560;
-    public static final double FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1470;//1500;
+    public static final double FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1500;//1560;
+    public static final double FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1440;//1500;
     public static final double PLUNGER_LAUNCH_POSITION = 0.67;
     public static final double PLUNGER_REST_POSITION = 0.84;
 
@@ -41,8 +41,8 @@ public class HzLauncher {
         launcherFlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         launcherFlyWheelMotor.setVelocityPIDFCoefficients(1.63835, 0.163835, 0, 16.3835);
-        launcherFlyWheelMotor.setVelocityPIDFCoefficients(5.0, 0.163835, 0, 16.3835);
-        launcherFlyWheelMotor.setPositionPIDFCoefficients(5.0);
+        launcherFlyWheelMotor.setVelocityPIDFCoefficients(8.0, 0.163835, 0, 16.3835);
+        launcherFlyWheelMotor.setPositionPIDFCoefficients(8.0);
 
         launcherFlyWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }

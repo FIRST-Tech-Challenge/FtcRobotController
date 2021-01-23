@@ -111,7 +111,7 @@ public class HzMagazine {
             magazineServo.setPower(0.0);
             magazinePosition = MAGAZINE_POSITION.AT_COLLECT;
         } else {
-            magazineServo.setPower(-0.7);
+            magazineServo.setPower(-0.5);
         }
     }
 
@@ -123,7 +123,7 @@ public class HzMagazine {
             magazineServo.setPower(0.0);
             magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
         } else {
-            magazineServo.setPower(0.7);
+            magazineServo.setPower(0.5);
         }
     }
 

@@ -186,6 +186,7 @@ public class HzTeleOpRR extends LinearOpMode {
         //****** Drive debug ******
         telemetry.addData("Drive Mode : ", hzDrive.driveMode);
         telemetry.addData("PoseEstimate :", hzDrive.poseEstimate);
+        telemetry.addData("Battery Power", hzDrive.getBatteryVoltage(hardwareMap));
 
         //telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
         // Print pose to telemetry

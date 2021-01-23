@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDriveEncoders;
@@ -47,7 +46,6 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
     // Define 2 states, driver control or alignment control
     enum DriveMode {
         NORMAL_CONTROL,
-        AUTOMATED_CONTROL,
         ALIGN_TO_POINT;
         DriveMode toggle() {
             if (this.equals(NORMAL_CONTROL))
@@ -134,25 +132,23 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
                         augmentedControl = AugmentedControl.NONE;
                         break;
                     case TURN_CENTER:
-                        turnAsync(Angle.normDelta(Math.toRadians(0) - poseEstimate.getHeading()));
-                        driveMode = DriveMode.AUTOMATED_CONTROL;
+                        if (poseEstimate.getHeading() > Math.toRadians(0) && poseEstimate.getHeading() < Math.toRadians(180)) {
+                            turn(-poseEstimate.getHeading());
+                        } else {
+                            turn(Math.toRadians(360)-poseEstimate.getHeading());
+                        }
+                        augmentedControl = AugmentedControl.NONE;
                         break;
                     case TURN_DELTA_LEFT:
-                        turnAsync(Angle.normDelta(Math.toRadians(-5)));
-                        driveMode = DriveMode.AUTOMATED_CONTROL;
+                        turn(Math.toRadians(5));
+                        augmentedControl = AugmentedControl.NONE;
                         break;
                     case TURN_DELTA_RIGHT:
-                        turnAsync(Angle.normDelta(Math.toRadians(5)));
-                        //augmentedControl = AugmentedControl.TURN_DELTA_RIGHT;
-                        driveMode = DriveMode.AUTOMATED_CONTROL;
+                        turn(Math.toRadians(-5));
+                        augmentedControl = AugmentedControl.NONE;
                         break;
                 }
                 break;
-
-            case AUTOMATED_CONTROL:
-                if (augmentedControl == AugmentedControl.NONE){
-                    driveMode = DriveMode.NORMAL_CONTROL;
-                }
 
             case ALIGN_TO_POINT:
                 // Create a vector from the gamepad x/y inputs which is the field relative movement

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 @Config
 //@Autonomous(group = "drive")
 @Autonomous(name = "Calib:RR-TurnTest", group = "Calibration")
+@Disabled
 public class TurnTest extends LinearOpMode {
     public static double ANGLE = 180;//90; // deg
 
