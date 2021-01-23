@@ -131,15 +131,15 @@ public class Eyes extends LinearOpMode {
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
 
+    private List<VuforiaTrackable> allTrackables;
+    private VuforiaTrackables targetsUltimateGoal;
+
     public Eyes(WebcamName wc) {
         /*
          * Retrieve the camera we are to use.
          */
         //webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         webcamName = wc;
-    }
-
-    public void trackPosition() {
 
 
         /*
@@ -166,21 +166,21 @@ public class Eyes extends LinearOpMode {
 
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
-        VuforiaTrackables targetsUltimateGoal = this.vuforia.loadTrackablesFromAsset("UltimateGoal");
-        VuforiaTrackable blueTowerGoalTarget = targetsUltimateGoal.get(0);
+        this.targetsUltimateGoal = this.vuforia.loadTrackablesFromAsset("UltimateGoal");
+        VuforiaTrackable blueTowerGoalTarget = this.targetsUltimateGoal.get(0);
         blueTowerGoalTarget.setName("Blue Tower Goal Target");
-        VuforiaTrackable redTowerGoalTarget = targetsUltimateGoal.get(1);
+        VuforiaTrackable redTowerGoalTarget = this.targetsUltimateGoal.get(1);
         redTowerGoalTarget.setName("Red Tower Goal Target");
-        VuforiaTrackable redAllianceTarget = targetsUltimateGoal.get(2);
+        VuforiaTrackable redAllianceTarget = this.targetsUltimateGoal.get(2);
         redAllianceTarget.setName("Red Alliance Target");
-        VuforiaTrackable blueAllianceTarget = targetsUltimateGoal.get(3);
+        VuforiaTrackable blueAllianceTarget = this.targetsUltimateGoal.get(3);
         blueAllianceTarget.setName("Blue Alliance Target");
-        VuforiaTrackable frontWallTarget = targetsUltimateGoal.get(4);
+        VuforiaTrackable frontWallTarget = this.targetsUltimateGoal.get(4);
         frontWallTarget.setName("Front Wall Target");
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
-        allTrackables.addAll(targetsUltimateGoal);
+        this.allTrackables = new ArrayList<VuforiaTrackable>();
+        this.allTrackables.addAll(this.targetsUltimateGoal);
 
         /**
          * In order for localization to work, we need to tell the system where each target is on the field, and
@@ -274,21 +274,26 @@ public class Eyes extends LinearOpMode {
         // Tap the preview window to receive a fresh image.
 
 
-        targetsUltimateGoal.activate();
-        while (!isStopRequested()) {
+        this.targetsUltimateGoal.activate();
+    }
+
+    public void trackPosition() {
+
+
+//        while (!isStopRequested()) {
 
             // check all the trackable targets to see which one (if any) is visible.
-            targetVisible = false;
+            this.targetVisible = false;
             for (VuforiaTrackable trackable : allTrackables) {
                 if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    telemetry.addData("Visible Target", trackable.getName());
-                    targetVisible = true;
+//                    telemetry.addData("Visible Target", trackable.getName());
+                    this.targetVisible = true;
 
                     // getUpdatedRobotLocation() will return null if no new information is available since
                     // the last time that call was made, or if the trackable is not currently visible.
                     OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
                     if (robotLocationTransform != null) {
-                        lastLocation = robotLocationTransform;
+                        this.lastLocation = robotLocationTransform;
                     }
                     break;
                 }
@@ -309,24 +314,29 @@ public class Eyes extends LinearOpMode {
 //                telemetry.addData("Visible Target", "none");
 //            }
 //            telemetry.update();
-        }
+//        }
 
         // Disable Tracking when we are done;
-        targetsUltimateGoal.deactivate();
-    }
+//        targetsUltimateGoal.deactivate();
 
+    }
+//TODO add target name
     public String getTranslation() {
         // express position (translation) of robot in inches.
-        VectorF translation = lastLocation.getTranslation();
+        VectorF translation = this.lastLocation.getTranslation();
         return String.format("{X, Y, Z} = %.1f, %.1f, %.1f", translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
     }
     public String getRotation() {
         // express the rotation of the robot in degrees.
-        Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+        Orientation rotation = Orientation.getOrientation(this.lastLocation, EXTRINSIC, XYZ, DEGREES);
         return String.format("{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
     }
     public boolean isTargetVisible() {
-        return targetVisible;
+        return this.targetVisible;
+    }
+
+    public void stopTracking() {
+        this.targetsUltimateGoal.deactivate();
     }
 
     //runopmode is always needed at the bottom of our classes because reasons.

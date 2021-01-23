@@ -87,7 +87,6 @@ public class Teleop2021 extends LinearOpMode {
             if (gamepad1.y && !clawButtonIsDown) {
                 clawButtonIsDown = true;
                 claw.nextPos();
-                eyes.trackPosition();
             } else if (!gamepad1.y) {
                 clawButtonIsDown = false;
             }
@@ -99,6 +98,7 @@ public class Teleop2021 extends LinearOpMode {
                 gearboxButtonIsDown = false;
             }
 
+            eyes.trackPosition(); // vuforia
 
             telemetry.addData("Status", "Run Time: ");
             telemetry.addData("Motor Power", gamepad1.left_stick_y);
