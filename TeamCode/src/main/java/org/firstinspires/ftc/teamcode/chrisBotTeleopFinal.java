@@ -3,12 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="chrisBotTeleopWithIntakeShooter", group="chrisBot")
+@TeleOp(name="chrisBotTeleopFINAL", group="chrisBot")
 //@Disabled
 
-public class chrisBotTeleopWithIntakeShooter extends OpMode{
+public class chrisBotTeleopFinal extends OpMode{
 
     chrisBot robot = new chrisBot();
 
@@ -27,7 +26,7 @@ public class chrisBotTeleopWithIntakeShooter extends OpMode{
             double r = Math.hypot(gamepadState[0], gamepadState[1]);
             double robotAngle = Math.atan2(gamepadState[1], gamepadState[0]) - Math.PI / 4;
             double rightX = gamepadState[2];
-            robot.setPower(r * Math.cos(robotAngle) + rightX, r * Math.sin(robotAngle) - rightX, r * Math.sin(robotAngle) + rightX, r * Math.cos(robotAngle) - rightX);
+            robot.setPower(-1*r * Math.cos(robotAngle) + rightX, -1*r * Math.sin(robotAngle) - rightX, -1*r * Math.sin(robotAngle) + rightX, -1*r * Math.cos(robotAngle) - rightX);
         }
         else {
             robot.setAllPower(0);
@@ -46,6 +45,16 @@ public class chrisBotTeleopWithIntakeShooter extends OpMode{
         } else {
             robot.shootOff();
             robot.intakeOff();
+        }
+        if (gamepad1.dpad_up) {
+            robot.motorLift1.setPower(0.5);
+            robot.motorLift2.setPower(0.5);
+        } else if (gamepad1.dpad_down) {
+            robot.motorLift1.setPower(-0.5);
+            robot.motorLift2.setPower(-0.5);
+        } else {
+            robot.motorLift1.setPower(0);
+            robot.motorLift2.setPower(0);
         }
     }
 

@@ -1,12 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.disabled;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -24,9 +22,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.PID;
+import org.firstinspires.ftc.teamcode.Position;
+import org.firstinspires.ftc.teamcode.ringObject;
 
 import java.util.ArrayList;
-import java.util.EventListenerProxy;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
@@ -49,13 +49,17 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  * the internal hub IMU named imu
  * a webcam attached to USB.
  */
-public class chrisBot
+public class chrisBot_old
 {
     private String version = "1.0.0";
 
     /** MOTOR OBJECTS */
-    public DcMotor  motorBackLeft   = null, motorFrontLeft  = null, motorFrontRight  = null, motorBackRight  = null;
-    public DcMotorSimple motorIntake = null, motorShooter = null, motorLift1 = null, motorLift2 = null;
+    public DcMotor  motorBackLeft   = null;
+    public DcMotor  motorFrontLeft  = null;
+    public DcMotor  motorFrontRight  = null;
+    public DcMotor  motorBackRight  = null;
+    public DcMotor motorIntake = null;
+    public DcMotor motorShooter = null;
 
     public WebcamName webcam = null;
 
@@ -63,11 +67,16 @@ public class chrisBot
     public static final double DRIVE_GEAR_REDUCTION    = (double)2/(double)3 ;     // This is < 1.0 if geared UP
     public static final double WHEEL_DIAMETER_INCHES   = 2.95276 ;     // For figuring circumference
     public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    public static final double DRIVE_SPEED = 0.3, TURN_SPEED = 0.3;
+    public static final double DRIVE_SPEED = 0.3;
+    public static final double TURN_SPEED = 0.3;
 
-    int FLTarget = 0, FRTarget = 0, BLTarget = 0, BRTarget = 0;
+    int FLTarget = 0;
+    int FRTarget = 0;
+    int BLTarget = 0;
+    int BRTarget = 0;
 
-    public boolean shooterOn = false, intakeOn = false;
+    public boolean shooterOn = false;
+    public boolean intakeOn = false;
 
     /** GYRO OBJECTS */
 
@@ -77,9 +86,6 @@ public class chrisBot
     Orientation angles;
     Acceleration gravity;
 
-    Orientation lastAngles = new Orientation();
-    double globalAngle;
-
     /** VUFORIA OBJECTS */
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
@@ -87,13 +93,17 @@ public class chrisBot
 
     private static final boolean PHONE_IS_PORTRAIT = false  ;
 
-    private static final float mmPerInch = 25.4f, mmTargetHeight = (6) * mmPerInch;
+    private static final float mmPerInch        = 25.4f;
+    private static final float mmTargetHeight   = (6) * mmPerInch;
 
     // Constants for perimeter targets
-    private static final float halfField = 72 * mmPerInch, quadField  = 36 * mmPerInch;
+    private static final float halfField = 72 * mmPerInch;
+    private static final float quadField  = 36 * mmPerInch;
 
     // private boolean targetVisible = false;
-    private float phoneXRotate = 0, phoneYRotate = 0, phoneZRotate = 0;
+    private float phoneXRotate    = 0;
+    private float phoneYRotate    = 0;
+    private float phoneZRotate    = 0;
 
     List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
 
@@ -103,7 +113,9 @@ public class chrisBot
 
     public TFObjectDetector tfod;
 
-    public static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite", LABEL_FIRST_ELEMENT = "Quad", LABEL_SECOND_ELEMENT = "Single";
+    public static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    public static final String LABEL_FIRST_ELEMENT = "Quad";
+    public static final String LABEL_SECOND_ELEMENT = "Single";
 
     public static final String VUFORIA_KEY = "AQU7a8H/////AAABmfH4ZcQHIkPTjsjCf80CSVReJtuQBMiQodPHMSkdFHY8RhKT4fIEcY3JbCWjXRsUBFiewYx5etup17dUnX/SIQx6cjctrioEXrID+gV4tD9B29eCOdFVgyAr+7ZnEHHDYcSnt2pfzDZyMpi+I3IODqbUgVO82UiaZViuZBnA3dNvokZNFwZvv8/YDkcd4LhHv75Qdk" +
             "qgBzKe/TumwxjR/EqtR2fQRy9WnRjNVR9fYGl9MsuGNBSEmmys6GczXn8yZ/k2PKusiYz7h4hFGiXmlVLyikZuB4dxETGoqz+WWYUFJAdHzFiBptg5xXaa86qMBYBi3ht0RUiBKicLJhQZzLG0bIEJZWr198ihexUuhhGV";
@@ -115,10 +127,10 @@ public class chrisBot
 
     private Telemetry telemetry;
 
-    public boolean shooterExists = false, intakeExists = false, webcamExists = false, liftExists = false;
+    public boolean shooterExists = false, intakeExists = false, webcamExists = false;
 
     /* Constructor */
-    public chrisBot() { }
+    public chrisBot_old() { }
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap, Telemetry telemetry) {
@@ -152,7 +164,6 @@ public class chrisBot
 
         imu = hwMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
 
         motorBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
@@ -172,24 +183,27 @@ public class chrisBot
 
         /** Attachment section */
 
-        intakeExists = hwMap.tryGet(DcMotorSimple.class, "motorIntake") != null;
-        shooterExists = hwMap.tryGet(DcMotorSimple.class, "motorShooter") != null;
+        intakeExists = hwMap.tryGet(DcMotor.class, "motorIntake") != null;
+        shooterExists = hwMap.tryGet(DcMotor.class, "motorShooter") != null;
         webcamExists = hwMap.get(WebcamName.class, "Webcam 1") != null;
-        liftExists = hwMap.tryGet(DcMotorSimple.class, "motorLift1") != null && hwMap.tryGet(DcMotorSimple.class, "motorLift1") != null;
 
         if (intakeExists) {
-            motorIntake = hwMap.get(DcMotorSimple.class, "motorIntake");
-            motorIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+            motorIntake = hwMap.get(DcMotor.class, "motorIntake");
+            motorIntake.setDirection(DcMotor.Direction.REVERSE);
             motorIntake.setPower(0);
+            motorIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motorIntake.setMode((DcMotor.RunMode.RUN_WITHOUT_ENCODER));
 
             telemetry.addLine("Intake motor initialized");
             telemetry.update();
         }
 
         if (shooterExists) {
-            motorShooter = hwMap.get(DcMotorSimple.class, "motorShooter");
-            motorShooter.setDirection(DcMotorSimple.Direction.FORWARD);
+            motorShooter = hwMap.get(DcMotor.class, "motorShooter");
+            motorShooter.setDirection(DcMotor.Direction.FORWARD);
             motorShooter.setPower(0);
+            motorShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motorShooter.setMode((DcMotor.RunMode.RUN_WITHOUT_ENCODER));
 
             telemetry.addLine("Shooter motor initialized");
             telemetry.update();
@@ -199,18 +213,6 @@ public class chrisBot
             webcam = hwMap.get(WebcamName.class, "Webcam 1");
 
             telemetry.addLine("Webcam initialized");
-            telemetry.update();
-        }
-
-        if (liftExists) {
-            motorLift1 = hwMap.get(DcMotorSimple.class, "motorLift1");
-            motorLift2 = hwMap.get(DcMotorSimple.class, "motorLift2");
-            motorLift1.setDirection(DcMotorSimple.Direction.FORWARD);
-            motorLift2.setDirection(DcMotorSimple.Direction.REVERSE);
-            motorLift1.setPower(0);
-            motorLift2.setPower(0);
-
-            telemetry.addLine("Lift initialized");
             telemetry.update();
         }
 
@@ -297,13 +299,19 @@ public class chrisBot
     }
 
     // This method checks power levels to be safe and pushes them to the motors
-    public void setPower(double flPower, double frPower, double blPower, double brPower) {
+    public void setPower(double flPower, double frPower, double blPower, double brPower)
+    {
         setPower(new double[]{flPower, frPower, blPower, brPower});
     }
     public void setPower(double[] powers) {
         // Check deadzones
         for (int i = 0; i < powers.length; i++) {
-            powers[i] = Range.clip(powers[i], -1, 1);
+            if(powers[i] > 1) {
+                powers[i] = 1;
+            }
+            else if(powers[i] < -1) {
+                powers[i] = -1;
+            }
         }
         // Push powers
         motorFrontLeft.setPower(powers[0]);
@@ -396,8 +404,7 @@ public class chrisBot
 
     public void linearSlowEncoderDrive(double inches, double speed) {
         double[] powers = {speed, speed, speed, speed};
-        int[] motorPositionsOld = {motorFrontLeft.getCurrentPosition(), motorFrontRight.getCurrentPosition(), motorBackLeft.getCurrentPosition(), motorBackRight.getCurrentPosition()};
-        int[] motorPositions = motorPositionsOld;
+        int[] motorPositions = {motorFrontLeft.getCurrentPosition(), motorFrontRight.getCurrentPosition(), motorBackLeft.getCurrentPosition(), motorBackRight.getCurrentPosition()};
         resetTargets();
 
         // Determine new target position, and pass to motor controller
@@ -417,28 +424,15 @@ public class chrisBot
         runtime.reset();
         setPower(powers);
 
-        Telemetry.Item a = telemetry.addData("fl",powers[0]);
-        Telemetry.Item b = telemetry.addData("fr",powers[1]);
-        Telemetry.Item c = telemetry.addData("bl",powers[2]);
-        Telemetry.Item d = telemetry.addData("br",powers[3]);
-        telemetry.update();
-
         // keep looping while we are still active, and there is time left and motors are running.
         while (isBusy()) {
             for(int i : range(0,4)) {
-                motorPositions = new int[]{motorFrontLeft.getCurrentPosition(), motorFrontRight.getCurrentPosition(), motorBackLeft.getCurrentPosition(), motorBackRight.getCurrentPosition()};
-                double power = powers[i]*(1 - (double)(motorPositions[i]-motorPositionsOld[i])/(double)countsToTravel);
-                if (power < 0.5) {
-                    power = 0.5;
+                double power = powers[i]*(double)motorPositions[i]/(double)countsToTravel;
+                if (power < 0.05) {
+                    power = 0.05;
                 }
                 powers[i] = power;
             }
-            setPower(powers);
-            a.setValue(powers[0]);
-            b.setValue(powers[1]);
-            c.setValue(powers[2]);
-            d.setValue(powers[3]);
-            telemetry.update();
         }
 
         // Stop all motion;
@@ -448,7 +442,7 @@ public class chrisBot
         setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    /*public void halfGyroDrive(double inches) { halfGyroDrive(inches, DRIVE_SPEED); }
+    public void halfGyroDrive(double inches) { halfGyroDrive(inches, DRIVE_SPEED); }
 
     public void halfGyroDrive(double inches, double speed) {
         double[] powers = {speed, speed, speed, speed};
@@ -471,7 +465,8 @@ public class chrisBot
         setPower(powers);
 
         double angle = getOrientation().firstAngle;
-        PID angleCorrector = new PID(angle, new double[]{0.02,0.02,0});
+        PID angleCorrector = new PID(angle, angle);
+        angleCorrector.setCoefficient(new double[]{0.02,0.02,0});
         double correction = 0;
 
         // keep looping while we are still active, and there is time left and motors are running.
@@ -482,7 +477,6 @@ public class chrisBot
             powers[1] = powers[1] - correction;
             powers[2] = powers[2] + correction;
             powers[3] = powers[3] - correction;
-            setPower(powers);
         }
 
         // Stop all motion;
@@ -490,40 +484,6 @@ public class chrisBot
 
         // Turn off RUN_TO_POSITION
         setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }*/
-
-    public void stemPIDdrive(int ms, double power) {
-        PIDController pidDrive = new PIDController(.05, 0, 0);
-        ElapsedTime e = new ElapsedTime();
-        // Set up parameters for driving in a straight line.
-        pidDrive.setSetpoint(0);
-        pidDrive.setOutputRange(0, power);
-        pidDrive.setInputRange(-90, 90);
-        pidDrive.enable();
-
-        // drive until end of period.
-        e.reset();
-        Telemetry.Item a = telemetry.addData("1 imu heading", lastAngles.firstAngle);
-        Telemetry.Item b = telemetry.addData("2 global heading", globalAngle);
-        Telemetry.Item c = telemetry.addData("3 correction", 0);
-        telemetry.update();
-        while (e.milliseconds() < ms)
-        {
-            // Use PID with imu input to drive in a straight line.
-            double correction = pidDrive.performPID(getAngle());
-
-            a.setValue(lastAngles.firstAngle);
-            b.setValue(globalAngle);
-            c.setValue(correction);
-            telemetry.update();
-
-            // set power levels.
-            setPower(power + correction, power - correction, power + correction, power - correction);
-
-        }
-
-        // turn the motors off.
-        setAllPower(0);
     }
 
     /** ATTACHMENT METHODS */
@@ -583,57 +543,6 @@ public class chrisBot
         // Code to get the gyro orientation goes here
         return imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
-    // stemrobotics code
-    public void resetAngle() {
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        globalAngle = 0;
-    }
-    public double getAngle() {
-        Orientation x = getOrientation();
-        double deltaAngle = (double)x.firstAngle - lastAngles.firstAngle;
-
-        if (deltaAngle < -180)
-            deltaAngle += 360;
-        else if (deltaAngle > 180)
-            deltaAngle -= 360;
-
-        globalAngle += deltaAngle;
-
-        lastAngles = angles;
-
-        return globalAngle;
-    }
-
-    public void liftUp() {
-        ElapsedTime e = new ElapsedTime();
-        e.reset();
-        while(e.milliseconds() < 3000) {
-            motorLift1.setPower(0.5);
-            motorLift2.setPower(0.5);
-        }
-        motorLift1.setPower(0);
-        motorLift2.setPower(0);
-    }
-    public void liftDown() {
-        ElapsedTime e = new ElapsedTime();
-        e.reset();
-        while(e.milliseconds() < 3000) {
-            motorLift1.setPower(-0.5);
-            motorLift2.setPower(-0.5);
-        }
-        motorLift1.setPower(0);
-        motorLift2.setPower(0);
-    }
-    public void autonShoot() {
-        ElapsedTime e = new ElapsedTime();
-        e.reset();
-        while(e.milliseconds() < 2000) {
-            shootOn();
-            intakeOn();
-        }
-        shootOff();
-        intakeOff();
-    }
 
     /** VUFORIA METHODS */
 
@@ -648,7 +557,7 @@ public class chrisBot
 
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.vuforiaLicenseKey = chrisBot_old.VUFORIA_KEY;
 
         /*
           We also indicate which camera on the RC we wish to use.
@@ -826,5 +735,8 @@ public class chrisBot
         telemetry.addLine("Welcome to ChrisBot version "+version+"!\nPlease wait a few seconds for the encoders to reset, so that Chris doesn't complain about not having gyro yet\nWhen you're ready to pwn some n00bs press the \"Play\" button");
         telemetry.update();
     }
+
+
+
 }
 

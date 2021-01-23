@@ -34,7 +34,7 @@ public class chrisBotTeleop extends OpMode{
         }
     }
 
-//--------------------------------- FUNCTIONS ----------------------------------------------------
+    //--------------------------------- FUNCTIONS ----------------------------------------------------
     public static boolean notInDeadzone(Gamepad gamepad, String stick) {
         if (stick.equals("left")) {
             return Math.abs(gamepad.left_stick_x) > 0.1 || Math.abs(gamepad.left_stick_y) > 0.1;

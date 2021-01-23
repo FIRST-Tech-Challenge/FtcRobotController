@@ -23,10 +23,10 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
-@TeleOp(name="chrisBotTeleopWithIntakeCam", group="chrisBot")
+@TeleOp(name="chrisBotTeleopWithCam", group="chrisBot")
 //@Disabled
 
-public class chrisBotTeleopWithIntakeCam extends OpMode{
+public class chrisBotTeleopWithCam extends OpMode{
 
     chrisBot robot  = new chrisBot();
 
@@ -77,7 +77,6 @@ public class chrisBotTeleopWithIntakeCam extends OpMode{
     @Override
     public void loop() {
         move();
-        intake();
         robot.detectTargets();
     }
 
@@ -116,13 +115,6 @@ public class chrisBotTeleopWithIntakeCam extends OpMode{
         }
         else {
             robot.setAllPower(0);
-        }
-    }
-    private void intake() {
-        if (gamepad1.x) {
-            robot.intakeOn();
-        } else {
-            robot.intakeOff();
         }
     }
 }

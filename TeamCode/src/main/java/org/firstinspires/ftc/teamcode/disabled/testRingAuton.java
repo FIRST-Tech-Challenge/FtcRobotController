@@ -42,13 +42,14 @@ import org.firstinspires.ftc.teamcode.ringObject;
 
 import java.util.ArrayList;
 
+/*
 
 @Autonomous(name="testRingAuton", group="Zippo")
 @Disabled
 
 public class testRingAuton extends LinearOpMode {
 
-    /* Declare OpMode members. */
+    /* Declare OpMode members.
     testPlatformHardware robot   = new testPlatformHardware();
     private ElapsedTime     runtime = new ElapsedTime();
 
@@ -69,13 +70,13 @@ public class testRingAuton extends LinearOpMode {
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
-     */
+
     private VuforiaLocalizer vuforia;
 
     /**
      * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
      * Detection engine.
-     */
+
     private TFObjectDetector tfod;
 
     @Override
@@ -84,7 +85,7 @@ public class testRingAuton extends LinearOpMode {
         /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
-         */
+
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
@@ -97,7 +98,7 @@ public class testRingAuton extends LinearOpMode {
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
+
         if (tfod != null) {
             tfod.activate();
 
@@ -153,7 +154,7 @@ public class testRingAuton extends LinearOpMode {
      *  1) Move gets to the desired position
      *  2) Move runs out of time
      *  3) Driver stops the opmode running.
-     */
+
     public void encoderDrive(double speed, double inches) {
         int newflTarget, newfrTarget, newblTarget, newbrTarget;
 
@@ -216,7 +217,7 @@ public class testRingAuton extends LinearOpMode {
     private void initVuforia() {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
+
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
@@ -231,7 +232,7 @@ public class testRingAuton extends LinearOpMode {
 
     /**
      * Initialize the TensorFlow Object Detection engine.
-     */
+
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -241,3 +242,5 @@ public class testRingAuton extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 }
+
+*/

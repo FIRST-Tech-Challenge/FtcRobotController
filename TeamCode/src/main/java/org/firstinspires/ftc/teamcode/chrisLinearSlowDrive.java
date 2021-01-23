@@ -13,7 +13,8 @@ public class chrisLinearSlowDrive extends LinearOpMode {
 
         waitForStart();
 
-        robot.linearSlowEncoderDrive(12, 0.5);
+        robot.linearSlowEncoderDrive(240, 1);
+
     }
 
 }

@@ -3,12 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="chrisBotTeleopWithIntakeShooter", group="chrisBot")
+@TeleOp(name="chrisBotTeleopFINAL2C", group="chrisBot")
 //@Disabled
 
-public class chrisBotTeleopWithIntakeShooter extends OpMode{
+public class chrisBotTeleopFinalTwoControllers extends OpMode{
 
     chrisBot robot = new chrisBot();
 
@@ -21,12 +20,29 @@ public class chrisBotTeleopWithIntakeShooter extends OpMode{
     @Override
     public void loop() {
         // Driving code
-        if(notInDeadzone(gamepad1, "left") || notInDeadzone(gamepad1, "right")) {
-            // Algorithm taken from https://ftcforum.firstinspires.org/forum/ftc-technology/android-studio/6361-mecanum-wheels-drive-code-example, quote to dmssargent
-            double[] gamepadState = getGamepadState(gamepad1);
-            double r = Math.hypot(gamepadState[0], gamepadState[1]);
-            double robotAngle = Math.atan2(gamepadState[1], gamepadState[0]) - Math.PI / 4;
-            double rightX = gamepadState[2];
+        // Algorithm taken from https://ftcforum.firstinspires.org/forum/ftc-technology/android-studio/6361-mecanum-wheels-drive-code-example, quote to dmssargent
+        double r = 0, robotAngle = 0, rightX = 0;
+        boolean driving = false;
+        double[] gamepadState1 = getGamepadState(gamepad1), gamepadState2 = getGamepadState(gamepad2);
+        if(notInDeadzone(gamepad1, "left")) {
+            driving = true;
+            r = Math.hypot(gamepadState1[0], gamepadState1[1]);
+            robotAngle = Math.atan2(gamepadState1[1], gamepadState1[0]) - Math.PI / 4;
+        }
+        if(!notInDeadzone(gamepad1, "left") && notInDeadzone(gamepad2, "left")) {
+            driving = true;
+            r = Math.hypot(gamepadState2[0], gamepadState2[1]);
+            robotAngle = Math.atan2(gamepadState2[1], gamepadState2[0]) - Math.PI / 4;
+        }
+        if(notInDeadzone(gamepad1, "right")) {
+            driving = true;
+            rightX = gamepadState1[2];
+        }
+        if(!notInDeadzone(gamepad1, "right") && notInDeadzone(gamepad2, "right")) {
+            driving = true;
+            rightX = gamepadState2[2];
+        }
+        if(driving) {
             robot.setPower(r * Math.cos(robotAngle) + rightX, r * Math.sin(robotAngle) - rightX, r * Math.sin(robotAngle) + rightX, r * Math.cos(robotAngle) - rightX);
         }
         else {
@@ -34,18 +50,34 @@ public class chrisBotTeleopWithIntakeShooter extends OpMode{
         }
 
         // Attachment code
-        if (gamepad1.b || (gamepad1.a && gamepad1.x)) {
+        if (gamepad1.b || (gamepad1.a && gamepad1.x) || gamepad2.b || (gamepad2.a && gamepad2.x)) {
             robot.shootOn();
             robot.intakeOn();
-        } else if (gamepad1.x) {
+        } else if (gamepad1.x || gamepad2.x) {
             robot.shootOn();
             robot.intakeOff();
-        } else if (gamepad1.a) {
+        } else if (gamepad1.a || gamepad2.a) {
             robot.intakeOn();
             robot.shootOff();
         } else {
             robot.shootOff();
             robot.intakeOff();
+        }
+        if (gamepad1.dpad_up) {
+            robot.motorLift1.setPower(0.5);
+            robot.motorLift2.setPower(0.5);
+        } else if (gamepad1.dpad_down) {
+            robot.motorLift1.setPower(-0.5);
+            robot.motorLift2.setPower(-0.5);
+        } else if (gamepad2.dpad_up) {
+            robot.motorLift1.setPower(0.5);
+            robot.motorLift2.setPower(0.5);
+        } else if (gamepad2.dpad_down) {
+            robot.motorLift1.setPower(-0.5);
+            robot.motorLift2.setPower(-0.5);
+        } else {
+            robot.motorLift1.setPower(0);
+            robot.motorLift2.setPower(0);
         }
     }
 

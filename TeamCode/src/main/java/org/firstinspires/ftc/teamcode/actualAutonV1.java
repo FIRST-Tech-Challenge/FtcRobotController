@@ -25,7 +25,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
-@Autonomous(group="Zippo", name="actualAutonV1")
+@Autonomous(group="chrisBot", name="actualAutonV1")
 
 public class actualAutonV1 extends LinearOpMode {
 
@@ -217,7 +217,7 @@ public class actualAutonV1 extends LinearOpMode {
         // Repeat with other two targets
 
 
-        for(int i : chrisBot.range(0,2)) {
+        for(int i = 0; i < 2; i++) {
             telemetry.addLine("Moving over...");
             telemetry.update();
             robot.wheelMecanumDrive(robot.calculateInches(-7.5,0),0.7);
