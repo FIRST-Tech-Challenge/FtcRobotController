@@ -251,7 +251,7 @@ public class Chassis_Auto2 extends LinearOpMode {
                 }
                 Shooter.setPower(0.0);
                 // code below would drive forward and turn to drop wobble
-                driveStraight(true, 1.0, -0.6, 975);
+                driveStraight(true, 1.0, -0.6, 1000);
                 stopMotion(100);
                 rotateToAngle(-75.0, 1.0, 0.2);
                 stopMotion(100);
