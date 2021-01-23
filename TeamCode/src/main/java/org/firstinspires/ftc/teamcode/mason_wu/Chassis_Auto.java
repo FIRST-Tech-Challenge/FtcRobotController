@@ -218,7 +218,7 @@ public class Chassis_Auto extends LinearOpMode {
                 }
                 Shooter.setPower(0.0);
                 // code below would drive forward to drop wobble
-                driveStraight(true, 1.0, -0.6, 475);
+                driveStraight(true, 1.0, -0.6, 375);
                 stopMotion(100);
                 // drops wobble here
                 armMotion(false, 0.8, 300);
@@ -229,7 +229,7 @@ public class Chassis_Auto extends LinearOpMode {
                 sleep(250);
                 handMotion(true);
                 sleep(250);
-                driveStraight(true, 1.0, 0.6, 250);
+                driveStraight(true, 1.0, 0.6, 300);
             }
 
             //code below is for QUAD rings scenario
