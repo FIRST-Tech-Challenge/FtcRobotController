@@ -27,8 +27,8 @@ public class HzGameField {
 
     public static final Pose2d BLUE_INNER_START_LINE =  new Pose2d(-57,26,Math.toRadians(90));//Center of ther robot
     public static final Pose2d BLUE_OUTER_START_LINE =  new Pose2d(-57,44,Math.toRadians(-90));
-    public static final Pose2d RED_INNER_START_LINE =  new Pose2d(-55,-22,Math.toRadians(55));
-    public static final Pose2d RED_OUTER_START_LINE =  new Pose2d(-55,-52,Math.toRadians(-55));
+    public static final Pose2d RED_INNER_START_LINE =  new Pose2d(-57,-26,Math.toRadians(-90));
+    public static final Pose2d RED_OUTER_START_LINE =  new Pose2d(-57,-44,Math.toRadians(90));
 
     //public static final Pose2d BLUE_INNER_START_LINE_TELEOPTEST =  new Pose2d(-62.5,22,Math.toRadians(0));//Center of the robot
 
@@ -39,6 +39,8 @@ public class HzGameField {
         BLUE_ALLIANCE,
     }
     public static PLAYING_ALLIANCE playingAlliance = PLAYING_ALLIANCE.BLUE_ALLIANCE;
+
+    public static double ALLIANCE_FACTOR = 1;
 
     public enum TARGET_ZONE{
         A,

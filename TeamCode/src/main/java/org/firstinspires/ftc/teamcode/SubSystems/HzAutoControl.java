@@ -43,6 +43,7 @@ public class HzAutoControl {
     public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
     public boolean pickRingFromTargetMarker = false;
     public boolean launchRingsPickedFromTargetMarkerToHighGoal = false;
+    public boolean pickAndDropSecondWobbleGoal = false;
 
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
@@ -234,12 +235,12 @@ public class HzAutoControl {
                 acHzLaunchController.launchMode == HzLaunchController.LAUNCH_MODE.MANUAL) {
             switch (autoLaunchtarget){
                 case HIGH_GOAL:
-                    acHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL);
+                    acHzLauncher.runFlyWheelToTarget(acHzLauncher.flyWheelVelocityHighGoal);
                     break;
                 case POWER_SHOT1:
                 case POWER_SHOT2:
                 case POWER_SHOT3:
-                    acHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT);
+                    acHzLauncher.runFlyWheelToTarget(acHzLauncher.flyWheelVelocityPowerShot);
                     break;
                 case OFF:
                     acHzLaunchController.deactivateLaunchReadinessState = true;

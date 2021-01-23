@@ -59,9 +59,9 @@ public class HzGamepad {
     }
 
     public void runByGamepad(){
-        runMagazineControl();
-        runIntakeControl();
-        runLaunchController();
+        runMagazineControl(); //runLaunchController();
+        runIntakeControl(); //runMagazineControl();
+        runLaunchController(); //runIntakeControl();
         runLauncher();
         runByGamepadRRDriveModes();
         runArm();
@@ -123,7 +123,7 @@ public class HzGamepad {
 
     }
 
-    public void runMagazineControl(){
+    public void runMagazineControl(){ //this function should be in IntakeControl's place after order change
         if (gpHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_COLLECT){
             gpHzLauncher.stopFlyWheel();
         }
@@ -140,7 +140,7 @@ public class HzGamepad {
     }
 
 
-    public void runIntakeControl(){
+    public void runIntakeControl(){ //this function should be at LaunchController's place after order change
 
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
         if (getDpad_downPress()) {
@@ -190,9 +190,19 @@ public class HzGamepad {
     }
 
 
-    public void runLaunchController(){
-        if (getStartPersistent() && getButtonYPress()) {
+    public void runLaunchController(){   //this function should be in magazineControl's place after order change
+        /*if (getStartPersistent() && getButtonYPress()) {
             gpHzLaunchController.toggleModeManualAutomated();
+        }*/
+
+        if(getStartPersistent() && getButtonXPress()) {
+            gpHzLauncher.flyWheelVelocityHighGoal -= gpHzLauncher.DELTA_VELOCITY_CORRECTION;
+            gpHzLauncher.flyWheelVelocityPowerShot -= gpHzLauncher.DELTA_VELOCITY_CORRECTION;
+        }
+
+        if(getStartPersistent() && getButtonYPress()) {
+            gpHzLauncher.flyWheelVelocityHighGoal += gpHzLauncher.DELTA_VELOCITY_CORRECTION;
+            gpHzLauncher.flyWheelVelocityPowerShot += gpHzLauncher.DELTA_VELOCITY_CORRECTION;
         }
 
         if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED) {
@@ -241,7 +251,7 @@ public class HzGamepad {
                 gpHzLaunchController.launchMode == HzLaunchController.LAUNCH_MODE.MANUAL) {
             //gpLaunchController.runLauncherByDistanceToTarget();
             if (gpHzLaunchController.lcTarget == HzLaunchController.LAUNCH_TARGET.HIGH_GOAL) {
-                gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL);
+                gpHzLauncher.runFlyWheelToTarget(gpHzLauncher.flyWheelVelocityHighGoal);
                 if (getButtonYPress()) {
                     gpHzLaunchController.deactivateLaunchReadinessState = true;
                 }
@@ -249,7 +259,7 @@ public class HzGamepad {
                     gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
                 }
             } else { //gpHzLaunchController.lcTarget == HzLaunchController.LAUNCH_TARGET.POWER_SHOT2
-                gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT);
+                gpHzLauncher.runFlyWheelToTarget(gpHzLauncher.flyWheelVelocityHighGoal);
                 if (getButtonAPress()) {
                     gpHzLaunchController.deactivateLaunchReadinessState = true;
                 }
