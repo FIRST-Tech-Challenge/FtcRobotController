@@ -112,7 +112,7 @@ public class Backup_Auto extends LinearOpMode {
                                   rotateToAngle (double targetAngle, double margin, double power)
              */
                 sleep(5000);
-                driveStraight(true, 1.0, -0.6, 1050);
+                driveStraight(true, 1.0, -0.6, 850);
                 stopMotion(100);
                 //rotateToAngle(-4.5, 1.0, 0.15);
                 //stopMotion(100);
