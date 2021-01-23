@@ -99,7 +99,7 @@ public class RobotHardware {
     
     public RobotStatus update() {
         // get data from Vuforia
-        RobotStatus r = RobotStatus(0, 0, 0); // x, y, heading
+        RobotStatus r = new RobotStatus(0f, 0f, 0f); // x, y, heading
         return r;
     }
     

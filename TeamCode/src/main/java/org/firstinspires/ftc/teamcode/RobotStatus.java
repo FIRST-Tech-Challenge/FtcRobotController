@@ -1,10 +1,12 @@
+package org.firstinspires.ftc.teamcode;
+
 public class RobotStatus {
   
   float x;
   float y;
   float heading;
   
-  public static RobotStatus(float x, float y, float heading) { // add args as needed
+  public RobotStatus(float x, float y, float heading) { // add args as needed
     this.x = x;
     this.y = y;
     this.heading = heading;

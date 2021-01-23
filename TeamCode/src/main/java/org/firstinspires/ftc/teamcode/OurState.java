@@ -41,10 +41,14 @@ public class OurState extends OpMode
     public void start() {
         
     }
-
-    @Override
+    
     public void loop(RobotStatus status) {
         
+    }
+
+    @Override
+    public void loop() {
+
     }
 
     @Override
