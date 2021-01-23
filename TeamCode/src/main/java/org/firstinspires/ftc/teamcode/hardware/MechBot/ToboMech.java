@@ -1220,7 +1220,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // still need to change positions to be far left for blue side
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 28, 180, -15, false, 3);
+                chassis.driveTo(1.0, 15, 180, -15, false, 3);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
