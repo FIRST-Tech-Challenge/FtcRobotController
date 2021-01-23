@@ -161,9 +161,9 @@ public class Chassis_Auto2 extends LinearOpMode {
             sleep(3000);
             //code below is for ZERO ring scenario
             if (visionResult == null) {
-                driveStraight(true, 1.0, -0.6, 1050);
+                driveStraight(true, 1.0, -0.6, 1150);
                 stopMotion(100);
-                rotateToAngle(-90.0, 1.0, 0.2);
+                rotateToAngle(-90, 1.0, 0.2);
                 stopMotion(100);
                 driveStraight(true, 1.0, -0.6, 400);
                 stopMotion(100);
@@ -199,11 +199,11 @@ public class Chassis_Auto2 extends LinearOpMode {
             //code below is for SINGLE ring scenario
             else if (visionResult.toLowerCase().equals("single")) {
                 // code below drives and positions for shooting
-                driveStraight(true, 1.0, -0.6, 1050);
+                driveStraight(true, 1.0, -0.6, 1150);
                 stopMotion(100);
-                rotateToAngle(-90.0, 1.0, 0.2);
+                rotateToAngle(-90, 1.0, 0.2);
                 stopMotion(100);
-                driveStraight(true, 1.0, -0.6, 400);
+                driveStraight(true, 1.0, -0.6, 350);
                 stopMotion(100);
                 rotateToAngle(0.0, 1.0, 0.2);
                 stopMotion(100);
@@ -228,14 +228,14 @@ public class Chassis_Auto2 extends LinearOpMode {
                 sleep(250);
                 handMotion(true);
                 sleep(250);
-                driveStraight(true, 1.0, 0.6, 250);
+                driveStraight(true, 1.0, 0.6, 275);
             }
 
             //code below is for QUAD rings scenario
             else if (visionResult.toLowerCase().equals("quad")) {
-                driveStraight(true, 1.0, -0.6, 1050);
+                driveStraight(true, 1.0, -0.6, 1150);
                 stopMotion(100);
-                rotateToAngle(-90.0, 1.0, 0.2);
+                rotateToAngle(-90, 1.0, 0.2);
                 stopMotion(100);
                 driveStraight(true, 1.0, -0.6, 400);
                 stopMotion(100);
