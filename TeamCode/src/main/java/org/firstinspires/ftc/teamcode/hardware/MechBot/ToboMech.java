@@ -70,7 +70,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double webcam_offset_y = -14.2;
     public double shooting_dist = 0;
     public double shooting_angle = 0;
-    public double shooterAngleOffset = 3.0;
+    public double shooterAngleOffset = 2.5;
     final public double WARM_UP_RPM = 1320;
     public double shooting_rpm = WARM_UP_RPM;
 
@@ -1401,8 +1401,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 sleep(100);
             }
             int i=0;
-            while (Math.abs(chassis.odo_heading() - shooting_angle)>1 && i<2) {
-                chassis.rawRotateTo(chassis.chassisAligmentPowerMin, shooting_angle, false, 0.5);
+            while (Math.abs(chassis.odo_heading() - heading)>1 && i<2) {
+                chassis.rawRotateTo(chassis.chassisAligmentPowerMin, heading, false, 0.5);
                 i++;
             }
             //sleep(200);
@@ -1732,7 +1732,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double a = 225.686;
         double b = -35.9631;
         double ideal_rpm = a*velocity+b;
-        double real_rpm = (int)ideal_rpm/20 * 20;
+        double real_rpm = (int)(ideal_rpm/20) * 20;
         double error = ideal_rpm - real_rpm;
         if (error > 10){
             real_rpm += 20;

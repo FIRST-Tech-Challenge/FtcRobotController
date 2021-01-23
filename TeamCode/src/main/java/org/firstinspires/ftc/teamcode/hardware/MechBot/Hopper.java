@@ -40,9 +40,9 @@ public class Hopper extends Logger<Hopper> implements Configurable {
     private final double FEEDER_INIT = FEEDER_IN;
     private final double FEEDER_OUT = 0.92;
 
-    private final double HOLDER_IN = 0.5;
-    private final double HOLDER_INIT = FEEDER_IN;
-    private final double HOLDER_OUT = 0.1;
+    private final double HOLDER_IN = 0.9;
+    private final double HOLDER_INIT = HOLDER_IN;
+    private final double HOLDER_OUT = 0.15;
 
     private boolean feederIsIn = true;
     private boolean holderIsIn = true;
@@ -196,12 +196,13 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
+                holderOut();
                 HopperTimer.reset();
                 ringLifter.setPower(-0.85);
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (HopperTimer.milliseconds()>=100);
+                        return (HopperTimer.milliseconds()>=200);
                     }
                 }; }}, taskName);
         TaskManager.add(new Task() {
@@ -264,6 +265,16 @@ public class Hopper extends Logger<Hopper> implements Configurable {
             @Override
             public Progress start() {
                 holderIn();
+                HopperTimer.reset();
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (HopperTimer.seconds()>0.2);
+                    }
+                }; }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
                 ringLifter.setPower(1);
                 HopperTimer.reset();
                 return new Progress() {
