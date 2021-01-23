@@ -1220,7 +1220,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // still need to change positions to be far left for blue side
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 28, 180, -45, true, 3);
+                chassis.driveTo(auto_chassis_power, 28, 180, -15, false, 3);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
@@ -1465,15 +1465,21 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if(tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C){
             shooter.shootOutByRpm(WARM_UP_RPM);
         }
-        chassis.driveTo(.99, side(70), 40, 0, true,  5);
-
+        if(tZone == TargetZone.ZONE_C)
+        {
+            chassis.driveTo(.99, side(70), 40, 0, true, 5);
+        }
+        else
+        {
+            chassis.driveTo(auto_chassis_power, side(70), 40, 0, true, 5);
+        }
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C){
                 chassis.driveTo(.6, side(102), 35, 0, false, 3);
             } else if (tZone == TargetZone.ZONE_B){
                 chassis.driveTo(auto_chassis_power, side(105), 30, 0, true, 3);
-            }            else {
-                chassis.driveTo(auto_chassis_power, side(100), 33, 0, true, 3);
+            } else {
+                chassis.driveTo(auto_chassis_power, side(102), 35, 0, true, 3);
             }
         } else {
             chassis.driveTo(auto_chassis_power, side(47), 30, 0, true,  3);
@@ -1540,8 +1546,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (tZone==TargetZone.ZONE_C){
             chassis.driveTo(1.0, chassis.odo_x_pos_cm(), 225, chassis.getCurHeading(), false,  2);
-        } else{
+        }
+        else if (tZone==TargetZone.ZONE_B)
+        {
             chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 210, chassis.getCurHeading(), false,  2);
+        }
+        else
+        {
+            chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 190, chassis.getCurHeading(), false,  2);
         }
         while (!TaskManager.isComplete("Transfer Down Combo")) {
             TaskManager.processTasks();
