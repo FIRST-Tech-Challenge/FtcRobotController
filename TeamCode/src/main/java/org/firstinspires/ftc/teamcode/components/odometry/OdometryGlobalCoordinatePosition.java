@@ -88,7 +88,8 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         double rightChange = verticalRightEncoderWheelPosition - previousVerticalRightEncoderWheelPosition;
 
         //Calculate Angle
-        changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
+        //changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
+        changeInRobotOrientation = Math.signum(leftChange - rightChange) * Math.acos(1  - (leftChange - rightChange)*(leftChange - rightChange)/ robotEncoderWheelDistance/ robotEncoderWheelDistance / 2);
         // Replace angle calculation by imu
         if (orientationSensor!=null && useIMU) {
             robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
