@@ -96,9 +96,9 @@ public class Mecanum_TeleOp extends LinearOpMode {
             }
 
             if(gamepad1.left_bumper) {
-                intake.setPower(0.75);
+                intake.setPower(0.45);
             } else if(gamepad1.x) {
-               intake.setPower(-0.75);
+               intake.setPower(-0.45);
             } else {
               intake.setPower(0.0);
             }
