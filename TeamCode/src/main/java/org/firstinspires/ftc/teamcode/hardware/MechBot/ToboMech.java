@@ -72,7 +72,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_angle = 0;
     public double shooterAngleOffset = 2.5;
     final public double WARM_UP_RPM = 1320;
-    final public double SEMI_AUTO_RPM = 1390;
+    final public double SEMI_AUTO_RPM = 1400;
     public double shooting_rpm = WARM_UP_RPM;
 
     public double auto_rotate_degree = 0;
@@ -266,7 +266,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (Math.abs(currentY) > MIN_STICK_VAL) { // car mode
                     chassis.carDrive(currentY * Math.abs(currentY) * normalizeRatio * chassis.powerScale(), right_x);
                 } else if (Math.abs(currentX) > MIN_STICK_VAL) {
-                    chassis.turn((currentX > 0 ? 1 : -1), 0.6 * Math.abs(currentX * currentX) * chassis.powerScale() * normalizeRatio);
+                    double scale = chassis.powerScale()*normalizeRatio;
+                    if (scale>0.6) scale=0.6; // fix turn power to be 0.6 for the odometry accuracy
+                    chassis.turn((currentX > 0 ? 1 : -1), Math.abs(currentX * currentX) * scale);
                 } else if (Math.abs(currentY) > MIN_STICK_VAL) {
                     chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(currentY * currentY) * chassis.powerScale() * normalizeRatio);
                 } else {
@@ -598,10 +600,16 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     }
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (comboGrabber != null)
-                        comboGrabber.grabWobbleGoalCombo(true);
+                        autoGrabHighWobbleGoal();
                     //top wobble goal combos functions go here
                 } else if (source.isPressed(Button.BACK)) {
                     comboGrabber.collectRingCombo();
+                } else {
+                    if (comboGrabber.isArmLow()) {
+                        comboGrabber.initWobbleGoalCombo();
+                    } else {
+                        comboGrabber.releaseWobbleGoalFastCombo();
+                    }
                 }
             }
         }, new Button[]{Button.B});
@@ -1413,11 +1421,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         for (int i=0; i<3; i++) {
             if (i==0) {
                 autoShoot();
+                sleep(200);
             }
             else {
                 autoShootFast();
+                if (i==1) {
+                    sleep(250);
+                }
             }
-            sleep(200);
+
         }
         shooter.shootOutByRpm(SEMI_AUTO_RPM);
     }
@@ -1583,9 +1595,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         sleep(100);
         comboGrabber.armDown();
         sleep(250);
-        chassis.yMove(1, 0.30);
+        chassis.yMove(1, 0.35);
         sleep(200);
-        chassis.yMove(1, 0.10);
+        chassis.yMove(1, 0.15);
         if (comboGrabber!=null) {
             comboGrabber.grabWobbleGoalCombo(false);
             while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
@@ -1593,6 +1605,24 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }
         //chassis.stop();
+    }
+    public void autoGrabHighWobbleGoal() throws InterruptedException {
+        if (simulation_mode || chassis==null) return;
+        comboGrabber.grabberOpen();
+        sleep(100);
+        comboGrabber.armDown();
+        sleep(200);
+        chassis.yMove(1, 0.3);
+        sleep(200);
+        chassis.stop();
+        if (comboGrabber!=null) {
+            comboGrabber.grabWobbleGoalCombo(true);
+            while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
+                TaskManager.processTasks();
+            }
+        }
+        chassis.rawRotateTo(1,130,false, 2);
+        chassis.rawRotateTo(0.2,165,false, 2);
     }
 
     public void autoIntakeRings(int n, boolean callFromAuto) throws InterruptedException {

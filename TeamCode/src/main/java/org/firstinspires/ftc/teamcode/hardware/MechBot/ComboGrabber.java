@@ -40,6 +40,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
 
     private final double ARM_UP = 0.48;
     private final double ARM_INIT = 0.35;
+    private final double ARM_DOWN_RELEASE = 0.8;
     private final double ARM_DOWN = 0.85;
     private final double ARM_COLLECT_RING = 0.53;
 
@@ -69,6 +70,10 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
      */
     public ComboGrabber(CoreSystem core) {
         this.core = core;
+    }
+
+    public boolean isArmLow() {
+        return armIsLow;
     }
 
     public void reset(boolean Auto) {
@@ -316,7 +321,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return moveArm(ARM_DOWN);
+                return moveArm(ARM_DOWN_RELEASE);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override
@@ -394,7 +399,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private Progress moveArm(double position) {
         double adjustment = Math.abs(position - arm.getPosition());
         arm.setPosition(position);
-        if (position>= ARM_DOWN - 0.1)
+        if (position>= ARM_DOWN - 0.3)
             armIsLow=true;
         else {
             armIsLow = false;
