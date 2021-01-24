@@ -1530,6 +1530,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 autoIntakeRings(3, true);
                 chassis.driveTo(1.0, side(90), 165, 0, false, 5);
                 autoShootHighGoal(3, true);
+                shooter.shootOutByRpm(WARM_UP_RPM);
                 intake.intakeIn();
                 chassis.driveTo(1.0, side(3), 285, 0, false, 5);
                 intake.stop();
@@ -1569,7 +1570,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(auto_chassis_power+0.2, side(110), 165, 0, false, 2);
         }
         if (tZone==TargetZone.ZONE_C){
-            chassis.driveTo(1.0, chassis.odo_x_pos_cm(), 225, chassis.getCurHeading(), false,  2);
+            shooter.shootOutByRpm(WARM_UP_RPM);
+            chassis.driveTo(auto_chassis_power, side(70), 175, 0, false, 5);
+            autoShootHighGoal(1, true);
+            chassis.driveTo(1.0, chassis.odo_x_pos_cm(), 190, chassis.getCurHeading(), false,  2);
         }
         else if (tZone==TargetZone.ZONE_B)
         {
