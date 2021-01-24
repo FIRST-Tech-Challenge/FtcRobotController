@@ -1220,7 +1220,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // still need to change positions to be far left for blue side
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(1.0, 20, 175, -20, false, 3);
+                chassis.driveTo(1.0, 20, 165, -20, false, 3);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
@@ -1524,11 +1524,21 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }
         if (comboGrabber!=null) {
-            comboGrabber.releaseWobbleGoalFastCombo();
-            while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
-                TaskManager.processTasks();
+            if(tZone == TargetZone.ZONE_A)
+            {
+                comboGrabber.releaseWobbleGoalCombo();
+                while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
+                    TaskManager.processTasks();
+                }
             }
-            comboGrabber.initWobbleGoalCombo();
+            else
+            {
+                comboGrabber.releaseWobbleGoalFastCombo();
+                while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
+                    TaskManager.processTasks();
+                }
+                comboGrabber.initWobbleGoalCombo();
+            }
         }
         //sleep(1000);
     }
