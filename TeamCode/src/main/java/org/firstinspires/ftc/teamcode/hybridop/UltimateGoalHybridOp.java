@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.playmaker.GamepadActions;
 import org.firstinspires.ftc.teamcode.playmaker.HybridOp;
 import org.firstinspires.ftc.teamcode.playmaker.Localizer;
 
-@TeleOp(name = "Ultimate Goal Tele Op")
+@TeleOp(name = "Ultimate Goal TeleOp")
 public class UltimateGoalHybridOp extends UltimateGoalHardware implements HybridOp {
 
     float omniDrivePower = 0.5f;
@@ -30,11 +30,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
     public void teleop_loop() {
 
         // region slowmode {...}
-        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.bumper_right)) {
-            slowMode = true;
-        } else {
-            slowMode = false;
-        }
+        slowMode = gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.bumper_left);
 
         if (shooter.getPower() > 0) {
             slowMode = true;
