@@ -1220,7 +1220,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // still need to change positions to be far left for blue side
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(1.0, 20, 165, -20, false, 3);
+                chassis.driveTo(1.0, 25, 165, -20, false, 3);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
@@ -1501,7 +1501,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 // chassis.driveTo(.8, side(30), 40, 0, false, 2);
-                chassis.driveTo(0.9, side(17), 165, 0, false, 5);
+                chassis.driveTo(0.9, side(17), 165, -15, false, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 shooter.shootOutByRpm(WARM_UP_RPM);
                 intake.intakeIn();
@@ -1563,7 +1563,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         else
         {
-            chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 190, chassis.getCurHeading(), false,  2);
+            chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 180, chassis.getCurHeading(), false,  2);
         }
         while (!TaskManager.isComplete("Transfer Down Combo")) {
             TaskManager.processTasks();
