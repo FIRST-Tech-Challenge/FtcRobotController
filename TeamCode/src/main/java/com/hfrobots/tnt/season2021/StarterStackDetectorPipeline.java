@@ -19,6 +19,8 @@
 
 package com.hfrobots.tnt.season2021;
 
+import android.util.Log;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -32,6 +34,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import lombok.Builder;
 import lombok.Setter;
+
+import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 
 @Builder
 public class StarterStackDetectorPipeline extends OpenCvPipeline {
@@ -131,6 +135,9 @@ public class StarterStackDetectorPipeline extends OpenCvPipeline {
                 }
 
                 telemetry.addData("SDet", largestBoundingRect.width + " x " + largestBoundingRect.height + " -> " + ringsDetected.get().toString());
+
+                Log.d(LOG_TAG,
+                        "Rings detected: " + largestBoundingRect.width + " x " + largestBoundingRect.height + " -> " + ringsDetected.get().toString());
             }
         }
 

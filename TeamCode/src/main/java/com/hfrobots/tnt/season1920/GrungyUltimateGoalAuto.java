@@ -317,19 +317,29 @@ public class GrungyUltimateGoalAuto extends OpMode {
                         }
 
                         deliverToTarget = Target.A;
+                        Log.d(LOG_TAG, "Unknown rings detected, Zone A selected" );
+
                         break;
                     case ZERO:
                         deliverToTarget = Target.A;
+                        Log.d(LOG_TAG, "Zero rings detected, Zone A selected" );
+
                         break;
                     case ONE:
                         deliverToTarget = Target.B;
+                        Log.d(LOG_TAG, "One rings detected, Zone B selected" );
+
                         break;
                     case FOUR:
                         deliverToTarget = Target.C;
+                        Log.d(LOG_TAG, "Four rings detected, Zone C selected" );
+
                         break;
                     case SOME:
-                        //if we see ornge it is more likey we see beteen 1 and 4 and should lean towards 4
+                        //if we see orange it is more likely we see between 1 and 4 and should lean towards 4
                         deliverToTarget = Target.C;
+                        Log.d(LOG_TAG, "Some rings detected, Zone C selected" );
+
                         break;
                 }
 
