@@ -12,7 +12,7 @@ public class Drivetrain {
     static int pos = 0;
 
     public void forward(double power){
-        robot.setPowerAll(power);
+        setMotorPowers(power, power, power, power);
     }
     public void stop(){
         forward(0);

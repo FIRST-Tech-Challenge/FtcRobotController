@@ -13,7 +13,7 @@ public class AutoOmniMovement {
     public AutoOmniMovement (double x, double y, double angleDeg) {
         this.x = x;
         this.y = y;
-        angleRad = Math.toRadians(angleDeg-45);
+        angleRad = Math.toRadians(angleDeg);
         Arrays.fill(wheelPowers, 0.0);
     }
 
@@ -51,7 +51,7 @@ public class AutoOmniMovement {
     }
 
     public void addTurnPower(double angleDeg) {
-        double goalAngleDeg = (angleDeg-45) - Math.toDegrees(angleRad);
+        double goalAngleDeg = (angleDeg) - Math.toDegrees(angleRad);
         double powerDiff = 0;
         if (Math.abs(goalAngleDeg) > 0) {
             powerDiff = 1-MAX_POWER;
@@ -66,6 +66,13 @@ public class AutoOmniMovement {
                 wheelPowers[i]+=powerDiff;
                 powerDiff = -powerDiff;
             }
+        }
+//        wheelPowers[0]+=powerDiff+0.5;
+//        wheelPowers[3]-=powerDiff+0.5;
+    }
+    public void resetPowers(){
+        for (int i = 0; i <= 3; i++){
+            wheelPowers[i] = 0;
         }
     }
 }

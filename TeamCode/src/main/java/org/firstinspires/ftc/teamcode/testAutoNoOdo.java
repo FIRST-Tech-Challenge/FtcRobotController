@@ -16,6 +16,5 @@ public abstract class testAutoNoOdo extends LinearOpMode {
         robot = new HardwareMapV2();
         robot.init(hardwareMap);
 
-
     }
 }
