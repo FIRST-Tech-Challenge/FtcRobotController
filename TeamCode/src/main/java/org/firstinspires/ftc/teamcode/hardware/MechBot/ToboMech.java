@@ -1595,9 +1595,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         sleep(100);
         comboGrabber.armDown();
         sleep(250);
-        chassis.yMove(1, 0.35);
+        chassis.yMove(1, 0.4);
         sleep(200);
-        chassis.yMove(1, 0.15);
+        chassis.yMove(1, 0.2);
         if (comboGrabber!=null) {
             comboGrabber.grabWobbleGoalCombo(false);
             while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
