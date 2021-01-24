@@ -55,7 +55,13 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
         }
 
         if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.a)) {
-            collector.setPower(gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.start) ? -1 : 1);
+            collector.setPower(1);
+        } else {
+            collector.setPower(0);
+        }
+
+        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.start)) {
+            collector.setPower(-1);
         } else {
             collector.setPower(0);
         }
