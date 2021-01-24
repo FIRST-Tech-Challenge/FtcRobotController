@@ -13,7 +13,7 @@ public class TestActionSequence extends ActionSequence {
     DetectRingsAction detectRingsAction = new DetectRingsAction(2000);
 
     public TestActionSequence() {
-        addAction(new MoveAndOrientAction(DistanceUnit.INCH, 0, -40, 90, 0.75f));
+        //addAction(new MoveAndOrientAction(DistanceUnit.INCH, 0, -40, 90, 0.75f));
         addAction(new ExecuteSequenceAction(new ReleaseWobbleGoalSequence()));
 //        addAction(new MoveAndOrientAction(DistanceUnit.INCH, 0, -36, 80, 0.75f));
 //        addAction(new ExecuteSequenceAction(new ShootActionSequence(3)));

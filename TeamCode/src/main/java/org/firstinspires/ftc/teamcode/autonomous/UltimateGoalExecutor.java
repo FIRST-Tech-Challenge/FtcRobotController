@@ -16,7 +16,7 @@ public abstract class UltimateGoalExecutor extends UltimateGoalHardware implemen
 
 
     @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Red Left")
-    static class UltimateGoalRedLeftExecutor extends UltimateGoalExecutor {
+    public static class UltimateGoalRedLeftExecutor extends UltimateGoalExecutor {
 
         @Override
         Team getTeam() {
@@ -35,7 +35,7 @@ public abstract class UltimateGoalExecutor extends UltimateGoalHardware implemen
     }
 
     @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Red Right")
-    static class UltimateGoalRedRightExecutor extends UltimateGoalExecutor {
+    public static class UltimateGoalRedRightExecutor extends UltimateGoalExecutor {
 
         @Override
         Team getTeam() {
@@ -54,7 +54,7 @@ public abstract class UltimateGoalExecutor extends UltimateGoalHardware implemen
     }
 
     @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Blue Left")
-    static class UltimateGoalBlueLeftExecutor extends UltimateGoalExecutor {
+    public static class UltimateGoalBlueLeftExecutor extends UltimateGoalExecutor {
 
         @Override
         Team getTeam() {
@@ -73,7 +73,7 @@ public abstract class UltimateGoalExecutor extends UltimateGoalHardware implemen
     }
 
     @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Blue Right")
-    static class UltimateGoalBlueRightExecutor extends UltimateGoalExecutor {
+    public static class UltimateGoalBlueRightExecutor extends UltimateGoalExecutor {
 
         @Override
         Team getTeam() {

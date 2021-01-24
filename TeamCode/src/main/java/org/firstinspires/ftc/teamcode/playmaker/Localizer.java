@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.playmaker;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -46,6 +47,7 @@ public class Localizer {
     private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
     private static final float halfField = 72 * mmPerInch;
     private static final float quadField  = 36 * mmPerInch;
+    public static final double DISTANCE_TO_ACCEPT_VUFORIA_INCHES = 0;
 
     public double encodersXScaleFactor = 1;
     public double encodersYScaleFactor = 1;
@@ -249,18 +251,24 @@ public class Localizer {
      */
     public void setCameraMatrix(RobotHardware hardware, Position cameraOffset, Orientation cameraRotation) {
         Position cameraOffsetMM = cameraOffset.toUnit(DistanceUnit.MM);
-        this.cameraMatrix = OpenGLMatrix.translation((float) cameraOffsetMM.x, (float) cameraOffsetMM.y, (float) cameraOffsetMM.z);
-        this.cameraMatrix = this.cameraMatrix.multiplied(cameraRotation.getRotationMatrix());
+        this.cameraMatrix = OpenGLMatrix.translation((float) cameraOffsetMM.x, (float) cameraOffsetMM.y, (float) cameraOffsetMM.z).multiplied(cameraRotation.getRotationMatrix());
+        RobotLog.ii("PM Localizer", "phone=%s", this.cameraMatrix.formatAsTransform());
         for (VuforiaTrackable trackable : vuforiaTrackables) {
             VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener) trackable.getListener();
-            listener.setPhoneInformation(this.cameraMatrix, hardware.vuforiaParameters.cameraDirection);
+            listener.setCameraLocationOnRobot(hardware.webcamName, this.cameraMatrix);
         }
+    }
+
+    public void loadUltimateGoalTrackables(RobotHardware hardware) {
+        this.loadUltimateGoalTrackables(hardware,
+                new Position(DistanceUnit.MM, 0,0,0,0),
+                new Orientation(EXTRINSIC, XYZ, DEGREES, 0,-90,0,0));
     }
 
     /**
      * Load the Ultimate Goal Trackables. Largely copied from ConceptVuforiaUltimteGoalNavigationWebcam
      */
-    public void loadUltimateGoalTrackables(RobotHardware hardware) {
+    public void loadUltimateGoalTrackables(RobotHardware hardware, Position cameraOffset, Orientation cameraRotation) {
         VuforiaTrackables targetsUltimateGoal = hardware.vuforia.loadTrackablesFromAsset("UltimateGoal");
         VuforiaTrackable blueTowerGoalTarget = targetsUltimateGoal.get(0);
         blueTowerGoalTarget.setName("Blue Tower Goal Target");
@@ -313,6 +321,8 @@ public class Localizer {
                 .translation(halfField, -quadField, mmTargetHeight)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
 
+        this.setCameraMatrix(hardware, cameraOffset, cameraRotation);
+
         targetsUltimateGoal.activate();
     }
 
@@ -323,11 +333,15 @@ public class Localizer {
         for (VuforiaTrackable trackable : vuforiaTrackables) {
             VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener) trackable.getListener();
             if (listener.isVisible()) {
-                VectorF translation = listener.getVuforiaCameraFromTarget().getTranslation();
-                //hardware.telemetry.addData("Localizer Visible Target:", trackable.getName());
-                //hardware.telemetry.addData("Localizer Visible Target Rel Camera", String.format("%.1f, %.1f, %.1f", translation.get(0), translation.get(1), translation.get(2)));
-                OpenGLMatrix robotTransform = listener.getRobotLocation();
-                if (robotTransform != null) {
+                hardware.telemetry.addData("Localizer Visible Target:", trackable.getName());
+                OpenGLMatrix imageLocationRelRobot = listener.getVuforiaCameraFromTarget();
+                float x = imageLocationRelRobot.getTranslation().get(0);
+                float y = imageLocationRelRobot.getTranslation().get(1);
+                float z = imageLocationRelRobot.getTranslation().get(2);
+                Position imagePositionRelRobot = new Position(DistanceUnit.MM, x,y,z, 0);
+                double distance = Localizer.distance(zero, imagePositionRelRobot, DistanceUnit.INCH);
+                if (distance <= DISTANCE_TO_ACCEPT_VUFORIA_INCHES) {
+                    OpenGLMatrix robotTransform = listener.getRobotLocation();
                     lastVuforiaTransform = new VuforiaTransform(robotTransform);
                 }
             }
@@ -476,6 +490,8 @@ public class Localizer {
      * @param end End angle
      * @return An angle from -180 to 180, where positive angles indicate a rotation to the left and vice versa.
      */
+    public static final Position zero = new Position(DistanceUnit.INCH,0,0,0,0);
+
     public static double angularDifferenceInDegrees(double start, double end) {
         return (start - end + 180) % 360 - 180;
     }

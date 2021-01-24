@@ -20,7 +20,7 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
-    public static final double SHOOTER_POWER = 0.5535;
+    public static final double SHOOTER_POWER = 0.5235;
 
     public enum UltimateGoalStartingPosition  {
         LEFT,
@@ -58,8 +58,8 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter = this.initializeDevice(DcMotor.class, "shooter");
         shooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         collector = this.initializeDevice(DcMotor.class, "collector");
-        collector.setDirection(DcMotorSimple.Direction.REVERSE);
         escalator = this.initializeDevice(DcMotor.class, "escalator");
         //.setDirection(DcMotorSimple.Direction.REVERSE);
         wobbleGoalHolder = this.initializeDevice(DcMotor.class, "wobble");
@@ -84,10 +84,10 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         super.initializeLocalizer();
         //this.localizer.setRobotStart(revIMU, 90);
         this.localizer.encodersXScaleFactor = 40.0/48.0; // ANTI JANK
-        this.localizer.loadUltimateGoalTrackables(this);
-        this.localizer.setCameraMatrix(this,
-                new Position(DistanceUnit.INCH, 9.5, 0, 0, 0),
+        this.localizer.loadUltimateGoalTrackables(this,
+                new Position(DistanceUnit.INCH, -9.25, 0, 0, 0),
                 new Orientation(EXTRINSIC, YZX, DEGREES, -90, 0, 0, 0));
+
     }
 
     @Override
