@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 /**
  * Main Teleop
@@ -22,6 +23,7 @@ public class MainTeleop extends LinearOpMode{
     private CRServo leftConveyor, rightConveyor, intake;
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
     private Servo flipper, wobbleClaw;
+    private VoltageSensor voltageSensor;
 
 
     private BNO055IMU imu;
@@ -77,6 +79,8 @@ public class MainTeleop extends LinearOpMode{
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
+        voltSensor = hardwareMap.voltageSensor.get("Motor Controller 1");
+
         //reverse the needed motors
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -99,6 +103,8 @@ public class MainTeleop extends LinearOpMode{
         double intakeMod = 1.0;
         double outtakeMod = .46;
         double wobbleMod = .3;
+        double volts = voltSensor.getVoltage();
+
 
         waitForStart();
 
@@ -155,7 +161,7 @@ public class MainTeleop extends LinearOpMode{
             if(gamepad2.right_bumper){
                 outtakeMod = .41;
             }else{
-                outtakeMod = .44;
+                outtakeMod = .44 * (14/volts);
             }
             double outtakePower = (gamepad2.right_trigger * outtakeMod);
             outtakeLeft.setPower(outtakePower);
@@ -198,6 +204,8 @@ public class MainTeleop extends LinearOpMode{
 
 
             //Sending data on power of outtake, outtake motor RPM, and tangential velocity of outtake wheel to telemetry
+            telemetry.addData("Volts: ", volts);
+
             telemetry.addData("Outtake Power", outtakePower);
             telemetry.addData("Outtake RPM", outtakeRPM);
             telemetry.addData("Outtake Wheel Velocity (m/s)", outtakeWheelVelocity);

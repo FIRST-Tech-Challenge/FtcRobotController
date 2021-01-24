@@ -137,7 +137,7 @@ public class StarterStackDetectorTest extends LinearOpMode
             if (mainPipeline.stackHeight < 20) {
                 targetZone = 1;
 
-            } else if (mainPipeline.stackHeight > 60) {
+            } else if (mainPipeline.stackHeight > 70) {
                 targetZone = 3;
 
             } else {
@@ -152,25 +152,25 @@ public class StarterStackDetectorTest extends LinearOpMode
 
         switch(targetZone){
             case 1:
-                robot.gyroDriveCm(-.5, 200);
+                robot.gyroDriveCm(-.75, 200);
                 dropWobble();
-                robot.gyroTurn(-45, .5);
-                robot.gyroDriveCm(-.25, 60);
+                robot.gyroTurn(-45, .75);
+                robot.gyroDriveCm(-.75, 60);
                 //odometryDriveToPos(100,100);
                 break;
             case 2:
-                robot.gyroDriveCm(-.5, 280);
-                robot.gyroTurn(-30, .5);
-                robot.gyroDriveCm(-.5, 40);
+                robot.gyroDriveCm(-.75, 280);
+                robot.gyroTurn(-30, .75);
+                robot.gyroDriveCm(-.75, 40);
                 dropWobble();
-                robot.gyroDriveCm(.25, 100);
+                robot.gyroDriveCm(.75, 100);
 
                 //odometryDriveToPos(100,100);
                 break;
             case 3:
-                robot.gyroDriveCm(-.5, 360);
+                robot.gyroDriveCm(-.75, 360);
                 dropWobble();
-                robot.gyroDriveCm(.25, 180);//
+                robot.gyroDriveCm(.75, 180);//
                 //odometryDriveToPos(100,100);
                 break;
             default:
