@@ -1233,7 +1233,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(1.0, 10, 280, 0, false, 6); // no rotation to make it faster
+                chassis.driveTo(1.0, 10, 295, 0, false, 6); // no rotation to make it faster
             } else {
                 return;
             }
@@ -1571,7 +1571,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (tZone==TargetZone.ZONE_C){
             shooter.shootOutByRpm(WARM_UP_RPM);
-            chassis.driveTo(auto_chassis_power, side(70), 175, 0, false, 5);
+            chassis.driveTo(1.0, side(70), 175, 0, false, 5);
             autoShootHighGoal(1, true);
             chassis.driveTo(1.0, chassis.odo_x_pos_cm(), 190, chassis.getCurHeading(), false,  2);
         }
@@ -1651,7 +1651,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //sleep(1000);
         //hopper.transferShakeCombo();
         intake.stop();
-        if (n>1) {
+        /*if (n>1) {
             // backup a little bit to prevent getting fourth ring
             //chassis.yMove(-1, 0.30);
             //sleep(100);
@@ -1659,7 +1659,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             intake.intakeOut();
             sleep(400);
             intake.stop();
-        }
+        }*/
     }
 
     public void autoTransferWobbleGoal() throws InterruptedException {
