@@ -11,12 +11,12 @@ import org.firstinspires.ftc.teamcode.playmaker.Localizer;
 @TeleOp(name = "Ultimate Goal TeleOp")
 public class UltimateGoalHybridOp extends UltimateGoalHardware implements HybridOp {
 
-    float omniDrivePower = 0.5f;
+    float omniDrivePower = 1f;
 //    double spinnerPower = 1;
 //    double largeSpinnerIncrement = 0.05;
 //    double smallSpinnerIncrement = 0.005;
     boolean slowMode = false;
-    float slowModeMultiplier = 0.25f;
+    float slowModeMultiplier = 0.5f;
 
     long prevTime = System.currentTimeMillis();
     int prevPos = 0;
@@ -39,8 +39,8 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
         // endregion
 
         omniDrive.dpadMove(gamepad1, slowMode ? omniDrivePower * slowModeMultiplier : omniDrivePower, false);
-        //region shooter
 
+        //region shooter {...}
         if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.y)) {
             shooter.setPower(SHOOTER_POWER);
         } else {
@@ -48,7 +48,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
         }
         // endregion
 
-        if (gamepad1.b) {
+        if (gamepad1.b && shooter.getPower() > 0) {
             escalator.setPower(1);
         } else {
             escalator.setPower(0);
@@ -56,11 +56,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
         if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.a)) {
             collector.setPower(1);
-        } else {
-            collector.setPower(0);
-        }
-
-        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.start)) {
+        } else if (gamepad1.start) {
             collector.setPower(-1);
         } else {
             collector.setPower(0);
