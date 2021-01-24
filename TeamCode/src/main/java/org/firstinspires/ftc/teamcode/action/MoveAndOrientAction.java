@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.action;
 
-import com.qualcomm.robotcore.robot.Robot;
-
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
@@ -57,9 +55,9 @@ public class MoveAndOrientAction implements Action {
         double currentHeading = currentOrientation.thirdAngle;
         double currentDistanceToTarget = Localizer.distance(currentPosition, transform.position, DistanceUnit.INCH);
 
-        double angularDifferenceBetweenPositions = Localizer.atan2(currentPosition, transform.position);
-        double angularDifferenceToTargetHeading = Localizer.angularDifference(currentHeading, transform.heading);
-        double angDiffBetweenForwardAndTargetPos = Localizer.angularDifference(currentHeading, angularDifferenceBetweenPositions);
+        double angularDifferenceBetweenPositions = Localizer.atan2InDegrees(currentPosition, transform.position);
+        double angularDifferenceToTargetHeading = Localizer.angularDifferenceInDegrees(currentHeading, transform.heading);
+        double angDiffBetweenForwardAndTargetPos = Localizer.angularDifferenceInDegrees(currentHeading, angularDifferenceBetweenPositions);
         double distanceToTargetIn = Localizer.distance(currentPosition, transform.position, DISTANCE_TOLERANCE_UNIT);
 
         hardware.telemetry.addData("current pos", "%.1f %.1f %.1f", inches.x, inches.y, inches.z);
@@ -83,7 +81,7 @@ public class MoveAndOrientAction implements Action {
 
 
         boolean withinDistanceTolerance = Localizer.distance(currentPosition, transform.position, DISTANCE_TOLERANCE_UNIT) <= DISTANCE_TOLERANCE;
-        boolean withinHeadingTolerance = Math.abs(Localizer.angularDifference(currentHeading, transform.heading)) <= HEADING_TOLERANCE;
+        boolean withinHeadingTolerance = Math.abs(Localizer.angularDifferenceInDegrees(currentHeading, transform.heading)) <= HEADING_TOLERANCE;
         if (withinDistanceTolerance && withinHeadingTolerance) {
             hardware.omniDrive.stopDrive();
             return true;

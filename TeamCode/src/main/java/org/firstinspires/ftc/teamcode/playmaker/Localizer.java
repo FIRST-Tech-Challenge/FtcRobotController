@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.playmaker;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.robot.Robot;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -96,6 +95,11 @@ public class Localizer {
 
         public RobotTransform(Position position, double heading) {
             this.position = position;
+            this.heading = heading;
+        }
+
+        public RobotTransform(DistanceUnit unit, double x, double y, double heading) {
+            this.position = new Position(unit, x, y, 0, 0);
             this.heading = heading;
         }
     }
@@ -414,7 +418,7 @@ public class Localizer {
 
     public void setIMUToWorldOffset(BNO055IMU imu, double startingHeading) {
         Orientation imuRotation = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES);
-        imuToWorldRotation = Localizer.angularDifference(startingHeading, imuRotation.thirdAngle);
+        imuToWorldRotation = Localizer.angularDifferenceInDegrees(startingHeading, imuRotation.thirdAngle);
     }
 
     public Double getImuToWorldRotation() {
@@ -426,7 +430,7 @@ public class Localizer {
         this.lastRawIMUOrientation = imuOrientation;
         if (this.imuToWorldRotation != null) {
             double imuHeading = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES).thirdAngle;
-            double worldHeading = Localizer.headingWrapDegrees(imuHeading + this.imuToWorldRotation);
+            double worldHeading = Localizer.headingWrapInDegrees(imuHeading + this.imuToWorldRotation);
             this.lastIMUOrientation = new Orientation(EXTRINSIC, XYZ, DEGREES, imuOrientation.firstAngle, imuOrientation.secondAngle, (float) worldHeading, System.nanoTime());
         }
     }
@@ -436,15 +440,20 @@ public class Localizer {
     //region Static Methods
 
     public static Position mirrorPositionOverTeamLine(Position position) {
-        position.x = -position.x;
-        return position;
+        Position copy = new Position(position.unit, -position.x, position.y, position.z, position.acquisitionTime);
+        return copy;
+    }
+
+    public static RobotTransform mirrorTransformOverTeamLine(RobotTransform transform) {
+        double angleDiffFrom90 = transform.heading - 90;
+        return new RobotTransform(mirrorPositionOverTeamLine(transform.position), headingWrapInDegrees(90 - angleDiffFrom90));
     }
 
     public static RobotTransform[] mirrorTransformsOverTeamLine(RobotTransform[] transforms) {
         RobotTransform[] new_transforms = new RobotTransform[transforms.length];
         for (int i = 0; i < new_transforms.length; i++) {
             RobotTransform transform = transforms[i];
-            new_transforms[i] = new RobotTransform(mirrorPositionOverTeamLine(transform.position), transform.heading);
+            new_transforms[i] = mirrorTransformOverTeamLine(transform);
         }
         return new_transforms;
     }
@@ -467,7 +476,7 @@ public class Localizer {
      * @param end End angle
      * @return An angle from -180 to 180, where positive angles indicate a rotation to the left and vice versa.
      */
-    public static double angularDifference(double start, double end) {
+    public static double angularDifferenceInDegrees(double start, double end) {
         return (start - end + 180) % 360 - 180;
     }
 
@@ -487,15 +496,15 @@ public class Localizer {
         return (x % n) - (x < 0 ? n : 0);
     }
 
-    public static double headingWrapDegrees(double angle) {
+    public static double headingWrapInDegrees(double angle) {
         return Localizer.mod(angle + 180, 360) - 180;
     }
 
-    public static double headingWrapRadians(double angle) {
+    public static double headingWrapInRadians(double angle) {
         return Localizer.mod(angle + Math.PI, 2*Math.PI) - Math.PI;
     }
 
-    public static double atan2(Position a, Position b) {
+    public static double atan2InDegrees(Position a, Position b) {
         Position unit_a = a.toUnit(DistanceUnit.CM);
         Position unit_b = b.toUnit(DistanceUnit.CM);
         return Math.toDegrees(Math.atan2((unit_b.x-unit_a.x),-(unit_b.y-unit_a.y)));

@@ -139,17 +139,17 @@ public class OmniDrive {
      * Move and/or rotate the robot along an axis relative to the robot's center.
 
      * @param power The power to move everything
-     * @param angle The heading to move the robot in, 0 is forward rotating clockwise.
+     * @param angleInRadians The heading (IN RADIANS) to move the robot in, 0 is forward rotating clockwise.
      * @param rotation How fast to rotate from -1 to 1 where 1 indicates CW rotation and full rotation w/ no movement.
      */
-    public void move(double power, double angle, double rotation) {
+    public void move(double power, double angleInRadians, double rotation) {
         double pi4 = Math.PI / 4;
 
         // Get raw powers
-        double fl_power = power * Math.sin(angle + pi4) + rotation;
-        double fr_power = power * Math.cos(angle + pi4) - rotation;
-        double bl_power = power * Math.cos(angle + pi4) + rotation;
-        double br_power = power * Math.sin(angle + pi4) - rotation;
+        double fl_power = power * Math.sin(angleInRadians + pi4) + rotation;
+        double fr_power = power * Math.cos(angleInRadians + pi4) - rotation;
+        double bl_power = power * Math.cos(angleInRadians + pi4) + rotation;
+        double br_power = power * Math.sin(angleInRadians + pi4) - rotation;
 
         // Calculate unit vector and apply power magnitude
         double power_max = Math.max(Math.max(fl_power, fr_power), Math.max(bl_power, br_power));

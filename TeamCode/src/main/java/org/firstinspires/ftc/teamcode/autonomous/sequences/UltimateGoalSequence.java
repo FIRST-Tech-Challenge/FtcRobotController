@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.autonomous.sequences;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.action.DetectRingsAction;
+import org.firstinspires.ftc.teamcode.action.ExecuteSequenceAction;
 import org.firstinspires.ftc.teamcode.action.IfActionResult;
-import org.firstinspires.ftc.teamcode.action.MoveAlongPathAction;
+import org.firstinspires.ftc.teamcode.action.LocalizerMoveAction;
+import org.firstinspires.ftc.teamcode.action.MoveAndOrientAction;
 import org.firstinspires.ftc.teamcode.hardware.UltimateGoalHardware;
 import org.firstinspires.ftc.teamcode.playmaker.ActionSequence;
 import org.firstinspires.ftc.teamcode.playmaker.Localizer;
@@ -13,79 +15,125 @@ import org.firstinspires.ftc.teamcode.playmaker.RobotHardware;
 
 public class UltimateGoalSequence extends ActionSequence {
 
-    public static RobotTransform[] A_Left_Transforms = {
-            new RobotTransform(new Position(DistanceUnit.INCH, 0,0,0, 0), 0)
+    public static RobotTransform[] A_Near_Center_Transforms = {
+            new RobotTransform(DistanceUnit.INCH, 0, 0, 0)
     };
 
-    public static RobotTransform[] A_Right_Transforms = {
-            new RobotTransform(new Position(DistanceUnit.INCH, -12,-60,0, 0), 0)
+    public static RobotTransform[] A_Near_Wall_Transforms = {
+            new RobotTransform(DistanceUnit.INCH, -12, 60, 0)
     };
 
-    public static RobotTransform[] B_Left_Transforms = {
-            new RobotTransform(new Position(DistanceUnit.INCH, 0,0,0, 0), 0)
+    public static RobotTransform[] B_Near_Center_Transforms = {
+            new RobotTransform(DistanceUnit.INCH, 0, 0, 0)
     };
 
-    public static RobotTransform[] B_Right_Transforms = {
-            new RobotTransform(new Position(DistanceUnit.INCH, 36,-60,0, 0), 0)
+    public static RobotTransform[] B_Near_Wall_Transforms = {
+            new RobotTransform(DistanceUnit.INCH, 36, -60, 0)
     };
 
-    public static RobotTransform[] C_Left_Transforms = {
-            new RobotTransform(new Position(DistanceUnit.INCH, 0,0,0, 0), 0)
+    public static RobotTransform[] C_Near_Center_Transforms = {
+            new RobotTransform(DistanceUnit.INCH, 0, 0, 0)
     };
 
-    public static RobotTransform[] C_Right_Transforms = {
-            new RobotTransform(new Position(DistanceUnit.INCH, 36,-60,0, 0), 0)
+    public static RobotTransform[] C_Near_Wall_Transforms = {
+            new RobotTransform(DistanceUnit.INCH, 36, -60, 0)
     };
-
 
     static final double ROBOT_SPEED = 0.75;
-    static final MoveAlongPathAction.FollowPathMethod FOLLOW_PATH_METHOD = MoveAlongPathAction.FollowPathMethod.LINEAR;
+    static final double ROBOT_PRECISE_SPEED = 0.35f;
+    static final LocalizerMoveAction.FollowPathMethod FOLLOW_PATH_METHOD = LocalizerMoveAction.FollowPathMethod.LINEAR;
+    static final RobotTransform SHOOTING_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, 0, -36, 80);
+    static final RobotTransform SHOOTING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, 0, -36, 80);
+    static final RobotTransform PARKING_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, 12, -12, 90);
+    static final RobotTransform PARKING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, 12, -36, 90);
+    static final RobotTransform RING_DETECTION_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, -48,-24,60);
+    static final RobotTransform RING_DETECTION_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, -48,-48,120);
 
     public UltimateGoalSequence(RobotHardware.Team team, UltimateGoalHardware.UltimateGoalStartingPosition startingPosition) {
+        // Setup transforms
+        RobotTransform shootingPosition;
+        RobotTransform parkingPosition;
+        RobotTransform ringDetectionPosition;
+
+        // The transforms to use for different ring positions
+        // 0 - No rings
+        // 1 - Single ring
+        // 2 - Quad rings
+        RobotTransform[][] ringTransforms = new RobotTransform[3][];
+
+        if (team == RobotHardware.Team.RED && startingPosition == UltimateGoalHardware.UltimateGoalStartingPosition.LEFT) {
+            // RED LEFT
+            ringTransforms[0] = A_Near_Center_Transforms;
+            ringTransforms[1] = B_Near_Center_Transforms;
+            ringTransforms[2] = C_Near_Center_Transforms;
+            shootingPosition = SHOOTING_POSITION_NEAR_CENTER;
+            parkingPosition = PARKING_POSITION_NEAR_CENTER;
+            ringDetectionPosition = RING_DETECTION_POSITION_NEAR_CENTER;
+        } else if (team == RobotHardware.Team.RED && startingPosition == UltimateGoalHardware.UltimateGoalStartingPosition.RIGHT) {
+            // RED RIGHT
+            ringTransforms[0] = A_Near_Wall_Transforms;
+            ringTransforms[1] = B_Near_Wall_Transforms;
+            ringTransforms[2] = C_Near_Wall_Transforms;
+            shootingPosition = SHOOTING_POSITION_NEAR_WALL;
+            parkingPosition = PARKING_POSITION_NEAR_WALL;
+            ringDetectionPosition = RING_DETECTION_POSITION_NEAR_WALL;
+        } else if (team == RobotHardware.Team.BLUE && startingPosition == UltimateGoalHardware.UltimateGoalStartingPosition.LEFT) {
+            // BLUE LEFT
+            ringTransforms[0] = Localizer.mirrorTransformsOverTeamLine(A_Near_Wall_Transforms);
+            ringTransforms[1] = Localizer.mirrorTransformsOverTeamLine(B_Near_Wall_Transforms);
+            ringTransforms[2] = Localizer.mirrorTransformsOverTeamLine(C_Near_Wall_Transforms);
+            shootingPosition = Localizer.mirrorTransformOverTeamLine(SHOOTING_POSITION_NEAR_WALL);
+            parkingPosition = Localizer.mirrorTransformOverTeamLine(PARKING_POSITION_NEAR_WALL);
+            ringDetectionPosition = Localizer.mirrorTransformOverTeamLine(RING_DETECTION_POSITION_NEAR_WALL);
+        } else {
+            // BLUE RIGHT
+            ringTransforms[0] = Localizer.mirrorTransformsOverTeamLine(A_Near_Center_Transforms);
+            ringTransforms[1] = Localizer.mirrorTransformsOverTeamLine(B_Near_Center_Transforms);
+            ringTransforms[2] = Localizer.mirrorTransformsOverTeamLine(C_Near_Center_Transforms);
+            shootingPosition = Localizer.mirrorTransformOverTeamLine(SHOOTING_POSITION_NEAR_CENTER);
+            parkingPosition = Localizer.mirrorTransformOverTeamLine(PARKING_POSITION_NEAR_CENTER);
+            ringDetectionPosition = Localizer.mirrorTransformOverTeamLine(RING_DETECTION_POSITION_NEAR_CENTER);
+        }
+
+        // Move to ring detection position
+        addAction(new LocalizerMoveAction(ringDetectionPosition, ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD));
 
         // Detect rings
         DetectRingsAction ringDetectionAction = new DetectRingsAction(2000);
         addAction(ringDetectionAction);
 
-        RobotTransform[][] ringTransforms = new RobotTransform[3][];
-        if (team == RobotHardware.Team.RED && startingPosition == UltimateGoalHardware.UltimateGoalStartingPosition.LEFT) {
-            ringTransforms[0] = A_Left_Transforms;
-            ringTransforms[1] = B_Left_Transforms;
-            ringTransforms[2] = C_Right_Transforms;
-        } else if (team == RobotHardware.Team.RED && startingPosition == UltimateGoalHardware.UltimateGoalStartingPosition.RIGHT) {
-            ringTransforms[0] = A_Right_Transforms;
-            ringTransforms[1] = B_Right_Transforms;
-            ringTransforms[2] = C_Right_Transforms;
-        } else if (team == RobotHardware.Team.BLUE && startingPosition == UltimateGoalHardware.UltimateGoalStartingPosition.LEFT) {
-            // We use the right transforms for the left starting position because they start closer to the wall
-            ringTransforms[0] = Localizer.mirrorTransformsOverTeamLine(A_Right_Transforms);
-            ringTransforms[1] = Localizer.mirrorTransformsOverTeamLine(B_Right_Transforms);
-            ringTransforms[2] = Localizer.mirrorTransformsOverTeamLine(C_Right_Transforms);
-        } else {
-            ringTransforms[0] = Localizer.mirrorTransformsOverTeamLine(A_Left_Transforms);
-            ringTransforms[1] = Localizer.mirrorTransformsOverTeamLine(B_Left_Transforms);
-            ringTransforms[2] = Localizer.mirrorTransformsOverTeamLine(C_Left_Transforms);
-         }
-
+        // Go to the correct wobble goal zone depending on what the camera detected
+        // A - No rings
         addAction(new IfActionResult(
                 ringDetectionAction,
                 DetectRingsAction.DetectRingsResult.NONE,
-                new MoveAlongPathAction(ringTransforms[0], ROBOT_SPEED, FOLLOW_PATH_METHOD),
+                new LocalizerMoveAction(ringTransforms[0], ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD),
                 null));
 
+        // B - Single ring
         addAction(new IfActionResult(
                 ringDetectionAction,
                 DetectRingsAction.DetectRingsResult.SINGLE,
-                new MoveAlongPathAction(ringTransforms[1], ROBOT_SPEED, FOLLOW_PATH_METHOD),
+                new LocalizerMoveAction(ringTransforms[1], ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD),
                 null));
 
+        // C - Quad rings
         addAction(new IfActionResult(
                 ringDetectionAction,
                 DetectRingsAction.DetectRingsResult.QUAD,
-                new MoveAlongPathAction(ringTransforms[2], ROBOT_SPEED, FOLLOW_PATH_METHOD),
+                new LocalizerMoveAction(ringTransforms[2], ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD),
                 null));
 
-        //addAction(new ReleaseWobbleGoalAction());
+        // Release the wobble goal
+        addAction(new ExecuteSequenceAction(new ReleaseWobbleGoalSequence()));
 
+        // Move to shooting position
+        addAction(new LocalizerMoveAction(shootingPosition, ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD));
+
+        // Shoot three rings into high goal
+        addAction(new ExecuteSequenceAction(new ShootActionSequence(3)));
+
+        // Park on center line
+        addAction(new LocalizerMoveAction(parkingPosition, ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD));
     }
 }
