@@ -1460,7 +1460,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
 
         if(tZone == TargetZone.ZONE_B){
-            chassis.driveTo(auto_chassis_power, side(50), 170, 0, true,  5);
+            chassis.driveTo(auto_chassis_power, side(50), 170, 0, false,  5);
         }
         if(tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C){
             shooter.shootOutByRpm(WARM_UP_RPM);
@@ -1506,6 +1506,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 shooter.shootOutByRpm(WARM_UP_RPM);
                 intake.intakeIn();
                 chassis.driveTo(auto_chassis_power, side(80), 140, 0, false, 5);
+                sleep(500); //to allow time for intaking the bonus ring
                 intake.stop();
                 autoShootHighGoal(1, false);
                 chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
