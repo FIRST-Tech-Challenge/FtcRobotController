@@ -1571,7 +1571,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (tZone==TargetZone.ZONE_C){
             shooter.shootOutByRpm(WARM_UP_RPM);
-            chassis.driveTo(1.0, side(70), 175, 0, false, 5);
+            hopper.hopperUpCombo();
+            TaskManager.processTasks();
+            chassis.driveTo(1.0, side(70), 180, 0, false, 5);
             autoShootHighGoal(1, true);
             chassis.driveTo(1.0, chassis.odo_x_pos_cm(), 190, chassis.getCurHeading(), false,  2);
         }
@@ -1598,7 +1600,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         comboGrabber.grabberOpen();
         sleep(100);
         comboGrabber.armDown();
-        sleep(250);
+        sleep(300);
         chassis.yMove(1, 0.4);
         sleep(200);
         chassis.yMove(1, 0.2);
