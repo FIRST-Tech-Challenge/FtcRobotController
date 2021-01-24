@@ -32,6 +32,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
         // region slowmode {...}
         slowMode = gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.bumper_left);
 
+        // Slowmode when shooter running
         if (shooter.getPower() > 0) {
             slowMode = true;
         }
@@ -40,7 +41,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
         omniDrive.dpadMove(gamepad1, slowMode ? omniDrivePower * slowModeMultiplier : omniDrivePower, false);
         //region shooter
 
-        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.b)) {
+        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.y)) {
             shooter.setPower(SHOOTER_POWER);
         } else {
             shooter.setPower(0);
@@ -54,7 +55,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
         }
 
         if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.a)) {
-            collector.setPower(1);
+            collector.setPower(gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.start) ? -1 : 1);
         } else {
             collector.setPower(0);
         }
