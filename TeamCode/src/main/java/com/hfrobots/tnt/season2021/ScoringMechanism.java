@@ -33,6 +33,7 @@ import com.google.common.base.Ticker;
 import com.google.common.collect.Lists;
 import com.hfrobots.tnt.corelib.drive.ExtendedDcMotor;
 import com.hfrobots.tnt.corelib.drive.PidController;
+import com.hfrobots.tnt.corelib.drive.StallDetector;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -68,7 +69,7 @@ public class ScoringMechanism {
                             Telemetry telemetry,
                             Ticker ticker) {
         launcher = new Launcher(hardwareMap);
-        intake = new Intake(hardwareMap);
+        intake = new Intake(hardwareMap, ticker);
 
         this.intakeVelocity = intakeVelocity;
         this.launchTrigger = launchTrigger;
@@ -77,6 +78,10 @@ public class ScoringMechanism {
         IntakeMoving intakeMoving = new IntakeMoving(telemetry);
         idleState.setIntakeMoving(intakeMoving);
         intakeMoving.setIdleState(idleState);
+
+        IntakeStalled intakeStalled = new IntakeStalled(telemetry, ticker);
+        intakeStalled.setIdleState(idleState);
+        intakeMoving.setIntakeStalled(intakeStalled);
 
         PreloadRings preloadRings = new PreloadRings(telemetry);
         idleState.setPreloadRings(preloadRings);
@@ -172,9 +177,11 @@ public class ScoringMechanism {
         //  Intake Direction: Operator Controlled 
         // Launcher: Not Moving
 
-        // Transitions - operator stops requesting intake to move, operator requests launch of rings
         @Setter
         private IdleState idleState;
+
+        @Setter
+        private IntakeStalled intakeStalled;
 
         public IntakeMoving(Telemetry telemetry) {
             super("Intake Moving", telemetry);
@@ -182,10 +189,24 @@ public class ScoringMechanism {
 
         @Override
         public State doStuffAndGetNextState() {
+            // Intake encoder not installed yet...
+
+            if (false) {
+                if (intake.isStalled()) {
+                    intake.resetStallDetector();
+
+                    return intakeStalled;
+                }
+            }
+
             if (intakeVelocity.getPosition() > 0) {
                 intake.intake(intakeVelocity.getPosition());
+
+                return this;
             } else if (intakeVelocity.getPosition() < 0) {
                 intake.outtake(intakeVelocity.getPosition());
+
+                return this;
             }
 
             return idleState;
@@ -197,6 +218,41 @@ public class ScoringMechanism {
 
         public boolean isOuttaking() {
             return intake.isOuttaking();
+        }
+
+        @Override
+        public void checkReady() {
+            Preconditions.checkNotNull(idleState);
+            Preconditions.checkNotNull(intakeStalled);
+        }
+    }
+
+    class IntakeStalled extends StopwatchTimeoutSafetyState implements ReadyCheckable {
+
+        @Setter
+        private IdleState idleState;
+
+        public IntakeStalled(Telemetry telemetry, Ticker ticker) {
+
+            super("Intake Stalled", telemetry, ticker, TimeUnit.SECONDS.toMillis(1));
+        }
+
+        @Override
+        public State doStuffAndGetNextState() {
+            intake.stop();
+
+            if (isTimedOut()) {
+                resetTimer();
+
+                return idleState;
+            }
+
+            return this;
+        }
+
+        @Override
+        public void liveConfigure(NinjaGamePad ninjaGamePad) {
+
         }
 
         @Override

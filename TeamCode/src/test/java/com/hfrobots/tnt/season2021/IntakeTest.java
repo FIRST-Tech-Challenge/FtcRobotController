@@ -20,6 +20,7 @@
 package com.hfrobots.tnt.season2021;
 
 import com.ftc9929.testing.fakes.drive.FakeDcMotorEx;
+import com.google.common.testing.FakeTicker;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.junit.Assert;
@@ -42,7 +43,7 @@ public class IntakeTest {
 
     @Test
     public void testIntake() {
-        Intake intakeToTest = new Intake(hwMap);
+        Intake intakeToTest = new Intake(hwMap, new FakeTicker());
         intakeToTest.intake(Intake.INTAKE_POWER);
 
         Assert.assertEquals(Intake.INTAKE_POWER, intakeMotor.getPower(), 0.01);

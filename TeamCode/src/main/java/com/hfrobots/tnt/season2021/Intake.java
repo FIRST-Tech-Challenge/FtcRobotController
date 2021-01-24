@@ -19,8 +19,12 @@
 
 package com.hfrobots.tnt.season2021;
 
+import com.google.common.base.Ticker;
+import com.hfrobots.tnt.corelib.drive.StallDetector;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import java.util.concurrent.TimeUnit;
 
 public class Intake {
     public static final float INTAKE_POWER = 1;
@@ -30,9 +34,19 @@ public class Intake {
     // NR-3.7 Orbital: positive voltage rotation CCW, encoder/sec 3400
     private final DcMotorEx intakeMotor;
 
-    public Intake(HardwareMap hardwareMap){
-        intakeMotor = hardwareMap.get(DcMotorEx.class,"intakeMotor");
+    private StallDetector stallDetector;
 
+    private final Ticker ticker;
+
+    public Intake(HardwareMap hardwareMap, Ticker ticker){
+        intakeMotor = hardwareMap.get(DcMotorEx.class,"intakeMotor");
+        this.ticker = ticker;
+
+        resetStallDetector();
+    }
+
+    public void resetStallDetector() {
+        stallDetector = new StallDetector(ticker, 5, TimeUnit.SECONDS.toMillis(1));
     }
 
     public void intake(float speed){
@@ -53,5 +67,9 @@ public class Intake {
 
     public boolean isOuttaking() {
         return Math.signum(intakeMotor.getPower()) == Math.signum(OUTTAKE_POWER);
+    }
+
+    public boolean isStalled() {
+        return stallDetector.isStalled(intakeMotor.getCurrentPosition());
     }
 }

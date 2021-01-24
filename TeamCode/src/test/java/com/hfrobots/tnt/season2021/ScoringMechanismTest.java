@@ -32,7 +32,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -45,8 +48,21 @@ public class ScoringMechanismTest {
 
     private FakeServo ringFeedServo;
 
+    private FakeTicker fakeTicker = new FakeTicker();
+    private FakeTelemetry fakeTelemetry = new FakeTelemetry();
+    private FakeRangeInput intakeVelocity = new FakeRangeInput();
+    private FakeOnOffButton launchTrigger = new FakeOnOffButton();
+
+    private ScoringMechanism scoringMechanism;
+
     @Before
     public void setup() {
+        scoringMechanism = ScoringMechanism.builder()
+                .hardwareMap(UltimateGoalTestConstants.HARDWARE_MAP)
+                .intakeVelocity(intakeVelocity)
+                .launchTrigger(launchTrigger)
+                .telemetry(fakeTelemetry).ticker(fakeTicker).build();
+
         intakeMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "intakeMotor");
         frontLauncherMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "frontLauncherMotor");
         rearLauncherMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "rearLauncherMotor");
@@ -56,17 +72,6 @@ public class ScoringMechanismTest {
 
     @Test
     public void testIntakeToFiring() {
-        FakeTicker fakeTicker = new FakeTicker();
-        FakeTelemetry fakeTelemetry = new FakeTelemetry();
-        FakeRangeInput intakeVelocity = new FakeRangeInput();
-        FakeOnOffButton launchTrigger = new FakeOnOffButton();
-
-        ScoringMechanism scoringMechanism = ScoringMechanism.builder()
-                .hardwareMap(UltimateGoalTestConstants.HARDWARE_MAP)
-                .intakeVelocity(intakeVelocity)
-                .launchTrigger(launchTrigger)
-                .telemetry(fakeTelemetry).ticker(fakeTicker).build();
-
         State shouldBeIdleState = scoringMechanism.getCurrentState();
         assertEquals(ScoringMechanism.IdleState.class, shouldBeIdleState.getClass());
 
@@ -76,6 +81,66 @@ public class ScoringMechanismTest {
 
         State shouldBeIntaking = scoringMechanism.getCurrentState();
         assertEquals(ScoringMechanism.IntakeMoving.class, shouldBeIntaking.getClass());
+    }
+
+    @Test
+    public void intakeExpectedStatesWhileMoving() {
+        State shouldBeIdleState = scoringMechanism.getCurrentState();
+        assertEquals(ScoringMechanism.IdleState.class, shouldBeIdleState.getClass());
+
+        backwardsOnInput(intakeVelocity, .5F);
+
+        scoringMechanism.periodicTask();
+
+        assertEquals(ScoringMechanism.IntakeMoving.class, scoringMechanism.getCurrentState().getClass());
+
+        scoringMechanism.periodicTask();
+
+        assertEquals(ScoringMechanism.IntakeMoving.class, scoringMechanism.getCurrentState().getClass());
+    }
+
+    @Test
+    @Ignore // Intake encoders not installed, yet
+    public void intakeStallDetector() {
+        State shouldBeIdleState = scoringMechanism.getCurrentState();
+        assertEquals(ScoringMechanism.IdleState.class, shouldBeIdleState.getClass());
+
+        // Run this sequence of events more than once, to test whether the timer used for
+        // timing out actually resets itself
+        for (int i = 0; i < 2; i++) {
+            backwardsOnInput(intakeVelocity, .5F);
+
+            scoringMechanism.periodicTask();
+
+            assertEquals(ScoringMechanism.IntakeMoving.class, scoringMechanism.getCurrentState().getClass());
+
+            // The next 3 times through the state machine, pretend the motor does not move by
+            // setting the encoder position to the same value. It takes 3 times through the stall detector
+            // to detect a stall...
+
+            intakeMotor.setCurrentPosistion(42);
+            scoringMechanism.periodicTask();
+            fakeTicker.advance(1100, TimeUnit.MILLISECONDS);
+            scoringMechanism.periodicTask();
+            fakeTicker.advance(1100, TimeUnit.MILLISECONDS);
+            scoringMechanism.periodicTask();
+
+            // At this point, we should be in the IntakeStalled state, and the intake motor should be
+            // stopped (zero power)
+            assertEquals(ScoringMechanism.IntakeStalled.class, scoringMechanism.getCurrentState().getClass());
+            scoringMechanism.periodicTask(); // actually do the logic in the state
+
+            // Make sure we're still in the stalled state
+            assertEquals(ScoringMechanism.IntakeStalled.class, scoringMechanism.getCurrentState().getClass());
+
+            // Intake motor should be zero power
+            assertEquals(0, intakeMotor.getPower(), 0.05);
+
+            // Move past the timeout - to see if we transition back to idle
+            fakeTicker.advance(1100, TimeUnit.MILLISECONDS);
+            scoringMechanism.periodicTask();
+            assertEquals(ScoringMechanism.IdleState.class, scoringMechanism.getCurrentState().getClass());
+        }
     }
 
     // TODO: These are probably a good shared method somewhere
