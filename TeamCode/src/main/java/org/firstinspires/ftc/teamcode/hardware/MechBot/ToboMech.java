@@ -72,6 +72,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_angle = 0;
     public double shooterAngleOffset = 2.5;
     final public double WARM_UP_RPM = 1320;
+    final public double SEMI_AUTO_RPM = 1390;
     public double shooting_rpm = WARM_UP_RPM;
 
     public double auto_rotate_degree = 0;
@@ -1382,7 +1383,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public void doHighGoalsSemi() throws InterruptedException {
-        shooter.shootOutByRpm(1400);
+        shooter.shootOutByRpm(SEMI_AUTO_RPM);
         if (hopper != null) {
             hopper.hopperUpCombo();
             TaskManager.processTasks();
@@ -1418,7 +1419,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
             sleep(200);
         }
-        shooter.shootOutByRpm(1400);
+        shooter.shootOutByRpm(SEMI_AUTO_RPM);
     }
 
     public void getSecondWobbleGoal() throws InterruptedException {
@@ -1505,11 +1506,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else if (tZone == TargetZone.ZONE_B) {//1
                 shooter.shootOutByRpm(WARM_UP_RPM);
                 intake.intakeIn();
-                chassis.driveTo(auto_chassis_power, side(80), 140, 0, false, 5);
+                chassis.driveTo(auto_chassis_power, side(80), 165, 0, false, 5);
                 sleep(500); //to allow time for intaking the bonus ring
                 intake.stop();
-                autoShootHighGoal(1, false);
-                chassis.driveTo(auto_chassis_power, side(70), 230, 0, false, 5);
+                autoShootHighGoal(1, true);
+                chassis.driveTo(auto_chassis_power, side(70), 225, 0, false, 5);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 shooter.shootOutByRpm(WARM_UP_RPM);
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
@@ -1525,7 +1526,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
         }
         if (comboGrabber!=null) {
-            if(tZone == TargetZone.ZONE_A)
+            if(tZone != TargetZone.ZONE_C) // Zone A and B
             {
                 comboGrabber.releaseWobbleGoalCombo();
                 while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
@@ -1560,7 +1561,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         else if (tZone==TargetZone.ZONE_B)
         {
-            chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 210, chassis.getCurHeading(), false,  2);
+            chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 220, chassis.getCurHeading(), false,  2);
         }
         else
         {
