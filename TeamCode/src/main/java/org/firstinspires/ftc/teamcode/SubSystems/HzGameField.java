@@ -40,6 +40,12 @@ public class HzGameField {
     }
     public static PLAYING_ALLIANCE playingAlliance = PLAYING_ALLIANCE.BLUE_ALLIANCE;
 
+    public enum START_POSITION{
+        INNER,
+        OUTER
+    }
+    public static START_POSITION startPosition = START_POSITION.INNER;
+
     public static double ALLIANCE_FACTOR = 1;
 
     public enum TARGET_ZONE{
