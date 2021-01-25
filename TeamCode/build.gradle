@@ -20,4 +20,5 @@ repositories {
 
 dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'androidx.annotation:annotation:1.1.0'
 }

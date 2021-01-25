@@ -38,6 +38,7 @@ public class TeleOps extends LinearOpMode {
     public TouchSensor armButtonBot;
     public DcMotor Arm;
     public TouchSensor armButtonTop;
+    public Servo blocker;
 
     //private Robot robot;
 
@@ -62,6 +63,8 @@ public class TeleOps extends LinearOpMode {
         armButtonBot = hardwareMap.get(TouchSensor.class, "armButtonBot");
         Arm = hardwareMap.get(DcMotor.class, "Arm");
         armButtonTop = hardwareMap.get(TouchSensor.class, "armButtonTop");
+        blocker = hardwareMap.get(Servo.class, "blocker");
+
 
         /*robot = new Robot();
         robot.Init(hardwareMap, telemetry, false);
@@ -75,8 +78,16 @@ public class TeleOps extends LinearOpMode {
 
 
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
 
+
+            while (opModeIsActive()) {
+                if (gamepad1.right_bumper) {
+                    blocker.setPosition(1);
+                }
+                else if (gamepad1.left_bumper) {
+                    blocker.setPosition(-1);
+                }
+                telemetry.update();
                 //lift up
                 if (gamepad2.a && !liftButtonBot.isPressed()) {
                     Move_Lift_Down_Continuous();
