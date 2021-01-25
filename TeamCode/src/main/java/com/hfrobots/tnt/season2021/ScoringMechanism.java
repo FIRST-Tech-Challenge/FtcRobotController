@@ -21,9 +21,11 @@ package com.hfrobots.tnt.season2021;
 
 import android.util.Log;
 
+import com.ftc9929.corelib.control.DebouncedButton;
 import com.ftc9929.corelib.control.NinjaGamePad;
 import com.ftc9929.corelib.control.OnOffButton;
 import com.ftc9929.corelib.control.RangeInput;
+import com.ftc9929.corelib.control.ToggledButton;
 import com.ftc9929.corelib.state.State;
 import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
 import com.google.common.annotations.VisibleForTesting;
@@ -31,9 +33,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Ticker;
 import com.google.common.collect.Lists;
-import com.hfrobots.tnt.corelib.drive.ExtendedDcMotor;
-import com.hfrobots.tnt.corelib.drive.PidController;
-import com.hfrobots.tnt.corelib.drive.StallDetector;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -49,7 +48,9 @@ import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 
 public class ScoringMechanism {
 
-    public static final long LAUNCHER_TO_SPEED_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(2);
+    public static final long LAUNCHER_TO_SPEED_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(10);
+
+    public static final long WAIT_FOR_HOPPER_TO_FLOAT_MILLIS = 1000; // One second, placeholder
 
     private Launcher launcher;
     private Intake intake;
@@ -60,6 +61,15 @@ public class ScoringMechanism {
     @Setter
     private OnOffButton launchTrigger;
 
+    @Setter
+    private ToggledButton upToSpeedToggle;
+
+    @Setter
+    private OnOffButton unsafe;
+
+    @Setter
+    private DebouncedButton stopLauncher;
+
     private State currentState;
 
     @Builder
@@ -68,7 +78,7 @@ public class ScoringMechanism {
                             OnOffButton launchTrigger,
                             Telemetry telemetry,
                             Ticker ticker) {
-        launcher = new Launcher(hardwareMap);
+        launcher = new Launcher(hardwareMap, telemetry, ticker);
         intake = new Intake(hardwareMap, ticker);
 
         this.intakeVelocity = intakeVelocity;
@@ -83,19 +93,19 @@ public class ScoringMechanism {
         intakeStalled.setIdleState(idleState);
         intakeMoving.setIntakeStalled(intakeStalled);
 
-        PreloadRings preloadRings = new PreloadRings(telemetry);
+        PreloadRings preloadRings = new PreloadRings(telemetry, ticker);
         idleState.setPreloadRings(preloadRings);
+        intakeMoving.setPreloadRings(preloadRings);
+        preloadRings.setIdleState(idleState);
 
         LauncherToSpeed launcherToSpeed = new LauncherToSpeed(telemetry, ticker);
+        preloadRings.setLauncherToSpeed(launcherToSpeed);
 
         LauncherReady launcherReady = new LauncherReady(telemetry);
+        launcherReady.setIdleState(idleState);
 
-        // MM - Remove Me for Kids to Look Into
         launcherToSpeed.setLauncherReady(launcherReady);
-
-        FeedRingIntoLauncher feedRingIntoLauncher = new FeedRingIntoLauncher();
-
-        DelayBeforeFeedingAgain delayBeforeFeedingAgain = new DelayBeforeFeedingAgain();
+        launcherToSpeed.setIdleState(idleState);
 
         // because of circular dependencies during construction, we need to post-check
         // that all of the transitions have been setup correctly
@@ -129,6 +139,14 @@ public class ScoringMechanism {
         return currentState;
     }
 
+    void commonLauncherSpeedHandling() {
+        if (upToSpeedToggle.isToggledTrue()) {
+            launcher.launcherToFullSpeed();
+        } else {
+            launcher.launcherToIdleSpeed();
+        }
+    }
+
     List<ReadyCheckable> readyCheckables = Lists.newArrayList();
 
     interface ReadyCheckable {
@@ -152,8 +170,11 @@ public class ScoringMechanism {
 
         @Override
         public State doStuffAndGetNextState() {
-            launcher.stop();
+            commonLauncherSpeedHandling();
+
             intake.stop();
+            launcher.pulldownHopper();
+            launcher.parkRingFeeder();
 
             if (intakeVelocity.getPosition() != 0) {
                 return intakeMoving;
@@ -183,6 +204,9 @@ public class ScoringMechanism {
         @Setter
         private IntakeStalled intakeStalled;
 
+        @Setter
+        private PreloadRings preloadRings;
+
         public IntakeMoving(Telemetry telemetry) {
             super("Intake Moving", telemetry);
         }
@@ -199,6 +223,8 @@ public class ScoringMechanism {
                 }
             }
 
+            commonLauncherSpeedHandling();
+
             if (intakeVelocity.getPosition() > 0) {
                 intake.intake(intakeVelocity.getPosition());
 
@@ -207,6 +233,8 @@ public class ScoringMechanism {
                 intake.outtake(intakeVelocity.getPosition());
 
                 return this;
+            } else if (launchTrigger.isPressed()) {
+                return preloadRings;
             }
 
             return idleState;
@@ -224,6 +252,7 @@ public class ScoringMechanism {
         public void checkReady() {
             Preconditions.checkNotNull(idleState);
             Preconditions.checkNotNull(intakeStalled);
+            Preconditions.checkNotNull(preloadRings);
         }
     }
 
@@ -261,101 +290,102 @@ public class ScoringMechanism {
         }
     }
 
-    class PreloadRings extends NotDebuggableState{
+    class PreloadRings extends NotDebuggableState {
         // Intake:Not Moving
-        //  Launcher: Not Moving*
+        //  Launcher: "Whatever"
+        // Hopper: Floats with launcher
 
-        // Transitions - operator stops requesting launch of rings
+        private Stopwatch waitForFloat;
 
-        public PreloadRings(Telemetry telemetry) {
+        @Setter
+        private LauncherToSpeed launcherToSpeed;
+
+        @Setter
+        private IdleState idleState;
+
+        public PreloadRings(Telemetry telemetry, Ticker ticker) {
             super("Preload Rings", telemetry);
+            waitForFloat = Stopwatch.createUnstarted(ticker);
         }
 
         @Override
         public State doStuffAndGetNextState() {
-            return null;
+            // Transitions - enough time has passed for hopper to float -> launcher to speed
+            //               operator stops requesting launch of rings -> idle state
+
+            intake.stop();
+            launcher.launcherToFullSpeed();
+            launcher.floatHopperWithLauncher();
+
+            if (!waitForFloat.isRunning()) {
+                waitForFloat.start();
+            } else {
+                long elapsedWaitMillis = waitForFloat.elapsed(TimeUnit.MILLISECONDS);
+
+                if (elapsedWaitMillis > WAIT_FOR_HOPPER_TO_FLOAT_MILLIS) {
+                    waitForFloat.reset(); // for next time!
+
+                    return launcherToSpeed;
+                }
+            }
+
+            if (stopLauncher.getRise()){
+                waitForFloat.reset();
+
+                return idleState;
+            }
+
+            return this;
         }
 
         @Override
         public void checkReady() {
-            //Preconditions.checkNotNull(idleState);
+            Preconditions.checkNotNull(idleState);
+            Preconditions.checkNotNull(launcherToSpeed);
         }
     }
 
     class LauncherToSpeed extends StopwatchTimeoutSafetyState implements ReadyCheckable {
         // Intake:Not Moving 
         // Launcher: Moving - accelerate to target velocity, PID (velocity)
-
-        // Transitions - operator stops requesting launch of rings, launcher is at speed
-
-        private PidController pid;
-        private double kP;
-        private double kI;
-        private double kF;
-        private double encoderClicksPerSec;
-
-        private int lastEncoderCount = 0;
-
-        private Stopwatch stopwatch = Stopwatch.createUnstarted();
+        // Hopper - floating
 
         @Setter
         private LauncherReady launcherReady;
 
-        protected ExtendedDcMotor motor;
+        @Setter
+        private IdleState idleState;
 
         public LauncherToSpeed(Telemetry telemetry, Ticker ticker) {
             super("Launcher to Speed",telemetry, ticker, LAUNCHER_TO_SPEED_TIMEOUT_MILLIS);
-
-            pid = PidController.builder().setKp(kP).setkI(kI).setkF(kF).setAllowOscillation(true)
-                    .setTolerance(encoderClicksPerSec*.03).build();
-            pid.setAbsoluteSetPoint(true);
-            pid.setTarget(encoderClicksPerSec, 0);
 
             readyCheckables.add(this);
         }
 
         @Override
         public void checkReady() {
+            Preconditions.checkNotNull(idleState);
             Preconditions.checkNotNull(launcherReady);
         }
 
         @Override
         public State doStuffAndGetNextState() {
 
-            // FIXME: Transition for operator stops asking for ring launch
+            // Transitions - operator stops requesting launch of rings -> idle
+            //               launcher is at speed -> launcher ready
 
             if (isTimedOut()){
                 resetTimer();
+
+                Log.d(LOG_TAG, "Timed out waiting for launcher to get to speed");
+
                 return launcherReady;
             }
 
-            if(pid.isOnTarget()){
+            if (launcher.isLauncherAtFullSpeed()){
+                resetTimer();
+
                 return launcherReady;
-            }
-
-            if (!stopwatch.isRunning()) {
-                stopwatch.start();
-                lastEncoderCount = motor.getCurrentPosition();
-
-                motor.setPower(pid.getOutput(0));
-
-                return this;
-            }
-
-            long elapsedMs = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-
-            if (elapsedMs > 100) {
-                stopwatch.reset();
-                stopwatch.start();
-
-                int deltaEncoderCount = motor.getCurrentPosition() - lastEncoderCount;
-
-
-                double currEncoderPerSec = (double)deltaEncoderCount / elapsedMs * TimeUnit.SECONDS.toMillis(1);
-
-                double motorPower = pid.getOutput(currEncoderPerSec);
-
-                motor.setPower(motorPower);
             }
 
             return this;
@@ -368,7 +398,8 @@ public class ScoringMechanism {
     }
 
     class LauncherReady extends NotDebuggableState {
-        //FIX ME
+        @Setter
+        private IdleState idleState;
 
         protected LauncherReady(Telemetry telemetry) {
             super("Launcher ready", telemetry);
@@ -376,35 +407,31 @@ public class ScoringMechanism {
 
         @Override
         public void checkReady() {
-
+            Preconditions.checkNotNull(idleState);
         }
 
         @Override
         public State doStuffAndGetNextState() {
-            return null;
+            // Intake:Not Moving 
+            intake.stop();
+
+            launcher.launcherToFullSpeed();
+
+            // Transitions - operator stops requesting launch of rings (red button?) (back to idle)
+
+            if (launchTrigger.isPressed()) {
+                launcher.feedRing();
+            } else {
+                launcher.parkRingFeeder();
+            }
+
+            if (stopLauncher.getRise()) {
+                return idleState;
+            }
+
+            return this;
         }
-        // Intake:Not Moving 
-        // Launcher: Moving - hold voltage
 
-        // Transitions - operator stops requesting launch of rings (back to idle)
-
-    }
-
-    class FeedRingIntoLauncher {
-        // Intake:Not Moving 
-        // Launcher: Moving - hold voltage 
-        // Ring Feeder: Feeding
-
-        // Transitions: Delay after feeding -> delay before feeding again
-    }
-
-    class DelayBeforeFeedingAgain {
-        // Intake:Not Moving 
-        // Launcher: Moving - hold voltage 
-        // Ring Feeder: Not Feeding
-
-        // Transitions - time expires (go back to launcher-to-speed),
-        //               operator stops requesting launch of rings (back to idle)
     }
 
     //

@@ -34,6 +34,8 @@ SOFTWARE.
             <Motor name="rightFrontDriveMotor" port="2" /> <!-- Yellow -->
             <Motor name="rightRearDriveMotor"  port="3" /> <!-- Green  -->
 
+            <Servo name="ringFeedServo" port="0" />
+            <Servo name="hopperPullDownServo" port="5" /> <!-- Purple -->
         </LynxModule>
 
         <!-- Expansion Hub DQ2F4L4A -->
@@ -44,7 +46,7 @@ SOFTWARE.
             <Motor name="frontLauncherMotor" port="1" /> <!-- Orange -->
             <Motor name="rearLauncherMotor"  port="2" /> <!-- Yellow -->
 
-            <Servo name="ringFeedServo" port="0" />
+
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

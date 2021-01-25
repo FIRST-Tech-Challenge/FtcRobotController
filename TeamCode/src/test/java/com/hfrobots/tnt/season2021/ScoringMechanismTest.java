@@ -19,16 +19,18 @@
 
 package com.hfrobots.tnt.season2021;
 
+import android.widget.ToggleButton;
+
+import com.ftc9929.corelib.control.DebouncedButton;
+import com.ftc9929.corelib.control.ToggledButton;
 import com.ftc9929.corelib.state.State;
 import com.ftc9929.testing.fakes.FakeTelemetry;
 import com.ftc9929.testing.fakes.control.FakeOnOffButton;
 import com.ftc9929.testing.fakes.control.FakeRangeInput;
 import com.ftc9929.testing.fakes.drive.FakeDcMotorEx;
 import com.ftc9929.testing.fakes.drive.FakeServo;
-import com.ftc9929.testing.fakes.util.FakeHardwareMapFactory;
 import com.google.common.testing.FakeTicker;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.junit.Before;
@@ -38,6 +40,7 @@ import org.junit.Test;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ScoringMechanismTest {
     private FakeDcMotorEx intakeMotor;
@@ -48,10 +51,19 @@ public class ScoringMechanismTest {
 
     private FakeServo ringFeedServo;
 
+    private FakeServo hopperPullDownServo;
+
     private FakeTicker fakeTicker = new FakeTicker();
     private FakeTelemetry fakeTelemetry = new FakeTelemetry();
     private FakeRangeInput intakeVelocity = new FakeRangeInput();
     private FakeOnOffButton launchTrigger = new FakeOnOffButton();
+    private FakeOnOffButton toSpeedOnOff = new FakeOnOffButton();
+    private FakeOnOffButton stopLaunchingButton = new FakeOnOffButton();
+    private FakeOnOffButton unsafeButton = new FakeOnOffButton();
+
+    // "Derived"
+    private DebouncedButton stopLaunchingDebounced = stopLaunchingButton.debounced();
+    private ToggledButton toSpeedToggleButton = new ToggledButton(toSpeedOnOff);
 
     private ScoringMechanism scoringMechanism;
 
@@ -63,11 +75,16 @@ public class ScoringMechanismTest {
                 .launchTrigger(launchTrigger)
                 .telemetry(fakeTelemetry).ticker(fakeTicker).build();
 
+        scoringMechanism.setUpToSpeedToggle(toSpeedToggleButton);
+        scoringMechanism.setUnsafe(unsafeButton);
+        scoringMechanism.setStopLauncher(stopLaunchingDebounced);
+
         intakeMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "intakeMotor");
         frontLauncherMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "frontLauncherMotor");
         rearLauncherMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "rearLauncherMotor");
 
         ringFeedServo = (FakeServo) UltimateGoalTestConstants.HARDWARE_MAP.get(Servo.class, "ringFeedServo");
+        hopperPullDownServo = (FakeServo) UltimateGoalTestConstants.HARDWARE_MAP.get(Servo.class, "hopperPullDownServo");
     }
 
     @Test
@@ -143,6 +160,79 @@ public class ScoringMechanismTest {
         }
     }
 
+    @Test
+    public void launcherHappyPath() {
+        State shouldBeIdleState = scoringMechanism.getCurrentState();
+        assertEquals(ScoringMechanism.IdleState.class, shouldBeIdleState.getClass());
+        scoringMechanism.periodicTask();
+
+
+        assertTrue(frontLauncherMotor.getVelocity() > 0 && frontLauncherMotor.getVelocity() < 1000);
+        assertTrue(rearLauncherMotor.getVelocity() > 0 && rearLauncherMotor.getVelocity() < 1000);
+
+        assertEquals(hopperPullDownServo.getPosition(), Launcher.HOPPER_PULLED_DOWN_POSITION, 0.05);
+        assertEquals(ringFeedServo.getPosition(), Launcher.RING_FEEDER_PARKED_POSITION, 0.05);
+
+        // FIXME: What other things should be asserted in idle state?
+
+        // Hit the bumper to bring the launcher up to speed
+        causeButtonToRiseForNextPeriodTask(toSpeedOnOff);
+        scoringMechanism.periodicTask();
+
+        assertTrue(frontLauncherMotor.getVelocity() > 2000);
+        assertTrue(rearLauncherMotor.getVelocity() > 2000);
+
+        // Move into "Launch Mode"
+        launchTrigger.setPressed(true);
+        scoringMechanism.periodicTask();
+        scoringMechanism.periodicTask();
+        assertEquals(Launcher.HOPPER_FLOAT_POSITION, hopperPullDownServo.getPosition(), 0.05);
+
+        fakeTicker.advance(5000, TimeUnit.MILLISECONDS);
+        scoringMechanism.periodicTask();
+
+        // FIXME: Assert what state things should be in, if launch requested, but launcher not ready
+
+        // Get launcher up to speed (set encoder positions)
+        // this takes at least 3 periodicTasks...(see launcher test)
+        frontLauncherMotor.setCurrentPosistion(1000);
+        rearLauncherMotor.setCurrentPosistion(1000);
+        scoringMechanism.periodicTask();
+
+        fakeTicker.advance(120, TimeUnit.MILLISECONDS);
+        frontLauncherMotor.setCurrentPosistion(2000);
+        rearLauncherMotor.setCurrentPosistion(2000);
+        scoringMechanism.periodicTask();
+
+        fakeTicker.advance(120, TimeUnit.MILLISECONDS);
+        frontLauncherMotor.setCurrentPosistion(2000 + (int)((double)Launcher.LAUNCH_SPEED_ENC_SEC / 1000D * 120D));
+        rearLauncherMotor.setCurrentPosistion(2000 + (int)((double)Launcher.LAUNCH_SPEED_ENC_SEC / 1000D * 120D));
+        scoringMechanism.periodicTask();
+
+        assertEquals(ScoringMechanism.LauncherReady.class, scoringMechanism.getCurrentState().getClass());
+
+        // Launch a ring...
+        launchTrigger.setPressed(true);
+        scoringMechanism.periodicTask();
+        assertEquals(ringFeedServo.getPosition(), Launcher.RING_FEEDER_FEEDING_POSITION, 0.05);
+
+        // Let feeder return to park
+        launchTrigger.setPressed(false);
+        scoringMechanism.periodicTask();
+        assertEquals(ringFeedServo.getPosition(), Launcher.RING_FEEDER_PARKED_POSITION, 0.05);
+
+        // Stop the launcher
+        causeButtonToRiseForNextPeriodTask(stopLaunchingButton);
+        scoringMechanism.periodicTask();
+
+        // We should be back at idle state if everything is working
+        assertEquals(ScoringMechanism.IdleState.class, shouldBeIdleState.getClass());
+        scoringMechanism.periodicTask();
+
+        assertEquals(hopperPullDownServo.getPosition(), Launcher.HOPPER_PULLED_DOWN_POSITION, 0.05);
+        assertEquals(ringFeedServo.getPosition(), Launcher.RING_FEEDER_PARKED_POSITION, 0.05);
+    }
+
     // TODO: These are probably a good shared method somewhere
     private static void backwardsOnInput(FakeRangeInput input, float magnitude) {
         input.setCurrentPosition(1 * Math.abs(magnitude));
@@ -152,4 +242,9 @@ public class ScoringMechanismTest {
         input.setCurrentPosition(-1 * Math.abs(magnitude));
     }
 
+    private void causeButtonToRiseForNextPeriodTask(FakeOnOffButton button) {
+        button.setPressed(false);
+        scoringMechanism.periodicTask();
+        button.setPressed(true);
+    }
 }

@@ -19,7 +19,16 @@
 
 package com.hfrobots.tnt.season2021;
 
+import com.google.common.base.Stopwatch;
+import com.google.common.base.Ticker;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.concurrent.TimeUnit;
 
 import lombok.NonNull;
 
@@ -27,11 +36,126 @@ public class Launcher {
 
     // GoBilda 1:1 positive power rotation CCW, max theoretical encoder/sec is 2800, measured is 2700
 
-    public Launcher(@NonNull HardwareMap hardwareMap){
-        //throw new RuntimeException("not implemted yet");
+    public final static int LAUNCH_SPEED_ENC_SEC = 2300;
+
+    private final static int LAUNCH_SPEED_TOLERANCE_ENC_SEC = 300;
+
+    private final static int IDLE_SPEED_ENC_SEC = 500;
+
+    private final DcMotorEx frontLauncherMotor;
+
+    private final DcMotorEx rearLauncherMotor;
+
+    // Taylor said in Slack that center is "up", right is "down"
+
+    private final Servo hopperPullDownServo;
+
+    public final static double HOPPER_PULLED_DOWN_POSITION = 1;
+
+    public final static double HOPPER_FLOAT_POSITION = 0.5;
+
+    private final Servo ringFeederServo;
+
+    public final static double RING_FEEDER_FEEDING_POSITION = 0.5;
+
+    public final static double RING_FEEDER_PARKED_POSITION = 1.0;
+
+    private final VelocityTracker frontVelocityTracker;
+
+    private final VelocityTracker rearVelocityTracker;
+
+    private final Telemetry telemetry;
+
+    private final Ticker ticker;
+
+    public Launcher(@NonNull HardwareMap hardwareMap, Telemetry telemetry, Ticker ticker) {
+        this.telemetry = telemetry;
+        this.ticker = ticker;
+
+        frontLauncherMotor = hardwareMap.get(DcMotorEx.class, "frontLauncherMotor");
+        rearLauncherMotor = hardwareMap.get(DcMotorEx.class, "rearLauncherMotor");
+
+        frontLauncherMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rearLauncherMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        ringFeederServo = hardwareMap.get(Servo.class, "ringFeedServo");
+
+        hopperPullDownServo = hardwareMap.get(Servo.class, "hopperPullDownServo");
+
+        frontVelocityTracker = new VelocityTracker();
+        rearVelocityTracker = new VelocityTracker();
     }
 
-    public void stop() {
+    public void pulldownHopper() {
+        hopperPullDownServo.setPosition(HOPPER_PULLED_DOWN_POSITION);
+    }
+
+    public void floatHopperWithLauncher() {
+        hopperPullDownServo.setPosition(HOPPER_FLOAT_POSITION);
+    }
+
+    public void feedRing() {
+        ringFeederServo.setPosition(RING_FEEDER_FEEDING_POSITION);
+    }
+
+    public void parkRingFeeder() {
+        ringFeederServo.setPosition(RING_FEEDER_PARKED_POSITION);
+    }
+
+    public void launcherToIdleSpeed() {
+        frontLauncherMotor.setVelocity(IDLE_SPEED_ENC_SEC);
+        rearLauncherMotor.setVelocity(IDLE_SPEED_ENC_SEC);
+    }
+
+    public void launcherToFullSpeed() {
+        frontLauncherMotor.setVelocity(LAUNCH_SPEED_ENC_SEC);
+        rearLauncherMotor.setVelocity(LAUNCH_SPEED_ENC_SEC);
+    }
+
+    public boolean isLauncherAtFullSpeed() {
+        double frontEncoderTicksPerSecond = frontVelocityTracker.getTicksPerSec(frontLauncherMotor.getCurrentPosition());
+        double rearEncoderTicksPerSecond = rearVelocityTracker.getTicksPerSec(rearLauncherMotor.getCurrentPosition());
+
+        telemetry.addData("lv",  "vf: %.1f vr: %.1f", frontEncoderTicksPerSecond, rearEncoderTicksPerSecond);
+
+        double frontDeltaEncSec = Math.abs(frontEncoderTicksPerSecond - LAUNCH_SPEED_ENC_SEC);
+        double rearDeltaEncSec = Math.abs(rearEncoderTicksPerSecond - LAUNCH_SPEED_ENC_SEC);
+
+        // FIXME - Later, warn if tolerance is too low, or too high so intelligent decision can be made!
+
+        return frontDeltaEncSec < LAUNCH_SPEED_TOLERANCE_ENC_SEC && rearDeltaEncSec < LAUNCH_SPEED_TOLERANCE_ENC_SEC;
+    }
+
+    private class VelocityTracker {
+        private int lastEncoderPos = Integer.MIN_VALUE;
+
+        private double encoderTicksPerSecond = 0;
+
+        private Stopwatch stopWatch;
+
+        public double getTicksPerSec(int currentEncoderPosition) {
+            if (stopWatch == null) {
+                stopWatch = Stopwatch.createStarted(ticker);
+            }
+
+            long elapsedTime = stopWatch.elapsed(TimeUnit.MILLISECONDS);
+
+            if (elapsedTime >= 100) {
+                stopWatch.reset();
+                stopWatch.start();
+
+                if (lastEncoderPos != Integer.MIN_VALUE) {
+                    int encoderTicksDelta = currentEncoderPosition - lastEncoderPos;
+
+                    double encoderTicksPerMs = (double) encoderTicksDelta / (double) elapsedTime;
+                    encoderTicksPerSecond = encoderTicksPerMs * 1000;
+                }
+
+                lastEncoderPos = currentEncoderPosition;
+            }
+
+            return encoderTicksPerSecond;
+        }
     }
 }
 

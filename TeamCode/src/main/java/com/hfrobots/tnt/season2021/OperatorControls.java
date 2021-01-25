@@ -27,6 +27,7 @@ import com.ftc9929.corelib.control.OnOffButton;
 import com.ftc9929.corelib.control.ParametricScaledRangeInput;
 import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.control.RangeInputButton;
+import com.ftc9929.corelib.control.ToggledButton;
 
 import lombok.Builder;
 
@@ -67,6 +68,12 @@ public class OperatorControls {
     private RangeInput intakeVelocity;
 
     private OnOffButton launchTrigger;
+
+    private ToggledButton upToSpeedToggle;
+
+    private OnOffButton unsafe;
+
+    private DebouncedButton stopLauncher;
 
     private NinjaGamePad operatorGamepad;
 
@@ -122,6 +129,9 @@ public class OperatorControls {
         this.scoringMechanism = scoringMechanism;
         scoringMechanism.setIntakeVelocity(intakeVelocity);
         scoringMechanism.setLaunchTrigger(launchTrigger);
+        scoringMechanism.setUpToSpeedToggle(upToSpeedToggle);
+        scoringMechanism.setUnsafe(unsafe);
+        scoringMechanism.setStopLauncher(stopLauncher);
     }
 
 
@@ -149,6 +159,10 @@ public class OperatorControls {
     private void setupDerivedControls() {
         intakeVelocity = leftStickY;
         launchTrigger = rightBumper;
+        upToSpeedToggle = new ToggledButton(leftBumper);
+        stopLauncher = bRedButton;
+
+        unsafe = new RangeInputButton( rightTrigger, 0.65f);
     }
 
     public void periodicTask() {
