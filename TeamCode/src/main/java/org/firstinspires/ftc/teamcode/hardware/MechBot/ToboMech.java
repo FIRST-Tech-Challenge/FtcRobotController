@@ -1574,7 +1574,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             hopper.hopperUpCombo();
             TaskManager.processTasks();
             chassis.driveTo(1.0, side(70), 180, 0, false, 5);
-            autoShootHighGoal(1, true);
+            autoShootHighGoal(2, true);
             chassis.driveTo(1.0, chassis.odo_x_pos_cm(), 190, chassis.getCurHeading(), false,  2);
         }
         else if (tZone==TargetZone.ZONE_B)
