@@ -40,13 +40,13 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 public class VuforiaWebcam extends Thread {
     private OpMode op;
-    private double xpos, ypos, angle;
+    private static double xpos, ypos, angle;
     private double vuforiaAngle = 90.0;
 
     //It is used on line 193 for debugging purposes. This is why it isn't currently in use.
     private String trackable;
 
-    private boolean targetVisible = false;
+    private static boolean targetVisible = false;
 
     private VuforiaTrackables targetsUltimateGoal;
     private List<VuforiaTrackable> allTrackables = new ArrayList<>();
@@ -165,12 +165,14 @@ public class VuforiaWebcam extends Thread {
                 op.telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
                         translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-//                setXposition(translation.get(0) / mmPerInch);
-//                setYposition(translation.get(1) / mmPerInch);
+                if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))>=24.5 && VuforiaWebcam.isTargetVisible()==true) {
+                    setXposition(translation.get(0) / mmPerInch);
+                    setYposition(translation.get(1) / mmPerInch);
+                }
                 xpos = translation.get(0) / mmPerInch;
                 ypos = translation.get(1) / mmPerInch;
                 angle = rotation.thirdAngle;
-//                setInVuforia(false);
+                setInVuforia(false);
                 op.telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
             }
             else {
@@ -180,16 +182,20 @@ public class VuforiaWebcam extends Thread {
         }
     }
 
-    public double getVuforiaX() {
+    public static double getVuforiaX() {
         return xpos;
     }
 
-    public double getVuforiaY() {
+    public static double getVuforiaY() {
         return ypos;
     }
 
-    public double getVuforiaAngle() {
+    public static double getVuforiaAngle() {
         return angle;
+    }
+
+    public static boolean isTargetVisible() {
+        return targetVisible;
     }
 
     public double getVuforiaAngle2() {
