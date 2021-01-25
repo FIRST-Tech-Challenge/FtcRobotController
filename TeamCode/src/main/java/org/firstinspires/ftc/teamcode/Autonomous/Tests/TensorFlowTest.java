@@ -45,8 +45,6 @@ public class TensorFlowTest extends LinearOpMode {
         int arraySize = 11;
         ArrayList<Integer> NumberOfRings = new ArrayList<Integer>(arraySize);
 
-        tensorFlow.initTensorFlow();
-
         for (int index = 0; index<arraySize; index++) {
             tensorFlow.runTensorFlow();
             sleep(10);

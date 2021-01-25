@@ -72,39 +72,6 @@ public class TensorFlow {
         }
     }
 
-    //TODO Aamod: Duplciate code. Constructor is already doing this.
-    //The initTensorFlow method is needed, because it is used in TensorFlowTest
-    public void initTensorFlow() {
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = op.hardwareMap.get(WebcamName.class, "WebcamFront");
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        int tfodMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
-
-        if (tfod != null) {
-            tfod.activate();
-
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 1.78 or 16/9).
-
-            // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
-             tfod.setZoom(2.5, 1.78);
-        }
-    }
-
     public void runTensorFlow () {
         if (tfod != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
