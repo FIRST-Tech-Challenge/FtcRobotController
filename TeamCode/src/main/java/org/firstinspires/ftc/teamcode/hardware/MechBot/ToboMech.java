@@ -72,7 +72,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_angle = 0;
     public double shooterAngleOffset = 2.5;
     final public double WARM_UP_RPM = 1320;
-    final public double SEMI_AUTO_RPM = 1400;
+    final public double WARM_UP_RPM_AUTO = 1340;
+    final public double SEMI_AUTO_RPM = 1395;
     public double shooting_rpm = WARM_UP_RPM;
 
     public double auto_rotate_degree = 0;
@@ -1333,7 +1334,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public void doHighGoalsAndPowerShots(int numHighGoals, int numPowerShots, boolean keepPos) throws InterruptedException {
-        shooter.shootOutByRpm(WARM_UP_RPM);
+        shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
 
         if (hopper != null) {
             hopper.hopperUpCombo();
@@ -1385,7 +1386,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
 
         if (tZone == TargetZone.UNKNOWN)
-            shooter.shootOutByRpm(WARM_UP_RPM); // for teleop keep the shooter at WARM_UP_RPM
+            shooter.shootOutByRpm(WARM_UP_RPM_AUTO); // for teleop keep the shooter at WARM_UP_RPM
         else
             shooter.shootOutByRpm(0);
     }
@@ -1476,7 +1477,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(auto_chassis_power, side(50), 170, 0, false,  5);
         }
         if(tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C){
-            shooter.shootOutByRpm(WARM_UP_RPM);
+            shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
         }
         if(tZone == TargetZone.ZONE_C)
         {
@@ -1516,7 +1517,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 // chassis.driveTo(.8, side(30), 40, 0, false, 2);
                 chassis.driveTo(0.9, side(17), 165, -15, false, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                shooter.shootOutByRpm(WARM_UP_RPM);
+                shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 intake.intakeIn();
                 chassis.driveTo(auto_chassis_power, side(80), 165, 0, false, 5);
                 sleep(500); //to allow time for intaking the bonus ring
@@ -1524,13 +1525,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 autoShootHighGoal(1, true);
                 chassis.driveTo(auto_chassis_power, side(70), 225, 0, false, 5);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                shooter.shootOutByRpm(WARM_UP_RPM);
+                shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
                 chassis.driveTo(1.0, side(90), 123, 0, false, 5);
                 autoIntakeRings(3, true);
                 chassis.driveTo(1.0, side(90), 165, 0, false, 5);
                 autoShootHighGoal(3, true);
-                shooter.shootOutByRpm(WARM_UP_RPM);
+                shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 intake.intakeIn();
                 chassis.driveTo(1.0, side(3), 285, 0, false, 5);
                 intake.stop();
@@ -1558,7 +1559,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //sleep(1000);
     }
     public void autoShootHighGoal(int n, boolean keepPos) throws InterruptedException {
-        shooter.shootOutByRpm(WARM_UP_RPM);
+        shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
         hopper.hopperUpCombo();
         TaskManager.processTasks();
         doHighGoalsAndPowerShots(n, 0, keepPos);
@@ -1570,7 +1571,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(auto_chassis_power+0.2, side(110), 165, 0, false, 2);
         }
         if (tZone==TargetZone.ZONE_C){
-            shooter.shootOutByRpm(WARM_UP_RPM);
+            shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
             hopper.hopperUpCombo();
             TaskManager.processTasks();
             chassis.driveTo(1.0, side(70), 180, 0, false, 5);
