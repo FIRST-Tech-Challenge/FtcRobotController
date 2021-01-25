@@ -65,6 +65,7 @@ public class AutoBlueOutHighGoal extends LinearOpMode {
         // run until the end of the match (driver presses STOP or timeout)
         if (opModeIsActive()) {
             try {
+                robot.shooter.shootOutByRpm(1320);
                 // write the program here
                 //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive()
                 robot.detectPosition();
