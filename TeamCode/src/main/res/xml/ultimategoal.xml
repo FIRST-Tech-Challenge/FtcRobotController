@@ -34,7 +34,7 @@ SOFTWARE.
             <Motor name="rightFrontDriveMotor" port="2" /> <!-- Yellow -->
             <Motor name="rightRearDriveMotor"  port="3" /> <!-- Green  -->
 
-            <Servo name="ringFeedServo" port="0" />
+            <Servo name="ringFeedServo" port="4" />
             <Servo name="hopperPullDownServo" port="5" /> <!-- Purple -->
         </LynxModule>
 
