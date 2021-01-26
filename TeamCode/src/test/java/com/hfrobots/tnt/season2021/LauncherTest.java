@@ -60,18 +60,20 @@ public class LauncherTest {
     public void velocityTracking() {
         assertFalse(launcher.isLauncherAtFullSpeed());
 
-        // FIXME: How do we fix this in FTC 9929 core lib? :) (typo'd)
-        frontLauncherMotor.setCurrentPosistion(1000);
-        rearLauncherMotor.setCurrentPosistion(1000);
-
-        ticker.advance(200, TimeUnit.MILLISECONDS);
-
+        frontLauncherMotor.setCurrentPosition(1000);
+        rearLauncherMotor.setCurrentPosition(1000);
         assertFalse(launcher.isLauncherAtFullSpeed());
 
-        frontLauncherMotor.setCurrentPosistion(2000);
-        rearLauncherMotor.setCurrentPosistion(2000);
+        ticker.advance(120, TimeUnit.MILLISECONDS);
 
-        ticker.advance(200, TimeUnit.MILLISECONDS);
+        frontLauncherMotor.setCurrentPosition(2000);
+        rearLauncherMotor.setCurrentPosition(2000);
+        assertFalse(launcher.isLauncherAtFullSpeed());
+
+        frontLauncherMotor.setCurrentPosition(2000 + (int)((double)Launcher.LAUNCH_SPEED_ENC_SEC / 1000D * 120D));
+        rearLauncherMotor.setCurrentPosition(2000 + (int)((double)Launcher.LAUNCH_SPEED_ENC_SEC / 1000D * 120D));
+
+        ticker.advance(120, TimeUnit.MILLISECONDS);
 
         assertTrue(launcher.isLauncherAtFullSpeed());
     }
