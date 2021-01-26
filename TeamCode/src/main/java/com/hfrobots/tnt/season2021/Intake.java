@@ -22,6 +22,7 @@ package com.hfrobots.tnt.season2021;
 import com.google.common.base.Ticker;
 import com.hfrobots.tnt.corelib.drive.StallDetector;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.concurrent.TimeUnit;
@@ -41,6 +42,7 @@ public class Intake {
     public Intake(HardwareMap hardwareMap, Ticker ticker){
         intakeMotor = hardwareMap.get(DcMotorEx.class,"intakeMotor");
         this.ticker = ticker;
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         resetStallDetector();
     }
