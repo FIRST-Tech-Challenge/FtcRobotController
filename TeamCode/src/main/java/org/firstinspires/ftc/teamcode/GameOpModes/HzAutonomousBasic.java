@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.GameOpModes;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -33,6 +34,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  *
  */
 @Autonomous(name = "Hazmat Autonomous", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp RR")
+@Disabled
 public class HzAutonomousBasic extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
