@@ -4,6 +4,7 @@ import android.graphics.Point;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -21,8 +22,7 @@ public class UltimateBot extends YellowBot {
     private Servo wobbleClaw2 = null;
     private Servo ringCamera = null;
     private Servo shooterServo = null;
-    private DcMotor intake = null;
-    private DcMotor shooter = null;
+    private DcMotorEx shooter = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
     private static int SWING_GROUND_POS = 210;
@@ -32,7 +32,7 @@ public class UltimateBot extends YellowBot {
     private static int SWING_LIFT_WALL = 90;
     private static int STRAIGHT_UP = 70;
     private static int AUTO_WAY_BACK = -38;
-    private static double SHOOT_SERVO = 0.5;
+    private static double SHOOT_SERVO = 0.7;
 
     private static int TIMEOUT = 2500;
     private static int TIMEOUT_LONGER = 3000;
@@ -54,18 +54,10 @@ public class UltimateBot extends YellowBot {
     public void init(LinearOpMode owner, HardwareMap ahwMap, Telemetry telemetry) throws Exception {
         super.init(owner, ahwMap, telemetry);
 
-        try {
-            wobbleSwing = hwMap.get(DcMotor.class, "swing");
-            wobbleSwing.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            wobbleSwing.setDirection(DcMotor.Direction.FORWARD);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            wobbleSwing.setPower(0);
-        } catch (Exception ex) {
-            throw new Exception("Issues with wobbleSwing. Check the controller config", ex);
-        }
+
 
         try {
-            intake = hwMap.get(DcMotor.class, "intake");
+            DcMotorEx intake = getIntakeMotor();
             intake.setDirection(DcMotor.Direction.FORWARD);
             intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             intake.setPower(0);
@@ -74,10 +66,10 @@ public class UltimateBot extends YellowBot {
         }
 
         try {
-            shooter = hwMap.get(DcMotor.class, "shooter");
+            shooter = hwMap.get(DcMotorEx.class, "shooter");
             shooter.setDirection(DcMotor.Direction.REVERSE);
-            shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            shooter.setPower(0);
+            shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shooter.setVelocity(0);
         } catch (Exception ex) {
             throw new Exception("Issues with shooter. Check the controller config", ex);
         }
@@ -110,8 +102,25 @@ public class UltimateBot extends YellowBot {
             throw new Exception("Issues with shooterServo. Check the controller config", ex);
         }
 
+        try {
+            wobbleSwing = hwMap.get(DcMotor.class, "swing");
+            wobbleSwing.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            wobbleSwing.setDirection(DcMotor.Direction.FORWARD);
+            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            wobbleSwing.setPower(0);
+        } catch (Exception ex) {
+            throw new Exception("Issues with wobbleSwing. Check the controller config", ex);
+        }
 
         telemetry.addData("Init", "Ultimate is ready");
+    }
+
+    public DcMotorEx getIntakeMotor(){
+        return rightOdo;
+    }
+
+    public double getShooterVelocity(){
+        return shooter.getVelocity();
     }
 
 
@@ -130,6 +139,7 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Move Intake", defaultReturn = "")
     public void intake() {
+        DcMotorEx intake = getIntakeMotor();
         if (intake != null) {
             intake.setPower(0.9);
         }
@@ -137,6 +147,7 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Move Intake Reverse", defaultReturn = "")
     public void intakeReverse() {
+        DcMotorEx intake = getIntakeMotor();
         if (intake != null) {
             intake.setPower(-0.7);
         }
@@ -144,6 +155,7 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Stop Intake", defaultReturn = "")
     public void stopintake() {
+        DcMotorEx intake = getIntakeMotor();
         if (intake != null) {
             intake.setPower(0);
         }
@@ -152,7 +164,8 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Shooter", defaultReturn = "")
     public void shooter() {
         if (shooter != null) {
-            shooter.setPower(0.85);
+            shooter.setVelocity(MAX_VELOCITY*0.85);
+//            shooter.setPower(0.85);
         }
     }
 
@@ -174,7 +187,7 @@ public class UltimateBot extends YellowBot {
     public void shootServo() {
         ElapsedTime runtime = new ElapsedTime();
         if (shooterServo != null) {
-            shooterServo.setPosition(0.1);
+            shooterServo.setPosition(SHOOT_SERVO - 0.4);
             runtime.reset();
             while (runtime.milliseconds() <= 250) {
 

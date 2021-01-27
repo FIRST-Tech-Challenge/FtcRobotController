@@ -54,7 +54,7 @@ import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
  */
 
 @TeleOp(name="YellowDriveOdo", group="Robot15173")
-@Disabled
+//@Disabled
 public class YellowDriveOdo extends LinearOpMode {
 
     // Declare OpMode members.

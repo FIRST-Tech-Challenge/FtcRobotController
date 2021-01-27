@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.bots.DummyBot;
 import org.firstinspires.ftc.teamcode.bots.SwingPosition;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
+import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.BotThreadAction;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
@@ -191,8 +192,9 @@ public class UltimateMode extends LinearOpMode {
                     robot.shootServo();
                 }
 
-                telemetry.addData("Heading", robot.getGyroHeading());
-                telemetry.addData("Horiz encoder", robot.getHorizontalOdometer());
+                telemetry.addData("Left", robot.getLeftOdometer());
+                telemetry.addData("Right", robot.getRightOdometer());
+                telemetry.addData("Hor", robot.getHorizontalOdometer());
                 telemetry.update();
             }
         } catch (Exception ex) {

@@ -14,6 +14,7 @@ public class MotorReductionBot implements Serializable {
     private double distanceRatio = 1;
     private double headChange = 0;
 
+
     protected MotorName [] motors = new MotorName[]{MotorName.LF, MotorName.RF, MotorName.RB, MotorName.LB};
     protected double [] MRs = new double[] {DEFAULT_REDUCTION, DEFAULT_REDUCTION, DEFAULT_REDUCTION, DEFAULT_REDUCTION};
 

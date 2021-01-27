@@ -21,6 +21,9 @@ public class RobotMovementStats {
     private double slowDownDelay = 0;
     private MotorReductionBot suggestedMR = new MotorReductionBot();
 
+    private double maxVelocityLeft = 0;
+    private double maxVelocityRight = 0;
+
     ArrayList<MotorReductionBot> motorAmps = new ArrayList<>();
 
     ElapsedTime fullSpeedTimer = new ElapsedTime();
@@ -201,5 +204,23 @@ public class RobotMovementStats {
 
     public void setSuggestedMR(MotorReductionBot suggestedMR) {
         this.suggestedMR = suggestedMR;
+    }
+
+    public void updateVelocity(double left, double right){
+        if (getMaxVelocityLeft() < left){
+            maxVelocityLeft = left;
+        }
+
+        if (getMaxVelocityRight() < right){
+            maxVelocityRight = right;
+        }
+    }
+
+    public double getMaxVelocityLeft() {
+        return maxVelocityLeft;
+    }
+
+    public double getMaxVelocityRight() {
+        return maxVelocityRight;
     }
 }

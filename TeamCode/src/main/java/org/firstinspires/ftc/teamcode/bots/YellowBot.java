@@ -4,6 +4,8 @@ import android.graphics.Point;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -28,10 +30,13 @@ import java.util.Random;
 
 public class YellowBot implements OdoBot {
     public static double CALIB_SPEED = 0.5;
-    private DcMotor frontLeft = null;
-    private DcMotor frontRight = null;
-    private DcMotor backLeft = null;
-    private DcMotor backRight = null;
+    private DcMotorEx frontLeft = null;
+    private DcMotorEx frontRight = null;
+    protected DcMotorEx leftOdo = null; //leftodo port 1 ext hub    forward positive
+    protected DcMotorEx rightOdo = null; // rightodo - intake port 0 control hub     forw negative
+    protected DcMotorEx horizontalOdo = null; // horizontal port 0 ext hub    right neg
+    private DcMotorEx backLeft = null;
+    private DcMotorEx backRight = null;
 
     protected HardwareMap hwMap = null;
     protected Telemetry telemetry;
@@ -42,11 +47,12 @@ public class YellowBot implements OdoBot {
 
     protected LinearOpMode owner = null;
 
-    static final double COUNTS_PER_MOTOR_HD = 560;    // Rev HD motor
+    static final double COUNTS_PER_MOTOR_HD = 560;    // Rev HD motor 537.6
     static final double REV_TBORE = 8192;    // Rev HD motor
     static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP. was 2 in the sample
     static final double WHEEL_DIAMETER_INCHES = 2.0;     // For figuring circumference
     public static final double COUNTS_PER_INCH_REV = (REV_TBORE * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);  //1303.79729
+    public static final double MAX_VELOCITY = 2140;
 
     public static final double ROBOT_LENGTH_X = 17.25;
     public static final double ROBOT_LENGTH_Y = 17.5;
@@ -75,33 +81,48 @@ public class YellowBot implements OdoBot {
         this.telemetry = t;
         try {
             // Define and Initialize Motors
-            frontLeft = hwMap.get(DcMotor.class, LEFT_FRONT);
-            frontRight = hwMap.get(DcMotor.class, RIGHT_FRONT);
-            backLeft = hwMap.get(DcMotor.class, LEFT_BACK);
-            backRight = hwMap.get(DcMotor.class, RIGHT_BACK);
+            frontLeft = hwMap.get(DcMotorEx.class, LEFT_FRONT);
+            frontRight = hwMap.get(DcMotorEx.class, RIGHT_FRONT);
+            backLeft = hwMap.get(DcMotorEx.class, LEFT_BACK);
+            backRight = hwMap.get(DcMotorEx.class, RIGHT_BACK);
 
+            horizontalOdo = hwMap.get(DcMotorEx.class, "horizontal");
+            leftOdo = hwMap.get(DcMotorEx.class, "leftodo");
+            rightOdo = hwMap.get(DcMotorEx.class, "rightodo");
 
             resetEncoders();
 
 
             if (backLeft != null) {
                 backLeft.setDirection(DcMotor.Direction.FORWARD);
-                backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
             if (backRight != null) {
                 backRight.setDirection(DcMotor.Direction.REVERSE);
-                backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
             if (frontLeft != null) {
                 frontLeft.setDirection(DcMotor.Direction.FORWARD);
-                frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
             if (frontRight != null) {
                 frontRight.setDirection(DcMotor.Direction.REVERSE);
-                frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+
+            if (horizontalOdo != null){
+                horizontalOdo.setDirection(DcMotor.Direction.REVERSE);
+            }
+
+            if (leftOdo != null){
+                horizontalOdo.setDirection(DcMotor.Direction.FORWARD);
+            }
+
+            if (rightOdo != null){
+                horizontalOdo.setDirection(DcMotor.Direction.FORWARD);
             }
 
             stop();
@@ -123,6 +144,11 @@ public class YellowBot implements OdoBot {
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
+        if (leftOdo != null && rightOdo != null && horizontalOdo != null){
+            leftOdo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightOdo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            horizontalOdo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
     }
 
     public void stop() {
@@ -136,28 +162,34 @@ public class YellowBot implements OdoBot {
         }
     }
 
-    public double getOdemeteReading(boolean left) {
+    public double getOdometerReading(boolean left) {
         if (left) {
-            return frontLeft.getCurrentPosition();
+            return leftOdo.getCurrentPosition();
         } else {
-            return frontRight.getCurrentPosition();
+            return rightOdo.getCurrentPosition();
         }
-
     }
 
     public double getLeftOdometer() {
-        return frontLeft.getCurrentPosition();
+        return leftOdo.getCurrentPosition();
 
     }
 
     public double getRightOdometer() {
-        return frontRight.getCurrentPosition();
-
+        return -rightOdo.getCurrentPosition();
     }
 
     public double getHorizontalOdometer() {
-        return backLeft.getCurrentPosition();
+        return  horizontalOdo.getCurrentPosition();
 
+    }
+
+    public double getLeftVelocity() {
+        return frontLeft.getVelocity();
+    }
+
+    public double getRightVelocity() {
+        return frontRight.getVelocity();
     }
 
     public void move(double drive, double turn) {
@@ -190,141 +222,6 @@ public class YellowBot implements OdoBot {
         }
     }
 
-    public void moveTo(double leftspeed, double rightspeed, double inches) {
-        if (frontLeft != null && frontRight != null && backLeft != null && backRight != null) {
-            double rightPower = rightspeed;
-            double leftPower = leftspeed;
-            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-            boolean forward = inches > 0;
-
-            //reverse speed
-            if (forward) {
-                rightPower = -rightPower;
-                leftPower = -leftPower;
-            }
-
-            double distance = inches * COUNTS_PER_INCH_REV;
-
-            double startingPoint = this.getLeftOdometer();
-
-            double leftTarget = this.getLeftOdometer() + distance;
-
-            double cutOff = ROBOT_LENGTH_Y * COUNTS_PER_INCH_REV;
-            //at top speed the slow-down should start at a 23% greater distance than at half speed.
-            cutOff = cutOff + ROBOT_LENGTH_Y * 0.5 * COUNTS_PER_INCH_REV;
-
-            double slowdownDistance = Math.abs(distance) - cutOff;
-
-            double slowdownMark = 0;
-
-            if (slowdownDistance < 0) {
-                slowdownMark = distance * 0.1;
-                if (forward) {
-                    rightPower = -CALIB_SPEED;
-                } else {
-                    rightPower = CALIB_SPEED;
-                }
-            } else {
-                if (forward) {
-                    slowdownMark = startingPoint + slowdownDistance;
-                } else {
-                    slowdownMark = startingPoint - slowdownDistance;
-                }
-            }
-
-
-            double minSpeed = 0.2;
-
-            double speedDropStep = 0.1;
-
-
-            double originalRight = rightPower;
-
-
-            double speedIncrement = 0.05;
-            if (forward) {
-                speedIncrement = -speedIncrement;
-            }
-            leftPower = 0;
-            rightPower = 0;
-
-            double realSpeedLeft = leftPower;
-            double realSpeedRight = rightPower;
-
-            this.frontLeft.setPower(leftPower);
-            this.frontRight.setPower(rightPower);
-            this.backLeft.setPower(leftPower);
-            this.backRight.setPower(rightPower);
-
-            boolean stop = false;
-            int step = 0;
-            while (!stop && owner.opModeIsActive()) {
-                double leftreading = this.getLeftOdometer();
-                stop = (forward && leftreading >= leftTarget) ||
-                        (forward == false && leftreading <= leftTarget);
-                if (stop) {
-                    break;
-                }
-                if ((forward && leftreading >= slowdownMark) ||
-                        (forward == false && leftreading <= slowdownMark)) {
-                    step++;
-
-                    if (forward) {
-                        rightPower = realSpeedRight + speedDropStep * step;
-                        leftPower = realSpeedLeft + speedDropStep * step;
-                        if (rightPower >= -minSpeed || leftPower >= -minSpeed) {
-                            leftPower = -minSpeed;
-                            rightPower = -minSpeed;
-                        }
-                    } else {
-                        rightPower = realSpeedRight - speedDropStep * step;
-                        leftPower = realSpeedLeft - speedDropStep * step;
-                        if (rightPower <= minSpeed || leftPower <= minSpeed) {
-                            leftPower = minSpeed;
-                            rightPower = minSpeed;
-                        }
-                    }
-                } else {
-                    //acceleration
-                    if ((forward && rightPower + speedIncrement >= originalRight) ||
-                            (!forward && rightPower + speedIncrement <= originalRight)) {
-                        rightPower = rightPower + speedIncrement;
-                        leftPower = rightPower;
-                        realSpeedLeft = leftPower;
-                        realSpeedRight = rightPower;
-                    }
-                }
-
-                this.frontLeft.setPower(leftPower);
-                this.frontRight.setPower(rightPower);
-                this.backLeft.setPower(leftPower);
-                this.backRight.setPower(rightPower);
-            }
-
-            this.stop();
-        }
-    }
-
-
-//    public MotorReductionBot getMotorAmperage(){
-//        ExpansionHubMotor rb = (ExpansionHubMotor) hwMap.dcMotor.get(RIGHT_BACK);
-//        ExpansionHubMotor rf = (ExpansionHubMotor) hwMap.dcMotor.get(RIGHT_FRONT);
-//        ExpansionHubMotor lb = (ExpansionHubMotor) hwMap.dcMotor.get(LEFT_BACK);
-//        ExpansionHubMotor lf = (ExpansionHubMotor) hwMap.dcMotor.get(LEFT_FRONT);
-//
-//        MotorReductionBot sample = new MotorReductionBot();
-//        if (rb != null && rf != null && lb != null && lf != null) {
-//            sample.setRB(rb.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-//            sample.setRF(rf.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-//            sample.setLB(lb.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-//            sample.setLF(lf.getCurrentDraw(ExpansionHubEx.CurrentDrawUnits.AMPS));
-//        }
-//        return sample;
-//    }
 
     public MotorReductionBot getSuggestedMR(MotorReductionBot amperage) {
 
@@ -437,10 +334,10 @@ public class YellowBot implements OdoBot {
                     }
                 }
 
-                this.frontLeft.setPower(leftPower * mr.getLF());
-                this.frontRight.setPower(rightPower * mr.getRF());
-                this.backLeft.setPower(leftPower * mr.getLB());
-                this.backRight.setPower(rightPower * mr.getRB());
+                this.frontLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLF());
+                this.frontRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRF());
+                this.backLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLB());
+                this.backRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRB());
 
             }
 
@@ -563,11 +460,12 @@ public class YellowBot implements OdoBot {
                     }
                 }
 
-                this.frontLeft.setPower(leftPower * mr.getLF());
-                this.frontRight.setPower(rightPower * mr.getRF());
-                this.backLeft.setPower(leftPower * mr.getLB());
-                this.backRight.setPower(rightPower * mr.getRB());
+                this.frontLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLF());
+                this.frontRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRF());
+                this.backLeft.setVelocity(MAX_VELOCITY * leftPower * mr.getLB());
+                this.backRight.setVelocity(MAX_VELOCITY * rightPower * mr.getRB());
 
+                stats.updateVelocity(this.getLeftVelocity(), this.getRightVelocity());
             }
             stats.stopSlowdownTimer(this.getLeftOdometer());
 
@@ -743,10 +641,10 @@ public class YellowBot implements OdoBot {
                     }
                 }
 
-                this.frontLeft.setPower(realSpeedLF * mr.getLF());
-                this.frontRight.setPower(realSpeedRF * mr.getRF());
-                this.backLeft.setPower(realSpeedLB * mr.getLB());
-                this.backRight.setPower(realSpeedRB * mr.getRB());
+                this.frontLeft.setVelocity(MAX_VELOCITY *realSpeedLF * mr.getLF());
+                this.frontRight.setVelocity(MAX_VELOCITY *realSpeedRF * mr.getRF());
+                this.backLeft.setVelocity(MAX_VELOCITY *realSpeedLB * mr.getLB());
+                this.backRight.setVelocity(MAX_VELOCITY *realSpeedRB * mr.getRB());
             }
 
             if (profile.shouldStop()) {
@@ -848,10 +746,10 @@ public class YellowBot implements OdoBot {
                         }
                     }
                 }
-                this.frontLeft.setPower(leftPower);
-                this.frontRight.setPower(rightPower);
-                this.backLeft.setPower(leftPower);
-                this.backRight.setPower(rightPower);
+                this.frontLeft.setVelocity(MAX_VELOCITY *leftPower);
+                this.frontRight.setVelocity(MAX_VELOCITY *rightPower);
+                this.backLeft.setVelocity(MAX_VELOCITY *leftPower);
+                this.backRight.setVelocity(MAX_VELOCITY *rightPower);
             }
 
             if (profile.shouldStop()) {
@@ -944,10 +842,10 @@ public class YellowBot implements OdoBot {
                     }
                 }
             }
-            this.frontLeft.setPower(leftPower);
-            this.frontRight.setPower(rightPower);
-            this.backLeft.setPower(leftPower);
-            this.backRight.setPower(rightPower);
+            this.frontLeft.setVelocity(MAX_VELOCITY *leftPower);
+            this.frontRight.setVelocity(MAX_VELOCITY *rightPower);
+            this.backLeft.setVelocity(MAX_VELOCITY *leftPower);
+            this.backRight.setVelocity(MAX_VELOCITY *rightPower);
         }
 
         this.stop();
@@ -1149,15 +1047,15 @@ public class YellowBot implements OdoBot {
             }
 
             if (left) {
-                this.backLeft.setPower(-speed * calib.getLB());
-                this.backRight.setPower(speed * calib.getRB());
-                this.frontLeft.setPower(speed * calib.getLF());
-                this.frontRight.setPower(-speed * calib.getRF());
+                this.backLeft.setVelocity(MAX_VELOCITY *-speed * calib.getLB());
+                this.backRight.setVelocity(MAX_VELOCITY *speed * calib.getRB());
+                this.frontLeft.setVelocity(MAX_VELOCITY *speed * calib.getLF());
+                this.frontRight.setVelocity(MAX_VELOCITY *-speed * calib.getRF());
             } else {
-                this.backLeft.setPower(speed * calib.getLB());
-                this.backRight.setPower(-speed * calib.getRB());
-                this.frontLeft.setPower(-speed * calib.getLF());
-                this.frontRight.setPower(speed * calib.getRF());
+                this.backLeft.setVelocity(MAX_VELOCITY *speed * calib.getLB());
+                this.backRight.setVelocity(MAX_VELOCITY *-speed * calib.getRB());
+                this.frontLeft.setVelocity(MAX_VELOCITY *-speed * calib.getLF());
+                this.frontRight.setVelocity(MAX_VELOCITY *speed * calib.getRF());
             }
         }
 
@@ -1261,17 +1159,17 @@ public class YellowBot implements OdoBot {
 
 
                 if (!leftAxis) {
-                    this.frontLeft.setPower(power * calib.getLF());
-                    this.backRight.setPower(power * calib.getRB());
+                    this.frontLeft.setVelocity(MAX_VELOCITY *power * calib.getLF());
+                    this.backRight.setVelocity(MAX_VELOCITY *power * calib.getRB());
 
-                    this.backLeft.setPower(lowSpeed * calib.getLB());
-                    this.frontRight.setPower(lowSpeed * calib.getRF());
+                    this.backLeft.setVelocity(MAX_VELOCITY *lowSpeed * calib.getLB());
+                    this.frontRight.setVelocity(MAX_VELOCITY *lowSpeed * calib.getRF());
                 } else {
-                    this.backLeft.setPower(power * calib.getLB());
-                    this.frontRight.setPower(power * calib.getRF());
+                    this.backLeft.setVelocity(MAX_VELOCITY *power * calib.getLB());
+                    this.frontRight.setVelocity(MAX_VELOCITY *power * calib.getRF());
 
-                    this.frontLeft.setPower(lowSpeed * calib.getLF());
-                    this.backRight.setPower(lowSpeed * calib.getRB());
+                    this.frontLeft.setVelocity(MAX_VELOCITY *lowSpeed * calib.getLF());
+                    this.backRight.setVelocity(MAX_VELOCITY *lowSpeed * calib.getRB());
                 }
             }
         }
@@ -1329,17 +1227,17 @@ public class YellowBot implements OdoBot {
 
 
                 if (!leftAxis) {
-                    this.frontLeft.setPower(power * calib.getLF());
-                    this.backRight.setPower(power * calib.getRB());
+                    this.frontLeft.setVelocity(MAX_VELOCITY *power * calib.getLF());
+                    this.backRight.setVelocity(MAX_VELOCITY *power * calib.getRB());
 
-                    this.backLeft.setPower(lowSpeed * calib.getLB());
-                    this.frontRight.setPower(lowSpeed * calib.getRF());
+                    this.backLeft.setVelocity(MAX_VELOCITY *lowSpeed * calib.getLB());
+                    this.frontRight.setVelocity(MAX_VELOCITY *lowSpeed * calib.getRF());
                 } else {
-                    this.backLeft.setPower(power * calib.getLB());
-                    this.frontRight.setPower(power * calib.getRF());
+                    this.backLeft.setVelocity(MAX_VELOCITY *power * calib.getLB());
+                    this.frontRight.setVelocity(MAX_VELOCITY *power * calib.getRF());
 
-                    this.frontLeft.setPower(lowSpeed * calib.getLF());
-                    this.backRight.setPower(lowSpeed * calib.getRB());
+                    this.frontLeft.setVelocity(MAX_VELOCITY *lowSpeed * calib.getLF());
+                    this.backRight.setVelocity(MAX_VELOCITY *lowSpeed * calib.getRB());
                 }
             }
         }

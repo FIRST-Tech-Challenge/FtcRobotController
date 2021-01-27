@@ -1111,14 +1111,18 @@ public class MasterCalib extends LinearOpMode {
 
 
         //separation
-        separation = 2*90 * ((leftLong - rightLong)/actualAngle)/(Math.PI*bot.COUNTS_PER_INCH_REV);
+        double ticksPerDegree = (leftLong - rightLong)/actualAngle;
+        double circumferance = 180 * ticksPerDegree;
+        double circumferanceInches = circumferance / bot.COUNTS_PER_INCH_REV;
+        separation = Math.abs(circumferanceInches / Math.PI);
+//        separation = 2*90 * ((leftLong - rightLong)/actualAngle)/(Math.PI*bot.COUNTS_PER_INCH_REV);
 
         BotCalibConfig config = bot.getCalibConfig();
         if (config == null){
             config = new BotCalibConfig();
         }
 
-        config.setWheelBaseSeparation(Math.abs(separation));
+        config.setWheelBaseSeparation(separation);
         config.setHorizontalTicksDegreeLeft(horizontalTicksDegreeLeft);
         config.setHorizontalTicksDegreeRight(horizontalTicksDegreeRight);
         ReadWriteFile.writeFile(bot.getCalibConfigFile(), config.serialize());
@@ -1134,6 +1138,10 @@ public class MasterCalib extends LinearOpMode {
         telemetry.addData("Spin","Calibration complete");
 
         telemetry.addData("separation", separation);
+        telemetry.addData("rightLong", rightLong);
+        telemetry.addData("leftLong", leftLong);
+        telemetry.addData("ticksPerDegree", ticksPerDegree);
+        telemetry.addData("circumferanceInches", circumferanceInches);
         telemetry.addData("horizontalTicksDegree Left", horizontalTicksDegreeLeft);
         telemetry.addData("horizontalTicksDegree Right", horizontalTicksDegreeRight);
         telemetry.addData("actualAngle Left", actualAngle);
@@ -1866,6 +1874,7 @@ public class MasterCalib extends LinearOpMode {
         telemetry.addData("   ", "Speed: Top %.2f, Average: %.2f", mr.getStats().getFullSpeed(), mr.getStats().getAverageSpeed());
         telemetry.addData("   ", "Dist: T: %.2f, A: %.2f, S: %.2f, Delta: %.2f", mr.getStats().getTotalDistance(), mr.getStats().getAccelerateDistance(), mr.getStats().getSlowDownDistance(), mr.getStats().getSlowDownDelta());
         telemetry.addData("   ", "Time: T: %.2f, A: %.2f, S: %.2f", mr.getStats().getTotalTime(), mr.getStats().getAccelerateTime(), mr.getStats().getSlowDownTime());
+        telemetry.addData("   ", "Velocity: L: %.2f, R: %.2f", mr.getStats().getMaxVelocityLeft(), mr.getStats().getMaxVelocityRight());
         telemetry.addData("*  ", "--------------------");
         telemetry.addData("*  ", "Motor Amps (%d samples", mr.getStats().getAmpSampleCount());
         telemetry.addData("*  ","%.2f||--  --||%.2f", mr.getStats().getMotorAmpsAverages().getLF(),  mr.getStats().getMotorAmpsAverages().getRF());

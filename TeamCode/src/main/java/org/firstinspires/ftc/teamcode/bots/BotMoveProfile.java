@@ -721,4 +721,12 @@ public class BotMoveProfile {
     public boolean shouldStop(){
         return !isContinuous() || isDryRun();
     }
+
+    public double getTopVelocity() {
+        return this.getTopSpeed() * YellowBot.MAX_VELOCITY;
+    }
+
+    public double getLowVelocity() {
+        return getLowSpeed() * YellowBot.MAX_VELOCITY;
+    }
 }
