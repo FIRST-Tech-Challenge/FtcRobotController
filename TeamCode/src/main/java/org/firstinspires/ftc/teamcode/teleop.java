@@ -137,16 +137,16 @@ public class teleop extends OpMode {
         //intakePower = -gamepad2.left_stick_y ;
 
         // Send calculated power to wheels
-        leftFoward.setPower(-leftFowardPower);
-        rightReverse.setPower(-rightReversePower);
-        leftReverse.setPower(-leftReversePower);
-        rightFoward.setPower(-rightFowardPower);
+        leftFoward.setPower(leftFowardPower);
+        rightReverse.setPower(rightReversePower);
+        leftReverse.setPower(leftReversePower);
+        rightFoward.setPower(rightFowardPower);
         //intake.setPower(intakePower);
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Motors",
-                "-leftForward (%.2f), -rightReverse (%.2f), -leftReverse (%.2f), -rightForward (%.2f)",
+                "leftForward (%.2f), rightReverse (%.2f), leftReverse (%.2f), rightForward (%.2f)",
                 leftFowardPower, rightReversePower, leftReversePower, rightFowardPower);   //intakePower);
     }
 
