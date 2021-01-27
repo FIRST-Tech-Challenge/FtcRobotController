@@ -16,7 +16,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 //    double largeSpinnerIncrement = 0.05;
 //    double smallSpinnerIncrement = 0.005;
     boolean slowMode = false;
-    float slowModeMultiplier = 0.25f;
+    float slowModeMultiplier = 0.5f;
 
 
 
@@ -31,19 +31,18 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
         // region slowmode {...}
         slowMode = gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.bumper_left);
 
+        // Slowmode when shooter running
         if (shooter.getPower() > 0) {
             slowMode = true;
         }
         // endregion
 
         omniDrive.dpadMove(gamepad1, slowMode ? omniDrivePower * slowModeMultiplier : omniDrivePower, false);
-        //region shooter
 
         this.setShooterEnabled(gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.b));
-
         // endregion
 
-        if (gamepad1.b) {
+        if (gamepad1.b && this.canShoot()) {
             escalator.setPower(1);
         } else {
             escalator.setPower(0);
@@ -51,6 +50,8 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
         if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.a)) {
             collector.setPower(1);
+        } else if (gamepad1.start) {
+            collector.setPower(-1);
         } else {
             collector.setPower(0);
         }

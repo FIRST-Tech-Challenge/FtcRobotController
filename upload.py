@@ -16,7 +16,7 @@ def uploadJavaFile(path: str):
     if path.endswith(".java"):
         files = {'file': (os.path.basename(path), open(path, 'rb'), 'application/octet-stream')}
         return requests.post(CONTROL_HUB_UPLOAD_URL, files=files)
-        
+
 
 async def build():
     async with websockets.connect(CONTROL_HUB_WSURL) as ws:
