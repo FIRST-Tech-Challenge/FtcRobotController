@@ -222,7 +222,7 @@ public class BlueRight extends OpMode {
                 break;
             case 111:
                 //Drive forward onto shot line
-                robot.linearDrive(.5,-5);
+                robot.linearDrive(.5,-7);
                 stateMachineFlow++;
                 break;
                 /*
@@ -286,7 +286,7 @@ public class BlueRight extends OpMode {
                 break;
             case 156:
                 //Move forward onto the shot line
-                robot.linearDrive(.5,-5);
+                robot.linearDrive(.5,-7);
                 stateMachineFlow++;
                 break;
                 /*
@@ -300,7 +300,7 @@ public class BlueRight extends OpMode {
              **************************/
             case 200:
                 //Drive forward to zone B
-                robot.linearDrive(.5,-58);
+                robot.linearDrive(.5,-60);
                 stateMachineFlow++;
                 break;
             case 201:
@@ -327,7 +327,7 @@ public class BlueRight extends OpMode {
                 break;
             case 203:
                 //Back up behind shot line
-                robot.linearDrive(.5,33);
+                robot.linearDrive(.5,35);
                 stateMachineFlow++;
                 break;
             case 204:
@@ -403,7 +403,7 @@ public class BlueRight extends OpMode {
                 break;
             case 210:
                 //Drive forward onto shot line
-                robot.linearDrive(.5,-5);
+                robot.linearDrive(.5,-7);
                 stateMachineFlow++;
                 break;
                 /*
@@ -467,7 +467,7 @@ public class BlueRight extends OpMode {
                 break;
             case 256:
                 //Move forward onto the shot line
-                robot.linearDrive(.5,-5);
+                robot.linearDrive(.5,-7);
                 stateMachineFlow++;
                 break;
                 /*
@@ -588,7 +588,7 @@ public class BlueRight extends OpMode {
                 break;
             case 311:
                 //Drive forward onto shot line
-                robot.linearDrive(.5,-5);
+                robot.linearDrive(.5,-7);
                 stateMachineFlow++;
                 break;
                 /*
@@ -652,7 +652,7 @@ public class BlueRight extends OpMode {
                 break;
             case 356:
                 //Move forward onto the shot line
-                robot.linearDrive(.5,-5);
+                robot.linearDrive(.5,-7);
                 stateMachineFlow++;
                 break;
                 /*
