@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
 public class UltimateBot extends YellowBot {
-    public DcMotor wobbleSwing = null;
+//    public DcMotor wobbleSwing = null;
     private Servo wobbleClaw1 = null;
     private Servo wobbleClaw2 = null;
     private Servo ringCamera = null;
@@ -28,7 +28,7 @@ public class UltimateBot extends YellowBot {
     private static int SWING_GROUND_POS = 210;
     private static int SWING_GROUND_POS_TELEOP = 228;
     private static int AUTO_DROP = 190;
-    private static int SWING_LIFT_UP_POS = 120;
+    private static int SWING_LIFT_UP_POS = 100;
     private static int SWING_LIFT_WALL = 90;
     private static int STRAIGHT_UP = 70;
     private static int AUTO_WAY_BACK = -38;
@@ -102,15 +102,15 @@ public class UltimateBot extends YellowBot {
             throw new Exception("Issues with shooterServo. Check the controller config", ex);
         }
 
-        try {
-            wobbleSwing = hwMap.get(DcMotor.class, "swing");
-            wobbleSwing.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            wobbleSwing.setDirection(DcMotor.Direction.FORWARD);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            wobbleSwing.setPower(0);
-        } catch (Exception ex) {
-            throw new Exception("Issues with wobbleSwing. Check the controller config", ex);
-        }
+//        try {
+//            wobbleSwing = hwMap.get(DcMotor.class, "swing");
+//            wobbleSwing.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            wobbleSwing.setDirection(DcMotor.Direction.FORWARD);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            wobbleSwing.setPower(0);
+//        } catch (Exception ex) {
+//            throw new Exception("Issues with wobbleSwing. Check the controller config", ex);
+//        }
 
         telemetry.addData("Init", "Ultimate is ready");
     }
@@ -124,12 +124,12 @@ public class UltimateBot extends YellowBot {
     }
 
 
-    public int moveWobbleSwing(double speed) {
-        double power = Range.clip(speed, -1.0, 1.0);
-        wobbleSwing.setPower(power);
-        int position = wobbleSwing.getCurrentPosition();
-        return position;
-    }
+//    public int moveWobbleSwing(double speed) {
+//        double power = Range.clip(speed, -1.0, 1.0);
+//        wobbleSwing.setPower(power);
+//        int position = wobbleSwing.getCurrentPosition();
+//        return position;
+//    }
 
 
     public void moveRingCamera(double position) {
@@ -173,6 +173,13 @@ public class UltimateBot extends YellowBot {
     public void shooterpeg() {
         if (shooter != null) {
             shooter.setPower(0.76);
+        }
+    }
+
+    @BotAction(displayName = "Move B Shooter", defaultReturn = "")
+    public void shooterB() {
+        if (shooter != null) {
+            shooter.setPower(0.78);
         }
     }
 
@@ -236,187 +243,187 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Wobble Little Up", defaultReturn = "")
     public void wobbleLittleUp() {
-        if (wobbleSwing != null) {
-            ElapsedTime runtime = new ElapsedTime();
-            runtime.reset();
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            int upPosition = wobbleSwing.getCurrentPosition() - 35;
-            wobbleSwing.setTargetPosition(upPosition);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.95);
-            boolean stop = false;
-            while (!stop) {
-                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT_SHORTER);
-            }
-            wobbleSwing.setPower(0);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+//        if (wobbleSwing != null) {
+//            ElapsedTime runtime = new ElapsedTime();
+//            runtime.reset();
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            int upPosition = wobbleSwing.getCurrentPosition() - 35;
+//            wobbleSwing.setTargetPosition(upPosition);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            wobbleSwing.setPower(0.95);
+//            boolean stop = false;
+//            while (!stop) {
+//                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT_SHORTER);
+//            }
+//            wobbleSwing.setPower(0);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
     }
 
 
     @BotAction(displayName = "Wobble Little Down", defaultReturn = "")
     public void wobbleLittleDown() {
-        if (wobbleSwing != null) {
-            ElapsedTime runtime = new ElapsedTime();
-            runtime.reset();
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            int downPosition = wobbleSwing.getCurrentPosition() + 40;
-            wobbleSwing.setTargetPosition(downPosition);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.95);
-            boolean stop = false;
-            while (!stop) {
-                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT_SHORTER);
-            }
-            wobbleSwing.setPower(0);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+//        if (wobbleSwing != null) {
+//            ElapsedTime runtime = new ElapsedTime();
+//            runtime.reset();
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            int downPosition = wobbleSwing.getCurrentPosition() + 40;
+//            wobbleSwing.setTargetPosition(downPosition);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            wobbleSwing.setPower(0.95);
+//            boolean stop = false;
+//            while (!stop) {
+//                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT_SHORTER);
+//            }
+//            wobbleSwing.setPower(0);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
     }
 
     @BotAction(displayName = "Init WobbleSwing", defaultReturn = "")
     public void backWobbleSwing() {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        if (wobbleSwing != null) {
-            if (this.getSwingPosition() == SwingPosition.Init) {
-                return;
-            }
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setTargetPosition(0);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.6);
-            boolean stop = false;
-            while (!stop) {
-                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT);
-            }
-            this.swingPosition = SwingPosition.Init;
-            wobbleSwing.setPower(0);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+//        if (wobbleSwing != null) {
+//            if (this.getSwingPosition() == SwingPosition.Init) {
+//                return;
+//            }
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            wobbleSwing.setTargetPosition(0);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            wobbleSwing.setPower(0.6);
+//            boolean stop = false;
+//            while (!stop) {
+//                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT);
+//            }
+//            this.swingPosition = SwingPosition.Init;
+//            wobbleSwing.setPower(0);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
     }
 
     @BotAction(displayName = "Wobble Way Back", defaultReturn = "")
     public void wobbleWayBack() {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        if (wobbleSwing != null) {
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setTargetPosition(AUTO_WAY_BACK);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.8);
-            boolean stop = false;
-            while (!stop) {
-                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT_LONGER);
-            }
-            wobbleSwing.setPower(0);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+//        if (wobbleSwing != null) {
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            wobbleSwing.setTargetPosition(AUTO_WAY_BACK);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            wobbleSwing.setPower(0.8);
+//            boolean stop = false;
+//            while (!stop) {
+//                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT_LONGER);
+//            }
+//            wobbleSwing.setPower(0);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
     }
 
     @BotAction(displayName = "Wobble Ground Teleop", defaultReturn = "")
     public void groundWobbleTeleop() {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        if (wobbleSwing != null) {
-            if (this.getSwingPosition() == SwingPosition.Ground) {
-                return;
-            }
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            int groundPosition = wobbleSwing.getCurrentPosition() + 175;
-            wobbleSwing.setTargetPosition(groundPosition);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.6);
-            boolean stop = false;
-            while (!stop) {
-                int position = wobbleSwing.getCurrentPosition();
-                stop = position >= SWING_GROUND_POS_TELEOP || !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT);
-            }
-            this.swingPosition = SwingPosition.Ground;
-            wobbleSwing.setPower(0);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+//        if (wobbleSwing != null) {
+//            if (this.getSwingPosition() == SwingPosition.Ground) {
+//                return;
+//            }
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            int groundPosition = wobbleSwing.getCurrentPosition() + 175;
+//            wobbleSwing.setTargetPosition(groundPosition);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            wobbleSwing.setPower(0.6);
+//            boolean stop = false;
+//            while (!stop) {
+//                int position = wobbleSwing.getCurrentPosition();
+//                stop = position >= SWING_GROUND_POS_TELEOP || !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT);
+//            }
+//            this.swingPosition = SwingPosition.Ground;
+//            wobbleSwing.setPower(0);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
     }
 
     @BotAction(displayName = "Place Wobble", defaultReturn = "")
     public void forwardWobbleSwing() {
         ElapsedTime runtime = new ElapsedTime();
         runtime.reset();
-        if (wobbleSwing != null) {
-            if (this.getSwingPosition() == SwingPosition.Ground) {
-                return;
-            }
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setTargetPosition(SWING_GROUND_POS);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.6);
-            boolean stop = false;
-            while (!stop) {
-                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT);
-            }
-            this.swingPosition = SwingPosition.Ground;
-            wobbleSwing.setPower(0);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            wobbleSwing.setPower(-0.01);
-        }
+//        if (wobbleSwing != null) {
+//            if (this.getSwingPosition() == SwingPosition.Ground) {
+//                return;
+//            }
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            wobbleSwing.setTargetPosition(SWING_GROUND_POS);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            wobbleSwing.setPower(0.6);
+//            boolean stop = false;
+//            while (!stop) {
+//                stop = !wobbleSwing.isBusy() || (runtime.milliseconds() > TIMEOUT);
+//            }
+//            this.swingPosition = SwingPosition.Ground;
+//            wobbleSwing.setPower(0);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            wobbleSwing.setPower(-0.01);
+//        }
     }
 
     @BotAction(displayName = "Auto Wobble Drop", defaultReturn = "")
     public void wobbleAutoDrop() {
-        if (wobbleSwing != null) {
-            if (this.getSwingPosition() == SwingPosition.Ground) {
-                return;
-            }
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setTargetPosition(AUTO_DROP);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.6);
-            boolean stop = false;
-            while (!stop) {
-                stop = !wobbleSwing.isBusy();
-            }
-            this.swingPosition = SwingPosition.Ground;
-            wobbleSwing.setPower(0);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+//        if (wobbleSwing != null) {
+//            if (this.getSwingPosition() == SwingPosition.Ground) {
+//                return;
+//            }
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            wobbleSwing.setTargetPosition(AUTO_DROP);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            wobbleSwing.setPower(0.6);
+//            boolean stop = false;
+//            while (!stop) {
+//                stop = !wobbleSwing.isBusy();
+//            }
+//            this.swingPosition = SwingPosition.Ground;
+//            wobbleSwing.setPower(0);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
     }
 
     @BotAction(displayName = "Lift Wobble Up", defaultReturn = "")
     public void liftAndHoldWobbleSwing() {
-        if (wobbleSwing != null) {
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setTargetPosition(SWING_LIFT_UP_POS);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.7);
-            boolean stop = false;
-            while (!stop) {
-                stop = !wobbleSwing.isBusy();
-            }
-            this.swingPosition = SwingPosition.LiftUp;
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setPower(0);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            wobbleSwing.setPower(-0.015);
-        }
+//        if (wobbleSwing != null) {
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            wobbleSwing.setTargetPosition(SWING_LIFT_UP_POS);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            wobbleSwing.setPower(0.7);
+//            boolean stop = false;
+//            while (!stop) {
+//                stop = !wobbleSwing.isBusy();
+//            }
+//            this.swingPosition = SwingPosition.LiftUp;
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            wobbleSwing.setPower(0);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            wobbleSwing.setPower(-0.015);
+//        }
     }
 
     @BotAction(displayName = "Lift Wobble Wall", defaultReturn = "")
     public void liftWobbleWall() {
-        if (wobbleSwing != null) {
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            int wallPosition = wobbleSwing.getCurrentPosition() - 160;
-            wobbleSwing.setTargetPosition(wallPosition);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            wobbleSwing.setPower(0.7);
-            boolean stop = false;
-            while (!stop) {
-                stop = !wobbleSwing.isBusy();
-            }
-            this.swingPosition = SwingPosition.LiftUp;
-            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            wobbleSwing.setPower(0);
-            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            wobbleSwing.setPower(-0.015);
-        }
+//        if (wobbleSwing != null) {
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            int wallPosition = wobbleSwing.getCurrentPosition() - 160;
+//            wobbleSwing.setTargetPosition(wallPosition);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            wobbleSwing.setPower(0.7);
+//            boolean stop = false;
+//            while (!stop) {
+//                stop = !wobbleSwing.isBusy();
+//            }
+//            this.swingPosition = SwingPosition.LiftUp;
+//            wobbleSwing.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            wobbleSwing.setPower(0);
+//            wobbleSwing.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            wobbleSwing.setPower(-0.015);
+//        }
     }
 
 

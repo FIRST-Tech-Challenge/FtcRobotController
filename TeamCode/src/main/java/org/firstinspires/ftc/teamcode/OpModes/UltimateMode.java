@@ -163,15 +163,13 @@ public class UltimateMode extends LinearOpMode {
                     robot.stopintake();
                 }
 
-                if (!changedintake && gamepad1.b){
+                if (gamepad1.b && buttonpressable){
                     startdelay = runtime.milliseconds();
                     intakeReverse = !intakeReverse;
-                    if (intakeReverse){
-                        robot.intakeReverse();
-                    }
-                    else{
-                        robot.stopintake();
-                    }
+                }
+
+                if (intakeReverse){
+                    robot.intakeReverse();
                 }
 
                 // move shooter
