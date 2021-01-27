@@ -156,19 +156,10 @@ public class EncoderDrive {
         int BL_direction = (BL_speed > 0) ? 1 : (BL_speed < 0) ? -1 : 0;
         int BR_direction = (BR_speed > 0) ? 1 : (BR_speed < 0) ? -1 : 0;
 
-        if (direction == OmniDrive.Direction.LEFT || direction == OmniDrive.Direction.RIGHT) {
-            FL_targetPosition = omniDrive.frontLeft.getCurrentPosition() + FL_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
-            FR_targetPosition = omniDrive.frontRight.getCurrentPosition() + FR_direction * (int)(robotHardware.omniDrive.getCountsPerInch()  * distance);
-            BL_targetPosition = omniDrive.backLeft.getCurrentPosition() + BL_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
-            BR_targetPosition = omniDrive.backRight.getCurrentPosition() + BR_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
-        } else {
-            FL_targetPosition = omniDrive.frontLeft.getCurrentPosition() + FL_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
-            FR_targetPosition = omniDrive.frontRight.getCurrentPosition() + FR_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
-            BL_targetPosition = omniDrive.backLeft.getCurrentPosition() + BL_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
-            BR_targetPosition = omniDrive.backRight.getCurrentPosition() + BR_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
-        }
-
-
+        FL_targetPosition = omniDrive.frontLeft.getCurrentPosition() + FL_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
+        FR_targetPosition = omniDrive.frontRight.getCurrentPosition() + FR_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
+        BL_targetPosition = omniDrive.backLeft.getCurrentPosition() + BL_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
+        BR_targetPosition = omniDrive.backRight.getCurrentPosition() + BR_direction * (int)(robotHardware.omniDrive.getCountsPerInch() * distance);
 
         omniDrive.frontLeft.setTargetPosition(FL_targetPosition);
         omniDrive.frontRight.setTargetPosition(FR_targetPosition);
@@ -267,6 +258,8 @@ public class EncoderDrive {
         int BL_direction = (BL_speed > 0) ? 1 : (BL_speed < 0) ? -1 : 0;
         int BR_direction = (BR_speed > 0) ? 1 : (BR_speed < 0) ? -1 : 0;
 
+
+        // encoders on right side seem to be reversed
         FL_targetPosition = omniDrive.frontLeft.getCurrentPosition() + FL_direction * counts;
         FR_targetPosition = omniDrive.frontRight.getCurrentPosition() + FR_direction * counts;
         BL_targetPosition = omniDrive.backLeft.getCurrentPosition() + BL_direction * counts;
@@ -293,6 +286,12 @@ public class EncoderDrive {
                 omniDrive.frontRight.setPower(FR_speed);
                 omniDrive.backLeft.setPower(BL_speed);
                 omniDrive.backRight.setPower(BR_speed);
+
+                hardware.telemetry.addData("FL speed", FL_speed);
+                hardware.telemetry.addData("FR speed", FR_speed);
+                hardware.telemetry.addData("BL speed", BL_speed);
+                hardware.telemetry.addData("BR speed", BR_speed);
+
 
                 hardware.telemetry.addData("FL", String.format("%d -> %d", omniDrive.frontLeft.getCurrentPosition(), omniDrive.frontLeft.getTargetPosition()));
                 hardware.telemetry.addData("FR", String.format("%d -> %d", omniDrive.frontRight.getCurrentPosition(), omniDrive.frontRight.getTargetPosition()));

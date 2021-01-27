@@ -11,15 +11,14 @@ import org.firstinspires.ftc.teamcode.playmaker.Localizer;
 @TeleOp(name = "Ultimate Goal TeleOp")
 public class UltimateGoalHybridOp extends UltimateGoalHardware implements HybridOp {
 
-    float omniDrivePower = 0.5f;
+    float omniDrivePower = 1f;
 //    double spinnerPower = 1;
 //    double largeSpinnerIncrement = 0.05;
 //    double smallSpinnerIncrement = 0.005;
     boolean slowMode = false;
     float slowModeMultiplier = 0.25f;
 
-    long prevTime = System.currentTimeMillis();
-    int prevPos = 0;
+
 
     @Override
     public void autonomous_loop() {
@@ -40,11 +39,8 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
         omniDrive.dpadMove(gamepad1, slowMode ? omniDrivePower * slowModeMultiplier : omniDrivePower, false);
         //region shooter
 
-        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.b)) {
-            shooter.setPower(SHOOTER_POWER);
-        } else {
-            shooter.setPower(0);
-        }
+        this.setShooterEnabled(gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.b));
+
         // endregion
 
         if (gamepad1.b) {
@@ -89,14 +85,6 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
     @Override
     public void run_loop() {
-        long current_time = System.currentTimeMillis();
-        int current_pos = shooter.getCurrentPosition();
-        int deltaPos = current_pos - prevPos;
-        long deltaTime = current_time - prevTime;
-        prevPos = current_pos;
-        prevTime = current_time;
-        double rpm = (deltaPos/28.0) / (deltaTime) * (1000*60);
-        telemetry.addData("RPM", rpm);
         telemetry.addData("FL", frontLeft.getCurrentPosition());
         telemetry.addData("FR", frontRight.getCurrentPosition());
         telemetry.addData("BL", backLeft.getCurrentPosition());

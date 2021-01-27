@@ -16,11 +16,11 @@ public class ReleaseWobbleGoalSequence extends ActionSequence {
         addAction(new SetServoAction("wobbleServo", 0.8));
         addAction(new SetMotorPowerAction("wobble", 0));
         addAction(new WaitAction(150));
-        addAction(new MoveAction(OmniDrive.Direction.LEFT, 4, 0.5f, 1000));
+        addAction(new MoveAction(OmniDrive.Direction.LEFT, 8, 0.45f));
         addAction(new SetServoAction("wobbleServo", 0));
-        addAction(new WaitAction(150));
-        addAction(new SetMotorPowerAction("wobble", 0.75));
-        addAction(new WaitAction(500));
-        addAction(new SetMotorPowerAction("wobble", 0));
+//        addAction(new WaitAction(150));
+//        addAction(new SetMotorPowerAction("wobble", 0.75));
+//        addAction(new WaitAction(500));
+//        addAction(new SetMotorPowerAction("wobble", 0));
     }
 }

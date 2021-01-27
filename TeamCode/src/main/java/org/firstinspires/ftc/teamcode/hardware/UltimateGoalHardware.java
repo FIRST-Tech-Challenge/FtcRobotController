@@ -20,7 +20,19 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
+
     public static final double SHOOTER_POWER = 0.5235;
+    public static final double SHOOTER_RPM = 2700;
+    public static final double SHOOTER_RPM_THRESHOLD = 300;
+    public static final double SHOOTER_POWER_INCREMENT = 0.03;
+    public static final double SHOOTER_POWER_FINE_INCREMENT = 0.005;
+    public static final double SHOOTER_POWER_FINE_INCREMENT_RANGE = 1000;
+    boolean spinShooter = false;
+    double currentShooterPower = 0;
+    double currentShooterRPM = 0;
+    double targetShooterRPM = SHOOTER_RPM;
+    long shooterPrevTime = System.currentTimeMillis();
+    int shooterPrevPos = 0;
 
     public enum UltimateGoalStartingPosition  {
         LEFT,
@@ -46,7 +58,7 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     public Servo wobbleServo;
 
     public final static double COUNTS_PER_ENCODER_REV = 8192;
-    public final static double WHEEL_DIAMETER_IN = 4;
+    public final static double WHEEL_DIAMETER_IN = 4.0;
 
     @Override
     public void initializeHardware() {
@@ -63,6 +75,9 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         escalator = this.initializeDevice(DcMotor.class, "escalator");
         //.setDirection(DcMotorSimple.Direction.REVERSE);
         wobbleGoalHolder = this.initializeDevice(DcMotor.class, "wobble");
+//        wobbleGoalHolder.setTargetPosition(wobbleGoalHolder.getCurrentPosition() + 72); // 72 = 90deg
+//        wobbleGoalHolder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        wobbleGoalHolder.setPower(1);
         wobbleServo = this.initializeDevice(Servo.class, "wobbleServo");
         wobbleServo.setPosition(0);
         revIMU = this.hardwareMap.get(BNO055IMU.class, "imu");
@@ -88,6 +103,52 @@ public abstract class UltimateGoalHardware extends RobotHardware {
                 new Position(DistanceUnit.INCH, -9.25, 0, 0, 0),
                 new Orientation(EXTRINSIC, YZX, DEGREES, -90, 0, 0, 0));
 
+    }
+
+    @Override
+    public void hardware_loop() {
+        super.hardware_loop();
+
+        long current_time = System.currentTimeMillis();
+        int current_pos = shooter.getCurrentPosition();
+        int deltaPos = current_pos - shooterPrevPos;
+        long deltaTime = current_time - shooterPrevTime;
+        shooterPrevPos = current_pos;
+        shooterPrevTime = current_time;
+        currentShooterRPM = (deltaPos/28.0) / (deltaTime) * (1000*60);
+
+        if (spinShooter) {
+            if (Math.abs(currentShooterRPM - targetShooterRPM) > SHOOTER_RPM_THRESHOLD) {
+                double increment = Math.abs(currentShooterRPM - targetShooterRPM) <= SHOOTER_POWER_FINE_INCREMENT_RANGE ? SHOOTER_POWER_FINE_INCREMENT : SHOOTER_POWER_INCREMENT;
+
+                if (currentShooterRPM < targetShooterRPM) {
+                    // too slow
+                    currentShooterPower = Math.min(currentShooterPower + increment, 1);
+                } else {
+                    // too fast
+                    targetShooterRPM = SHOOTER_RPM;
+                    currentShooterPower = Math.max(currentShooterPower - increment, 0);
+                }
+            }
+        } else {
+            currentShooterPower = 0;
+        }
+
+        shooter.setPower(currentShooterPower);
+        telemetry.addData("Current Shooter Power", currentShooterPower);
+        telemetry.addData("Target RPM", targetShooterRPM);
+        telemetry.addData("RPM", currentShooterRPM);
+    }
+
+    public void setShooterEnabled(boolean enabled) {
+        if (enabled && !this.spinShooter) {
+            this.targetShooterRPM = SHOOTER_RPM - 1000;
+        }
+        this.spinShooter = enabled;
+    }
+
+    public boolean canShoot() {
+        return Math.abs(this.currentShooterRPM - this.SHOOTER_RPM) <= SHOOTER_RPM_THRESHOLD;
     }
 
     @Override

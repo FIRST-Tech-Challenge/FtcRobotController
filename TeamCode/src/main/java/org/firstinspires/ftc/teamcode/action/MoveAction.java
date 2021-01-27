@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.action;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.playmaker.Action;
+import org.firstinspires.ftc.teamcode.playmaker.Localizer;
 import org.firstinspires.ftc.teamcode.playmaker.RobotHardware;
 import org.firstinspires.ftc.teamcode.util.EncoderDrive;
 import org.firstinspires.ftc.teamcode.util.OmniDrive;
@@ -15,17 +19,11 @@ public class MoveAction implements Action {
     double distance;
     float speed;
     double timeout;
+    Position initialPosition;
+    Orientation initialOrientation;
+    LocalizerMoveAction localizerMoveAction;
 
     private EncoderDrive driver;
-
-
-
-    public MoveAction(OmniDrive.Direction direction, double distance, float speed) {
-        this.direction = direction;
-        this.distance = distance;
-        this.speed = speed;
-        this.timeout = 30000;
-    }
 
     /**
      * This action allows you to move the robot in any of the eight directions for a set distance.
@@ -33,32 +31,55 @@ public class MoveAction implements Action {
      * @param direction Direction for the robot to move.
      * @param distance The distance (in centimeters) for the robot to move..
      * @param speed How much power is given to each motor.
-     * @param timeout Timeout in case the motors act up.
      */
 
-    public MoveAction(OmniDrive.Direction direction, double distance, float speed, double timeout) {
+    public MoveAction(OmniDrive.Direction direction, double distance, float speed) {
         this.direction = direction;
         this.distance = distance;
         this.speed = speed;
-        this.timeout = timeout;
-    }
-
-    public MoveAction(OmniDrive.Direction direction, EncoderDrive.Distance distance, float speed, double timeout) {
-        this.direction = direction;
-        // TODO: Caclculate distance using a distance thingy;
-        this.distance = 0;
-        this.speed = speed;
-        this.timeout = timeout;
     }
 
     public void init(RobotHardware hardware) {
-        driver = new EncoderDrive(hardware);
-        driver.setInchesToDrive(direction, distance, speed, timeout);
+        Localizer.EstimatedPosition position = hardware.localizer.estimatePosition();
+        Localizer.EstimatedOrientation orientation = hardware.localizer.estimateOrientation();
+        if (position != null && orientation != null) {
+            initialPosition = position.position.toUnit(DistanceUnit.INCH);
+            initialOrientation = orientation.orientation;
+            double rawX = 0;
+            double rawY = 0;
+
+            switch (direction) {
+                case FORWARD:
+                    rawY = distance;
+                    break;
+                case LEFT:
+                    rawX = -distance;
+                    break;
+                case RIGHT:
+                    rawX = distance;
+                    break;
+                case BACKWARD:
+                    rawY = -distance;
+                    break;
+                default:
+                    return;
+            }
+
+            double robotHeading = Math.toRadians(initialOrientation.thirdAngle);
+            double newX = -((rawX*Math.cos(robotHeading)) - (rawY*Math.sin(robotHeading)));
+            double newY = -((rawX*Math.sin(robotHeading)) + (rawY*Math.cos(robotHeading)));
+            Localizer.RobotTransform targetTransform = new Localizer.RobotTransform(DistanceUnit.INCH, initialPosition.x + newX, initialPosition.y + newY, orientation.orientation.thirdAngle);
+            localizerMoveAction = new LocalizerMoveAction(targetTransform, speed, 0.5f, LocalizerMoveAction.FollowPathMethod.LINEAR);
+            localizerMoveAction.init(hardware);
+        }
+
     }
 
     public boolean doAction(RobotHardware hardware) {
-        driver.run(hardware);
-        return !driver.isBusy;
+        if (localizerMoveAction != null) {
+            return localizerMoveAction.doAction(hardware);
+        }
+        return true;
     }
 
     @Override

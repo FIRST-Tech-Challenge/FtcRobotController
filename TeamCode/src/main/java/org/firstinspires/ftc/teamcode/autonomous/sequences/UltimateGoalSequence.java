@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous.sequences;
 
+import com.qualcomm.robotcore.robot.Robot;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.action.DetectRingsAction;
@@ -17,30 +19,42 @@ import org.firstinspires.ftc.teamcode.playmaker.RobotHardware;
 public class UltimateGoalSequence extends ActionSequence {
 
     public static RobotTransform[] A_Near_Center_Transforms = {
-            new RobotTransform(DistanceUnit.INCH, -12, -50, 90),
+            new RobotTransform(DistanceUnit.INCH, -24, -12, 135),
+            new RobotTransform(DistanceUnit.INCH, 12, -12, 90),
             new RobotTransform(DistanceUnit.INCH, 12, -40, 90)
     };
 
     public static RobotTransform[] A_Near_Wall_Transforms = {
-            new RobotTransform(DistanceUnit.INCH, 12, -40, 90)
+            new RobotTransform(DistanceUnit.INCH, -24, -60, 90),
+            new RobotTransform(DistanceUnit.INCH, -12, -58, 0)
 
     };
 
     public static RobotTransform[] B_Near_Center_Transforms = {
+            new RobotTransform(DistanceUnit.INCH, -24, -12, 135),
             new RobotTransform(DistanceUnit.INCH, 36, -60, 90)
     };
 
     public static RobotTransform[] B_Near_Wall_Transforms = {
+            new RobotTransform(DistanceUnit.INCH, -24, -60, 90),
             new RobotTransform(DistanceUnit.INCH, 36, -60, 90),
             new RobotTransform(DistanceUnit.INCH, 36, -60, -90)
     };
 
     public static RobotTransform[] C_Near_Center_Transforms = {
+            new RobotTransform(DistanceUnit.INCH, -24, -12, 135),
             new RobotTransform(DistanceUnit.INCH, 60, -40, 90)
     };
 
     public static RobotTransform[] C_Near_Wall_Transforms = {
-            new RobotTransform(DistanceUnit.INCH, 60, -40, 90)
+            new RobotTransform(DistanceUnit.INCH, -24, -60, 90),
+            new RobotTransform(DistanceUnit.INCH, 40, -60, 90),
+            new RobotTransform(DistanceUnit.INCH, 40, -60, 0)
+    };
+
+    public static RobotTransform[] RING_DETECTION_TRANSFORMS_NEAR_CENTER = {
+            new RobotTransform(DistanceUnit.INCH, -48,-52,90),
+            new RobotTransform(DistanceUnit.INCH, -48,-48,120)
     };
 
     public static RobotTransform[] RING_DETECTION_TRANSFORMS_NEAR_WALL = {
@@ -55,8 +69,6 @@ public class UltimateGoalSequence extends ActionSequence {
     static final RobotTransform SHOOTING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, 0, -36, 85);
     static final RobotTransform PARKING_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, 12, -12, 90);
     static final RobotTransform PARKING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, 12, -36, 90);
-    static final RobotTransform RING_DETECTION_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, -48,-24,60);
-    static final RobotTransform RING_DETECTION_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, -48,-48,120);
 
     public UltimateGoalSequence(RobotHardware.Team team, UltimateGoalHardware.UltimateGoalStartingPosition startingPosition) {
         // Setup transforms
@@ -77,7 +89,7 @@ public class UltimateGoalSequence extends ActionSequence {
             ringTransforms[2] = C_Near_Center_Transforms;
             shootingPosition = new RobotTransform[] { SHOOTING_POSITION_NEAR_CENTER };
             parkingPosition = new RobotTransform[] { PARKING_POSITION_NEAR_CENTER };
-            ringDetectionPosition = new RobotTransform[] { RING_DETECTION_POSITION_NEAR_CENTER };
+            ringDetectionPosition = RING_DETECTION_TRANSFORMS_NEAR_CENTER;
         } else if (team == RobotHardware.Team.RED && startingPosition == UltimateGoalHardware.UltimateGoalStartingPosition.RIGHT) {
             // RED RIGHT
             ringTransforms[0] = A_Near_Wall_Transforms;
@@ -93,7 +105,7 @@ public class UltimateGoalSequence extends ActionSequence {
             ringTransforms[2] = Localizer.mirrorTransformsOverTeamLine(C_Near_Wall_Transforms);
             shootingPosition = new RobotTransform[] { SHOOTING_POSITION_NEAR_WALL };
             parkingPosition = new RobotTransform[] { PARKING_POSITION_NEAR_WALL};
-            ringDetectionPosition = new RobotTransform[] { RING_DETECTION_POSITION_NEAR_WALL};
+            ringDetectionPosition = Localizer.mirrorTransformsOverTeamLine(RING_DETECTION_TRANSFORMS_NEAR_WALL);
             shootingPosition = Localizer.mirrorTransformsOverTeamLine(shootingPosition);
             parkingPosition = Localizer.mirrorTransformsOverTeamLine(parkingPosition);
             ringDetectionPosition = Localizer.mirrorTransformsOverTeamLine(ringDetectionPosition);
@@ -104,7 +116,7 @@ public class UltimateGoalSequence extends ActionSequence {
             ringTransforms[2] = Localizer.mirrorTransformsOverTeamLine(C_Near_Center_Transforms);
             shootingPosition = new RobotTransform[] { SHOOTING_POSITION_NEAR_CENTER };
             parkingPosition = new RobotTransform[] { PARKING_POSITION_NEAR_CENTER };
-            ringDetectionPosition = new RobotTransform[] { RING_DETECTION_POSITION_NEAR_CENTER };
+            ringDetectionPosition = Localizer.mirrorTransformsOverTeamLine(RING_DETECTION_TRANSFORMS_NEAR_CENTER);
             shootingPosition = Localizer.mirrorTransformsOverTeamLine(shootingPosition);
             parkingPosition = Localizer.mirrorTransformsOverTeamLine(parkingPosition);
             ringDetectionPosition = Localizer.mirrorTransformsOverTeamLine(ringDetectionPosition);
