@@ -136,9 +136,9 @@ public class MecanumControlV2 extends OpMode {
 
         //Control grabber wrist
         if (gamepad1.dpad_left) {
-            grabber.gripWrist.setPosition(.77);
+            grabber.gripWrist.setPosition(.72);
         }else if (gamepad1.dpad_right) {
-            grabber.gripWrist.setPosition(.27);
+            grabber.gripWrist.setPosition(.23);
         }
 
         //Control grabber servo

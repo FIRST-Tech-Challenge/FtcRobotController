@@ -63,7 +63,7 @@ public class BluePower extends OpMode{
                 stateMachineFlow++;
                 break;
             case 3:
-                grabber.gripWrist.setPosition(.27);
+                grabber.gripWrist.setPosition(.23);
                 waitTime = 1;
                 runtime.reset();
                 time = runtime.time();

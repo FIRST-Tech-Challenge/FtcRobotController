@@ -151,7 +151,7 @@ public class BlueRight extends OpMode {
                 stateMachineFlow++;
                 break;
             case 105:
-                grabber.gripWrist.setPosition(.27);
+                grabber.gripWrist.setPosition(.23);
                 waitTime = 1;
                 runtime.reset();
                 time = runtime.time();
@@ -332,7 +332,7 @@ public class BlueRight extends OpMode {
                 break;
             case 204:
                 //Raise grabber
-                grabber.gripWrist.setPosition(.27);
+                grabber.gripWrist.setPosition(.23);
                 waitTime = 1;
                 runtime.reset();
                 time = runtime.time();
@@ -517,7 +517,7 @@ public class BlueRight extends OpMode {
                 stateMachineFlow++;
                 break;
             case 305:
-                grabber.gripWrist.setPosition(.27);
+                grabber.gripWrist.setPosition(.23);
                 waitTime = 1;
                 runtime.reset();
                 time = runtime.time();
