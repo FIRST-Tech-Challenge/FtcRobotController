@@ -36,12 +36,12 @@ public class UltimateGoalTeleOp extends OpMode {
     @Override
     public void init_loop() {
         telemetry.addLine("Press X on driver controller to reset encoders.");
-        telemetry.addLine("Press O on driver controller to disable Driver Centric Mode.");
+        telemetry.addLine("Press O on driver controller to enable Driver Centric Mode.");
         if(gamepad1.cross) {
             robot.forceReset = true;
         }
         if(gamepad1.circle) {
-            robot.disableDriverCentric = true;
+            robot.disableDriverCentric = false;
         }
     }
 
@@ -224,26 +224,14 @@ public class UltimateGoalTeleOp extends OpMode {
         }
 
         if(!downHeld && downPressed) {
-            if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.powerShotCenter, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
-                aligning = true;
-            } else {
-                aligning = false;
-                robot.stopShotAligning();
-            }
+            robot.setShooterFlapPowerShot();
             downHeld = true;
         } else if (!downPressed) {
             downHeld = false;
         }
 
         if(!upHeld && upPressed) {
-            if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.highGoal, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
-                aligning = true;
-            } else {
-                aligning = false;
-                robot.stopShotAligning();
-            }
+            robot.setShooterFlapHighGoal();
             upHeld = true;
         } else if (!upPressed) {
             upHeld = false;
@@ -251,9 +239,9 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!rightBumperHeld && rightBumperPressed) {
             if(robot.intakeMotorPower != 0.0) {
-                robot.setIntakeMotorPower(0.0);
+                robot.setIntakeOff();
             } else {
-                robot.setIntakeMotorPower(1.0);
+                robot.setIntakeIn();
             }
             rightBumperHeld = true;
         } else if(!rightBumperPressed) {
@@ -262,9 +250,9 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!leftBumperHeld && leftBumperPressed) {
             if(robot.intakeMotorPower != 0.0) {
-                robot.setIntakeMotorPower(0.0);
+                robot.setIntakeOff();
             } else {
-                robot.setIntakeMotorPower(-1.0);
+                robot.setIntakeOut();
             }
             leftBumperHeld = true;
         } else if(!leftBumperPressed) {
@@ -287,21 +275,21 @@ public class UltimateGoalTeleOp extends OpMode {
 		// ********************************************************************
 		// This was unassigned (fingers up/down)
         if(!square2Held && square2Pressed) {
-            robot.startReleaseGrabWobbleGoal();
+//            robot.startReleaseGrabWobbleGoal();
             square2Held = true;
         } else if(!square2Pressed) {
             square2Held = false;
         }
 
         if(!cross2Held && cross2Pressed) {
-            robot.startReleaseStowArm();
+//            robot.startReleaseStowArm();
             cross2Held = true;
         } else if(!cross2Pressed) {
             cross2Held = false;
         }
 
         if(!circle2Held && circle2Pressed) {
-            robot.startStowedToReleaseWobbleGoal();
+//            robot.startStowedToReleaseWobbleGoal();
             circle2Held = true;
         } else if(!circle2Pressed) {
             circle2Held = false;
@@ -387,6 +375,7 @@ public class UltimateGoalTeleOp extends OpMode {
         telemetry.addData("Y Power: ", yPower);
         telemetry.addData("X Power: ", xPower);
         telemetry.addData("Spin: ", spin);
+
         // This prevents us from reading the IMU every loop if we aren't in driver centric.
         if(!robot.disableDriverCentric) {
             telemetry.addData("Gyro Angle: ", robot.readIMU());

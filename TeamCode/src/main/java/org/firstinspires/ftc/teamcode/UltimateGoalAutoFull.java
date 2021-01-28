@@ -100,7 +100,7 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1800, true, true);
 
         driveAngle = 90.0;
-        headingAngle = 5.0;
+        headingAngle = 5.5;
         drivePower = 0.3;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1400, true, true);
 
@@ -110,7 +110,7 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
             sleep(15);
             performRobotActions();
         }
-        robot.toggleShooter();
+//        robot.toggleShooter();
     }
 
     public void dropWobbleTargetZoneA() {
@@ -135,7 +135,7 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
 
     public void dropWobbleTargetZoneB() {
         double headingAngle = 0.0;
-        double driveAngle = 197.0;
+        double driveAngle = 196.0;
         double drivePower = 0.5;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1800, true, true);
         robot.startStowedToReleaseWobbleGoal();
@@ -155,12 +155,12 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
 
     public void dropWobbleTargetZoneC() {
         double headingAngle = 45.0;
-        double driveAngle = 160.0;
+        double driveAngle = 145.0;
         double drivePower = 0.5;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1100, true, true);
         headingAngle = 45.0;
-        driveAngle = 180.0;
-        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1150, true, true);
+        driveAngle = 145.0;
+        driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1400, true, true);
         robot.startStowedToReleaseWobbleGoal();
         while(!isStopRequested() && (robot.stowedReleaseState != UltimateGoalRobot.STOWED_RELEASE_STATE.IDLE)) {
             sleep(15);
@@ -170,7 +170,7 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
         driveAngle = 300.0;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 700, true, true);
         headingAngle = 0.0;
-        driveAngle = 0.0;
+        driveAngle = 320.0;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1000, true, true);
         robot.startStowArm();
         while(!isStopRequested() && (robot.stowArmState != UltimateGoalRobot.STOW_ARM_STATE.IDLE)) {

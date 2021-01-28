@@ -26,17 +26,16 @@ public class MyPosition {
 //    public static double turnScalingFactor = 10.2897186;
 
 
-    // 3.691371094 +1.8 degrees
-    // 3.721371094 +2
-    // 3.761371094 +3 degrees
-    // 3.811371094 +2.25 degrees
-    // 3.814371094 +3.8
-    // 3.819371094 +4.2
-    // 3.851371094 +4.75
-    // 3.891371094 +4 degrees
     //    public static double turnScalingFactor = 10.4999; //STEM Punk
 //    public static double turnScalingFactor = 3.691371094; Ultimate Goal Math Starting Point
-    public static double turnScalingFactor = 3.651371094;
+    // -13.9 after 5 turns
+//    public static double turnScalingFactor = 3.681371094;
+    // 1.3 after 5 turns
+//    public static double turnScalingFactor = 3.651371094;
+    // 2.1 after 10 turns
+//    public static double turnScalingFactor = 3.652371094;
+
+    public static double turnScalingFactor = 3.655371094;
     public static double auxPredictionScalingFactor = 0.92;
 
 
@@ -150,7 +149,7 @@ public class MyPosition {
 //        double wheelLeftTotal = currPos_l-wheelLeftInitialReading;
 
         double worldAngleLast = worldAngle_rad;
-        worldAngle_rad = AngleWrap(((wheelLeftTotal-wheelRightTotal)*turnScalingFactor/100000.0) + lastResetAngle);
+        worldAngle_rad = -AngleWrap(((wheelLeftTotal-wheelRightTotal)*turnScalingFactor/100000.0) + lastResetAngle);
 
         //get the predicted amount the straif will go
         double tracker_a_prediction = Math.toDegrees(angleIncrement)*(auxPredictionScalingFactor/10.0);
@@ -243,7 +242,7 @@ public class MyPosition {
         //but use absolute for our actual angle
         double wheelRightTotal = currPos_r-wheelRightInitialReading;
         double wheelLeftTotal = -(currPos_l-wheelLeftInitialReading);
-        worldAngle_rad = AngleWrap(((wheelLeftTotal-wheelRightTotal)*turnScalingFactor/100000.0) + lastResetAngle);
+        worldAngle_rad = -AngleWrap(((wheelLeftTotal-wheelRightTotal)*turnScalingFactor/100000.0) + lastResetAngle);
 
 
 

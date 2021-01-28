@@ -64,6 +64,7 @@ public class UltimateGoalRobot
     public final static String CLAW_SERVO = "Claw";
     public final static String FLAP_SERVO = "Flap";
     public final static String INJECTOR_SERVO = "Injector";
+    public final static String INTAKE_PUSHER_SERVO = "IntakePusher";
     public String hub1;
     public String hub2;
 
@@ -74,7 +75,7 @@ public class UltimateGoalRobot
     public FLAP_POSITION flapPosition;
     public final static double FLAP_POWERSHOT = 0.620;
     public double powerShotOffset = 0.0;
-    public final static double FLAP_HIGH_GOAL = 0.517;
+    public final static double FLAP_HIGH_GOAL = 0.507;
     public double highGoalOffset = 0.0;
     public double flapAngle;
 
@@ -97,6 +98,7 @@ public class UltimateGoalRobot
     protected Servo flap = null;
     protected Servo claw = null;
     protected Servo injector = null;
+    protected Servo intakePusher = null;
 
     // Sensors
     protected BNO055IMU imu = null;
@@ -124,7 +126,7 @@ public class UltimateGoalRobot
 
     public static boolean encodersReset = false;
     public boolean forceReset = false;
-    public boolean disableDriverCentric = false;
+    public boolean disableDriverCentric = true;
 
     public static WayPoint highGoal = new WayPoint(164.35324, 187.18276, 95.0, 0.5);
     public static WayPoint powerShotRight = new WayPoint(104.06888, 187.18276, 95.0, 0.5);
@@ -197,6 +199,7 @@ public class UltimateGoalRobot
         empty.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Define and initialize servos
+        intakePusher = hwMap.get(Servo.class, INTAKE_PUSHER_SERVO);
         flap = hwMap.get(Servo.class, FLAP_SERVO);
         injector = hwMap.get(Servo.class, INJECTOR_SERVO);
         claw = hwMap.get(Servo.class, CLAW_SERVO);
@@ -298,6 +301,21 @@ public class UltimateGoalRobot
             shooter.setVelocity(0);
             shooterMotorTargetVelocity = 0;
         }
+    }
+
+    public void setIntakeIn() {
+        setIntakeMotorPower(1.0);
+        intakePusher.setPosition(1.0);
+    }
+
+    public void setIntakeOut() {
+        setIntakeMotorPower(-1.0);
+        intakePusher.setPosition(-1.0);
+    }
+
+    public void setIntakeOff() {
+        setIntakeMotorPower(0.0);
+        intakePusher.setPosition(0.0);
     }
 
     public void setIntakeMotorPower(double power) {
@@ -703,13 +721,21 @@ public class UltimateGoalRobot
 
     /** Inject activity pushes a disk into the shooter and resets th
      * e injector. **/
-    public final static double INJECTOR_FIRE_TIME = 300.0;
+    public final static double INJECTOR_FIRE_TIME = 400.0;
     public final static double INJECTOR_RESET_TIME = 400.0;
     public final static double INJECTOR_HOME_TIME = 300.0;
     public final static double SHOOTER_THROTTLE_DELAY = 500.0;
-    public final static double INJECTOR_HOME = 0.55;
-    public final static double INJECTOR_RESET = 0.450;
-    public final static double INJECTOR_FIRE = 0.800;
+//    public final static double INJECTOR_HOME = 0.53;
+//    public final static double INJECTOR_RESET = 0.450;
+//    public final static double INJECTOR_FIRE = 0.850;
+    // What we were using, shifted to 0.
+//    public final static double INJECTOR_HOME = 0.0;
+//    public final static double INJECTOR_RESET = -0.08;
+//    public final static double INJECTOR_FIRE = 0.32;
+    // 1.875 Multiplier for range 300 degrees to 160 for Savox
+    public final static double INJECTOR_HOME = 0.0;
+    public final static double INJECTOR_RESET = -0.15;
+    public final static double INJECTOR_FIRE = 0.6;
     public final static int VELOCITY_SUCCESS_CHECKS = 6;
     public boolean disableVelocityCheck = false;
     public int sequentialStableVelocityChecks = 0;
@@ -793,7 +819,8 @@ public class UltimateGoalRobot
         IDLE,
         FIRING_ONE,
         FIRING_TWO,
-        FIRING_THREE
+        FIRING_THREE,
+        FIRING_FOUR
     }
     public TRIPLE_INJECTING tripleInjectState = TRIPLE_INJECTING.IDLE;
     public void startTripleInjecting() {
@@ -819,6 +846,13 @@ public class UltimateGoalRobot
                 break;
             case FIRING_THREE:
                 if(injectState == INJECTING.IDLE) {
+                    tripleInjectState = TRIPLE_INJECTING.FIRING_FOUR;
+                    startInjecting();
+                }
+                break;
+            case FIRING_FOUR:
+                if(injectState == INJECTING.IDLE) {
+                    toggleShooter();
                     tripleInjectState = TRIPLE_INJECTING.IDLE;
                 }
                 break;

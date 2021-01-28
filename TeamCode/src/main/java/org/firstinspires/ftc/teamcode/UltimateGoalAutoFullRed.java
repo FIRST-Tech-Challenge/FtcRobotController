@@ -29,7 +29,7 @@ import org.opencv.core.Point;
 /**
  * Created by 7592 RoarBots
  */
-@Autonomous(name="Full Red", group ="Ultimate Goal Red")
+@Autonomous(name="Full Red", group ="Ultimate Goal Red", preselectTeleOp = "UltimateGoal: TeleOp")
 public class UltimateGoalAutoFullRed extends UltimateGoalAutoFull
 {
     protected static final double REGULAR_SPEED = 0.5;

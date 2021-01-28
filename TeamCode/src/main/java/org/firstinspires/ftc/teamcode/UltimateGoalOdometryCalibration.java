@@ -110,7 +110,9 @@ public class UltimateGoalOdometryCalibration extends OpMode {
                     robot.getRightEncoderWheelPosition(),
                     robot.getStrafeEncoderWheelPosition());
         }
-        MyPosition.setPosition(0.0, 0.0, toRadians(90.0));
+        // Why do I have to negative angle to get the right angle!?! Everything works that way
+        // but weird.
+        MyPosition.setPosition(0.0, 0.0, toRadians(-0.0));
     }
 
     @Override
