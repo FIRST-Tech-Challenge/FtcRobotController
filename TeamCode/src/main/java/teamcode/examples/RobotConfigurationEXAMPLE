@@ -1,0 +1,63 @@
+An example of how to effectively use this document, this is the documentation of the electronic configuration
+for our 2019-2020 Skystone robot Moonshot
+
+Expansion Hub 1:
+    Motor:
+        0. Name: FrontRightDrive  Type: REV Robotics 20:1 HD Hex Motor    Power Source: FrontRightDrive    Encoder Source: N/A
+        1. Name: RearRightDrive  Type: REV Robotics 20:1 HD Hex Motor    Power Source: FrontLeftDrive    Encoder Source: N/A
+        2. Name: RightIntake  Type: Unspecified Motor    Power Source: RightIntake    Encoder Source: HorizontalOdometer
+        3. Name: LeftIntake  Type: Unspecified Motor    Power Source: LeftIntake    Encoder Source: RightVerticalOdometer
+
+    Servo:
+        0. Name: BoxTransfer Type: Servo
+        1. Name: Type:
+        2. Name: RightFoundationGrabber  Type: Servo
+        3. Name:  Type:
+        4. Name:  Type:
+        5. Name: LeftFoundationGrabber Type: Servo
+    Digital Device:
+        0.
+
+    Analog Device:
+
+    I2C Bus 0:
+        0. Name: imu Type: REV imu
+        1. Name: IntakeColorSensor Type: REV Color Sensor V3
+
+    I2C Bus 1:
+
+    I2C Bus 2:
+
+    I2C Bus 3:
+
+
+
+Expansion Hub 2:
+    Motor:
+        0. Name: RearLeftDrive Type: REV Robotics 20:1 HD Hex Motor   Power Source: RearLeftDrive    Encoder Source: N/A
+        1. Name: FrontLeftDrive Type: REV Robotics 20:1 HD Hex Motor   Power Source: FrontLeftDrive    Encoder Source: N/A
+        2. Name: RearWinch Type: Unspecified Motor   Power Source: RearWinch    Encoder Source: LeftVerticalOdometer
+        3. Name: FrontWinch Type: Unspecified Motor   Power Source: FrontWinch    Encoder Source: LiftEncoder
+
+    Servo:
+        0. Name: FrontGrabber Type: Servo
+        1. Name:  Type:
+        2. Name: Pulley Type: Servo
+        3. Name:  Type:
+        4. Name:  Type:
+        5. Name: BackGrabber Type: Servo
+    Digital Device:
+
+    Analog Device:
+
+    I2C Bus 0:
+        0. imu1
+
+    I2C Bus 1:
+
+    I2C Bus 2:
+
+    I2C Bus 3:
+
+Webcam 1
+    Name: Webcam    Type: webcam

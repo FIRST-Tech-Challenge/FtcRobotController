@@ -1,0 +1,9 @@
+Ok so for reference the motor is named TestMotor
+the servo is named TestServo
+and the ColorSensor is named TestColor
+the webcam is named just webcam
+so just create any test classes you want here, I will leave you with a hardware diagnostic
+as well as a basic vision pipeline and our vision pipeline.
+The basic one will just display whatever the webcam sees and the other one is the one I have
+in the comp folder with the Mats summation that I am hoping you can work on
+Other than that good luck! We can discuss this all on friday.

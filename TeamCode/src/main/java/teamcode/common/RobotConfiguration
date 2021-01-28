@@ -1,0 +1,65 @@
+This is mostly a convinience for programmers to be able to reference the Config on the fly
+Please see teamcode/examples/RobotConfigurationEXAMPLE for how to format this document
+
+TODO Update
+Expansion Hub 1:
+    Motor:
+        0. Name: FrontLeftDrive  Type: Unspecified Motor    Power Source: FrontLeftDrive    Encoder Source: LeftOdometer
+        1. Name: FrontRightDrive  Type: Unspecified Motor    Power Source: FrontRightDrive    Encoder Source: RightOdometer
+        2. Name: BackLeftDrive  Type: Unspecified Motor    Power Source: BackLeftDrive    Encoder Source: BackOdometer
+        3. Name: BackRightDrive  Type: GOBilda 5202 Planetary Motor    Power Source: BackRightDrive    Encoder Source:
+
+    Servo:
+        0. Name: WobbleGrabber Type: Unspecified Servo
+        1. Name:  Type:
+        2. Name:  Type:
+        3. Name:  Type:
+        4. Name:  Type:
+        5. Name:  Type:
+
+    Digital Device:
+        0.
+
+    Analog Device:
+
+    I2C Bus 0:
+        0. Name: imu Type: REV imu
+        1. Name: Type:
+
+    I2C Bus 1:
+
+    I2C Bus 2:
+
+    I2C Bus 3:
+
+
+
+Expansion Hub 2:
+    Motor:
+        0. Name:  Type:    Power Source:     Encoder Source:
+        1. Name:  Type:    Power Source:     Encoder Source:
+        2. Name:  Type:    Power Source:     Encoder Source:
+        3. Name:  Type:    Power Source:     Encoder Source:
+
+    Servo:
+        0. Name:  Type:
+        1. Name:  Type:
+        2. Name:  Type:
+        3. Name:  Type:
+        4. Name:  Type:
+        5. Name:  Type:
+    Digital Device:
+
+    Analog Device:
+
+    I2C Bus 0:
+        0. imu1
+
+    I2C Bus 1:
+
+    I2C Bus 2:
+
+    I2C Bus 3:
+
+Webcam 1
+    Name: Webcam    Type: webcam
