@@ -208,7 +208,7 @@ public class HzAutonomousBasic2 extends LinearOpMode {
                 break;
             case C:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(52,af*43,Math.toRadians(af*-90)))
+                        .lineToSplineHeading(new Pose2d(54,af*51,Math.toRadians(af*-90)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 break;
@@ -247,12 +247,12 @@ public class HzAutonomousBasic2 extends LinearOpMode {
 
             if (targetZone == HzGameField.TARGET_ZONE.B) {
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-10,af*33,Math.toRadians(af*135)))
+                        .lineToLinearHeading(new Pose2d(-10,af*37,Math.toRadians(af*135)))
                         .build();
                 hzDrive.followTrajectory(traj);
 
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-22,af*33,Math.toRadians(af*135)))
+                        .lineToLinearHeading(new Pose2d(-22,af*37,Math.toRadians(af*135)))
                         .build();
                 hzDrive.followTrajectory(traj);
 
@@ -262,17 +262,19 @@ public class HzAutonomousBasic2 extends LinearOpMode {
             // Spline to (24,24,0)
             if (targetZone == HzGameField.TARGET_ZONE.C) {
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-10,af*33,Math.toRadians(af*-180)))
+                        .lineToLinearHeading(new Pose2d(-10,af*37,Math.toRadians(af*-180)))
                         .build();
                 hzDrive.followTrajectory(traj);
 
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-22,af*33,Math.toRadians(af*-180)))
-                        .build();
-                hzDrive.followTrajectory(traj);
+                if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(-22, af * 37, Math.toRadians(af * -180)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+                }
 
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-33, af*33, Math.toRadians(af*-180)))
+                        .lineToLinearHeading(new Pose2d(-33, af*37, Math.toRadians(af*-180)))
                         .build();
                 hzDrive.followTrajectory(traj);
 
@@ -285,7 +287,7 @@ public class HzAutonomousBasic2 extends LinearOpMode {
                 hzAutoControl.setLaunchTargetHighGoal();
 
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-13, af*33, Math.toRadians(af*0)))
+                        .lineToLinearHeading(new Pose2d(-13, af*40, Math.toRadians(af*0)))
                         .build();
                 hzDrive.followTrajectory(traj);
 
@@ -320,11 +322,14 @@ public class HzAutonomousBasic2 extends LinearOpMode {
         hzAutoControl.setMoveArmPickWobble();
         hzAutoControl.runOpenGrip();
         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-30, af*45, Math.toRadians(af*0)))
+                .lineToLinearHeading(new Pose2d(-31, af*47, Math.toRadians(af*0)))
                 .build();
         hzDrive.followTrajectory(traj);
+        hzWait(200);
         hzAutoControl.runCloseGrip();
+        hzWait(400);
         hzAutoControl.setMoveArmHoldUpWobbleRing();
+        hzWait(500);
         switch (targetZone) {
             case A:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -334,23 +339,25 @@ public class HzAutonomousBasic2 extends LinearOpMode {
                 break;
             case B:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(13, af*20, Math.toRadians(af*180)))
+                        .lineToSplineHeading(new Pose2d(13, af*33, Math.toRadians(af*180)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 break;
             case C:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(33, af*40, Math.toRadians(af*-90)))
+                        .lineToSplineHeading(new Pose2d(37, af*50, Math.toRadians(af*-135)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 break;
         }
         dropWobbleGoalInTarget();
         //Park
-        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToSplineHeading(new Pose2d(13, af*33, Math.toRadians(af*0)))
-                .build();
-        hzDrive.followTrajectory(traj);
+        if (targetZone == HzGameField.TARGET_ZONE.C) {
+            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    .lineToSplineHeading(new Pose2d(13, af * 33, Math.toRadians(af * 0)))
+                    .build();
+            hzDrive.followTrajectory(traj);
+        }
     }
 
     public void runAutoOuter(){
@@ -508,13 +515,13 @@ public class HzAutonomousBasic2 extends LinearOpMode {
     public void launch3RingsToHighGoal(){
         hzAutoControl.setLaunchTargetHighGoal();
         hzAutoControl.setMagazineToLaunch();
-        hzWait(500);
+        hzWait(200);
         hzAutoControl.setLaunchTargetHighGoal();
         hzAutoControl.setMagazineToLaunch();
         hzWait(400);
         hzAutoControl.setRunLauncherTrue();
         hzAutoControl.setMagazineToLaunch();
-        hzWait(400);
+        hzWait(500);
         hzAutoControl.setRunLauncherTrue();
         hzAutoControl.setMagazineToLaunch();
         hzWait(400);
@@ -551,7 +558,8 @@ public class HzAutonomousBasic2 extends LinearOpMode {
 
     public void dropWobbleGoalInTarget(){
         hzAutoControl.setMoveArmDropWobbleAutonoumous();
-        hzWait(1000);
+        //hzWait(1000);
+        hzWait(500);
         hzAutoControl.runOpenGrip();
         hzWait(300);
         hzAutoControl.setMoveArmHoldUpWobbleRing();

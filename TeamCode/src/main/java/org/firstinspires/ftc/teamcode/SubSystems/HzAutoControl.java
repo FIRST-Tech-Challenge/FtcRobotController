@@ -326,7 +326,7 @@ public class HzAutoControl {
             case PICK_WOBBLE:
                 acHzArm.moveArmPickWobblePosition();
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
-                acHzArm.openGrip();
+                //acHzArm.openGrip();
                 break;
             case DROP_WOBBLE_AUTONOMOUS:
                 acHzArm.moveArmDropWobbleAutonomousPosition();
