@@ -23,15 +23,16 @@ public abstract class UltimateGoalHardware extends RobotHardware {
 
     public static final double SHOOTER_POWER = 0.5235;
     public static final double SHOOTER_RPM = 2700;
-    public static final double SHOOTER_RPM_THRESHOLD = 300;
+    public static final double SHOOTER_RPM_THRESHOLD = 250;
     public static final double SHOOTER_POWER_INCREMENT = 0.03;
-    public static final double SHOOTER_POWER_FINE_INCREMENT = 0.005;
+    public static final double SHOOTER_POWER_FINE_INCREMENT = 0.01;
     public static final double SHOOTER_POWER_FINE_INCREMENT_RANGE = 1000;
     boolean spinShooter = false;
     double currentShooterPower = 0;
     double currentShooterRPM = 0;
     double targetShooterRPM = SHOOTER_RPM;
     long shooterPrevTime = System.currentTimeMillis();
+    long shooterPrevUnstableTime = System.currentTimeMillis();
     int shooterPrevPos = 0;
 
     public enum UltimateGoalStartingPosition  {
@@ -142,13 +143,15 @@ public abstract class UltimateGoalHardware extends RobotHardware {
 
     public void setShooterEnabled(boolean enabled) {
         if (enabled && !this.spinShooter) {
+            this.shooterPrevUnstableTime = System.currentTimeMillis();
             this.targetShooterRPM = SHOOTER_RPM - 1000;
         }
         this.spinShooter = enabled;
     }
 
     public boolean canShoot() {
-        return Math.abs(this.currentShooterRPM - this.SHOOTER_RPM) <= SHOOTER_RPM_THRESHOLD;
+        boolean rpmReady = Math.abs(this.currentShooterRPM - this.SHOOTER_RPM) <= SHOOTER_RPM_THRESHOLD;
+        return rpmReady;
     }
 
     @Override

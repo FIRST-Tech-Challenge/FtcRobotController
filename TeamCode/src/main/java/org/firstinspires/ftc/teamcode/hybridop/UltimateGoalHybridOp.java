@@ -29,17 +29,16 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
     public void teleop_loop() {
 
         // region slowmode {...}
-        slowMode = gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.bumper_left);
 
-        // Slowmode when shooter running
-        if (shooter.getPower() > 0) {
-            slowMode = true;
-        }
+        // Slowmode when shooter running or bumper_left toggled
+        slowMode = gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.bumper_left) || shooter.getPower() > 0;
+
+
         // endregion
 
         omniDrive.dpadMove(gamepad1, slowMode ? omniDrivePower * slowModeMultiplier : omniDrivePower, false);
 
-        this.setShooterEnabled(gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.b));
+        this.setShooterEnabled(gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.y));
         // endregion
 
         if (gamepad1.b && this.canShoot()) {
@@ -48,10 +47,10 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
             escalator.setPower(0);
         }
 
-        if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.a)) {
-            collector.setPower(1);
-        } else if (gamepad1.start) {
+        if (gamepad1.start) {
             collector.setPower(-1);
+        } else if (gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.a)) {
+            collector.setPower(1);
         } else {
             collector.setPower(0);
         }
@@ -86,6 +85,7 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
     @Override
     public void run_loop() {
+        telemetry.addData("Slow Mode", slowMode);
         telemetry.addData("FL", frontLeft.getCurrentPosition());
         telemetry.addData("FR", frontRight.getCurrentPosition());
         telemetry.addData("BL", backLeft.getCurrentPosition());
