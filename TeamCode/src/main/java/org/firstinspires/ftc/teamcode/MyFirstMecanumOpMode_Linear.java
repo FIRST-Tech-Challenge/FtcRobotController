@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 //import com.qualcomm.robotcore.hardware.Servo;
 
 
-@TeleOp (name="Mecanum Test?")
+@TeleOp(name = "Mecanum Test?")
 public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     //    private Gyroscope imu;
 //    private DcMotor motorTest;
@@ -102,13 +102,9 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             shooterMotor.setPower(shooterPower);
 
             if (gamepad2.left_trigger >= .87) {
-                wobbleGoalRaiseMotor.setPower(.2);
-            } else {
-                wobbleGoalRaiseMotor.setPower(0);
-            }
-
-            if (gamepad2.left_bumper == true) {
-                wobbleGoalRaiseMotor.setPower(-.6);
+                wobbleGoalRaiseMotor.setPower(.4);
+            } else if (gamepad2.left_bumper == true) {
+                wobbleGoalRaiseMotor.setPower(-.4);
             } else {
                 wobbleGoalRaiseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 wobbleGoalRaiseMotor.setPower(0);
@@ -128,30 +124,38 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             if (gamepad2.a) {
                 intakeOne.setPower(0.9);
                 intakeTwo.setPower(0.9);
-
-
-                if (gamepad2.b) {
-                    intakeTwo.setPower(-0.9);
-                    intakeOne.setPower(-0.9);
-                }
-                if (gamepad2.y) {
-                    if (!yPressed) {
-                        yPressed = true;
-                        if (yOpen) {
-                            wobbleGoalGrippyThing.setPosition(0.2);
-
-                            yOpen = false;
-                        } else {
-                            wobbleGoalGrippyThing.setPosition(.9);
-                            yOpen = true;
-                        }
-                    }
-                } else {
-                    if (yPressed) {
-                        yPressed = false;
-                    }
-                }
             }
+
+
+            if (gamepad2.b) {
+                intakeTwo.setPower(-0.9);
+                intakeOne.setPower(-0.9);
+            }
+//            if (gamepad2.y) {
+//                if (!yPressed) {
+//                    yPressed = true;
+//                    if (yOpen) {
+//                        wobbleGoalGrippyThing.setPosition(0.2);
+//
+//                        yOpen = false;
+//                    } else {
+//                        wobbleGoalGrippyThing.setPosition(.9);
+//                        yOpen = true;
+//                    }
+//                }
+//            } else {
+//                if (yPressed) {
+//                    yPressed = false;
+//                }
+//            }
+
+            if (gamepad2.y){
+                wobbleGoalGrippyThing.setPosition(0.2);
+            }
+            if (gamepad2.x){
+                wobbleGoalGrippyThing.setPosition(0.9);
+            }
+
         }
     }
 }
