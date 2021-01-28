@@ -102,7 +102,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             shooterMotor.setPower(shooterPower);
 
             if (gamepad2.left_trigger >= .87) {
-                wobbleGoalRaiseMotor.setPower(.4);
+                wobbleGoalRaiseMotor.setPower(.6);
             } else if (gamepad2.left_bumper == true) {
                 wobbleGoalRaiseMotor.setPower(-.4);
             } else {
@@ -111,7 +111,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             }
 
             if (gamepad2.right_trigger >= .87) {
-                wobbleGoalExtendMotor.setPower(.2);
+                wobbleGoalExtendMotor.setPower(.25);
             } else {
                 wobbleGoalExtendMotor.setPower(0);
             }
