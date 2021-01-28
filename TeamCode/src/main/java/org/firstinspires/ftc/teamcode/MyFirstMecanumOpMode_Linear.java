@@ -26,6 +26,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     DcMotor rightRearMotor = null;
     DcMotor wobbleGoalExtendMotor = null;
     DcMotor wobbleGoalRaiseMotor = null;
+    DcMotor shooterMotor = null;
     Servo wobbleGoalGrippyThing = null;
     CRServo intakeOne = null;
     CRServo intakeTwo = null;
@@ -46,6 +47,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
         wobbleGoalExtendMotor = hardwareMap.dcMotor.get("wobbleExtendo");
         wobbleGoalRaiseMotor = hardwareMap.dcMotor.get("wobbleLift");
+        shooterMotor = hardwareMap.dcMotor.get("shooterMotor");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         intakeOne = hardwareMap.crservo.get("intakeServoOne");
         intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
@@ -73,10 +75,10 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             double x = gamepad1.left_stick_x * 1.3;
             double rx = gamepad1.right_stick_x;
 
-            double leftFrontPower = y + x + rx;
-            double leftRearPower = y - x + rx;
-            double rightFrontPower = y - x - rx;
-            double rightRearPower = y + x - rx;
+            double leftFrontPower = y + x - rx;
+            double leftRearPower = y - x - rx;
+            double rightFrontPower = y - x + rx;
+            double rightRearPower = y + x + rx;
 
             if (Math.abs(leftFrontPower) > 1 || Math.abs(leftRearPower) > 1 || Math.abs(rightFrontPower) > 1 || Math.abs(rightRearPower) > 1) {
 
@@ -95,6 +97,9 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             leftRearMotor.setPower(leftRearPower);
             rightFrontMotor.setPower(rightFrontPower);
             rightRearMotor.setPower(rightRearPower);
+
+            double shooterPower = gamepad2.right_stick_y;
+            shooterMotor.setPower(shooterPower);
 
             if (gamepad2.left_trigger >= .87) {
                 wobbleGoalRaiseMotor.setPower(.2);

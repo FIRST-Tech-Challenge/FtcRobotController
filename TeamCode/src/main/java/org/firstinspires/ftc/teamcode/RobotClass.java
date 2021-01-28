@@ -23,6 +23,7 @@ public class RobotClass {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
+    private DcMotor shooterMotor;
     private double ticks = 537;//537
     private CRServo continuous1;
     BNO055IMU imu;
@@ -37,6 +38,7 @@ public class RobotClass {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
+        shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
         continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
 
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -570,6 +572,12 @@ public class RobotClass {
 //            telemetry.addData("LAUGHTER: Now ", num);
 //            telemetry.update();
 
+    }
+    //Pretend "Engage" is actually ENGAGE!
+    public void shooterEngage (double duration) {
+        shooterMotor.setPower(1);
+
+        for (int i=0; i < duration; i++ );
     }
     }
 /*
