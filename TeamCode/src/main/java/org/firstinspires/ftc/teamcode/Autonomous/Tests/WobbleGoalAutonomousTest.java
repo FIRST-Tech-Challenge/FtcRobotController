@@ -21,13 +21,11 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class WobbleGoalAutonomousTest extends LinearOpMode {
 
     public void runOpMode(){
-        DcMotor motor = (DcMotor) hardwareMap.dcMotor.get ("wobbleGoalMotor");
         Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER, false, false);
         ElapsedTime runtime = new ElapsedTime();
         telemetry.addData("Init", "Complete");
         telemetry.update();
         waitForStart();
         robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
-
     }
 }

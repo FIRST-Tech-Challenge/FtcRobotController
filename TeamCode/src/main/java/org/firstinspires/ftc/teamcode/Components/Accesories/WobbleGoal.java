@@ -49,7 +49,7 @@ public class WobbleGoal {
         wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wobbleGoalServo.setPosition(0);
-        wobbleGoalServoClaw.setPosition(1);
+        wobbleGoalServoClaw.setPosition(0);
 
     }
 
@@ -62,8 +62,8 @@ public class WobbleGoal {
             i = ticksForGRAB;
         } else if (p == Position.RAISE) {
             i = ticksForRAISE;
-        } else if (p == Position.DROP) {
-            i = ticksForAutonomousDrop;
+        } else if (p == Position.STARTOFTELEEOP) {
+            i = ticksForSTARTOFTELEEOP;
         } else {
             op.telemetry.addData("IQ Lvl", "0.00");
             op.telemetry.update();
@@ -72,22 +72,15 @@ public class WobbleGoal {
 
         wobbleGoalMotor.setTargetPosition(i);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        if (p== Position.DROP){
+        if (p == Position.DROP) {
             wobbleGoalMotor.setPower(wobbleGoalSpeedDrop);
-        } else{
+        } else {
             wobbleGoalMotor.setPower(wobbleGoalSpeed);
         }
-//        op.sleep(100);
+//        op.sleep(1000);
         op.telemetry.addData("Wobble Goal", "Position:" + wobbleGoalMotor.getCurrentPosition() + "-->" + i);
         op.telemetry.update();
 //        op.sleep(2000);
-    }
-
-    //TODO: Siddharth & Aiden, can this folded into above gotoPosition method?
-    public void teleopStartPosition(){
-        wobbleGoalMotor.setTargetPosition(ticksForSTARTOFTELEEOP);
-        wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wobbleGoalMotor.setPower(wobbleGoalSpeed);
     }
 
     public void printCurrentLocation(){
@@ -113,15 +106,15 @@ public class WobbleGoal {
         op.sleep(500);
     }
 
-    public void moveWobbleGoalClaw(boolean direction) {
-        if (direction){
-            wobbleGoalServoClaw.setPosition(1);
+    public void moveWobbleGoalClaw(boolean open) {
+        if (open){
+            wobbleGoalServoClaw.setPosition(0);
             op.sleep(1000);
-            op.telemetry.addData(" Wobble Goal Claw: ", "open");
+            op.telemetry.addData(" Wobble Goal Claw: ", "closed");
         } else {
             wobbleGoalServoClaw.setPosition(0.5);
             op.sleep(1000);
-            op.telemetry.addData(" Wobble Goal Claw: ", "closed");
+            op.telemetry.addData(" Wobble Goal Claw: ", "open");
 
         }
         op.telemetry.update();

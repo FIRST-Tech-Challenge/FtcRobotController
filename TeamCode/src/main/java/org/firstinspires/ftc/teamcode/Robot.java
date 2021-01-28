@@ -223,13 +223,6 @@ public class Robot {
         return (p);
     }
 
-    //TODO: Siddharth & Aiden, can we be consistent and crate another WobbleGoal.Position for teleop start position?
-    public void teleopStartPosition(){
-        if (isCorgi) {
-            wobbleGoal.teleopStartPosition();
-        }
-    }
-
     public void printCurrentWobbleGoalLocation(){
         if(isCorgi) {
             wobbleGoal.printCurrentLocation();
@@ -244,6 +237,10 @@ public class Robot {
 
     public void moveWobbleGoalServo(boolean direction){
         wobbleGoal.moveWobbleGoalServo(direction);
+    }
+
+    public void moveWobbleGoalClaw(boolean open) {
+        wobbleGoal.moveWobbleGoalClaw(open);
     }
 
     // intake

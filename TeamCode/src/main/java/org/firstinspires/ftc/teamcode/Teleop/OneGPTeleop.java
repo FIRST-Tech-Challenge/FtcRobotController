@@ -56,7 +56,7 @@ public class OneGPTeleop extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.teleopStartPosition();
+        robot.moveWobbleGoalToPosition(WobbleGoal.Position.STARTOFTELEEOP);
 
         while (!isStopRequested()) {
 
