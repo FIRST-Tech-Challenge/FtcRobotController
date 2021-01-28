@@ -26,7 +26,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous(name="Encoder test", group="4100")
+@Autonomous(name="Encoder Auto", group="4100")
 public class Encoder_Auto extends LinearOpMode {
     // Declare OpMode members.
     private DcMotor Arm = null;
@@ -94,31 +94,90 @@ public class Encoder_Auto extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            //forward
+            //forward - Speed Method
             driveStraight_Encoder(1000,0.4);
-            //backward
+            //backward - Speed Method
             driveStraight_Encoder(-1000,0.4);
+
+            stopMotion(3000);
+
+            //forward - Distance Method
+            driveStraight_Encoder_Alternative(1000,0.4);
+            //backward - Distance Method
+            driveStraight_Encoder_Alternative(-1000,0.4);
         }
     }
 
     void driveStraight_Encoder(double distance, double power) throws InterruptedException {
+        LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int straightFactor = -1;
+        if(distance * power > 0) {
+            straightFactor = 1;
+        }
         double LFEnc = LF.getCurrentPosition();
         double RFEnc = RF.getCurrentPosition();
         double LBEnc = LB.getCurrentPosition();
         double RBEnc = RB.getCurrentPosition();
         double avgEnc = (LFEnc + LBEnc + RFEnc + RBEnc) / 4.0;
         double target = avgEnc + distance;
-        if(distance > 0) {
+        final double currentAngle = aquireHeading();
+        double targetAngle = currentAngle;
+
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+
+        if(straightFactor > 0) {
             while (avgEnc <= target - 50) {
                 LFEnc = LF.getCurrentPosition();
                 RFEnc = RF.getCurrentPosition();
                 LBEnc = LB.getCurrentPosition();
                 RBEnc = RB.getCurrentPosition();
                 avgEnc = (LFEnc + LBEnc + RFEnc + RBEnc) / 4.0;
-                driveStraight(distance > 0, 0.5, power, 30,false);
+                double tempAngle = aquireHeading();
+                LF_power = straightFactor * Math.abs(power);
+                LB_power = straightFactor * Math.abs(power);
+                RF_power = straightFactor * Math.abs(power);
+                RB_power = straightFactor * Math.abs(power);
+                if (tempAngle < normalizeAngle(targetAngle - 1 * 1.0)) {
+                    RF_power += 0.1;
+                    RB_power += 0.1;
+                    LF_power -= 0.1;
+                    LB_power -= 0.1;
+                } else if (tempAngle > normalizeAngle(targetAngle + (1.0))) {
+                    RF_power -= 0.1;
+                    RB_power -= 0.1;
+                    LF_power += 0.1;
+                    LB_power += 0.1;
+                }
+                RF_power = Range.clip(RF_power, -1, 1);
+                RB_power = Range.clip(RB_power, -1, 1);
+                LF_power = Range.clip(LF_power, -1, 1);
+                LB_power = Range.clip(LB_power, -1, 1);
+                LF.setPower(LF_power);
+                RF.setPower(RF_power);
+                LB.setPower(LB_power);
+                RB.setPower(RB_power);
+                telemetry.addLine("Encoder Speed Method");
+                telemetry.addData("Encoders Average:", avgEnc);
+                telemetry.addData("Distance Left", target - avgEnc - 50);
+                telemetry.addData("RF_power", RF_power);
+                telemetry.addData("RB_power", RB_power);
+                telemetry.addData("LF_power", LF_power);
+                telemetry.addData("LB_power", LB_power);
+
+                telemetry.update();
             }
-            stopMotion();
         }
         else{
             while (avgEnc >= target + 50) {
@@ -127,11 +186,106 @@ public class Encoder_Auto extends LinearOpMode {
                 LBEnc = LB.getCurrentPosition();
                 RBEnc = RB.getCurrentPosition();
                 avgEnc = (LFEnc + LBEnc + RFEnc + RBEnc) / 4.0;
-                driveStraight(distance > 0, 0.5, power, 30,false);
+                double tempAngle = aquireHeading();
+                LF_power = straightFactor * Math.abs(power);
+                LB_power = straightFactor * Math.abs(power);
+                RF_power = straightFactor * Math.abs(power);
+                RB_power = straightFactor * Math.abs(power);
+                if (tempAngle < normalizeAngle(targetAngle - 1 * 1.0)) {
+                    RF_power += 0.1;
+                    RB_power += 0.1;
+                    LF_power -= 0.1;
+                    LB_power -= 0.1;
+                } else if (tempAngle > normalizeAngle(targetAngle + (1.0))) {
+                    RF_power -= 0.1;
+                    RB_power -= 0.1;
+                    LF_power += 0.1;
+                    LB_power += 0.1;
+                }
+                RF_power = Range.clip(RF_power, -1, 1);
+                RB_power = Range.clip(RB_power, -1, 1);
+                LF_power = Range.clip(LF_power, -1, 1);
+                LB_power = Range.clip(LB_power, -1, 1);
+                LF.setPower(LF_power);
+                RF.setPower(RF_power);
+                LB.setPower(LB_power);
+                RB.setPower(RB_power);
+                telemetry.addLine("Encoder Speed Method");
+                telemetry.addData("Encoders Average:", avgEnc);
+                telemetry.addData("Distance Left", target - avgEnc + 50);
+                telemetry.addData("RF_power", RF_power);
+                telemetry.addData("RB_power", RB_power);
+                telemetry.addData("LF_power", LF_power);
+                telemetry.addData("LB_power", LB_power);
+                telemetry.update();
             }
-            stopMotion();
         }
+        stopMotion();
 
+    }
+
+    void driveStraight_Encoder_Alternative(double distance, double power) throws InterruptedException{
+        LF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        int loop = 0;
+        final double currentAngle = aquireHeading();
+        double targetAngle = currentAngle;
+        int straightFactor = -1;
+        if(distance * power > 0) {
+            straightFactor = 1;
+        }
+        double LFtarget = LF.getCurrentPosition() + straightFactor * Math.abs(distance);
+        double RFtarget = RF.getCurrentPosition() + straightFactor * Math.abs(distance);
+        double LBtarget = LB.getCurrentPosition() + straightFactor * Math.abs(distance);
+        double RBtarget = RB.getCurrentPosition() + straightFactor * Math.abs(distance);
+        LF.setTargetPosition((int) (LFtarget));
+        RF.setTargetPosition((int) (RFtarget));
+        LB.setTargetPosition((int) (LBtarget));
+        RB.setTargetPosition((int) (RBtarget));
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+        while (LF.isBusy()&&RF.isBusy()&&LB.isBusy()&&RB.isBusy()) {
+            double tempAngle = aquireHeading();
+            LF_power = straightFactor * Math.abs(power);
+            LB_power = straightFactor * Math.abs(power);
+            RF_power = straightFactor * Math.abs(power);
+            RB_power = straightFactor * Math.abs(power);
+            if (tempAngle < normalizeAngle(targetAngle - 1 * 1.0)) {
+                RF_power += 0.1;
+                RB_power += 0.1;
+                LF_power -= 0.1;
+                LB_power -= 0.1;
+            } else if (tempAngle > normalizeAngle(targetAngle + (1.0))) {
+                RF_power -= 0.1;
+                RB_power -= 0.1;
+                LF_power += 0.1;
+                LB_power += 0.1;
+            }
+            RF_power = Range.clip(RF_power, -1, 1);
+            RB_power = Range.clip(RB_power, -1, 1);
+            LF_power = Range.clip(LF_power, -1, 1);
+            LB_power = Range.clip(LB_power, -1, 1);
+            LF.setPower(LF_power);
+            RF.setPower(RF_power);
+            LB.setPower(LB_power);
+            RB.setPower(RB_power);
+            telemetry.addLine("Encoder Distance Method");
+            loop++;
+            if(loop == 10) {
+                telemetry.addData("RF Distance Left", RFtarget - RF.getCurrentPosition());
+                telemetry.addData("RB Distance Left", RBtarget - RB.getCurrentPosition());
+                telemetry.addData("LF Distance Left", LFtarget - LF.getCurrentPosition());
+                telemetry.addData("LB Distance Left", LBtarget - LB.getCurrentPosition());
+                loop = 0;
+            }
+            telemetry.update();
+        }
+            stopMotion();
     }
 
     void stopMotion() {
@@ -164,24 +318,6 @@ public class Encoder_Auto extends LinearOpMode {
         telemetry.update();
         sleep(20);
         return tempHead;
-    }
-
-    void displayVoltageEncoderValue() {
-        try {
-            double LFEnc = LF.getCurrentPosition();
-            double RFEnc = RF.getCurrentPosition();
-            double LBEnc = LB.getCurrentPosition();
-            double RBEnc = RB.getCurrentPosition();
-            telemetry.addData("LF Encoder Value: ", LFEnc);
-            telemetry.addData("RF Encoder Value: ", RFEnc);
-            telemetry.addData("LB Encoder Value: ", LBEnc);
-            telemetry.addData("RB Encoder Value: ", RBEnc);
-            telemetry.addData("Average Encoder Value: ", (LFEnc + LBEnc + RFEnc + RBEnc) / 4.0);
-            telemetry.update();
-        } catch (Exception e) {
-            telemetry.addLine("Unable to find encoder value");
-            telemetry.update();
-        }
     }
 
     void driveStraight(boolean isForward, double margin, double power, double timeInterval,boolean stop) throws InterruptedException {
@@ -226,7 +362,6 @@ public class Encoder_Auto extends LinearOpMode {
             telemetry.addData("LF_power", LF_power);
             telemetry.addData("LB_power", LB_power);
             telemetry.update();
-            displayVoltageEncoderValue();
         }
         if(stop){
             stopMotion();
