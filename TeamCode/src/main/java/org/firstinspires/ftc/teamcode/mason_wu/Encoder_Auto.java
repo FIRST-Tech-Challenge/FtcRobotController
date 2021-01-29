@@ -96,15 +96,17 @@ public class Encoder_Auto extends LinearOpMode {
         if (opModeIsActive()) {
             //forward - Speed Method
             driveStraight_Encoder(500,0.3);
+            stopMotion(100);
             //backward - Speed Method
-            //driveStraight_Encoder(-500,0.3);
+            driveStraight_Encoder(-500,0.3);
 
             stopMotion(3000);
 
             //forward - Distance Method
-            //driveStraight_Encoder_Alternative(500,0.3);
+            driveStraight_Encoder_Alternative(500,0.3);
+            stopMotion(100);
             //backward - Distance Method
-            //driveStraight_Encoder_Alternative(-500,0.3);
+            driveStraight_Encoder_Alternative(-500,0.3);
         }
     }
 
