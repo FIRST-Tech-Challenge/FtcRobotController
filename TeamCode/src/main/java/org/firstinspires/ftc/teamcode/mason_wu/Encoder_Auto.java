@@ -225,11 +225,6 @@ public class Encoder_Auto extends LinearOpMode {
     }
 
     void driveStraight_Encoder_Alternative(double distance, double power) throws InterruptedException{
-        LF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        RF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        LB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        RB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
         int loop = 0;
         final double currentAngle = aquireHeading();
         double targetAngle = currentAngle;
@@ -245,6 +240,10 @@ public class Encoder_Auto extends LinearOpMode {
         RF.setTargetPosition((int) (RFtarget));
         LB.setTargetPosition((int) (LBtarget));
         RB.setTargetPosition((int) (RBtarget));
+        LF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RF.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        LB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        RB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         double LF_power;
         double LB_power;
         double RF_power;
