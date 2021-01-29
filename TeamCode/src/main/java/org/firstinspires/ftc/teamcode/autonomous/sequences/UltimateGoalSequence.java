@@ -20,19 +20,18 @@ public class UltimateGoalSequence extends ActionSequence {
 
     public static RobotTransform[] A_Near_Center_Transforms = {
             new RobotTransform(DistanceUnit.INCH, -24, -12, 135),
-            new RobotTransform(DistanceUnit.INCH, 12, -12, 90),
-            new RobotTransform(DistanceUnit.INCH, 12, -40, 90)
+            new RobotTransform(DistanceUnit.INCH, 12, -36, 90)
     };
 
     public static RobotTransform[] A_Near_Wall_Transforms = {
             new RobotTransform(DistanceUnit.INCH, -24, -60, 90),
-            new RobotTransform(DistanceUnit.INCH, -12, -58, 0)
+            new RobotTransform(DistanceUnit.INCH, -8, -60, 0)
 
     };
 
     public static RobotTransform[] B_Near_Center_Transforms = {
             new RobotTransform(DistanceUnit.INCH, -24, -12, 135),
-            new RobotTransform(DistanceUnit.INCH, 36, -60, 90)
+            new RobotTransform(DistanceUnit.INCH, 36, -12, 90)
     };
 
     public static RobotTransform[] B_Near_Wall_Transforms = {
@@ -43,13 +42,14 @@ public class UltimateGoalSequence extends ActionSequence {
 
     public static RobotTransform[] C_Near_Center_Transforms = {
             new RobotTransform(DistanceUnit.INCH, -24, -12, 135),
-            new RobotTransform(DistanceUnit.INCH, 60, -40, 90)
+            new RobotTransform(DistanceUnit.INCH, 48, -36, 90),
+            new RobotTransform(DistanceUnit.INCH, 60l, -36, 90),
     };
 
     public static RobotTransform[] C_Near_Wall_Transforms = {
             new RobotTransform(DistanceUnit.INCH, -24, -60, 90),
-            new RobotTransform(DistanceUnit.INCH, 40, -60, 90),
-            new RobotTransform(DistanceUnit.INCH, 40, -60, 0)
+            new RobotTransform(DistanceUnit.INCH, 36, -60, 90),
+            new RobotTransform(DistanceUnit.INCH, 36, -60, 0)
     };
 
     public static RobotTransform[] RING_DETECTION_TRANSFORMS_NEAR_CENTER = {
