@@ -3,13 +3,11 @@
     <LynxUsbDevice name="Control Hub Portal 1" serialNumber="(embedded)" parentModuleAddress="1">
         <LynxModule name="Expansion Hub 1" port="1">
             <RevRobotics40HDHexMotor name="elbow" port="1" />
-            <RevRobotics40HDHexMotor name="extender" port="2" />
+            <RevRobotics40HDHexMotor name="flywheelMotor" port="2" />
             <RevRobotics40HDHexMotor name="turret" port="0" />
 
 
             <Servo name="servoGripper" port="0" />
-            <Servo name="intakeServoBack" port="2" />
-            <Servo name="gripperSwivel" port="1" />
             <Servo name="blinkin" port="4" />
 
             <LynxEmbeddedIMU name="turretIMU" port="0" bus="0" />

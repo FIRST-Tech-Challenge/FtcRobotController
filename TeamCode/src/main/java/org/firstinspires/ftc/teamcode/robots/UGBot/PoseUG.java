@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robots.UGBot;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -70,12 +69,9 @@ public class PoseUG {
     private DcMotor motorFrontLeft = null;
     private DcMotor motorBackRight = null;
     private DcMotor elbow = null;
-    private DcMotor extender = null;
+    private DcMotor flywheelMotor = null;
     private DcMotor turretMotor = null;
-    private Servo intakeServoFront = null;
-    private Servo intakeServoBack = null;
-    private Servo gripperSwivel = null;
-    private Servo hook = null;
+    private Servo wobbleGripper = null;
     Servo blinkin = null;
 
     // All Subsystems
@@ -275,13 +271,9 @@ public class PoseUG {
         // this.driveRight = this.hwMap.dcMotor.get("driveRight");
         this.elbow = this.hwMap.dcMotor.get("elbow");
 
-        this.extender = this.hwMap.dcMotor.get("extender");
+        this.flywheelMotor = this.hwMap.dcMotor.get("flywheelMotor");
 
-        this.intakeServoFront = this.hwMap.servo.get("servoGripper");
-        this.intakeServoBack = this.hwMap.servo.get("intakeServoBack");
-        this.gripperSwivel = this.hwMap.servo.get("gripperSwivel");
-
-        this.hook = this.hwMap.servo.get("hook");
+        this.wobbleGripper = this.hwMap.servo.get("servoGripper");
 
         this.blinkin = this.hwMap.servo.get("blinkin");
         this.distForward = this.hwMap.get(DistanceSensor.class, "distForward");
@@ -306,7 +298,7 @@ public class PoseUG {
         // turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // magSensor.setMode(DigitalChannel.Mode.INPUT);
 
-        extender.setDirection(DcMotor.Direction.REVERSE);
+        flywheelMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // behaviors of motors
         /*
@@ -319,7 +311,7 @@ public class PoseUG {
          * driveRight.setDirection(DcMotorSimple.Direction.FORWARD); }
          */
         // setup subsystems
-        launcher = new Launcher(elbow, extender, hook, intakeServoFront, intakeServoBack, gripperSwivel);
+        launcher = new Launcher(elbow, flywheelMotor, wobbleGripper);
         turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
         turret = new Turret(turretMotor, turretIMU);
         ledSystem = new LEDSystem(blinkin);

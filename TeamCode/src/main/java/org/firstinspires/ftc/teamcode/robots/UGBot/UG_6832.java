@@ -432,25 +432,6 @@ public class UG_6832 extends OpMode {
                         }
                         break;
                     case 2:
-                        switch(autoState){
-                            case 0:
-                                if(robot.driveIMUDistanceWithReset(.5,robot.getHeading(),true,.5)){
-                                    autoState = 1;
-                                }
-                                break;
-                            case 1:
-                                robot.turret.rotateCardinalTurret(true);
-                                autoState = 2;
-                                break;
-                            case 2:
-                                if(robot.launcher.extendToMax()){
-                                    autoState = 3;
-                                }
-                                break;
-                            default:
-                                robot.stopAll();
-                                break;
-                        }
                         break;
                     case 4:
                         break;
@@ -811,8 +792,6 @@ public class UG_6832 extends OpMode {
         telemetry.addLine() .addData("Articulation", () -> robot.getArticulation());
         telemetry.addLine().addData("elbow Current Position", () -> robot.launcher.getElbowCurrentPos());
         telemetry.addLine().addData("elbow Target Position", () -> robot.launcher.getElbowTargetPos());
-        telemetry.addLine().addData("Extension Current Position", () -> robot.launcher.getExtendABobCurrentPos());
-        telemetry.addLine().addData("Extension Target Position", () -> robot.launcher.getExtendABobTargetPos());
         telemetry.addLine()  .addData("chassis heading", () -> robot.getHeading());
         telemetry.addLine()  .addData("chassis ticks left", () -> robot.getLeftMotorTicks());
         telemetry.addLine()  .addData("chassis ticks right", () -> robot.getRightMotorTicks());
@@ -822,7 +801,6 @@ public class UG_6832 extends OpMode {
         telemetry.addLine().addData("Turret Target`s", () -> robot.turret.getTurretTargetHeading());
         telemetry.addLine().addData("Turret Current angle ", () -> robot.turret.getHeading());
         telemetry.addLine() .addData("right distance ", () -> robot.getDistRightDist());
-        telemetry.addLine() .addData("right distance ", () -> (Math.acos(robot.getDistRightDist() / 0.4572)));
 
     }
 
