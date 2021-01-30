@@ -1,19 +1,19 @@
 package org.firstinspires.ftc.teamcode.GameOpModes;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.SubSystems.HzArm;
-import org.firstinspires.ftc.teamcode.SubSystems.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzDrive;
+import org.firstinspires.ftc.teamcode.SubSystems.HzGameField;
 import org.firstinspires.ftc.teamcode.SubSystems.HzGamepad;
-import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 import org.firstinspires.ftc.teamcode.SubSystems.HzIntake;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLaunchController;
 import org.firstinspires.ftc.teamcode.SubSystems.HzLauncher;
 import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
+import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 
 
 /**
@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
  * <p>
  * See lines 42-57.
  */
+@Disabled
 @TeleOp(name = "HzTeleOp RR Viewforia", group = "00-Teleop")
 public class HzTeleOpRRVuforia extends LinearOpMode {
 
@@ -38,7 +39,8 @@ public class HzTeleOpRRVuforia extends LinearOpMode {
     public HzArm hzArm;
 
     public HzVuforia hzVuforia;
-    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
+    public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
+    public HzVuforia.ACTIVE_WEBCAM activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
     //int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
     //TODO : Create another TeleOp for Red
 
@@ -56,7 +58,7 @@ public class HzTeleOpRRVuforia extends LinearOpMode {
 
         initialConfiguration();
 
-        hzVuforia = new HzVuforia(hardwareMap);
+        hzVuforia = new HzVuforia(hardwareMap,activeWebcam);
         hzVuforia.setupVuforiaNavigation();
 
         // We want to turn off velocity control for teleop
@@ -148,23 +150,27 @@ public class HzTeleOpRRVuforia extends LinearOpMode {
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
                     startPose = HzGameField.RED_INNER_START_LINE;
+                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
                     telemetry.addData("Start Pose : ", "RED_INNER_START_LINE");
                     break;
                 }
-                if (hzGamepad.getButtonAPress()) {
+                if (hzGamepad.getButtonYPress()) {
                     startPose = HzGameField.RED_OUTER_START_LINE;
+                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
                     telemetry.addData("Start Pose : ", "RED_OUTER_START_LINE");
                     break;
                 }
             }
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
                 if (hzGamepad.getButtonAPress()) {
-                    startPose = HzGameField.BLUE_INNER_START_LINE_TELEOPTEST;
+                    startPose = HzGameField.BLUE_INNER_START_LINE;
+                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;
                     telemetry.addData("Start Pose : ", "BLUE_INNER_START_LINE");
                     break;
                 }
-                if (hzGamepad.getButtonAPress()) {
+                if (hzGamepad.getButtonYPress()) {
                     startPose = HzGameField.BLUE_OUTER_START_LINE;
+                    activeWebcam = HzVuforia.ACTIVE_WEBCAM.LEFT;
                     telemetry.addData("Start Pose : ", "BLUE_OUTER_START_LINE");
                     break;
                 }
@@ -216,9 +222,9 @@ public class HzTeleOpRRVuforia extends LinearOpMode {
                 break;
             }
         }
-        telemetry.addData("hzMagazine.moveMagazineToLaunchState",hzMagazine.moveMagazineToLaunchState);
+        //telemetry.addData("hzMagazine.moveMagazineToLaunchState",hzMagazine.moveMagazineToLaunchState);
         telemetry.addData("magazineLaunchTouchSensor.getState():", hzMagazine.magazineLaunchTouchSensor.isPressed());
-        telemetry.addData("hzMagazine.moveMagazineToCollectState",hzMagazine.moveMagazineToCollectState);
+        //telemetry.addData("hzMagazine.moveMagazineToCollectState",hzMagazine.moveMagazineToCollectState);
         telemetry.addData("magazineCollectTouchSensor.getState():", hzMagazine.magazineCollectTouchSensor.isPressed());
 
 

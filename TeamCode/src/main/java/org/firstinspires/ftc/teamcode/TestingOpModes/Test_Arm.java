@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TestingOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzGamepadClassic;
  *  Expected behavior.. trigger will pull arm back to park all the time.. To test only key pad, comment out trigger line.
  */
 @TeleOp(name = "Test_Arm", group = "Test")
+@Disabled
 public class Test_Arm extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;

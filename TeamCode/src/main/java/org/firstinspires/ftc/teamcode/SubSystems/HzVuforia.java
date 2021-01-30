@@ -104,6 +104,11 @@ public class HzVuforia {
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false  ;
 
+    public enum ACTIVE_WEBCAM{
+        LEFT,
+        RIGHT,
+    }
+
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -170,15 +175,18 @@ public class HzVuforia {
     private static final String LABEL_SECOND_ELEMENT = "Single";
 
     private TFObjectDetector tfod;
+    private List<Recognition> updatedRecognitions;
+    public HzGameField.TARGET_ZONE targetZoneDetected = HzGameField.TARGET_ZONE.UNKNOWN;
 
     /**
      * Initialize the Vuforia localization engine.
      */
-    public HzVuforia(HardwareMap hardwareMap) {
+    public HzVuforia(HardwareMap hardwareMap, ACTIVE_WEBCAM activeWebcam) {
         /*
          * Retrieve the camera we are to use.
          */
-        if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+        //if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
+        if (activeWebcam == ACTIVE_WEBCAM.LEFT){
             webcamName = hardwareMap.get(WebcamName.class, "Webcam_l");
         } else {
             webcamName = hardwareMap.get(WebcamName.class, "Webcam_r");
@@ -216,11 +224,87 @@ public class HzVuforia {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.8f;
+        tfodParameters.minResultConfidence = 0.75f;//0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
         vuforiaState = VUFORIA_STATE.TFOD_INIT;
     }
+
+    public void activateVuforiaTensorFlow(){
+        /**
+         * Activate TensorFlow Object Detection before we wait for the start command.
+         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
+         **/
+        if (tfod != null) {
+            tfod.activate();
+            vuforiaState = VUFORIA_STATE.TFOD_ACTIVE;
+
+            // The TensorFlow software will scale the input images from the camera to a lower resolution.
+            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
+            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
+            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
+            // should be set to the value of the images used to create the TensorFlow Object Detection model
+            // (typically 1.78 or 16/9).
+
+            // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
+            tfod.setZoom(1.75, 16.0/9.0);
+            updatedRecognitions = tfod.getUpdatedRecognitions();
+        }
+    }
+
+    public HzGameField.TARGET_ZONE runVuforiaTensorFlow() {
+        vuforiaState = VUFORIA_STATE.TFOD_RUNNING;
+
+        if (tfod != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                //telemetry.addData("# Object Detected", updatedRecognitions.size());
+                if (updatedRecognitions.size() == 0 ) {
+                    // empty list.  no objects recognized.
+                    //telemetry.addData("TFOD", "No items detected.");
+                    //telemetry.addData("Target Zone", "A");
+                    targetZoneDetected = HzGameField.TARGET_ZONE.A;
+                } else {
+                    // list is not empty.
+                    // step through the list of recognitions and display boundary info.
+                    int i = 0;
+                    for (Recognition recognition : updatedRecognitions) {
+                        //telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                        //telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                        //        recognition.getLeft(), recognition.getTop());
+                        //telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                        //        recognition.getRight(), recognition.getBottom());
+
+                        // check label to see which target zone to go after.
+                        if (recognition.getLabel().equals("Single")) {
+                            //telemetry.addData("Target Zone", "B");
+                            targetZoneDetected =  HzGameField.TARGET_ZONE.B;
+                        } else if (recognition.getLabel().equals("Quad")) {
+                            //telemetry.addData("Target Zone", "C");
+                            targetZoneDetected =  HzGameField.TARGET_ZONE.C;
+                        } else {
+                            //telemetry.addData("Target Zone", "UNKNOWN");
+                            targetZoneDetected = HzGameField.TARGET_ZONE.UNKNOWN;
+                        }
+                    }
+                }
+
+                //telemetry.update();
+
+            }
+        }
+        return targetZoneDetected;
+    }
+
+    public void deactivateVuforiaTensorFlow(){
+        if (tfod != null) {
+            tfod.shutdown();
+            vuforiaState = VUFORIA_STATE.INACTIVE;
+        }
+    }
+
 
     public void setupVuforiaNavigation() {
 
@@ -393,80 +477,6 @@ public class HzVuforia {
         targetsUltimateGoal.deactivate();
         vuforiaState = VUFORIA_STATE.INACTIVE;
 
-    }
-
-    public void activateVuforiaTensorFlow(){
-        /**
-         * Activate TensorFlow Object Detection before we wait for the start command.
-         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
-         **/
-        if (tfod != null) {
-            tfod.activate();
-            vuforiaState = VUFORIA_STATE.TFOD_ACTIVE;
-
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 1.78 or 16/9).
-
-            // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
-            tfod.setZoom(2.5, 1.78);
-        }
-    }
-
-    public HzGameField.TARGET_ZONE runVuforiaTensorFlow() {
-        vuforiaState = VUFORIA_STATE.TFOD_RUNNING;
-        HzGameField.TARGET_ZONE targetZoneDetected = HzGameField.TARGET_ZONE.UNKNOWN;
-        if (tfod != null) {
-              // getUpdatedRecognitions() will return null if no new information is available since
-             // the last time that call was made.
-            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-            if (updatedRecognitions != null) {
-                //telemetry.addData("# Object Detected", updatedRecognitions.size());
-                if (updatedRecognitions.size() == 0 ) {
-                    // empty list.  no objects recognized.
-                    //telemetry.addData("TFOD", "No items detected.");
-                    //telemetry.addData("Target Zone", "A");
-                    targetZoneDetected = HzGameField.TARGET_ZONE.A;
-                } else {
-                    // list is not empty.
-                    // step through the list of recognitions and display boundary info.
-                    int i = 0;
-                    for (Recognition recognition : updatedRecognitions) {
-                        //telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                        //telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                        //        recognition.getLeft(), recognition.getTop());
-                        //telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                        //        recognition.getRight(), recognition.getBottom());
-
-                        // check label to see which target zone to go after.
-                        if (recognition.getLabel().equals("Single")) {
-                            //telemetry.addData("Target Zone", "B");
-                            targetZoneDetected =  HzGameField.TARGET_ZONE.B;
-                        } else if (recognition.getLabel().equals("Quad")) {
-                            //telemetry.addData("Target Zone", "C");
-                            targetZoneDetected =  HzGameField.TARGET_ZONE.C;
-                        } else {
-                            //telemetry.addData("Target Zone", "UNKNOWN");
-                            targetZoneDetected = HzGameField.TARGET_ZONE.UNKNOWN;
-                        }
-                    }
-                }
-
-                //telemetry.update();
-
-            }
-        }
-        return targetZoneDetected;
-    }
-
-    public void deactivateVuforiaTensorFlow(){
-        if (tfod != null) {
-            tfod.shutdown();
-            vuforiaState = VUFORIA_STATE.INACTIVE;
-        }
     }
 
 }

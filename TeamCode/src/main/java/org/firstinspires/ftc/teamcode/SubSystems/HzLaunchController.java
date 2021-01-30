@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 public class HzLaunchController {
 
@@ -53,35 +51,54 @@ public class HzLaunchController {
     public double distanceFromTarget, lclaunchMotorPower, angleToTarget;
     public double lclaunchMotorVelocity;
 
-    public Servo launchControllerBeaconServo;
+    //public Servo launchControllerBeaconServo;
 
     //TODO : AMJAD : Use servo to flag if beacon is not working
-    public static final double launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_AUTO = 0.2;
+    /*public static final double launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_AUTO = 0.2;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_AUTO = 0.4;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_MANUAL = 0.6;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL = 0.8;
     public static final double launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE = 0.0;
+     */
 
     public HzLauncher lcHzLauncher;
     public HzIntake lcHzIntake;
     public HzMagazine lcHzMagazine;
-    public HzDrive lcDrive;
+    public HzDrive lcHzDrive;
+    public HardwareMap lcHzHardwareMap;
 
 
-    public HzLaunchController(HardwareMap hardwareMap, HzLauncher lcHzLauncherPassed, HzIntake lcHzIntakePassed, HzMagazine lcHzMagazinePassed,
-                              HzDrive lcDrivePassed){
+    public HzLaunchController(HardwareMap lcHzhardwareMapPassed, HzLauncher lcHzLauncherPassed, HzIntake lcHzIntakePassed, HzMagazine lcHzMagazinePassed,
+                              HzDrive lcHzDrivePassed){
         lcHzLauncher = lcHzLauncherPassed;
         lcHzMagazine = lcHzMagazinePassed;
         lcHzIntake = lcHzIntakePassed;
-        lcDrive = lcDrivePassed;
+        lcHzDrive = lcHzDrivePassed;
+        lcHzHardwareMap = lcHzhardwareMapPassed;
 
-        launchControllerBeaconServo = hardwareMap.servo.get("launch_beacon_servo");
+        //launchControllerBeaconServo = hardwareMap.servo.get("launch_beacon_servo");
+    }
+
+    public void setLauncherFlyWheelNominalVelocityBasedOnBattery(){
+        double batteryVoltage = lcHzDrive.getBatteryVoltage(lcHzHardwareMap);
+        if (batteryVoltage > 13.0){
+            lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1500;
+            lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1440;
+        } else if (batteryVoltage > 12.5) {
+            lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1540;
+            lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1460;
+        } else if (batteryVoltage > 12.0) {
+            lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1580;
+            lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1500;
+        }
     }
 
     public boolean activateLaunchReadinessState;
 
     public LAUNCH_READINESS activateLaunchReadiness() {
         launchActivation = LAUNCH_ACTIVATION.ACTIVATED;
+
+        //setLauncherFlyWheelNominalVelocityBasedOnBattery();
 
         if (launchMode == LAUNCH_MODE.MANUAL)  {
             turnRobotToNormalControl();
@@ -104,26 +121,25 @@ public class HzLaunchController {
 
         //gpVuforia.identifyCurrentLocation();
 
-        //TODO : IN MANUAL MODE DONT REPEND ON LOCATION AT ALL. FIX POWER TO A FIXED VALUE
-
         if (launchMode == LAUNCH_MODE.AUTOMATED && launchReadiness == LAUNCH_READINESS.READY)  {
             determineLaunchTarget();
             turnRobotToTarget();
             runLauncherByDistanceToTarget();
         }
 
-        //TODO : IN MANUAL MODE DONT REPEND ON LOCATION AT ALL. FIX POWER TO A FIXED VALUE
         if (launchMode == LAUNCH_MODE.MANUAL && launchReadiness == LAUNCH_READINESS.READY) {
             if (lcTarget == LAUNCH_TARGET.HIGH_GOAL){
                 //lcHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_HIGH_GOAL);
-                lclaunchMotorVelocity = HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
+                //lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
+                lclaunchMotorVelocity = lcHzLauncher.flyWheelVelocityHighGoal;
                 lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
             }
             if (lcTarget == LAUNCH_TARGET.POWER_SHOT1 ||
                     lcTarget ==LAUNCH_TARGET.POWER_SHOT2 ||
                     lcTarget == LAUNCH_TARGET.POWER_SHOT3) {
                 //lcHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
-                lclaunchMotorVelocity = HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
+                //lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
+                lclaunchMotorVelocity = lcHzLauncher.flyWheelVelocityPowerShot;
                 lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
             }
         }
@@ -151,27 +167,27 @@ public class HzLaunchController {
         if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
             switch (lcTarget) {
                 case HIGH_GOAL:
-                    lcDrive.drivePointToAlign = HzGameField.BLUE_TOWER_GOAL;
+                    lcHzDrive.drivePointToAlign = HzGameField.BLUE_TOWER_GOAL;
                     lcTargetVector = HzGameField.BLUE_TOWER_GOAL;
                     break;
                 case MID_GOAL:
-                    lcDrive.drivePointToAlign = HzGameField.RED_TOWER_GOAL;
+                    lcHzDrive.drivePointToAlign = HzGameField.RED_TOWER_GOAL;
                     lcTargetVector = HzGameField.RED_TOWER_GOAL;
                     break;
                 case LOW_GOAL:
-                    lcDrive.drivePointToAlign = HzGameField.BLUE_TOWER_GOAL;
+                    lcHzDrive.drivePointToAlign = HzGameField.BLUE_TOWER_GOAL;
                     lcTargetVector = HzGameField.BLUE_TOWER_GOAL;
                     break;
                 case POWER_SHOT1:
-                    lcDrive.drivePointToAlign = HzGameField.BLUE_POWERSHOT1;
+                    lcHzDrive.drivePointToAlign = HzGameField.BLUE_POWERSHOT1;
                     lcTargetVector = HzGameField.BLUE_POWERSHOT1;
                     break;
                 case POWER_SHOT2:
-                    lcDrive.drivePointToAlign = HzGameField.BLUE_POWERSHOT2;
+                    lcHzDrive.drivePointToAlign = HzGameField.BLUE_POWERSHOT2;
                     lcTargetVector = HzGameField.BLUE_POWERSHOT2;
                     break;
                 case POWER_SHOT3:
-                    lcDrive.drivePointToAlign = HzGameField.BLUE_POWERSHOT3;
+                    lcHzDrive.drivePointToAlign = HzGameField.BLUE_POWERSHOT3;
                     lcTargetVector = HzGameField.BLUE_POWERSHOT3;
                     break;
             }
@@ -180,27 +196,27 @@ public class HzLaunchController {
         if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
             switch (lcTarget) {
                 case HIGH_GOAL:
-                    lcDrive.drivePointToAlign = HzGameField.RED_TOWER_GOAL;
+                    lcHzDrive.drivePointToAlign = HzGameField.RED_TOWER_GOAL;
                     lcTargetVector = HzGameField.RED_TOWER_GOAL;
                     break;
                 case MID_GOAL:
-                    lcDrive.drivePointToAlign = HzGameField.BLUE_TOWER_GOAL;
+                    lcHzDrive.drivePointToAlign = HzGameField.BLUE_TOWER_GOAL;
                     lcTargetVector = HzGameField.BLUE_TOWER_GOAL;
                     break;
                 case LOW_GOAL:
-                    lcDrive.drivePointToAlign = HzGameField.RED_TOWER_GOAL;
+                    lcHzDrive.drivePointToAlign = HzGameField.RED_TOWER_GOAL;
                     lcTargetVector = HzGameField.RED_TOWER_GOAL;
                     break;
                 case POWER_SHOT1:
-                    lcDrive.drivePointToAlign = HzGameField.RED_POWERSHOT1;
+                    lcHzDrive.drivePointToAlign = HzGameField.RED_POWERSHOT1;
                     lcTargetVector = HzGameField.RED_POWERSHOT1;
                     break;
                 case POWER_SHOT2:
-                    lcDrive.drivePointToAlign = HzGameField.RED_POWERSHOT2;
+                    lcHzDrive.drivePointToAlign = HzGameField.RED_POWERSHOT2;
                     lcTargetVector = HzGameField.RED_POWERSHOT2;
                     break;
                 case POWER_SHOT3:
-                    lcDrive.drivePointToAlign = HzGameField.RED_POWERSHOT3;
+                    lcHzDrive.drivePointToAlign = HzGameField.RED_POWERSHOT3;
                     lcTargetVector = HzGameField.RED_POWERSHOT3;
                     break;
             }
@@ -210,19 +226,17 @@ public class HzLaunchController {
     public void turnRobotToTarget(){
         //If MODE_AUTOMATED, turnRobotToTarget : turn the robot to face the target based on angle determined. Ensure this function is on time out, or on a parallel thread where drivers can override, so that robot does not get locked in this function. (Driver has to manually turn the robot in MODE_AUTOMATED) [Priority : This is second priority after all other basic functionality is done]
         if (getLaunchMode() == LAUNCH_MODE.AUTOMATED) {
-            lcDrive.driveMode = HzDrive.DriveMode.ALIGN_TO_POINT;
-            lcDrive.driveTrainPointFieldModes();
+            lcHzDrive.driveMode = HzDrive.DriveMode.ALIGN_TO_POINT;
+            lcHzDrive.driveTrainPointFieldModes();
         }
     }
 
     public void turnRobotToNormalControl(){
-        lcDrive.driveMode = HzDrive.DriveMode.NORMAL_CONTROL;
+        lcHzDrive.driveMode = HzDrive.DriveMode.NORMAL_CONTROL;
         //lcDrive.driveTrainPointFieldModes();
     }
 
-    public void senseLaunchReadiness() {
-        //TODO : AMJAD : UPDATE LOGIC FOR AUTOMATED MODE - CALCULATE IF ROBOT IS ALIGNED TO WITHIN 10%
-        //TODO : AMJAD : SENSE IF DISTANCE IS WITHING ACHIEVABLE LIMITS
+    /*public void senseLaunchReadiness() {
         launchReadiness = LAUNCH_READINESS.READY;
     }
 
@@ -245,7 +259,7 @@ public class HzLaunchController {
             turnlaunchControllerBeaconOff();
         }
 
-    }
+    }*/
 
     public ROBOT_ZONE getRobotZone() {
         return robotZone;
@@ -254,7 +268,7 @@ public class HzLaunchController {
     public void getDistanceFromTarget() {
         //Vector2d difference = lcDrive.drivePointToAlign.minus(lcDrive.poseEstimate.vec());
         //distanceFromTarget = Math.sqrt(Math.pow(difference.getX(), 2) + Math.pow(difference.getY(), 2));
-        distanceFromTarget = lcTargetVector.distTo(lcDrive.poseEstimate.vec());
+        distanceFromTarget = lcTargetVector.distTo(lcHzDrive.poseEstimate.vec());
         /*distanceFromTarget = Math.sqrt(Math.pow(lcTargetVector.getX()-lcTargetVector.getX(), 2)
                 + Math.pow(lcTargetVector.getY()-lcTargetVector.getY(), 2));*/
     }
@@ -265,12 +279,12 @@ public class HzLaunchController {
                 case POWER_SHOT1:
                 case POWER_SHOT2:
                 case POWER_SHOT3:
-                    //lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.66, 0.74);
-                    lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1550, 0.66, 1740);
+                    //lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1550, 0.66, 1740);
+                    lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
                     break;
                 case HIGH_GOAL:
-                    //lclaunchMotorPower = Range.scale(distanceFromTarget, 66.0, 138, 0.70, 0.78);
-                    lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1560, 1640, 1830);
+                    //lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1560, 1640, 1830);
+                    lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
                     break;
             }
         } else {
@@ -284,7 +298,7 @@ public class HzLaunchController {
         return launchMode;
     }
 
-    public void setLaunchReadyIndicator(LAUNCH_READINESS launchStatus) {
+    /*public void setLaunchReadyIndicator(LAUNCH_READINESS launchStatus) {
         launchReadiness = launchStatus;
     }
 
@@ -306,7 +320,7 @@ public class HzLaunchController {
 
     public void turnlaunchControllerBeaconOff() {
         launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE);
-    }
+    }*/
 
     public void toggleModeManualAutomated() {
         if (launchMode == LAUNCH_MODE.AUTOMATED) {

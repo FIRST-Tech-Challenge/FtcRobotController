@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.TestingOpModes;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -55,7 +56,7 @@ import java.util.Locale;
  */
 @SuppressWarnings("JavadocReference")
 @TeleOp(name = "TestOpMode : Sensor: BNO055 IMU", group = "TestOpMode")
-//@Disabled                            // Comment this out to add to the opmode list
+@Disabled                            // Comment this out to add to the opmode list
 public class SensorBNO055IMU extends LinearOpMode
     {
     //----------------------------------------------------------------------------------------------

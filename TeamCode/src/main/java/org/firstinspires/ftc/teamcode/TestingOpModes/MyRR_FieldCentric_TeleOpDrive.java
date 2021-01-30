@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.TestingOpModes;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * See lines 42-57.
  */
 @TeleOp(name = "TestOpMode : MyRR Field Centric TeleOp", group = "TestOpMode")
+@Disabled
 public class MyRR_FieldCentric_TeleOpDrive extends LinearOpMode {
 
     enum GAMEPAD_LOCATION {

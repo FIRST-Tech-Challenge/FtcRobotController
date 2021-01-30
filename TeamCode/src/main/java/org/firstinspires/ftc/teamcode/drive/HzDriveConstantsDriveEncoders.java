@@ -37,6 +37,8 @@ public class HzDriveConstantsDriveEncoders {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
+    public static final Object MAX_ANG_VEL = 1 ;
+    public static final Object MAX_ACCEL = 1;
     //public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(11, 0, 0.01, 14.7);
 
@@ -55,7 +57,7 @@ public class HzDriveConstantsDriveEncoders {
     //Main Robot Calibration Parameters
     public static double WHEEL_RADIUS = 1.8898;//1.8898; // in
     //EDIT THIS FOR STRAIGHT TEST
-    public static double GEAR_RATIO = 1.0; // Test Robot : *55.5/60.0; // output (wheel) speed / input (motor) speed
+    public static double GEAR_RATIO = 1.055;//1.0; // Test Robot : *55.5/60.0; // output (wheel) speed / input (motor) speed
     //EDIT THIS FOR TRACK WIDTH TUNER TEST
     public static double TRACK_WIDTH = 15.64; //16.2;//16.1;// Test Robot : 10.75;//9.4; // in
 

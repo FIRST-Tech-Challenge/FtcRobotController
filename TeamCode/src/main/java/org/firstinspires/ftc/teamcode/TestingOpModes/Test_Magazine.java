@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TestingOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
  * TeleOpMode for Team Hazmat<BR>
  */
 @TeleOp(name = "Test_Magazine", group = "Test")
+@Disabled
 public class Test_Magazine extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;

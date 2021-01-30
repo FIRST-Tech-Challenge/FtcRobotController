@@ -59,9 +59,9 @@ public class HzGamepad {
     }
 
     public void runByGamepad(){
-        runMagazineControl();
-        runIntakeControl();
-        runLaunchController();
+        runMagazineControl(); //runLaunchController();
+        runIntakeControl(); //runMagazineControl();
+        runLaunchController(); //runIntakeControl();
         runLauncher();
         runByGamepadRRDriveModes();
         runArm();
@@ -110,11 +110,20 @@ public class HzGamepad {
         }
         gpDrive.gamepadInputTurn = -turboMode(getRightStickX());
 
+        if (getButtonXPress()) {
+            gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_LEFT;
+        }
+
+        //Power Shot 2
+        if (getButtonBPress()) {
+            gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_RIGHT;
+        }
+
         gpDrive.driveTrainPointFieldModes();
 
     }
 
-    public void runMagazineControl(){
+    public void runMagazineControl(){ //this function should be in IntakeControl's place after order change
         if (gpHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_COLLECT){
             gpHzLauncher.stopFlyWheel();
         }
@@ -131,7 +140,7 @@ public class HzGamepad {
     }
 
 
-    public void runIntakeControl(){
+    public void runIntakeControl(){ //this function should be at LaunchController's place after order change
 
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
         if (getDpad_downPress()) {
@@ -181,9 +190,19 @@ public class HzGamepad {
     }
 
 
-    public void runLaunchController(){
-        if (getStartPersistent() && getButtonYPress()) {
+    public void runLaunchController(){   //this function should be in magazineControl's place after order change
+        /*if (getStartPersistent() && getButtonYPress()) {
             gpHzLaunchController.toggleModeManualAutomated();
+        }*/
+
+        if(getStartPersistent() && getButtonXPress()) {
+            gpHzLauncher.flyWheelVelocityHighGoal -= gpHzLauncher.DELTA_VELOCITY_CORRECTION;
+            gpHzLauncher.flyWheelVelocityPowerShot -= gpHzLauncher.DELTA_VELOCITY_CORRECTION;
+        }
+
+        if(getStartPersistent() && getButtonYPress()) {
+            gpHzLauncher.flyWheelVelocityHighGoal += gpHzLauncher.DELTA_VELOCITY_CORRECTION;
+            gpHzLauncher.flyWheelVelocityPowerShot += gpHzLauncher.DELTA_VELOCITY_CORRECTION;
         }
 
         if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED) {
@@ -194,28 +213,36 @@ public class HzGamepad {
             }
 
             //Power Shot 1
-            if (getButtonXPress()) {
-                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
-                gpHzLaunchController.activateLaunchReadinessState = true;
+            /*if (getButtonXPress()) {
+                //gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT1;
+                //gpHzLaunchController.activateLaunchReadinessState = true;
+                gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_LEFT;
             }
 
             //Power Shot 2
             if (getButtonBPress()) {
-                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
-                gpHzLaunchController.activateLaunchReadinessState = true;
-            }
+                //gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT3;
+                //gpHzLaunchController.activateLaunchReadinessState = true;
+                gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_DELTA_RIGHT;
+            }*/
 
             //Power Shot 3
             if (getButtonAPress()) {
-                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT3;
+                gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
                 gpHzLaunchController.activateLaunchReadinessState = true;
+                if (gpDrive.augmentedControl == HzDrive.AugmentedControl.NONE){
+                    gpDrive.augmentedControl = HzDrive.AugmentedControl.TURN_CENTER;
+                } else {
+                    gpDrive.augmentedControl = HzDrive.AugmentedControl.NONE;
+                };
             }
         }
 
         if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
                 gpHzLaunchController.launchMode == HzLaunchController.LAUNCH_MODE.AUTOMATED) {
             gpHzLaunchController.runLauncherByDistanceToTarget();
-            if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
+            //if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
+            if (getButtonYPress() || getButtonAPress()) {
                 gpHzLaunchController.deactivateLaunchReadinessState = true;
             }
         }
@@ -224,14 +251,27 @@ public class HzGamepad {
                 gpHzLaunchController.launchMode == HzLaunchController.LAUNCH_MODE.MANUAL) {
             //gpLaunchController.runLauncherByDistanceToTarget();
             if (gpHzLaunchController.lcTarget == HzLaunchController.LAUNCH_TARGET.HIGH_GOAL) {
-                gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL);
-            } else {
-                gpHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT);
+                gpHzLauncher.runFlyWheelToTarget(gpHzLauncher.flyWheelVelocityHighGoal);
+                if (getButtonYPress()) {
+                    gpHzLaunchController.deactivateLaunchReadinessState = true;
+                }
+                if (getButtonAPress()) {
+                    gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
+                }
+            } else { //gpHzLaunchController.lcTarget == HzLaunchController.LAUNCH_TARGET.POWER_SHOT2
+                gpHzLauncher.runFlyWheelToTarget(gpHzLauncher.flyWheelVelocityPowerShot);
+                if (getButtonAPress()) {
+                    gpHzLaunchController.deactivateLaunchReadinessState = true;
+                }
+                if (getButtonYPress()) {
+                    gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.HIGH_GOAL;
+                }
             }
 
-            if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
+            //if (getButtonYPress() || getButtonXPress() || getButtonBPress()|| getButtonAPress()) {
+            /*if (getButtonYPress() || getButtonAPress()) {
                 gpHzLaunchController.deactivateLaunchReadinessState = true;
-            }
+            }*/
         }
 
         if (gpHzLaunchController.deactivateLaunchReadinessState) {
@@ -242,7 +282,7 @@ public class HzGamepad {
             gpHzLaunchController.activateLaunchReadiness();
         }
 
-        gpHzLaunchController.indicateLaunchReadiness();
+        //gpHzLaunchController.indicateLaunchReadiness();
 
     }
 

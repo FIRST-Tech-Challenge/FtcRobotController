@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.TestingOpModes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -87,7 +88,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 
 @TeleOp(name="TestOpMode : Vuforia Nav Webcam TeleOp", group ="TestOpMode")
-//@Disabled
+@Disabled
 public class VuforiaNavigationWebcamTeleOp extends LinearOpMode {
 
     //*****From : HazmatTeleOpMode

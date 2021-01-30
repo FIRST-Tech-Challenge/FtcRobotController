@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.advanced;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  * This opmode is essentially just LocalizationTest.java with a few additions and comments.
  */
 @TeleOp(name = "TestAdvanced:TeleOpDrive", group = "TestAdvanced")
+@Disabled
 public class TeleOpDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
