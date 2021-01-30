@@ -276,9 +276,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(currentY * currentY) * chassis.powerScale() * normalizeRatio);
                 } else {
                     chassis.stop();
-                    if (useIMUforOdometryAngleCorrection){
-                        chassis.getGPS().correctAngleUsingIMU();
-                    }
                 }
             }
         }, Events.Axis.BOTH, Events.Side.LEFT);
@@ -333,9 +330,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     chassis.freeStyle(power_lf, power_rf, power_lb, power_rb, true);
                 } else {
                     chassis.stop();
-                    if (useIMUforOdometryAngleCorrection){
-                        chassis.getGPS().correctAngleUsingIMU();
-                    }
                 }
             }
         }, Events.Axis.BOTH, Events.Side.RIGHT);
@@ -1290,6 +1284,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         while (Math.abs(shooter.getCurrentRPM() - target) > 11 && (System.currentTimeMillis() - iniTime < 500)) { // timeout 5 sec
             sleep(5);
         }
+        if (useIMUforOdometryAngleCorrection){
+            chassis.getGPS().correctAngleUsingIMU();
+        }
         shooter.shootOutByRpm(target - 50);
         hopper.feederAuto();
     }
@@ -1302,6 +1299,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // Stage-2 make sure rpm difference is within 11 error range
         while (Math.abs(shooter.getCurrentRPM() - target) > 11 && (System.currentTimeMillis() - iniTime < 500)) { // timeout 5 sec
             sleep(5);
+        }
+        if (useIMUforOdometryAngleCorrection){
+            chassis.getGPS().correctAngleUsingIMU();
         }
         shooter.shootOutByRpm(target - 60);
         hopper.feederAuto();
