@@ -93,10 +93,10 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double ratioBL = 14460.0/14756.0;
     private double ratioBR = 1.0;
 
-    private double left_ratio = 1.0; // slow down ratio for left wheels to go straight
+    private double left_ratio = 0.75; // slow down ratio for left wheels to go straight
     private double right_ratio = 1.0; // slow down ratio for right wheels to go straight
-    private double front_ratio = 1.0; // slow down ratio for front wheels to go 90 degree
-    private double back_ratio = 0.975; // slow down ratio for front wheels to go 90 degree
+    private double front_ratio = 0.975; // slow down ratio for front wheels to go 90 degree
+    private double back_ratio = 1.0; // slow down ratio for front wheels to go 90 degree
 
     private double fixedStopDist = 18; // stop distance for 152.4 cm /sec
 
@@ -159,7 +159,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private boolean setImuTelemetry = false;//unless debugging, don't set telemetry for imu
     private boolean setRangeSensorTelemetry = true; //unless debugging, don't set telemetry for range sensor
     private boolean useOdometry = true;
-    private boolean normalizeMode = true;
+    private boolean normalizeMode = false;
     private boolean showEncoderDetail = false; // enable the chassis encoders
     private boolean slowMode = false;
 
