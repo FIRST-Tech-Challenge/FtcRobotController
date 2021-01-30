@@ -322,7 +322,7 @@ public class HzAutonomousBasic2 extends LinearOpMode {
         hzAutoControl.setMoveArmPickWobble();
         hzAutoControl.runOpenGrip();
         traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                .lineToLinearHeading(new Pose2d(-31, af*47, Math.toRadians(af*0)))
+                .lineToLinearHeading(new Pose2d(-33, af*50, Math.toRadians(af*0)))
                 .build();
         hzDrive.followTrajectory(traj);
         hzWait(200);
@@ -345,7 +345,7 @@ public class HzAutonomousBasic2 extends LinearOpMode {
                 break;
             case C:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(37, af*50, Math.toRadians(af*-135)))
+                        .lineToSplineHeading(new Pose2d(42, af*50, Math.toRadians(af*-135)))
                         .build();
                 hzDrive.followTrajectory(traj);
                 break;

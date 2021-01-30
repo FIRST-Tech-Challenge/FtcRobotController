@@ -121,26 +121,25 @@ public class HzLaunchController {
 
         //gpVuforia.identifyCurrentLocation();
 
-        //TODO : IN MANUAL MODE DONT REPEND ON LOCATION AT ALL. FIX POWER TO A FIXED VALUE
-
         if (launchMode == LAUNCH_MODE.AUTOMATED && launchReadiness == LAUNCH_READINESS.READY)  {
             determineLaunchTarget();
             turnRobotToTarget();
             runLauncherByDistanceToTarget();
         }
 
-        //TODO : IN MANUAL MODE DONT REPEND ON LOCATION AT ALL. FIX POWER TO A FIXED VALUE
         if (launchMode == LAUNCH_MODE.MANUAL && launchReadiness == LAUNCH_READINESS.READY) {
             if (lcTarget == LAUNCH_TARGET.HIGH_GOAL){
                 //lcHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_HIGH_GOAL);
-                lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
+                //lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
+                lclaunchMotorVelocity = lcHzLauncher.flyWheelVelocityHighGoal;
                 lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
             }
             if (lcTarget == LAUNCH_TARGET.POWER_SHOT1 ||
                     lcTarget ==LAUNCH_TARGET.POWER_SHOT2 ||
                     lcTarget == LAUNCH_TARGET.POWER_SHOT3) {
                 //lcHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
-                lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
+                //lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
+                lclaunchMotorVelocity = lcHzLauncher.flyWheelVelocityPowerShot;
                 lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
             }
         }

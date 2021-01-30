@@ -259,7 +259,7 @@ public class HzGamepad {
                     gpHzLaunchController.lcTarget = HzLaunchController.LAUNCH_TARGET.POWER_SHOT2;
                 }
             } else { //gpHzLaunchController.lcTarget == HzLaunchController.LAUNCH_TARGET.POWER_SHOT2
-                gpHzLauncher.runFlyWheelToTarget(gpHzLauncher.flyWheelVelocityHighGoal);
+                gpHzLauncher.runFlyWheelToTarget(gpHzLauncher.flyWheelVelocityPowerShot);
                 if (getButtonAPress()) {
                     gpHzLaunchController.deactivateLaunchReadinessState = true;
                 }
