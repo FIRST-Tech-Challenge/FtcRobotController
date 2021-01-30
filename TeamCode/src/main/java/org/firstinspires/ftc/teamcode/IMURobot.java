@@ -56,7 +56,10 @@ public class IMURobot {
     private LinearOpMode opMode;
     private Telemetry telemetry;
 
-    private final double SECONDS_PER_CM = 0.012345;
+    private final double DRIVE_WHEEL_CIRCUMFERENCE = 9.6 * Math.PI;
+    private final double MOTOR_RPM = 435;
+    private final double MOTOR_SPR = 60/MOTOR_RPM;
+    private final double SECONDS_PER_CM = MOTOR_SPR/DRIVE_WHEEL_CIRCUMFERENCE;
     private final double TICKS_PER_CM =34.225;
 
     //Odometry encoder wheels
@@ -65,7 +68,10 @@ public class IMURobot {
     private boolean usingOdometry;
 
     //The amount of encoder ticks for each inch the robot moves. This will change for each robot and needs to be changed here
-    final double COUNTS_PER_INCH = 307.699557;
+    final double WHEEL_DIAMETER = 1.5;
+    final double ENCODER_WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
+    final double COUNTS_PER_REVOLUTION = 1280;
+    final double COUNTS_PER_INCH = COUNTS_PER_REVOLUTION/ENCODER_WHEEL_CIRCUMFERENCE;
 
     private OdometryGlobalCoordinatePosition globalPositionUpdate;
 
@@ -497,7 +503,7 @@ public class IMURobot {
     }
 
     public void gyroDriveCm(double power, double cm) throws InterruptedException{
-        gyroDriveSec(power, (cm*SECONDS_PER_CM)/power);
+        gyroDriveSec(power, (cm*SECONDS_PER_CM)/Math.abs(power));
     }
 
     /**
@@ -614,22 +620,25 @@ public class IMURobot {
      * @param power
      */
     public void driveToPos(double targetX, double targetY, double power) throws InterruptedException{
-        //calculate angle
-        double currentX = globalPositionUpdate.returnXCoordinate();
-        double currentY = globalPositionUpdate.returnYCoordinate();
-        double currentTheta = globalPositionUpdate.returnOrientation();
-
-        double angle = Math.atan2(targetY - currentY, targetX - currentX) + Math.PI/4 + (currentTheta * Math.PI/180);
-        
-        //calculate powers
-        double leftPower = Math.cos(angle) * power;
-        double rightPower = Math.sin(angle) * power;
+        //Convert inches to encoder ticks
+        targetX *= COUNTS_PER_INCH;
+        targetY *= COUNTS_PER_INCH;
 
         //strafe until position is reached
         resetAngle();
-        while(Math.abs(targetY - globalPositionUpdate.returnYCoordinate()) > 0 && Math.abs(targetX - globalPositionUpdate.returnXCoordinate()) > 0 && opMode.opModeIsActive()){
-            telemetry.addData("Current X", globalPositionUpdate.returnXCoordinate());
-            telemetry.addData("Current Y", globalPositionUpdate.returnYCoordinate());
+        while(Math.abs(targetY - globalPositionUpdate.returnYCoordinate()) > 10 && Math.abs(targetX - globalPositionUpdate.returnXCoordinate()) > 10 && opMode.opModeIsActive()){
+            double currentX = globalPositionUpdate.returnXCoordinate();
+            double currentY = globalPositionUpdate.returnYCoordinate();
+            double currentTheta = globalPositionUpdate.returnOrientation();
+
+            double angle = Math.atan2(targetY - currentY, targetX - currentX) + Math.PI/4 + (currentTheta * Math.PI/180);
+
+            //calculate powers
+            double leftPower = Math.cos(angle) * power;
+            double rightPower = Math.sin(angle) * power;
+
+            telemetry.addData("Current X", currentX);
+            telemetry.addData("Current Y", currentY);
             telemetry.update();
             
             double correction = getCorrection();

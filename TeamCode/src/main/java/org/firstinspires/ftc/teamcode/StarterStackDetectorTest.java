@@ -73,7 +73,7 @@ public class StarterStackDetectorTest extends LinearOpMode
         wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
         wobbleClaw = hardwareMap.servo.get("wobbleClaw");
 
-        verticalLeft = hardwareMap.dcMotor.get("leftOdometry");
+        verticalLeft = hardwareMap.dcMotor.get("FL");
         verticalRight = hardwareMap.dcMotor.get("FR");
         horizontal = hardwareMap.dcMotor.get("BL");
 
@@ -91,6 +91,8 @@ public class StarterStackDetectorTest extends LinearOpMode
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
             imu, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
+
+        wobbleClaw.setPosition(0);
 
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
@@ -148,29 +150,27 @@ public class StarterStackDetectorTest extends LinearOpMode
             telemetry.update();
 
 
-
         switch(targetZone){
             case 1:
-                robot.gyroTurn(15, .5);
-                robot.gyroDriveCm(-.5, 180);
+                robot.gyroDriveCm(-.5, 200);
                 dropWobble();
                 robot.gyroTurn(-45, .5);
                 robot.gyroDriveCm(-.25, 60);
                 //odometryDriveToPos(100,100);
                 break;
             case 2:
-                robot.gyroDriveCm(-.5, 210);
+                robot.gyroDriveCm(-.5, 280);
+                robot.gyroTurn(-30, .5);
+                robot.gyroDriveCm(-.5, 40);
                 dropWobble();
-                robot.gyroDriveCm(.25, 60);
+                robot.gyroDriveCm(.25, 100);
+
                 //odometryDriveToPos(100,100);
                 break;
             case 3:
-                robot.gyroTurn(10, .5);
-                robot.gyroDriveCm(-.5, 180);
-                robot.gyroTurn(-10, .5);
-                robot.gyroDriveCm(-.5, 60);
+                robot.gyroDriveCm(-.5, 360);
                 dropWobble();
-                robot.gyroDriveCm(.25, 60);
+                robot.gyroDriveCm(.25, 180);//
                 //odometryDriveToPos(100,100);
                 break;
             default:
@@ -305,8 +305,8 @@ public class StarterStackDetectorTest extends LinearOpMode
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
-        while(timer.milliseconds() < 1000){
-            wobbleArm.setPower(-.1);
+        while(timer.milliseconds() < 2500){
+            wobbleArm.setPower(-.3);
         }
         wobbleArm.setPower(0);
 
@@ -314,7 +314,7 @@ public class StarterStackDetectorTest extends LinearOpMode
 
         timer.reset();
         while(timer.milliseconds() < 1000){
-            wobbleArm.setPower(.1);
+            wobbleArm.setPower(.4);
         }
         wobbleArm.setPower(0);
     }
