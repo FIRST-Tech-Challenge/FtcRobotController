@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.Navigations;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
 import org.firstinspires.ftc.teamcode.Components.Navigations.Odometry;
 import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
 
@@ -59,14 +61,11 @@ public class Navigation {
     }
 
 
-    public void navigate() {
-//        Thread vuforia = new Thread(new VuforiaWebcam(op));
-//        Thread odometry = new Thread(new Odometry(op));
+    public void navigate( LinearOpMode op) {
+        Thread vuforia = new Thread(new VuforiaWebcam(op));
+        Thread odometry = new Thread(new Odometry(op));
 
-//        odometry.start();
-//        vuforia.start();
-        while (true) {
-
-        }
+        odometry.start();
+       vuforia.start();
     }
 }

@@ -16,11 +16,11 @@ public class R_3Power_park extends LinearOpMode {
     public void runOpMode(){
         Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
         ElapsedTime runtime = new ElapsedTime();
-        int rings  = 4;//robot.getRingsAndWaitForStart();
-        //robot.stopRingDetection();
-        waitForStart();
+        int rings  = robot.getRingsAndWaitForStart();
+        robot.stopRingDetection();
+       // waitForStart();
         robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-        robot.setPosition(-17.75,63.75, 0);
+        robot.setPosition(-15.75,61.75, 0);//high goal -12,22
         if(rings==0) {
             robot.moveAngle( -5,-65, 0.8);//-25,60
             robot.moveAngle(41,7,0.8);//37,4

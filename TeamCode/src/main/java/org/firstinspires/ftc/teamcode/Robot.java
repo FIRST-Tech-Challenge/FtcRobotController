@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Components.Accesories.Transfer;
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
+import org.firstinspires.ftc.teamcode.Components.Navigations.Navigation;
 import org.firstinspires.ftc.teamcode.Components.Navigations.Odometry;
 import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Components.ObjectDetection.TensorFlow;
@@ -27,6 +28,7 @@ public class Robot {
     private Shooter shooter = null;
     private VuforiaWebcam vuforiaWebcam = null;
     private TensorFlow tensorFlow = null;
+    private Navigation navigation = new Navigation();
 
     private double vuforiaX = 0;
     private double vuforiaY = 0;
@@ -137,6 +139,7 @@ public class Robot {
         drivetrain.moveBackward(distance, power);
     }
     public void setPosition(double xPosition,double yPosition, double newAngle){drivetrain.setPosition(xPosition,yPosition,newAngle);}
+    public void goToPosition(double xPosition,double yPosition, double newAngle, double power){drivetrain.goToPosition(xPosition,yPosition,newAngle,power);}
     public void moveRight(double distance, double power) {
         drivetrain.moveRight(distance, power);
     }
@@ -161,11 +164,7 @@ public class Robot {
     /**Navigation**/
 
     public void runNavigation() {
-        Thread vuforia = new Thread(new VuforiaWebcam(op));
-        Thread odometry = new Thread(new Odometry(op));
-
-        odometry.start();
-        vuforia.start();
+        navigation.navigate(op);
         //This is where we write the code that uses Vuforia to override Odometry
     }
 

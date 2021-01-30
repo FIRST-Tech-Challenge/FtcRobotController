@@ -23,15 +23,19 @@ public class Odometry extends Thread {
     DcMotorEx odom1;
     DcMotorEx odom2;
     DcMotorEx odom3;
-    int[] odomconst = {1,1,1};
-    double ticks_per_inch = (8640*2.54/38*Math.PI)*72/76;
-    double robot_diameter = sqrt(619.84);
-    double[] odom = new double[3];
-    double xpos,ypos,angle;
+    int[] odomconst = {-1,1,-1};
+    float ticks_per_inch = (float)(8640*2.54/38*Math.PI)*72/76;
+    float robot_diameter = (float)sqrt(619.84);
+    float[] odom = new float[3];
+    float xpos,ypos,angle;
     private LinearOpMode op = null;
     private BNO055IMU imu;
     private Orientation             lastAngles = new Orientation();
     private double globalAngle, power = .30, correction;
+
+
+    //set true to enable imu vice versa
+    final boolean enableIMU = true;
 
     public Odometry(LinearOpMode opMode) {
 
@@ -72,12 +76,12 @@ public class Odometry extends Thread {
     public void run() {
         while(!isInterrupted()) {
             if(getInVuforia()) {//getInVuforia
-                double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
+                float diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
                 odom[0] += odomconst[0]*diff[0];
                 odom[1] += odomconst[1]*diff[1];
                 odom[2] += odomconst[2]*diff[2];
-                double x =  cos((getAngle() * Math.PI / 180));
-                double y = sin((getAngle() * Math.PI / 180));
+                float x =  (float)cos((getAngle() * Math.PI / 180));
+                float y = (float)sin((getAngle() * Math.PI / 180));
                 setXposition(getXposition()+(y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1);
                 setYposition(getYposition()+ (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1);
                 setAngle(getAngle());

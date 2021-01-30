@@ -87,22 +87,7 @@ public class OdometryChassis extends BasicChassis {
         motorRightFront.setPower(0);
     }
     public double getAngle() {
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        //op.telemetry.addData("first angle: ", (int)angles.firstAngle);
-        //op.telemetry.update();
-        //op.sleep(1000);
-        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
-
-        if (deltaAngle <= -180) //If the angle is -180, it should be 180, because they are at the same point. The acceptable angles are (-180, 180]
-            deltaAngle += 360;
-        else if (deltaAngle > 180)
-            deltaAngle -= 360;
-
-        globalAngle += deltaAngle;
-
-        lastAngles = angles;
-
-        return -globalAngle;
+        return 0;
     }
     public double[] track() {
         double data[]={0,0,0};
