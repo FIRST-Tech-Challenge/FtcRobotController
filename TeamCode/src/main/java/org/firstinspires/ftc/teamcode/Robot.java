@@ -136,7 +136,7 @@ public class Robot {
     public void moveBackward(double distance, double power) {
         drivetrain.moveBackward(distance, power);
     }
-
+    public void setPosition(double xPosition,double yPosition, double newAngle){drivetrain.setPosition(xPosition,yPosition,newAngle);}
     public void moveRight(double distance, double power) {
         drivetrain.moveRight(distance, power);
     }
@@ -239,10 +239,6 @@ public class Robot {
         wobbleGoal.moveWobbleGoalServo(direction);
     }
 
-    public void moveWobbleGoalClaw(boolean open) {
-        wobbleGoal.moveWobbleGoalClaw(open);
-    }
-
     // intake
     public void startIntake(){
         if(isCorgi) {
@@ -315,11 +311,11 @@ public class Robot {
 
 
 
-    public void shootLeftPowerShot(int rings) {
+    public void shootThreePowerShot() {
         ElapsedTime runtime = new ElapsedTime();
         op.telemetry.addData("speed: ", shooter.getRPM());
         op.telemetry.update();
-        op.sleep(100);
+        drivetrain.turnInPlace(-1.5,1.0);
         shooter.setVelocity(1725, 1000);
         op.sleep(1500);
         if (shooter.getRPM()*28/60 > 0) {
@@ -328,39 +324,16 @@ public class Robot {
             op.telemetry.addData("status", shooter.getRPM());
             op.telemetry.update();
         }
-        for (int i = 0; i < rings; i++) {
-            moveServo(false);
-            moveAngle(-9.6,0,0.5);
-            moveServo(true);
-        }
+        shooter.moveServo(false);
+        shooter.moveServo(true);
+        drivetrain.turnInPlace(4,0.5);
+        shooter.moveServo(false);
+        shooter.moveServo(true);
+        drivetrain.turnInPlace(-6.5,0.5);
+        shooter.moveServo(false);
+        shooter.moveServo(true);
         if(op.getRuntime()>3){
             stopShooter();
         }
     }
-    public void shootRightPowerShot(int rings) {
-        ElapsedTime runtime = new ElapsedTime();
-        op.telemetry.addData("speed: ", shooter.getRPM());
-        op.telemetry.update();
-        op.sleep(100);
-        shooter.setVelocity(1725, 1000);
-        op.sleep(1500);
-        if (shooter.getRPM()*28/60 > 0) {
-            op.sleep(100);
-            op.telemetry.clear();
-            op.telemetry.addData("status", shooter.getRPM());
-            op.telemetry.update();
-        }
-        for (int i = 0; i < rings; i++) {
-            moveServo(false);
-            moveAngle(9.6,0,0.5);
-            moveServo(true);
-        }
-        if(op.getRuntime()>3){
-            stopShooter();
-        }
-    }
-
-
-
-
 }

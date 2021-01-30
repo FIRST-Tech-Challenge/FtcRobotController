@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
@@ -23,6 +24,7 @@ public class R_Power_park extends LinearOpMode {
         robot.stopRingDetection();
         telemetry.update();
         //waitForStart();
+        robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
         if(rings == 0) {
             robot.moveAngle( -53,-55, 0.6);
             robot.turnInPlace(0,1.0);
@@ -52,7 +54,7 @@ public class R_Power_park extends LinearOpMode {
             robot.moveAngle(39,2,0.7);
             robot.turnInPlace(2,1.0);
         }
-        robot.shootRightPowerShot(3);
+        robot.shootThreePowerShot();
 
         sleep(500);
         stop();

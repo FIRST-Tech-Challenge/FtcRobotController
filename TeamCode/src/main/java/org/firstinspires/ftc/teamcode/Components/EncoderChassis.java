@@ -360,4 +360,9 @@ public class EncoderChassis extends BasicChassis {
             turnInPlace(startAngle, 0.25);
             stopAllMotors();
         }
+
+    @Override
+    public void setPosition(double xPosition, double yPosition, double newangle) {
+
     }
+}

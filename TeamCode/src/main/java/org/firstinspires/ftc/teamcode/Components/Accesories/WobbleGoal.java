@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class WobbleGoal {
 
     public enum Position {
-        REST, GRAB, RAISE, RELEASE, DROP, STARTOFTELEEOP
+        REST, GRAB, RAISE,RUN, RELEASE, DROP, STARTOFTELEEOP
     }
 
     //declaring the op mode
@@ -29,9 +29,9 @@ public class WobbleGoal {
     protected Servo wobbleGoalServoClaw = null;
 
     private final int ticksForREST = 0;
-    private final int ticksForGRAB = 540;
+    private final int ticksForGRAB = -400;
     private final int ticksForRAISE = 300;
-    private final int ticksForAutonomousDrop = 950;
+    private final int ticksForAutonomousMove = -425;
     private final int ticksForSTARTOFTELEEOP = 200;
     private final double wobbleGoalSpeed = 0.3;
     private final double wobbleGoalSpeedDrop = 0.5;
@@ -64,10 +64,12 @@ public class WobbleGoal {
             i = ticksForRAISE;
         } else if (p == Position.STARTOFTELEEOP) {
             i = ticksForSTARTOFTELEEOP;
+        }else if (p == Position.RUN) {
+            i = ticksForAutonomousMove;
         } else {
             op.telemetry.addData("IQ Lvl", "0.00");
             op.telemetry.update();
-            op.sleep(2000);
+            //op.sleep(2000);
         }
 
         wobbleGoalMotor.setTargetPosition(i);

@@ -433,4 +433,9 @@ public class IMUChassis extends BasicChassis {
     }
     stopAllMotors();
 }
+
+    @Override
+    public void setPosition(double xPosition, double yPosition, double newangle) {
+
+    }
 }

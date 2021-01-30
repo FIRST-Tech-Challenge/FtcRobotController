@@ -61,6 +61,7 @@ public abstract class BasicChassis {
     abstract public void moveRight(double distance, double power);
     abstract public void moveLeft(double distance, double power);
     abstract public void moveAngle(double x, double y, double power);
+    abstract public void setPosition(double xPosition, double yPosition, double newangle);
 
     public void moveMultidirectional(double power, double angle, float rightStick, boolean isSlow) {
         double angleInRadian;

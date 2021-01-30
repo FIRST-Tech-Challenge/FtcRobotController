@@ -21,7 +21,7 @@ final boolean debug = true;
         telemetry.update();
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
-        sleep(1000);
+        sleep(500);
         waitForStart();
         /*robot.moveAngle(0,20,0.5);
         telemetry.addData("moved1s", "done");
@@ -73,10 +73,15 @@ final boolean debug = true;
         sleep(1000);*/
         //while(!isStopRequested()){
         robot.moveAngle(0,72,0.5);
+        sleep(5000);
         robot.moveAngle(0,-72,0.5);
+        sleep(5000);
         robot.moveAngle(48,0,0.5);
+        sleep(5000);
         robot.moveAngle(-48,0,0.5);
+        sleep(5000);
         robot.moveAngle(48,48,0.5);
+        sleep(5000);
         robot.moveAngle(-48,-48,0.5);
            //robot.moveRight(48,0.5);
            //robot.moveLeft(48,0.5);

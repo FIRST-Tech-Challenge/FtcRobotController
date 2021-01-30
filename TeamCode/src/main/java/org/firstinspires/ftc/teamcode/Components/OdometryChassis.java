@@ -117,15 +117,76 @@ public class OdometryChassis extends BasicChassis {
         angle=getAngle();
         op.telemetry.addData("x",xpos);
         op.telemetry.addData("y",ypos);
-        op.telemetry.addData("odom1",odomconst[0]*odom1.getCurrentPosition());
-        op.telemetry.addData("odom2",odomconst[1]*odom2.getCurrentPosition());
-        op.telemetry.addData("odom3",odomconst[2]*odom3.getCurrentPosition());
+        //op.telemetry.addData("odom1",odomconst[0]*odom1.getCurrentPosition());
+        //op.telemetry.addData("odom2",odomconst[1]*odom2.getCurrentPosition());
+        //op.telemetry.addData("odom3",odomconst[2]*odom3.getCurrentPosition());
         op.telemetry.addData("angle",angle);
         op.telemetry.update();
         data[0]=xpos;
         data[1]=ypos;
         data[2]=angle;
         return data;
+    }
+    public void setPosition(double xPosition, double yPosition, double newangle){
+        xpos=xPosition;
+        ypos=yPosition;
+        angle= newangle;
+    }
+    public void goToPosition(double x, double y, double a, double power){
+        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
+        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
+        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
+        motorRightBack.setDirection(DcMotor.Direction.FORWARD);
+        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        double startAngle = getAngle();
+        double[] currentPosition = track();
+        double[] target_position = {0, 0, 0};
+        double anglecorrection=0;
+        target_position[0] = x;
+        target_position[1] = y-0.15;
+        target_position[2] = a;
+        double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
+        double angleInRadians = atan2(y, x) - getAngle() * PI / 180;
+        double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
+        double startpower=power;
+        while (op.opModeIsActive() && (difference >= 0.5)) {
+            currentPosition = track();
+            if (difference < 15*power) {
+                power = startpower* difference / (15*power);
+            }
+            x = target_position[0] - currentPosition[0];
+            y = target_position[1] - currentPosition[1];
+            angleInRadians = atan2(y, x) - (target_position[2]+((currentPosition[2] * PI / 180)-target_position[2])/1);
+            anglePower[0] = sin(angleInRadians + PI / 4);
+            anglePower[1] = sin(angleInRadians - PI / 4);
+            anglecorrection = (currentPosition[2] - target_position[2]) * 0.05;
+            if(anglecorrection>0.5){
+                anglecorrection=0.5;
+            }
+            if (difference > 5) {
+                if (abs(anglePower[1]) > abs(anglePower[0])) {
+                    anglePower[1] *= abs(1 / anglePower[1]);
+                    anglePower[0] *= abs(1 / anglePower[1]);
+                } else {
+                    anglePower[1] *= abs(1 / anglePower[0]);
+                    anglePower[0] *= abs(1 / anglePower[0]);
+                }
+            }
+            while(abs(power)<0.3){
+                power*=0.3/abs(power);
+            }
+            motorRightBack.setPower(power * anglePower[1] + anglecorrection);
+            motorRightFront.setPower(power * anglePower[0] + anglecorrection);
+            motorLeftBack.setPower(power * anglePower[0] - anglecorrection);
+            motorLeftFront.setPower(power * anglePower[1] - anglecorrection);
+            difference = abs(sqrt((x) * (x) + (y) * (y)));
+            op.telemetry.addData("distance", difference);
+        }
+        turnInPlace(a,1.0);
+        stopAllMotors();
     }
     public void turnInPlace(double target, double power) {
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
@@ -159,7 +220,7 @@ public class OdometryChassis extends BasicChassis {
         motorRightBack.setPower(rightPower);
         motorRightFront.setPower(rightPower);
 
-        while (op.opModeIsActive() && (error > 1 || error < -1))
+        while (op.opModeIsActive() && (error > 0.75  || error < -0.75))
         {
             currentAngle = getAngle();
             error = newTarget - currentAngle;
@@ -309,8 +370,8 @@ public class OdometryChassis extends BasicChassis {
         double[] currentPosition = track();
         double[] target_position = {0, 0, 0};
         double anglecorrection=0,startx=x,starty=y;
-        target_position[0] = currentPosition[0] + x+0.3;
-        target_position[1] = currentPosition[1] + y-0.1;
+        target_position[0] = currentPosition[0] + x;
+        target_position[1] = currentPosition[1] + y-0.15;
         target_position[2] = currentPosition[2];
         double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
         double angleInRadians = atan2(y, x) - getAngle() * PI / 180;
@@ -326,8 +387,9 @@ public class OdometryChassis extends BasicChassis {
             op.telemetry.addData("power2",anglePower[1]);
             op.telemetry.update();
             op.telemetry.update();*/
-            if (difference < 5) {
-                power = startpower* difference / 5;
+            power=difference/15;
+            if(power>startpower){
+                power=startpower;
             }
             x = target_position[0] - currentPosition[0];
             y = target_position[1] - currentPosition[1];
@@ -356,7 +418,8 @@ public class OdometryChassis extends BasicChassis {
             //op.telemetry.addData("y", y);
             op.telemetry.addData("distance", difference);
         }
-        turnInPlace(0,0.25);
+        currentPosition = track();
+        turnInPlace(0,1.0);
         stopAllMotors();
     }
 }
