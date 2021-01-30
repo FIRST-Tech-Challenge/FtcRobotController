@@ -19,7 +19,6 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private CombinedOrientationSensor orientationSensor;
     //Thead run condition
     private boolean isRunning = true;
-    private boolean useIMU = true; // use IMU for radian correction
     //Position variables used for storage and calculations
     double initRadians = 0;
     double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0,  changeInRobotOrientation = 0;
@@ -91,11 +90,8 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
   //      changeInRobotOrientation = Math.signum(leftChange - rightChange) * Math.acos(1  - (leftChange - rightChange)*(leftChange - rightChange)/ robotEncoderWheelDistance/ robotEncoderWheelDistance / 2);
         // Replace angle calculation by imu
-        if (orientationSensor!=null && useIMU) {
-            robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
-        } else {
-            robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
-        }
+
+        robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
         //Get the components of the motion
         double rawHorizontalChange = normalEncoderWheelPosition - prevNormalEncoderWheelPosition;
         double horizontalChange = rawHorizontalChange - (changeInRobotOrientation*horizontalEncoderTickPerDegreeOffset);
@@ -120,6 +116,9 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
 
         count = (count+1)%10000;
 
+    }
+    public void correctAngleUsingIMU(){
+        robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
     }
 
     /**

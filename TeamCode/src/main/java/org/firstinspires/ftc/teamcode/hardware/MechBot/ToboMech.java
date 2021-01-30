@@ -89,6 +89,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean useShooter = true;
     public boolean useIntake = true;
     public boolean isTeleOpAfterAuto = false;
+    private boolean useIMU = true; // use IMU for radian correction
+
 
     public void set_simulation_mode(boolean value) {
         simulation_mode = value;
@@ -274,6 +276,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(currentY * currentY) * chassis.powerScale() * normalizeRatio);
                 } else {
                     chassis.stop();
+                    if (useIMU){
+                        chassis.getGPS().correctAngleUsingIMU();
+                    }
                 }
             }
         }, Events.Axis.BOTH, Events.Side.LEFT);
@@ -328,6 +333,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     chassis.freeStyle(power_lf, power_rf, power_lb, power_rb, true);
                 } else {
                     chassis.stop();
+                    if (useIMU){
+                        chassis.getGPS().correctAngleUsingIMU();
+                    }
                 }
             }
         }, Events.Axis.BOTH, Events.Side.RIGHT);
