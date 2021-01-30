@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Components.Navigations.Navigation;
 import org.firstinspires.ftc.teamcode.Components.Navigations.Odometry;
 
 import java.io.File;
@@ -26,17 +27,7 @@ import static java.lang.Math.sqrt;
 //2.0,1.7,1.1
 public class OdometryChassis extends BasicChassis {
     private Odometry odometry = null;
-    DcMotorEx odom1;
-    DcMotorEx odom2;
-    DcMotorEx odom3;
-    int[] odomconst = {-1,1,-1};
-    double ticks_per_inch = (8640*2.54/38*Math.PI)*72/76;
-    double robot_diameter = sqrt(619.84);
-    double[] odom = new double[3];
-    double xpos,ypos,angle;
-    private LinearOpMode op = null;
-    private BNO055IMU imu;
-    private Orientation             lastAngles = new Orientation();
+    private Navigation navigation= null;
     private double globalAngle, power = .30, correction;
 
 
@@ -47,39 +38,12 @@ public class OdometryChassis extends BasicChassis {
         super(opMode);
         op = opMode;
 
-        // Chassis encoders
-        odom1 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
-        odom3 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
-        odom2 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightBack");
-        // reset encoder count.
-        odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        odom3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lastAngles  = new Orientation();
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = false;
-
-        imu = op.hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
-        // make sure the imu gyro is calibrated before continuing.
-        while (!op.isStopRequested() && !imu.isGyroCalibrated())
-        {
-            op.sleep(50);
-            op.idle();
-        }
-
-        op.telemetry.addData("Mode", "waiting for start");
-        op.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
-        op.telemetry.update();
+        Navigation navigation = new Navigation();
+        navigation.navigate(op);
     }
-
+    public void setPosition(double x, double y, double angle){
+        navigation.setPosition(x,y,angle);
+    }
     public void stopAllMotors() {
         motorLeftBack.setPower(0);
         motorRightBack.setPower(0);
@@ -87,35 +51,10 @@ public class OdometryChassis extends BasicChassis {
         motorRightFront.setPower(0);
     }
     public double getAngle() {
-        return 0;
+        return navigation.getPosition()[2];
     }
     public double[] track() {
-        double data[]={0,0,0};
-        double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
-        odom[0] += odomconst[0]*diff[0];
-        odom[1] += odomconst[1]*diff[1];
-        odom[2] += odomconst[2]*diff[2];
-        double x =  cos((getAngle() * Math.PI / 180));
-        double y = sin((getAngle() * Math.PI / 180));
-        xpos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1;
-        ypos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
-        angle=getAngle();
-        op.telemetry.addData("x",xpos);
-        op.telemetry.addData("y",ypos);
-        //op.telemetry.addData("odom1",odomconst[0]*odom1.getCurrentPosition());
-        //op.telemetry.addData("odom2",odomconst[1]*odom2.getCurrentPosition());
-        //op.telemetry.addData("odom3",odomconst[2]*odom3.getCurrentPosition());
-        op.telemetry.addData("angle",angle);
-        op.telemetry.update();
-        data[0]=xpos;
-        data[1]=ypos;
-        data[2]=angle;
-        return data;
-    }
-    public void setPosition(double xPosition, double yPosition, double newangle){
-        xpos=xPosition;
-        ypos=yPosition;
-        angle= newangle;
+        return navigation.getPosition();
     }
     public void goToPosition(double x, double y, double a, double power){
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
