@@ -53,6 +53,8 @@ public class YellowBot implements OdoBot {
     static final double WHEEL_DIAMETER_INCHES = 2.0;     // For figuring circumference
     public static final double COUNTS_PER_INCH_REV = (REV_TBORE * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * Math.PI);  //1303.79729
     public static final double MAX_VELOCITY = 2140;
+    public static final  double PROC_DELAY = 7; // 142ms. todo: infer from calibration
+    public static final double MAX_VELOCITY_PER_PROC_DELAY = MAX_VELOCITY / PROC_DELAY;
 
     public static final double ROBOT_LENGTH_X = 17.25;
     public static final double ROBOT_LENGTH_Y = 17.5;
@@ -134,6 +136,24 @@ public class YellowBot implements OdoBot {
 
     public Telemetry getTelemetry() {
         return this.telemetry;
+    }
+
+    public void setDriveToPowerMode(){
+        if (backLeft != null) {
+            backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        if (backRight != null) {
+            backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        if (frontLeft != null) {
+            frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        if (frontRight != null) {
+            frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
     }
 
 
@@ -683,11 +703,16 @@ public class YellowBot implements OdoBot {
             }
 
             double desired = Math.abs(degrees);
-            double slowdownMark = desired; // Math.abs(degrees) * reduction.getBreakPoint(profile.getTopSpeed());
+            double slowdownMark = Math.abs(degrees) * reduction.getBreakPoint(profile.getTopSpeed());
+            //adjust slow down by 100ms to account for processing time
+            double ticksAdjustment = MAX_VELOCITY_PER_PROC_DELAY*profile.getTopSpeed();
+            double ticksAdjustmentDegrees = ticksAdjustment/botConfig.getHorizontalTicksDegree();
+            slowdownMark = slowdownMark - ticksAdjustmentDegrees;
+            desired = desired - ticksAdjustmentDegrees;
 
 
             if (!profile.shouldStop()) {
-                desired = slowdownMark;
+                 desired = slowdownMark;
             }
 
 

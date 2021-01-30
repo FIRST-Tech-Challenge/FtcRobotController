@@ -207,10 +207,10 @@ public class OdoBase extends LinearOpMode {
             sleep(locator.getThreadSleepTime());
             BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(desiredHead, instruction.getTopSpeed(), locator);
             if (Math.abs(profile.getAngleChange()) < 30){
-                profile.setTopSpeed(0.1);
+                profile.setTopSpeed(0.3);
             }
             else{
-                profile.setTopSpeed(0.3);
+                profile.setTopSpeed(0.5);
             }
             spin(profileSpin);
         }

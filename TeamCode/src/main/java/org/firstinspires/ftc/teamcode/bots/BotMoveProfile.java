@@ -491,10 +491,14 @@ public class BotMoveProfile {
 
         double sign = Math.signum(distanceLong);
 
-        double slowdownMarkLong = startingPointLong + sign*(Math.abs(distanceLong) - breakPoint);
-        double slowdownMarkShort = startingPointShort + sign*(Math.abs(distanceShort) - breakPoint);
+        //account for processing time
+        double ticksLong = YellowBot.MAX_VELOCITY_PER_PROC_DELAY*topSpeed;
+        double ticksShort = YellowBot.MAX_VELOCITY_PER_PROC_DELAY*lowSpeed;
 
-        double longTarget = startingPointLong + distanceLong;
+        double slowdownMarkLong = startingPointLong + sign*(Math.abs(distanceLong) - breakPoint - ticksLong);
+        double slowdownMarkShort = startingPointShort + sign*(Math.abs(distanceShort) - breakPoint - ticksShort);
+
+        double longTarget = startingPointLong + sign*(Math.abs(distanceLong) - ticksLong);
 
 
         profile.setLeftLong(leftLong);
@@ -525,10 +529,10 @@ public class BotMoveProfile {
         profile.setTopSpeed(topSpeed);
         if(next != null && next == MoveStrategy.Straight){
             if (Math.abs(profile.getAngleChange()) < 30){
-                profile.setTopSpeed(0.1);
+                profile.setTopSpeed(0.3);
             }
             else{
-                profile.setTopSpeed(0.3);
+                profile.setTopSpeed(0.5);
             }
         }
         profile.setNextStep(next);

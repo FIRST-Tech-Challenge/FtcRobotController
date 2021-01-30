@@ -931,7 +931,7 @@ public class MasterOdo extends OdoBase {
     }
 
     private void showHeading(){
-        telemetry.addData("Current Heading", "%.2f", locator.getOrientation());
+        telemetry.addData("Current Heading", "%.2f", locator.getAdjustedCurrentHeading());
     }
 
 

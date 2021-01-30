@@ -658,7 +658,6 @@ public class MasterCalib extends LinearOpMode {
 
             if (actualChange > desiredChange){
                 reduction = 1 - ((actualChange - desiredChange)/desiredChange);
-                reduction = reduction - 0.3;
             }
 
             if (left) {
@@ -701,15 +700,23 @@ public class MasterCalib extends LinearOpMode {
 
             double actualChange = Math.abs(endHead - startHead);
 
+            if (Math.abs(actualChange) <= MARGIN_ERROR_DEGREES){
+                led.OK();
+            }
+            else{
+                led.needAdjustment();
+            }
+
 
             telemetry.addData("left", left);
             telemetry.addData("desired", desiredChange);
             telemetry.addData("actual", actualChange);
             timer.reset();
-            while(timer.milliseconds() < 1000 && opModeIsActive()){
+            while(timer.milliseconds() < 2000 && opModeIsActive()){
 
             }
 
+            led.none();
         }
         catch (Exception ex){
             telemetry.addData("Error", ex.getMessage());

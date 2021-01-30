@@ -63,6 +63,7 @@ public class UltimateMode extends LinearOpMode {
         try {
             try {
                 robot.init(this, this.hardwareMap, telemetry);
+                robot.setDriveToPowerMode();
             } catch (Exception ex) {
                 telemetry.addData("Init", ex.getMessage());
             }
