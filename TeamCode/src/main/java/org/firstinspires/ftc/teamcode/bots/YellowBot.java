@@ -648,13 +648,13 @@ public class YellowBot implements OdoBot {
                         realSpeedRB = adjustedRight;
                         realSpeedLF = adjustedLeft;
                         realSpeedLB = adjustedLeft;
-                        telemetry.addData("Adj Left", adjustedLeft);
-                        telemetry.addData("Adj Right", adjustedRight);
+//                        telemetry.addData("Adj Left", adjustedLeft);
+//                        telemetry.addData("Adj Right", adjustedRight);
                         leftLong = locator.isLeftLong();
 //                        slowdownMarkLong = locator.getSlowdownMarkLong();
 //                        slowdownMarkShort = locator.getSlowdownMarkShort();
 //                        longTarget = locator.getLongTarget();
-                        telemetry.addData("LeftLong", leftLong);
+//                        telemetry.addData("LeftLong", leftLong);
 //                        telemetry.addData("SlowdownMarkLong", slowdownMarkLong);
 //                        telemetry.addData("SlowdownMarkShort", slowdownMarkShort);
 //                        telemetry.addData("longTarget", longTarget);

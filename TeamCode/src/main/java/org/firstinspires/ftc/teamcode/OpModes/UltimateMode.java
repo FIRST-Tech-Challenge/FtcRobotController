@@ -40,14 +40,14 @@ import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.BotThreadAction;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
-//Opmode for quick testing of motors
+// Main Op Mode
 @TeleOp(name = "Ultimate", group = "Robot15173")
 public class UltimateMode extends LinearOpMode {
 
     // Declare OpMode members.
     UltimateBot robot = new UltimateBot();
     private ElapsedTime runtime = new ElapsedTime();
-    boolean changedclaw = false;
+    boolean changedclaw = true;
     boolean changedintake = false;
     boolean changedshooter = false;
     boolean intakeReverse = false;
@@ -138,7 +138,7 @@ public class UltimateMode extends LinearOpMode {
                 // wobble swing regular
                 if (gamepad1.dpad_up && buttonpressable) {
                     startdelay = runtime.milliseconds();
-                    robot.groundWobbleTeleop();
+                    robot.forwardWobbleSwing();
                 } else if (gamepad1.dpad_down && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     robot.backWobbleSwing();
@@ -194,6 +194,7 @@ public class UltimateMode extends LinearOpMode {
                 telemetry.addData("Left", robot.getLeftOdometer());
                 telemetry.addData("Right", robot.getRightOdometer());
                 telemetry.addData("Hor", robot.getHorizontalOdometer());
+                telemetry.addData("Wobble Position", robot.getWobblePos());
                 telemetry.update();
             }
         } catch (Exception ex) {

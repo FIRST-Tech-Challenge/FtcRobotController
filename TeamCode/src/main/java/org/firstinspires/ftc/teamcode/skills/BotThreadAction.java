@@ -26,7 +26,7 @@ public class BotThreadAction implements Runnable {
         } else if (function.contains("wobbleback")) {
             robot.backWobbleSwing();
         } else if (function.contains("wobbleforward")) {
-            robot.groundWobbleTeleop();
+            robot.forwardWobbleSwing();
         } else if (function.contains("wobblewall")) {
             robot.liftWobbleWall();
         }
