@@ -84,10 +84,10 @@ public class Launcher {
 
         }
         if(active) {
-            if(FlywheelActivePID)
-                movePIDExtend(kpFlywheel, kiFlywheel, kdFlywheel, flywheelMotor.getCurrentPosition(), FlywheelRPM);
-            else
-                FlywheelRPM = flywheelMotor.getCurrentPosition();
+//            if(FlywheelActivePID)
+//                spinPIDFlywheel(kpFlywheel, kiFlywheel, kdFlywheel, flywheelMotor.getCurrentPosition(), FlywheelRPM);
+//            else
+//                FlywheelRPM = flywheelMotor.getCurrentPosition();
         }
     }
 
@@ -122,9 +122,9 @@ public class Launcher {
     public boolean toggleGripper() {
         grabState = !grabState;
         if(grabState)
-            servoGripper.setPosition(servoNormalize(1500)); //open
+            servoGripper.setPosition(servoNormalize(1800)); //open //1500
         else
-            servoGripper.setPosition(servoNormalize(899)); //closed
+            servoGripper.setPosition(servoNormalize(2100)); //closed //899
         return true;
     }
 
@@ -134,7 +134,7 @@ public class Launcher {
 
 
 
-    public void movePIDExtend(double Kp, double Ki, double Kd, double currentTicks, double targetTicks) {
+    public void spinPIDFlywheel(double Kp, double Ki, double Kd, double currentTicks, double targetTicks) {
 
         //initialization of the PID calculator's output range, target value and multipliers
         flyWheelPID.setOutputRange(-FlywheelPwr, FlywheelPwr);
