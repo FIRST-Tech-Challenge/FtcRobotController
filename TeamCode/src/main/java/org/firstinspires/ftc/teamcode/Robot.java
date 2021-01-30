@@ -137,7 +137,7 @@ public class Robot {
     public void moveBackward(double distance, double power) {
         drivetrain.moveBackward(distance, power);
     }
-    public void setPosition(double xPosition,double yPosition, double newAngle){}
+    public void setPosition(double xPosition,double yPosition, double newAngle){drivetrain.setPosition(xPosition,yPosition,newAngle);}
     public void goToPosition(double xPosition,double yPosition, double newAngle, double power){drivetrain.goToPosition(xPosition,yPosition,newAngle,power);}
     public void moveRight(double distance, double power) {
         drivetrain.moveRight(distance, power);

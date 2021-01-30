@@ -14,7 +14,7 @@ public class track extends LinearOpMode {
     final boolean debug= true;
     @Override
     public void runOpMode(){
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, true);
         ElapsedTime op = new ElapsedTime();
         OdometryChassis odom= new OdometryChassis(this);
 
@@ -23,11 +23,10 @@ public class track extends LinearOpMode {
         //int rings = robot.getRingsAndWaitForStart();
         //robot.stopRingDetection();
         waitForStart();
+        op.startTime();
         robot.setPosition(-15.75,61.75, 0);
-        robot.runNavigation();
-        while(!isStopRequested()){
-
-        }
+        sleep(5000);
+        robot.goToPosition(0,0,0,0.8);
         stop();
     }
 
