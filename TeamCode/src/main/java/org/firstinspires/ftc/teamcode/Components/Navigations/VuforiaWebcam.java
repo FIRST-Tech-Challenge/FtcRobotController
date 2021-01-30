@@ -59,10 +59,6 @@ public class VuforiaWebcam extends Thread {
 
     public VuforiaWebcam(OpMode opMode) {
         op = opMode;
-    }
-
-    public void init(LinearOpMode opMode){
-        op = opMode;
 
         // Vuforia License Key
         final String VUFORIA_KEY = key.key;

@@ -66,6 +66,6 @@ public class Navigation {
         Thread odometry = new Thread(new Odometry(op));
 
         odometry.start();
-       vuforia.start();
+        vuforia.start();
     }
 }

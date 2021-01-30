@@ -38,12 +38,12 @@ public class Robot {
         //This link has a easy to understand explanation. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
         drivetrain= ChassisFactory.getChassis(chassisType,op);
 
-        vuforiaWebcam = new VuforiaWebcam(op);
         if(objectDetectionNeeded){
             tensorFlow = new TensorFlow(op);
         }
         if(vuforiaNAVIGATIONneeded){
-            vuforiaWebcam.init(op);
+            vuforiaWebcam = new VuforiaWebcam(op);
+//            vuforiaWebcam.init(op);
         }
         if(objectDetectionNeeded && vuforiaNAVIGATIONneeded){
             throw new RuntimeException("They both can't be true.");
