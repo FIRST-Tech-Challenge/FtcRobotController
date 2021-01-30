@@ -1711,6 +1711,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
 
     public void rotateToTargetAndStartShooter(MechChassis.ShootingTarget target, boolean useVuforia) {
+        if (useIMUforOdometryAngleCorrection){
+            chassis.getGPS().correctAngleUsingIMU();
+        }
         double target_x = 0;
         double target_y = 360;
         double target_height = 0;
