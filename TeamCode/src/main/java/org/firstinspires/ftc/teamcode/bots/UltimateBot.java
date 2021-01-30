@@ -25,11 +25,11 @@ public class UltimateBot extends YellowBot {
     private DcMotorEx shooter = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
-    private static double SWING_BACK_POS = 1;
-    private static double SWING_PLACE_POS = 0;
-    private static double SWING_STRAIGHT_UP = 0.5;
-    private static double SWING_LIFT_AND_HOLD = 0.3;
-    private static double SWING_LIFT_WALL = 0.7;
+    private static double SWING_BACK_POS = 0.65;
+    private static double SWING_PLACE_POS = 0.05;
+    private static double SWING_STRAIGHT_UP = 0.4;
+    private static double SWING_LIFT_AND_HOLD = 0.2;
+    private static double SWING_LIFT_WALL = 0.4;
     private static double SHOOT_SERVO = 0.7;
 
     private static int TIMEOUT = 2500;
@@ -99,7 +99,7 @@ public class UltimateBot extends YellowBot {
 
         try {
             wobbleSwing = hwMap.get(Servo.class, "wobble");
-//            wobbleSwing.setPosition(0.5);
+            wobbleSwing.setPosition(0.65);
         } catch (Exception ex) {
             throw new Exception("Issues with wobbleSwing. Check the controller config", ex);
         }
@@ -223,43 +223,47 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Wobble Little Up", defaultReturn = "")
     public void wobbleLittleUp() {
         if (wobbleSwing != null) {
-            wobbleSwing.setPosition(wobbleSwing.getPosition() + 0.1);
+            double currposition = wobbleSwing.getPosition();
+            currposition = currposition + 0.05;
+            wobbleSwing.setPosition(currposition);
         }
     }
 
     @BotAction(displayName = "Wobble Little Down", defaultReturn = "")
     public void wobbleLittleDown() {
         if (wobbleSwing != null) {
-            wobbleSwing.setPosition(wobbleSwing.getPosition() - 0.1);
+            double currposition = wobbleSwing.getPosition();
+            currposition = currposition - 0.05;
+            wobbleSwing.setPosition(currposition);
         }
     }
 
     @BotAction(displayName = "Init WobbleSwing", defaultReturn = "")
     public void backWobbleSwing() {
-//        if (wobbleSwing != null) {
-//            wobbleSwing.setPosition(SWING_BACK_POS);
-//        }
+        if (wobbleSwing != null) {
+            wobbleSwing.setPosition(SWING_BACK_POS);
+        }
     }
 
     @BotAction(displayName = "Place Wobble", defaultReturn = "")
     public void forwardWobbleSwing() {
-//        if (wobbleSwing != null) {
-//            wobbleSwing.setPosition(SWING_PLACE_POS);
-//        }
+        if (wobbleSwing != null) {
+            wobbleSwing.setPosition(SWING_PLACE_POS);
+        }
     }
 
     @BotAction(displayName = "Lift Wobble Up Hold", defaultReturn = "")
     public void liftAndHoldWobbleSwing() {
-//        if (wobbleSwing != null) {
-//            wobbleSwing.setPosition(SWING_LIFT_AND_HOLD);
-//        }
+        if (wobbleSwing != null) {
+            wobbleSwing.setPosition(SWING_LIFT_AND_HOLD);
+        }
     }
 
     @BotAction(displayName = "Lift Wobble Wall", defaultReturn = "")
     public void liftWobbleWall() {
-//        if (wobbleSwing != null) {
-//            wobbleSwing.setPosition(SWING_LIFT_WALL);
-//        }
+        if (wobbleSwing != null) {
+            wobbleSwing.setPosition(SWING_LIFT_WALL);
+        }
     }
 
     // compound claw up for wall
