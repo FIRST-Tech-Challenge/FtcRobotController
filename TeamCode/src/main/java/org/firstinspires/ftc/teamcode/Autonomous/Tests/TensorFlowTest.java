@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import java.util.ArrayList;
 
 @Autonomous(name= "TensorFlowTest ", group="Tests: ")
-@Disabled
+//@Disabled
 public class TensorFlowTest extends LinearOpMode {
 
     @Override
@@ -34,6 +34,9 @@ public class TensorFlowTest extends LinearOpMode {
 
         TensorFlow tensorFlow = new TensorFlow(this);
         ElapsedTime runtime = new ElapsedTime();
+
+//        tensorFlow.moveTensorFlowServo(0.05);
+//        sleep(5000);
 
         int rings = -1;
         int i = 0;

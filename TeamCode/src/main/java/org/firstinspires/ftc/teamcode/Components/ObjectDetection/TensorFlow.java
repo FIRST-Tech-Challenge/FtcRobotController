@@ -13,6 +13,7 @@
 package org.firstinspires.ftc.teamcode.Components.ObjectDetection;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -28,6 +29,8 @@ import org.firstinspires.ftc.teamcode.key;
 //import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 
 public class TensorFlow {
+    Servo tensorFlowServo;
+
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
     private static final String LABEL_SECOND_ELEMENT = "Single";
@@ -42,6 +45,10 @@ public class TensorFlow {
 
     public TensorFlow(LinearOpMode opMode) {
         op = opMode;
+
+        tensorFlowServo = op.hardwareMap.servo.get("TensorFlowServo");
+        moveTensorFlowServo(0.05);
+
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
@@ -183,5 +190,9 @@ public class TensorFlow {
             op.sleep(100);
         }
         return rings;
+    }
+
+    public void moveTensorFlowServo(double distance) {
+        tensorFlowServo.setPosition(distance);
     }
 }
