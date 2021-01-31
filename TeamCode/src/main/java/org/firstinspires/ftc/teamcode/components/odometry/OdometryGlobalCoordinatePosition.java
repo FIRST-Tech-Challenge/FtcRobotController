@@ -19,6 +19,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private CombinedOrientationSensor orientationSensor;
     //Thead run condition
     private boolean isRunning = true;
+    private boolean useIMU = true;
     //Position variables used for storage and calculations
     double initRadians = 0;
     double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0,  changeInRobotOrientation = 0;
@@ -112,6 +113,9 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         if (count > 4) {
             ySpeedDegree = (ySpeedLogs[0]+ySpeedLogs[1]+ySpeedLogs[2]+ySpeedLogs[3]+ySpeedLogs[4])/5.0;
             xSpeedDegree = (xSpeedLogs[0]+xSpeedLogs[1]+xSpeedLogs[2]+xSpeedLogs[3]+xSpeedLogs[4])/5.0;
+            if ((ySpeedDegree+xSpeedDegree<1) && useIMU) { // robot is almost stop
+                robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
+            }
         }
 
         count = (count+1)%10000;

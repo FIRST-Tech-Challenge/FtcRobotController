@@ -1475,7 +1475,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         //grab the wobble goal
         if (!simulation_mode) {
-
             autoGrabBottomWobbleGoal();
         }
 
@@ -1505,7 +1504,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             if (tZone == TargetZone.ZONE_C){
                 chassis.driveTo(.7, side(102), 35, 0, true, 3);
             } else if (tZone == TargetZone.ZONE_B){
-                chassis.driveTo(auto_chassis_power, side(107), 35, 0, false, 3);
+                chassis.driveTo(auto_chassis_power, side(105), 35, 0, false, 3);
             } else {
                 chassis.driveTo(auto_chassis_power, side(102), 35, 0, false, 3);
             }
@@ -1517,7 +1516,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         //grab the wobble goal
         if (!simulation_mode) {
-
             autoGrabBottomWobbleGoal();
         }
 
@@ -1616,7 +1614,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         sleep(100);
         comboGrabber.armDown();
         sleep(400);
-        chassis.yMove(1, 0.4);
+        chassis.yMove(1, 0.5);
         sleep(200);
         chassis.yMove(1, 0.2);
         if (comboGrabber!=null) {
