@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robot_utilities.FlyWheel;
@@ -102,7 +101,7 @@ public class EchoOp extends OpMode {
         intake2.set(intakeSpeed);
 
 //        flywheel.set(Vals.flywheel_direction * flywheelSpeed);
-
+        flywheel.set();
 
         telemetry.addData("Flywheel Speed", flywheel.flywheel.get());
         telemetry.addData("Flywheel Set Speed", flywheelSpeed);

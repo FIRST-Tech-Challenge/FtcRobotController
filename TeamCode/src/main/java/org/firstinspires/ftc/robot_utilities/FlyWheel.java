@@ -17,31 +17,31 @@ public class FlyWheel {
         this.flywheel.setFeedforwardCoefficients(Vals.flywheel_ks, Vals.flywheel_kv);
     }
 
-    private void set() {
+    public void set() {
         this.flywheel.set(this.flywheelDirection * this.flywheelSpeed);
     }
 
     public void on() {
-        flywheel.setRunMode(Motor.RunMode.VelocityControl);
-        flywheelSpeed = Vals.flywheel_speed;
+        this.flywheel.setRunMode(Motor.RunMode.VelocityControl);
+        this.flywheelSpeed = Vals.flywheel_speed;
 
-        this.set();
+//        this.set();
     }
 
     public void off() {
-        flywheel.setRunMode(Motor.RunMode.RawPower);
-        flywheelSpeed = 0;
+        this.flywheel.setRunMode(Motor.RunMode.RawPower);
+        this.flywheelSpeed = 0;
 
-        this.set();
+//        this.set();
     }
 
     public boolean isOn() {
-        return flywheelSpeed != 0;
+        return this.flywheelSpeed != 0;
     }
 
     public void flipDirection() {
         this.flywheelDirection *= -1;
 
-        this.set();
+//        this.set();
     }
 }
