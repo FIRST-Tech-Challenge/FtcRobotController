@@ -26,7 +26,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.ArrayList;
-import java.util.EventListenerProxy;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
@@ -55,7 +54,7 @@ public class chrisBot
 
     /** MOTOR OBJECTS */
     public DcMotor  motorBackLeft   = null, motorFrontLeft  = null, motorFrontRight  = null, motorBackRight  = null;
-    public DcMotorSimple motorIntake = null, motorShooter = null, motorLift1 = null, motorLift2 = null;
+    public DcMotorSimple motorIntake = null, motorShooter1 = null, motorShooter2 = null;
 
     public WebcamName webcam = null;
 
@@ -115,7 +114,7 @@ public class chrisBot
 
     private Telemetry telemetry;
 
-    public boolean shooterExists = false, intakeExists = false, webcamExists = false, liftExists = false;
+    public boolean shooterExists = false, intakeExists = false, webcamExists = false;
 
     /* Constructor */
     public chrisBot() { }
@@ -173,9 +172,8 @@ public class chrisBot
         /** Attachment section */
 
         intakeExists = hwMap.tryGet(DcMotorSimple.class, "motorIntake") != null;
-        shooterExists = hwMap.tryGet(DcMotorSimple.class, "motorShooter") != null;
+        shooterExists = hwMap.tryGet(DcMotorSimple.class, "motorShooter1") != null && hwMap.tryGet(DcMotorSimple.class, "motorShooter2") != null;
         webcamExists = hwMap.get(WebcamName.class, "Webcam 1") != null;
-        liftExists = hwMap.tryGet(DcMotorSimple.class, "motorLift1") != null && hwMap.tryGet(DcMotorSimple.class, "motorLift1") != null;
 
         if (intakeExists) {
             motorIntake = hwMap.get(DcMotorSimple.class, "motorIntake");
@@ -187,9 +185,13 @@ public class chrisBot
         }
 
         if (shooterExists) {
-            motorShooter = hwMap.get(DcMotorSimple.class, "motorShooter");
-            motorShooter.setDirection(DcMotorSimple.Direction.FORWARD);
-            motorShooter.setPower(0);
+            motorShooter1 = hwMap.get(DcMotorSimple.class, "motorShooter1");
+            motorShooter1.setDirection(DcMotorSimple.Direction.FORWARD);
+            motorShooter1.setPower(0);
+
+            motorShooter2 = hwMap.get(DcMotorSimple.class, "motorShooter2");
+            motorShooter2.setDirection(DcMotorSimple.Direction.REVERSE);
+            motorShooter2.setPower(0);
 
             telemetry.addLine("Shooter motor initialized");
             telemetry.update();
@@ -199,18 +201,6 @@ public class chrisBot
             webcam = hwMap.get(WebcamName.class, "Webcam 1");
 
             telemetry.addLine("Webcam initialized");
-            telemetry.update();
-        }
-
-        if (liftExists) {
-            motorLift1 = hwMap.get(DcMotorSimple.class, "motorLift1");
-            motorLift2 = hwMap.get(DcMotorSimple.class, "motorLift2");
-            motorLift1.setDirection(DcMotorSimple.Direction.FORWARD);
-            motorLift2.setDirection(DcMotorSimple.Direction.REVERSE);
-            motorLift1.setPower(0);
-            motorLift2.setPower(0);
-
-            telemetry.addLine("Lift initialized");
             telemetry.update();
         }
 
@@ -538,20 +528,22 @@ public class chrisBot
     // These methods turn the shooter motor on and off, at a set power or at full power.
     public void shootOn(double power) {
         if(shooterExists) {
-            motorShooter.setPower(power);
+            motorShooter1.setPower(power);
             shooterOn = true;
         }
     }
 
     public void shootOn() {
         if(shooterExists) {
-            motorShooter.setPower(1);
+            motorShooter1.setPower(1);
+            motorShooter2.setPower(1);
             shooterOn = true;
         }
     }
     public void shootOff() {
         if(shooterExists) {
-            motorShooter.setPower(0);
+            motorShooter1.setPower(0);
+            motorShooter2.setPower(0);
             shooterOn = false;
         }
     }
@@ -602,27 +594,6 @@ public class chrisBot
         lastAngles = angles;
 
         return globalAngle;
-    }
-
-    public void liftUp() {
-        ElapsedTime e = new ElapsedTime();
-        e.reset();
-        while(e.milliseconds() < 3000) {
-            motorLift1.setPower(0.5);
-            motorLift2.setPower(0.5);
-        }
-        motorLift1.setPower(0);
-        motorLift2.setPower(0);
-    }
-    public void liftDown() {
-        ElapsedTime e = new ElapsedTime();
-        e.reset();
-        while(e.milliseconds() < 3000) {
-            motorLift1.setPower(-0.5);
-            motorLift2.setPower(-0.5);
-        }
-        motorLift1.setPower(0);
-        motorLift2.setPower(0);
     }
     public void autonShoot() {
         ElapsedTime e = new ElapsedTime();

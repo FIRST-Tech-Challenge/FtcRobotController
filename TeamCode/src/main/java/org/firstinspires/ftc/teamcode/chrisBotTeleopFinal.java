@@ -46,16 +46,6 @@ public class chrisBotTeleopFinal extends OpMode{
             robot.shootOff();
             robot.intakeOff();
         }
-        if (gamepad1.dpad_up) {
-            robot.motorLift1.setPower(0.5);
-            robot.motorLift2.setPower(0.5);
-        } else if (gamepad1.dpad_down) {
-            robot.motorLift1.setPower(-0.5);
-            robot.motorLift2.setPower(-0.5);
-        } else {
-            robot.motorLift1.setPower(0);
-            robot.motorLift2.setPower(0);
-        }
     }
 
 //--------------------------------- FUNCTIONS ----------------------------------------------------

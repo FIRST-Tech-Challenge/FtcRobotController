@@ -53,7 +53,7 @@ public class encoderMotorSpeedTest extends LinearOpMode {
                 robot.motorIntake.setPower(1);
             }
             if(robot.shooterExists) {
-                robot.motorShooter.setPower(1);
+                robot.motorShooter1.setPower(1);
             }
             flPos = robot.motorFrontLeft.getCurrentPosition();
             frPos = robot.motorFrontRight.getCurrentPosition();
@@ -85,7 +85,7 @@ public class encoderMotorSpeedTest extends LinearOpMode {
             robot.motorIntake.setPower(0);
         }
         if(robot.shooterExists) {
-            robot.motorShooter.setPower(0);
+            robot.motorShooter1.setPower(0);
         }
 
         telemetry.addLine("Test done");
