@@ -19,7 +19,7 @@ public class FlyWheel {
 
     private void set() {
         try {
-            Thread.sleep(22);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
