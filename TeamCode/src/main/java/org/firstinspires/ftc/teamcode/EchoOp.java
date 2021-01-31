@@ -19,7 +19,7 @@ public class EchoOp extends OpMode {
     private Servo hitter;
     private Motor intake1, intake2;
 
-    private boolean pressedB = false;
+    private boolean start = true;
 
     private double intakeSpeed = 0;
     private double flywheelSpeed = 0;
@@ -53,7 +53,6 @@ public class EchoOp extends OpMode {
 
     @Override
     public void loop() {
-
         gamepad.update();
 
 
@@ -72,25 +71,21 @@ public class EchoOp extends OpMode {
 //            Vals.flywheel_direction *= -1;
         }
 
-//        if(gamepad.isBRelease()) {
-//            if(flywheel.isOn()) {
-//                flywheel.off();
-//            } else {
-//                flywheel.on();
-//            }
-//
-//        }
-
-        if(gamepad1.b) {
-            pressedB = true;
-        } else if(pressedB) {
-            pressedB = false;
+        if(gamepad.isBRelease()) {
             if(flywheel.isOn()) {
                 flywheel.off();
             } else {
                 flywheel.on();
             }
+
         }
+
+        flywheel.on();
+        if(start) {
+            start = false;
+            flywheel.on();
+        }
+
 
         if(gamepad1.left_bumper) {
             hitter.setPosition(Vals.hitter_end);
