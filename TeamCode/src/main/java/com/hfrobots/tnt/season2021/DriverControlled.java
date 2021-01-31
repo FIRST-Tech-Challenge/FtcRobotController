@@ -54,5 +54,6 @@ public class DriverControlled extends OpMode {
     public void loop() {
         driverControls.periodicTask();
         operatorControls.periodicTask();
+        telemetry.update();
     }
 }

@@ -105,11 +105,20 @@ public class Launcher {
     public void launcherToIdleSpeed() {
         frontLauncherMotor.setVelocity(IDLE_SPEED_ENC_SEC);
         rearLauncherMotor.setVelocity(IDLE_SPEED_ENC_SEC);
+        writeWheelSpeedsToTelemetry();
     }
 
     public void launcherToFullSpeed() {
         frontLauncherMotor.setVelocity(LAUNCH_SPEED_ENC_SEC);
         rearLauncherMotor.setVelocity(LAUNCH_SPEED_ENC_SEC);
+        writeWheelSpeedsToTelemetry();
+    }
+
+    public void writeWheelSpeedsToTelemetry() {
+        double frontEncoderTicksPerSecond = frontVelocityTracker.getTicksPerSec(frontLauncherMotor.getCurrentPosition());
+        double rearEncoderTicksPerSecond = rearVelocityTracker.getTicksPerSec(rearLauncherMotor.getCurrentPosition());
+
+        telemetry.addData("lv",  "vf: %.1f vr: %.1f", frontEncoderTicksPerSecond, rearEncoderTicksPerSecond);
     }
 
     public boolean isLauncherAtFullSpeed() {
