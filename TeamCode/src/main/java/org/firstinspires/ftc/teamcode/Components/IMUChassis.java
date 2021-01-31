@@ -215,7 +215,7 @@ public class IMUChassis extends BasicChassis {
             currentPosition = motorLeftBack.getCurrentPosition();
             deltaPosition = newLeftBackTargetPosition - currentPosition;
             currentAngle = getAngle();
-            correction = (currentAngle - startingAngle) * .01;//gain
+            correction = (currentAngle - startingAngle) * .05;//gain
             motorRightBack.setPower(power - correction);
             motorRightFront.setPower(power + correction);
             motorLeftBack.setPower(power - correction);
