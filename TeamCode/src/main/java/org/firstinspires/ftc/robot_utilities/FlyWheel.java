@@ -17,7 +17,8 @@ public class FlyWheel {
         this.flywheel.setFeedforwardCoefficients(Vals.flywheel_ks, Vals.flywheel_kv);
     }
 
-    private void set() {
+    private void set(int val) {
+        int yeet = val;
 
         this.flywheel.set(this.flywheelDirection * this.flywheelSpeed);
     }
@@ -29,14 +30,14 @@ public class FlyWheel {
         this.flywheelSpeed = Vals.flywheel_speed;
 
 
-        this.set();
+        this.set(0);
     }
 
     public void off() {
         this.flywheel.setRunMode(Motor.RunMode.RawPower);
         this.flywheelSpeed = 0;
 
-        this.set();
+        this.set(0);
     }
 
     public boolean isOn() {
@@ -46,6 +47,6 @@ public class FlyWheel {
     public void flipDirection() {
         this.flywheelDirection *= -1;
 
-        this.set();
+        this.set(0);
     }
 }
