@@ -19,10 +19,8 @@ public class EchoOp extends OpMode {
     private Servo hitter;
     private Motor intake1, intake2;
 
-    private boolean start = true;
-
     private double intakeSpeed = 0;
-    private double flywheelSpeed = 0;
+    private boolean flywheelOn = false;
 
     @Override
     public void init() {
@@ -73,17 +71,19 @@ public class EchoOp extends OpMode {
 
         if(gamepad.isBRelease()) {
             if(flywheel.isOn()) {
-                flywheel.off();
+                flywheelOn = false;
+//                flywheel.off();
             } else {
-                flywheel.on();
+                flywheelOn = true;
+//                flywheel.on();
             }
 
         }
 
-        flywheel.on();
-        if(start) {
-            start = false;
+        if(flywheelOn) {
             flywheel.on();
+        } else {
+            flywheel.off();
         }
 
 
