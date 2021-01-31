@@ -52,6 +52,7 @@ public class EchoOp extends OpMode {
     @Override
     public void loop() {
 
+        gamepad.update();
 
 
         double leftSpeed = -gamepad1.left_stick_y;
