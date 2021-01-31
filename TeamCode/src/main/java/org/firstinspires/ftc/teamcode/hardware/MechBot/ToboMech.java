@@ -1627,10 +1627,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
     public void autoGrabHighWobbleGoal() throws InterruptedException {
         if (simulation_mode || chassis==null) return;
-        comboGrabber.grabberOpen();
+        /* comboGrabber.grabberOpen();
         sleep(100);
         comboGrabber.armDown();
         sleep(200);
+         */
         chassis.yMove(1, 0.3);
         sleep(200);
         chassis.stop();
@@ -1642,7 +1643,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         comboGrabber.raiseWobbleGoalCombo();
         TaskManager.processTasks();
-        chassis.rawRotateTo(1,130,false, 2);
+        sleep(200);
+        chassis.rawRotateTo(0.8,130,false, 2);
         chassis.rawRotateTo(0.2,165,false, 2);
     }
 
