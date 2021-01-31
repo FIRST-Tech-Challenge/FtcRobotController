@@ -1233,6 +1233,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 chassis.driveTo(1.0, 25, 165, -20, false, 3);
+                chassis.rawRotateTo(0.35,-40,false,1);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 3);
             } else if (tZone == TargetZone.ZONE_C) {//4
@@ -1501,7 +1502,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else if (tZone == TargetZone.ZONE_B){
                 chassis.driveTo(auto_chassis_power, side(105), 30, 0, true, 3);
             } else {
-                chassis.driveTo(auto_chassis_power, side(98), 33, 0, true, 3);
+                chassis.driveTo(auto_chassis_power, side(102), 35, 0, false, 3);
             }
         } else {
             chassis.driveTo(auto_chassis_power, side(47), 30, 0, true,  3);
@@ -1609,7 +1610,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         comboGrabber.grabberOpen();
         sleep(100);
         comboGrabber.armDown();
-        sleep(300);
+        sleep(400);
         chassis.yMove(1, 0.4);
         sleep(200);
         chassis.yMove(1, 0.2);
