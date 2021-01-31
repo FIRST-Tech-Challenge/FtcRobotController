@@ -27,13 +27,16 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     public static final double SHOOTER_POWER_INCREMENT = 0.03;
     public static final double SHOOTER_POWER_FINE_INCREMENT = 0.01;
     public static final double SHOOTER_POWER_FINE_INCREMENT_RANGE = 1000;
+    public static final double WOBBLE_GOAL_POWER_ZERO_THRESHOLD = 20;
     boolean spinShooter = false;
+    public boolean extendWobbleGoal = false;
     double currentShooterPower = 0;
     double currentShooterRPM = 0;
     double targetShooterRPM = SHOOTER_RPM;
     long shooterPrevTime = System.currentTimeMillis();
     long shooterPrevUnstableTime = System.currentTimeMillis();
     int shooterPrevPos = 0;
+    int wobbleGoalHolderInitPos;
 
     public enum UltimateGoalStartingPosition  {
         LEFT,
@@ -60,6 +63,7 @@ public abstract class UltimateGoalHardware extends RobotHardware {
 
     public final static double COUNTS_PER_ENCODER_REV = 8192;
     public final static double WHEEL_DIAMETER_IN = 4.0;
+    public final static double COUNTS_PER_WOBBLE_REVOLUTION = 288;
 
     @Override
     public void initializeHardware() {
@@ -74,11 +78,12 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         collector = this.initializeDevice(DcMotor.class, "collector");
         escalator = this.initializeDevice(DcMotor.class, "escalator");
-        //.setDirection(DcMotorSimple.Direction.REVERSE);
         wobbleGoalHolder = this.initializeDevice(DcMotor.class, "wobble");
-//        wobbleGoalHolder.setTargetPosition(wobbleGoalHolder.getCurrentPosition() + 72); // 72 = 90deg
-//        wobbleGoalHolder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        wobbleGoalHolder.setPower(1);
+        wobbleGoalHolder.setDirection(DcMotorSimple.Direction.REVERSE);
+        wobbleGoalHolderInitPos = wobbleGoalHolder.getCurrentPosition();
+        wobbleGoalHolder.setTargetPosition(wobbleGoalHolderInitPos); // 72 = 90deg
+        wobbleGoalHolder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         wobbleServo = this.initializeDevice(Servo.class, "wobbleServo");
         wobbleServo.setPosition(0);
         revIMU = this.hardwareMap.get(BNO055IMU.class, "imu");
@@ -118,23 +123,34 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         shooterPrevTime = current_time;
         currentShooterRPM = (deltaPos/28.0) / (deltaTime) * (1000*60);
 
-        if (spinShooter) {
-            if (Math.abs(currentShooterRPM - targetShooterRPM) > SHOOTER_RPM_THRESHOLD) {
-                double increment = Math.abs(currentShooterRPM - targetShooterRPM) <= SHOOTER_POWER_FINE_INCREMENT_RANGE ? SHOOTER_POWER_FINE_INCREMENT : SHOOTER_POWER_INCREMENT;
+//        if (spinShooter) {
+////            if (Math.abs(currentShooterRPM - targetShooterRPM) > SHOOTER_RPM_THRESHOLD) {
+////                double increment = Math.abs(currentShooterRPM - targetShooterRPM) <= SHOOTER_POWER_FINE_INCREMENT_RANGE ? SHOOTER_POWER_FINE_INCREMENT : SHOOTER_POWER_INCREMENT;
+////
+////                if (currentShooterRPM < targetShooterRPM) {
+////                    // too slow
+////                    currentShooterPower = Math.min(currentShooterPower + increment, 1);
+////                } else {
+////                    // too fast
+////                    targetShooterRPM = SHOOTER_RPM;
+////                    currentShooterPower = Math.max(currentShooterPower - increment, 0);
+////                }
+////            }
+//        } else {
+//            currentShooterPower = 0;
+//        }
 
-                if (currentShooterRPM < targetShooterRPM) {
-                    // too slow
-                    currentShooterPower = Math.min(currentShooterPower + increment, 1);
-                } else {
-                    // too fast
-                    targetShooterRPM = SHOOTER_RPM;
-                    currentShooterPower = Math.max(currentShooterPower - increment, 0);
-                }
-            }
+        if (extendWobbleGoal) {
+            wobbleGoalHolder.setTargetPosition(wobbleGoalHolderInitPos + (int) (170 * (COUNTS_PER_WOBBLE_REVOLUTION/360)));
         } else {
-            currentShooterPower = 0;
+            wobbleServo.setPosition(0);
+            wobbleGoalHolder.setTargetPosition(wobbleGoalHolderInitPos);
         }
 
+        int countsFromTarget = Math.abs(wobbleGoalHolder.getTargetPosition() - wobbleGoalHolder.getCurrentPosition());
+        wobbleGoalHolder.setPower(countsFromTarget <= WOBBLE_GOAL_POWER_ZERO_THRESHOLD ? 0 : 1);
+
+        currentShooterPower = spinShooter ? SHOOTER_POWER : 0;
         shooter.setPower(currentShooterPower);
         telemetry.addData("Current Shooter Power", currentShooterPower);
         telemetry.addData("Target RPM", targetShooterRPM);

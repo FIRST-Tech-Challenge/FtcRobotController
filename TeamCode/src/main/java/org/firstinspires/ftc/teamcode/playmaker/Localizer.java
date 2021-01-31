@@ -40,7 +40,7 @@ public class Localizer {
     private Integer lastBackLeft;
     private Integer lastBackRight;
     private Position lastEncoderPosition = new Position();
-    private Orientation lastEncoderOrientation = new Orientation(EXTRINSIC, XYZ, DEGREES, 0,0,0, System.nanoTime());
+    private Orientation lastEncoderOrientation = new Orientation(EXTRINSIC, XYZ, DEGREES, 0,0,0, System.currentTimeMillis());
 
     // Vuforia Constants
     private static final float mmPerInch        = 25.4f;
@@ -57,7 +57,7 @@ public class Localizer {
     Telemetry telemetry;
 
     public void setLatestAcquisitionTime() {
-        this.latestAcquisitionTime = System.nanoTime();
+        this.latestAcquisitionTime = System.currentTimeMillis();
     }
 
     enum PositionSource {
@@ -135,10 +135,6 @@ public class Localizer {
             float y = translation.get(1);
             float z = translation.get(2);
             Position position = new Position(DistanceUnit.MM, x, y, z, System.currentTimeMillis());
-
-            if (vuforiaOverwritesOtherLocations) {
-                lastEncoderPosition = position;
-            }
             return new EstimatedPosition(PositionSource.VUFORIA, position);
         } else if (newEncodersInfo){
             return new EstimatedPosition(PositionSource.ENCODERS, lastEncoderPosition);
@@ -208,12 +204,12 @@ public class Localizer {
     public void updateRobotTransform(RobotHardware hardware, BNO055IMU imu) {
         this.setLatestAcquisitionTime();
 
-        this.updateLocationWithVuforia(hardware);
+        boolean foundTarget = this.updateLocationWithVuforia(hardware);
         if (imu != null) {
             this.updateIMUOrientation(imu);
         }
         if (hardware.omniDrive != null) {
-            this.updateTransformWithEncodersAndIMU(hardware);
+            this.updateTransformWithEncodersAndIMU(hardware, !foundTarget);
         }
     }
 
@@ -224,7 +220,7 @@ public class Localizer {
         public OpenGLMatrix transform;
 
         public VuforiaTransform(OpenGLMatrix transform) {
-            this.acquisitionTime = System.nanoTime();
+            this.acquisitionTime = System.currentTimeMillis();
             this.transform = transform;
 
         }
@@ -326,9 +322,10 @@ public class Localizer {
         targetsUltimateGoal.activate();
     }
 
-    public void updateLocationWithVuforia(RobotHardware hardware) {
+    public boolean updateLocationWithVuforia(RobotHardware hardware) {
         // Clear the currently saved vuforia transform
         lastVuforiaTransform = null;
+        boolean didFindTarget = false;
 
         for (VuforiaTrackable trackable : vuforiaTrackables) {
             VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener) trackable.getListener();
@@ -340,12 +337,22 @@ public class Localizer {
                 float z = imageLocationRelRobot.getTranslation().get(2);
                 Position imagePositionRelRobot = new Position(DistanceUnit.MM, x,y,z, 0);
                 double distance = Localizer.distance(zero, imagePositionRelRobot, DistanceUnit.INCH);
-                if (distance <= DISTANCE_TO_ACCEPT_VUFORIA_INCHES) {
+                if (distance < DISTANCE_TO_ACCEPT_VUFORIA_INCHES) {
+                    didFindTarget = true;
                     OpenGLMatrix robotTransform = listener.getRobotLocation();
                     lastVuforiaTransform = new VuforiaTransform(robotTransform);
+                    if (vuforiaOverwritesOtherLocations) {
+                        VectorF translation = lastVuforiaTransform.transform.getTranslation();
+                        float rx = translation.get(0);
+                        float ry = translation.get(1);
+                        float rz = translation.get(2);
+                        Position position = new Position(DistanceUnit.MM, x, y, z, System.currentTimeMillis());
+                        lastEncoderPosition = position;
+                    }
                 }
             }
         }
+        return didFindTarget;
     }
 
     //endregion
@@ -358,7 +365,7 @@ public class Localizer {
      * @param hardware The hardware to use
      */
 
-    public void updateTransformWithEncodersAndIMU(RobotHardware hardware) {
+    public void updateTransformWithEncodersAndIMU(RobotHardware hardware, boolean calculateDelta) {
         if (lastIMUOrientation == null) {
             // If there is no IMU data, location/rotation can not be determined.
             return;
@@ -375,7 +382,8 @@ public class Localizer {
                 && lastFrontRight != null
                 && lastBackLeft != null
                 && lastBackRight != null
-                && lastEncoderOrientation != null) {
+                && lastEncoderOrientation != null
+                && calculateDelta) {
 
             // Get position deltas
             int deltaFrontLeft = currentFrontLeft - lastFrontLeft;
@@ -395,7 +403,7 @@ public class Localizer {
             Position lastMMPosition = lastEncoderPosition.toUnit(DistanceUnit.MM);
             double lastX = lastMMPosition.x;
             double lastY = lastMMPosition.y;
-            lastEncoderPosition = new Position(DistanceUnit.MM, lastX + fieldXMovement, lastY + fieldYMovement, 0, System.nanoTime());
+            lastEncoderPosition = new Position(DistanceUnit.MM, lastX + fieldXMovement, lastY + fieldYMovement, 0, System.currentTimeMillis());
         }
 
         // Set current positions for next transform update.
@@ -403,6 +411,7 @@ public class Localizer {
         lastFrontRight = currentFrontRight;
         lastBackLeft = currentBackLeft;
         lastBackRight = currentBackRight;
+
     }
 
     public void updateTransformWithEncoders(RobotHardware hardware) {
@@ -445,7 +454,7 @@ public class Localizer {
         if (this.imuToWorldRotation != null) {
             double imuHeading = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES).thirdAngle;
             double worldHeading = Localizer.headingWrapInDegrees(imuHeading + this.imuToWorldRotation);
-            this.lastIMUOrientation = new Orientation(EXTRINSIC, XYZ, DEGREES, imuOrientation.firstAngle, imuOrientation.secondAngle, (float) worldHeading, System.nanoTime());
+            this.lastIMUOrientation = new Orientation(EXTRINSIC, XYZ, DEGREES, imuOrientation.firstAngle, imuOrientation.secondAngle, (float) worldHeading, System.currentTimeMillis());
         }
     }
 
@@ -493,23 +502,11 @@ public class Localizer {
     public static final Position zero = new Position(DistanceUnit.INCH,0,0,0,0);
 
     public static double angularDifferenceInDegrees(double start, double end) {
-        return (start - end + 180) % 360 - 180;
-    }
-
-    public static int mod(int x, int n) {
-        return (x % n) - (x < 0 ? n : 0);
+        return mod((start-end+180), 360) - 180;
     }
 
     public static double mod(double x, double n) {
         return (((x % n) + n) % n);
-    }
-
-    public static float mod(float x, float n) {
-        return (x % n) - (x < 0 ? n : 0);
-    }
-
-    public static long mod(long x, long n) {
-        return (x % n) - (x < 0 ? n : 0);
     }
 
     public static double headingWrapInDegrees(double angle) {

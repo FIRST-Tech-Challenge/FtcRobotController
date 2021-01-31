@@ -70,6 +70,8 @@ public class LocalizerMoveAction implements Action {
         // Calculate distances / angles to target
         double distanceToTargetInInches = Localizer.distance(currentPosition, currentTarget.position, DistanceUnit.INCH);
 
+        double distanceToFinalTargetInInches = Localizer.distance(currentPosition, this.transforms[this.transforms.length-1].position, DistanceUnit.INCH);
+
         // This is the angular difference between the robot's current position and the target position in the field coordinate space.
         double angDiffBetweenPositionsDegrees = Localizer.atan2InDegrees(currentPosition, currentTarget.position);
 
@@ -109,8 +111,16 @@ public class LocalizerMoveAction implements Action {
                     // For fast operation, we only care about reaching the target heading for the final position.
                     // So, if the robot is heading towards the last target, it will focus on reaching
                     // the target as quickly as possible by going in the forward direction
+
+
                     robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
                     robotRotation = angDiffBetweenForwardAndTargetPosDegrees / 180;
+
+                    if (distanceToFinalTargetInInches <= SLOWDOWN_DISTANCE_INCHES) {
+                        double slope = (preciseSpeed - fullSpeed) / (SLOWEST_DISTANCE_INCHES - SLOWDOWN_DISTANCE_INCHES);
+                        speed = Math.max(slope * distanceToTargetInInches - preciseSpeed, preciseSpeed);
+                    }
+
                     if (distanceToTargetInInches <= DISTANCE_TOLERANCE_INCHES) {
                         currentTransformIndex++;
                     }
@@ -140,6 +150,9 @@ public class LocalizerMoveAction implements Action {
             hardware.omniDrive.stopDrive();
             return true;
         } else {
+            hardware.telemetry.addData("LMA Speed", speed);
+            hardware.telemetry.addData("LMA Move Angle", Math.toDegrees(robotMoveAngleRadians));
+            hardware.telemetry.addData("LMA Rotation", robotRotation);
             hardware.omniDrive.move(speed, robotMoveAngleRadians, robotRotation);
             return false;
         }
