@@ -34,7 +34,7 @@ import java.util.Locale;
 // if you want to make changes on this branch/mecanum stuff
 // use the MecanumWheelDraft file
 
-@TeleOp(name = "Graham: Mecanum", group = "Opmode")
+@TeleOp(name = "UltimateGoalTeleOp", group = "Opmode")
 //@Disabled
 public class TeleOp1 extends LinearOpMode {
 
@@ -60,6 +60,25 @@ public class TeleOp1 extends LinearOpMode {
 
         double max;
 
+        double launchMotorStatus = 0; // do not edit this
+        double launchMotorPower = 0; //do not edit this
+        double desiredLaunchPower = .5; // edit this for the power you want to motor to spin at
+
+        double intakeMotorStatus = 0; //do not edit this
+        double intakeMotorPower = 0; //do not edit this
+        double desiredIntakePower = .5; //edit this for the power you want the motor to spin at
+
+        // change the active and rest positions to change where each servo goes
+        double wobbleServoPosition = 0;
+        double WSactivePos1 = 0;
+        double WSactivePos2 = 0;
+        double WSrestPos1 = 0;
+        double WSrestPos2 = 0;
+
+        // change the active and rest positions to change where the servo goes
+        double launcherServoPosition = 0;
+        double LSactivePos = 0;
+        double LSrestPos = 0;
 
         Orientation targOrientMain;
         targOrientMain = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -148,9 +167,20 @@ public class TeleOp1 extends LinearOpMode {
             //dont delete this -- this is what you gotta pass through the heading functions to if you want to keep the heading straight
             // robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES
 
+// gamepad 1 - 111111111111111111111111111111111111111111
+            // driver launcher
+
 
             if (gamepad1.a){
-
+                sleep(250);
+                if(launcherServoPosition == 0){
+                    robot.launcherServo.setPosition(LSactivePos);
+                    launcherServoPosition = 1;
+                }
+                if(launcherServoPosition == 1){
+                    robot.launcherServo.setPosition(LSrestPos);
+                    launcherServoPosition = 0;
+                }
             }
 
             if(gamepad1.x){
@@ -161,9 +191,21 @@ public class TeleOp1 extends LinearOpMode {
 
             }
 
+            //launcher motor
+            // turns the launcher motor on or off
             if(gamepad1.y){
-
+                sleep(250);
+                if (launchMotorStatus == 0){ //if motor off
+                    launchMotorPower = desiredLaunchPower;  //turn motor on
+                    launchMotorStatus = 1;  // motor is on
+                }
+                else if (launchMotorStatus == 1){ // if motor on
+                    launchMotorPower = 0;       // turn motor off
+                    launchMotorStatus = 0;      // motor is off
+                }
             }
+            robot.launcherMotor.setPower(launchMotorPower);
+
 
             if(gamepad1.right_bumper){
 
@@ -172,6 +214,46 @@ public class TeleOp1 extends LinearOpMode {
             if(gamepad1.left_bumper){
 
             }
+
+// gamepad 2 - 22222222222222222222222222222222222222
+            // grabber collector
+
+            //intake motor
+            if(gamepad2.a){
+                sleep(250);
+                if(intakeMotorStatus == 0){ //if motor is off
+                    intakeMotorPower = desiredIntakePower; //turn motor on
+                    intakeMotorStatus = 1; //motor is on
+                }
+                else if (intakeMotorStatus == 1){ //if motor is on
+                    intakeMotorPower = 0;   //turn motor off
+                    intakeMotorStatus = 0; //motor is off
+                }
+            }
+            robot.intakeMotor1.setPower(intakeMotorPower);
+            robot.intakeMotor2.setPower(intakeMotorPower);
+
+
+            // wobble servo button
+            // positions not yet calibrated -- all set to 0
+            if(gamepad2.x){
+                sleep(250);
+                if(wobbleServoPosition == 0){
+                    robot.wobbleServo1.setPosition(WSactivePos1);
+                    robot.wobbleServo2.setPosition(WSactivePos2);
+                    wobbleServoPosition = 1;
+                }
+                if(wobbleServoPosition == 1){
+                    robot.wobbleServo1.setPosition(WSrestPos1);
+                    robot.wobbleServo1.setPosition(WSrestPos2);
+                    wobbleServoPosition = 0;
+                }
+            }
+
+
+
+
+
 
         }
 

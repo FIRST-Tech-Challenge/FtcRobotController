@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -31,6 +32,16 @@ public class GrahamHWMap {
     public DcMotor  backLeftMotor    = null;
     public DcMotor  backRightMotor   = null;
 
+    public DcMotor  launcherMotor = null;
+
+    public DcMotor  intakeMotor1 = null;
+    public DcMotor  intakeMotor2 = null;
+
+    public Servo    wobbleServo1 = null;
+    public Servo    wobbleServo2 = null;
+
+    public Servo    launcherServo = null;
+
 
     public DistanceSensor backDistance = null;
 
@@ -56,6 +67,20 @@ public class GrahamHWMap {
         backLeftMotor   = hwMap.dcMotor.get("BL"); // H1 2
         backRightMotor  = hwMap.dcMotor.get("BR"); // H1 3
 
+        // not yet in configuration on phones
+        launcherMotor = hwMap.dcMotor.get("LM"); // H2 P0
+
+        // not yet in configuration on phones
+        intakeMotor1 = hwMap.dcMotor.get("IM1"); // H2 P1
+        intakeMotor2 = hwMap.dcMotor.get("IM2"); // H2 P2
+
+        // not yet in configuration on phones
+        wobbleServo1 = hwMap.servo.get("WS1");
+        wobbleServo2 = hwMap.servo.get("WS2");
+
+        // not yet in configuration on phones
+        launcherServo = hwMap.servo.get("LS");
+
         backDistance = hwMap.get(DistanceSensor.class, "bsr"); //hub2 port 1
 
 
@@ -79,6 +104,11 @@ public class GrahamHWMap {
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        launcherMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        intakeMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 

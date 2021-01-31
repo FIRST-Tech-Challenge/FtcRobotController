@@ -55,6 +55,8 @@ public class MecanumWheelDraft extends LinearOpMode {
 
         double max;
 
+        double launchPowerHolder = 0;
+        double motorTestDirection = 0;
 
         Orientation targOrientMain;
         targOrientMain = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -144,10 +146,19 @@ public class MecanumWheelDraft extends LinearOpMode {
                 //the robot was at when you called the function
             // robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES
 
-            //rotates to a heading of 90 degrees
-            if (gamepad1.a){
-                rotateToHeading(90);
+
+            if(gamepad1.a){
+                sleep(250);
+                if(motorTestDirection == 0) {
+                    launchPowerHolder = .5;
+                    motorTestDirection = 1;
+                }
+                else if (motorTestDirection == 1){
+                    launchPowerHolder = 0;
+                    motorTestDirection = 0;
+                }
             }
+            robot.frontLeftMotor.setPower(launchPowerHolder);
 
             if(gamepad1.x){
                 strafeLeft(.5, robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES) );
@@ -161,6 +172,10 @@ public class MecanumWheelDraft extends LinearOpMode {
                 driveStraightDistance(.3,robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES), 1000);
             }
 
+
+
+            telemetry.addData("motorDirectionTest", motorTestDirection);
+            telemetry.update();
         }
 
     }
