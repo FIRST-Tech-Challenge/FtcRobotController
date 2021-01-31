@@ -22,6 +22,9 @@ public class EchoOp extends OpMode {
     private double intakeSpeed = 0;
     private double flywheelSpeed = 0;
 
+    private boolean updateTime = false;
+    private double period = 0;
+
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -85,7 +88,10 @@ public class EchoOp extends OpMode {
 ////                flywheelRunMode = "VelocityControl";
 //                flywheelSpeed = Vals.flywheel_speed;
 //            }
+
+            updateTime = true;
         }
+        double lastTimeStamp = (double)System.nanoTime() / 1E9;
 
         if(gamepad1.left_bumper) {
             hitter.setPosition(Vals.hitter_end);
@@ -101,8 +107,16 @@ public class EchoOp extends OpMode {
         intake2.set(intakeSpeed);
 
 //        flywheel.set(Vals.flywheel_direction * flywheelSpeed);
+        double currentTimeStamp = (double)System.nanoTime() / 1E9;
         flywheel.set();
 
+        if(updateTime) {
+            updateTime = false;
+            period = currentTimeStamp - lastTimeStamp;
+        }
+
+
+        telemetry.addData("Time Pass", period);
         telemetry.addData("Flywheel Speed", flywheel.flywheel.get());
         telemetry.addData("Flywheel Set Speed", flywheelSpeed);
         telemetry.addData("Flywheel Velocity", flywheel.flywheel.encoder.getRawVelocity());
