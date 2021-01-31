@@ -33,6 +33,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Ticker;
 import com.google.common.collect.Lists;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -53,7 +54,10 @@ public class ScoringMechanism {
     public static final long WAIT_FOR_HOPPER_TO_FLOAT_MILLIS = 1000; // One second, placeholder
 
     private Launcher launcher;
+
     private Intake intake;
+
+    private RevBlinkinLedDriver blinkinLed;
 
     @Setter
     private RangeInput intakeVelocity;
@@ -68,6 +72,9 @@ public class ScoringMechanism {
     private OnOffButton unsafe;
 
     @Setter
+    private OnOffButton invertHopper;
+
+    @Setter
     private DebouncedButton stopLauncher;
 
     private State currentState;
@@ -80,6 +87,12 @@ public class ScoringMechanism {
                             Ticker ticker) {
         launcher = new Launcher(hardwareMap, telemetry, ticker);
         intake = new Intake(hardwareMap, ticker);
+
+        try {
+            blinkinLed = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        } catch (IllegalArgumentException iae) {
+            Log.e(LOG_TAG, "Can't find blinkin led, either not faked, or not working");
+        }
 
         this.intakeVelocity = intakeVelocity;
         this.launchTrigger = launchTrigger;
@@ -147,6 +160,20 @@ public class ScoringMechanism {
         }
     }
 
+    void unsafeIntakeOperations() {
+        // Mostly unsafe because we don't know how to do stall detection from here, yet
+
+        if (unsafe.isPressed()) {
+            if (intakeVelocity.getPosition() > 0) {
+                intake.intake(intakeVelocity.getPosition());
+            } else if (intakeVelocity.getPosition() < 0) {
+                intake.outtake(intakeVelocity.getPosition());
+            } else {
+                intake.stop();
+            }
+        }
+    }
+
     List<ReadyCheckable> readyCheckables = Lists.newArrayList();
 
     interface ReadyCheckable {
@@ -173,7 +200,9 @@ public class ScoringMechanism {
             commonLauncherSpeedHandling();
 
             intake.stop();
-            launcher.pulldownHopper();
+
+            invertHopperFromPulledDown();
+
             launcher.parkRingFeeder();
 
             if (intakeVelocity.getPosition() != 0) {
@@ -189,6 +218,14 @@ public class ScoringMechanism {
         public void checkReady() {
             Preconditions.checkNotNull(intakeMoving);
             Preconditions.checkNotNull(preloadRings);
+        }
+    }
+
+    private void invertHopperFromPulledDown() {
+        if (!invertHopper.isPressed()) {
+            launcher.pulldownHopper();
+        } else {
+            launcher.floatHopperWithLauncher();
         }
     }
 
@@ -224,6 +261,8 @@ public class ScoringMechanism {
             }
 
             commonLauncherSpeedHandling();
+
+            invertHopperFromPulledDown();
 
             if (intakeVelocity.getPosition() > 0) {
                 intake.intake(intakeVelocity.getPosition());
@@ -315,7 +354,8 @@ public class ScoringMechanism {
 
             intake.stop();
             launcher.launcherToFullSpeed();
-            launcher.floatHopperWithLauncher();
+
+            invertHopperFromFloating();
 
             if (!waitForFloat.isRunning()) {
                 waitForFloat.start();
@@ -334,6 +374,8 @@ public class ScoringMechanism {
 
                 return idleState;
             }
+
+            unsafeIntakeOperations();
 
             return this;
         }
@@ -382,11 +424,21 @@ public class ScoringMechanism {
                 return launcherReady;
             }
 
+            invertHopperFromFloating();
+
+            if (unsafe.isPressed()) {
+                Log.w(LOG_TAG, "Unsafe pressed, bypassing launcher speed check");
+
+                return launcherReady;
+            }
+
             if (launcher.isLauncherAtFullSpeed()){
                 resetTimer();
 
                 return launcherReady;
             }
+
+            unsafeIntakeOperations();
 
             return this;
         }
@@ -394,6 +446,14 @@ public class ScoringMechanism {
         @Override
         public void liveConfigure(NinjaGamePad gamePad) {
 
+        }
+    }
+
+    private void invertHopperFromFloating() {
+        if (!invertHopper.isPressed()) {
+            launcher.floatHopperWithLauncher();
+        } else {
+            launcher.pulldownHopper();
         }
     }
 
@@ -412,6 +472,8 @@ public class ScoringMechanism {
 
         @Override
         public State doStuffAndGetNextState() {
+            // FIXME: For *now* would like ability to do "whatever" with intake during launching
+
             // Intake:Not Moving 
             intake.stop();
 
@@ -423,6 +485,9 @@ public class ScoringMechanism {
                 launcher.feedRing();
             } else {
                 launcher.parkRingFeeder();
+
+                // Only allowed when not pushing rings
+                invertHopperFromFloating();
             }
 
             if (stopLauncher.getRise()) {

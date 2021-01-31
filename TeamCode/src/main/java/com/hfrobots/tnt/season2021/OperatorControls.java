@@ -64,6 +64,8 @@ public class OperatorControls {
 
     protected RangeInput rightTrigger;
 
+    private NinjaGamePad operatorGamepad;
+
     // Derived
     private RangeInput intakeVelocity;
 
@@ -75,7 +77,7 @@ public class OperatorControls {
 
     private DebouncedButton stopLauncher;
 
-    private NinjaGamePad operatorGamepad;
+    private OnOffButton invertHopper;
 
     private ScoringMechanism scoringMechanism;
 
@@ -132,6 +134,7 @@ public class OperatorControls {
         scoringMechanism.setUpToSpeedToggle(upToSpeedToggle);
         scoringMechanism.setUnsafe(unsafe);
         scoringMechanism.setStopLauncher(stopLauncher);
+        scoringMechanism.setInvertHopper(invertHopper);
     }
 
 
@@ -159,10 +162,11 @@ public class OperatorControls {
     private void setupDerivedControls() {
         intakeVelocity = leftStickY;
         launchTrigger = rightBumper;
-        upToSpeedToggle = new ToggledButton(leftBumper);
+        upToSpeedToggle = new ToggledButton(new RangeInputButton( rightTrigger, 0.65f));
         stopLauncher = bRedButton;
+        invertHopper = operatorGamepad.getDpadDown();
 
-        unsafe = new RangeInputButton( rightTrigger, 0.65f);
+        unsafe = new RangeInputButton( leftTrigger, 0.65f);
     }
 
     public void periodicTask() {
