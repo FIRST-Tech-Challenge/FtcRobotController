@@ -83,7 +83,7 @@ public class Move2WobbleGoalsShootHighPark extends LinearOpMode {
             sleep(100);
             robot.moveBackward(25, 0.85);
             sleep(75);
-            robot.moveWobbleGoalServo(true);
+            robot.moveWobbleGoalClaw(true);
             robot.moveForward(8, 0.85);
             sleep(75);
             robot.turnInPlace(-13,0.6);

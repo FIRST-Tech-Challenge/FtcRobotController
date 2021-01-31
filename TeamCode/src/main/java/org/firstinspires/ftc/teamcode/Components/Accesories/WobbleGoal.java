@@ -29,10 +29,10 @@ public class WobbleGoal {
     protected Servo wobbleGoalServoClaw = null;
 
     private final int ticksForREST = 0;
-    private final int ticksForGRAB = -400;
-    private final int ticksForRAISE = 300;
-    private final int ticksForAutonomousMove = -425;
-    private final int ticksForSTARTOFTELEEOP = 200;
+    private final int ticksForGRAB = -840;
+    private final int ticksForRAISE = -400;
+    private final int ticksForAutonomousDrop = 950;
+    private final int ticksForSTARTOFTELEEOP = -200;
     private final double wobbleGoalSpeed = 0.3;
     private final double wobbleGoalSpeedDrop = 0.5;
 
@@ -64,12 +64,10 @@ public class WobbleGoal {
             i = ticksForRAISE;
         } else if (p == Position.STARTOFTELEEOP) {
             i = ticksForSTARTOFTELEEOP;
-        }else if (p == Position.RUN) {
-            i = ticksForAutonomousMove;
         } else {
             op.telemetry.addData("IQ Lvl", "0.00");
             op.telemetry.update();
-            //op.sleep(2000);
+            op.sleep(2000);
         }
 
         wobbleGoalMotor.setTargetPosition(i);
@@ -97,25 +95,14 @@ public class WobbleGoal {
     }
 
     // moves the wobble goal servo
-    public void moveWobbleGoalServo (boolean direction){
-        if (direction){
-            wobbleGoalServo.setPosition(1.0);
-        } else {
-            wobbleGoalServo.setPosition(0.0);
-        }
-        op.telemetry.addData(" Wobble Goal Position: ", direction);
-        op.telemetry.update();
-        op.sleep(500);
-    }
-
     public void moveWobbleGoalClaw(boolean open) {
         if (open){
             wobbleGoalServoClaw.setPosition(0);
-            op.sleep(1000);
+            op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "closed");
         } else {
-            wobbleGoalServoClaw.setPosition(0.5);
-            op.sleep(1000);
+            wobbleGoalServoClaw.setPosition(1);
+            op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "open");
 
         }

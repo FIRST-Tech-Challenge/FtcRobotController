@@ -65,7 +65,7 @@ public class OneGPTeleop extends LinearOpMode {
             float right_stick_x = -gamepad1.right_stick_x;
             boolean move_wobble_goal_arm = gamepad1.left_bumper;
             boolean start_transfer_sys = gamepad1.right_bumper;
-//            boolean wobble_goal_servo = gamepad1.y;
+            boolean wobble_goal_servo = gamepad1.y;
             boolean slow = gamepad1.a;
             boolean shooter_servo = gamepad1.x;
             float shooter = gamepad1.right_trigger;
@@ -121,9 +121,8 @@ public class OneGPTeleop extends LinearOpMode {
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.GRAB) {
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
-                } else if (currentWobbleGoalPosition == WobbleGoal.Position.RAISE) {
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.RELEASE);
-                } else if (currentWobbleGoalPosition == WobbleGoal.Position.RELEASE) {
+                } else if (currentWobbleGoalPosition == WobbleGoal.Position.RAISE
+                ) {
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 } else {
                     telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
@@ -136,29 +135,29 @@ public class OneGPTeleop extends LinearOpMode {
                 currentWobbleGoalPosition = nextWobbleGoalPosition;
             }
 
-//            if (wobble_goal_servo) {
-//                move_wobble_goal_servo = true;
-//
-//                if (wobble_goal_servo_is_up) {
-//                    wobble_goal_servo_is_up = false;
-//                } else if (!wobble_goal_servo_is_up) {
-//                    wobble_goal_servo_is_up = true;
-//                }
-//            } else {
-//                move_wobble_goal_servo = false;
-//            }
-//
-//            if (move_wobble_goal_servo) {
-//                if (wobble_goal_servo_is_up) {
-//                    telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
-//                    telemetry.update();
-//                    robot.moveWobbleGoalServo(true);
-//                } else if (!wobble_goal_servo_is_up) {
-//                    telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
-//                    telemetry.update();
-//                    robot.moveWobbleGoalServo(false);
-//                }
-//            }
+            if (wobble_goal_servo) {
+                move_wobble_goal_servo = true;
+
+                if (wobble_goal_servo_is_up) {
+                    wobble_goal_servo_is_up = false;
+                } else if (!wobble_goal_servo_is_up) {
+                    wobble_goal_servo_is_up = true;
+                }
+            } else {
+                move_wobble_goal_servo = false;
+            }
+
+            if (move_wobble_goal_servo) {
+                if (wobble_goal_servo_is_up) {
+                    telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
+                    telemetry.update();
+                    robot.moveWobbleGoalClaw(true);
+                } else if (!wobble_goal_servo_is_up) {
+                    telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
+                    telemetry.update();
+                    robot.moveWobbleGoalClaw(false);
+                }
+            }
 
             //transfer system
             if(start_transfer_sys){

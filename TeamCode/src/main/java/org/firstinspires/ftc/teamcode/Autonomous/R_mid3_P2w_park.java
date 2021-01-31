@@ -29,12 +29,12 @@ public class R_mid3_P2w_park extends LinearOpMode {
         ElapsedTime runtime = new ElapsedTime();
 
         waitForStart();
-        robot.moveWobbleGoalServo(false);
+        robot.moveWobbleGoalClaw(false);
         robot.moveBackward(59, 0.5);
         robot.shootHighGoal(3);
         robot.moveBackward(20, 0.5);
         sleep(1500);
-        robot.moveWobbleGoalServo(true);
+        robot.moveWobbleGoalClaw(true);
         robot.moveForward(10, 0.5);
     }
 }

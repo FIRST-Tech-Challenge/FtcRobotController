@@ -19,9 +19,9 @@ public class R_mid3_P1w_park extends LinearOpMode {
         telemetry.addData("Status", "InitComplete, Ready to Start");
         telemetry.update();
         waitForStart();
-        robot.moveWobbleGoalServo(false);
+        robot.moveWobbleGoalClaw(false);
         robot.moveAngle(0,- 65,0.5);
-        robot.moveWobbleGoalServo(true);
+        robot.moveWobbleGoalClaw(true);
         robot.moveAngle(20,5, 0.5);
         sleep(2000);
         //robot.shootHighGoal(3);

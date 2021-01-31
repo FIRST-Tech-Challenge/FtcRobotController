@@ -29,7 +29,7 @@ public class R_mid3_P3w_park extends LinearOpMode {
         ElapsedTime runtime = new ElapsedTime();
 
         waitForStart();
-        robot.moveWobbleGoalServo(false);
+        robot.moveWobbleGoalClaw(false);
         //Move to Shooting Position
         robot.moveAngle(-13, -57, 0.5);
         telemetry.addData("Moving Backwards", 60);
@@ -46,7 +46,7 @@ public class R_mid3_P3w_park extends LinearOpMode {
         telemetry.update();
         robot.moveBackward(7, 0.5);
         //Release the Wobble Goal and Park on the Launch Line
-        robot.moveWobbleGoalServo(true);
+        robot.moveWobbleGoalClaw(true);
         sleep(1000);
         robot.moveAngle(8, 40, 0.5);
     }

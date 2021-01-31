@@ -230,8 +230,8 @@ public class Robot {
         }
     }
 
-    public void moveWobbleGoalServo(boolean direction){
-        wobbleGoal.moveWobbleGoalServo(direction);
+    public void moveWobbleGoalClaw(boolean direction){
+        wobbleGoal.moveWobbleGoalClaw(direction);
     }
 
     // intake
