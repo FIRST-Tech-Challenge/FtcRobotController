@@ -42,7 +42,7 @@ public class Robot {
             tensorFlow = new TensorFlow(op);
         }
         if(vuforiaNAVIGATIONneeded){
-            vuforiaWebcam = new VuforiaWebcam(op);
+            //vuforiaWebcam = new VuforiaWebcam(op);
 //            vuforiaWebcam.init(op);
         }
         if(objectDetectionNeeded && vuforiaNAVIGATIONneeded){

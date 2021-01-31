@@ -75,16 +75,20 @@ public class Odometry extends Thread {
     }
     public void run() {
         while(!isInterrupted()) {
-            if(getInVuforia()) {//getInVuforia
+            if(!getInVuforia()) {//getInVuforia
                 float diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
                 odom[0] += odomconst[0]*diff[0];
                 odom[1] += odomconst[1]*diff[1];
                 odom[2] += odomconst[2]*diff[2];
                 float x =  (float)cos((getAngle() * Math.PI / 180));
                 float y = (float)sin((getAngle() * Math.PI / 180));
-                setXposition(getXposition()+(y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1);
+                setXposition(getXposition()+(y * (diff[0]+diff[1])/(2*ticks_per_inch) + x * diff[2]/ticks_per_inch)*-1);
                 setYposition(getYposition()+ (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1);
                 setAngle(getAngle());
+                op.telemetry.addData("x",getXposition());
+                op.telemetry.addData("y",getYposition());
+                op.telemetry.addData("a",getAngle());
+                op.telemetry.update();
             }
         }
     }
@@ -104,6 +108,6 @@ public class Odometry extends Thread {
 
         lastAngles = angles;
 
-        return globalAngle;
+        return -globalAngle;
     }
 }
