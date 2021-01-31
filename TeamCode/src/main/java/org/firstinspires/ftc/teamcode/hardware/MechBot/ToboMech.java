@@ -267,13 +267,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
                 // Left joystick for forward/backward and turn
                 if (Math.abs(currentY) > MIN_STICK_VAL) { // car mode
-                    chassis.carDrive(currentY * Math.abs(currentY) * normalizeRatio * chassis.powerScale(), right_x);
+                    //removed this code because Aaron didn't want left stick to move forward/backward
+                    // chassis.carDrive(currentY * Math.abs(currentY) * normalizeRatio * chassis.powerScale(), right_x);
                 } else if (Math.abs(currentX) > MIN_STICK_VAL) {
                     double scale = chassis.powerScale()*normalizeRatio;
                     if (scale>0.6) scale=0.6; // fix turn power to be 0.6 for the odometry accuracy
                     chassis.turn((currentX > 0 ? 1 : -1), Math.abs(currentX * currentX) * scale);
                 } else if (Math.abs(currentY) > MIN_STICK_VAL) {
-                    chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(currentY * currentY) * chassis.powerScale() * normalizeRatio);
+                    //removed this code because Aaron didn't want left stick to move forward/backward
+                    //chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(currentY * currentY) * chassis.powerScale() * normalizeRatio);
                 } else {
                     chassis.stop();
                 }
@@ -499,11 +501,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (comboGrabber != null)
                         comboGrabber.armDownInc();
                 } else if (source.isPressed(Button.BACK)) {
-                    doHighGoalsSemi();
+                    doHighGoalsSemi(false);
                 } else if (!source.isPressed((Button.START))) {
                     if (hopper != null) {
-                        //hopper.feederAuto();
-                        autoShoot();
+                        hopper.feederAuto();
+                        // autoShoot();
                     }
                 }
             }
@@ -1400,7 +1402,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             shooter.shootOutByRpm(0);
     }
 
-    public void doHighGoalsSemi() throws InterruptedException {
+    public void doHighGoalsSemi(boolean angleCollection) throws InterruptedException {
         shooter.shootOutByRpm(SEMI_AUTO_RPM);
         if (hopper != null) {
             hopper.hopperUpCombo();
@@ -1412,20 +1414,23 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             TaskManager.processTasks();
         }
 
-        // need to do something about this
-        double heading = 0;
-        if (Math.abs(chassis.odo_heading() - heading) > 0.8) {
-            if (Math.abs(chassis.odo_heading() - heading) > 10) {
-                chassis.rotateTo(0.3, heading);
-                sleep(100);
+        if(angleCollection){
+            double heading = 0;
+            if (Math.abs(chassis.odo_heading() - heading) > 0.8) {
+                if (Math.abs(chassis.odo_heading() - heading) > 10) {
+                    chassis.rotateTo(0.3, heading);
+                    sleep(100);
+                }
+                int i=0;
+                while (Math.abs(chassis.odo_heading() - heading)>1 && i<2) {
+                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin, heading, false, 0.5);
+                    i++;
+                }
+                //sleep(200);
             }
-            int i=0;
-            while (Math.abs(chassis.odo_heading() - heading)>1 && i<2) {
-                chassis.rawRotateTo(chassis.chassisAligmentPowerMin, heading, false, 0.5);
-                i++;
-            }
-            //sleep(200);
         }
+
+
         chassis.resetOdometry(true); // use rangeSensor to correct Odometry
         //shoot
         for (int i=0; i<3; i++) {

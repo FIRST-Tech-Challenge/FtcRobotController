@@ -260,13 +260,13 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     public void releaseWobbleGoalCombo() {
         final String taskName = "release Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
-        if (slider.getCurrentPosition()>SLIDER_POS_HIGH) {
-            TaskManager.add(new Task() {
-                @Override
-                public Progress start() {
-                    return slideToPos(SLIDER_POS_HIGH);
-                }}, taskName);
-        }
+//        if (slider.getCurrentPosition()>SLIDER_POS_HIGH) {
+//            TaskManager.add(new Task() {
+//                @Override
+//                public Progress start() {
+//                    return slideToPos(SLIDER_POS_HIGH);
+//                }}, taskName);
+//        }
         if (isGrabFromBottom) {
             TaskManager.add(new Task() {
                 @Override
