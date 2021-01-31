@@ -28,6 +28,7 @@ public class FlyWheel {
         this.flywheel.setFeedforwardCoefficients(Vals.flywheel_ks, Vals.flywheel_kv);
         this.flywheelSpeed = Vals.flywheel_speed;
 
+
         this.set();
     }
 
