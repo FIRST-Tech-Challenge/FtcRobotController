@@ -200,7 +200,7 @@ public class IMUChassis extends BasicChassis {
         double currentAngle = 0;
         double startingAngle = 0;
 
-        //startingAngle = getAngle();
+        startingAngle = getAngle();
 
         motorRightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -214,7 +214,7 @@ public class IMUChassis extends BasicChassis {
         while (op.opModeIsActive() && (deltaPosition >= 0)) {
             currentPosition = motorLeftBack.getCurrentPosition();
             deltaPosition = newLeftBackTargetPosition - currentPosition;
-            //currentAngle = getAngle();
+            currentAngle = getAngle();
             correction = (currentAngle - startingAngle) * .01;//gain
             motorRightBack.setPower(power - correction);
             motorRightFront.setPower(power + correction);
