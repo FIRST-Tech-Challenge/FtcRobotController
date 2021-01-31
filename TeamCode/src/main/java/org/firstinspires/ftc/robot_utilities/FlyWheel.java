@@ -29,6 +29,8 @@ public class FlyWheel {
 
     public void on() {
         this.flywheel.setRunMode(Motor.RunMode.VelocityControl);
+        this.flywheel.setVeloCoefficients(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
+        this.flywheel.setFeedforwardCoefficients(Vals.flywheel_ks, Vals.flywheel_kv);
         this.flywheelSpeed = Vals.flywheel_speed;
 
         this.set();
