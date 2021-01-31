@@ -18,11 +18,6 @@ public class FlyWheel {
     }
 
     private void set() {
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         this.flywheel.set(this.flywheelDirection * this.flywheelSpeed);
     }
