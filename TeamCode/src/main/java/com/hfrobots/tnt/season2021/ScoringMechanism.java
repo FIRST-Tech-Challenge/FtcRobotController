@@ -356,6 +356,7 @@ public class ScoringMechanism {
             launcher.launcherToFullSpeed();
 
             invertHopperFromFloating();
+            unsafeIntakeOperations();
 
             if (!waitForFloat.isRunning()) {
                 waitForFloat.start();
@@ -374,8 +375,6 @@ public class ScoringMechanism {
 
                 return idleState;
             }
-
-            unsafeIntakeOperations();
 
             return this;
         }
@@ -474,8 +473,8 @@ public class ScoringMechanism {
         public State doStuffAndGetNextState() {
             // FIXME: For *now* would like ability to do "whatever" with intake during launching
 
-            // Intake:Not Moving 
-            intake.stop();
+            // Intake:Not Moving  (unless unsafe)
+            unsafeIntakeOperations();
 
             launcher.launcherToFullSpeed();
 
