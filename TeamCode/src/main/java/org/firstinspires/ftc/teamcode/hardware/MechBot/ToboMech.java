@@ -1502,7 +1502,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C){
-                chassis.driveTo(.8, side(110), 43, 0, false, 3);
+                chassis.driveTo(.8, side(112), 43, 0, false, 3);
             } else if (tZone == TargetZone.ZONE_B){
                 chassis.driveTo(auto_chassis_power, side(105), 35, 0, false, 3);
             } else {
@@ -1657,8 +1657,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.yMove(1, -0.4);
             sleep(300);
         }
-        // chassis.yMove(1, -0.2);
-        // sleep(200);
+        chassis.yMove(1, -0.2);
+        sleep(200);
         chassis.yMove(1, 0.19);
         intake.intakeIn();
         for (int i = 0; i < n; i++) {
