@@ -34,7 +34,9 @@ package org.firstinspires.ftc.teamcode.robots.UGBot;
 
 import android.widget.Switch;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -154,6 +156,8 @@ public class UG_6832 extends OpMode {
     private int craneArticulation = 1;
 
     private boolean stopAll = false;
+
+    private FtcDashboard dashboard;
 
     Telemetry dummyT = new Telemetry() {
         @Override
@@ -307,6 +311,7 @@ public class UG_6832 extends OpMode {
         // this is commented out but left here to document that we are still doing the
         // functions that waitForStart() normally does, but needed to customize it.
 
+        dashboard = FtcDashboard.getInstance();
         robot.resetMotors(true);
         auto.visionProviderFinalized = false;
     }
@@ -534,6 +539,7 @@ public class UG_6832 extends OpMode {
     }
 
     int reverse = 1;
+    String message = "";
 
     private void joystickDrive() {
         if (notdeadzone(gamepad1.right_stick_y)) {
@@ -579,7 +585,16 @@ public class UG_6832 extends OpMode {
         }
 
         if(toggleAllowed(gamepad1.a, a, 1)){
-            robot.launcher.toggleGripper();
+            robot.articulate(PoseUG.Articulation.toggleGripper);
+        }
+
+        if(System.currentTimeMillis() %30000 > 15000) {
+            robot.launcher.setFlywheelTPS(0);
+
+            message = "0 tps";
+        } else if(System.currentTimeMillis() % 30000 < 15000) {
+            robot.launcher.setFlywheelTPS(2500);
+            message = "2500 tps";
         }
 
         if(gamepad1.y){
@@ -610,9 +625,9 @@ public class UG_6832 extends OpMode {
 
         // gamepad2 controls
 
-//        if (toggleAllowed(gamepad2.a, a, 2)) {
-//            robot.launcher.toggleGripper();
-//        }
+        if (toggleAllowed(gamepad2.a, a, 2)) {
+            robot.launcher.toggleGripper();
+        }
 
 
 
@@ -639,11 +654,16 @@ public class UG_6832 extends OpMode {
 //            robot.launcher.extendToPosition(1200, 1.0);
 //  }
 
-
-
-
         robot.launcher.update();
         robot.turret.update();
+
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("current flywheel velocity", robot.launcher.flywheelVelocity);
+        packet.put("target flywheel velocity", robot.launcher.getFlywheelTPS());
+        packet.put("flywheel motor power", robot.launcher.flywheelMotor.getPower() * 200);
+        packet.put("message",message);
+
+        dashboard.sendTelemetryPacket(packet);
     }
 
     private void joystickDrivePregameMode() {

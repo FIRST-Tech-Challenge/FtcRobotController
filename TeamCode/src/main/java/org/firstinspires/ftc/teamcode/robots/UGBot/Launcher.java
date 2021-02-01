@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.robots.UGBot;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
@@ -20,18 +22,18 @@ public class Launcher {
 
     //actuators
     DcMotor elbow = null;
-    DcMotor flywheelMotor = null;
+    DcMotorEx flywheelMotor = null;
     Servo servoGripper = null;
 
     //flywheel variables
+    public long lastUpdateTime;
+    public int lastFlywheelPosition;
     PIDController flyWheelPID;
-    public static double kpFlywheel = 0.006; //proportional constant multiplier goodish
-    public static  double kiFlywheel = 0.0; //integral constant multiplier
-    public static  double kdFlywheel= 0.0; //derivative constant multiplier
     double FlywheelCorrection = 0.00; //correction to apply to extention motor
     boolean FlywheelActivePID = true;
-    int FlywheelRPM = 0;
-    double FlywheelPwr = 0;
+    double FlywheelTPS = 0;
+    double FlywheelPwr = 1;
+    double flywheelVelocity;
 
     //elbow variables
     PIDController elbowPID;
@@ -52,7 +54,7 @@ public class Launcher {
     public int elbowMid = (actualElbowMax + elbowMin)/2;
     public int elbowMaxSafetyOffset = 70; //makes sure that the robot doesn't try and extend to the elbow max exactly
 
-    public Launcher(DcMotor elbow, DcMotor flywheelMotor, Servo servoGripper){
+    public Launcher(DcMotor elbow, DcMotorEx flywheelMotor, Servo servoGripper){
 
         this.elbow = elbow;
         this.flywheelMotor = flywheelMotor;
@@ -61,10 +63,12 @@ public class Launcher {
         this.elbow.setTargetPosition(elbow.getCurrentPosition());
         this.elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        this.flywheelMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         //PID
+        lastUpdateTime = System.currentTimeMillis();
+        lastFlywheelPosition = flywheelMotor.getCurrentPosition();
         flyWheelPID = new PIDController(0,0,0);
         elbowPID = new PIDController(0,0,0);
         elbowPID.setIntegralCutIn(40);
@@ -81,13 +85,12 @@ public class Launcher {
                 movePIDElbow(kpElbow, kiElbow, kdElbow, elbow.getCurrentPosition(), elbowPos);
             else
                 elbowPos = elbow.getCurrentPosition();
-
-        }
-        if(active) {
-//            if(FlywheelActivePID)
-//                spinPIDFlywheel(kpFlywheel, kiFlywheel, kdFlywheel, flywheelMotor.getCurrentPosition(), FlywheelRPM);
-//            else
-//                FlywheelRPM = flywheelMotor.getCurrentPosition();
+            flywheelVelocity = flywheelMotor.getVelocity();
+            if(FlywheelActivePID) {
+                spinPIDFlywheel(Constants.kpFlywheel, Constants.kiFlywheel, Constants.kdFlywheel, flywheelVelocity, FlywheelTPS);
+            }
+            else
+                FlywheelTPS = flywheelVelocity;
         }
     }
 
@@ -134,18 +137,18 @@ public class Launcher {
 
 
 
-    public void spinPIDFlywheel(double Kp, double Ki, double Kd, double currentTicks, double targetTicks) {
+    public void spinPIDFlywheel(double Kp, double Ki, double Kd, double currentVelocity, double targetVelocity) {
 
         //initialization of the PID calculator's output range, target value and multipliers
         flyWheelPID.setOutputRange(-FlywheelPwr, FlywheelPwr);
         flyWheelPID.setPID(Kp, Ki, Kd);
-        flyWheelPID.setSetpoint(targetTicks);
+        flyWheelPID.setSetpoint(targetVelocity);
         flyWheelPID.enable();
 
         //initialization of the PID calculator's input range and current value
         //extendPID.setInputRange(0, 360);
         //extendPID.setContinuous();
-        flyWheelPID.setInput(currentTicks);
+        flyWheelPID.setInput(currentVelocity);
 
         //calculates the correction to apply
         FlywheelCorrection = flyWheelPID.performPID();
@@ -203,9 +206,13 @@ public class Launcher {
     public int getElbowTargetPos(){
         return elbowPos;
     }
-    public int getElbowCurrentPos(){
+    public int getElbowCurrentPos() {
         return elbow.getCurrentPosition();
     }
+
+    public double getFlywheelTPS() {return FlywheelTPS;}
+    public void setFlywheelTPS(double flywheelTPS) {this.FlywheelTPS = flywheelTPS;}
+
     public double getCurrentAngle(){return  elbow.getCurrentPosition()/ticksPerDegree;}
 
     public void setElbowPwr(double pwr){ elbowPwr = pwr; }

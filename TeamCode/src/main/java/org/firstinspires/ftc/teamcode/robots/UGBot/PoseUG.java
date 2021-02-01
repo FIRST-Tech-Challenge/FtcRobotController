@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
+import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngleMinus;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_D;
@@ -69,7 +71,7 @@ public class PoseUG {
     private DcMotor motorFrontLeft = null;
     private DcMotor motorBackRight = null;
     private DcMotor elbow = null;
-    private DcMotor flywheelMotor = null;
+    private DcMotorEx flywheelMotor = null;
     private DcMotor turretMotor = null;
     private Servo wobbleGripper = null;
     Servo blinkin = null;
@@ -151,7 +153,8 @@ public class PoseUG {
 
     public enum Articulation { // serves as a desired robot articulation which may include related complex movements of the elbow, lift and supermanLeft
         inprogress, // currently in progress to a final articulation
-        manual // target positions are all being manually overridden
+        manual, // target positions are all being manually overridden
+        toggleGripper
     }
 
     public enum RobotType {
@@ -271,7 +274,7 @@ public class PoseUG {
         // this.driveRight = this.hwMap.dcMotor.get("driveRight");
         this.elbow = this.hwMap.dcMotor.get("elbow");
 
-        this.flywheelMotor = this.hwMap.dcMotor.get("flywheelMotor");
+        this.flywheelMotor = (DcMotorEx) this.hwMap.dcMotor.get("flywheelMotor");
 
         this.wobbleGripper = this.hwMap.servo.get("servoGripper");
 
@@ -673,6 +676,27 @@ public class PoseUG {
         return true;
     }
 
+    public int toggleGripperState = 0;
+    public long lastGripTime;
+
+    public boolean toggleGripperArticulation() {
+        switch(toggleGripperState) {
+            case 0:
+                launcher.servoGripper.setPosition(servoNormalize(1800)); //open //1500
+                lastGripTime = System.currentTimeMillis();
+                toggleGripperState++;
+                break;
+            case 1:
+                if(System.currentTimeMillis() - lastGripTime > 2000) {
+                    launcher.servoGripper.setPosition(servoNormalize(2100)); //closed //899
+                    return true;
+                }
+                toggleGripperState = 0;
+                break;
+        }
+        return false;
+    }
+
     public Articulation articulate(Articulation target) {
         articulation = target; // store the most recent explict articulation request as our target, allows us
                                // to keep calling incomplete multi-step transitions
@@ -685,6 +709,10 @@ public class PoseUG {
         switch (articulation) {
             case manual:
                 break; // do nothing here - likely we are directly overriding articulations in game
+            case toggleGripper:
+                if(toggleGripperArticulation())
+                        articulation = Articulation.manual;
+                break;
             default:
                 return target;
 
