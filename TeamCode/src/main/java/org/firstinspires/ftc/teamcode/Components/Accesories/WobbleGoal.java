@@ -93,7 +93,16 @@ public class WobbleGoal {
     public void stop() {
         wobbleGoalMotor.setPower(0);
     }
-
+    public void moveWobbleGoalServo (boolean direction){
+        if (direction){
+            wobbleGoalServo.setPosition(1.0);
+        } else {
+            wobbleGoalServo.setPosition(0.0);
+        }
+        op.telemetry.addData(" Wobble Goal Position: ", direction);
+        op.telemetry.update();
+        op.sleep(500);
+    }
     // moves the wobble goal servo
     public void moveWobbleGoalClaw(boolean open) {
         if (open){

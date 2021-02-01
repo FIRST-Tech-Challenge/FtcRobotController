@@ -42,6 +42,28 @@ public class OdometryChassis extends BasicChassis {
         return navigation.getAngle();
     }
     public double[] track() {
+        /*double data[]={0,0,0};
+double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
+odom[0] += odomconst[0]*diff[0];
+odom[1] += odomconst[1]*diff[1];
+odom[2] += odomconst[2]*diff[2];
+double x =  cos((getAngle() * Math.PI / 180));
+double y = sin((getAngle() * Math.PI / 180));
+xpos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1;
+ypos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
+angle=getAngle();
+op.telemetry.addData("x",xpos);
+op.telemetry.addData("y",ypos);
+//op.telemetry.addData("odom1",odomconst[0]*odom1.getCurrentPosition());
+//op.telemetry.addData("odom2",odomconst[1]*odom2.getCurrentPosition());
+//op.telemetry.addData("odom3",odomconst[2]*odom3.getCurrentPosition());
+op.telemetry.addData("angle",angle);
+op.telemetry.update();
+data[0]=xpos;
+data[1]=ypos;
+data[2]=angle;
+return data;
+*/
         op.telemetry.addData("x", navigation.getXposition());
         op.telemetry.addData("y", navigation.getYposition());
         op.telemetry.addData("angle", navigation.getAngle());
@@ -65,7 +87,7 @@ public class OdometryChassis extends BasicChassis {
         target_position[1] = y-0.15;
         target_position[2] = a;
         double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
-        double angleInRadians = atan2(y, x) - getAngle() * PI / 180;
+        double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
         double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
         double startpower=power;
         while (op.opModeIsActive() && (difference >= 1)) {
@@ -76,7 +98,7 @@ public class OdometryChassis extends BasicChassis {
             }
             x = target_position[0] - currentPosition[0];
             y = target_position[1] - currentPosition[1];
-            angleInRadians = atan2(y, x) - (target_position[2]+((currentPosition[2] * PI / 180)-target_position[2])/1);
+            angleInRadians = atan2(x, y) - (target_position[2]+((currentPosition[2] * PI / 180)-target_position[2])/1);
             anglePower[0] = sin(angleInRadians + PI / 4);
             anglePower[1] = sin(angleInRadians - PI / 4);
             anglecorrection = (currentPosition[2] - target_position[2])%360 * 0.05;
@@ -291,26 +313,18 @@ public class OdometryChassis extends BasicChassis {
         target_position[1] = currentPosition[1] + y-0.15;
         target_position[2] = currentPosition[2];
         double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
-        double angleInRadians = atan2(y, x) - getAngle() * PI / 180;
+        double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
         double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
         double startpower=power;
         while (op.opModeIsActive() && (difference >= 0.5)) {
             currentPosition = track();
-            /*op.telemetry.addData("targetx", target_position[0]);
-            op.telemetry.addData("targety",target_position[1]);
-            op.telemetry.addData("angle",angleInRadians);
-            op.telemetry.addData("distance",difference);
-            op.telemetry.addData("power1",anglePower[0]);
-            op.telemetry.addData("power2",anglePower[1]);
-            op.telemetry.update();
-            op.telemetry.update();*/
             power=difference/15;
             if(power>startpower){
                 power=startpower;
             }
             x = target_position[0] - currentPosition[0];
             y = target_position[1] - currentPosition[1];
-            angleInRadians = atan2(y, x) - (target_position[2]+((currentPosition[2] * PI / 180)-target_position[2])/1);
+            angleInRadians = atan2(x, y) - (target_position[2]+((currentPosition[2] * PI / 180)-target_position[2])/1);
             anglePower[0] = sin(angleInRadians + PI / 4);
             anglePower[1] = sin(angleInRadians - PI / 4);
             anglecorrection = (currentPosition[2] - target_position[2]) * 0.05;
@@ -331,12 +345,10 @@ public class OdometryChassis extends BasicChassis {
             motorLeftBack.setPower(power * anglePower[0] - anglecorrection);
             motorLeftFront.setPower(power * anglePower[1] - anglecorrection);
             difference = abs(sqrt((x) * (x) + (y) * (y)));
-            //op.telemetry.addData("x", x);
-            //op.telemetry.addData("y", y);
             op.telemetry.addData("distance", difference);
         }
         currentPosition = track();
-        turnInPlace(0,1.0);
+        turnInPlace(startAngle,1.0);
         stopAllMotors();
     }
 }
