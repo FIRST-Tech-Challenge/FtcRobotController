@@ -74,7 +74,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     final public double WARM_UP_RPM = 1320;
     final public double WARM_UP_RPM_AUTO = 1320;
     final public double SEMI_AUTO_RPM = 1400;
-    final public double SEMI_POWER_SHOT_RPM = 1250;
+    final public double SEMI_POWER_SHOT_RPM = 1200;
     public double shooting_rpm = WARM_UP_RPM;
 
     public double auto_rotate_degree = 0;
@@ -1485,11 +1485,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         hopper.feederAuto();
         sleep(200);
         // move to center power shot
-        chassis.rawRotateTo(chassis.chassisAligmentPowerMin, chassis.odo_heading()+3.5, false, 1);
+        shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-40);
+        chassis.rawRotateTo(chassis.chassisAligmentPower, chassis.odo_heading()+4, false, 1);
         hopper.feederAuto();
-        sleep(200);
+        sleep(500);
         // move to right power shot
-        chassis.rawRotateTo(chassis.chassisAligmentPowerMin, chassis.odo_heading()+3.5, false, 1);
+        shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-40);
+        chassis.rawRotateTo(chassis.chassisAligmentPower, chassis.odo_heading()+4, false, 1);
         hopper.feederAuto();
     }
 
