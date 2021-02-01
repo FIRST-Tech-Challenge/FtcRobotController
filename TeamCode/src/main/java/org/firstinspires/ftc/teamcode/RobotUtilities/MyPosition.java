@@ -14,13 +14,19 @@ public class MyPosition {
     // Make bigger to make distance shorter
 //    public static double moveScalingFactor = 4.15584064; //STEM Punk
 //    public static double moveScalingFactor = 1.461037725; Ultimate Goal Math Starting Point
-    public static double moveScalingFactor = 1.581037725;
+    // -8cm measured
+//    public static double moveScalingFactor = 1.581037725;
+    // -0.8cm measured
+//    public static double moveScalingFactor = 1.461037725;
+    public static double moveScalingFactor = 1.451037725;
 
 //    public static double auxScalingFactor = 4.08827586;
 // Make bigger to make distance shorter
 //    public static double auxScalingFactor = 4.12915862; //STEM Punk
 //    public static double auxScalingFactor = 1.451657327; Ultimate Goal Math Starting Point
-    public static double auxScalingFactor = 1.451657327;
+    // -1cm measured
+//public static double auxScalingFactor = 1.451657327;
+    public static double auxScalingFactor = 1.450657327;
 //    public static double turnScalingFactor = 39.0;
 //    public static double turnScalingFactor = 11.6928621;
 //    public static double turnScalingFactor = 10.2897186;
@@ -34,8 +40,14 @@ public class MyPosition {
 //    public static double turnScalingFactor = 3.651371094;
     // 2.1 after 10 turns
 //    public static double turnScalingFactor = 3.652371094;
+    // +4.9 degrees after 10 turns
+//    public static double turnScalingFactor = 3.655371094;
+    // +2.47 degrees after 10 turns
+//    public static double turnScalingFactor = 3.657371094;
+    // -1.06 degrees after 10 turns
+//    public static double turnScalingFactor = 3.659371094;
 
-    public static double turnScalingFactor = 3.655371094;
+    public static double turnScalingFactor = 3.658871094;
     public static double auxPredictionScalingFactor = 0.92;
 
 

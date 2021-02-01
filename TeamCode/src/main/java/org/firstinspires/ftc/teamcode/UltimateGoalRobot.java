@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import android.os.SystemClock;
@@ -12,8 +13,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -22,9 +23,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MovementVars;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
@@ -98,7 +96,7 @@ public class UltimateGoalRobot
     protected Servo flap = null;
     protected Servo claw = null;
     protected Servo injector = null;
-    protected Servo intakePusher = null;
+    protected CRServo intakePusher = null;
 
     // Sensors
     protected BNO055IMU imu = null;
@@ -199,7 +197,7 @@ public class UltimateGoalRobot
         empty.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Define and initialize servos
-        intakePusher = hwMap.get(Servo.class, INTAKE_PUSHER_SERVO);
+        intakePusher = hwMap.get(CRServo.class, INTAKE_PUSHER_SERVO);
         flap = hwMap.get(Servo.class, FLAP_SERVO);
         injector = hwMap.get(Servo.class, INJECTOR_SERVO);
         claw = hwMap.get(Servo.class, CLAW_SERVO);
@@ -304,18 +302,18 @@ public class UltimateGoalRobot
     }
 
     public void setIntakeIn() {
-        setIntakeMotorPower(1.0);
-        intakePusher.setPosition(1.0);
+        setIntakeMotorPower(-1.0);
+        intakePusher.setPower(1.0);
     }
 
     public void setIntakeOut() {
-        setIntakeMotorPower(-1.0);
-        intakePusher.setPosition(-1.0);
+        setIntakeMotorPower(1.0);
+        intakePusher.setPower(-1.0);
     }
 
     public void setIntakeOff() {
         setIntakeMotorPower(0.0);
-        intakePusher.setPosition(0.0);
+        intakePusher.setPower(0.0);
     }
 
     public void setIntakeMotorPower(double power) {
@@ -733,9 +731,13 @@ public class UltimateGoalRobot
 //    public final static double INJECTOR_RESET = -0.08;
 //    public final static double INJECTOR_FIRE = 0.32;
     // 1.875 Multiplier for range 300 degrees to 160 for Savox
-    public final static double INJECTOR_HOME = 0.0;
-    public final static double INJECTOR_RESET = -0.15;
-    public final static double INJECTOR_FIRE = 0.6;
+//    public final static double INJECTOR_HOME = 0.0;
+//    public final static double INJECTOR_RESET = -0.15;
+//    public final static double INJECTOR_FIRE = 0.6;
+    public final static double INJECTOR_HOME = 0.73;
+    public final static double INJECTOR_RESET = 0.83;
+//    public final static double INJECTOR_FIRE = 0.15;
+    public final static double INJECTOR_FIRE = 0.25;
     public final static int VELOCITY_SUCCESS_CHECKS = 6;
     public boolean disableVelocityCheck = false;
     public int sequentialStableVelocityChecks = 0;

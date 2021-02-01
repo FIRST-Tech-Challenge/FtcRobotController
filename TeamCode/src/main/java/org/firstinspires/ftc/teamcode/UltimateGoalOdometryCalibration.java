@@ -112,7 +112,7 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         }
         // Why do I have to negative angle to get the right angle!?! Everything works that way
         // but weird.
-        MyPosition.setPosition(0.0, 0.0, toRadians(-0.0));
+        MyPosition.setPosition(0.0, 0.0, toRadians(-90.0));
     }
 
     @Override
@@ -283,20 +283,21 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         }
 
         if(!cross2Held && cross2Pressed) {
+            robot.injector.setPosition(UltimateGoalRobot.INJECTOR_FIRE);
             cross2Held = true;
         } else if(!cross2Pressed) {
             cross2Held = false;
         }
 
         if(!circle2Held && circle2Pressed) {
+            robot.injector.setPosition(UltimateGoalRobot.INJECTOR_HOME);
             circle2Held = true;
         } else if(!circle2Pressed) {
             circle2Held = false;
         }
 
         if(!triangle2Held && triangle2Pressed) {
-            // Enable the velocity checks again.
-            robot.disableVelocityCheck = false;
+            robot.injector.setPosition(UltimateGoalRobot.INJECTOR_RESET);
             triangle2Held = true;
         } else if(!triangle2Pressed) {
             triangle2Held = false;
@@ -309,18 +310,21 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         }
 
         if(!right2Held && right2Pressed) {
+            robot.injector.setPosition(UltimateGoalRobot.INJECTOR_HOME);
             right2Held = true;
         } else if (!right2Pressed) {
             right2Held = false;
         }
 
         if(!up2Held && up2Pressed) {
+            robot.injector.setPosition(UltimateGoalRobot.INJECTOR_RESET);
             up2Held = true;
         } else if (!up2Pressed) {
 			up2Held = false;
 		}
 
         if(!down2Held && down2Pressed) {
+            robot.injector.setPosition(UltimateGoalRobot.INJECTOR_FIRE);
             down2Held = true;
         } else if (!down2Pressed) {
 			down2Held = false;
