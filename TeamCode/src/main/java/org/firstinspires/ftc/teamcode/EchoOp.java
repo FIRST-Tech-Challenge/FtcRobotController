@@ -42,9 +42,6 @@ public class EchoOp extends OpMode {
         intake2.setVeloCoefficients(0.05, 0, 0);
 
         flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE));
-//        flywheel.setRunMode(Motor.RunMode.VelocityControl);
-//        flywheel.setVeloCoefficients(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
-//        flywheel.setFeedforwardCoefficients(0, 0.03);
 
         hitter = hardwareMap.servo.get("sv");
     }
@@ -72,12 +69,9 @@ public class EchoOp extends OpMode {
         if(gamepad.isBRelease()) {
             if(flywheel.isOn()) {
                 flywheelOn = false;
-//                flywheel.off();
             } else {
                 flywheelOn = true;
-//                flywheel.on();
             }
-
         }
 
         if(flywheelOn) {
@@ -100,12 +94,9 @@ public class EchoOp extends OpMode {
         intake1.set(intakeSpeed);
         intake2.set(intakeSpeed);
 
-//        flywheel.set(Vals.flywheel_direction * flywheelSpeed);
-//        flywheel.set();
-
 
         telemetry.addData("Flywheel Speed", flywheel.flywheel.get());
-        telemetry.addData("Flywheel Set Speed", flywheelSpeed);
+//        telemetry.addData("Flywheel Set Speed", flywheelSpeed);
         telemetry.addData("Flywheel Velocity", flywheel.flywheel.encoder.getRawVelocity());
         telemetry.addData("Flywheel Position", flywheel.flywheel.getCurrentPosition());
         telemetry.addData("Coeffs P", flywheel.flywheel.getVeloCoefficients()[0]);
