@@ -19,7 +19,7 @@ public class R_3Power_park extends LinearOpMode {
         int rings  = 1;
         waitForStart();
         robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-        robot.setPosition(-15.75,61.75, 0);//high goal -12,22
+        robot.setPosition(61.75,-15.75, 0);//high goal -12,22
         if(rings==0) {
             robot.moveAngle( -5,-65, 0.8);//-25,60
             robot.moveAngle(41,7,0.8);//37,4
