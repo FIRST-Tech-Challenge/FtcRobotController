@@ -9,7 +9,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.util.AxesSigns;
+import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 
 import java.io.File;
 
@@ -62,6 +65,8 @@ public class OdometryCalibration extends LinearOpMode {
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
+        BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
+
         telemetry.addData("Odometry System Calibration Status", "IMU Init Complete");
         telemetry.clear();
 
