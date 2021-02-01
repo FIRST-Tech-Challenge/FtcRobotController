@@ -74,6 +74,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     final public double WARM_UP_RPM = 1320;
     final public double WARM_UP_RPM_AUTO = 1320;
     final public double SEMI_AUTO_RPM = 1400;
+    final public double SEMI_POWER_SHOT_RPM = 1250;
     public double shooting_rpm = WARM_UP_RPM;
 
     public double auto_rotate_degree = 0;
@@ -556,8 +557,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         hopper.transferUp();
 
                 } else if (source.isPressed(Button.BACK)) {
-                    if (hopper != null)
-                        hopper.holderAuto();
+                    // semi power shot
+                    doPowerShotsSemi(false);
                 }
             }
         }, new Button[]{Button.Y});
@@ -1447,6 +1448,49 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
         }
         shooter.shootOutByRpm(SEMI_AUTO_RPM);
+    }
+
+    public void doPowerShotsSemi(boolean angleCollection) throws InterruptedException {
+        shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
+        if (hopper != null) {
+            hopper.hopperUpCombo();
+            TaskManager.processTasks();
+        }
+        if (intake!=null)
+            intake.stop();
+        while (!TaskManager.isComplete("Transfer Up Combo")) {
+            TaskManager.processTasks();
+        }
+
+        if(angleCollection){
+            double heading = 0;
+            if (Math.abs(chassis.odo_heading() - heading) > 0.8) {
+                if (Math.abs(chassis.odo_heading() - heading) > 10) {
+                    chassis.rotateTo(0.3, heading);
+                    sleep(100);
+                }
+                int i=0;
+                while (Math.abs(chassis.odo_heading() - heading)>1 && i<2) {
+                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin, heading, false, 0.5);
+                    i++;
+                }
+                //sleep(200);
+            }
+        }
+
+
+        //chassis.resetOdometry(true); // use rangeSensor to correct Odometry
+        //shoot
+
+        hopper.feederAuto();
+        sleep(200);
+        // move to center power shot
+        chassis.rawRotateTo(chassis.chassisAligmentPowerMin, chassis.odo_heading()+3.5, false, 1);
+        hopper.feederAuto();
+        sleep(200);
+        // move to right power shot
+        chassis.rawRotateTo(chassis.chassisAligmentPowerMin, chassis.odo_heading()+3.5, false, 1);
+        hopper.feederAuto();
     }
 
     public void getSecondWobbleGoal() throws InterruptedException {
