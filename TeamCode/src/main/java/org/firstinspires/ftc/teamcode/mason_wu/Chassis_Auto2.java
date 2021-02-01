@@ -161,14 +161,10 @@ public class Chassis_Auto2 extends LinearOpMode {
             sleep(3000);
             //code below is for ZERO ring scenario
             if (visionResult == null) {
-                driveStraight(true, 1.0, -0.6, 1150);
-                stopMotion(100);
+                driveStraight_Encoder(-1000,0.5);
                 rotateToAngle(-90, 1.0, 0.2);
-                stopMotion(100);
-                driveStraight(true, 1.0, -0.6, 400);
-                stopMotion(100);
+                driveStraight_Encoder(-400,0.3);
                 rotateToAngle(0.0, 1.0, 0.2);
-                stopMotion(100);
                 // need code for shooting here
                 Shooter.setPower(1.0);
                 sleep(1000);
@@ -180,20 +176,13 @@ public class Chassis_Auto2 extends LinearOpMode {
                 }
                 Shooter.setPower(0.0);
                 sleep(100);
-                driveStraight(true, 1.0, -0.6, 250);
-                sleep(100);
+                driveStraight_Encoder(-200,0.3);
                 rotateToAngle(-75.0, 1.0, 0.2);
-                sleep(100);
-                driveStraight(true, 1.0, -0.6, 150);
-                sleep(1000);
+                driveStraight_Encoder(-200,0.3);
                 armMotion(false, 0.8, 300);
-                sleep(250);
                 handMotion(false);
-                sleep(250);
                 armMotion(true, 0.8, 400);
-                sleep(250);
                 handMotion(true);
-                sleep(250);
             }
 
             //code below is for SINGLE ring scenario
@@ -278,6 +267,122 @@ public class Chassis_Auto2 extends LinearOpMode {
 
 
         }
+    }
+
+    void driveStraight_Encoder(double distance, double power) throws InterruptedException {
+        LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int straightFactor = -1;
+        if(distance * power > 0) {
+            straightFactor = 1;
+        }
+        double LFEnc = LF.getCurrentPosition();
+        double RFEnc = RF.getCurrentPosition();
+        double LBEnc = LB.getCurrentPosition();
+        double RBEnc = RB.getCurrentPosition();
+        double avgEnc = (LFEnc + LBEnc + RFEnc + RBEnc) / 4.0;
+        double target = avgEnc + distance;
+        final double currentAngle = aquireHeading();
+        double targetAngle = currentAngle;
+
+        double LF_power;
+        double LB_power;
+        double RF_power;
+        double RB_power;
+
+        if(straightFactor > 0) {
+            while (avgEnc <= target - 50) {
+                LFEnc = LF.getCurrentPosition();
+                RFEnc = RF.getCurrentPosition();
+                LBEnc = LB.getCurrentPosition();
+                RBEnc = RB.getCurrentPosition();
+                avgEnc = (LFEnc + LBEnc + RFEnc + RBEnc) / 4.0;
+                double tempAngle = aquireHeading();
+                LF_power = straightFactor * Math.abs(power);
+                LB_power = straightFactor * Math.abs(power);
+                RF_power = straightFactor * Math.abs(power);
+                RB_power = straightFactor * Math.abs(power);
+                if (tempAngle < normalizeAngle(targetAngle - 1 * 1.0)) {
+                    RF_power += 0.1;
+                    RB_power += 0.1;
+                    LF_power -= 0.1;
+                    LB_power -= 0.1;
+                } else if (tempAngle > normalizeAngle(targetAngle + (1.0))) {
+                    RF_power -= 0.1;
+                    RB_power -= 0.1;
+                    LF_power += 0.1;
+                    LB_power += 0.1;
+                }
+                RF_power = Range.clip(RF_power, -1, 1);
+                RB_power = Range.clip(RB_power, -1, 1);
+                LF_power = Range.clip(LF_power, -1, 1);
+                LB_power = Range.clip(LB_power, -1, 1);
+                LF.setPower(LF_power);
+                RF.setPower(RF_power);
+                LB.setPower(LB_power);
+                RB.setPower(RB_power);
+                telemetry.addLine("Encoder Speed Method");
+                telemetry.addData("Encoders Average:", avgEnc);
+                telemetry.addData("Distance Left", target - avgEnc - 50);
+                telemetry.addData("RF_power", RF_power);
+                telemetry.addData("RB_power", RB_power);
+                telemetry.addData("LF_power", LF_power);
+                telemetry.addData("LB_power", LB_power);
+
+                telemetry.update();
+            }
+        }
+        else{
+            while (avgEnc >= target + 50) {
+                LFEnc = LF.getCurrentPosition();
+                RFEnc = RF.getCurrentPosition();
+                LBEnc = LB.getCurrentPosition();
+                RBEnc = RB.getCurrentPosition();
+                avgEnc = (LFEnc + LBEnc + RFEnc + RBEnc) / 4.0;
+                double tempAngle = aquireHeading();
+                LF_power = straightFactor * Math.abs(power);
+                LB_power = straightFactor * Math.abs(power);
+                RF_power = straightFactor * Math.abs(power);
+                RB_power = straightFactor * Math.abs(power);
+                if (tempAngle < normalizeAngle(targetAngle - 1 * 1.0)) {
+                    RF_power += 0.1;
+                    RB_power += 0.1;
+                    LF_power -= 0.1;
+                    LB_power -= 0.1;
+                } else if (tempAngle > normalizeAngle(targetAngle + (1.0))) {
+                    RF_power -= 0.1;
+                    RB_power -= 0.1;
+                    LF_power += 0.1;
+                    LB_power += 0.1;
+                }
+                RF_power = Range.clip(RF_power, -1, 1);
+                RB_power = Range.clip(RB_power, -1, 1);
+                LF_power = Range.clip(LF_power, -1, 1);
+                LB_power = Range.clip(LB_power, -1, 1);
+                LF.setPower(LF_power);
+                RF.setPower(RF_power);
+                LB.setPower(LB_power);
+                RB.setPower(RB_power);
+                telemetry.addLine("Encoder Speed Method");
+                telemetry.addData("Encoders Average:", avgEnc);
+                telemetry.addData("Distance Left", target - avgEnc + 50);
+                telemetry.addData("RF_power", RF_power);
+                telemetry.addData("RB_power", RB_power);
+                telemetry.addData("LF_power", LF_power);
+                telemetry.addData("LB_power", LB_power);
+                telemetry.update();
+            }
+        }
+        stopMotion();
+
     }
 
     void stopMotion() {
