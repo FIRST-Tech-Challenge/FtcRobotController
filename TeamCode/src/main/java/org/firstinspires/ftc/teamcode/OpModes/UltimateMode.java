@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import android.graphics.Point;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -57,6 +59,7 @@ public class UltimateMode extends LinearOpMode {
     double grabdelay = 0;
     private BotThreadAction bta = null;
     Thread btaThread = null;
+    RobotCoordinatePosition locator = null;
 
     @Override
     public void runOpMode() {
@@ -68,6 +71,11 @@ public class UltimateMode extends LinearOpMode {
                 telemetry.addData("Init", ex.getMessage());
             }
             telemetry.update();
+
+            locator = new RobotCoordinatePosition(robot, 75);
+            locator.reverseHorEncoder();
+            Thread positionThread = new Thread(locator);
+            positionThread.start();
 
             // Wait for the game to start (driver presses PLAY)
             waitForStart();
@@ -191,9 +199,9 @@ public class UltimateMode extends LinearOpMode {
                     robot.shootServo();
                 }
 
-                telemetry.addData("Left", robot.getLeftOdometer());
-                telemetry.addData("Right", robot.getRightOdometer());
-                telemetry.addData("Hor", robot.getHorizontalOdometer());
+                telemetry.addData("X ", locator.getXInches() );
+                telemetry.addData("Y ", locator.getYInches() );
+                telemetry.addData("Orientation (Degrees)", locator.getOrientation());
                 telemetry.addData("Wobble Position", robot.getWobblePos());
                 telemetry.update();
             }
@@ -205,6 +213,9 @@ public class UltimateMode extends LinearOpMode {
         finally {
             robot.stopintake();
             robot.stopshooter();
+            if (locator != null){
+                locator.stop();
+            }
         }
     }
 }

@@ -63,8 +63,16 @@ public class OdoBase extends LinearOpMode {
         if (locator == null) {
             locator = new RobotCoordinatePosition(bot, new Point(startX, startY), initHead, 75);
             locator.reverseHorEncoder();
+            locator.setPersistPosition(true);
             Thread positionThread = new Thread(locator);
             positionThread.start();
+        }
+    }
+
+    protected void stopLocator(){
+        if (locator != null){
+
+            locator.stop();
         }
     }
 

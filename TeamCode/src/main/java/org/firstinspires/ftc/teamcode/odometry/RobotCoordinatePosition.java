@@ -2,12 +2,17 @@ package org.firstinspires.ftc.teamcode.odometry;
 
 import android.graphics.Point;
 
+import com.qualcomm.robotcore.util.ReadWriteFile;
+
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
 import org.firstinspires.ftc.teamcode.bots.BotMoveRequest;
 import org.firstinspires.ftc.teamcode.bots.MoveStrategy;
 import org.firstinspires.ftc.teamcode.bots.RobotDirection;
 import org.firstinspires.ftc.teamcode.bots.YellowBot;
 import org.firstinspires.ftc.teamcode.calibration.BotCalibConfig;
+
+import java.io.File;
 
 public class RobotCoordinatePosition implements Runnable {
 
@@ -36,8 +41,28 @@ public class RobotCoordinatePosition implements Runnable {
     private int horEncoderPositionMultiplier = 1;
     private BotMoveRequest target = null;
     private double initialOrientation = 0;
+    private boolean persistPosition = false;
 
     private double botHalfLength = bot.ROBOT_CENTER_Y* bot.COUNTS_PER_INCH_REV;
+
+    public RobotCoordinatePosition(YellowBot bot, int sleepTimeMS){
+        this.bot = bot;
+        config = bot.getCalibConfig();
+        sleepTime = sleepTimeMS;
+        Point startPos = new Point(0, 0);
+        try{
+            BotPosition lastPos = getLastConfig();
+            if (lastPos != null){
+                startPos.x = lastPos.getPosX();
+                startPos.y = lastPos.getPosY();
+                initialOrientation = lastPos.getHeading();
+            }
+        }
+        catch (Exception ex){
+
+        }
+        init(startPos, initialOrientation);
+    }
 
     public RobotCoordinatePosition(YellowBot bot, Point startPos, double initialOrientation, int sleepTimeMS){
         this.bot = bot;
@@ -83,6 +108,9 @@ public class RobotCoordinatePosition implements Runnable {
         previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
         previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
         prevNormalEncoderWheelPosition = horEncoderWheelPosition;
+        if (persistPosition) {
+            saveLastPosition();
+        }
     }
 
     @Override
@@ -247,5 +275,34 @@ public class RobotCoordinatePosition implements Runnable {
 
     public void setInitialOrientation(double initialOrientation) {
         this.initialOrientation = initialOrientation;
+    }
+
+    public void saveLastPosition(){
+        BotPosition lastPos = new BotPosition();
+        lastPos.setPosX((int)this.getXInches());
+        lastPos.setPosY((int)this.getYInches());
+        lastPos.setHeading(this.getOrientation());
+        File file = AppUtil.getInstance().getSettingsFile(BotPosition.BOT_LAST_POSITION);
+        ReadWriteFile.writeFile(file, lastPos.serialize());
+    }
+
+    public BotPosition getLastConfig() {
+        BotPosition lastPos = null;
+
+        File posFile = AppUtil.getInstance().getSettingsFile(BotPosition.BOT_LAST_POSITION);
+        if (posFile.exists()) {
+            String data = ReadWriteFile.readFile(posFile);
+            lastPos = BotPosition.deserialize(data);
+        }
+
+        return lastPos;
+    }
+
+    public boolean persistPosition() {
+        return persistPosition;
+    }
+
+    public void setPersistPosition(boolean persistPosition) {
+        this.persistPosition = persistPosition;
     }
 }

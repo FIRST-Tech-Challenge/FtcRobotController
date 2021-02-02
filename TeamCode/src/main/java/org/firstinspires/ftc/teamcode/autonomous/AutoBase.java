@@ -26,6 +26,7 @@ public abstract class AutoBase extends OdoBase {
             telemetry.update();
             sleep(5000);
         } finally {
+            stopLocator();
             bot.stopDetection();
             bot.lightsOff();
         }

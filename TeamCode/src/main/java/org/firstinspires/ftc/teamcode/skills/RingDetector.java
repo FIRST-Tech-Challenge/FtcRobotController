@@ -59,28 +59,18 @@ public class RingDetector implements Runnable{
     protected void configZones(String side){
         if (this.namedCoordinates.size() > 0){
             for(AutoDot d : namedCoordinates){
-                if (d.getFieldSide().equals(side)){
-                    if (d.getDotName().equals("A")){
-                        zoneA = d;
-                    }
-                    else if (d.getDotName().equals("B")){
-                        zoneB = d;
-                    }
-                    else if (d.getDotName().equals("C")){
-                        zoneC = d;
+                if (d.getFieldSide().equals(this.side)) {
+                    if (d.getFieldSide().equals(side)) {
+                        if (d.getDotName().equals("A")) {
+                            zoneA = d;
+                        } else if (d.getDotName().equals("B")) {
+                            zoneB = d;
+                        } else if (d.getDotName().equals("C")) {
+                            zoneC = d;
+                        }
                     }
                 }
             }
-        }
-        else if (side.equals(AutoRoute.NAME_BLUE)){
-            zoneA.setX(30);
-            zoneA.setX(12);
-
-            zoneB.setX(30);
-            zoneB.setX(12);
-
-            zoneC.setX(30);
-            zoneC.setX(12);
         }
     }
 

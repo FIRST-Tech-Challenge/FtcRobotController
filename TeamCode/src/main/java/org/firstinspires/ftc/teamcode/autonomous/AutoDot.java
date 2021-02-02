@@ -38,14 +38,15 @@ public class AutoDot implements Serializable {
             return Objects.equals(getDotName(), o.toString());
         }
         else if (o instanceof AutoDot){
-            return Objects.equals(getDotName(), ((AutoDot) o).getDotName());
+            return Objects.equals(getDotName(), ((AutoDot) o).getDotName()) &&
+                    Objects.equals(getFieldSide(), ((AutoDot) o).getFieldSide());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dotName);
+        return Objects.hash(dotName, fieldSide);
     }
 
 
