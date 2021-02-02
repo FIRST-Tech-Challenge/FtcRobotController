@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.robot;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-
 import org.firstinspires.ftc.robot_utilities.Vals;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 
 public class FlyWheel {
 
@@ -56,11 +57,12 @@ public class FlyWheel {
         this.set();
     }
 
-    public boolean isReady() {
+    public boolean isReady(Telemetry telemetry) {
         int ticks = 0;
         int hits = 0;
         while(ticks < 10 && hits < 3) {
             double velocity = flywheel.getCorrectedVelocity();
+            telemetry.addData("Velocity", velocity);
             if(velocity >= MIN_SPEED && velocity <= MAX_SPEED) hits++;
             else hits = 0;
             ticks++;
