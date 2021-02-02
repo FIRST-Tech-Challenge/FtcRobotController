@@ -86,22 +86,11 @@ public class MyPosition {
         update();
     }
 
-    // myRobot was passed in just for telemetry printing.
-    //    public static void initialize(double l, double r,double a, Robot myRobot){
-//        MyPosition.myRobot = myRobot;
-//        currPos_l = l;
-//        currPos_r = r;
-//        currPos_a = a;
-//        update();
-//    }
-
     public static void giveMePositions(double l, double r, double a){
-//        if(currPos_l != 0 || currPos_r != 0 || currPos_a != 0) {
             currPos_l = l;
             currPos_r = r;
             currPos_a = a;
             update();
-//        }
     }
 
     private static void update(){
@@ -131,9 +120,7 @@ public class MyPosition {
      * Updates our position on the field using the change from the encoders
      */
     public static void PositioningCalculations(){
-        // This was due to GF encoder must have been reverse.
-        double wheelLeftCurrent = -currPos_l;
-//        double wheelLeftCurrent = currPos_l;
+        double wheelLeftCurrent = currPos_l;
         double wheelRightCurrent= currPos_r;
         double wheelAuxCurrent = currPos_a;
 
@@ -149,7 +136,8 @@ public class MyPosition {
         double wheelAuxDeltaScale = wheelAuxDelta*auxScalingFactor/1000.00;
 
         //get how much our angle has changed
-        double angleIncrement = (wheelLeftDelta-wheelRightDelta)*turnScalingFactor/100000.0;
+//        double angleIncrement = (wheelLeftDelta-wheelRightDelta)*turnScalingFactor/100000.0;
+        double angleIncrement = (wheelRightDelta-wheelLeftDelta)*turnScalingFactor/100000.0;
 //        myRobot.telemetry.addLine("Angle increment is " +
 //                (angleIncrement > 0 ? "POSITIVE" : "NEGATIVE"));
 
@@ -157,11 +145,12 @@ public class MyPosition {
         //but use absolute for our actual angle
         double wheelRightTotal = currPos_r-wheelRightInitialReading;
         // This was due to GF encoder must have been reverse. or something else?
-        double wheelLeftTotal = -(currPos_l-wheelLeftInitialReading);
+        double wheelLeftTotal = currPos_l-wheelLeftInitialReading;
 //        double wheelLeftTotal = currPos_l-wheelLeftInitialReading;
 
         double worldAngleLast = worldAngle_rad;
-        worldAngle_rad = -AngleWrap(((wheelLeftTotal-wheelRightTotal)*turnScalingFactor/100000.0) + lastResetAngle);
+        worldAngle_rad = AngleWrap(((wheelRightTotal-wheelLeftTotal)*turnScalingFactor/100000.0) + lastResetAngle);
+//        worldAngle_rad = AngleWrap(((wheelLeftTotal-wheelRightTotal)*turnScalingFactor/100000.0) + lastResetAngle);
 
         //get the predicted amount the straif will go
         double tracker_a_prediction = Math.toDegrees(angleIncrement)*(auxPredictionScalingFactor/10.0);
@@ -225,72 +214,6 @@ public class MyPosition {
         currentTravelYDistance = relativeY;
     }
 
-    /**
-     * Updates our position on the field using the change from the encoders
-     */
-    public static void PositioningCalculationsOld(){
-        double wheelLeftCurrent = currPos_l;
-        double wheelRightCurrent= -currPos_r;
-        double wheelAuxCurrent = currPos_a;
-
-        //compute how much the wheel data has changed
-        double wheelLeftDelta = wheelLeftCurrent - wheelLeftLast;
-        double wheelRightDelta = wheelRightCurrent - wheelRightLast;
-        double wheelAuxDelta = wheelAuxCurrent - wheelAuxLast;
-
-
-        //get the real distance traveled using the movement scaling factors
-        double wheelLeftDeltaScale = wheelLeftDelta*moveScalingFactor/1000.0;
-        double wheelRightDeltaScale = wheelRightDelta*moveScalingFactor/1000.0;
-        double wheelAuxDeltaScale = wheelAuxDelta*auxScalingFactor/1000.00;
-
-
-
-        //get how much our angle has changed
-        double angleIncrement = (wheelLeftDelta-wheelRightDelta)*turnScalingFactor/100000.0;
-
-
-
-        //but use absolute for our actual angle
-        double wheelRightTotal = currPos_r-wheelRightInitialReading;
-        double wheelLeftTotal = -(currPos_l-wheelLeftInitialReading);
-        worldAngle_rad = -AngleWrap(((wheelLeftTotal-wheelRightTotal)*turnScalingFactor/100000.0) + lastResetAngle);
-
-
-
-
-        //relative y translation
-        double r_yDistance = (wheelRightDeltaScale+wheelLeftDeltaScale)/2;
-
-
-        double tracker_a_prediction = Math.toDegrees(angleIncrement)*(auxPredictionScalingFactor/10.0);
-        double r_xDistance = wheelAuxDeltaScale-tracker_a_prediction;
-
-
-        worldXPosition += (Math.cos(worldAngle_rad) * r_yDistance) + (Math.sin(worldAngle_rad) *
-                r_xDistance);
-        worldYPosition += (Math.sin(worldAngle_rad) * r_yDistance) - (Math.cos(worldAngle_rad) *
-                r_xDistance);
-
-
-
-        SpeedOmeter.yDistTraveled += r_yDistance;
-        SpeedOmeter.xDistTraveled += r_xDistance;
-
-
-
-        //save the last positions for later
-        wheelLeftLast = wheelLeftCurrent;
-        wheelRightLast = wheelRightCurrent;
-        wheelAuxLast = wheelAuxCurrent;
-
-
-        //save how far we traveled in the y dimension this update for anyone that needs it
-        //currently the absolute control of the collector radius uses it to compensate for
-        //robot movement
-        currentTravelYDistance = r_yDistance;
-
-    }
     public static double subtractAngles(double angle1, double angle2){
         return AngleWrap(angle1-angle2);
     }

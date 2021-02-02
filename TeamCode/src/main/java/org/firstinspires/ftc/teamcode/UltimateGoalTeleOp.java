@@ -107,9 +107,10 @@ public class UltimateGoalTeleOp extends OpMode {
             robot.resetReads();
             MyPosition.initialize(robot.getLeftEncoderWheelPosition(),
                     robot.getRightEncoderWheelPosition(),
+
                     robot.getStrafeEncoderWheelPosition());
         }
-        MyPosition.setPosition(0.0, 0.0, Math.toRadians(0.0));
+        MyPosition.setPosition(0.0, 0.0, Math.toRadians(90.0));
     }
 
     @Override

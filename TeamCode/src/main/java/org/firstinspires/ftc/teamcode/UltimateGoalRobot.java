@@ -169,7 +169,7 @@ public class UltimateGoalRobot
 
         // Changing these values affect the direction of the encoder reads.
         wobble.setDirection(DcMotor.Direction.FORWARD);
-        intake.setDirection(DcMotor.Direction.FORWARD);
+        intake.setDirection(DcMotor.Direction.REVERSE);
         empty.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
@@ -228,9 +228,7 @@ public class UltimateGoalRobot
         initIMU();
     }
 
-    public int getLeftEncoderWheelPosition() {
-        // This is to compensate for GF having a negative left.
-        return intake.getCurrentPosition();
+    public int getLeftEncoderWheelPosition() { return intake.getCurrentPosition();
     }
 
     public int getRightEncoderWheelPosition() {
@@ -302,12 +300,12 @@ public class UltimateGoalRobot
     }
 
     public void setIntakeIn() {
-        setIntakeMotorPower(-1.0);
+        setIntakeMotorPower(1.0);
         intakePusher.setPower(1.0);
     }
 
     public void setIntakeOut() {
-        setIntakeMotorPower(1.0);
+        setIntakeMotorPower(-1.0);
         intakePusher.setPower(-1.0);
     }
 
@@ -566,7 +564,8 @@ public class UltimateGoalRobot
         double deltaAngle = MyPosition.AngleWrap(targetAngle - MyPosition.worldAngle_rad);
         double magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
         double driveSpeed;
-        double turnSpeed = Math.toDegrees(deltaAngle) * errorMultiplier;
+        // Apparently last season angle was positive CW, this season CCW is positive.
+        double turnSpeed = -Math.toDegrees(deltaAngle) * errorMultiplier;
         // Have to convert from world angles to robot centric angles.
         double robotDriveAngle = driveAngle - MyPosition.worldAngle_rad + Math.toRadians(-90);
 

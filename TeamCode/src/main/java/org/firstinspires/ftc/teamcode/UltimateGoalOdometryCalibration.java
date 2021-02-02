@@ -45,7 +45,7 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         }
     }
 
-    private WayPoint calibrationTarget = new WayPoint(0, 0, toRadians(90), 0.5);
+    private WayPoint calibrationTarget = new WayPoint(0, 0, toRadians(90.0), 0.5);
     private double driverAngle = 0.0;
     private final double MAX_SPEED = 1.0;
     private final double MAX_SPIN = 1.0;
@@ -112,7 +112,7 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         }
         // Why do I have to negative angle to get the right angle!?! Everything works that way
         // but weird.
-        MyPosition.setPosition(0.0, 0.0, toRadians(-90.0));
+        MyPosition.setPosition(0.0, 0.0, toRadians(90.0));
     }
 
     @Override
