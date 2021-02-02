@@ -593,6 +593,7 @@ public class Chassis_Auto extends LinearOpMode {
             RF.setPower(RF_power);
             LB.setPower(LB_power);
             RB.setPower(RB_power);
+            telemetry.addData("Current Angle", tempAngle);
             telemetry.addData("RF_power", RF_power);
             telemetry.addData("RB_power", RB_power);
             telemetry.addData("LF_power", LF_power);
