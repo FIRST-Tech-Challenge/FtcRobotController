@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.robot_utilities;
+package org.firstinspires.ftc.robot;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+
+import org.firstinspires.ftc.robot_utilities.Vals;
 
 public class FlyWheel {
 
@@ -8,6 +10,9 @@ public class FlyWheel {
 
     private double flywheelSpeed = 0;
     private double flywheelDirection = Vals.flywheel_direction;
+
+    private static final int MIN_SPEED = 960;
+    private static final int MAX_SPEED = 990;
 
     public FlyWheel(Motor flywheel) {
         this.flywheel = flywheel;
@@ -49,5 +54,20 @@ public class FlyWheel {
         this.flywheelDirection *= -1;
 
         this.set();
+    }
+
+    public boolean isReady() {
+        int ticks = 0;
+        int hits = 0;
+        while(ticks < 10 && hits < 3) {
+            double velocity = flywheel.getCorrectedVelocity();
+            if(velocity >= MIN_SPEED && velocity <= MAX_SPEED) hits++;
+            else hits = 0;
+            ticks++;
+        }
+
+        return hits == 3;
+
+
     }
 }

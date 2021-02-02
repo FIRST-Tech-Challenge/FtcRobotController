@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robot_utilities.FlyWheel;
+import org.firstinspires.ftc.robot.FlyWheel;
 
 @Autonomous(name="EchoLoopAuto")
 public class EchoLoopAuto extends LinearOpMode {

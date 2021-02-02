@@ -5,18 +5,17 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robot_utilities.FlyWheel;
+import org.firstinspires.ftc.robot.FlyWheel;
 import org.firstinspires.ftc.robot_utilities.GamePadController;
-import org.firstinspires.ftc.robot_utilities.Vals;
+import org.firstinspires.ftc.robot.Hitter;
 
 @TeleOp(name = "EchoOp")
 public class EchoOp extends OpMode {
     private GamePadController gamepad;
     private Motor driveLeft, driveRight;
     private FlyWheel flywheel;
-    private Servo hitter;
+    private Hitter hitter;
     private Motor intake1, intake2;
 
     private double intakeSpeed = 0;
@@ -43,7 +42,7 @@ public class EchoOp extends OpMode {
 
         flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE));
 
-        hitter = hardwareMap.servo.get("sv");
+        hitter = new Hitter(hardwareMap.servo.get("sv"));
     }
 
     @Override
@@ -81,10 +80,10 @@ public class EchoOp extends OpMode {
 
 
         if(gamepad1.left_bumper) {
-            hitter.setPosition(Vals.hitter_end);
+            hitter.hit();
         }
         else {
-            hitter.setPosition(Vals.hitter_start);
+            hitter.reset();
         }
 
         driveLeft.set(leftSpeed);
@@ -97,7 +96,7 @@ public class EchoOp extends OpMode {
         telemetry.addData("Flywheel Speed", flywheel.flywheel.get());
         telemetry.addData("Flywheel Velocity", flywheel.flywheel.encoder.getRawVelocity());
         telemetry.addData("Flywheel Position", flywheel.flywheel.getCurrentPosition());
-        telemetry.addData("Hitter Position", hitter.getPosition());
+        telemetry.addData("Hitter Position", hitter.hitter.getPosition());
         telemetry.addData("Left Speed", leftSpeed);
         telemetry.addData("Right Speed", rightSpeed);
         telemetry.addData("Intake Speed", intakeSpeed);
