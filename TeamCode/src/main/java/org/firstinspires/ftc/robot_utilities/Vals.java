@@ -11,6 +11,7 @@ public class Vals {
     public static double flywheel_kv = 0.03;
     public static double flywheel_speed = 0.36;
     public static double flywheel_direction = -1;
+    public static int flywheel_ready_ticks = 40;
 
     public static double hitter_start = 0.4;
     public static double hitter_end = .7;

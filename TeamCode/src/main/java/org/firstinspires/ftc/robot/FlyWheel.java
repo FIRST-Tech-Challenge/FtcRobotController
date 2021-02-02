@@ -62,8 +62,8 @@ public class FlyWheel {
         double velocity = Math.abs(flywheel.getCorrectedVelocity());
         if(velocity >= MIN_SPEED && velocity <= MAX_SPEED) ticks++;
         else ticks = 0;
-        
-        if(ticks >= 5) {
+
+        if(ticks >= Vals.flywheel_ready_ticks) {
             ticks = 0;
             return true;
         }
