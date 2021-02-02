@@ -15,6 +15,8 @@ public class FlyWheel {
     private static final int MIN_SPEED = 960;
     private static final int MAX_SPEED = 990;
 
+    private int ticks = 0;
+
     public FlyWheel(Motor flywheel) {
         this.flywheel = flywheel;
 
@@ -33,8 +35,7 @@ public class FlyWheel {
             this.flywheel.setRunMode(Motor.RunMode.VelocityControl);
             this.flywheelSpeed = Vals.flywheel_speed;
         }
-//        this.flywheel.setVeloCoefficients(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
-//        this.flywheel.setFeedforwardCoefficients(Vals.flywheel_ks, Vals.flywheel_kv);
+
         this.set();
     }
 
@@ -58,18 +59,15 @@ public class FlyWheel {
     }
 
     public boolean isReady() {
-        if(!isOn()) return false;
-        int ticks = 0;
-        int hits = 0;
-        while(ticks < 10 && hits < 3) {
-            on();
-            double velocity = Math.abs(flywheel.getCorrectedVelocity());
-            if(velocity >= MIN_SPEED && velocity <= MAX_SPEED) hits++;
-            else hits = 0;
-            ticks++;
+        double velocity = Math.abs(flywheel.getCorrectedVelocity());
+        if(velocity >= MIN_SPEED && velocity <= MAX_SPEED) ticks++;
+        else ticks = 0;
+        
+        if(ticks >= 5) {
+            ticks = 0;
+            return true;
         }
-
-        return hits == 3;
+        return false;
 
 
     }
