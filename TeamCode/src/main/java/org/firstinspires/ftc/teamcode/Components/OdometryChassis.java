@@ -22,13 +22,12 @@ public class OdometryChassis extends BasicChassis {
     private Odometry odometry = null;
     private Navigation navigation= new Navigation();
 
-    public OdometryChassis(LinearOpMode opMode) {
+    public OdometryChassis(LinearOpMode opMode,boolean navigator) {
         super(opMode);
         op = opMode;
-
-        Navigation navigation = new Navigation();
-        navigation.navigate(op);
+            Navigation navigation = new Navigation();
     }
+    public void navigate(){navigation.navigate(op);}
     public void setPosition(double x, double y, double angle){
         navigation.setPosition(x,y,angle);
     }

@@ -62,10 +62,10 @@ public class Navigation {
 
 
     public void navigate( LinearOpMode op) {
-        Thread vuforia = new Thread(new VuforiaWebcam(op));
+        //Thread vuforia = new Thread(new VuforiaWebcam(op));
         Thread odometry = new Thread(new Odometry(op));
 
         odometry.start();
-        vuforia.start();
+        //vuforia.start();
     }
 }

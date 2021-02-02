@@ -36,7 +36,7 @@ public class Robot {
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean objectDetectionNeeded, boolean vuforiaNAVIGATIONneeded ) {
         op = opMode;
         //This link has a easy to understand explanation. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
-        drivetrain= ChassisFactory.getChassis(chassisType,op);
+        drivetrain= ChassisFactory.getChassis(chassisType,op,vuforiaNAVIGATIONneeded);
 
         if(objectDetectionNeeded){
             tensorFlow = new TensorFlow(op);
@@ -45,9 +45,9 @@ public class Robot {
             //vuforiaWebcam = new VuforiaWebcam(op);
 //            vuforiaWebcam.init(op);
         }
-        if(objectDetectionNeeded && vuforiaNAVIGATIONneeded){
-            throw new RuntimeException("They both can't be true.");
-        }
+//        if(objectDetectionNeeded && vuforiaNAVIGATIONneeded){
+//            throw new RuntimeException("They both can't be true.");
+//        }
 
             intake = new Intake(op);
             transfer = new Transfer(op);
@@ -58,7 +58,9 @@ public class Robot {
             tensorFlow.runTensorFlowWaitForStart();
         }
     }
-
+    public void navigate(){
+        drivetrain.navigate();
+    }
     public void moveVuforiaWebcam(double x, double y, double endAngle) {
         if(!isCorgi) {
             getVuforiaPosition();

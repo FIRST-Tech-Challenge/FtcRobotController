@@ -68,6 +68,7 @@ public class OneGPTeleop extends LinearOpMode {
             boolean wobble_goal_servo = gamepad1.y;
             boolean slow = gamepad1.a;
             boolean shooter_servo = gamepad1.x;
+            boolean powershot = gamepad1.b;
             float shooter = gamepad1.right_trigger;
 
             angleInRadian = Math.atan2(left_stick_y, left_stick_x);
@@ -166,6 +167,10 @@ public class OneGPTeleop extends LinearOpMode {
             } else if (!start_transfer_sys){
                 robot.stopIntake();
                 robot.stopTransfer();
+            }
+            if(powershot){
+                robot.goToPosition(-1.5,2,0,0.9);
+                robot.shootThreePowerShot();
             }
 
         }

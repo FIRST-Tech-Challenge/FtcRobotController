@@ -443,4 +443,9 @@ public class IMUChassis extends BasicChassis {
     public void goToPosition(double xPosition, double yPosition, double newangle, double power) {
 
     }
+
+    @Override
+    public void navigate() {
+
+    }
 }
