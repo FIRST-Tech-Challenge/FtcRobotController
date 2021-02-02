@@ -57,12 +57,11 @@ public class FlyWheel {
         this.set();
     }
 
-    public boolean isReady(Telemetry telemetry) {
+    public boolean isReady() {
         int ticks = 0;
         int hits = 0;
         while(ticks < 10 && hits < 3) {
-            double velocity = flywheel.getCorrectedVelocity();
-            telemetry.addData("Velocity", velocity);
+            double velocity = Math.abs(flywheel.getCorrectedVelocity());
             if(velocity >= MIN_SPEED && velocity <= MAX_SPEED) hits++;
             else hits = 0;
             ticks++;

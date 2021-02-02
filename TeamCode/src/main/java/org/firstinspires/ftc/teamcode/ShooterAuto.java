@@ -30,11 +30,11 @@ public class ShooterAuto extends LinearOpMode {
         elapsedTime.reset();
         while(elapsedTime.seconds() < 10) {
             flywheel.on();
-            if(flywheel.isReady(telemetry)) {
-                telemetry.addData("GO", "it's a go :)");
+            if(flywheel.isReady()) {
+//                telemetry.addData("GO", "it's a go :)");
                 hitter.hitFullMotion(0.7);
             } else {
-                telemetry.addData("GO", "no go :(");
+//                telemetry.addData("GO", "no go :(");
             }
         }
 
