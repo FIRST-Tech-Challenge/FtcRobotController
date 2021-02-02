@@ -152,11 +152,11 @@ public class TwoGPTeleop extends LinearOpMode {
                 if (wobble_goal_servo_is_up) {
                     telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
                     telemetry.update();
-                    robot.moveWobbleGoalClaw(true);
+                    robot.closeWobbleGoalClaw();
                 } else if (!wobble_goal_servo_is_up) {
                     telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
                     telemetry.update();
-                    robot.moveWobbleGoalClaw(false);
+                    robot.openWobbleGoalClaw();
                 }
             }
 

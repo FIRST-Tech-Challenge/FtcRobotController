@@ -28,7 +28,7 @@ public class R_Power_park extends LinearOpMode {
         if(rings == 0) {
             robot.moveAngle( -53,-55, 0.6);
             robot.turnInPlace(0,1.0);
-            robot.moveWobbleGoalClaw(true);
+            robot.closeWobbleGoalClaw();
             robot.moveAngle(0,8,0.8);
             robot.turnInPlace(0,1.0);
             robot.moveAngle(37,2,0.5);
@@ -37,7 +37,7 @@ public class R_Power_park extends LinearOpMode {
         else if(rings==1) {
             robot.moveAngle(4,-83, 0.7);
             robot.turnInPlace(0,0.5);
-            robot.moveWobbleGoalClaw(true);
+            robot.closeWobbleGoalClaw();
             robot.moveAngle(0,4.5, 0.7);
             robot.turnInPlace(0,0.5);
             robot.moveAngle(10,22, 0.7);
@@ -46,7 +46,7 @@ public class R_Power_park extends LinearOpMode {
         else if(rings==4) {
             robot.moveAngle(-48, -102,0.7);
             robot.turnInPlace(0,0.5);
-            robot.moveWobbleGoalClaw(true);
+            robot.closeWobbleGoalClaw();
             robot.moveAngle(-0, 12,0.7);
             robot.turnInPlace(0,0.5);
             robot.moveAngle(2,40.5,0.7);

@@ -60,8 +60,15 @@ public class WobbleGoal {
             i = ticksForREST;
         } else if (p == Position.GRAB) {
             i = ticksForGRAB;
+            while (wobbleGoalServoClaw.getPosition() != 1) {
+                wobbleGoalServoClaw.setPosition(1);
+            }
         } else if (p == Position.RAISE) {
             i = ticksForRAISE;
+            while (wobbleGoalServoClaw.getPosition() != 0) {
+                wobbleGoalServoClaw.setPosition(0);
+            }
+            op.sleep(1000);
         } else if (p == Position.STARTOFTELEEOP) {
             i = ticksForSTARTOFTELEEOP;
         } else {
@@ -104,18 +111,19 @@ public class WobbleGoal {
         op.sleep(500);
     }
     // moves the wobble goal servo
-    public void moveWobbleGoalClaw(boolean open) {
-        if (open){
+    public void openWobbleGoalClaw() {
+            wobbleGoalServoClaw.setPosition(1);
+            op.sleep(200);
+            op.telemetry.addData(" Wobble Goal Claw: ", "closed");
+            op.telemetry.update();
+
+    }
+    public void  closeWobbleGoalClaw() {
+
             wobbleGoalServoClaw.setPosition(0);
             op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "closed");
-        } else {
-            wobbleGoalServoClaw.setPosition(1);
-            op.sleep(200);
-            op.telemetry.addData(" Wobble Goal Claw: ", "open");
-
-        }
-        op.telemetry.update();
+            op.telemetry.update();
     }
 }
 

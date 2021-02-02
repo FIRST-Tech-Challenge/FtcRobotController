@@ -91,7 +91,7 @@ public class MoveWobbleGoalPark extends LinearOpMode {
             sleep(200);
             robot.turnInPlace(0,0.6);
             sleep(200);
-            robot.moveWobbleGoalClaw(true);
+            robot.closeWobbleGoalClaw();
             sleep(200);
             robot.moveAngle(20, 12, 0.7);
             sleep(200);
