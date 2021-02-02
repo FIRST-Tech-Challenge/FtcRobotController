@@ -49,12 +49,10 @@ public class Robot {
             throw new RuntimeException("They both can't be true.");
         }
 
-        if(isCorgi) {
             intake = new Intake(op);
             transfer = new Transfer(op);
             wobbleGoal = new WobbleGoal(op);
             shooter = new Shooter(op);
-        }
 
         if (objectDetectionNeeded) {
             tensorFlow.runTensorFlowWaitForStart();

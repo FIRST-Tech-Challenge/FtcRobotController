@@ -162,8 +162,8 @@ public class VuforiaWebcam extends Thread {
                         //translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
                 if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))>=24.5 && VuforiaWebcam.isTargetVisible()==true) {
-                    setYposition(translation.get(0) / mmPerInch);
-                    setXposition(translation.get(1) / mmPerInch);
+                    setXposition(translation.get(0) / mmPerInch);
+                    setYposition((translation.get(1) / mmPerInch));
                 }
                 xpos = translation.get(0) / mmPerInch;
                 ypos = translation.get(1) / mmPerInch;

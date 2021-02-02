@@ -22,9 +22,10 @@ public class track extends LinearOpMode {
         //int rings = robot.getRingsAndWaitForStart();
         //robot.stopRingDetection();
         waitForStart();
-        while(!isStopRequested()){
-
-        }
+        robot.setPosition(24,24, 0);//robot.setPosition(61.75,-42.25, 0);
+        robot.moveAngle(0,-65,0.5);
+        sleep(5000);
+        robot.goToPosition(23.5,-23.5,0,0.5);
         stop();
     }
 

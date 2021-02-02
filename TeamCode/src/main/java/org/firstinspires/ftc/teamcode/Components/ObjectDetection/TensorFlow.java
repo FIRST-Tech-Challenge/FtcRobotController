@@ -154,7 +154,7 @@ public class TensorFlow {
 //        telemetry.update();
 //        sleep(2000);
 
-        while(!op.opModeIsActive() && !op.isStopRequested()) {
+        while( !op.isStarted()) {
             numOfTime4Rings = 0;
             numOfTime1Ring = 0;
             numOfTime0Rings = 0;
