@@ -47,7 +47,7 @@ public class TensorFlow {
         op = opMode;
 
         tensorFlowServo = op.hardwareMap.servo.get("TensorFlowServo");
-        moveTensorFlowServo(0.05);
+        moveTensorFlowServo(0.35);
 
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
