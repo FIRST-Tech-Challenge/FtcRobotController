@@ -38,7 +38,7 @@ public class EchoLoopAuto extends LinearOpMode {
         flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE));
     }
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         initRobot();
         waitForStart();
 
@@ -46,8 +46,8 @@ public class EchoLoopAuto extends LinearOpMode {
 
         double speed = 0.7;
         while(elapsedTime.seconds() < 2) {
-            driveLeft.set(-speed);
-            driveRight.set(speed);
+            driveLeft.set(speed);
+            driveRight.set(-speed);
         }
 
         stop();

@@ -27,47 +27,14 @@ import java.util.Locale;
 
 
 @TeleOp(name = "GyroTest")
-public class GyroTest extends LinearOpMode {
+public class GyroTest extends OpMode {
     private GamePadController gamepad;
     private BNO055IMU imu;
 
     Orientation angles;
     Acceleration gravity;
 
-//    FtcDashboard dashboard = FtcDashboard.getInstance();
-
-    public void initRobot() {
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        gamepad = new GamePadController(gamepad1);
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
-        composeTelemetry();
-
-
-
-    }
-
-    @Override
-    public void runOpMode() {
-        initRobot();
-        waitForStart();
-
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
-        while(opModeIsActive()) {
-            telemetry.update();
-        }
-
-    }
+    boolean firstRun = true;
 
     //----------------------------------------------------------------------------------------------
     // Telemetry Configuration
@@ -136,11 +103,60 @@ public class GyroTest extends LinearOpMode {
     // Formatting
     //----------------------------------------------------------------------------------------------
 
-    String formatAngle(AngleUnit angleUnit, double angle) {
+    private String formatAngle(AngleUnit angleUnit, double angle) {
         return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
     }
 
-    String formatDegrees(double degrees){
+    private String formatDegrees(double degrees){
         return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
+    }
+
+    private String formatAccel() {
+        return String.format(Locale.getDefault(), "%.3f",
+                Math.sqrt(gravity.xAccel*gravity.xAccel
+                        + gravity.yAccel*gravity.yAccel
+                        + gravity.zAccel*gravity.zAccel));
+    }
+
+    @Override
+    public void init() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        gamepad = new GamePadController(gamepad1);
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+    }
+
+    private void firstRun() {
+        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+    }
+
+    @Override
+    public void loop() {
+        if(firstRun) {
+            firstRun = false;
+            firstRun();
+        }
+
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        gravity  = imu.getGravity();
+
+
+        telemetry.addData("status", imu.getSystemStatus().toShortString());
+        telemetry.addData("calib", imu.getCalibrationStatus().toString());
+        telemetry.addData("heading", formatAngle(angles.angleUnit, angles.firstAngle));
+        telemetry.addData("roll", formatAngle(angles.angleUnit, angles.secondAngle));
+        telemetry.addData("pitch", formatAngle(angles.angleUnit, angles.thirdAngle));
+        telemetry.addData("gravity", gravity.toString());
+        telemetry.addData("magnitude", formatAccel());
+
+
     }
 }
