@@ -58,9 +58,11 @@ public class FlyWheel {
     }
 
     public boolean isReady() {
+        if(!isOn()) return false;
         int ticks = 0;
         int hits = 0;
         while(ticks < 10 && hits < 3) {
+            on();
             double velocity = Math.abs(flywheel.getCorrectedVelocity());
             if(velocity >= MIN_SPEED && velocity <= MAX_SPEED) hits++;
             else hits = 0;
