@@ -56,7 +56,6 @@ public class OneGPTeleop extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.moveWobbleGoalToPosition(WobbleGoal.Position.STARTOFTELEEOP);
 
         while (!isStopRequested()) {
 
@@ -121,8 +120,8 @@ public class OneGPTeleop extends LinearOpMode {
                 if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.GRAB) {
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
-                } else if (currentWobbleGoalPosition == WobbleGoal.Position.RAISE
+                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
+                } else if (currentWobbleGoalPosition == WobbleGoal.Position.REST
                 ) {
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 } else {

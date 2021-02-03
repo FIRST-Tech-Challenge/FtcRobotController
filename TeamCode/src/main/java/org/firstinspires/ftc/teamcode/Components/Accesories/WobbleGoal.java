@@ -29,11 +29,10 @@ public class WobbleGoal {
     protected Servo wobbleGoalServoClaw = null;
 
     private final int ticksForREST = 0;
-    private final int ticksForGRAB = -840;
+    private final int ticksForGRAB = -420;
     private final int ticksForRAISE = -400;
     private final int ticksForAutonomousRUN = -300;
     private final int ticksForAutonomousStart = 175;
-    private final int ticksForSTARTOFTELEEOP = -200;
     private final double wobbleGoalSpeed = 0.3;
     private final double wobbleGoalSpeedDrop = 0.5;
 
@@ -63,8 +62,6 @@ public class WobbleGoal {
             i = ticksForGRAB;
         } else if (p == Position.RAISE) {
             i = ticksForRAISE;
-        } else if (p == Position.STARTOFTELEEOP) {
-            i = ticksForSTARTOFTELEEOP;
         }else if (p == Position.RUN) {
             i = ticksForAutonomousRUN;
         } else if (p == Position.START) {
