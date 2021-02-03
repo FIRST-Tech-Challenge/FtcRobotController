@@ -43,13 +43,11 @@ public class WobbleGoal {
 
         //getting the motor & servo from the hardware map
         wobbleGoalMotor = (DcMotor) opMode.hardwareMap.get("wobbleGoalMotor");
-        wobbleGoalServo = op.hardwareMap.servo.get("WobbleGoalServo");
         wobbleGoalServoClaw = op.hardwareMap.servo.get("wobbleGoalServoClaw");
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
         wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wobbleGoalServo.setPosition(0);
         wobbleGoalServoClaw.setPosition(0);
         goToPosition(Position.START);
         opMode.sleep(500);
