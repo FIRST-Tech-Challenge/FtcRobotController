@@ -28,7 +28,7 @@ public class WobbleGoal2ShootAllHighPark extends LinearOpMode {
 //        waitForStart();
 //        rings = robot.tensorFlow.getNumberOfRings();
         robot.stopRingDetection();
-        robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
+        robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
         robot.navigate();
         robot.moveBackward(25,0.75);
         robot.turnInPlace(-5,0.8);
@@ -44,6 +44,9 @@ public class WobbleGoal2ShootAllHighPark extends LinearOpMode {
         sleep(100);
         robot.moveForward(10, 0.8);
         robot.moveBackward(3, 0.9);
+        robot.moveForward(5, 0.8);
+        robot.moveBackward(3, 0.9);
+        robot.moveForward(5, 0.8);
         robot.turnInPlace(5, 0.8);
         robot.moveForward(10, 0.8);
         robot.moveBackward(10, 0.8);

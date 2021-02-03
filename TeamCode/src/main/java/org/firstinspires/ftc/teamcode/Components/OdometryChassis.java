@@ -19,13 +19,12 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 //2.0,1.7,1.1
 public class OdometryChassis extends BasicChassis {
-    private Odometry odometry = null;
-    private Navigation navigation= new Navigation();
+    private Navigation navigation= null;
 
     public OdometryChassis(LinearOpMode opMode,boolean navigator) {
         super(opMode);
         op = opMode;
-            Navigation navigation = new Navigation();
+            navigation = new Navigation(op);
     }
     public void navigate(){navigation.navigate(op);}
     public void setPosition(double x, double y, double angle){
