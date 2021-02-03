@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class WobbleGoal {
 
     public enum Position {
-        REST, GRAB, RAISE,RUN, RELEASE, DROP, STARTOFTELEEOP
+        REST, GRAB, RAISE,RUN, RELEASE, DROP, STARTOFTELEEOP,START
     }
 
     //declaring the op mode
@@ -31,7 +31,8 @@ public class WobbleGoal {
     private final int ticksForREST = 0;
     private final int ticksForGRAB = -840;
     private final int ticksForRAISE = -400;
-    private final int ticksForAutonomousDrop = 950;
+    private final int ticksForAutonomousRUN = -300;
+    private final int ticksForAutonomousStart = 175;
     private final int ticksForSTARTOFTELEEOP = -200;
     private final double wobbleGoalSpeed = 0.3;
     private final double wobbleGoalSpeedDrop = 0.5;
@@ -42,14 +43,14 @@ public class WobbleGoal {
 
         //getting the motor & servo from the hardware map
         wobbleGoalMotor = (DcMotor) opMode.hardwareMap.get("wobbleGoalMotor");
-        wobbleGoalServo = op.hardwareMap.servo.get("WobbleGoalServo");
         wobbleGoalServoClaw = op.hardwareMap.servo.get("wobbleGoalServoClaw");
         wobbleGoalMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
         wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wobbleGoalServo.setPosition(0);
         wobbleGoalServoClaw.setPosition(0);
+        goToPosition(Position.START);
+        opMode.sleep(500);
 
     }
 
@@ -71,6 +72,10 @@ public class WobbleGoal {
             op.sleep(1000);
         } else if (p == Position.STARTOFTELEEOP) {
             i = ticksForSTARTOFTELEEOP;
+        }else if (p == Position.RUN) {
+            i = ticksForAutonomousRUN;
+        } else if (p == Position.START) {
+            i = ticksForAutonomousStart;
         } else {
             op.telemetry.addData("IQ Lvl", "0.00");
             op.telemetry.update();

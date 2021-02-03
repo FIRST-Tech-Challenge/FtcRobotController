@@ -19,7 +19,6 @@ import static org.firstinspires.ftc.teamcode.Components.Navigations.Navigation.*
 
 
 public class Odometry extends Thread {
-    private Odometry odometry = null;
     DcMotorEx odom1;
     DcMotorEx odom2;
     DcMotorEx odom3;

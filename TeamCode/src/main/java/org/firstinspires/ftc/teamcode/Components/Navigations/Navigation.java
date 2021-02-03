@@ -10,6 +10,10 @@ public class Navigation {
     private static double yPosition;
     private static double angle;
     private static boolean inVuforia = false;
+    Thread odometry = null;
+    public Navigation(LinearOpMode OpMode){
+        odometry = new Thread(new Odometry(OpMode));
+    }
 
     public static synchronized void editDistance(double changeX, double changeY) {
         xPosition+=changeX;
@@ -62,10 +66,8 @@ public class Navigation {
 
 
     public void navigate( LinearOpMode op) {
-        Thread vuforia = new Thread(new VuforiaWebcam(op));
-        Thread odometry = new Thread(new Odometry(op));
-
+        //Thread vuforia = new Thread(new VuforiaWebcam(op));
         odometry.start();
-        vuforia.start();
+        //vuforia.start();
     }
 }

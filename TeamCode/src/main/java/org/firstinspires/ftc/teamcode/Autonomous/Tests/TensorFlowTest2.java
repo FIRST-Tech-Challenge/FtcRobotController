@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import java.util.ArrayList;
 
 @Autonomous(name= "TensorFlowTest2 ", group="Tests: ")
-@Disabled
+
 public class TensorFlowTest2 extends LinearOpMode {
 
     @Override

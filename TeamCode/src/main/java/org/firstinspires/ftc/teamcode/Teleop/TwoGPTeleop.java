@@ -67,6 +67,7 @@ public class TwoGPTeleop extends LinearOpMode {
             boolean start_transfer_sys = gamepad1.right_bumper;
             boolean wobble_goal_servo = gamepad1.x;
             boolean slow = gamepad1.a;
+            boolean powershot = gamepad1.b;
             boolean servo = gamepad2.x;
             float shooter = gamepad2.right_trigger;
 
@@ -167,6 +168,10 @@ public class TwoGPTeleop extends LinearOpMode {
             } else if (!start_transfer_sys){
                 robot.stopIntake();
                 robot.stopTransfer();
+            }
+            if(powershot){
+                robot.goToPosition(-1.5,2,0,0.9);
+                robot.shootThreePowerShot();
             }
 
         }
