@@ -25,10 +25,10 @@ public class UltimateBot extends YellowBot {
     private DcMotorEx shooter = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
-    private static double SWING_BACK_POS = 0.75;
-    private static double SWING_PLACE_POS = 0.05;
-    private static double SWING_LIFT_AND_HOLD = 0.4;
-    private static double SWING_LIFT_WALL = 0.55;
+    private static double SWING_BACK_POS = 0.05;
+    private static double SWING_PLACE_POS = 1.0;
+    private static double SWING_LIFT_AND_HOLD = 0.75;
+    private static double SWING_LIFT_WALL = 0.4;
     private static double SHOOT_SERVO = 0.7;
 
     private static int TIMEOUT = 2500;
@@ -98,7 +98,7 @@ public class UltimateBot extends YellowBot {
 
         try {
             wobbleSwing = hwMap.get(Servo.class, "wobble");
-            wobbleSwing.setPosition(0.65);
+            wobbleSwing.setPosition(SWING_BACK_POS);
         } catch (Exception ex) {
             throw new Exception("Issues with wobbleSwing. Check the controller config", ex);
         }
