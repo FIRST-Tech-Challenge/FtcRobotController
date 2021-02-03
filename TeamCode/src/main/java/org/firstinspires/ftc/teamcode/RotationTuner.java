@@ -41,8 +41,6 @@ public class RotationTuner extends OpMode {
         driveRight.setInverted(true);
         driveLeft.setRunMode(Motor.RunMode.RawPower);
         driveRight.setRunMode(Motor.RunMode.RawPower);
-//        driveLeft.setVeloCoefficients(0.05, 0, 0);
-//        driveRight.setVeloCoefficients(0.05, 0, 0);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
@@ -72,18 +70,27 @@ public class RotationTuner extends OpMode {
 //        telemetry.addData("Current Power", power);
 
         if(gamepad.isARelease()) {
-            rotate(Vals.rotate_target);
+            driveLeft.set(0);
+            driveRight.set(0);
+            resetAngle();
         }
 
+        double power = rotate(Vals.rotate_target);
+
+        driveLeft.set(-power);
+        driveRight.set(power);
+
+        telemetry.addData("PID Error", pidRotate.getPositionError());
         telemetry.addData("Current Heading", lastAngles.firstAngle);
         telemetry.addData("Current Heading", currentHeading);
-        telemetry.addData("Current Power", driveLeft.get());
+        telemetry.addData("Current Power", power);
 
     }
 
     private void resetAngle() {
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         currentHeading = 0;
+        pidRotate.reset();
     }
 
     private double updateHeading() {
@@ -103,30 +110,11 @@ public class RotationTuner extends OpMode {
         return currentHeading;
     }
 
-    private void rotate(double degrees) {
-        resetAngle();
-
+    private double rotate(double degrees) {
         if(Math.abs(degrees) > 359) degrees = Math.copySign(359, degrees);
 
-        pidRotate.reset();
-        ElapsedTime elapsedTime = new ElapsedTime();
-
-        pidRotate.setSetPoint(degrees);
-
-        while(!pidRotate.atSetPoint() && elapsedTime.seconds() < 2) {
-            double power = pidRotate.calculate(updateHeading());
-
-            driveLeft.set(-power);
-            driveRight.set(power);
-
-            telemetry.addData("Current Angle", lastAngles.firstAngle);
-            telemetry.addData("Current Heading", currentHeading);
-            telemetry.addData("Current Power", power);
-            telemetry.update();
-        }
-
-        driveLeft.set(0);
-        driveRight.set(0);
+        double power = pidRotate.calculate(updateHeading(), degrees);
+        return power;
 
     }
 
