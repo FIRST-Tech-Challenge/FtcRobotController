@@ -84,9 +84,7 @@ public class actualAutonV2 extends LinearOpMode {
             telemetry.addLine("Shoot!");
             telemetry.update();
 
-            robot.liftUp();
             robot.autonShoot();
-            robot.liftDown();
 
             telemetry.addLine("Moving over...");
             telemetry.update();

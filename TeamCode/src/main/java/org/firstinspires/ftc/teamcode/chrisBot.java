@@ -66,6 +66,8 @@ public class chrisBot
 
     int FLTarget = 0, FRTarget = 0, BLTarget = 0, BRTarget = 0;
 
+    public static final double shootPower = 0.3;
+
     public boolean shooterOn = false, intakeOn = false;
 
     /** GYRO OBJECTS */
@@ -535,8 +537,8 @@ public class chrisBot
 
     public void shootOn() {
         if(shooterExists) {
-            motorShooter1.setPower(1);
-            motorShooter2.setPower(1);
+            motorShooter1.setPower(shootPower);
+            motorShooter2.setPower(shootPower);
             shooterOn = true;
         }
     }

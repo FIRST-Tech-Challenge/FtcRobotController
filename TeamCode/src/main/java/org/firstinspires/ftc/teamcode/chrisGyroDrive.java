@@ -13,7 +13,7 @@ public class chrisGyroDrive extends LinearOpMode {
 
         waitForStart();
 
-        robot.halfGyroDrive(12, 0.3);
+        //robot.halfGyroDrive(12, 0.3);
     }
 
 }
