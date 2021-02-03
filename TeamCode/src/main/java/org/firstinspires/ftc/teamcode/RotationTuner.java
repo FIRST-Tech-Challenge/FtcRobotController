@@ -8,6 +8,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robot_utilities.GamePadController;
 import org.firstinspires.ftc.robot_utilities.Vals;
@@ -23,7 +24,8 @@ public class RotationTuner extends OpMode {
     private Motor driveLeft, driveRight;
     private BNO055IMU imu;
 
-    private Orientation angles;
+    private Orientation lastAngles;
+    private double currentHeading = 0;
     private PIDController pidRotate;
 
     @Override
@@ -32,7 +34,7 @@ public class RotationTuner extends OpMode {
         gamepad = new GamePadController(gamepad1);
 
         pidRotate = new PIDController(Vals.rotate_kp, Vals.rotate_ki, Vals.rotate_kd);
-        pidRotate.setTolerance(2);
+        pidRotate.setTolerance(Vals.rotate_tolerance);
 
         driveLeft = new Motor(hardwareMap, "dl");
         driveRight = new Motor(hardwareMap, "dr");
@@ -55,15 +57,69 @@ public class RotationTuner extends OpMode {
     @Override
     public void loop() {
         gamepad.update();
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//
+//        pidRotate.setPID(Vals.rotate_kp, Vals.rotate_ki, Vals.rotate_kd);
+//        double power = pidRotate.calculate(lastAngle.firstAngle, Vals.rotate_target);
+//
+//
+//
+//        driveLeft.set(-power);
+//        driveRight.set(power);
+//
+//        telemetry.addData("Current Heading", lastAngles.firstAngle);
+//        telemetry.addData("Current Power", power);
 
-        double power = pidRotate.calculate(angles.firstAngle, Vals.rotate_target);
+        if(gamepad.isARelease()) {
+            rotate(Vals.rotate_target);
+        }
 
-        driveLeft.set(-power);
-        driveRight.set(power);
+    }
 
-        telemetry.addData("Current Heading", angles.firstAngle);
-        telemetry.addData("Current Power", power);
+    private void resetAngle() {
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        currentHeading = 0;
+    }
+
+    private double updateHeading() {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+
+        if(deltaAngle < -180) {
+            deltaAngle += 360;
+        } else if(deltaAngle > 180) {
+            deltaAngle -= 360;
+        }
+
+        currentHeading += deltaAngle;
+
+        return currentHeading;
+    }
+
+    private void rotate(double degrees) {
+        resetAngle();
+
+        if(Math.abs(degrees) > 359) degrees = Math.copySign(359, degrees);
+
+        pidRotate.reset();
+        ElapsedTime elapsedTime = new ElapsedTime();
+
+        pidRotate.setSetPoint(degrees);
+
+        while(!pidRotate.atSetPoint() && elapsedTime.seconds() < 2) {
+            double power = pidRotate.calculate(updateHeading());
+
+            driveLeft.set(-power);
+            driveRight.set(power);
+
+            telemetry.addData("Current Heading", lastAngles.firstAngle);
+            telemetry.addData("Current Power", power);
+            telemetry.update();
+        }
+
+        driveLeft.set(0);
+        driveLeft.set(0);
 
     }
 
