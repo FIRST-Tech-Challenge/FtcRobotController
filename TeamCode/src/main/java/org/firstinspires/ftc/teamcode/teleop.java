@@ -132,17 +132,19 @@ public class teleop extends OpMode {
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
 
         if (Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)){
-            //Micheal's stuff
+            leftFowardPower = -gamepad1.left_stick_x;
+            leftReversePower = gamepad1.left_stick_x;
         } else {
             leftReversePower = gamepad1.left_stick_y;
             leftFowardPower = gamepad1.left_stick_y;
         }
 
         if (Math.abs(gamepad1.right_stick_x) > Math.abs(gamepad1.right_stick_y)){
-            //Micheal's stuff
+            rightFowardPower = -gamepad1.right_stick_x;
+            rightReversePower = gamepad1.right_stick_x;
         } else {
-            rightReversePower = gamepad1.left_stick_y;
-            rightFowardPower = gamepad1.left_stick_y;
+            rightReversePower = gamepad1.right_stick_y;
+            rightFowardPower = gamepad1.right_stick_y;
         }
         /*
         leftReversePower = gamepad1.left_stick_y;
