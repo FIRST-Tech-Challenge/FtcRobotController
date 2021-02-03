@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.mechBot;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.components.Robot2;
@@ -18,7 +19,7 @@ import java.io.IOException;
 /**
  * Created by 28761 on 6/29/2019.
  */
-//@Disabled
+@Disabled
 @Autonomous(name = "Auto-GPS-Only", group = "MechBot")
 public class AutoTestGPS extends LinearOpMode {
     private ToboSigma.SkystoneLocation StoneLoc;

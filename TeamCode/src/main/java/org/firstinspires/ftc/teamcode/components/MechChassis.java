@@ -93,7 +93,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double ratioBL = 14460.0/14756.0;
     private double ratioBR = 1.0;
 
-    private double left_ratio = 0.75; // slow down ratio for left wheels to go straight
+    private double left_ratio = 0.9; // slow down ratio for left wheels to go straight
     private double right_ratio = 1.0; // slow down ratio for right wheels to go straight
     private double front_ratio = 0.975; // slow down ratio for front wheels to go 90 degree
     private double back_ratio = 1.0; // slow down ratio for front wheels to go 90 degree

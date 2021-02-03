@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.opmodes.mechBot;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -80,7 +81,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-
+@Disabled
 @TeleOp(name="Vuforia-Detector", group ="MechBot")
 public class VuforiaNavigationWebcam extends LinearOpMode {
 

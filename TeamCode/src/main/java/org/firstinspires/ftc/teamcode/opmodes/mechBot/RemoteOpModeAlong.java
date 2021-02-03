@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.mechBot; //set your package
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.Robot2;
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.events.EventManager;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
-
+@Disabled
 @TeleOp(name = "R-TeleOp-Along", group = "MechBot")
 public class RemoteOpModeAlong extends TeleDrive {
     protected static int LOG_LEVEL = Log.INFO;

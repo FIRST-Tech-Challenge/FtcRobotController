@@ -267,16 +267,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     normalizeRatio = 1;
 
                 // Left joystick for forward/backward and turn
-                if (Math.abs(currentY) > MIN_STICK_VAL) { // car mode
-                    //removed this code because Aaron didn't want left stick to move forward/backward
-                    // chassis.carDrive(currentY * Math.abs(currentY) * normalizeRatio * chassis.powerScale(), right_x);
-                } else if (Math.abs(currentX) > MIN_STICK_VAL) {
+                if (Math.abs(currentX) > MIN_STICK_VAL) {
                     double scale = chassis.powerScale()*normalizeRatio;
                     if (scale>0.6) scale=0.6; // fix turn power to be 0.6 for the odometry accuracy
+                    else if (scale<0.2) scale=0.2;
                     chassis.turn((currentX > 0 ? 1 : -1), Math.abs(currentX * currentX) * scale);
+                } else if (Math.abs(currentY) > MIN_STICK_VAL) { // car mode
+                    chassis.carDrive(currentY * Math.abs(currentY) * normalizeRatio * chassis.powerScale(), right_x);
                 } else if (Math.abs(currentY) > MIN_STICK_VAL) {
-                    //removed this code because Aaron didn't want left stick to move forward/backward
-                    //chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(currentY * currentY) * chassis.powerScale() * normalizeRatio);
+                    chassis.yMove((currentY > 0 ? 1 : -1), Math.abs(currentY * currentY) * chassis.powerScale() * normalizeRatio);
                 } else {
                     chassis.stop();
                 }
@@ -447,10 +446,13 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         cameraDetector.dec_cam_pos();
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
                     autoIntakeRings(3, false);
+                } else if (source.isPressed(Button.LEFT_BUMPER)) {
+                    shooting_rpm = SEMI_POWER_SHOT_RPM;
+                    shooter.shootOutByRpm(shooting_rpm);
                 }
-
             }
         }, new Button[]{Button.DPAD_RIGHT});
+
         em.onButtonDown(new Events.Listener() {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
@@ -464,6 +466,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (intake != null)
                         intake.stop();
                     if (hopper != null) hopper.transferShakeCombo();
+                } else if (source.isPressed(Button.LEFT_BUMPER)) {
+                    shooting_rpm = WARM_UP_RPM;
+                    shooter.shootOutByRpm(shooting_rpm);
                 }
 
             }
@@ -631,8 +636,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
                 if (source.isPressed(Button.LEFT_BUMPER)) {
-                    if (shooter != null)
+                    if (shooter != null) {
                         shooter.shootAutoFast();
+                    }
                 }
             }
         }, new Button[]{Button.RIGHT_BUMPER});
@@ -1405,6 +1411,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     public void doHighGoalsSemi(boolean angleCollection) throws InterruptedException {
         shooter.shootOutByRpm(SEMI_AUTO_RPM);
+        shooting_rpm = SEMI_AUTO_RPM;
         if (hopper != null) {
             hopper.hopperUpCombo();
             TaskManager.processTasks();
@@ -1452,6 +1459,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     public void doPowerShotsSemi(boolean angleCollection) throws InterruptedException {
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
+        shooting_rpm = SEMI_POWER_SHOT_RPM;
         if (hopper != null) {
             hopper.hopperUpCombo();
             TaskManager.processTasks();
@@ -1493,6 +1501,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         chassis.rawRotateTo(0.25, chassis.odo_heading()+4.5, false, 1);
         hopper.feederAuto();
+        shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
     }
 
     public void getSecondWobbleGoal() throws InterruptedException {
@@ -1548,7 +1557,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C){
-                chassis.driveTo(.8, side(112), 43, 0, false, 3);
+                chassis.driveTo(.7, side(100), 35, 0, false, 3);
             } else if (tZone == TargetZone.ZONE_B){
                 chassis.driveTo(auto_chassis_power, side(105), 35, 0, false, 3);
             } else {
@@ -1590,6 +1599,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.driveTo(1.0, side(90), 175, 0, false, 5);
                 autoShootHighGoal(3, true);
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
+                while (!TaskManager.isComplete("Transfer Down Combo")) {
+                    TaskManager.processTasks();
+                }
                 intake.intakeIn();
                 chassis.driveTo(1.0, side(10), 285, 0, false, 2.5);
                 intake.stop();
@@ -1703,12 +1715,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.yMove(1, -0.4);
             sleep(300);
         }
-        chassis.yMove(1, -0.2);
+        chassis.yMove(1, -0.35);
         sleep(200);
-        chassis.yMove(1, 0.19);
+        chassis.yMove(1, 0.17);
         intake.intakeIn();
         for (int i = 0; i < n; i++) {
-            sleep(750);
+            sleep(700);
             if(i+2==n)
                 chassis.stop();
         }
@@ -1786,7 +1798,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         };
         switch (target) {
             case TOWER:
-                target_x = 90;
+                target_x = 96; // 90;
                 target_height = 92;
                 break;
             case PSHOT_L:

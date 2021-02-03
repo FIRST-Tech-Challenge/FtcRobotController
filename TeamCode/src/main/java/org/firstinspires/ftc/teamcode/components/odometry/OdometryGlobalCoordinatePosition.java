@@ -89,10 +89,13 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
 
         //Calculate Angle
         changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
-  //      changeInRobotOrientation = Math.signum(leftChange - rightChange) * Math.acos(1  - (leftChange - rightChange)*(leftChange - rightChange)/ robotEncoderWheelDistance/ robotEncoderWheelDistance / 2);
+        // changeInRobotOrientation = Math.signum(leftChange - rightChange) * Math.acos(1  - (leftChange - rightChange)*(leftChange - rightChange)/ robotEncoderWheelDistance/ robotEncoderWheelDistance / 2);
         // Replace angle calculation by imu
-
-        robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
+        if ((orientationSensor!=null) && useIMU) { // robot is almost stop
+            robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
+        } else {
+            robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
+        }
         //Get the components of the motion
         double rawHorizontalChange = normalEncoderWheelPosition - prevNormalEncoderWheelPosition;
         double horizontalChange = rawHorizontalChange - (changeInRobotOrientation*horizontalEncoderTickPerDegreeOffset);
@@ -113,9 +116,9 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         if (count > 4) {
             ySpeedDegree = (ySpeedLogs[0]+ySpeedLogs[1]+ySpeedLogs[2]+ySpeedLogs[3]+ySpeedLogs[4])/5.0;
             xSpeedDegree = (xSpeedLogs[0]+xSpeedLogs[1]+xSpeedLogs[2]+xSpeedLogs[3]+xSpeedLogs[4])/5.0;
-            if ((ySpeedDegree+xSpeedDegree<1) && useIMU) { // robot is almost stop
-                robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
-            }
+//            if ((ySpeedDegree+xSpeedDegree<1) && useIMU) { // robot is almost stop
+//                robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
+//            }
         }
 
         count = (count+1)%10000;
