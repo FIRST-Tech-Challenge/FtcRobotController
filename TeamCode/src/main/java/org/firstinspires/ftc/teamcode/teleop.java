@@ -131,6 +131,9 @@ public class teleop extends OpMode {
         // Tank Mode uses one stick to control each wheel.
         // - This requires no math, but it is hard to drive forward slowly and keep straight.
 
+        //Left side: If the stick is held left or right, then set powers to strafe.
+        // Else the stick will be held vertically, so the power is just how much you push the stick
+
         if (Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)){
             leftFowardPower = -gamepad1.left_stick_x;
             leftReversePower = gamepad1.left_stick_x;
@@ -138,7 +141,8 @@ public class teleop extends OpMode {
             leftReversePower = gamepad1.left_stick_y;
             leftFowardPower = gamepad1.left_stick_y;
         }
-
+        //right side: If the stick is held left or right, then set powers to strafe.
+        // Else the stick will be held vertically, so the power is just how much you push the stick
         if (Math.abs(gamepad1.right_stick_x) > Math.abs(gamepad1.right_stick_y)){
             rightFowardPower = -gamepad1.right_stick_x;
             rightReversePower = gamepad1.right_stick_x;
