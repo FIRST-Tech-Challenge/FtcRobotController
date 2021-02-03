@@ -75,6 +75,7 @@ public class RotationTuner extends OpMode {
         }
 
         telemetry.addData("Current Heading", lastAngles.firstAngle);
+        telemetry.addData("Current Heading", currentHeading);
         telemetry.addData("Current Power", driveLeft.get());
 
     }
@@ -116,7 +117,8 @@ public class RotationTuner extends OpMode {
             driveLeft.set(-power);
             driveRight.set(power);
 
-            telemetry.addData("Current Heading", lastAngles.firstAngle);
+            telemetry.addData("Current Angle", lastAngles.firstAngle);
+            telemetry.addData("Current Heading", currentHeading);
             telemetry.addData("Current Power", power);
             telemetry.update();
         }
