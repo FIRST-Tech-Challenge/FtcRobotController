@@ -71,7 +71,7 @@ public class chrisBotTeleopWithCam extends OpMode{
     public void init() {
         robot.init(hardwareMap, telemetry);
         double time =  System.currentTimeMillis();
-        robot.initVuMarks();
+        //robot.initVuMarks();
     }
 
     @Override
