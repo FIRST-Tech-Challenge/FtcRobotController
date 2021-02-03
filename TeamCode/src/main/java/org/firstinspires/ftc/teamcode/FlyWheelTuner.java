@@ -21,7 +21,7 @@ class PIDVals {
     public static double flywheelSpeed = 0.36;
 }
 
-@TeleOp(name = "FlyWheelTuner")
+@TeleOp(name = "FlyWheelTuner", group = "Tuner")
 public class FlyWheelTuner extends OpMode {
     private Motor flywheel;
     private Motor hitter;

@@ -13,7 +13,14 @@ public class Vals {
     public static double flywheel_direction = -1;
     public static int flywheel_ready_ticks = 40;
 
+    public static double rotate_kp = .003;
+    public static double rotate_ki = .00003;
+    public static double rotate_kd = 0;
+    public static double rotate_target = 0;
+
     public static double hitter_start = 0.4;
     public static double hitter_end = .7;
+
+    public static double heading = 0;
 
 }
