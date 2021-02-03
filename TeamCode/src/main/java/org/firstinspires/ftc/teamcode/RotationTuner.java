@@ -52,6 +52,7 @@ public class RotationTuner extends OpMode {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+        resetAngle();
     }
 
     @Override
@@ -75,7 +76,7 @@ public class RotationTuner extends OpMode {
         }
 
         telemetry.addData("Current Heading", lastAngles.firstAngle);
-        telemetry.addData("Current Heading", currentHeading);
+        telemetry.addData("Current Heading", updateHeading());
         telemetry.addData("Current Power", driveLeft.get());
 
     }
