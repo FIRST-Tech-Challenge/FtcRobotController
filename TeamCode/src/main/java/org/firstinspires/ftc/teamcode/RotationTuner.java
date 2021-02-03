@@ -74,6 +74,9 @@ public class RotationTuner extends OpMode {
             rotate(Vals.rotate_target);
         }
 
+        telemetry.addData("Current Heading", lastAngles.firstAngle);
+        telemetry.addData("Current Power", driveLeft.get());
+
     }
 
     private void resetAngle() {
@@ -119,7 +122,7 @@ public class RotationTuner extends OpMode {
         }
 
         driveLeft.set(0);
-        driveLeft.set(0);
+        driveRight.set(0);
 
     }
 
