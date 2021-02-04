@@ -33,6 +33,7 @@ public class WobbleGoal {
     private final int ticksForRAISE = -400;
     private final int ticksForAutonomousRUN = -300;
     private final int ticksForAutonomousStart = 175;
+    private final int ticksForSTARTOFTELEEOP = -200;
     private final double wobbleGoalSpeed = 0.3;
     private final double wobbleGoalSpeedDrop = 0.5;
 
@@ -65,15 +66,12 @@ public class WobbleGoal {
             }
         } else if (p == Position.RAISE) {
             i = ticksForRAISE;
-<<<<<<< HEAD
             while (wobbleGoalServoClaw.getPosition() != 0) {
                 wobbleGoalServoClaw.setPosition(0);
             }
             op.sleep(1000);
         } else if (p == Position.STARTOFTELEEOP) {
             i = ticksForSTARTOFTELEEOP;
-=======
->>>>>>> 55ff47ff42829da52380aa496aaa2b5ab4db0ca5
         }else if (p == Position.RUN) {
             i = ticksForAutonomousRUN;
         } else if (p == Position.START) {
