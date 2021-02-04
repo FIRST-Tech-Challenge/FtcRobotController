@@ -203,7 +203,7 @@ public class Robot {
 
     public int getRingsAndWaitForStart(){
         tensorFlow.runTensorFlowWaitForStart();
-        return tensorFlow.getNumberOfRings();
+        return tensorFlow.getRings();
     }
 
     /**Odometry**/

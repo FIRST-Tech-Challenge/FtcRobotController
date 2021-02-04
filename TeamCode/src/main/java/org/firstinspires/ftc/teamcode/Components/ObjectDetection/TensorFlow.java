@@ -36,6 +36,7 @@ public class TensorFlow {
     private static final String LABEL_SECOND_ELEMENT = "Single";
 
     private int numberOfRings;
+    private int rings;
 
     private static final String VUFORIA_KEY = key.key;
 
@@ -112,12 +113,16 @@ public class TensorFlow {
                 numberOfRings = -1;
                 op.telemetry.addData("InElse", 0);
             }
-            //op.telemetry.update();
+//            op.telemetry.update();
         }
     }
 
     public int getNumberOfRings () {
         return numberOfRings;
+    }
+
+    public int getRings () {
+        return rings;
     }
 
     public void stopTensorFlow () {
@@ -127,7 +132,7 @@ public class TensorFlow {
     }
 
     public int runTensorFlowWaitForStart(){
-        int rings = -1;
+        rings = -1;
         int i = 0;
 
         int numOfTime4Rings = 0;
@@ -142,7 +147,7 @@ public class TensorFlow {
         for (int index = 0; index<arraySize; index++) {
             runTensorFlow();
             op.sleep(10);
-            rings = getNumberOfRings();
+            rings = getRings();
             NumberOfRings.add(index, rings);
             //telemetry.addData("11 Number of Rings: ", "i=%4d %d", i++, rings);
             //telemetry.update();
@@ -161,7 +166,7 @@ public class TensorFlow {
 
             runTensorFlow();
             NumberOfRings.remove(0);
-            NumberOfRings.add(getNumberOfRings());
+            NumberOfRings.add(getRings());
             op.telemetry.addData("Number of Rings: ", "%d %d %d %d %d %d", NumberOfRings.get(0), NumberOfRings.get(1), NumberOfRings.get(2), NumberOfRings.get(3), NumberOfRings.get(4), NumberOfRings.get(5));
             op.telemetry.addData("Number of Rings: ", "%d %d %d %d %d", NumberOfRings.get(6), NumberOfRings.get(7), NumberOfRings.get(8), NumberOfRings.get(9), NumberOfRings.get(10));
 
@@ -189,6 +194,7 @@ public class TensorFlow {
             op.telemetry.update();
             op.sleep(100);
         }
+//        numberOfRings=rings;
         return rings;
     }
 

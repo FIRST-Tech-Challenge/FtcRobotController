@@ -234,9 +234,9 @@ public class IMUChassis extends BasicChassis {
     public void moveBackward(double distance, double power) {
         double ticksToMove = counts_per_inch * distance;
         double newLeftBackTargetPosition = motorLeftBack.getCurrentPosition() - ticksToMove;
-        double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() + ticksToMove;
-        double newRightBackTargetPosition = motorRightBack.getCurrentPosition() + ticksToMove;
-        double newRightFrontTargetPosition = motorRightFront.getCurrentPosition() + ticksToMove;
+        double newLeftFrontTargetPosition = motorLeftFront.getCurrentPosition() - ticksToMove;
+        double newRightBackTargetPosition = motorRightBack.getCurrentPosition() - ticksToMove;
+        double newRightFrontTargetPosition = motorRightFront.getCurrentPosition() - ticksToMove;
         double currentPosition = 0;
         double deltaPosition = 0;
         double currentAngle = 0;
