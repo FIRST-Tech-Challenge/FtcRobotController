@@ -18,16 +18,6 @@ public class OlliesFirstAutonomous extends LinearOpMode {
 
         robot.pivotLeft(.7,90);
         telemetry.addData("pivot left complete",0);
-        telemetry.update();
-        robot.pivotRight(.7,90);
-        telemetry.addData("pivot right complete",0);
-        telemetry.update();
-        robot.strafeRight(.7,5);
-        telemetry.addData("strafe right complete",0);
-        telemetry.update();
-        robot.mecanumWitchcraft(76,2);
-        telemetry.addData("mecanum stuff complete",0);
-        telemetry.update();
 
 
     }

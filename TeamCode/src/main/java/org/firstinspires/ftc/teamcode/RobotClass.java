@@ -24,8 +24,10 @@ public class RobotClass {
     private DcMotor backLeft;
     private DcMotor backRight;
     private DcMotor shooterMotor;
+    private DcMotor wobbleGoalRaise;
     private double ticks = 537;//537
     private CRServo continuous1;
+    private Servo wobbleGoalGrippyThing;
     BNO055IMU imu;
 
     public Telemetry telemetry;
@@ -40,6 +42,8 @@ public class RobotClass {
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
         shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
         continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
+        wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
+        wobbleGoalRaise = hardwareMap.dcMotor.get("wobbleLift");
 
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -435,7 +439,7 @@ public class RobotClass {
 
         stopMotors();
     }
-    public void forwardToBlue (double speed, double rotations, double speed2) throws InterruptedException {
+    public void forwardToBlue (double speed, double rotations, double speed2) {
         forward(speed,rotations);
         frontLeft.setPower(speed2);
         frontRight.setPower(speed2);
@@ -578,8 +582,24 @@ public class RobotClass {
         shooterMotor.setPower(1);
 
         for (int i=0; i < duration; i++ );
-    }
-    }
-/*
 
- */
+
+    }
+
+    public void wobbleGoalGrippyThingGrab () {
+        wobbleGoalGrippyThing.setPosition(.2);
+    }
+    public void wobbleGoalGrippyThingRelease () {
+        wobbleGoalGrippyThing.setPosition(.9);
+    }
+
+    public void moveWobbleGoalArm (double speed, double rotation) {
+        int currentPosition = frontLeft.getCurrentPosition();
+
+        double toPosition = currentPosition + rotation*ticks;
+        wobbleGoalRaise.setTargetPosition((int)toPosition);
+        wobbleGoalRaise.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleGoalRaise.setPower(speed);
+    }
+
+    }
