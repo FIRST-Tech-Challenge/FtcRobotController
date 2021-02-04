@@ -23,7 +23,7 @@ public class MainTeleop extends LinearOpMode{
     private CRServo leftConveyor, rightConveyor, intake;
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
     private Servo flipper, wobbleClaw;
-    private VoltageSensor voltageSensor;
+    private VoltageSensor voltSensor;
 
 
     private BNO055IMU imu;
@@ -79,7 +79,7 @@ public class MainTeleop extends LinearOpMode{
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        voltSensor = hardwareMap.voltageSensor.get("Motor Controller 1");
+        //voltSensor = hardwareMap.voltageSensor.get("outtakeRight");
 
         //reverse the needed motors
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -103,7 +103,7 @@ public class MainTeleop extends LinearOpMode{
         double intakeMod = 1.0;
         double outtakeMod = .46;
         double wobbleMod = .3;
-        double volts = voltSensor.getVoltage();
+        //double volts = voltSensor.getVoltage();
 
 
         waitForStart();
@@ -159,9 +159,9 @@ public class MainTeleop extends LinearOpMode{
             //Sending data on power of outtake, outtake motor RPM, and tangential velocity of outtake wheel to telemetry
 
             if(gamepad2.right_bumper){
-                outtakeMod = .41;
+                outtakeMod = .31; //power shots
             }else{
-                outtakeMod = .44 * (14/volts);
+                outtakeMod = .34 /* * (14/volts) */; //theoretically high goal
             }
             double outtakePower = (gamepad2.right_trigger * outtakeMod);
             outtakeLeft.setPower(outtakePower);
@@ -204,7 +204,7 @@ public class MainTeleop extends LinearOpMode{
 
 
             //Sending data on power of outtake, outtake motor RPM, and tangential velocity of outtake wheel to telemetry
-            telemetry.addData("Volts: ", volts);
+            //telemetry.addData("Volts: ", volts);
 
             telemetry.addData("Outtake Power", outtakePower);
             telemetry.addData("Outtake RPM", outtakeRPM);

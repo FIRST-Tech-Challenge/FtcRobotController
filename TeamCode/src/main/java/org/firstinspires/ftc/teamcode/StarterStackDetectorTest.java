@@ -150,27 +150,35 @@ public class StarterStackDetectorTest extends LinearOpMode
             telemetry.update();
 
 
+            robot.gyroStrafeCm(0.5, -90, 60);
         switch(targetZone){
             case 1:
-                robot.gyroDriveCm(-.75, 200);
-                dropWobble();
-                robot.gyroTurn(-45, .75);
-                robot.gyroDriveCm(-.75, 60);
+                robot.gyroDriveCm(-.5, 200);
+                dropWobble(targetZone);
+                //robot.gyroTurn(-45, .75);
+                //robot.gyroDriveCm(-.75, 60);
                 //odometryDriveToPos(100,100);
+
+                robot.gyroStrafeCm(0.5, 90, 150);
+                robot.gyroDriveCm(-.5, 40);
                 break;
             case 2:
-                robot.gyroDriveCm(-.75, 280);
-                robot.gyroTurn(-30, .75);
-                robot.gyroDriveCm(-.75, 40);
-                dropWobble();
-                robot.gyroDriveCm(.75, 100);
-
+                robot.gyroDriveCm(-.5, 265);
+                robot.gyroTurn(-45, .25);
+                robot.gyroDriveCm(-.5, 50);
+                //robot.gyroDriveCm(-.75, 40);
+                dropWobble(targetZone);
+                //robot.gyroTurn(30, 0.75);
+                //robot.gyroDriveCm(.75, 75);
+                robot.gyroDriveCm(.5, 50);
+                robot.gyroTurn(45, .25);
+                robot.gyroDriveCm(.5, 50);
                 //odometryDriveToPos(100,100);
                 break;
             case 3:
-                robot.gyroDriveCm(-.75, 360);
-                dropWobble();
-                robot.gyroDriveCm(.75, 180);//
+                robot.gyroDriveCm(-.5, 360);
+                dropWobble(targetZone);
+                robot.gyroDriveCm(.5, 130);//
                 //odometryDriveToPos(100,100);
                 break;
             default:
@@ -301,22 +309,24 @@ public class StarterStackDetectorTest extends LinearOpMode
         //}
     }
 
-    public void dropWobble(){
+    public void dropWobble(int targetZone){
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
-        while(timer.milliseconds() < 2500){
+        while(timer.milliseconds() < 1750){
             wobbleArm.setPower(-.3);
         }
         wobbleArm.setPower(0);
 
         wobbleClaw.setPosition(1);
 
-        timer.reset();
-        while(timer.milliseconds() < 1000){
-            wobbleArm.setPower(.4);
+        if(targetZone > 1) {
+            timer.reset();
+            while (timer.milliseconds() < 750) {//remove?
+                wobbleArm.setPower(.4);
+            }
+            wobbleArm.setPower(0);
         }
-        wobbleArm.setPower(0);
     }
 
 }

@@ -154,14 +154,14 @@ public class TestAutonomous extends LinearOpMode {
                 //CHANGE!!!
                 robot.gyroTurn(90, .5);
                 //robot.gyroDriveCm(-.5, 180);
-                dropWobble();
+                dropWobble(targetZone);
                 //robot.gyroTurn(-45, .5);
                 //robot.gyroDriveCm(-.25, 60);
                 //odometryDriveToPos(100,100);
                 break;
             case 2:
                 robot.gyroDriveCm(-.5, 100);
-                dropWobble();
+                dropWobble(targetZone);
                 robot.gyroDriveCm(.25, 60);
                 //odometryDriveToPos(100,100);
                 break;
@@ -170,7 +170,7 @@ public class TestAutonomous extends LinearOpMode {
                 robot.gyroDriveCm(-.5, 180);
                 //robot.gyroTurn(-10, .5);
                 robot.gyroDriveCm(-.5, 20);
-                dropWobble();
+                dropWobble(targetZone);
                 robot.gyroDriveCm(.25, 60);
                 //odometryDriveToPos(100,100);
                 break;
@@ -179,6 +179,36 @@ public class TestAutonomous extends LinearOpMode {
         }
 
         globalPositionUpdate.stop();
+        robot.gyroStrafeCm(0.5, -90, 80);
+        switch(targetZone){
+            case 1:
+                robot.gyroDriveCm(-.5, 200);
+                dropWobble(targetZone);
+                //robot.gyroTurn(-45, .75);
+                //robot.gyroDriveCm(-.75, 60);
+                //odometryDriveToPos(100,100);
+                robot.gyroStrafeCm(0.5, 90, 100);
+                robot.gyroDriveCm(-.5, 40);
+                break;
+            case 2:
+                robot.gyroDriveCm(-.5, 265);
+                robot.gyroTurn(-45, .75);
+                //robot.gyroDriveCm(-.75, 40);
+                dropWobble(targetZone);
+                //robot.gyroTurn(30, 0.75);
+                //robot.gyroDriveCm(.75, 75);
+
+                //odometryDriveToPos(100,100);
+                break;
+            case 3:
+                robot.gyroDriveCm(-.5, 350);
+                dropWobble(targetZone);
+                robot.gyroDriveCm(.5, 130);//
+                //odometryDriveToPos(100,100);
+                break;
+            default:
+                break;
+        }
 
 
     }
@@ -314,22 +344,24 @@ public class TestAutonomous extends LinearOpMode {
         //}
     }
 
-    public void dropWobble(){
+    public void dropWobble(int targetZone){
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
-        while(timer.milliseconds() < 1000){
-            wobbleArm.setPower(-.1);
+        while(timer.milliseconds() < 2000){
+            wobbleArm.setPower(-.3);
         }
         wobbleArm.setPower(0);
 
         wobbleClaw.setPosition(1);
 
-        timer.reset();
-        while(timer.milliseconds() < 1000){
-            wobbleArm.setPower(.1);
+        if(targetZone > 1) {
+            timer.reset();
+            while (timer.milliseconds() < 1000) {//remove?
+                wobbleArm.setPower(.4);
+            }
+            wobbleArm.setPower(0);
         }
-        wobbleArm.setPower(0);
     }
 
 }
