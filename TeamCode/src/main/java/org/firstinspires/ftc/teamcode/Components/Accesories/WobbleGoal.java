@@ -29,7 +29,7 @@ public class WobbleGoal {
     protected Servo wobbleGoalServoClaw = null;
 
     private final int ticksForREST = 0;
-    private final int ticksForGRAB = -420;
+    private final int ticksForGRAB = -480;
     private final int ticksForRAISE = -400;
     private final int ticksForAutonomousRUN = -300;
     private final int ticksForAutonomousStart = 175;

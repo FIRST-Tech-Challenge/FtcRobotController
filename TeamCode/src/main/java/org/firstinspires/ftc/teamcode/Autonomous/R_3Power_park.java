@@ -25,19 +25,19 @@ public class R_3Power_park extends LinearOpMode {
         robot.setPosition(60.25,-32.25, 0);//high goal -12,22
         if(rings==0) {
             robot.moveAngle( -5,-65, 0.8);//-25,60
-            robot.moveWobbleGoalClaw(false);
+//            robot.moveWobbleGoalClaw(false);
             sleep(250);
             robot.moveAngle(41,7,0.8);//37,4
         }
         else if(rings==1) {
             robot.moveAngle(14,-89, 0.8);
-            robot.moveWobbleGoalClaw(false);
+//            robot.moveWobbleGoalClaw(false);
             sleep(250);
             robot.moveAngle(10.5,31, 0.8);
         }
         else if(rings==4) {
             robot.moveAngle(-2.5, -113,1.0);
-            robot.moveWobbleGoalClaw(false);
+//            robot.moveWobbleGoalClaw(false);
             sleep(250);
             robot.moveAngle(34,51.5,1.0);
         }
@@ -49,7 +49,7 @@ public class R_3Power_park extends LinearOpMode {
                 robot.turnInPlace(0, 1.0);
                 robot.moveAngle(1, 49, 0.8);
                 robot.moveAngle(-3,0,0.8);
-                robot.moveWobbleGoalClaw(true);
+//                robot.moveWobbleGoalClaw(true);
                 sleep(250);
                 robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
                 robot.moveAngle(-29,-59,0.7);
@@ -60,7 +60,7 @@ public class R_3Power_park extends LinearOpMode {
                 robot.moveAngle(1, 48, 0.8);
                 robot.turnInPlace(0,1.0);
                 robot.moveAngle(-3,0,0.8);
-                robot.moveWobbleGoalClaw(true);
+//                robot.moveWobbleGoalClaw(true);
                 sleep(250);
                 robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
                 robot.moveAngle(-5,-80,0.7);
@@ -73,7 +73,7 @@ public class R_3Power_park extends LinearOpMode {
             robot.moveAngle(1, 49, 1.0);
             robot.turnInPlace(0,1.0);
             robot.moveAngle(-3,0,0.8);
-            robot.moveWobbleGoalClaw(true);
+//            robot.moveWobbleGoalClaw(true);
             sleep(250);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
             robot.moveAngle(-27,-100,1.0);
