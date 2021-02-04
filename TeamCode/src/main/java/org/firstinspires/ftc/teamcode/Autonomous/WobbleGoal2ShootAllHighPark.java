@@ -56,7 +56,7 @@ public class WobbleGoal2ShootAllHighPark extends LinearOpMode {
         }
         if(!(rings==1 || rings==4)) {
             robot.moveAngle(-5, -65, 0.8);
-            robot.moveWobbleGoalClaw(false);
+            robot.openWobbleGoalClaw();
             sleep(250);
             robot.moveAngle(41, 7, 0.8);
             robot.shootThreePowerShot();
@@ -64,7 +64,7 @@ public class WobbleGoal2ShootAllHighPark extends LinearOpMode {
             robot.turnInPlace(0, 1.0);
             robot.moveAngle(1, 49, 0.8);
             robot.moveAngle(-3,0,0.8);
-            robot.moveWobbleGoalClaw(true);
+            robot.closeWobbleGoalClaw();
             sleep(250);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
             robot.moveAngle(-29,-59,0.7);
