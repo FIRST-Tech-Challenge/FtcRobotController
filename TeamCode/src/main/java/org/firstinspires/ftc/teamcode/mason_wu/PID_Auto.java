@@ -1,16 +1,18 @@
 package org.firstinspires.ftc.teamcode.mason_wu;
 
+import com.acmerobotics.roadrunner.control.PIDFController;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -19,15 +21,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.robot_common.Robot4100Common;
 
-import java.io.File;
 import java.util.List;
-import java.util.Locale;
 
-@Autonomous(name="Chassis Autonomous RED", group="4100")
-public class Chassis_Auto2 extends LinearOpMode {
+import kotlin.jvm.functions.Function2;
+
+@Autonomous(name="PID Auto", group="4100")
+public class PID_Auto extends LinearOpMode {
     // Declare OpMode members.
     private DcMotor Arm = null;
     private Servo Hand = null;
@@ -119,151 +120,6 @@ public class Chassis_Auto2 extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            /*
-            plan the motion of chassis here:
-                available method: stopMotion(long timeInterval)
-                                  driveStraight(double margin, double power, double timeInterval)
-                                  drivePerpendicularly(boolean isLeft, double margin, double power, double timeInterval)
-                                  rotateAtAngle (boolean isClockwise, double degree, double margin, double power)
-                                  rotateToAngle (double targetAngle, double margin, double power)
-             */
-
-            String visionResult = null;
-            ElapsedTime recogTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
-
-            while (opModeIsActive() && recogTime.milliseconds() <= 1500.0) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Object Detected", updatedRecognitions.size());
-                        // step through the list of recognitions and display boundary info.
-                        int i = 0;
-                        for (Recognition recognition : updatedRecognitions) {
-                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                    recognition.getLeft(), recognition.getTop());
-                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                    recognition.getRight(), recognition.getBottom());
-                            visionResult = recognition.getLabel();
-                        }
-                        telemetry.update();
-                    }
-                }
-            }
-            if (tfod != null) {
-                tfod.shutdown();
-            }
-
-            telemetry.addLine("Result from Object Detection:" + visionResult);
-            telemetry.update();
-            sleep(3000);
-            //code below is for ZERO ring scenario
-            if (visionResult == null) {
-                driveStraight_Encoder(-1000,0.5);
-                rotateToAngle(-90, 1.0, 0.2);
-                driveStraight_Encoder(-400,0.3);
-                rotateToAngle(0.0, 1.0, 0.2);
-                // need code for shooting here
-                Shooter.setPower(1.0);
-                sleep(1000);
-                for (int i = 0; i < 3; i++) {
-                    Spanker.setPosition(0.55);
-                    sleep(500);
-                    Spanker.setPosition(0.85);
-                    sleep(500);
-                }
-                Shooter.setPower(0.0);
-                sleep(100);
-                driveStraight_Encoder(-200,0.3);
-                rotateToAngle(-75.0, 1.0, 0.2);
-                driveStraight_Encoder(-200,0.3);
-                armMotion(false, 0.8, 300);
-                handMotion(false);
-                armMotion(true, 0.8, 400);
-                handMotion(true);
-            }
-
-            //code below is for SINGLE ring scenario
-            else if (visionResult.toLowerCase().equals("single")) {
-                // code below drives and positions for shooting
-                driveStraight(true, 1.0, -0.6, 1150);
-                stopMotion(100);
-                rotateToAngle(-90, 1.0, 0.2);
-                stopMotion(100);
-                driveStraight(true, 1.0, -0.6, 350);
-                stopMotion(100);
-                rotateToAngle(0.0, 1.0, 0.2);
-                stopMotion(100);
-                Shooter.setPower(1.0);
-                sleep(1000);
-                for (int i = 0; i < 3; i++) {
-                    Spanker.setPosition(0.55);
-                    sleep(500);
-                    Spanker.setPosition(0.85);
-                    sleep(500);
-                }
-                Shooter.setPower(0.0);
-                // code below would drive forward to drop wobble
-                driveStraight(true, 1.0, -0.6, 475);
-                stopMotion(100);
-                // drops wobble here
-                armMotion(false, 0.8, 300);
-                sleep(250);
-                handMotion(false);
-                sleep(250);
-                armMotion(true, 0.8, 400);
-                sleep(250);
-                handMotion(true);
-                sleep(250);
-                driveStraight(true, 1.0, 0.6, 275);
-            }
-
-            //code below is for QUAD rings scenario
-            else if (visionResult.toLowerCase().equals("quad")) {
-                driveStraight(true, 1.0, -0.6, 1150);
-                stopMotion(100);
-                rotateToAngle(-90, 1.0, 0.2);
-                stopMotion(100);
-                driveStraight(true, 1.0, -0.6, 400);
-                stopMotion(100);
-                rotateToAngle(0.0, 1.0, 0.2);
-                stopMotion(100);
-                Shooter.setPower(1.0);
-                sleep(1000);
-                for (int i = 0; i < 3; i++) {
-                    Spanker.setPosition(0.55);
-                    sleep(500);
-                    Spanker.setPosition(0.85);
-                    sleep(500);
-                }
-                Shooter.setPower(0.0);
-                // code below would drive forward and turn to drop wobble
-                driveStraight(true, 1.0, -0.6, 1000);
-                stopMotion(100);
-                rotateToAngle(-75.0, 1.0, 0.2);
-                stopMotion(100);
-                driveStraight(true, 1.0, -0.6, 200);
-                stopMotion(100);
-                // drops wobble here
-                armMotion(false, 0.8, 300);
-                sleep(250);
-                handMotion(false);
-                sleep(250);
-                armMotion(true, 0.8, 400);
-                sleep(250);
-                handMotion(true);
-                sleep(250);
-                rotateToAngle(0.0, 1.0, 0.2);
-                sleep(250);
-                driveStraight(true, 1.0, 0.6, 525);
-
-            } else {
-                telemetry.addLine("Fail to recognize");
-                telemetry.update();
-                sleep(2000);
-            }
 
 
         }
@@ -595,6 +451,7 @@ public class Chassis_Auto2 extends LinearOpMode {
             RF.setPower(RF_power);
             LB.setPower(LB_power);
             RB.setPower(RB_power);
+            telemetry.addData("Current Angle", tempAngle);
             telemetry.addData("RF_power", RF_power);
             telemetry.addData("RB_power", RB_power);
             telemetry.addData("LF_power", LF_power);

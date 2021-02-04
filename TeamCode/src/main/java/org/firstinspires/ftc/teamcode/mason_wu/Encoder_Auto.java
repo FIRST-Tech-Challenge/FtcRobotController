@@ -453,6 +453,12 @@ public class Encoder_Auto extends LinearOpMode {
         double RB_power;
         double tempAngle = currentAngle;
         while (!((tempAngle < targetAngle + margin) && (tempAngle > targetAngle - margin))) {
+            if((angleFactor == -1) && (tempAngle < targetAngle - margin)){
+                break;
+            }
+            if((angleFactor == 1) && (tempAngle > targetAngle + margin)){
+                break;
+            }
             tempAngle = aquireHeading();
             RF_power = angleFactor * power;
             RB_power = angleFactor * power;
