@@ -77,8 +77,25 @@ public class RotationTuner extends OpMode {
 
         double power = rotate(Vals.rotate_target);
 
-        driveLeft.set(-power);
-        driveRight.set(power);
+        double leftPower = -power;
+        double rightPower = power;
+
+        if(gamepad.gamepad.right_bumper) {
+            leftPower += .4;
+            rightPower += .4;
+            leftPower = Math.max(.93, leftPower);
+            rightPower = Math.max(.93, rightPower);
+        } else if(gamepad.gamepad.left_bumper) {
+            if(gamepad.gamepad.right_bumper) {
+                leftPower -= .4;
+                rightPower -= .4;
+                leftPower = Math.min(-.93, leftPower);
+                rightPower = Math.min(-.93, rightPower);
+            }
+        }
+
+        driveLeft.set(leftPower);
+        driveRight.set(rightPower);
 
         telemetry.addData("PID Error", pidRotate.getPositionError());
         telemetry.addData("Current Heading", lastAngles.firstAngle);

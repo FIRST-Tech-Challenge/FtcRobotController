@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class GamePadController {
 
-    Gamepad gamepad;
+    public Gamepad gamepad;
 
     private boolean pressedA, pressedB, pressedX, pressedY;
     private boolean pressedLeft, pressedRight, pressedUp, pressedDown;
