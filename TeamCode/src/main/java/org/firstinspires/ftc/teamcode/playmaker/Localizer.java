@@ -463,8 +463,12 @@ public class Localizer {
     //region Static Methods
 
     public static Position mirrorPositionOverTeamLine(Position position) {
-        Position copy = new Position(position.unit, -position.x, position.y, position.z, position.acquisitionTime);
+        Position copy = new Position(position.unit, position.x, -position.y, position.z, position.acquisitionTime);
         return copy;
+    }
+
+    public static RobotTransform mirrorTransformPositionOverTeamLine(RobotTransform transform) {
+        return new RobotTransform(mirrorPositionOverTeamLine(transform.position), transform.heading);
     }
 
     public static RobotTransform mirrorTransformOverTeamLine(RobotTransform transform) {

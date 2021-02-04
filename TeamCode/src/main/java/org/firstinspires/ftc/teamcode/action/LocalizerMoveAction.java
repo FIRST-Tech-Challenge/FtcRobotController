@@ -15,17 +15,19 @@ public class LocalizerMoveAction implements Action {
     private int currentTransformIndex = 0;
     private double fullSpeed;
     private double preciseSpeed;
+    private double previousHeadingInDegrees = 0;
+    private double previousHeadingTime = 0;
     private FollowPathMethod followPathMethod;
 
     // Linear Path Following Configuration
-    static final double SLOWDOWN_DISTANCE_INCHES = 16;
-    static final double SLOWEST_DISTANCE_INCHES = 8;
-    static final double ROTATE_SPEED = 0.3;
+    static final double SLOWDOWN_DISTANCE_INCHES = 12;
+    static final double SLOWEST_DISTANCE_INCHES = 4;
+    static final double ROTATE_SPEED = 0.22;
 
 
     // Tolerances
     static final double DISTANCE_TOLERANCE_INCHES = 1;
-    static final double HEADING_TOLERANCE_DEGREES = 2;
+    static final double HEADING_TOLERANCE_DEGREES = 1;
 
     public enum FollowPathMethod {
         LINEAR, // not gonna be implemented
@@ -92,7 +94,7 @@ public class LocalizerMoveAction implements Action {
             case LINEAR:
                 // For the final target, the robot needs to reach the correct target heading.
                 robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
-                robotRotation = angDiffToTargetHeadingDegrees / 180;
+                robotRotation = Math.max(-0.5, Math.min(0.5, angDiffToTargetHeadingDegrees / 180));
 
                 if (withinDistanceTolerance && withinHeadingTolerance) {
                     currentTransformIndex++;
@@ -107,14 +109,14 @@ public class LocalizerMoveAction implements Action {
                 }
                 break;
             case FAST:
-                if (currentTransformIndex < transforms.length - 1) {
+                if (currentTransformIndex != (transforms.length - 1)) {
                     // For fast operation, we only care about reaching the target heading for the final position.
                     // So, if the robot is heading towards the last target, it will focus on reaching
                     // the target as quickly as possible by going in the forward direction
 
 
                     robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
-                    robotRotation = angDiffBetweenForwardAndTargetPosDegrees / 180;
+                    robotRotation = Math.max(-0.5, Math.min(0.5, angDiffBetweenForwardAndTargetPosDegrees / 180));
 
                     if (distanceToFinalTargetInInches <= SLOWDOWN_DISTANCE_INCHES) {
                         double slope = (preciseSpeed - fullSpeed) / (SLOWEST_DISTANCE_INCHES - SLOWDOWN_DISTANCE_INCHES);
@@ -127,7 +129,7 @@ public class LocalizerMoveAction implements Action {
                 } else {
                     // For the final target, the robot needs to reach the correct target heading.
                     robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
-                    robotRotation = angDiffToTargetHeadingDegrees / 180;
+                    robotRotation = Math.max(-0.5, Math.min(0.5, angDiffBetweenForwardAndTargetPosDegrees / 180));
 
                     if (withinDistanceTolerance && withinHeadingTolerance) {
                         currentTransformIndex++;
@@ -136,6 +138,7 @@ public class LocalizerMoveAction implements Action {
                         robotRotation = angDiffToTargetHeadingDegrees > 0 ? ROTATE_SPEED : -ROTATE_SPEED;
                     } else {
                         if (distanceToTargetInInches <= SLOWDOWN_DISTANCE_INCHES) {
+                            robotRotation = Math.max(-0.5, Math.min(0.5, angDiffToTargetHeadingDegrees / 180));
                             double slope = (preciseSpeed - fullSpeed) / (SLOWEST_DISTANCE_INCHES - SLOWDOWN_DISTANCE_INCHES);
                             speed = Math.max(slope * distanceToTargetInInches - preciseSpeed, preciseSpeed);
                         }
@@ -153,7 +156,13 @@ public class LocalizerMoveAction implements Action {
             hardware.telemetry.addData("LMA Speed", speed);
             hardware.telemetry.addData("LMA Move Angle", Math.toDegrees(robotMoveAngleRadians));
             hardware.telemetry.addData("LMA Rotation", robotRotation);
+            hardware.telemetry.addData("LMA ABP", angDiffBetweenPositionsDegrees);
+            hardware.telemetry.addData("LMA AFTT", angDiffBetweenForwardAndTargetPosDegrees);
+            hardware.telemetry.addData("LMA ATTH", angDiffToTargetHeadingDegrees);
+
             hardware.omniDrive.move(speed, robotMoveAngleRadians, robotRotation);
+            previousHeadingInDegrees = currentHeading;
+            previousHeadingTime = System.currentTimeMillis();
             return false;
         }
     }

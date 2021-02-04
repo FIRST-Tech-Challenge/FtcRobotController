@@ -26,7 +26,7 @@ public class TestSequenceExecutor extends UltimateGoalHardware implements Autono
 
     @Override
     public Localizer.RobotTransform getStartingTransform() {
-        Position position = new Position(DistanceUnit.INCH, -63, -48, 0, System.nanoTime());
+        Position position = new Position(DistanceUnit.INCH, -63, 48, 0, System.nanoTime());
         double heading = 90;
         Localizer.RobotTransform transform = new Localizer.RobotTransform(position, heading);
         return transform;

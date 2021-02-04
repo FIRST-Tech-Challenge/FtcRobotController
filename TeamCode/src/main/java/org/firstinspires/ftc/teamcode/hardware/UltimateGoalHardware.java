@@ -170,9 +170,17 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         return rpmReady;
     }
 
+    public boolean wobbleGoalIsInPosition() {
+        int countsFromTarget = Math.abs(wobbleGoalHolder.getTargetPosition() - wobbleGoalHolder.getCurrentPosition());
+        return countsFromTarget <= WOBBLE_GOAL_POWER_ZERO_THRESHOLD;
+    }
+
     @Override
     public void initTfod() {
         super.initTfod();
+        tfod.deactivate();
+        tfod.setZoom(2, 16.0/9.0);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+        tfod.activate();
     }
 }

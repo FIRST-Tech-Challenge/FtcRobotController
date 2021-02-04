@@ -31,7 +31,7 @@ public class UltimateGoalSequence extends ActionSequence {
 
     public static RobotTransform[] B_Near_Center_Transforms = {
             new RobotTransform(DistanceUnit.INCH, -24, -12, 135),
-            new RobotTransform(DistanceUnit.INCH, 36, -12, 90)
+            new RobotTransform(DistanceUnit.INCH, 36, -16, 90)
     };
 
     public static RobotTransform[] B_Near_Wall_Transforms = {
@@ -42,7 +42,7 @@ public class UltimateGoalSequence extends ActionSequence {
 
     public static RobotTransform[] C_Near_Center_Transforms = {
             new RobotTransform(DistanceUnit.INCH, -24, -12, 135),
-            new RobotTransform(DistanceUnit.INCH, 48, -42, 90),
+            new RobotTransform(DistanceUnit.INCH, 44, -42, 90),
             new RobotTransform(DistanceUnit.INCH, 60, -42, 90),
     };
 
@@ -54,19 +54,20 @@ public class UltimateGoalSequence extends ActionSequence {
 
     public static RobotTransform[] RING_DETECTION_TRANSFORMS_NEAR_CENTER = {
             new RobotTransform(DistanceUnit.INCH, -52,-24,90),
-            new RobotTransform(DistanceUnit.INCH, -48,-24,60)
+            new RobotTransform(DistanceUnit.INCH, -48,-24,65)
     };
 
     public static RobotTransform[] RING_DETECTION_TRANSFORMS_NEAR_WALL = {
             new RobotTransform(DistanceUnit.INCH, -52,-48,90),
-            new RobotTransform(DistanceUnit.INCH, -48,-48,120)
+            new RobotTransform(DistanceUnit.INCH, -48,-48,115)
     };
 
-    static final double ROBOT_SPEED = 0.75;
-    static final double ROBOT_PRECISE_SPEED = 0.6f;
+    static final double ROBOT_SPEED = 0.65;
+    static final double ROBOT_PRECISE_SPEED = 0.5f;
+    static final double SHOOTER_HEADING_OFFSET = -10;
     static final LocalizerMoveAction.FollowPathMethod FOLLOW_PATH_METHOD = LocalizerMoveAction.FollowPathMethod.FAST;
-    static final RobotTransform SHOOTING_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, 0, -36, 80);
-    static final RobotTransform SHOOTING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, 0, -36, 80);
+    static final RobotTransform SHOOTING_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, 0, -12, 68);
+    static final RobotTransform SHOOTING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, 0, -36, 90);
     static final RobotTransform PARKING_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, 12, -12, 90);
     static final RobotTransform PARKING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, 12, -36, 90);
 
@@ -103,24 +104,29 @@ public class UltimateGoalSequence extends ActionSequence {
             ringTransforms[0] = Localizer.mirrorTransformsOverTeamLine(A_Near_Wall_Transforms);
             ringTransforms[1] = Localizer.mirrorTransformsOverTeamLine(B_Near_Wall_Transforms);
             ringTransforms[2] = Localizer.mirrorTransformsOverTeamLine(C_Near_Wall_Transforms);
-            shootingPosition = new RobotTransform[] { SHOOTING_POSITION_NEAR_WALL };
-            parkingPosition = new RobotTransform[] { PARKING_POSITION_NEAR_WALL};
+            // Flip all wobble goal deploy positions 180 degrees
+            for (RobotTransform[] transforms : ringTransforms) {
+                transforms[transforms.length -1].heading = Localizer.headingWrapInDegrees(transforms[transforms.length -1].heading - 180);
+            }
+            shootingPosition = new RobotTransform[] { Localizer.mirrorTransformOverTeamLine(SHOOTING_POSITION_NEAR_WALL) };
+            parkingPosition = new RobotTransform[] { Localizer.mirrorTransformOverTeamLine(PARKING_POSITION_NEAR_WALL)};
             ringDetectionPosition = Localizer.mirrorTransformsOverTeamLine(RING_DETECTION_TRANSFORMS_NEAR_WALL);
-            shootingPosition = Localizer.mirrorTransformsOverTeamLine(shootingPosition);
-            parkingPosition = Localizer.mirrorTransformsOverTeamLine(parkingPosition);
-            ringDetectionPosition = Localizer.mirrorTransformsOverTeamLine(ringDetectionPosition);
         } else {
             // BLUE RIGHT
             ringTransforms[0] = Localizer.mirrorTransformsOverTeamLine(A_Near_Center_Transforms);
             ringTransforms[1] = Localizer.mirrorTransformsOverTeamLine(B_Near_Center_Transforms);
             ringTransforms[2] = Localizer.mirrorTransformsOverTeamLine(C_Near_Center_Transforms);
-            shootingPosition = new RobotTransform[] { SHOOTING_POSITION_NEAR_CENTER };
-            parkingPosition = new RobotTransform[] { PARKING_POSITION_NEAR_CENTER };
+            // Flip all wobble goal deploy positions 180 degrees
+            for (RobotTransform[] transforms : ringTransforms) {
+                transforms[transforms.length -1].heading = Localizer.headingWrapInDegrees(transforms[transforms.length -1].heading - 180);
+            }
+            shootingPosition = new RobotTransform[] { Localizer.mirrorTransformOverTeamLine(SHOOTING_POSITION_NEAR_CENTER) };
+            parkingPosition = new RobotTransform[] { Localizer.mirrorTransformOverTeamLine(PARKING_POSITION_NEAR_CENTER) };
             ringDetectionPosition = Localizer.mirrorTransformsOverTeamLine(RING_DETECTION_TRANSFORMS_NEAR_CENTER);
-            shootingPosition = Localizer.mirrorTransformsOverTeamLine(shootingPosition);
-            parkingPosition = Localizer.mirrorTransformsOverTeamLine(parkingPosition);
-            ringDetectionPosition = Localizer.mirrorTransformsOverTeamLine(ringDetectionPosition);
         }
+
+        // Add shooting offset
+        shootingPosition[shootingPosition.length - 1].heading += SHOOTER_HEADING_OFFSET;
 
         // Move to ring detection position
         addAction(new LocalizerMoveAction(ringDetectionPosition, ROBOT_SPEED, ROBOT_PRECISE_SPEED, LocalizerMoveAction.FollowPathMethod.LINEAR));

@@ -108,6 +108,7 @@ public abstract class RobotHardware extends OpMode {
         }
         tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.activate();
     }
 
     public void initializeLocalizer() {

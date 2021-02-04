@@ -5,6 +5,7 @@ import org.firstinspires.ftc.teamcode.action.MoveAction;
 import org.firstinspires.ftc.teamcode.action.SetMotorPowerAction;
 import org.firstinspires.ftc.teamcode.action.SetServoAction;
 import org.firstinspires.ftc.teamcode.action.WaitAction;
+import org.firstinspires.ftc.teamcode.autonomous.WaitForWobbleGoalInPositionAction;
 import org.firstinspires.ftc.teamcode.playmaker.ActionSequence;
 import org.firstinspires.ftc.teamcode.util.OmniDrive;
 
@@ -12,7 +13,7 @@ public class ReleaseWobbleGoalSequence extends ActionSequence {
 
     public ReleaseWobbleGoalSequence() {
         addAction(new ExtendWobbleGoalAction(true));
-        addAction(new WaitAction(1000));
+        addAction(new WaitForWobbleGoalInPositionAction());
         addAction(new SetServoAction("wobbleServo", 0.8));
         addAction(new WaitAction(500));
         addAction(new MoveAction(OmniDrive.Direction.LEFT, 8, 0.55f));

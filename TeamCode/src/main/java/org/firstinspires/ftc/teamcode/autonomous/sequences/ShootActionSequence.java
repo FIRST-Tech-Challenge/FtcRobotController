@@ -10,7 +10,7 @@ public class ShootActionSequence extends ActionSequence {
 
     public ShootActionSequence(int numOfRingsToShoot) {
         addAction(new EnableShooterAction(true));
-        addAction(new WaitAction(1500));
+        addAction(new WaitAction(2000));
         addAction(new SetMotorPowerAction("escalator" ,1));
         addAction(new WaitAction(1500));
         addAction(new WaitAction(1600 * (Math.max(1, numOfRingsToShoot)-1)));
