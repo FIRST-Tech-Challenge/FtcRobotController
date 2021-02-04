@@ -25,10 +25,10 @@ public class UltimateBot extends YellowBot {
     private DcMotorEx shooter = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
-    private static double SWING_BACK_POS = 0.05;
-    private static double SWING_PLACE_POS = 1.0;
-    private static double SWING_LIFT_AND_HOLD = 0.75;
-    private static double SWING_LIFT_WALL = 0.4;
+    private static double SWING_BACK_POS = 1;
+    private static double SWING_PLACE_POS = 0.25;
+    private static double SWING_LIFT_AND_HOLD = 0.45;
+    private static double SWING_LIFT_WALL = 0.7;
     private static double SHOOT_SERVO = 0.7;
 
     private static int TIMEOUT = 2500;
@@ -149,21 +149,21 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Peg Shooter", defaultReturn = "")
     public void shooterpeg() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.76);
+            shooter.setVelocity(MAX_VELOCITY*0.77);
         }
     }
 
     @BotAction(displayName = "Move B Shooter", defaultReturn = "")
     public void shooterB() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.78);
+            shooter.setVelocity(MAX_VELOCITY*0.8);
         }
     }
 
     @BotAction(displayName = "Move Slower Shooter", defaultReturn = "")
     public void shooterslower() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.73);
+            shooter.setVelocity(MAX_VELOCITY*0.75);
         }
     }
 
