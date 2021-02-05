@@ -35,7 +35,7 @@ import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_P;
  * must be called regularly, it monitors and integrates data from the
  * orientation (IMU) and odometry (motor encoder) sensors.
  * 
- * @author Abhijit Bhattaru
+ * @author plethora of ironreign programmers
  * @version 3.0
  * @since 2018-11-02
  */
@@ -49,7 +49,7 @@ public class PoseUG {
     PIDController alignPID = new PIDController(ALIGN_P, ALIGN_I, ALIGN_D);
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
-
+    public static double brightness = 0.0; //headlamp brightness - max value should be .8 on a fully charged battery
     public static double kpDrive = 0.02; // proportional constant multiplier
     public static double kiDrive = 0.01; // integral constant multiplier
     public static double kdDrive = 0.68; // derivative constant multiplier //increase
@@ -71,6 +71,7 @@ public class PoseUG {
     private DcMotor motorFrontLeft = null;
     private DcMotor motorBackRight = null;
     private DcMotor elbow = null;
+    private DcMotor headlight = null;
     private DcMotorEx flywheelMotor = null;
     private DcMotor turretMotor = null;
     private Servo wobbleGripper = null;
@@ -275,6 +276,8 @@ public class PoseUG {
         this.elbow = this.hwMap.dcMotor.get("elbow");
 
         this.flywheelMotor = (DcMotorEx) this.hwMap.dcMotor.get("flywheelMotor");
+        this.headlight = this.hwMap.dcMotor.get("headlight");
+        this.headlight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         this.wobbleGripper = this.hwMap.servo.get("servoGripper");
 
@@ -301,7 +304,7 @@ public class PoseUG {
         // turretMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // magSensor.setMode(DigitalChannel.Mode.INPUT);
 
-        flywheelMotor.setDirection(DcMotor.Direction.REVERSE);
+        //flywheelMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // behaviors of motors
         /*
@@ -464,6 +467,7 @@ public class PoseUG {
     }
 
     public void updateSensors(boolean isActive) {
+        headlight.setPower(-brightness);
         update(imu, 0, 0, isActive);
     }
 
