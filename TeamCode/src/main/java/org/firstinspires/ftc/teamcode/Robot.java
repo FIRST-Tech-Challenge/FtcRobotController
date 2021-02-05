@@ -244,6 +244,10 @@ public class Robot {
         }
     }
 
+    public void reverseIntake(){
+       intake.reverseIntake();
+    }
+
     public void stopIntake(){
         if(isCorgi) {
             intake.stopIntake();
@@ -255,6 +259,10 @@ public class Robot {
         if(isCorgi) {
             transfer.startTransfer();
         }
+    }
+
+    public void reverseTransfer(){
+        transfer.reverseTransfer();
     }
 
     public void stopTransfer() {
@@ -295,19 +303,6 @@ public class Robot {
     public void stopShooter(){
         shooter.stopShooter();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public void shootThreePowerShot() {
         ElapsedTime runtime = new ElapsedTime();

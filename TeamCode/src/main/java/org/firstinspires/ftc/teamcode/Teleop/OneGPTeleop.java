@@ -64,14 +64,22 @@ public class OneGPTeleop extends LinearOpMode {
             float right_stick_x = -gamepad1.right_stick_x;
             boolean move_wobble_goal_arm = gamepad1.left_bumper;
             boolean start_transfer_sys = gamepad1.right_bumper;
-            boolean wobble_goal_servo = gamepad1.y;
-            boolean slow = gamepad1.a;
-            boolean shooter_servo = gamepad1.x;
-            boolean powershot = gamepad1.b;
             float shooter = gamepad1.right_trigger;
+            float reverse_transfer_sys = gamepad1.left_trigger;
+//            boolean slow = gamepad1.a;
+            boolean odo_powershots = gamepad1.b;
+            boolean shooter_servo = gamepad1.x;
+            boolean wobble_goal_servo = gamepad1.y;
+
 
             angleInRadian = Math.atan2(left_stick_y, left_stick_x);
             angleInDegree = Math.toDegrees(angleInRadian);
+
+            /**Powershots**/
+            if(odo_powershots){
+                robot.goToPosition(-1.5,2,0,0.9);
+                robot.shootThreePowerShot();
+            }
 
             /**Shooter**/
             if (shooter_servo){
@@ -87,26 +95,26 @@ public class OneGPTeleop extends LinearOpMode {
                 robot.stopShooter();
             }
 
-            /**Speed Mode**/
-            if (slow) {
-                isSlow = true;
-
-                if (currSlow) {
-                    currSlow = false;
-                } else if (currSlow == false) {
-                    currSlow = true;
-                }
-            } else {
-                isSlow = false;
-            }
-
-            if (isSlow) {
-                if (currSlow) {
-                    slowMode = true;
-                } else if (currSlow == false) {
-                    slowMode = false;
-                }
-            }
+//            /**Speed Mode**/
+//            if (slow) {
+//                isSlow = true;
+//
+//                if (currSlow) {
+//                    currSlow = false;
+//                } else if (currSlow == false) {
+//                    currSlow = true;
+//                }
+//            } else {
+//                isSlow = false;
+//            }
+//
+//            if (isSlow) {
+//                if (currSlow) {
+//                    slowMode = true;
+//                } else if (currSlow == false) {
+//                    slowMode = false;
+//                }
+//            }
 
             magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
 
@@ -167,10 +175,13 @@ public class OneGPTeleop extends LinearOpMode {
                 robot.stopIntake();
                 robot.stopTransfer();
             }
-            if(powershot){
-                robot.goToPosition(-1.5,2,0,0.9);
-                robot.shootThreePowerShot();
-            }
+//            if (reverse_transfer_sys != 0) {
+//                robot.reverseIntake();
+//                robot.reverseTransfer();
+//            } else {
+//                robot.stopIntake();
+//                robot.stopTransfer();
+//            }
 
         }
         idle();

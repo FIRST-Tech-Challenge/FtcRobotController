@@ -32,7 +32,7 @@ public class WobbleGoal2ShootAllHighPark extends LinearOpMode {
         robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
         robot.navigate();
         if(rings==1 || rings==4) {
-            robot.moveBackward(24, 0.8);
+            robot.moveBackward(24, 1);
             robot.shootGoalTeleop(120);
             robot.turnInPlace(-5, 1);
             robot.shootHighGoal(3);
@@ -55,16 +55,18 @@ public class WobbleGoal2ShootAllHighPark extends LinearOpMode {
             if(rings==4) {
                 robot.turnInPlace(0, 1);
                 robot.moveAngle(-7, -6, 1);
-                robot.moveBackward(26, 1);
-                robot.moveRight(19, 1);
+                robot.moveBackward(34, 1);
+                robot.openWobbleGoalClaw();
+                robot.moveRight(20, 1);
                 robot.startIntake();
                 robot.startTransfer();
-                robot.moveForward(8, 0.75);
+                robot.moveForward(19, 0.8);
                 sleep(100);
-                robot.shootHighGoal(0);
-                robot.moveForward(10, 1);
-                robot.shootHighGoal(3);
+                robot.shootHighGoal(2);
+                robot.moveForward(12, 1);
+                robot.shootHighGoal(2);
                 sleep(75);
+                robot.moveBackward(45, 1);
                 robot.stopIntake();
                 robot.stopTransfer();
             }
