@@ -66,7 +66,7 @@ public class chrisBot
 
     int FLTarget = 0, FRTarget = 0, BLTarget = 0, BRTarget = 0;
 
-    public static final double shootPower = .24;
+    public static final double shootPower = .225;
 
     public boolean shooterOn = false, intakeOn = false;
 
