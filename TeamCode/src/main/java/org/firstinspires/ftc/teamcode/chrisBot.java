@@ -26,6 +26,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
@@ -69,6 +70,7 @@ public class chrisBot
     public static final double shootPower = .225;
 
     public boolean shooterOn = false, intakeOn = false;
+
 
     /** GYRO OBJECTS */
 
@@ -528,6 +530,7 @@ public class chrisBot
     }
 
     // These methods turn the shooter motor on and off, at a set power or at full power.
+<<<<<<< Updated upstream
 //    public void shootOn(double power) {
 //        if(shooterExists) {
 //            motorShooter1.setPower(shootPower);
@@ -535,6 +538,15 @@ public class chrisBot
 //        }
 //    }
 
+=======
+    public void shootOn(double power) {
+        if(shooterExists) {
+            motorShooter1.setPower(power);
+            motorShooter2.setPower(power);
+            shooterOn = true;
+        }
+    }
+>>>>>>> Stashed changes
     public void shootOn() {
         if(shooterExists) {
             motorShooter1.setPower(shootPower);
@@ -551,20 +563,18 @@ public class chrisBot
     }
 
     // These methods turn the intake motor on and off, at a set power or at full power.
-    public void intakeOn(double power) {
-        if(intakeExists) {
-            motorIntake.setPower(power);
-            intakeOn = true;
-        }
-    }
-
     public void intakeOn() {
         if(intakeExists) {
             motorIntake.setPower(1);
             intakeOn = true;
         }
     }
-
+    public void intakeReverse() {
+        if(intakeExists) {
+            motorIntake.setPower(-1);
+            intakeOn = true;
+        }
+    }
     public void intakeOff() {
         if(intakeExists) {
             motorIntake.setPower(0);

@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp(name="chrisBotTeleopFINAL2C", group="chrisBot")
-//@Disabled
+@Disabled
 
 public class chrisBotTeleopFinalTwoControllers extends OpMode{
 
@@ -42,6 +43,10 @@ public class chrisBotTeleopFinalTwoControllers extends OpMode{
             driving = true;
             rightX = gamepadState2[2];
         }
+        if (gamepad1.right_bumper) {
+            r=0.4*r;
+        }
+        robotAngle = -1*robotAngle;
         if(driving) {
             robot.setPower(r * Math.cos(robotAngle) + rightX, r * Math.sin(robotAngle) - rightX, r * Math.sin(robotAngle) + rightX, r * Math.cos(robotAngle) - rightX);
         }

@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.Arrays;
 
 @TeleOp(name="chrisBotTeleopFINAL", group="chrisBot")
 //@Disabled
@@ -10,6 +13,10 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class chrisBotTeleopFinal extends OpMode{
 
     chrisBot robot = new chrisBot();
+
+    ElapsedTime count = new ElapsedTime();
+    long t = System.currentTimeMillis();
+    boolean holding, inching;
 
     @Override
     public void init() {
@@ -24,7 +31,10 @@ public class chrisBotTeleopFinal extends OpMode{
             // Algorithm taken from https://ftcforum.firstinspires.org/forum/ftc-technology/android-studio/6361-mecanum-wheels-drive-code-example, quote to dmssargent
             double[] gamepadState = getGamepadState(gamepad1);
             double r = Math.hypot(gamepadState[0], gamepadState[1]);
-            double robotAngle = Math.atan2(gamepadState[1], gamepadState[0]) - Math.PI / 4;
+            if (gamepad1.right_bumper) {
+                r=0.4*r;
+            }
+            double robotAngle = -1*(Math.atan2(gamepadState[1], gamepadState[0]) - Math.PI / 4);
             double rightX = gamepadState[2];
             robot.setPower(-1*r * Math.cos(robotAngle) + rightX, -1*r * Math.sin(robotAngle) - rightX, -1*r * Math.sin(robotAngle) + rightX, -1*r * Math.cos(robotAngle) - rightX);
         }
@@ -32,18 +42,48 @@ public class chrisBotTeleopFinal extends OpMode{
             robot.setAllPower(0);
         }
 
+        // Inch
+        if(!holding) {
+            double[] powers = {};
+            if(gamepad1.dpad_up) {
+                powers = new double[]{0.1,0.1,0.1,0.1};
+            }
+            if(gamepad1.dpad_down) {
+                powers = new double[]{-0.1,-0.1,-0.1,-0.1};
+            }
+            if(gamepad1.dpad_left) {
+                powers = new double[]{0.1,-0.1,-0.1,0.1};
+            }
+            if(gamepad1.dpad_right) {
+                powers = new double[]{-0.1,0.1,0.1,-0.1};
+            }
+            if (!(Arrays.equals(new double[]{}, powers))) {
+                holding = true;
+                count.reset();
+                t = System.currentTimeMillis();
+                robot.setPower(powers);
+            }
+
+        }
+        if (count.milliseconds() - t > 300) {
+            robot.setAllPower(0);
+            if (!(gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_right || gamepad1.dpad_left)) {
+                holding = false;
+            }
+        }
+
         // Attachment code
-        if (gamepad1.b || (gamepad1.a && gamepad1.x)) {
-            robot.shootOn();
-            robot.intakeOn();
-        } else if (gamepad1.x) {
-            robot.shootOn();
-            robot.intakeOff();
-        } else if (gamepad1.a) {
-            robot.intakeOn();
-            robot.shootOff();
+        if(gamepad1.x) {
+            robot.shootOn(0.6);
+        } else if (gamepad1.b) {
+            robot.shootOn(0.4);
         } else {
             robot.shootOff();
+        } if(gamepad1.a) {
+            robot.intakeOn();
+        } else if(gamepad1.y) {
+            robot.intakeReverse();
+        } else {
             robot.intakeOff();
         }
     }
