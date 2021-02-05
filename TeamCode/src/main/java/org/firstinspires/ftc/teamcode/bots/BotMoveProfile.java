@@ -42,8 +42,8 @@ public class BotMoveProfile {
 
     private double initialSpeed = 0;
     private double speedIncrement = 0.05;
-    private double minSpeed = 0.1;
-    private double speedDecrement = 0.1;
+    private double minSpeed = 0.3;
+    private double speedDecrement = 0.05;
 
     private boolean continuous = false;
     private boolean dryRun = true;

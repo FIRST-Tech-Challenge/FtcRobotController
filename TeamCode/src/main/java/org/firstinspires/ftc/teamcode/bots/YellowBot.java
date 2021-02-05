@@ -290,9 +290,9 @@ public class YellowBot implements OdoBot {
             double leftTarget = profile.getLongTarget();
 
 
-            double minSpeed = 0.1;
+            double minSpeed = profile.getMinSpeed();
 
-            double speedDropStep = 0.05;
+            double speedDropStep = profile.getSpeedDecrement();
 
             double originalRight = rightPower;
 
@@ -521,11 +521,11 @@ public class YellowBot implements OdoBot {
             double longTarget = profile.getLongTarget();
 
 
-            double minSpeed = 0.1;
+            double minSpeed = profile.getMinSpeed();
 
-            double lastMileSpeed = 0.2;
+            double lastMileSpeed = minSpeed;
 
-            double speedDropStep = 0.05;
+            double speedDropStep = profile.getSpeedDecrement();
 
             double originalRight = profile.getRealSpeedRight();
             double originalLeft = profile.getRealSpeedLeft();
