@@ -142,7 +142,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Shooter", defaultReturn = "")
     public void shooter() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.85);
+            shooter.setVelocity(MAX_VELOCITY*0.835);
         }
     }
 
