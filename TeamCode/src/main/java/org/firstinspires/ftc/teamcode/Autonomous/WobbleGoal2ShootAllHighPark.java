@@ -30,26 +30,41 @@ public class WobbleGoal2ShootAllHighPark extends LinearOpMode {
         robot.stopRingDetection();
         sleep(100);
         robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-//        robot.shootGoalTeleop(120);
         robot.navigate();
         if(rings==1 || rings==4) {
             robot.moveBackward(24, 0.8);
+            robot.shootGoalTeleop(120);
             robot.turnInPlace(-5, 1);
             robot.shootHighGoal(3);
-            sleep(200);
-            robot.turnInPlace(0, 1);
-            robot.moveAngle(-7, -6, 1);
-            robot.moveBackward(27, 1);
-            robot.moveRight(18, 1);
-            robot.startIntake();
-            robot.startTransfer();
-            robot.moveForward(8, 0.75);
-            sleep(100);
-            robot.shootHighGoal(1);
+            sleep(75);
+            if(rings==1){
+                robot.moveBackward(64, 1);
+                robot.openWobbleGoalClaw();
+                robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
+                robot.turnInPlace(0, 1);
+                robot.moveRight(23, 1);
+                robot.moveForward(36, 1);
+                robot.turnInPlace(0, 1);
+                robot.moveForward(40, 1);
+                robot.moveLeft(3, 1);
+                robot.moveAngle(-10, -80, 0.85);
+                robot.openWobbleGoalClaw();
+                robot.moveRight(5, 1);
+                robot.moveForward(18, 1);
+            }
             if(rings==4) {
+                robot.turnInPlace(0, 1);
+                robot.moveAngle(-7, -6, 1);
+                robot.moveBackward(26, 1);
+                robot.moveRight(19, 1);
+                robot.startIntake();
+                robot.startTransfer();
+                robot.moveForward(8, 0.75);
+                sleep(100);
+                robot.shootHighGoal(0);
                 robot.moveForward(10, 1);
                 robot.shootHighGoal(3);
-                sleep(200);
+                sleep(75);
                 robot.stopIntake();
                 robot.stopTransfer();
             }

@@ -54,9 +54,9 @@ public class Robot {
             wobbleGoal = new WobbleGoal(op);
             shooter = new Shooter(op);
 
-        if (objectDetectionNeeded) {
-            tensorFlow.runTensorFlowWaitForStart();
-        }
+//        if (objectDetectionNeeded) {
+//            tensorFlow.runTensorFlowWaitForStart();
+//        }
     }
     public void navigate(){
         drivetrain.navigate();
