@@ -6,6 +6,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.action.DetectRingsAction;
 import org.firstinspires.ftc.teamcode.action.DisableTFODAction;
+import org.firstinspires.ftc.teamcode.action.EnableCollectorAction;
 import org.firstinspires.ftc.teamcode.action.ExecuteSequenceAction;
 import org.firstinspires.ftc.teamcode.action.IfActionResult;
 import org.firstinspires.ftc.teamcode.action.LocalizerMoveAction;
@@ -53,6 +54,16 @@ public class UltimateGoalSequence extends ActionSequence {
             new RobotTransform(DistanceUnit.INCH, 38, -54, 180)
     };
 
+    public static RobotTransform[] C_Near_Wall_Extra_Rings = {
+            new RobotTransform(DistanceUnit.INCH, -2, -36, 90)
+    };
+
+    public static RobotTransform[] EXTRA_RINGS_COLLECTION = {
+            new RobotTransform(DistanceUnit.INCH, -18, -36, 90),
+            new RobotTransform(DistanceUnit.INCH, -38, -36, 90),
+            new RobotTransform(DistanceUnit.INCH, -18, -36, 90)
+    };
+
     public static RobotTransform[] RING_DETECTION_TRANSFORMS_NEAR_CENTER = {
             new RobotTransform(DistanceUnit.INCH, -52,-24,90),
             new RobotTransform(DistanceUnit.INCH, -48,-24,65)
@@ -68,8 +79,8 @@ public class UltimateGoalSequence extends ActionSequence {
             new RobotTransform(DistanceUnit.INCH, 1, -12, 73)
     };
 
-    static final double ROBOT_SPEED = 0.7f;
-    static final double ROBOT_PRECISE_SPEED = 0.35f;
+    static final double ROBOT_SPEED = 0.9f;
+    static final double ROBOT_PRECISE_SPEED = 0.3f;
     static final double SHOOTER_HEADING_OFFSET = -10;
     static final LocalizerMoveAction.FollowPathMethod FOLLOW_PATH_METHOD = LocalizerMoveAction.FollowPathMethod.FAST;
     static final RobotTransform SHOOTING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, -3, -36, 90);
@@ -177,9 +188,31 @@ public class UltimateGoalSequence extends ActionSequence {
         // Shoot three rings into high goal
         addAction(new ExecuteSequenceAction(new ShootActionSequence(3)));
 
+        // // C - Extra quad rings 
+        // addAction(new IfActionResult(
+        //         ringDetectionAction,
+        //         DetectRingsAction.DetectRingsResult.QUAD,
+        //         new ExecuteSequenceAction(new ExtraRingSequence(team, C_Near_Wall_Extra_Rings, shootingPosition[shootingPosition.length - 1])),
+        //         null));
+
         // Park on center line
         addAction(new LocalizerMoveAction(parkingPosition, ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD));
+    }
 
-        addAction(new WaitForeverAction());
+    static class ExtraRingSequence extends ActionSequence {
+            public ExtraRingSequence(RobotHardware.Team team, RobotTransform[] knockoverTransforms, RobotTransform shootPosition) {
+                addAction(new LocalizerMoveAction(knockoverTransforms, ROBOT_SPEED, ROBOT_PRECISE_SPEED, LocalizerMoveAction.FollowPathMethod.LINEAR));
+                addAction(new EnableCollectorAction(true));
+                if (team == RobotHardware.Team.BLUE) {
+                        addAction(new LocalizerMoveAction(Localizer.mirrorTransformsOverTeamLine(EXTRA_RINGS_COLLECTION), ROBOT_SPEED, 0.45f, LocalizerMoveAction.FollowPathMethod.LINEAR));
+                } else {
+                        addAction(new LocalizerMoveAction(EXTRA_RINGS_COLLECTION, ROBOT_SPEED, 0.45f, LocalizerMoveAction.FollowPathMethod.LINEAR));
+                }
+                
+                addAction(new EnableCollectorAction(false));
+                addAction(new LocalizerMoveAction(shootPosition, ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD));
+                // Shoot three rings into high goal
+                addAction(new ExecuteSequenceAction(new ShootActionSequence(3)));
+            }
     }
 }

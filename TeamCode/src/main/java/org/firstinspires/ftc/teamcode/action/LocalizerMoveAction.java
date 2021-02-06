@@ -24,13 +24,13 @@ public class LocalizerMoveAction implements Action {
     // Linear Path Following Configuration
     static final double SLOWDOWN_DISTANCE_INCHES = 12;
     static final double SLOWEST_DISTANCE_INCHES = 4;
-    static final double ROTATE_SPEED = 0.25;
-    static final double SLOW_ROTATE_THRESHOLD_DEGREES = 30;
+    static final double ROTATE_SPEED = 0.275;
+    static final double SLOW_ROTATE_THRESHOLD_DEGREES = 15;
     static final double MAX_ROTATION_AMOUNT = 0.5;
 
 
     // Tolerances
-    static final double DISTANCE_TOLERANCE_INCHES = 0.5;
+    static final double DISTANCE_TOLERANCE_INCHES = 0.7;
     static final double FAST_DISTANCE_TOLERANCE_INCHES = 3;
     static final double HEADING_TOLERANCE_DEGREES = 1;
 
