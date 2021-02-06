@@ -48,7 +48,7 @@ public class Robot {
 //        if(objectDetectionNeeded && vuforiaNAVIGATIONneeded){
 //            throw new RuntimeException("They both can't be true.");
 //        }
-
+        drivetrain= ChassisFactory.getChassis(chassisType,op,vuforiaNAVIGATIONneeded);
             intake = new Intake(op);
             transfer = new Transfer(op);
             wobbleGoal = new WobbleGoal(op);
@@ -308,9 +308,9 @@ public class Robot {
         ElapsedTime runtime = new ElapsedTime();
         op.telemetry.addData("speed: ", shooter.getRPM());
         op.telemetry.update();
-        drivetrain.turnInPlace(-1.5,1.0);
-        shooter.setVelocity(1725, 1000);
-        op.sleep(1500);
+        drivetrain.turnInPlace(-1.75,1.0);
+        shooter.setVelocity(1600, 1000);
+        op.sleep(1600);
         if (shooter.getRPM()*28/60 > 0) {
             op.sleep(100);
             op.telemetry.clear();
@@ -319,14 +319,26 @@ public class Robot {
         }
         shooter.moveServo(false);
         shooter.moveServo(true);
-        drivetrain.turnInPlace(4,0.5);
+        drivetrain.turnInPlace(2,0.5);
         shooter.moveServo(false);
         shooter.moveServo(true);
-        drivetrain.turnInPlace(-6.5,0.5);
+        drivetrain.turnInPlace(-6.9,0.5);
         shooter.moveServo(false);
         shooter.moveServo(true);
         if(op.getRuntime()>3){
             stopShooter();
         }
+    }
+    public void intakeAndShootHighGoal(){
+        ElapsedTime runtime = new ElapsedTime();
+        shooter.setVelocity(1675, 1000);
+        intake.startIntake();
+        transfer.startTransfer();
+        drivetrain.moveAngle(-20,20, 1.0);
+        drivetrain.moveAngle(0,15, 1.0);
+        shooter.moveServo(false);
+    }
+    public void navigateTeleOp(){
+        drivetrain.navigateTeleOp();
     }
 }

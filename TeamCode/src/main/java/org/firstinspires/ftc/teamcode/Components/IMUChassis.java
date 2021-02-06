@@ -448,4 +448,9 @@ public class IMUChassis extends BasicChassis {
     public void navigate() {
 
     }
+
+    @Override
+    public void navigateTeleOp() {
+
+    }
 }

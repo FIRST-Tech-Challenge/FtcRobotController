@@ -47,7 +47,7 @@ public class WalrusTest extends LinearOpMode {
         shooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
         wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
         shooter_Servo = (Servo) hardwareMap.servo.get("ShooterServo");
-        wobbleGoalServo = (Servo) hardwareMap.servo.get("WobbleGoalServo");
+        //wobbleGoalServo = (Servo) hardwareMap.servo.get("WobbleGoalServo");
         wobbleGoalServoClaw = (Servo) hardwareMap.servo.get("wobbleGoalServoClaw");
 
 
@@ -62,7 +62,7 @@ public class WalrusTest extends LinearOpMode {
 
         //Servos
         shooter_Servo.setPosition(-0.5);
-        wobbleGoalServo.setPosition(0);
+        //wobbleGoalServo.setPosition(0);
         wobbleGoalServoClaw.setPosition(0);
 
         // To match default

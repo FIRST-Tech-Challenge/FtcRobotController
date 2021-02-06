@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Robot;
 
 /**
@@ -36,7 +37,7 @@ public class OneGPTeleop extends LinearOpMode {
         Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER, false ,false);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
-
+        //robot.navigateTeleOp();
         double magnitude;
         double angleInRadian;
         double angleInDegree;
@@ -77,7 +78,7 @@ public class OneGPTeleop extends LinearOpMode {
 
             /**Powershots**/
             if(odo_powershots){
-                robot.goToPosition(-1.5,2,0,0.9);
+                robot.goToPosition(0,-9,-2,0.8);
                 robot.shootThreePowerShot();
             }
 
