@@ -6,6 +6,7 @@ import android.os.SystemClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -24,6 +25,7 @@ import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MovementVars;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -35,6 +37,8 @@ import static java.lang.Math.sqrt;
 public class UltimateGoalRobot
 {
     /* Public OpMode members. */
+    public final static double WOBBLE_ARM_MIN = 0.05;
+    public final static double WOBBLE_ARM_MAX = 3.1;
     public final static double SHOOT_VELOCITY = 1120;
     public final static double SHOOT_VELOCITY_ERROR = 20;
     public final static double THROTTLE_TIMEOUT = 7000;
@@ -63,6 +67,7 @@ public class UltimateGoalRobot
     public final static String FLAP_SERVO = "Flap";
     public final static String INJECTOR_SERVO = "Injector";
     public final static String INTAKE_PUSHER_SERVO = "IntakePusher";
+    public final static String ARM_POT = "ArmPot";
     public String hub1;
     public String hub2;
 
@@ -100,6 +105,7 @@ public class UltimateGoalRobot
 
     // Sensors
     protected BNO055IMU imu = null;
+    protected AnalogInput armPot = null;
 
     // Tracking variables
     private static final int encoderClicksPerSecond = 2800;
@@ -225,6 +231,8 @@ public class UltimateGoalRobot
 //        rearRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10,
 //                3, 0, 12, MotorControlAlgorithm.PIDF));
 
+        // Define and initialize sensors
+        armPot = hwMap.get(AnalogInput.class, ARM_POT);
         initIMU();
     }
 
@@ -315,14 +323,14 @@ public class UltimateGoalRobot
     }
 
     public void setIntakeMotorPower(double power) {
-        if (Math.abs(power - intakeMotorPower) > 0.005) {
+        if (abs(power - intakeMotorPower) > 0.005) {
             intakeMotorPower = power;
             intake.setPower(power);
         }
     }
 
     public void setWobbleMotorPower(double power) {
-        if (Math.abs(power - wobbleMotorPower) > 0.005) {
+        if (abs(power - wobbleMotorPower) > 0.005) {
             wobbleMotorPower = power;
             wobble.setPower(power);
         }
@@ -330,7 +338,7 @@ public class UltimateGoalRobot
 
     public void setFrontLeftMotorPower(double power)
     {
-        if(Math.abs(power - frontLeftMotorPower) > 0.005)
+        if(abs(power - frontLeftMotorPower) > 0.005)
         {
             frontLeftMotorPower = power;
             frontLeft.setPower(power);
@@ -339,7 +347,7 @@ public class UltimateGoalRobot
 
     public void setRearLeftMotorPower(double power)
     {
-        if(Math.abs(power - rearLeftMotorPower) > 0.005)
+        if(abs(power - rearLeftMotorPower) > 0.005)
         {
             rearLeftMotorPower = power;
             rearLeft.setPower(power);
@@ -348,7 +356,7 @@ public class UltimateGoalRobot
 
     public void setFrontRightMotorPower(double power)
     {
-        if(Math.abs(power - frontRightMotorPower) > 0.005)
+        if(abs(power - frontRightMotorPower) > 0.005)
         {
             frontRightMotorPower = power;
             frontRight.setPower(power);
@@ -357,7 +365,7 @@ public class UltimateGoalRobot
 
     public void setRearRightMotorPower(double power)
     {
-        if(Math.abs(power - rearRightMotorPower) > 0.005)
+        if(abs(power - rearRightMotorPower) > 0.005)
         {
             rearRightMotorPower = power;
             rearRight.setPower(power);
@@ -410,7 +418,7 @@ public class UltimateGoalRobot
         } else {
             if (inputShaping) {
                 valueOut = aValue * Math.pow(valueIn, 3) + (1 - aValue) * valueIn;
-                valueOut = Math.copySign(Math.max(MIN_DRIVE_RATE, Math.abs(valueOut)), valueOut);
+                valueOut = Math.copySign(Math.max(MIN_DRIVE_RATE, abs(valueOut)), valueOut);
             } else {
                 valueOut = valueIn;
             }
@@ -428,7 +436,7 @@ public class UltimateGoalRobot
         } else {
             if (inputShaping) {
                 valueOut = aValue * Math.pow(valueIn, 3) + (1 - aValue) * valueIn;
-                valueOut = Math.copySign(Math.max(MIN_SPIN_RATE, Math.abs(valueOut)), valueOut);
+                valueOut = Math.copySign(Math.max(MIN_SPIN_RATE, abs(valueOut)), valueOut);
             } else {
                 valueOut = valueIn;
             }
@@ -502,7 +510,7 @@ public class UltimateGoalRobot
         }
 
         // We are done if we are within 2 degrees
-        if(Math.abs(Math.toDegrees(deltaAngle)) < 2) {
+        if(abs(Math.toDegrees(deltaAngle)) < 2) {
             // We have reached our destination if the angle is close enough
             setAllDriveZero();
             reachedDestination = true;
@@ -645,10 +653,10 @@ public class UltimateGoalRobot
         double tr_power_raw = -MovementVars.movement_y-MovementVars.movement_turn+MovementVars.movement_x*strafeMultiplier;
 
         //find the maximum of the powers
-        double maxRawPower = Math.abs(tl_power_raw);
-        if(Math.abs(bl_power_raw) > maxRawPower){ maxRawPower = Math.abs(bl_power_raw);}
-        if(Math.abs(br_power_raw) > maxRawPower){ maxRawPower = Math.abs(br_power_raw);}
-        if(Math.abs(tr_power_raw) > maxRawPower){ maxRawPower = Math.abs(tr_power_raw);}
+        double maxRawPower = abs(tl_power_raw);
+        if(abs(bl_power_raw) > maxRawPower){ maxRawPower = abs(bl_power_raw);}
+        if(abs(br_power_raw) > maxRawPower){ maxRawPower = abs(br_power_raw);}
+        if(abs(tr_power_raw) > maxRawPower){ maxRawPower = abs(tr_power_raw);}
 
         //if the maximum is greater than 1, scale all the powers down to preserve the shape
         double scaleDownAmount = 1.0;
@@ -672,7 +680,7 @@ public class UltimateGoalRobot
     // velocity.
     public void updateShooterStability() {
         // Verify this loop is at target velocity.
-        if(Math.abs(shooter.getVelocity() - SHOOT_VELOCITY) <= SHOOT_VELOCITY_ERROR) {
+        if(abs(shooter.getVelocity() - SHOOT_VELOCITY) <= SHOOT_VELOCITY_ERROR) {
             sequentialStableVelocityChecks++;
         } else {
             sequentialStableVelocityChecks = 0;
@@ -855,6 +863,60 @@ public class UltimateGoalRobot
                 if(injectState == INJECTING.IDLE) {
                     toggleShooter();
                     tripleInjectState = TRIPLE_INJECTING.IDLE;
+                }
+                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    /** Moves the wobble arm to the specified position. **/
+    public static double WOBBLE_ARM_STOWED = WOBBLE_ARM_MIN;
+    public static double WOBBLE_ARM_RUNNING = 1.06;
+    public static double WOBBLE_ARM_GRABBING = 2.34;
+    public static double WOBBLE_ARM_ERROR = 0.1;
+    public static double WOBBLE_ARM_REFINING = 0.005;
+    public enum WOBBLE_ARM_ROTATOR {
+        IDLE,
+        MOVING,
+        REFINING
+    }
+    protected double targetPosition;
+    public WOBBLE_ARM_ROTATOR armMovement = WOBBLE_ARM_ROTATOR.IDLE;
+    public void startRotatingArm(double newPosition) {
+        targetPosition = newPosition;
+        armMovement = WOBBLE_ARM_ROTATOR.MOVING;
+        if(targetPosition == WOBBLE_ARM_STOWED) {
+            claw.setPosition(CLAW_CLOSED);
+            clawClosed = true;
+        }
+    }
+
+    public void performRotatingArm() {
+        switch(armMovement) {
+            case MOVING:
+                if(abs(armPot.getVoltage() - targetPosition) > WOBBLE_ARM_ERROR) {
+                    if(armPot.getVoltage() > targetPosition) {
+                        setWobbleMotorPower(-1.0);
+                    } else {
+                        setWobbleMotorPower(1.0);
+                    }
+                } else {
+                    setWobbleMotorPower(0.0);
+                    armMovement = WOBBLE_ARM_ROTATOR.REFINING;
+                }
+                break;
+            case REFINING:
+                if(abs(armPot.getVoltage() - targetPosition) > WOBBLE_ARM_REFINING) {
+                    if(armPot.getVoltage() > targetPosition) {
+                        setWobbleMotorPower(-0.5);
+                    } else {
+                        setWobbleMotorPower(0.5);
+                    }
+                } else {
+                    setWobbleMotorPower(0.0);
+                    armMovement = WOBBLE_ARM_ROTATOR.IDLE;
                 }
                 break;
             case IDLE:

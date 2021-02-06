@@ -195,7 +195,8 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         // This can be used for shoot alignment.
         if(!rightHeld && rightPressed) {
             if(!aligning) {
-                calibrationTarget.x += 100.0;
+                calibrationTarget.x = 100.0;
+                calibrationTarget.y = 0.0;
                 robot.startOdometryCal(calibrationTarget);
                 aligning = true;
             } else {
@@ -209,7 +210,8 @@ public class UltimateGoalOdometryCalibration extends OpMode {
 
         if(!leftHeld && leftPressed) {
             if(!aligning) {
-                calibrationTarget.x -= 100.0;
+                calibrationTarget.x = -100.0;
+                calibrationTarget.y = 0.0;
                 robot.startOdometryCal(calibrationTarget);
                 aligning = true;
             } else {
@@ -223,7 +225,8 @@ public class UltimateGoalOdometryCalibration extends OpMode {
 
         if(!downHeld && downPressed) {
             if(!aligning) {
-                calibrationTarget.y -= 100.0;
+                calibrationTarget.x = 0.0;
+                calibrationTarget.y = -100.0;
                 robot.startOdometryCal(calibrationTarget);
                 aligning = true;
             } else {
@@ -237,7 +240,8 @@ public class UltimateGoalOdometryCalibration extends OpMode {
 
         if(!upHeld && upPressed) {
             if(!aligning) {
-                calibrationTarget.y += 100.0;
+                calibrationTarget.x = 0.0;
+                calibrationTarget.y = 100.0;
                 robot.startOdometryCal(calibrationTarget);
                 aligning = true;
             } else {

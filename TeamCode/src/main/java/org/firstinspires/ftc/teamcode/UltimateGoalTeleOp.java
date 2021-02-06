@@ -10,6 +10,11 @@ import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.toDegrees;
+import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_GRABBING;
+import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_MAX;
+import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_MIN;
+import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_RUNNING;
+import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_STOWED;
 
 /**
  * Created by 7592 Roarbots.
@@ -199,26 +204,26 @@ public class UltimateGoalTeleOp extends OpMode {
 
         // This can be used for shoot alignment.
         if(!rightHeld && rightPressed) {
-            if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.powerShotRight, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
-                aligning = true;
-            } else {
-                aligning = false;
-                robot.stopShotAligning();
-            }
+//            if(!aligning) {
+//                robot.startShotAligning(UltimateGoalRobot.powerShotRight, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+//                aligning = true;
+//            } else {
+//                aligning = false;
+//                robot.stopShotAligning();
+//            }
             rightHeld = true;
         } else if(!rightPressed) {
             rightHeld = false;
         }
 
         if(!leftHeld && leftPressed) {
-            if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.powerShotLeft, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
-                aligning = true;
-            } else {
-                aligning = false;
-                robot.stopShotAligning();
-            }
+//            if(!aligning) {
+//                robot.startShotAligning(UltimateGoalRobot.powerShotLeft, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+//                aligning = true;
+//            } else {
+//                aligning = false;
+//                robot.stopShotAligning();
+//            }
             leftHeld = true;
         } else if(!leftPressed) {
             leftHeld = false;
@@ -263,9 +268,13 @@ public class UltimateGoalTeleOp extends OpMode {
         // This allows to reset claw, remove!!!
 //        if(robot.disableDriverCentric) {
             if (rightTriggerPower >= 0.05) {
-                robot.setWobbleMotorPower(-rightTriggerPower);
+                if(robot.armPot.getVoltage() > WOBBLE_ARM_MIN) {
+                    robot.setWobbleMotorPower(-rightTriggerPower);
+                } else {robot.setWobbleMotorPower(0.0);}
             } else if (leftTriggerPower >= 0.05) {
-                robot.setWobbleMotorPower(leftTriggerPower);
+                if(robot.armPot.getVoltage() < WOBBLE_ARM_MAX) {
+                    robot.setWobbleMotorPower(leftTriggerPower);
+                } else {robot.setWobbleMotorPower(0.0);}
             } else {
                 robot.setWobbleMotorPower(0.0);
             }
@@ -276,29 +285,29 @@ public class UltimateGoalTeleOp extends OpMode {
 		// ********************************************************************
 		// This was unassigned (fingers up/down)
         if(!square2Held && square2Pressed) {
-//            robot.startReleaseGrabWobbleGoal();
+            // Enable the velocity checks again.
+            robot.disableVelocityCheck = false;
             square2Held = true;
         } else if(!square2Pressed) {
             square2Held = false;
         }
 
         if(!cross2Held && cross2Pressed) {
-//            robot.startReleaseStowArm();
+            robot.startRotatingArm(WOBBLE_ARM_GRABBING);
             cross2Held = true;
         } else if(!cross2Pressed) {
             cross2Held = false;
         }
 
         if(!circle2Held && circle2Pressed) {
-//            robot.startStowedToReleaseWobbleGoal();
+            robot.startRotatingArm(WOBBLE_ARM_RUNNING);
             circle2Held = true;
         } else if(!circle2Pressed) {
             circle2Held = false;
         }
 
         if(!triangle2Held && triangle2Pressed) {
-            // Enable the velocity checks again.
-            robot.disableVelocityCheck = false;
+            robot.startRotatingArm(WOBBLE_ARM_STOWED);
             triangle2Held = true;
         } else if(!triangle2Pressed) {
             triangle2Held = false;
@@ -364,6 +373,7 @@ public class UltimateGoalTeleOp extends OpMode {
 
         telemetry.addData( "Offset Angle: ", driverAngle);
         telemetry.addData("Flap Position: ", robot.flapAngle);
+        telemetry.addData("Wobble Pot: ", robot.armPot.getVoltage());
         telemetry.addData("Shooter Velocity: ", robot.shooter.getVelocity());
         telemetry.addData("Shooter Stability: ", robot.sequentialStableVelocityChecks);
         telemetry.addData("FL Motor Velocity: ", robot.frontLeft.getVelocity());
@@ -400,6 +410,7 @@ public class UltimateGoalTeleOp extends OpMode {
         robot.performStowedToReleaseWobbleGoal();
         robot.performReleaseGrabWobbleGoal();
         robot.performReleaseStowArm();
+        robot.performRotatingArm();
         robot.updateShooterStability();
     }
 }
