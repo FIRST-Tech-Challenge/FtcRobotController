@@ -157,7 +157,7 @@ public class Autonomous {
             // telemetry.update();
             robot.ledSystem.setColor(LEDSystem.Color.CALM);
             vp = visionProviders[visionProviderState].newInstance();
-             vp.initializeVision(robot.hwMap, viewpoint);
+             vp.initializeVision(robot.hwMap, viewpoint, this.enableTelemetry);
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
@@ -170,7 +170,7 @@ public class Autonomous {
             // telemetry.update();
             robot.ledSystem.setColor(LEDSystem.Color.CALM);
             vp = VisionProviders.defaultProvider.newInstance();
-             vp.initializeVision(robot.hwMap, viewpoint);
+             vp.initializeVision(robot.hwMap, viewpoint, false);
         } catch (IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }

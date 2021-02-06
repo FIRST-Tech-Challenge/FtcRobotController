@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.vision.VisionProvider;
 
 public abstract class AbstractDummyVisionIntegration implements VisionProvider {
     @Override
-    public void initializeVision(HardwareMap hardwareMap, Viewpoint viewpoint) {
+    public void initializeVision(HardwareMap hardwareMap, Viewpoint viewpoint, boolean enableDashboard) {
 
     }
 
