@@ -29,6 +29,8 @@ import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.control.RangeInputButton;
 import com.ftc9929.corelib.control.ToggledButton;
 
+import java.nio.charset.CharacterCodingException;
+
 import lombok.Builder;
 
 public class OperatorControls {
@@ -79,7 +81,13 @@ public class OperatorControls {
 
     private OnOffButton invertHopper;
 
+    private OnOffButton toggleWobbleGripper;
+
+    private RangeInput wobbleShoulderThrottle;
+
     private ScoringMechanism scoringMechanism;
+
+    private WobbleGoal wobbleGoal;
 
     @Builder
     private OperatorControls(RangeInput leftStickX,
@@ -103,7 +111,8 @@ public class OperatorControls {
                              RangeInput leftTrigger,
                              RangeInput rightTrigger,
                              NinjaGamePad operatorGamepad,
-                             ScoringMechanism scoringMechanism) {
+                             ScoringMechanism scoringMechanism,
+                             WobbleGoal wobbleGoal) {
         if (operatorGamepad != null) {
             this.operatorGamepad = operatorGamepad;
             setupFromGamepad();
@@ -135,6 +144,10 @@ public class OperatorControls {
         scoringMechanism.setUnsafe(unsafe);
         scoringMechanism.setStopLauncher(stopLauncher);
         scoringMechanism.setInvertHopper(invertHopper);
+
+        this.wobbleGoal = wobbleGoal;
+        this.wobbleGoal.setShoulderThrottle(wobbleShoulderThrottle);
+        this.wobbleGoal.setGripperButton(new ToggledButton(toggleWobbleGripper));
     }
 
 
@@ -166,10 +179,14 @@ public class OperatorControls {
         stopLauncher = bRedButton;
         invertHopper = operatorGamepad.getDpadDown();
 
+        toggleWobbleGripper = operatorGamepad.getXButton();
+        wobbleShoulderThrottle = rightStickY;
+
         unsafe = new RangeInputButton( leftTrigger, 0.65f);
     }
 
     public void periodicTask() {
        scoringMechanism.periodicTask();
+       wobbleGoal.periodicTask();
     }
 }

@@ -176,10 +176,6 @@ public class ScoringMechanism {
 
     List<ReadyCheckable> readyCheckables = Lists.newArrayList();
 
-    interface ReadyCheckable {
-        void checkReady();
-    }
-
     class IdleState extends NotDebuggableState {
         // Intake: Not Moving 
         // Launcher: Not Moving
@@ -497,11 +493,6 @@ public class ScoringMechanism {
         }
 
     }
-
-    //
-    // Just here to remove some boiler plate code that's not really used by our
-    // implementation
-    //
 
     abstract class NotDebuggableState extends State implements ReadyCheckable {
 
