@@ -1379,6 +1379,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
         //shoot
         for (int i = 0; i < numHighGoals; i++) {
+            if (runtimeAuto.seconds() > 29){ return;}
             if (i == 0) {
                 autoShoot();
             } else {
@@ -1387,12 +1388,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             sleep(200);
         }
         if (numPowerShots > 0) {
+            if (runtimeAuto.seconds() > 29){ return;}
             shooter.shootOutByRpm(1260);
             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
             //shoot
             autoShootFast();
         }
         if (numPowerShots > 1) {
+            if (runtimeAuto.seconds() > 29){ return;}
             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_M, false);
             //chassis.driveTo(.55, side(150), 170, 0, false,  2);
             //shoot
@@ -1400,6 +1403,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             //sleep(500);
         }
         if (numPowerShots > 2) {
+            if (runtimeAuto.seconds() > 29){ return;}
             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R, false);
             //chassis.driveTo(.55, side(170), 170, 0, false,  2);
             //shoot
