@@ -112,10 +112,10 @@ public class UltimateGoalTeleOp extends OpMode {
             robot.resetReads();
             MyPosition.initialize(robot.getLeftEncoderWheelPosition(),
                     robot.getRightEncoderWheelPosition(),
-
                     robot.getStrafeEncoderWheelPosition());
         }
-        MyPosition.setPosition(0.0, 0.0, Math.toRadians(90.0));
+        MyPosition.setPosition(MyPosition.worldXPosition, MyPosition.worldYPosition,
+                MyPosition.worldAngle_rad);
     }
 
     @Override
@@ -186,6 +186,9 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!triangleHeld && trianglePressed) {
             if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
+                UltimateGoalRobot.highGoal.x = MyPosition.worldXPosition;
+                UltimateGoalRobot.highGoal.y = MyPosition.worldYPosition;
+                UltimateGoalRobot.highGoal.angle = MyPosition.worldAngle_rad;
                 robot.startTripleInjecting();
             } else {
                 robot.startInjecting();
@@ -204,13 +207,13 @@ public class UltimateGoalTeleOp extends OpMode {
 
         // This can be used for shoot alignment.
         if(!rightHeld && rightPressed) {
-//            if(!aligning) {
-//                robot.startShotAligning(UltimateGoalRobot.powerShotRight, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
-//                aligning = true;
-//            } else {
-//                aligning = false;
-//                robot.stopShotAligning();
-//            }
+            if(!aligning) {
+                robot.startShotAligning(UltimateGoalRobot.highGoal, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                aligning = true;
+            } else {
+                aligning = false;
+                robot.stopShotAligning();
+            }
             rightHeld = true;
         } else if(!rightPressed) {
             rightHeld = false;
@@ -231,6 +234,13 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!downHeld && downPressed) {
             robot.setShooterFlapPowerShot();
+//            if(!aligning) {
+//                robot.startShotAligning(UltimateGoalRobot.powerShotCenter, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+//                aligning = true;
+//            } else {
+//                aligning = false;
+//                robot.stopShotAligning();
+//            }
             downHeld = true;
         } else if (!downPressed) {
             downHeld = false;
@@ -238,6 +248,13 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!upHeld && upPressed) {
             robot.setShooterFlapHighGoal();
+//            if(!aligning) {
+//                robot.startShotAligning(UltimateGoalRobot.highGoal, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+//                aligning = true;
+//            } else {
+//                aligning = false;
+//                robot.stopShotAligning();
+//            }
             upHeld = true;
         } else if (!upPressed) {
             upHeld = false;

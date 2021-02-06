@@ -102,8 +102,7 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
         robot.resetReads();
         robot.performInjecting();
         robot.performTripleInjecting();
-        robot.performStowedToReleaseWobbleGoal();
-        robot.performStowArm();
+        robot.performRotatingArm();
         robot.performClawToggle();
         robot.updateShooterStability();
     }

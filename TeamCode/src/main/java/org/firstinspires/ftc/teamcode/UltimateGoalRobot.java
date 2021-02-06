@@ -502,7 +502,7 @@ public class UltimateGoalRobot
         double errorMultiplier = pullingFoundation ? 0.04 : 0.016;
         double minSpinRate = pullingFoundation ? MIN_FOUNDATION_SPIN_RATE : MIN_SPIN_RATE;
         double deltaAngle = MyPosition.AngleWrap(targetAngle - MyPosition.worldAngle_rad);
-        double turnSpeed = Math.toDegrees(deltaAngle) * errorMultiplier;
+        double turnSpeed = -Math.toDegrees(deltaAngle) * errorMultiplier;
 
         // This should be set on the first call to start us on a new path.
         if(resetDriveAngle) {
@@ -874,6 +874,7 @@ public class UltimateGoalRobot
     /** Moves the wobble arm to the specified position. **/
     public static double WOBBLE_ARM_STOWED = WOBBLE_ARM_MIN;
     public static double WOBBLE_ARM_RUNNING = 1.06;
+    public static double WOBBLE_ARM_DEPLOYING = 1.6;
     public static double WOBBLE_ARM_GRABBING = 2.34;
     public static double WOBBLE_ARM_ERROR = 0.1;
     public static double WOBBLE_ARM_REFINING = 0.005;
