@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Main Teleop
@@ -22,7 +19,12 @@ public class OdometryTeleOp extends LinearOpMode{
 
     private IMURobot robot;
 
-    final double COUNTS_PER_INCH = 307.699557;//~~~~~~~~~~~~~~
+    final double WHEEL_DIAMETER = 1.5;
+    final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
+    final double COUNTS_PER_REVOLUTION = 1280;
+    final double COUNTS_PER_INCH = COUNTS_PER_REVOLUTION/WHEEL_CIRCUMFERENCE;
+
+
 
     //Odometry encoder wheels
     DcMotor verticalRight, verticalLeft, horizontal;
@@ -77,6 +79,22 @@ public class OdometryTeleOp extends LinearOpMode{
                 powerMod = 1.0;
             }
 
+            if(gamepad1.y){
+                odometryDriveToPos(0,0);
+            }
+
+            if(gamepad1.x){
+                odometryDriveToPos(0, 24);
+            }
+
+            if(gamepad1.b){
+                odometryDriveToPos(24, 0);
+            }
+
+            if(gamepad1.a){
+                odometryDriveToPos(24, 24);
+            }
+
 
             //everything driving
             //Mecanum drive using trig
@@ -110,48 +128,48 @@ public class OdometryTeleOp extends LinearOpMode{
 
     }
 
-    public void odometryNormalizeAngle(){
-        while (globalPositionUpdate.returnOrientation() > 0){
-            robot.turnCounterClockwise(1);
-        }
+    public void odometryNormalizeAngle() throws InterruptedException{
 
-        while (globalPositionUpdate.returnOrientation() < 0){
-            robot.turnClockwise(1);
+        while(Math.abs(globalPositionUpdate.returnOrientation()) > 5){
+            if(globalPositionUpdate.returnOrientation() > 0){// thing > 0 + threshold
+                robot.turnCounterClockwise(0.1);
+            }else if(globalPositionUpdate.returnOrientation() < 0){// thing > 0 - threshold
+                robot.turnClockwise(0.1);
+            }else{
+                break;
+            }
         }
-
-        if (globalPositionUpdate.returnOrientation() == 0){
-            robot.completeStop();
-        }
+        robot.completeStop();
     }
 
-    public void odometryDriveToPos (double xPos, double yPos) {
+    public void odometryDriveToPos (double xPos, double yPos) throws InterruptedException{
         double C = 0;
-        while (globalPositionUpdate.returnXCoordinate() > xPos) {
-            robotStrafe(1, -90);
+        while (Math.abs(globalPositionUpdate.returnXCoordinate() - xPos) > 1) {//while distance to destination > than threshold
+            double angle = globalPositionUpdate.returnXCoordinate() < xPos ? 90 : -90;//basically angle = (boolean)? value-if-true : value-if-false
+            robotStrafe(.4, angle);
+
+            if(globalPositionUpdate.returnXCoordinate() == xPos){
+                break;
+            }
         }
-        while (globalPositionUpdate.returnXCoordinate() < xPos) {
-            robotStrafe(1, 90);
-        }
-        if (globalPositionUpdate.returnXCoordinate() == xPos) {
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 1;
-        }
+        robot.completeStop();
+        odometryNormalizeAngle();
+        Thread.sleep(500);
 
 
-        while (globalPositionUpdate.returnYCoordinate() > yPos && C == 1) {
-            robotStrafe(-1, 0);
+        while (Math.abs(globalPositionUpdate.returnYCoordinate() - yPos) > 1) {
+            double power = globalPositionUpdate.returnYCoordinate() < yPos ? -.4 : .4;
+            robotStrafe(power, 0);
+
+            if(globalPositionUpdate.returnYCoordinate() == yPos){
+                break;
+            }
         }
-        while (globalPositionUpdate.returnYCoordinate() < yPos && C == 1) {
-            robotStrafe(1, 0);
-        }
-        if (globalPositionUpdate.returnYCoordinate() < yPos && C == 1) {
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 2;
-        }
+        robot.completeStop();
+        odometryNormalizeAngle();
+        Thread.sleep(500);
     }
-    public void robotStrafe (double power, double angle){
+    public void robotStrafe (double power, double angle) throws InterruptedException{
         //restart angle tracking
         robot.resetAngle();
 

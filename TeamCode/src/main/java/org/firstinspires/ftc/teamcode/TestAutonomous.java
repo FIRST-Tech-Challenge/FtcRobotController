@@ -124,7 +124,7 @@ public class TestAutonomous extends LinearOpMode {
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
-        goShoot();
+
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
         int stackThreshold = 60;
@@ -148,30 +148,27 @@ public class TestAutonomous extends LinearOpMode {
         telemetry.update();
 
 
-
+        goShoot();
         switch(targetZone){
             case 1:
-                //CHANGE!!!
-                robot.gyroTurn(90, .5);
-                //robot.gyroDriveCm(-.5, 180);
-                dropWobble(targetZone);
-                //robot.gyroTurn(-45, .5);
-                //robot.gyroDriveCm(-.25, 60);
+                robot.gyroTurn(150, 0.75);
+                dropWobble();
+                robot.gyroDriveCm(-.5, 10);
                 //odometryDriveToPos(100,100);
                 break;
             case 2:
-                robot.gyroDriveCm(-.5, 100);
-                dropWobble(targetZone);
-                robot.gyroDriveCm(.25, 60);
+                robot.gyroTurn(180, 0.75);
+                robot.gyroDriveCm(-.75, 50);
+                dropWobble();
+                robot.gyroDriveCm(.75, 40);
                 //odometryDriveToPos(100,100);
                 break;
             case 3:
-                robot.gyroTurn(20, .5);
-                robot.gyroDriveCm(-.5, 180);
-                //robot.gyroTurn(-10, .5);
-                robot.gyroDriveCm(-.5, 20);
-                dropWobble(targetZone);
-                robot.gyroDriveCm(.25, 60);
+                robot.gyroTurn(180, 0.75);
+                robot.gyroStrafeCm(0.75, -90,40);
+                robot.gyroDriveCm(-.75, 100);
+                dropWobble();
+                robot.gyroDriveCm(.75, 90);
                 //odometryDriveToPos(100,100);
                 break;
             default:
@@ -179,37 +176,6 @@ public class TestAutonomous extends LinearOpMode {
         }
 
         globalPositionUpdate.stop();
-        robot.gyroStrafeCm(0.5, -90, 80);
-        switch(targetZone){
-            case 1:
-                robot.gyroDriveCm(-.5, 200);
-                dropWobble(targetZone);
-                //robot.gyroTurn(-45, .75);
-                //robot.gyroDriveCm(-.75, 60);
-                //odometryDriveToPos(100,100);
-                robot.gyroStrafeCm(0.5, 90, 100);
-                robot.gyroDriveCm(-.5, 40);
-                break;
-            case 2:
-                robot.gyroDriveCm(-.5, 265);
-                robot.gyroTurn(-45, .75);
-                //robot.gyroDriveCm(-.75, 40);
-                dropWobble(targetZone);
-                //robot.gyroTurn(30, 0.75);
-                //robot.gyroDriveCm(.75, 75);
-
-                //odometryDriveToPos(100,100);
-                break;
-            case 3:
-                robot.gyroDriveCm(-.5, 350);
-                dropWobble(targetZone);
-                robot.gyroDriveCm(.5, 130);//
-                //odometryDriveToPos(100,100);
-                break;
-            default:
-                break;
-        }
-
 
     }
 
@@ -273,14 +239,17 @@ public class TestAutonomous extends LinearOpMode {
 
     }
     public void goShoot() throws InterruptedException{
-        outtakeLeft.setPower(0.46);//or 0.44
-        outtakeRight.setPower(0.46);//or 0.44
-        robot.gyroDriveCm(0.5, 180);
+        outtakeLeft.setPower(0.35);//or 0.44
+        outtakeRight.setPower(0.35);//or 0.44
+        robot.gyroStrafeCm(0.75, -90, 40);
+        robot.gyroDriveCm(0.75, 180);
+        robot.gyroStrafeCm(0.75, 90, 70);
+
         for(int i = 0; i < 3; i++){
             flipper.setPosition(1);
-            Thread.sleep(1000);//change
+            Thread.sleep(750);//CHANGE!!!!!!!
             flipper.setPosition(0);
-            Thread.sleep(1000);
+            Thread.sleep(750);//CHANGE!!!!!!!!
         }
         outtakeLeft.setPower(0);
         outtakeRight.setPower(0);
@@ -344,7 +313,7 @@ public class TestAutonomous extends LinearOpMode {
         //}
     }
 
-    public void dropWobble(int targetZone){
+    public void dropWobble(){
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
@@ -355,13 +324,12 @@ public class TestAutonomous extends LinearOpMode {
 
         wobbleClaw.setPosition(1);
 
-        if(targetZone > 1) {
-            timer.reset();
-            while (timer.milliseconds() < 1000) {//remove?
-                wobbleArm.setPower(.4);
-            }
-            wobbleArm.setPower(0);
+        timer.reset();
+        while (timer.milliseconds() < 2000) {
+            wobbleArm.setPower(.4);
         }
+        wobbleArm.setPower(0);
+
     }
 
 }
