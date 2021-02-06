@@ -32,13 +32,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.robots.UGBot;
 
-import android.widget.Switch;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.ftccommon.SoundPlayer;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -47,10 +44,10 @@ import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.nearZero;
 import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
-import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
 
 /**
  * This file contains the code for Iron Reign's main OpMode, used for both
@@ -96,6 +93,8 @@ public class UG_6832 extends OpMode {
     private long damperTimer = 0;
     private int direction = 1; // -1 to reverse direction
     private int currTarget = 0;
+
+    public CsvLogKeeper logger;
 
     // sensors/sensing-related variables
     private Orientation angles;
@@ -298,6 +297,9 @@ public class UG_6832 extends OpMode {
         robot.init(this.hardwareMap);
 
         auto = new Autonomous(robot, dummyT, gamepad1);
+
+        logger = new CsvLogKeeper("test",3,"tps, armTicks, targetDistance");
+
 
         debugTelemetry = gamepad1.right_trigger > .3;
         debugTelemetry = true;
@@ -541,17 +543,15 @@ public class UG_6832 extends OpMode {
     int reverse = 1;
     String message = "";
 
+    int lastCachedArmTiccs = 0;
+    double lastCachedTPS = 0;
+    boolean cacheValidated = false;
+
+
     private void joystickDrive() {
         if (notdeadzone(gamepad1.right_stick_y)) {
             robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
         }
-//
-//        if (notdeadzone(gamepad2.right_stick_y)) {
-//            robot.launcher.adjustBelt(-gamepad2.right_stick_y);
-//        }
-//        if (notdeadzone(gamepad2.right_stick_x)) {
-//            robot.turret.adjust(gamepad2.right_stick_x);
-//        }
 
         if (!joystickDriveStarted) {
             robot.resetMotors(true);
@@ -584,21 +584,33 @@ public class UG_6832 extends OpMode {
             robot.turret.rotateCardinalTurret(true);
         }
 
-        if(toggleAllowed(gamepad1.a, a, 1)){
-            robot.articulate(PoseUG.Articulation.toggleGripper);
+
+        if(toggleAllowed(gamepad1.a, a, 1) && gamepad1.y){
+            robot.articulate(PoseUG.Articulation.toggleTrigger);
+            lastCachedTPS = robot.launcher.getFlywheelTPS();
+            lastCachedArmTiccs= robot.launcher.getElbowCurrentPos();
         }
 
-        if(System.currentTimeMillis() %30000 > 15000) {
-            robot.launcher.setFlywheelTPS(0);
-
-            message = "0 tps";
-        } else if(System.currentTimeMillis() % 30000 < 15000) {
-            robot.launcher.setFlywheelTPS(2500);
-            message = "2500 tps";
+        if(toggleAllowed(gamepad2.a, a, 2)){
+            cacheValidated = true;
         }
+
+        if(cacheValidated = true){
+            logger.UpdateLog(Double.toString(lastCachedTPS) + ","  + Double.toString(lastCachedArmTiccs) + "," + "idkguess");
+            cacheValidated = false;
+        }
+
+//        if(System.currentTimeMillis() %30000 > 15000) {
+//            robot.launcher.setFlywheelTPS(0);
+//
+//            message = "0 tps";
+//        } else if(System.currentTimeMillis() % 30000 < 15000) {
+//            robot.launcher.setFlywheelTPS(2500);
+//            message = "2500 tps";
+//        }
 
         if(gamepad1.y){
-            robot.launcher.flywheelMotor.setPower(-1);
+            robot.launcher.flywheelMotor.setPower(1);
         }
         else{
             robot.launcher.flywheelMotor.setPower(0);
@@ -614,6 +626,13 @@ public class UG_6832 extends OpMode {
         if (notdeadzone(gamepad1.left_trigger))
             robot.turret.rotateLeft(gamepad1.left_trigger * 5);
 
+
+        if (gamepad1.right_bumper)
+            robot.turret.rotateRight(.5);
+
+        if (gamepad1.left_bumper)
+            robot.turret.rotateLeft(.5);
+
 //        if (toggleAllowed(gamepad1.x, x, 1)) {
 //            robot.launcher.hookToggle();
 //        }
@@ -625,9 +644,9 @@ public class UG_6832 extends OpMode {
 
         // gamepad2 controls
 
-        if (toggleAllowed(gamepad2.a, a, 2)) {
-            robot.launcher.toggleGripper();
-        }
+//        if (toggleAllowed(gamepad2.a, a, 2)) {
+//            robot.launcher.toggleGripper();
+//        }
 
 
 
@@ -658,8 +677,8 @@ public class UG_6832 extends OpMode {
         robot.turret.update();
 
         TelemetryPacket packet = new TelemetryPacket();
-        packet.put("current flywheel velocity", robot.launcher.flywheelVelocity);
-        packet.put("target flywheel velocity", robot.launcher.getFlywheelTPS());
+        packet.put("current flywheel velocity", robot.launcher.flywheelTPS);
+        packet.put("target flywheel velocity", robot.launcher.getFlywheelTargetTPS());
         packet.put("flywheel motor power", robot.launcher.flywheelMotor.getPower() * 200);
         packet.put("message",message);
 
@@ -707,7 +726,7 @@ public class UG_6832 extends OpMode {
         }
 
         if(toggleAllowed(gamepad1.a, a, 1)){
-            robot.launcher.toggleGripper();
+            robot.launcher.toggleTrigger();
         }
 
         if(toggleAllowed(gamepad1.b, b, 1)){

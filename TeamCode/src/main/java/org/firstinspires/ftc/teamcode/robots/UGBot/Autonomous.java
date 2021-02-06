@@ -110,7 +110,7 @@ public class Autonomous {
                     () -> robot.rotateIMU(270,3))
 
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.launcher.toggleGripper())
+            //.addState(() -> robot.launcher.toggleGripper())
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .addState(() -> robot.rotateIMU(0,3))

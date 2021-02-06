@@ -155,7 +155,7 @@ public class PoseUG {
     public enum Articulation { // serves as a desired robot articulation which may include related complex movements of the elbow, lift and supermanLeft
         inprogress, // currently in progress to a final articulation
         manual, // target positions are all being manually overridden
-        toggleGripper
+        toggleTrigger
     }
 
     public enum RobotType {
@@ -680,22 +680,22 @@ public class PoseUG {
         return true;
     }
 
-    public int toggleGripperState = 0;
-    public long lastGripTime;
+    public int toggleTriggerState = 0;
+    public long lastTriggerTime;
 
-    public boolean toggleGripperArticulation() {
-        switch(toggleGripperState) {
+    public boolean toggleTriggerArticulation() {
+        switch(toggleTriggerState) {
             case 0:
-                launcher.servoGripper.setPosition(servoNormalize(1800)); //open //1500
-                lastGripTime = System.currentTimeMillis();
-                toggleGripperState++;
+                launcher.toggleTrigger();
+                lastTriggerTime = System.currentTimeMillis();
+                toggleTriggerState++;
                 break;
             case 1:
-                if(System.currentTimeMillis() - lastGripTime > 2000) {
-                    launcher.servoGripper.setPosition(servoNormalize(2100)); //closed //899
+                if(System.currentTimeMillis() - lastTriggerTime > 500) {
+                    launcher.toggleTrigger();
+                    toggleTriggerState = 0;
                     return true;
                 }
-                toggleGripperState = 0;
                 break;
         }
         return false;
@@ -713,8 +713,8 @@ public class PoseUG {
         switch (articulation) {
             case manual:
                 break; // do nothing here - likely we are directly overriding articulations in game
-            case toggleGripper:
-                if(toggleGripperArticulation())
+            case toggleTrigger:
+                if(toggleTriggerArticulation())
                         articulation = Articulation.manual;
                 break;
             default:

@@ -23,7 +23,7 @@ public class Launcher {
     //actuators
     DcMotor elbow = null;
     DcMotorEx flywheelMotor = null;
-    Servo servoGripper = null;
+    Servo servoTrigger = null;
 
     //flywheel variables
     public long lastUpdateTime;
@@ -31,9 +31,9 @@ public class Launcher {
     PIDController flyWheelPID;
     double FlywheelCorrection = 0.00; //correction to apply to extention motor
     boolean FlywheelActivePID = true;
-    double FlywheelTPS = 0;
+    double FlywheelTargetTPS = 0;
     double FlywheelPwr = 1;
-    double flywheelVelocity;
+    double flywheelTPS;
 
     //elbow variables
     PIDController elbowPID;
@@ -54,11 +54,11 @@ public class Launcher {
     public int elbowMid = (actualElbowMax + elbowMin)/2;
     public int elbowMaxSafetyOffset = 70; //makes sure that the robot doesn't try and extend to the elbow max exactly
 
-    public Launcher(DcMotor elbow, DcMotorEx flywheelMotor, Servo servoGripper){
+    public Launcher(DcMotor elbow, DcMotorEx flywheelMotor, Servo servoTrigger){
 
         this.elbow = elbow;
         this.flywheelMotor = flywheelMotor;
-        this.servoGripper = servoGripper;
+        this.servoTrigger = servoTrigger;
 
         this.elbow.setTargetPosition(elbow.getCurrentPosition());
         this.elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -74,10 +74,14 @@ public class Launcher {
         elbowPID.setIntegralCutIn(40);
         elbowPID.enableIntegralZeroCrossingReset(false);
 
+        servoTrigger.setPosition(servoNormalize(1800));
 
     }
 
     //Important junk
+
+    long prevNanoTime;
+    int prevMotorTicks;
 
     public void update(){
         if(active) {
@@ -85,12 +89,20 @@ public class Launcher {
                 movePIDElbow(kpElbow, kiElbow, kdElbow, elbow.getCurrentPosition(), elbowPos);
             else
                 elbowPos = elbow.getCurrentPosition();
-            flywheelVelocity = flywheelMotor.getVelocity();
+
+            flywheelTPS = (flywheelMotor.getCurrentPosition() - prevMotorTicks) / ((System.nanoTime() - prevNanoTime) * 1E9);
+
+            prevNanoTime = System.nanoTime();
+            prevMotorTicks = flywheelMotor.getCurrentPosition();
+
+
             if(FlywheelActivePID) {
-                spinPIDFlywheel(Constants.kpFlywheel, Constants.kiFlywheel, Constants.kdFlywheel, flywheelVelocity, FlywheelTPS);
+                spinPIDFlywheel(Constants.kpFlywheel, Constants.kiFlywheel, Constants.kdFlywheel, flywheelTPS, FlywheelTargetTPS);
             }
             else
-                FlywheelTPS = flywheelVelocity;
+                FlywheelTargetTPS = flywheelTPS;
+//
+
         }
     }
 
@@ -118,16 +130,16 @@ public class Launcher {
 
 
 
-    //gripper methods
+    //trigger methods
 
-    boolean grabState = false;
+    boolean triggState = true;
 
-    public boolean toggleGripper() {
-        grabState = !grabState;
-        if(grabState)
-            servoGripper.setPosition(servoNormalize(1800)); //open //1500
+    public boolean toggleTrigger() {
+        triggState = !triggState;
+        if(triggState)
+            servoTrigger.setPosition(servoNormalize(1750));
         else
-            servoGripper.setPosition(servoNormalize(2100)); //closed //899
+            servoTrigger.setPosition(servoNormalize(2100)); //closed //899
         return true;
     }
 
@@ -157,7 +169,9 @@ public class Launcher {
         flywheelMotor.setPower(FlywheelCorrection);
     }
 
-
+    public double getFlywheelTPS() {
+        return flywheelTPS;
+    }
 
 
     //elbow methods
@@ -210,8 +224,8 @@ public class Launcher {
         return elbow.getCurrentPosition();
     }
 
-    public double getFlywheelTPS() {return FlywheelTPS;}
-    public void setFlywheelTPS(double flywheelTPS) {this.FlywheelTPS = flywheelTPS;}
+    public double getFlywheelTargetTPS() {return FlywheelTargetTPS;}
+    public void setFlywheelTargetTPS(double flywheelTargetTPS) {this.FlywheelTargetTPS = flywheelTargetTPS;}
 
     public double getCurrentAngle(){return  elbow.getCurrentPosition()/ticksPerDegree;}
 
