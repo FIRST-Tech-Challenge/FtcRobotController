@@ -46,8 +46,12 @@ public class DriverControlled extends OpMode {
                 .telemetry(telemetry)
                 .ticker(Ticker.systemTicker()).build();
 
+        WobbleGoal wobbleGoal = WobbleGoal.builder().hardwareMap(hardwareMap)
+                .telemetry(telemetry).build();
+
         operatorControls = OperatorControls.builder().operatorGamepad(new NinjaGamePad(gamepad2))
-                .scoringMechanism(scoringMechanism).build();
+                .scoringMechanism(scoringMechanism)
+                .wobbleGoal(wobbleGoal).build();
     }
 
     @Override
