@@ -6,7 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 public interface VisionProvider {
-    public void initializeVision(HardwareMap hardwareMap, Viewpoint viewpoint);
+    public void initializeVision(HardwareMap hardwareMap, Viewpoint viewpoint, boolean enableDashboard);
 
     public void shutdownVision();
 

@@ -8,7 +8,7 @@ public class VisionProviders {
     private VisionProviders() { throw new RuntimeException("Utility Class"); }
 
     public static final Class<? extends VisionProvider>[] visionProviders =
-            new Class[]{TensorflowIntegration.class, ZeroDummyVisionIntegration.class, OneDummyVisionIntegration.class, FourDummyVisionIntegration.class,};
+            new Class[]{OpenCVIntegration.class, TensorflowIntegration.class, ZeroDummyVisionIntegration.class, OneDummyVisionIntegration.class, FourDummyVisionIntegration.class,};
 
 
     public static final Class<? extends VisionProvider> defaultProvider = OneDummyVisionIntegration.class;
