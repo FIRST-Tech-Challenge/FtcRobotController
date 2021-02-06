@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.action;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.playmaker.Action;
@@ -15,21 +16,30 @@ public class LocalizerMoveAction implements Action {
     private int currentTransformIndex = 0;
     private double fullSpeed;
     private double preciseSpeed;
+    private double rotateSpeed = ROTATE_SPEED;
     private double previousHeadingInDegrees = 0;
     private double previousHeadingTime = 0;
     private FollowPathMethod followPathMethod;
 
     // Linear Path Following Configuration
-    static final double SLOWDOWN_DISTANCE_INCHES = 16;
+    static final double SLOWDOWN_DISTANCE_INCHES = 12;
     static final double SLOWEST_DISTANCE_INCHES = 4;
-    static final double ROTATE_SPEED = 0.24;
+    static final double ROTATE_SPEED = 0.25;
+    static final double SLOW_ROTATE_THRESHOLD_DEGREES = 30;
     static final double MAX_ROTATION_AMOUNT = 0.5;
 
 
     // Tolerances
-    static final double DISTANCE_TOLERANCE_INCHES = 1;
+    static final double DISTANCE_TOLERANCE_INCHES = 0.5;
     static final double FAST_DISTANCE_TOLERANCE_INCHES = 3;
     static final double HEADING_TOLERANCE_DEGREES = 1;
+
+    // Speed Up
+    static final double SPEED_STUCK_TIMEOUT = 750;
+    static final double SPEED_STUCK_BUMP_AMOUNT = 0.15;
+    static final double SPEED_STUCK_DIST_THERSHOLD = 0.2;
+    Position lastPosition;
+    double lastMovementTime;
 
     public enum FollowPathMethod {
         LINEAR, // not gonna be implemented
@@ -52,7 +62,7 @@ public class LocalizerMoveAction implements Action {
 
     @Override
     public void init(RobotHardware hardware) {
-
+        lastMovementTime = System.currentTimeMillis();
     }
 
     double rotationLimit(double rotation) {
@@ -74,6 +84,7 @@ public class LocalizerMoveAction implements Action {
             return false;
         }
         double currentHeading = currentOrientation.thirdAngle;
+        double currentBackwardsHeading = Localizer.headingWrapInDegrees(currentHeading - 180);
 
         // Calculate distances / angles to target
         double distanceToTargetInInches = Localizer.distance(currentPosition, currentTarget.position, DistanceUnit.INCH);
@@ -88,6 +99,13 @@ public class LocalizerMoveAction implements Action {
 
         // This is the angular difference between the robot's forward heading and the heading towards the target position.
         double angDiffBetweenForwardAndTargetPosDegrees = Localizer.angularDifferenceInDegrees(currentHeading, angDiffBetweenPositionsDegrees);
+        double angDiffBetweenBackwardAndTargetPosDegrees = Localizer.angularDifferenceInDegrees(currentBackwardsHeading, angDiffBetweenPositionsDegrees);
+        double smallestDiffToTargetPosDegrees;
+        if (Math.abs(angDiffBetweenForwardAndTargetPosDegrees) < Math.abs(angDiffBetweenBackwardAndTargetPosDegrees)){
+            smallestDiffToTargetPosDegrees = angDiffBetweenForwardAndTargetPosDegrees;
+        } else {
+            smallestDiffToTargetPosDegrees = angDiffBetweenBackwardAndTargetPosDegrees;
+        }
 
         double robotMoveAngleRadians = 0;
         double robotRotation = 0;
@@ -107,7 +125,12 @@ public class LocalizerMoveAction implements Action {
                     currentTransformIndex++;
                 } else if (withinDistanceTolerance) {
                     speed = 0;
-                    robotRotation = angDiffToTargetHeadingDegrees > 0 ? ROTATE_SPEED : -ROTATE_SPEED;
+                    if (Math.abs(angDiffToTargetHeadingDegrees) <= SLOW_ROTATE_THRESHOLD_DEGREES) {
+                        robotRotation = angDiffToTargetHeadingDegrees > 0 ? ROTATE_SPEED : -ROTATE_SPEED;
+                    } else {
+                        robotRotation = angDiffToTargetHeadingDegrees > 0 ? 2 * ROTATE_SPEED : -2 * ROTATE_SPEED;
+                    }
+                    
                 } else {
                     if (distanceToTargetInInches <= SLOWDOWN_DISTANCE_INCHES) {
                         double slope = (preciseSpeed - fullSpeed) / (SLOWEST_DISTANCE_INCHES - SLOWDOWN_DISTANCE_INCHES);
@@ -123,11 +146,26 @@ public class LocalizerMoveAction implements Action {
 
 
                     robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
-                    robotRotation = rotationLimit(angDiffBetweenForwardAndTargetPosDegrees / 180);
+                    robotRotation = rotationLimit(smallestDiffToTargetPosDegrees / 180);
 
                     if (distanceToFinalTargetInInches <= SLOWDOWN_DISTANCE_INCHES) {
                         double slope = (preciseSpeed - fullSpeed) / (SLOWEST_DISTANCE_INCHES - SLOWDOWN_DISTANCE_INCHES);
                         speed = Math.max(slope * distanceToTargetInInches - preciseSpeed, preciseSpeed);
+
+                        double currentTime = System.currentTimeMillis();
+                        if (lastPosition != null) {
+                            double deltaDistance = Localizer.distance(lastPosition, currentPosition, DistanceUnit.INCH);
+                            if (deltaDistance >= SPEED_STUCK_DIST_THERSHOLD) {
+                                lastMovementTime = currentTime;
+                            }
+
+                            if (currentTime - lastMovementTime >= SPEED_STUCK_TIMEOUT) {
+                                fullSpeed += SPEED_STUCK_BUMP_AMOUNT;
+                                preciseSpeed += SPEED_STUCK_BUMP_AMOUNT;
+                                lastMovementTime = currentTime;
+                            }
+                        }
+                        lastPosition = currentPosition;
                     }
 
                     if (withinFastDistanceTolerance) {
@@ -136,18 +174,37 @@ public class LocalizerMoveAction implements Action {
                 } else {
                     // For the final target, the robot needs to reach the correct target heading.
                     robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
-                    robotRotation = rotationLimit(angDiffBetweenForwardAndTargetPosDegrees / 180);
+                    robotRotation = rotationLimit(smallestDiffToTargetPosDegrees / 180);
 
                     if (withinDistanceTolerance && withinHeadingTolerance) {
                         currentTransformIndex++;
                     } else if (withinDistanceTolerance) {
                         speed = 0;
-                        robotRotation = angDiffToTargetHeadingDegrees > 0 ? ROTATE_SPEED : -ROTATE_SPEED;
+                        if (Math.abs(angDiffToTargetHeadingDegrees) <= SLOW_ROTATE_THRESHOLD_DEGREES) {
+                            robotRotation = angDiffToTargetHeadingDegrees > 0 ? rotateSpeed : -rotateSpeed;
+                        } else {
+                            robotRotation = angDiffToTargetHeadingDegrees > 0 ? 2 * rotateSpeed : -2 * rotateSpeed;
+                        }
                     } else {
                         if (distanceToTargetInInches <= SLOWDOWN_DISTANCE_INCHES) {
                             robotRotation = angDiffToTargetHeadingDegrees / 180;
                             double slope = (preciseSpeed - fullSpeed) / (SLOWEST_DISTANCE_INCHES - SLOWDOWN_DISTANCE_INCHES);
                             speed = Math.max(slope * distanceToTargetInInches - preciseSpeed, preciseSpeed);
+
+                            double currentTime = System.currentTimeMillis();
+                            if (lastPosition != null) {
+                                double deltaDistance = Localizer.distance(lastPosition, currentPosition, DistanceUnit.INCH);
+                                if (deltaDistance >= SPEED_STUCK_DIST_THERSHOLD) {
+                                    lastMovementTime = currentTime;
+                                }
+
+                                if (currentTime - lastMovementTime >= SPEED_STUCK_TIMEOUT) {
+                                    fullSpeed += SPEED_STUCK_BUMP_AMOUNT;
+                                    preciseSpeed += SPEED_STUCK_BUMP_AMOUNT;
+                                    lastMovementTime = currentTime;
+                                }
+                            }
+                            lastPosition = currentPosition;
                         }
                     }
                 }
@@ -160,6 +217,11 @@ public class LocalizerMoveAction implements Action {
             hardware.omniDrive.stopDrive();
             return true;
         } else {
+            String progress = String.format("Current Target X: %.1f Y: %.1f H: %.1f",
+                    currentTarget.position.x,
+                    currentTarget.position.y,
+                    currentTarget.heading);
+            hardware.telemetry.addLine(progress);
             hardware.telemetry.addData("LMA Speed", speed);
             hardware.telemetry.addData("LMA Move Angle", Math.toDegrees(robotMoveAngleRadians));
             hardware.telemetry.addData("LMA Rotation", robotRotation);
@@ -181,14 +243,6 @@ public class LocalizerMoveAction implements Action {
 
     @Override
     public String progressString() {
-        if (currentTransformIndex < transforms.length) {
-            RobotTransform currentTarget = transforms[currentTransformIndex];
-            String progress = String.format("Current Target X: %.1f Y: %.1f H: %.1f",
-                    currentTarget.position.x,
-                    currentTarget.position.y,
-                    currentTarget.heading);
-            return progress;
-        }
         return null;
     }
 

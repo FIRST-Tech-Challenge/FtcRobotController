@@ -15,6 +15,7 @@ public class DetectRingsAction implements Action {
     }
 
     public DetectRingsResult detectRingsResult = DetectRingsResult.NONE;
+    public static final double QUAD_ASPECT_RATIO_LIMIT = 3;
     private double timeToDetect;
     private double endTime;
 
@@ -46,6 +47,11 @@ public class DetectRingsAction implements Action {
                         this.detectRingsResult = DetectRingsResult.SINGLE;
                     } else if (recognition.getLabel().equals("Quad")) {
                         this.detectRingsResult = DetectRingsResult.QUAD;
+                        double aspectRatio = recognition.getWidth() / recognition.getHeight();
+                        if (aspectRatio >= QUAD_ASPECT_RATIO_LIMIT) {
+                            // faulty detection
+                            this.detectRingsResult = DetectRingsResult.SINGLE;
+                        }
                     }
                     hardware.telemetry.addData("Confidence", "%.03f", recognition.getConfidence());
                     return true;
