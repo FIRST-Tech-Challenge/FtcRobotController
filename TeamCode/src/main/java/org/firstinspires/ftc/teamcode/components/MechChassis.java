@@ -133,6 +133,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private DcMotorEx motorBR;
 
     private DistanceSensor leftRangeSensor;
+    private DistanceSensor frontRangeSensor;
 
     // array contains the same wheel assemblies as above variables
     //  and is convenient to use when actions have to be performed on all 4
@@ -502,6 +503,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
         if ((auto || setRangeSensorTelemetry)) {
             leftRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "leftRange");
+            frontRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "frontRange");
         }
 
         // register chassis as configurable component
