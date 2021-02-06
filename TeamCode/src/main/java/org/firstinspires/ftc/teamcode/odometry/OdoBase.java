@@ -161,7 +161,9 @@ public class OdoBase extends LinearOpMode {
                 telemetry.addData("Warning", String.format("No data in target reference function %s", instruction.getTargetReference()));
                 return;
             }
-            desiredHead = dot.getHeading();
+            if (dot.getHeading() != BotMoveProfile.DEFAULT_HEADING) {
+                desiredHead = dot.getHeading();
+            }
         }
         BotMoveProfile profile = null;
         if (strategy == MoveStrategy.StraightRelative){
