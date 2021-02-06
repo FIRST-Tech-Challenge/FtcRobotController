@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
@@ -22,20 +24,14 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     private static final String LABEL_SECOND_ELEMENT = "Single";
 
     public static final double SHOOTER_POWER = 0.5235;
-    public static final double SHOOTER_RPM = 2700;
-    public static final double SHOOTER_RPM_THRESHOLD = 250;
-    public static final double SHOOTER_POWER_INCREMENT = 0.03;
-    public static final double SHOOTER_POWER_FINE_INCREMENT = 0.01;
-    public static final double SHOOTER_POWER_FINE_INCREMENT_RANGE = 1000;
-    public static final double WOBBLE_GOAL_POWER_ZERO_THRESHOLD = 20;
+    public static final double SHOOTER_RPM = 2600;
+    public static final double COUNTS_PER_SHOOTER_REV = 28;
+    public static final double SHOOTER_RPM_THRESHOLD = 100;
+    public static final double WOBBLE_GOAL_POWER_ZERO_THRESHOLD = 25;
     boolean spinShooter = false;
     public boolean extendWobbleGoal = false;
     double currentShooterPower = 0;
     double currentShooterRPM = 0;
-    double targetShooterRPM = SHOOTER_RPM;
-    long shooterPrevTime = System.currentTimeMillis();
-    long shooterPrevUnstableTime = System.currentTimeMillis();
-    int shooterPrevPos = 0;
     int wobbleGoalHolderInitPos;
 
     public enum UltimateGoalStartingPosition  {
@@ -54,7 +50,7 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     public DcMotor backLeft;
     public DcMotor backRight;
 
-    public DcMotor shooter;
+    public DcMotorEx shooter;
     public DcMotor collector;
     public DcMotor escalator;
 
@@ -73,13 +69,12 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         backLeft = this.initializeDevice(DcMotor.class, "backLeft");
         backRight = this.initializeDevice(DcMotor.class, "backRight");
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooter = this.initializeDevice(DcMotor.class, "shooter");
+        shooter = this.initializeDevice(DcMotorEx.class, "shooter");
         shooter.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         collector = this.initializeDevice(DcMotor.class, "collector");
         escalator = this.initializeDevice(DcMotor.class, "escalator");
         wobbleGoalHolder = this.initializeDevice(DcMotor.class, "wobble");
-        wobbleGoalHolder.setDirection(DcMotorSimple.Direction.REVERSE);
         wobbleGoalHolderInitPos = wobbleGoalHolder.getCurrentPosition();
         wobbleGoalHolder.setTargetPosition(wobbleGoalHolderInitPos); // 72 = 90deg
         wobbleGoalHolder.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -111,17 +106,25 @@ public abstract class UltimateGoalHardware extends RobotHardware {
 
     }
 
+    private double rpmToCPS(double val) {
+        return (val * COUNTS_PER_SHOOTER_REV) / 60;
+    }
+
+    private double cpsToRPM(double val) {
+        return (val / COUNTS_PER_SHOOTER_REV) * 60;
+    }
+
     @Override
     public void hardware_loop() {
         super.hardware_loop();
 
-        long current_time = System.currentTimeMillis();
-        int current_pos = shooter.getCurrentPosition();
-        int deltaPos = current_pos - shooterPrevPos;
-        long deltaTime = current_time - shooterPrevTime;
-        shooterPrevPos = current_pos;
-        shooterPrevTime = current_time;
-        currentShooterRPM = (deltaPos/28.0) / (deltaTime) * (1000*60);
+//        long current_time = System.currentTimeMillis();
+//        int current_pos = shooter.getCurrentPosition();
+//        int deltaPos = current_pos - shooterPrevPos;
+//        long deltaTime = current_time - shooterPrevTime;
+//        shooterPrevPos = current_pos;
+//        shooterPrevTime = current_time;
+//        currentShooterRPM = (deltaPos/28.0) / (deltaTime) * (1000*60);
 
 //        if (spinShooter) {
 ////            if (Math.abs(currentShooterRPM - targetShooterRPM) > SHOOTER_RPM_THRESHOLD) {
@@ -141,7 +144,7 @@ public abstract class UltimateGoalHardware extends RobotHardware {
 //        }
 
         if (extendWobbleGoal) {
-            wobbleGoalHolder.setTargetPosition(wobbleGoalHolderInitPos + (int) (170 * (COUNTS_PER_WOBBLE_REVOLUTION/360)));
+            wobbleGoalHolder.setTargetPosition(wobbleGoalHolderInitPos + (int) (160 * (COUNTS_PER_WOBBLE_REVOLUTION/360)));
         } else {
             wobbleServo.setPosition(0);
             wobbleGoalHolder.setTargetPosition(wobbleGoalHolderInitPos);
@@ -150,23 +153,24 @@ public abstract class UltimateGoalHardware extends RobotHardware {
         int countsFromTarget = Math.abs(wobbleGoalHolder.getTargetPosition() - wobbleGoalHolder.getCurrentPosition());
         wobbleGoalHolder.setPower(countsFromTarget <= WOBBLE_GOAL_POWER_ZERO_THRESHOLD ? 0 : 1);
 
-        currentShooterPower = spinShooter ? SHOOTER_POWER : 0;
-        shooter.setPower(currentShooterPower);
-        telemetry.addData("Current Shooter Power", currentShooterPower);
-        telemetry.addData("Target RPM", targetShooterRPM);
-        telemetry.addData("RPM", currentShooterRPM);
+        shooter.setVelocity(spinShooter ? rpmToCPS(SHOOTER_RPM) : 0);
+        double rpm = cpsToRPM(shooter.getVelocity());
+        telemetry.addData("Shooter Power", currentShooterPower);
+        telemetry.addData("Shooter DPS", shooter.getVelocity(DEGREES));
+        telemetry.addData("Shooter RPM", rpm);
     }
 
     public void setShooterEnabled(boolean enabled) {
-        if (enabled && !this.spinShooter) {
-            this.shooterPrevUnstableTime = System.currentTimeMillis();
-            this.targetShooterRPM = SHOOTER_RPM - 1000;
-        }
+//        if (enabled && !this.spinShooter) {
+//            this.shooterPrevUnstableTime = System.currentTimeMillis();
+//            this.targetShooterRPM = SHOOTER_RPM - 1000;
+//        }
         this.spinShooter = enabled;
     }
 
     public boolean canShoot() {
-        boolean rpmReady = Math.abs(this.currentShooterRPM - this.SHOOTER_RPM) <= SHOOTER_RPM_THRESHOLD;
+        double rpm = cpsToRPM(shooter.getVelocity());
+        boolean rpmReady = Math.abs(rpm - this.SHOOTER_RPM) <= SHOOTER_RPM_THRESHOLD;
         return rpmReady;
     }
 

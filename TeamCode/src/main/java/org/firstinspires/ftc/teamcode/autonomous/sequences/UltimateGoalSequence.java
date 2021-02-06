@@ -43,7 +43,7 @@ public class UltimateGoalSequence extends ActionSequence {
     public static RobotTransform[] C_Near_Center_Transforms = {
             new RobotTransform(DistanceUnit.INCH, -24, -12, 135),
             new RobotTransform(DistanceUnit.INCH, 44, -42, 90),
-            new RobotTransform(DistanceUnit.INCH, 60, -42, 90),
+            new RobotTransform(DistanceUnit.INCH, 56, -36, 90),
     };
 
     public static RobotTransform[] C_Near_Wall_Transforms = {
@@ -63,11 +63,11 @@ public class UltimateGoalSequence extends ActionSequence {
     };
 
     static final double ROBOT_SPEED = 0.65;
-    static final double ROBOT_PRECISE_SPEED = 0.5f;
+    static final double ROBOT_PRECISE_SPEED = 0.35f;
     static final double SHOOTER_HEADING_OFFSET = -10;
     static final LocalizerMoveAction.FollowPathMethod FOLLOW_PATH_METHOD = LocalizerMoveAction.FollowPathMethod.FAST;
-    static final RobotTransform SHOOTING_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, 0, -12, 68);
-    static final RobotTransform SHOOTING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, 0, -36, 90);
+    static final RobotTransform SHOOTING_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, -3, -12, 72);
+    static final RobotTransform SHOOTING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, -3, -36, 90);
     static final RobotTransform PARKING_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, 12, -12, 90);
     static final RobotTransform PARKING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, 12, -36, 90);
 

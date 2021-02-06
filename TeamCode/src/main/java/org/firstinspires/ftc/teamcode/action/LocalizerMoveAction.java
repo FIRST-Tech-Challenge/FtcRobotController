@@ -20,13 +20,15 @@ public class LocalizerMoveAction implements Action {
     private FollowPathMethod followPathMethod;
 
     // Linear Path Following Configuration
-    static final double SLOWDOWN_DISTANCE_INCHES = 12;
+    static final double SLOWDOWN_DISTANCE_INCHES = 16;
     static final double SLOWEST_DISTANCE_INCHES = 4;
-    static final double ROTATE_SPEED = 0.22;
+    static final double ROTATE_SPEED = 0.24;
+    static final double MAX_ROTATION_AMOUNT = 0.5;
 
 
     // Tolerances
     static final double DISTANCE_TOLERANCE_INCHES = 1;
+    static final double FAST_DISTANCE_TOLERANCE_INCHES = 3;
     static final double HEADING_TOLERANCE_DEGREES = 1;
 
     public enum FollowPathMethod {
@@ -51,6 +53,10 @@ public class LocalizerMoveAction implements Action {
     @Override
     public void init(RobotHardware hardware) {
 
+    }
+
+    double rotationLimit(double rotation) {
+        return Math.min(MAX_ROTATION_AMOUNT, Math.max(rotation, -MAX_ROTATION_AMOUNT));
     }
 
     @Override
@@ -87,6 +93,7 @@ public class LocalizerMoveAction implements Action {
         double robotRotation = 0;
         double speed = this.fullSpeed;
 
+        boolean withinFastDistanceTolerance = distanceToTargetInInches <= FAST_DISTANCE_TOLERANCE_INCHES;
         boolean withinDistanceTolerance = distanceToTargetInInches <= DISTANCE_TOLERANCE_INCHES;
         boolean withinHeadingTolerance = Math.abs(angDiffToTargetHeadingDegrees) <= HEADING_TOLERANCE_DEGREES;
 
@@ -94,7 +101,7 @@ public class LocalizerMoveAction implements Action {
             case LINEAR:
                 // For the final target, the robot needs to reach the correct target heading.
                 robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
-                robotRotation = Math.max(-0.5, Math.min(0.5, angDiffToTargetHeadingDegrees / 180));
+                robotRotation = rotationLimit(angDiffToTargetHeadingDegrees / 180);
 
                 if (withinDistanceTolerance && withinHeadingTolerance) {
                     currentTransformIndex++;
@@ -116,20 +123,20 @@ public class LocalizerMoveAction implements Action {
 
 
                     robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
-                    robotRotation = Math.max(-0.5, Math.min(0.5, angDiffBetweenForwardAndTargetPosDegrees / 180));
+                    robotRotation = rotationLimit(angDiffBetweenForwardAndTargetPosDegrees / 180);
 
                     if (distanceToFinalTargetInInches <= SLOWDOWN_DISTANCE_INCHES) {
                         double slope = (preciseSpeed - fullSpeed) / (SLOWEST_DISTANCE_INCHES - SLOWDOWN_DISTANCE_INCHES);
                         speed = Math.max(slope * distanceToTargetInInches - preciseSpeed, preciseSpeed);
                     }
 
-                    if (distanceToTargetInInches <= DISTANCE_TOLERANCE_INCHES) {
+                    if (withinFastDistanceTolerance) {
                         currentTransformIndex++;
                     }
                 } else {
                     // For the final target, the robot needs to reach the correct target heading.
                     robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
-                    robotRotation = Math.max(-0.5, Math.min(0.5, angDiffBetweenForwardAndTargetPosDegrees / 180));
+                    robotRotation = rotationLimit(angDiffBetweenForwardAndTargetPosDegrees / 180);
 
                     if (withinDistanceTolerance && withinHeadingTolerance) {
                         currentTransformIndex++;
@@ -138,7 +145,7 @@ public class LocalizerMoveAction implements Action {
                         robotRotation = angDiffToTargetHeadingDegrees > 0 ? ROTATE_SPEED : -ROTATE_SPEED;
                     } else {
                         if (distanceToTargetInInches <= SLOWDOWN_DISTANCE_INCHES) {
-                            robotRotation = Math.max(-0.5, Math.min(0.5, angDiffToTargetHeadingDegrees / 180));
+                            robotRotation = angDiffToTargetHeadingDegrees / 180;
                             double slope = (preciseSpeed - fullSpeed) / (SLOWEST_DISTANCE_INCHES - SLOWDOWN_DISTANCE_INCHES);
                             speed = Math.max(slope * distanceToTargetInInches - preciseSpeed, preciseSpeed);
                         }

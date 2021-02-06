@@ -151,6 +151,15 @@ public class OmniDrive {
         double bl_power = power * Math.cos(angleInRadians + pi4) + rotation;
         double br_power = power * Math.sin(angleInRadians + pi4) - rotation;
 
+        double avg_power = (Math.abs(fl_power) + Math.abs(fr_power) + Math.abs(bl_power) + Math.abs(br_power)) / 4.0;
+        if (avg_power < power) {
+            double power_upscale = power/avg_power;
+            fl_power *= power_upscale;
+            fr_power *= power_upscale;
+            bl_power *= power_upscale;
+            br_power *= power_upscale;
+        }
+
         // Calculate unit vector and apply power magnitude
         double power_max = Math.max(Math.max(fl_power, fr_power), Math.max(bl_power, br_power));
 
