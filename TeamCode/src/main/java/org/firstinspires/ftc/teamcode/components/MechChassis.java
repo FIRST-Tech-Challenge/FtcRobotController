@@ -1074,7 +1074,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                     @Override
                     public Double value() {
                         // return rightRangeSensor.getDistance(DistanceUnit.CM);
-                        return getDistance(SwerveChassis.Direction.LEFT);
+                        return getDistance(SwerveChassis.Direction.FRONT);
                     }
                 });
         }
@@ -1227,6 +1227,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                 rangeSensor = leftRangeSensor;
                 break;
             case FRONT_LEFT:
+            case FRONT_RIGHT:
+            case FRONT:
                 rangeSensor = frontRangeSensor;
             default:
                 rangeSensor = null;
