@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+//import org.openftc.revextensions2.ExpansionHubEx;
 
 /**
  * Main Teleop
@@ -23,7 +24,8 @@ public class MainTeleop extends LinearOpMode{
     private CRServo leftConveyor, rightConveyor, intake;
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
     private Servo flipper, wobbleClaw;
-    private VoltageSensor voltSensor;
+    //private VoltageSensor voltSensor;
+   // private ExpansionHubEx expansionHub;
 
 
     private BNO055IMU imu;
@@ -56,6 +58,7 @@ public class MainTeleop extends LinearOpMode{
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
+     //   expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
 
         //intake and conveyor
         intake = hardwareMap.crservo.get("intake");
@@ -159,9 +162,9 @@ public class MainTeleop extends LinearOpMode{
             //Sending data on power of outtake, outtake motor RPM, and tangential velocity of outtake wheel to telemetry
 
             if(gamepad2.right_bumper){
-                outtakeMod = .31; //power shots
+                outtakeMod = 0.305;//* (12/expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS)); //power shots
             }else{
-                outtakeMod = .34 /* * (14/volts) */; //theoretically high goal
+                outtakeMod = 0.355;//* (12/expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS));
             }
             double outtakePower = (gamepad2.right_trigger * outtakeMod);
             outtakeLeft.setPower(outtakePower);
@@ -219,6 +222,8 @@ public class MainTeleop extends LinearOpMode{
             telemetry.addData("horizontal encoder position", horizontal.getCurrentPosition());
 
             telemetry.addData("Thread Active", positionThread.isAlive());
+            //telemetry.addData("5v monitor", expansionHub.read5vMonitor(ExpansionHubEx.VoltageUnits.VOLTS)); //Voltage from the phone
+           // telemetry.addData("12v monitor", expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS)); //Battery voltage
             telemetry.update();
 
             telemetry.update();
