@@ -25,7 +25,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "TestAutonomous")
+@Autonomous(name = "TestAuto")
 public class TestAutonomous extends LinearOpMode {
     double hue;
     OpenCvCamera webcam;
@@ -41,8 +41,10 @@ public class TestAutonomous extends LinearOpMode {
     private DcMotor wobbleArm;
     private Servo wobbleClaw;
 
-    private DcMotor outtakeLeft, outtakeRight;
     private Servo flipper;
+
+    private DcMotor outtakeLeft;
+    private DcMotor outtakeRight;
 
     final double COUNTS_PER_INCH = 307.699557;
 
@@ -68,17 +70,18 @@ public class TestAutonomous extends LinearOpMode {
         wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
         wobbleClaw = hardwareMap.servo.get("wobbleClaw");
 
-        verticalLeft = hardwareMap.dcMotor.get("leftOdometry");
+        flipper = hardwareMap.servo.get("flipper");
+
+        //launcher
+        outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
+        outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
+
+        verticalLeft = hardwareMap.dcMotor.get("FL");
         verticalRight = hardwareMap.dcMotor.get("FR");
         horizontal = hardwareMap.dcMotor.get("BL");
 
-        outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
-        outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
-        flipper = hardwareMap.servo.get("flipper");
-
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-        //Reverse requred motors
 
         //Set zero power behaviors to brake
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -90,6 +93,9 @@ public class TestAutonomous extends LinearOpMode {
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
                 imu, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
+
+        wobbleClaw.setPosition(0);
+        flipper.setPosition(1);
 
         /*
          * Instantiate an OpenCvCamera object for the camera we'll be using.
@@ -109,7 +115,6 @@ public class TestAutonomous extends LinearOpMode {
         webcam.openCameraDevice();
 
         mainPipeline = new MainPipeline();
-
         webcam.setPipeline(mainPipeline);
 
 
@@ -124,6 +129,7 @@ public class TestAutonomous extends LinearOpMode {
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
+        goShoot();
 
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
@@ -131,11 +137,12 @@ public class TestAutonomous extends LinearOpMode {
 
 
         int stack = mainPipeline.ycontours.size();
+        telemetry.addData("Stack Height before case: ", mainPipeline.stackHeight);
 
-        if (mainPipeline.stackHeight < 20) {
+        if (mainPipeline.stackHeight < 100) {
             targetZone = 1;
 
-        } else if (mainPipeline.stackHeight > 60) {
+        } else if (mainPipeline.stackHeight > 160) {
             targetZone = 3;
 
         } else {
@@ -148,25 +155,28 @@ public class TestAutonomous extends LinearOpMode {
         telemetry.update();
 
 
-        goShoot();
+
         switch(targetZone){
             case 1:
-                robot.gyroTurn(150, 0.75);
+                robot.gyroDriveCm(0.5, 60);
+                robot.gyroTurn(-90, 0.5);
                 dropWobble();
-                robot.gyroDriveCm(-.5, 10);
+                robot.gyroDriveCm(0.75,40);
+                //backup
+                //robot.gyroDriveCm(-.5, 10);
                 //odometryDriveToPos(100,100);
                 break;
             case 2:
-                robot.gyroTurn(180, 0.75);
-                robot.gyroDriveCm(-.75, 50);
+                robot.gyroTurn(175, 0.5);
+                robot.gyroDriveCm(-.75, 80);
                 dropWobble();
-                robot.gyroDriveCm(.75, 40);
+                //robot.gyroDriveCm(.75, 50);
                 //odometryDriveToPos(100,100);
                 break;
             case 3:
-                robot.gyroTurn(180, 0.75);
-                robot.gyroStrafeCm(0.75, -90,40);
-                robot.gyroDriveCm(-.75, 100);
+                robot.gyroTurn(180, 0.5);
+                robot.gyroStrafeCm(0.5, -90,80);
+                robot.gyroDriveCm(-0.75, 160);
                 dropWobble();
                 robot.gyroDriveCm(.75, 90);
                 //odometryDriveToPos(100,100);
@@ -239,17 +249,17 @@ public class TestAutonomous extends LinearOpMode {
 
     }
     public void goShoot() throws InterruptedException{
-        outtakeLeft.setPower(0.35);//or 0.44
-        outtakeRight.setPower(0.35);//or 0.44
-        robot.gyroStrafeCm(0.75, -90, 40);
-        robot.gyroDriveCm(0.75, 180);
-        robot.gyroStrafeCm(0.75, 90, 70);
+        outtakeLeft.setPower(0.36);//or 0.44
+        outtakeRight.setPower(0.36);//or 0.44
+        //robot.gyroStrafeCm(0.5, 90, 60);//speed up later
+        robot.gyroDriveCm(0.5, 190);
+        robot.gyroStrafeCm(0.5, -90, 110);
 
         for(int i = 0; i < 3; i++){
             flipper.setPosition(1);
-            Thread.sleep(750);//CHANGE!!!!!!!
+            Thread.sleep(500);//CHANGE!!!!!!! slower
             flipper.setPosition(0);
-            Thread.sleep(750);//CHANGE!!!!!!!!
+            Thread.sleep(500);//CHANGE!!!!!!!!
         }
         outtakeLeft.setPower(0);
         outtakeRight.setPower(0);

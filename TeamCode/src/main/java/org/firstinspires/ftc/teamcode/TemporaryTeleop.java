@@ -17,8 +17,8 @@ import org.openftc.revextensions2.ExpansionHubEx;
  * 3 October 2020
  */
 
-@TeleOp(name = "MainTeleop")
-public class MainTeleop extends LinearOpMode{
+@TeleOp(name = "Main2Teleop")
+public class TemporaryTeleop extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
     private CRServo leftConveyor, rightConveyor, intake;
