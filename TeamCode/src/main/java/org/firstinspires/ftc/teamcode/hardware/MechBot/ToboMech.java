@@ -1255,11 +1255,23 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
 
         if (comboGrabber != null) {
-            comboGrabber.releaseWobbleGoalCombo();
-            while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
-                TaskManager.processTasks();
+            if(tZone != TargetZone.ZONE_C) // Zone A and B
+            {
+                comboGrabber.releaseWobbleGoalCombo();
+                while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
+                    TaskManager.processTasks();
+                }
+            }
+            else
+            {
+                comboGrabber.releaseWobbleGoalFastCombo();
+                while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
+                    TaskManager.processTasks();
+                }
+                //comboGrabber.initWobbleGoalCombo();
             }
             comboGrabber.initWobbleGoalCombo();
+            TaskManager.processTasks();
         }
         /*if (tZone == TargetZone.ZONE_C) {
             chassis.rawRotateTo(0.3, -2.5, true, 0.5);
