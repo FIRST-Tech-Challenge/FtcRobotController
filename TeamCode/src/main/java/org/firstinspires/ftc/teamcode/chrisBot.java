@@ -527,16 +527,6 @@ public class chrisBot
         telemetry.update();
     }
 
-    // These methods turn the shooter motor on and off, at a set power or at full power.
-
-//    public void shootOn(double power) {
-//        if(shooterExists) {
-//            motorShooter1.setPower(shootPower);
-//            shooterOn = true;
-//        }
-//    }
-
-
     public void shootOnSlow() {
         if(shooterExists) {
             motorShooter1.setPower(shootPowerSlow);
@@ -544,7 +534,6 @@ public class chrisBot
             shooterOn = true;
         }
     }
-
     public void shootOn() {
         if(shooterExists) {
             motorShooter1.setPower(shootPower);

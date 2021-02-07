@@ -107,7 +107,7 @@ public class chrisBotTeleopFinal extends OpMode{
     }
 
     public static double[] getGamepadState(Gamepad gamepad) {
-        double[] gamepadState = {(double)gamepad.left_stick_x, (double)gamepad.left_stick_y, (double)gamepad.right_stick_x, (double)gamepad.right_stick_y};
+        double[] gamepadState = {-1*(double)gamepad.left_stick_x, (double)gamepad.left_stick_y, (double)gamepad.right_stick_x, (double)gamepad.right_stick_y};
         for (int i = 0; i < gamepadState.length; i++) {
             if (gamepadState[i] > 0.9) {
                 gamepadState[i] = Math.signum(gamepadState[i])*1;
