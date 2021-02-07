@@ -39,13 +39,13 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private final int SLIDER_POS_RING = 580;
 
     private final double ARM_UP = 0.48;
-    private final double ARM_INIT = 0.27;
-    private final double ARM_DOWN_RELEASE = 0.97;
-    private final double ARM_DOWN = 1.0;
+    private final double ARM_INIT = 0.31;
+    private final double ARM_DOWN_RELEASE = 0.91;
+    private final double ARM_DOWN = 0.95;
     private final double ARM_COLLECT_RING = 0.53;
 
-    private final double GRABBER_OPEN = 0.58;
-    private final double GRABBER_CLOSE = 0.87;
+    private final double GRABBER_OPEN = 0.52;
+    private final double GRABBER_CLOSE = 0.9;
     private final double GRABBER_INIT = GRABBER_CLOSE;
 
     private boolean sliderIsLow = true;
@@ -399,7 +399,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     public void grabWobbleGoalFastCombo() {
         final String taskName = "grab Wobble Goal Fast Combo";
         if (!TaskManager.isComplete(taskName)) return;
-        isGrabFromBottom = !false;
+        isGrabFromBottom = false;
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
@@ -410,11 +410,11 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             public Progress start() {
                 return moveArm(ARM_DOWN);
             }}, taskName);
-        TaskManager.add(new Task() {
-                @Override
-                public Progress start() {
-                    return slideToPos(SLIDER_POS_HIGH);
-                }}, taskName);
+//        TaskManager.add(new Task() {
+//                @Override
+//                public Progress start() {
+//                    return slideToPos(SLIDER_POS_HIGH);
+//                }}, taskName);
         TaskManager.add(new Task() {
             @Override public Progress start() {
                 return moveGrabber(GRABBER_CLOSE);
