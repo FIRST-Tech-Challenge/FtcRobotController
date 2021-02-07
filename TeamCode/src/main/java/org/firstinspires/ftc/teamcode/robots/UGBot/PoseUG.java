@@ -278,6 +278,7 @@ public class PoseUG {
         this.flywheelMotor = (DcMotorEx) this.hwMap.dcMotor.get("flywheelMotor");
         this.headlight = this.hwMap.dcMotor.get("headlight");
         this.headlight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        brightness = .8;
 
         this.wobbleGripper = this.hwMap.servo.get("servoGripper");
 
@@ -467,7 +468,7 @@ public class PoseUG {
     }
 
     public void updateSensors(boolean isActive) {
-        headlight.setPower(-brightness);
+        headlight.setPower(Math.max(-brightness, -.8));
         update(imu, 0, 0, isActive);
     }
 

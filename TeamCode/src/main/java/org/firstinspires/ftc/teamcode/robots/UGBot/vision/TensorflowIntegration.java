@@ -71,7 +71,7 @@ public class TensorflowIntegration implements VisionProvider {
     }
 
     @Override
-    public void initializeVision(HardwareMap hardwareMap, Viewpoint viewpoint) {
+    public void initializeVision(HardwareMap hardwareMap, Viewpoint viewpoint, boolean enableDashboard) {
         initVuforia(hardwareMap, viewpoint);
         initTfod(hardwareMap);
 

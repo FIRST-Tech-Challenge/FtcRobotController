@@ -43,6 +43,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 
@@ -157,6 +159,8 @@ public class UG_6832 extends OpMode {
     private boolean stopAll = false;
 
     private FtcDashboard dashboard;
+
+    private TrajectoryCalculator calc = new TrajectoryCalculator(Constants.tempDistance);
 
     Telemetry dummyT = new Telemetry() {
         @Override
@@ -568,6 +572,8 @@ public class UG_6832 extends OpMode {
         pwrFwd = 0;
         pwrRot = 0;
 
+
+
         if (notdeadzone(gamepad1.left_stick_y))
             pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
         if (notdeadzone(gamepad1.right_stick_x))
@@ -601,20 +607,27 @@ public class UG_6832 extends OpMode {
         }
 
 //        if(System.currentTimeMillis() %30000 > 15000) {
-//            robot.launcher.setFlywheelTPS(0);
+//            robot.launcher.setFlywheelTargetTPS(0);
 //
 //            message = "0 tps";
 //        } else if(System.currentTimeMillis() % 30000 < 15000) {
-//            robot.launcher.setFlywheelTPS(2500);
+//            robot.launcher.setFlywheelTargetTPS(2500);
 //            message = "2500 tps";
 //        }
 
+        calc.setDistance(Constants.tempDistance);
+
         if(gamepad1.y){
-            robot.launcher.flywheelMotor.setPower(1);
+            robot.launcher.setFlywheelTargetTPS(calc.getTrajectorySolution().getAngularVelocity());
+            // robot.launcher.flywheelMotor.setPower(1);
         }
         else{
-            robot.launcher.flywheelMotor.setPower(0);
+            robot.launcher.setFlywheelTargetTPS(0);
+            //robot.launcher.flywheelMotor.setPower(0);
         }
+
+        if(toggleAllowed(gamepad1.dpad_left, dpad_left, 1))
+            robot.launcher.setElbowTargetAngle((calc.getTrajectorySolution().getTheta() * 180) / Math.PI);
 
         if (toggleAllowed(gamepad1.x, x, 1)) {
             robot.turret.rotateCardinalTurret(false);
@@ -677,7 +690,7 @@ public class UG_6832 extends OpMode {
         robot.turret.update();
 
         TelemetryPacket packet = new TelemetryPacket();
-        packet.put("current flywheel velocity", robot.launcher.flywheelTPS);
+        packet.put("current flywheel velocity", robot.launcher.getFlywheelTPS());
         packet.put("target flywheel velocity", robot.launcher.getFlywheelTargetTPS());
         packet.put("flywheel motor power", robot.launcher.flywheelMotor.getPower() * 200);
         packet.put("message",message);
@@ -703,7 +716,7 @@ public class UG_6832 extends OpMode {
         // turret controls - this is on gamepad2 in teleop - but on gamepad 1 for
         // prematch setup
         if (notdeadzone(gamepad1.right_trigger))
-            robot.turret.rotateRight(gamepad1.right_trigger * 5);
+            //robot.turret.rotateRight(gamepad1.right_trigger * 5);
         if (notdeadzone(gamepad1.left_trigger))
             robot.turret.rotateLeft(gamepad1.left_trigger * 5);
 
@@ -715,6 +728,8 @@ public class UG_6832 extends OpMode {
             robot.turret.rotateCardinalTurret(false);
 
         }
+
+
 
         if (notdeadzone(gamepad1.right_stick_y)) {
             robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
@@ -846,9 +861,11 @@ public class UG_6832 extends OpMode {
         telemetry.addLine().addData("Turret Heading", () -> robot.turret.getHeading());
         telemetry.addLine().addData("Turret Target`s", () -> robot.turret.getTurretTargetHeading());
         telemetry.addLine().addData("Turret Current angle ", () -> robot.turret.getHeading());
-        telemetry.addLine() .addData("right distance ", () -> robot.getDistRightDist());
+        telemetry.addLine() .addData("calc predicted angle ", () -> calc.getTrajectorySolution().getTheta());
 
     }
+
+
 
     private void configureDashboardMatch() {
         // Configure the dashboard.
@@ -861,6 +878,7 @@ public class UG_6832 extends OpMode {
                 () -> 1000000000 / loopAvg);
 
     }
+
 
     private int servoTest = 1005;
 

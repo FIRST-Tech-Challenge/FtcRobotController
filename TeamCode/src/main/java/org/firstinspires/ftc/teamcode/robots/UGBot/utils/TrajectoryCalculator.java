@@ -7,6 +7,8 @@ public class TrajectoryCalculator {
         this.distance = distance;
     }
 
+    public void setDistance(double newDistance){distance = newDistance;}
+
     public TrajectorySolution getTrajectorySolution() {
         // vertical distance in meters the disk has to travel
         double travelHeight = Constants.GOAL_HEIGHT - Constants.LAUNCH_HEIGHT;

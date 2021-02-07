@@ -17,7 +17,7 @@ import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
 public class Launcher {
 
     //misc
-    public double ticksPerDegree = 19.4705882353;//todo-remeasure
+    public double ticksPerDegree = 15.7;
     public boolean active = true;
 
     //actuators
@@ -90,7 +90,7 @@ public class Launcher {
             else
                 elbowPos = elbow.getCurrentPosition();
 
-            flywheelTPS = (flywheelMotor.getCurrentPosition() - prevMotorTicks) / ((System.nanoTime() - prevNanoTime) * 1E9);
+            flywheelTPS = (flywheelMotor.getCurrentPosition() - prevMotorTicks) / ((System.nanoTime() - prevNanoTime) / 1E9);
 
             prevNanoTime = System.nanoTime();
             prevMotorTicks = flywheelMotor.getCurrentPosition();
@@ -213,7 +213,7 @@ public class Launcher {
 
 
     public boolean setElbowTargetAngle(double angleDegrees){
-        setElbowTargetPos((int) (ticksPerDegree* angleDegrees));
+        setElbowTargetPos((int) (ticksPerDegree* angleDegrees) + 141); //plus the offset to zero
         return true;
     }
 

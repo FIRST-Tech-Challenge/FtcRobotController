@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class Constants {
+    //misc
     public static final double LAUNCH_HEIGHT = 0.41;
     public static final double GOAL_HEIGHT = 0.88;
     public static final int ENCODER_TICKS_PER_REVOLUTION = 28;
@@ -33,4 +34,7 @@ public class Constants {
     public static double HSV_THRESHOLD_VALUE_MAX = 255.0;
 
     public static double MIN_CONTOUR_AREA = 1000;
+
+    //testVars
+    public static  double tempDistance= 0.0;
 }
