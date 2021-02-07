@@ -54,6 +54,7 @@ public class UltimateMode extends LinearOpMode {
     boolean changedshooter = false;
     boolean intakeReverse = false;
     boolean buttonpressable = true;
+    boolean shooterslower = false;
     double delaytime = 200;
     double startdelay = 0;
     double grabdelay = 0;
@@ -151,7 +152,7 @@ public class UltimateMode extends LinearOpMode {
                     startdelay = runtime.milliseconds();
                     robot.backWobbleSwing();
                 } else if (gamepad1.dpad_left) {
-                    robot.wobbleLittleUp();
+                    robot.liftWobbleWall();
                 } else if (gamepad1.x && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     robot.liftWallGrab();
@@ -160,7 +161,7 @@ public class UltimateMode extends LinearOpMode {
 
                 if (gamepad1.y && buttonpressable) {
                     startdelay = runtime.milliseconds();
-                    robot.shooterpeg();
+                    shooterslower = !shooterslower;
                 }
 
                 // move intake
@@ -191,7 +192,11 @@ public class UltimateMode extends LinearOpMode {
                 }
 
                 if (changedshooter) {
-                    robot.shooter();
+                    if (shooterslower) {
+                        robot.shooterpeg();
+                    } else {
+                        robot.shooter();
+                    }
                 } else {
                     robot.stopshooter();
                 }
