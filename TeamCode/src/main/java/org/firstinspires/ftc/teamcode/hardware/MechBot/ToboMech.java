@@ -1654,11 +1654,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
             hopper.hopperUpCombo();
             TaskManager.processTasks();
-            chassis.driveTo(1.0, side(70), 185, 0, false, 5);
-            autoShootHighGoal(2, true);
-            comboGrabber.initWobbleGoalCombo();
-            TaskManager.processTasks();
-            chassis.driveTo(1.0, chassis.odo_x_pos_cm(), chassis.odo_y_pos_cm()+30, chassis.getCurHeading(), false,  2);
+            if (runtimeAuto.seconds() < 26) {
+                chassis.driveTo(1.0, side(70), 185, 0, false, 5);
+                comboGrabber.initWobbleGoalCombo();
+                TaskManager.processTasks();
+                autoShootHighGoal(2, true);
+                comboGrabber.initWobbleGoalCombo();
+                TaskManager.processTasks();
+                chassis.driveTo(1.0, chassis.odo_x_pos_cm(), chassis.odo_y_pos_cm() + 30, chassis.getCurHeading(), false, 2);
+            }
+            else {
+                chassis.driveTo(1.0, chassis.odo_x_pos_cm(), 200, chassis.getCurHeading(), false, 2);
+            }
         }
         else if (tZone==TargetZone.ZONE_B)
         {
