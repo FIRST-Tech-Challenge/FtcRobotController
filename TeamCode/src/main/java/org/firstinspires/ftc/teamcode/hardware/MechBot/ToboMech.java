@@ -591,10 +591,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     }
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (comboGrabber != null) {
-                        comboGrabber.releaseWobbleGoalCombo();
+                        autoReleaseHighWobbleGoal();
                     }
                 } else if (source.isPressed(Button.BACK)) {
-                    endGameGrabCombo();
+                    comboGrabber.releaseWobbleGoalCombo();
                 }
             }
         }, new Button[]{Button.X});
@@ -614,7 +614,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         autoGrabHighWobbleGoal();
                     //top wobble goal combos functions go here
                 } else if (source.isPressed(Button.BACK)) {
-                    comboGrabber.collectRingCombo();
+                    //comboGrabber.collectRingCombo();
+                    comboGrabber.grabWobbleGoalCombo(true);
                 } else {
                     if (comboGrabber.isArmLow()) {
                         comboGrabber.initWobbleGoalCombo();
@@ -1713,6 +1714,18 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         sleep(200);
         chassis.rawRotateTo(0.8,130,false, 2);
         chassis.rawRotateTo(0.2,165,false, 2);
+    }
+
+    public void autoReleaseHighWobbleGoal() throws InterruptedException {
+        if (simulation_mode || chassis==null) return;
+        if (comboGrabber!=null) {
+            comboGrabber.grabberOpen();
+        }
+        sleep(200);
+        comboGrabber.releaseWobbleGoalCombo();
+        TaskManager.processTasks();
+        chassis.rawRotateTo(0.8,50,false, 2);
+        chassis.rawRotateTo(0.2,15,false, 2);
     }
 
     public void autoIntakeRings(int n, boolean callFromAuto) throws InterruptedException {

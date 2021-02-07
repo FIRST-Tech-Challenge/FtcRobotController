@@ -364,7 +364,8 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             public Progress start() {
                 return moveArm(ARM_DOWN);
             }}, taskName);
-        if (isHigh) {
+        // if (isHigh) {
+        if (false) {
             TaskManager.add(new Task() {
                 @Override
                 public Progress start() {
