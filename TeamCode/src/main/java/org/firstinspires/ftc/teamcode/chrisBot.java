@@ -22,16 +22,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
@@ -67,7 +64,8 @@ public class chrisBot
 
     int FLTarget = 0, FRTarget = 0, BLTarget = 0, BRTarget = 0;
 
-    public static final double shootPower = .225;
+    public static final double shootPower = .265;
+    public static final double shootPowerSlow = .25;
 
     public boolean shooterOn = false, intakeOn = false;
 
@@ -157,10 +155,10 @@ public class chrisBot
         imu.initialize(parameters);
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
 
-        motorBackLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        motorFrontRight.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        motorBackRight.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        motorBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
 
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -208,7 +206,7 @@ public class chrisBot
             telemetry.update();
         }
 
-        setAllPower(0);
+        setAllDrivePower(0);
 
         // Start the logging of measured acceleration
         imu.startAccelerationIntegration(new org.firstinspires.ftc.robotcore.external.navigation.Position(), new Velocity(), 1000);
@@ -262,21 +260,21 @@ public class chrisBot
         return motorFrontLeft.isBusy() || motorBackRight.isBusy() || motorFrontRight.isBusy() || motorBackLeft.isBusy();
     }
     // This method sets the powers of all the drive motors on the robot.
-    public void setAllPower(double speed) {
+    public void setAllDrivePower(double speed) {
         motorFrontLeft.setPower(speed);
         motorFrontRight.setPower(speed);
         motorBackRight.setPower(speed);
         motorBackLeft.setPower(speed);
     }
     // This method sets the encoder drive targets on the actual motors.
-    public void setTargets() {
+    public void setDriveTargets() {
         motorFrontLeft.setTargetPosition(FLTarget);
         motorFrontRight.setTargetPosition(FRTarget);
         motorBackLeft.setTargetPosition(BLTarget);
         motorBackRight.setTargetPosition(BRTarget);
     }
     // This method sets the modes of all the motors.
-    public void setAllMode(DcMotor.RunMode mode) {
+    public void setAllDriveMode(DcMotor.RunMode mode) {
         motorFrontLeft.setMode(mode);
         motorFrontRight.setMode(mode);
         motorBackLeft.setMode(mode);
@@ -291,10 +289,10 @@ public class chrisBot
     }
 
     // This method checks power levels to be safe and pushes them to the motors
-    public void setPower(double flPower, double frPower, double blPower, double brPower) {
-        setPower(new double[]{flPower, frPower, blPower, brPower});
+    public void setDrivePower(double flPower, double frPower, double blPower, double brPower) {
+        setDrivePower(new double[]{flPower, frPower, blPower, brPower});
     }
-    public void setPower(double[] powers) {
+    public void setDrivePower(double[] powers) {
         // Check deadzones
         for (int i = 0; i < powers.length; i++) {
             powers[i] = Range.clip(powers[i], -1, 1);
@@ -319,24 +317,24 @@ public class chrisBot
         BLTarget = motorBackLeft.getCurrentPosition() + countsToTravel;
         BRTarget = motorBackRight.getCurrentPosition() + countsToTravel;
 
-        setTargets();
+        setDriveTargets();
 
         // Turn On RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setAllDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
         runtime.reset();
-        setAllPower(DRIVE_SPEED);
+        setAllDrivePower(DRIVE_SPEED);
 
         // keep looping while we are still active, and there is time left and motors are running.
         while (isBusy()) {
         }
 
         // Stop all motion;
-        setAllPower(0);
+        setAllDrivePower(0);
 
         // Turn off RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setAllDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void encoderDrive(double inches) {
         encoderDrive(DRIVE_SPEED, inches);
@@ -361,24 +359,24 @@ public class chrisBot
         BLTarget = motorBackLeft.getCurrentPosition() + (int) (inches[2] * COUNTS_PER_INCH);
         BRTarget = motorBackRight.getCurrentPosition() + (int) (inches[3] * COUNTS_PER_INCH);
 
-        setTargets();
+        setDriveTargets();
 
         // Turn On RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setAllDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
         runtime.reset();
-        setAllPower(DRIVE_SPEED);
+        setAllDrivePower(DRIVE_SPEED);
 
         // keep looping while we are still active, and there is time left and motors are running.
         while ((runtime.seconds() < timeoutS) && isBusy()) {
         }
 
         // Stop all motion;
-        setAllPower(0);
+        setAllDrivePower(0);
 
         // Turn off RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setAllDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
     public void wheelMecanumDrive(double[] inches) {
@@ -402,14 +400,14 @@ public class chrisBot
         BRTarget = motorBackRight.getCurrentPosition() + countsToTravel;
         int[] targets = {FLTarget, FRTarget, BLTarget, BRTarget};
 
-        setTargets();
+        setDriveTargets();
 
         // Turn On RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_TO_POSITION);
+        setAllDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
         runtime.reset();
-        setPower(powers);
+        setDrivePower(powers);
 
         Telemetry.Item a = telemetry.addData("fl",powers[0]);
         Telemetry.Item b = telemetry.addData("fr",powers[1]);
@@ -427,7 +425,7 @@ public class chrisBot
                 }
                 powers[i] = power;
             }
-            setPower(powers);
+            setDrivePower(powers);
             a.setValue(powers[0]);
             b.setValue(powers[1]);
             c.setValue(powers[2]);
@@ -436,10 +434,10 @@ public class chrisBot
         }
 
         // Stop all motion;
-        setAllPower(0);
+        setAllDrivePower(0);
 
         // Turn off RUN_TO_POSITION
-        setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        setAllDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /*public void halfGyroDrive(double inches) { halfGyroDrive(inches, DRIVE_SPEED); }
@@ -512,12 +510,12 @@ public class chrisBot
             telemetry.update();
 
             // set power levels.
-            setPower(power + correction, power - correction, power + correction, power - correction);
+            setDrivePower(power + correction, power - correction, power + correction, power - correction);
 
         }
 
         // turn the motors off.
-        setAllPower(0);
+        setAllDrivePower(0);
     }
 
     /** ATTACHMENT METHODS */
@@ -530,7 +528,7 @@ public class chrisBot
     }
 
     // These methods turn the shooter motor on and off, at a set power or at full power.
-<<<<<<< Updated upstream
+
 //    public void shootOn(double power) {
 //        if(shooterExists) {
 //            motorShooter1.setPower(shootPower);
@@ -538,15 +536,15 @@ public class chrisBot
 //        }
 //    }
 
-=======
-    public void shootOn(double power) {
+
+    public void shootOnSlow() {
         if(shooterExists) {
-            motorShooter1.setPower(power);
-            motorShooter2.setPower(power);
+            motorShooter1.setPower(shootPowerSlow);
+            motorShooter2.setPower(shootPowerSlow);
             shooterOn = true;
         }
     }
->>>>>>> Stashed changes
+
     public void shootOn() {
         if(shooterExists) {
             motorShooter1.setPower(shootPower);

@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.disabled;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp(name="testPlatfromTeleopV2", group="Zippo")
-//@Disabled
+@Disabled
 
 public class testPlatformTeleopV2 extends OpMode{
 

@@ -3,10 +3,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 @Autonomous(group="chrisBot", name="testGoodDrive")
-public class testGoodDrive extends LinearOpMode {
+public class chrisGoodDrive extends LinearOpMode {
     chrisBot robot = new chrisBot();
 
     @Override
@@ -28,6 +27,6 @@ public class testGoodDrive extends LinearOpMode {
 
         robot.stemPIDdrive(5000, 0.5);
 
-        robot.setAllPower(0);
+        robot.setAllDrivePower(0);
     }
 }

@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.Arrays;
 
 @TeleOp(name="chrisBotTeleopFINAL", group="chrisBot")
@@ -15,13 +17,16 @@ public class chrisBotTeleopFinal extends OpMode{
     chrisBot robot = new chrisBot();
 
     ElapsedTime count = new ElapsedTime();
-    long t = System.currentTimeMillis();
-    boolean holding, inching;
+    final long inchTime = 200;
+    final double inchPower = 0.3;
+    int shooterState = 0;
 
     @Override
     public void init() {
         robot.init(hardwareMap, telemetry);
         double time =  System.currentTimeMillis();
+        telemetry.clear();
+        telemetry.setAutoClear(true);
     }
 
     @Override
@@ -34,61 +39,63 @@ public class chrisBotTeleopFinal extends OpMode{
             if (gamepad1.right_bumper) {
                 r=0.4*r;
             }
-            double robotAngle = -1*(Math.atan2(gamepadState[1], gamepadState[0]) - Math.PI / 4);
+            double robotAngle = Math.atan2(gamepadState[1], gamepadState[0]) - Math.PI / 4;
             double rightX = gamepadState[2];
-            robot.setPower(-1*r * Math.cos(robotAngle) + rightX, -1*r * Math.sin(robotAngle) - rightX, -1*r * Math.sin(robotAngle) + rightX, -1*r * Math.cos(robotAngle) - rightX);
+            robot.setDrivePower(-1*r * Math.cos(robotAngle) + rightX, -1*r * Math.sin(robotAngle) - rightX, -1*r * Math.sin(robotAngle) + rightX, -1*r * Math.cos(robotAngle) - rightX);
         }
         else {
-            robot.setAllPower(0);
+            robot.setAllDrivePower(0);
         }
 
         // Inch
-        if(!holding) {
-            double[] powers = {};
-            if(gamepad1.dpad_up) {
-                powers = new double[]{0.1,0.1,0.1,0.1};
-            }
-            if(gamepad1.dpad_down) {
-                powers = new double[]{-0.1,-0.1,-0.1,-0.1};
-            }
-            if(gamepad1.dpad_left) {
-                powers = new double[]{0.1,-0.1,-0.1,0.1};
-            }
-            if(gamepad1.dpad_right) {
-                powers = new double[]{-0.1,0.1,0.1,-0.1};
-            }
-            if (!(Arrays.equals(new double[]{}, powers))) {
-                holding = true;
-                count.reset();
-                t = System.currentTimeMillis();
-                robot.setPower(powers);
-            }
-
+        double[] powers = {};
+        if(gamepad1.dpad_up) {
+            powers = new double[]{inchPower,inchPower,inchPower,inchPower};
         }
-        if (count.milliseconds() - t > 300) {
-            robot.setAllPower(0);
-            if (!(gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_right || gamepad1.dpad_left)) {
-                holding = false;
-            }
+        if(gamepad1.dpad_down) {
+            powers = new double[]{-1*inchPower,-1*inchPower,-1*inchPower,-1*inchPower};
+        }
+        if(gamepad1.dpad_left) {
+            powers = new double[]{-1*inchPower,inchPower,inchPower,-1*inchPower};
+        }
+        if(gamepad1.dpad_right) {
+            powers = new double[]{inchPower,-1*inchPower,-1*inchPower,inchPower};
+        }
+        count.reset();
+        if(!Arrays.equals(powers, new double[]{})) {
+            do {
+                robot.setDrivePower(powers);
+            } while (count.milliseconds() < inchTime);
+            robot.setAllDrivePower(0);
         }
 
         // Attachment code
         if(gamepad1.x) {
-            robot.shootOn(0.6);
+            telemetry.addLine("Intake speed fast");
+            robot.shootOn();
         } else if (gamepad1.b) {
-            robot.shootOn(0.4);
-        } else {
-            robot.shootOff();
-        } if(gamepad1.a) {
+            telemetry.addLine("Intake speed slow");
+            robot.shootOnSlow();
+        }
+        telemetry.update();
+        if(gamepad1.a) {
             robot.intakeOn();
         } else if(gamepad1.y) {
             robot.intakeReverse();
         } else {
             robot.intakeOff();
         }
+
     }
 
-//--------------------------------- FUNCTIONS ----------------------------------------------------
+    @Override
+    public void stop() {
+        robot.shootOff();
+        robot.setAllDrivePower(0);
+        super.stop();
+    }
+
+    //--------------------------------- FUNCTIONS ----------------------------------------------------
     public static boolean notInDeadzone(Gamepad gamepad, String stick) {
         if (stick.equals("left")) {
             return Math.abs(gamepad.left_stick_x) > 0.1 || Math.abs(gamepad.left_stick_y) > 0.1;

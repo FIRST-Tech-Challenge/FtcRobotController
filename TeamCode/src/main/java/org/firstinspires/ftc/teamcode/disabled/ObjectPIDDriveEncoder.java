@@ -50,17 +50,17 @@ public class ObjectPIDDriveEncoder extends LinearOpMode {
         x.reset();
 
         // Turn On RUN_TO_POSITION
-        robot.setAllMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.setAllDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // keep looping while we are still active, and there is time left and motors are running.
         while (robot.isBusy() && x.milliseconds() < ms) {
             double correction = pidDrive.calcCorrection();
-            robot.setPower(new double[]{power+correction,power-correction,power+correction,power-correction});
+            robot.setDrivePower(new double[]{power+correction,power-correction,power+correction,power-correction});
         }
 
-        robot.setAllMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setAllDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        robot.setAllPower(0);
+        robot.setAllDrivePower(0);
     }
 
 

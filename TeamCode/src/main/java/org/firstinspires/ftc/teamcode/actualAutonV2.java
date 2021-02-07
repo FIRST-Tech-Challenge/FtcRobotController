@@ -32,7 +32,7 @@ public class actualAutonV2 extends LinearOpMode {
         telemetry.addLine("Driving forward...");
         telemetry.update();
 
-        robot.encoderDrive(-24);
+        robot.encoderDrive(24);
 
         pause(1000);
 
@@ -58,7 +58,7 @@ public class actualAutonV2 extends LinearOpMode {
 
         // Drive to first foam tile
 
-        double inches = -36;
+        double inches = 36;
 
         telemetry.addLine("Driving " + inches + " inches...");
         telemetry.update();
@@ -71,14 +71,14 @@ public class actualAutonV2 extends LinearOpMode {
 
         telemetry.addLine("Moving left");
         telemetry.update();
-        robot.wheelMecanumDrive(robot.calculateInches(-16,0), 0.7);
+        robot.wheelMecanumDrive(robot.calculateInches(16,0), 0.7);
 
         // Line up with first target
 
         telemetry.addLine("Lining up with first Powershot target...");
         telemetry.update();
 
-        robot.encoderDrive(-12);
+        robot.encoderDrive(12);
 
         for(int i = 0; i < 3; i++) {
             telemetry.addLine("Shoot!");
@@ -89,7 +89,7 @@ public class actualAutonV2 extends LinearOpMode {
             telemetry.addLine("Moving over...");
             telemetry.update();
 
-            robot.wheelMecanumDrive(robot.calculateInches(-7.5,0),0.7);
+            robot.wheelMecanumDrive(robot.calculateInches(7.5,0),0.7);
 
             pause(1000);
         }
@@ -99,7 +99,7 @@ public class actualAutonV2 extends LinearOpMode {
         telemetry.addLine("Moving over white line...");
         telemetry.update();
 
-        robot.encoderDrive(0.5,-5);
+        robot.encoderDrive(0.5,5);
 
         pause(1000);
 
