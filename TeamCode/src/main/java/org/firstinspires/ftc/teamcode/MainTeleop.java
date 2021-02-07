@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -108,6 +109,18 @@ public class MainTeleop extends LinearOpMode{
         double wobbleMod = .3;
         //double volts = voltSensor.getVoltage();
 
+        //Jeff added
+        public void init (HardwareMap hwMap) {
+            outtakeLeft=hwMap.get(DcMotor.class, "outtakeLeft");
+            outtakeRight=hwMap.get(DcMotor.class, "outtakeRight");
+            outtakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            outtakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+        public void setMotorSpeed(double speed) {
+            outtakeLeft.setPower(speed);
+            outtakeRight.setPower(speed);
+        //end Jeff added
 
         waitForStart();
 
@@ -162,9 +175,9 @@ public class MainTeleop extends LinearOpMode{
             //Sending data on power of outtake, outtake motor RPM, and tangential velocity of outtake wheel to telemetry
 
             if(gamepad2.right_bumper){
-                outtakeMod = 0.305;//* (12/expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS)); //power shots
+                outtakeMod = 0.32;//* (12/expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS)); //power shots
             }else{
-                outtakeMod = 0.355;//* (12/expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS));
+                outtakeMod = 0.37;//* (12/expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS));
             }
             double outtakePower = (gamepad2.right_trigger * outtakeMod);
             outtakeLeft.setPower(outtakePower);
