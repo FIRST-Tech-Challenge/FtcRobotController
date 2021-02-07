@@ -88,11 +88,7 @@ public class ScoringMechanism {
         launcher = new Launcher(hardwareMap, telemetry, ticker);
         intake = new Intake(hardwareMap, ticker);
 
-        try {
-            blinkinLed = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
-        } catch (IllegalArgumentException iae) {
-            Log.e(LOG_TAG, "Can't find blinkin led, either not faked, or not working");
-        }
+        blinkinLed = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
         this.intakeVelocity = intakeVelocity;
         this.launchTrigger = launchTrigger;

@@ -28,10 +28,10 @@ import com.ftc9929.corelib.state.State;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -49,9 +49,9 @@ public class WobbleGoal {
 
     private Servo gripperServo;
 
-    private TouchSensor placeLimitSwitch;
+    private RevTouchSensor placeLimitSwitch;
 
-    private TouchSensor stowLimitSwitch;
+    private RevTouchSensor stowLimitSwitch;
 
     @Setter
     private RangeInput shoulderThrottle;
@@ -79,9 +79,9 @@ public class WobbleGoal {
 
         gripperServo = hardwareMap.get(Servo.class, "gripperServo");
 
-        placeLimitSwitch = hardwareMap.get(TouchSensor.class, "placeLimitSwitch");
+        placeLimitSwitch = hardwareMap.get(RevTouchSensor.class, "placeLimitSwitch");
 
-        stowLimitSwitch = hardwareMap.get(TouchSensor.class, "stowLimitSwitch");
+        stowLimitSwitch = hardwareMap.get(RevTouchSensor.class, "stowLimitSwitch");
 
         PlaceState placeState = new PlaceState(telemetry);
 
