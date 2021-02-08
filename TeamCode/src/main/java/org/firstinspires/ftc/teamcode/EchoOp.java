@@ -78,8 +78,14 @@ public class EchoOp extends OpMode {
             flywheel.off();
         }
 
+        String isReady = "FLYWHEEL NOT READY";
 
-        if(gamepad1.left_bumper && flywheel.isReady()) {
+        if(flywheel.isReady()) {
+            isReady = "FLYWHEEL READY!";
+        }
+
+
+        if(gamepad1.left_bumper) {
             hitter.hit();
         }
         else {
@@ -100,6 +106,7 @@ public class EchoOp extends OpMode {
         telemetry.addData("Left Speed", leftSpeed);
         telemetry.addData("Right Speed", rightSpeed);
         telemetry.addData("Intake Speed", intakeSpeed);
+        telemetry.addData("Flywheel Ready State", isReady);
 
 
     }
