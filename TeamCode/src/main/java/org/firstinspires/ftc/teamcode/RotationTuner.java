@@ -56,18 +56,6 @@ public class RotationTuner extends OpMode {
     @Override
     public void loop() {
         gamepad.update();
-//        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-//
-//        pidRotate.setPID(Vals.rotate_kp, Vals.rotate_ki, Vals.rotate_kd);
-//        double power = pidRotate.calculate(lastAngle.firstAngle, Vals.rotate_target);
-//
-//
-//
-//        driveLeft.set(-power);
-//        driveRight.set(power);
-//
-//        telemetry.addData("Current Heading", lastAngles.firstAngle);
-//        telemetry.addData("Current Power", power);
 
         if(gamepad.isARelease()) {
             driveLeft.set(0);
@@ -86,12 +74,10 @@ public class RotationTuner extends OpMode {
             leftPower = Math.max(.93, leftPower);
             rightPower = Math.max(.93, rightPower);
         } else if(gamepad.gamepad.left_bumper) {
-            if(gamepad.gamepad.right_bumper) {
-                leftPower -= .4;
-                rightPower -= .4;
-                leftPower = Math.min(-.93, leftPower);
-                rightPower = Math.min(-.93, rightPower);
-            }
+            leftPower -= .4;
+            rightPower -= .4;
+            leftPower = Math.min(-.93, leftPower);
+            rightPower = Math.min(-.93, rightPower);
         }
 
         driveLeft.set(leftPower);

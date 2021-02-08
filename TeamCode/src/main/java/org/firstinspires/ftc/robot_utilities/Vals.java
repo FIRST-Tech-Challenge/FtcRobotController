@@ -9,7 +9,7 @@ public class Vals {
     public static double flywheel_kd = 0;
     public static double flywheel_ks = 0;
     public static double flywheel_kv = 0.03;
-    public static double flywheel_speed = 0.36;
+    public static double flywheel_speed = 0.345;
     public static double flywheel_direction = -1;
     public static int flywheel_ready_ticks = 40;
 

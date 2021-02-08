@@ -12,8 +12,8 @@ public class FlyWheel {
     private double flywheelSpeed = 0;
     private double flywheelDirection = Vals.flywheel_direction;
 
-    private static final int MIN_SPEED = 960;
-    private static final int MAX_SPEED = 990;
+    private static final int MIN_SPEED = 920;
+    private static final int MAX_SPEED = 960;
 
     private int ticks = 0;
 

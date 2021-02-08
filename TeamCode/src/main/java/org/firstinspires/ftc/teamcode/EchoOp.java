@@ -79,7 +79,7 @@ public class EchoOp extends OpMode {
         }
 
 
-        if(gamepad1.left_bumper) {
+        if(gamepad1.left_bumper && flywheel.isReady()) {
             hitter.hit();
         }
         else {
