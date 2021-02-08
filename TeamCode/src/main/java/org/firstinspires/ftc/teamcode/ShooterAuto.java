@@ -39,6 +39,7 @@ public class ShooterAuto extends LinearOpMode {
             }
         }
 
+
         stop();
     }
 }
