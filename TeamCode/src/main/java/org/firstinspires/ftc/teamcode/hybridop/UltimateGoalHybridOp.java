@@ -3,22 +3,36 @@ package org.firstinspires.ftc.teamcode.hybridop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.autonomous.sequences.NavigateAndShootRingsSequence;
 import org.firstinspires.ftc.teamcode.hardware.UltimateGoalHardware;
 import org.firstinspires.ftc.teamcode.playmaker.GamepadActions;
 import org.firstinspires.ftc.teamcode.playmaker.HybridOp;
 import org.firstinspires.ftc.teamcode.playmaker.Localizer;
+import org.firstinspires.ftc.teamcode.playmaker.RobotHardware;
 
-@TeleOp(name = "Ultimate Goal TeleOp")
-public class UltimateGoalHybridOp extends UltimateGoalHardware implements HybridOp {
+public abstract class UltimateGoalHybridOp extends UltimateGoalHardware implements HybridOp {
+
+    @TeleOp(name = "Ultimate Goal Hybrid Op - RED")
+    public static class UltimateGoalHybridOpRed extends UltimateGoalHybridOp {
+        @Override
+        Team getTeam() {
+            return Team.RED;
+        }
+    }
+
+    @TeleOp(name = "Ultimate Goal Hybrid Op - BLUE")
+    public static class UltimateGoalHybridOpBlue extends UltimateGoalHybridOp {
+        @Override
+        Team getTeam() {
+            return Team.BLUE;
+        }
+    }
 
     float omniDrivePower = 1f;
-//    double spinnerPower = 1;
-//    double largeSpinnerIncrement = 0.05;
-//    double smallSpinnerIncrement = 0.005;
     boolean slowMode = false;
     float slowModeMultiplier = 0.5f;
 
-
+    abstract RobotHardware.Team getTeam();
 
     @Override
     public void autonomous_loop() {
@@ -32,7 +46,6 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
         // Slowmode when shooter running or bumper_left toggled
         slowMode = gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.bumper_left) || shooter.getPower() > 0;
-
 
         // endregion
 
@@ -55,6 +68,11 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
             collector.setPower(0);
         }
 
+        // Navigate and shoot rings
+        if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.left_stick)) {
+            hybridOpExecutor.executeActionSequence(new NavigateAndShootRingsSequence(getTeam()), true, true);
+        }
+
         // region wobbleGoal {...}
         extendWobbleGoal = gamepadActions.isToggled(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.x);
         if (gamepadActions.isFirstPress(GamepadActions.GamepadType.ONE, GamepadActions.GamepadButtons.x) && extendWobbleGoal) {
@@ -73,7 +91,6 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
         // endregion
 
-
         // Collector should not run if shooter is running
         if (shooter.getPower() > 0) {
             collector.setPower(0);
@@ -89,10 +106,6 @@ public class UltimateGoalHybridOp extends UltimateGoalHardware implements Hybrid
 
     @Override
     public void run_loop() {
-        telemetry.addData("Slow Mode", slowMode);
-        telemetry.addData("FL", frontLeft.getCurrentPosition());
-        telemetry.addData("FR", frontRight.getCurrentPosition());
-        telemetry.addData("BL", backLeft.getCurrentPosition());
-        telemetry.addData("BR", backRight.getCurrentPosition());
+        telemetry.addData("[UGHO] Slow Mode", slowMode);
     }
 }

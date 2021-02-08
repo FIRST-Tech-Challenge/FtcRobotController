@@ -79,9 +79,6 @@ public class UltimateGoalSequence extends ActionSequence {
             new RobotTransform(DistanceUnit.INCH, 1, -12, 73)
     };
 
-    static final double ROBOT_SPEED = 0.9f;
-    static final double ROBOT_PRECISE_SPEED = 0.3f;
-    static final double SHOOTER_HEADING_OFFSET = -10;
     static final LocalizerMoveAction.FollowPathMethod FOLLOW_PATH_METHOD = LocalizerMoveAction.FollowPathMethod.FAST;
     static final RobotTransform SHOOTING_POSITION_NEAR_WALL = new RobotTransform(DistanceUnit.INCH, -3, -36, 90);
     static final RobotTransform PARKING_POSITION_NEAR_CENTER = new RobotTransform(DistanceUnit.INCH, 12, -12, 90);
@@ -142,14 +139,12 @@ public class UltimateGoalSequence extends ActionSequence {
         }
 
         // Add shooting offset
-        RobotTransform finalShootingPosition = shootingPosition[shootingPosition.length - 1];
-        shootingPosition[shootingPosition.length - 1] = new RobotTransform(
-            finalShootingPosition.position,
-            finalShootingPosition.heading + SHOOTER_HEADING_OFFSET
-        );
+        RobotTransform finalShootingPosition = shootingPosition[shootingPosition.length - 1].copy();
+        finalShootingPosition.heading += UltimateGoalHardware.SHOOTER_HEADING_OFFSET;
+        shootingPosition[shootingPosition.length - 1] = finalShootingPosition;
 
         // Move to ring detection position
-        addAction(new LocalizerMoveAction(ringDetectionPosition, ROBOT_SPEED, ROBOT_PRECISE_SPEED, LocalizerMoveAction.FollowPathMethod.LINEAR));
+        addAction(new LocalizerMoveAction(ringDetectionPosition, UltimateGoalHardware.defaultLocalizerMoveParameters));
 
         // Detect rings
         DetectRingsAction ringDetectionAction = new DetectRingsAction(2000);
@@ -162,28 +157,28 @@ public class UltimateGoalSequence extends ActionSequence {
         addAction(new IfActionResult(
                 ringDetectionAction,
                 DetectRingsAction.DetectRingsResult.NONE,
-                new LocalizerMoveAction(ringTransforms[0], ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD),
+                new LocalizerMoveAction(ringTransforms[0], UltimateGoalHardware.defaultLocalizerMoveParameters),
                 null));
 
         // B - Single ring
         addAction(new IfActionResult(
                 ringDetectionAction,
                 DetectRingsAction.DetectRingsResult.SINGLE,
-                new LocalizerMoveAction(ringTransforms[1], ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD),
+                new LocalizerMoveAction(ringTransforms[1], UltimateGoalHardware.defaultLocalizerMoveParameters),
                 null));
 
         // C - Quad rings
         addAction(new IfActionResult(
                 ringDetectionAction,
                 DetectRingsAction.DetectRingsResult.QUAD,
-                new LocalizerMoveAction(ringTransforms[2], ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD),
+                new LocalizerMoveAction(ringTransforms[2], UltimateGoalHardware.defaultLocalizerMoveParameters),
                 null));
 
         // Release the wobble goal
         addAction(new ExecuteSequenceAction(new ReleaseWobbleGoalSequence()));
 
         // Move to shooting position
-        addAction(new LocalizerMoveAction(shootingPosition, ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD));
+        addAction(new LocalizerMoveAction(shootingPosition, UltimateGoalHardware.defaultLocalizerMoveParameters));
 
         // Shoot three rings into high goal
         addAction(new ExecuteSequenceAction(new ShootActionSequence(3)));
@@ -196,21 +191,21 @@ public class UltimateGoalSequence extends ActionSequence {
         //         null));
 
         // Park on center line
-        addAction(new LocalizerMoveAction(parkingPosition, ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD));
+        addAction(new LocalizerMoveAction(parkingPosition, UltimateGoalHardware.defaultLocalizerMoveParameters));
     }
 
     static class ExtraRingSequence extends ActionSequence {
-            public ExtraRingSequence(RobotHardware.Team team, RobotTransform[] knockoverTransforms, RobotTransform shootPosition) {
-                addAction(new LocalizerMoveAction(knockoverTransforms, ROBOT_SPEED, ROBOT_PRECISE_SPEED, LocalizerMoveAction.FollowPathMethod.LINEAR));
+            public ExtraRingSequence(RobotHardware.Team team, RobotTransform[] knockoverTransforms, RobotTransform shootPosition, LocalizerMoveAction.LocalizerMoveActionParameters parameters) {
+                addAction(new LocalizerMoveAction(knockoverTransforms, parameters));
                 addAction(new EnableCollectorAction(true));
                 if (team == RobotHardware.Team.BLUE) {
-                        addAction(new LocalizerMoveAction(Localizer.mirrorTransformsOverTeamLine(EXTRA_RINGS_COLLECTION), ROBOT_SPEED, 0.45f, LocalizerMoveAction.FollowPathMethod.LINEAR));
+                        addAction(new LocalizerMoveAction(Localizer.mirrorTransformsOverTeamLine(EXTRA_RINGS_COLLECTION), parameters));
                 } else {
-                        addAction(new LocalizerMoveAction(EXTRA_RINGS_COLLECTION, ROBOT_SPEED, 0.45f, LocalizerMoveAction.FollowPathMethod.LINEAR));
+                        addAction(new LocalizerMoveAction(EXTRA_RINGS_COLLECTION, parameters));
                 }
                 
                 addAction(new EnableCollectorAction(false));
-                addAction(new LocalizerMoveAction(shootPosition, ROBOT_SPEED, ROBOT_PRECISE_SPEED, FOLLOW_PATH_METHOD));
+                addAction(new LocalizerMoveAction(shootPosition, parameters));
                 // Shoot three rings into high goal
                 addAction(new ExecuteSequenceAction(new ShootActionSequence(3)));
             }

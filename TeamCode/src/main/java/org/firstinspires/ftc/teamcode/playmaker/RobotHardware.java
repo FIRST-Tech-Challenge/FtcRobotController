@@ -25,7 +25,6 @@ public abstract class RobotHardware extends OpMode {
     }
 
     private ExecutionMode executionMode = ExecutionMode.TELEOP;
-
     public static final String vuforiaKey = "ActI1F//////AAABmS42p5yOnkGis4OjI6bXOlAnHWRg28DHHDgR3ja8s8s9yCGhUmk3wfLPYxAOtfsiSVSi97uAosw46Pu3KQNf7fSqrMOT/PUcG2zW3Lq8tnJHTe/uwhwWgvnwOlrgEovZPA0uhwQ/uHH2zr/U2mFMYOQTTAk6ovbCjARxN+HfP6XWCDHDQ4dhOK+joRlA8u0HqXPzm6uBQWBgCyUno8aESPLQu3QGgEWUWm1tEhUny4rgQXC19nH160f7EGy+YoTR6YAD37xQQxnzP58wHmrX7+cBuiwkai9+g65R3pfBYprNpeRunzEml6m+a792ypI/niKew1VWPSgQSHaE1Ix8+c6uCvqySjcu5mZ1g3/pnU2j";
     public VuforiaLocalizer.Parameters vuforiaParameters;
     public VuforiaLocalizer vuforia;
@@ -33,6 +32,9 @@ public abstract class RobotHardware extends OpMode {
     public WebcamName webcamName;
     public boolean initVuforia = true;
     public boolean initTfod = true;
+    private double lastLoopTime;
+    private double msSinceLastLoop;
+    private double msElapsedOfLastLoop;
 
     // Executors
     public AutonomousExecutor autonomousExecutor;
@@ -40,7 +42,7 @@ public abstract class RobotHardware extends OpMode {
 
     public BNO055IMU revIMU;
     public OmniDrive omniDrive;
-    public Localizer  localizer;
+    public Localizer localizer;
 
     public GamepadActions gamepadActions;
 
@@ -157,14 +159,24 @@ public abstract class RobotHardware extends OpMode {
 
     @Override
     public void init_loop() {
-        this.localizer.updateRobotTransform(this, revIMU);
+        this.localizer.updateRobotTransform(this);
         this.localizer.telemetry();
     }
 
     @Override
+    public void start() {
+        super.start();
+        lastLoopTime = System.currentTimeMillis();
+    }
+
+    @Override
     public void loop() {
+        long loopStart = System.currentTimeMillis();
+        msSinceLastLoop = loopStart - lastLoopTime;
+        this.hardware_loop();
+
         // Update robot location
-        this.localizer.updateRobotTransform(this, revIMU);
+        this.localizer.updateRobotTransform(this);
         this.localizer.telemetry();
 
         // Update gamepad actions
@@ -181,8 +193,23 @@ public abstract class RobotHardware extends OpMode {
                 if (done) requestOpModeStop();
                 break;
         }
-
-        this.hardware_loop();
         this.run_loop();
+        double loopEnd = System.currentTimeMillis();
+        msElapsedOfLastLoop = loopEnd - loopStart;
+        lastLoopTime = loopEnd;
+
+        telemetry.addData("[RobotHardware] LT", "%.1f ms", msSinceLastLoop);
+        telemetry.addData("[RobotHardware] LPS", "%.1f LPS", 1000/msSinceLastLoop);
+        telemetry.addData("[RobotHardware] LET", "%.1f ms", msElapsedOfLastLoop);
+        telemetry.addData("[RobotHardware] LEPS", "%.1f LEPS", 1000/msElapsedOfLastLoop);
+
+    }
+
+    public double getMsSinceLastLoopStart() {
+        return msSinceLastLoop;
+    }
+
+    public double getMsOfLastLoopExecutionTime() {
+        return msElapsedOfLastLoop;
     }
 }

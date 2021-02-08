@@ -6,9 +6,11 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
@@ -23,6 +25,10 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 public class Localizer {
 
     private long latestAcquisitionTime = 0;
+    private EstimatedPosition lastEstimatedPosition;
+    private EstimatedOrientation lastEstimatedOrientation;
+    private Velocity estimatedVelocity;
+    private AngularVelocity estimatedAngularVelocity;
 
     // IMU measurements
     private Orientation lastRawIMUOrientation;
@@ -40,15 +46,14 @@ public class Localizer {
     private Integer lastBackLeft;
     private Integer lastBackRight;
     private Position lastEncoderPosition = new Position();
-    private Orientation lastEncoderOrientation = new Orientation(EXTRINSIC, XYZ, DEGREES, 0,0,0, System.currentTimeMillis());
 
     // Vuforia Constants
     private static final float mmPerInch        = 25.4f;
     private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
     private static final float halfField = 72 * mmPerInch;
     private static final float quadField  = 36 * mmPerInch;
-    public static final double DISTANCE_TO_ACCEPT_VUFORIA_INCHES = 0;
 
+    public double distanceToAcceptVuforiaInches = 72;
     public double encodersXScaleFactor = 1;
     public double encodersYScaleFactor = 1;
 
@@ -78,7 +83,6 @@ public class Localizer {
         public EstimatedPosition(PositionSource source, Position position) {
             this.source = source;
             this.position = position;
-
         }
     }
 
@@ -103,6 +107,10 @@ public class Localizer {
         public RobotTransform(DistanceUnit unit, double x, double y, double heading) {
             this.position = new Position(unit, x, y, 0, 0);
             this.heading = heading;
+        }
+
+        public RobotTransform copy() {
+            return new RobotTransform(new Position(this.position.unit, this.position.x, this.position.y, this.position.z, this.position.acquisitionTime), this.heading);
         }
     }
 
@@ -160,57 +168,100 @@ public class Localizer {
         return null;
     } //meeep
 
+    public Velocity estimateVelocity() {
+        return estimatedVelocity;
+    }
+
+    public AngularVelocity estimateAngularVelocity() {
+        return estimatedAngularVelocity;
+    }
+
     public void telemetry() {
         EstimatedPosition estimatedPosition = estimatePosition();
         EstimatedOrientation orientation = estimateOrientation();
         if (estimatedPosition != null) {
             Position position = estimatedPosition.position.toUnit(DistanceUnit.INCH);
-            telemetry.addData("Loc. Position Source", estimatedPosition.source.toString());
-            telemetry.addData("Loc. Position", String.format("%.1f, %.1f, %.1f", position.x, position.y, position.z));
+            telemetry.addData("[Loc] Position Source", estimatedPosition.source.toString());
+            telemetry.addData("[Loc] Position", String.format("%.1f, %.1f, %.1f", position.x, position.y, position.z));
+
+
         } else {
-            telemetry.addData("Loc. Position", "unknown");
+            telemetry.addData("[Loc] Position", "unknown");
         }
 
-        if (orientation != null) {
-            telemetry.addData("Loc. Orientation Source", orientation.source.toString());
-            Orientation rotation = orientation.orientation;
-            telemetry.addData("Loc. Orientation", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+        if (estimatedVelocity != null) {
+            Velocity velocity = estimatedVelocity.toUnit(DistanceUnit.INCH);
+            telemetry.addData("[Loc] Velocity (in/s)", "X: %.1f, Y: %.1f, SPD: %.1f", velocity.xVeloc, velocity.yVeloc, speed(velocity));
         } else {
-            telemetry.addData("Loc. Orientation", "unknown");
+            telemetry.addData("[Loc] Velocity (in/s)", "unknown");
+        }
+
+
+
+        if (orientation != null) {
+            telemetry.addData("[Loc] Orientation Source", orientation.source.toString());
+            Orientation rotation = orientation.orientation;
+            telemetry.addData("[Loc] Heading", "%.0f", rotation.thirdAngle);
+        } else {
+            telemetry.addData("[Loc] Orientation", "unknown");
+        }
+
+        if (estimatedAngularVelocity != null) {
+            telemetry.addData("[Loc] Angular Velocity (deg/s)", estimatedAngularVelocity.zRotationRate);
+        } else {
+            telemetry.addData("[Loc] Angular Velocity (deg/s)", "unknown");
         }
 
         if (imuToWorldRotation != null) {
-            telemetry.addData("IMU World Angle Offset", imuToWorldRotation);
+            telemetry.addData("[Loc] IMU World Angle Offset", imuToWorldRotation);
         } else {
-            telemetry.addData("IMU World Angle Offset", "not set");
+            telemetry.addData("[Loc] IMU World Angle Offset", "not set");
         }
-
-        if (lastRawIMUOrientation != null) {
-            Orientation rotation = lastRawIMUOrientation;
-
-            telemetry.addData("Raw IMU. Orientation", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-        } else {
-            telemetry.addData("Raw IMU. Orientation", "unknown");
-        }
-
     }
 
     /**
      * Updates the data needed to estimate position and transform. This should be called in every
      * loop of the OpMode.
      * @param hardware The robot hardware; it will be used to fetch Vuforia and encoder data
-     * @param imu The REV IMU, it will be used to determine orientation
      */
-    public void updateRobotTransform(RobotHardware hardware, BNO055IMU imu) {
+    public void updateRobotTransform(RobotHardware hardware) {
         this.setLatestAcquisitionTime();
 
         boolean foundTarget = this.updateLocationWithVuforia(hardware);
-        if (imu != null) {
-            this.updateIMUOrientation(imu);
+        if (hardware.revIMU != null) {
+            this.updateIMUOrientation(hardware.revIMU);
         }
         if (hardware.omniDrive != null) {
             this.updateTransformWithEncodersAndIMU(hardware, !foundTarget);
         }
+
+        EstimatedPosition currentEstimatedPosition = estimatePosition();
+        EstimatedOrientation currentEstimatedOrientation = estimateOrientation();
+
+        // Calculate velocity
+        if (lastEstimatedPosition != null) {
+            Position currentPosition = currentEstimatedPosition.position.toUnit(DistanceUnit.MM);
+            Position lastPosition = lastEstimatedPosition.position.toUnit(DistanceUnit.MM);
+            double deltaMs = currentEstimatedPosition.position.acquisitionTime - lastEstimatedPosition.position.acquisitionTime;
+            double deltaSeconds = deltaMs / 1000;
+            double deltaX = currentPosition.x - lastEstimatedPosition.position.x;
+            double deltaY = currentPosition.y - lastEstimatedPosition.position.y;
+            estimatedVelocity = new Velocity(DistanceUnit.MM, deltaX / deltaSeconds, deltaY / deltaSeconds, 0, currentPosition.acquisitionTime);
+        }
+
+        // Calculate angular velocity
+        if (lastEstimatedOrientation != null) {
+            double currentHeading = currentEstimatedOrientation.orientation.thirdAngle;
+            double lastHeading = lastEstimatedOrientation.orientation.thirdAngle;
+            double deltaMs = currentEstimatedOrientation.orientation.acquisitionTime - lastEstimatedOrientation.orientation.acquisitionTime;
+            double deltaSeconds = deltaMs / 1000;
+            double deltaHeading = Localizer.angularDifferenceInDegrees(lastHeading, currentHeading);
+            estimatedAngularVelocity = new AngularVelocity(DEGREES, 0, 0, (float) (deltaHeading / deltaSeconds), currentEstimatedOrientation.orientation.acquisitionTime);
+        }
+
+        lastEstimatedPosition = currentEstimatedPosition;
+        lastEstimatedOrientation = currentEstimatedOrientation;
+
     }
 
     //region Vuforia
@@ -322,7 +373,7 @@ public class Localizer {
         targetsUltimateGoal.activate();
     }
 
-    public boolean updateLocationWithVuforia(RobotHardware hardware) {
+    private boolean updateLocationWithVuforia(RobotHardware hardware) {
         // Clear the currently saved vuforia transform
         lastVuforiaTransform = null;
         boolean didFindTarget = false;
@@ -332,20 +383,20 @@ public class Localizer {
             if (listener.isVisible()) {
                 hardware.telemetry.addData("Localizer Visible Target:", trackable.getName());
                 OpenGLMatrix imageLocationRelRobot = listener.getVuforiaCameraFromTarget();
-                float x = imageLocationRelRobot.getTranslation().get(0);
-                float y = imageLocationRelRobot.getTranslation().get(1);
-                float z = imageLocationRelRobot.getTranslation().get(2);
-                Position imagePositionRelRobot = new Position(DistanceUnit.MM, x,y,z, 0);
+                float relX = imageLocationRelRobot.getTranslation().get(0);
+                float relY = imageLocationRelRobot.getTranslation().get(1);
+                float relZ = imageLocationRelRobot.getTranslation().get(2);
+                Position imagePositionRelRobot = new Position(DistanceUnit.MM, relX,relY,relZ, 0);
                 double distance = Localizer.distance(zero, imagePositionRelRobot, DistanceUnit.INCH);
-                if (distance < DISTANCE_TO_ACCEPT_VUFORIA_INCHES) {
+                if (distance < distanceToAcceptVuforiaInches) {
                     didFindTarget = true;
                     OpenGLMatrix robotTransform = listener.getRobotLocation();
                     lastVuforiaTransform = new VuforiaTransform(robotTransform);
                     if (vuforiaOverwritesOtherLocations) {
                         VectorF translation = lastVuforiaTransform.transform.getTranslation();
-                        float rx = translation.get(0);
-                        float ry = translation.get(1);
-                        float rz = translation.get(2);
+                        float x = translation.get(0);
+                        float y = translation.get(1);
+                        float z = translation.get(2);
                         Position position = new Position(DistanceUnit.MM, x, y, z, System.currentTimeMillis());
                         lastEncoderPosition = position;
                     }
@@ -365,9 +416,9 @@ public class Localizer {
      * @param hardware The hardware to use
      */
 
-    public void updateTransformWithEncodersAndIMU(RobotHardware hardware, boolean calculateDelta) {
-        if (lastIMUOrientation == null) {
-            // If there is no IMU data, location/rotation can not be determined.
+    private void updateTransformWithEncodersAndIMU(RobotHardware hardware, boolean calculateDelta) {
+        if (lastEncoderPosition == null || lastIMUOrientation == null) {
+            // If there is no previous position data from Vuforia/defined robot start and/or IMU data, location/rotation can not be determined.
             return;
         }
 
@@ -382,7 +433,6 @@ public class Localizer {
                 && lastFrontRight != null
                 && lastBackLeft != null
                 && lastBackRight != null
-                && lastEncoderOrientation != null
                 && calculateDelta) {
 
             // Get position deltas
@@ -413,11 +463,6 @@ public class Localizer {
         lastBackRight = currentBackRight;
 
     }
-
-    public void updateTransformWithEncoders(RobotHardware hardware) {
-
-    }
-
     //endregion
 
     //region IMU
@@ -448,7 +493,7 @@ public class Localizer {
         return this.imuToWorldRotation;
     }
 
-    public void updateIMUOrientation(BNO055IMU imu) {
+    private void updateIMUOrientation(BNO055IMU imu) {
         Orientation imuOrientation = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES);
         this.lastRawIMUOrientation = imuOrientation;
         if (this.imuToWorldRotation != null) {
@@ -495,6 +540,15 @@ public class Localizer {
         Position unit_a = a.toUnit(unit);
         Position unit_b = b.toUnit(unit);
         return Math.hypot(unit_b.x - unit_a.x, unit_b.y - unit_a.y);
+    }
+
+    /**
+     * Returns speed from velocity
+     * @param velocity Velocity
+     * @return Speed in provided velocity's units
+     */
+    public static double speed(Velocity velocity) {
+        return Math.hypot(velocity.xVeloc, velocity.yVeloc);
     }
 
     /**
