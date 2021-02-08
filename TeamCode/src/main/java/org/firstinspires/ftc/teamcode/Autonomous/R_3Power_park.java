@@ -24,16 +24,16 @@ public class R_3Power_park extends LinearOpMode {
         //robot.navigate();
         //robot.setPosition(60.25,-32.25, 0);//high goal -12,22
         if(rings!=1&&rings!=4) {
-            robot.goToPosition( -67,-1,0, 1);//-25,60
+            robot.goToPosition( -64,-1,0, 1);//-25,60
             robot.openWobbleGoalClaw();
             sleep(250);
-            robot.goToPosition(-60.5,32,-2,0.8);//37,4
+            robot.goToPosition(-60.5,29.8,-2,0.8);//37,4
         }
         else if(rings==1) {
             robot.goToPosition(-98,12,0,1);
             robot.openWobbleGoalClaw();
             sleep(250);
-            robot.goToPosition(-60.5,24,-2.5,0.8);
+            robot.goToPosition(-60.5,21,-2.5,0.7);
         }
         else if(rings==4) {
 //            robot.moveAngle(-2.5, -113,1.0);
@@ -45,6 +45,7 @@ public class R_3Power_park extends LinearOpMode {
 
         }
         robot.shootThreePowerShot();
+        robot.turnInPlace(0,1.0);
         robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
         if(rings!=4) {
 
@@ -52,9 +53,9 @@ public class R_3Power_park extends LinearOpMode {
                 robot.turnInPlace(0, 1.0);
                 //robot.moveAngle(6.5, 49.5, 0.8);
                 robot.goToPosition(-53.5+43.5,32+3,0,0.8);
-                robot.turnInPlace(0,1.0);
+                robot.turnInPlace(0,0.6);
                 //robot.moveAngle(-4.0,0,0.8);
-                robot.goToPosition(-53.5+43.5,32+3-6.5,0,0.8);
+                robot.goToPosition(-53.5+43.5,32+3-6.9,0,0.8);
                 robot.closeWobbleGoalClaw();
                 sleep(600);
                 robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
@@ -74,11 +75,12 @@ public class R_3Power_park extends LinearOpMode {
                 robot.goToPosition(-53.5+43.5,26,0,0.8);
                 robot.turnInPlace(0,1.0);
 ////                robot.moveAngle(-4.0,0,0.8);
-                robot.goToPosition(-53.5+43.5,18.5,0,0.8);
+                robot.goToPosition(-53.5+43.5,19,0,0.8);
+                sleep(250);
                 robot.closeWobbleGoalClaw();
                 sleep(600);
                 robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-                robot.goToPosition(-92,12,0,0.8);
+                robot.goToPosition(-88,12,0,0.8);
 //                robot.moveAngle(-0.5,-80,0.8);
                 robot.openWobbleGoalClaw();
                 sleep(250);
@@ -100,6 +102,7 @@ public class R_3Power_park extends LinearOpMode {
             robot.openWobbleGoalClaw();
             robot.moveAngle(15,40,1.0);
         }
+        sleep(1000);
         stop();
     }
 

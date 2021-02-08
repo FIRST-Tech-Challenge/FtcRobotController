@@ -172,17 +172,19 @@ return data;
             anglePower[0] = sin(angleInRadians + PI / 4);
             anglePower[1] = sin(angleInRadians - PI / 4);
             anglecorrection = (currentPosition[2] - target_position[2])%360 * 0.05;
-            if (difference > 5) {
-                if (abs(anglePower[1]) > abs(anglePower[0])) {
-                    anglePower[1] *= abs(1 / anglePower[1]);
-                    anglePower[0] *= abs(1 / anglePower[1]);
-                } else {
-                    anglePower[1] *= abs(1 / anglePower[0]);
-                    anglePower[0] *= abs(1 / anglePower[0]);
-                }
+            if (abs(anglePower[1]) > abs(anglePower[0])) {
+                anglePower[1] *= abs(1 / anglePower[1]);
+                anglePower[0] *= abs(1 / anglePower[1]);
+            } else {
+                anglePower[1] *= abs(1 / anglePower[0]);
+                anglePower[0] *= abs(1 / anglePower[0]);
             }
-            while(abs(power)<0.3){
-                power*=0.3/abs(power);
+//            if((abs(power * anglePower[1] + anglecorrection)<=0.2&&abs(power * anglePower[0] - anglecorrection)<=0.2)||(abs(power * anglePower[0] + anglecorrection)<=0.2&&abs(power * anglePower[1] - anglecorrection)<=0.2)){
+//                anglePower[1]*=1.5;
+//                anglePower[0]*=1.5;
+//            }
+            while(abs(power)<0.35){
+                power*=0.35/abs(power);
             }
             motorRightBack.setPower(power * anglePower[1] + anglecorrection);
             motorRightFront.setPower(power * anglePower[0] + anglecorrection);
@@ -206,9 +208,9 @@ return data;
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        double currentAngle = getAngle();
-        double newTarget = target;
-        double error = target-currentAngle;
+        float currentAngle = getAngle();
+        float newTarget = (float)target;
+        float error = (float)target-currentAngle;
         double gain = 0.05;
         int direction=1;
         if(error<0){
@@ -223,38 +225,67 @@ return data;
         if (newTarget>180){newTarget=newTarget-360;}
         if (newTarget<=-180){newTarget=newTarget+360;}
 
+        if(abs(error)<10){
+            while (op.opModeIsActive() && (error > 0.25  || error < -0.25))
+            {
+                currentAngle = (float)track()[2];
+                error = newTarget - currentAngle;
+                if(error<0){
+                    direction = -1;
+                }else{
+                    direction = 1;
+                }
+                rightPower = -direction*min(abs(power*gain*error),abs(power));
+                leftPower = -rightPower;
+                if(abs(leftPower)<0.315){
+                    leftPower*=0.3/abs(leftPower);
+                }
+                if(abs(rightPower)<0.315){
+                    rightPower*=0.3/abs(rightPower);
+                }
+                motorLeftBack.setPower(leftPower);
+                motorLeftFront.setPower(leftPower);
+                motorRightBack.setPower(rightPower);
+                motorRightFront.setPower(rightPower);
+            }
 
-        while (op.opModeIsActive() && (error > 0.5  || error < -0.5))
-        {
-            currentAngle = getAngle();
-            error = newTarget - currentAngle%360;
-            if(error<0){
-                direction = -1;
-            }else{
-                direction = 1;
-            }
-            rightPower = -direction*min(abs(power*gain*error),abs(power));
-            leftPower = -rightPower;
-            while(abs(leftPower)<0.4){
-                leftPower*=0.4/abs(leftPower);
-            }
-            while(abs(rightPower)<0.4){
-                rightPower*=0.4/abs(rightPower);
-            }
-            op.telemetry.addData("leftPower",leftPower);
-            op.telemetry.addData("rightPower",rightPower);
-            op.telemetry.addData("error",error);
-            motorLeftBack.setPower(leftPower);
-            motorLeftFront.setPower(leftPower);
-            motorRightBack.setPower(rightPower);
-            motorRightFront.setPower(rightPower);
-            track();
+            motorLeftBack.setPower(0);
+            motorRightFront.setPower(0);
+            motorLeftFront.setPower(0);
+            motorRightBack.setPower(0);
         }
+        else {
+            while (op.opModeIsActive() && (error > 0.5 || error < -0.5)) {
+                currentAngle = getAngle();
+                error = newTarget - currentAngle % 360;
+                if (error < 0) {
+                    direction = -1;
+                } else {
+                    direction = 1;
+                }
+                rightPower = -direction * min(abs(power * gain * error), abs(power));
+                leftPower = -rightPower;
+                while (abs(leftPower) < 0.4) {
+                    leftPower *= 0.4 / abs(leftPower);
+                }
+                while (abs(rightPower) < 0.4) {
+                    rightPower *= 0.4 / abs(rightPower);
+                }
+                op.telemetry.addData("leftPower", leftPower);
+                op.telemetry.addData("rightPower", rightPower);
+                op.telemetry.addData("error", error);
+                motorLeftBack.setPower(leftPower);
+                motorLeftFront.setPower(leftPower);
+                motorRightBack.setPower(rightPower);
+                motorRightFront.setPower(rightPower);
+                track();
+            }
 
-        motorLeftBack.setPower(0);
-        motorRightFront.setPower(0);
-        motorLeftFront.setPower(0);
-        motorRightBack.setPower(0);
+            motorLeftBack.setPower(0);
+            motorRightFront.setPower(0);
+            motorLeftFront.setPower(0);
+            motorRightBack.setPower(0);
+        }
 
     }
 
