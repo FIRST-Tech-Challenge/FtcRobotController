@@ -28,6 +28,7 @@ import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.control.ToggledButton;
 import com.ftc9929.corelib.state.State;
 import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
+import com.ftc9929.testing.fakes.FakeTelemetry;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
@@ -52,6 +53,8 @@ public class ScoringMechanism {
     public static final long LAUNCHER_TO_SPEED_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(10);
 
     public static final long WAIT_FOR_HOPPER_TO_FLOAT_MILLIS = 1000; // One second, placeholder
+
+    private static final RevBlinkinLedDriver.BlinkinPattern IDLE_PATTERN = RevBlinkinLedDriver.BlinkinPattern.BREATH_RED;
 
     private Launcher launcher;
 
@@ -141,6 +144,10 @@ public class ScoringMechanism {
         } else {
             Log.e(LOG_TAG, "No state machine setup!");
         }
+
+        if (unsafe.isPressed()) {
+            blinkinLed.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
+        }
     }
 
     @VisibleForTesting
@@ -189,6 +196,8 @@ public class ScoringMechanism {
 
         @Override
         public State doStuffAndGetNextState() {
+            blinkinLed.setPattern(IDLE_PATTERN);
+
             commonLauncherSpeedHandling();
 
             intake.stop();
@@ -243,7 +252,7 @@ public class ScoringMechanism {
         @Override
         public State doStuffAndGetNextState() {
             // Intake encoder not installed yet...
-
+            blinkinLed.setPattern(IDLE_PATTERN);
             if (false) {
                 if (intake.isStalled()) {
                     intake.resetStallDetector();
@@ -299,6 +308,7 @@ public class ScoringMechanism {
 
         @Override
         public State doStuffAndGetNextState() {
+            blinkinLed.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
             intake.stop();
 
             if (isTimedOut()) {
@@ -426,6 +436,10 @@ public class ScoringMechanism {
             if (launcher.isLauncherAtFullSpeed()){
                 resetTimer();
 
+                if (!(telemetry instanceof FakeTelemetry)) { // FIX fake telemetry!
+                    telemetry.speak("send it");
+                }
+
                 return launcherReady;
             }
 
@@ -463,6 +477,7 @@ public class ScoringMechanism {
 
         @Override
         public State doStuffAndGetNextState() {
+            blinkinLed.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
             // FIXME: For *now* would like ability to do "whatever" with intake during launching
 
             // Intake:Not Moving  (unless unsafe)
