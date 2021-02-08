@@ -55,7 +55,7 @@ public class HybridOpExecutor {
      * Function that is called every loop regardless of in autonomous/manual control
      */
     public void loop() {
-        hardware.telemetry.addData("HybridOp Autonomous Mode", inAutonomousMode);
+        hardware.telemetry.addData("[HybridOpExecutor] In Autonomous", inAutonomousMode);
 
         if (inAutonomousMode && overrideManualControl) {
             inAutonomousMode = !this.actionExecutor.loop();

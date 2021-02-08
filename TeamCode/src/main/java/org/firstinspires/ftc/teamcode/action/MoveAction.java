@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.action;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.teamcode.hardware.UltimateGoalHardware;
 import org.firstinspires.ftc.teamcode.playmaker.Action;
 import org.firstinspires.ftc.teamcode.playmaker.Localizer;
 import org.firstinspires.ftc.teamcode.playmaker.RobotHardware;
@@ -18,7 +19,6 @@ public class MoveAction implements Action {
     OmniDrive.Direction direction;
     double distance;
     float speed;
-    double timeout;
     Position initialPosition;
     Orientation initialOrientation;
     LocalizerMoveAction localizerMoveAction;
@@ -69,7 +69,7 @@ public class MoveAction implements Action {
             double newX = -((rawX*Math.cos(robotHeading)) - (rawY*Math.sin(robotHeading)));
             double newY = -((rawX*Math.sin(robotHeading)) + (rawY*Math.cos(robotHeading)));
             Localizer.RobotTransform targetTransform = new Localizer.RobotTransform(DistanceUnit.INCH, initialPosition.x + newX, initialPosition.y + newY, orientation.orientation.thirdAngle);
-            localizerMoveAction = new LocalizerMoveAction(targetTransform, speed, 0.5f, LocalizerMoveAction.FollowPathMethod.LINEAR);
+            localizerMoveAction = new LocalizerMoveAction(targetTransform, UltimateGoalHardware.defaultLocalizerMoveParameters);
             localizerMoveAction.init(hardware);
         }
 

@@ -43,15 +43,15 @@ public class ActionExecutor {
                 didInit = true;
             }
 
-            hardware.telemetry.addData("Sequence Progress", "%d/%d, %d%%", actionNumber, actionSequence.numberOfActions(),
+            hardware.telemetry.addData("[ActionExecutor] Sequence Progress", "%d/%d, %d%%", actionNumber, actionSequence.numberOfActions(),
                     (int) ((double) actionNumber / (double) actionSequence.numberOfActions() * 100.0));
-            hardware.telemetry.addData("Current Action", action.getClass().getSimpleName());
+            hardware.telemetry.addData("[ActionExecutor] Current Action", action.getClass().getSimpleName());
             if (action.progress() != null) {
-                hardware.telemetry.addData("Action %", "%.2f%%", action.progress()*100.0);
+                hardware.telemetry.addData("[ActionExecutor] Action %", "%.2f%%", action.progress()*100.0);
             }
 
             if (action.progressString() != null) {
-                hardware.telemetry.addData("Action Progress", action.progressString());
+                hardware.telemetry.addData("[ActionExecutor] Action Progress", action.progressString());
             }
 
             hardware.telemetry.addLine("");

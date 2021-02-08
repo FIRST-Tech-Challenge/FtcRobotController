@@ -38,11 +38,9 @@ public class DetectRingsAction implements Action {
             // the last time that call was made.
             List<Recognition> updatedRecognitions = hardware.tfod.getRecognitions();
             if (updatedRecognitions != null) {
-                hardware.telemetry.addData("# Object Detected", updatedRecognitions.size());
                 // step through the list of recognitions and display boundary info.
                 int i = 0;
                 for (Recognition recognition : updatedRecognitions) {
-                    hardware.telemetry.addData(String.format("Label (%d)", i), recognition.getLabel());
                     if (recognition.getLabel().equals("Single")) {
                         this.detectRingsResult = DetectRingsResult.SINGLE;
                     } else if (recognition.getLabel().equals("Quad")) {
@@ -53,7 +51,6 @@ public class DetectRingsAction implements Action {
                             this.detectRingsResult = DetectRingsResult.SINGLE;
                         }
                     }
-                    hardware.telemetry.addData("Confidence", "%.03f", recognition.getConfidence());
                     return true;
                 }
             }

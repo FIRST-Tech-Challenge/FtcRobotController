@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.playmaker;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 /**
  * A template class used to create an autonomous opmode for executing action sequences.
  * This utilizes the ActionExecutor and just ties it to the OpMode functions.

@@ -198,11 +198,9 @@ public abstract class RobotHardware extends OpMode {
         msElapsedOfLastLoop = loopEnd - loopStart;
         lastLoopTime = loopEnd;
 
-        telemetry.addData("[RobotHardware] LT", "%.1f ms", msSinceLastLoop);
-        telemetry.addData("[RobotHardware] LPS", "%.1f LPS", 1000/msSinceLastLoop);
         telemetry.addData("[RobotHardware] LET", "%.1f ms", msElapsedOfLastLoop);
-        telemetry.addData("[RobotHardware] LEPS", "%.1f LEPS", 1000/msElapsedOfLastLoop);
-
+        telemetry.addData("[RobotHardware] LLT", "%.1f ms", msSinceLastLoop);
+        telemetry.addData("[RobotHardware] LPS", "%.1f LPS", 1000/msSinceLastLoop);
     }
 
     public double getMsSinceLastLoopStart() {

@@ -17,9 +17,6 @@ public class LocalizerMoveAction implements Action {
     private double fullSpeed;
     private double preciseSpeed;
     private double rotateSpeed;
-    private double previousHeadingInDegrees = 0;
-    private double previousHeadingTime = 0;
-    private FollowPathMethod followPathMethod;
     Position lastPosition;
     double lastMovementTime;
 
@@ -143,7 +140,7 @@ public class LocalizerMoveAction implements Action {
         boolean withinHeadingTolerance = Math.abs(angDiffToTargetHeadingDegrees) <= parameters.headingToleranceDegrees;
         boolean withinSlowdownDistance = distanceToFinalTargetInInches <= parameters.slowdownDistanceInches;
 
-        switch (followPathMethod) {
+        switch (parameters.pathMethod) {
             case LINEAR:
                 // For the final target, the robot needs to reach the correct target heading.
                 robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
@@ -245,21 +242,19 @@ public class LocalizerMoveAction implements Action {
             hardware.omniDrive.stopDrive();
             return true;
         } else {
-            String progress = String.format("Current Target X: %.1f Y: %.1f H: %.1f",
+            String progress = String.format("[LMA] Current Target (in/deg)", "X: %.1f Y: %.1f H: %.1f",
                     currentTarget.position.x,
                     currentTarget.position.y,
                     currentTarget.heading);
             hardware.telemetry.addLine(progress);
-            hardware.telemetry.addData("LMA Speed", speed);
-            hardware.telemetry.addData("LMA Move Angle", Math.toDegrees(robotMoveAngleRadians));
-            hardware.telemetry.addData("LMA Rotation", robotRotation);
-            hardware.telemetry.addData("LMA ABP", angDiffBetweenPositionsDegrees);
-            hardware.telemetry.addData("LMA AFTT", angDiffBetweenForwardAndTargetPosDegrees);
-            hardware.telemetry.addData("LMA ATTH", angDiffToTargetHeadingDegrees);
+            hardware.telemetry.addData("[LMA] Speed", "%.1f", speed);
+            hardware.telemetry.addData("[LMA] Move Angle", "%.1f deg", Math.toDegrees(robotMoveAngleRadians));
+            hardware.telemetry.addData("[LMA] Rotation", "%.1f", robotRotation);
+            hardware.telemetry.addData("[LMA] ABP", "%.1f deg", angDiffBetweenPositionsDegrees);
+            hardware.telemetry.addData("[LMA] AFTT", "%.1f deg", angDiffBetweenForwardAndTargetPosDegrees);
+            hardware.telemetry.addData("[LMA] ATTH", "%.1f deg", angDiffToTargetHeadingDegrees);
 
             hardware.omniDrive.move(speed, robotMoveAngleRadians, robotRotation);
-            previousHeadingInDegrees = currentHeading;
-            previousHeadingTime = System.currentTimeMillis();
             return false;
         }
     }

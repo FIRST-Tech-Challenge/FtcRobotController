@@ -126,31 +126,6 @@ public abstract class UltimateGoalHardware extends RobotHardware {
     public void hardware_loop() {
         super.hardware_loop();
 
-//        long current_time = System.currentTimeMillis();
-//        int current_pos = shooter.getCurrentPosition();
-//        int deltaPos = current_pos - shooterPrevPos;
-//        long deltaTime = current_time - shooterPrevTime;
-//        shooterPrevPos = current_pos;
-//        shooterPrevTime = current_time;
-//        currentShooterRPM = (deltaPos/28.0) / (deltaTime) * (1000*60);
-
-//        if (spinShooter) {
-////            if (Math.abs(currentShooterRPM - targetShooterRPM) > SHOOTER_RPM_THRESHOLD) {
-////                double increment = Math.abs(currentShooterRPM - targetShooterRPM) <= SHOOTER_POWER_FINE_INCREMENT_RANGE ? SHOOTER_POWER_FINE_INCREMENT : SHOOTER_POWER_INCREMENT;
-////
-////                if (currentShooterRPM < targetShooterRPM) {
-////                    // too slow
-////                    currentShooterPower = Math.min(currentShooterPower + increment, 1);
-////                } else {
-////                    // too fast
-////                    targetShooterRPM = SHOOTER_RPM;
-////                    currentShooterPower = Math.max(currentShooterPower - increment, 0);
-////                }
-////            }
-//        } else {
-//            currentShooterPower = 0;
-//        }
-
         if (extendWobbleGoal) {
             wobbleGoalHolder.setTargetPosition(wobbleGoalHolderInitPos + (int) (160 * (COUNTS_PER_WOBBLE_REVOLUTION/360)));
         } else {
@@ -163,16 +138,12 @@ public abstract class UltimateGoalHardware extends RobotHardware {
 
         shooter.setVelocity(spinShooter ? rpmToCPS(SHOOTER_RPM) : 0);
         double rpm = cpsToRPM(shooter.getVelocity());
-        telemetry.addData("Shooter Power", currentShooterPower);
-        telemetry.addData("Shooter DPS", shooter.getVelocity(DEGREES));
-        telemetry.addData("Shooter RPM", rpm);
+        telemetry.addData("[UltimateGoalHardware] Shooter Power", "%.1f", currentShooterPower);
+        telemetry.addData("[UltimateGoalHardware] Shooter DPS", "%.1f", shooter.getVelocity(DEGREES));
+        telemetry.addData("[UltimateGoalHardware] Shooter RPM", "%.1f",  rpm);
     }
 
     public void setShooterEnabled(boolean enabled) {
-//        if (enabled && !this.spinShooter) {
-//            this.shooterPrevUnstableTime = System.currentTimeMillis();
-//            this.targetShooterRPM = SHOOTER_RPM - 1000;
-//        }
         this.spinShooter = enabled;
     }
 
