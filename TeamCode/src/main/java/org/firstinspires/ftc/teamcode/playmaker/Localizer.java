@@ -235,7 +235,7 @@ public class Localizer {
         // Clear previous delta
         deltaPosition = null;
 
-        boolean foundTarget = this.updateLocationWithVuforia(hardware);
+        boolean foundTarget = this.updateTransformWithVuforia(hardware);
         if (hardware.revIMU != null) {
             this.updateIMUOrientation(hardware.revIMU);
         }
@@ -412,7 +412,7 @@ public class Localizer {
         targetsUltimateGoal.activate();
     }
 
-    private boolean updateLocationWithVuforia(RobotHardware hardware) {
+    private boolean updateTransformWithVuforia(RobotHardware hardware) {
         // Clear the currently saved vuforia transform
         lastVuforiaTransform = null;
         boolean didFindTarget = false;
@@ -429,15 +429,17 @@ public class Localizer {
                 double distance = Localizer.distance(zero, imagePositionRelRobot, DistanceUnit.INCH);
                 if (distance < distanceToAcceptVuforiaInches) {
                     didFindTarget = true;
-                    OpenGLMatrix robotTransform = listener.getRobotLocation();
-                    lastVuforiaTransform = new VuforiaTransform(robotTransform);
-                    if (vuforiaOverwritesOtherLocations) {
-                        VectorF translation = lastVuforiaTransform.transform.getTranslation();
-                        float x = translation.get(0);
-                        float y = translation.get(1);
-                        float z = translation.get(2);
-                        Position position = new Position(DistanceUnit.MM, x, y, z, System.currentTimeMillis());
-                        lastEncoderPosition = position;
+                    OpenGLMatrix robotTransform = listener.getUpdatedRobotLocation();
+                    if (robotTransform != null) {
+                        lastVuforiaTransform = new VuforiaTransform(robotTransform);
+                        if (vuforiaOverwritesOtherLocations) {
+                            VectorF translation = lastVuforiaTransform.transform.getTranslation();
+                            float x = translation.get(0);
+                            float y = translation.get(1);
+                            float z = translation.get(2);
+                            Position position = new Position(DistanceUnit.MM, x, y, z, System.currentTimeMillis());
+                            lastEncoderPosition = position;
+                        }
                     }
                 }
             }
