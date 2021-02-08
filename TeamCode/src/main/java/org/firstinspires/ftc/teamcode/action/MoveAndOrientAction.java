@@ -44,8 +44,8 @@ public class MoveAndOrientAction implements Action {
 
     @Override
     public boolean doAction(RobotHardware hardware) {
-        Position currentPosition = hardware.localizer.estimatePosition().position;
-        Localizer.EstimatedOrientation currentEstimatedOrientation = hardware.localizer.estimateOrientation();
+        Position currentPosition = hardware.localizer.getEstimatedPosition().position;
+        Localizer.EstimatedOrientation currentEstimatedOrientation = hardware.localizer.getEstimatedOrientation();
         if (currentPosition == null || currentEstimatedOrientation == null) {
             return false;
         }

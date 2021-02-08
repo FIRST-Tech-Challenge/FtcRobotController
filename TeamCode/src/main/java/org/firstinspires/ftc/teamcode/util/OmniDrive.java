@@ -28,6 +28,47 @@ public class OmniDrive {
         ROTATE_RIGHT
     }
 
+    public static class SpeedController {
+
+        double acceleration;
+        double targetPower = 0;
+        double currentPower = 0;
+        double lastPowerCalculateTime = 0;
+
+        public SpeedController(double acceleration) {
+            setAcceleration(acceleration);
+        }
+
+        void setAcceleration(double acceleration) {
+            this.acceleration = acceleration;
+        }
+
+        void setPower(double power) {
+            targetPower = power;
+        }
+
+        double getPower() {
+            if (lastPowerCalculateTime == 0) {
+                return currentPower;
+            }
+
+            double currentTime = System.currentTimeMillis();
+            double deltaTimeS = (currentTime - lastPowerCalculateTime) * 1000;
+            double powerDelta = acceleration * deltaTimeS;
+            if (currentPower < targetPower) {
+                currentPower = Math.min(targetPower, currentPower + powerDelta);
+            } else if (currentPower > targetPower) {
+                currentPower = Math.max(targetPower, currentPower - powerDelta);
+            }
+
+            lastPowerCalculateTime = currentTime;
+            return currentPower;
+        }
+
+
+    }
+
+
     public OmniDrive(DcMotor frontLeft, DcMotor frontRight,
                      DcMotor backLeft, DcMotor backRight) {
         this.frontLeft = frontLeft;

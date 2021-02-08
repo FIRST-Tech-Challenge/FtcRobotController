@@ -26,8 +26,8 @@ public class LocalizerTelemetry extends MovementHardware {
     @SuppressLint("DefaultLocale")
     @Override
     public void run_loop() {
-        Position position = localizer.estimatePosition().position;
-        Orientation orientation = localizer.estimateOrientation().orientation;
+        Position position = localizer.getEstimatedPosition().position;
+        Orientation orientation = localizer.getEstimatedOrientation().orientation;
         if (position != null) {
             telemetry.addData("Localizer Position", String.format("%.1f, %.1f, %.1f", position.x, position.y, position.z));
             telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", orientation.firstAngle, orientation.secondAngle, orientation.thirdAngle);

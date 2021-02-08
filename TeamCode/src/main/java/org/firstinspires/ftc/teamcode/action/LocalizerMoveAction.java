@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.action;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.playmaker.Action;
@@ -17,8 +16,7 @@ public class LocalizerMoveAction implements Action {
     private double fullSpeed;
     private double preciseSpeed;
     private double rotateSpeed;
-    Position lastPosition;
-    double lastMovementTime;
+    private double lastMovementTime;
 
     public enum FollowPathMethod {
         LINEAR, // not gonna be implemented
@@ -84,11 +82,6 @@ public class LocalizerMoveAction implements Action {
         this.rotateSpeed = parameters.rotateSpeed;
     }
 
-    @Override
-    public void init(RobotHardware hardware) {
-        lastMovementTime = System.currentTimeMillis();
-    }
-
     double rotationLimit(double rotation) {
         return Math.min(parameters.maxRotationSpeed, Math.max(rotation, -parameters.maxRotationSpeed));
     }
@@ -99,13 +92,18 @@ public class LocalizerMoveAction implements Action {
     }
 
     @Override
+    public void init(RobotHardware hardware) {
+        lastMovementTime = System.currentTimeMillis();
+    }
+
+    @Override
     public boolean doAction(RobotHardware hardware) {
         // Get current target to follow
         RobotTransform currentTarget = transforms[currentTransformIndex];
 
         // Get current robot position and orientation
-        Position currentPosition = hardware.localizer.estimatePosition().position;
-        Orientation currentOrientation = hardware.localizer.estimateOrientation().orientation;
+        Position currentPosition = hardware.localizer.getEstimatedPosition().position;
+        Orientation currentOrientation = hardware.localizer.getEstimatedOrientation().orientation;
         if (currentPosition == null || currentOrientation == null) {
             // If either of these are null, it means that the robot's location is unknown
             // This point shouldn't be reached with input from the encoders
@@ -197,20 +195,16 @@ public class LocalizerMoveAction implements Action {
 
                 // If we're not moving, bump the power up
                 double currentTime = System.currentTimeMillis();
+                Localizer.EstimatedPosition lastPosition = hardware.localizer.getLastEstimatedPosition();
                 if (lastPosition != null) {
-                    double deltaDistance = Localizer.distance(lastPosition, currentPosition, DistanceUnit.INCH);
-                    if (deltaDistance >= parameters.speedStuckDistanceThresholdInches) {
+                    if (hardware.localizer.getDeltaDistance(DistanceUnit.INCH) >= parameters.speedStuckDistanceThresholdInches) {
                         lastMovementTime = currentTime;
-                    }
-
-                    if (currentTime - lastMovementTime >= parameters.speedStuckTimeoutMs) {
+                    } else if (currentTime - lastMovementTime >= parameters.speedStuckTimeoutMs) {
                         fullSpeed += parameters.speedStuckBumpAmount;
                         preciseSpeed += parameters.speedStuckBumpAmount;
                         lastMovementTime = currentTime;
                     }
                 }
-                lastPosition = currentPosition;
-
                 break;
         }
 

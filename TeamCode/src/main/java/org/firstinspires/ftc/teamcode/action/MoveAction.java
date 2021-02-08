@@ -40,8 +40,8 @@ public class MoveAction implements Action {
     }
 
     public void init(RobotHardware hardware) {
-        Localizer.EstimatedPosition position = hardware.localizer.estimatePosition();
-        Localizer.EstimatedOrientation orientation = hardware.localizer.estimateOrientation();
+        Localizer.EstimatedPosition position = hardware.localizer.getEstimatedPosition();
+        Localizer.EstimatedOrientation orientation = hardware.localizer.getEstimatedOrientation();
         if (position != null && orientation != null) {
             initialPosition = position.position.toUnit(DistanceUnit.INCH);
             initialOrientation = orientation.orientation;

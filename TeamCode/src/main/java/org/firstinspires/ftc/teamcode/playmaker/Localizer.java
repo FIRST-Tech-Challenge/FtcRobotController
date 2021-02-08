@@ -27,6 +27,9 @@ public class Localizer {
     private long latestAcquisitionTime = 0;
     private EstimatedPosition lastEstimatedPosition;
     private EstimatedOrientation lastEstimatedOrientation;
+    private EstimatedPosition estimatedPosition;
+    private EstimatedOrientation estimatedOrientation;
+    private Position deltaPosition;
     private Velocity estimatedVelocity;
     private AngularVelocity estimatedAngularVelocity;
 
@@ -114,6 +117,9 @@ public class Localizer {
         }
     }
 
+    public Localizer(Telemetry telemetry) {
+        this.telemetry = telemetry;
+    }
 
     /**
      * Return the robot's estimated location on the field.
@@ -123,31 +129,8 @@ public class Localizer {
      * @return The robot's estimated position
      */
 
-    public Localizer(Telemetry telemetry) {
-        this.telemetry = telemetry;
-    }
-
-    public EstimatedPosition estimatePosition() {
-        boolean newVuforiaInfo = false;
-        boolean newEncodersInfo = false;
-        if (lastVuforiaTransform != null) {
-            newVuforiaInfo = lastVuforiaTransform.acquisitionTime >= latestAcquisitionTime;
-        }
-        if (lastEncoderPosition != null) {
-            newEncodersInfo = lastEncoderPosition.acquisitionTime >= latestAcquisitionTime;
-        }
-
-        if (newVuforiaInfo) {
-            VectorF translation = lastVuforiaTransform.transform.getTranslation();
-            float x = translation.get(0);
-            float y = translation.get(1);
-            float z = translation.get(2);
-            Position position = new Position(DistanceUnit.MM, x, y, z, System.currentTimeMillis());
-            return new EstimatedPosition(PositionSource.VUFORIA, position);
-        } else if (newEncodersInfo){
-            return new EstimatedPosition(PositionSource.ENCODERS, lastEncoderPosition);
-        }
-        return null;
+    public EstimatedPosition getEstimatedPosition() {
+        return estimatedPosition;
     }
 
     /**
@@ -158,14 +141,8 @@ public class Localizer {
      * @return The robot's estimated orientation
      */
 
-    public EstimatedOrientation estimateOrientation() {
-        if (lastVuforiaTransform != null) {
-            Orientation rotation = Orientation.getOrientation(lastVuforiaTransform.transform, EXTRINSIC, XYZ, DEGREES);
-            return new EstimatedOrientation(OrientationSource.VUFORIA, rotation);
-        } else if (lastIMUOrientation != null) {
-            return new EstimatedOrientation(OrientationSource.IMU, lastIMUOrientation);
-        }
-        return null;
+    public EstimatedOrientation getEstimatedOrientation() {
+        return estimatedOrientation;
     } //meeep
 
     public Velocity estimateVelocity() {
@@ -176,9 +153,38 @@ public class Localizer {
         return estimatedAngularVelocity;
     }
 
+    public Position getDeltaPosition(DistanceUnit unit) {
+        if (deltaPosition != null) {
+            return deltaPosition.toUnit(unit);
+        }
+        return null;
+    }
+
+    public Double getDeltaDistance(DistanceUnit unit) {
+        if (deltaPosition != null) {
+            return Localizer.distance(zero, deltaPosition, unit);
+        }
+        return null;
+    }
+
+    public Long getTimeBetweenEstimatedPositions() {
+        if (lastEstimatedPosition != null && estimatedPosition != null) {
+            return estimatedPosition.position.acquisitionTime - lastEstimatedPosition.position.acquisitionTime;
+        }
+        return null;
+    }
+
+    public EstimatedPosition getLastEstimatedPosition() {
+        return lastEstimatedPosition;
+    }
+
+    public EstimatedOrientation getLastEstimatedOrientation() {
+        return lastEstimatedOrientation;
+    }
+
     public void telemetry() {
-        EstimatedPosition estimatedPosition = estimatePosition();
-        EstimatedOrientation orientation = estimateOrientation();
+        EstimatedPosition estimatedPosition = getEstimatedPosition();
+        EstimatedOrientation orientation = getEstimatedOrientation();
         if (estimatedPosition != null) {
             Position position = estimatedPosition.position.toUnit(DistanceUnit.INCH);
             telemetry.addData("[Loc] Position Source", estimatedPosition.source.toString());
@@ -226,6 +232,8 @@ public class Localizer {
      */
     public void updateRobotTransform(RobotHardware hardware) {
         this.setLatestAcquisitionTime();
+        // Clear previous delta
+        deltaPosition = null;
 
         boolean foundTarget = this.updateLocationWithVuforia(hardware);
         if (hardware.revIMU != null) {
@@ -235,32 +243,63 @@ public class Localizer {
             this.updateTransformWithEncodersAndIMU(hardware, !foundTarget);
         }
 
-        EstimatedPosition currentEstimatedPosition = estimatePosition();
-        EstimatedOrientation currentEstimatedOrientation = estimateOrientation();
+        boolean newVuforiaInfo = false;
+        boolean newEncodersInfo = false;
+
+        if (lastVuforiaTransform != null) {
+            newVuforiaInfo = lastVuforiaTransform.acquisitionTime >= latestAcquisitionTime;
+        }
+        if (lastEncoderPosition != null) {
+            newEncodersInfo = lastEncoderPosition.acquisitionTime >= latestAcquisitionTime;
+        }
+
+        // Estimate Position
+        if (newVuforiaInfo) {
+            VectorF translation = lastVuforiaTransform.transform.getTranslation();
+            float x = translation.get(0);
+            float y = translation.get(1);
+            float z = translation.get(2);
+            Position position = new Position(DistanceUnit.MM, x, y, z, System.currentTimeMillis());
+            estimatedPosition = new EstimatedPosition(PositionSource.VUFORIA, position);
+        } else if (newEncodersInfo){
+            estimatedPosition = new EstimatedPosition(PositionSource.ENCODERS, lastEncoderPosition);
+        }
+
+        // Estimate Orientation
+        if (lastVuforiaTransform != null) {
+            Orientation rotation = Orientation.getOrientation(lastVuforiaTransform.transform, EXTRINSIC, XYZ, DEGREES);
+            estimatedOrientation = new EstimatedOrientation(OrientationSource.VUFORIA, rotation);
+            if (vuforiaOverwritesOtherOrientations) {
+                setIMUToWorldOffset(hardware.revIMU, rotation.thirdAngle);
+            }
+        } else if (lastIMUOrientation != null) {
+            estimatedOrientation = new EstimatedOrientation(OrientationSource.IMU, lastIMUOrientation);
+        }
 
         // Calculate velocity
-        if (lastEstimatedPosition != null) {
-            Position currentPosition = currentEstimatedPosition.position.toUnit(DistanceUnit.MM);
+        if (lastEstimatedPosition != null && estimatedPosition != null) {
+            Position currentPosition = estimatedPosition.position.toUnit(DistanceUnit.MM);
             Position lastPosition = lastEstimatedPosition.position.toUnit(DistanceUnit.MM);
-            double deltaMs = currentEstimatedPosition.position.acquisitionTime - lastEstimatedPosition.position.acquisitionTime;
+            double deltaMs = estimatedPosition.position.acquisitionTime - lastEstimatedPosition.position.acquisitionTime;
             double deltaSeconds = deltaMs / 1000;
-            double deltaX = currentPosition.x - lastEstimatedPosition.position.x;
-            double deltaY = currentPosition.y - lastEstimatedPosition.position.y;
+            double deltaX = currentPosition.x - lastPosition.x;
+            double deltaY = currentPosition.y - lastPosition.y;
+            deltaPosition = new Position(DistanceUnit.MM, deltaX, deltaY, 0, currentPosition.acquisitionTime);
             estimatedVelocity = new Velocity(DistanceUnit.MM, deltaX / deltaSeconds, deltaY / deltaSeconds, 0, currentPosition.acquisitionTime);
         }
 
         // Calculate angular velocity
-        if (lastEstimatedOrientation != null) {
-            double currentHeading = currentEstimatedOrientation.orientation.thirdAngle;
+        if (lastEstimatedOrientation != null && estimatedOrientation != null) {
+            double currentHeading = estimatedOrientation.orientation.thirdAngle;
             double lastHeading = lastEstimatedOrientation.orientation.thirdAngle;
-            double deltaMs = currentEstimatedOrientation.orientation.acquisitionTime - lastEstimatedOrientation.orientation.acquisitionTime;
+            double deltaMs = estimatedOrientation.orientation.acquisitionTime - lastEstimatedOrientation.orientation.acquisitionTime;
             double deltaSeconds = deltaMs / 1000;
             double deltaHeading = Localizer.angularDifferenceInDegrees(lastHeading, currentHeading);
-            estimatedAngularVelocity = new AngularVelocity(DEGREES, 0, 0, (float) (deltaHeading / deltaSeconds), currentEstimatedOrientation.orientation.acquisitionTime);
+            estimatedAngularVelocity = new AngularVelocity(DEGREES, 0, 0, (float) (deltaHeading / deltaSeconds), estimatedOrientation.orientation.acquisitionTime);
         }
 
-        lastEstimatedPosition = currentEstimatedPosition;
-        lastEstimatedOrientation = currentEstimatedOrientation;
+        lastEstimatedPosition = estimatedPosition;
+        lastEstimatedOrientation = estimatedOrientation;
 
     }
 
@@ -484,9 +523,9 @@ public class Localizer {
         this.setIMUToWorldOffset(imu, startingHeading);
     }
 
-    public void setIMUToWorldOffset(BNO055IMU imu, double startingHeading) {
+    public void setIMUToWorldOffset(BNO055IMU imu, double worldHeading) {
         Orientation imuRotation = imu.getAngularOrientation(EXTRINSIC, XYZ, DEGREES);
-        imuToWorldRotation = Localizer.angularDifferenceInDegrees(startingHeading, imuRotation.thirdAngle);
+        imuToWorldRotation = Localizer.angularDifferenceInDegrees(worldHeading, imuRotation.thirdAngle);
     }
 
     public Double getImuToWorldRotation() {
