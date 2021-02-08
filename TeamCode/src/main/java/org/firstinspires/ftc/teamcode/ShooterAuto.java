@@ -28,10 +28,14 @@ public class ShooterAuto extends LinearOpMode {
         initRobot();
 
         elapsedTime.reset();
-        while(elapsedTime.seconds() < 10) {
+
+        int ticks = 0;
+
+        while(ticks < 3 && elapsedTime.seconds() < 28) {
             flywheel.on();
             if(flywheel.isReady()) {
                 hitter.hitFullMotion(0.7);
+                ticks++;
             }
         }
 
