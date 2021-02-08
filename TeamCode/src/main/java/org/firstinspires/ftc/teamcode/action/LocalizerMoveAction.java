@@ -93,6 +93,11 @@ public class LocalizerMoveAction implements Action {
         return Math.min(parameters.maxRotationSpeed, Math.max(rotation, -parameters.maxRotationSpeed));
     }
 
+    double speedForDistance(double distance) {
+        double slope = (preciseSpeed - fullSpeed) / (parameters.slowestDistanceInches - parameters.slowdownDistanceInches);
+        return Math.min(fullSpeed, Math.max(slope * distance - preciseSpeed, preciseSpeed));
+    }
+
     @Override
     public boolean doAction(RobotHardware hardware) {
         // Get current target to follow
@@ -164,47 +169,20 @@ public class LocalizerMoveAction implements Action {
                 }
                 break;
             case FAST:
+                robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
+                robotRotation = rotationLimit(smallestDiffToTargetPosDegrees / 180);
+                speed = Math.min(speedForDistance(distanceToFinalTargetInInches), speedForDistance(distanceToTargetInInches));
+
+                // If we're not on the final target, we aren't really going to care about precisely getting in the right spot
                 if (currentTransformIndex != (transforms.length - 1)) {
-                    // For fast operation, we only care about reaching the target heading for the final position.
-                    // So, if the robot is heading towards the last target, it will focus on reaching
-                    // the target as quickly as possible by going in the forward direction
-
-
-                    robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
-                    robotRotation = rotationLimit(smallestDiffToTargetPosDegrees / 180);
-
-                    if (withinSlowdownDistance) {
-                        double slope = (preciseSpeed - fullSpeed) / (parameters.slowestDistanceInches - parameters.slowdownDistanceInches);
-                        speed = Math.max(slope * distanceToTargetInInches - preciseSpeed, preciseSpeed);
-
-                        double currentTime = System.currentTimeMillis();
-                        if (lastPosition != null) {
-                            double deltaDistance = Localizer.distance(lastPosition, currentPosition, DistanceUnit.INCH);
-                            if (deltaDistance >= parameters.speedStuckDistanceThresholdInches) {
-                                lastMovementTime = currentTime;
-                            }
-
-                            if (currentTime - lastMovementTime >= parameters.speedStuckTimeoutMs) {
-                                fullSpeed += parameters.speedStuckBumpAmount;
-                                preciseSpeed += parameters.speedStuckBumpAmount;
-                                lastMovementTime = currentTime;
-                            }
-                        }
-                        lastPosition = currentPosition;
-                    }
-
                     if (withinFastDistanceTolerance) {
                         currentTransformIndex++;
                     }
                 } else {
-                    // For the final target, the robot needs to reach the correct target heading.
-                    robotMoveAngleRadians = Math.toRadians(angDiffBetweenForwardAndTargetPosDegrees);
-                    robotRotation = rotationLimit(smallestDiffToTargetPosDegrees / 180);
-
                     if (withinDistanceTolerance && withinHeadingTolerance) {
                         currentTransformIndex++;
                     } else if (withinDistanceTolerance) {
-                        speed = 0;
+                        speed = 0; // Don't move, just rotate
                         if (Math.abs(angDiffToTargetHeadingDegrees) <= parameters.slowRotationThresholdDegrees) {
                             robotRotation = angDiffToTargetHeadingDegrees > 0 ? rotateSpeed : -rotateSpeed;
                         } else {
@@ -213,26 +191,25 @@ public class LocalizerMoveAction implements Action {
                     } else {
                         if (withinSlowdownDistance) {
                             robotRotation = angDiffToTargetHeadingDegrees / 180;
-                            double slope = (preciseSpeed - fullSpeed) / (parameters.slowestDistanceInches - parameters.slowdownDistanceInches);
-                            speed = Math.max(slope * distanceToTargetInInches - preciseSpeed, preciseSpeed);
-
-                            double currentTime = System.currentTimeMillis();
-                            if (lastPosition != null) {
-                                double deltaDistance = Localizer.distance(lastPosition, currentPosition, DistanceUnit.INCH);
-                                if (deltaDistance >= parameters.speedStuckDistanceThresholdInches) {
-                                    lastMovementTime = currentTime;
-                                }
-
-                                if (currentTime - lastMovementTime >= parameters.speedStuckTimeoutMs) {
-                                    fullSpeed += parameters.speedStuckBumpAmount;
-                                    preciseSpeed += parameters.speedStuckBumpAmount;
-                                    lastMovementTime = currentTime;
-                                }
-                            }
-                            lastPosition = currentPosition;
                         }
                     }
                 }
+
+                // If we're not moving, bump the power up
+                double currentTime = System.currentTimeMillis();
+                if (lastPosition != null) {
+                    double deltaDistance = Localizer.distance(lastPosition, currentPosition, DistanceUnit.INCH);
+                    if (deltaDistance >= parameters.speedStuckDistanceThresholdInches) {
+                        lastMovementTime = currentTime;
+                    }
+
+                    if (currentTime - lastMovementTime >= parameters.speedStuckTimeoutMs) {
+                        fullSpeed += parameters.speedStuckBumpAmount;
+                        preciseSpeed += parameters.speedStuckBumpAmount;
+                        lastMovementTime = currentTime;
+                    }
+                }
+                lastPosition = currentPosition;
 
                 break;
         }
