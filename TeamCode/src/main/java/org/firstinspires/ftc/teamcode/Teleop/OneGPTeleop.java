@@ -119,7 +119,7 @@ public class OneGPTeleop extends LinearOpMode {
 
             magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
 
-            robot.moveMultidirectional(0.95*magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
+            robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
 
             // wobble goal movements
             telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
