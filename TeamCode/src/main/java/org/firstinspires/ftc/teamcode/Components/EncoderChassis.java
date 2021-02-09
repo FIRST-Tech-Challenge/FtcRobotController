@@ -375,4 +375,9 @@ public class EncoderChassis extends BasicChassis {
     public void navigate() {
 
     }
+
+    @Override
+    public void navigateTeleOp() {
+
+    }
 }

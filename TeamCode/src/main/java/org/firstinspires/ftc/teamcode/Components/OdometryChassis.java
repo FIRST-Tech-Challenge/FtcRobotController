@@ -1,7 +1,14 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Components.Navigations.Navigation;
 import org.firstinspires.ftc.teamcode.Components.Navigations.Odometry;
 
@@ -20,15 +27,68 @@ import static java.lang.Math.sqrt;
 //2.0,1.7,1.1
 public class OdometryChassis extends BasicChassis {
     private Navigation navigation= null;
+    DcMotorEx odom1;
+    DcMotorEx odom2;
+    DcMotorEx odom3;
+    int[] odomconst = {-1,1,-1};
+    float ticks_per_inch = (float)(8640*2.54/38*Math.PI)*72/76;
+    float robot_diameter = (float)sqrt(619.84);
+    float[] odom = new float[3];
+    private LinearOpMode op = null;
+    private BNO055IMU imu;
+    private Orientation lastAngles = new Orientation();
+    private float globalAngle;
+    double power = .30, correction;
+    float xpos,ypos,angle;
+
+
+
+    //set true to enable imu vice versa
+    final boolean enableIMU = true;
 
     public OdometryChassis(LinearOpMode opMode,boolean navigator) {
         super(opMode);
         op = opMode;
-            navigation = new Navigation(op);
+
+        // Chassis encoders
+        odom1 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
+        odom3 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
+        odom2 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightBack");
+        // reset encoder count.
+        odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        odom3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lastAngles  = new Orientation();
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.mode                = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled      = false;
+
+        imu = op.hardwareMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        // make sure the imu gyro is calibrated before continuing.
+        while (!op.isStopRequested() && !imu.isGyroCalibrated())
+        {
+            op.sleep(50);
+            op.idle();
+        }
+
+        op.telemetry.addData("Mode", "waiting for start");
+        op.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
+        op.telemetry.update();
+        //navigation = new Navigation(op);
     }
-    public void navigate(){navigation.navigate(op);}
+    public void navigate(){//navigation.navigate(op);
+        }
+    public void navigateTeleOp(){//navigation.navigateTeleOp(op)
+        }
     public void setPosition(double x, double y, double angle){
-        navigation.setPosition(x,y,angle);
+        //navigation.setPosition(x,y,angle);
     }
     public void stopAllMotors() {
         motorLeftBack.setPower(0);
@@ -36,19 +96,34 @@ public class OdometryChassis extends BasicChassis {
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
     }
-    public double getAngle() {
-        return navigation.getAngle();
+    public float getAngle() {
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        //op.telemetry.addData("first angle: ", (int)angles.firstAngle);
+        //op.telemetry.update();
+        //op.sleep(1000);
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+
+        if (deltaAngle <= -180) //If the angle is -180, it should be 180, because they are at the same point. The acceptable angles are (-180, 180]
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        globalAngle += deltaAngle;
+
+        lastAngles = angles;
+
+        return -globalAngle;
     }
     public double[] track() {
-        /*double data[]={0,0,0};
+        double data[]={0,0,0};
 double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
 odom[0] += odomconst[0]*diff[0];
 odom[1] += odomconst[1]*diff[1];
 odom[2] += odomconst[2]*diff[2];
 double x =  cos((getAngle() * Math.PI / 180));
 double y = sin((getAngle() * Math.PI / 180));
-xpos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1;
-ypos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
+ypos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1;
+xpos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
 angle=getAngle();
 op.telemetry.addData("x",xpos);
 op.telemetry.addData("y",ypos);
@@ -60,14 +135,11 @@ op.telemetry.update();
 data[0]=xpos;
 data[1]=ypos;
 data[2]=angle;
-return data;
-*/
-        op.telemetry.addData("x", navigation.getXposition());
-        op.telemetry.addData("y", navigation.getYposition());
-        op.telemetry.addData("angle", navigation.getAngle());
+        op.telemetry.addData("x", xpos);
+        op.telemetry.addData("y", ypos);
+        op.telemetry.addData("angle", angle);
         op.telemetry.update();
-        return navigation.getPosition();
-
+return data;
     }
     public void goToPosition(double x, double y, double a, double power){
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
@@ -100,17 +172,19 @@ return data;
             anglePower[0] = sin(angleInRadians + PI / 4);
             anglePower[1] = sin(angleInRadians - PI / 4);
             anglecorrection = (currentPosition[2] - target_position[2])%360 * 0.05;
-            if (difference > 5) {
-                if (abs(anglePower[1]) > abs(anglePower[0])) {
-                    anglePower[1] *= abs(1 / anglePower[1]);
-                    anglePower[0] *= abs(1 / anglePower[1]);
-                } else {
-                    anglePower[1] *= abs(1 / anglePower[0]);
-                    anglePower[0] *= abs(1 / anglePower[0]);
-                }
+            if (abs(anglePower[1]) > abs(anglePower[0])) {
+                anglePower[1] *= abs(1 / anglePower[1]);
+                anglePower[0] *= abs(1 / anglePower[1]);
+            } else {
+                anglePower[1] *= abs(1 / anglePower[0]);
+                anglePower[0] *= abs(1 / anglePower[0]);
             }
-            while(abs(power)<0.3){
-                power*=0.3/abs(power);
+//            if((abs(power * anglePower[1] + anglecorrection)<=0.2&&abs(power * anglePower[0] - anglecorrection)<=0.2)||(abs(power * anglePower[0] + anglecorrection)<=0.2&&abs(power * anglePower[1] - anglecorrection)<=0.2)){
+//                anglePower[1]*=1.5;
+//                anglePower[0]*=1.5;
+//            }
+            while(abs(power)<0.35){
+                power*=0.35/abs(power);
             }
             motorRightBack.setPower(power * anglePower[1] + anglecorrection);
             motorRightFront.setPower(power * anglePower[0] + anglecorrection);
@@ -123,7 +197,6 @@ return data;
         turnInPlace(a,1.0);
         stopAllMotors();
         op.telemetry.addData("done", true);
-        op.sleep(5000);
     }
     public void turnInPlace(double target, double power) {
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
@@ -135,9 +208,9 @@ return data;
         motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        double currentAngle = getAngle();
-        double newTarget = target;
-        double error = target-currentAngle;
+        float currentAngle = getAngle();
+        float newTarget = (float)target;
+        float error = (float)target-currentAngle;
         double gain = 0.05;
         int direction=1;
         if(error<0){
@@ -152,42 +225,67 @@ return data;
         if (newTarget>180){newTarget=newTarget-360;}
         if (newTarget<=-180){newTarget=newTarget+360;}
 
-        motorLeftBack.setPower(leftPower);
-        motorLeftFront.setPower(leftPower);
-        motorRightBack.setPower(rightPower);
-        motorRightFront.setPower(rightPower);
+        if(abs(error)<10){
+            while (op.opModeIsActive() && (error > 0.25  || error < -0.25))
+            {
+                currentAngle = (float)track()[2];
+                error = newTarget - currentAngle;
+                if(error<0){
+                    direction = -1;
+                }else{
+                    direction = 1;
+                }
+                rightPower = -direction*min(abs(power*gain*error),abs(power));
+                leftPower = -rightPower;
+                if(abs(leftPower)<0.315){
+                    leftPower*=0.3/abs(leftPower);
+                }
+                if(abs(rightPower)<0.315){
+                    rightPower*=0.3/abs(rightPower);
+                }
+                motorLeftBack.setPower(leftPower);
+                motorLeftFront.setPower(leftPower);
+                motorRightBack.setPower(rightPower);
+                motorRightFront.setPower(rightPower);
+            }
 
-        while (op.opModeIsActive() && (error > 0.75  || error < -0.75))
-        {
-            currentAngle = getAngle();
-            error = newTarget - currentAngle%360;
-            if(error<0){
-                direction = -1;
-            }else{
-                direction = 1;
-            }
-            rightPower = -direction*min(abs(power*gain*error),abs(power));
-            leftPower = -rightPower;
-            while(abs(leftPower)<0.3){
-                leftPower*=0.3/abs(leftPower);
-            }
-            while(abs(rightPower)<0.3){
-                rightPower*=0.3/abs(rightPower);
-            }
-            op.telemetry.addData("leftPower",leftPower);
-            op.telemetry.addData("rightPower",rightPower);
-            op.telemetry.addData("error",error);
-            motorLeftBack.setPower(leftPower);
-            motorLeftFront.setPower(leftPower);
-            motorRightBack.setPower(rightPower);
-            motorRightFront.setPower(rightPower);
-            track();
+            motorLeftBack.setPower(0);
+            motorRightFront.setPower(0);
+            motorLeftFront.setPower(0);
+            motorRightBack.setPower(0);
         }
+        else {
+            while (op.opModeIsActive() && (error > 0.5 || error < -0.5)) {
+                currentAngle = getAngle();
+                error = newTarget - currentAngle % 360;
+                if (error < 0) {
+                    direction = -1;
+                } else {
+                    direction = 1;
+                }
+                rightPower = -direction * min(abs(power * gain * error), abs(power));
+                leftPower = -rightPower;
+                while (abs(leftPower) < 0.4) {
+                    leftPower *= 0.4 / abs(leftPower);
+                }
+                while (abs(rightPower) < 0.4) {
+                    rightPower *= 0.4 / abs(rightPower);
+                }
+                op.telemetry.addData("leftPower", leftPower);
+                op.telemetry.addData("rightPower", rightPower);
+                op.telemetry.addData("error", error);
+                motorLeftBack.setPower(leftPower);
+                motorLeftFront.setPower(leftPower);
+                motorRightBack.setPower(rightPower);
+                motorRightFront.setPower(rightPower);
+                track();
+            }
 
-        motorLeftBack.setPower(0);
-        motorRightFront.setPower(0);
-        motorLeftFront.setPower(0);
-        motorRightBack.setPower(0);
+            motorLeftBack.setPower(0);
+            motorRightFront.setPower(0);
+            motorLeftFront.setPower(0);
+            motorRightBack.setPower(0);
+        }
 
     }
 
@@ -314,7 +412,8 @@ return data;
         double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
         double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
         double startpower=power;
-        while (op.opModeIsActive() && (difference >= 0.5)) {
+        int gamernum = 0;
+        while (op.opModeIsActive() && (difference>0.75)) {
             currentPosition = track();
             power=difference/15;
             if(power>startpower){
@@ -326,7 +425,6 @@ return data;
             anglePower[0] = sin(angleInRadians + PI / 4);
             anglePower[1] = sin(angleInRadians - PI / 4);
             anglecorrection = (currentPosition[2] - target_position[2]) * 0.05;
-            if (difference > 5) {
                 if (abs(anglePower[1]) > abs(anglePower[0])) {
                     anglePower[1] *= abs(1 / anglePower[1]);
                     anglePower[0] *= abs(1 / anglePower[1]);
@@ -334,9 +432,12 @@ return data;
                     anglePower[1] *= abs(1 / anglePower[0]);
                     anglePower[0] *= abs(1 / anglePower[0]);
                 }
-            }
-            while(abs(power)<0.3){
-                power*=0.3/abs(power);
+                if((abs(power * anglePower[1] + anglecorrection)<=0.2&&abs(power * anglePower[0] - anglecorrection)<=0.2)||(abs(power * anglePower[0] + anglecorrection)<=0.2&&abs(power * anglePower[1] - anglecorrection)<=0.2)){
+                    anglePower[1]*=1.5;
+                    anglePower[0]*=1.5;
+                }
+            while(abs(power)<0.4){
+                power*=0.4/abs(power);
             }
             motorRightBack.setPower(power * anglePower[1] + anglecorrection);
             motorRightFront.setPower(power * anglePower[0] + anglecorrection);

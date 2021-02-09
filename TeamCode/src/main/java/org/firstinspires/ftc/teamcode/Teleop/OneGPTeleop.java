@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Robot;
 
 /**
@@ -36,7 +37,7 @@ public class OneGPTeleop extends LinearOpMode {
         Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER, false ,false);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
-
+        //robot.navigateTeleOp();
         double magnitude;
         double angleInRadian;
         double angleInDegree;
@@ -64,14 +65,22 @@ public class OneGPTeleop extends LinearOpMode {
             float right_stick_x = -gamepad1.right_stick_x;
             boolean move_wobble_goal_arm = gamepad1.left_bumper;
             boolean start_transfer_sys = gamepad1.right_bumper;
-            boolean wobble_goal_servo = gamepad1.y;
-            boolean slow = gamepad1.a;
-            boolean shooter_servo = gamepad1.x;
-            boolean powershot = gamepad1.b;
             float shooter = gamepad1.right_trigger;
+            float reverse_transfer_sys = gamepad1.left_trigger;
+//            boolean slow = gamepad1.a;
+            boolean odo_powershots = gamepad1.b;
+            boolean shooter_servo = gamepad1.x;
+            boolean wobble_goal_servo = gamepad1.y;
+
 
             angleInRadian = Math.atan2(left_stick_y, left_stick_x);
             angleInDegree = Math.toDegrees(angleInRadian);
+
+            /**Powershots**/
+            if(odo_powershots){
+                robot.goToPosition(0,-9,-2,0.8);
+                robot.shootThreePowerShot();
+            }
 
             /**Shooter**/
             if (shooter_servo){
@@ -87,30 +96,30 @@ public class OneGPTeleop extends LinearOpMode {
                 robot.stopShooter();
             }
 
-            /**Speed Mode**/
-            if (slow) {
-                isSlow = true;
-
-                if (currSlow) {
-                    currSlow = false;
-                } else if (currSlow == false) {
-                    currSlow = true;
-                }
-            } else {
-                isSlow = false;
-            }
-
-            if (isSlow) {
-                if (currSlow) {
-                    slowMode = true;
-                } else if (currSlow == false) {
-                    slowMode = false;
-                }
-            }
+//            /**Speed Mode**/
+//            if (slow) {
+//                isSlow = true;
+//
+//                if (currSlow) {
+//                    currSlow = false;
+//                } else if (currSlow == false) {
+//                    currSlow = true;
+//                }
+//            } else {
+//                isSlow = false;
+//            }
+//
+//            if (isSlow) {
+//                if (currSlow) {
+//                    slowMode = true;
+//                } else if (currSlow == false) {
+//                    slowMode = false;
+//                }
+//            }
 
             magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
 
-            robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode);
+            robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
 
             // wobble goal movements
             telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
@@ -151,11 +160,11 @@ public class OneGPTeleop extends LinearOpMode {
                 if (wobble_goal_servo_is_up) {
                     telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
                     telemetry.update();
-                    robot.moveWobbleGoalClaw(true);
+                    robot.closeWobbleGoalClaw();
                 } else if (!wobble_goal_servo_is_up) {
                     telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
                     telemetry.update();
-                    robot.moveWobbleGoalClaw(false);
+                    robot.openWobbleGoalClaw();
                 }
             }
 
@@ -167,10 +176,13 @@ public class OneGPTeleop extends LinearOpMode {
                 robot.stopIntake();
                 robot.stopTransfer();
             }
-            if(powershot){
-                robot.goToPosition(-1.5,2,0,0.9);
-                robot.shootThreePowerShot();
-            }
+//            if (reverse_transfer_sys != 0) {
+//                robot.reverseIntake();
+//                robot.reverseTransfer();
+//            } else {
+//                robot.stopIntake();
+//                robot.stopTransfer();
+//            }
 
         }
         idle();

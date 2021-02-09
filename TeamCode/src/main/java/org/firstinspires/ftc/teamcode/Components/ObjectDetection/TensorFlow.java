@@ -37,6 +37,7 @@ public class TensorFlow {
 
     private int numberOfRings;
 
+
     private static final String VUFORIA_KEY = key.key;
 
     private VuforiaLocalizer vuforia;
@@ -154,7 +155,7 @@ public class TensorFlow {
 //        telemetry.update();
 //        sleep(2000);
 
-        while( !op.isStarted()) {
+        while(!op.opModeIsActive() && !op.isStopRequested()) {
             numOfTime4Rings = 0;
             numOfTime1Ring = 0;
             numOfTime0Rings = 0;

@@ -11,6 +11,7 @@ public class Navigation {
     private static double angle;
     private static boolean inVuforia = false;
     Thread odometry = null;
+    Thread vuforia=null;
     public Navigation(LinearOpMode OpMode){
         odometry = new Thread(new Odometry(OpMode));
     }
@@ -45,7 +46,7 @@ public class Navigation {
         return pos;
     }
 
-    public void setPosition(double x, double y, double newAngle){
+    public static void setPosition(double x, double y, double newAngle){
         xPosition = x;
         yPosition = y;
         angle = newAngle;
@@ -69,5 +70,10 @@ public class Navigation {
         //Thread vuforia = new Thread(new VuforiaWebcam(op));
         odometry.start();
         //vuforia.start();
+    }
+    public void navigateTeleOp( LinearOpMode op) {
+        odometry.start();
+        vuforia = new Thread(new VuforiaWebcam(op));
+        vuforia.start();
     }
 }

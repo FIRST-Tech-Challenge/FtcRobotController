@@ -20,6 +20,11 @@ public class Transfer {
         transferMotor.setPower(transferSpeed);
     }
 
+    public void reverseTransfer(){
+        transferMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        transferMotor.setPower(-transferSpeed);
+    }
+
     public void stopTransfer() {
         transferMotor.setPower(0);
     }

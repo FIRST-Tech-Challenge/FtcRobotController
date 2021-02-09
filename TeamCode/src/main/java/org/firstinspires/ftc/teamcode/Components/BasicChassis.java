@@ -64,6 +64,7 @@ public abstract class BasicChassis {
     abstract public void setPosition(double xPosition, double yPosition, double newangle);
     abstract public void goToPosition(double xPosition, double yPosition, double newangle, double power);
     abstract public void navigate();
+    abstract public void navigateTeleOp();
     public void moveMultidirectional(double power, double angle, float rightStick, boolean isSlow) {
         double angleInRadian;
         angleInRadian = Math.toRadians(angle);

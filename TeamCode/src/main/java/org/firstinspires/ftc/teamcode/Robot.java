@@ -48,15 +48,15 @@ public class Robot {
 //        if(objectDetectionNeeded && vuforiaNAVIGATIONneeded){
 //            throw new RuntimeException("They both can't be true.");
 //        }
-
+        drivetrain= ChassisFactory.getChassis(chassisType,op,vuforiaNAVIGATIONneeded);
             intake = new Intake(op);
             transfer = new Transfer(op);
             wobbleGoal = new WobbleGoal(op);
             shooter = new Shooter(op);
 
-        if (objectDetectionNeeded) {
-            tensorFlow.runTensorFlowWaitForStart();
-        }
+//        if (objectDetectionNeeded) {
+//            tensorFlow.runTensorFlowWaitForStart();
+//        }
     }
     public void navigate(){
         drivetrain.navigate();
@@ -202,8 +202,7 @@ public class Robot {
     }
 
     public int getRingsAndWaitForStart(){
-        tensorFlow.runTensorFlowWaitForStart();
-        return tensorFlow.getNumberOfRings();
+        return tensorFlow.runTensorFlowWaitForStart();
     }
 
     /**Odometry**/
@@ -230,8 +229,12 @@ public class Robot {
         }
     }
 
-    public void moveWobbleGoalClaw(boolean direction){
-        wobbleGoal.moveWobbleGoalClaw(direction);
+    public void openWobbleGoalClaw(){
+        wobbleGoal.openWobbleGoalClaw();
+    }
+
+    public void closeWobbleGoalClaw(){
+        wobbleGoal.closeWobbleGoalClaw();
     }
 
     // intake
@@ -239,6 +242,10 @@ public class Robot {
         if(isCorgi) {
             intake.startIntake();
         }
+    }
+
+    public void reverseIntake(){
+       intake.reverseIntake();
     }
 
     public void stopIntake(){
@@ -252,6 +259,10 @@ public class Robot {
         if(isCorgi) {
             transfer.startTransfer();
         }
+    }
+
+    public void reverseTransfer(){
+        transfer.reverseTransfer();
     }
 
     public void stopTransfer() {
@@ -293,26 +304,13 @@ public class Robot {
         shooter.stopShooter();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     public void shootThreePowerShot() {
         ElapsedTime runtime = new ElapsedTime();
         op.telemetry.addData("speed: ", shooter.getRPM());
         op.telemetry.update();
-        drivetrain.turnInPlace(-1.5,1.0);
-        shooter.setVelocity(1725, 1000);
-        op.sleep(1500);
+        drivetrain.turnInPlace(-1.75,1.0);
+        shooter.setVelocity(1500, 1000);
+        op.sleep(1600);
         if (shooter.getRPM()*28/60 > 0) {
             op.sleep(100);
             op.telemetry.clear();
@@ -320,8 +318,9 @@ public class Robot {
             op.telemetry.update();
         }
         shooter.moveServo(false);
+        shooter.setVelocity(1600, 1000);
         shooter.moveServo(true);
-        drivetrain.turnInPlace(4,0.5);
+        drivetrain.turnInPlace(2.7,0.5);
         shooter.moveServo(false);
         shooter.moveServo(true);
         drivetrain.turnInPlace(-6.5,0.5);
@@ -330,5 +329,17 @@ public class Robot {
         if(op.getRuntime()>3){
             stopShooter();
         }
+    }
+    public void intakeAndShootHighGoal(){
+        ElapsedTime runtime = new ElapsedTime();
+        shooter.setVelocity(1675, 1000);
+        intake.startIntake();
+        transfer.startTransfer();
+        drivetrain.moveAngle(-20,20, 1.0);
+        drivetrain.moveAngle(0,15, 1.0);
+        shooter.moveServo(false);
+    }
+    public void navigateTeleOp(){
+        drivetrain.navigateTeleOp();
     }
 }

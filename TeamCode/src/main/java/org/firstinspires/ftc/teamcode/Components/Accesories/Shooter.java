@@ -102,7 +102,7 @@ public class Shooter {
 
     public void shootHighGoal(int rings) {
         shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shoot(highGoalVelocity, 1, 3);
+        shoot(highGoalVelocity, 1, rings);
     }
 
     public void shootMidGoal(int rings) {

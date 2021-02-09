@@ -33,7 +33,7 @@ public class TwoGPTeleop extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER, false ,false);
+        Robot robot=new Robot(this, BasicChassis.ChassisType.ODOMETRY, false ,false);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
 
@@ -153,11 +153,11 @@ public class TwoGPTeleop extends LinearOpMode {
                 if (wobble_goal_servo_is_up) {
                     telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
                     telemetry.update();
-                    robot.moveWobbleGoalClaw(true);
+                    robot.closeWobbleGoalClaw();
                 } else if (!wobble_goal_servo_is_up) {
                     telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
                     telemetry.update();
-                    robot.moveWobbleGoalClaw(false);
+                    robot.openWobbleGoalClaw();
                 }
             }
 
