@@ -1,14 +1,13 @@
 /**
  * This is the test program for Walrus.
  *
+ * This is the wiring configuration of Walrus: https://docs.google.com/document/d/1umaQxQ1bZnItleHeQlGetBS1Zwyi2ag-nbSXEFhcqCI/edit
+ *
  * @author Sai
  * @version 1.0
  * @since 1/4/2020
  * @status finished
  */
-
-//TODO Sai: fix the wobbleGoalServoClaw (it is not moving right now)
-//TODO Sai: add the wobbleGoalServo once it is added onto the robot
 
 package org.firstinspires.ftc.teamcode.Autonomous.Tests;
 
@@ -35,8 +34,8 @@ public class WalrusTest extends LinearOpMode {
         DcMotorEx shooterMotor;
         Servo shooter_Servo;
         DcMotorEx wobbleGoalMotor;
-        Servo wobbleGoalServo;
         Servo wobbleGoalServoClaw;
+        Servo webcamServo;
 
 
         motorLeftFront = (DcMotorEx) hardwareMap.dcMotor.get("motorLeftFront");
@@ -47,8 +46,8 @@ public class WalrusTest extends LinearOpMode {
         shooterMotor = (DcMotorEx) hardwareMap.dcMotor.get("ShooterMotor");
         wobbleGoalMotor = (DcMotorEx) hardwareMap.dcMotor.get("wobbleGoalMotor");
         shooter_Servo = (Servo) hardwareMap.servo.get("ShooterServo");
-        //wobbleGoalServo = (Servo) hardwareMap.servo.get("WobbleGoalServo");
         wobbleGoalServoClaw = (Servo) hardwareMap.servo.get("wobbleGoalServoClaw");
+        webcamServo = (Servo) hardwareMap.servo.get("TensorFlowServo");
 
 
         // All Motors
@@ -62,8 +61,9 @@ public class WalrusTest extends LinearOpMode {
 
         //Servos
         shooter_Servo.setPosition(-0.5);
-        //wobbleGoalServo.setPosition(0);
         wobbleGoalServoClaw.setPosition(0);
+        webcamServo.setPosition(0.35);
+
 
         // To match default
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
@@ -183,7 +183,7 @@ public class WalrusTest extends LinearOpMode {
         wobbleGoalMotor.setPower(0.25);
         telemetry.addData("Moving wobbleGoalMotor", 0.25);
         telemetry.update();
-        sleep(750);
+        sleep(500);
         wobbleGoalMotor.setPower(0);
         sleep(1000);
         wobbleGoalMotor.setPower(-0.3);
@@ -203,10 +203,14 @@ public class WalrusTest extends LinearOpMode {
         telemetry.update();
         sleep(1500);
 
-        //Wobble Goal Servo
-//        wobbleGoalServo.setPosition(1);
-//        sleep(1000);
-//        wobbleGoalServo.setPosition(0);
-//        sleep(2000);
+        //Webcam Servo
+        webcamServo.setPosition(0.5);
+        telemetry.addData("Moving webcamServo", 0.5);
+        telemetry.update();
+        sleep(1000);
+        webcamServo.setPosition(0.35);
+        telemetry.addData("Moving webcamServo", 0.35);
+        telemetry.update();
+        sleep(2000);
     }
 }
