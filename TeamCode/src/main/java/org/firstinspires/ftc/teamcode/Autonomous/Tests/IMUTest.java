@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
-@Disabled
+//@Disabled
 @Autonomous(name = "IMUTest ", group="Tests: ")
 public class IMUTest extends LinearOpMode {
     @Override
@@ -32,6 +32,8 @@ public class IMUTest extends LinearOpMode {
         robot.moveRight(69, 0.75);
         sleep(1000);
         robot.turnInPlace(0, 0.5);
+
+        stop();
 
     }
 }

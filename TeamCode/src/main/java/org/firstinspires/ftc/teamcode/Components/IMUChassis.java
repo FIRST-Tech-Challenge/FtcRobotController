@@ -101,7 +101,7 @@ public class IMUChassis extends BasicChassis {
 
         lastAngles = angles;
 
-        return globalAngle;
+        return -globalAngle;
     }
 
     private double checkDirection() {
