@@ -66,7 +66,7 @@ public class GrahamHWMap {
         frontRightMotor = hwMap.dcMotor.get("FR"); // H1 1
         backLeftMotor   = hwMap.dcMotor.get("BL"); // H1 2
         backRightMotor  = hwMap.dcMotor.get("BR"); // H1 3
-
+/*
         // not yet in configuration on phones
         launcherMotor = hwMap.dcMotor.get("LM"); // H2 P0
 
@@ -82,7 +82,7 @@ public class GrahamHWMap {
         launcherServo = hwMap.servo.get("LS");
 
         backDistance = hwMap.get(DistanceSensor.class, "bsr"); //hub2 port 1
-
+*/
 
         frontLeftMotor.setPower(0);
         frontRightMotor.setPower(0);
@@ -105,11 +105,12 @@ public class GrahamHWMap {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+/*
         launcherMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         intakeMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+*/
 
 
         // Set up the parameters with which we will use our IMU. Note that integration

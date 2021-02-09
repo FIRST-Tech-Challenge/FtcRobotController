@@ -62,11 +62,11 @@ public class TeleOp1 extends LinearOpMode {
 
         double launchMotorStatus = 0; // do not edit this
         double launchMotorPower = 0; //do not edit this
-        double desiredLaunchPower = .5; // edit this for the power you want to motor to spin at
+        double desiredLaunchPower = .85; // edit this for the power you want to motor to spin at
 
         double intakeMotorStatus = 0; //do not edit this
         double intakeMotorPower = 0; //do not edit this
-        double desiredIntakePower = .5; //edit this for the power you want the motor to spin at
+        double desiredIntakePower = .7; //edit this for the power you want the motor to spin at
 
         // change the active and rest positions to change where each servo goes
         double wobbleServoPosition = 0;
@@ -231,7 +231,7 @@ public class TeleOp1 extends LinearOpMode {
                 }
             }
             robot.intakeMotor1.setPower(intakeMotorPower);
-            robot.intakeMotor2.setPower(intakeMotorPower);
+            robot.intakeMotor2.setPower(-intakeMotorPower);
 
 
             // wobble servo button

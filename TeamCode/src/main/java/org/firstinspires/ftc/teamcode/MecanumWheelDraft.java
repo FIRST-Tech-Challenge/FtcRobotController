@@ -134,7 +134,7 @@ public class MecanumWheelDraft extends LinearOpMode {
 
                 //telemetry.addData("current heading", formatAngle(angles.angleUnit, angles.firstAngle));
 
-                telemetry.addData("back distance", robot.backDistance.getDistance(DistanceUnit.MM));
+                //telemetry.addData("back distance", robot.backDistance.getDistance(DistanceUnit.MM));
 
                 telemetry.update();
 
@@ -156,7 +156,7 @@ public class MecanumWheelDraft extends LinearOpMode {
                 else if (motorTestDirection == 1){
                     launchPowerHolder = 0;
                     motorTestDirection = 0;
-                }
+                }   
             }
             robot.frontLeftMotor.setPower(launchPowerHolder);
 
@@ -169,7 +169,7 @@ public class MecanumWheelDraft extends LinearOpMode {
             }
 
             if(gamepad1.y){
-                driveStraightDistance(.3,robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES), 1000);
+                //driveStraightDistance(.3,robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES), 1000);
             }
 
 
@@ -462,6 +462,7 @@ public class MecanumWheelDraft extends LinearOpMode {
 
         }
 
+
     //drives straight for a desired distanced based off of the back distance sensor
     void driveStraightDistance(double pwr, Orientation target, double desiredDistance){
 
@@ -529,6 +530,8 @@ public class MecanumWheelDraft extends LinearOpMode {
         }
 
     }
+
+
 
 
 
