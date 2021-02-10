@@ -48,11 +48,11 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  */
 public class chrisBot
 {
-    private String version = "1.0.0";
+    private String version = "1.1";
 
     /** MOTOR OBJECTS */
     public DcMotor  motorBackLeft   = null, motorFrontLeft  = null, motorFrontRight  = null, motorBackRight  = null;
-    public DcMotorSimple motorIntake = null, motorShooter1 = null, motorShooter2 = null;
+    public DcMotorSimple motorIntake = null, motorShooter1 = null, motorShooter2 = null, motorBottomIntake = null;
 
     public WebcamName webcam = null;
 
@@ -60,14 +60,14 @@ public class chrisBot
     public static final double DRIVE_GEAR_REDUCTION    = (double)2/(double)3 ;     // This is < 1.0 if geared UP
     public static final double WHEEL_DIAMETER_INCHES   = 2.95276 ;     // For figuring circumference
     public static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
-    public static final double DRIVE_SPEED = 0.3, TURN_SPEED = 0.3;
+    public static final double DRIVE_SPEED = chrisBotConstants.DRIVE_SPEED, TURN_SPEED = chrisBotConstants.TURN_SPEED, JIGGLE_SPEED = chrisBotConstants.JIGGLE_SPEED;
 
     int FLTarget = 0, FRTarget = 0, BLTarget = 0, BRTarget = 0;
 
-    public static final double shootPower = .265;
-    public static final double shootPowerSlow = .25;
+    public static final double shootPower = chrisBotConstants.shootPower;
+    public static final double shootPowerSlow = chrisBotConstants.shootPowerSlow;
 
-    public boolean shooterOn = false, intakeOn = false;
+    public boolean shooterOn = chrisBotConstants.shooterOn, intakeOn = chrisBotConstants.intakeOn;
 
 
     /** GYRO OBJECTS */
@@ -106,8 +106,7 @@ public class chrisBot
 
     public static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite", LABEL_FIRST_ELEMENT = "Quad", LABEL_SECOND_ELEMENT = "Single";
 
-    public static final String VUFORIA_KEY = "AQU7a8H/////AAABmfH4ZcQHIkPTjsjCf80CSVReJtuQBMiQodPHMSkdFHY8RhKT4fIEcY3JbCWjXRsUBFiewYx5etup17dUnX/SIQx6cjctrioEXrID+gV4tD9B29eCOdFVgyAr+7ZnEHHDYcSnt2pfzDZyMpi+I3IODqbUgVO82UiaZViuZBnA3dNvokZNFwZvv8/YDkcd4LhHv75Qdk" +
-            "qgBzKe/TumwxjR/EqtR2fQRy9WnRjNVR9fYGl9MsuGNBSEmmys6GczXn8yZ/k2PKusiYz7h4hFGiXmlVLyikZuB4dxETGoqz+WWYUFJAdHzFiBptg5xXaa86qMBYBi3ht0RUiBKicLJhQZzLG0bIEJZWr198ihexUuhhGV";
+    public static final String VUFORIA_KEY = chrisBotConstants.key1;
 
     /** local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -116,7 +115,7 @@ public class chrisBot
 
     private Telemetry telemetry;
 
-    public boolean shooterExists = false, intakeExists = false, webcamExists = false;
+    public boolean shooterExists = false, intakeExists = false, webcamExists = false, intakeBottomExists = false;
 
     /* Constructor */
     public chrisBot() { }
@@ -174,6 +173,7 @@ public class chrisBot
         /** Attachment section */
 
         intakeExists = hwMap.tryGet(DcMotorSimple.class, "motorIntake") != null;
+        intakeBottomExists = hwMap.tryGet(DcMotorSimple.class, "motorBottomIntake") != null;
         shooterExists = hwMap.tryGet(DcMotorSimple.class, "motorShooter1") != null && hwMap.tryGet(DcMotorSimple.class, "motorShooter2") != null;
         webcamExists = hwMap.get(WebcamName.class, "Webcam 1") != null;
 
@@ -183,6 +183,15 @@ public class chrisBot
             motorIntake.setPower(0);
 
             telemetry.addLine("Intake motor initialized");
+            telemetry.update();
+        }
+
+        if (intakeBottomExists) {
+            motorBottomIntake = hwMap.get(DcMotorSimple.class, "motorBottomIntake");
+            motorBottomIntake.setDirection(DcMotorSimple.Direction.FORWARD);
+            motorBottomIntake.setPower(0);
+
+            telemetry.addLine("Bottom Intake motor initialized");
             telemetry.update();
         }
 
@@ -485,7 +494,7 @@ public class chrisBot
     }*/
 
     public void stemPIDdrive(int ms, double power) {
-        PIDController pidDrive = new PIDController(.05, 0, 0);
+        PIDController pidDrive = new PIDController(chrisBotConstants.drive_Kp, chrisBotConstants.drive_Ki, chrisBotConstants.drive_Kd);
         ElapsedTime e = new ElapsedTime();
         // Set up parameters for driving in a straight line.
         pidDrive.setSetpoint(0);
@@ -548,6 +557,14 @@ public class chrisBot
             shooterOn = false;
         }
     }
+    public void shootReverse() {
+        if(shooterExists) {
+            motorShooter1.setPower(-1);
+            motorShooter2.setPower(-1);
+            shooterOn = true;
+        }
+    }
+
 
     // These methods turn the intake motor on and off, at a set power or at full power.
     public void intakeOn() {
@@ -556,15 +573,16 @@ public class chrisBot
             intakeOn = true;
         }
     }
-    public void intakeReverse() {
-        if(intakeExists) {
-            motorIntake.setPower(-1);
+    public void intakeBottom() {
+        if(intakeBottomExists) {
+            motorBottomIntake.setPower(-1);
             intakeOn = true;
         }
     }
     public void intakeOff() {
         if(intakeExists) {
             motorIntake.setPower(0);
+            motorBottomIntake.setPower(0);
             intakeOn = false;
         }
     }

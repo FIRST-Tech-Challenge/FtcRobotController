@@ -5,15 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.PID;
-
 import java.util.Arrays;
 
-@TeleOp(name="chrisBotTeleopFINAL", group="chrisBot")
+@TeleOp(name="chrisBotTeleopFINALtwoControllers", group="chrisBot")
 //@Disabled
 
-public class chrisBotTeleopFinal extends OpMode{
+public class chrisBotTeleopFinalTwoControllers extends OpMode{
 
     chrisBot robot = new chrisBot();
 
@@ -35,7 +32,18 @@ public class chrisBotTeleopFinal extends OpMode{
     @Override
     public void loop() {
         // Drive/inch
-        if(gamepad1.left_bumper) {
+        if(notInDeadzone(gamepad2, "left") || notInDeadzone(gamepad2, "right")) {
+            // Algorithm taken from https://ftcforum.firstinspires.org/forum/ftc-technology/android-studio/6361-mecanum-wheels-drive-code-example, quote to dmssargent
+            double[] gamepadState = getGamepadState(gamepad2);
+            double r = Math.hypot(gamepadState[0], gamepadState[1]);
+            if (gamepad1.right_bumper) {
+                r=0.4*r;
+            }
+            double robotAngle = Math.atan2(gamepadState[1], gamepadState[0]) - Math.PI / 4;
+            double rightX = gamepadState[2];
+            robot.setDrivePower(-1*r * Math.cos(robotAngle) + rightX, -1*r * Math.sin(robotAngle) - rightX, -1*r * Math.sin(robotAngle) + rightX, -1*r * Math.cos(robotAngle) - rightX);
+        }
+        else if(gamepad1.left_bumper) {
             if(count2.milliseconds() > 100) {
                 forward = !forward;
                 count2.reset();
@@ -81,7 +89,7 @@ public class chrisBotTeleopFinal extends OpMode{
                 }
                 double robotAngle = Math.atan2(gamepadState[1], gamepadState[0]) - Math.PI / 4;
                 double rightX = gamepadState[2];
-                robot.setDrivePower(-1*r * Math.cos(robotAngle) + rightX, -1*r * Math.sin(robotAngle) - rightX, -1*r * Math.sin(robotAngle) + rightX, -1*r * Math.cos(robotAngle) - rightX);
+                robot.setDrivePower(r * Math.cos(robotAngle) + rightX, r * Math.sin(robotAngle) - rightX, r * Math.sin(robotAngle) + rightX, r * Math.cos(robotAngle) - rightX);
             }
             else {
                 robot.setAllDrivePower(0);
