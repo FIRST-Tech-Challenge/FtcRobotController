@@ -11,6 +11,11 @@ public class OmniDrive {
     public DcMotor frontRight;
     public DcMotor backLeft;
     public DcMotor backRight;
+    SpeedController flSpeedController;
+    SpeedController frSpeedController;
+    SpeedController blSpeedController;
+    SpeedController brSpeedController;
+
 
     private Double countsPerInch;
     private Double countsPerDegreee;
@@ -45,6 +50,7 @@ public class OmniDrive {
 
         void setPower(double power) {
             targetPower = power;
+            lastPowerCalculateTime = System.currentTimeMillis();
         }
 
         double getPower() {
@@ -76,6 +82,16 @@ public class OmniDrive {
         this.backLeft = backLeft;
         this.backRight = backRight;
 
+    }
+
+    public void setAcceleration(Double acceleration) {
+        if (acceleration == null) {
+            flSpeedController = null;
+        } else if (flSpeedController != null) {
+            flSpeedController.setAcceleration(acceleration);
+        } else {
+            flSpeedController = new SpeedController(acceleration);
+        }
     }
 
     public Double getCountsPerUnit(DistanceUnit unit) {
@@ -176,6 +192,13 @@ public class OmniDrive {
         backRight.setPower(0);
     }
 
+    void updateMotorPowers() {
+        frontLeft.setPower(flSpeedController.getPower());
+        frontRight.setPower(frSpeedController.getPower());
+        backLeft.setPower(blSpeedController.getPower());
+        backRight.setPower(brSpeedController.getPower());
+    }
+
     /**
      * Move and/or rotate the robot along an axis relative to the robot's center.
 
@@ -184,6 +207,7 @@ public class OmniDrive {
      * @param rotation How fast to rotate from -1 to 1 where 1 indicates CW rotation and full rotation w/ no movement.
      */
     public void move(double power, double angleInRadians, double rotation) {
+
         double pi4 = Math.PI / 4;
 
         // Get raw powers
