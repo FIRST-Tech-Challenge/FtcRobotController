@@ -75,7 +75,7 @@ public class FinalAuto extends LinearOpMode {
             robot.goToPosition(-23,0,0,0.8);
 //            robot.moveBackward(23, 0.8);
             robot.shootGoalTeleop(120);
-            robot.turnInPlace(-4, 1);
+            robot.turnInPlace(-5, 1);
             robot.shootHighGoal(3);
 //            robot.turnInPlace(0, 1);
             robot.goToPosition(-23,-9.5,0,1);
@@ -85,13 +85,13 @@ public class FinalAuto extends LinearOpMode {
 //            robot.moveBackward(88, 1);
             robot.openWobbleGoalClaw();
 //            robot.goToPosition(-20);
-            robot.goToPosition(-55,2,0,1);
-            robot.goToPosition(-49,2,0,1);
+            robot.goToPosition(-63,1,0,1);
+            robot.goToPosition(-49,1,0,1);
 //            robot.goToPosition(-51,2,0,1);
             robot.startIntake();
             robot.startTransfer();
 //            robot.moveAngle(8, 50,0.9);
-            robot.goToPosition(-41, 1, -5,0.7);
+            robot.goToPosition(-42, 1, -5,0.7);
             robot.shootHighGoal(1);
             robot.turnInPlace(0,1);
             robot.goToPosition(-26, 1, 0,1);
