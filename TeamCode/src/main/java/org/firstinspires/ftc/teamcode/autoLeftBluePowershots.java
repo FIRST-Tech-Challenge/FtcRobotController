@@ -36,7 +36,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 
 
-@Autonomous(name = "RedRightPowershotsUlt2020", group = "Pushbot")
+@Autonomous(name = "LeftBluePowershotsUlt2020", group = "Pushbot")
 public class autoLeftBluePowershots extends LinearOpMode {
 
     //OpMode members
@@ -82,7 +82,6 @@ public class autoLeftBluePowershots extends LinearOpMode {
         robot.intake.setPower(1.0);//Shoot ring
         robot.turnDrive(1.0, 5.98, 7.0); //Turn clockwise 90 degrees
         robot.intake.setPower(1.0);//Shoot ring
-
 
 
     }

@@ -2,20 +2,14 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.*;
-
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 public class autoDeclarations extends LinearOpMode {
 
     //runOpMode
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
     }
 
     // Declare OpMode members.
@@ -57,13 +51,13 @@ public class autoDeclarations extends LinearOpMode {
         leftReverse.setDirection(DcMotor.Direction.FORWARD);
         rightFoward.setDirection(DcMotor.Direction.REVERSE);
         intake.setDirection(DcMotor.Direction.FORWARD);
-
+        //Reset encoders
         leftFoward.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightReverse.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftReverse.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFoward.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        //Reset power
         leftFoward.setPower(0);
         rightReverse.setPower(0);
         leftReverse.setPower(0);
@@ -81,13 +75,18 @@ public class autoDeclarations extends LinearOpMode {
 
         //OpMode
         if (opModeIsActive()) {
-            //Find the new position)
+
+            //Turning degrees into inches moved
             double degreeInches = (degrees * (Math.PI / 180) * ROBOT_RADIUS);
+
+            //Find the new position
             if (0 < degrees) {
+                //Positive degrees: spin right
                 turnLeftTarget = leftFoward.getCurrentPosition() + (int) (degreeInches * COUNTS_PER_INCH);
                 turnRightTarget = rightReverse.getCurrentPosition() + (int) (-degreeInches * COUNTS_PER_INCH);
                 rightPower = -speed;
                 leftPower = speed;
+                //Negative degrees: spin left
             } else {
                 turnLeftTarget = leftFoward.getCurrentPosition() + (int) (-degreeInches * COUNTS_PER_INCH);
                 turnRightTarget = rightReverse.getCurrentPosition() + (int) (degreeInches * COUNTS_PER_INCH);

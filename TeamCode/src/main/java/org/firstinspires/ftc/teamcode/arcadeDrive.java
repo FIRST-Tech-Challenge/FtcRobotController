@@ -29,11 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -51,17 +49,17 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name = "teleop", group = "Iterative Opmode")
-//@Disabled
-public class teleop extends OpMode {
-    // Declare OpMode members.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFoward = null;
-    private DcMotor rightReverse = null;
-    private DcMotor leftReverse = null;
-    private DcMotor rightFoward = null;
-    //private DcMotor intake = null;
+@TeleOp(name = "arcadeDrive", group = "Iterative Opmode")
 
+public class arcadeDrive extends OpMode {
+    // Declare OpMode members.
+
+    public ElapsedTime runtime = new ElapsedTime();
+    public DcMotor leftFoward = null;
+    public DcMotor rightReverse = null;
+    public DcMotor leftReverse = null;
+    public DcMotor rightFoward = null;
+    public DcMotor intake = null;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -73,22 +71,43 @@ public class teleop extends OpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
+        //Name motors
+
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
         leftFoward = hardwareMap.get(DcMotor.class, "left_foward_drive");
         rightReverse = hardwareMap.get(DcMotor.class, "right_reverse_drive");
         leftReverse = hardwareMap.get(DcMotor.class, "left_reverse_drive");
         rightFoward = hardwareMap.get(DcMotor.class, "right_foward_drive");
-        //intake = hardwareMap.get(DcMotor.class, "intake_intial");
-
+        intake = hardwareMap.get(DcMotor.class, "intake_intial");
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFoward.setDirection(DcMotor.Direction.FORWARD);
         rightReverse.setDirection(DcMotor.Direction.REVERSE);
         leftReverse.setDirection(DcMotor.Direction.FORWARD);
         rightFoward.setDirection(DcMotor.Direction.REVERSE);
-        //intake.setDirection(DcMotor.Direction.FORWARD);
+        intake.setDirection(DcMotor.Direction.FORWARD);
+        //Reset encoders
+        leftFoward.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightReverse.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftReverse.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFoward.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //Reset power
+        leftFoward.setPower(0);
+        rightReverse.setPower(0);
+        leftReverse.setPower(0);
+        rightFoward.setPower(0);
+        intake.setPower(0);
 
-        // Tell the driver that initialization is complete.
-        telemetry.addData("Status", "Initialized");
+        //use encoders
+        leftFoward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightReverse.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftReverse.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFoward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     /*
@@ -106,77 +125,34 @@ public class teleop extends OpMode {
         runtime.reset();
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
-     */
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
-        double leftFowardPower;
-        double rightReversePower;
-        double leftReversePower;
-        double rightFowardPower;
-        //double intakePower;
 
-        // Choose to drive using either Tank Mode, or POV Mode
-        // Comment out the method that's not used.  The default below is POV.
+        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        //hypotenuse: distance of stick from center
+        double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+        //Angle of stick: shifted -45 degrees
+        double rightX = gamepad1.right_stick_x;
+        //Speed control
 
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
-        //double drive = -gamepad1.left_stick_y;
-        //double turn  =  gamepad1.right_stick_x;
-        // leftPower    = Range.clip(drive + turn, -1.0, 1.0) ;
-        // rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
+        final double v3 = r * Math.sin(robotAngle) + rightX;
+        final double v4 = r * Math.cos(robotAngle) - rightX;
+        /* Finding power
+        Front motors: positive speed
+        Back motors: negative speed
 
-        // Tank Mode uses one stick to control each wheel.
-        // - This requires no math, but it is hard to drive forward slowly and keep straight.
-
-        //Left side: If the stick is held left or right, then set powers to strafe.
-        // Else the stick will be held vertically, so the power is just how much you push the stick
-
-        if (Math.abs(gamepad1.left_stick_x) > Math.abs(gamepad1.left_stick_y)){
-            leftFowardPower = -gamepad1.left_stick_x;
-            leftReversePower = gamepad1.left_stick_x;
-        } else {
-            leftReversePower = gamepad1.left_stick_y;
-            leftFowardPower = gamepad1.left_stick_y;
-        }
-        //right side: If the stick is held left or right, then set powers to strafe.
-        // Else the stick will be held vertically, so the power is just how much you push the stick
-        if (Math.abs(gamepad1.right_stick_x) > Math.abs(gamepad1.right_stick_y)){
-            rightFowardPower = -gamepad1.right_stick_x;
-            rightReversePower = gamepad1.right_stick_x;
-        } else {
-            rightReversePower = gamepad1.right_stick_y;
-            rightFowardPower = gamepad1.right_stick_y;
-        }
-        /*
-        leftReversePower = gamepad1.left_stick_y;
-        leftFowardPower = gamepad1.left_stick_y;
-        rightReversePower = gamepad1.left_stick_y;
-        rightFowardPower = gamepad1.left_stick_y;
          */
-        //intakePower = -gamepad2.left_stick_y ;
 
-        // Send calculated power to wheels
-        leftFoward.setPower(leftFowardPower);
-        rightReverse.setPower(rightReversePower);
-        leftReverse.setPower(leftReversePower);
-        rightFoward.setPower(rightFowardPower);
-        //intake.setPower(intakePower);
+        leftFoward.setPower(v1);
+        rightFoward.setPower(v2);
+        leftReverse.setPower(v3);
+        rightReverse.setPower(v4);
+        //set power
 
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Motors",
-                "leftForward (%.2f), rightReverse (%.2f), leftReverse (%.2f), rightForward (%.2f)",
-                leftFowardPower, rightReversePower, leftReversePower, rightFowardPower);   //intakePower);
     }
 
-    /*
-     * Code to run ONCE after the driver hits STOP
-     */
-    @Override
-    public void stop() {
-    }
 
 }
+
