@@ -11,22 +11,21 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @Autonomous(name="Odometry Reading Test", group="tests")
 public class OdometryReading extends LinearOpMode{
 
-    //for three odometry wheels setup
-    private DcMotor leftEncoder, rightEncoder, frontEncoder;
+    //for two odometry wheels setup
+    private DcMotor parallelEncoder, perpendicularEncoder;
+
     @Override
     public void runOpMode() throws InterruptedException {
-        leftEncoder = hardwareMap.get(DcMotor.class, "LEncoder");
-        rightEncoder = hardwareMap.get(DcMotor.class, "REncoder");
-        frontEncoder = hardwareMap.get(DcMotor.class, "FEncoder");
+        parallelEncoder = hardwareMap.get(DcMotor.class, "parallelEncoder");
+        perpendicularEncoder = hardwareMap.get(DcMotor.class, "perpendicularEncoder");
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
         waitForStart();
 
         while (opModeIsActive()) {
-            telemetry.addData("left encoder: ", leftEncoder.getCurrentPosition());
-            telemetry.addData("right encoder: ", rightEncoder.getCurrentPosition());
-            telemetry.addData("front encoder: ", frontEncoder.getCurrentPosition());
+            telemetry.addData("parallel encoder: ", parallelEncoder.getCurrentPosition());
+            telemetry.addData("perpendicular encoder: ", perpendicularEncoder.getCurrentPosition());
             telemetry.update();
         }
     }
