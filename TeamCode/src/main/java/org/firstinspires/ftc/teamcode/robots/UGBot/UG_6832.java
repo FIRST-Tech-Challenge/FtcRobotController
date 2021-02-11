@@ -693,7 +693,10 @@ public class UG_6832 extends OpMode {
         packet.put("current flywheel velocity", robot.launcher.getFlywheelTPS());
         packet.put("target flywheel velocity", robot.launcher.getFlywheelTargetTPS());
         packet.put("flywheel motor power", robot.launcher.flywheelMotor.getPower() * 200);
-        packet.put("message",message);
+        packet.put("posey",robot.getPoseY());
+        packet.put("posex",robot.getPoseX());
+        packet.put("displacement",robot.getDisplacement());
+        packet.put("avg ticks",robot.getAverageTicks());
 
         dashboard.sendTelemetryPacket(packet);
     }

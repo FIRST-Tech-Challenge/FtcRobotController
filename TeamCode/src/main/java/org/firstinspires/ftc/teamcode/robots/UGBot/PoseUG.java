@@ -36,7 +36,7 @@ import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_P;
  * orientation (IMU) and odometry (motor encoder) sensors.
  * 
  * @author plethora of ironreign programmers
- * @version 3.0
+ * @version 17564.70_b
  * @since 2018-11-02
  */
 
@@ -60,10 +60,6 @@ public class PoseUG {
 
     public double balanceP = .35;
     public double balanceD = 3.1444;
-
-    public double stoneLengthMeters = 8 * 25.4 / 1000;
-    public long stoneLengthTicks = (long) stoneLengthMeters * forwardTPM;
-    public double foundationToNearestStoneMeters = 1.75; // tune depending on final arm position.
 
     // All Actuators
     private DcMotor motorFrontRight = null;
@@ -104,9 +100,10 @@ public class PoseUG {
     int rightTPM = 1304; // todo - these need to be tuned for each robot
     int leftTPM = 1304; // todo - these need to be tuned for each robot
     private int strafeTPM = 1909; // todo - fix value high priority this current value is based on Kraken -
-                                  // minimech will be different
-    private double poseX;
-    private double poseY;
+
+    // minimech will be different
+    public static double poseX;
+    public static double poseY;
     private static double poseHeading; // current heading in degrees. Might be rotated by 90 degrees from imu's heading when strafing
     private double poseHeadingRad; // current heading converted to radians
     private double poseSpeed;
@@ -114,11 +111,11 @@ public class PoseUG {
     private double poseRoll;
     private long timeStamp; // timestamp of last update
     private static boolean initialized = false;
-    public  double offsetHeading;
+    public static double offsetHeading;
     private double offsetPitch;
     private double offsetRoll;
 
-    private double displacement;
+    public static double displacement;
     private double displacementPrev;
     private double odometer;
 
@@ -238,8 +235,8 @@ public class PoseUG {
      */
     public PoseUG(RobotType name) {
 
-        poseX = 0;
-        poseY = 0;
+        poseX = 1.2192; //todo- don't hardcode this
+        poseY = .24765; //this is in meters
         poseHeading = 0;
         poseSpeed = 0;
         posePitch = 0;
@@ -435,29 +432,36 @@ public class PoseUG {
         // pure forward, backward, left and right
         // so no diagonals or rotations - if we do those then our absolute positioning
         // fails
-
-        switch (moveMode) {
-            case forward:
-            case backward:
-                displacement = (getAverageTicks() - displacementPrev) * forwardTPM;
-                odometer += Math.abs(displacement);
-                poseHeadingRad = Math.toRadians(poseHeading);
-                break;
-            default:
-                displacement = 0; // when rotating or in an undefined moveMode, ignore/reset displacement
-                displacementPrev = 0;
-                break;
-        }
+//
+//        switch (moveMode) {
+//            case forward:
+//                displacement = (getAverageTicks() - displacementPrev) * forwardTPM;
+//                odometer += Math.abs(displacement);
+//                poseHeadingRad = Math.toRadians(poseHeading);
+//                break;
+//            case backward:
+//                displacement = (getAverageTicks() - displacementPrev) * forwardTPM;
+//                odometer += Math.abs(displacement);
+//                poseHeadingRad = Math.toRadians(poseHeading);
+//                break;
+//            default:
+//                displacement = 0; // when rotating or in an undefined moveMode, ignore/reset displacement
+//                displacementPrev = 0;
+//                break;
+//        }
+        displacement = (getAverageTicks() - displacementPrev);
+        odometer += Math.abs(displacement);
+        poseHeadingRad = Math.toRadians(poseHeading);
 
         odometer += Math.abs(displacement);
         poseSpeed = displacement / (double) (currentTime - this.timeStamp) * 1000000; // meters per second when ticks
                                                                                       // per meter is calibrated
 
         timeStamp = currentTime;
-        displacementPrev = displacement;
+        displacementPrev = getAverageTicks();
 
-        poseX += displacement * Math.cos(poseHeadingRad);
-        poseY += displacement * Math.sin(poseHeadingRad);
+        poseX += (displacement / forwardTPM) * Math.sin(poseHeadingRad);
+        poseY += (displacement / forwardTPM) * Math.cos(poseHeadingRad);
 
         lastXAcceleration = cachedXAcceleration;
         cachedXAcceleration = imu.getLinearAcceleration().xAccel;
@@ -629,6 +633,30 @@ public class PoseUG {
         // return true;
         // }
 
+    }
+
+    public boolean driveToFieldPosition(double targetX, double targetY){
+        if(rotateIMU(getBearingTo(targetX, targetY),999 )){
+            return driveIMUDistance(.5, getBearingTo(targetX, targetY), true, getDistanceTo(targetX, targetY));//todo- test if without reset works
+        }
+        return false;
+    }
+
+    public boolean driveToFieldPosition(double targetX, double targetY, double targetFinalHeading){
+        if(rotateIMU(getBearingTo(targetX, targetY),999 )){
+            if(driveIMUDistance(.5, getBearingTo(targetX, targetY), true, getDistanceTo(targetX, targetY))){//todo- test if without reset works
+                return rotateIMU(targetFinalHeading,999 );
+            }
+        }
+        return false;
+    }
+
+    private double getDistanceTo(double targetX, double targetY) {
+        return Math.sqrt(Math.pow((targetX-getPoseX()),2) + Math.pow((targetY-getPoseY()),2));
+    }
+
+    private double getBearingTo(double targetX, double targetY) {
+        return Math.toDegrees(Math.tan((targetX-getPoseX()) / (targetY-getPoseY())));
     }
 
     /**
@@ -1191,6 +1219,20 @@ public class PoseUG {
         }
         return false;
     }
+
+
+    public static double getPoseX() { //todo-get rid of once done
+        return poseX;
+    }
+
+    public static double getPoseY() {
+        return poseY;
+    }
+
+    public static double getDisplacement() {
+        return displacement;
+    }
+
 
     /**
      * the maintain heading function used in demo: holds the heading read on initial
