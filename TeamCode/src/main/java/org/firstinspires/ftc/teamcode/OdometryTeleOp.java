@@ -95,6 +95,35 @@ public class OdometryTeleOp extends LinearOpMode{
                 odometryDriveToPos(24, 24);
             }
 
+            //This should lock the robot from moving horizontally 20 inches on both sides
+            if(Math.abs(globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) > 20) {
+                motorFrontLeft.setPower(0);
+                motorFrontRight.setPower(0);
+                motorBackLeft.setPower(0);
+                motorBackRight.setPower(0);
+            }
+            //This should only move the robot either forward or backward 20 inches
+            if (gamepad2.a){
+                while (Math.abs(globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) > 20){
+                    motorFrontLeft.setPower(1);
+                    motorFrontRight.setPower(1);
+                    motorBackLeft.setPower(1);
+                    motorBackRight.setPower(1);
+                }
+                motorFrontLeft.setPower(0);
+                motorFrontRight.setPower(0);
+                motorBackLeft.setPower(0);
+                motorBackRight.setPower(0);
+            }
+
+            //This will test if it is just an overshooting problem
+            if (Math.abs(globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) == 10){
+                motorFrontLeft.setPower(0);
+                motorFrontRight.setPower(0);
+                motorBackLeft.setPower(0);
+                motorBackRight.setPower(0);
+            }
+
 
             //everything driving
             //Mecanum drive using trig
