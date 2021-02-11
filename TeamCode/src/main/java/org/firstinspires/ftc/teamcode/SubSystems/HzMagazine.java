@@ -104,8 +104,6 @@ public class HzMagazine {
         return magazine_touch_sensors_state;
     }
 
-    //public boolean moveMagazineToCollectState = false;
-
     public void moveMagazineToCollect(){
         if (magazineCollectTouchSensor.isPressed()) {
             magazineServo.setPower(0.0);
@@ -115,15 +113,12 @@ public class HzMagazine {
         }
     }
 
-
-    //public boolean moveMagazineToLaunchState = false;
-
     public void moveMagazineToLaunch() {
         if (magazineLaunchTouchSensor.isPressed()) {
             magazineServo.setPower(0.0);
             magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
         } else {
-            magazineServo.setPower(0.5);
+            magazineServo.setPower(0.8);
         }
     }
 

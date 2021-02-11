@@ -41,6 +41,8 @@ public class HzAutoControl {
     public AutoLaunchAim autoLaunchAim = AutoLaunchAim.HIGHGOAL;
 
     public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
+
+    public boolean dropFirstWobbleGoal = false;
     public boolean pickRingFromTargetMarker = false;
     public boolean launchRingsPickedFromTargetMarkerToHighGoal = false;
     public boolean pickAndDropSecondWobbleGoal = false;
@@ -131,20 +133,6 @@ public class HzAutoControl {
             acHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.OFF;
         }
 
-
-
-        //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
-        /*if (getDpad_downPress()) {
-            if (acHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
-                acHzLaunchController.activateLaunchReadinessState = false;
-                acHzLaunchController.deactivateLaunchReadinessState = true;
-                acHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.COLLECT;
-                acHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.ON;
-            } else if(acHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
-                acHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.OFF;
-            }
-        }*/
-
         if (autoIntakeState == AUTO_INTAKE_STATE.START &&
                 acHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.RUNNING &&
                 acHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_COLLECT){
@@ -174,25 +162,21 @@ public class HzAutoControl {
     public void setLaunchTargetPowerShot1(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT1;
         runAutoControl();
-        //runAutoControl();
     }
 
     public void setLaunchTargetPowerShot2(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT2;
         runAutoControl();
-        //runAutoControl();
     }
 
     public void setLaunchTargetPowerShot3(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT3;
         runAutoControl();
-        //runAutoControl();
     }
 
     public void setLaunchTargetOff(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.OFF;
         runAutoControl();
-        //runAutoControl();
     }
 
     public void runLaunchController(){
@@ -255,8 +239,6 @@ public class HzAutoControl {
         if (acHzLaunchController.activateLaunchReadinessState) {
             acHzLaunchController.activateLaunchReadiness();
         }
-
-        //acHzLaunchController.indicateLaunchReadiness();
 
     }
 
@@ -321,17 +303,15 @@ public class HzAutoControl {
             case HOLD_UP_WOBBLE_RING:
                 acHzArm.moveArmHoldUpWobbleRingPosition();
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
-                //acHzArm.closeGrip();
                 break;
             case PICK_WOBBLE:
                 acHzArm.moveArmPickWobblePosition();
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
-                //acHzArm.openGrip();
                 break;
             case DROP_WOBBLE_AUTONOMOUS:
                 acHzArm.moveArmDropWobbleAutonomousPosition();
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
-                //acHzArm.openGrip();
+                break;
         }
     }
 

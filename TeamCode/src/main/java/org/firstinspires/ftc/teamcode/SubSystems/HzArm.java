@@ -31,9 +31,9 @@ public class HzArm {
         PICK_RING
     }
 
-    public static int baselineEncoderCount = 0;//130;
+    public static int baselineEncoderCount = 0;
     public static int ARM_PARKED_POSITION_COUNT = 0;
-    public static int ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT = -250;//-350 ;
+    public static int ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT = -250;
     public static int ARM_DROP_WOBBLE_RING_POSITION_COUNT = -500 ;
     public static int ARM_DROP_WOBBLE_AUTONOMOUS_POSITION = -700;
     public static int ARM_PICK_WOBBLE_POSITION_COUNT = -725 ;
@@ -55,18 +55,16 @@ public class HzArm {
     public GRIP_SERVO_STATE gripServoState = GRIP_SERVO_STATE.OPENED ;
 
     public HzArm(HardwareMap hardwareMap) {
-        //armMotor = hardwareMap.dcMotor.get("arm_rotate");
         armMotor = hardwareMap.get(DcMotorEx.class, "arm_rotate");
         armGripServo = hardwareMap.servo.get("arm_grip");
     }
 
     LinearOpMode opModepassed;
 
-    public void initArm(/*LinearOpMode opModepassed1*/){
-        //this.opModepassed = opModepassed1;
+    public void initArm(){
+
         armMotor.setPositionPIDFCoefficients(5.0);
         armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        //baselineEncoderCount = armMotor.getCurrentPosition();
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         resetArm();
         moveArmParkedPosition();
@@ -87,7 +85,6 @@ public class HzArm {
      */
     public void turnArmBrakeModeOn(){
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //armMotor.setPower(0.0);
     }
 
     /**
@@ -97,7 +94,6 @@ public class HzArm {
      */
     public void turnArmBrakeModeOff(){
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        //armMotor.setPower(0.0);
     }
 
     /**

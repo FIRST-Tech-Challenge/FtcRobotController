@@ -103,7 +103,6 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
 
     public void driveTrainPointFieldModes(){
         //poseEstimate = getPoseEstimate();
-        //TODO : TESTING VUFORIA RUNNING IN PARALLEL
 
         // Set input bounds for the heading controller
         // Automatically handles overflow

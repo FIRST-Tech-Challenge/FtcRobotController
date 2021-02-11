@@ -59,9 +59,9 @@ public class HzGamepad {
     }
 
     public void runByGamepad(){
-        runMagazineControl(); //runLaunchController();
-        runIntakeControl(); //runMagazineControl();
-        runLaunchController(); //runIntakeControl();
+        runMagazineControl();
+        runIntakeControl();
+        runLaunchController();
         runLauncher();
         runByGamepadRRDriveModes();
         runArm();
@@ -69,7 +69,7 @@ public class HzGamepad {
 
 
     // RR Drive Train
-    public void runByGamepadRRDriveModes(/*HzDrive gpDrive, int playingAlliance*/) {
+    public void runByGamepadRRDriveModes() {
 
         if (HzVuforiaStatic.vuforiaState == HzVuforiaStatic.VUFORIA_STATE.NAVIGATION_RUNNING &&
                 HzVuforiaStatic.targetVisible){
@@ -87,12 +87,6 @@ public class HzGamepad {
         };
 
         if (gpDrive.driveType == HzDrive.DriveType.FIELD_CENTRIC){
-            /*if (GameField.playingAlliance == GameField.PLAYING_ALLIANCE.AUDIENCE) { // Audience
-                gpDrive.gamepadInput = new Vector2d(
-                        -turboMode(getLeftStickY()),
-                        -turboMode(getLeftStickX())
-                ).rotated(-gpDrive.poseEstimate.getHeading());
-            }*/
 
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) { // Red Alliance
                 gpDrive.gamepadInput = new Vector2d(
@@ -282,8 +276,6 @@ public class HzGamepad {
             gpHzLaunchController.activateLaunchReadiness();
         }
 
-        //gpHzLaunchController.indicateLaunchReadiness();
-
     }
 
     public void runLauncher(){
@@ -353,7 +345,8 @@ public class HzGamepad {
         double turboFactor;
 
         rightTriggerValue = getRightTrigger();
-        acceleration_factor = 1.0 + 3.0 * rightTriggerValue;
+        //acceleration_factor = 1.0 + 3.0 * rightTriggerValue;
+        acceleration_factor = 1.0 + 2.0 * rightTriggerValue;
         turboFactor = limitStick(stickInput) * acceleration_factor;
         return turboFactor;
     }
@@ -584,65 +577,5 @@ public class HzGamepad {
     public boolean getStartPersistent(){
         return gpGamepad.start;
     }
-
-
-
-/*
-    Scale a number in the range of x1 to x2, to the range of y1 to y2
-    Range.scale(double n, double x1, double x2, double y1, double y2)
-
-    Example for using Range.clip and scaleInput to switch to array points
-    public void loop() {
-
-        double rightDriveMotorsSpeed = -gamepad1.right_stick_y;
-        double leftDriveMotorsSpeed  = -gamepad1.left_stick_y;
-
-        rightDriveMotorsSpeed = Range.clip(rightDriveMotorsSpeed, -1, 1);
-        leftDriveMotorsSpeed = Range.clip(leftDriveMotorsSpeed, -1, 1);
-
-        rightDriveMotorsSpeed = scaleInput(rightDriveMotorsSpeed);
-        leftDriveMotorsSpeed = scaleInput(leftDriveMotorsSpeed);
-
-        driveRightFront.setPower(rightDriveMotorsSpeed);
-        driveRightBack.setPower(rightDriveMotorsSpeed);
-        driveLeftFront.setPower(leftDriveMotorsSpeed);
-        driveLeftBack.setPower(leftDriveMotorsSpeed);
-
-    }
-
-    @Override
-    public void stop() {
-    }
-
-    //Scales Motor Power
-    double scaleInput(double Val) {
-
-        double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24, 0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00};
-
-        // get the corresponding index for the scaleInput array.
-        int index = (int) (Val * 16.0);
-
-        // index should be positive.
-        if(index < 0){
-            index = -index;
-        }
-
-        // index cannot exceed size of array minus 1.
-        if(index > 16){
-            index = 16;
-        }
-
-        // get value from the array.
-        double Scale = 0.0;
-        if(Val < 0){
-            Scale = scaleArray[index];
-        } else {
-            Scale = -scaleArray[index];
-        }
-
-        // return scaled value.
-        return Scale;
-    }*/
-
 
 }

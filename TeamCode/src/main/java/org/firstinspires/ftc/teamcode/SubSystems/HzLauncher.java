@@ -44,8 +44,8 @@ public class HzLauncher {
         launcherFlyWheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         launcherFlyWheelMotor.setVelocityPIDFCoefficients(1.63835, 0.163835, 0, 16.3835);
-        launcherFlyWheelMotor.setVelocityPIDFCoefficients(5.0, 0.163835, 0, 16.3835);
-        launcherFlyWheelMotor.setPositionPIDFCoefficients(5.0);
+        launcherFlyWheelMotor.setVelocityPIDFCoefficients(8.0, 0.163835, 0, 16.3835);
+        launcherFlyWheelMotor.setPositionPIDFCoefficients(8.0);
 
         launcherFlyWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
@@ -58,13 +58,11 @@ public class HzLauncher {
     public void runFlyWheelToTarget(double launcherMotorVelocity) {
         launcherFlyWheelMotor.setDirection(DcMotor.Direction.FORWARD);
         launcherFlyWheelMotor.setVelocity(launcherMotorVelocity);
-        //launchMotorVelocity = launcherFlyWheelMotor.getVelocity();
         launcherState = LAUNCHER_FLYWHEEL_CONTROL.RUNNING_FOR_TARGET;
     }
 
     //stop flywheel motor
     public void stopFlyWheel() {
-        //launcherFlyWheelMotor.setPower(0.0);
         launcherFlyWheelMotor.setVelocity(0);
         launcherState = LAUNCHER_FLYWHEEL_CONTROL.STOPPED;
     }

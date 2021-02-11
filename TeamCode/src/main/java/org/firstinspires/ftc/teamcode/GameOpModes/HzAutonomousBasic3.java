@@ -32,8 +32,8 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  * setAutoMoveArmDropWobbleRing()
  *
  */
-@Autonomous(name = "Hazmat Autonomous 2", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp RR")
-public class HzAutonomousBasic2 extends LinearOpMode {
+@Autonomous(name = "Hazmat Autonomous 3", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp RR")
+public class HzAutonomousBasic3 extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
 
@@ -149,6 +149,10 @@ public class HzAutonomousBasic2 extends LinearOpMode {
         // Set magazine to Launch in case it slipped
         hzAutoControl.setMagazineToLaunch();
 
+        if (!hzAutoControl.dropFirstWobbleGoal){
+            hzWait(20000);
+        }
+
         // Move to launch position and launch rings to High Goal or Powershots
         if (hzAutoControl.autoLaunchAim == HzAutoControl.AutoLaunchAim.HIGHGOAL) {
             hzAutoControl.setLaunchTargetHighGoal();
@@ -184,53 +188,62 @@ public class HzAutonomousBasic2 extends LinearOpMode {
             launch3RingsToPowerShots();
         }
 
-        // Move to drop wobble goal on target
-        switch (targetZone){
-            case A:
-                if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
+        if (!hzAutoControl.dropFirstWobbleGoal){
+            //Park
+            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    .lineToSplineHeading(new Pose2d(13, af * 20, Math.toRadians(af * 0)))
+                    .build();
+            hzDrive.followTrajectory(traj);
+            return;
+        } else {
+            // Move to drop wobble goal on target
+            switch (targetZone) {
+                case A:
+                    if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
+                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                                .lineToSplineHeading(new Pose2d(46, af * 22, Math.toRadians(af * -45)))
+                                .build();
+                        hzDrive.followTrajectory(traj);
+                    }
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToSplineHeading(new Pose2d(27, af * 43, Math.toRadians(af * -45)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+
+                    break;
+
+                case B:
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
                             .lineToSplineHeading(new Pose2d(46, af * 22, Math.toRadians(af * -45)))
                             .build();
                     hzDrive.followTrajectory(traj);
-                }
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(27,af*43,Math.toRadians(af*-45)))
-                        .build();
-                hzDrive.followTrajectory(traj);
+                    break;
+                case C:
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToSplineHeading(new Pose2d(54, af * 51, Math.toRadians(af * -90)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+                    break;
 
-                break;
-
-            case B:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(46,af*22,Math.toRadians(af*-45)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                break;
-            case C:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(54,af*51,Math.toRadians(af*-90)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                break;
-
-        }
-
-        dropWobbleGoalInTarget();
-
-        if ((hzAutoControl.pickRingFromTargetMarker == false) || (targetZone == HzGameField.TARGET_ZONE.A)){ // Park
-            //Park
-            if (hzAutoControl.pickAndDropSecondWobbleGoal) {
-                runInnerPickAndDropSecondWobbleGoalAndPark();
-            } else {
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(50, af * 16, Math.toRadians(af * -45)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(13, af * 20, Math.toRadians(af * 0)))
-                        .build();
-                hzDrive.followTrajectory(traj);
             }
+
+            dropWobbleGoalInTarget();
+
+            if ((hzAutoControl.pickRingFromTargetMarker == false) || (targetZone == HzGameField.TARGET_ZONE.A)) { // Park
+                //Park
+                if (hzAutoControl.pickAndDropSecondWobbleGoal) {
+                    runInnerPickAndDropSecondWobbleGoalAndPark();
+                } else {
+                    //Park
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(50, af * 16, Math.toRadians(af * -45)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToSplineHeading(new Pose2d(13, af * 20, Math.toRadians(af * 0)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+                }
 
             /* Alternate
             traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -238,82 +251,83 @@ public class HzAutonomousBasic2 extends LinearOpMode {
                     .build();
             hzDrive.followTrajectory(traj);
             */
-            return;
-        } else { //Target Zone is B or C and pickRingFromTargetMarker == True
-            //Pick rings from Target Marker
-            hzIntake.setIntakeReleaseOpen();
-            hzAutoControl.setIntakeStart();
-            hzWait(500);
+                return;
+            } else { //Target Zone is B or C and pickRingFromTargetMarker == True
+                //Pick rings from Target Marker
+                hzIntake.setIntakeReleaseOpen();
+                hzAutoControl.setIntakeStart();
+                hzWait(500);
 
-            if (targetZone == HzGameField.TARGET_ZONE.B) {
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-10,af*37,Math.toRadians(af*135)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-22,af*37,Math.toRadians(af*135)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-
-                hzWait(300);
-            }
-
-            // Spline to (24,24,0)
-            if (targetZone == HzGameField.TARGET_ZONE.C) {
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-10,af*37,Math.toRadians(af*-180)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-
-                if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
+                if (targetZone == HzGameField.TARGET_ZONE.B) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-22, af * 37, Math.toRadians(af * -180)))
+                            .lineToLinearHeading(new Pose2d(-10, af * 37, Math.toRadians(af * 135)))
                             .build();
                     hzDrive.followTrajectory(traj);
-                }
 
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-33, af*37, Math.toRadians(af*-180)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-
-                hzWait(300);
-            }
-
-            if (hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal) {
-                hzAutoControl.setIntakeStop();
-                hzAutoControl.setMagazineToLaunch();
-                hzAutoControl.setLaunchTargetHighGoal();
-
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-13, af*40, Math.toRadians(af*0)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-
-                launch3RingsToHighGoal();
-
-                if(hzAutoControl.pickAndDropSecondWobbleGoal == true) {
-                    runInnerPickAndDropSecondWobbleGoalAndPark();
-                } else{
-                    //Park
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToSplineHeading(new Pose2d(13, af*33, Math.toRadians(af*0)))
+                            .lineToLinearHeading(new Pose2d(-22, af * 37, Math.toRadians(af * 135)))
                             .build();
                     hzDrive.followTrajectory(traj);
+
+                    hzWait(300);
                 }
 
+                // Spline to (24,24,0)
+                if (targetZone == HzGameField.TARGET_ZONE.C) {
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(-10, af * 37, Math.toRadians(af * -180)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
 
-            } else { //Move to baseline and park in safe zone
-                traj =  hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-50,af*16,Math.toRadians(af*-90)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(10, af*0, Math.toRadians(af*0)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                hzAutoControl.setIntakeStop();
+                    if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
+                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                                .lineToLinearHeading(new Pose2d(-22, af * 37, Math.toRadians(af * -180)))
+                                .build();
+                        hzDrive.followTrajectory(traj);
+                    }
+
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(-33, af * 37, Math.toRadians(af * -180)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+
+                    hzWait(300);
+                }
+
+                if (hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal) {
+                    hzAutoControl.setIntakeStop();
+                    hzAutoControl.setMagazineToLaunch();
+                    hzAutoControl.setLaunchTargetHighGoal();
+
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(-13, af * 40, Math.toRadians(af * 0)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+
+                    launch3RingsToHighGoal();
+
+                    if (hzAutoControl.pickAndDropSecondWobbleGoal == true) {
+                        runInnerPickAndDropSecondWobbleGoalAndPark();
+                    } else {
+                        //Park
+                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                                .lineToSplineHeading(new Pose2d(13, af * 33, Math.toRadians(af * 0)))
+                                .build();
+                        hzDrive.followTrajectory(traj);
+                    }
+
+
+                } else { //Move to baseline and park in safe zone
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(-50, af * 16, Math.toRadians(af * -90)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToSplineHeading(new Pose2d(10, af * 0, Math.toRadians(af * 0)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+                    hzAutoControl.setIntakeStop();
+                }
             }
         }
     }
@@ -364,6 +378,10 @@ public class HzAutonomousBasic2 extends LinearOpMode {
         // Set magazine to Launch in case it slipped
         hzAutoControl.setMagazineToLaunch();
 
+        if (!hzAutoControl.dropFirstWobbleGoal){
+            hzWait(20000);
+        }
+
         // Move to launch position and launch rings to High Goal or Powershots
         if (hzAutoControl.autoLaunchAim == HzAutoControl.AutoLaunchAim.HIGHGOAL) {
             hzAutoControl.setLaunchTargetHighGoal();
@@ -399,40 +417,48 @@ public class HzAutonomousBasic2 extends LinearOpMode {
             launch3RingsToPowerShots();
         }
 
-
-        switch (targetZone){
-            case A:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-10,af*48,Math.toRadians(af*-135)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                break;
-            case B:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(15,af*48,Math.toRadians(af*135)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                break;
-            case C:
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(35,af*50,Math.toRadians(af*-150)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                break;
-
-        }
-
-        dropWobbleGoalInTarget();
-
-        if ((hzAutoControl.pickRingFromTargetMarker == false) || (targetZone == HzGameField.TARGET_ZONE.A)){ // Park
-            if (hzAutoControl.pickAndDropSecondWobbleGoal) {
-                runOuterPickAndDropSecondWobbleGoalAndPark();
-            } else {
+        if (!hzAutoControl.dropFirstWobbleGoal) {
             //Park
-                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(13, af * 20, Math.toRadians(af * 0)))
-                        .build();
-                hzDrive.followTrajectory(traj);
+            traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                    .lineToSplineHeading(new Pose2d(13, af * 40, Math.toRadians(af * 0)))
+                    .build();
+            hzDrive.followTrajectory(traj);
+            return;
+        } else {
+
+            switch (targetZone) {
+                case A:
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(-10, af * 48, Math.toRadians(af * -135)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+                    break;
+                case B:
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToSplineHeading(new Pose2d(15, af * 48, Math.toRadians(af * 135)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+                    break;
+                case C:
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToSplineHeading(new Pose2d(35, af * 50, Math.toRadians(af * -150)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+                    break;
+
+            }
+
+            dropWobbleGoalInTarget();
+
+            if ((hzAutoControl.pickRingFromTargetMarker == false) || (targetZone == HzGameField.TARGET_ZONE.A)) { // Park
+                if (hzAutoControl.pickAndDropSecondWobbleGoal) {
+                    runOuterPickAndDropSecondWobbleGoalAndPark();
+                } else {
+                    //Park
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToSplineHeading(new Pose2d(13, af * 20, Math.toRadians(af * 0)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
 
             /* Alternate
             traj =  hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -444,83 +470,84 @@ public class HzAutonomousBasic2 extends LinearOpMode {
                     .build();
             hzDrive.followTrajectory(traj);
             */
-            }
-            return;
+                }
+                return;
 
-        } else { //Target Zone is B or C and pickRingFromTargetMarker == True
-            //Pick rings from Target Marker
-            hzIntake.setIntakeReleaseOpen();
-            hzAutoControl.setIntakeStart();
-            hzWait(500);
+            } else { //Target Zone is B or C and pickRingFromTargetMarker == True
+                //Pick rings from Target Marker
+                hzIntake.setIntakeReleaseOpen();
+                hzAutoControl.setIntakeStart();
+                hzWait(500);
 
-            if (targetZone == HzGameField.TARGET_ZONE.B) {
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-10,af*33,Math.toRadians(af*135)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-22,af*33,Math.toRadians(af*135)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-
-                hzWait(300);
-            }
-
-            // Spline to (24,24,0)
-            if (targetZone == HzGameField.TARGET_ZONE.C) {
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-10,af*33,Math.toRadians(af*-180)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-
-                if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
+                if (targetZone == HzGameField.TARGET_ZONE.B) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-22, af * 33, Math.toRadians(af * -180)))
+                            .lineToLinearHeading(new Pose2d(-10, af * 33, Math.toRadians(af * 135)))
                             .build();
                     hzDrive.followTrajectory(traj);
-                }
 
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-33, af*33, Math.toRadians(af*-180)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-
-                hzWait(300);
-            }
-
-            if (hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal) {
-                hzAutoControl.setIntakeStop();
-                hzAutoControl.setLaunchTargetHighGoal();
-                hzAutoControl.setMagazineToLaunch();
-
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-13, af*40, Math.toRadians(af*0)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-
-                launch3RingsToHighGoal();
-
-                if(hzAutoControl.pickAndDropSecondWobbleGoal == true) {
-                    runOuterPickAndDropSecondWobbleGoalAndPark();
-                } else {
-
-                    //Park
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToSplineHeading(new Pose2d(13, af * 33, Math.toRadians(af * 0)))
+                            .lineToLinearHeading(new Pose2d(-22, af * 33, Math.toRadians(af * 135)))
                             .build();
                     hzDrive.followTrajectory(traj);
+
+                    hzWait(300);
                 }
-            } else { //Move to baseline and park in safe zone
-                traj =  hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToLinearHeading(new Pose2d(-50,af*16,Math.toRadians(af*-90)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                        .lineToSplineHeading(new Pose2d(10, af*0, Math.toRadians(af*0)))
-                        .build();
-                hzDrive.followTrajectory(traj);
-                hzAutoControl.setIntakeStop();
+
+                // Spline to (24,24,0)
+                if (targetZone == HzGameField.TARGET_ZONE.C) {
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(-10, af * 33, Math.toRadians(af * -180)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+
+                    if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
+                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                                .lineToLinearHeading(new Pose2d(-22, af * 33, Math.toRadians(af * -180)))
+                                .build();
+                        hzDrive.followTrajectory(traj);
+                    }
+
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(-33, af * 33, Math.toRadians(af * -180)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+
+                    hzWait(300);
+                }
+
+                if (hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal) {
+                    hzAutoControl.setIntakeStop();
+                    hzAutoControl.setLaunchTargetHighGoal();
+                    hzAutoControl.setMagazineToLaunch();
+
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(-13, af * 40, Math.toRadians(af * 0)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+
+                    launch3RingsToHighGoal();
+
+                    if (hzAutoControl.pickAndDropSecondWobbleGoal == true) {
+                        runOuterPickAndDropSecondWobbleGoalAndPark();
+                    } else {
+
+                        //Park
+                        traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                                .lineToSplineHeading(new Pose2d(13, af * 33, Math.toRadians(af * 0)))
+                                .build();
+                        hzDrive.followTrajectory(traj);
+                    }
+                } else { //Move to baseline and park in safe zone
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToLinearHeading(new Pose2d(-50, af * 16, Math.toRadians(af * -90)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+                    traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
+                            .lineToSplineHeading(new Pose2d(10, af * 0, Math.toRadians(af * 0)))
+                            .build();
+                    hzDrive.followTrajectory(traj);
+                    hzAutoControl.setIntakeStop();
+                }
             }
         }
     }

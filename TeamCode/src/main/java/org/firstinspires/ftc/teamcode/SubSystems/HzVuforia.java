@@ -185,7 +185,6 @@ public class HzVuforia {
         /*
          * Retrieve the camera we are to use.
          */
-        //if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE) {
         if (activeWebcam == ACTIVE_WEBCAM.LEFT){
             webcamName = hardwareMap.get(WebcamName.class, "Webcam_l");
         } else {
@@ -199,8 +198,6 @@ public class HzVuforia {
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-        // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
 

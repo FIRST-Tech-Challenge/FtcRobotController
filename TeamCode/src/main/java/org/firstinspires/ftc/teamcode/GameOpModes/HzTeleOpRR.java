@@ -37,7 +37,6 @@ public class HzTeleOpRR extends LinearOpMode {
 
     //public HzVuforia hzVuforia1;
     public Pose2d startPose = HzGameField.calibPoint;
-    //int playingAlliance = 0; //1 for Red, -1 for Blue, 0 for Audience
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -51,18 +50,6 @@ public class HzTeleOpRR extends LinearOpMode {
         hzLaunchController = new HzLaunchController(hardwareMap, hzLauncher, hzIntake, hzMagazine, hzDrive);
         hzGamepad = new HzGamepad(gamepad1,hzDrive,hzMagazine,hzIntake,hzLaunchController,hzLauncher,hzArm);
 
-        //initialConfiguration();
-
-        //hzVuforia1 = new HzVuforia(hardwareMap);
-
-        // We want to turn off velocity control for teleop
-        // Velocity control per wheel is not necessary outside of motion profiled auto
-        //hzDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // TODO : When implementing Autonomous Mode uncomment this section.
-        // Retrieve our pose from the PoseStorage.currentPose static field
-        // See AutoTransferPose.java for further details
-        //hzDrive.setPoseEstimate(PoseStorage.currentPose);
         if ( HzGameField.poseSetInAutonomous == true) {
             hzDrive.getLocalizer().setPoseEstimate(HzGameField.currentPose);
         } else {
@@ -128,7 +115,6 @@ public class HzTeleOpRR extends LinearOpMode {
                 telemetry.addData("Playing Alliance Selected : ", "BLUE_ALLIANCE");
                 break;
             }
-            //telemetry.addData("10s time : Default Alliance A :",);
             telemetry.update();
         }
 
@@ -136,7 +122,6 @@ public class HzTeleOpRR extends LinearOpMode {
         sleep(500);
 
         //***** Select Start Pose ******
-        //timer.reset();
         telemetry.addData("Enter Start Pose :", "(Inner:A, Outer:Y)");
         while (!isStopRequested()) {
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
@@ -163,7 +148,6 @@ public class HzTeleOpRR extends LinearOpMode {
                     break;
                 }
             }
-            //telemetry.addData("10s Timer : Default Pose : BLUE_INNER_START_LINE : %.3f", timer.time());
             telemetry.update();
         }
         telemetry.update();
@@ -214,9 +198,6 @@ public class HzTeleOpRR extends LinearOpMode {
 
 
         //********** Intake Debug *******
-        //telemetry.addData("hzGamepad1.getDpad_downPress()", hzGamepad.getDpad_downPress());
-        //telemetry.addData("hzGamepad1.getDpad_upPress()", hzGamepad.getDpad_upPress());
-        //telemetry.addData("intakeMotor.isBusy()", hzIntake.intakeMotor.isBusy());
         switch (hzIntake.getIntakeState()){
             case RUNNING: {
                 telemetry.addData("hzIntake.getIntakeState()", "INTAKE_MOTOR_RUNNING");
@@ -284,12 +265,6 @@ public class HzTeleOpRR extends LinearOpMode {
                 break;
             }
         }
-
-        //telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
-        //telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
-
-        //telemetry.addData("armGripServo.getCurrentPosition()", hzArm.armGripServo.getPosition());
-        //telemetry.addData("hzGamepad.getLeftTriggerPress()", hzGamepad.getLeftTriggerPress());
 
         switch (hzArm.getCurrentArmPosition()){
             case PARKED: {
