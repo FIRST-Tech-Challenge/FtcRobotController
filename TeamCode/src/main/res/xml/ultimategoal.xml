@@ -19,7 +19,7 @@ SOFTWARE.
 -->
 <Robot type="FirstInspires-FTC">
     <!-- C310 with mount removed -->
-    <!-- Webcam name="webcam" serialNumber="7B2F4FD0" /> -->
+    <Webcam name="webcam" serialNumber="7B2F4FD0" />
 
     <!-- Control Hub #1 -->
     <LynxUsbDevice name="Control Hub" serialNumber="(embedded)" parentModuleAddress="2">
