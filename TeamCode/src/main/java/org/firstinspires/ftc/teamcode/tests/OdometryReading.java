@@ -16,8 +16,10 @@ public class OdometryReading extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
-        parallelEncoder = hardwareMap.get(DcMotor.class, "parallelEncoder");
-        perpendicularEncoder = hardwareMap.get(DcMotor.class, "perpendicularEncoder");
+        //"arm"
+        parallelEncoder = hardwareMap.get(DcMotor.class, "arm");
+        //"intake"
+        perpendicularEncoder = hardwareMap.get(DcMotor.class, "intake");
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
