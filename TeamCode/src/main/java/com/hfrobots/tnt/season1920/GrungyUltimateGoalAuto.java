@@ -48,7 +48,7 @@ import lombok.NonNull;
 
 import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 
-@Autonomous(name="00 Grungy UG Auto")
+//@Autonomous(name="00 Grungy UG Auto")
 @SuppressWarnings("unused")
 public class GrungyUltimateGoalAuto extends OpMode {
     private Ticker ticker;
