@@ -47,8 +47,8 @@ SOFTWARE.
             <Servo name="gripperServo"          port="0" /> <!-- Red    -->
             <RevBlinkinLedDriver name="blinkin" port="1" /> <!-- Orange -->
 
-            <RevTouchSensor name="placeLimitSwitch" port="1" /> <!-- Red    -->
-            <RevTouchSensor name="stowLimitSwitch"  port="3" /> <!-- Orange -->
+            <DigitalDevice name="placeLimitSwitch" port="1" /> <!-- Red    -->
+            <DigitalDevice name="stowLimitSwitch"  port="3" /> <!-- Orange -->
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

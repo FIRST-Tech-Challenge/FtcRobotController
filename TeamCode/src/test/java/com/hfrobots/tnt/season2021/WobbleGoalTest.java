@@ -25,13 +25,11 @@ import com.ftc9929.testing.fakes.control.FakeOnOffButton;
 import com.ftc9929.testing.fakes.control.FakeRangeInput;
 import com.ftc9929.testing.fakes.drive.FakeDcMotorEx;
 import com.ftc9929.testing.fakes.drive.FakeServo;
-import com.ftc9929.testing.fakes.sensors.FakeRevTouchSensor;
-import com.ftc9929.testing.fakes.sensors.FakeTouchSensor;
+import com.ftc9929.testing.fakes.sensors.FakeDigitalChannel;
 import com.google.common.testing.FakeTicker;
-import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,9 +44,9 @@ public class WobbleGoalTest {
 
     private WobbleGoal wobbleGoal;
 
-    private FakeRevTouchSensor placeLimitSwitch;
+    private FakeDigitalChannel placeLimitSwitch;
 
-    private FakeRevTouchSensor stowLimitSwitch;
+    private FakeDigitalChannel stowLimitSwitch;
 
     private FakeTicker fakeTicker = new FakeTicker();
 
@@ -73,9 +71,9 @@ public class WobbleGoalTest {
 
         gripperServo = (FakeServo) UltimateGoalTestConstants.HARDWARE_MAP.get(Servo.class, "gripperServo");
 
-        placeLimitSwitch = (FakeRevTouchSensor) UltimateGoalTestConstants.HARDWARE_MAP.get(RevTouchSensor.class, "placeLimitSwitch");
+        placeLimitSwitch = (FakeDigitalChannel) UltimateGoalTestConstants.HARDWARE_MAP.get(DigitalChannel.class, "placeLimitSwitch");
 
-        stowLimitSwitch = (FakeRevTouchSensor) UltimateGoalTestConstants.HARDWARE_MAP.get(RevTouchSensor.class, "stowLimitSwitch");
+        stowLimitSwitch = (FakeDigitalChannel) UltimateGoalTestConstants.HARDWARE_MAP.get(DigitalChannel.class, "stowLimitSwitch");
     }
 
     @Test
@@ -84,7 +82,7 @@ public class WobbleGoalTest {
 
         assertEquals(WobbleGoal.MotionState.class, wobbleGoal.getCurrentState().getClass());
 
-        stowLimitSwitch.setPressed(true);
+        stowLimitSwitch.setState(false);
 
         // Try to move "backwards", this should not move the arm, but you should end up in stow
         commandStowDirection();
@@ -127,7 +125,7 @@ public class WobbleGoalTest {
         // what should happen?
 
         commandPlaceDirection();
-        placeLimitSwitch.setPressed(true);
+        placeLimitSwitch.setState(false);
         wobbleGoal.periodicTask();
 
         assertEquals(WobbleGoal.PlaceState.class, wobbleGoal.getCurrentState().getClass()); // FIXME

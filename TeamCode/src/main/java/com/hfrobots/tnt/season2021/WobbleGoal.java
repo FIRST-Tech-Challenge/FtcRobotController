@@ -28,8 +28,8 @@ import com.ftc9929.corelib.state.State;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -49,9 +49,9 @@ public class WobbleGoal {
 
     private Servo gripperServo;
 
-    private RevTouchSensor placeLimitSwitch;
+    private DigitalChannel placeLimitSwitch;
 
-    private RevTouchSensor stowLimitSwitch;
+    private DigitalChannel stowLimitSwitch;
 
     @Setter
     private RangeInput shoulderThrottle;
@@ -79,9 +79,9 @@ public class WobbleGoal {
 
         gripperServo = hardwareMap.get(Servo.class, "gripperServo");
 
-        placeLimitSwitch = hardwareMap.get(RevTouchSensor.class, "placeLimitSwitch");
+        placeLimitSwitch = hardwareMap.get(DigitalChannel.class, "placeLimitSwitch");
 
-        stowLimitSwitch = hardwareMap.get(RevTouchSensor.class, "stowLimitSwitch");
+        stowLimitSwitch = hardwareMap.get(DigitalChannel.class, "stowLimitSwitch");
 
         PlaceState placeState = new PlaceState(telemetry);
 
@@ -204,7 +204,7 @@ public class WobbleGoal {
         public State doStuffAndGetNextState() {
             if (requestTowardsStow()) {
                 // we are heading towards stowed position, are we there?
-                if (stowLimitSwitch.isPressed()) {
+                if (limitSwitchOn(stowLimitSwitch)) {
                     shoulderMotor.setPower(0);
 
                     return stowState;
@@ -216,7 +216,7 @@ public class WobbleGoal {
                 return this;
             } else if (requestTowardsPlace()) {
                 // we are heading towards the placed position, are we there?
-                if (placeLimitSwitch.isPressed()) {
+                if (limitSwitchOn(placeLimitSwitch)) {
                     shoulderMotor.setPower(0);
 
                     return placeState;
@@ -274,5 +274,9 @@ public class WobbleGoal {
         public void liveConfigure(NinjaGamePad gamePad) {
 
         }
+    }
+
+    private static boolean limitSwitchOn(DigitalChannel channel) {
+        return !channel.getState();
     }
 }
