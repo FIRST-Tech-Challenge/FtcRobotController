@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
           package="com.qualcomm.ftcrobotcontroller"
-          android:versionCode="38"
-          android:versionName="6.0">
+          android:versionCode="39"
+          android:versionName="6.1">
 
   <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
@@ -13,7 +13,8 @@
     android:extractNativeLibs="true"
     android:icon="@drawable/ic_launcher"
     android:label="@string/app_name"
-    android:theme="@style/AppThemeRedRC" >
+    android:theme="@style/AppThemeRedRC"
+    android:usesCleartextTraffic="true">
 
     <!-- Indicates to the ControlHubUpdater what the latest version of the Control Hub is that this app supports -->
     <meta-data
