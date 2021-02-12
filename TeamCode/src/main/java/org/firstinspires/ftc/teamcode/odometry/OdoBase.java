@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
 import android.graphics.Point;
+import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -29,6 +30,8 @@ import static org.firstinspires.ftc.robotcore.internal.system.AppUtil.FIRST_FOLD
 public class OdoBase extends LinearOpMode {
     public static final File ROUTES_FOLDER = new File(FIRST_FOLDER, "/routes/");
     public static final File DOTS_FOLDER = new File(FIRST_FOLDER, "/dots/");
+
+    private static final String TAG = "OdoBase";
 
     protected double initHead = 0;
     protected int startX = 50;
@@ -99,6 +102,9 @@ public class OdoBase extends LinearOpMode {
         if (!qualifies(instruction)){
             return;
         }
+
+        Log.d(TAG, String.format("Executing Step: %s", instruction.toString()));
+
         if (dryRun && selectedRoute.getSteps().size() == 0){
             selectedRoute.setStartX((int)locator.getXInches());
             selectedRoute.setStartY((int)locator.getYInches());

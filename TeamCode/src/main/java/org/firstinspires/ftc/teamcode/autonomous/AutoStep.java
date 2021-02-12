@@ -67,6 +67,17 @@ public class AutoStep implements Cloneable {
         this.action = action;
     }
 
+    @Override
+    public String toString() {
+        return "AutoStep{" +
+                "targetX=" + targetX +
+                ", targetY=" + targetY +
+                ", moveStrategy=" + moveStrategy +
+                ", action='" + action + '\'' +
+                ", desiredHead=" + desiredHead +
+                '}';
+    }
+
     public String getDestination(){
         if (targetReference.equals("")) {
             return String.format("%d : %d", getTargetX(), getTargetY());

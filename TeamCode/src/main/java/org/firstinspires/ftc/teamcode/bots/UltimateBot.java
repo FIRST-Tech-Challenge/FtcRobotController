@@ -359,9 +359,9 @@ public class UltimateBot extends YellowBot {
             try {
                 target = rf.detectRing(2, side, telemetry, owner);
             } finally {
-                if (rf != null) {
-                    rf.stopDetection();
-                }
+//                if (rf != null) {
+//                    rf.stopDetection();
+//                }
             }
         }
         return target;
