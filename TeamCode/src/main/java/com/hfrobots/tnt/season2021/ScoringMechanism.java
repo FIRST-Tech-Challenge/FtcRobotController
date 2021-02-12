@@ -146,7 +146,7 @@ public class ScoringMechanism {
         }
 
         if (unsafe.isPressed()) {
-            blinkinLed.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
+            setBlinkinLedPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
         }
     }
 
@@ -196,7 +196,7 @@ public class ScoringMechanism {
 
         @Override
         public State doStuffAndGetNextState() {
-            blinkinLed.setPattern(IDLE_PATTERN);
+            setBlinkinLedPattern(IDLE_PATTERN);
 
             commonLauncherSpeedHandling();
 
@@ -252,7 +252,8 @@ public class ScoringMechanism {
         @Override
         public State doStuffAndGetNextState() {
             // Intake encoder not installed yet...
-            blinkinLed.setPattern(IDLE_PATTERN);
+            setBlinkinLedPattern(IDLE_PATTERN);
+
             if (false) {
                 if (intake.isStalled()) {
                     intake.resetStallDetector();
@@ -308,7 +309,8 @@ public class ScoringMechanism {
 
         @Override
         public State doStuffAndGetNextState() {
-            blinkinLed.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+            setBlinkinLedPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+
             intake.stop();
 
             if (isTimedOut()) {
@@ -477,7 +479,7 @@ public class ScoringMechanism {
 
         @Override
         public State doStuffAndGetNextState() {
-            blinkinLed.setPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
+            setBlinkinLedPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
             // FIXME: For *now* would like ability to do "whatever" with intake during launching
 
             // Intake:Not Moving  (unless unsafe)
@@ -523,4 +525,14 @@ public class ScoringMechanism {
         }
     }
 
+    private RevBlinkinLedDriver.BlinkinPattern currentBlinkinPattern = null;
+
+    private void setBlinkinLedPattern(@NonNull RevBlinkinLedDriver.BlinkinPattern pattern) {
+        // Only set if changed - the driver logs every time setPattern() is called :(
+        if (currentBlinkinPattern == null || pattern != currentBlinkinPattern) {
+            blinkinLed.setPattern(pattern);
+
+            currentBlinkinPattern = pattern;
+        }
+    }
 }
