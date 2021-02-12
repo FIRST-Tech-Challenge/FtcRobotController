@@ -131,7 +131,7 @@ public class Chassis_Auto extends LinearOpMode {
             String visionResult = null;
             ElapsedTime recogTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
-            while (opModeIsActive() && recogTime.milliseconds() <= 1500.0) {
+            while (opModeIsActive() && recogTime.milliseconds() <= 13000.0) { //Changed from 1500 to 18000 to 15000 to 12000 to 13000
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
