@@ -21,6 +21,7 @@ package com.hfrobots.tnt.season2021;
 
 import com.ftc9929.corelib.control.NinjaGamePad;
 import com.google.common.base.Ticker;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -32,6 +33,8 @@ public class DriverControlled extends OpMode {
     private DriverControls driverControls;
 
     private OperatorControls operatorControls;
+
+    private RevBlinkinLedDriver blinkinLed;
 
     @Override
     public void init() {
@@ -52,6 +55,9 @@ public class DriverControlled extends OpMode {
         operatorControls = OperatorControls.builder().operatorGamepad(new NinjaGamePad(gamepad2))
                 .scoringMechanism(scoringMechanism)
                 .wobbleGoal(wobbleGoal).build();
+
+        blinkinLed = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        blinkinLed.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY);
     }
 
     @Override
