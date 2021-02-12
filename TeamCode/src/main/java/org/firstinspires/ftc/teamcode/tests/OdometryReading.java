@@ -16,13 +16,14 @@ public class OdometryReading extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //"shooter"
+        parallelEncoder = hardwareMap.get(DcMotor.class, "shooter");
+        //"intake"
+        perpendicularEncoder = hardwareMap.get(DcMotor.class, "intake");
+        parallelEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        perpendicularEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         parallelEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         perpendicularEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //"intake"
-        parallelEncoder = hardwareMap.get(DcMotor.class, "intake");
-        //"arm"
-        perpendicularEncoder = hardwareMap.get(DcMotor.class, "arm");
-
         waitForStart();
 
         while (opModeIsActive()) {
