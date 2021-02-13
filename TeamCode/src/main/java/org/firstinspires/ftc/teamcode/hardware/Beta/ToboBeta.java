@@ -94,10 +94,10 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     public boolean useTfod = false;
     public boolean useBottomWobbleGoalGrabber = false;
     public boolean useTopWobbleGoalGrabber = false;
-    public boolean useComboGrabber = true;
-    public boolean useHopper = true;
-    public boolean useShooter = true;
-    public boolean useIntake = true;
+    public boolean useComboGrabber = false;
+    public boolean useHopper = false;
+    public boolean useShooter = false;
+    public boolean useIntake = false;
     public boolean isTeleOpAfterAuto = false;
     private boolean useIMUforOdometryAngleCorrection = true; // use IMU for radian correction
 
@@ -138,7 +138,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
 
         // simFile = Paths.get("ToboBeta_events.txt");
         this.core = new CoreSystem();
-        info("RoboMech configure() after new CoreSystem()(run time = %.2f sec)", (runtime.seconds() - ini_time));
+        info("RoboBeta configure() after new CoreSystem()(run time = %.2f sec)", (runtime.seconds() - ini_time));
 
         if (useChassis) {
             chassis = new MechChassis(core).configureLogging("Beta", logLevel); // Log.DEBUG
@@ -1053,7 +1053,9 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     }
 
     public void initAfterStart() {
-        shooter.shootOutByRpm(WARM_UP_RPM);
+        if (shooter!=null) {
+            shooter.shootOutByRpm(WARM_UP_RPM);
+        }
         if (comboGrabber != null && tZone != TargetZone.UNKNOWN) // during autonomous
             comboGrabber.armUp();
         initializeGPSThread();
