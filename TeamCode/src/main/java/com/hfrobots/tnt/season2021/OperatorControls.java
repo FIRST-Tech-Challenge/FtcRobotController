@@ -146,8 +146,9 @@ public class OperatorControls {
         scoringMechanism.setInvertHopper(invertHopper);
 
         this.wobbleGoal = wobbleGoal;
-        this.wobbleGoal.setShoulderThrottle(wobbleShoulderThrottle);
+        this.wobbleGoal.setShoulderThrottle(new LowPassFilteredRangeInput(wobbleShoulderThrottle, 0.85F));
         this.wobbleGoal.setGripperButton(new ToggledButton(toggleWobbleGripper));
+        this.wobbleGoal.setUnsafe(unsafe);
     }
 
 

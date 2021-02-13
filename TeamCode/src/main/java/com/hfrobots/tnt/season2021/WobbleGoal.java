@@ -22,6 +22,7 @@ package com.hfrobots.tnt.season2021;
 import android.util.Log;
 
 import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.corelib.control.OnOffButton;
 import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.control.ToggledButton;
 import com.ftc9929.corelib.state.State;
@@ -58,6 +59,9 @@ public class WobbleGoal {
 
     @Setter
     private ToggledButton gripperButton;
+
+    @Setter
+    private OnOffButton unsafe;
 
     private final static int PLACE_POS_ENCODER_COUNT = 0; //FIXME this is not correct
 
@@ -141,11 +145,7 @@ public class WobbleGoal {
         @Override
         public State doStuffAndGetNextState() {
 
-            if (gripperButton.isToggledTrue()) {
-                gripperServo.setPosition(OPEN_GRIPPER_POS);
-            } else {
-                gripperServo.setPosition(CLOSED_GRIPPER_POS);
-            }
+            handleGripperServo();
 
             if (requestTowardsStow()) {
                 return motionState;
@@ -157,6 +157,14 @@ public class WobbleGoal {
         @Override
         public void checkReady() {
             Preconditions.checkNotNull(motionState);
+        }
+    }
+
+    private void handleGripperServo() {
+        if (gripperButton.isToggledTrue()) {
+            gripperServo.setPosition(OPEN_GRIPPER_POS);
+        } else {
+            gripperServo.setPosition(CLOSED_GRIPPER_POS);
         }
     }
 
@@ -174,6 +182,10 @@ public class WobbleGoal {
         public State doStuffAndGetNextState() {
             if (requestTowardsPlace()) {
                 return motionState;
+            }
+
+            if(unsafe.isPressed()){
+                handleGripperServo();
             }
 
             return this;
@@ -204,7 +216,7 @@ public class WobbleGoal {
         public State doStuffAndGetNextState() {
             if (requestTowardsStow()) {
                 // we are heading towards stowed position, are we there?
-                if (limitSwitchOn(stowLimitSwitch)) {
+                if (!unsafe.isPressed() && limitSwitchOn(stowLimitSwitch)) {
                     shoulderMotor.setPower(0);
 
                     return stowState;
@@ -216,17 +228,23 @@ public class WobbleGoal {
                 return this;
             } else if (requestTowardsPlace()) {
                 // we are heading towards the placed position, are we there?
-                if (limitSwitchOn(placeLimitSwitch)) {
+                if (!unsafe.isPressed() && limitSwitchOn(placeLimitSwitch)) {
                     shoulderMotor.setPower(0);
 
                     return placeState;
                 }
+
 
                 // otherwise adjust power to the shoulder motor
                 setShoulderMotorPower(TOWARDS_PLACE_POWER_MAGNITUDE);
 
                 return this;
             }
+
+            if (unsafe.isPressed()) {
+                handleGripperServo();
+            }
+
 
             // TODO: Doubtful (because of gearing), but we may need feedforward to hold position?
 
