@@ -184,7 +184,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         if (volt<=13.0) {
             auto_power_scale_by_voltage = 1.0;
         } else {
-            auto_power_scale_by_voltage = 13.0/Math.pow(volt, 1.05);
+            auto_power_scale_by_voltage = 13.0/Math.pow(volt, 1.03);
         }
     }
     public void switchAutoMode() {
