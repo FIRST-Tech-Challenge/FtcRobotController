@@ -776,9 +776,9 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         double degree_diff = Math.abs(cur_heading-fixed_heading);
 
         // adjust max power by the battery voltage level
-//        if (power>=0.9) { // Voltage > 13 will scale down
-//            power *= auto_power_scale_by_voltage;
-//        }
+       if (power>=0.9) { // Voltage > 13 will scale down
+           power *= auto_power_scale_by_voltage;
+        }
 
         // to-do: need to handle gap from 179 to -179
         double cur_left_to_right_ratio = 1.0;
