@@ -88,7 +88,7 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
         while(opModeIsActive() && robot.armMovement != UltimateGoalRobot.WOBBLE_ARM_ROTATOR.IDLE) {
             updatePosition();
         }
-        robot.startClawToggle();
+        robot.startClawToggle(true);
         while(opModeIsActive() && robot.grabState != IDLE) {
             updatePosition();
         }

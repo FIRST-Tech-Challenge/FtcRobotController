@@ -118,19 +118,19 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
         double driveAngle = 160.0;
         double drivePower = 0.5;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1100, true, true);
-        robot.startStowedToReleaseWobbleGoal();
-        while(!isStopRequested() && (robot.stowedReleaseState != UltimateGoalRobot.STOWED_RELEASE_STATE.IDLE)) {
-            sleep(15);
-            performRobotActions();
-        }
+//        robot.startStowedToReleaseWobbleGoal();
+//        while(!isStopRequested() && (robot.stowedReleaseState != UltimateGoalRobot.STOWED_RELEASE_STATE.IDLE)) {
+//            sleep(15);
+//            performRobotActions();
+//        }
         headingAngle = 0.0;
         driveAngle = 300.0;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 700, true, true);
-        robot.startStowArm();
-        while(!isStopRequested() && (robot.stowArmState != UltimateGoalRobot.STOW_ARM_STATE.IDLE)) {
-            sleep(15);
-            performRobotActions();
-        }
+//        robot.startStowArm();
+//        while(!isStopRequested() && (robot.stowArmState != UltimateGoalRobot.STOW_ARM_STATE.IDLE)) {
+//            sleep(15);
+//            performRobotActions();
+//        }
     }
 
     public void dropWobbleTargetZoneB() {
@@ -138,19 +138,19 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
         double driveAngle = 196.0;
         double drivePower = 0.5;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1800, true, true);
-        robot.startStowedToReleaseWobbleGoal();
-        while(!isStopRequested() && (robot.stowedReleaseState != UltimateGoalRobot.STOWED_RELEASE_STATE.IDLE)) {
-            sleep(15);
-            performRobotActions();
-        }
+//        robot.startStowedToReleaseWobbleGoal();
+//        while(!isStopRequested() && (robot.stowedReleaseState != UltimateGoalRobot.STOWED_RELEASE_STATE.IDLE)) {
+//            sleep(15);
+//            performRobotActions();
+//        }
         headingAngle = 0.0;
         driveAngle = 330.0;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1250, true, true);
-        robot.startStowArm();
-        while(!isStopRequested() && (robot.stowArmState != UltimateGoalRobot.STOW_ARM_STATE.IDLE)) {
-            sleep(15);
-            performRobotActions();
-        }
+//        robot.startStowArm();
+//        while(!isStopRequested() && (robot.stowArmState != UltimateGoalRobot.STOW_ARM_STATE.IDLE)) {
+//            sleep(15);
+//            performRobotActions();
+//        }
     }
 
     public void dropWobbleTargetZoneC() {
@@ -161,22 +161,22 @@ public abstract class UltimateGoalAutoFull extends UltimateGoalAutoBase
         headingAngle = 45.0;
         driveAngle = 145.0;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1400, true, true);
-        robot.startStowedToReleaseWobbleGoal();
-        while(!isStopRequested() && (robot.stowedReleaseState != UltimateGoalRobot.STOWED_RELEASE_STATE.IDLE)) {
-            sleep(15);
-            performRobotActions();
-        }
+//        robot.startStowedToReleaseWobbleGoal();
+//        while(!isStopRequested() && (robot.stowedReleaseState != UltimateGoalRobot.STOWED_RELEASE_STATE.IDLE)) {
+//            sleep(15);
+//            performRobotActions();
+//        }
         headingAngle = 45.0;
         driveAngle = 300.0;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 700, true, true);
         headingAngle = 0.0;
         driveAngle = 320.0;
         driveAtHeadingForTime(drivePower, 0.1, driveAngle, headingAngle, 1000, true, true);
-        robot.startStowArm();
-        while(!isStopRequested() && (robot.stowArmState != UltimateGoalRobot.STOW_ARM_STATE.IDLE)) {
-            sleep(15);
-            performRobotActions();
-        }
+//        robot.startStowArm();
+//        while(!isStopRequested() && (robot.stowArmState != UltimateGoalRobot.STOW_ARM_STATE.IDLE)) {
+//            sleep(15);
+//            performRobotActions();
+//        }
     }
 
     @Override

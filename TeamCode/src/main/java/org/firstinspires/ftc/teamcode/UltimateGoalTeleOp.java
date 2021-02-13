@@ -178,7 +178,11 @@ public class UltimateGoalTeleOp extends OpMode {
 		// DRIVER JOYSTICK
 		// ********************************************************************
         if(!circleHeld && circlePressed) {
-            robot.startClawToggle();
+            if(robot.clawClosed) {
+                robot.startClawToggle(true);
+            } else {
+                robot.startClawToggle(false);
+            }
             circleHeld = true;
         } else if(!circlePressed) {
             circleHeld = false;
@@ -424,9 +428,6 @@ public class UltimateGoalTeleOp extends OpMode {
         robot.performInjecting();
         robot.performTripleInjecting();
         robot.performShotAligning();
-        robot.performStowedToReleaseWobbleGoal();
-        robot.performReleaseGrabWobbleGoal();
-        robot.performReleaseStowArm();
         robot.performRotatingArm();
         robot.updateShooterStability();
     }

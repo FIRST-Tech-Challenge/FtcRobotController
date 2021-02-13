@@ -63,7 +63,8 @@ public class UltimateGoalRobot
     public final static String WOBBLE_MOTOR = "Wobble";
     public final static String SHOOTER_MOTOR = "Shooter";
     public final static String EMPTY_MOTOR = "Empty";
-    public final static String CLAW_SERVO = "Claw";
+    public final static String CLAW_LEFT_SERVO = "ClawLeft";
+    public final static String CLAW_RIGHT_SERVO = "ClawRight";
     public final static String FLAP_SERVO = "Flap";
     public final static String INJECTOR_SERVO = "Injector";
     public final static String INTAKE_PUSHER_SERVO = "IntakePusher";
@@ -99,7 +100,8 @@ public class UltimateGoalRobot
 
     // Servos
     protected Servo flap = null;
-    protected Servo claw = null;
+    protected Servo clawLeft = null;
+    protected Servo clawRight = null;
     protected Servo injector = null;
     protected CRServo intakePusher = null;
 
@@ -206,10 +208,12 @@ public class UltimateGoalRobot
         intakePusher = hwMap.get(CRServo.class, INTAKE_PUSHER_SERVO);
         flap = hwMap.get(Servo.class, FLAP_SERVO);
         injector = hwMap.get(Servo.class, INJECTOR_SERVO);
-        claw = hwMap.get(Servo.class, CLAW_SERVO);
+        clawLeft = hwMap.get(Servo.class, CLAW_LEFT_SERVO);
+        clawRight = hwMap.get(Servo.class, CLAW_RIGHT_SERVO);
 
         injector.setPosition(INJECTOR_HOME);
-        claw.setPosition(CLAW_CLOSED);
+        clawLeft.setPosition(CLAW_LEFT_CLOSED);
+        clawLeft.setPosition(CLAW_RIGHT_CLOSED);
         clawClosed = true;
         setShooterFlapPowerShot();
 
@@ -689,8 +693,10 @@ public class UltimateGoalRobot
 
     /** Grab activity closes or opens the wobble arm claw. **/
     public final static double CLAW_TIME = 500.0;
-    public final static double CLAW_CLOSED = 0.150;
-    public final static double CLAW_OPEN = 0.40;
+    public final static double CLAW_LEFT_CLOSED = 0.150;
+    public final static double CLAW_RIGHT_CLOSED = 0.150;
+    public final static double CLAW_LEFT_OPEN = 0.40;
+    public final static double CLAW_RIGHT_OPEN = 0.40;
     public boolean clawClosed = false;
     public enum GRABBING {
         IDLE,
@@ -698,12 +704,16 @@ public class UltimateGoalRobot
     }
 
     public GRABBING grabState = GRABBING.IDLE;
-    public void startClawToggle() {
+    public void startClawToggle(boolean open) {
         if(grabState == GRABBING.IDLE) {
-            if(clawClosed) {
-                claw.setPosition(CLAW_OPEN);
+            if(open) {
+                clawLeft.setPosition(CLAW_LEFT_OPEN);
+                clawRight.setPosition(CLAW_RIGHT_OPEN);
+                clawClosed = false;
             } else {
-                claw.setPosition(CLAW_CLOSED);
+                clawLeft.setPosition(CLAW_LEFT_CLOSED);
+                clawRight.setPosition(CLAW_RIGHT_CLOSED);
+                clawClosed = true;
             }
             clawTimer.reset();
             grabState = GRABBING.CLOSING;
@@ -715,7 +725,6 @@ public class UltimateGoalRobot
             case CLOSING:
                 if(clawTimer.milliseconds() >= CLAW_TIME) {
                     grabState = GRABBING.IDLE;
-                    clawClosed = !clawClosed;
                 }
                 break;
             case IDLE:
@@ -889,8 +898,7 @@ public class UltimateGoalRobot
         targetPosition = newPosition;
         armMovement = WOBBLE_ARM_ROTATOR.MOVING;
         if(targetPosition == WOBBLE_ARM_STOWED) {
-            claw.setPosition(CLAW_CLOSED);
-            clawClosed = true;
+            startClawToggle(false);
         }
     }
 
@@ -1030,149 +1038,6 @@ public class UltimateGoalRobot
 
     public void stopOdometryCal() {
         odometryCalState = ODOMETRY_CAL_STATE.IDLE;
-    }
-
-    public enum STOWED_RELEASE_STATE {
-        IDLE,
-        LOWER_ARM,
-        RELEASE_WOBBLE
-    }
-    public STOWED_RELEASE_STATE stowedReleaseState = STOWED_RELEASE_STATE.IDLE;
-    protected static final double STOW_RELEASE_TIME = 3000.0;
-    public void startStowedToReleaseWobbleGoal() {
-        if(stowedReleaseState == STOWED_RELEASE_STATE.IDLE) {
-            stowedReleaseState = STOWED_RELEASE_STATE.LOWER_ARM;
-            wobbleTimer.reset();
-            setWobbleMotorPower(0.7);
-        }
-    }
-
-    public void performStowedToReleaseWobbleGoal() {
-        switch(stowedReleaseState) {
-            case LOWER_ARM:
-                if (wobbleTimer.milliseconds() >= STOW_RELEASE_TIME) {
-                    setWobbleMotorPower(0.0);
-                    startClawToggle();
-                    stowedReleaseState = STOWED_RELEASE_STATE.RELEASE_WOBBLE;
-                }
-                break;
-            case RELEASE_WOBBLE:
-                if (grabState == GRABBING.IDLE) {
-                    stowedReleaseState = STOWED_RELEASE_STATE.IDLE;
-                }
-                break;
-            case IDLE:
-            default:
-                break;
-        }
-    }
-
-    public enum STOW_ARM_STATE {
-        IDLE,
-        STOW_ARM
-    }
-    public STOW_ARM_STATE stowArmState = STOW_ARM_STATE.IDLE;
-    protected static final double STOW_ARM_TIME = 2950.0;
-    public void startStowArm() {
-        if(stowArmState == STOW_ARM_STATE.IDLE) {
-            stowArmState = STOW_ARM_STATE.STOW_ARM;
-            wobbleTimer.reset();
-            startClawToggle();
-            setWobbleMotorPower(-0.7);
-        }
-    }
-
-    public void performStowArm() {
-        switch(stowArmState) {
-            case STOW_ARM:
-                if (wobbleTimer.milliseconds() >= STOW_ARM_TIME) {
-                    setWobbleMotorPower(0.0);
-                    stowArmState = STOW_ARM_STATE.IDLE;
-                }
-                break;
-            case IDLE:
-            default:
-                break;
-        }
-    }
-
-    public enum RELEASE_GRAB_STATE {
-        IDLE,
-        GRAB_WOBBLE,
-        LIFT_WOBBLE
-    }
-    public RELEASE_GRAB_STATE releaseGrabState = RELEASE_GRAB_STATE.IDLE;
-    protected static final double LIFT_WOBBLE_TIME = 500.0;
-    public void startReleaseGrabWobbleGoal() {
-        if(releaseGrabState == RELEASE_GRAB_STATE.IDLE) {
-            releaseGrabState = RELEASE_GRAB_STATE.GRAB_WOBBLE;
-            startClawToggle();
-        }
-    }
-
-    public void performReleaseGrabWobbleGoal() {
-        switch(releaseGrabState) {
-            case GRAB_WOBBLE:
-                if (grabState == GRABBING.IDLE) {
-                    wobbleTimer.reset();
-                    setWobbleMotorPower(-1.0);
-                    releaseGrabState = RELEASE_GRAB_STATE.LIFT_WOBBLE;
-                }
-                break;
-            case LIFT_WOBBLE:
-                if(wobbleTimer.milliseconds() >= LIFT_WOBBLE_TIME) {
-                    setWobbleMotorPower(0.0);
-                    releaseGrabState = RELEASE_GRAB_STATE.IDLE;
-                }
-                break;
-            case IDLE:
-            default:
-                break;
-        }
-    }
-
-    public enum RELEASE_STOW_STATE {
-        IDLE,
-        RELEASE_WOBBLE,
-        LOWER_ARM,
-        STOW_ARM
-    }
-    public RELEASE_STOW_STATE releaseStowState = RELEASE_STOW_STATE.IDLE;
-    protected static final double LOWER_ARM_TIME = 450.0;
-    protected static final double STOW_RELEASE_ARM_TIME = 500.0;
-    public void startReleaseStowArm() {
-        if(releaseStowState == RELEASE_STOW_STATE.IDLE) {
-            releaseStowState = RELEASE_STOW_STATE.RELEASE_WOBBLE;
-            startClawToggle();
-        }
-    }
-
-    public void performReleaseStowArm() {
-        switch(releaseStowState) {
-            case RELEASE_WOBBLE:
-                if (grabState == GRABBING.IDLE) {
-                    wobbleTimer.reset();
-                    setWobbleMotorPower(1.0);
-                    releaseStowState = RELEASE_STOW_STATE.LOWER_ARM;
-                }
-                break;
-            case LOWER_ARM:
-                if(wobbleTimer.milliseconds() >= LOWER_ARM_TIME) {
-                    startClawToggle();
-                    wobbleTimer.reset();
-                    releaseStowState = RELEASE_STOW_STATE.STOW_ARM;
-                }
-                break;
-            case STOW_ARM:
-                if(wobbleTimer.milliseconds() >= STOW_RELEASE_ARM_TIME) {
-                    setWobbleMotorPower(0.0);
-                    releaseStowState = RELEASE_STOW_STATE.IDLE;
-                }
-                break;
-            case IDLE:
-            default:
-                break;
-        }
     }
 }
 
