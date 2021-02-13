@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware.MechBot;
 
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -76,6 +77,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     final public double SEMI_AUTO_RPM = 1400;
     final public double SEMI_POWER_SHOT_RPM = 1220;
     public double shooting_rpm = WARM_UP_RPM;
+    public double batteryVolt = 0;
 
     public double auto_rotate_degree = 0;
 
@@ -237,7 +239,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             positionThread = (chassis.getGPS() == null ? null : new Thread(chassis.getGPS()));
             if (positionThread != null)
                 positionThread.start();
-
+        }
+        if (chassis!=null) {
+            batteryVolt = getBatteryVoltage();
+            chassis.set_auto_power_scale_by_voltage(batteryVolt);
         }
         if (intake != null)
             intake.setupTelemetry(telemetry);
@@ -716,10 +721,15 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (Thread.currentThread().isInterrupted()) return;
         if (chassis == null) return;
         Telemetry.Line line = telemetry.addLine();
-        line.addData(" | Shooting (dist,angle,rpm) =", new Func<String>() {
+        batteryVolt = getBatteryVoltage();
+        if (chassis!=null) {
+            chassis.set_auto_power_scale_by_voltage(batteryVolt);
+        }
+        line.addData(" | Shooting (dist,angle,rpm, volt) =", new Func<String>() {
             @Override
             public String value() {
-                return String.format("(%1.0f,%1.0f,%1.0f)\n", shooting_dist, shooting_angle, shooting_rpm);
+                return String.format("(%1.0f,%1.0f,%1.0f, %2.1f)\n",
+                        shooting_dist, shooting_angle, shooting_rpm, getBatteryVoltage());
             }
         });
         if (useVuforia && (cameraDetector != null)) {
@@ -1066,6 +1076,22 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (comboGrabber != null && tZone != TargetZone.UNKNOWN) // during autonomous
             comboGrabber.armUp();
         initializeGPSThread();
+        if (chassis!=null) {
+            batteryVolt = getBatteryVoltage();
+            chassis.set_auto_power_scale_by_voltage(batteryVolt);
+        }
+    }
+
+    // Computes the current battery voltage
+    double getBatteryVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+        for (VoltageSensor sensor : cfg.getHardwareMap().voltageSensor) {
+            double voltage = sensor.getVoltage();
+            if (voltage > 0) {
+                result = Math.min(result, voltage);
+            }
+        }
+        return result;
     }
 
     public void initializeGPSThread() {

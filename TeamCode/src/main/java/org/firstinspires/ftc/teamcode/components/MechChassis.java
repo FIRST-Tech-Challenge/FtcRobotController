@@ -149,6 +149,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     public double auto_max_calc_speed = 0;
     public double auto_exit_speed = 0;
     public double auto_stop_early_dist = 0;
+    public double auto_power_scale_by_voltage = 1.0;
 
     private TeleOpDriveMode teleOpDriveMode = TeleOpDriveMode.STOP;      // current drive mode
     private AutoDriveMode autoDriveMode = AutoDriveMode.STOP;
@@ -179,7 +180,13 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     public boolean getNormalizeMode(){
         return normalizeMode;
     }
-
+    public void set_auto_power_scale_by_voltage(double volt) {
+        if (volt<=13.0) {
+            auto_power_scale_by_voltage = 1.0;
+        } else {
+            auto_power_scale_by_voltage = 13.0/volt;
+        }
+    }
     public void switchAutoMode() {
         switch (autoDriveMode) {
             case STOP: setAutoDriveMode(AutoDriveMode.STOP_NO_CORRECTION); break;
@@ -767,6 +774,11 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
         double cur_heading = odo_heading();
         double degree_diff = Math.abs(cur_heading-fixed_heading);
+
+        // adjust max power by the battery voltage level
+//        if (power>=0.9) { // Voltage > 13 will scale down
+//            power *= auto_power_scale_by_voltage;
+//        }
 
         // to-do: need to handle gap from 179 to -179
         double cur_left_to_right_ratio = 1.0;
