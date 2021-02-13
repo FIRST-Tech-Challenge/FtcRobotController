@@ -606,28 +606,18 @@ public class UG_6832 extends OpMode {
             cacheValidated = false;
         }
 
-//        if(System.currentTimeMillis() %30000 > 15000) {
+
+//        if(gamepad1.y){
+//            robot.launcher.setFlywheelTargetTPS(calc.getTrajectorySolution().getAngularVelocity());
+//            // robot.launcher.flywheelMotor.setPower(1);
+//        }
+//        else{
 //            robot.launcher.setFlywheelTargetTPS(0);
-//
-//            message = "0 tps";
-//        } else if(System.currentTimeMillis() % 30000 < 15000) {
-//            robot.launcher.setFlywheelTargetTPS(2500);
-//            message = "2500 tps";
+//            //robot.launcher.flywheelMotor.setPower(0);
 //        }
 
-        calc.setDistance(Constants.tempDistance);
-
-        if(gamepad1.y){
-            robot.launcher.setFlywheelTargetTPS(calc.getTrajectorySolution().getAngularVelocity());
-            // robot.launcher.flywheelMotor.setPower(1);
-        }
-        else{
-            robot.launcher.setFlywheelTargetTPS(0);
-            //robot.launcher.flywheelMotor.setPower(0);
-        }
-
         if(toggleAllowed(gamepad1.dpad_left, dpad_left, 1))
-            robot.launcher.setElbowTargetAngle((calc.getTrajectorySolution().getTheta() * 180) / Math.PI);
+            robot.articulate(PoseUG.Articulation.testShot);
 
         if (toggleAllowed(gamepad1.x, x, 1)) {
             robot.turret.rotateCardinalTurret(false);
@@ -695,7 +685,7 @@ public class UG_6832 extends OpMode {
         packet.put("flywheel motor power", robot.launcher.flywheelMotor.getPower() * 200);
         packet.put("posey",robot.getPoseY());
         packet.put("posex",robot.getPoseX());
-        packet.put("displacement",robot.getDisplacement());
+        packet.put("target angle for the thing", Math.toDegrees(Math.tan((robot.poseX - Constants.goalX) / (robot.poseY - Constants.goalY))));
         packet.put("avg ticks",robot.getAverageTicks());
 
         dashboard.sendTelemetryPacket(packet);

@@ -37,4 +37,10 @@ public class Constants {
 
     //testVars
     public static  double tempDistance= 0.0;
+
+    //odometry positions all in meters
+    public static double goalX = 0.9144;
+    public static double goalY = 1.8288;
+
+
 }

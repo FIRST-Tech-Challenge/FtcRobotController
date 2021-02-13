@@ -96,8 +96,8 @@ public class Turret{
         turretHeading = wrapAngle((360-imuAngles.firstAngle), offsetHeading);
 
         //execute PID calcs
-        if(isMaintainingHeading)
-            maintainHeadingTurret(true);
+//        if(isMaintainingHeading)
+//            maintainHeadingTurret(true);
 
     }
 

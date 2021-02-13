@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
@@ -152,7 +154,8 @@ public class PoseUG {
     public enum Articulation { // serves as a desired robot articulation which may include related complex movements of the elbow, lift and supermanLeft
         inprogress, // currently in progress to a final articulation
         manual, // target positions are all being manually overridden
-        toggleTrigger
+        toggleTrigger,
+        testShot
     }
 
     public enum RobotType {
@@ -730,6 +733,41 @@ public class PoseUG {
         return false;
     }
 
+    public int testShotState = 0;
+    public long testShotTime;
+    public TrajectoryCalculator testCalc = new TrajectoryCalculator(Constants.tempDistance);
+    public double currentDistToTarget;
+    public boolean isOn = false;
+
+    public boolean testShot(){
+            currentDistToTarget = Math.sqrt(Math.pow((poseX - Constants.goalX), 2) + Math.pow((poseY - Constants.goalY), 2));
+            testCalc.setDistance(currentDistToTarget);
+            launcher.setFlywheelTargetTPS(testCalc.getTrajectorySolution().getAngularVelocity() * 2);
+            turret.movePIDTurret(.07,.1,.1,turret.getHeading(),Math.toDegrees(Math.tan((poseX - Constants.goalX) / (poseY - Constants.goalY))));
+            switch (testShotState) {
+                case 0:
+//                    if (turret.rotateIMUTurret() {
+                        testShotState++;
+//                    }
+                    break;
+                case 1:
+                    if (launcher.setElbowTargetAngle(testCalc.getTrajectorySolution().getTheta())) {
+                        testShotTime = System.currentTimeMillis();
+                        testShotState++;
+                    }
+                    break;
+                case 2:
+                    if (System.currentTimeMillis() - testShotTime > 5000) {
+                        if (toggleTriggerArticulation()) {
+                            testShotState = 0;
+                            return true;
+                        }
+                    }
+                    break;
+            }
+            return false;
+    }
+
     public Articulation articulate(Articulation target) {
         articulation = target; // store the most recent explict articulation request as our target, allows us
                                // to keep calling incomplete multi-step transitions
@@ -745,6 +783,10 @@ public class PoseUG {
             case toggleTrigger:
                 if(toggleTriggerArticulation())
                         articulation = Articulation.manual;
+                break;
+            case testShot:
+                if(testShot())
+                    articulation = Articulation.manual;
                 break;
             default:
                 return target;
