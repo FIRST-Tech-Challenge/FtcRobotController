@@ -24,7 +24,7 @@ public class HzLauncher {
     public double flyWheelVelocityHighGoal = FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
     public double flyWheelVelocityPowerShot = FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
     public double DELTA_VELOCITY_CORRECTION = 60;
-    public static final double PLUNGER_LAUNCH_POSITION = 0.66;//0.67;
+    public static final double PLUNGER_LAUNCH_POSITION = 0.65;//0.67;
     public static final double PLUNGER_REST_POSITION = 0.83;//0.84;
 
 

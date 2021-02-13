@@ -260,12 +260,12 @@ public class HzAutonomousBasic3 extends LinearOpMode {
 
                 if (targetZone == HzGameField.TARGET_ZONE.B) {
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-10, af * 37, Math.toRadians(af * 135)))
+                            .lineToLinearHeading(new Pose2d(-10, af * 37, Math.toRadians(af * 160)))
                             .build();
                     hzDrive.followTrajectory(traj);
 
                     traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
-                            .lineToLinearHeading(new Pose2d(-22, af * 37, Math.toRadians(af * 135)))
+                            .lineToLinearHeading(new Pose2d(-22, af * 37, Math.toRadians(af * 180)))
                             .build();
                     hzDrive.followTrajectory(traj);
 
