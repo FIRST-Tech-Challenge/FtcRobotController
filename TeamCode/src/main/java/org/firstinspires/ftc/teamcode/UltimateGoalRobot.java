@@ -213,7 +213,7 @@ public class UltimateGoalRobot
 
         injector.setPosition(INJECTOR_HOME);
         clawLeft.setPosition(CLAW_LEFT_CLOSED);
-        clawLeft.setPosition(CLAW_RIGHT_CLOSED);
+        clawRight.setPosition(CLAW_RIGHT_CLOSED);
         clawClosed = true;
         setShooterFlapPowerShot();
 
@@ -693,9 +693,9 @@ public class UltimateGoalRobot
 
     /** Grab activity closes or opens the wobble arm claw. **/
     public final static double CLAW_TIME = 500.0;
-    public final static double CLAW_LEFT_CLOSED = 0.150;
-    public final static double CLAW_RIGHT_CLOSED = 0.150;
-    public final static double CLAW_LEFT_OPEN = 0.40;
+    public final static double CLAW_LEFT_CLOSED = 0.43;
+    public final static double CLAW_RIGHT_CLOSED = 0.11;
+    public final static double CLAW_LEFT_OPEN = 0.150;
     public final static double CLAW_RIGHT_OPEN = 0.40;
     public boolean clawClosed = false;
     public enum GRABBING {
