@@ -29,7 +29,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private double ySpeedLogs[] = {0,0,0,0,0};
     private int count=0;
     private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
-    final double DEFAULT_COUNTS_PER_INCH = 303.7; //307.699557;
+    private double DEFAULT_COUNTS_PER_INCH = 303.7; //307.699557;
 
     //Algorithm constants
     //private double robotEncoderWheelDistance = 15.20435 * DEFAULT_COUNTS_PER_INCH;
@@ -48,6 +48,8 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
     private double verticalLeftEncoderPositionMultiplier = 1;  // 0.8680555556;;
     private double verticalRightEncoderPositionMultiplier = 1; // 1.152;
     private double normalEncoderPositionMultiplier = 1;
+    private int GPSVersion = 1; // version 1 - Wizard Odometry
+                                // version 2 - Beta Odometry
 
 
     public void set_orientationSensor(CombinedOrientationSensor val) {
@@ -61,17 +63,24 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
      * @param horizontalEncoder horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
      * @param threadSleepDelay delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is suggested)
      */
-    public OdometryGlobalCoordinatePosition(DcMotorEx verticalEncoderLeft, DcMotorEx verticalEncoderRight, DcMotorEx horizontalEncoder, double COUNTS_PER_INCH, int threadSleepDelay){
+    public OdometryGlobalCoordinatePosition(DcMotorEx verticalEncoderLeft, DcMotorEx verticalEncoderRight, DcMotorEx horizontalEncoder, double COUNTS_PER_INCH, int threadSleepDelay, int version){
         this.verticalEncoderLeft = verticalEncoderLeft;
         this.verticalEncoderRight = verticalEncoderRight;
         this.horizontalEncoder = horizontalEncoder;
         sleepTime = threadSleepDelay;
+        GPSVersion = version;
 
 //        if (wheelBaseSeparationFile.exists()) {
 //            robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
 //        }
         if (horizontalTickOffsetFile.exists()) {
             this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
+        }
+        if(GPSVersion == 2) {
+            DEFAULT_COUNTS_PER_INCH = DEFAULT_COUNTS_PER_INCH * 1.08;
+            robotEncoderWheelDistance = 14.5 * DEFAULT_COUNTS_PER_INCH;
+            horizontalEncoderTickPerDegreeOffset = 84.26;
+
         }
     }
 

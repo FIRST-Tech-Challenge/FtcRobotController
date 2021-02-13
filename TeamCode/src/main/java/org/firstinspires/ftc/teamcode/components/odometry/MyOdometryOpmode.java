@@ -38,7 +38,7 @@ public class MyOdometryOpmode extends LinearOpMode {
         waitForStart();
 
         //Create and start GlobalCoordinatePosition thread to constantly update the global coordinate positions
-        globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
+        globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75, 2);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 

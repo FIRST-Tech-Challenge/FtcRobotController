@@ -168,7 +168,14 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private String simEvents="";
     public FileOutputStream simOS;
     private boolean simulation_mode = false;
+    private int robotVersion = 1; // 1 is ToboMech, 2 is ToboBeta
 
+    public void setRobotVersion(int version) {
+        robotVersion = version;
+    }
+    public int getRobotVersion() {
+        return robotVersion;
+    }
     public void set_simulation_mode(boolean val) {
         simulation_mode = val;
     }
@@ -185,6 +192,36 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             auto_power_scale_by_voltage = 1.0;
         } else {
             auto_power_scale_by_voltage = 13.0/Math.pow(volt, 1.02);
+        }
+    }
+    public void calibrateRobotByVersion() {
+        if (robotVersion == 2) {
+            ratioFL = 14460.0 / 14503.0;
+            ratioFR = 14460.0 / 14710.0;
+            ratioBL = 14460.0 / 14756.0;
+            ratioBR = 1.0;
+
+            left_ratio = 0.9; // slow down ratio for left wheels to go straight
+            right_ratio = 1.0; // slow down ratio for right wheels to go straight
+            front_ratio = 0.975; // slow down ratio for front wheels to go 90 degree
+            back_ratio = 1.0; // slow down ratio for front wheels to go 90 degree
+
+            fixedStopDist = 18; // stop distance for 152.4 cm /sec
+
+
+            // distance between the centers of left and right wheels, inches
+            track = 15.75;
+            // distance between the centers of front and back wheels, inches
+            wheelBase = 13;
+            // wheel radius, inches
+            wheelRadius = 2.0;
+            // minimum power that should be applied to the wheel motors for robot to start moving
+            minPower = 0.1;
+            minDrivePower = 0.15;
+            // maximum power that should be applied to the wheel motors
+            maxPower = 0.999;
+            slowDownSpeed = 0.25;
+            minPowerHorizontal = 0.3;
         }
     }
     public void switchAutoMode() {
@@ -249,7 +286,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
     public void configureOdometry(Telemetry telemetry) {
         if (!useOdometry) return;
-        GPS = new OdometryGlobalCoordinatePosition(verticalLeftEncoder(), verticalRightEncoder(), horizontalEncoder(), odo_count_per_inch(), 75);
+        GPS = new OdometryGlobalCoordinatePosition(verticalLeftEncoder(), verticalRightEncoder(), horizontalEncoder(), odo_count_per_inch(), 75, robotVersion);
         GPS.set_orientationSensor(orientationSensor);
         // GPS.reverseRightEncoder();
         // GPS.reverseLeftEncoder();
@@ -512,6 +549,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             leftRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "leftRange");
             frontRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "frontRange");
         }
+        calibrateRobotByVersion(); //perform robot version specific calibration
 
         // register chassis as configurable component
         configuration.register(this);
