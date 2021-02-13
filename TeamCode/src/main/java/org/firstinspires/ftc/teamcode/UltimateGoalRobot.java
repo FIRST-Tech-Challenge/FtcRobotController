@@ -133,11 +133,10 @@ public class UltimateGoalRobot
     public static boolean encodersReset = false;
     public boolean forceReset = false;
     public boolean disableDriverCentric = true;
-
-    public static WayPoint highGoal = new WayPoint(164.35324, 187.18276, 95.0, 0.5);
-    public static WayPoint powerShotRight = new WayPoint(104.06888, 187.18276, 95.0, 0.5);
-    public static WayPoint powerShotCenter = new WayPoint(89.47404, 187.18276, 95.0, 0.5);
-    public static WayPoint powerShotLeft = new WayPoint(74.8792, 187.18276, 95.0, 0.5);
+    public static WayPoint highGoal = new WayPoint(144.03324, 149.7584, Math.toRadians(95.0), 1.0);
+    public static WayPoint powerShotRight = new WayPoint(104.06888, 149.7584, Math.toRadians(95.0), 1.0);
+    public static WayPoint powerShotCenter = new WayPoint(89.47404, 149.7584, Math.toRadians(95.0), 1.0);
+    public static WayPoint powerShotLeft = new WayPoint(74.8792, 149.7584, Math.toRadians(95.0), 1.0);
 
     public double xAngle, yAngle, zAngle;
     /* local OpMode members. */
@@ -693,10 +692,14 @@ public class UltimateGoalRobot
 
     /** Grab activity closes or opens the wobble arm claw. **/
     public final static double CLAW_TIME = 500.0;
+    protected final static double CLAW_DIFFERENTIAL = 0.23;
+    // Claw Closed positions
     public final static double CLAW_LEFT_CLOSED = 0.43;
     public final static double CLAW_RIGHT_CLOSED = 0.11;
-    public final static double CLAW_LEFT_OPEN = 0.150;
-    public final static double CLAW_RIGHT_OPEN = 0.40;
+
+    // Claw opened positions
+    public final static double CLAW_LEFT_OPEN = CLAW_LEFT_CLOSED - CLAW_DIFFERENTIAL;
+    public final static double CLAW_RIGHT_OPEN = CLAW_RIGHT_CLOSED + CLAW_DIFFERENTIAL;
     public boolean clawClosed = false;
     public enum GRABBING {
         IDLE,

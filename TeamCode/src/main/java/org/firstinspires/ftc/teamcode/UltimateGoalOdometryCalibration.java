@@ -112,7 +112,8 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         }
         // Why do I have to negative angle to get the right angle!?! Everything works that way
         // but weird.
-        MyPosition.setPosition(0.0, 0.0, toRadians(90.0));
+//        startLocation = new WayPoint(149.7584, 22.86, Math.toRadians(90.0), 0.0);
+        MyPosition.setPosition(149.7584, 22.86, toRadians(90.0));
     }
 
     @Override
@@ -194,45 +195,18 @@ public class UltimateGoalOdometryCalibration extends OpMode {
 
         // This can be used for shoot alignment.
         if(!rightHeld && rightPressed) {
-            if(!aligning) {
-                calibrationTarget.x = 100.0;
-                calibrationTarget.y = 0.0;
-                robot.startOdometryCal(calibrationTarget);
-                aligning = true;
-            } else {
-                aligning = false;
-                robot.stopOdometryCal();
-            }
             rightHeld = true;
         } else if(!rightPressed) {
             rightHeld = false;
         }
 
         if(!leftHeld && leftPressed) {
-            if(!aligning) {
-                calibrationTarget.x = -100.0;
-                calibrationTarget.y = 0.0;
-                robot.startOdometryCal(calibrationTarget);
-                aligning = true;
-            } else {
-                aligning = false;
-                robot.stopOdometryCal();
-            }
             leftHeld = true;
         } else if(!leftPressed) {
             leftHeld = false;
         }
 
         if(!downHeld && downPressed) {
-            if(!aligning) {
-                calibrationTarget.x = 0.0;
-                calibrationTarget.y = -100.0;
-                robot.startOdometryCal(calibrationTarget);
-                aligning = true;
-            } else {
-                aligning = false;
-                robot.stopOdometryCal();
-            }
             downHeld = true;
         } else if (!downPressed) {
             downHeld = false;
@@ -240,13 +214,11 @@ public class UltimateGoalOdometryCalibration extends OpMode {
 
         if(!upHeld && upPressed) {
             if(!aligning) {
-                calibrationTarget.x = 0.0;
-                calibrationTarget.y = 100.0;
-                robot.startOdometryCal(calibrationTarget);
+                robot.startShotAligning(UltimateGoalRobot.highGoal, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
                 aligning = true;
             } else {
                 aligning = false;
-                robot.stopOdometryCal();
+                robot.stopShotAligning();
             }
             upHeld = true;
         } else if (!upPressed) {
@@ -348,7 +320,7 @@ public class UltimateGoalOdometryCalibration extends OpMode {
 
         // If the activity is not performing, it will be idle and return.
         performActivities();
-        if(robot.odometryCalState == UltimateGoalRobot.ODOMETRY_CAL_STATE.IDLE) {
+        if(robot.shotAlignmentState == UltimateGoalRobot.SHOT_ALIGNMENT_STATE.IDLE) {
             aligning = false;
             robot.drive(speedMultiplier * xPower, speedMultiplier * yPower,
                     spinMultiplier * spin, driverAngle - 90.0, robot.defaultInputShaping);
@@ -384,7 +356,11 @@ public class UltimateGoalOdometryCalibration extends OpMode {
 //        robot.stopGroundEffects();
     }
     protected void performActivities() {
-        robot.performOdometryCal();
+        robot.performClawToggle();
+        robot.performInjecting();
+        robot.performTripleInjecting();
+        robot.performShotAligning();
+        robot.performRotatingArm();
         robot.updateShooterStability();
     }
 }

@@ -56,7 +56,7 @@ public class UltimateGoalAutoFullRedOdo extends UltimateGoalAutoFullOdo
         collectStartingStack = new WayPoint(126.8984, 97.70872, Math.toRadians(85.0), REGULAR_SPEED);
 
         // Shoot the collected rings in the high goal.
-        highGoal = new WayPoint(164.35324, 187.18276, Math.toRadians(95.0), REGULAR_SPEED);
+        highGoal = new WayPoint(164.35324, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
         UltimateGoalRobot.highGoal = highGoal;
 
         park = new WayPoint(149.7584, 195.44792, Math.toRadians(270.0), REGULAR_SPEED);
