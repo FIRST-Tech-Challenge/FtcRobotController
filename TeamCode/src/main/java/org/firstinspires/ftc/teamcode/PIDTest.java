@@ -21,9 +21,9 @@ public class PIDTest extends LinearOpMode {
     double globalAngle;
     Orientation lastAngles = new Orientation();
 
-    public final double WHEEL_DIAMETER = 4.0; //Wheel diameter in inches
+    public final double WHEEL_DIAMETER = 2.6; //Wheel diameter in inches
     public final int MOTOR_GEAR_TEETH = 1; //# of teeth on the motor gear
-    public final int WHEEL_GEAR_TEETH = 15; //# of teeth on the wheel gear
+    public final int WHEEL_GEAR_TEETH = 1; //# of teeth on the wheel gear
     public final double GEAR_RATIO = (MOTOR_GEAR_TEETH + 0.0) / WHEEL_GEAR_TEETH; //For every full turn of the motor, the wheel turns this many rotations.
     public final double MOTOR_TO_INCHES = GEAR_RATIO * WHEEL_DIAMETER * Math.PI; //For every full turn of both motors, the wheel moves forward this many inches
     public final double NUMBER_OF_ENCODER_TICKS_PER_REVOLUTION = 28; //bruh
