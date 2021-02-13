@@ -68,6 +68,24 @@ public class Autonomous_Proto extends LinearOpMode {
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 30.0)) {
 
+            spindoctor.setPower(0);
+            collector.setPower(0);
+            lf.setPower(0);
+            rf.setPower(0);
+            lb.setPower(0);
+            rb.setPower(0);
+            pushover.setDirection(Servo.Direction.FORWARD);
+            sleep(250);
+
+            spindoctor.setPower(0);
+            collector.setPower(0);
+            lf.setPower(1.0);
+            rf.setPower(1.0);
+            lb.setPower(1.0);
+            rb.setPower(1.0);
+            pushover.setDirection(Servo.Direction.FORWARD);
+            sleep(500);
+
             if (color >= 0 && distance <= 0){
 
 
@@ -78,7 +96,7 @@ public class Autonomous_Proto extends LinearOpMode {
                 rf.setPower(0);
                 lb.setPower(0);
                 rb.setPower(0);
-                pushover.setPosition(0);
+                pushover.setDirection(Servo.Direction.FORWARD);
                 sleep(1000);
 
             }else {
@@ -90,7 +108,7 @@ public class Autonomous_Proto extends LinearOpMode {
                 rf.setPower(0);
                 lb.setPower(0);
                 rb.setPower(0);
-                pushover.setPosition(0);
+                pushover.setDirection(Servo.Direction.FORWARD);
                 sleep(1000);
 
                 if (color >= 0 && distance > 0){
@@ -102,7 +120,7 @@ public class Autonomous_Proto extends LinearOpMode {
                     rf.setPower(0);
                     lb.setPower(0);
                     rb.setPower(0);
-                    pushover.setPosition(0);
+                    pushover.setDirection(Servo.Direction.FORWARD);
                     sleep(1000);
 
                 }else {
@@ -114,7 +132,7 @@ public class Autonomous_Proto extends LinearOpMode {
                     rf.setPower(0);
                     lb.setPower(0);
                     rb.setPower(0);
-                    pushover.setPosition(0);
+                    pushover.setDirection(Servo.Direction.FORWARD);
                     sleep(1000);
 
                 }
