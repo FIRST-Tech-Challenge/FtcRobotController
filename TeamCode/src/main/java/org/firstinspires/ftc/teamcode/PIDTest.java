@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @SuppressWarnings("ALL")
-@Autonomous(name="Combined Auto", group="auto")
+@Autonomous(name="PIDTest", group="auto")
 //@Disabled
 public class PIDTest extends LinearOpMode {
 
