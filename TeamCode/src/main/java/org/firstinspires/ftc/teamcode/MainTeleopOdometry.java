@@ -98,9 +98,8 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         robot.setupRobot();//calibrate IMU, set any required parameters
 
-        double powerMod = 1.0;
-        double outtakeMod = .325;
-        double wobbleMod = .3;
+        double powerMod;
+        double wobbleMod;
 
         waitForStart();
 
@@ -114,6 +113,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             /*
             Checks if right bumper is pressed. If so, power is reduced
              */
+
             if(gamepad1.right_bumper){
                 powerMod = 0.5;
             }else{
@@ -142,6 +142,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             //Ring flipper
             //Run by a servo, 1 is fully "flipped" position, 0 is fully "retracted" position
             //Hold down b button to flip ring out
+
             if(gamepad2.b){
                 flipper.setPosition(1);
             }
@@ -153,6 +154,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.addData("flipper position", flipper.getPosition());
 
             //everything shooting
+
             if (gamepad2.right_bumper){
                 shootPowerShot();
             }
@@ -167,6 +169,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             }else{
                 wobbleMod = .3;
             }
+
             wobbleArm.setPower(gamepad2.left_stick_y * wobbleMod );
 
             if(gamepad2.x){
@@ -179,6 +182,8 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             //everything driving
             //Mecanum drive using trig
+
+
             double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI / 4);
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
             double rotation = gamepad1.left_stick_x;
@@ -228,21 +233,6 @@ public class MainTeleopOdometry extends LinearOpMode{
         //}
     }
 
-    public void odometryNormalizeAngle(){
-        if (globalPositionUpdate.returnOrientation() > 0){
-            robot.turnCounterClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() > 0){
-
-            }
-        }else if (globalPositionUpdate.returnOrientation() < 0){
-            robot.turnClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() < 0){
-
-            }
-        }
-        robot.completeStop();
-    }
-
     public void odometrySetAngle(double angle){
         if (globalPositionUpdate.returnOrientation() > angle){
             robot.turnCounterClockwise(0.5);
@@ -259,7 +249,6 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
-        double C = 0;
         double angle = 0;
         angle = Math.toDegrees(Math.atan2(xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH), yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH))) - 90;
         robotStrafe(1,angle);

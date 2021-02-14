@@ -133,29 +133,25 @@ public class AutonomousMain extends LinearOpMode
 
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
-        int stackThreshold = 60;
 
+            if (mainPipeline.stackHeight < 20) {
+                targetZone = 1; //A
 
-            int stack = mainPipeline.ycontours.size();
-            telemetry.addData("Stack Height before case: ", mainPipeline.stackHeight);
-
-            if (mainPipeline.stackHeight < 20) { //a
-                targetZone = 1;
-
-            } else if (mainPipeline.stackHeight > 60) { //c
-                targetZone = 3;
+            } else if (mainPipeline.stackHeight > 60) {
+                targetZone = 3; //C
 
             } else {
-                targetZone = 2; //b
+                targetZone = 2; //B
 
             }
 
+            telemetry.addData("Stack Height before case: ", mainPipeline.stackHeight);
             telemetry.addData("Stack Height: ", mainPipeline.stackHeight);
             telemetry.addData("tz: ", targetZone);
             telemetry.update();
 
 
-            robot.gyroStrafeCm(0.5, -90, 60);
+            //robot.gyroStrafeCm(0.5, -90, 60);
         switch(targetZone){
             case 1: //A
                 /*
@@ -281,7 +277,7 @@ public class AutonomousMain extends LinearOpMode
             //converting blurred image from BGR to HSV
             Imgproc.cvtColor(blurImg, hsvImage, Imgproc.COLOR_RGB2HSV);
 
-            //find yellow contours
+            //find orange contours
             Core.inRange(hsvImage, new Scalar((hue / 2) - sensitivity, 100, 50), new Scalar((hue / 2) + sensitivity, 255, 255), yellow);
             Imgproc.findContours(yellow, ycontours, hierachy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -295,7 +291,7 @@ public class AutonomousMain extends LinearOpMode
                         ymaxValIdx = contourIdx;
                     }
                 }
-                //Find the bounding box of the largest yellow contour
+                //Find the bounding box of the largest orange contour
                 Rect ylargestRect = Imgproc.boundingRect(ycontours.get(ymaxValIdx));
                 Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
 
@@ -343,7 +339,6 @@ public class AutonomousMain extends LinearOpMode
     }
 
     public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
-        double C = 0;
         double angle = 0;
         angle = Math.toDegrees(Math.atan2(xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH), yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH))) - 90;
         robotStrafe(1,angle);
@@ -385,7 +380,7 @@ public class AutonomousMain extends LinearOpMode
 
         if(targetZone > 1) {
             timer.reset();
-            while (timer.milliseconds() < 750) {//remove?
+            while (timer.milliseconds() < 750) {
                 wobbleArm.setPower(.4);
             }
             wobbleArm.setPower(0);
