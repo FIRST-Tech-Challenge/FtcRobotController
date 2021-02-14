@@ -703,7 +703,7 @@ public class IMURobot {
     public void shootRings() throws InterruptedException{
         int i = 0;
         outtake(0.325);
-        Thread.sleep(300);
+        Thread.sleep(500);
         while (i < 3) {
             flipper.setPosition(0);
             Thread.sleep(500);
@@ -715,7 +715,7 @@ public class IMURobot {
 
     public void shootRingsPower() throws InterruptedException{
         outtake(0.3325);
-        Thread.sleep(300);
+        Thread.sleep(500);
         flipper.setPosition(0);
         Thread.sleep(500);
         flipper.setPosition(1);
