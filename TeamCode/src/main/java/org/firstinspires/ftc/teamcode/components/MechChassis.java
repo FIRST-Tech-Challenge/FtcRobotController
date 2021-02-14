@@ -545,7 +545,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             configure_IMUs(configuration, noReset);
         }
 
-        if ((auto || setRangeSensorTelemetry)) {
+        if ((auto || setRangeSensorTelemetry) && (robotVersion==1)) {
             leftRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "leftRange");
             frontRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "frontRange");
         }

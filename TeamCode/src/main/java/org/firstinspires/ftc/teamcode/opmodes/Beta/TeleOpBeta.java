@@ -41,7 +41,7 @@ public class TeleOpBeta extends LinearOpMode {
             configuration.apply();
             robot.isTeleOpAfterAuto = false;
             // robot.initSetup(Robot2.ProgramType.TELE_OP, ToboBeta.StartPosition.OUT, configuration); // check
-            //robot.reset(false);
+            robot.reset(false);
 
             eventManager1 = new EventManager(gamepad1, true);
             eventManager2 = new EventManager(gamepad2, true);

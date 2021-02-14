@@ -78,8 +78,8 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         }
         if(GPSVersion == 2) {
             DEFAULT_COUNTS_PER_INCH = DEFAULT_COUNTS_PER_INCH * 1.08;
-            robotEncoderWheelDistance = 14.5 * DEFAULT_COUNTS_PER_INCH;
-            horizontalEncoderTickPerDegreeOffset = 84.26;
+            robotEncoderWheelDistance = 14.75 * DEFAULT_COUNTS_PER_INCH;
+            horizontalEncoderTickPerDegreeOffset = 60;
 
         }
     }
