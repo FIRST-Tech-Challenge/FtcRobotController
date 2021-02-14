@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /**
  * Main Teleop
@@ -18,6 +20,11 @@ public class OdometryTeleOp extends LinearOpMode{
     private BNO055IMU imu;
 
     private IMURobot robot;
+
+    private CRServo leftConveyor, rightConveyor, intake;
+    private DcMotor outtakeRight, outtakeLeft, wobbleArm;
+    private Servo flipper, wobbleClaw;
+
 
     final double WHEEL_DIAMETER = 1.5;
     final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
@@ -38,6 +45,15 @@ public class OdometryTeleOp extends LinearOpMode{
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
+        //intake and conveyor
+        intake = hardwareMap.crservo.get("intake");
+        leftConveyor = hardwareMap.crservo.get("leftConveyor");
+        rightConveyor = hardwareMap.crservo.get("rightConveyor");
+
+        //wobble and flipper
+        wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
+        wobbleClaw = hardwareMap.servo.get("wobbleClaw");
+        flipper = hardwareMap.servo.get("flipper");
 
         //Encoders
         verticalLeft = hardwareMap.dcMotor.get("FL");
@@ -57,7 +73,8 @@ public class OdometryTeleOp extends LinearOpMode{
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-                imu, this);
+                imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
+                outtakeRight, outtakeLeft, this);
 
         robot.setupRobot();//calibrate IMU, set any required parameters
 
