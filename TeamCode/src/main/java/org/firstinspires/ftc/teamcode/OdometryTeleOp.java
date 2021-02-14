@@ -69,7 +69,9 @@ public class OdometryTeleOp extends LinearOpMode{
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
+
         while(opModeIsActive()){
+
             /*
             Checks if right bumper is pressed. If so, power is reduced
              */
@@ -105,10 +107,8 @@ public class OdometryTeleOp extends LinearOpMode{
             //This should only move the robot either forward or backward 20 inches
             if (gamepad2.a){
                 while (Math.abs(globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) > 20){
-                    motorFrontLeft.setPower(1);
-                    motorFrontRight.setPower(1);
-                    motorBackLeft.setPower(1);
-                    motorBackRight.setPower(1);
+                    double power = (globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH < 0) ? 0.5:-0.5;
+                    robotStrafe(power,0);
                 }
                 motorFrontLeft.setPower(0);
                 motorFrontRight.setPower(0);
@@ -141,6 +141,7 @@ public class OdometryTeleOp extends LinearOpMode{
 
             telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
+            telemetry.addData("test", globalPositionUpdate.returnYCoordinate());
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
 
             telemetry.addData("Vertical left encoder position", verticalLeft.getCurrentPosition());

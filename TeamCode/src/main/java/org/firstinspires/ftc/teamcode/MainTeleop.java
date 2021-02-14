@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+//import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -48,6 +49,7 @@ public class MainTeleop extends LinearOpMode{
 
     final double COUNTS_PER_INCH = 307.699557;
 
+
     //Odometry encoder wheels
     DcMotor verticalRight, verticalLeft, horizontal;
 
@@ -71,9 +73,15 @@ public class MainTeleop extends LinearOpMode{
         wobbleClaw = hardwareMap.servo.get("wobbleClaw");
         flipper = hardwareMap.servo.get("flipper");
 
-        //launcher
-        outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
-        outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
+        //launcher  //Feb 7 - Jeff commmented out these motor definitions
+        //outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
+        //outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
+        //Jeff added
+        outtakeLeft=hardwareMap.get(DcMotor.class, "outtakeLeft");
+        outtakeRight=hardwareMap.get(DcMotor.class, "outtakeRight");
+        outtakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outtakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Encoders
         verticalLeft = hardwareMap.dcMotor.get("FL");
@@ -105,22 +113,11 @@ public class MainTeleop extends LinearOpMode{
 
         double powerMod = 1.0;
         double intakeMod = 1.0;
-        double outtakeMod = .46;
+        double outtakeMod = .325;
         double wobbleMod = .3;
         //double volts = voltSensor.getVoltage();
 
-        //Jeff added
-        public void init (HardwareMap hwMap) {
-            outtakeLeft=hwMap.get(DcMotor.class, "outtakeLeft");
-            outtakeRight=hwMap.get(DcMotor.class, "outtakeRight");
-            outtakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            outtakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
 
-        public void setMotorSpeed(double speed) {
-            outtakeLeft.setPower(speed);
-            outtakeRight.setPower(speed);
-        //end Jeff added
 
         waitForStart();
 
@@ -177,11 +174,12 @@ public class MainTeleop extends LinearOpMode{
             if(gamepad2.right_bumper){
                 outtakeMod = 0.32;//* (12/expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS)); //power shots
             }else{
-                outtakeMod = 0.37;//* (12/expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS));
+                outtakeMod = 0.325;//* (12/expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS));
             }
             double outtakePower = (gamepad2.right_trigger * outtakeMod);
             outtakeLeft.setPower(outtakePower);
             outtakeRight.setPower(outtakePower);
+
 
             double outtakeRPM = outtakePower * OUTTAKE_MOTOR_RPM * OUTTAKE_GEAR_RATIO;
             double outtakeWheelVelocity = (outtakeRPM * 2 * Math.PI * OUTTAKE_WHEEL_RADIUS_M)/60;
