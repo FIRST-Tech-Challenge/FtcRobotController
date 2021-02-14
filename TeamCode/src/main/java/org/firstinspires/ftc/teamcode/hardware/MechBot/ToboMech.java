@@ -1336,7 +1336,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (useIMUforOdometryAngleCorrection){
             chassis.getGPS().correctAngleUsingIMU();
         }
-        shooter.shootOutByRpm(target - 80);
+        shooter.shootOutByRpm(target - 70);
         hopper.feederAuto();
     }
 
