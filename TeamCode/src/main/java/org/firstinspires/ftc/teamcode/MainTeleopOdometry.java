@@ -237,12 +237,12 @@ public class MainTeleopOdometry extends LinearOpMode{
         if (globalPositionUpdate.returnOrientation() > angle){
             robot.turnCounterClockwise(0.5);
             while (globalPositionUpdate.returnOrientation() > angle){
-
+                telemetry.update();
             }
         }else if (globalPositionUpdate.returnOrientation() < angle){
             robot.turnClockwise(0.5);
             while (globalPositionUpdate.returnOrientation() < angle){
-
+                telemetry.update();
             }
         }
         robot.completeStop();
@@ -253,7 +253,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         angle = Math.toDegrees(Math.atan2(xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH), yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH))) - 90;
         robotStrafe(1,angle);
         while ((Math.abs(globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) < Math.abs(yPos)) && (Math.abs(globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) < Math.abs(xPos))){
-            //Just loop and do nothing
+            telemetry.update();
         }
         robot.completeStop();
         odometrySetAngle(direction);
