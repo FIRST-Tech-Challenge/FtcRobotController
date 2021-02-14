@@ -21,6 +21,7 @@ package com.hfrobots.tnt.season2021;
 
 import com.google.common.base.Ticker;
 import com.hfrobots.tnt.corelib.drive.StallDetector;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -32,8 +33,14 @@ public class Intake {
 
     public static final float OUTTAKE_POWER = -1;
 
+    public static final float INTAKE_SERVO_POWER = 1;
+
+    public static final float OUTTAKE_SERVO_POWER = -1;
+
     // NR-3.7 Orbital: positive voltage rotation CCW, encoder/sec 3400
     private final DcMotorEx intakeMotor;
+
+    private CRServo intakeServo;
 
     private StallDetector stallDetector;
 
@@ -44,11 +51,25 @@ public class Intake {
         this.ticker = ticker;
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        try {
+            intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+        } catch (Exception ex) {
+            intakeServo = null;
+        }
+
         resetStallDetector();
     }
 
     public void resetStallDetector() {
         stallDetector = new StallDetector(ticker, 5, TimeUnit.SECONDS.toMillis(1));
+    }
+
+    public void runJankyServo() {
+        safeServoSetPower(INTAKE_SERVO_POWER);
+    }
+
+    public void stopJankyServo() {
+        safeServoSetPower(0);
     }
 
     public void intake(float speed){
@@ -61,6 +82,12 @@ public class Intake {
 
     public void stop() {
         intakeMotor.setPower(0);
+    }
+
+    private void safeServoSetPower(float power) {
+        if(intakeServo != null) {
+            intakeServo.setPower(power);
+        }
     }
 
     public boolean isIntaking() {

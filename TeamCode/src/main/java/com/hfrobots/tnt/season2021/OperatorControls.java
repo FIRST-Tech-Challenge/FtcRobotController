@@ -85,6 +85,8 @@ public class OperatorControls {
 
     private RangeInput wobbleShoulderThrottle;
 
+    private OnOffButton jankyServo;
+
     private ScoringMechanism scoringMechanism;
 
     private WobbleGoal wobbleGoal;
@@ -144,6 +146,7 @@ public class OperatorControls {
         scoringMechanism.setUnsafe(unsafe);
         scoringMechanism.setStopLauncher(stopLauncher);
         scoringMechanism.setInvertHopper(invertHopper);
+        scoringMechanism.setJankyServo(jankyServo);
 
         this.wobbleGoal = wobbleGoal;
         this.wobbleGoal.setShoulderThrottle(new LowPassFilteredRangeInput(wobbleShoulderThrottle, 0.85F));
@@ -182,7 +185,7 @@ public class OperatorControls {
 
         toggleWobbleGripper = operatorGamepad.getXButton();
         wobbleShoulderThrottle = rightStickY;
-
+        jankyServo = leftBumper;
         unsafe = new RangeInputButton( leftTrigger, 0.65f);
     }
 

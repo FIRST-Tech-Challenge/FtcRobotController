@@ -61,6 +61,12 @@ public class DriverControlled extends OpMode {
     }
 
     @Override
+    public void init_loop() {
+        // Let operator work with wobble goal gripper during setup
+        operatorControls.periodicTask();
+    }
+
+    @Override
     public void loop() {
         driverControls.periodicTask();
         operatorControls.periodicTask();

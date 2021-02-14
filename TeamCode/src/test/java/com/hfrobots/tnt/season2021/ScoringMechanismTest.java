@@ -61,6 +61,7 @@ public class ScoringMechanismTest {
     private FakeOnOffButton stopLaunchingButton = new FakeOnOffButton();
     private FakeOnOffButton unsafeButton = new FakeOnOffButton();
     private FakeOnOffButton invertHopper = new FakeOnOffButton();
+    private FakeOnOffButton jankyServo = new FakeOnOffButton();
 
     // "Derived"
     private DebouncedButton stopLaunchingDebounced = stopLaunchingButton.debounced();
@@ -80,6 +81,7 @@ public class ScoringMechanismTest {
         scoringMechanism.setUnsafe(unsafeButton);
         scoringMechanism.setStopLauncher(stopLaunchingDebounced);
         scoringMechanism.setInvertHopper(invertHopper);
+        scoringMechanism.setJankyServo(jankyServo);
 
         intakeMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "intakeMotor");
         frontLauncherMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "frontLauncherMotor");

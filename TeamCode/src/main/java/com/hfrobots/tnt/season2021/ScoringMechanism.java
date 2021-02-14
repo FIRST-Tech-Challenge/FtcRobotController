@@ -80,6 +80,9 @@ public class ScoringMechanism {
     @Setter
     private DebouncedButton stopLauncher;
 
+    @Setter
+    private OnOffButton jankyServo;
+
     private State currentState;
 
     @Builder
@@ -163,6 +166,14 @@ public class ScoringMechanism {
         }
     }
 
+    void jankyServoHandling() {
+        if (jankyServo.isPressed()) {
+            intake.runJankyServo();
+        } else {
+            intake.stopJankyServo();
+        }
+    }
+
     void unsafeIntakeOperations() {
         // Mostly unsafe because we don't know how to do stall detection from here, yet
 
@@ -204,6 +215,8 @@ public class ScoringMechanism {
 
             invertHopperFromPulledDown();
 
+            jankyServoHandling();
+
             launcher.parkRingFeeder();
 
             if (intakeVelocity.getPosition() != 0) {
@@ -222,7 +235,7 @@ public class ScoringMechanism {
         }
     }
 
-    private void invertHopperFromPulledDown() {
+    private void invertHopperFromPulledDown()  {
         if (!invertHopper.isPressed()) {
             launcher.pulldownHopper();
         } else {
@@ -263,8 +276,7 @@ public class ScoringMechanism {
             }
 
             commonLauncherSpeedHandling();
-
-            invertHopperFromPulledDown();
+            jankyServoHandling();
 
             if (intakeVelocity.getPosition() > 0) {
                 intake.intake(intakeVelocity.getPosition());
@@ -277,6 +289,7 @@ public class ScoringMechanism {
             } else if (launchTrigger.isPressed()) {
                 return preloadRings;
             }
+
 
             return idleState;
         }
@@ -484,6 +497,8 @@ public class ScoringMechanism {
 
             // Intake:Not Moving  (unless unsafe)
             unsafeIntakeOperations();
+
+            jankyServoHandling();
 
             launcher.launcherToFullSpeed();
 

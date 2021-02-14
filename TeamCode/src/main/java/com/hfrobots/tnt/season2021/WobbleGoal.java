@@ -69,9 +69,9 @@ public class WobbleGoal {
 
     public final static double CLOSED_GRIPPER_POS = 1;
 
-    public static final float TOWARDS_STOW_POWER_MAGNITUDE = 1;
+    public static final float TOWARDS_STOW_POWER_MAGNITUDE = -1;
 
-    public static final float TOWARDS_PLACE_POWER_MAGNITUDE = -1;
+    public static final float TOWARDS_PLACE_POWER_MAGNITUDE = 1;
 
     private State currentState;
 
@@ -184,7 +184,7 @@ public class WobbleGoal {
                 return motionState;
             }
 
-            if(unsafe.isPressed()){
+            if (unsafe.isPressed()){
                 handleGripperServo();
             }
 
@@ -239,6 +239,9 @@ public class WobbleGoal {
                 setShoulderMotorPower(TOWARDS_PLACE_POWER_MAGNITUDE);
 
                 return this;
+            } else {
+                // FIXME: What case is this? (not asking for forward or backward motion)
+                shoulderMotor.setPower(0);
             }
 
             if (unsafe.isPressed()) {

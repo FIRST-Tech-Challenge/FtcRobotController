@@ -57,6 +57,8 @@ public class WobbleGoalTest {
     private FakeOnOffButton gripperButton = new FakeOnOffButton();
     private ToggledButton gripperToggle;
 
+    private FakeOnOffButton unsafe = new FakeOnOffButton();
+
     @Before
     public void setup() {
         wobbleGoal = WobbleGoal.builder()
@@ -64,6 +66,8 @@ public class WobbleGoalTest {
 
         gripperToggle = new ToggledButton(gripperButton);
         wobbleGoal.setGripperButton(gripperToggle);
+
+        wobbleGoal.setUnsafe(unsafe);
 
         wobbleGoal.setShoulderThrottle(shoulderThrottle);
 
