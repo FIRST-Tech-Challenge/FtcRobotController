@@ -180,6 +180,16 @@ public class MainTeleopOdometry extends LinearOpMode{
                 wobbleClaw.setPosition(1);
             }
 
+            if(gamepad1.left_bumper){
+                odometryDriveToPosAngular(0,20,0);
+            }
+            if(gamepad1.b){
+                odometryDriveToPosAngular(20,0,0);
+            }
+            if (gamepad1.y){
+                odometryDriveToPosAngular(-10,-10,0);
+            }
+
             //everything driving
             //Mecanum drive using trig
 
@@ -271,7 +281,6 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPosAngular(0,70.2,0);
         odometryDriveToPosAngular(-15.5,67.9,0);
         robot.shootRings();
     }
