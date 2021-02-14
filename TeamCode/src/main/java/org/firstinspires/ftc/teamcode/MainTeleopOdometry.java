@@ -268,20 +268,65 @@ public class MainTeleopOdometry extends LinearOpMode{
         //odometrySetAngle(direction);
     }
 
+    public void odometryDriveToPos (double xPos, double yPos) throws InterruptedException{
+        double C = 0;
+        while (Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) > 1) {//while distance to destination > than threshold
+            double angle = globalPositionUpdate.returnXCoordinate() < xPos ? 90 : -90;//basically angle = (boolean)? value-if-true : value-if-false
+            //Maybe check above line~~~~?
+            robotStrafe(.4, angle);
+
+            if(Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) > 1){
+                break;
+            }
+        }
+        robot.completeStop();
+        odometryNormalizeAngle();
+        Thread.sleep(500);
+
+
+        while (Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) > 1) {
+            double power = globalPositionUpdate.returnYCoordinate() < yPos ? -.4 : .4;
+            robotStrafe(power, 0);
+
+            if(Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) > 1){
+                break;
+            }
+        }
+        robot.completeStop();
+        odometryNormalizeAngle();
+        Thread.sleep(500);
+    }
+
+    public void odometryNormalizeAngle() throws InterruptedException{
+
+        while(Math.abs(globalPositionUpdate.returnOrientation()) < 5){
+            if(globalPositionUpdate.returnOrientation() > 0 + 0.1){// thing > 0 + threshold
+                //Change threshold above ~~~~~~~~~~~~~~~~
+                robot.turnCounterClockwise(0.1);
+            }else if(globalPositionUpdate.returnOrientation() > 0 - 0.1){// thing > 0 - threshold
+                //Here too ~~~~~~~~~~~~~~~~~
+                robot.turnClockwise(0.1);
+            }else{
+                break;
+            }
+        }
+        robot.completeStop();
+    }
+
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
-        odometryDriveToPosAngular(-39.85,62.9,-8);
+        odometryDriveToPos(-39.85,62.9);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPosAngular(-50.7,49.0,-13.7);
+        odometryDriveToPos(-50.7,49.0);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPosAngular(-39.8,62.8,-16.1);
+        odometryDriveToPos(-39.8,62.8);
         robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPosAngular(-15.5,67.9,0);
+        odometryDriveToPos(-15.5,67.9);
         robot.shootRings();
     }
 }
