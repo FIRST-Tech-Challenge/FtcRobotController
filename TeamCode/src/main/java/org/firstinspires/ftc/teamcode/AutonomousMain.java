@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -33,6 +34,8 @@ public class AutonomousMain extends LinearOpMode
     WebcamName webcam1;
     MainPipeline mainPipeline;
     double sensitivity;
+
+    private CRServo leftConveyor, rightConveyor, intake;
 
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -81,6 +84,11 @@ public class AutonomousMain extends LinearOpMode
         verticalRight = hardwareMap.dcMotor.get("FR");
         horizontal = hardwareMap.dcMotor.get("BL");
 
+        //intake and conveyor
+        intake = hardwareMap.crservo.get("intake");
+        leftConveyor = hardwareMap.crservo.get("leftConveyor");
+        rightConveyor = hardwareMap.crservo.get("rightConveyor");
+
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
@@ -92,7 +100,8 @@ public class AutonomousMain extends LinearOpMode
 
         //Create an IMURobot object that we will use to run the robot
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-            imu, this);
+                imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
+                outtakeRight, outtakeLeft, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
         wobbleClaw.setPosition(0);
