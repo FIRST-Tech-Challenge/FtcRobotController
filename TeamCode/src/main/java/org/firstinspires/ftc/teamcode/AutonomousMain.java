@@ -349,7 +349,7 @@ public class AutonomousMain extends LinearOpMode
 
     public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
         double angle = 0;
-        angle = Math.toDegrees(Math.atan2(xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH), yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH))) - 90;
+        angle = Math.atan2(xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH), yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH)) - (Math.PI / 4) ;
         robotStrafe(1,angle);
         while ((Math.abs(globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) < Math.abs(yPos)) && (Math.abs(globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) < Math.abs(xPos))){
             //Just loop and do nothing
