@@ -99,7 +99,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     public boolean useShooter = false;
     public boolean useIntake = false;
     public boolean isTeleOpAfterAuto = false;
-    private boolean useIMUforOdometryAngleCorrection = true; // use IMU for radian correction
+    private boolean useIMUforOdometryAngleCorrection = false; // use IMU for radian correction
 
 
     public void set_simulation_mode(boolean value) {
@@ -148,6 +148,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 // chassis.simOS = new FileOutputStream(new File(simEventFile.getParentFile(), simEventFile.getName()));
                 chassis.simOS = new FileOutputStream(new File(simEventFile.getParent(), simEventFile.getName()));
             }
+            chassis.enableImuTelemetry(configuration);
             if (autoside == ProgramType.DIAGNOSIS) {
                 // enable imu for diagnosis
                 // chassis.enableImuTelemetry(configuration);

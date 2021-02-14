@@ -80,7 +80,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
             DEFAULT_COUNTS_PER_INCH = DEFAULT_COUNTS_PER_INCH * 1.08;
             robotEncoderWheelDistance = 14.75 * DEFAULT_COUNTS_PER_INCH;
             horizontalEncoderTickPerDegreeOffset = 60;
-
+            useIMU=false;
         }
     }
 
