@@ -314,14 +314,14 @@ public class AutonomousMain extends LinearOpMode
     }
 
     public void odometrySetAngle(double angle){
-        if (globalPositionUpdate.returnOrientation() > angle){
+        if (globalPositionUpdate.returnOrientation() < angle){
             robot.turnCounterClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() > angle){
+            while (globalPositionUpdate.returnOrientation() < angle){
 
             }
-        }else if (globalPositionUpdate.returnOrientation() < angle){
+        }else if (globalPositionUpdate.returnOrientation() > angle){
             robot.turnClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() < angle){
+            while (globalPositionUpdate.returnOrientation() > angle){
 
             }
         }

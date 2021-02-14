@@ -255,7 +255,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.update();
         }
         robot.completeStop();
-        odometrySetAngle(direction);
+        //odometrySetAngle(direction);
     }
 
     public void shootPowerShot() throws InterruptedException{
