@@ -35,10 +35,10 @@ public class GrahamHWMap {
     public DcMotor  launcherMotor = null;
 
     public DcMotor  intakeMotor1 = null;
-    public DcMotor  intakeMotor2 = null;
+
 
     public Servo    wobbleServo1 = null;
-    public Servo    wobbleServo2 = null;
+    //public Servo    wobbleServo2 = null;
 
     public Servo    launcherServo = null;
 
@@ -66,33 +66,33 @@ public class GrahamHWMap {
         frontRightMotor = hwMap.dcMotor.get("FR"); // H1 1
         backLeftMotor   = hwMap.dcMotor.get("BL"); // H1 2
         backRightMotor  = hwMap.dcMotor.get("BR"); // H1 3
-/*
-        // not yet in configuration on phones
+
+
         launcherMotor = hwMap.dcMotor.get("LM"); // H2 P0
 
-        // not yet in configuration on phones
-        intakeMotor1 = hwMap.dcMotor.get("IM1"); // H2 P1
-        intakeMotor2 = hwMap.dcMotor.get("IM2"); // H2 P2
 
-        // not yet in configuration on phones
-        wobbleServo1 = hwMap.servo.get("WS1");
-        wobbleServo2 = hwMap.servo.get("WS2");
+        intakeMotor1 = hwMap.dcMotor.get("IM"); // H2 P1
 
-        // not yet in configuration on phones
-        launcherServo = hwMap.servo.get("LS");
 
-        backDistance = hwMap.get(DistanceSensor.class, "bsr"); //hub2 port 1
-*/
+
+        wobbleServo1 = hwMap.servo.get("WS1"); //H2 P0
+       // this needs to be a motor -- wobbleServo2 = hwMap.servo.get("WS2");
+
+
+        launcherServo = hwMap.servo.get("LS"); //H2 P1
+
+        backDistance = hwMap.get(DistanceSensor.class, "bsr");
+
 
         frontLeftMotor.setPower(0);
         frontRightMotor.setPower(0);
         backLeftMotor.setPower(0);
         backRightMotor.setPower(0);
 
-        //frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        //frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
-        //backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
-        //backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -105,12 +105,12 @@ public class GrahamHWMap {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-/*
+
         launcherMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         intakeMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-*/
+
+
 
 
         // Set up the parameters with which we will use our IMU. Note that integration
