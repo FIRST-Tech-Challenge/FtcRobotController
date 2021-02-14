@@ -206,7 +206,6 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.addData("horizontal encoder position", horizontal.getCurrentPosition());
 
             telemetry.addData("Thread Active", positionThread.isAlive());
-            telemetry.update();
 
             telemetry.update();
             idle();
@@ -234,14 +233,14 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometrySetAngle(double angle){
-        if (globalPositionUpdate.returnOrientation() > angle){
+        if (globalPositionUpdate.returnOrientation() < angle){
             robot.turnCounterClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() > angle){
+            while (globalPositionUpdate.returnOrientation() < angle){
                 telemetry.update();
             }
-        }else if (globalPositionUpdate.returnOrientation() < angle){
+        }else if (globalPositionUpdate.returnOrientation() > angle){
             robot.turnClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() < angle){
+            while (globalPositionUpdate.returnOrientation() > angle){
                 telemetry.update();
             }
         }
@@ -260,8 +259,6 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootPowerShot() throws InterruptedException{
-        odometryDriveToPosAngular(0,70.2,0);
-        odometrySetAngle(0);
         //Shot 1
         odometryDriveToPosAngular(-39.85,62.9,-8);
         robot.shootRingsPower();
