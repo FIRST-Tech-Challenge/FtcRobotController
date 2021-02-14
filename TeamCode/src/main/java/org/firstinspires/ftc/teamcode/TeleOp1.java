@@ -60,7 +60,7 @@ public class TeleOp1 extends LinearOpMode {
         double interval = 25;  //was 75 // how often to update
         double lastSpeedTime = runtime.milliseconds();
 
-        double max;
+        double max; //
 
         double launchMotorStatus = 0; // do not edit this
         double launchMotorPower = 0; //do not edit this
