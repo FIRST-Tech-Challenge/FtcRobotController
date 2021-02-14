@@ -150,36 +150,60 @@ public class StarterStackDetectorTest extends LinearOpMode
             telemetry.update();
 
 
-            robot.gyroStrafeCm(0.5, -90, 60);
+            //robot.gyroStrafeCm(0.5, -90, 60);
         switch(targetZone){
             case 1:
+                /*
                 robot.gyroDriveCm(-.5, 200);
                 dropWobble(targetZone);
-                //robot.gyroTurn(-45, .75);
-                //robot.gyroDriveCm(-.75, 60);
-                //odometryDriveToPos(100,100);
-
                 robot.gyroStrafeCm(0.5, 90, 150);
                 robot.gyroDriveCm(-.5, 40);
+                 */
+
+                //Go to Target Zone
+                odometryDriveToPosAngular(0,0,0);
+                //Drop Wobble
+                dropWobble(targetZone);
+                //Shoot Powershot
+                shootPowerShot();
+                //Drive to Line
+                odometryDriveToPosAngular(0,0,0);
                 break;
             case 2:
+                /*
                 robot.gyroDriveCm(-.5, 265);
                 robot.gyroTurn(-45, .25);
                 robot.gyroDriveCm(-.5, 50);
-                //robot.gyroDriveCm(-.75, 40);
                 dropWobble(targetZone);
-                //robot.gyroTurn(30, 0.75);
-                //robot.gyroDriveCm(.75, 75);
                 robot.gyroDriveCm(.5, 50);
                 robot.gyroTurn(45, .25);
                 robot.gyroDriveCm(.5, 50);
-                //odometryDriveToPos(100,100);
+                 */
+
+                //Go to Target Zone
+                odometryDriveToPosAngular(0,0,0);
+                //Drop Wobble
+                dropWobble(targetZone);
+                //Shoot Powershot
+                shootPowerShot();
+                //Drive to Line
+                odometryDriveToPosAngular(0,0,0);
                 break;
             case 3:
+                /*
                 robot.gyroDriveCm(-.5, 360);
                 dropWobble(targetZone);
-                robot.gyroDriveCm(.5, 130);//
-                //odometryDriveToPos(100,100);
+                robot.gyroDriveCm(.5, 130);
+                 */
+
+                //Go to Target Zone
+                odometryDriveToPosAngular(0,0,0);
+                //Drop Wobble
+                dropWobble(targetZone);
+                //Shoot Powershot
+                shootPowerShot();
+                //Drive to Line
+                odometryDriveToPosAngular(0,0,0);
                 break;
             default:
                 break;
@@ -251,46 +275,95 @@ public class StarterStackDetectorTest extends LinearOpMode
     }
 
     public void odometryNormalizeAngle(){
-        while (globalPositionUpdate.returnOrientation() > 0){
-            robot.turnCounterClockwise(1);
-        }
+        if (globalPositionUpdate.returnOrientation() > 0){
+            robot.turnCounterClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() > 0){
 
-        while (globalPositionUpdate.returnOrientation() < 0){
-            robot.turnClockwise(1);
-        }
+            }
+        }else if (globalPositionUpdate.returnOrientation() < 0){
+            robot.turnClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() < 0){
 
-        if (globalPositionUpdate.returnOrientation() == 0){
-            robot.completeStop();
+            }
         }
+        robot.completeStop();
     }
 
-    public void odometryDriveToPos (double xPos, double yPos) {
+    public void odometrySetAngle(double angle){
+        if (globalPositionUpdate.returnOrientation() > angle){
+            robot.turnCounterClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() > angle){
+
+            }
+        }else if (globalPositionUpdate.returnOrientation() < angle){
+            robot.turnClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() < angle){
+
+            }
+        }
+        robot.completeStop();
+    }
+
+    public void odometryDriveToPosStraight (double xPos, double yPos) {
         double C = 0;
-        while (globalPositionUpdate.returnXCoordinate() > xPos) {
+
+        if ((globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) < xPos){
             robotStrafe(1, -90);
-        }
-        while (globalPositionUpdate.returnXCoordinate() < xPos) {
+            while (globalPositionUpdate.returnXCoordinate() > xPos) {
+                //Do nothing
+            }
+            robot.completeStop();
+            odometryNormalizeAngle();
+            C = 1;
+        }else if ((globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) > xPos){
             robotStrafe(1, 90);
-        }
-        if (globalPositionUpdate.returnXCoordinate() == xPos) {
+            while (globalPositionUpdate.returnXCoordinate() < xPos) {
+                //Do nothing
+            }
+            robot.completeStop();
+            odometryNormalizeAngle();
+            C = 1;
+        }else{
             robot.completeStop();
             odometryNormalizeAngle();
             C = 1;
         }
 
-
-        while (globalPositionUpdate.returnXCoordinate() > yPos && C == 1) {
+        if ((globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) < yPos){
             robotStrafe(-1, 0);
-        }
-        while (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
+            while (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
+                //Do nothing
+            }
+            robot.completeStop();
+            odometryNormalizeAngle();
+            C = 2;
+        }else if ((globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) > yPos){
             robotStrafe(1, 0);
-        }
-        if (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
+            while (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
+                //Do nothing
+            }
+            robot.completeStop();
+            odometryNormalizeAngle();
+            C = 2;
+        }else{
             robot.completeStop();
             odometryNormalizeAngle();
             C = 2;
         }
     }
+
+    public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
+        double C = 0;
+        double angle = 0;
+        angle = Math.toDegrees(Math.atan2(xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH), yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH))) + 90;
+        robotStrafe(1,angle);
+        while (Math.abs(globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) < yPos){
+            //Just loop and do nothing
+        }
+        robot.completeStop();
+        odometrySetAngle(direction);
+    }
+
     public void robotStrafe (double power, double angle){
         //restart angle tracking
         robot.resetAngle();
@@ -327,6 +400,24 @@ public class StarterStackDetectorTest extends LinearOpMode
             }
             wobbleArm.setPower(0);
         }
+    }
+
+    public void shootPowerShot() throws InterruptedException{
+
+        //Shot 1
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRingsPower();
+        //Shot 2
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRingsPower();
+        //Shot 3
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRingsPower();
+    }
+
+    public void shootGoal() throws InterruptedException{
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRings();
     }
 
 }

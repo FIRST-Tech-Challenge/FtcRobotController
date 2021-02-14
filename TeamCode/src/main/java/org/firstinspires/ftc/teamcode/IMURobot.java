@@ -257,6 +257,7 @@ public class IMURobot {
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
 
+        leftConveyor.setDirection(CRServo.Direction.REVERSE);
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -675,9 +676,6 @@ public class IMURobot {
     public void intakeOn() {
         intake.setPower(1);
     }
-
-
-
     /**
      * Turn off intake
      */
@@ -685,10 +683,6 @@ public class IMURobot {
     public void intakeOff() {
         intake.setPower(0);
     }
-
-
-
-
     /**
      * Reverse intake direction
      */
@@ -697,6 +691,42 @@ public class IMURobot {
         intake.setPower(-1);
     }
 
+    public void outtake (double power){
+        outtakeLeft.setPower(power);
+        outtakeRight.setPower(power);
+    }
 
+    public void shootRings() throws InterruptedException{
+        int i = 0;
+        outtake(0.325);
+        while (i < 3) {
+            flipper.setPosition(0);
+            Thread.sleep(500);
+            flipper.setPosition(1);
+            i++;
+        }
+        outtake(0);
+    }
+
+    public void shootRingsPower() throws InterruptedException{
+        outtake(0.32);
+        flipper.setPosition(0);
+        Thread.sleep(500);
+        flipper.setPosition(1);
+        outtake(0);
+    }
+
+    public void conveyorOn(){
+        rightConveyor.setPower(1);
+        leftConveyor.setPower(1);
+    }
+    public void conveyorOff(){
+        rightConveyor.setPower(0);
+        leftConveyor.setPower(0);
+    }
+    public void conveyorReverse(){
+        rightConveyor.setPower(-1);
+        leftConveyor.setPower(-1);
+    }
 
 }

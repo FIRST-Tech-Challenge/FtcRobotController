@@ -5,13 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-//import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
-//import org.openftc.revextensions2.ExpansionHubEx;
 
 /**
  * Main Teleop
@@ -19,8 +14,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
  * 3 October 2020
  */
 
-@TeleOp(name = "MainTeleop")
-public class MainTeleop extends LinearOpMode{
+@TeleOp(name = "Main Odometry Teleop")
+public class MainTeleopOdometry extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
     private CRServo leftConveyor, rightConveyor, intake;
@@ -38,13 +33,12 @@ public class MainTeleop extends LinearOpMode{
     private static final double SERVO_RPM = 50.0;
     private static final double ELEVATOR_TIME = PINION_REVOLUTIONS/SERVO_RPM * 60;
 
-    //Figures for telemetry calculations
-    private static final int OUTTAKE_MOTOR_RPM = 1100;
-    private static final double OUTTAKE_GEAR_RATIO = 3.0;
-    private static final double OUTTAKE_WHEEL_RADIUS_IN = 2;
-    private static final double OUTTAKE_WHEEL_RADIUS_M = OUTTAKE_WHEEL_RADIUS_IN*0.0254;
+    //Figures for Odometry
+    final double WHEEL_DIAMETER = 1.5;
+    final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
+    final double COUNTS_PER_REVOLUTION = 1280;
+    final double COUNTS_PER_INCH = COUNTS_PER_REVOLUTION/WHEEL_CIRCUMFERENCE;
 
-    final double COUNTS_PER_INCH = 307.699557;
 
 
     //Odometry encoder wheels
@@ -87,8 +81,6 @@ public class MainTeleop extends LinearOpMode{
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        //voltSensor = hardwareMap.voltageSensor.get("outtakeRight");
-
         //reverse the needed motors
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
@@ -100,7 +92,6 @@ public class MainTeleop extends LinearOpMode{
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
                 imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
                 outtakeRight, outtakeLeft, this);
@@ -108,7 +99,6 @@ public class MainTeleop extends LinearOpMode{
         robot.setupRobot();//calibrate IMU, set any required parameters
 
         double powerMod = 1.0;
-        double intakeMod = 1.0;
         double outtakeMod = .325;
         double wobbleMod = .3;
 
@@ -118,7 +108,9 @@ public class MainTeleop extends LinearOpMode{
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
+
         while(opModeIsActive()){
+
             /*
             Checks if right bumper is pressed. If so, power is reduced
              */
@@ -128,23 +120,24 @@ public class MainTeleop extends LinearOpMode{
                 powerMod = 1.0;
             }
 
-            //stuff to program still
-
             //everything intake
-            /*
-            Change direction of intake
-            */
-            if(gamepad1.a){//press and hold a while running intake
-                intakeMod = -1.0;
+
+            //changes direction of intake
+            if (gamepad1.a){
+                robot.intakeReverse();
+                robot.conveyorReverse();
             }else{
-                intakeMod = 1.0;
+                //turns on intake
+                if (gamepad1.left_trigger > 0.3){
+                    robot.intakeOn();
+                    robot.conveyorOn();
+
+                //turns off intake
+                }else{
+                    robot.intakeOff();
+                    robot.conveyorOff();
+                }
             }
-            double intakeSpeed = gamepad1.left_trigger * intakeMod;
-            intake.setPower(intakeSpeed);
-            rightConveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
-            leftConveyor.setPower(intakeSpeed);
-
-
 
             //Ring flipper
             //Run by a servo, 1 is fully "flipped" position, 0 is fully "retracted" position
@@ -159,23 +152,13 @@ public class MainTeleop extends LinearOpMode{
 
             telemetry.addData("flipper position", flipper.getPosition());
 
-
-            //everything outtake/launch
-
-            //Sending data on power of outtake, outtake motor RPM, and tangential velocity of outtake wheel to telemetry
-
-            if(gamepad2.right_bumper){
-                outtakeMod = 0.32; //power shots
-            }else{
-                outtakeMod = 0.325;
+            //everything shooting
+            if (gamepad2.right_bumper){
+                shootPowerShot();
             }
-            double outtakePower = (gamepad2.right_trigger * outtakeMod);
-            outtakeLeft.setPower(outtakePower);
-            outtakeRight.setPower(outtakePower);
-
-
-            double outtakeRPM = outtakePower * OUTTAKE_MOTOR_RPM * OUTTAKE_GEAR_RATIO;
-            double outtakeWheelVelocity = (outtakeRPM * 2 * Math.PI * OUTTAKE_WHEEL_RADIUS_M)/60;
+            if (gamepad2.right_trigger > 0.3){
+                shootGoal();
+            }
 
             //everything wobble
 
@@ -194,31 +177,23 @@ public class MainTeleop extends LinearOpMode{
                 wobbleClaw.setPosition(1);
             }
 
-
             //everything driving
             //Mecanum drive using trig
-            double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI/4);
+            double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI / 4);
             double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
             double rotation = gamepad1.left_stick_x;
 
-            double powerOne = r*Math.sin(angle);
-            double powerTwo = r*Math.cos(angle);
+            double powerOne = r * Math.sin(angle);
+            double powerTwo = r * Math.cos(angle);
 
             motorFrontLeft.setPower((powerOne - (rotation))*powerMod);
             motorFrontRight.setPower((powerTwo + (rotation))*powerMod);
             motorBackLeft.setPower((powerTwo - (rotation))*powerMod);
             motorBackRight.setPower((powerOne + (rotation))*powerMod);
 
-
-            //Sending data on power of outtake, outtake motor RPM, and tangential velocity of outtake wheel to telemetry
-            //telemetry.addData("Volts: ", volts);
-
-            telemetry.addData("Outtake Power", outtakePower);
-            telemetry.addData("Outtake RPM", outtakeRPM);
-            telemetry.addData("Outtake Wheel Velocity (m/s)", outtakeWheelVelocity);
-
             telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
+            telemetry.addData("test", globalPositionUpdate.returnYCoordinate());
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
 
             telemetry.addData("Vertical left encoder position", verticalLeft.getCurrentPosition());
@@ -226,8 +201,6 @@ public class MainTeleop extends LinearOpMode{
             telemetry.addData("horizontal encoder position", horizontal.getCurrentPosition());
 
             telemetry.addData("Thread Active", positionThread.isAlive());
-            //telemetry.addData("5v monitor", expansionHub.read5vMonitor(ExpansionHubEx.VoltageUnits.VOLTS)); //Voltage from the phone
-           // telemetry.addData("12v monitor", expansionHub.read12vMonitor(ExpansionHubEx.VoltageUnits.VOLTS)); //Battery voltage
             telemetry.update();
 
             telemetry.update();
@@ -237,48 +210,6 @@ public class MainTeleop extends LinearOpMode{
 
     }
 
-
-    public void odometryNormalizeAngle(){
-        while (globalPositionUpdate.returnOrientation() > 0){
-            robot.turnCounterClockwise(1);
-        }
-
-        while (globalPositionUpdate.returnOrientation() < 0){
-            robot.turnClockwise(1);
-        }
-
-        if (globalPositionUpdate.returnOrientation() == 0){
-            robot.completeStop();
-        }
-    }
-
-    public void odometryDriveToPos (double xPos, double yPos) {
-        double C = 0;
-        while (globalPositionUpdate.returnXCoordinate() > xPos) {
-            robotStrafe(1, -90);
-        }
-        while (globalPositionUpdate.returnXCoordinate() < xPos) {
-            robotStrafe(1, 90);
-        }
-        if (globalPositionUpdate.returnXCoordinate() == xPos) {
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 1;
-        }
-
-
-        while (globalPositionUpdate.returnXCoordinate() > yPos && C == 1) {
-            robotStrafe(-1, 0);
-        }
-        while (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
-            robotStrafe(1, 0);
-        }
-        if (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 2;
-        }
-    }
     public void robotStrafe (double power, double angle){
         //restart angle tracking
         robot.resetAngle();
@@ -295,5 +226,65 @@ public class MainTeleop extends LinearOpMode{
         //Use the correction to adjust robot power so robot faces straight
         robot.correctedTankStrafe(leftPower, rightPower, correction);
         //}
+    }
+
+    public void odometryNormalizeAngle(){
+        if (globalPositionUpdate.returnOrientation() > 0){
+            robot.turnCounterClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() > 0){
+
+            }
+        }else if (globalPositionUpdate.returnOrientation() < 0){
+            robot.turnClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() < 0){
+
+            }
+        }
+        robot.completeStop();
+    }
+
+    public void odometrySetAngle(double angle){
+        if (globalPositionUpdate.returnOrientation() > angle){
+            robot.turnCounterClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() > angle){
+
+            }
+        }else if (globalPositionUpdate.returnOrientation() < angle){
+            robot.turnClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() < angle){
+
+            }
+        }
+        robot.completeStop();
+    }
+
+    public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
+        double C = 0;
+        double angle = 0;
+        angle = Math.toDegrees(Math.atan2(xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH), yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH))) + 90;
+        robotStrafe(1,angle);
+        while (Math.abs(globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) < yPos){
+            //Just loop and do nothing
+        }
+        robot.completeStop();
+        odometrySetAngle(direction);
+    }
+
+    public void shootPowerShot() throws InterruptedException{
+        odometrySetAngle(0);
+        //Shot 1
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRingsPower();
+        //Shot 2
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRingsPower();
+        //Shot 3
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRingsPower();
+    }
+
+    public void shootGoal() throws InterruptedException{
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRings();
     }
 }
