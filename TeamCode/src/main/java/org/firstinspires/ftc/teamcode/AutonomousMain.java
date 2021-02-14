@@ -170,14 +170,14 @@ public class AutonomousMain extends LinearOpMode
                 robot.gyroDriveCm(.5, 38); //drive forward onto line
                  */
 
+                shootPowerShot();
                 //Go to Target Zone
-                odometryDriveToPosAngular(0,0,0);
+                odometryDriveToPosAngular(-16,83.2,-144.1);
                 //Drop Wobble
                 dropWobble(targetZone);
                 //Shoot Powershot
-                shootPowerShot();
                 //Drive to Line
-                odometryDriveToPosAngular(0,0,0);
+                odometryDriveToPosAngular(-15.5,70,0);
                 break;
             case 2: //B
                 /*
@@ -203,14 +203,14 @@ public class AutonomousMain extends LinearOpMode
                 robot.gyroDriveCm(.5, 40); //drive onto line
                  */
 
+                shootPowerShot();
                 //Go to Target Zone
-                odometryDriveToPosAngular(0,0,0);
+                odometryDriveToPosAngular(-31.5,99.1,163);
                 //Drop Wobble
                 dropWobble(targetZone);
                 //Shoot Powershot
-                shootPowerShot();
                 //Drive to Line
-                odometryDriveToPosAngular(0,0,0);
+                odometryDriveToPosAngular(-15.5,70,0);
                 break;
             case 3: //C
                 /*
@@ -226,14 +226,14 @@ public class AutonomousMain extends LinearOpMode
                 robot.gyroDriveCm( .5, 40); //move onto line
                  */
 
+                shootPowerShot();
                 //Go to Target Zone
-                odometryDriveToPosAngular(0,0,0);
+                odometryDriveToPosAngular(-29.64,132.0,208);
                 //Drop Wobble
                 dropWobble(targetZone);
                 //Shoot Powershot
-                shootPowerShot();
                 //Drive to Line
-                odometryDriveToPosAngular(0,0,0);
+                odometryDriveToPosAngular(-15.5,70,0);
                 break;
             default:
                 break;
@@ -350,20 +350,22 @@ public class AutonomousMain extends LinearOpMode
     }
 
     public void shootPowerShot() throws InterruptedException{
-
+        odometryDriveToPosAngular(0,70.2,0);
+        odometrySetAngle(0);
         //Shot 1
-        odometryDriveToPosAngular(0,0,0);
+        odometryDriveToPosAngular(-39.85,62.9,-8);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPosAngular(0,0,0);
+        odometryDriveToPosAngular(-50.7,49.0,-13.7);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPosAngular(0,0,0);
+        odometryDriveToPosAngular(-39.8,62.8,-16.1);
         robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPosAngular(0,0,0);
+        odometryDriveToPosAngular(0,70.2,0);
+        odometryDriveToPosAngular(-15.5,67.9,0);
         robot.shootRings();
     }
 

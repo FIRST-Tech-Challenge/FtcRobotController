@@ -352,6 +352,7 @@ public class IMURobot {
     /**
      * Complete stop, sets all motor powers to 0
      */
+
     public void completeStop(){
         motorFrontLeft.setPower(0);
         motorFrontRight.setPower(0);
@@ -363,6 +364,7 @@ public class IMURobot {
      * Robot turns clockwise at a set power in tank drive
      * @param power desired power for motors
      */
+
     public void turnClockwise(double power){
         motorFrontLeft.setPower(-power);
         motorBackLeft.setPower(-power);
@@ -374,6 +376,7 @@ public class IMURobot {
      * Robot turns counterclockwise at a set power in tank drive
      * @param power desired power for motors
      */
+
     public void turnCounterClockwise(double power){
         motorFrontLeft.setPower(power);
         motorBackLeft.setPower(power);
@@ -427,6 +430,7 @@ public class IMURobot {
      * If not, get a power correction using a preset gain.
      * @return correction, positive = correct clockwise, negative = correct counterclockwise
      */
+
     public double getCorrection(){
         //Get the current angle of the robot
         double angle = getAngle();
@@ -444,8 +448,6 @@ public class IMURobot {
             //Lower gains are ineffective
             correction = -angle*gain;
         }
-        //Display correction
-        //telemetry.addData("Correction", correction);
 
         return correction;
     }
@@ -676,6 +678,7 @@ public class IMURobot {
     public void intakeOn() {
         intake.setPower(1);
     }
+
     /**
      * Turn off intake
      */
@@ -683,6 +686,7 @@ public class IMURobot {
     public void intakeOff() {
         intake.setPower(0);
     }
+
     /**
      * Reverse intake direction
      */
@@ -699,6 +703,7 @@ public class IMURobot {
     public void shootRings() throws InterruptedException{
         int i = 0;
         outtake(0.325);
+        Thread.sleep(300);
         while (i < 3) {
             flipper.setPosition(0);
             Thread.sleep(500);
@@ -709,7 +714,8 @@ public class IMURobot {
     }
 
     public void shootRingsPower() throws InterruptedException{
-        outtake(0.32);
+        outtake(0.3325);
+        Thread.sleep(300);
         flipper.setPosition(0);
         Thread.sleep(500);
         flipper.setPosition(1);
@@ -720,10 +726,12 @@ public class IMURobot {
         rightConveyor.setPower(1);
         leftConveyor.setPower(1);
     }
+
     public void conveyorOff(){
         rightConveyor.setPower(0);
         leftConveyor.setPower(0);
     }
+
     public void conveyorReverse(){
         rightConveyor.setPower(-1);
         leftConveyor.setPower(-1);

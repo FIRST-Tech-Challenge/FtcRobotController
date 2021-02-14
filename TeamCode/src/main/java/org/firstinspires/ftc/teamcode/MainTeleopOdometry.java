@@ -260,20 +260,22 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootPowerShot() throws InterruptedException{
+        odometryDriveToPosAngular(0,70.2,0);
         odometrySetAngle(0);
         //Shot 1
-        odometryDriveToPosAngular(0,0,0);
+        odometryDriveToPosAngular(-39.85,62.9,-8);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPosAngular(0,0,0);
+        odometryDriveToPosAngular(-50.7,49.0,-13.7);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPosAngular(0,0,0);
+        odometryDriveToPosAngular(-39.8,62.8,-16.1);
         robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPosAngular(0,0,0);
+        odometryDriveToPosAngular(0,70.2,0);
+        odometryDriveToPosAngular(-15.5,67.9,0);
         robot.shootRings();
     }
 }
