@@ -168,7 +168,11 @@ public class ScoringMechanism {
 
     void jankyServoHandling() {
         if (jankyServo.isPressed()) {
-            intake.runJankyServo();
+            if (!unsafe.isPressed()) {
+                intake.runJankyServo();
+            } else {
+                intake.backwardsRunJankyServo();
+            }
         } else {
             intake.stopJankyServo();
         }

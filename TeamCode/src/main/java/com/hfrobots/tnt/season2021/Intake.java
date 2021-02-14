@@ -68,6 +68,10 @@ public class Intake {
         safeServoSetPower(INTAKE_SERVO_POWER);
     }
 
+    public void backwardsRunJankyServo() {
+        safeServoSetPower(OUTTAKE_SERVO_POWER);
+    }
+
     public void stopJankyServo() {
         safeServoSetPower(0);
     }
