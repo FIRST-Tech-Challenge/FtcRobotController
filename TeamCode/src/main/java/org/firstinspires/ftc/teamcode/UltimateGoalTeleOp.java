@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
 import static java.lang.Math.atan2;
 import static java.lang.Math.toDegrees;
+import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.SHOOT_VELOCITY;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_GRABBING;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_MAX;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_MIN;
@@ -204,7 +205,11 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!crossHeld && crossPressed) {
             crossHeld = true;
-            robot.toggleShooter();
+            if(robot.shooterMotorTargetVelocity == SHOOT_VELOCITY) {
+                robot.shooterOff();
+            } else {
+                robot.shooterOn();
+            }
         } else if(!crossPressed) {
             crossHeld = false;
         }

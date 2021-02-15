@@ -200,7 +200,7 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
                 updatePosition();
             }
 
-            robot.toggleShooter();
+            robot.shooterOff();
 
             dropWobbleTargetZone();
 

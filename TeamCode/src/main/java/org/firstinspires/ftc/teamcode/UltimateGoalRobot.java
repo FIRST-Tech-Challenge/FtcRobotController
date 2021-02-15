@@ -28,6 +28,8 @@ import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
@@ -300,11 +302,15 @@ public class UltimateGoalRobot
         flapPosition = FLAP_POSITION.HIGH_GOAL;
     }
 
-    public void toggleShooter() {
+    public void shooterOn() {
         if(shooterMotorTargetVelocity != SHOOT_VELOCITY) {
             shooter.setVelocity(SHOOT_VELOCITY);
             shooterMotorTargetVelocity = SHOOT_VELOCITY;
-        } else {
+        }
+    }
+
+    public void shooterOff() {
+        if(shooterMotorTargetVelocity != 0) {
             shooter.setVelocity(0);
             shooterMotorTargetVelocity = 0;
         }
@@ -421,7 +427,7 @@ public class UltimateGoalRobot
         } else {
             if (inputShaping) {
                 valueOut = aValue * Math.pow(valueIn, 3) + (1 - aValue) * valueIn;
-                valueOut = Math.copySign(Math.max(MIN_DRIVE_RATE, abs(valueOut)), valueOut);
+                valueOut = Math.copySign(max(MIN_DRIVE_RATE, abs(valueOut)), valueOut);
             } else {
                 valueOut = valueIn;
             }
@@ -439,7 +445,7 @@ public class UltimateGoalRobot
         } else {
             if (inputShaping) {
                 valueOut = aValue * Math.pow(valueIn, 3) + (1 - aValue) * valueIn;
-                valueOut = Math.copySign(Math.max(MIN_SPIN_RATE, abs(valueOut)), valueOut);
+                valueOut = Math.copySign(max(MIN_SPIN_RATE, abs(valueOut)), valueOut);
             } else {
                 valueOut = valueIn;
             }
@@ -554,6 +560,24 @@ public class UltimateGoalRobot
         return reachedDestination;
     }
 
+    public double calculateDriveSpeed(double distance, double minSpeed, double maxSpeed, boolean passThrough) {
+        double driveSpeed = 0.0;
+        final double curveSlope = 0.77;
+        final double fullThrottleMaxRange = 60.0;
+
+        // Full speed above 60cm
+        if(passThrough || distance >= fullThrottleMaxRange) {
+            driveSpeed = maxSpeed;
+        } else {
+            double valueIn = distance / fullThrottleMaxRange;
+            driveSpeed = curveSlope * Math.pow(valueIn, 3) + (1.0 - curveSlope) * valueIn;
+            driveSpeed *= maxSpeed;
+        }
+
+        driveSpeed = max(min(driveSpeed, maxSpeed), minSpeed);
+
+        return driveSpeed;
+    }
     /**
      * @param x           - The X field coordinate to go to.
      * @param y           - The Y field coordinate to go to.
@@ -574,26 +598,11 @@ public class UltimateGoalRobot
         double driveAngle = Math.atan2(deltaY, deltaX);
         double deltaAngle = MyPosition.AngleWrap(targetAngle - MyPosition.worldAngle_rad);
         double magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        double driveSpeed;
+        double driveSpeed = calculateDriveSpeed(magnitude, minSpeed, maxSpeed, passThrough);
         // Apparently last season angle was positive CW, this season CCW is positive.
         double turnSpeed = -Math.toDegrees(deltaAngle) * errorMultiplier;
         // Have to convert from world angles to robot centric angles.
         double robotDriveAngle = driveAngle - MyPosition.worldAngle_rad + Math.toRadians(-90);
-
-        // This will allow us to do multi-point routes without huge slowdowns.
-        // Such use cases will be changing angles, or triggering activities at
-        // certain points.
-        if(!passThrough) {
-            driveSpeed = magnitude * errorMultiplier;
-        } else {
-            driveSpeed = maxSpeed;
-        }
-
-        if(driveSpeed < minSpeed) {
-            driveSpeed = minSpeed;
-        } else if (driveSpeed > maxSpeed) {
-            driveSpeed = maxSpeed;
-        }
 
         // Check if we passed through our point
         if(magnitude <= allowedError) {
@@ -772,9 +781,7 @@ public class UltimateGoalRobot
     public void startInjecting() {
         if(injectState == INJECTING.IDLE) {
             // If the shooter isn't on, fire it up.
-            if(shooterMotorTargetVelocity != SHOOT_VELOCITY) {
-                toggleShooter();
-            }
+            shooterOn();
             injectTimer.reset();
             injectState = INJECTING.THROTTLING_UP;
         }
@@ -873,7 +880,7 @@ public class UltimateGoalRobot
                 break;
             case FIRING_FOUR:
                 if(injectState == INJECTING.IDLE) {
-                    toggleShooter();
+                    shooterOff();
                     tripleInjectState = TRIPLE_INJECTING.IDLE;
                 }
                 break;
@@ -946,17 +953,15 @@ public class UltimateGoalRobot
         FIRE
     }
     public SHOT_ALIGNMENT_STATE shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
-    public FLAP_POSITION shotFlapTarget;
+    public FLAP_POSITION shooterFlapTarget;
     public void startShotAligning(WayPoint alignmentCoordinates, FLAP_POSITION targetFlap) {
         if (shotAlignmentState == SHOT_ALIGNMENT_STATE.IDLE) {
             shootingDestination = alignmentCoordinates;
-            shotFlapTarget = targetFlap;
+            shooterFlapTarget = targetFlap;
             // If the shooter isn't on, fire it up.
-            if(shooterMotorTargetVelocity != SHOOT_VELOCITY) {
-                toggleShooter();
-            }
+            shooterOn();
             // Make sure shooter flap is in the right position.
-            if(shotFlapTarget == FLAP_POSITION.POWERSHOT) {
+            if(shooterFlapTarget == FLAP_POSITION.POWERSHOT) {
                 setShooterFlapPowerShot();
             } else {
                 setShooterFlapHighGoal();
@@ -979,7 +984,7 @@ public class UltimateGoalRobot
                 break;
             case ANGLE_ALIGNMENT:
                 if(rotateToAngle(shootingDestination.angle, false, false)) {
-                    if(shotFlapTarget == FLAP_POSITION.POWERSHOT) {
+                    if(shooterFlapTarget == FLAP_POSITION.POWERSHOT) {
                         startInjecting();
                     } else {
                         startTripleInjecting();
@@ -988,7 +993,7 @@ public class UltimateGoalRobot
                 }
                 break;
             case FIRE:
-                if(shotFlapTarget == FLAP_POSITION.POWERSHOT) {
+                if(shooterFlapTarget == FLAP_POSITION.POWERSHOT) {
                     if(injectState == INJECTING.IDLE) {
                         shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
                     }
@@ -1007,40 +1012,6 @@ public class UltimateGoalRobot
     public void stopShotAligning() {
         shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
         injector.setPosition(INJECTOR_HOME);
-    }
-
-
-    public enum ODOMETRY_CAL_STATE {
-        IDLE,
-        MOVING
-    }
-    public ODOMETRY_CAL_STATE odometryCalState = ODOMETRY_CAL_STATE.IDLE;
-    public WayPoint calibrationDestination;
-    public void startOdometryCal(WayPoint calDestination) {
-        if(odometryCalState == ODOMETRY_CAL_STATE.IDLE) {
-            calibrationDestination = calDestination;
-            driveToXY(calibrationDestination.x, calibrationDestination.y, calibrationDestination.angle, MIN_DRIVE_MAGNITUDE,
-                    0.5, 0.014, 2.0, false);
-            odometryCalState = ODOMETRY_CAL_STATE.MOVING;
-        }
-    }
-    public void performOdometryCal() {
-        switch(odometryCalState) {
-            case MOVING:
-                if (driveToXY(calibrationDestination.x, calibrationDestination.y, calibrationDestination.angle, MIN_DRIVE_MAGNITUDE,
-                        0.5, 0.014, 2.0, false)) {
-                    // We have reached the position, need to rotate to angle.
-                    odometryCalState = ODOMETRY_CAL_STATE.IDLE;
-                }
-                break;
-            case IDLE:
-            default:
-                break;
-        }
-    }
-
-    public void stopOdometryCal() {
-        odometryCalState = ODOMETRY_CAL_STATE.IDLE;
     }
 }
 
