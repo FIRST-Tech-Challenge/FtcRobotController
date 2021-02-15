@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class Shooter {
     //This class is for the shooter and will include two motors
@@ -52,5 +53,49 @@ public class Shooter {
     public void shooterPower(double power) {
         leftShooter.setPower(-power);
         rightShooter.setPower(power);
+    }
+
+    /**
+     * Will return infinity if no sensor is installed
+     * @return Current battery voltage
+     */
+    public double getBatteryVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+        for(VoltageSensor sensor : hwMap.voltageSensor) {
+            double voltage = sensor.getVoltage();
+            if (voltage > 0) {
+                result = Math.min(result, voltage);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Scales shooter power for power shots in autonomous depending on current battery power
+     * @return
+     */
+    public double scalePowerShot() {
+        if (getBatteryVoltage() > 13) {
+            return -.825;
+        } else if (getBatteryVoltage() <= 13 && getBatteryVoltage() > 12.45) {
+            return -.875;
+        } else if (getBatteryVoltage() <= 12.45) {
+            return -.9;
+        }
+        return -.875;
+    }
+    /**
+     * Scales shooter power for high goal in autonomous depending on current battery power
+     * @return
+     */
+    public double scaleHighGoal() {
+        if (getBatteryVoltage() > 13) {
+            return -.875;
+        } else if (getBatteryVoltage() <= 13 && getBatteryVoltage() > 12.45) {
+            return -.93;
+        } else if (getBatteryVoltage() <= 12.45) {
+            return -.95;
+        }
+        return -.93;
     }
 }

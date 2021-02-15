@@ -53,6 +53,10 @@ public class BlueRight extends OpMode {
         }if (gamepad2.dpad_down) {
             powerShot = false;
         }
+        power = shooter.scalePowerShot();
+        high  = shooter.scaleHighGoal();
+
+        //This is a fail-safe in case the automatic adjuster doesn't work
         if (gamepad2.dpad_right) {
             power = -.825;
             high = -.9;
@@ -62,7 +66,10 @@ public class BlueRight extends OpMode {
             high = -.93;
             highVoltage = false;
         }
-        telemetry.addData("Over 13 Volts", highVoltage);
+
+        telemetry.addData("Volts", shooter.getBatteryVoltage());
+        telemetry.addData("High Goal Power", high);
+        telemetry.addData("Power Shot Power", power);
         telemetry.addData("Power Shot", powerShot);
         telemetry.update();
     }
