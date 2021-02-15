@@ -208,7 +208,6 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
-            telemetry.addData("test", globalPositionUpdate.returnYCoordinate());
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
 
             telemetry.addData("Vertical left encoder position", verticalLeft.getCurrentPosition());
@@ -258,83 +257,41 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
-        double angle = 0;
-        angle = Math.atan2(yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH),xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH)) - Math.PI / 4;
+        xPos *= COUNTS_PER_INCH;
+        yPos *= COUNTS_PER_INCH;
+        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate());
+        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate());
+        double angle = Math.atan2(distanceX,distanceY);
+        double distance = Math.hypot(distanceX,distanceY);
 
-        double powerOne = Math.sin(angle);
-        double powerTwo = Math.cos(angle);
+        double powerOne = 1 * Math.sin(angle);
+        double powerTwo = 1 * Math.cos(angle);
 
-        motorFrontLeft.setPower(powerOne);
-        motorFrontRight.setPower(powerTwo);
-        motorBackLeft.setPower(powerTwo);
-        motorBackRight.setPower(powerOne);
-
-        while ((Math.abs(globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) < Math.abs(yPos)) && (Math.abs(globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) < Math.abs(xPos))){
-            telemetry.update();
+        while (distance > 1){
+            distance = Math.hypot(distanceX,distanceY);
+            motorFrontLeft.setPower(powerOne);
+            motorFrontRight.setPower(powerTwo);
+            motorBackLeft.setPower(powerTwo);
+            motorBackRight.setPower(powerOne);
         }
         robot.completeStop();
         //odometrySetAngle(direction);
     }
 
-    public void odometryDriveToPos (double xPos, double yPos) throws InterruptedException{
-        double C = 0;
-        while (Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) > 1) {//while distance to destination > than threshold
-            double angle = globalPositionUpdate.returnXCoordinate() < xPos ? 90 : -90;//basically angle = (boolean)? value-if-true : value-if-false
-            //Maybe check above line~~~~?
-            robotStrafe(.4, angle);
-
-            if(Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) > 1){
-                break;
-            }
-        }
-        robot.completeStop();
-        odometryNormalizeAngle();
-        Thread.sleep(500);
-
-
-        while (Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) > 1) {
-            double power = globalPositionUpdate.returnYCoordinate() < yPos ? -.4 : .4;
-            robotStrafe(power, 0);
-
-            if(Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) > 1){
-                break;
-            }
-        }
-        robot.completeStop();
-        odometryNormalizeAngle();
-        Thread.sleep(500);
-    }
-
-    public void odometryNormalizeAngle() throws InterruptedException{
-
-        while(Math.abs(globalPositionUpdate.returnOrientation()) < 5){
-            if(globalPositionUpdate.returnOrientation() > 0 + 0.1){// thing > 0 + threshold
-                //Change threshold above ~~~~~~~~~~~~~~~~
-                robot.turnCounterClockwise(0.1);
-            }else if(globalPositionUpdate.returnOrientation() > 0 - 0.1){// thing > 0 - threshold
-                //Here too ~~~~~~~~~~~~~~~~~
-                robot.turnClockwise(0.1);
-            }else{
-                break;
-            }
-        }
-        robot.completeStop();
-    }
-
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
-        odometryDriveToPos(-39.85,62.9);
+        odometryDriveToPosAngular(-39.85,62.9,0);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPos(-50.7,49.0);
+        odometryDriveToPosAngular(-50.7,49.0,0);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPos(-39.8,62.8);
+        odometryDriveToPosAngular(-39.8,62.8,0);
         robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-15.5,67.9);
+        odometryDriveToPosAngular(-15.5,67.9,0);
         robot.shootRings();
     }
 }
