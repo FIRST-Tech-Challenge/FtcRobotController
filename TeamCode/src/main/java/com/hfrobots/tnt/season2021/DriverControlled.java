@@ -21,6 +21,7 @@ package com.hfrobots.tnt.season2021;
 
 import com.ftc9929.corelib.control.NinjaGamePad;
 import com.google.common.base.Ticker;
+import com.hfrobots.tnt.corelib.sensors.TotalCurrentSensor;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -36,9 +37,13 @@ public class DriverControlled extends OpMode {
 
     private RevBlinkinLedDriver blinkinLed;
 
+    private TotalCurrentSensor totalCurrentSensor;
+
     @Override
     public void init() {
         drivebase = new Drivebase(hardwareMap);
+
+        totalCurrentSensor = new TotalCurrentSensor(hardwareMap);
 
         driverControls = DriverControls.builder()
                 .driversGamepad(new NinjaGamePad(gamepad1))
@@ -70,6 +75,14 @@ public class DriverControlled extends OpMode {
     public void loop() {
         driverControls.periodicTask();
         operatorControls.periodicTask();
+
+        totalCurrentSensor.update();
+
+        double averageCurrent = totalCurrentSensor.getAverageCurrent();
+        double maxCurrent = totalCurrentSensor.getMaxCurrent();
+
+        telemetry.addData("C", "max: %.1fA avg: %.1fA", maxCurrent, averageCurrent);
+
         telemetry.update();
     }
 }
