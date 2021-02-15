@@ -107,11 +107,15 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
         robot.updateShooterStability();
     }
 
-    protected void driveToWayPoint(WayPoint destination, boolean passThrough, boolean pullingFoundation) {
+    protected void driveToWayPoint(WayPoint destination, boolean passThrough) {
         // Loop until we get to destination.
         updatePosition();
+        double allowedError = 2.0;
+        if(passThrough) {
+            allowedError = 7.0;
+        }
         while(!robot.driveToXY(destination.x, destination.y, destination.angle,
-                destination.speed, passThrough, pullingFoundation)
+                robot.MIN_DRIVE_RATE, destination.speed, 0.014, allowedError, passThrough)
                 && opModeIsActive()) {
             updatePosition();
         }

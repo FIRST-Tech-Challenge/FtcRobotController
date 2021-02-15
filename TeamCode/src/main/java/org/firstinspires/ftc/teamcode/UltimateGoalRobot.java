@@ -625,27 +625,6 @@ public class UltimateGoalRobot
 
         return reachedDestination;
     }
-    /**
-     * @param x           - The X field coordinate to go to.
-     * @param y           - The Y field coordinate to go to.
-     * @param targetAngle  - The angle the robot should try to face when reaching destination in radians.
-     * @param maxSpeed    - Sets the speed when we are driving through the point.
-     * @param passThrough - Slows the robot down to stop at destination coordinate.
-     * @param pullingFoundation - If we are pulling the foundation.
-     * @return - Boolean true we have reached destination, false we have not
-     */
-    public boolean driveToXY(double x, double y, double targetAngle, double maxSpeed,
-                             boolean passThrough, boolean pullingFoundation) {
-        double errorMultiplier = pullingFoundation ? 0.020 : 0.014;
-        double minDriveMagnitude = pullingFoundation ? MIN_FOUNDATION_DRIVE_MAGNITUDE : MIN_DRIVE_MAGNITUDE;
-        double allowedError = 2;
-
-        if(passThrough) {
-            allowedError = 7;
-        }
-        return (driveToXY(x, y, targetAngle, minDriveMagnitude, maxSpeed, errorMultiplier,
-                allowedError, passThrough));
-    }
 
     // Odometry updates
     private long lastUpdateTime = 0;
