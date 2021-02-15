@@ -184,7 +184,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 odometryDriveToPos(0,20);
             }
             if(gamepad1.b){
-                odometryDriveToPosAngular(20,0,0);
+                odometryDriveToPos(20,0);
             }
             if (gamepad1.y){
                 odometryDriveToPosAngular(-10,-10,0);
