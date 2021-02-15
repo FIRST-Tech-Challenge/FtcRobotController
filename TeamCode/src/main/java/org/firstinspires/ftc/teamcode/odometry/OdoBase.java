@@ -93,6 +93,7 @@ public class OdoBase extends LinearOpMode {
             }
         }
         catch (Exception ex){
+            Log.e(TAG, "Error in runRoute", ex);
             telemetry.addData("Error", "Run selected route. %s", ex.getMessage());
             telemetry.update();
         }
@@ -105,38 +106,42 @@ public class OdoBase extends LinearOpMode {
 
         Log.d(TAG, String.format("Executing Step: %s", instruction.toString()));
 
-        if (dryRun && selectedRoute.getSteps().size() == 0){
-            selectedRoute.setStartX((int)locator.getXInches());
-            selectedRoute.setStartY((int)locator.getYInches());
-        }
-        waitToStartStep(instruction.getWaitMS());
-        MoveStrategy strategy = instruction.getMoveStrategy();
-        executeStep(instruction, strategy, dryRun);
-        Method action = findActionMethod(instruction.getAction());
-        if (action != null){
-            try {
-                Object result;
-                if (isMethodOpModeSpecific(action)){
-                    result = (AutoDot) action.invoke(this.bot, opMode);
-                }
-                else {
-                    result = (AutoDot) action.invoke(this.bot);
-                }
-                if (coordinateFunctions.containsKey(action.getName())){
-                    if (result instanceof AutoDot){
-                        coordinateFunctions.put(action.getName(), (AutoDot)result);
-                    }
-                }
-            }
-            catch (Exception ex){
-                telemetry.addData("Error", ex.getMessage());
-                telemetry.update();
-            }
-        }
-        if (dryRun) {
-            selectedRoute.getSteps().add(instruction.clone());
-        }
+        try {
 
+            if (dryRun && selectedRoute.getSteps().size() == 0) {
+                selectedRoute.setStartX((int) locator.getXInches());
+                selectedRoute.setStartY((int) locator.getYInches());
+            }
+            waitToStartStep(instruction.getWaitMS());
+            MoveStrategy strategy = instruction.getMoveStrategy();
+            executeStep(instruction, strategy, dryRun);
+            Method action = findActionMethod(instruction.getAction());
+            if (action != null) {
+                try {
+                    Object result;
+                    if (isMethodOpModeSpecific(action)) {
+                        result = (AutoDot) action.invoke(this.bot, opMode);
+                    } else {
+                        result = (AutoDot) action.invoke(this.bot);
+                    }
+                    if (coordinateFunctions.containsKey(action.getName())) {
+                        if (result instanceof AutoDot) {
+                            coordinateFunctions.put(action.getName(), (AutoDot) result);
+                        }
+                    }
+                } catch (Exception ex) {
+                    Log.e(TAG, "Error in step action", ex);
+                    telemetry.addData("Error", ex.getMessage());
+                    telemetry.update();
+                }
+            }
+            if (dryRun) {
+                selectedRoute.getSteps().add(instruction.clone());
+            }
+        }
+        catch (Exception ex){
+            Log.e(TAG, "Error in execute step", ex);
+        }
     }
 
     protected boolean qualifies(AutoStep step){

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.odometry;
 
 import android.graphics.Point;
+import android.util.Log;
 
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
@@ -45,6 +46,8 @@ public class RobotCoordinatePosition implements Runnable {
 
     private double botHalfLength = bot.ROBOT_CENTER_Y* bot.COUNTS_PER_INCH_REV;
 
+    private static final String TAG = "RobotCoordinatePosition";
+
     public RobotCoordinatePosition(YellowBot bot, int sleepTimeMS){
         this.bot = bot;
         config = bot.getCalibConfig();
@@ -82,34 +85,39 @@ public class RobotCoordinatePosition implements Runnable {
 
 
     private void updatePosition(){
-        verticalLeftEncoderWheelPosition = (bot.getLeftOdometer() * verticalLeftEncoderPositionMultiplier);
-        verticalRightEncoderWheelPosition = (bot.getRightOdometer() * verticalRightEncoderPositionMultiplier);
+        try {
+            verticalLeftEncoderWheelPosition = (bot.getLeftOdometer() * verticalLeftEncoderPositionMultiplier);
+            verticalRightEncoderWheelPosition = (bot.getRightOdometer() * verticalRightEncoderPositionMultiplier);
 
-        double leftChange = verticalLeftEncoderWheelPosition - previousVerticalLeftEncoderWheelPosition;
-        double rightChange = verticalRightEncoderWheelPosition - previousVerticalRightEncoderWheelPosition;
+            double leftChange = verticalLeftEncoderWheelPosition - previousVerticalLeftEncoderWheelPosition;
+            double rightChange = verticalRightEncoderWheelPosition - previousVerticalRightEncoderWheelPosition;
 
-        changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
-        robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
+            changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
+            robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
 
-        horEncoderWheelPosition = (bot.getHorizontalOdometer() * horEncoderPositionMultiplier) - (changeInRobotOrientation*horizontalEncoderTickPerDegreeOffset);
-        double horizontalChange = horEncoderWheelPosition - prevNormalEncoderWheelPosition;
+            horEncoderWheelPosition = (bot.getHorizontalOdometer() * horEncoderPositionMultiplier) - (changeInRobotOrientation * horizontalEncoderTickPerDegreeOffset);
+            double horizontalChange = horEncoderWheelPosition - prevNormalEncoderWheelPosition;
 
 
-        double p = ((rightChange + leftChange) / 2);
-        double n = horizontalChange;
+            double p = ((rightChange + leftChange) / 2);
+            double n = horizontalChange;
 
-        robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + (p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
-        robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
+            robotGlobalXCoordinatePosition = robotGlobalXCoordinatePosition + (p * Math.sin(robotOrientationRadians) + n * Math.cos(robotOrientationRadians));
+            robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + (p * Math.cos(robotOrientationRadians) - n * Math.sin(robotOrientationRadians));
 
-        //Front Center of the robot
-        setFrontCenterX(robotGlobalXCoordinatePosition + botHalfLength*Math.sin(robotOrientationRadians));
-        setFrontCenterY(robotGlobalYCoordinatePosition + botHalfLength*Math.cos(robotOrientationRadians));
+            //Front Center of the robot
+            setFrontCenterX(robotGlobalXCoordinatePosition + botHalfLength * Math.sin(robotOrientationRadians));
+            setFrontCenterY(robotGlobalYCoordinatePosition + botHalfLength * Math.cos(robotOrientationRadians));
 
-        previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
-        previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
-        prevNormalEncoderWheelPosition = horEncoderWheelPosition;
-        if (persistPosition) {
-            saveLastPosition();
+            previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
+            previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
+            prevNormalEncoderWheelPosition = horEncoderWheelPosition;
+            if (persistPosition) {
+                saveLastPosition();
+            }
+        }
+        catch (Exception ex){
+            Log.e(TAG, "Error in update position", ex);
         }
     }
 
@@ -146,12 +154,14 @@ public class RobotCoordinatePosition implements Runnable {
     public void adjustRoute(){
         BotMoveProfile profile = BotMoveProfile.bestRoute(this.bot, getXInches(), getYInches(), this.target.getTarget(), this.target.getDirection(), this.target.getTopSpeed(), MoveStrategy.Curve,
                 BotMoveProfile.DEFAULT_HEADING, this);
-        realSpeedLeft = profile.getRealSpeedLeft();
-        realSpeedRight = profile.getRealSpeedRight();
-        this.leftLong = profile.isLeftLong();
-        this.slowdownMarkLong = profile.getSlowdownMarkLong();
-        this.slowdownMarkShort = profile.getSlowdownMarkShort();
-        this.longTarget = profile.getLongTarget();
+        if (profile != null) {
+            realSpeedLeft = profile.getRealSpeedLeft();
+            realSpeedRight = profile.getRealSpeedRight();
+            this.leftLong = profile.isLeftLong();
+            this.slowdownMarkLong = profile.getSlowdownMarkLong();
+            this.slowdownMarkShort = profile.getSlowdownMarkShort();
+            this.longTarget = profile.getLongTarget();
+        }
     }
 
 
