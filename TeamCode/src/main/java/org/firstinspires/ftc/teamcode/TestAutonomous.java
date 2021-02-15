@@ -27,7 +27,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "TestAuto")
+@Autonomous(name = "MainAuto")
 public class TestAutonomous extends LinearOpMode {
     double hue;
     OpenCvCamera webcam;
@@ -264,25 +264,25 @@ public class TestAutonomous extends LinearOpMode {
 
     }
     public void goShoot() throws InterruptedException{
-        double power = .325;
+        double power = .3225;
 
-//        outtakeLeft.setPower(power);//or 0.44
-//        outtakeRight.setPower(power);//or 0.44
+        outtakeLeft.setPower(power);//or 0.44
+        outtakeRight.setPower(power);//or 0.44
         //robot.gyroStrafeCm(0.5, 90, 60);//speed up later
         robot.gyroDriveCm(0.5, 195);
         robot.gyroStrafeCm(0.5, -90, 140);
 
-        /*for(int i = 0; i < 3; i++){
-            flipper.setPosition(1);
-            Thread.sleep(500);//CHANGE!!!!!!! slower
+        for(int i = 0; i < 3; i++){
             flipper.setPosition(0);
+            Thread.sleep(500);//CHANGE!!!!!!! slower
+            flipper.setPosition(1);
             Thread.sleep(500);//CHANGE!!!!!!!!
             outtakeLeft.setPower(power);//or 0.44
             outtakeRight.setPower(power);//or 0.44
         }
-        flipper.setPosition(0);
+        flipper.setPosition(1);
         outtakeLeft.setPower(0);
-        outtakeRight.setPower(0);*/
+        outtakeRight.setPower(0);
     }
     public void odometryNormalizeAngle(){
         while (globalPositionUpdate.returnOrientation() > 0){

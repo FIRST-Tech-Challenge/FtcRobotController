@@ -167,7 +167,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             if(gamepad2.left_bumper){
                 wobbleMod = 1.0;
             }else{
-                wobbleMod = .3;
+                wobbleMod = .15;
             }
 
             wobbleArm.setPower(gamepad2.left_stick_y * wobbleMod );
@@ -187,7 +187,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 odometryDriveToPos(20,0);
             }
             if (gamepad1.y){
-                odometryDriveToPosAngular(-10,-10,0);
+                odometryDriveToPosAngular(0,20,0);
             }
 
             //everything driving
@@ -258,18 +258,26 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
-        double angle = 0;
-        angle = Math.atan2(yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH),xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH)) - Math.PI / 4;
+        odometryNormalizeAngle();
+        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate());//20
+        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate());//0
+        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);//0 if robot facing
+        double distance = Math.hypot(distanceX,distanceY);//20
 
-        double powerOne = Math.sin(angle);
-        double powerTwo = Math.cos(angle);
+        double powerOne = 0.4 * Math.sin(angle);//all be 0.4
+        double powerTwo = 0.4 * Math.cos(angle);//same here
 
-        motorFrontLeft.setPower(powerOne);
-        motorFrontRight.setPower(powerTwo);
-        motorBackLeft.setPower(powerTwo);
-        motorBackRight.setPower(powerOne);
-
-        while ((Math.abs(globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) < Math.abs(yPos)) && (Math.abs(globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) < Math.abs(xPos))){
+        while (distance > 5){//can assume robot faces straight up?
+            distanceX = xPos - (globalPositionUpdate.returnXCoordinate());
+            distanceY = yPos - (globalPositionUpdate.returnYCoordinate());
+            distance = Math.hypot(distanceX,distanceY);
+            motorFrontLeft.setPower(powerOne);
+            motorFrontRight.setPower(powerTwo);
+            motorBackLeft.setPower(powerTwo);
+            motorBackRight.setPower(powerOne);
+            telemetry.addData("Distance: ", distance);
+            telemetry.addData("DistanceX: ", distanceX);
+            telemetry.addData("DistanceY: ", distanceY);
             telemetry.update();
         }
         robot.completeStop();
@@ -277,10 +285,14 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryDriveToPos (double xPos, double yPos) throws InterruptedException{
+        odometryNormalizeAngle();
         double C = 0;
         while (Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) > 1) {//while distance to destination > than threshold
-            double angle = globalPositionUpdate.returnXCoordinate() < xPos ? 90 : -90;//basically angle = (boolean)? value-if-true : value-if-false
-            //Maybe check above line~~~~?
+            double angle = 0;
+            if(globalPositionUpdate.returnXCoordinate() < xPos)
+                angle = 90;
+            else
+                angle = -90;
             robotStrafe(.4, angle);
 
             if(Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) <= 1){
@@ -288,12 +300,15 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
         }
         robot.completeStop();
-        //odometryNormalizeAngle();
         Thread.sleep(500);
-
+        odometryNormalizeAngle();
 
         while (Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) > 1) {
-            double power = globalPositionUpdate.returnYCoordinate() < yPos ? -.4 : .4;
+            double power = 0;
+            if(globalPositionUpdate.returnXCoordinate() < xPos)
+                power = -0.4;
+            else
+                power = 0.4;
             robotStrafe(power, 0);
 
             if(Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) <= 1){
@@ -301,17 +316,15 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
         }
         robot.completeStop();
-        //odometryNormalizeAngle();
         Thread.sleep(500);
     }
 
-    public void odometryNormalizeAngle() throws InterruptedException{
-
-        while(Math.abs(globalPositionUpdate.returnOrientation()) < 5){
-            if(globalPositionUpdate.returnOrientation() > 0 + 0.1){// thing > 0 + threshold
+    public void odometryNormalizeAngle() {
+        while(Math.abs(globalPositionUpdate.returnOrientation()) < -5 || Math.abs(globalPositionUpdate.returnOrientation()) > 5){
+            if(globalPositionUpdate.returnOrientation() > 0 + 5){// thing > 0 + threshold
                 //Change threshold above ~~~~~~~~~~~~~~~~
                 robot.turnCounterClockwise(0.1);
-            }else if(globalPositionUpdate.returnOrientation() > 0 - 0.1){// thing > 0 - threshold
+            }else if(globalPositionUpdate.returnOrientation() > 0 - 5){// thing > 0 - threshold
                 //Here too ~~~~~~~~~~~~~~~~~
                 robot.turnClockwise(0.1);
             }else{

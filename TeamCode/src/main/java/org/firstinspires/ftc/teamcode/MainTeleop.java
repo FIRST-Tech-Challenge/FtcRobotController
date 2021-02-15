@@ -149,12 +149,12 @@ public class MainTeleop extends LinearOpMode{
             //Ring flipper
             //Run by a servo, 1 is fully "flipped" position, 0 is fully "retracted" position
             //Hold down b button to flip ring out
-            if(gamepad2.b){
-                flipper.setPosition(1);
-            }
+
 
             if(gamepad2.a){
                 flipper.setPosition(0);
+                Thread.sleep(500);
+                flipper.setPosition(1);
             }
 
             telemetry.addData("flipper position", flipper.getPosition());
@@ -167,7 +167,7 @@ public class MainTeleop extends LinearOpMode{
             if(gamepad2.right_bumper){
                 outtakeMod = 0.32; //power shots
             }else{
-                outtakeMod = 0.325;
+                outtakeMod = 0.3225;
             }
             double outtakePower = (gamepad2.right_trigger * outtakeMod);
             outtakeLeft.setPower(outtakePower);
