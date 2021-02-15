@@ -43,6 +43,11 @@ public class BlueRight extends OpMode {
         grabber.init(hardwareMap);
         camera.init(hardwareMap);
 
+        if (shooter.scalePowerShot() != Double.POSITIVE_INFINITY) {
+            power = shooter.scalePowerShot();
+            high  = shooter.scaleHighGoal();
+        }
+
         stateMachineFlow = 0;
     }
     public void init_loop() {
@@ -53,8 +58,6 @@ public class BlueRight extends OpMode {
         }if (gamepad2.dpad_down) {
             powerShot = false;
         }
-        power = shooter.scalePowerShot();
-        high  = shooter.scaleHighGoal();
 
         //This is a fail-safe in case the automatic adjuster doesn't work
         if (gamepad2.dpad_right) {
@@ -76,6 +79,12 @@ public class BlueRight extends OpMode {
 
     @Override
     public void loop() {
+
+        if (shooter.scalePowerShot() != Double.POSITIVE_INFINITY) {
+            power = shooter.scalePowerShot();
+            high  = shooter.scaleHighGoal();
+        }
+
         switch(stateMachineFlow) {
             case 0:
                 //Drive into place to check number of rings
