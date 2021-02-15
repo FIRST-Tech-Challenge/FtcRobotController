@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -53,6 +55,7 @@ public class TestAutonomous extends LinearOpMode {
 
     OdometryGlobalCoordinatePosition globalPositionUpdate;
 
+    private CRServo leftConveyor, rightConveyor, intake;
 
     //Declare imu
     private BNO055IMU imu;
@@ -73,12 +76,22 @@ public class TestAutonomous extends LinearOpMode {
         flipper = hardwareMap.servo.get("flipper");
 
         //launcher
-        outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
-        outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
+        /*outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
+        outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");*/
+        outtakeLeft=hardwareMap.get(DcMotor.class, "outtakeLeft");
+        outtakeRight=hardwareMap.get(DcMotor.class, "outtakeRight");
+        outtakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outtakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         verticalLeft = hardwareMap.dcMotor.get("FL");
         verticalRight = hardwareMap.dcMotor.get("FR");
         horizontal = hardwareMap.dcMotor.get("BL");
+
+        intake = hardwareMap.crservo.get("intake");
+        leftConveyor = hardwareMap.crservo.get("leftConveyor");
+        rightConveyor = hardwareMap.crservo.get("rightConveyor");
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -91,7 +104,8 @@ public class TestAutonomous extends LinearOpMode {
 
         //Create an IMURobot object that we will use to run the robot
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-                imu, this);
+                imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
+                outtakeRight, outtakeLeft, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
         wobbleClaw.setPosition(0);
@@ -139,10 +153,10 @@ public class TestAutonomous extends LinearOpMode {
         int stack = mainPipeline.ycontours.size();
         telemetry.addData("Stack Height before case: ", mainPipeline.stackHeight);
 
-        if (mainPipeline.stackHeight < 100) {
+        if (mainPipeline.stackHeight < 50) {
             targetZone = 1;
 
-        } else if (mainPipeline.stackHeight > 160) {
+        } else if (mainPipeline.stackHeight > 120) {
             targetZone = 3;
 
         } else {
@@ -159,9 +173,10 @@ public class TestAutonomous extends LinearOpMode {
         switch(targetZone){
             case 1:
                 robot.gyroDriveCm(0.5, 60);
-                robot.gyroTurn(-90, 0.5);
+                robot.gyroTurn(-95, 0.5);
+                robot.gyroDriveCm(-0.5, 40);
                 dropWobble();
-                robot.gyroDriveCm(0.75,40);
+                robot.gyroDriveCm(0.75,45);
                 //backup
                 //robot.gyroDriveCm(-.5, 10);
                 //odometryDriveToPos(100,100);
@@ -178,7 +193,7 @@ public class TestAutonomous extends LinearOpMode {
                 robot.gyroStrafeCm(0.5, -90,80);
                 robot.gyroDriveCm(-0.75, 160);
                 dropWobble();
-                robot.gyroDriveCm(.75, 90);
+                robot.gyroDriveCm(.75, 120);
                 //odometryDriveToPos(100,100);
                 break;
             default:
@@ -249,20 +264,25 @@ public class TestAutonomous extends LinearOpMode {
 
     }
     public void goShoot() throws InterruptedException{
-        outtakeLeft.setPower(0.36);//or 0.44
-        outtakeRight.setPower(0.36);//or 0.44
-        //robot.gyroStrafeCm(0.5, 90, 60);//speed up later
-        robot.gyroDriveCm(0.5, 190);
-        robot.gyroStrafeCm(0.5, -90, 110);
+        double power = .325;
 
-        for(int i = 0; i < 3; i++){
+//        outtakeLeft.setPower(power);//or 0.44
+//        outtakeRight.setPower(power);//or 0.44
+        //robot.gyroStrafeCm(0.5, 90, 60);//speed up later
+        robot.gyroDriveCm(0.5, 195);
+        robot.gyroStrafeCm(0.5, -90, 140);
+
+        /*for(int i = 0; i < 3; i++){
             flipper.setPosition(1);
             Thread.sleep(500);//CHANGE!!!!!!! slower
             flipper.setPosition(0);
             Thread.sleep(500);//CHANGE!!!!!!!!
+            outtakeLeft.setPower(power);//or 0.44
+            outtakeRight.setPower(power);//or 0.44
         }
+        flipper.setPosition(0);
         outtakeLeft.setPower(0);
-        outtakeRight.setPower(0);
+        outtakeRight.setPower(0);*/
     }
     public void odometryNormalizeAngle(){
         while (globalPositionUpdate.returnOrientation() > 0){
@@ -327,15 +347,15 @@ public class TestAutonomous extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
-        while(timer.milliseconds() < 2000){
-            wobbleArm.setPower(-.3);
+        while(timer.milliseconds() < 1000){
+            wobbleArm.setPower(-.4);
         }
         wobbleArm.setPower(0);
 
         wobbleClaw.setPosition(1);
 
         timer.reset();
-        while (timer.milliseconds() < 2000) {
+        while (timer.milliseconds() < 1000) {
             wobbleArm.setPower(.4);
         }
         wobbleArm.setPower(0);

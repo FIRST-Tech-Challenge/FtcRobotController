@@ -181,7 +181,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
 
             if(gamepad1.left_bumper){
-                odometryDriveToPosAngular(0,20,0);
+                odometryDriveToPos(0,20);
             }
             if(gamepad1.b){
                 odometryDriveToPosAngular(20,0,0);
@@ -283,12 +283,12 @@ public class MainTeleopOdometry extends LinearOpMode{
             //Maybe check above line~~~~?
             robotStrafe(.4, angle);
 
-            if(Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) > 1){
+            if(Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) <= 1){
                 break;
             }
         }
         robot.completeStop();
-        odometryNormalizeAngle();
+        //odometryNormalizeAngle();
         Thread.sleep(500);
 
 
@@ -296,12 +296,12 @@ public class MainTeleopOdometry extends LinearOpMode{
             double power = globalPositionUpdate.returnYCoordinate() < yPos ? -.4 : .4;
             robotStrafe(power, 0);
 
-            if(Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) > 1){
+            if(Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) <= 1){
                 break;
             }
         }
         robot.completeStop();
-        odometryNormalizeAngle();
+        //odometryNormalizeAngle();
         Thread.sleep(500);
     }
 

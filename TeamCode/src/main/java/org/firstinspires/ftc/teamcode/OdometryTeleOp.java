@@ -124,7 +124,7 @@ public class OdometryTeleOp extends LinearOpMode{
             //This should only move the robot either forward or backward 20 inches
             if (gamepad2.a){
                 while (Math.abs(globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) > 20){
-                    double power = (globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH < 0) ? 0.5:-0.5;//This line~~~~~~!!!
+                    double power = (globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH < 0) ? 0.5:-0.5;
                     robotStrafe(power,0);
                 }
                 motorFrontLeft.setPower(0);
@@ -178,11 +178,9 @@ public class OdometryTeleOp extends LinearOpMode{
     public void odometryNormalizeAngle() throws InterruptedException{
 
         while(Math.abs(globalPositionUpdate.returnOrientation()) > 5){
-            if(globalPositionUpdate.returnOrientation() > 0 + 0.1){// thing > 0 + threshold
-                //Change threshold above ~~~~~~~~~~~~~~~~
+            if(globalPositionUpdate.returnOrientation() > 0){// thing > 0 + threshold
                 robot.turnCounterClockwise(0.1);
-            }else if(globalPositionUpdate.returnOrientation() < 0 - 0.1){// thing > 0 - threshold
-                //Here too ~~~~~~~~~~~~~~~~~
+            }else if(globalPositionUpdate.returnOrientation() < 0){// thing > 0 - threshold
                 robot.turnClockwise(0.1);
             }else{
                 break;
@@ -193,12 +191,11 @@ public class OdometryTeleOp extends LinearOpMode{
 
     public void odometryDriveToPos (double xPos, double yPos) throws InterruptedException{
         double C = 0;
-        while (Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) > 1) {//while distance to destination > than threshold
+        while (Math.abs(globalPositionUpdate.returnXCoordinate() - xPos) > 1) {//while distance to destination > than threshold
             double angle = globalPositionUpdate.returnXCoordinate() < xPos ? 90 : -90;//basically angle = (boolean)? value-if-true : value-if-false
-            //Maybe check above line~~~~?
             robotStrafe(.4, angle);
 
-            if(Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) > 1){
+            if(globalPositionUpdate.returnXCoordinate() == xPos){
                 break;
             }
         }
@@ -207,11 +204,11 @@ public class OdometryTeleOp extends LinearOpMode{
         Thread.sleep(500);
 
 
-        while (Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) > 1) {
+        while (Math.abs(globalPositionUpdate.returnYCoordinate() - yPos) > 1) {
             double power = globalPositionUpdate.returnYCoordinate() < yPos ? -.4 : .4;
             robotStrafe(power, 0);
 
-            if(Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) > 1){
+            if(globalPositionUpdate.returnYCoordinate() == yPos){
                 break;
             }
         }
