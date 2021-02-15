@@ -175,6 +175,14 @@ public class OdoBase extends LinearOpMode {
         if (strategy == MoveStrategy.StraightRelative){
             profile = BotMoveProfile.buildMoveProfile(bot, target.x, instruction.getTopSpeed(), 0, 0, false, instruction.getRobotDirection(), null, desiredHead, desiredHead, locator );
         }
+        else if (strategy == MoveStrategy.StrafeRelative){
+            double distance = instruction.getTargetX();
+            double angleChange = 90;
+            if (instruction.getRobotDirection() == RobotDirection.Right){
+                angleChange = -90;
+            }
+            profile = BotMoveProfile.buildStrafeProfile(bot.getCalibConfig(), angleChange, instruction.getTopSpeed(), Math.abs(distance), instruction.getRobotDirection(), null, desiredHead, desiredHead, locator, null);
+        }
         else{
             profile = BotMoveProfile.bestRoute(bot, (int)locator.getXInches(), (int)locator.getYInches(), target,
                     instruction.getRobotDirection(), instruction.getTopSpeed(), strategy, desiredHead, locator);

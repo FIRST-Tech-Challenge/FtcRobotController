@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.bots;
 
 import android.graphics.Point;
+import android.util.Log;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -52,6 +53,7 @@ public class BotMoveProfile {
 
     public static double MOTOR_WHEEL_OFFSET = 1.25;
     public static double ERROR_MARGIN_INCHES = 2;
+    public static final String TAG = "BotMoveProfile";
 
     public BotMoveProfile(){
 
@@ -207,6 +209,17 @@ public class BotMoveProfile {
             return null;
         }
 
+        //if AutoLine, set the ideal destination
+        if (preferredStrategy == MoveStrategy.AutoLine){
+            if (target.x == 0){
+                target.x = (int)currentX;
+            }
+
+            if (target.y == 0){
+                target.y = (int)currentY;
+            }
+        }
+
         double currentHead = locator.getAdjustedCurrentHeading();
 
         if (direction == RobotDirection.Backward) {
@@ -283,6 +296,42 @@ public class BotMoveProfile {
 
         if (direction == RobotDirection.Optimal){
             direction = RobotDirection.Forward;
+        }
+
+        if (preferredStrategy == MoveStrategy.AutoLine){
+            double sign = Math.signum(realAngleChange);
+            double diagDistance = distance / Math.cos(Math.toRadians(Math.abs(45-angleChange)));
+            MoveStrategy toLineStrategy = MoveStrategy.Diag;
+            Log.d(TAG, String.format("AutoLine angleChange = %.2f", angleChange));
+            Log.d(TAG, String.format("AutoLine diagDistance = %.2f", diagDistance));
+            if (angleChange > 45){
+                distance = distance / Math.cos(Math.toRadians(Math.abs(90 - angleChange)));
+                Log.d(TAG, String.format("AutoLine strafeDistance = %.2f", distance));
+                if (distance <= diagDistance){
+                    toLineStrategy = MoveStrategy.Strafe;
+                }
+            }
+            else{
+                distance = distance / Math.cos(Math.toRadians(angleChange));
+                Log.d(TAG, String.format("AutoLine straightDistance = %.2f", distance));
+                if (distance <= diagDistance){
+                    toLineStrategy = MoveStrategy.Straight;
+                }
+            }
+            if (toLineStrategy == MoveStrategy.Strafe){
+                //strafe
+                realAngleChange = 90 * sign;
+                return buildStrafeProfile(bot.getCalibConfig(), realAngleChange, topSpeed, distance, direction, target, currentHead, targetVector, locator, null);
+            }
+            else if (toLineStrategy == MoveStrategy.Straight){
+                //straight
+                return buildMoveProfile(bot, distance, topSpeed, 0, 0, false, direction, target, currentHead, currentHead, locator);
+            }
+            else{
+                //diag
+                realAngleChange = 45 * sign;
+                return  buildDiagRawProfile(bot.getCalibConfig(), realAngleChange, topSpeed, diagDistance, direction,null);
+            }
         }
 
         if(preferredStrategy == MoveStrategy.SpinNCurve ){
@@ -539,9 +588,14 @@ public class BotMoveProfile {
         return profile;
     }
 
-    private static BotMoveProfile buildStrafeProfile(BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, RobotDirection direction, Point target, double currentHead, double targetVector, RobotCoordinatePosition locator, MoveStrategy next){
-        BotMoveProfile profile = new BotMoveProfile();
+    public static BotMoveProfile buildStrafeProfile(BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, RobotDirection direction, Point target, double currentHead, double targetVector, RobotCoordinatePosition locator, MoveStrategy next){
         double strafeDistance = distance * Math.sin(Math.toRadians(Math.abs(angleChange)));
+
+        return buildStrafeRawProfile(botConfig, angleChange, topSpeed, strafeDistance, direction, target, currentHead, targetVector, locator, next);
+    }
+
+    private static BotMoveProfile buildStrafeRawProfile(BotCalibConfig botConfig, double angleChange, double topSpeed, double strafeDistance, RobotDirection direction, Point target, double currentHead, double targetVector, RobotCoordinatePosition locator, MoveStrategy next){
+        BotMoveProfile profile = new BotMoveProfile();
 
         if (direction == RobotDirection.Backward){
             angleChange = -angleChange;
@@ -575,9 +629,14 @@ public class BotMoveProfile {
     }
 
     private static BotMoveProfile buildDiagProfile(BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, RobotDirection direction, MoveStrategy next){
-        BotMoveProfile profile = new BotMoveProfile();
         double strafeDistance = distance * Math.sin(Math.toRadians(Math.abs(angleChange)));
         double diagDistance = strafeDistance/Math.cos(Math.toRadians(45));
+
+       return buildDiagRawProfile(botConfig, angleChange, topSpeed, diagDistance, direction, next);
+    }
+
+    private static BotMoveProfile buildDiagRawProfile(BotCalibConfig botConfig, double angleChange, double topSpeed, double distance, RobotDirection direction, MoveStrategy next){
+        BotMoveProfile profile = new BotMoveProfile();
 
         boolean left = angleChange > 0;
         if (left){
@@ -586,8 +645,8 @@ public class BotMoveProfile {
         else{
             profile.setMotorReduction(botConfig.getDiagMRRight());
         }
-        profile.setDistance(diagDistance);
-        profile.setLongTarget(Math.abs(diagDistance * YellowBot.COUNTS_PER_INCH_REV));
+        profile.setDistance(distance);
+        profile.setLongTarget(Math.abs(distance * YellowBot.COUNTS_PER_INCH_REV));
         profile.setAngleChange(angleChange);
         profile.setStrategy(MoveStrategy.Diag);
         profile.setTopSpeed(topSpeed);
