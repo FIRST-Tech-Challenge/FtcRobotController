@@ -43,9 +43,6 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
     // This sets the waypoints for randomization specific after match start.
     public abstract void setRandomizationPosition(int position);
 
-    public void shootHighGoal(){
-    }
-
     public void dropWobbleTargetZone() {
         driveToWayPoint(targetZone1, false);
         robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
@@ -56,17 +53,6 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
         while(opModeIsActive() && robot.grabState != IDLE) {
             updatePosition();
         }
-    }
-    public void dropWobbleTargetZoneA() {
-        dropWobbleTargetZone();
-    }
-
-    public void dropWobbleTargetZoneB() {
-        dropWobbleTargetZone();
-    }
-
-    public void dropWobbleTargetZoneC() {
-        dropWobbleTargetZone();
     }
 
     @Override
@@ -177,80 +163,6 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
 
         if (tfod != null) {
             tfod.shutdown();
-        }
-    }
-
-    /**
-     * @param destinationAngle - The target angle to reach, between 0.0 and 360.0
-     * @param gyroReading      - The current angle of the robot
-     * @return The minumum angle to travel to get to the destination angle
-     */
-    private double deltaAngle(double destinationAngle, double gyroReading) {
-        double result = 0.0;
-        double leftResult = 0.0;
-        double rightResult = 0.0;
-
-        if (gyroReading > destinationAngle) {
-            leftResult = gyroReading - destinationAngle;
-            rightResult = 360.0 - gyroReading + destinationAngle;
-        } else {
-            leftResult = gyroReading + 360.0 - destinationAngle;
-            rightResult = destinationAngle - gyroReading;
-        }
-
-        if (leftResult < rightResult) {
-            result = -leftResult;
-        } else {
-            result = rightResult;
-        }
-
-        return result;
-    }
-
-    /**
-     * @param speed        - The driving power
-     * @param rotateSpeed  - The rotational speed to correct heading errors
-     * @param driveAngle   - The angle of movement to drive the robot
-     * @param headingAngle - The heading angle to hold while driving
-     */
-    public void driveAtHeading(double speed, double rotateSpeed, double driveAngle, double headingAngle) {
-        double xPower = 0.0;
-        double yPower = 0.0;
-        double deltaAngle = 0.0;
-        final double SAME_ANGLE = 1;
-        double gyroReading = robot.readIMU();
-        deltaAngle = deltaAngle(headingAngle, gyroReading);
-
-        if (Math.abs(deltaAngle) > SAME_ANGLE) {
-            if (deltaAngle > 0.0) {
-                rotateSpeed = -rotateSpeed;
-            }
-        } else {
-            rotateSpeed = 0.0;
-        }
-
-        xPower = speed * Math.cos(Math.toRadians(driveAngle));
-        yPower = speed * Math.sin(Math.toRadians(driveAngle));
-        robot.drive(xPower, yPower, rotateSpeed, 0.0, false);
-    }
-
-    /**
-     * @param speed        - The driving power
-     * @param rotateSpeed  - The rotational speed to correct heading errors
-     * @param driveAngle   - The angle of movement to drive the robot
-     * @param headingAngle - The heading angle to hold while driving
-     */
-    public void driveAtHeadingForTime(double speed, double rotateSpeed, double driveAngle, double headingAngle, int driveTime, boolean stopWhenDone, boolean progressActivities) {
-        double endTime = timer.milliseconds() + driveTime;
-        while (!isStopRequested() && (timer.milliseconds() <= endTime) && (!isStopRequested())) {
-            robot.resetReads();
-            driveAtHeading(speed, rotateSpeed, driveAngle, headingAngle);
-            if(progressActivities) {
-                performRobotActions();
-            }
-        }
-        if(stopWhenDone) {
-            robot.setAllDriveZero();
         }
     }
 }
