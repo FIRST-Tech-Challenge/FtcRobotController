@@ -187,13 +187,13 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
 
             if(gamepad1.left_bumper){
-                odometryNormalizeAngle();
+                odometryDriveToPosAngular(0,20,0);
             }
             if(gamepad1.b){
-                odometryNormalizeAngleNew();
+                odometryDriveToPosAngular(20,0,0);
             }
             if (gamepad1.y){
-                odometryDriveToPosAngular(10,10,0);
+                odometryDriveToPosAngular(20,20,0);
             }
 
             //everything driving
@@ -290,7 +290,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         //odometryNormalizeAngleNew();
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate());//20
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate());//0
-        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4)+Math.toRadians(globalPositionUpdate.returnOrientation());
+        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
         double distance = Math.hypot(distanceX,distanceY);//20
 
         double powerOne = 0.4 * Math.sin(angle);//all be 0.4
