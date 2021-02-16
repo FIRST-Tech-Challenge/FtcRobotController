@@ -55,7 +55,7 @@ import lombok.NonNull;
 
 import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 
-@Autonomous(name="00 Skystone Auto")
+@Autonomous(name="Skystone Auto", group = "Old")
 @SuppressWarnings("unused")
 public class SkystoneAuto extends OpMode {
     private Ticker ticker;

@@ -36,7 +36,7 @@ import java.util.List;
 
 
 @TeleOp(name="DogeCv", group="DogeCV")
-//@Disabled
+@Disabled
 public class DogeCvTest extends OpMode
 {
     // Detector object

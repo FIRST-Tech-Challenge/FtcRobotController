@@ -40,7 +40,7 @@ import java.util.Set;
 
 import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 
-@TeleOp(name="Skystone Teleop")
+@TeleOp(name="Skystone Teleop", group="Old")
 @SuppressWarnings("unused")
 public class SkystoneTeleop extends OpMode {
     private OpenLoopMecanumKinematics kinematics;

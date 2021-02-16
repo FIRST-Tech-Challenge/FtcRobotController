@@ -31,6 +31,7 @@ import com.hfrobots.tnt.season1920.DeliveryMechanism;
 import com.hfrobots.tnt.season1920.FoundationGripMechanism;
 import com.hfrobots.tnt.season1920.ParkingSticks;
 import com.hfrobots.tnt.season1920.SkystoneGrabber;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -40,6 +41,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  */
 @Config
 @TeleOp(name="Mech Selftest", group = "util")
+@Disabled
 @SuppressWarnings("unused")
 public class SkystoneMechanismsSelfTest extends LinearOpMode {
 

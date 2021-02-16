@@ -24,6 +24,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.hfrobots.tnt.corelib.drive.mecanum.RoadRunnerMecanumDriveREV;
 import com.hfrobots.tnt.corelib.util.RealSimplerHardwareMap;
 import com.hfrobots.tnt.season1920.SkystoneDriveConstants;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -36,6 +37,7 @@ import java.util.List;
  */
 @Config
 @TeleOp(name="Drive Selftest", group = "util")
+@Disabled
 public class SkystoneDrivebaseSelfTest extends LinearOpMode {
 
     @Override

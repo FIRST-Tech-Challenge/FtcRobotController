@@ -24,7 +24,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.openftc.easyopencv.OpenCvPipeline;
 
-@TeleOp(name = "UG-Vision")
+@TeleOp(name = "UG-Vision", group="Utilities")
 public class VisionTest extends OpenCvTestTeleop {
     @Override
     protected OpenCvPipeline getPipeline() {
