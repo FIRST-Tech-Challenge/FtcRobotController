@@ -395,13 +395,13 @@ public class MainTeleopOdometry extends LinearOpMode{
     public void odometryNormalizeAngleNew() {
         if (globalPositionUpdate.returnOrientation() > 0){
             robot.turnCounterClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() > 0){
+            while (globalPositionUpdate.returnOrientation() > 5){
                 telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
                 telemetry.update();
             }
         }else if (globalPositionUpdate.returnOrientation() < 0){
             robot.turnClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() < 0){
+            while (globalPositionUpdate.returnOrientation() < -5){
                 telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
                 telemetry.update();
             }
