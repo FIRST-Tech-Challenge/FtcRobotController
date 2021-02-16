@@ -23,6 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.teamcode.robots.UGBot.PoseUG;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.RC;
@@ -184,6 +185,15 @@ public class PoseArgos
     private double vuDepth = 0; //calculated distance from the vuforia target on the z axis (mm)
     private double vuXOffset = 0; //calculated distance from the vuforia target on the x axis (mm)
 
+    public void updateSensors(boolean active) {
+        if (active)
+            updateSensors();
+    }
+
+    public void stopAll() {
+    motorFront.setPower(0);
+    motorBack.setPower(0);}
+
     public enum MoveMode{
         forward,
         backward,
@@ -195,7 +205,11 @@ public class PoseArgos
 
     protected MoveMode moveMode;
 
+    public enum RobotType {
+        Argos, Beachcomber;
+    }
 
+    public PoseUG.RobotType currentBot;
 
     Orientation imuAngles; //pitch, roll and yaw from the IMU
     protected boolean targetAngleInitialized = false;
@@ -267,9 +281,8 @@ public class PoseArgos
      * Initializes motors, servos, lights and sensors from a given hardware map
      *
      * @param ahwMap   Given hardware map
-     * @param isBlue   Tells the robot which alliance to initialize for
      */
-    public void init(HardwareMap ahwMap, boolean isBlue) {
+    public void init(HardwareMap ahwMap) {
         // save reference to HW Map
         hwMap = ahwMap;
                /* eg: Initialize the hardware variables. Note that the strings used here as parameters
@@ -986,7 +999,8 @@ public void BalanceArgos(double Kp, double Ki, double Kd, double pwr, double cur
         maxSpeed = maxSpeed/10; //debug
         if(beacon.getPose() != null) {
 
-            vuTrans = beacon.getRawPose().getTranslation();
+            //vuTrans = beacon.getRawPose().getTranslation();
+            vuTrans = beacon.getFtcCameraFromTarget().getTranslation();
             vuPanAngle = Math.toDegrees(Math.atan2(vuTrans.get(0), vuTrans.get(2)));
             vuTiltAngle = Math.toDegrees(Math.atan2(vuTrans.get(1), vuTrans.get(2)));
             vuDepth = vuTrans.get(2);

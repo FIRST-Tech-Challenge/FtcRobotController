@@ -37,8 +37,10 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -54,6 +56,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.RC;
+import org.firstinspires.ftc.teamcode.robots.UGBot.Autonomous;
+import org.firstinspires.ftc.teamcode.robots.UGBot.LEDSystem;
+import org.firstinspires.ftc.teamcode.robots.UGBot.PoseUG;
+import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
+import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 import org.firstinspires.ftc.teamcode.util.VisionUtils;
 import org.firstinspires.ftc.teamcode.vision.colorblob.ColorBlobDetector;
 
@@ -63,26 +70,14 @@ import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.Vuforia;
 import com.vuforia.HINT;
 
-import static org.firstinspires.ftc.teamcode.util.VisionUtils.getJewelConfig;
-import static org.firstinspires.ftc.teamcode.util.VisionUtils.getImageFromFrame;
+//import static org.firstinspires.ftc.teamcode.util.VisionUtils.getJewelConfig;
+//import static org.firstinspires.ftc.teamcode.util.VisionUtils.getImageFromFrame;
 
-/**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the tertiaryAuto or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a PushBot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
 
-@TeleOp(name="Argos", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="Argos", group="Research")  // @Autonomous(...) is the other common choice
 //  @Autonomous
 
-public class Argos extends LinearOpMode {
+public class Argos extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -157,111 +152,157 @@ public class Argos extends LinearOpMode {
     VuforiaTrackable redFarTarget;
     VuforiaTrackable blueFarTarget;
     VuforiaLocalizer locale;
+    private CsvLogKeeper logger;
+    private PoseArgos.RobotType currentBot = PoseArgos.RobotType.Argos;
+    private FtcDashboard dashboard;
 
+    // loop time profile
+    long lastLoopClockTime;
+    double loopAvg = 0;
+    private static final double loopWeight = .1;
 
-
+    /*
+     * Code to run ONCE when the driver hits INIT
+     */
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void init() {
 
-        robot.init(this.hardwareMap, isBlue);
-
-        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Status", "Initializing " + currentBot + "...");
+        telemetry.addData("Status", "Hold right_trigger to enable debug mode");
         telemetry.update();
 
-        configureDashboard();
+        robot = new PoseArgos();
+        robot.init(this.hardwareMap);
 
-        VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
-        params.vuforiaLicenseKey = RC.VUFORIA_LICENSE_KEY;
-        params.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+        //auto = new Autonomous(robot, dummyT, gamepad1);
 
-        locale = ClassFactory.createVuforiaLocalizer(params);
-        locale.setFrameQueueCapacity(1);
-        Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
+        logger = new CsvLogKeeper("test",3,"tps, armTicks, targetDistance");
 
-        Vuforia.setHint (HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 1);
+/*
+        debugTelemetry = gamepad1.right_trigger > .3;
+        debugTelemetry = true;
+        if (debugTelemetry)
+            configureDashboardDebug();
+        else
+            configureDashboardMatch();
 
-        beaconTargets = locale.loadTrackablesFromAsset("FTC_2016-17");
-        beaconTargets.get(0).setName("Gears");
-        redNearTarget = beaconTargets.get(3);
-        redNearTarget.setName("redNear");  // Gears
+        */
+        telemetry.update();
 
+        // waitForStart();
+        // this is commented out but left here to document that we are still doing the
+        // functions that waitForStart() normally does, but needed to customize it.
 
-        beaconTargets.activate();
-
-        mDetector = new ColorBlobDetector();
-
-        // Acquire a reference to the system Location Manager
-        LocationManager locationManager = (LocationManager) RC.a().getSystemService(Context.LOCATION_SERVICE);
-
-        //currently set to beach tent outside of hotel on South Padre
-        home = new Location("GPS_PROVIDER");
-        home.setLatitude(26.13813517);
-        home.setLongitude(-97.16818156);
-
-
-//        waitForStart(); //this is commented out but left here to document that we are still doing the functions that waitForStart() normally does, but needed to customize it.
-
-        while(!isStarted()){    // Wait for the game to start (driver presses PLAY)
-            synchronized (this) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    return;
-                }
-            }
-            //beacons.activate();
+        dashboard = FtcDashboard.getInstance();
+        robot.resetMotors(true);
+        //auto.visionProviderFinalized = false;
+    }
+    /*
+     * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
+     */
+    @Override
+    public void init_loop() {
 
 
-            stateSwitch();
+        stateSwitch();
 
+        if (active) {
 
-            if(gamepad1.y){
-                flingNumber = 3;
-            }
-            if(toggleAllowed(gamepad1.x,x)) {
+            // we can do very basic driving to get to calibration position
+            // turret and drive controls on gamepad1 only since we don't always have 2 pads
+            // for auton testing
 
-                    isBlue = !isBlue;
+            // this test suppresses pregame driving while a calibration articulation is
+            // active
+            //if (robot.articulation == PoseUG.Articulation.manual)
+            //    joystickDrivePregameMode();
 
-            }
-            if(toggleAllowed(gamepad1.dpad_down,dpad_down)){
-
-                autoDelay--;
-                if(autoDelay < 0) autoDelay = 15;
-
-            }
-            if(toggleAllowed(gamepad1.dpad_up, dpad_up)){
-
-                autoDelay++;
-                if(autoDelay>15) autoDelay = 0;
-
-            }
-
-            telemetry.addData("Status", "Initialized");
-            telemetry.addData("Status", "Number of throws: " + Integer.toString(flingNumber));
-            telemetry.addData("Status", "Side: " + getAlliance());
-            telemetry.update();
-
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
 
+        else { // if inactive we are in configuration mode
+/*
+            if(auto.visionProviderFinalized)
+                auto.sample();
+
+            if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_left, dpad_left, 1)) {
+                auto.visionProviderState = (auto.visionProviderState + 1) % auto.visionProviders.length; // switch
+                // vision
+                // provider
+            }
+            if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_up, dpad_up, 1)) {
+                auto.initVisionProvider(); // this is blocking
+            } else if (auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_up, dpad_up, 1)) {
+                auto.deinitVisionProvider(); // also blocking, but should be very quick
+            }
+            if (!auto.visionProviderFinalized && toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
+                auto.enableTelemetry = !auto.enableTelemetry; // enable/disable FtcDashboard telemetry
+                // CenterOfGravityCalculator.drawRobotDiagram =
+                // !CenterOfGravityCalculator.drawRobotDiagram;
+            }
+            if (auto.visionProviderFinalized && gamepad1.left_trigger > 0.3) {
+                StackHeight sp = auto.vp.detect();
+                if (sp != StackHeight.NONE_FOUND)
+                    initStackHeightTest = sp;
+                telemetry.addData("Vision", "Prep detection: %s%s", initStackHeightTest,
+                        sp == StackHeight.NONE_FOUND ? " (NONE_FOUND)" : "");
+            }
+
+            if (soundState == 0 && toggleAllowed(gamepad1.right_stick_button, right_stick_button, 1)) {
+                initialization_initSound();
+            }
+
+            telemetry.addData("Vision", "Backend: %s (%s)",
+                    auto.visionProviders[auto.visionProviderState].getSimpleName(),
+                    auto.visionProviderFinalized ? "finalized"
+                            : System.currentTimeMillis() / 500 % 2 == 0 ? "**NOT FINALIZED**" : " NOT FINALIZED ");
+            telemetry.addData("Vision", "FtcDashboard Telemetry: %s",
+                    auto.enableTelemetry ? "Enabled" : "Disabled");
+            telemetry.addData("Vision", "Viewpoint: %s", auto.viewpoint);
+
+            */
+            telemetry.addData("Status", "Initialized");
+
+        }
+        telemetry.update();
+
+        robot.updateSensors(active);
 
 
+    } // end of stuff that happens during Init, but before Start
+
+    //
+    // THIS SECTION EXECUTES ONCE RIGHT AFTER START IS PRESSED
+    //
+    /*
+     * Code to run ONCE when the driver hits PLAY
+     */
+    @Override
+    public void start() {
         runtime.reset();
 
-        if(!runAutonomous){
-            state = 1;
+/*
+        if (auto.vp == null) {
+            auto.initDummyVisionProvider(); // this is blocking
         }
 
+        auto.vp.reset();
+*/
 
+        lastLoopClockTime = System.nanoTime();
+    }
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
-            telemetry.update();
-            stateSwitch();
-            if(active) {
+    //
+    // END OF SECTION THAT EXECUTES ONCE RIGHT AFTER START IS PRESSED
+    //
+    /*
+     * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
+     */
+    @Override
+    public void loop() {
+        stateSwitch();
+        if (active) {
                 switch(state){
-                    case 0: //main tertiaryAuto function that scores 1 or 2 balls and toggles both beacons
+                    case 0:
                         if(toggleAllowed(gamepad1.b, b)){
                             robot.zeroHead();
                         }
@@ -273,7 +314,7 @@ public class Argos extends LinearOpMode {
                         }
                         else {
                             joystickDrive();
-                            robot.vuTargetTracker((VuforiaTrackableDefaultListener)redNearTarget.getListener());
+                            //robot.vuTargetTracker((VuforiaTrackableDefaultListener)redNearTarget.getListener());
                         }
 
                         break;
@@ -288,67 +329,54 @@ public class Argos extends LinearOpMode {
                         robot.PIDTune(robot.balancePID, toggleAllowed(gamepad1.dpad_up,dpad_up), toggleAllowed(gamepad1.dpad_down,dpad_down), toggleAllowed(gamepad1.y,y), toggleAllowed(gamepad1.a,a), toggleAllowed(gamepad1.x,x));
                         break;
                     case 4:
-                        vuTest((VuforiaTrackableDefaultListener)redNearTarget.getListener(),500);
-                        beaconConfig = VisionUtils.NOT_VISIBLE;
-                        beaconConfig = VisionUtils.getJewelConfig(getImageFromFrame(locale.getFrameQueue().take(), PIXEL_FORMAT.RGB565), (VuforiaTrackableDefaultListener)redNearTarget.getListener(), locale.getCameraCalibration());
-                        if (beaconConfig == VisionUtils.BEACON_RED_BLUE) {
-                            Log.i("RED", "BLUE");
-                        } else if (beaconConfig != VisionUtils.NOT_VISIBLE) {
-                            Log.i("BLUE", "RED");
-                        } else {
-                            Log.i("BEAC", "== -1");
-                        }
                         break;
-                    case 5: //provides data for forwards/backwards calibration
-                        joystickDriveStarted = false;
-                        //if(robot.driveForward(false, 1, .5)) active = false;
+                    case 5:
                         break;
-                    case 6: //provides data for left/right calibration
-                        joystickDriveStarted = false;
-                        if(robot.getAverageAbsTicks() < 2000){
-                            robot.driveMixer(0,0);
-                        }
-                        else robot.driveMixer(0,0);
-                        break;
-                    case 7: //demo mode
-                        demo();
-                        break;
-                    case 8: //tertiaryAuto demo mode
-                        //tertiaryAuto(1.0);
-                        //break;
-                        testableHeading = robot.getHeading();
-                        state++;
-                    case 9:
+                case 6:
+                    demo();
+                    break;
+                case 7:
+                    break;
+                case 8:
+                    demo();
+                    break;
+                case 9:
+                    break;
+                case 10:
 
-                        break;
-                }
-                robot.updateSensors();
+                    break;
+                default:
+                    robot.stopAll();
+                    break;
             }
-
-            idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
+            robot.updateSensors(active);
+        } else {
+            //robot.stopAll();
         }
+
+        long loopClockTime = System.nanoTime();
+        long loopTime = loopClockTime - lastLoopClockTime;
+        if (loopAvg == 0)
+            loopAvg = loopTime;
+        else
+            loopAvg = loopWeight * loopTime + (1 - loopWeight) * loopAvg;
+        lastLoopClockTime = loopClockTime;
+
+        telemetry.update();
+
     }
 
-    public void vuTest(VuforiaTrackableDefaultListener beaconTarget, double distance){
-        if (toggleAllowed(gamepad1.x, x)) {
-            vuTestMode++;
-            if (vuTestMode > 1) vuTestMode=0;
-        }
-        switch (vuTestMode) {
-            case 0: //do nothing
-                break;
-            case 1: // drive to center of beacon target
-                vuPwr = robot.driveToBeacon(beaconTarget,isBlue, beaconConfig,500, 0.8, false, false);
-                break;
-
-        }
+    /*
+     * Code to run ONCE after the driver hits STOP
+     */
+    @Override
+    public void stop() {
     }
+
     public void demo(){
         robot.MaintainHeading(gamepad1.x);
 
     }
-
-
 
     public void joystickDrive(){
 
