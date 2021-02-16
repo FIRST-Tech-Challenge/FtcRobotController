@@ -70,6 +70,7 @@ public class Auto extends OpMode {
 
     private StateMachine stateMachine;
     private StarterStackDetectorPipeline starterStackDetectorPipeline;
+    private WobbleGoal wobbleGoal;
 
     // The routes our robot knows how to do
     private enum Routes {
@@ -99,6 +100,8 @@ public class Auto extends OpMode {
 
     private RevBlinkinLedDriver blinkinLed;
 
+    private OperatorControls operatorControls;
+
     @Override
     public void init() {
         ticker = createAndroidTicker();
@@ -113,6 +116,18 @@ public class Auto extends OpMode {
         stateMachine = new StateMachine(telemetry);
 
         setupOpenCvCameraAndPipeline();
+
+        ScoringMechanism scoringMechanism = ScoringMechanism.builder()
+                .hardwareMap(hardwareMap)
+                .telemetry(telemetry)
+                .ticker(Ticker.systemTicker()).build();
+
+        wobbleGoal = WobbleGoal.builder().hardwareMap(hardwareMap)
+                .telemetry(telemetry).ticker(Ticker.systemTicker()).build();
+
+        operatorControls = OperatorControls.builder().operatorGamepad(new NinjaGamePad(gamepad2))
+                .scoringMechanism(scoringMechanism)
+                .wobbleGoal(wobbleGoal).build();
 
         blinkinLed = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         blinkinLed.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY);
@@ -151,6 +166,10 @@ public class Auto extends OpMode {
         if (driversGamepad == null) { // safety, need to double check whether we actually need this
             // not ready yet init() hasn't been called
             return;
+        }
+
+        if (operatorControls != null) {
+            operatorControls.periodicTask();
         }
 
         if (!configLocked) {
@@ -253,7 +272,10 @@ public class Auto extends OpMode {
                 stateMachineSetup = true;
             }
 
+            wobbleGoal.periodicTask();
+
             stateMachine.doOneStateLoop();
+
 
             telemetry.update(); // send all telemetry to the drivers' station
         } catch (Throwable t) {
@@ -360,7 +382,36 @@ public class Auto extends OpMode {
             }
         };
 
-        State wobbleGoalWaitState = newDelayState("Deposit Wobble Goal", 4);
+        State wobbleGoalToPlaceState = new StopwatchTimeoutSafetyState("wobbleMovingToPlace",
+                telemetry, ticker, TimeUnit.SECONDS.toMillis(10)) {
+            @Override
+            public State doStuffAndGetNextState() {
+                Class<? extends State> wobbleStateClass = wobbleGoal.getCurrentState().getClass();
+
+                if (!wobbleStateClass.equals(WobbleGoal.AutoPlaceState.class)) {
+                    wobbleGoal.gotoPlaceState();
+
+                    return this;
+                }
+
+                if (isTimedOut()) {
+                    resetTimer();
+
+                    return nextState;
+                }
+
+                if (!wobbleStateClass.equals(WobbleGoal.PlaceState.class)) {
+                    return nextState;
+                }
+
+                return this;
+            }
+
+            @Override
+            public void liveConfigure(NinjaGamePad gamePad) {
+
+            }
+        };
 
         State toParkedPosition = new TrajectoryFollowerState("Parking",
                 telemetry, driveBase, ticker, TimeUnit.SECONDS.toMillis(20 * 1000)) {
@@ -384,14 +435,7 @@ public class Auto extends OpMode {
             }
         };
 
-        // toParkedPosition
-        // ejectWobbleGoalState
-        // wobbleGoalWaitState
-        // wobbleGoalCoolDownState
-
-        // toTargetZone
-
-        State ejectWobbleGoalState = new State("Eject wobble goal", telemetry) {
+        State dropWobbleGoalState = new State("Drop wobble goal", telemetry) {
 
             @Override
             public State doStuffAndGetNextState() {
@@ -409,9 +453,15 @@ public class Auto extends OpMode {
             }
         };
 
-        State wobbleGoalCoolDownState = new State("Stop the delivey Mech",telemetry){
+        State wobbleGoalCoolDownState = new State("Close servo, back to stow", telemetry){
             @Override
             public State doStuffAndGetNextState() {
+                Class<? extends State> wobbleStateClass = wobbleGoal.getCurrentState().getClass();
+
+                if (!wobbleStateClass.equals(WobbleGoal.AutoStowState.class)) {
+                    wobbleGoal.gotoStowState();
+                }
+
                 return nextState;
             }
 
@@ -428,8 +478,8 @@ public class Auto extends OpMode {
 
         stateMachine.addSequential(detectorState);
         stateMachine.addSequential(toTargetZone);
-        stateMachine.addSequential(ejectWobbleGoalState);
-        stateMachine.addSequential(wobbleGoalWaitState);
+        stateMachine.addSequential(wobbleGoalToPlaceState);
+        stateMachine.addSequential(dropWobbleGoalState);
         stateMachine.addSequential(wobbleGoalCoolDownState);
         stateMachine.addSequential(toParkedPosition);
         stateMachine.addSequential(newDoneState("Done!"));

@@ -26,8 +26,10 @@ import com.ftc9929.corelib.control.OnOffButton;
 import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.control.ToggledButton;
 import com.ftc9929.corelib.state.State;
+import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Ticker;
 import com.google.common.collect.Lists;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -37,6 +39,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import lombok.Builder;
 import lombok.NonNull;
@@ -77,8 +80,12 @@ public class WobbleGoal {
 
     private List<ReadyCheckable> readyCheckables = Lists.newArrayList();
 
+    private AutoStowState autoStowState;
+
+    private AutoPlaceState autoPlaceState;
+
     @Builder
-    private WobbleGoal(HardwareMap hardwareMap, Telemetry telemetry) {
+    private WobbleGoal(HardwareMap hardwareMap, Telemetry telemetry, Ticker ticker) {
         shoulderMotor = hardwareMap.get(DcMotorEx.class, "shoulderMotor");
 
         gripperServo = hardwareMap.get(Servo.class, "gripperServo");
@@ -99,6 +106,12 @@ public class WobbleGoal {
         motionState.setPlaceState(placeState);
         motionState.setStowState(stowState);
 
+        autoPlaceState = new AutoPlaceState(telemetry, ticker);
+        autoPlaceState.setNextState(placeState);
+
+        autoStowState = new AutoStowState(telemetry,ticker);
+        autoStowState.setNextState(stowState);
+
         // because of circular dependencies during construction, we need to post-check
         // that all of the transitions have been setup correctly
 
@@ -108,6 +121,14 @@ public class WobbleGoal {
 
         // FIXME: Why does this work? (or more - how do we make sure this works, to start this way?)
         currentState = motionState;
+    }
+
+    public void gotoPlaceState() {
+        currentState = autoPlaceState;
+    }
+
+    public void gotoStowState() {
+        currentState = autoStowState;
     }
 
     public void periodicTask() {
@@ -125,6 +146,16 @@ public class WobbleGoal {
         } else {
             Log.e(LOG_TAG, "No state machine setup!");
         }
+    }
+
+    // FIXME:
+    public void openGripper() {
+
+    }
+
+    // FIXME:
+    public void closeGripper() {
+
     }
 
     @VisibleForTesting
@@ -196,6 +227,63 @@ public class WobbleGoal {
             Preconditions.checkNotNull(motionState);
         }
     }
+
+    abstract class AutoMotionState extends StopwatchTimeoutSafetyState implements ReadyCheckable {
+        final DigitalChannel limitSwitch;
+
+        final float motorPower;
+
+        protected AutoMotionState(final String name, final Telemetry telemetry, final Ticker ticker,
+                                  final DigitalChannel limitSwitch, final float motorPower) {
+            super(name, telemetry, ticker, TimeUnit.SECONDS.toMillis(8));
+            this.limitSwitch = limitSwitch;
+            this.motorPower = motorPower;
+        }
+
+        @Override
+        public State doStuffAndGetNextState() {
+            if (isTimedOut() || limitSwitchOn(limitSwitch)) {
+                if (isTimedOut())  {
+                    Log.w(LOG_TAG, name + " timed out waiting for limit switch");
+                }
+
+                shoulderMotor.setPower(0);
+
+                resetTimer();
+
+                return nextState;
+            }
+
+            setShoulderMotorPower(motorPower);
+
+            return this;
+        }
+
+        @Override
+        public void checkReady() {
+            Preconditions.checkNotNull(nextState);
+        }
+
+        @Override
+        public void liveConfigure(NinjaGamePad gamePad) {
+
+        }
+    }
+
+    class AutoPlaceState extends AutoMotionState{
+        protected AutoPlaceState(Telemetry telemetry, Ticker ticker) {
+            super("AutoPlaceState", telemetry, ticker,
+            placeLimitSwitch, TOWARDS_PLACE_POWER_MAGNITUDE);
+        }
+    }
+
+    class AutoStowState extends AutoMotionState{
+        protected AutoStowState(Telemetry telemetry, Ticker ticker) {
+            super("AutoStowState", telemetry, ticker,
+                    stowLimitSwitch, TOWARDS_STOW_POWER_MAGNITUDE);
+        }
+    }
+
 
     // Handles the motion when not placing, and not stowed. Needs to detect when
     // when the arm reaches either of those positions and do change to the

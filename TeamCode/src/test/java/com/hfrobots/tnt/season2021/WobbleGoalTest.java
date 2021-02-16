@@ -62,7 +62,8 @@ public class WobbleGoalTest {
     @Before
     public void setup() {
         wobbleGoal = WobbleGoal.builder()
-                .hardwareMap(UltimateGoalTestConstants.HARDWARE_MAP).telemetry(fakeTelemetry).build();
+                .hardwareMap(UltimateGoalTestConstants.HARDWARE_MAP)
+                .telemetry(fakeTelemetry).ticker(fakeTicker).build();
 
         gripperToggle = new ToggledButton(gripperButton);
         wobbleGoal.setGripperButton(gripperToggle);
