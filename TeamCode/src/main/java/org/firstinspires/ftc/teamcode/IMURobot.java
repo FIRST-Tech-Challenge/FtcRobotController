@@ -425,6 +425,41 @@ public class IMURobot {
         resetAngle();
     }
 
+    public void gyroOdoTurn(int degrees, double power, double currentAngle) throws InterruptedException{
+        //restart angle tracking
+        resetAngle();
+
+        if(degrees < 0){
+            turnClockwise(power);
+        }else if(degrees > 0){
+            turnCounterClockwise(power);
+        }else{
+            return;
+        }
+
+        //Rotate until current angle is equal to the target angle
+        if (degrees < 0){
+            while (opMode.opModeIsActive() && getAngle() > degrees){
+                composeAngleTelemetry();
+                //display the target angle
+                telemetry.addData("Target angle", degrees);
+                telemetry.update();
+            }
+        }else{
+            while (opMode.opModeIsActive() && getAngle() < degrees) {
+                composeAngleTelemetry();
+                //display the target angle
+                telemetry.addData("Target angle", degrees);
+                telemetry.update();
+            }
+        }
+
+        completeStop();
+        //Wait .5 seconds to ensure robot is stopped before continuing
+        Thread.sleep(500);
+        resetAngle();
+    }
+
     /**
      * Check if robot is moving in a straight line using gyro sensor.
      * If not, get a power correction using a preset gain.

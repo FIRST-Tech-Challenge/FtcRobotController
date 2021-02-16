@@ -344,7 +344,10 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryNormalizeAngle() {
-        robot.turnCounterClockwise(0.4);
+        motorFrontLeft.setPower(0.4);
+        motorBackLeft.setPower(0.4);
+        motorFrontRight.setPower(-0.4);
+        motorBackRight.setPower(-0.4);
         while (globalPositionUpdate.returnOrientation() < 5 && globalPositionUpdate.returnOrientation() > 0){
             if (gamepad1.y){
                 break;
