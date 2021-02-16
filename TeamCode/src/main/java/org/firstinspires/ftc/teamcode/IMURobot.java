@@ -427,7 +427,6 @@ public class IMURobot {
 
     public void gyroOdoTurn(int degrees, double power, double currentAngle) throws InterruptedException{
         //restart angle tracking
-        resetAngle();
 
         if(degrees < 0){
             turnClockwise(power);
