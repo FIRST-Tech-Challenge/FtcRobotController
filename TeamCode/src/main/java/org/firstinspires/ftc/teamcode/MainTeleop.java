@@ -165,13 +165,22 @@ public class MainTeleop extends LinearOpMode{
             //Sending data on power of outtake, outtake motor RPM, and tangential velocity of outtake wheel to telemetry
 
             if(gamepad2.right_bumper){
-                outtakeMod = 0.32; //power shots
+                outtakeMod= .57;
+                //outtakeMod = 0.32; //power shots
             }else{
-                outtakeMod = 0.3225;
+                outtakeMod=.65;
+               // outtakeMod = 0.3225;
             }
-            double outtakePower = (gamepad2.right_trigger * outtakeMod);
-            outtakeLeft.setPower(outtakePower);
-            outtakeRight.setPower(outtakePower);
+            double outtakePower = outtakeMod;
+
+            if (gamepad2.right_trigger > .3) {
+                outtakeLeft.setPower(outtakeMod);
+                outtakeRight.setPower(0);
+            }
+            //double outtakePower = (gamepad2.right_trigger * outtakeMod);
+
+            outtakeLeft.setPower(0);
+         //   outtakeRight.setPower(outtakePower);
 
 
             double outtakeRPM = outtakePower * OUTTAKE_MOTOR_RPM * OUTTAKE_GEAR_RATIO;

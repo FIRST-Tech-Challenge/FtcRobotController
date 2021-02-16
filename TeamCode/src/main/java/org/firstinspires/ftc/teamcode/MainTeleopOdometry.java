@@ -345,12 +345,12 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void odometryNormalizeAngle() {
         robot.turnClockwise(0.4);
-        while (globalPositionUpdate.returnOrientation() < 350 || globalPositionUpdate.returnOrientation() > 10){
+        while (globalPositionUpdate.returnOrientation() < 350 && globalPositionUpdate.returnOrientation() > 10){
             if (gamepad1.y){
                 break;
             }
             telemetry.addData("Degrees: ", globalPositionUpdate.returnOrientation());
-            telemetry.addData("IMU: ", robot.getAngle());
+            //telemetry.addData("IMU: ", robot.getAngle());
             telemetry.update();
         }
             robot.completeStop();
