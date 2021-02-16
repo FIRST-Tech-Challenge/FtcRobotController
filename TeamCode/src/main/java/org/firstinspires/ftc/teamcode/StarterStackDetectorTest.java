@@ -304,54 +304,6 @@ public class StarterStackDetectorTest extends LinearOpMode
         robot.completeStop();
     }
 
-    public void odometryDriveToPosStraight (double xPos, double yPos) {
-        double C = 0;
-
-        if ((globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) < xPos){
-            robotStrafe(1, -90);
-            while (globalPositionUpdate.returnXCoordinate() > xPos) {
-                //Do nothing
-            }
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 1;
-        }else if ((globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) > xPos){
-            robotStrafe(1, 90);
-            while (globalPositionUpdate.returnXCoordinate() < xPos) {
-                //Do nothing
-            }
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 1;
-        }else{
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 1;
-        }
-
-        if ((globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) < yPos){
-            robotStrafe(-1, 0);
-            while (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
-                //Do nothing
-            }
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 2;
-        }else if ((globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) > yPos){
-            robotStrafe(1, 0);
-            while (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
-                //Do nothing
-            }
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 2;
-        }else{
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 2;
-        }
-    }
-
     public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
         double C = 0;
         double angle = 0;

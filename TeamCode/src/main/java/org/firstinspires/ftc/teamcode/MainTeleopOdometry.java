@@ -64,11 +64,11 @@ public class MainTeleopOdometry extends LinearOpMode{
         flipper = hardwareMap.servo.get("flipper");
 
         //launcher  //Feb 7 - Jeff commmented out these motor definitions
-        //outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
-        //outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
+        outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
+        outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
         //Jeff added
-        outtakeLeft=hardwareMap.get(DcMotor.class, "outtakeLeft");
-        outtakeRight=hardwareMap.get(DcMotor.class, "outtakeRight");
+        //outtakeLeft=hardwareMap.get(DcMotor.class, "outtakeLeft");
+        //outtakeRight=hardwareMap.get(DcMotor.class, "outtakeRight");
         outtakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         outtakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         outtakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -181,13 +181,13 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
 
             if(gamepad1.left_bumper){
-                odometryDriveToPos(0,20);
+                odometryNormalizeAngle();
             }
             if(gamepad1.b){
-                odometryDriveToPos(20,0);
+                odometryNormalizeAngleNew();
             }
             if (gamepad1.y){
-                odometryDriveToPosAngular(0,20,0);
+                odometryDriveToPosAngular(10,10,0);
             }
 
             //everything driving
@@ -242,6 +242,29 @@ public class MainTeleopOdometry extends LinearOpMode{
         //}
     }
 
+    public double getOdometryCorrection(double currentAngle){
+        double gain = 0.1; //0.01
+        //Get the current angle of the robot
+        double angle = globalPositionUpdate.returnOrientation();
+        double correction;
+
+        //Use the angle to calculate the correction
+        if (currentAngle == angle){
+            //If angle = 0, robot is moving straight; no correction needed
+            correction = 0;
+        }else{
+            //If angle != 0, robot is not moving straight
+            //Correction is negative angle (to move the robot in the opposite direction)
+            //multiplied by gain; the gain is the sensitivity to angle
+            //We have determined that .1 is a good gain; higher gains result in overcorrection
+            //Lower gains are ineffective
+            angle = angle - currentAngle;
+            correction = -angle*gain;
+        }
+
+        return correction;
+    }
+
     public void odometrySetAngle(double angle){
         if (globalPositionUpdate.returnOrientation() < angle){
             robot.turnCounterClockwise(0.5);
@@ -258,7 +281,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
-        odometryNormalizeAngle();
+        odometryNormalizeAngleNew();
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate());//20
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate());//0
         double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4)+Math.toRadians(globalPositionUpdate.returnOrientation());
@@ -275,6 +298,35 @@ public class MainTeleopOdometry extends LinearOpMode{
             motorFrontRight.setPower(powerTwo);
             motorBackLeft.setPower(powerTwo);
             motorBackRight.setPower(powerOne);
+            telemetry.addData("Distance: ", distance);
+            telemetry.addData("DistanceX: ", distanceX);
+            telemetry.addData("DistanceY: ", distanceY);
+            telemetry.update();
+        }
+        robot.completeStop();
+        //odometrySetAngle(direction);
+    }
+
+    public void odometryDriveToPosCorrection (double xPos, double yPos, double direction) {
+        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate());//20
+        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate());//0
+        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4)+Math.toRadians(globalPositionUpdate.returnOrientation());
+        double distance = Math.hypot(distanceX,distanceY);//20
+
+        double powerOne = 0.4 * Math.sin(angle);//all be 0.4
+        double powerTwo = 0.4 * Math.cos(angle);//same here
+
+        double currentAngle = globalPositionUpdate.returnOrientation();
+
+        while (distance > 5){//can assume robot faces straight up?
+            distanceX = xPos - (globalPositionUpdate.returnXCoordinate());
+            distanceY = yPos - (globalPositionUpdate.returnYCoordinate());
+            distance = Math.hypot(distanceX,distanceY);
+            double correction = getOdometryCorrection(currentAngle);
+            motorFrontLeft.setPower(powerOne + correction);
+            motorFrontRight.setPower(powerTwo - correction);
+            motorBackLeft.setPower(powerTwo + correction);
+            motorBackRight.setPower(powerOne - correction);
             telemetry.addData("Distance: ", distance);
             telemetry.addData("DistanceX: ", distanceX);
             telemetry.addData("DistanceY: ", distanceY);
@@ -329,6 +381,23 @@ public class MainTeleopOdometry extends LinearOpMode{
                 robot.turnClockwise(0.1);
             }else{
                 break;
+            }
+        }
+        robot.completeStop();
+    }
+
+    public void odometryNormalizeAngleNew() {
+        if (globalPositionUpdate.returnOrientation() > 0){
+            robot.turnCounterClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() > 0){
+                telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
+                telemetry.update();
+            }
+        }else if (globalPositionUpdate.returnOrientation() < 0){
+            robot.turnClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() < 0){
+                telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
+                telemetry.update();
             }
         }
         robot.completeStop();
