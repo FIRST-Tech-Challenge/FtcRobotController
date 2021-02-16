@@ -4,7 +4,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
 import static java.lang.Thread.sleep;
 
 /*Class Description:Launcher consists of a plunger mechanism to push the ring
@@ -24,8 +26,8 @@ public class HzLauncher {
     public double flyWheelVelocityHighGoal = FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
     public double flyWheelVelocityPowerShot = FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
     public double DELTA_VELOCITY_CORRECTION = 60;
-    public static final double PLUNGER_LAUNCH_POSITION = 0.65;//0.67;
-    public static final double PLUNGER_REST_POSITION = 0.83;//0.84;
+    public static final double PLUNGER_LAUNCH_POSITION = 0.65;//0.65;//0.67;
+    public static final double PLUNGER_REST_POSITION = 0.84;//0.83;//0.84;
 
 
     public enum LAUNCHER_FLYWHEEL_CONTROL {
@@ -48,9 +50,6 @@ public class HzLauncher {
         launcherFlyWheelMotor.setPositionPIDFCoefficients(8.0);
 
         launcherFlyWheelMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-    }
-
-    public void initLauncher(){
         launcherRingPlungerServo.setPosition(PLUNGER_REST_POSITION);
     }
 
@@ -77,6 +76,7 @@ public class HzLauncher {
     //run launcherRingPlungerServo to push Ring from magazine to Flywheel and retract to initial state
     public void plungeRingToFlyWheel() {
         launcherRingPlungerServo.setPosition(PLUNGER_LAUNCH_POSITION);
+        //plungeWait(250);
         try {
             sleep(250);
         } catch (InterruptedException e) {
@@ -87,6 +87,13 @@ public class HzLauncher {
 
     public LAUNCHER_FLYWHEEL_CONTROL getLauncherState(){
         return launcherState;
+    }
+
+    public void plungeWait(double time){
+        ElapsedTime timer = new ElapsedTime(MILLISECONDS);
+        timer.reset();
+        while (timer.time() < time){
+        }
     }
 
 }

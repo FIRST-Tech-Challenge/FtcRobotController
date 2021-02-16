@@ -58,6 +58,10 @@ public class HzGamepad {
         gpHzArm = gpHzArmPassed;
     }
 
+    /**
+     *runByGamepad sets every function used in this file, in order for it to be passed and used.
+     */
+
     public void runByGamepad(){
         runMagazineControl();
         runIntakeControl();
@@ -67,6 +71,9 @@ public class HzGamepad {
         runArm();
     }
 
+    /**
+     * runByGamepadRRDriveModes sets modes for Road Runner such as ROBOT and FIELD Centric Modes. <BR>
+     */
 
     // RR Drive Train
     public void runByGamepadRRDriveModes() {
@@ -117,6 +124,10 @@ public class HzGamepad {
 
     }
 
+    /**
+     * runMagazineControl sets 2 modes for Magazine, COLLECT and LAUNCH. <BR>
+     */
+
     public void runMagazineControl(){ //this function should be in IntakeControl's place after order change
         if (gpHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_COLLECT){
             gpHzLauncher.stopFlyWheel();
@@ -133,6 +144,10 @@ public class HzGamepad {
 
     }
 
+    /**
+     * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
+     * direction in order for a stuck ring to be out of intake. <BR>
+     */
 
     public void runIntakeControl(){ //this function should be at LaunchController's place after order change
 
@@ -183,6 +198,14 @@ public class HzGamepad {
 
     }
 
+    /**
+     * This function has the most basic controlller buttons, that sets the place each button should target. <BR>
+     *     <emsp>StartPersistent and getButtonXPress decreases the velocity of each target by detecting the battery voltage
+     *     and the current velocity power. </emsp> <BR>
+     *     <emsp>StartPersistent and getButtonYPress increases the velocity of the flyhwheel by also detecting battery voltage. </emsp> <BR>
+     *     <emsp>The ButtonY sets the target to High Goal and ButtonA Press sets the target to PowerShot 2.
+     *     After this function, these two buttons are set to true to be executed. </emsp> <BR>
+     */
 
     public void runLaunchController(){   //this function should be in magazineControl's place after order change
         /*if (getStartPersistent() && getButtonYPress()) {
@@ -278,6 +301,10 @@ public class HzGamepad {
 
     }
 
+    /**
+     * The runLauncher function tells if getRightBumperPress is set to true, and if it is, the Launcher plunges ring to Flywheel. <BR>
+     */
+
     public void runLauncher(){
         if (getRightBumperPress()) {
             if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
@@ -286,6 +313,12 @@ public class HzGamepad {
             }
         }
     }
+
+    /**
+     * The leftTriggerPress when pressed once moves the arm halfway down, when it is pressed again the arm moves all the way down,
+     * at last when the button is pressed for a third time the arm moves back to resting poistion. <BR>
+     * The leftBumperPress when pressed once opens the arm, and when pressed again closes the arm grip. <BR>
+     */
 
     public void runArm(){
         if (getLeftTriggerPress()) {
