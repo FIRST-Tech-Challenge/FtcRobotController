@@ -187,16 +187,16 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
 
             if(gamepad1.left_bumper){
-                odometryDriveToPosC(0,20,0);
+                odometryDriveToPosC(-10,10,0);
             }
             if(gamepad1.b){
                 odometryDriveToPosC(0,0,0);
             }
             if (gamepad1.y){
-                odometryDriveToPosC(20,20,0);
+                odometryDriveToPosC(15,20,0);
             }
             if(gamepad1.x){
-                odometryNormalizeAngle();
+                odometryNormalizeAngleTest();
             }
 
             //everything driving
@@ -316,29 +316,34 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryDriveToPosCorrection (double xPos, double yPos, double direction) {
-        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate());//20
-        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate());//0
-        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4)+Math.toRadians(globalPositionUpdate.returnOrientation());
-        double distance = Math.hypot(distanceX,distanceY);//20
+        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
+        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
+        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
+        double distance = Math.hypot(distanceX,distanceY);//0
 
-        double powerOne = 0.4 * Math.sin(angle);//all be 0.4
-        double powerTwo = 0.4 * Math.cos(angle);//same here
+        double powerOne = 0.5 * Math.sin(angle);//all be 0.4
+        double powerTwo = 0.5 * Math.cos(angle);//same here
 
-        double currentAngle = globalPositionUpdate.returnOrientation();
-
+        double correction = 0;
         while (distance > 5){//can assume robot faces straight up?
-            distanceX = xPos - (globalPositionUpdate.returnXCoordinate());
-            distanceY = yPos - (globalPositionUpdate.returnYCoordinate());
+            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
+            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
             distance = Math.hypot(distanceX,distanceY);
-            double correction = getOdometryCorrection(currentAngle);
+
+            angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
+            powerOne = 0.5 * Math.sin(angle);//all be 0.4
+            powerTwo = 0.5 * Math.cos(angle);//same here
+
             motorFrontLeft.setPower(powerOne + correction);
             motorFrontRight.setPower(powerTwo - correction);
             motorBackLeft.setPower(powerTwo + correction);
             motorBackRight.setPower(powerOne - correction);
+
             telemetry.addData("Distance: ", distance);
             telemetry.addData("DistanceX: ", distanceX);
             telemetry.addData("DistanceY: ", distanceY);
             telemetry.update();
+
         }
         robot.completeStop();
         //odometrySetAngle(direction);
@@ -354,7 +359,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         double powerOne = 0.5 * Math.sin(angle);//all be 0.4
         double powerTwo = 0.5 * Math.cos(angle);//same here
 
-        while (distance > 5){//can assume robot faces straight up?
+        while (distance > 3){//can assume robot faces straight up?
             distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
             distance = Math.hypot(distanceX,distanceY);
@@ -442,6 +447,15 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
             robot.completeStop();
         }
+    }
+
+    public void odometryNormalizeAngleTest() {
+        robot.turnClockwise(0.5);
+        while (globalPositionUpdate.returnOrientation() > 5 || globalPositionUpdate.returnOrientation() < -5){
+            telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
+            telemetry.update();
+        }
+            robot.completeStop();
     }
 
     public void shootPowerShot() throws InterruptedException{
