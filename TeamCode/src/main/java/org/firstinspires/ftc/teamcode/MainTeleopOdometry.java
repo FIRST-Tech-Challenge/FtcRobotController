@@ -330,7 +330,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         //odometryNormalizeAngleNew();
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
-        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
+        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4)+Math.toRadians(globalPositionUpdate.returnOrientation());
         double distance = Math.hypot(distanceX,distanceY);//0
 
         double powerOne = 0.5 * Math.sin(angle);//all be 0.4
