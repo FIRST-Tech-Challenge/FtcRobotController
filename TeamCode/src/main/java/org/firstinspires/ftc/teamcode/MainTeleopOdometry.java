@@ -261,7 +261,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         odometryNormalizeAngle();
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate());//20
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate());//0
-        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);//0 if robot facing
+        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4)+Math.toRadians(globalPositionUpdate.returnOrientation());
         double distance = Math.hypot(distanceX,distanceY);//20
 
         double powerOne = 0.4 * Math.sin(angle);//all be 0.4
