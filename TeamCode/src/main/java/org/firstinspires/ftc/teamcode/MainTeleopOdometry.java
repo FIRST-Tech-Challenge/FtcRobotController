@@ -290,11 +290,11 @@ public class MainTeleopOdometry extends LinearOpMode{
         //odometryNormalizeAngleNew();
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
-        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4)+Math.toRadians(globalPositionUpdate.returnOrientation());
+        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
         double distance = Math.hypot(distanceX,distanceY);//0
 
-        double powerOne = 0.4 * Math.sin(angle);//all be 0.4
-        double powerTwo = 0.4 * Math.cos(angle);//same here
+        double powerOne = 0.5 * Math.sin(angle);//all be 0.4
+        double powerTwo = 0.5 * Math.cos(angle);//same here
 
         while (distance > 1){//can assume robot faces straight up?
             distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
@@ -399,14 +399,15 @@ public class MainTeleopOdometry extends LinearOpMode{
                 telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
                 telemetry.update();
             }
+            robot.completeStop();
         }else if (globalPositionUpdate.returnOrientation() < 0){
             robot.turnClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() < -5){
+            while (globalPositionUpdate.returnOrientation() < 5){
                 telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
                 telemetry.update();
             }
+            robot.completeStop();
         }
-        robot.completeStop();
     }
 
     public void shootPowerShot() throws InterruptedException{
