@@ -187,14 +187,17 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
 
             if(gamepad1.left_bumper){
+                odometryDriveToPosC(10,10,0);
                 odometryDriveToPosC(-10,10,0);
+                odometryDriveToPosC(10,-10,0);
+                odometryDriveToPosC(-10,-10,0);
+                odometryDriveToPosC(0,0,0);
+
             }
             if(gamepad1.b){
                 odometryDriveToPosC(0,0,0);
             }
-            if (gamepad1.y){
-                odometryDriveToPosC(15,20,0);
-            }
+
             if(gamepad1.x){
                 odometryNormalizeAngleTest();
             }
@@ -288,32 +291,6 @@ public class MainTeleopOdometry extends LinearOpMode{
         robot.completeStop();
     }
 
-    public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
-        //odometryNormalizeAngleNew();
-        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
-        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
-        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
-        double distance = Math.hypot(distanceX,distanceY);//0
-
-        double powerOne = 0.5 * Math.sin(angle);//all be 0.4
-        double powerTwo = 0.5 * Math.cos(angle);//same here
-
-        while (distance > 5){//can assume robot faces straight up?
-            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
-            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
-            distance = Math.hypot(distanceX,distanceY);
-            motorFrontLeft.setPower(powerOne);
-            motorFrontRight.setPower(powerTwo);
-            motorBackLeft.setPower(powerTwo);
-            motorBackRight.setPower(powerOne);
-            telemetry.addData("Distance: ", distance);
-            telemetry.addData("DistanceX: ", distanceX);
-            telemetry.addData("DistanceY: ", distanceY);
-            telemetry.update();
-        }
-        robot.completeStop();
-        //odometrySetAngle(direction);
-    }
 
     public void odometryDriveToPosCorrection (double xPos, double yPos, double direction) {
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
@@ -450,12 +427,27 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryNormalizeAngleTest() {
-        robot.turnClockwise(0.5);
-        while (globalPositionUpdate.returnOrientation() > 5 || globalPositionUpdate.returnOrientation() < -5){
-            telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
-            telemetry.update();
-        }
+        if (globalPositionUpdate.returnOrientation() > 5){
+            robot.turnCounterClockwise(0.4);
+            while ((globalPositionUpdate.returnOrientation() != 0) || (globalPositionUpdate.returnOrientation() != 359)){
+                if (gamepad1.y){
+                    break;
+                }
+                telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
+                telemetry.update();
+            }
             robot.completeStop();
+        }else if (globalPositionUpdate.returnOrientation() < -5){
+            robot.turnClockwise(0.4);
+            while ((globalPositionUpdate.returnOrientation() != 0) || (globalPositionUpdate.returnOrientation() != -359)){
+                if (gamepad1.y){
+                    break;
+                }
+                telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
+                telemetry.update();
+            }
+            robot.completeStop();
+        }
     }
 
     public void shootPowerShot() throws InterruptedException{
