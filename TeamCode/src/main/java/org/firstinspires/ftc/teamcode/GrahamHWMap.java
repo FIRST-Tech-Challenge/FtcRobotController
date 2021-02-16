@@ -32,14 +32,11 @@ public class GrahamHWMap {
     public DcMotor  backLeftMotor    = null;
     public DcMotor  backRightMotor   = null;
 
-    public DcMotor  launcherMotor = null;
-
-    public DcMotor  intakeMotor1 = null;
-
-
+    public DcMotor  launchMotor = null;
+    public DcMotor  intakeMotor = null;
+    
+    
     public Servo    wobbleServo1 = null;
-    //public Servo    wobbleServo2 = null;
-
     public Servo    launcherServo = null;
 
 
