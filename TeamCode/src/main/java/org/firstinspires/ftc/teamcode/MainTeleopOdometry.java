@@ -288,8 +288,8 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
         //odometryNormalizeAngleNew();
-        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate());//20
-        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate());//0
+        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//20
+        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
         double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
         double distance = Math.hypot(distanceX,distanceY);//20
 
@@ -297,8 +297,8 @@ public class MainTeleopOdometry extends LinearOpMode{
         double powerTwo = 0.4 * Math.cos(angle);//same here
 
         while (distance > 5){//can assume robot faces straight up?
-            distanceX = xPos - (globalPositionUpdate.returnXCoordinate());
-            distanceY = yPos - (globalPositionUpdate.returnYCoordinate());
+            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
+            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
             distance = Math.hypot(distanceX,distanceY);
             motorFrontLeft.setPower(powerOne);
             motorFrontRight.setPower(powerTwo);
