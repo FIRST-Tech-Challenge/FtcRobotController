@@ -344,14 +344,14 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryNormalizeAngle() {
-        motorFrontLeft.setPower(0.5);
-        motorBackLeft.setPower(0.5);
-        motorFrontRight.setPower(-0.5);
-        motorBackRight.setPower(-0.5);
-        while (globalPositionUpdate.returnOrientation() > 10 /*&& globalPositionUpdate.returnOrientation() > 0*/){
+        while (globalPositionUpdate.returnOrientationRadians() > (Math.PI/4) /*&& globalPositionUpdate.returnOrientation() > 0*/){
             if (gamepad1.y){
                 break;
             }
+            motorFrontLeft.setPower(0.5);
+            motorBackLeft.setPower(0.5);
+            motorFrontRight.setPower(-0.5);
+            motorBackRight.setPower(-0.5);
             telemetry.addData("Degrees: ", globalPositionUpdate.returnOrientation());
             telemetry.update();
         }
