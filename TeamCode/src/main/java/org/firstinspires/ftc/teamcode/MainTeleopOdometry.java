@@ -187,16 +187,16 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
 
             if(gamepad1.left_bumper){
-                odometryDriveToPosAngular(0,20,0);
+                odometryDriveToPosC(0,20,0);
             }
             if(gamepad1.b){
-                odometryDriveToPosAngular(0,0,0);
+                odometryDriveToPosC(0,0,0);
             }
             if (gamepad1.y){
                 odometryDriveToPosC(20,20,0);
             }
             if(gamepad1.x){
-                odometryNormalizeAngleNew();
+                odometryNormalizeAngle();
             }
 
             //everything driving
