@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.location.Location;
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -54,13 +56,13 @@ import static org.firstinspires.ftc.teamcode.util.VisionUtils.getImageFromFrame;
  * @since 2016-12-10
  */
 
+@Config
 public class PoseArgos
 {
 
     HardwareMap hwMap;
 
-    //motors
-
+    FtcDashboard dashboard;
     public CsvLogKeeper logger;
 
     PIDController drivePID = new PIDController(0, 0, 0);
@@ -69,7 +71,7 @@ public class PoseArgos
     public  double KpDrive = 0.10; //proportional constant multiplier
     private double KiDrive = 0.000; //integral constant multiplier
     private double KdDrive = 150; //derivative constant multiplier
-    public  double KpBalance = 0.02; //proportional constant multiplier
+    public static double KpBalance = 0.02; //proportional constant multiplier
     private double KiBalance = 0.01; //integral constant multiplier
     private double KdBalance = .07; //derivative constant multiplier
     private double driveIMUBasePower = .5;
@@ -79,31 +81,26 @@ public class PoseArgos
     private int pidTunerState = 0;
 
 
-
     private int numTimesBalanced = 0;
 
 
     public boolean isBalanceMode() {
         return balanceMode;
     }
-
     public void setBalanceMode(boolean balanceMode) {
         this.balanceMode = balanceMode;
     }
-
     private boolean balanceMode = false;
 
-
     DcMotor motorFront = null;
-
     DcMotor motorBack = null;
-
 
     DcMotor motorNeck = null; //
     DcMotor headLamp        = null; //front white LED string
     //DcMotor redLamps        = null; //side red highlight LED strings
     Servo servoPan = null; //gate for the particle launcher
     Servo servoTilt = null;
+    Servo servoFace = null;
     Servo servoSteerFront = null;
     Servo servoSteerBack = null;
 
@@ -127,11 +124,8 @@ public class PoseArgos
     double beaconDistFore;
 
     private double powerFront = 0;
-    private double powerFrontRight = 0;
     private double powerBack = 0;
-    private double powerBackRight  = 0;
-    private double powerConveyor   = 0;
-    static  int ticksPerRot        = 1680;
+
 
     private Location poseLocation;
     private double poseBearing; //Bearing is global (gps) while heading is local (imu/odom)
@@ -152,8 +146,11 @@ public class PoseArgos
     public  double offsetHeading;
     private double offsetPitch;
     private double offsetRoll;
-    private double displacement;
-    private double displacementPrev;
+    private double ticksPerMeter = 6416.325; //REV through-bore encoder = 2048 tics per revolution / 0.319185798 circumference of 4" omni wheels = 6,416.325 theoretical
+    private double distTics;
+    private double distTicsPrev;
+    private double loopDisplacement;
+    private double loopDisplacementPrev;
     private double odometer;
     static double scanSpeed = .25;
     private long presserTimer = 0;
@@ -185,10 +182,7 @@ public class PoseArgos
     private double vuDepth = 0; //calculated distance from the vuforia target on the z axis (mm)
     private double vuXOffset = 0; //calculated distance from the vuforia target on the x axis (mm)
 
-    public void updateSensors(boolean active) {
-        if (active)
-            updateSensors();
-    }
+
 
     public void stopAll() {
     motorFront.setPower(0);
@@ -209,7 +203,7 @@ public class PoseArgos
         Argos, Beachcomber;
     }
 
-    public PoseUG.RobotType currentBot;
+    public PoseArgos.RobotType currentBot;
 
     Orientation imuAngles; //pitch, roll and yaw from the IMU
     protected boolean targetAngleInitialized = false;
@@ -298,6 +292,7 @@ public class PoseArgos
         //this.redLamps        = this.hwMap.dcMotor.get("redLamps");
         this.servoPan = this.hwMap.servo.get("servoPan");
         this.servoTilt = this.hwMap.servo.get("servoTilt");
+        this.servoFace = this.hwMap.servo.get("servoTiltFace");
         this.servoSteerFront = this.hwMap.servo.get("servoSteerFront");
         this.servoSteerBack = this.hwMap.servo.get("servoSteerBack");
 
@@ -310,7 +305,10 @@ public class PoseArgos
         this.motorFront.setDirection(DcMotorSimple.Direction.REVERSE);
         this.motorBack.setDirection(DcMotorSimple.Direction.REVERSE);
         this.motorNeck.setDirection(DcMotorSimple.Direction.FORWARD);
+
         this.servoSteerBack.setDirection(Servo.Direction.REVERSE);
+        servoTilt.setDirection(Servo.Direction.REVERSE);
+        servoFace.setDirection(Servo.Direction.REVERSE);
         //this.headLamp.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motorFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -365,7 +363,8 @@ public class PoseArgos
 //
 //        HeadLampOn();
 
-
+        // dashboard
+        dashboard = FtcDashboard.getInstance();
 
     }
 
@@ -691,9 +690,6 @@ public void BalanceArgos(double Kp, double Ki, double Kd, double pwr, double cur
     }
 
 
-
-
-
     /**
      * Set the current position of the robot in the X direction on the field
      * @param poseX
@@ -778,12 +774,9 @@ public void BalanceArgos(double Kp, double Ki, double Kd, double pwr, double cur
     public double getPitch() {
         return posePitch;
     }
-
     public double getRoll() {
         return poseRoll;
     }
-
-
 
 
 
@@ -791,6 +784,11 @@ public void BalanceArgos(double Kp, double Ki, double Kd, double pwr, double cur
 
         Update(imu, 0, 0);
         BalanceArgos(KpBalance,KiBalance,KdBalance,0,getRoll(),staticBalance);
+    }
+
+    public void updateSensors(boolean active) {
+        if (active)
+            updateSensors();
     }
 
     /**
@@ -828,25 +826,28 @@ public void BalanceArgos(double Kp, double Ki, double Kd, double pwr, double cur
             initialized = true;
         }
 
-
         servoPan.setPosition((headPosition[0]));
         servoTilt.setPosition((headPosition[1]));
+        servoFace.setPosition(servoTilt.getPosition()); //follow tilt - todo: face tracking and person finding will override this
 
         poseHeading = wrapAngle(imuAngles.firstAngle, offsetHeading);
         posePitch = wrapAngle(imuAngles.thirdAngle, offsetPitch);
         poseRoll = wrapAngle(imuAngles.secondAngle, offsetRoll);
 
-        //removed and entire section here that calculated displacement based on a mecanum setup - does not apply to argos
-        // TODO: must have a displacement calculation for the rest of this to make sense and to track relative position for Argos
+        //removed an entire section here that calculated displacement based on a mecanum setup - does not apply to argos
+        //displacement currently coming from the REV through bore encoder connected to the lamp "motor" port
 
-        odometer += Math.abs(displacement);
-        poseSpeed = displacement / (double)(currentTime - this.timeStamp)*1000000; //meters per second when ticks per meter is calibrated
+        distTics = headLamp.getCurrentPosition(); //set distTics to the best indicator of distance travelled - can be a cumulative encoder reading
+        loopDisplacement = (distTics-distTicsPrev) / ticksPerMeter;
+        odometer += Math.abs(loopDisplacement);
+        poseSpeed = loopDisplacement / (double)(currentTime - this.timeStamp)*1000000; //meters per second when ticks per meter is calibrated
 
         timeStamp = currentTime;
-        displacementPrev = displacement;
+        distTicsPrev = distTics;
+        loopDisplacementPrev = loopDisplacement;
 
-        poseX += displacement * Math.cos(poseHeadingRad);
-        poseY += displacement * Math.sin(poseHeadingRad);
+        poseX += loopDisplacement * Math.cos(poseHeadingRad);
+        poseY += loopDisplacement * Math.sin(poseHeadingRad);
 
     }
 
