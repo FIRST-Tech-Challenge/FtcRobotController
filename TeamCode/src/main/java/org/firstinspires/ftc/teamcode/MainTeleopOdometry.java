@@ -190,7 +190,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 odometryDriveToPosAngular(0,20,0);
             }
             if(gamepad1.b){
-                odometryDriveToPosAngular(20,0,0);
+                odometryDriveToPosAngular(0,0,0);
             }
             if (gamepad1.y){
                 odometryDriveToPosAngular(20,20,0);
@@ -217,7 +217,6 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
-            telemetry.addData("test", globalPositionUpdate.returnYCoordinate());
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
 
             telemetry.addData("Vertical left encoder position", verticalLeft.getCurrentPosition());
@@ -398,14 +397,14 @@ public class MainTeleopOdometry extends LinearOpMode{
     public void odometryNormalizeAngleNew() {
         if (globalPositionUpdate.returnOrientation() > 5){
             robot.turnCounterClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() > 5){
+            while (globalPositionUpdate.returnOrientation() < 5){
                 telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
                 telemetry.update();
             }
             robot.completeStop();
         }else if (globalPositionUpdate.returnOrientation() < 5){
             robot.turnClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() < 5){
+            while (globalPositionUpdate.returnOrientation() > 5){
                 telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
                 telemetry.update();
             }
