@@ -193,7 +193,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 odometryDriveToPosAngular(0,0,0);
             }
             if (gamepad1.y){
-                odometryDriveToPosAngular(20,20,0);
+                odometryDriveToPosC(20,20,0);
             }
             if(gamepad1.x){
                 odometryNormalizeAngleNew();
@@ -344,6 +344,38 @@ public class MainTeleopOdometry extends LinearOpMode{
         //odometrySetAngle(direction);
     }
 
+    public void odometryDriveToPosC (double xPos, double yPos, double direction) {
+        //odometryNormalizeAngleNew();
+        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
+        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
+        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
+        double distance = Math.hypot(distanceX,distanceY);//0
+
+        double powerOne = 0.5 * Math.sin(angle);//all be 0.4
+        double powerTwo = 0.5 * Math.cos(angle);//same here
+
+        while (distance > 5){//can assume robot faces straight up?
+            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
+            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
+            distance = Math.hypot(distanceX,distanceY);
+
+            angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
+            powerOne = 0.5 * Math.sin(angle);//all be 0.4
+            powerTwo = 0.5 * Math.cos(angle);//same here
+
+            motorFrontLeft.setPower(powerOne);
+            motorFrontRight.setPower(powerTwo);
+            motorBackLeft.setPower(powerTwo);
+            motorBackRight.setPower(powerOne);
+            telemetry.addData("Distance: ", distance);
+            telemetry.addData("DistanceX: ", distanceX);
+            telemetry.addData("DistanceY: ", distanceY);
+            telemetry.update();
+        }
+        robot.completeStop();
+        //odometrySetAngle(direction);
+    }
+
     public void odometryDriveToPos (double xPos, double yPos) throws InterruptedException{
         odometryNormalizeAngle();
         double C = 0;
@@ -397,14 +429,14 @@ public class MainTeleopOdometry extends LinearOpMode{
     public void odometryNormalizeAngleNew() {
         if (globalPositionUpdate.returnOrientation() > 5){
             robot.turnCounterClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() < 5){
+            while (globalPositionUpdate.returnOrientation() > 5){
                 telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
                 telemetry.update();
             }
             robot.completeStop();
-        }else if (globalPositionUpdate.returnOrientation() < 5){
+        }else if (globalPositionUpdate.returnOrientation() < -5){
             robot.turnClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() > 5){
+            while (globalPositionUpdate.returnOrientation() < -5){
                 telemetry.addData("Angle: ", globalPositionUpdate.returnOrientation());
                 telemetry.update();
             }
