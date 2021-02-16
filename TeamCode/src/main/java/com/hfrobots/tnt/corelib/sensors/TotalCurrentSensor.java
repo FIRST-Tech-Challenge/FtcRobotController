@@ -35,6 +35,8 @@ public class TotalCurrentSensor {
 
     private double accumulatedCurrent;
 
+    private double currentCurrent;
+
     private double maxCurrent = Double.MIN_VALUE;
 
     public TotalCurrentSensor(final @NonNull HardwareMap hardwareMap) {
@@ -49,6 +51,8 @@ public class TotalCurrentSensor {
             sampleCount++;
         }
 
+        currentCurrent = totalCurrent;
+
         accumulatedCurrent += totalCurrent;
 
         if (totalCurrent > maxCurrent) {
@@ -56,7 +60,15 @@ public class TotalCurrentSensor {
         }
     }
 
+    public double getCurrentCurrent() {
+        return currentCurrent;
+    }
+
     public double getAverageCurrent() {
+        if (sampleCount == 0) {
+            return 0;
+        }
+
         return accumulatedCurrent / (double) sampleCount;
     }
 

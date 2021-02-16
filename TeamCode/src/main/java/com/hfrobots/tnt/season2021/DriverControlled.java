@@ -80,8 +80,9 @@ public class DriverControlled extends OpMode {
 
         double averageCurrent = totalCurrentSensor.getAverageCurrent();
         double maxCurrent = totalCurrentSensor.getMaxCurrent();
+        double cur = totalCurrentSensor.getCurrentCurrent();
 
-        telemetry.addData("C", "max: %.1fA avg: %.1fA", maxCurrent, averageCurrent);
+        telemetry.addData("C", "%.1fA max: %.1fA avg: %.1fA", cur, maxCurrent, averageCurrent);
 
         telemetry.update();
     }
