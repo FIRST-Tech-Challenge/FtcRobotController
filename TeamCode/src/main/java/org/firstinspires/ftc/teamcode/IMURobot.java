@@ -318,7 +318,7 @@ public class IMURobot {
      * Get the change in angle since the last angle reset
      * @return angle in degrees, positive = counterclockwise, negative = clockwise
      */
-    private double getAngle(){
+    public double getAngle(){
         //Get a new angle measurement
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         //Get the difference between current angle measurement and last angle measurement
