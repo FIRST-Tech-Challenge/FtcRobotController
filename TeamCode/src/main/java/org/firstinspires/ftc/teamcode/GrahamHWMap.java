@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 /**
  * This is NOT an opmode.
- * This class defines all the specific hardware for a the BACONbot robot.
+ * This class defines all the specific hardware for the BACONbot robot.
  */
 
 public class GrahamHWMap {
