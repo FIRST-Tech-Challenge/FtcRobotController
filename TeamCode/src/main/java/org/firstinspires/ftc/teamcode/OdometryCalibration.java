@@ -38,6 +38,7 @@ public class OdometryCalibration extends LinearOpMode {
     final double WHEEL_DIAMETER = 1.5;
     final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
     final double COUNTS_PER_REVOLUTION = 1280;
+    //final double COUNTS_PER_INCH = 307.699557;
     final double COUNTS_PER_INCH = COUNTS_PER_REVOLUTION/WHEEL_CIRCUMFERENCE;
 
     ElapsedTime timer = new ElapsedTime();

@@ -697,16 +697,15 @@ public class IMURobot {
 
     public void outtake (double power){
         outtakeLeft.setPower(power);
-        outtakeRight.setPower(power);
     }
 
     public void shootRings() throws InterruptedException{
         int i = 0;
-        outtake(0.325);
+        outtake(0.65);
         Thread.sleep(500);
         while (i < 3) {
             flipper.setPosition(0);
-            Thread.sleep(500);
+            Thread.sleep(1000);
             flipper.setPosition(1);
             i++;
         }

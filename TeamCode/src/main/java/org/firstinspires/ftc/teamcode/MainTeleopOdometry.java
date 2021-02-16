@@ -37,6 +37,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     final double WHEEL_DIAMETER = 1.5;
     final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
     final double COUNTS_PER_REVOLUTION = 1280;
+    //final double COUNTS_PER_INCH = 307.699557;
     final double COUNTS_PER_INCH = COUNTS_PER_REVOLUTION/WHEEL_CIRCUMFERENCE;
 
 
@@ -74,9 +75,14 @@ public class MainTeleopOdometry extends LinearOpMode{
         outtakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Encoders
+        /*
         verticalLeft = hardwareMap.dcMotor.get("FL");
         verticalRight = hardwareMap.dcMotor.get("FR");
         horizontal = hardwareMap.dcMotor.get("BL");
+         */
+        horizontal = hardwareMap.dcMotor.get("outtakeRight");
+        verticalLeft = hardwareMap.dcMotor.get("wobbleArm");
+        verticalRight = hardwareMap.dcMotor.get("encoderFree");
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -281,7 +287,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
-        odometryNormalizeAngleNew();
+        //odometryNormalizeAngleNew();
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate());//20
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate());//0
         double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4)+Math.toRadians(globalPositionUpdate.returnOrientation());
