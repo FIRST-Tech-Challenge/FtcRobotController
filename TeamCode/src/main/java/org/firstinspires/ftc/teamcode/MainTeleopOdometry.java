@@ -321,14 +321,20 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void setOdometryAngle(double desiredAngle) {
-        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
 
+        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
+        if (angleDifference > 180){
+            angleDifference = 360 - angleDifference;
+        }
         while (angleDifference < 5){
             if (gamepad1.y){
                 break;
             }
-
             angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
+
+            if (angleDifference > 180){
+                angleDifference = 360 - angleDifference;
+            }
 
             if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
                 motorFrontLeft.setPower(-0.4);
@@ -341,6 +347,8 @@ public class MainTeleopOdometry extends LinearOpMode{
                 motorFrontRight.setPower(-0.4);
                 motorBackRight.setPower(-0.4);
             }
+            telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
+            telemetry.update();
         }
         robot.completeStop();
     }
