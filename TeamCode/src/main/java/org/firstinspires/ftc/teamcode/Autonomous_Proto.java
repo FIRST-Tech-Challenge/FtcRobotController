@@ -27,7 +27,7 @@ public class Autonomous_Proto extends LinearOpMode {
     private DcMotor rf;
     private DcMotor lb;
     private DcMotor rb;
-    private CRServo collector;
+    private CRServo SoN;
     private Servo pushover;         //empties hopper
     private DcMotor spindoctor;     //spins wheels
 
@@ -51,7 +51,7 @@ public class Autonomous_Proto extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
-        collector = hardwareMap.get(CRServo.class, "collector");
+        SoN = hardwareMap.get(CRServo.class, "SoN");
         spindoctor = hardwareMap.get(DcMotorEx.class, "spindoctor");
         pushover = hardwareMap.get(Servo.class, "pushover");
         CS = hardwareMap.get(ColorSensor.class, "cs");
@@ -61,7 +61,7 @@ public class Autonomous_Proto extends LinearOpMode {
         rf.setDirection(DcMotor.Direction.REVERSE);
         lb.setDirection(DcMotor.Direction.FORWARD);
         rb.setDirection(DcMotor.Direction.FORWARD);
-        collector.setDirection(CRServo.Direction.FORWARD);
+        SoN.setDirection(CRServo.Direction.FORWARD);
         spindoctor.setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
@@ -69,7 +69,7 @@ public class Autonomous_Proto extends LinearOpMode {
         while (opModeIsActive() && (runtime.seconds() < 30.0)) {
 
             spindoctor.setPower(0);
-            collector.setPower(0);
+            SoN.setPower(0);
             lf.setPower(0);
             rf.setPower(0);
             lb.setPower(0);
@@ -78,7 +78,7 @@ public class Autonomous_Proto extends LinearOpMode {
             sleep(250);
 
             spindoctor.setPower(0);
-            collector.setPower(0);
+            SoN.setPower(0);
             lf.setPower(1.0);
             rf.setPower(1.0);
             lb.setPower(1.0);
@@ -91,7 +91,7 @@ public class Autonomous_Proto extends LinearOpMode {
 
                 // Autonomous A: four rings
                 spindoctor.setPower(0);
-                collector.setPower(0);
+                SoN.setPower(0);
                 lf.setPower(0);
                 rf.setPower(0);
                 lb.setPower(0);
@@ -103,7 +103,7 @@ public class Autonomous_Proto extends LinearOpMode {
 
                 // check for Autonomous B
                 spindoctor.setPower(0);
-                collector.setPower(0);
+                SoN.setPower(0);
                 lf.setPower(0);
                 rf.setPower(0);
                 lb.setPower(0);
@@ -115,7 +115,7 @@ public class Autonomous_Proto extends LinearOpMode {
 
                     // Autonomous B: one ring
                     spindoctor.setPower(0);
-                    collector.setPower(0);
+                    SoN.setPower(0);
                     lf.setPower(0);
                     rf.setPower(0);
                     lb.setPower(0);
@@ -127,7 +127,7 @@ public class Autonomous_Proto extends LinearOpMode {
 
                     //Autonomous C: no rings
                     spindoctor.setPower(0);
-                    collector.setPower(0);
+                    SoN.setPower(0);
                     lf.setPower(0);
                     rf.setPower(0);
                     lb.setPower(0);
