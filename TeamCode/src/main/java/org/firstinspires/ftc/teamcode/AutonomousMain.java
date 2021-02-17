@@ -181,12 +181,12 @@ public class AutonomousMain extends LinearOpMode
 
                 shootPowerShot();
                 //Go to Target Zone
-                odometryDriveToPosAngular(-16,83.2,-144.1);
+                odometryDriveToPos(-16,83.2,-144.1);
                 //Drop Wobble
                 dropWobble(targetZone);
                 //Shoot Powershot
                 //Drive to Line
-                odometryDriveToPosAngular(-15.5,70,0);
+                odometryDriveToPos(-15.5,70,0);
                 break;
             case 2: //B
                 /*
@@ -214,12 +214,12 @@ public class AutonomousMain extends LinearOpMode
 
                 shootPowerShot();
                 //Go to Target Zone
-                odometryDriveToPosAngular(-31.5,99.1,163);
+                odometryDriveToPos(-31.5,99.1,163);
                 //Drop Wobble
                 dropWobble(targetZone);
                 //Shoot Powershot
                 //Drive to Line
-                odometryDriveToPosAngular(-15.5,70,0);
+                odometryDriveToPos(-15.5,70,0);
                 break;
             case 3: //C
                 /*
@@ -237,12 +237,12 @@ public class AutonomousMain extends LinearOpMode
 
                 shootPowerShot();
                 //Go to Target Zone
-                odometryDriveToPosAngular(-29.64,132.0,208);
+                odometryDriveToPos(-29.64,132.0,208);
                 //Drop Wobble
                 dropWobble(targetZone);
                 //Shoot Powershot
                 //Drive to Line
-                odometryDriveToPosAngular(-15.5,70,0);
+                odometryDriveToPos(-15.5,70,0);
                 break;
             default:
                 break;
@@ -313,69 +313,120 @@ public class AutonomousMain extends LinearOpMode
 
     }
 
-    public void odometrySetAngle(double angle){
-        if (globalPositionUpdate.returnOrientation() < angle){
-            robot.turnCounterClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() < angle){
-
-            }
-        }else if (globalPositionUpdate.returnOrientation() > angle){
-            robot.turnClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() > angle){
-
-            }
-        }
-        robot.completeStop();
-    }
-
-
-    public void robotStrafe (double power, double angle){
-        //restart angle tracking
-        robot.resetAngle();
-
-        //convert direction (degrees) into radians
-        double newDirection = angle * Math.PI/180 + Math.PI/4;
-        //calculate powers needed using direction
-        double leftPower = Math.cos(newDirection) * power;
-        double rightPower = Math.sin(newDirection) * power;
-
-        //while(opMode.opModeIsActive()){
-        //Get a correction
-        double correction = robot.getCorrection();
-        //Use the correction to adjust robot power so robot faces straight
-        robot.correctedTankStrafe(leftPower, rightPower, correction);
-        //}
-    }
-
-    public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
-        double angle = 0;
-        angle = Math.atan2(xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH), yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH)) - (Math.PI / 4) ;
-        robotStrafe(1,angle);
-        while ((Math.abs(globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) < Math.abs(yPos)) && (Math.abs(globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) < Math.abs(xPos))){
-            //Just loop and do nothing
-        }
-        robot.completeStop();
-        odometrySetAngle(direction);
-    }
 
     public void shootPowerShot() throws InterruptedException{
-        odometryDriveToPosAngular(0,70.2,0);
-        odometrySetAngle(0);
+        odometryDriveToPos(0,70.2,0);
+        setOdometryAngle(0);
         //Shot 1
-        odometryDriveToPosAngular(-39.85,62.9,-8);
+        odometryDriveToPos(-39.85,62.9,0);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPosAngular(-50.7,49.0,-13.7);
+        odometryDriveToPos(-50.7,49.0,0);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPosAngular(-39.8,62.8,-16.1);
+        odometryDriveToPos(-39.8,62.8,0);
         robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPosAngular(0,70.2,0);
-        odometryDriveToPosAngular(-15.5,67.9,0);
+        odometryDriveToPos(0,70.2,0);
+        odometryDriveToPos(-15.5,67.9,0);
         robot.shootRings();
+    }
+
+    public void odometryDriveToPos (double xPos, double yPos, double direction) {
+        setOdometryAngle(0);
+        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
+        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
+        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
+        double distance = Math.hypot(distanceX,distanceY);//0
+
+        double powerOne = 0.7 * Math.sin(angle);//all be 0.4
+        double powerTwo = 0.7 * Math.cos(angle);//same here
+
+        while (distance > 3){
+            if (gamepad1.y){
+                break;
+            }
+            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
+            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
+            distance = Math.hypot(distanceX,distanceY);
+
+            angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
+            powerOne = 0.7 * Math.sin(angle);//all be 0.4
+            powerTwo = 0.7 * Math.cos(angle);//same here
+
+            motorFrontLeft.setPower(powerOne);
+            motorFrontRight.setPower(powerTwo);
+            motorBackLeft.setPower(powerTwo);
+            motorBackRight.setPower(powerOne);
+            telemetry.addData("Distance: ", distance);
+            telemetry.addData("DistanceX: ", distanceX);
+            telemetry.addData("DistanceY: ", distanceY);
+            telemetry.update();
+        }
+        robot.completeStop();
+        setOdometryAngle(direction);
+    }
+
+    public void setOdometryAngle(double desiredAngle) {
+
+        double angleDifference = getOdometryAngleDifference(desiredAngle);
+
+        while (angleDifference > 3){
+            if (gamepad1.y){
+                break;
+            }
+            angleDifference = getOdometryAngleDifference(desiredAngle);
+            if (angleDifference >= 15){
+                if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
+                    motorFrontLeft.setPower(-0.7);
+                    motorBackLeft.setPower(-0.7);
+                    motorFrontRight.setPower(0.7);
+                    motorBackRight.setPower(0.7);
+                }else{
+                    motorFrontLeft.setPower(0.7);
+                    motorBackLeft.setPower(0.7);
+                    motorFrontRight.setPower(-0.7);
+                    motorBackRight.setPower(-0.7);
+                }
+            }else if (angleDifference < 15 || angleDifference >= 6){
+                if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
+                    motorFrontLeft.setPower(-0.3);
+                    motorBackLeft.setPower(-0.3);
+                    motorFrontRight.setPower(0.3);
+                    motorBackRight.setPower(0.3);
+                }else{
+                    motorFrontLeft.setPower(0.3);
+                    motorBackLeft.setPower(0.3);
+                    motorFrontRight.setPower(-0.3);
+                    motorBackRight.setPower(-0.3);
+                }
+            }else if (angleDifference < 6){
+                if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
+                    motorFrontLeft.setPower(-0.2);
+                    motorBackLeft.setPower(-0.2);
+                    motorFrontRight.setPower(0.2);
+                    motorBackRight.setPower(0.2);
+                }else{
+                    motorFrontLeft.setPower(0.2);
+                    motorBackLeft.setPower(0.2);
+                    motorFrontRight.setPower(-0.2);
+                    motorBackRight.setPower(-0.2);
+                }
+            }
+            telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
+            telemetry.update();
+        }
+        robot.completeStop();
+    }
+
+    public double getOdometryAngleDifference(double desiredAngle){
+        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
+        if (angleDifference > 180){
+            angleDifference = 360 - angleDifference;
+        }
+        return angleDifference;
     }
 
     public void dropWobble(int targetZone){

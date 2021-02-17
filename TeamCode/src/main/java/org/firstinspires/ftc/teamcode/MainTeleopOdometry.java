@@ -198,15 +198,9 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
 
             if(gamepad1.left_bumper){
-                odometryDriveToPosC(10,10,0);
-                odometryDriveToPosC(-10,10,0);
-                odometryDriveToPosC(10,-10,0);
-                odometryDriveToPosC(-10,-10,0);
-                odometryDriveToPosC(0,0,0);
-
+                shootGoal();
             }
             if(gamepad1.b){
-                setOdometryAngle(0);
             }
 
             if(gamepad1.x){
@@ -245,7 +239,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     }
 
-    public void odometryDriveToPosC (double xPos, double yPos, double direction) {
+    public void odometryDriveToPos (double xPos, double yPos, double direction) {
         setOdometryAngle(0);
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
@@ -266,46 +260,6 @@ public class MainTeleopOdometry extends LinearOpMode{
             angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
             powerOne = 0.7 * Math.sin(angle);//all be 0.4
             powerTwo = 0.7 * Math.cos(angle);//same here
-
-            motorFrontLeft.setPower(powerOne);
-            motorFrontRight.setPower(powerTwo);
-            motorBackLeft.setPower(powerTwo);
-            motorBackRight.setPower(powerOne);
-            telemetry.addData("Distance: ", distance);
-            telemetry.addData("DistanceX: ", distanceX);
-            telemetry.addData("DistanceY: ", distanceY);
-            telemetry.update();
-        }
-        robot.completeStop();
-        setOdometryAngle(direction);
-    }
-
-    public void odometryDriveToPosAngle (double xPos, double yPos, double direction) {
-        setOdometryAngle(0);
-        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
-        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
-        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
-        double distance = Math.hypot(distanceX,distanceY);//0
-
-        double powerOne = 0.7 * Math.sin(angle);//all be 0.4
-        double powerTwo = 0.7 * Math.cos(angle);//same here
-
-        while (distance > 1){
-            if (gamepad1.y){
-                break;
-            }
-            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
-            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
-            distance = Math.hypot(distanceX,distanceY);
-
-            angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
-            if (distance >= 5){
-                powerOne = 0.7 * Math.sin(angle);
-                powerTwo = 0.7 * Math.cos(angle);
-            }else if (distance < 5){
-                powerOne = 0.4 * Math.sin(angle);
-                powerTwo = 0.4 * Math.cos(angle);
-            }
 
             motorFrontLeft.setPower(powerOne);
             motorFrontRight.setPower(powerTwo);
@@ -374,18 +328,18 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
-        odometryDriveToPosC(-39.85,62.9,0);
+        odometryDriveToPos(-39.85,62.9,0);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPosC(-50.7,49.0,0);
+        odometryDriveToPos(-50.7,49.0,0);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPosC(-39.8,62.8,0);
+        odometryDriveToPos(-39.8,62.8,0);
         robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPosC(-15.5,67.9,0);
+        odometryDriveToPos(-15.5,67.9,0);
         robot.shootRings();
 
     }
