@@ -217,8 +217,8 @@ public class MainTeleopOdometry extends LinearOpMode{
                     robot.gyroStrafe(-0.4,0);
                     sleep(500);
                     robot.completeStop();
-
                 }
+                odometryNormalizeAngle();
             }
 
             //everything driving
@@ -363,15 +363,11 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryNormalizeAngle() {
-        while (globalPositionUpdate.returnOrientation() > 10 && globalPositionUpdate.returnOrientation() < -10){
+        while (globalPositionUpdate.returnOrientation() > 100){
             if (gamepad1.y){
                 break;
             }
-            if (globalPositionUpdate.returnOrientation() < 0){
-                robot.turnClockwise(0.5);
-            }else{
-                robot.turnCounterClockwise(0.5);
-            }
+            robot.turnClockwise(0.4);
             telemetry.addData("Degrees: ", globalPositionUpdate.returnOrientation());
             telemetry.update();
         }
