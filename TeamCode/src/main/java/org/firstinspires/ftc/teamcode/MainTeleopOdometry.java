@@ -259,13 +259,8 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
 
-            if (distance >= 5){
-                powerOne = 0.7 * Math.sin(angle);
-                powerTwo = 0.7 * Math.cos(angle);
-            }else if (distance < 5){
-                powerOne = 0.4 * Math.sin(angle);
-                powerTwo = 0.4 * Math.cos(angle);
-            }
+            powerOne = 0.7 * Math.sin(angle);//all be 0.4
+            powerTwo = 0.7 * Math.cos(angle);//same here
 
             motorFrontLeft.setPower(powerOne);
             motorFrontRight.setPower(powerTwo);
@@ -281,9 +276,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void setOdometryAngle(double desiredAngle) {
-
         double angleDifference = getOdometryAngleDifference(desiredAngle);
-
         while (angleDifference > 3){
             if (gamepad1.y){
                 break;
@@ -291,21 +284,39 @@ public class MainTeleopOdometry extends LinearOpMode{
             angleDifference = getOdometryAngleDifference(desiredAngle);
             if (angleDifference >= 15){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
-                    counterClockwiseTurn(0.7);
+                    motorFrontLeft.setPower(-0.7);
+                    motorBackLeft.setPower(-0.7);
+                    motorFrontRight.setPower(0.7);
+                    motorBackRight.setPower(0.7);
                 }else{
-                    clockwiseTurn(0.7);
+                    motorFrontLeft.setPower(0.7);
+                    motorBackLeft.setPower(0.7);
+                    motorFrontRight.setPower(-0.7);
+                    motorBackRight.setPower(-0.7);
                 }
             }else if (angleDifference < 15 || angleDifference >= 6){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
-                    counterClockwiseTurn(0.3);
+                    motorFrontLeft.setPower(-0.3);
+                    motorBackLeft.setPower(-0.3);
+                    motorFrontRight.setPower(0.3);
+                    motorBackRight.setPower(0.3);
                 }else{
-                    clockwiseTurn(0.3);
+                    motorFrontLeft.setPower(0.3);
+                    motorBackLeft.setPower(0.3);
+                    motorFrontRight.setPower(-0.3);
+                    motorBackRight.setPower(-0.3);
                 }
             }else if (angleDifference < 6){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
-                    counterClockwiseTurn(0.2);
+                    motorFrontLeft.setPower(-0.2);
+                    motorBackLeft.setPower(-0.2);
+                    motorFrontRight.setPower(0.2);
+                    motorBackRight.setPower(0.2);
                 }else{
-                    clockwiseTurn(0.2);
+                    motorFrontLeft.setPower(0.2);
+                    motorBackLeft.setPower(0.2);
+                    motorFrontRight.setPower(-0.2);
+                    motorBackRight.setPower(-0.2);
                 }
             }
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
