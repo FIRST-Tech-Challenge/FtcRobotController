@@ -277,7 +277,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void setOdometryAngle(double desiredAngle) {
         double angleDifference = getOdometryAngleDifference(desiredAngle);
-        while (angleDifference > 3){
+        while (angleDifference > 5){
             if (gamepad1.y){
                 break;
             }
@@ -294,7 +294,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                     motorFrontRight.setPower(-0.7);
                     motorBackRight.setPower(-0.7);
                 }
-            }else if (angleDifference < 15 || angleDifference >= 6){
+            }else if (angleDifference < 15 || angleDifference >= 8){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
                     motorFrontLeft.setPower(-0.3);
                     motorBackLeft.setPower(-0.3);
@@ -306,7 +306,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                     motorFrontRight.setPower(-0.3);
                     motorBackRight.setPower(-0.3);
                 }
-            }else if (angleDifference < 6){
+            }else if (angleDifference < 8){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
                     motorFrontLeft.setPower(-0.2);
                     motorBackLeft.setPower(-0.2);
@@ -338,7 +338,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-10.97,123.45,344.49);
+        odometryDriveToPos(9.8,169,188);
         robot.shootRings();
 
     }
@@ -349,18 +349,5 @@ public class MainTeleopOdometry extends LinearOpMode{
             angleDifference = 360 - angleDifference;
         }
         return angleDifference;
-    }
-
-    public void counterClockwiseTurn(double power){
-        motorFrontLeft.setPower(-power);
-        motorBackLeft.setPower(-power);
-        motorFrontRight.setPower(power);
-        motorBackRight.setPower(power);
-    }
-    public void clockwiseTurn (double power){
-        motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(power);
-        motorFrontRight.setPower(-power);
-        motorBackRight.setPower(-power);
     }
 }
