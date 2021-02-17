@@ -23,18 +23,22 @@ public class InsideBlue extends LinearOpMode {
 
         robot.wobbleGoalGrippyThingGrab();
         // here you detect rings, no rings=0 and so on
-        // we will detect the rings by glaring at them untill they assign themselves numbers, then we will order the numbers in an array and sort by value to find the number of rings
+
         int ringNmb = 1;
         waitForStart();
 
         robot.forward(0.5, -4);
         //shoot here
+        robot.shooterEngage(3);
+        robot.shooterServo1(1);
+        robot.shooterServo2(1);
         robot.forward(0.5,-2);
         if (ringNmb == 0) {
             //strafe right
+            robot.strafeRight(0.5, 2);
         } else if (ringNmb == 1) {
             robot.forward(0.5,-3);
-            robot.moveWobbleGoalArm(0.2,0.4);
+            robot.moveWobbleGoalArm(0.7,0.4);
             robot.wobbleGoalGrippyThingRelease();
             robot.forward(0.5,2);
         } else if (ringNmb == 3) {

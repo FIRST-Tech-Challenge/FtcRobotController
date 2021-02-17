@@ -26,8 +26,10 @@ public class RobotClass {
     private DcMotor shooterMotor;
     private DcMotor wobbleGoalRaise;
     private double ticks = 537;//537
-    private CRServo continuous1;
+  //  private CRServo continuous1;
     private Servo wobbleGoalGrippyThing;
+    private CRServo shooterServo1;
+    private CRServo shooterServo2;
     BNO055IMU imu;
 
     public Telemetry telemetry;
@@ -41,14 +43,12 @@ public class RobotClass {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
         shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
-        continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
+       // continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
+        shooterServo1 = hardwareMap.get(CRServo.class,"shooterServo1");
         wobbleGoalRaise = hardwareMap.dcMotor.get("wobbleLift");
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+       motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -90,16 +90,16 @@ public class RobotClass {
 
         return angles.firstAngle;
     }
-    public double relegateTargetAngle(double targetAngle) {
-        if (targetAngle > 180) {
-            double newTargetAngle = (targetAngle - 180);
-            targetAngle = -180+newTargetAngle;
-        }else if (targetAngle < -180) {
-            double newTargetAngle = (targetAngle + 180);
-            targetAngle = 180-newTargetAngle;
-        }
-        return targetAngle;
-    }
+//    public double relegateTargetAngle(double targetAngle) {
+//        if (targetAngle > 180) {
+//            double newTargetAngle = (targetAngle - 180);
+//            targetAngle = -180+newTargetAngle;
+//        }else if (targetAngle < -180) {
+//            double newTargetAngle = (targetAngle + 180);
+//            targetAngle = 180-newTargetAngle;
+//        }
+//        return targetAngle;
+//    }
 
     public void forward (double speed, double rotations){
         int leftCurrent = frontLeft.getCurrentPosition();
@@ -134,10 +134,7 @@ public class RobotClass {
         backLeft.setTargetPosition((int)toPositionbackLeft);
         backRight.setTargetPosition((int)toPositionbackRight);
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setPower(Math.abs(speed));
         frontRight.setPower(Math.abs(speed));
@@ -148,27 +145,11 @@ public class RobotClass {
                 (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
 
             // Display it for the driver.
-            telemetry.addData("Target Front Left Motor Position", frontLeft.getCurrentPosition());
-            telemetry.addData("Target Front Right Motor Position", frontRight.getCurrentPosition());
-            telemetry.addData("Target Back Left Motor Position", backLeft.getCurrentPosition());
-            telemetry.addData("Target Back Right Motor Position", backRight.getCurrentPosition());
-            telemetry.update();
+            motorTelemetry();
         }
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
+        stopMotors();
 
-        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
-        telemetry.addData("Target Front Right Motor Position", toPositionRight);
-        telemetry.addData("Target Back Left Motor Position", toPositionbackLeft);
-        telemetry.addData("Target Back Right Motor Position", toPositionbackLeft);
-        telemetry.update();
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
     public void backwards (double speed, double rotations) {
@@ -187,10 +168,7 @@ public class RobotClass {
         backLeft.setTargetPosition((int) toPositionbackLeft);
         backRight.setTargetPosition((int) toPositionbackRight);
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setPower(speed);
         frontRight.setPower(speed);
@@ -224,203 +202,147 @@ public class RobotClass {
             backRight.setPower(0);
         }
 
-        public void turnRight (double speed, double angle) {
-        double anglemult = 1.5;
-
-            int leftCurrent = frontLeft.getCurrentPosition();
-            int rightCurrent = frontRight.getCurrentPosition();
-            int backLeftCurrent = backLeft.getCurrentPosition();
-            int backRightCurrent = backRight.getCurrentPosition();
-
-            double toPositionLeft = leftCurrent + anglemult  * angle;
-            double toPositionRight = rightCurrent - anglemult * angle;
-            double toPositionbackLeft = backLeftCurrent + anglemult * angle;
-            double toPositionbackRight = backRightCurrent - anglemult * angle;
-
-            frontLeft.setTargetPosition((int) toPositionLeft);
-            frontRight.setTargetPosition((int) toPositionRight);
-            backLeft.setTargetPosition((int) toPositionbackLeft);
-            backRight.setTargetPosition((int) toPositionbackRight);
-
-            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            frontLeft.setPower(speed);
-            frontRight.setPower(speed);
-            backLeft.setPower(speed);
-            backRight.setPower(speed);
-
-//        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
-//        telemetry.addData("Target Front Right Motor Position", toPositionRight);
-//        telemetry.addData("Target Back Left Motor Position", toPositionBackLeft);
-//        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
-//        telemetry.update();
-    }
-    public void turnLeft (double speed, double angle) {
-        double anglemult = 1.5;
-
-        int leftCurrent = frontLeft.getCurrentPosition();
-        int rightCurrent = frontRight.getCurrentPosition();
-        int backLeftCurrent = backLeft.getCurrentPosition();
-        int backRightCurrent = backRight.getCurrentPosition();
-
-        double toPositionLeft = leftCurrent - anglemult * angle;
-        double toPositionRight = rightCurrent + anglemult * angle;
-        double toPositionBackLeft = backLeftCurrent - anglemult * angle;
-        double toPositionBackRight = backRightCurrent + anglemult * angle;
-
-        frontLeft.setTargetPosition((int) toPositionLeft);
-        frontRight.setTargetPosition((int) toPositionRight);
-        backLeft.setTargetPosition((int) toPositionBackLeft);
-        backRight.setTargetPosition((int) toPositionBackRight);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        frontLeft.setPower(speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(speed);
-        backRight.setPower(speed);
-
-//        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
-//        telemetry.addData("Target Front Right Motor Position", toPositionRight);
-//        telemetry.addData("Target Back Left Motor Position", toPositionBackLeft);
-//        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
-//        telemetry.update();
-    }
-
-    public void pivotRightSloppy (double speed, double angle) throws InterruptedException {
-        frontLeft.setPower(speed);
-        frontRight.setPower(-speed);
-        backLeft.setPower(speed);
-        backRight.setPower(-speed);
-
-        while (getAngleFromGyro() < angle) {
-            
+        protected void motorTelemetry(){
+            telemetry.addData("Target Front Left Motor Position", frontLeft.getCurrentPosition());
+            telemetry.addData("Target Front Right Motor Position", frontRight.getCurrentPosition());
+            telemetry.addData("Target Back Left Motor Position", backLeft.getCurrentPosition());
+            telemetry.addData("Target Back Right Motor Position", backRight.getCurrentPosition());
+            telemetry.update();
         }
 
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        frontLeft.setPower(0);
+//        public void turnRight (double speed, double angle) {
+//        double anglemult = 1.5;
+//
+//            int leftCurrent = frontLeft.getCurrentPosition();
+//            int rightCurrent = frontRight.getCurrentPosition();
+//            int backLeftCurrent = backLeft.getCurrentPosition();
+//            int backRightCurrent = backRight.getCurrentPosition();
+//
+//            double toPositionLeft = leftCurrent + anglemult  * angle;
+//            double toPositionRight = rightCurrent - anglemult * angle;
+//            double toPositionbackLeft = backLeftCurrent + anglemult * angle;
+//            double toPositionbackRight = backRightCurrent - anglemult * angle;
+//
+//            frontLeft.setTargetPosition((int) toPositionLeft);
+//            frontRight.setTargetPosition((int) toPositionRight);
+//            backLeft.setTargetPosition((int) toPositionbackLeft);
+//            backRight.setTargetPosition((int) toPositionbackRight);
+//
+//            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//            frontLeft.setPower(speed);
+//            frontRight.setPower(speed);
+//            backLeft.setPower(speed);
+//            backRight.setPower(speed);
+//
+//    }
+//    public void turnLeft (double speed, double angle) {
+//        double anglemult = 1.5;
+//
+//        int leftCurrent = frontLeft.getCurrentPosition();
+//        int rightCurrent = frontRight.getCurrentPosition();
+//        int backLeftCurrent = backLeft.getCurrentPosition();
+//        int backRightCurrent = backRight.getCurrentPosition();
+//
+//        double toPositionLeft = leftCurrent - anglemult * angle;
+//        double toPositionRight = rightCurrent + anglemult * angle;
+//        double toPositionBackLeft = backLeftCurrent - anglemult * angle;
+//        double toPositionBackRight = backRightCurrent + anglemult * angle;
+//
+//        frontLeft.setTargetPosition((int) toPositionLeft);
+//        frontRight.setTargetPosition((int) toPositionRight);
+//        backLeft.setTargetPosition((int) toPositionBackLeft);
+//        backRight.setTargetPosition((int) toPositionBackRight);
+//
+//        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//
+//        frontLeft.setPower(speed);
+//        frontRight.setPower(speed);
+//        backLeft.setPower(speed);
+//        backRight.setPower(speed);
 
-        telemetry.addData("Gyro Angle", getAngleFromGyro());
-        telemetry.update();
-    }
+//        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
+//        telemetry.addData("Target Front Right Motor Position", toPositionRight);
+//        telemetry.addData("Target Back Left Motor Position", toPositionBackLeft);
+//        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
+//        telemetry.update();
+  //  }
 
-    public void pivotLeftSloppy (double speed, double angle) throws InterruptedException {
-        setSpeedForTurnLeft(speed);
+    public void pivotRightSloppy (double speed, double angle) {
+        setSpeedForTurnRight(speed);
 
-        while (getAngleFromGyro() < angle) {
-            
+        double targetAngle = getAngleFromGyro() - angle;
+
+        while (getAngleFromGyro() > targetAngle && opmode.opModeIsActive()) {
+            telemetry.addData("Gyro Angle: ", getAngleFromGyro());
+            telemetry.update();
         }
 
         stopMotors();
 
         telemetry.addData("Gyro Angle", getAngleFromGyro());
         telemetry.update();
+    }
+
+    public void pivotLeftSloppy (double speed, double angle) {
+        setSpeedForTurnLeft(speed);
+
+        double targetAngle = getAngleFromGyro() + angle;
+
+        while (getAngleFromGyro() < targetAngle && opmode.opModeIsActive()) {
+            telemetry.addData("Gyro Angle: ", getAngleFromGyro());
+            telemetry.update();
         }
-    public void pivotRight (double speed, double angle) {
-        telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
+
+        stopMotors();
+
+        telemetry.addData("Gyro Angle", getAngleFromGyro());
         telemetry.update();
+    }
 
-        frontLeft.setPower(speed);
-        frontRight.setPower(-speed);
-        backLeft.setPower(speed);
-        backRight.setPower(-speed);
-
+    public void pivotRight (double speed, double angle) {
         double targetAngle = getAngleFromGyro() - angle;
-
-        relegateTargetAngle(targetAngle);
-
-        if (targetAngle > 0) {
-            while (getAngleFromGyro() > targetAngle) {
-                telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
-                telemetry.update();
-            }
-        } else if (targetAngle < 0) {
-            while (getAngleFromGyro() < targetAngle) {
-                telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
-                telemetry.update();
-            }
-        }
-
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        frontLeft.setPower(0);
+        pivotRightSloppy(speed, angle);
 
         telemetry.addData("Middle Gyro Angle: ", getAngleFromGyro());
         telemetry.update();
 
-        frontLeft.setPower(-speed*.5);
-        frontRight.setPower(speed*.5);
-        backLeft.setPower(-speed*.5);
-        backRight.setPower(speed*.5);
-        while (getAngleFromGyro() < targetAngle) {
-            
-            telemetry.addData("Correcting Gyro Angle: ", getAngleFromGyro());
-            telemetry.update();
+        speed= speed*0.5;
+        if (getAngleFromGyro()<targetAngle-0.5) {
+            setSpeedForTurnLeft(speed);
+            while (getAngleFromGyro() < targetAngle && opmode.opModeIsActive()) {
+                telemetry.addData("Gyro Angle: ", getAngleFromGyro());
+                telemetry.update();
+            }
         }
 
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        frontLeft.setPower(0);
+        stopMotors();
         telemetry.addData("Completed Gyro Angle: ", getAngleFromGyro());
         telemetry.update();
     }
     public void pivotLeft (double speed, double angle) {
-        telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
-        telemetry.update();
-
-        frontLeft.setPower(-speed);
-        frontRight.setPower(speed);
-        backLeft.setPower(-speed);
-        backRight.setPower(speed);
-
         double targetAngle = getAngleFromGyro() + angle;
-
-        relegateTargetAngle(targetAngle);
-
-        if (targetAngle > 0) {
-            while (getAngleFromGyro() > targetAngle) {
-                telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
-                telemetry.update();
-            }
-        } else if (targetAngle < 0) {
-            while (getAngleFromGyro() < targetAngle) {
-                telemetry.addData("Prior Gyro Angle: ", getAngleFromGyro());
-                telemetry.update();
-            }
-        }
-
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        frontLeft.setPower(0);
+        pivotLeftSloppy(speed, angle);
 
         telemetry.addData("Middle Gyro Angle: ", getAngleFromGyro());
         telemetry.update();
 
-        frontLeft.setPower(speed*.5);
-        frontRight.setPower(-speed*.5);
-        backLeft.setPower(speed*.5);
-        backRight.setPower(-speed*.5);
-        while (getAngleFromGyro() < angle) {
-            
-            telemetry.addData("Correcting Gyro Angle: ", getAngleFromGyro());
-            telemetry.update();
+        speed= speed*0.5;
+        setSpeedForTurnRight(speed);
+        if (getAngleFromGyro()>targetAngle+0.5) {
+            while (getAngleFromGyro() > targetAngle + 0.5 && opmode.opModeIsActive()) {
+                telemetry.addData("Gyro Angle: ", getAngleFromGyro());
+                telemetry.update();
+            }
         }
 
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        frontLeft.setPower(0);
+        stopMotors();
         telemetry.addData("Completed Gyro Angle: ", getAngleFromGyro());
         telemetry.update();
     }
@@ -552,31 +474,34 @@ public class RobotClass {
         backLeft.setTargetPosition((int)toPositionbackLeft);
         backRight.setTargetPosition((int)toPositionbackRight);
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         frontLeft.setPower(Math.abs(speed));
         frontRight.setPower(Math.abs(-speed));
         backLeft.setPower(Math.abs(-speed));
         backRight.setPower(Math.abs(speed));
-
-
     }
-    public void testServo1 (double speed) {
-        continuous1.setPower(speed);
 
-        while (true){
-            //laughter
-        }
-
-//        for (int num = 0; num < duration; num ++) {
-//            //LAUGHTER
-//            telemetry.addData("LAUGHTER: Now ", num);
-//            telemetry.update();
-
+    protected void motorSetMode(DcMotor.RunMode runMode){
+        frontLeft.setMode(runMode);
+        frontRight.setMode(runMode);
+        backLeft.setMode(runMode);
+        backRight.setMode(runMode);
     }
+
+//    public void testServo1 (double speed) {
+//        continuous1.setPower(speed);
+//
+//        while (true){
+//            //laughter
+//        }
+//
+////        for (int num = 0; num < duration; num ++) {
+////            //LAUGHTER
+////            telemetry.addData("LAUGHTER: Now ", num);
+////            telemetry.update();
+//
+//    }
     //Pretend "Engage" is actually ENGAGE!
     public void shooterEngage (double duration) {
         shooterMotor.setPower(1);
@@ -591,6 +516,14 @@ public class RobotClass {
     }
     public void wobbleGoalGrippyThingRelease () {
         wobbleGoalGrippyThing.setPosition(.9);
+    }
+
+    public void shooterServo1 (double speed) {
+       shooterServo1.setPower(speed);
+    }
+
+    public void shooterServo2 (double speed) {
+        shooterServo2.setPower(speed);
     }
 
     public void moveWobbleGoalArm (double speed, double rotation) {

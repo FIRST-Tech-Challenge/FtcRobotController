@@ -6,11 +6,6 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-//import com.qualcomm.robotcore.hardware.DcMotorSimple;
-//import com.qualcomm.robotcore.hardware.DigitalChannel;
-//import com.qualcomm.robotcore.hardware.DistanceSensor;
-//import com.qualcomm.robotcore.hardware.Gyroscope;
-//import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp(name = "Mecanum Test?")
@@ -29,7 +24,9 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     DcMotor shooterMotor = null;
     Servo wobbleGoalGrippyThing = null;
     CRServo intakeOne = null;
-    CRServo intakeTwo = null;
+  //  CRServo intakeTwo = null;
+    CRServo shooterServo1 = null;
+    CRServo shooterServo2 = null;
 
 
     @Override
@@ -50,16 +47,19 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         shooterMotor = hardwareMap.dcMotor.get("shooterMotor");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         intakeOne = hardwareMap.crservo.get("intakeServoOne");
-        intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
+      //  intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
+        shooterServo1 = hardwareMap.crservo.get("shooterServo1");
+        shooterServo2 = hardwareMap.crservo.get("shooterServo2");
 
         leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
         rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
-        intakeTwo.setDirection(CRServo.Direction.REVERSE);
+     //   intakeTwo.setDirection(CRServo.Direction.REVERSE);
 
         boolean yPressed = false;
         boolean yOpen = true;
+        boolean intake = false;
 
 
         telemetry.addData("Status", "Initialized");
@@ -98,8 +98,15 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             rightFrontMotor.setPower(rightFrontPower);
             rightRearMotor.setPower(rightRearPower);
 
-            double shooterPower = gamepad2.right_stick_y;
+           double shooterPower = gamepad2.right_stick_y;
+            //double shooterPower= -0.85;
+
             shooterMotor.setPower(shooterPower);
+
+            if (gamepad2.dpad_down == true) {
+                shooterServo1.setPower(0.8);
+                shooterServo2.setPower(-0.8);
+            }
 
             if (gamepad2.left_trigger >= .87) {
                 wobbleGoalRaiseMotor.setPower(.6);
@@ -121,14 +128,24 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             } else {
                 wobbleGoalExtendMotor.setPower(0);
             }
+
             if (gamepad2.a) {
                 intakeOne.setPower(0.9);
-                intakeTwo.setPower(0.9);
-            }
+            }  
 
+//            if (gamepad2.a) {
+//                intake = true;
+//                if (gamepad2.a) {
+//                    intake = false;
+//                }
+//                while (intake) {
+//                    intakeOne.setPower(0.9);
+//                    intakeTwo.setPower(0.9);
+//                }
+//            }
+//            this won't work, HA HA HA
 
             if (gamepad2.b) {
-                intakeTwo.setPower(-0.9);
                 intakeOne.setPower(-0.9);
             }
 //            if (gamepad2.y) {
