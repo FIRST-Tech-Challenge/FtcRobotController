@@ -193,15 +193,16 @@ public class TestJeff extends LinearOpMode {
                 intake.setPower(1);
                 rightConveyor.setPower(1);//turn conveyor on when the intake turns on
                 leftConveyor.setPower(1);
-                robot.gyroDriveCm(-.75, 150);
+                robot.gyroDriveCm(-.6, 150);
+                robot.gyroDriveCm(.6, 150);
+                outtakeLeft.setPower(.65);
+                Thread.sleep(2500);
                 intake.setPower(0);
-                robot.gyroDriveCm(.75, 150);
-                Thread.sleep(1500);
                 flipper.setPosition(0);
                 Thread.sleep(500);//CHANGE!!!!!!! slower
                 flipper.setPosition(1);
                 Thread.sleep(500);//CHANGE!!!!!!!!
-                outtakeLeft.setPower(.65);
+                outtakeLeft.setPower(0);
                 outtakeRight.setPower(0);
                 rightConveyor.setPower(0);//turn conveyor on when the intake turns on
                 leftConveyor.setPower(0);
@@ -212,6 +213,28 @@ public class TestJeff extends LinearOpMode {
                 //odometryDriveToPos(100,100);
                 break;
             case 3:
+                intake.setPower(1);
+                rightConveyor.setPower(1);//turn conveyor on when the intake turns on
+                leftConveyor.setPower(1);
+                robot.gyroDriveCm(-.5, 185);
+                Thread.sleep(1000);
+                robot.gyroDriveCm(.5, 185);
+                outtakeLeft.setPower(.65);
+                Thread.sleep(3000);
+                intake.setPower(0);
+                flipper.setPosition(0);
+                Thread.sleep(500);//CHANGE!!!!!!! slower
+                flipper.setPosition(1);
+                Thread.sleep(500);//CHANGE!!!!!!!!
+                intake.setPower(0);
+                flipper.setPosition(0);
+                Thread.sleep(500);//CHANGE!!!!!!! slower
+                flipper.setPosition(1);
+                Thread.sleep(500);//CHANGE!!!!!!!!
+                outtakeLeft.setPower(0);
+                outtakeRight.setPower(0);
+                rightConveyor.setPower(0);//turn conveyor on when the intake turns on
+                leftConveyor.setPower(0);
                 robot.gyroTurn(180, 0.5);
                 //robot.gyroStrafeCm(0.5, -90,80);
                 robot.gyroDriveCm(-0.75, 170);
@@ -294,7 +317,7 @@ public class TestJeff extends LinearOpMode {
         outtakeRight.setPower(power_off);//or 0.44
         //robot.gyroStrafeCm(0.5, 90, 60);//speed up later
         robot.gyroDriveCm(0.5, 195);
-        robot.gyroStrafeCm(0.5, -90, 110);
+        robot.gyroStrafeCm(0.5, -90, 105);
 
         for(int i = 0; i < 3; i++){
             Thread.sleep(500);
