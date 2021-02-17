@@ -210,7 +210,6 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
 
             if(gamepad1.x){
-                normalizeAngle();
             }
 
             //everything driving
@@ -232,7 +231,6 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
-            telemetry.addData("IMU Angle: ", getZAngle());
 
             telemetry.addData("Vertical left encoder position", verticalLeft.getCurrentPosition());
             telemetry.addData("Vertical right encoder position", verticalRight.getCurrentPosition());
@@ -322,19 +320,13 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void setOdometryAngle(double desiredAngle) {
 
-        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
-        if (angleDifference > 180){
-            angleDifference = 360 - angleDifference;
-        }
+        double angleDifference = getOdometryAngleDifference(desiredAngle);
+
         while (angleDifference < 5){
             if (gamepad1.y){
                 break;
             }
-            angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
-
-            if (angleDifference > 180){
-                angleDifference = 360 - angleDifference;
-            }
+            angleDifference = getOdometryAngleDifference(desiredAngle);
 
             if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
                 motorFrontLeft.setPower(-0.4);
@@ -349,20 +341,6 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
             telemetry.update();
-        }
-        robot.completeStop();
-    }
-
-    public void normalizeAngle(){
-        while (getAngle() < -5 || getAngle() > 5){
-            if (gamepad1.y){
-                break;
-            }
-            if (getAngle() < 0){
-                robot.turnClockwise(0.5);
-            }else{
-                robot.turnCounterClockwise(0.5);
-            }
         }
         robot.completeStop();
     }
@@ -385,29 +363,11 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     }
 
-    private double getZAngle(){
-        return (imu.getAngularOrientation().firstAngle);
-    }
-
-    private double getAngle(){
-        //Get a new angle measurement
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        //Get the difference between current angle measurement and last angle measurement
-        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
-
-        //Process the angle to keep it within (-180,180)
-        //(Once angle passes +180, it will rollback to -179, and vice versa)
-        if (deltaAngle < -180)
-            deltaAngle += 360;
-        else if (deltaAngle > 180)
-            deltaAngle -= 360;
-
-        //Add the change in angle since last measurement (deltaAngle)
-        //to the change in angle since last reset (globalAngle)
-        globalAngle += deltaAngle;
-        //Set last angle measurement to current angle measurement
-        lastAngles = angles;
-
-        return globalAngle;
+    public double getOdometryAngleDifference(double desiredAngle){
+        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
+        if (angleDifference > 180){
+            angleDifference = 360 - angleDifference;
+        }
+        return angleDifference;
     }
 }
