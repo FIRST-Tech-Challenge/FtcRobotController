@@ -173,9 +173,14 @@ public class MainTeleop extends LinearOpMode{
             }
             double outtakePower = outtakeMod;
 
-            if (gamepad2.right_trigger > .3) {
+            while(gamepad2.right_trigger > .3) {
                 outtakeLeft.setPower(outtakeMod);
                 outtakeRight.setPower(0);
+                if(gamepad2.a){
+                    flipper.setPosition(0);
+                    Thread.sleep(500);
+                    flipper.setPosition(1);
+                }
             }
             //double outtakePower = (gamepad2.right_trigger * outtakeMod);
 
