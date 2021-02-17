@@ -291,21 +291,21 @@ public class MainTeleopOdometry extends LinearOpMode{
             angleDifference = getOdometryAngleDifference(desiredAngle);
             if (angleDifference >= 15){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
-                    counterClock(0.7);
+                    counterClockwiseTurn(0.7);
                 }else{
-                    clockwise(0.7);
+                    clockwiseTurn(0.7);
                 }
             }else if (angleDifference < 15 || angleDifference >= 6){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
-                    counterClock(0.3);
+                    counterClockwiseTurn(0.3);
                 }else{
-                    clockwise(0.3);
+                    clockwiseTurn(0.3);
                 }
             }else if (angleDifference < 6){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
-                    counterClock(0.2);
+                    counterClockwiseTurn(0.2);
                 }else{
-                    clockwise(0.2);
+                    clockwiseTurn(0.2);
                 }
             }
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
@@ -340,13 +340,13 @@ public class MainTeleopOdometry extends LinearOpMode{
         return angleDifference;
     }
 
-    public void counterClock(double power){
+    public void counterClockwiseTurn(double power){
         motorFrontLeft.setPower(-power);
         motorBackLeft.setPower(-power);
         motorFrontRight.setPower(power);
         motorBackRight.setPower(power);
     }
-    public void clockwise (double power){
+    public void clockwiseTurn (double power){
         motorFrontLeft.setPower(power);
         motorBackLeft.setPower(power);
         motorFrontRight.setPower(-power);
