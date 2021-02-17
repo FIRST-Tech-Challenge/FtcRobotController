@@ -246,8 +246,8 @@ public class MainTeleopOdometry extends LinearOpMode{
         double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
         double distance = Math.hypot(distanceX,distanceY);//0
 
-        double powerOne = 0.7 * Math.sin(angle);//all be 0.4
-        double powerTwo = 0.7 * Math.cos(angle);//same here
+        double powerOne = 0.7 * Math.sin(angle);
+        double powerTwo = 0.7 * Math.cos(angle);
 
         while (distance > 3){
             if (gamepad1.y){
@@ -258,8 +258,14 @@ public class MainTeleopOdometry extends LinearOpMode{
             distance = Math.hypot(distanceX,distanceY);
 
             angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
-            powerOne = 0.7 * Math.sin(angle);//all be 0.4
-            powerTwo = 0.7 * Math.cos(angle);//same here
+
+            if (distance >= 5){
+                powerOne = 0.7 * Math.sin(angle);
+                powerTwo = 0.7 * Math.cos(angle);
+            }else if (distance < 5){
+                powerOne = 0.4 * Math.sin(angle);
+                powerTwo = 0.4 * Math.cos(angle);
+            }
 
             motorFrontLeft.setPower(powerOne);
             motorFrontRight.setPower(powerTwo);
@@ -285,39 +291,21 @@ public class MainTeleopOdometry extends LinearOpMode{
             angleDifference = getOdometryAngleDifference(desiredAngle);
             if (angleDifference >= 15){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
-                    motorFrontLeft.setPower(-0.7);
-                    motorBackLeft.setPower(-0.7);
-                    motorFrontRight.setPower(0.7);
-                    motorBackRight.setPower(0.7);
+                    counterClock(0.7);
                 }else{
-                    motorFrontLeft.setPower(0.7);
-                    motorBackLeft.setPower(0.7);
-                    motorFrontRight.setPower(-0.7);
-                    motorBackRight.setPower(-0.7);
+                    clockwise(0.7);
                 }
             }else if (angleDifference < 15 || angleDifference >= 6){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
-                    motorFrontLeft.setPower(-0.3);
-                    motorBackLeft.setPower(-0.3);
-                    motorFrontRight.setPower(0.3);
-                    motorBackRight.setPower(0.3);
+                    counterClock(0.3);
                 }else{
-                    motorFrontLeft.setPower(0.3);
-                    motorBackLeft.setPower(0.3);
-                    motorFrontRight.setPower(-0.3);
-                    motorBackRight.setPower(-0.3);
+                    clockwise(0.3);
                 }
             }else if (angleDifference < 6){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
-                    motorFrontLeft.setPower(-0.2);
-                    motorBackLeft.setPower(-0.2);
-                    motorFrontRight.setPower(0.2);
-                    motorBackRight.setPower(0.2);
+                    counterClock(0.2);
                 }else{
-                    motorFrontLeft.setPower(0.2);
-                    motorBackLeft.setPower(0.2);
-                    motorFrontRight.setPower(-0.2);
-                    motorBackRight.setPower(-0.2);
+                    clockwise(0.2);
                 }
             }
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
@@ -339,7 +327,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-15.5,67.9,0);
+        odometryDriveToPos(-10.97,123.45,344.49);
         robot.shootRings();
 
     }
@@ -350,5 +338,18 @@ public class MainTeleopOdometry extends LinearOpMode{
             angleDifference = 360 - angleDifference;
         }
         return angleDifference;
+    }
+
+    public void counterClock(double power){
+        motorFrontLeft.setPower(-power);
+        motorBackLeft.setPower(-power);
+        motorFrontRight.setPower(power);
+        motorBackRight.setPower(power);
+    }
+    public void clockwise (double power){
+        motorFrontLeft.setPower(power);
+        motorBackLeft.setPower(power);
+        motorFrontRight.setPower(-power);
+        motorBackRight.setPower(-power);
     }
 }
