@@ -299,8 +299,13 @@ public class MainTeleopOdometry extends LinearOpMode{
             distance = Math.hypot(distanceX,distanceY);
 
             angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
-            powerOne = 0.7 * Math.sin(angle);//all be 0.4
-            powerTwo = 0.7 * Math.cos(angle);//same here
+            if (distance > 2){
+                powerOne = 0.7 * Math.sin(angle);
+                powerTwo = 0.7 * Math.cos(angle);
+            }else if (distance < 2){
+                powerOne = 0.4 * Math.sin(angle);
+                powerTwo = 0.4 * Math.cos(angle);
+            }
 
             motorFrontLeft.setPower(powerOne);
             motorFrontRight.setPower(powerTwo);
@@ -324,17 +329,30 @@ public class MainTeleopOdometry extends LinearOpMode{
                 break;
             }
             angleDifference = getOdometryAngleDifference(desiredAngle);
-
-            if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
-                motorFrontLeft.setPower(-0.7);
-                motorBackLeft.setPower(-0.7);
-                motorFrontRight.setPower(0.7);
-                motorBackRight.setPower(0.7);
-            }else{
-                motorFrontLeft.setPower(0.7);
-                motorBackLeft.setPower(0.7);
-                motorFrontRight.setPower(-0.7);
-                motorBackRight.setPower(-0.7);
+            if (angleDifference > 2){
+                if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
+                    motorFrontLeft.setPower(-0.7);
+                    motorBackLeft.setPower(-0.7);
+                    motorFrontRight.setPower(0.7);
+                    motorBackRight.setPower(0.7);
+                }else{
+                    motorFrontLeft.setPower(0.7);
+                    motorBackLeft.setPower(0.7);
+                    motorFrontRight.setPower(-0.7);
+                    motorBackRight.setPower(-0.7);
+                }
+            }else if (angleDifference < 2){
+                if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
+                    motorFrontLeft.setPower(-0.4);
+                    motorBackLeft.setPower(-0.4);
+                    motorFrontRight.setPower(0.4);
+                    motorBackRight.setPower(0.4);
+                }else{
+                    motorFrontLeft.setPower(0.4);
+                    motorBackLeft.setPower(0.4);
+                    motorFrontRight.setPower(-0.4);
+                    motorBackRight.setPower(-0.4);
+                }
             }
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
             telemetry.update();
