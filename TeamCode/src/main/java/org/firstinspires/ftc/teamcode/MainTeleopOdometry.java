@@ -268,21 +268,6 @@ public class MainTeleopOdometry extends LinearOpMode{
         return correction;
     }
 
-    public void odometrySetAngle(double angle){
-        if (globalPositionUpdate.returnOrientation() < angle){
-            robot.turnCounterClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() < angle){
-                telemetry.update();
-            }
-        }else if (globalPositionUpdate.returnOrientation() > angle){
-            robot.turnClockwise(0.5);
-            while (globalPositionUpdate.returnOrientation() > angle){
-                telemetry.update();
-            }
-        }
-        robot.completeStop();
-    }
-
     public void odometryDriveToPosC (double xPos, double yPos, double direction) {
         //odometryNormalizeAngleNew();
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
@@ -322,7 +307,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         double angleDifference = getOdometryAngleDifference(desiredAngle);
 
-        while (angleDifference < 5){
+        while (angleDifference > 5){
             if (gamepad1.y){
                 break;
             }
