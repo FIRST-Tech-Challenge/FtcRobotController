@@ -206,11 +206,11 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             }
             if(gamepad1.b){
-                odometryNormalizeAngle();
+                setOdometryAngle(0);
             }
 
             if(gamepad1.x){
-                odometryNormalizeAngle();
+                setOdometryAngle(90);
             }
 
             //everything driving
@@ -355,21 +355,25 @@ public class MainTeleopOdometry extends LinearOpMode{
         //odometrySetAngle(direction);
     }
 
-    public void odometryNormalizeAngle() {
-        while (globalPositionUpdate.returnOrientation() > 5 || globalPositionUpdate.returnOrientation() < -5){
-            if (gamepad1.y){
-                break;
-            }
-            if (globalPositionUpdate.returnOrientation() > 5){
-                robot.turnClockwise(0.4);
-            }else{
-                robot.turnCounterClockwise(0.4);
-            }
+    public void setOdometryAngle(double desiredAngle) {
+        double angleDifference = desiredAngle - globalPositionUpdate.returnOrientation();
 
-            telemetry.addData("Degrees: ", globalPositionUpdate.returnOrientation());
-            telemetry.update();
+        while (angleDifference < 5){
+            angleDifference = desiredAngle - globalPositionUpdate.returnOrientation();
+
+            if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
+                motorFrontLeft.setPower(-0.4);
+                motorBackLeft.setPower(-0.4);
+                motorFrontRight.setPower(0.4);
+                motorBackRight.setPower(0.4);
+            }else{
+                motorFrontLeft.setPower(0.4);
+                motorBackLeft.setPower(0.4);
+                motorFrontRight.setPower(-0.4);
+                motorBackRight.setPower(-0.4);
+            }
         }
-            robot.completeStop();
+        robot.completeStop();
     }
 
     public void normalizeAngle(){
