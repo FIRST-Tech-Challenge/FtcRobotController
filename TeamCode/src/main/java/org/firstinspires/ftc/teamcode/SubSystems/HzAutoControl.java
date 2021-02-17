@@ -297,19 +297,23 @@ public class HzAutoControl {
         switch (autoMoveArm){
             case PARKED:
                 acHzArm.moveArmParkedPosition();
+                acHzArm.motorPowerToRun = acHzArm.POWER_NO_WOBBLEGOAL;
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
                 acHzArm.closeGrip();
                 break;
             case HOLD_UP_WOBBLE_RING:
                 acHzArm.moveArmHoldUpWobbleRingPosition();
+                acHzArm.motorPowerToRun = acHzArm.POWER_WITH_WOBBLEGOAL;
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
                 break;
             case PICK_WOBBLE:
                 acHzArm.moveArmPickWobblePosition();
+                acHzArm.motorPowerToRun = acHzArm.POWER_WITH_WOBBLEGOAL;
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
                 break;
             case DROP_WOBBLE_AUTONOMOUS:
                 acHzArm.moveArmDropWobbleAutonomousPosition();
+                acHzArm.motorPowerToRun = acHzArm.POWER_WITH_WOBBLEGOAL;
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
                 break;
         }

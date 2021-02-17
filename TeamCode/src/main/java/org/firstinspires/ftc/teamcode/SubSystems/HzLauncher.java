@@ -28,6 +28,7 @@ public class HzLauncher {
     public double DELTA_VELOCITY_CORRECTION = 60;
     public static final double PLUNGER_LAUNCH_POSITION = 0.65;//0.65;//0.67;
     public static final double PLUNGER_REST_POSITION = 0.84;//0.83;//0.84;
+    public static final double PLUNGER_PRELAUNCH_POSITION = 0.86;
 
 
     public enum LAUNCHER_FLYWHEEL_CONTROL {
@@ -75,6 +76,24 @@ public class HzLauncher {
 
     //run launcherRingPlungerServo to push Ring from magazine to Flywheel and retract to initial state
     public void plungeRingToFlyWheel() {
+        launcherRingPlungerServo.setPosition(PLUNGER_PRELAUNCH_POSITION);
+        try {
+            sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        };
+        launcherRingPlungerServo.setPosition(PLUNGER_LAUNCH_POSITION);
+        //plungeWait(250);
+        try {
+            sleep(200);//250
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        launcherRingPlungerServo.setPosition(PLUNGER_REST_POSITION);
+    }
+
+    //run launcherRingPlungerServo to push Ring from magazine to Flywheel and retract to initial state
+    public void plungeRingToFlyWheelPersistant() {
         launcherRingPlungerServo.setPosition(PLUNGER_LAUNCH_POSITION);
         //plungeWait(250);
         try {
@@ -83,7 +102,14 @@ public class HzLauncher {
             e.printStackTrace();
         }
         launcherRingPlungerServo.setPosition(PLUNGER_REST_POSITION);
+        //plungeWait(250);
+        try {
+            sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
+
 
     public LAUNCHER_FLYWHEEL_CONTROL getLauncherState(){
         return launcherState;

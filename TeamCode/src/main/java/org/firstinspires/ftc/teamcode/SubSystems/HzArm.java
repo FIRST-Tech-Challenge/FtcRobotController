@@ -40,7 +40,7 @@ public class HzArm {
     public static int ARM_PICK_RING_POSITION_COUNT = -900 ;
 
     public static double POWER_NO_WOBBLEGOAL = 0.6;
-    public static double POWER_WITH_WOBBLEGOAL = 0.6;
+    public static double POWER_WITH_WOBBLEGOAL = 0.4;
 
     public ARM_POSITION currentArmPosition = ARM_POSITION.PARKED;
     public ARM_POSITION previousArmPosition = ARM_POSITION.PARKED;;
@@ -141,7 +141,7 @@ public class HzArm {
     public void moveArmDropWobbleAutonomousPosition() {
         turnArmBrakeModeOn();
         armMotor.setTargetPosition(ARM_DROP_WOBBLE_AUTONOMOUS_POSITION + baselineEncoderCount);
-        motorPowerToRun = POWER_NO_WOBBLEGOAL;
+        motorPowerToRun = POWER_WITH_WOBBLEGOAL;
         runArmToLevelState = true;
         currentArmPosition = ARM_POSITION.DROP_WOBBLE_AUTONOMOUS;
     }

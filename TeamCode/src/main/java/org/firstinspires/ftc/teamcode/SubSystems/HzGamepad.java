@@ -314,6 +314,16 @@ public class HzGamepad {
         }
     }
 
+    public void runLauncherPersistant(){
+        while (getRightBumperPersistant()) {
+            if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
+                    gpHzLaunchController.launchReadiness == HzLaunchController.LAUNCH_READINESS.READY) {
+                gpHzLauncher.plungeRingToFlyWheelPersistant();
+            }
+        }
+    }
+
+
     /**
      * The leftTriggerPress when pressed once moves the arm halfway down, when it is pressed again the arm moves all the way down,
      * at last when the button is pressed for a third time the arm moves back to resting poistion. <BR>
@@ -463,6 +473,7 @@ public class HzGamepad {
         return isPressedLeftBumper;
     }
 
+
     /**
      * Method to track if Right Bumper was pressed to <TO-BE-UPDATED>.
      * To ensure that the continuous holding of the right bumper does not cause a continual action,
@@ -480,6 +491,10 @@ public class HzGamepad {
         }
         gp1RightBumperLast = gpGamepad.right_bumper;
         return isPressedRightBumper;
+    }
+
+    public boolean getRightBumperPersistant(){
+        return gpGamepad.right_bumper;
     }
 
     /**
