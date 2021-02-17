@@ -324,4 +324,19 @@ public class MainTeleop extends LinearOpMode{
         robot.correctedTankStrafe(leftPower, rightPower, correction);
         //}
     }
+    public void shootRings() throws InterruptedException{
+        int i = 0;
+        robot.outtake(0.65);
+        Thread.sleep(700);
+        while (i < 3) {
+            if (gamepad1.y){
+                break;
+            }
+            flipper.setPosition(0);
+            Thread.sleep(1000);
+            flipper.setPosition(1);
+            i++;
+        }
+        robot.outtake(0);
+    }
 }

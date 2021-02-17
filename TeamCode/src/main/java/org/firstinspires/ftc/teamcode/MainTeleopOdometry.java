@@ -23,8 +23,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class MainTeleopOdometry extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
-    double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
-
     private CRServo leftConveyor, rightConveyor, intake;
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
     private Servo flipper, wobbleClaw;
@@ -149,7 +147,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                     robot.intakeOn();
                     robot.conveyorOn();
 
-                //turns off intake
+                    //turns off intake
                 }else{
                     robot.intakeOff();
                     robot.conveyorOff();
@@ -246,8 +244,8 @@ public class MainTeleopOdometry extends LinearOpMode{
         double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
         double distance = Math.hypot(distanceX,distanceY);//0
 
-        double powerOne = 0.7 * Math.sin(angle);
-        double powerTwo = 0.7 * Math.cos(angle);
+        double powerOne = 0.7 * Math.sin(angle);//all be 0.4
+        double powerTwo = 0.7 * Math.cos(angle);//same here
 
         while (distance > 3){
             if (gamepad1.y){
@@ -258,7 +256,6 @@ public class MainTeleopOdometry extends LinearOpMode{
             distance = Math.hypot(distanceX,distanceY);
 
             angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
-
             powerOne = 0.7 * Math.sin(angle);//all be 0.4
             powerTwo = 0.7 * Math.cos(angle);//same here
 
@@ -276,43 +273,44 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void setOdometryAngle(double desiredAngle) {
+
         double angleDifference = getOdometryAngleDifference(desiredAngle);
-        while (angleDifference > 5){
+
+        while (angleDifference > 3){
             if (gamepad1.y){
                 break;
             }
             angleDifference = getOdometryAngleDifference(desiredAngle);
-            if (angleDifference >= 15){
-                if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
+
+            if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
+                if (angleDifference >= 15){
                     motorFrontLeft.setPower(-0.7);
                     motorBackLeft.setPower(-0.7);
                     motorFrontRight.setPower(0.7);
                     motorBackRight.setPower(0.7);
-                }else{
-                    motorFrontLeft.setPower(0.7);
-                    motorBackLeft.setPower(0.7);
-                    motorFrontRight.setPower(-0.7);
-                    motorBackRight.setPower(-0.7);
-                }
-            }else if (angleDifference < 15 || angleDifference >= 8){
-                if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
+                }else if ((angleDifference >= 6) && (angleDifference < 15)){
                     motorFrontLeft.setPower(-0.3);
                     motorBackLeft.setPower(-0.3);
                     motorFrontRight.setPower(0.3);
                     motorBackRight.setPower(0.3);
-                }else{
-                    motorFrontLeft.setPower(0.3);
-                    motorBackLeft.setPower(0.3);
-                    motorFrontRight.setPower(-0.3);
-                    motorBackRight.setPower(-0.3);
-                }
-            }else if (angleDifference < 8){
-                if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
+                }else if (angleDifference < 6){
                     motorFrontLeft.setPower(-0.2);
                     motorBackLeft.setPower(-0.2);
                     motorFrontRight.setPower(0.2);
                     motorBackRight.setPower(0.2);
-                }else{
+                }
+            }else {
+                if (angleDifference >= 15){
+                    motorFrontLeft.setPower(0.7);
+                    motorBackLeft.setPower(0.7);
+                    motorFrontRight.setPower(-0.7);
+                    motorBackRight.setPower(-0.7);
+                }else if ((angleDifference >= 6) && (angleDifference < 15)){
+                    motorFrontLeft.setPower(0.3);
+                    motorBackLeft.setPower(0.3);
+                    motorFrontRight.setPower(-0.3);
+                    motorBackRight.setPower(-0.3);
+                }else if (angleDifference < 6){
                     motorFrontLeft.setPower(0.2);
                     motorBackLeft.setPower(0.2);
                     motorFrontRight.setPower(-0.2);
@@ -338,7 +336,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(9.8,169,188);
+        odometryDriveToPos(-15.5,67.9,0);
         robot.shootRings();
 
     }
