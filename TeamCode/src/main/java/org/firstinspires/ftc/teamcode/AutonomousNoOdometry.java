@@ -27,8 +27,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "TestJeff")
-public class TestJeff extends LinearOpMode {
+@Autonomous(name = "AutonomousNoOdometry")
+public class AutonomousNoOdometry extends LinearOpMode {
     double hue;
     OpenCvCamera webcam;
     WebcamName webcam1;
@@ -48,7 +48,12 @@ public class TestJeff extends LinearOpMode {
     private DcMotor outtakeLeft;
     private DcMotor outtakeRight;
 
-    final double COUNTS_PER_INCH = 307.699557;
+    //Figures for Odometry
+    final double WHEEL_DIAMETER = 1.5;
+    final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
+    final double COUNTS_PER_REVOLUTION = 1280;
+    //final double COUNTS_PER_INCH = 307.699557;
+    final double COUNTS_PER_INCH = COUNTS_PER_REVOLUTION/WHEEL_CIRCUMFERENCE;
 
     //Odometry encoder wheels
     DcMotor verticalRight, verticalLeft, horizontal;
