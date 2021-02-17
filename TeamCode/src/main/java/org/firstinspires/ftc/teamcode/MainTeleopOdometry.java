@@ -321,14 +321,14 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void setOdometryAngle(double desiredAngle) {
-        double angleDifference = desiredAngle - globalPositionUpdate.returnOrientation();
+        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
 
         while (angleDifference < 5){
             if (gamepad1.y){
                 break;
             }
 
-            angleDifference = desiredAngle - globalPositionUpdate.returnOrientation();
+            angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
 
             if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
                 motorFrontLeft.setPower(-0.4);
