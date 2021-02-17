@@ -253,6 +253,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     public void hopperUpCombo() throws InterruptedException {
         if (ringLifter == null) return;
+        if (!transferIsDown) return;
         ringLifter.setPower(-1);
         transferUpCombo();
     }
