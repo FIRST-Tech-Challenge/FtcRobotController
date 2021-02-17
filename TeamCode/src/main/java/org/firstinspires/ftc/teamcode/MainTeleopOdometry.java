@@ -8,6 +8,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 /**
  * Main Teleop
  *
@@ -18,9 +23,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class MainTeleopOdometry extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
+    double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
+
     private CRServo leftConveyor, rightConveyor, intake;
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
     private Servo flipper, wobbleClaw;
+
+    private Orientation angles, lastAngles, startAngles;
+    private double globalAngle;
 
     private BNO055IMU imu;
 
@@ -86,6 +96,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+
 
         //reverse the needed motors
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
@@ -221,6 +232,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
+            telemetry.addData("IMU Angle: ", getZAngle());
 
             telemetry.addData("Vertical left encoder position", verticalLeft.getCurrentPosition());
             telemetry.addData("Vertical right encoder position", verticalRight.getCurrentPosition());
@@ -283,7 +295,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         double powerOne = 0.5 * Math.sin(angle);//all be 0.4
         double powerTwo = 0.5 * Math.cos(angle);//same here
 
-        double correction = 0;
+        double correction = robot.getCorrection();
         while (distance > 5){//can assume robot faces straight up?
             distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
@@ -360,6 +372,17 @@ public class MainTeleopOdometry extends LinearOpMode{
             robot.completeStop();
     }
 
+    public void normalizeAngle(){
+        while (getAngle() < -5 || getAngle() > 5){
+            if (getAngle() < 0){
+                robot.turnClockwise(0.5);
+            }else{
+                robot.turnCounterClockwise(0.5);
+            }
+        }
+        robot.completeStop();
+    }
+
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
         odometryDriveToPosC(-39.85,62.9,0);
@@ -375,5 +398,32 @@ public class MainTeleopOdometry extends LinearOpMode{
     public void shootGoal() throws InterruptedException{
         odometryDriveToPosC(-15.5,67.9,0);
         robot.shootRings();
+
+    }
+
+    private double getZAngle(){
+        return (imu.getAngularOrientation().firstAngle);
+    }
+
+    private double getAngle(){
+        //Get a new angle measurement
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        //Get the difference between current angle measurement and last angle measurement
+        double deltaAngle = angles.firstAngle - lastAngles.firstAngle;
+
+        //Process the angle to keep it within (-180,180)
+        //(Once angle passes +180, it will rollback to -179, and vice versa)
+        if (deltaAngle < -180)
+            deltaAngle += 360;
+        else if (deltaAngle > 180)
+            deltaAngle -= 360;
+
+        //Add the change in angle since last measurement (deltaAngle)
+        //to the change in angle since last reset (globalAngle)
+        globalAngle += deltaAngle;
+        //Set last angle measurement to current angle measurement
+        lastAngles = angles;
+
+        return globalAngle;
     }
 }
