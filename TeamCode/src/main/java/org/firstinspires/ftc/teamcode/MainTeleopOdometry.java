@@ -245,31 +245,8 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     }
 
-    public double getOdometryCorrection(double currentAngle){
-        double gain = 0.1; //0.01
-        //Get the current angle of the robot
-        double angle = globalPositionUpdate.returnOrientation();
-        double correction;
-
-        //Use the angle to calculate the correction
-        if (currentAngle == angle){
-            //If angle = 0, robot is moving straight; no correction needed
-            correction = 0;
-        }else{
-            //If angle != 0, robot is not moving straight
-            //Correction is negative angle (to move the robot in the opposite direction)
-            //multiplied by gain; the gain is the sensitivity to angle
-            //We have determined that .1 is a good gain; higher gains result in overcorrection
-            //Lower gains are ineffective
-            angle = angle - currentAngle;
-            correction = -angle*gain;
-        }
-
-        return correction;
-    }
-
     public void odometryDriveToPosC (double xPos, double yPos, double direction) {
-        //odometryNormalizeAngleNew();
+        setOdometryAngle(0);
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
         double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
@@ -300,29 +277,64 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.update();
         }
         robot.completeStop();
-        //odometrySetAngle(direction);
+        setOdometryAngle(direction);
+    }
+
+    public void odometryDriveToPosAngle (double xPos, double yPos, double direction) {
+        setOdometryAngle(0);
+        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
+        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
+        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
+        double distance = Math.hypot(distanceX,distanceY);//0
+
+        double powerOne = 0.7 * Math.sin(angle);//all be 0.4
+        double powerTwo = 0.7 * Math.cos(angle);//same here
+
+        while (distance > 3){
+            if (gamepad1.y){
+                break;
+            }
+            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
+            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
+            distance = Math.hypot(distanceX,distanceY);
+
+            angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
+            powerOne = 0.7 * Math.sin(angle);//all be 0.4
+            powerTwo = 0.7 * Math.cos(angle);//same here
+
+            motorFrontLeft.setPower(powerOne);
+            motorFrontRight.setPower(powerTwo);
+            motorBackLeft.setPower(powerTwo);
+            motorBackRight.setPower(powerOne);
+            telemetry.addData("Distance: ", distance);
+            telemetry.addData("DistanceX: ", distanceX);
+            telemetry.addData("DistanceY: ", distanceY);
+            telemetry.update();
+        }
+        robot.completeStop();
+        setOdometryAngle(direction);
     }
 
     public void setOdometryAngle(double desiredAngle) {
 
         double angleDifference = getOdometryAngleDifference(desiredAngle);
 
-        while (angleDifference > 5){
+        while (angleDifference > 2){
             if (gamepad1.y){
                 break;
             }
             angleDifference = getOdometryAngleDifference(desiredAngle);
 
             if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
-                motorFrontLeft.setPower(-0.4);
-                motorBackLeft.setPower(-0.4);
-                motorFrontRight.setPower(0.4);
-                motorBackRight.setPower(0.4);
+                motorFrontLeft.setPower(-0.7);
+                motorBackLeft.setPower(-0.7);
+                motorFrontRight.setPower(0.7);
+                motorBackRight.setPower(0.7);
             }else{
-                motorFrontLeft.setPower(0.4);
-                motorBackLeft.setPower(0.4);
-                motorFrontRight.setPower(-0.4);
-                motorBackRight.setPower(-0.4);
+                motorFrontLeft.setPower(0.7);
+                motorBackLeft.setPower(0.7);
+                motorFrontRight.setPower(-0.7);
+                motorBackRight.setPower(-0.7);
             }
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
             telemetry.update();
