@@ -299,10 +299,10 @@ public class MainTeleopOdometry extends LinearOpMode{
             distance = Math.hypot(distanceX,distanceY);
 
             angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
-            if (distance > 2){
+            if (distance >= 5){
                 powerOne = 0.7 * Math.sin(angle);
                 powerTwo = 0.7 * Math.cos(angle);
-            }else if (distance < 2){
+            }else if (distance < 5){
                 powerOne = 0.4 * Math.sin(angle);
                 powerTwo = 0.4 * Math.cos(angle);
             }
@@ -329,7 +329,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 break;
             }
             angleDifference = getOdometryAngleDifference(desiredAngle);
-            if (angleDifference > 2){
+            if (angleDifference >= 15){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
                     motorFrontLeft.setPower(-0.7);
                     motorBackLeft.setPower(-0.7);
@@ -341,7 +341,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                     motorFrontRight.setPower(-0.7);
                     motorBackRight.setPower(-0.7);
                 }
-            }else if (angleDifference < 2){
+            }else if (angleDifference < 15){
                 if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
                     motorFrontLeft.setPower(-0.4);
                     motorBackLeft.setPower(-0.4);
