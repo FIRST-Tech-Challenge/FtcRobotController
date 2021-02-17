@@ -49,9 +49,9 @@ public class UltimateGoalRobot
     public final static double MIN_FOUNDATION_SPIN_RATE = 0.19;
     public final static double MIN_FOUNDATION_DRIVE_RATE = 0.18;
     public final static double MIN_FOUNDATION_STRAFE_RATE = 0.19;
-    public final static double MIN_SPIN_RATE = 0.12;
-    public final static double MIN_DRIVE_RATE = 0.10;
-    public final static double MIN_STRAFE_RATE = 0.19;
+    public final static double MIN_SPIN_RATE = 0.02;
+    public final static double MIN_DRIVE_RATE = 0.02;
+    public final static double MIN_STRAFE_RATE = 0.04;
     public final static double MIN_DRIVE_MAGNITUDE = Math.sqrt(MIN_DRIVE_RATE*MIN_DRIVE_RATE+MIN_DRIVE_RATE*MIN_DRIVE_RATE);
     public final static double MIN_FOUNDATION_DRIVE_MAGNITUDE = Math.sqrt(MIN_FOUNDATION_DRIVE_RATE*MIN_FOUNDATION_DRIVE_RATE+MIN_FOUNDATION_DRIVE_RATE*MIN_FOUNDATION_DRIVE_RATE);
 
@@ -121,7 +121,7 @@ public class UltimateGoalRobot
     protected double intakeMotorPower = 0.0;
     protected double wobbleMotorPower = 0.0;
 
-    public boolean defaultInputShaping = true;
+    public boolean defaultInputShaping = false;
     protected boolean imuRead = false;
     protected double imuValue = 0.0;
     protected double strafeMultiplier = STRAFE_MULTIPLIER;
@@ -560,16 +560,32 @@ public class UltimateGoalRobot
         return reachedDestination;
     }
 
-    public double calculateDriveSpeed(double distance, double minSpeed, double maxSpeed, boolean passThrough) {
+    public double calculateLinearDriveSlowdown(double distance, double minSpeed, double maxSpeed, boolean passThrough) {
         double driveSpeed = 0.0;
-        final double curveSlope = 0.77;
-        final double fullThrottleMaxRange = 60.0;
+        final double fullThrottleMinDistance = 100.0;
 
-        // Full speed above 60cm
-        if(passThrough || distance >= fullThrottleMaxRange) {
+        // Full speed above fullThrottleMinRange
+        if(passThrough || distance >= fullThrottleMinDistance) {
             driveSpeed = maxSpeed;
         } else {
-            double valueIn = distance / fullThrottleMaxRange;
+            driveSpeed = maxSpeed * distance / fullThrottleMinDistance;
+        }
+
+        driveSpeed = max(min(driveSpeed, maxSpeed), minSpeed);
+
+        return driveSpeed;
+    }
+
+    public double calculateCubicDriveSlowdown(double distance, double minSpeed, double maxSpeed, boolean passThrough) {
+        double driveSpeed = 0.0;
+        final double curveSlope = 0.3;
+        final double fullThrottleMinDistance = 80.0;
+
+        // Full speed above fullThrottleMinRange
+        if(passThrough || distance >= fullThrottleMinDistance) {
+            driveSpeed = maxSpeed;
+        } else {
+            double valueIn = distance / fullThrottleMinDistance;
             driveSpeed = curveSlope * Math.pow(valueIn, 3) + (1.0 - curveSlope) * valueIn;
             driveSpeed *= maxSpeed;
         }
@@ -598,7 +614,7 @@ public class UltimateGoalRobot
         double driveAngle = Math.atan2(deltaY, deltaX);
         double deltaAngle = MyPosition.AngleWrap(targetAngle - MyPosition.worldAngle_rad);
         double magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        double driveSpeed = calculateDriveSpeed(magnitude, minSpeed, maxSpeed, passThrough);
+        double driveSpeed = calculateCubicDriveSlowdown(magnitude, minSpeed, maxSpeed, passThrough);
         // Apparently last season angle was positive CW, this season CCW is positive.
         double turnSpeed = -Math.toDegrees(deltaAngle) * errorMultiplier;
         // Have to convert from world angles to robot centric angles.
@@ -938,7 +954,7 @@ public class UltimateGoalRobot
             shootingDestination = alignmentCoordinates;
             shooterFlapTarget = targetFlap;
             // If the shooter isn't on, fire it up.
-            shooterOn();
+//            shooterOn();
             // Make sure shooter flap is in the right position.
             if(shooterFlapTarget == FLAP_POSITION.POWERSHOT) {
                 setShooterFlapPowerShot();
@@ -964,9 +980,9 @@ public class UltimateGoalRobot
             case ANGLE_ALIGNMENT:
                 if(rotateToAngle(shootingDestination.angle, false, false)) {
                     if(shooterFlapTarget == FLAP_POSITION.POWERSHOT) {
-                        startInjecting();
+//                        startInjecting();
                     } else {
-                        startTripleInjecting();
+//                        startTripleInjecting();
                     }
                     shotAlignmentState = SHOT_ALIGNMENT_STATE.FIRE;
                 }

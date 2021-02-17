@@ -45,7 +45,7 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         }
     }
 
-    private WayPoint calibrationTarget = new WayPoint(0, 0, toRadians(90.0), 0.5);
+    private WayPoint calibrationTarget = new WayPoint(0, 150.0, toRadians(90.0), 1.0);
     private double driverAngle = 0.0;
     private final double MAX_SPEED = 1.0;
     private final double MAX_SPIN = 1.0;
@@ -97,6 +97,8 @@ public class UltimateGoalOdometryCalibration extends OpMode {
     private double spin;
     private ElapsedTime loopTime = new ElapsedTime();
     private boolean runWithEncoders = true;
+    protected double forwardPower = 0.0;
+    protected double strafePower = 0.0;
 
     @Override
     public void start() {
@@ -113,7 +115,7 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         // Why do I have to negative angle to get the right angle!?! Everything works that way
         // but weird.
 //        startLocation = new WayPoint(149.7584, 22.86, Math.toRadians(90.0), 0.0);
-        MyPosition.setPosition(149.7584, 22.86, toRadians(90.0));
+        MyPosition.setPosition(0, 0, toRadians(90.0));
     }
 
     @Override
@@ -214,7 +216,7 @@ public class UltimateGoalOdometryCalibration extends OpMode {
 
         if(!upHeld && upPressed) {
             if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.highGoal, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                robot.startShotAligning(calibrationTarget, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
                 aligning = true;
             } else {
                 aligning = false;
@@ -337,8 +339,8 @@ public class UltimateGoalOdometryCalibration extends OpMode {
         telemetry.addData("Left Encoder: ", robot.getLeftEncoderWheelPosition());
         telemetry.addData("Strafe Encoder: ", robot.getStrafeEncoderWheelPosition());
         telemetry.addData("Right Encoder: ", robot.getRightEncoderWheelPosition());
-        telemetry.addData("Y Power: ", yPower);
-        telemetry.addData("X Power: ", xPower);
+        telemetry.addData("Forward Power: ", forwardPower);
+        telemetry.addData("Strafe Power: ", strafePower);
         telemetry.addData("Spin: ", spin);
         // This prevents us from reading the IMU every loop if we aren't in driver centric.
         if(!robot.disableDriverCentric) {
