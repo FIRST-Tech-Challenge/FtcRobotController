@@ -199,7 +199,11 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
 
             if(gamepad1.x){
-                odometryNormalizeAngle();
+                if (globalPositionUpdate.returnOrientation() != 0){
+                    robot.gyroStrafe(0.4,0);
+                    sleep(500);
+                    robot.completeStop();
+                }
             }
 
             //everything driving
