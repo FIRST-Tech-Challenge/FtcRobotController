@@ -31,7 +31,7 @@ public class OuterBlueAutonomous extends LinearOpMode{
          */
 
         robot.forward(.8,-8);
-        robot.turnRight(.4,180);
+        robot.pivotRight(.4,180);
         robot.moveWobbleGoalArm(.3,.5);
         robot.wobbleGoalGrippyThingRelease();//semi-colander
 
