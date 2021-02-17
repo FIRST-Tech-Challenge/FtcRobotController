@@ -195,14 +195,10 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             }
             if(gamepad1.b){
-                robot.gyroTurn(-90,0.4);
-                sleep(500);
                 odometryNormalizeAngle();
             }
 
             if(gamepad1.x){
-                robot.gyroTurn(90,0.4);
-                sleep(500);
                 odometryNormalizeAngle();
             }
 
