@@ -160,9 +160,24 @@ public class MainTeleop extends LinearOpMode{
             telemetry.addData("flipper position", flipper.getPosition());
 
 
+            //everything driving
+            //Mecanum drive using trig
+            double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI/4);
+            double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
+            double rotation = gamepad1.left_stick_x;
+
+            double powerOne = r*Math.sin(angle);
+            double powerTwo = r*Math.cos(angle);
+
+            motorFrontLeft.setPower((powerOne - (rotation))*powerMod);
+            motorFrontRight.setPower((powerTwo + (rotation))*powerMod);
+            motorBackLeft.setPower((powerTwo - (rotation))*powerMod);
+            motorBackRight.setPower((powerOne + (rotation))*powerMod);
+
             //everything outtake/launch
 
             //Sending data on power of outtake, outtake motor RPM, and tangential velocity of outtake wheel to telemetry
+
 
             if(gamepad2.right_bumper){
                 outtakeMod= .57;
@@ -174,6 +189,21 @@ public class MainTeleop extends LinearOpMode{
             double outtakePower = outtakeMod;
 
             while(gamepad2.right_trigger > .3) {
+
+                //everything driving
+                //Mecanum drive using trig
+                angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI/4);
+                r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
+                rotation = gamepad1.left_stick_x;
+
+                powerOne = r*Math.sin(angle);
+                powerTwo = r*Math.cos(angle);
+
+                motorFrontLeft.setPower((powerOne - (rotation))*powerMod);
+                motorFrontRight.setPower((powerTwo + (rotation))*powerMod);
+                motorBackLeft.setPower((powerTwo - (rotation))*powerMod);
+                motorBackRight.setPower((powerOne + (rotation))*powerMod);
+
                 outtakeLeft.setPower(outtakeMod);
                 outtakeRight.setPower(0);
                 if(gamepad2.a){
@@ -207,22 +237,6 @@ public class MainTeleop extends LinearOpMode{
             if(gamepad2.y){
                 wobbleClaw.setPosition(1);
             }
-
-
-            //everything driving
-            //Mecanum drive using trig
-            double angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI/4);
-            double r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
-            double rotation = gamepad1.left_stick_x;
-
-            double powerOne = r*Math.sin(angle);
-            double powerTwo = r*Math.cos(angle);
-
-            motorFrontLeft.setPower((powerOne - (rotation))*powerMod);
-            motorFrontRight.setPower((powerTwo + (rotation))*powerMod);
-            motorBackLeft.setPower((powerTwo - (rotation))*powerMod);
-            motorBackRight.setPower((powerOne + (rotation))*powerMod);
-
 
             //Sending data on power of outtake, outtake motor RPM, and tangential velocity of outtake wheel to telemetry
             //telemetry.addData("Volts: ", volts);
