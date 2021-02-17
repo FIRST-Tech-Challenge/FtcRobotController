@@ -34,6 +34,7 @@ android {
 
     aaptOptions {
         noCompress "tflite"
+        additionalParameters "--keep-raw-values"
     }
 
     defaultConfig {
