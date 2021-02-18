@@ -23,6 +23,13 @@ public class MecanumControlV2 extends OpMode {
     boolean isShooterOff = true;
     boolean wasPowerIncreased;
     boolean wasPowerDecreased;
+    double shooterChange = .05;
+
+    boolean highGoalMode = true;
+    boolean powerShotMode = false;
+
+    boolean autoPower = true;
+    boolean manualPower = false;
 
     private ElapsedTime period  = new ElapsedTime();
     private double runtime = 0;
@@ -44,8 +51,9 @@ public class MecanumControlV2 extends OpMode {
     @Override
     public void loop() {
         telemetry.addData("isShooterOn", isShooterOn);
-        telemetry.addData("isShooterOff", isShooterOff);
-        telemetry.addData("Shooter Power", shooterPower);
+        telemetry.addData("highGoalMode", highGoalMode);
+        telemetry.addData("Automatic Power", autoPower);
+        telemetry.addData("Shooter Power", shooter.getShooterPower());
         //telemetry.addData("Drive Speed",driveSpeed);
         //telemetry.addData("Direction",direction);
         //telemetry.addData("Turn Speed", turnSpeed);
@@ -87,21 +95,63 @@ public class MecanumControlV2 extends OpMode {
             isShooterOn = true;
         }else if (!gamepad2.a && isShooterOn) {
             isShooterOff = false;
-            shooter.shooterPower(shooterPower);
         }
         //Turn shooter off
         if (gamepad2.a && !isShooterOff) {
             isShooterOn = false;
         }else if (!gamepad2.a && !isShooterOn) {
             isShooterOff = true;
+        }
+        //Shooter into PowerShot mode
+        if (gamepad2.b && !powerShotMode) {
+            powerShotMode = true;
+        }else if (!gamepad2.b && powerShotMode) {
+            highGoalMode = false;
+        }
+        //Shooter into HighGoal mode
+        if (gamepad2.b && !highGoalMode) {
+            powerShotMode = false;
+        }else if (!gamepad2.b && !powerShotMode) {
+            highGoalMode = true;
+        }
+        //Shooter into Manual mode
+        if (gamepad2.x && !manualPower) {
+            manualPower = true;
+        }else if (!gamepad2.x && manualPower) {
+            autoPower = false;
+        }
+        //Shooter into Automatic mode
+        if (gamepad2.x && !autoPower) {
+            manualPower = false;
+        }else if (!gamepad2.x && !manualPower) {
+            autoPower = true;
+        }
+
+        //Set power of the shooter
+        if (isShooterOn) {
+            if (autoPower) {
+                if (highGoalMode) {
+                    shooter.shooterPower(shooter.scaleHighGoalDynamic());
+                } else {
+                    shooter.shooterPower(shooter.scalePowerShotDynamic());
+                }
+            } else {
+                if (isShooterOn) {
+                    shooter.shooterPower(shooterPower);
+                } else {
+                    shooter.shooterPower(0);
+                }
+            }
+        } else {
             shooter.shooterPower(0);
         }
+
         //Change shooter power
         if (gamepad2.dpad_up) {
             wasPowerIncreased = true;
         }else if (!gamepad2.dpad_up && wasPowerIncreased) {
-            shooterPower -= .05;
-            if (shooterPower <= -1.04) {
+            shooterPower -= shooterChange;
+            if (shooterPower <= -1.01) {
                 shooterPower = -.65;
             }
             wasPowerIncreased = false;
@@ -109,8 +159,8 @@ public class MecanumControlV2 extends OpMode {
         if (gamepad2.dpad_down) {
             wasPowerDecreased = true;
         }else if (!gamepad2.dpad_down && wasPowerDecreased) {
-            shooterPower += .05;
-            if (shooterPower >= -.61) {
+            shooterPower += shooterChange;
+            if (shooterPower >= -.62) {
                 shooterPower = -1;
             }
             wasPowerDecreased = false;

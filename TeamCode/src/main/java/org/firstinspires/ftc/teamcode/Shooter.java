@@ -98,4 +98,24 @@ public class Shooter {
         }
         return -.94;
     }
+
+    public double scalePowerShotDynamic() {
+        //Old linear version (flawed at extreme powers)
+//        double scalar = 120;
+//        return .108*(getBatteryVoltage()) - 1.265 - scalar/124.5;
+        double scalar = 142.606;
+        return -Math.cbrt((121050*getBatteryVoltage()/607117) + (Math.sqrt(Math.pow((242100*getBatteryVoltage()/607117 - 52.1392052),2) - 650.717989))/2 - 26.0696026)/3 - 0.843916411 + (1.81965764/Math.cbrt((121050*getBatteryVoltage()/607117) + (Math.sqrt(Math.pow((242100*getBatteryVoltage()/607117 - 52.1392052),2) - 650.717989))/2 - 26.0696026));
+    }
+
+    public double scaleHighGoalDynamic() {
+        //Old linear version (flawed at extreme powers)
+//        double scalar = 128;
+//        return .108*(getBatteryVoltage()) - 1.265 - scalar/124.5;
+        double scalar = 149.799;
+        return (7.315*Math.pow(getBatteryVoltage(),3)) + (18.519*Math.pow(getBatteryVoltage(),2)) + (14.469*getBatteryVoltage()) + 3.28 - (scalar/124.5);
+    }
+
+    public double getShooterPower() {
+        return rightShooter.getPower();
+    }
 }
