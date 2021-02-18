@@ -261,7 +261,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         double powerOne = 0.7 * Math.sin(angle);//all be 0.4
         double powerTwo = 0.7 * Math.cos(angle);//same here
 
-        while (distance > 2){
+        while (distance > 1.5){
             if (gamepad1.y){
                 break;
             }
@@ -295,7 +295,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         double angleDifference = getOdometryAngleDifference(desiredAngle);
 
-        while (angleDifference > 1){
+        while (angleDifference > 1.5){
             if (gamepad1.y){
                 break;
             }
@@ -355,7 +355,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-15.5,60,0);
+        odometryDriveToPos(-15.5,62,0);
         robot.shootRings();
 
     }
