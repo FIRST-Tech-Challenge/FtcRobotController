@@ -76,13 +76,13 @@ public class Shooter {
      */
     public double scalePowerShot() {
         if (getBatteryVoltage() > 13) {
-            return -.825;
+            return -.83;
         } else if (getBatteryVoltage() <= 13 && getBatteryVoltage() > 12.45) {
-            return -.875;
+            return -.885;
         } else if (getBatteryVoltage() <= 12.45) {
-            return -.9;
+            return -.91;
         }
-        return -.875;
+        return -.885;
     }
     /**
      * Scales shooter power for high goal in autonomous depending on current battery power
@@ -90,12 +90,12 @@ public class Shooter {
      */
     public double scaleHighGoal() {
         if (getBatteryVoltage() > 13) {
-            return -.875;
+            return -.88;
         } else if (getBatteryVoltage() <= 13 && getBatteryVoltage() > 12.45) {
-            return -.93;
+            return -.94;
         } else if (getBatteryVoltage() <= 12.45) {
-            return -.95;
+            return -.96;
         }
-        return -.93;
+        return -.94;
     }
 }

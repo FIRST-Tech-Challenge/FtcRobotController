@@ -84,6 +84,10 @@ public class BlueRight extends OpMode {
             power = shooter.scalePowerShot();
             high  = shooter.scaleHighGoal();
         }
+        telemetry.addData("Volts", shooter.getBatteryVoltage());
+        telemetry.addData("High Goal Power", high);
+        telemetry.addData("Power Shot Power", power);
+        telemetry.update();
 
         switch(stateMachineFlow) {
             case 0:
@@ -121,7 +125,6 @@ public class BlueRight extends OpMode {
                 }
                 camera.decativate();
                 telemetry.addData("Case",stateMachineFlow);
-                telemetry.update();
                 break;
 
             /***************************
@@ -188,7 +191,6 @@ public class BlueRight extends OpMode {
                     stateMachineFlow = 150;
                 }
                 telemetry.addData("Case",stateMachineFlow);
-                telemetry.update();
                 break;
             case 107:
                 //Move right to be in line with goal
@@ -246,7 +248,7 @@ public class BlueRight extends OpMode {
                  */
             case 150:
                 //Move right in line with first power shot
-                robot.sideDrive(.4,-28);
+                robot.sideDrive(.4,-31);
                 stateMachineFlow++;
                 break;
             case 151:
@@ -274,7 +276,7 @@ public class BlueRight extends OpMode {
                 break;
             case 153:
                 //Move right to second power shot
-                robot.sideDrive(.4,-6);
+                robot.sideDrive(.4,-7);
                 waitTime = .5;
                 runtime.reset();
                 time = runtime.time();
@@ -369,7 +371,6 @@ public class BlueRight extends OpMode {
                     stateMachineFlow = 250;
                 }
                 telemetry.addData("Case",stateMachineFlow);
-                telemetry.update();
                 break;
             case 206:
                 //Move to be in line with goal
@@ -455,7 +456,7 @@ public class BlueRight extends OpMode {
                 break;
             case 253:
                 //Move right to second power shot
-                robot.sideDrive(.4,-6);
+                robot.sideDrive(.4,-7);
                 waitTime = .5;
                 runtime.reset();
                 time = runtime.time();
@@ -554,7 +555,6 @@ public class BlueRight extends OpMode {
                     stateMachineFlow = 350;
                 }
                 telemetry.addData("Case",stateMachineFlow);
-                telemetry.update();
                 break;
             case 307:
                 //Move right to be in line with goal
