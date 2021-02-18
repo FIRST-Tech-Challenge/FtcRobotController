@@ -95,6 +95,13 @@ public class MainTeleopOdometry extends LinearOpMode{
         verticalLeft = hardwareMap.dcMotor.get("wobbleArm");
         verticalRight = hardwareMap.dcMotor.get("encoderFree");
 
+        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        outtakeRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
@@ -118,14 +125,11 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         double powerMod;
         double wobbleMod;
-        double verticalLeftEncoderWheelPosition = 0;
-        double verticalRightEncoderWheelPosition = 0;
-        double normalEncoderWheelPosition = 0;
-        double changeInRobotOrientation = 0;
+
 
         waitForStart();
 
-        globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, verticalLeftEncoderWheelPosition, verticalRightEncoderWheelPosition, normalEncoderWheelPosition, changeInRobotOrientation,75);
+        globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
