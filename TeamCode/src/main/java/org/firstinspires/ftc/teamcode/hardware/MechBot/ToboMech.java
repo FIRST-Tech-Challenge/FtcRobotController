@@ -1402,12 +1402,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (runtimeAuto.seconds() > 29){ return;}
         if (!keepPos) {
             if (tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C && numHighGoals == 3) {
-                chassis.driveTo(.55, side(50), 170, 0, true, 2);
+                chassis.driveTo(.55, side(50), 165, 0, true, 2);
             } else if (tZone != TargetZone.UNKNOWN) {
                 if (runtimeAuto.seconds() > 29) {
                     return;
                 }
-                chassis.driveTo(.55, side(90), 170, 0, true, 2);
+                chassis.driveTo(.55, side(90), 165, 0, true, 2);
             }
             }
         while (!TaskManager.isComplete("Transfer Up Combo")) {
