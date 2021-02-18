@@ -252,7 +252,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryDriveToPos (double xPos, double yPos, double direction) {
-        setOdometryAngle(0);
+        setOdometryAngle(direction);
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
         double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
@@ -300,8 +300,14 @@ public class MainTeleopOdometry extends LinearOpMode{
                 break;
             }
             angleDifference = getOdometryAngleDifference(desiredAngle);
+            telemetry.addData("Angle Differece: ", angleDifference);
+            telemetry.update();
+
 
             if (angleDifference < 0){
+                telemetry.addData("Angle Differece: ", angleDifference);
+                telemetry.addLine("Difference Less than 0");
+                telemetry.update();
                 if (Math.abs(angleDifference) >= 15){
                     motorFrontLeft.setPower(-0.7);
                     motorBackLeft.setPower(-0.7);
@@ -319,6 +325,9 @@ public class MainTeleopOdometry extends LinearOpMode{
                     motorBackRight.setPower(0.2);
                 }
             }else {
+                telemetry.addData("Angle Differece: ", angleDifference);
+                telemetry.addLine("Difference Greater than 0");
+                telemetry.update();
                 if (Math.abs(angleDifference) >= 15){
                     motorFrontLeft.setPower(0.7);
                     motorBackLeft.setPower(0.7);
@@ -364,7 +373,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     public double getOdometryAngleDifference(double desiredAngle){
         double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
         if (angleDifference > 180){
-            angleDifference = angleDifference - 360;
+            angleDifference = globalPositionUpdate.returnOrientation() - 360;
         }
         return angleDifference;
     }
