@@ -118,17 +118,18 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         double powerMod;
         double wobbleMod;
+        double verticalLeftEncoderWheelPosition = 0;
+        double verticalRightEncoderWheelPosition = 0;
+        double normalEncoderWheelPosition = 0;
+        double changeInRobotOrientation = 0;
+
+
 
         waitForStart();
 
-        globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
+        globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, verticalLeftEncoderWheelPosition, verticalRightEncoderWheelPosition, normalEncoderWheelPosition, changeInRobotOrientation,75);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
-
-        globalPositionUpdate.normalEncoderWheelPosition = 0;
-        globalPositionUpdate.verticalLeftEncoderWheelPosition = 0;
-        globalPositionUpdate.verticalRightEncoderWheelPosition = 0;
-
 
         while(opModeIsActive()){
 
