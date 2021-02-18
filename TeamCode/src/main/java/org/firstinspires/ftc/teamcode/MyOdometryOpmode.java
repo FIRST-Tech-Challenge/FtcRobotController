@@ -78,6 +78,8 @@ public class MyOdometryOpmode extends LinearOpMode {
 
         //Stop the thread
         globalPositionUpdate.stop();
+        telemetry.addData("Thread Active", positionThread.isAlive());
+        telemetry.update();
 
     }
 
