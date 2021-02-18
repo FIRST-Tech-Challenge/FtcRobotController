@@ -259,9 +259,12 @@ public class MainTeleopOdometry extends LinearOpMode{
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
         double currentAngle = globalPositionUpdate.returnOrientation();
 
+        /*
         if (currentAngle > 180){
             currentAngle = globalPositionUpdate.returnOrientation() - 360;
         }
+
+         */
         double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4) + Math.toRadians(currentAngle);
         double distance = Math.hypot(distanceX,distanceY);//0
 
