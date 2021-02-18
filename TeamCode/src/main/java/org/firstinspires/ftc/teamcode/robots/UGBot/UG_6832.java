@@ -160,8 +160,6 @@ public class UG_6832 extends OpMode {
 
     private FtcDashboard dashboard;
 
-    private TrajectoryCalculator calc = new TrajectoryCalculator(Constants.tempDistance);
-
     Telemetry dummyT = new Telemetry() {
         @Override
         public Item addData(String caption, String format, Object... args) {
@@ -678,17 +676,6 @@ public class UG_6832 extends OpMode {
 
         robot.launcher.update();
         robot.turret.update();
-
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.put("current flywheel velocity", robot.launcher.getFlywheelTPS());
-        packet.put("target flywheel velocity", robot.launcher.getFlywheelTargetTPS());
-        packet.put("flywheel motor power", robot.launcher.flywheelMotor.getPower() * 200);
-        packet.put("posey",robot.getPoseY());
-        packet.put("posex",robot.getPoseX());
-        packet.put("target angle for the thing", Math.toDegrees(Math.tan((robot.poseX - Constants.goalX) / (robot.poseY - Constants.goalY))));
-        packet.put("avg ticks",robot.getAverageTicks());
-
-        dashboard.sendTelemetryPacket(packet);
     }
 
     private void joystickDrivePregameMode() {
@@ -731,10 +718,6 @@ public class UG_6832 extends OpMode {
         // on gamepad 1 for prematch setup
         if (notdeadzone(gamepad1.left_stick_x)) {
             robot.turret.adjust(gamepad1.left_stick_x);
-        }
-
-        if(toggleAllowed(gamepad1.a, a, 1)){
-            robot.launcher.toggleTrigger();
         }
 
         if(toggleAllowed(gamepad1.b, b, 1)){
@@ -854,7 +837,7 @@ public class UG_6832 extends OpMode {
         telemetry.addLine().addData("Turret Heading", () -> robot.turret.getHeading());
         telemetry.addLine().addData("Turret Target`s", () -> robot.turret.getTurretTargetHeading());
         telemetry.addLine().addData("Turret Current angle ", () -> robot.turret.getHeading());
-        telemetry.addLine() .addData("calc predicted angle ", () -> calc.getTrajectorySolution().getTheta());
+
 
     }
 

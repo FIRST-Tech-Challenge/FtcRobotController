@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.UGBot.vision;
 import android.graphics.Bitmap;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.vuforia.Image;
 import com.vuforia.PIXEL_FORMAT;
@@ -66,6 +67,9 @@ public class OpenCVIntegration implements VisionProvider {
 
     @Override
     public StackHeight detect() {
+//        TelemetryPacket packet = new TelemetryPacket();
+//        packet.put("q size", q.size());
+//        dashboard.sendTelemetryPacket(packet);
         if (q.isEmpty())
             return StackHeight.HOLD_STATE;
         VuforiaLocalizer.CloseableFrame frame;

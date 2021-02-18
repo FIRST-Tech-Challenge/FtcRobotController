@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.robots.UGBot;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -87,6 +89,7 @@ public class PoseUG {
     DistanceSensor distLeft;
     DistanceSensor distRight;
     // DigitalChannel magSensor;
+    public TrajectoryCalculator trajCalc = new TrajectoryCalculator(poseX, poseY);;
 
     // drive train power values
     private double powerLeft = 0;
@@ -116,6 +119,7 @@ public class PoseUG {
     public static double offsetHeading;
     private double offsetPitch;
     private double offsetRoll;
+    private double goalHeading;
 
     public static double displacement;
     private double displacementPrev;
@@ -236,10 +240,13 @@ public class PoseUG {
      * Creates a base Pose instance at the origin, (_0,_0), with _0 speed and _0
      * vuAngle. Useful for determining the Pose of the robot relative to the origin.
      */
+
+
+
     public PoseUG(RobotType name) {
 
-        poseX = 1.2192; //todo- don't hardcode this
-        poseY = .24765; //this is in meters
+        poseX = Constants.startingXOffset;
+        poseY = Constants.startingYOffset;
         poseHeading = 0;
         poseSpeed = 0;
         posePitch = 0;
@@ -368,6 +375,47 @@ public class PoseUG {
         launcher.resetEncoders();
     }
 
+    public void sendTelemetry() {
+        TelemetryPacket packet = new TelemetryPacket();
+
+        Canvas fieldOverlay = packet.fieldOverlay();
+        double x = getPoseY() * Constants.INCHES_PER_METER - 72;
+        double y = -getPoseX() * Constants.INCHES_PER_METER;
+
+        // goal location
+        fieldOverlay.strokeCircle(Constants.goalY * Constants.INCHES_PER_METER - 72, -Constants.goalX * Constants.INCHES_PER_METER, Constants.GOAL_RADIUS);
+
+        // robot location
+        fieldOverlay.strokeCircle(x, y, Constants.ROBOT_RADIUS);
+        // robot heading
+        fieldOverlay.strokeLine(x, y, x + 3 * Constants.ROBOT_RADIUS * Math.sin(poseHeadingRad + 0.5 * Math.PI), y + 3 * Constants.ROBOT_RADIUS * Math.cos(poseHeadingRad + 0.5 *  Math.PI));
+
+        // turret heading
+        fieldOverlay.setStroke("#f50000");
+        // robot location
+        fieldOverlay.strokeLine(x, y, x + 2 * Constants.ROBOT_RADIUS * Math.sin(Math.toRadians(turret.getHeading()) + 0.5 * Math.PI), y + Constants.ROBOT_RADIUS * 2 * Math.cos(Math.toRadians(turret.getHeading()) + 0.5 *  Math.PI));
+
+        // heading to goal
+        fieldOverlay.setStroke("#0000ff");
+        fieldOverlay.strokeLine(x, y, x + Constants.ROBOT_RADIUS * Math.sin(Math.toRadians(goalHeading) + 0.5 * Math.PI), y +  Constants.ROBOT_RADIUS * Math.cos(Math.toRadians(goalHeading) + 0.5 *  Math.PI));
+
+        packet.put("current flywheel velocity", launcher.getFlywheelTPS());
+        packet.put("target flywheel velocity", launcher.getFlywheelTargetTPS());
+        packet.put("flywheel motor power", launcher.flywheelMotor.getPower() * 200);
+        packet.put("posey",getPoseY());
+        packet.put("posex",getPoseX());
+        packet.put("target angle for the thing", goalHeading);
+        packet.put("avg ticks",getAverageTicks());
+        packet.put("current turret heading", turret.getHeading());
+        packet.put("target turret heading", turret.getTurretTargetHeading());
+
+        dashboard.sendTelemetryPacket(packet);
+    }
+
+    public double getGoalHeading() {
+        return goalHeading;
+    }
+
     /**
      * update the current location of the robot. This implementation gets heading
      * and orientation from the Bosch BNO055 IMU and assumes a simple differential
@@ -427,6 +475,8 @@ public class PoseUG {
 
         articulate(articulation); // call the most recently requested articulation
         launcher.update();
+        goalHeading = getBearingTo(Constants.goalX, Constants.goalY);
+        turret.setTurntableAngle(goalHeading);
         turret.update();
 
         // we haven't worked out the trig of calculating displacement from any
@@ -472,6 +522,9 @@ public class PoseUG {
         loopTime = System.currentTimeMillis() - lastUpdateTimestamp;
         lastUpdateTimestamp = System.currentTimeMillis();
 
+        trajCalc.updatePos(poseX, poseY);
+
+        sendTelemetry();
     }
 
     public void updateSensors(boolean isActive) {
@@ -659,7 +712,7 @@ public class PoseUG {
     }
 
     private double getBearingTo(double targetX, double targetY) {
-        return Math.toDegrees(Math.tan((targetX-getPoseX()) / (targetY-getPoseY())));
+        return Math.toDegrees(Math.atan2((targetX-getPoseX()), (targetY-getPoseY())));
     }
 
     /**
@@ -718,13 +771,13 @@ public class PoseUG {
     public boolean toggleTriggerArticulation() {
         switch(toggleTriggerState) {
             case 0:
-                launcher.toggleTrigger();
+                launcher.servoTrigger.setPosition(servoNormalize(1750));
                 lastTriggerTime = System.currentTimeMillis();
                 toggleTriggerState++;
                 break;
             case 1:
                 if(System.currentTimeMillis() - lastTriggerTime > 500) {
-                    launcher.toggleTrigger();
+                    launcher.servoTrigger.setPosition(servoNormalize(2100));
                     toggleTriggerState = 0;
                     return true;
                 }
@@ -734,31 +787,23 @@ public class PoseUG {
     }
 
     public int testShotState = 0;
-    public long testShotTime;
-    public TrajectoryCalculator testCalc = new TrajectoryCalculator(Constants.tempDistance);
-    public double currentDistToTarget;
-    public boolean isOn = false;
+
 
     public boolean testShot(){
-            currentDistToTarget = Math.sqrt(Math.pow((poseX - Constants.goalX), 2) + Math.pow((poseY - Constants.goalY), 2));
-            testCalc.setDistance(currentDistToTarget);
-            launcher.setFlywheelTargetTPS(testCalc.getTrajectorySolution().getAngularVelocity() * 2);
-            turret.movePIDTurret(.07,.1,.1,turret.getHeading(),Math.toDegrees(Math.tan((poseX - Constants.goalX) / (poseY - Constants.goalY))));
+        launcher.setFlywheelTargetTPS(trajCalc.getTrajectorySolution().getAngularVelocity());
             switch (testShotState) {
                 case 0:
-//                    if (turret.rotateIMUTurret() {
-                        testShotState++;
-//                    }
+                    testShotState++;
                     break;
                 case 1:
-                    if (launcher.setElbowTargetAngle(testCalc.getTrajectorySolution().getTheta())) {
-                        testShotTime = System.currentTimeMillis();
+                    if (launcher.setElbowTargetAngle(trajCalc.getTrajectorySolution().getElevation() * Constants.MULTIPLIER)) {
                         testShotState++;
                     }
                     break;
                 case 2:
-                    if (System.currentTimeMillis() - testShotTime > 5000) {
+                    if (Math.abs(launcher.flywheelTargetTPS - launcher.flywheelTPS) / launcher.flywheelTargetTPS < 0.05) {
                         if (toggleTriggerArticulation()) {
+//                            launcher.setFlywheelTargetTPS(0);
                             testShotState = 0;
                             return true;
                         }

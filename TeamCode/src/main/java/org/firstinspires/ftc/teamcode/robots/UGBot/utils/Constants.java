@@ -10,6 +10,8 @@ public class Constants {
     public static final int ENCODER_TICKS_PER_REVOLUTION = 28;
     public static final double FLYWHEEL_RADIUS = 0.0765;
     public static final double GRAVITY = 9.80665;
+    public static final double INCHES_PER_METER = 39.3701;
+    public static final double ROBOT_RADIUS = 8.75;
 
     public static double kpFlywheel = 0.006; //proportional constant multiplier goodish
     public static  double kiFlywheel = 0.0; //integral constant multiplier
@@ -35,12 +37,15 @@ public class Constants {
 
     public static double MIN_CONTOUR_AREA = 1000;
 
-    //testVars
-    public static  double tempDistance= 0.0;
-
     //odometry positions all in meters
     public static double goalX = 0.9144;
-    public static double goalY = 1.8288;
+    public static double goalY = 3.6576;
+    public static double GOAL_RADIUS = 8;
+    public static double startingXOffset = 1.2192;
+    public static double startingYOffset = .24765;
+    public static double MULTIPLIER = 1.4;
+
+    public static int overrideTPS = 0;
 
 
 }

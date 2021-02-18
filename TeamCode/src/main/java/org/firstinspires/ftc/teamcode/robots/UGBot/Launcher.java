@@ -31,7 +31,7 @@ public class Launcher {
     PIDController flyWheelPID;
     double FlywheelCorrection = 0.00; //correction to apply to extention motor
     boolean FlywheelActivePID = true;
-    double FlywheelTargetTPS = 0;
+    double flywheelTargetTPS = 0;
     double FlywheelPwr = 1;
     double flywheelTPS;
 
@@ -82,6 +82,7 @@ public class Launcher {
 
     long prevNanoTime;
     int prevMotorTicks;
+    int prevOverride = Constants.overrideTPS;
 
     public void update(){
         if(active) {
@@ -90,17 +91,20 @@ public class Launcher {
             else
                 elbowPos = elbow.getCurrentPosition();
 
+
+
             flywheelTPS = (flywheelMotor.getCurrentPosition() - prevMotorTicks) / ((System.nanoTime() - prevNanoTime) / 1E9);
 
             prevNanoTime = System.nanoTime();
             prevMotorTicks = flywheelMotor.getCurrentPosition();
+            if(prevOverride != Constants.overrideTPS)
+                flywheelTargetTPS = Constants.overrideTPS;
 
+            if (FlywheelActivePID) {
+                spinPIDFlywheel(Constants.kpFlywheel, Constants.kiFlywheel, Constants.kdFlywheel, flywheelTPS, flywheelTargetTPS);
+            } else
+                flywheelTargetTPS = flywheelTPS;
 
-            if(FlywheelActivePID) {
-                spinPIDFlywheel(Constants.kpFlywheel, Constants.kiFlywheel, Constants.kdFlywheel, flywheelTPS, FlywheelTargetTPS);
-            }
-            else
-                FlywheelTargetTPS = flywheelTPS;
 //
 
         }
@@ -127,22 +131,6 @@ public class Launcher {
         elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         flywheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
-
-
-
-    //trigger methods
-
-    boolean triggState = true;
-
-    public boolean toggleTrigger() {
-        triggState = !triggState;
-        if(triggState)
-            servoTrigger.setPosition(servoNormalize(1750));
-        else
-            servoTrigger.setPosition(servoNormalize(2100)); //closed //899
-        return true;
-    }
-
 
 
     //flywheel methods
@@ -224,8 +212,8 @@ public class Launcher {
         return elbow.getCurrentPosition();
     }
 
-    public double getFlywheelTargetTPS() {return FlywheelTargetTPS;}
-    public void setFlywheelTargetTPS(double flywheelTargetTPS) {this.FlywheelTargetTPS = flywheelTargetTPS;}
+    public double getFlywheelTargetTPS() {return flywheelTargetTPS;}
+    public void setFlywheelTargetTPS(double flywheelTargetTPS) {this.flywheelTargetTPS = flywheelTargetTPS;}
 
     public double getCurrentAngle(){return  elbow.getCurrentPosition()/ticksPerDegree;}
 
