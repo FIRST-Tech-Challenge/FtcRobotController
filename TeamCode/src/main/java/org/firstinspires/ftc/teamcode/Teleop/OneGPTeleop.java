@@ -44,6 +44,7 @@ public class OneGPTeleop extends LinearOpMode {
         boolean slowMode = false;
         boolean wobble_goal_servo_is_up = true;
         boolean move_wobble_goal_servo = true;
+        robot.openWobbleGoalClaw();
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
 
         telemetry.addData("Status", "Ready to go");
