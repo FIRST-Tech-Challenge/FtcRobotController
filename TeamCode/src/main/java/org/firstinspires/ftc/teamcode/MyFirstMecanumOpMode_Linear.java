@@ -19,7 +19,6 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     DcMotor rightFrontMotor = null;
     DcMotor leftRearMotor = null;
     DcMotor rightRearMotor = null;
-    DcMotor wobbleGoalExtendMotor = null;
     DcMotor wobbleGoalRaiseMotor = null;
     DcMotor shooterMotor = null;
     Servo wobbleGoalGrippyThing = null;
@@ -42,7 +41,6 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
         leftRearMotor = hardwareMap.dcMotor.get("backLeft");
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
-        wobbleGoalExtendMotor = hardwareMap.dcMotor.get("wobbleExtendo");
         wobbleGoalRaiseMotor = hardwareMap.dcMotor.get("wobbleLift");
         shooterMotor = hardwareMap.dcMotor.get("shooterMotor");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
@@ -56,10 +54,13 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         leftRearMotor.setDirection(DcMotor.Direction.FORWARD);
         rightRearMotor.setDirection(DcMotor.Direction.REVERSE);
      //   intakeTwo.setDirection(CRServo.Direction.REVERSE);
+        shooterServo2.setDirection(CRServo.Direction.REVERSE);
 
+        boolean bPressed = false;
         boolean yPressed = false;
         boolean yOpen = true;
         boolean intake = false;
+        boolean bRunning = false;
 
 
         telemetry.addData("Status", "Initialized");
@@ -97,15 +98,22 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             leftRearMotor.setPower(leftRearPower);
             rightFrontMotor.setPower(rightFrontPower);
             rightRearMotor.setPower(rightRearPower);
+//
+//           double shooterPower = gamepad2.right_stick_y;
+//            //double shooterPower= -0.85;
+//            shooterMotor.setPower(shooterPower);
 
-           double shooterPower = gamepad2.right_stick_y;
-            //double shooterPower= -0.85;
+            if (gamepad2.right_trigger >= .87) {
+                shooterMotor.setPower(.85);
+            }
 
-            shooterMotor.setPower(shooterPower);
+            if (gamepad2.right_bumper == true) {
+                shooterMotor.setPower(0);
+            }
 
             if (gamepad2.dpad_down == true) {
                 shooterServo1.setPower(0.8);
-                shooterServo2.setPower(-0.8);
+                shooterServo2.setPower(0.8);
             }
 
             if (gamepad2.left_trigger >= .87) {
@@ -115,18 +123,6 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             } else {
                 wobbleGoalRaiseMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
                 wobbleGoalRaiseMotor.setPower(0);
-            }
-
-            if (gamepad2.right_trigger >= .87) {
-                wobbleGoalExtendMotor.setPower(.25);
-            } else {
-                wobbleGoalExtendMotor.setPower(0);
-            }
-
-            if (gamepad2.right_bumper == true) {
-                wobbleGoalExtendMotor.setPower(-.5);
-            } else {
-                wobbleGoalExtendMotor.setPower(0);
             }
 
             if (gamepad2.a) {
@@ -147,6 +143,23 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
 
             if (gamepad2.b) {
                 intakeOne.setPower(-0.9);
+            }
+
+            if (gamepad2.b) {
+                if (!bPressed) {
+                    bPressed = true;
+                    if (bRunning) {
+                        intakeOne.setPower(0);
+                        bRunning = false;
+                    } else {
+                        intakeOne.setPower(.9);
+                        bRunning = true;
+                    }
+                }
+            } else {
+                if (bPressed) {
+                    bPressed = false;
+                }
             }
 //            if (gamepad2.y) {
 //                if (!yPressed) {
@@ -172,6 +185,8 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             if (gamepad2.x){
                 wobbleGoalGrippyThing.setPosition(0.9);
             }
+
+
 
         }
     }

@@ -25,6 +25,7 @@ public class RobotClass {
     private DcMotor backRight;
     private DcMotor shooterMotor;
     private DcMotor wobbleGoalRaise;
+    private DcMotor intakeServoOne;
     private double ticks = 537;//537
   //  private CRServo continuous1;
     private Servo wobbleGoalGrippyThing;
@@ -43,6 +44,7 @@ public class RobotClass {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
         shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
+        intakeServoOne = hardwareMap.get(DcMotor.class, "intakeServoOne");
        // continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         shooterServo1 = hardwareMap.get(CRServo.class,"shooterServo1");
@@ -524,6 +526,10 @@ public class RobotClass {
 
     public void shooterServo2 (double speed) {
         shooterServo2.setPower(speed);
+    }
+
+    public void intakeEngage (double speed) {
+        intakeServoOne.setPower(speed);
     }
 
     public void moveWobbleGoalArm (double speed, double rotation) {
