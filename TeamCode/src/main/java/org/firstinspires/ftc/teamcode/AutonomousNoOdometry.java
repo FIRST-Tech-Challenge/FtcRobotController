@@ -121,7 +121,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
                 outtakeRight, outtakeLeft, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
-        wobbleClaw.setPosition(0);
+        wobbleClaw.setPosition(1);
         flipper.setPosition(1);
 
         /*
@@ -401,15 +401,15 @@ public class AutonomousNoOdometry extends LinearOpMode {
         timer.reset();
 
         while(timer.milliseconds() < 1500){
-            wobbleArm.setPower(-.4);
+            wobbleArm.setPower(-.5);
         }
         wobbleArm.setPower(0);
 
-        wobbleClaw.setPosition(1);
+        wobbleClaw.setPosition(0);
 
         timer.reset();
         while (timer.milliseconds() < 1500) {
-            wobbleArm.setPower(.4);
+            wobbleArm.setPower(.5);
         }
         wobbleArm.setPower(0);
 

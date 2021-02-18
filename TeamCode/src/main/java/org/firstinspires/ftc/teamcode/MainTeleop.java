@@ -216,7 +216,14 @@ public class MainTeleop extends LinearOpMode{
 
             outtakeLeft.setPower(0);
          //   outtakeRight.setPower(outtakePower);
-
+            if(gamepad1.a){//press and hold a while running intake
+                intakeMod = -1.0;
+            }else{
+                intakeMod = 1.0;
+            }
+            intake.setPower(intakeSpeed);
+            rightConveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
+            leftConveyor.setPower(intakeSpeed);
 
             double outtakeRPM = outtakePower * OUTTAKE_MOTOR_RPM * OUTTAKE_GEAR_RATIO;
             double outtakeWheelVelocity = (outtakeRPM * 2 * Math.PI * OUTTAKE_WHEEL_RADIUS_M)/60;
@@ -226,7 +233,7 @@ public class MainTeleop extends LinearOpMode{
             if(gamepad2.left_bumper){
                 wobbleMod = 1.0;
             }else{
-                wobbleMod = .3;
+                wobbleMod = .6;
             }
             wobbleArm.setPower(gamepad2.left_stick_y * wobbleMod );
 
