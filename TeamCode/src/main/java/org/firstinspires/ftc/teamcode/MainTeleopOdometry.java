@@ -260,11 +260,13 @@ public class MainTeleopOdometry extends LinearOpMode{
         double currentAngle = globalPositionUpdate.returnOrientation();
 
 
+        double correction = getOdometryAngleDifference(direction) * 0.01;
+
         if (currentAngle > 180){
             currentAngle = globalPositionUpdate.returnOrientation() - 360;
         }
 
-        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4) + Math.toRadians(currentAngle);
+        double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4) + Math.toRadians(currentAngle)) % 180;
         double distance = Math.hypot(distanceX,distanceY);//0
 
         double powerOne = 0.7 * Math.sin(angle);
