@@ -303,34 +303,34 @@ public class MainTeleopOdometry extends LinearOpMode{
             angleDifference = getOdometryAngleDifference(desiredAngle);
 
             if (angleDifference < 0){
-                if (Math.abs(angleDifference) >= 15){
+                if (angleDifference <= -15){
                     motorFrontLeft.setPower(-0.7);
                     motorBackLeft.setPower(-0.7);
                     motorFrontRight.setPower(0.7);
                     motorBackRight.setPower(0.7);
-                }else if ((Math.abs(angleDifference) >= 6) && (Math.abs(angleDifference) < 15)){
+                }else if ((angleDifference <= -6) && (angleDifference > -15)){
                     motorFrontLeft.setPower(-0.3);
                     motorBackLeft.setPower(-0.3);
                     motorFrontRight.setPower(0.3);
                     motorBackRight.setPower(0.3);
-                }else if (Math.abs(angleDifference) < 6){
+                }else if (angleDifference > -6){
                     motorFrontLeft.setPower(-0.2);
                     motorBackLeft.setPower(-0.2);
                     motorFrontRight.setPower(0.2);
                     motorBackRight.setPower(0.2);
                 }
             }else if (angleDifference > 0) {
-                if (Math.abs(angleDifference) >= 15){
+                if (angleDifference >= 15){
                     motorFrontLeft.setPower(0.7);
                     motorBackLeft.setPower(0.7);
                     motorFrontRight.setPower(-0.7);
                     motorBackRight.setPower(-0.7);
-                }else if ((Math.abs(angleDifference) >= 6) && (Math.abs(angleDifference) < 15)){
+                }else if ((angleDifference >= 6) && (angleDifference < 15)){
                     motorFrontLeft.setPower(0.3);
                     motorBackLeft.setPower(0.3);
                     motorFrontRight.setPower(-0.3);
                     motorBackRight.setPower(-0.3);
-                }else if (Math.abs(angleDifference) < 6){
+                }else if (angleDifference < 6){
                     motorFrontLeft.setPower(0.2);
                     motorBackLeft.setPower(0.2);
                     motorFrontRight.setPower(-0.2);
@@ -358,7 +358,6 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-18,58,0);
         odometryDriveToPos(-18,58,0);
         robot.shootRings();
 
