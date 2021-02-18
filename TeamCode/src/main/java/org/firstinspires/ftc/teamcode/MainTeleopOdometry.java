@@ -301,7 +301,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
             angleDifference = getOdometryAngleDifference(desiredAngle);
 
-            if (globalPositionUpdate.returnOrientation() < desiredAngle + 180){
+            if (globalPositionUpdate.returnOrientation() < desiredAngle){
                 if (angleDifference >= 15){
                     motorFrontLeft.setPower(-0.7);
                     motorBackLeft.setPower(-0.7);
@@ -355,8 +355,8 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-18,58,10);
-        odometryDriveToPos(-18,58,10);
+        odometryDriveToPos(-18,58,0);
+        odometryDriveToPos(-18,58,0);
         robot.shootRings();
 
     }
