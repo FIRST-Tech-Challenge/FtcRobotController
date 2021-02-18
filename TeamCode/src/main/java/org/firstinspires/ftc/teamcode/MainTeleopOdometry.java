@@ -277,7 +277,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             if (gamepad1.y){
                 break;
             }
-            //correction = getOdometryAngleDifference(direction) * 0.01;
+            correction = getOdometryAngleDifference(direction) * 0.01;
 
             distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
@@ -292,10 +292,10 @@ public class MainTeleopOdometry extends LinearOpMode{
                 powerTwo = 0.4 * Math.cos(angle);
             }
 
-            motorFrontLeft.setPower(powerOne);
-            motorFrontRight.setPower(powerTwo);
-            motorBackLeft.setPower(powerTwo);
-            motorBackRight.setPower(powerOne);
+            motorFrontLeft.setPower(powerOne+correction);
+            motorFrontRight.setPower(powerTwo-correction);
+            motorBackLeft.setPower(powerTwo+correction);
+            motorBackRight.setPower(powerOne-correction);
             telemetry.addData("Distance: ", distance);
             telemetry.addData("DistanceX: ", distanceX);
             telemetry.addData("DistanceY: ", distanceY);
@@ -335,6 +335,8 @@ public class MainTeleopOdometry extends LinearOpMode{
                     motorBackLeft.setPower(-0.3);
                     motorFrontRight.setPower(0.3);
                     motorBackRight.setPower(0.3);
+                }else if (angleDifference < 2){
+                    break;
                 }
             }else if ((globalPositionUpdate.returnOrientation() > angle2) && (globalPositionUpdate.returnOrientation() <= angle3)){
                 if (angleDifference >= 15){
@@ -352,6 +354,8 @@ public class MainTeleopOdometry extends LinearOpMode{
                     motorBackLeft.setPower(0.3);
                     motorFrontRight.setPower(-0.3);
                     motorBackRight.setPower(-0.3);
+                }else if (angleDifference < 2){
+                    break;
                 }
             }else{
                 break;
