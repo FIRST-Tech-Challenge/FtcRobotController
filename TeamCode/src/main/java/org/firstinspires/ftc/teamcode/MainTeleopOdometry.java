@@ -240,6 +240,8 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.addData("Vertical right encoder position", verticalRight.getCurrentPosition());
             telemetry.addData("horizontal encoder position", horizontal.getCurrentPosition());
             telemetry.addData("Angle Difference from 0: ", getOdometryAngleDifference(0));
+            telemetry.addData("Angle Difference from 90: ", getOdometryAngleDifference(90));
+
 
             telemetry.addData("Thread Active", positionThread.isAlive());
 
@@ -302,7 +304,11 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
             angleDifference = getOdometryAngleDifference(desiredAngle);
 
-            if (angleDifference < 0){
+            double angle1 = (0 + desiredAngle) % 360;
+            double angle2 = (180 + desiredAngle) % 360;
+            double angle3 = (359 + desiredAngle) % 360;
+
+            if ((globalPositionUpdate.returnOrientation() > angle1) && (globalPositionUpdate.returnOrientation() <= angle2)){
                 if (angleDifference <= -15){
                     motorFrontLeft.setPower(-0.7);
                     motorBackLeft.setPower(-0.7);
@@ -319,7 +325,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                     motorFrontRight.setPower(0.2);
                     motorBackRight.setPower(0.2);
                 }
-            }else if (angleDifference > 0) {
+            }else if ((globalPositionUpdate.returnOrientation() > angle2) && (globalPositionUpdate.returnOrientation() <= angle3)){
                 if (angleDifference >= 15){
                     motorFrontLeft.setPower(0.7);
                     motorBackLeft.setPower(0.7);
@@ -339,6 +345,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             }else{
                 break;
             }
+
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
             telemetry.update();
         }
@@ -366,7 +373,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     public double getOdometryAngleDifference(double desiredAngle){
         double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
         if (angleDifference > 180){
-            angleDifference = globalPositionUpdate.returnOrientation() - 360;
+            angleDifference = 360 - angleDifference;
         }
         return angleDifference;
     }
