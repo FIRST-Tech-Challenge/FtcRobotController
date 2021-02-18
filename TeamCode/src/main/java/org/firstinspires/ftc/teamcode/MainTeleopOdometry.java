@@ -209,11 +209,11 @@ public class MainTeleopOdometry extends LinearOpMode{
                 shootGoal();
             }
             if(gamepad1.b){
-
-
+                setOdometryAngle(0);
             }
 
             if(gamepad1.x){
+                setOdometryAngle(270);
             }
 
             //everything driving
@@ -319,10 +319,10 @@ public class MainTeleopOdometry extends LinearOpMode{
                     motorFrontRight.setPower(0.7);
                     motorBackRight.setPower(0.7);
                 }else if ((angleDifference <= -6) && (angleDifference > -15)){
-                    motorFrontLeft.setPower(-0.3);
-                    motorBackLeft.setPower(-0.3);
-                    motorFrontRight.setPower(0.3);
-                    motorBackRight.setPower(0.3);
+                    motorFrontLeft.setPower(-0.4);
+                    motorBackLeft.setPower(-0.4);
+                    motorFrontRight.setPower(0.4);
+                    motorBackRight.setPower(0.4);
                 }else if (angleDifference > -6){
                     motorFrontLeft.setPower(-0.2);
                     motorBackLeft.setPower(-0.2);
@@ -336,10 +336,10 @@ public class MainTeleopOdometry extends LinearOpMode{
                     motorFrontRight.setPower(-0.7);
                     motorBackRight.setPower(-0.7);
                 }else if ((angleDifference >= 6) && (angleDifference < 15)){
-                    motorFrontLeft.setPower(0.3);
-                    motorBackLeft.setPower(0.3);
-                    motorFrontRight.setPower(-0.3);
-                    motorBackRight.setPower(-0.3);
+                    motorFrontLeft.setPower(0.4);
+                    motorBackLeft.setPower(0.4);
+                    motorFrontRight.setPower(-0.4);
+                    motorBackRight.setPower(-0.4);
                 }else if (angleDifference < 6){
                     motorFrontLeft.setPower(0.2);
                     motorBackLeft.setPower(0.2);
@@ -349,9 +349,6 @@ public class MainTeleopOdometry extends LinearOpMode{
             }else{
                 break;
             }
-
-            telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
-            telemetry.update();
         }
         robot.completeStop();
     }
