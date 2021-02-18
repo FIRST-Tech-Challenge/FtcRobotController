@@ -384,12 +384,11 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public double getOdometryAngleDifference(double desiredAngle){
         double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
-        /*
+
         if (angleDifference > 180){
             angleDifference = 360 - angleDifference;
         }
 
-         */
         return angleDifference;
     }
 }
