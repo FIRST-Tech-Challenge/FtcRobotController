@@ -260,9 +260,6 @@ public class MainTeleopOdometry extends LinearOpMode{
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
         double currentAngle = globalPositionUpdate.returnOrientation();
 
-
-        double correction = getOdometryAngleDifference(direction) * 0.01;
-
         if (currentAngle > 180){
             currentAngle = globalPositionUpdate.returnOrientation() - 360;
         }
@@ -277,7 +274,6 @@ public class MainTeleopOdometry extends LinearOpMode{
             if (gamepad1.y){
                 break;
             }
-            correction = getOdometryAngleDifference(direction) * 0.01;
 
             distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
@@ -292,10 +288,10 @@ public class MainTeleopOdometry extends LinearOpMode{
                 powerTwo = 0.4 * Math.cos(angle);
             }
 
-            motorFrontLeft.setPower(powerOne+correction);
-            motorFrontRight.setPower(powerTwo-correction);
-            motorBackLeft.setPower(powerTwo+correction);
-            motorBackRight.setPower(powerOne-correction);
+            motorFrontLeft.setPower(powerOne);
+            motorFrontRight.setPower(powerTwo);
+            motorBackLeft.setPower(powerTwo);
+            motorBackRight.setPower(powerOne);
             telemetry.addData("Distance: ", distance);
             telemetry.addData("DistanceX: ", distanceX);
             telemetry.addData("DistanceY: ", distanceY);
