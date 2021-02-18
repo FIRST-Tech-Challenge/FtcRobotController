@@ -735,7 +735,7 @@ public class IMURobot {
 
     public void shootRings() throws InterruptedException{
         int i = 0;
-        outtake(0.63);
+        outtake(0.61);
         Thread.sleep(500);
         while (i < 3) {
             Thread.sleep(500);

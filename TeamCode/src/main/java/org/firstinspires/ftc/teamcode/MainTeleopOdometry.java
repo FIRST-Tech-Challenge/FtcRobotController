@@ -355,8 +355,8 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-18,58,5);
-        odometryDriveToPos(-18,58,5);
+        odometryDriveToPos(-18,58,10);
+        odometryDriveToPos(-18,58,10);
         robot.shootRings();
 
     }
