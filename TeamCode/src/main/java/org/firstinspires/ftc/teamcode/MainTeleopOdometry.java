@@ -125,6 +125,10 @@ public class MainTeleopOdometry extends LinearOpMode{
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
+        globalPositionUpdate.normalEncoderWheelPosition = 0;
+        globalPositionUpdate.verticalLeftEncoderWheelPosition = 0;
+        globalPositionUpdate.verticalRightEncoderWheelPosition = 0;
+
 
         while(opModeIsActive()){
 
@@ -203,6 +207,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
             if(gamepad1.b){
 
+
             }
 
             if(gamepad1.x){
@@ -238,6 +243,8 @@ public class MainTeleopOdometry extends LinearOpMode{
             idle();
         }
         globalPositionUpdate.stop();
+        telemetry.addData("Thread Active", positionThread.isAlive());
+        telemetry.update();
 
     }
 
