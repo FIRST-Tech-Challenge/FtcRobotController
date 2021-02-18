@@ -261,7 +261,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         double powerOne = 0.7 * Math.sin(angle);//all be 0.4
         double powerTwo = 0.7 * Math.cos(angle);//same here
 
-        while (distance > 1){
+        while (distance > 2){
             if (gamepad1.y){
                 break;
             }
@@ -270,8 +270,13 @@ public class MainTeleopOdometry extends LinearOpMode{
             distance = Math.hypot(distanceX,distanceY);
 
             angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
-            powerOne = 0.7 * Math.sin(angle);//all be 0.4
-            powerTwo = 0.7 * Math.cos(angle);//same here
+            if (distance >= 10){
+                powerOne = 0.7 * Math.sin(angle);
+                powerTwo = 0.7 * Math.cos(angle);
+            }else{
+                powerOne = 0.3 * Math.sin(angle);
+                powerTwo = 0.3 * Math.cos(angle);
+            }
 
             motorFrontLeft.setPower(powerOne);
             motorFrontRight.setPower(powerTwo);
