@@ -310,7 +310,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             double angle1 = (0 + desiredAngle) % 360;
             double angle2 = (180 + desiredAngle) % 360;
-            double angle3 = (359 + desiredAngle) % 360;
+            double angle3 = ((359 + desiredAngle) % 360) + 1;
 
             if ((globalPositionUpdate.returnOrientation() > angle1) && (globalPositionUpdate.returnOrientation() <= angle2)){
                 if (angleDifference <= -15){
