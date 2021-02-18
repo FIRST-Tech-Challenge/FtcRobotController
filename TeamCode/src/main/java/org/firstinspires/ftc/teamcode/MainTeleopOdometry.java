@@ -209,11 +209,11 @@ public class MainTeleopOdometry extends LinearOpMode{
                 shootGoal();
             }
             if(gamepad1.b){
-                setOdometryAngle(0);
+                odometryDriveToPos(0,70,0);
             }
 
             if(gamepad1.x){
-                setOdometryAngle(270);
+                odometryDriveToPos(0,30,0);
             }
 
             //everything driving
@@ -259,17 +259,16 @@ public class MainTeleopOdometry extends LinearOpMode{
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
         double currentAngle = globalPositionUpdate.returnOrientation();
 
-        /*
+
         if (currentAngle > 180){
             currentAngle = globalPositionUpdate.returnOrientation() - 360;
         }
 
-         */
         double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4) + Math.toRadians(currentAngle);
         double distance = Math.hypot(distanceX,distanceY);//0
 
-        double powerOne = 0.7 * Math.sin(angle);//all be 0.4
-        double powerTwo = 0.7 * Math.cos(angle);//same here
+        double powerOne = 0.7 * Math.sin(angle);
+        double powerTwo = 0.7 * Math.cos(angle);
 
         while (distance > 1.5){
             if (gamepad1.y){
