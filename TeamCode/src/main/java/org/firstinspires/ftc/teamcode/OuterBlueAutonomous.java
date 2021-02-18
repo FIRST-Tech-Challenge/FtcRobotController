@@ -23,17 +23,13 @@ public class OuterBlueAutonomous extends LinearOpMode{
         robot.wobbleGoalGrippyThingGrab();
         waitForStart();
 
-        /*
-        Forward until blue
-        Deposit wobble goal
-        Backwards to white
-        Shoot much, a lot, good.
-         */
-
         robot.forward(.8,-8);
-        robot.pivotRight(.4,180);
+        robot.pivotRight(.4,90);
+        robot.pivotRight(.4,90);
         robot.moveWobbleGoalArm(.3,.5);
-        robot.wobbleGoalGrippyThingRelease();//semi-colander
+        robot.wobbleGoalGrippyThingRelease();
+        //I've stopped caring about anything at this point. Buffoonery unending. Reciprocation unknown. Despair hilarious. Disconcerting apathy. Muse murdered. Why. Industry. Cogs. Cogs to the regime. Supression. Smothering.  The world ends in fire. Murder By Death-The Desert is on Fire. Unending Loathing Omnipresently repres
 
     }
 }
+// Omnia mutantur, nos et mutamur in illis.
