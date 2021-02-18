@@ -274,8 +274,8 @@ public class MainTeleopOdometry extends LinearOpMode{
                 powerOne = 0.7 * Math.sin(angle);
                 powerTwo = 0.7 * Math.cos(angle);
             }else{
-                powerOne = 0.3 * Math.sin(angle);
-                powerTwo = 0.3 * Math.cos(angle);
+                powerOne = 0.4 * Math.sin(angle);
+                powerTwo = 0.4 * Math.cos(angle);
             }
 
             motorFrontLeft.setPower(powerOne);
@@ -295,7 +295,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         double angleDifference = getOdometryAngleDifference(desiredAngle);
 
-        while (angleDifference > 2){
+        while (angleDifference > 1){
             if (gamepad1.y){
                 break;
             }
