@@ -739,7 +739,7 @@ public class IMURobot {
         Thread.sleep(1000);
         while (i < 3) {
             flipper.setPosition(0);
-            Thread.sleep(1000);
+            Thread.sleep(700);
             flipper.setPosition(1);
             i++;
         }
