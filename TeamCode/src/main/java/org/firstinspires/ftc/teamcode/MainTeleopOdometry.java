@@ -295,7 +295,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         double angleDifference = getOdometryAngleDifference(desiredAngle);
 
-        while (angleDifference > 1.5){
+        while (angleDifference > 2){
             if (gamepad1.y){
                 break;
             }
