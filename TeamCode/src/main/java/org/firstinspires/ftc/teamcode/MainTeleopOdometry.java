@@ -255,10 +255,14 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryDriveToPos (double xPos, double yPos, double direction) {
-        setOdometryAngle(direction);
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
-        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4);
+        double currentAngle = globalPositionUpdate.returnOrientation();
+
+        if (currentAngle > 180){
+            currentAngle = globalPositionUpdate.returnOrientation() - 360;
+        }
+        double angle = Math.atan2(distanceY,distanceX)-(Math.PI/4) - Math.toRadians(currentAngle);
         double distance = Math.hypot(distanceX,distanceY);//0
 
         double powerOne = 0.7 * Math.sin(angle);//all be 0.4
