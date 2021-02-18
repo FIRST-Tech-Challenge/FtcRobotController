@@ -37,7 +37,7 @@ public class OdometryCalibration extends LinearOpMode {
 
     //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
     // final double COUNTS_PER_INCH = 307.699557;
-    final double COUNTS_PER_INCH = 303.712;
+    final double COUNTS_PER_INCH = 303.712 * 1.08; //Version 2
     ElapsedTime timer = new ElapsedTime();
 
     double horizontalTickOffset = 0;

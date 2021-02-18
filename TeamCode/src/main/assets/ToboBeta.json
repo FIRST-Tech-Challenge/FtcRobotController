@@ -1,0 +1,46 @@
+{
+  "arm": {
+    "center": 0.5,
+    "left": 0.01,
+    "right": 0.99
+  },
+  "t_grabber": {
+    "center": 0.5,
+    "left": 0.01,
+    "right": 0.99
+  },
+  "pivot": {
+    "center": 0.5,
+    "left": 0.001,
+    "right": 0.999
+  },
+  "arm": {
+    "center": 0.5,
+    "left": 0.001,
+    "right": 0.999
+  },
+  "grabber": {
+    "center": 0.5,
+    "left": 0.001,
+    "right": 0.999
+  },
+  "b_grabber": {
+    "center": 0.5,
+    "left": 0.0001,
+    "right": 0.999
+  },
+  "camLR": {
+    "center": 0.5,
+    "left": 0.01,
+    "right": 0.99
+  },
+  "chassis": {
+    "track": 15.75,
+    "wheelBase": 13,
+    "wheelRadius": 2.0,
+    "maxPower": 0.999,
+    "minPower": 0.1,
+    "initX": 0,
+    "initY": 0
+  }
+}

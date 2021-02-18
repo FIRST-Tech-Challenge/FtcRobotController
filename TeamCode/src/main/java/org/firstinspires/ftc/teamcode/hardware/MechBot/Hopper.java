@@ -42,7 +42,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     private final double HOLDER_IN = 0.9;
     private final double HOLDER_INIT = HOLDER_IN;
-    private final double HOLDER_OUT = 0.14;
+    private final double HOLDER_OUT = 0.15;
 
     private boolean feederIsIn = true;
     private boolean holderIsIn = true;
@@ -253,6 +253,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     public void hopperUpCombo() throws InterruptedException {
         if (ringLifter == null) return;
+        if (!transferIsDown) return;
         ringLifter.setPower(-1);
         transferUpCombo();
     }
