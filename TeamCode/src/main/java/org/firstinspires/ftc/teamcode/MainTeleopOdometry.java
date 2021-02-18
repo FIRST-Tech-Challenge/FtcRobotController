@@ -199,6 +199,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 shootGoal();
             }
             if(gamepad1.b){
+
             }
 
             if(gamepad1.x){
@@ -336,7 +337,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-15.5,67.9,0);
+        odometryDriveToPos(-15.5,62.6,5);
         robot.shootRings();
 
     }
