@@ -134,6 +134,7 @@ public class AutonomousMain extends LinearOpMode
         //Input Upright Mid Point: 240,320
         //Input Sideways Mid Point: 320,240
 
+
         waitForStart();
 
         globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);

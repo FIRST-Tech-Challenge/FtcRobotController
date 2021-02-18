@@ -123,8 +123,6 @@ public class MainTeleopOdometry extends LinearOpMode{
         double normalEncoderWheelPosition = 0;
         double changeInRobotOrientation = 0;
 
-
-
         waitForStart();
 
         globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, verticalLeftEncoderWheelPosition, verticalRightEncoderWheelPosition, normalEncoderWheelPosition, changeInRobotOrientation,75);
