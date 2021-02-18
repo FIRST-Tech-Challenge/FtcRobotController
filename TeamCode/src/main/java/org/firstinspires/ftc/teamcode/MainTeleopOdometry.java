@@ -276,7 +276,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             if (gamepad1.y){
                 break;
             }
-            correction = getOdometryAngleDifference(direction) * 0.1;
+            correction = getOdometryAngleDifference(direction) * 0.01;
 
             distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
