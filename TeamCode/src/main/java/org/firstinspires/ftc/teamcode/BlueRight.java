@@ -84,7 +84,7 @@ public class BlueRight extends OpMode {
 
         if (shooter.scalePowerShot() != Double.POSITIVE_INFINITY) {
             //power = shooter.scalePowerShot();
-            power = shooter.scalePowerShotDynamic();
+            //power = shooter.scalePowerShotDynamic();
             //high  = shooter.scaleHighGoal();
             high = shooter.scaleHighGoalDynamic();
         }
@@ -264,6 +264,7 @@ public class BlueRight extends OpMode {
                 while (waitTime > runtime.time() - time) {
 
                 }
+                power = shooter.scalePowerShotDynamic();
                 stateMachineFlow++;
                 break;
             case 152:
@@ -287,6 +288,7 @@ public class BlueRight extends OpMode {
                 while (waitTime > runtime.time() - time) {
 
                 }
+                power = shooter.scalePowerShotDynamic();
                 stateMachineFlow++;
                 break;
             case 154:
