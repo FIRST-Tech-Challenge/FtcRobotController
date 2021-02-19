@@ -109,6 +109,8 @@ public class OneGPTeleop extends LinearOpMode {
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DriveToWall);
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.DriveToWall) {
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DropOverWall);
+                    this.sleep(600);
+                    robot.openWobbleGoalClaw();
                 } else if(currentWobbleGoalPosition == WobbleGoal.Position.DropOverWall){
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
                 }
