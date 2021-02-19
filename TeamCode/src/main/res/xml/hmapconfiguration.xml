@@ -12,8 +12,8 @@
 
             <LynxEmbeddedIMU name="imu" port="0" bus="0"/>
 
-            <Servo name="[wobble arm Servo}" port="5"/>
-            <Servo name="[wobble grab Servo}" port="4"/>
+            <Servo name="wobbleGoalHold" port="4" />
+            <Servo name="wobbleGoalLift" port="5" />
         </LynxModule>
 
         <LynxModule name="Control Hub" port="173">
@@ -23,10 +23,13 @@
 
             <LynxEmbeddedIMU name="imu 1" port="0" bus="0"/>
 
-            <Servo name="[launcher Servo}" port="0"/>
-            <RevRobotics20HDHexMotor name="[launcher motor front]" port="0"/>
-            <RevRobotics20HDHexMotor name="[launcher motor back]" port="1"/>
+            <Servo name="aimServo" port="0" />
+            <Servo name="shooterServo" port="1" />
+            <RevRobotics20HDHexMotor name="shooterMotorFront" port="0" />
+            <RevRobotics20HDHexMotor name="shooterMotorBack" port="1" />
 
         </LynxModule>
     </LynxUsbDevice>
+
+    <Webcam name="Webcam 1" serialNumber="4927E1A0" />
 </Robot>
