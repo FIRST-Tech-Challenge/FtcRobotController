@@ -131,7 +131,6 @@ public class WobbleGoal {
 
     }
     public void  closeWobbleGoalClaw() {
-
             wobbleGoalServoClaw.setPosition(0);
             op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "closed");

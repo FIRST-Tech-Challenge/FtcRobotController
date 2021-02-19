@@ -286,7 +286,6 @@ return data;
             motorLeftFront.setPower(0);
             motorRightBack.setPower(0);
         }
-
     }
 
     public void moveForward(double distance, double power) {
@@ -302,7 +301,6 @@ return data;
     public void moveRight(double distance, double power) {//right is positive use distance to change direction
         double x=cos(getAngle()*PI/180)*distance,y=sin(getAngle()*PI/180)*distance;
         moveAngle(x,y,power);
-
     }
 
     public void moveLeft(double distance, double power) {

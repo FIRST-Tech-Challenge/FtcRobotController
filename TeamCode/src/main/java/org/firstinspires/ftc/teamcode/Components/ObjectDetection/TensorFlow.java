@@ -37,7 +37,6 @@ public class TensorFlow {
 
     private int numberOfRings;
 
-
     private static final String VUFORIA_KEY = key.key;
 
     private VuforiaLocalizer vuforia;

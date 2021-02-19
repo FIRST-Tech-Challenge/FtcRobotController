@@ -58,40 +58,6 @@ public class Robot {
 //            tensorFlow.runTensorFlowWaitForStart();
 //        }
     }
-    public void navigate(){
-        drivetrain.navigate();
-    }
-    public void moveVuforiaWebcam(double x, double y, double endAngle) {
-        if(!isCorgi) {
-            getVuforiaPosition();
-
-            double xdifference = x - vuforiaX;
-            double ydifference = y - vuforiaY;
-
-            double turn = endAngle - robotAngle;
-
-            double magnitude = Math.sqrt((xdifference * xdifference) + (ydifference * ydifference));
-
-            double mAngle = robotAngle - Math.toDegrees(Math.acos(ydifference / magnitude)); //move Angle
-
-            op.telemetry.addData("VuforiaX", "%.2f %.2f %.2f %.3f %.3f %.3f", vuforiaX, x, xdifference, robotAngle, getVuforiaAngle2(), endAngle);
-            op.telemetry.addData("VuforiaY", "%.2f %.2f %.2f %.2f %.3f %.3f", vuforiaY, y, ydifference, magnitude, turn, mAngle);
-            op.telemetry.update();
-            op.sleep(5000);
-            //drivetrain.moveAngle2(magnitude, mAngle, turn);
-
-            getVuforiaPosition();
-
-            op.telemetry.addData("VuforiaX", "%.2f %.2f %.2f %.3f %.3f %.3f", vuforiaX, x, xdifference, robotAngle, getVuforiaAngle2(), endAngle);
-            op.telemetry.addData("VuforiaY", "%.2f %.2f %.2f %.2f %.3f %.3f", vuforiaY, y, ydifference, magnitude, turn, mAngle);
-            op.telemetry.update();
-            op.sleep(5000);
-        }
-    }
-
-    public void startVuforia () {
-        vuforiaWebcam.start();
-    }
 
     public void stopAllMotors() {
         drivetrain.stopAllMotors();
@@ -162,10 +128,15 @@ public class Robot {
 
     /**Navigation**/
 
-
-
+    public void navigate(){
+        drivetrain.navigate();
+    }
 
     /**Vuforia**/
+
+    public void startVuforia () {
+        vuforiaWebcam.start();
+    }
 
     public double getVuforiaAngle() {
         if(isCorgi) {
@@ -204,12 +175,7 @@ public class Robot {
     public int getRingsAndWaitForStart(){
         return tensorFlow.runTensorFlowWaitForStart();
     }
-
-    /**Odometry**/
-
-    /**
-     * wobble goal methods
-     */
+    /**wobble goal methods**/
     public WobbleGoal.Position moveWobbleGoalToPosition(WobbleGoal.Position p){
         if(isCorgi) {
             wobbleGoal.goToPosition(p);
@@ -273,7 +239,6 @@ public class Robot {
 
     //shooter
 
-
     public void moveServo(boolean direction) {
             shooter.moveServo(direction);
     }
@@ -289,8 +254,6 @@ public class Robot {
     public void shootLowGoal(int rings){
         shooter.shootLowGoal(rings);;
     }
-
-
 
     public void shootGoalTeleop(int distance) {
             shooter.shootGoalTeleop(distance);

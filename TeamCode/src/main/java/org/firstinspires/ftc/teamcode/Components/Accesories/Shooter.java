@@ -80,7 +80,6 @@ public class Shooter {
         if(op.getRuntime()>3){
             stopShooter();
         }
-
     }
 
 
@@ -94,7 +93,6 @@ public class Shooter {
         op.telemetry.update();
         op.sleep(500);
     }
-
 
     public void shootGoalTeleop(int distance) {
         setVelocity(highGoalVelocity, distance);
