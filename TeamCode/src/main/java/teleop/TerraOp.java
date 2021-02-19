@@ -1,11 +1,12 @@
 package teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import global.TerraBot;
 import util.Vector;
-
+@Disabled
 @TeleOp(name = "TerraOp V5")
 public class TerraOp extends OpMode {
 
