@@ -106,11 +106,13 @@ public class OneGPTeleop extends LinearOpMode {
                 if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.GRAB) {
+                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DriveToWall);
+                } else if (currentWobbleGoalPosition == WobbleGoal.Position.DriveToWall) {
+                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DropOverWall);
+                } else if(currentWobbleGoalPosition == WobbleGoal.Position.DropOverWall){
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
-                } else if (currentWobbleGoalPosition == WobbleGoal.Position.REST
-                ) {
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
-                } else {
+                }
+                    else {
                     telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
                     telemetry.update();
                     sleep(500);

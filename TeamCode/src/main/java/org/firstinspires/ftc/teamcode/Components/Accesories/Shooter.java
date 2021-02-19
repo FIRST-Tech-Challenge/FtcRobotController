@@ -35,8 +35,8 @@ public class Shooter {
         shooterMotor = (DcMotorEx) op.hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
         shooter_Servo = op.hardwareMap.servo.get("ShooterServo");
         shooterMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        shooterMotor.setVelocityPIDFCoefficients(57, 0, 0, 17);
-        shooter_Servo.setPosition(1.0);
+        shooterMotor.setVelocityPIDFCoefficients(57, 0, 0, 15.4);
+        shooter_Servo.setPosition(0.59);
     }
 
     public void setVelocity(double velocity, int distance) {
@@ -86,9 +86,9 @@ public class Shooter {
 
     public void moveServo(boolean direction) {
         if (direction == true) {
-            shooter_Servo.setPosition(1.0);
+            shooter_Servo.setPosition(0.59);
         } else {
-            shooter_Servo.setPosition(0.0);
+            shooter_Servo.setPosition(0.52);
         }
         op.telemetry.addData("pusher position :", direction);
         op.telemetry.update();
