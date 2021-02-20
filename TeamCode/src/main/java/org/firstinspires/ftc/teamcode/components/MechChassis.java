@@ -196,6 +196,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     }
     public void calibrateRobotByVersion() {
         if (robotVersion == 2) {
+            ODO_COUNTS_PER_INCH = 334.6;
+            ODO_COUNTS_PER_CM = ODO_COUNTS_PER_INCH / 2.54;
             ratioFL = 14460.0 / 14503.0;
             ratioFR = 14460.0 / 14710.0;
             ratioBL = 14460.0 / 14756.0;
@@ -256,8 +258,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     DcMotorEx verticalRightEncoder;
     DcMotorEx horizontalEncoder;
     OdometryGlobalCoordinatePosition GPS;
-    final double ODO_COUNTS_PER_INCH = 303.71;
-    final double ODO_COUNTS_PER_CM = ODO_COUNTS_PER_INCH / 2.54;
+    double ODO_COUNTS_PER_INCH = 303.71;
+    double ODO_COUNTS_PER_CM = ODO_COUNTS_PER_INCH / 2.54;
 
     String rfName = "motorFR" , lfName = "motorFL";
     String rbName = "motorBR";
@@ -1240,7 +1242,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             line.addData("Odo-pos (x,y,angle)", new Func<String>() {
                 @Override
                 public String value() {
-                    return String.format("(%2.0f, %2.0f, %2.2f)", odo_x_pos_cm(), odo_y_pos_cm(), odo_heading());
+                    return String.format("(%2.2f, %2.2f, %2.2f)", odo_x_pos_cm(), odo_y_pos_cm(), odo_heading());
                 }
             });
             line.addData("Raw (x,ly,ry)", new Func<String>() {

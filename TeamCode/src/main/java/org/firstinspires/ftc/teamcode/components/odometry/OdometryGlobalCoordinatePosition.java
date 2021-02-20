@@ -77,7 +77,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
             this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
         }
         if(GPSVersion == 2) {
-            DEFAULT_COUNTS_PER_INCH = DEFAULT_COUNTS_PER_INCH * 1.08;
+            DEFAULT_COUNTS_PER_INCH = 334.6;
             robotEncoderWheelDistance = 14.75 * DEFAULT_COUNTS_PER_INCH;
             horizontalEncoderTickPerDegreeOffset = 60;
             useIMU=false;
@@ -164,7 +164,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         robotGlobalYCoordinatePosition = y;
     }
 
-    public void set_x_pos(double x) {
+    public void set_x_pos(double x_cm) {
 //        horizontalEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        horizontalEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        verticalEncoderLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -175,7 +175,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
 //        initRadians = robotOrientationRadians;
 //        verticalRightEncoderWheelPosition = verticalLeftEncoderWheelPosition = normalEncoderWheelPosition = changeInRobotOrientation = 0;
 //        previousVerticalRightEncoderWheelPosition = previousVerticalLeftEncoderWheelPosition = prevNormalEncoderWheelPosition = 0;
-        robotGlobalXCoordinatePosition = x * DEFAULT_COUNTS_PER_INCH / 2.54;
+        robotGlobalXCoordinatePosition = x_cm * DEFAULT_COUNTS_PER_INCH / 2.54;
     }
 
     public void set_y_pos(double y) {
