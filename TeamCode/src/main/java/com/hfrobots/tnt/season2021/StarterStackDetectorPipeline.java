@@ -123,9 +123,9 @@ public class StarterStackDetectorPipeline extends OpenCvPipeline {
                 int height = largestBoundingRect.height;
                 int width = largestBoundingRect.width;
 
-                if (height > 20 && height < 35) {
+                if (height > 20 && height < 37) {
                     ringsDetected.set(RingsDetected.ONE);
-                } else if (height > 40 && height < 60) {
+                } else if (height > 40 && height < 62) {
                     ringsDetected.set(RingsDetected.FOUR);
                 } else {
                     // we think we saw rings, but the height is off
