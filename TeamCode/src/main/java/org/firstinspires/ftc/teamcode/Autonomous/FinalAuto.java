@@ -74,19 +74,20 @@ public class FinalAuto extends LinearOpMode {
             robot.startTransfer();
             robot.goToPosition(-63,6,0,0.8);
             robot.goToPosition(-62.6,4,0,0.3);
-            sleep(1000);
+            sleep(500);
             robot.stopIntake();
             robot.stopTransfer();
-            robot.goToPosition(-49,4,0,0.8);
-            robot.goToPosition(-49.25,4,-3,1);
+            robot.goToPosition(-51,4,0,0.8);
+            robot.goToPosition(-51.25,4,-3,1);
             robot.shootHighGoal(2);
             robot.startIntake();
             robot.startTransfer();
-            robot.goToPosition(-45,2,-5,1);
+            sleep(250);
+            robot.goToPosition(-42,2,-5,1);
             robot.shootHighGoal(2);
-            robot.goToPosition(-70,1, 0,1);
+            robot.goToPosition(-67,1, 0,1);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
-            sleep(420);
+            sleep(250);
         }
         stop();
     }
