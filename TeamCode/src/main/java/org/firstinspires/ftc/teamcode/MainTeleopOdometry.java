@@ -284,8 +284,8 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             angle = angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4) + Math.toRadians(currentAngle));
             if (distance >= 10){
-                powerOne = 0.7 * Math.sin(angle);
-                powerTwo = 0.7 * Math.cos(angle);
+                powerOne = 1 * Math.sin(angle);
+                powerTwo = 1 * Math.cos(angle);
             }else{
                 powerOne = 0.4 * Math.sin(angle);
                 powerTwo = 0.4 * Math.cos(angle);

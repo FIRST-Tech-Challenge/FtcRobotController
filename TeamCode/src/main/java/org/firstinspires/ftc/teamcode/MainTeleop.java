@@ -188,21 +188,7 @@ public class MainTeleop extends LinearOpMode{
             }
             double outtakePower = outtakeMod;
 
-            while(gamepad2.right_trigger > .3) {
-
-                //everything driving
-                //Mecanum drive using trig
-                angle = Math.atan2(gamepad1.right_stick_y, gamepad1.right_stick_x) - (Math.PI/4);
-                r = Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y);
-                rotation = gamepad1.left_stick_x;
-
-                powerOne = r*Math.sin(angle);
-                powerTwo = r*Math.cos(angle);
-
-                motorFrontLeft.setPower((powerOne - (rotation))*powerMod);
-                motorFrontRight.setPower((powerTwo + (rotation))*powerMod);
-                motorBackLeft.setPower((powerTwo - (rotation))*powerMod);
-                motorBackRight.setPower((powerOne + (rotation))*powerMod);
+            if(gamepad2.right_trigger > .3) {
 
                 outtakeLeft.setPower(outtakeMod);
                 outtakeRight.setPower(0);
