@@ -14,7 +14,7 @@ public class CanvasUtils {
                 center.getX(),
                 center.getY(),
                 center.getX() + magnitude * Math.sin(Math.toRadians(direction) + 0.5 * Math.PI),
-                center.getY() + magnitude * Math.cos(Math.toRadians(direction) + 0.5 + Math.PI)
+                center.getY() + magnitude * Math.cos(Math.toRadians(direction) + 0.5 * Math.PI)
         );
     }
 

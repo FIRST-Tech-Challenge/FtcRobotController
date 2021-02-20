@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils.Point;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectorySolution;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
@@ -91,7 +92,10 @@ public class PoseUG {
     DistanceSensor distLeft;
     DistanceSensor distRight;
     // DigitalChannel magSensor;
-    public TrajectoryCalculator trajCalc = new TrajectoryCalculator(poseX, poseY);;
+
+    private Constants.Target target = Constants.Target.NONE;
+    public TrajectoryCalculator trajCalc = new TrajectoryCalculator(poseX, poseY, target);
+    public TrajectorySolution trajSol = null;
 
     // drive train power values
     private double powerLeft = 0;
@@ -391,15 +395,26 @@ public class PoseUG {
         Point robotCanvasPoint = CanvasUtils.toCanvasPoint(posePoint);
         fieldOverlay.strokeCircle(robotCanvasPoint.getX(), robotCanvasPoint.getY(), Constants.ROBOT_RADIUS);
 
-        // bearing to goal (neon green)
-        fieldOverlay.setStroke("#39FF14");
-        fieldOverlay.strokeLine(posePoint.getX(), posePoint.getY(), goalCanvasPoint.getX(), goalCanvasPoint.getY());
+        // power shots
+        Point firstPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.FIRST_POWER_SHOT.x, Constants.Target.FIRST_POWER_SHOT.y));
+        Point secondPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.SECOND_POWER_SHOT.x, Constants.Target.SECOND_POWER_SHOT.y));
+        Point thirdPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.THIRD_POWER_SHOT.x, Constants.Target.THIRD_POWER_SHOT.y));
 
+        fieldOverlay.strokeCircle(firstPowerShot.getX(), firstPowerShot.getY(), Constants.POWER_SHOT_RADIUS);
+        fieldOverlay.strokeCircle(secondPowerShot.getX(), secondPowerShot.getY(), Constants.POWER_SHOT_RADIUS);
+        fieldOverlay.strokeCircle(thirdPowerShot.getX(), thirdPowerShot.getY(), Constants.POWER_SHOT_RADIUS);
+
+        // bearing to target (neon green)
+        if(!target.equals(Constants.Target.NONE)) {
+            Point targetPoint = CanvasUtils.toCanvasPoint(new Point(getTarget().x, getTarget().y));
+            fieldOverlay.setStroke("#39FF14");
+            fieldOverlay.strokeLine(robotCanvasPoint.getX(), robotCanvasPoint.getY(), targetPoint.getX(), targetPoint.getY());
+        }
         // robot heading (black)
-        CanvasUtils.drawVector(fieldOverlay, posePoint, 3 * Constants.ROBOT_RADIUS, poseHeading, "#000000");
+        CanvasUtils.drawVector(fieldOverlay, posePoint, 2 * Constants.ROBOT_RADIUS, poseHeading, "#000000");
 
         // turret heading (red)
-        CanvasUtils.drawVector(fieldOverlay, posePoint, 2 * Constants.ROBOT_RADIUS, turret.getHeading(), "#FF0000");
+        CanvasUtils.drawVector(fieldOverlay, posePoint, 3 * Constants.ROBOT_RADIUS, turret.getHeading(), "#FF0000");
 
         packet.put("current flywheel velocity", launcher.getFlywheelTPS());
         packet.put("target flywheel velocity", launcher.getFlywheelTargetTPS());
@@ -410,6 +425,7 @@ public class PoseUG {
         packet.put("avg ticks",getAverageTicks());
         packet.put("current turret heading", turret.getHeading());
         packet.put("target turret heading", turret.getTurretTargetHeading());
+        packet.put("target", target);
 
         dashboard.sendTelemetryPacket(packet);
     }
@@ -439,6 +455,8 @@ public class PoseUG {
      * @param ticksLeft
      * @param ticksRight
      */
+
+    boolean flywheelIsActive = false;
     public void update(BNO055IMU imu, long ticksLeft, long ticksRight, boolean isActive) {
         long currentTime = System.nanoTime();
 
@@ -476,10 +494,6 @@ public class PoseUG {
          */
 
         articulate(articulation); // call the most recently requested articulation
-        launcher.update();
-        goalHeading = getBearingTo(Constants.goalX, Constants.goalY);
-        turret.setTurntableAngle(goalHeading);
-        turret.update();
 
         // we haven't worked out the trig of calculating displacement from any
         // driveMixer combination, so
@@ -525,8 +539,41 @@ public class PoseUG {
         lastUpdateTimestamp = System.currentTimeMillis();
 
         trajCalc.updatePos(poseX, poseY);
+        trajCalc.setTarget(target);
+        trajSol = trajCalc.getTrajectorySolution();
+
+        launcher.update();
+        turret.update();
+        maintainTarget();
 
         sendTelemetry();
+    }
+
+    public void setTarget(Constants.Target target) {
+        this.target = target;
+    }
+
+    public Constants.Target getTarget() {
+        return target; }
+
+    public void maintainTarget() {
+        switch(target) {
+            case NONE:
+                turret.setTurntableAngle(turret.getHeading());
+                break;
+            default:
+                goalHeading = getBearingTo(target.x, target.y);
+                turret.setTurntableAngle(goalHeading);
+                launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.MULTIPLIER);
+
+                if(flywheelIsActive){
+                    launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity());
+                }
+                else{
+                    launcher.setFlywheelTargetTPS(0);
+                }
+                break;
+        }
     }
 
     public void updateSensors(boolean isActive) {
@@ -771,19 +818,21 @@ public class PoseUG {
     public long lastTriggerTime;
 
     public boolean toggleTriggerArticulation() {
-        switch(toggleTriggerState) {
-            case 0:
-                launcher.servoTrigger.setPosition(servoNormalize(1750));
-                lastTriggerTime = System.currentTimeMillis();
-                toggleTriggerState++;
-                break;
-            case 1:
-                if(System.currentTimeMillis() - lastTriggerTime > 500) {
+        if (Math.abs(launcher.flywheelTargetTPS - launcher.flywheelTPS) / launcher.flywheelTargetTPS < 0.05) {
+            switch (toggleTriggerState) {
+                case 0:
                     launcher.servoTrigger.setPosition(servoNormalize(2100));
-                    toggleTriggerState = 0;
-                    return true;
-                }
-                break;
+                    lastTriggerTime = System.currentTimeMillis();
+                    toggleTriggerState++;
+                    break;
+                case 1:
+                    if (System.currentTimeMillis() - lastTriggerTime > 500) {
+                        launcher.servoTrigger.setPosition(servoNormalize(1750));
+                        toggleTriggerState = 0;
+                        return true;
+                    }
+                    break;
+            }
         }
         return false;
     }
@@ -792,13 +841,13 @@ public class PoseUG {
 
 
     public boolean testShot(){
-        launcher.setFlywheelTargetTPS(trajCalc.getTrajectorySolution().getAngularVelocity());
+        launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity());
             switch (testShotState) {
                 case 0:
                     testShotState++;
                     break;
                 case 1:
-                    if (launcher.setElbowTargetAngle(trajCalc.getTrajectorySolution().getElevation() * Constants.MULTIPLIER)) {
+                    if (launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.MULTIPLIER)) {
                         testShotState++;
                     }
                     break;

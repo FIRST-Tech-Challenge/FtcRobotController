@@ -33,6 +33,7 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -145,6 +146,9 @@ public class WebCamCapture extends LinearOpMode {
         initVuforia(hardwareMap, viewpoint);
         q = vuforia.getFrameQueue();
         dashboard = FtcDashboard.getInstance();
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("q size", q.size());
+        dashboard.sendTelemetryPacket(packet);
 
     }
     public void saveTempBitmap(Bitmap bitmap) {

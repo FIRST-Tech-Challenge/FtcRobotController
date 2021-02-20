@@ -6,13 +6,12 @@ import com.acmerobotics.dashboard.config.Config;
 public class Constants {
     //misc
     public static final double LAUNCH_HEIGHT = 0.41;
-    public static final double GOAL_HEIGHT = 0.88;
     public static final int ENCODER_TICKS_PER_REVOLUTION = 28;
     public static final double FLYWHEEL_RADIUS = 0.0765;
     public static final double GRAVITY = 9.80665;
     public static final double INCHES_PER_METER = 39.3701;
     public static final double ROBOT_RADIUS = 8.75;
-    public static double ITERATIONS = 20;
+    public static double ITERATIONS = 1;
     public static final double LAUNCHER_LENGTH = 0.24;
     public static final double LAUNCHER_VERTICAL_OFFSET = 0.085;
     public static final double BASE_LAUNCH_ANGLE = 19.50244851;
@@ -45,11 +44,34 @@ public class Constants {
     public static double goalX = 0.9144;
     public static double goalY = 3.6576;
     public static double GOAL_RADIUS = 8;
+    public static double POWER_SHOT_RADIUS = 1;
     public static double startingXOffset = 1.2192;
     public static double startingYOffset = .24765;
     public static double MULTIPLIER = 1.4;
 
+
     public static int overrideTPS = 0;
 
+    public static double  DUMMYVAL = 0.0;
 
+    public enum Target {
+        NONE(0, 0, 0),
+        HIGH_GOAL(0.9144, 3.6576, 0.88),
+        MID_GOAL(0.9144,3.6576,.6858),
+        MID_GOAL_CLASSIC(-0.9144,3.6576,.6858),
+        LOW_GOAL(0.9144,3.6576,.4318),
+        FIRST_POWER_SHOT(.1016,3.6576,.8),
+        SECOND_POWER_SHOT(.2921,3.6576,.8),
+        THIRD_POWER_SHOT(.4826,3.6576,.8);
+
+
+
+        public double x, y, height;
+
+        private Target(double x, double y, double height) {
+            this.x = x;
+            this.y = y;
+            this.height = height;
+        }
+    }
 }

@@ -4,10 +4,12 @@ public class TrajectoryCalculator {
     private double x;
     private double y;
     private double distance;
+    private Constants.Target target;
 
-    public TrajectoryCalculator(double x, double y) {
+    public TrajectoryCalculator(double x, double y, Constants.Target target) {
         this.x = x;
         this.y = y;
+        this.target = target;
     }
 
     public void updatePos(double x, double y){
@@ -15,10 +17,14 @@ public class TrajectoryCalculator {
         this.y = y;
     }
 
+    public void setTarget(Constants.Target target) {
+        this.target = target;
+    }
+
     public TrajectorySolution getTrajectorySolution() {
         // initializing base launch height and distance
         double launchHeight = Constants.LAUNCH_HEIGHT;
-        distance = Math.hypot(Constants.goalX - x, Constants.goalY - y);
+        distance = Math.hypot(target.x - x, target.y - y);
         TrajectorySolution trajectoryIterationSolution = null;
 
         // performing iterations for convergence
@@ -38,7 +44,7 @@ public class TrajectoryCalculator {
 
     private TrajectorySolution performTrajectoryIteration(double distance, double launchHeight) {
         // vertical distance in meters the disk has to travel
-        double travelHeight = Constants.GOAL_HEIGHT - launchHeight;
+        double travelHeight = target.height - launchHeight;
         // time the disk is in air in seconds
         double flightTime = Math.sqrt((2 * travelHeight) / Constants.GRAVITY);
 
@@ -52,7 +58,7 @@ public class TrajectoryCalculator {
         angularVelocity *= (Constants.ENCODER_TICKS_PER_REVOLUTION / (2 * Math.PI)) * 2; // angular velocity in ticks/s
 
         double elevation = Math.toDegrees(Math.asin((Constants.GRAVITY * flightTime) / velocity));
-        double bearing = Math.toDegrees(Math.atan2((Constants.goalX-x), (Constants.goalY-y)));
+        double bearing = Math.toDegrees(Math.atan2((target.x - x), (target.y -y)));
 
         return new TrajectorySolution(angularVelocity, elevation, distance, bearing);
     }

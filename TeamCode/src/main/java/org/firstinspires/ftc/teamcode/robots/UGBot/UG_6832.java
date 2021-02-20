@@ -583,21 +583,21 @@ public class UG_6832 extends OpMode {
             robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
         }
 
-        //turret control
-        if (toggleAllowed(gamepad1.b, b, 1)) {
-            robot.turret.rotateCardinalTurret(true);
-        }
+//        //turret control
+//        if (toggleAllowed(gamepad1.b, b, 1)) {
+//            robot.turret.rotateCardinalTurret(true);
+//        }
 
 
-        if(toggleAllowed(gamepad1.a, a, 1) && gamepad1.y){
-            robot.articulate(PoseUG.Articulation.toggleTrigger);
-            lastCachedTPS = robot.launcher.getFlywheelTPS();
-            lastCachedArmTiccs= robot.launcher.getElbowCurrentPos();
-        }
-
-        if(toggleAllowed(gamepad2.a, a, 2)){
-            cacheValidated = true;
-        }
+//        if(toggleAllowed(gamepad1.a, a, 1) && gamepad1.y){
+//            robot.articulate(PoseUG.Articulation.toggleTrigger);
+//            lastCachedTPS = robot.launcher.getFlywheelTPS();
+//            lastCachedArmTiccs= robot.launcher.getElbowCurrentPos();
+//        }
+//
+//        if(toggleAllowed(gamepad2.a, a, 2)){
+//            cacheValidated = true;
+//        }
 
         if(cacheValidated = true){
             logger.UpdateLog(Double.toString(lastCachedTPS) + ","  + Double.toString(lastCachedArmTiccs) + "," + "idkguess");
@@ -614,8 +614,10 @@ public class UG_6832 extends OpMode {
 //            //robot.launcher.flywheelMotor.setPower(0);
 //        }
 
-        if(toggleAllowed(gamepad1.dpad_left, dpad_left, 1))
-            robot.articulate(PoseUG.Articulation.testShot);
+        if(toggleAllowed(gamepad1.b, b, 1))
+            robot.articulate(PoseUG.Articulation.toggleTrigger);
+        if(toggleAllowed(gamepad1.a, a, 1))
+            robot.flywheelIsActive = !robot.flywheelIsActive;
 
         if (toggleAllowed(gamepad1.x, x, 1)) {
             robot.turret.rotateCardinalTurret(false);
@@ -673,6 +675,39 @@ public class UG_6832 extends OpMode {
 //            robot.launcher.setElbowTargetPos(350,1);
 //            robot.launcher.extendToPosition(1200, 1.0);
 //  }
+
+        if(toggleAllowed(gamepad1.dpad_right,dpad_right,1))
+            robot.setTarget(Constants.Target.NONE);
+        if(toggleAllowed(gamepad1.dpad_up,dpad_up,1))
+            robot.setTarget(Constants.Target.HIGH_GOAL);
+        if(toggleAllowed(gamepad1.dpad_left,dpad_left,1)){
+            switch(robot.getTarget()){
+                case FIRST_POWER_SHOT:
+                    robot.setTarget(Constants.Target.SECOND_POWER_SHOT);
+                    break;
+                case SECOND_POWER_SHOT:
+                    robot.setTarget(Constants.Target.THIRD_POWER_SHOT);
+                    break;
+                case THIRD_POWER_SHOT:
+                    robot.setTarget(Constants.Target.FIRST_POWER_SHOT);
+                    break;
+                default:
+                    robot.setTarget(Constants.Target.FIRST_POWER_SHOT);
+            }
+        }
+        if(toggleAllowed(gamepad1.dpad_down,dpad_down,1)) {
+            switch(robot.getTarget()){
+                case MID_GOAL:
+                    robot.setTarget(Constants.Target.LOW_GOAL);
+                    break;
+                case LOW_GOAL:
+                    robot.setTarget(Constants.Target.MID_GOAL);
+                    break;
+                default:
+                    robot.setTarget(Constants.Target.MID_GOAL);
+            }
+        }
+
 
         robot.launcher.update();
         robot.turret.update();
@@ -837,6 +872,7 @@ public class UG_6832 extends OpMode {
         telemetry.addLine().addData("Turret Heading", () -> robot.turret.getHeading());
         telemetry.addLine().addData("Turret Target`s", () -> robot.turret.getTurretTargetHeading());
         telemetry.addLine().addData("Turret Current angle ", () -> robot.turret.getHeading());
+        telemetry.addLine().addData("Current Target", () -> robot.getTarget());
 
 
     }
