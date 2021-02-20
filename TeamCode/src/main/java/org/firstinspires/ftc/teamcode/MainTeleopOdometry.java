@@ -209,11 +209,11 @@ public class MainTeleopOdometry extends LinearOpMode{
                 shootGoal();
             }
             if(gamepad1.b){
-                odometryDriveToPos(0,70,0);
+                setOdometryAngle(0);
             }
 
             if(gamepad1.x){
-                odometryDriveToPos(0,30,0);
+                setOdometryAngle(45);
             }
 
             //everything driving
@@ -235,12 +235,15 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.addData("X Position", globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Y Position", globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
             telemetry.addData("Orientation (Degrees)", globalPositionUpdate.returnOrientation());
+            telemetry.addData("Relative Angle Difference from 0: ", getOdometryAngleDifference(0));
+            telemetry.addData("Relative Angle Difference from 90: ", getOdometryAngleDifference(90));
+            telemetry.addData("Raw Angle Difference from 0: ", getAngleRaw(0));
+            telemetry.addData("Raw Angle Difference from 90: ", getAngleRaw(90));
+
 
             telemetry.addData("Vertical left encoder position", verticalLeft.getCurrentPosition());
             telemetry.addData("Vertical right encoder position", verticalRight.getCurrentPosition());
             telemetry.addData("horizontal encoder position", horizontal.getCurrentPosition());
-            telemetry.addData("Angle Difference from 0: ", getOdometryAngleDifference(0));
-            telemetry.addData("Angle Difference from 90: ", getOdometryAngleDifference(90));
 
 
             telemetry.addData("Thread Active", positionThread.isAlive());
@@ -303,58 +306,26 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void setOdometryAngle(double desiredAngle) {
 
-        double angleDifference = getOdometryAngleDifference(desiredAngle);
+        double rawAngleDifference = getAngleRaw(desiredAngle);
+        double relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
-        while (Math.abs(angleDifference) > 2){
+
+        while (relativeAngleDifference > 2){
             if (gamepad1.y){
                 break;
             }
-            angleDifference = getOdometryAngleDifference(desiredAngle);
+            rawAngleDifference = getAngleRaw(desiredAngle);
+            relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
-            double angle1 = (0 + desiredAngle) % 360;
-            double angle2 = (180 + desiredAngle) % 360;
-            double angle3 = ((359 + desiredAngle) % 360) + 1;
 
-            if ((globalPositionUpdate.returnOrientation() > angle1) && (globalPositionUpdate.returnOrientation() <= angle2)){
-                if (angleDifference >= 15){
-                    motorFrontLeft.setPower(-0.7);
-                    motorBackLeft.setPower(-0.7);
-                    motorFrontRight.setPower(0.7);
-                    motorBackRight.setPower(0.7);
-                }else if ((angleDifference >= 6) && (angleDifference < 15)){
-                    motorFrontLeft.setPower(-0.4);
-                    motorBackLeft.setPower(-0.4);
-                    motorFrontRight.setPower(0.4);
-                    motorBackRight.setPower(0.4);
-                }else if (angleDifference < 6){
-                    motorFrontLeft.setPower(-0.3);
-                    motorBackLeft.setPower(-0.3);
-                    motorFrontRight.setPower(0.3);
-                    motorBackRight.setPower(0.3);
-                }else if (angleDifference < 2){
-                    break;
-                }
-            }else if ((globalPositionUpdate.returnOrientation() > angle2) && (globalPositionUpdate.returnOrientation() <= angle3)){
-                if (angleDifference >= 15){
-                    motorFrontLeft.setPower(0.7);
-                    motorBackLeft.setPower(0.7);
-                    motorFrontRight.setPower(-0.7);
-                    motorBackRight.setPower(-0.7);
-                }else if ((angleDifference >= 6) && (angleDifference < 15)){
-                    motorFrontLeft.setPower(0.4);
-                    motorBackLeft.setPower(0.4);
-                    motorFrontRight.setPower(-0.4);
-                    motorBackRight.setPower(-0.4);
-                }else if (angleDifference < 6){
-                    motorFrontLeft.setPower(0.3);
-                    motorBackLeft.setPower(0.3);
-                    motorFrontRight.setPower(-0.3);
-                    motorBackRight.setPower(-0.3);
-                }else if (angleDifference < 2){
-                    break;
-                }
-            }else{
-                break;
+            if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
+                turnClockwise(0.4);
+            }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
+                turnCounterClockwise(0.4);
+            }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
+                turnClockwise(0.4);
+            }else if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
+                turnCounterClockwise(0.4);
             }
         }
         robot.completeStop();
@@ -386,5 +357,22 @@ public class MainTeleopOdometry extends LinearOpMode{
         }
 
         return angleDifference;
+    }
+
+    public double getAngleRaw (double desiredAngle){
+        return ((double) Math.abs(desiredAngle - globalPositionUpdate.returnOrientation()));
+    }
+
+    public void turnClockwise(double power){
+        motorFrontLeft.setPower(power);
+        motorBackLeft.setPower(power);
+        motorFrontRight.setPower(-power);
+        motorBackRight.setPower(-power);
+    }
+    public void turnCounterClockwise(double power){
+        motorFrontLeft.setPower(-power);
+        motorBackLeft.setPower(-power);
+        motorFrontRight.setPower(power);
+        motorBackRight.setPower(power);
     }
 }

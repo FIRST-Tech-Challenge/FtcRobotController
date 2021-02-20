@@ -176,7 +176,6 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                isRunning = false;
             }
         }
     }
