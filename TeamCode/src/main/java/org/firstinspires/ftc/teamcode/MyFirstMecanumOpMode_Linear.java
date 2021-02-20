@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -21,7 +22,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     DcMotor rightRearMotor = null;
     DcMotor wobbleGoalExtendMotor = null;
     DcMotor wobbleGoalRaiseMotor = null;
-    DcMotor shooterMotor = null;
+    DcMotorImplEx shooterMotor = null;
     Servo wobbleGoalGrippyThing = null;
     CRServo intakeOne = null;
   //  CRServo intakeTwo = null;
@@ -44,7 +45,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
         wobbleGoalExtendMotor = hardwareMap.dcMotor.get("wobbleExtendo");
         wobbleGoalRaiseMotor = hardwareMap.dcMotor.get("wobbleLift");
-        shooterMotor = hardwareMap.dcMotor.get("shooterMotor");
+        shooterMotor = (DcMotorImplEx) hardwareMap.dcMotor.get("shooterMotor");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         intakeOne = hardwareMap.crservo.get("intakeServoOne");
       //  intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
@@ -59,8 +60,10 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
 
         boolean yPressed = false;
         boolean yOpen = true;
+        boolean shooterServoPressed = false;
+        boolean shooterServoOn= false;
         boolean intake = false;
-
+        wobbleGoalGrippyThing.setPosition(0.9);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -98,15 +101,23 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             rightFrontMotor.setPower(rightFrontPower);
             rightRearMotor.setPower(rightRearPower);
 
-           double shooterPower = gamepad2.right_stick_y;
-            //double shooterPower= -0.85;
-
-            shooterMotor.setPower(shooterPower);
-
-            if (gamepad2.dpad_down == true) {
-                shooterServo1.setPower(0.8);
-                shooterServo2.setPower(-0.8);
+            if (gamepad2.dpad_down) {
+                if (!shooterServoPressed) {
+                    if (shooterServoOn) {
+                        shooterServo1.setPower(0);
+                        shooterServo2.setPower(0);
+                        shooterServoOn = false;
+                    } else {
+                        shooterServo1.setPower(0.8);
+                        shooterServo2.setPower(0.8);
+                        shooterServoOn = true;
+                    }
+                }
+                shooterServoPressed=true;
+            } else {
+                shooterServoPressed = false;
             }
+
 
             if (gamepad2.left_trigger >= .87) {
                 wobbleGoalRaiseMotor.setPower(.6);
@@ -118,9 +129,9 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             }
 
             if (gamepad2.right_trigger >= .87) {
-                wobbleGoalExtendMotor.setPower(.25);
-            } else {
-                wobbleGoalExtendMotor.setPower(0);
+                shooterMotor.setVelocity(-5400*0.85*28/60);
+            } else if(gamepad2.right_bumper == true){
+                shooterMotor.setPower(0);
             }
 
             if (gamepad2.right_bumper == true) {
@@ -131,46 +142,25 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
 
             if (gamepad2.a) {
                 intakeOne.setPower(0.9);
-            }  
-
-//            if (gamepad2.a) {
-//                intake = true;
-//                if (gamepad2.a) {
-//                    intake = false;
-//                }
-//                while (intake) {
-//                    intakeOne.setPower(0.9);
-//                    intakeTwo.setPower(0.9);
-//                }
-//            }
-//            this won't work, HA HA HA
-
-            if (gamepad2.b) {
+            } else if (gamepad2.b) {
                 intakeOne.setPower(-0.9);
+            } else if (gamepad2.x){
+                intakeOne.setPower(0);
             }
-//            if (gamepad2.y) {
-//                if (!yPressed) {
-//                    yPressed = true;
-//                    if (yOpen) {
-//                        wobbleGoalGrippyThing.setPosition(0.2);
-//
-//                        yOpen = false;
-//                    } else {
-//                        wobbleGoalGrippyThing.setPosition(.9);
-//                        yOpen = true;
-//                    }
-//                }
-//            } else {
-//                if (yPressed) {
-//                    yPressed = false;
-//                }
-//            }
 
-            if (gamepad2.y){
-                wobbleGoalGrippyThing.setPosition(0.2);
-            }
-            if (gamepad2.x){
-                wobbleGoalGrippyThing.setPosition(0.9);
+            if (gamepad2.y) {
+                if (!yPressed) {
+                    if (yOpen) {
+                        wobbleGoalGrippyThing.setPosition(0.2);
+                        yOpen = false;
+                    } else {
+                        wobbleGoalGrippyThing.setPosition(.9);
+                        yOpen = true;
+                    }
+                }
+                yPressed=true;
+            } else {
+                yPressed = false;
             }
 
         }
