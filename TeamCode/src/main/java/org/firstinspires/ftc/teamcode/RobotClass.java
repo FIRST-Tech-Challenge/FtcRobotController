@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -23,7 +24,7 @@ public class RobotClass {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
-    private DcMotor shooterMotor;
+    private DcMotorImplEx shooterMotor;
     private DcMotor wobbleGoalRaise;
     private double ticks = 537;//537
   //  private CRServo continuous1;
@@ -42,7 +43,7 @@ public class RobotClass {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
         backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
         backRight = hardwareMap.get(DcMotor.class, "backRight" );
-        shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
+        shooterMotor = hardwareMap.get(DcMotorImplEx.class, "shooterMotor");
        // continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         shooterServo1 = hardwareMap.get(CRServo.class,"shooterServo1");
@@ -504,11 +505,9 @@ public class RobotClass {
 //    }
     //Pretend "Engage" is actually ENGAGE!
     public void shooterEngage (double duration) {
-        shooterMotor.setPower(1);
+        shooterMotor.setVelocity(10);
 
         for (int i=0; i < duration; i++ );
-
-
     }
 
     public void wobbleGoalGrippyThingGrab () {

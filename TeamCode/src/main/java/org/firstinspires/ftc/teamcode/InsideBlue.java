@@ -29,9 +29,9 @@ public class InsideBlue extends LinearOpMode {
 
         robot.forward(0.5, -4);
         //shoot here
-        robot.shooterEngage(3);
         robot.shooterServo1(1);
         robot.shooterServo2(1);
+        robot.shooterEngage(5);
         robot.forward(0.5,-2);
         if (ringNmb == 0) {
             //strafe right
