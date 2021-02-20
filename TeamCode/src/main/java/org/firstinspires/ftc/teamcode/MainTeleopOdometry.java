@@ -310,7 +310,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         double relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
 
-        while (relativeAngleDifference > 3){
+        while (relativeAngleDifference > 2){
             if (gamepad1.y){
                 break;
             }
@@ -368,7 +368,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-18,58,0);
+        odometryDriveToPos(-18,60,0);
         robot.shootRings();
 
     }
