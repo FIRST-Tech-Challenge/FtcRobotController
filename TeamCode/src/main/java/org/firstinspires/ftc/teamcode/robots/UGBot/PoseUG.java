@@ -393,7 +393,7 @@ public class PoseUG {
 
         // bearing to goal (neon green)
         fieldOverlay.setStroke("#39FF14");
-        fieldOverlay.strokeLine(goalCanvasPoint.getX(), goalCanvasPoint.getY(), goalCanvasPoint.getX(), goalCanvasPoint.getY());
+        fieldOverlay.strokeLine(posePoint.getX(), posePoint.getY(), goalCanvasPoint.getX(), goalCanvasPoint.getY());
 
         // robot heading (black)
         CanvasUtils.drawVector(fieldOverlay, posePoint, 3 * Constants.ROBOT_RADIUS, poseHeading, "#000000");
