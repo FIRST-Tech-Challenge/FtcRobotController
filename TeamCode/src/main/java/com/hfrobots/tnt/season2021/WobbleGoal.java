@@ -148,14 +148,12 @@ public class WobbleGoal {
         }
     }
 
-    // FIXME:
     public void openGripper() {
-
+        gripperServo.setPosition(OPEN_GRIPPER_POS);
     }
 
-    // FIXME:
     public void closeGripper() {
-
+        gripperServo.setPosition(CLOSED_GRIPPER_POS);
     }
 
     @VisibleForTesting
@@ -254,7 +252,7 @@ public class WobbleGoal {
                 return nextState;
             }
 
-            setShoulderMotorPower(motorPower);
+            shoulderMotor.setPower(motorPower);
 
             return this;
         }
