@@ -28,7 +28,8 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private DcMotorEx slider;
     private AdjustableServo grabber;
 
-
+    private final int grabberVersion = 1; // current version used for LeagueMeet 0
+                                         // 2 is new grabber
     private final double SLIDER_POWER = 0.5;
     private final double SLIDER_SPEED = 1000;
     private final int SLIDER_POS_HIGH = 920;
@@ -38,15 +39,15 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private final int SLIDER_POS_MAX = 1733;
     private final int SLIDER_POS_RING = 580;
 
-    private final double ARM_UP = 0.48;
-    private final double ARM_INIT = 0.16;
-    private final double ARM_DOWN_RELEASE = 0.91;
-    private final double ARM_DOWN = 0.95;
-    private final double ARM_COLLECT_RING = 0.53;
+    private double ARM_UP = 0.48;
+    private double ARM_INIT = 0.16;
+    private double ARM_DOWN_RELEASE = 0.91;
+    private double ARM_DOWN = 0.95;
+    private double ARM_COLLECT_RING = 0.53;
 
-    private final double GRABBER_OPEN = 0.52;
-    private final double GRABBER_CLOSE = 0.9;
-    private final double GRABBER_INIT = GRABBER_CLOSE;
+    private double GRABBER_OPEN = 0.52;
+    private double GRABBER_CLOSE = 0.9;
+    private double GRABBER_INIT = GRABBER_CLOSE;
 
     private boolean sliderIsLow = true;
     private boolean armIsLow = false;
@@ -81,6 +82,17 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     }
 
     public void configure(Configuration configuration, boolean auto) {
+        if (grabberVersion ==  2) {
+            ARM_UP = 0.48;
+            ARM_INIT = 0.16;
+            ARM_DOWN_RELEASE = 0.91;
+            ARM_DOWN = 0.95;
+            ARM_COLLECT_RING = 0.53;
+
+            GRABBER_OPEN = 0.52;
+            GRABBER_CLOSE = 0.9;
+            GRABBER_INIT = GRABBER_CLOSE;
+        }
         grabber = new AdjustableServo(0, 1).configureLogging(
                 logTag + ":topWobbleGoalGrabber", logLevel
         );
@@ -114,8 +126,8 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     }
 
     public void sliderStop() {
-        slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         if (slider==null) return;
+        slider.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slider.setPower(0);
     }
 
@@ -304,14 +316,14 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     public void releaseWobbleGoalFastCombo() {
         final String taskName = "release Wobble Goal Fast Combo";
         if (!TaskManager.isComplete(taskName)) return;
-        if (slider.getCurrentPosition()>SLIDER_POS_HIGH) {
+        if (slider!=null && slider.getCurrentPosition()>SLIDER_POS_HIGH) {
             TaskManager.add(new Task() {
                 @Override
                 public Progress start() {
                     return slideToPos(SLIDER_POS_HIGH);
                 }}, taskName);
         }
-        if (isGrabFromBottom) {
+        if (slider != null && isGrabFromBottom) {
             TaskManager.add(new Task() {
                 @Override
                 public Progress start() {
@@ -335,7 +347,8 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         if (!TaskManager.isComplete(taskName)) return;
         grabberClose();
         moveArm(ARM_INIT);
-        TaskManager.add(new Task() {
+        if(slider!=null)
+            TaskManager.add(new Task() {
                 @Override
                 public Progress start() { return slideToPos(SLIDER_POS_INIT);
                 }}, taskName);
@@ -347,7 +360,8 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             TaskManager.processTasks();
         }
         moveArm(ARM_COLLECT_RING);
-        slideToPos(SLIDER_POS_RING);
+        if (slider!=null)
+            slideToPos(SLIDER_POS_RING);
     }
 
     public void grabWobbleGoalCombo(boolean isHigh) {
