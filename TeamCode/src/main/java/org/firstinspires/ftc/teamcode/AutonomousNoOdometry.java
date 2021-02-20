@@ -121,7 +121,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
                 outtakeRight, outtakeLeft, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
-        wobbleClaw.setPosition(1);
+        wobbleClaw.setPosition(0);
         flipper.setPosition(1);
 
         /*
@@ -223,7 +223,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
                 leftConveyor.setPower(1);
                 robot.gyroDriveCm(-.5, 185);
                 Thread.sleep(1000);
-                robot.gyroDriveCm(.5, 185);
+                robot.gyroDriveCm(.5, 180);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(3000);
                 intake.setPower(0);
@@ -315,7 +315,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
 
     }
     public void goShoot() throws InterruptedException{
-        double power = .65;
+        double power = .64;
         double power_off = 0;
 
         outtakeLeft.setPower(power);//or 0.44
@@ -405,7 +405,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
         }
         wobbleArm.setPower(0);
 
-        wobbleClaw.setPosition(0);
+        wobbleClaw.setPosition(1);
 
         timer.reset();
         while (timer.milliseconds() < 1500) {

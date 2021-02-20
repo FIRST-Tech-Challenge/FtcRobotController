@@ -109,7 +109,7 @@ public class MainTeleop extends LinearOpMode{
 
         double powerMod = 1.0;
         double intakeMod = 1.0;
-        double outtakeMod = .325;
+        double outtakeMod = .64;
         double wobbleMod = .3;
 
         waitForStart();
@@ -183,7 +183,7 @@ public class MainTeleop extends LinearOpMode{
                 outtakeMod= .57;
                 //outtakeMod = 0.32; //power shots
             }else{
-                outtakeMod=.65;
+                outtakeMod=.64;
                // outtakeMod = 0.3225;
             }
             double outtakePower = outtakeMod;
@@ -198,15 +198,19 @@ public class MainTeleop extends LinearOpMode{
                     flipper.setPosition(1);
                 }
             }
+            else{
+                outtakeLeft.setPower(0);
+            }
             //double outtakePower = (gamepad2.right_trigger * outtakeMod);
 
-            outtakeLeft.setPower(0);
+
          //   outtakeRight.setPower(outtakePower);
             if(gamepad1.a){//press and hold a while running intake
                 intakeMod = -1.0;
             }else{
                 intakeMod = 1.0;
             }
+           // double intakeSpeed = gamepad1.left_trigger * intakeMod;
             intake.setPower(intakeSpeed);
             rightConveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
             leftConveyor.setPower(intakeSpeed);
