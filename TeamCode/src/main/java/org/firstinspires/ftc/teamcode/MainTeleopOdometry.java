@@ -286,7 +286,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             if (distance >= 10){
                 powerOne = 1 * Math.sin(angle);
                 powerTwo = 1 * Math.cos(angle);
-            }else{
+            }else if (distance < 10 && distance > 5){
                 powerOne = 0.4 * Math.sin(angle);
                 powerTwo = 0.4 * Math.cos(angle);
             }
@@ -314,6 +314,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             if (gamepad1.y){
                 break;
             }
+
             rawAngleDifference = getAngleRaw(desiredAngle);
             relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
@@ -322,34 +323,41 @@ public class MainTeleopOdometry extends LinearOpMode{
                 if (relativeAngleDifference > 15){
                     turnClockwise(0.7);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
-                    turnClockwise(0.4);
-                }else if (relativeAngleDifference <= 4){
+                    turnClockwise(0.3);
+                }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnClockwise(0.2);
+                }else{
+                    break;
                 }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
                 if (relativeAngleDifference > 15){
-                    turnCounterClockwise(0.7);
+                    turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
-                    turnCounterClockwise(0.4);
-                }else if (relativeAngleDifference <= 4){
+                    turnCounterClockwise(0.3);
+                }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnCounterClockwise(0.2);
+                }else{
+                    break;
                 }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
                 if (relativeAngleDifference > 15){
                     turnClockwise(0.7);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
-                    turnClockwise(0.4);
-                }else if (relativeAngleDifference <= 4){
+                    turnClockwise(0.3);
+                }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnClockwise(0.2);
                 }
             }else if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
                 if (relativeAngleDifference > 15){
                     turnCounterClockwise(0.7);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
-                    turnCounterClockwise(0.4);
-                }else if (relativeAngleDifference <= 4){
+                    turnCounterClockwise(0.3);
+                }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnCounterClockwise(0.2);
+                }else{
+                    break;
                 }
+
             }
         }
         robot.completeStop();
