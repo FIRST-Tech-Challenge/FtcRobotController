@@ -426,6 +426,9 @@ public class PoseUG {
         packet.put("current turret heading", turret.getHeading());
         packet.put("target turret heading", turret.getTurretTargetHeading());
         packet.put("target", target);
+        packet.put("left dist", getDistLeftDist());
+        packet.put("outliers", countOutliers);
+
 
         dashboard.sendTelemetryPacket(packet);
     }
@@ -674,6 +677,9 @@ public class PoseUG {
         }
     }
 
+    double prevWallVal = 0.4572;
+    int countOutliers = 0;
+
     public boolean driveGenericPIDDistance(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
 
         if (!driveIMUDistanceInitialzed) {
@@ -684,6 +690,11 @@ public class PoseUG {
             driveIMUDistanceTarget = (long) Math.abs((targetMeters * forwardTPM)) + Math.abs(getAverageTicks());
             driveIMUDistanceInitialzed = true;
         }
+
+        if(Math.abs(((prevWallVal / 50) - (currentVal / 50) / 0.4572)) < .10){
+            countOutliers++;
+        }
+        prevWallVal = currentVal / 50;
 
         if (!forward) {
             moveMode = moveMode.backward;
