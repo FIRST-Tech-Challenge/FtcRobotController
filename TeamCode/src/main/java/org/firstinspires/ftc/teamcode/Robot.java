@@ -103,7 +103,7 @@ public class Robot {
     public void moveBackward(double distance, double power) {
         drivetrain.moveBackward(distance, power);
     }
-    public void setPosition(double xPosition,double yPosition, double newAngle){drivetrain.setPosition(xPosition,yPosition,newAngle);}
+    public void setPosition(float xPosition,float yPosition, float newAngle){drivetrain.setPosition(xPosition,yPosition,newAngle);}
     public void goToPosition(double xPosition,double yPosition, double newAngle, double power){drivetrain.goToPosition(xPosition,yPosition,newAngle,power);}
     public void moveRight(double distance, double power) {
         drivetrain.moveRight(distance, power);
@@ -272,7 +272,7 @@ public class Robot {
         op.telemetry.addData("speed: ", shooter.getRPM());
         op.telemetry.update();
         drivetrain.turnInPlace(-1.75,1.0);
-        shooter.setVelocity(1500, 1000);
+        shooter.setVelocity(1600, 1000);
         op.sleep(1600);
         if (shooter.getRPM()*28/60 > 0) {
             op.sleep(100);

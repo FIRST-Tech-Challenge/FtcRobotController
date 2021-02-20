@@ -34,7 +34,7 @@ public class OneGPTeleop extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot = new Robot(this, BasicChassis.ChassisType.ENCODER, false ,false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false ,false);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
         //robot.navigateTeleOp();
@@ -76,7 +76,9 @@ public class OneGPTeleop extends LinearOpMode {
 
             /**Powershots**/
             if(odo_powershots){
-                robot.goToPosition(0,-9,-2,0.8);
+                robot.setPosition(0,0,0);
+                robot.goToPosition(40,5 ,0,0.8);
+                robot.goToPosition(40,-40,-88,0.7);
                 robot.shootThreePowerShot();
             }
 

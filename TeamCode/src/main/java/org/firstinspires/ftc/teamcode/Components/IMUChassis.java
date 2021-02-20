@@ -435,7 +435,7 @@ public class IMUChassis extends BasicChassis {
 }
 
     @Override
-    public void setPosition(double xPosition, double yPosition, double newangle) {
+    public void setPosition(float xPosition, float yPosition, float newangle) {
 
     }
 

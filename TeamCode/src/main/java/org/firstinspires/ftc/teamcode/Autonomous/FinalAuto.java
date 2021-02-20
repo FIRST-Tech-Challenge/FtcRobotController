@@ -22,14 +22,14 @@ public class FinalAuto extends LinearOpMode {
             robot.goToPosition( -64,-6,0, 1);//-25,60
             robot.openWobbleGoalClaw();
             sleep(250);
-            robot.goToPosition(-60.5,30.8,-2,0.8);//37,4
+            robot.goToPosition(-60.5,34.8,-2,0.8);//37,4
             robot.shootThreePowerShot();
             robot.turnInPlace(0,1.0);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
             robot.turnInPlace(0, 1.0);
-            robot.goToPosition(-53.5+44,32+3,0,0.8);
+            robot.goToPosition(-53.5+44,32+8,0,0.8);
             robot.turnInPlace(0,0.6);
-            robot.goToPosition(-53.5+44,32+3-6.9,0,0.8);
+            robot.goToPosition(-53.5+44,32+3-5.8,0,0.8);
             robot.closeWobbleGoalClaw();
             sleep(600);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
@@ -44,7 +44,7 @@ public class FinalAuto extends LinearOpMode {
             robot.goToPosition(-98,12,0,1);
             robot.openWobbleGoalClaw();
             sleep(200);
-            robot.goToPosition(-60.5,25.25,-2,0.7);//yPosition - 23
+            robot.goToPosition(-59.5,25.25,-2,0.7);//yPosition - 23
             robot.shootThreePowerShot();
             robot.turnInPlace(0,1.0);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);

@@ -61,7 +61,7 @@ public abstract class BasicChassis {
     abstract public void moveRight(double distance, double power);
     abstract public void moveLeft(double distance, double power);
     abstract public void moveAngle(double x, double y, double power);
-    abstract public void setPosition(double xPosition, double yPosition, double newangle);
+    abstract public void setPosition(float xPosition, float yPosition, float newangle);
     abstract public void goToPosition(double xPosition, double yPosition, double newangle, double power);
     abstract public void navigate();
     abstract public void navigateTeleOp();

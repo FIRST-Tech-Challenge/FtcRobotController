@@ -26,7 +26,6 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 //2.0,1.7,1.1
 public class OdometryChassis extends BasicChassis {
-    private Navigation navigation= null;
     DcMotorEx odom1;
     DcMotorEx odom2;
     DcMotorEx odom3;
@@ -87,8 +86,15 @@ public class OdometryChassis extends BasicChassis {
         }
     public void navigateTeleOp(){//navigation.navigateTeleOp(op)
         }
-    public void setPosition(double x, double y, double angle){
+    public void setPosition(float x, float y, float newAngle){
         //navigation.setPosition(x,y,angle);
+        xpos=x;
+        ypos=y;
+        globalAngle=-newAngle;
+        odom1 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
+        odom3 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
+        odom2 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightBack");
+        track();
     }
     public void stopAllMotors() {
         motorLeftBack.setPower(0);
@@ -122,14 +128,14 @@ odom[1] += odomconst[1]*diff[1];
 odom[2] += odomconst[2]*diff[2];
 double x =  cos((getAngle() * Math.PI / 180));
 double y = sin((getAngle() * Math.PI / 180));
-ypos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1;
+ypos += (-y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1;
 xpos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
 angle=getAngle();
 op.telemetry.addData("x",xpos);
 op.telemetry.addData("y",ypos);
-//op.telemetry.addData("odom1",odomconst[0]*odom1.getCurrentPosition());
-//op.telemetry.addData("odom2",odomconst[1]*odom2.getCurrentPosition());
-//op.telemetry.addData("odom3",odomconst[2]*odom3.getCurrentPosition());
+op.telemetry.addData("odom1",odomconst[0]*odom1.getCurrentPosition());
+op.telemetry.addData("odom2",odomconst[1]*odom2.getCurrentPosition());
+op.telemetry.addData("odom3",odomconst[2]*odom3.getCurrentPosition());
 op.telemetry.addData("angle",angle);
 op.telemetry.update();
 data[0]=xpos;
@@ -183,8 +189,8 @@ return data;
 //                anglePower[1]*=1.5;
 //                anglePower[0]*=1.5;
 //            }
-            while(abs(power)<0.35){
-                power*=0.35/abs(power);
+            while(abs(power)<0.4){
+                power*=0.4/abs(power);
             }
             motorRightBack.setPower(power * anglePower[1] + anglecorrection);
             motorRightFront.setPower(power * anglePower[0] + anglecorrection);
@@ -443,6 +449,7 @@ return data;
             motorLeftFront.setPower(power * anglePower[1] - anglecorrection);
             difference = abs(sqrt((x) * (x) + (y) * (y)));
             op.telemetry.addData("distance", difference);
+            op.telemetry.update();
         }
         currentPosition = track();
         turnInPlace(startAngle,1.0);
