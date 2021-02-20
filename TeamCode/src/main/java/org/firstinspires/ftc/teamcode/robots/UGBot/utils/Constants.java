@@ -12,6 +12,10 @@ public class Constants {
     public static final double GRAVITY = 9.80665;
     public static final double INCHES_PER_METER = 39.3701;
     public static final double ROBOT_RADIUS = 8.75;
+    public static double ITERATIONS = 20;
+    public static final double LAUNCHER_LENGTH = 0.24;
+    public static final double LAUNCHER_VERTICAL_OFFSET = 0.085;
+    public static final double BASE_LAUNCH_ANGLE = 19.50244851;
 
     public static double kpFlywheel = 0.006; //proportional constant multiplier goodish
     public static  double kiFlywheel = 0.0; //integral constant multiplier

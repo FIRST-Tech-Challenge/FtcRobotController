@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils;
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils.Point;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.util.PIDController;
@@ -377,27 +379,27 @@ public class PoseUG {
 
     public void sendTelemetry() {
         TelemetryPacket packet = new TelemetryPacket();
-
         Canvas fieldOverlay = packet.fieldOverlay();
-        double x = getPoseY() * Constants.INCHES_PER_METER - 72;
-        double y = -getPoseX() * Constants.INCHES_PER_METER;
+
+        Point posePoint = new Point(getPoseX(), getPoseY());
 
         // goal location
-        fieldOverlay.strokeCircle(Constants.goalY * Constants.INCHES_PER_METER - 72, -Constants.goalX * Constants.INCHES_PER_METER, Constants.GOAL_RADIUS);
+        Point goalCanvasPoint = CanvasUtils.toCanvasPoint(new Point(Constants.goalX, Constants.goalY));
+        fieldOverlay.strokeCircle(goalCanvasPoint.getX(), goalCanvasPoint.getY(), Constants.GOAL_RADIUS);
 
         // robot location
-        fieldOverlay.strokeCircle(x, y, Constants.ROBOT_RADIUS);
-        // robot heading
-        fieldOverlay.strokeLine(x, y, x + 3 * Constants.ROBOT_RADIUS * Math.sin(poseHeadingRad + 0.5 * Math.PI), y + 3 * Constants.ROBOT_RADIUS * Math.cos(poseHeadingRad + 0.5 *  Math.PI));
+        Point robotCanvasPoint = CanvasUtils.toCanvasPoint(posePoint);
+        fieldOverlay.strokeCircle(robotCanvasPoint.getX(), robotCanvasPoint.getY(), Constants.ROBOT_RADIUS);
 
-        // turret heading
-        fieldOverlay.setStroke("#f50000");
-        // robot location
-        fieldOverlay.strokeLine(x, y, x + 2 * Constants.ROBOT_RADIUS * Math.sin(Math.toRadians(turret.getHeading()) + 0.5 * Math.PI), y + Constants.ROBOT_RADIUS * 2 * Math.cos(Math.toRadians(turret.getHeading()) + 0.5 *  Math.PI));
+        // bearing to goal (neon green)
+        fieldOverlay.setStroke("#39FF14");
+        fieldOverlay.strokeLine(goalCanvasPoint.getX(), goalCanvasPoint.getY(), goalCanvasPoint.getX(), goalCanvasPoint.getY());
 
-        // heading to goal
-        fieldOverlay.setStroke("#0000ff");
-        fieldOverlay.strokeLine(x, y, x + Constants.ROBOT_RADIUS * Math.sin(Math.toRadians(goalHeading) + 0.5 * Math.PI), y +  Constants.ROBOT_RADIUS * Math.cos(Math.toRadians(goalHeading) + 0.5 *  Math.PI));
+        // robot heading (black)
+        CanvasUtils.drawVector(fieldOverlay, posePoint, 3 * Constants.ROBOT_RADIUS, poseHeading, "#000000");
+
+        // turret heading (red)
+        CanvasUtils.drawVector(fieldOverlay, posePoint, 2 * Constants.ROBOT_RADIUS, turret.getHeading(), "#FF0000");
 
         packet.put("current flywheel velocity", launcher.getFlywheelTPS());
         packet.put("target flywheel velocity", launcher.getFlywheelTargetTPS());
