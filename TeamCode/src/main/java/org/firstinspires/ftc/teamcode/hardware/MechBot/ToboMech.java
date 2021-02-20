@@ -72,7 +72,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_dist = 0;
     public double shooting_angle = 0;
     public double shooterAngleOffset = 2.5;
-    final public double WARM_UP_RPM = 1400;
+    final public double WARM_UP_RPM = 1380;
     final public double WARM_UP_RPM_POWER_SHOT = 1220;
     final public double WARM_UP_RPM_AUTO = 1320;
     final public double SEMI_AUTO_RPM = 1400;
@@ -518,7 +518,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     doHighGoalsSemi(false, 3);
                 } else if (!source.isPressed((Button.START))) {
                     if (hopper != null) {
-                        if (hopper.getTransferIsDown() || shooting_rpm<WARM_UP_RPM) {
+                        if (hopper.getTransferIsDown() || Math.abs(shooting_rpm-WARM_UP_RPM)>20 ||
+                                shooter.getCurrentRPM()<WARM_UP_RPM-100) {
                             shooting_rpm = WARM_UP_RPM;
                             shooter.shootOutByRpm(shooting_rpm);
                             hopper.hopperUpCombo();
@@ -581,7 +582,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     // semi power shot
                     doPowerShotsSemi(3,false);
                 } else {
-                    if (hopper.getTransferIsDown() || shooting_rpm>WARM_UP_RPM_POWER_SHOT) {
+                    if (hopper.getTransferIsDown() || Math.abs(shooting_rpm-WARM_UP_RPM_POWER_SHOT)>20 ||
+                    shooter.getCurrentRPM()<WARM_UP_RPM_POWER_SHOT-100) {
                         shooting_rpm = WARM_UP_RPM_POWER_SHOT;
                         shooter.shootOutByRpm(shooting_rpm);
                         hopper.hopperUpCombo();
@@ -1529,7 +1531,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             }
 
         }
-        shooter.shootOutByRpm(SEMI_AUTO_RPM);
+        shooter.shootOutByRpm(WARM_UP_RPM);
     }
 
     public void doPowerShotsSemi(int n, boolean angleCollection) throws InterruptedException {
@@ -1582,7 +1584,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         sleep(500);
         // move to right power shot
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
-        chassis.rawRotateTo(0.25, chassis.odo_heading()+4.5, false, 1);
+        chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
         hopper.feederAuto();
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
     }
