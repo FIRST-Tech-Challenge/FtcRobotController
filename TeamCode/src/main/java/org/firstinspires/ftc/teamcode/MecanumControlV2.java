@@ -23,7 +23,7 @@ public class MecanumControlV2 extends OpMode {
     boolean isShooterOff = true;
     boolean wasPowerIncreased;
     boolean wasPowerDecreased;
-    double shooterChange = .05;
+    double shooterChange = .025;
 
     boolean highGoalMode = true;
     boolean powerShotMode = false;

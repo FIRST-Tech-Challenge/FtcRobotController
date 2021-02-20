@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Blue_Right", group="Competition")
-public class BlueRight extends OpMode {
+@Autonomous(name="Blue_Right_Dynamic", group="Competition")
+public class BlueRightDynamic extends OpMode {
 
     /****************************
      *
@@ -44,8 +44,10 @@ public class BlueRight extends OpMode {
         camera.init(hardwareMap);
 
         if (shooter.scalePowerShot() != Double.POSITIVE_INFINITY) {
-            power = shooter.scalePowerShot();
-            high  = shooter.scaleHighGoal();
+            //power = shooter.scalePowerShot();
+            power = shooter.scalePowerShotDynamic();
+            //high  = shooter.scaleHighGoal();
+            high = shooter.scaleHighGoalDynamic();
         }
 
         stateMachineFlow = 0;
@@ -81,8 +83,10 @@ public class BlueRight extends OpMode {
     public void loop() {
 
         if (shooter.scalePowerShot() != Double.POSITIVE_INFINITY) {
-            power = shooter.scalePowerShot();
-            high  = shooter.scaleHighGoal();
+            //power = shooter.scalePowerShot();
+            power = shooter.scalePowerShotDynamic();
+            //high  = shooter.scaleHighGoal();
+            high = shooter.scaleHighGoalDynamic();
         }
         telemetry.addData("Volts", shooter.getBatteryVoltage());
         telemetry.addData("High Goal Power", high);
