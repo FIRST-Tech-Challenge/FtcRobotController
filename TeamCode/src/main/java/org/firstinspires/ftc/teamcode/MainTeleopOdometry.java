@@ -310,7 +310,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         double relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
 
-        while (relativeAngleDifference > 2){
+        while (relativeAngleDifference > 3){
             if (gamepad1.y){
                 break;
             }
@@ -319,13 +319,37 @@ public class MainTeleopOdometry extends LinearOpMode{
 
 
             if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
-                turnClockwise(0.4);
+                if (relativeAngleDifference > 15){
+                    turnClockwise(0.7);
+                }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
+                    turnClockwise(0.4);
+                }else if (relativeAngleDifference <= 4){
+                    turnClockwise(0.2);
+                }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
-                turnCounterClockwise(0.4);
+                if (relativeAngleDifference > 15){
+                    turnCounterClockwise(0.7);
+                }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
+                    turnCounterClockwise(0.4);
+                }else if (relativeAngleDifference <= 4){
+                    turnCounterClockwise(0.2);
+                }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
-                turnClockwise(0.4);
+                if (relativeAngleDifference > 15){
+                    turnClockwise(0.7);
+                }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
+                    turnClockwise(0.4);
+                }else if (relativeAngleDifference <= 4){
+                    turnClockwise(0.2);
+                }
             }else if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
-                turnCounterClockwise(0.4);
+                if (relativeAngleDifference > 15){
+                    turnCounterClockwise(0.7);
+                }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
+                    turnCounterClockwise(0.4);
+                }else if (relativeAngleDifference <= 4){
+                    turnCounterClockwise(0.2);
+                }
             }
         }
         robot.completeStop();
