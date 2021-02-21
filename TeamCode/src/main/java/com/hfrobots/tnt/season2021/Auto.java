@@ -53,6 +53,8 @@ import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 public class Auto extends OpMode {
     private Ticker ticker;
 
+    boolean runWobbleGoalStateMachine = true;
+
     private OnOffButton unsafe = new OnOffButton() {
         @Override
         public boolean isPressed() {
@@ -121,6 +123,8 @@ public class Auto extends OpMode {
                 .hardwareMap(hardwareMap)
                 .telemetry(telemetry)
                 .ticker(Ticker.systemTicker()).build();
+
+        scoringMechanism.toStowedPosition();
 
         wobbleGoal = WobbleGoal.builder().hardwareMap(hardwareMap)
                 .telemetry(telemetry).ticker(Ticker.systemTicker()).build();
@@ -272,7 +276,9 @@ public class Auto extends OpMode {
                 stateMachineSetup = true;
             }
 
-            wobbleGoal.periodicTask();
+            if (runWobbleGoalStateMachine) {
+                wobbleGoal.periodicTask();
+            }
 
             stateMachine.doOneStateLoop();
 
@@ -386,7 +392,14 @@ public class Auto extends OpMode {
                 telemetry, ticker, TimeUnit.SECONDS.toMillis(10)) {
             @Override
             public State doStuffAndGetNextState() {
+                runWobbleGoalStateMachine = true;
+
                 Class<? extends State> wobbleStateClass = wobbleGoal.getCurrentState().getClass();
+
+                // FIXME: Remove, then talk about
+                if (wobbleStateClass.equals(WobbleGoal.PlaceState.class)) {
+                    return nextState;
+                }
 
                 if (!wobbleStateClass.equals(WobbleGoal.AutoPlaceState.class)) {
                     wobbleGoal.gotoPlaceState();
@@ -400,7 +413,7 @@ public class Auto extends OpMode {
                     return nextState;
                 }
 
-                if (!wobbleStateClass.equals(WobbleGoal.PlaceState.class)) {
+                if (wobbleStateClass.equals(WobbleGoal.PlaceState.class)) {
                     return nextState;
                 }
 
@@ -436,9 +449,9 @@ public class Auto extends OpMode {
         };
 
         State dropWobbleGoalState = new State("Drop wobble goal", telemetry) {
-
             @Override
             public State doStuffAndGetNextState() {
+                runWobbleGoalStateMachine = false;
 
                 wobbleGoal.openGripper();
 
@@ -459,6 +472,8 @@ public class Auto extends OpMode {
         State wobbleGoalCoolDownState = new State("Close servo, back to stow", telemetry){
             @Override
             public State doStuffAndGetNextState() {
+                runWobbleGoalStateMachine = true;
+
                 Class<? extends State> wobbleStateClass = wobbleGoal.getCurrentState().getClass();
 
                 if (!wobbleStateClass.equals(WobbleGoal.AutoStowState.class)) {
@@ -484,8 +499,9 @@ public class Auto extends OpMode {
         stateMachine.addSequential(toTargetZone);
         stateMachine.addSequential(wobbleGoalToPlaceState);
         stateMachine.addSequential(dropWobbleGoalState);
-        stateMachine.addSequential(newDelayState("Wait to drop", 1));
+        stateMachine.addSequential(newDelayState("Wait to drop", 3));
         stateMachine.addSequential(wobbleGoalCoolDownState);
+        stateMachine.addSequential(newDelayState("Wait to stow", 3));
         stateMachine.addSequential(toParkedPosition);
         stateMachine.addSequential(newDoneState("Done!"));
     }

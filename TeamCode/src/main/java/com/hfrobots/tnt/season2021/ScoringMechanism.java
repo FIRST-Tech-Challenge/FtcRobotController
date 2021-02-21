@@ -81,6 +81,12 @@ public class ScoringMechanism {
     private DebouncedButton stopLauncher;
 
     @Setter
+    private DebouncedButton raiseLauncher;
+
+    @Setter
+    private DebouncedButton lowerLauncher;
+
+    @Setter
     private OnOffButton jankyServo;
 
     private State currentState;
@@ -132,6 +138,14 @@ public class ScoringMechanism {
         currentState = idleState;
     }
 
+    public void toStowedPosition() {
+        launcher.launcherToStowedPosition();
+    }
+
+    public void toDeployedPosition() {
+        launcher.launcherToHighPosition();
+    }
+
     public void periodicTask() {
         if (currentState != null) {
             State nextState = currentState.doStuffAndGetNextState();
@@ -150,6 +164,16 @@ public class ScoringMechanism {
 
         if (unsafe.isPressed()) {
             setBlinkinLedPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
+        }
+
+        handleLauncherAdjustment();
+    }
+
+    private void handleLauncherAdjustment() {
+        if (lowerLauncher.getRise()) {
+            launcher.lowerLauncher();
+        } else if (raiseLauncher.getRise()) {
+            launcher.raiseLauncher();
         }
     }
 

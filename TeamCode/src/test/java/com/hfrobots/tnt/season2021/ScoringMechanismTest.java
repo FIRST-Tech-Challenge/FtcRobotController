@@ -82,6 +82,8 @@ public class ScoringMechanismTest {
         scoringMechanism.setStopLauncher(stopLaunchingDebounced);
         scoringMechanism.setInvertHopper(invertHopper);
         scoringMechanism.setJankyServo(jankyServo);
+        scoringMechanism.setRaiseLauncher(new FakeOnOffButton().debounced());
+        scoringMechanism.setLowerLauncher(new FakeOnOffButton().debounced());
 
         intakeMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "intakeMotor");
         frontLauncherMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "frontLauncherMotor");
@@ -183,8 +185,8 @@ public class ScoringMechanismTest {
         causeButtonToRiseForNextPeriodTask(toSpeedOnOff);
         scoringMechanism.periodicTask();
 
-        assertTrue(frontLauncherMotor.getVelocity() > 2000);
-        assertTrue(rearLauncherMotor.getVelocity() > 2000);
+        assertTrue(frontLauncherMotor.getVelocity() > 1500);
+        assertTrue(rearLauncherMotor.getVelocity() > 1500);
 
         // Move into "Launch Mode"
         launchTrigger.setPressed(true);

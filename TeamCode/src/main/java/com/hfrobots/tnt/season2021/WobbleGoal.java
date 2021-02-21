@@ -68,9 +68,9 @@ public class WobbleGoal {
 
     private final static int PLACE_POS_ENCODER_COUNT = 0; //FIXME this is not correct
 
-    public final static double OPEN_GRIPPER_POS = 0;
+    public final static double OPEN_GRIPPER_POS = .50;
 
-    public final static double CLOSED_GRIPPER_POS = 1;
+    public final static double CLOSED_GRIPPER_POS = 0;
 
     public static final float TOWARDS_STOW_POWER_MAGNITUDE = -1;
 

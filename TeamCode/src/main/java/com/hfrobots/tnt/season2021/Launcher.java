@@ -36,11 +36,12 @@ public class Launcher {
 
     // GoBilda 1:1 positive power rotation CCW, max theoretical encoder/sec is 2800, measured is 2700
 
-    public final static int LAUNCH_SPEED_ENC_SEC = 2300;
+    public final static int LAUNCH_SPEED_ENC_SEC = 1600;
 
     private final static int LAUNCH_SPEED_TOLERANCE_ENC_SEC = 300;
 
     private final static int IDLE_SPEED_ENC_SEC = 500;
+    private static final double LIFT_ADJUSTMENT_VALUE = 0.1;
 
     private final DcMotorEx frontLauncherMotor;
 
@@ -56,9 +57,15 @@ public class Launcher {
 
     private final Servo ringFeederServo;
 
+    private final Servo launcherLiftServo;
+
     public final static double RING_FEEDER_FEEDING_POSITION = 0.5;
 
     public final static double RING_FEEDER_PARKED_POSITION = 1.0;
+
+    public final static double LAUNCHER_LIFT_STOWED_POSITION = 0.5;
+
+    public final static double LAUNCHER_LIFT_HIGH_POSITION = 1.0;
 
     private final VelocityTracker frontVelocityTracker;
 
@@ -81,9 +88,42 @@ public class Launcher {
         ringFeederServo = hardwareMap.get(Servo.class, "ringFeedServo");
 
         hopperPullDownServo = hardwareMap.get(Servo.class, "hopperPullDownServo");
+        launcherLiftServo = hardwareMap.get(Servo.class, "launcherLiftServo");
 
         frontVelocityTracker = new VelocityTracker();
         rearVelocityTracker = new VelocityTracker();
+    }
+
+    public void launcherToStowedPosition() {
+        launcherLiftServo.setPosition(LAUNCHER_LIFT_STOWED_POSITION);
+    }
+
+    public void launcherToHighPosition() {
+        launcherLiftServo.setPosition(LAUNCHER_LIFT_HIGH_POSITION);
+    }
+
+    public void raiseLauncher() {
+        adjustLauncher(1);
+    }
+
+    public void lowerLauncher() {
+        adjustLauncher(-1);
+    }
+
+    private void adjustLauncher(int magnitude) {
+        double currentPosition = launcherLiftServo.getPosition();
+
+        if (magnitude > 1 && currentPosition + LIFT_ADJUSTMENT_VALUE > 1.0) {
+            return;
+        }
+
+        if (magnitude < 1 && currentPosition - LIFT_ADJUSTMENT_VALUE < LAUNCHER_LIFT_STOWED_POSITION) {
+            return;
+        }
+
+        launcherLiftServo.setPosition(currentPosition + (double)magnitude * LIFT_ADJUSTMENT_VALUE);
+
+        telemetry.addData("Lch", "lift: %.2f", launcherLiftServo.getPosition());
     }
 
     public void pulldownHopper() {

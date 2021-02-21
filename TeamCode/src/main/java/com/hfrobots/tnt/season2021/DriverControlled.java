@@ -54,6 +54,8 @@ public class DriverControlled extends OpMode {
                 .telemetry(telemetry)
                 .ticker(Ticker.systemTicker()).build();
 
+        scoringMechanism.toDeployedPosition();
+
         WobbleGoal wobbleGoal = WobbleGoal.builder().hardwareMap(hardwareMap)
                 .telemetry(telemetry).ticker(Ticker.systemTicker()).build();
 

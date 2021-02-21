@@ -88,6 +88,10 @@ public class OperatorControls {
 
     private OnOffButton jankyServo;
 
+    private DebouncedButton raiseLauncher;
+
+    private DebouncedButton lowerLauncher;
+
     private ScoringMechanism scoringMechanism;
 
     private WobbleGoal wobbleGoal;
@@ -148,6 +152,8 @@ public class OperatorControls {
         scoringMechanism.setStopLauncher(stopLauncher);
         scoringMechanism.setInvertHopper(invertHopper);
         scoringMechanism.setJankyServo(jankyServo);
+        scoringMechanism.setLowerLauncher(lowerLauncher);
+        scoringMechanism.setRaiseLauncher(raiseLauncher);
 
         this.wobbleGoal = wobbleGoal;
         this.wobbleGoal.setShoulderThrottle(new LowPassFilteredRangeInput(wobbleShoulderThrottle, 0.85F));
@@ -188,6 +194,9 @@ public class OperatorControls {
         wobbleShoulderThrottle = rightStickY;
         jankyServo = leftBumper;
         unsafe = new RangeInputButton( leftTrigger, 0.65f);
+
+        lowerLauncher = dpadLeft;
+        raiseLauncher = dpadRight;
     }
 
     public void periodicTask() {

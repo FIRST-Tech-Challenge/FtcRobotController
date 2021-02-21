@@ -48,6 +48,7 @@ SOFTWARE.
 
             <Servo name="gripperServo"          port="0" /> <!-- Red    -->
             <RevBlinkinLedDriver name="blinkin" port="1" /> <!-- Orange -->
+            <Servo name="launcherLiftServo"     port="2" /> <!-- Yellow -->
 
             <DigitalDevice name="placeLimitSwitch" port="1" /> <!-- Red    -->
             <DigitalDevice name="stowLimitSwitch"  port="3" /> <!-- Orange -->
