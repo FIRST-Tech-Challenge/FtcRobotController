@@ -824,8 +824,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         double degree_diff = Math.abs(cur_heading-fixed_heading);
 
         // adjust max power by the battery voltage level
-       if (power>=0.9) { // Voltage > 13 will scale down
-           power *= auto_power_scale_by_voltage;
+       if (power>=0.6) { // Voltage > 13 will scale down
+            power *= auto_power_scale_by_voltage;
         }
 
         // to-do: need to handle gap from 179 to -179
@@ -1458,7 +1458,9 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             }
             return;
         }
-
+        if (power>=0.6) { // Voltage > 13 will scale down
+            power *= auto_power_scale_by_voltage;
+        }
         if (Thread.interrupted()) return;
         double iniHeading = odo_heading();
         if (power <= chassisAligmentPower || Math.abs(iniHeading-finalHeading)<5.0) {
