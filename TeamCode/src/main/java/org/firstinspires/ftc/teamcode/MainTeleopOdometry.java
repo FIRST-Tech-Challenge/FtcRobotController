@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.OdometryGlobalCoordinatePosition;
 public class MainTeleopOdometry extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
-    private CRServo leftConveyor, rightConveyor, intake;
+    private DcMotor intake;
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
     private Servo flipper, wobbleClaw;
 
@@ -66,9 +66,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
         //intake and conveyor
-        intake = hardwareMap.crservo.get("intake");
-        leftConveyor = hardwareMap.crservo.get("leftConveyor");
-        rightConveyor = hardwareMap.crservo.get("rightConveyor");
+        intake = hardwareMap.dcMotor.get("intake");
 
         //wobble and flipper
         wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
@@ -110,15 +108,13 @@ public class MainTeleopOdometry extends LinearOpMode{
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 
-        leftConveyor.setDirection(CRServo.Direction.REVERSE);
-
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-                imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
+                imu, wobbleArm, wobbleClaw, flipper, intake,
                 outtakeRight, outtakeLeft, this);
 
         robot.setupRobot();//calibrate IMU, set any required parameters
@@ -150,17 +146,14 @@ public class MainTeleopOdometry extends LinearOpMode{
             //changes direction of intake
             if (gamepad1.a){
                 robot.intakeReverse();
-                robot.conveyorReverse();
             }else{
                 //turns on intake
                 if (gamepad1.left_trigger > 0.3){
                     robot.intakeOn();
-                    robot.conveyorOn();
 
                     //turns off intake
                 }else{
                     robot.intakeOff();
-                    robot.conveyorOff();
                 }
             }
 

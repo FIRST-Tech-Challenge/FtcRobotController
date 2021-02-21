@@ -55,7 +55,7 @@ public class TestAutonomous extends LinearOpMode {
 
     OdometryGlobalCoordinatePosition globalPositionUpdate;
 
-    private CRServo leftConveyor, rightConveyor, intake;
+    private DcMotor intake;
 
     //Declare imu
     private BNO055IMU imu;
@@ -89,9 +89,7 @@ public class TestAutonomous extends LinearOpMode {
         verticalRight = hardwareMap.dcMotor.get("FR");
         horizontal = hardwareMap.dcMotor.get("BL");
 
-        intake = hardwareMap.crservo.get("intake");
-        leftConveyor = hardwareMap.crservo.get("leftConveyor");
-        rightConveyor = hardwareMap.crservo.get("rightConveyor");
+        intake = hardwareMap.dcMotor.get("intake");
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -104,7 +102,7 @@ public class TestAutonomous extends LinearOpMode {
 
         //Create an IMURobot object that we will use to run the robot
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-                imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
+                imu, wobbleArm, wobbleClaw, flipper, intake,
                 outtakeRight, outtakeLeft, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
@@ -284,6 +282,7 @@ public class TestAutonomous extends LinearOpMode {
         outtakeLeft.setPower(0);
         outtakeRight.setPower(0);
     }
+
     public void odometryNormalizeAngle(){
         while (globalPositionUpdate.returnOrientation() > 0){
             robot.turnCounterClockwise(1);
@@ -295,34 +294,6 @@ public class TestAutonomous extends LinearOpMode {
 
         if (globalPositionUpdate.returnOrientation() == 0){
             robot.completeStop();
-        }
-    }
-
-    public void odometryDriveToPos (double xPos, double yPos) {
-        double C = 0;
-        while (globalPositionUpdate.returnXCoordinate() > xPos) {
-            robotStrafe(1, -90);
-        }
-        while (globalPositionUpdate.returnXCoordinate() < xPos) {
-            robotStrafe(1, 90);
-        }
-        if (globalPositionUpdate.returnXCoordinate() == xPos) {
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 1;
-        }
-
-
-        while (globalPositionUpdate.returnXCoordinate() > yPos && C == 1) {
-            robotStrafe(-1, 0);
-        }
-        while (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
-            robotStrafe(1, 0);
-        }
-        if (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 2;
         }
     }
     public void robotStrafe (double power, double angle){
@@ -341,6 +312,74 @@ public class TestAutonomous extends LinearOpMode {
         //Use the correction to adjust robot power so robot faces straight
         robot.correctedTankStrafe(leftPower, rightPower, correction);
         //}
+    }
+    public void odometrySetAngle(double angle){
+        if (globalPositionUpdate.returnOrientation() > angle){
+            robot.turnCounterClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() > angle){
+
+            }
+        }else if (globalPositionUpdate.returnOrientation() < angle){
+            robot.turnClockwise(0.5);
+            while (globalPositionUpdate.returnOrientation() < angle){
+
+            }
+        }
+        robot.completeStop();
+    }
+    public void odometryDriveToPos (double xPos, double yPos) throws InterruptedException{
+        double C = 0;
+        while (Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) > 1) {//while distance to destination > than threshold
+            double angle = globalPositionUpdate.returnXCoordinate() < xPos ? 90 : -90;//basically angle = (boolean)? value-if-true : value-if-false
+            //Maybe check above line~~~~?
+            robotStrafe(.4, angle);
+
+            if(Math.abs(globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH - xPos) > 1){
+                break;
+            }
+        }
+        robot.completeStop();
+        odometryNormalizeAngle();
+        Thread.sleep(500);
+
+
+        while (Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) > 1) {
+            double power = globalPositionUpdate.returnYCoordinate() < yPos ? -.4 : .4;
+            robotStrafe(power, 0);
+
+            if(Math.abs(globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH - yPos) > 1){
+                break;
+            }
+        }
+        robot.completeStop();
+        odometryNormalizeAngle();
+        Thread.sleep(500);
+    }
+    public void odometryDriveToPosAngular (double xPos, double yPos, double direction) {
+        double angle = 0;
+        angle = Math.toDegrees(Math.atan2(xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH), yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH))) - 90;
+        robotStrafe(1,angle);
+        while ((Math.abs(globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH) < Math.abs(yPos)) && (Math.abs(globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH) < Math.abs(xPos))){
+            //Just loop and do nothing
+        }
+        robot.completeStop();
+        odometrySetAngle(direction);
+    }
+    public void shootPowerShot() throws InterruptedException{
+
+        //Shot 1
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRingsPower();
+        //Shot 2
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRingsPower();
+        //Shot 3
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRingsPower();
+    }
+    public void shootGoal() throws InterruptedException{
+        odometryDriveToPosAngular(0,0,0);
+        robot.shootRings();
     }
 
     public void dropWobble(){

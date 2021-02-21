@@ -23,7 +23,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 public class MainTeleop extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
-    private CRServo leftConveyor, rightConveyor, intake;
+    private DcMotor intake;
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
     private Servo flipper, wobbleClaw;
 
@@ -60,9 +60,7 @@ public class MainTeleop extends LinearOpMode{
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
         //intake and conveyor
-        intake = hardwareMap.crservo.get("intake");
-        leftConveyor = hardwareMap.crservo.get("leftConveyor");
-        rightConveyor = hardwareMap.crservo.get("rightConveyor");
+        intake = hardwareMap.dcMotor.get("intake");
 
         //wobble and flipper
         wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
@@ -93,8 +91,6 @@ public class MainTeleop extends LinearOpMode{
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 
-        leftConveyor.setDirection(CRServo.Direction.REVERSE);
-
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -102,7 +98,7 @@ public class MainTeleop extends LinearOpMode{
 
 
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-                imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
+                imu, wobbleArm, wobbleClaw, flipper, intake,
                 outtakeRight, outtakeLeft, this);
 
         robot.setupRobot();//calibrate IMU, set any required parameters
@@ -141,8 +137,6 @@ public class MainTeleop extends LinearOpMode{
             }
             double intakeSpeed = gamepad1.left_trigger * intakeMod;
             intake.setPower(intakeSpeed);
-            rightConveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
-            leftConveyor.setPower(intakeSpeed);
 
 
 
@@ -212,8 +206,6 @@ public class MainTeleop extends LinearOpMode{
             }
            // double intakeSpeed = gamepad1.left_trigger * intakeMod;
             intake.setPower(intakeSpeed);
-            rightConveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
-            leftConveyor.setPower(intakeSpeed);
 
             double outtakeRPM = outtakePower * OUTTAKE_MOTOR_RPM * OUTTAKE_GEAR_RATIO;
             double outtakeWheelVelocity = (outtakeRPM * 2 * Math.PI * OUTTAKE_WHEEL_RADIUS_M)/60;

@@ -21,7 +21,7 @@ import org.openftc.revextensions2.ExpansionHubEx;
 public class TemporaryTeleop extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
-    private CRServo leftConveyor, rightConveyor, intake;
+    private DcMotor intake;
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
     private Servo flipper, wobbleClaw;
     //private VoltageSensor voltSensor;
@@ -61,9 +61,7 @@ public class TemporaryTeleop extends LinearOpMode{
         expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 1");
 
         //intake and conveyor
-        intake = hardwareMap.crservo.get("intake");
-        leftConveyor = hardwareMap.crservo.get("leftConveyor");
-        rightConveyor = hardwareMap.crservo.get("rightConveyor");
+        intake = hardwareMap.dcMotor.get("intake");
 
         //wobble and flipper
         wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
@@ -88,8 +86,6 @@ public class TemporaryTeleop extends LinearOpMode{
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 
-        leftConveyor.setDirection(CRServo.Direction.REVERSE);
-
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -97,7 +93,7 @@ public class TemporaryTeleop extends LinearOpMode{
 
 
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-                imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
+                imu, wobbleArm, wobbleClaw, flipper, intake,
                 outtakeRight, outtakeLeft, this);
 
         robot.setupRobot();//calibrate IMU, set any required parameters
@@ -138,8 +134,6 @@ public class TemporaryTeleop extends LinearOpMode{
             }
             double intakeSpeed = gamepad1.left_trigger * intakeMod;
             intake.setPower(intakeSpeed);
-            rightConveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
-            leftConveyor.setPower(intakeSpeed);
 
 
 

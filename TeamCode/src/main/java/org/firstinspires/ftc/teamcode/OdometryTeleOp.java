@@ -21,7 +21,7 @@ public class OdometryTeleOp extends LinearOpMode{
 
     private IMURobot robot;
 
-    private CRServo leftConveyor, rightConveyor, intake;
+    private DcMotor intake;
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
     private Servo flipper, wobbleClaw;
 
@@ -45,10 +45,8 @@ public class OdometryTeleOp extends LinearOpMode{
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
-        //intake and conveyor
-        intake = hardwareMap.crservo.get("intake");
-        leftConveyor = hardwareMap.crservo.get("leftConveyor");
-        rightConveyor = hardwareMap.crservo.get("rightConveyor");
+        //intake
+        intake = hardwareMap.dcMotor.get("intake");
 
         //wobble and flipper
         wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
@@ -73,7 +71,7 @@ public class OdometryTeleOp extends LinearOpMode{
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-                imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
+                imu, wobbleArm, wobbleClaw, flipper, intake,
                 outtakeRight, outtakeLeft, this);
 
         robot.setupRobot();//calibrate IMU, set any required parameters

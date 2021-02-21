@@ -60,7 +60,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
 
     OdometryGlobalCoordinatePosition globalPositionUpdate;
 
-    private CRServo leftConveyor, rightConveyor, intake;
+    private DcMotor intake;
 
     //Declare imu
     private BNO055IMU imu;
@@ -102,9 +102,8 @@ public class AutonomousNoOdometry extends LinearOpMode {
         verticalRight = hardwareMap.dcMotor.get("encoderFree");
 
 
-        intake = hardwareMap.crservo.get("intake");
-        leftConveyor = hardwareMap.crservo.get("leftConveyor");
-        rightConveyor = hardwareMap.crservo.get("rightConveyor");
+        intake = hardwareMap.dcMotor.get("intake");
+
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -117,7 +116,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
 
         //Create an IMURobot object that we will use to run the robot
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-                imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
+                imu, wobbleArm, wobbleClaw, flipper, intake,
                 outtakeRight, outtakeLeft, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
@@ -196,8 +195,6 @@ public class AutonomousNoOdometry extends LinearOpMode {
                 break;
             case 2:
                 intake.setPower(1);
-                rightConveyor.setPower(1);//turn conveyor on when the intake turns on
-                leftConveyor.setPower(1);
                 robot.gyroDriveCm(-.6, 150);
                 robot.gyroDriveCm(.6, 150);
                 outtakeLeft.setPower(.65);
@@ -209,8 +206,6 @@ public class AutonomousNoOdometry extends LinearOpMode {
                 Thread.sleep(500);//CHANGE!!!!!!!!
                 outtakeLeft.setPower(0);
                 outtakeRight.setPower(0);
-                rightConveyor.setPower(0);//turn conveyor on when the intake turns on
-                leftConveyor.setPower(0);
                 robot.gyroTurn(165, 0.5);
                 robot.gyroDriveCm(-.75, 80);
                 dropWobble();
@@ -219,8 +214,6 @@ public class AutonomousNoOdometry extends LinearOpMode {
                 break;
             case 3:
                 intake.setPower(1);
-                rightConveyor.setPower(1);//turn conveyor on when the intake turns on
-                leftConveyor.setPower(1);
                 robot.gyroDriveCm(-.5, 185);
                 Thread.sleep(1000);
                 robot.gyroDriveCm(.5, 180);
@@ -238,8 +231,6 @@ public class AutonomousNoOdometry extends LinearOpMode {
                 Thread.sleep(500);//CHANGE!!!!!!!!
                 outtakeLeft.setPower(0);
                 outtakeRight.setPower(0);
-                rightConveyor.setPower(0);//turn conveyor on when the intake turns on
-                leftConveyor.setPower(0);
                 robot.gyroTurn(180, 0.5);
                 //robot.gyroStrafeCm(0.5, -90,80);
                 robot.gyroDriveCm(-0.75, 170);

@@ -29,13 +29,10 @@ public class IMURobot {
     public DcMotor motorFrontLeft;
     public DcMotor motorBackRight;
     public DcMotor motorBackLeft;
-    public CRServo intake;
+    public DcMotor intake;
     public DcMotor outtakeLeft;
     public DcMotor outtakeRight;
     private DcMotor wobbleArm;
-
-    private CRServo leftConveyor;
-    private CRServo rightConveyor;
 
     //Declare servos
     private Servo flipper;
@@ -88,8 +85,6 @@ public class IMURobot {
      * @param imu
      * @param wobbleArm
      * @param wobbleClaw
-     * @param leftConveyor
-     * @param rightConveyor
      * @param flipper
      * @param intake
      * @param outtakeRight
@@ -100,9 +95,8 @@ public class IMURobot {
     
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft, 
                     DcMotor verticalLeft, DcMotor verticalRight, DcMotor horizontal,
-                    BNO055IMU imu, DcMotor wobbleArm, Servo wobbleClaw,
-                    CRServo leftConveyor, CRServo rightConveyor, Servo flipper,
-                    CRServo intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
+                    BNO055IMU imu, DcMotor wobbleArm, Servo wobbleClaw, Servo flipper,
+                    DcMotor intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -113,8 +107,6 @@ public class IMURobot {
         this.imu = imu;
         this.wobbleArm = wobbleArm;
         this.wobbleClaw = wobbleClaw;
-        this.leftConveyor = leftConveyor;
-        this.rightConveyor = rightConveyor;
         this.flipper = flipper;
         this.intake = intake;
         this.outtakeRight = outtakeRight;
@@ -135,8 +127,6 @@ public class IMURobot {
      * @param imu
      * @param wobbleArm
      * @param wobbleClaw
-     * @param leftConveyor
-     * @param rightConveyor
      * @param flipper
      * @param intake
      * @param outtakeRight
@@ -146,9 +136,8 @@ public class IMURobot {
      */
 
     public IMURobot(DcMotor motorFrontRight, DcMotor motorFrontLeft, DcMotor motorBackRight, DcMotor motorBackLeft,
-                    BNO055IMU imu, DcMotor wobbleArm, Servo wobbleClaw,
-                    CRServo leftConveyor, CRServo rightConveyor, Servo flipper,
-                    CRServo intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
+                    BNO055IMU imu, DcMotor wobbleArm, Servo wobbleClaw, Servo flipper,
+                    DcMotor intake, DcMotor outtakeRight, DcMotor outtakeLeft, LinearOpMode opMode){
         this.motorFrontRight = motorFrontRight;
         this.motorFrontLeft = motorFrontLeft;
         this.motorBackRight = motorBackRight;
@@ -156,8 +145,6 @@ public class IMURobot {
         this.imu = imu;
         this.wobbleArm = wobbleArm;
         this.wobbleClaw = wobbleClaw;
-        this.leftConveyor = leftConveyor;
-        this.rightConveyor = rightConveyor;
         this.flipper = flipper;
         this.intake = intake;
         this.outtakeRight = outtakeRight;
@@ -256,8 +243,6 @@ public class IMURobot {
     public void setupRobot() throws InterruptedException{
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-
-        leftConveyor.setDirection(CRServo.Direction.REVERSE);
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -771,21 +756,6 @@ public class IMURobot {
         Thread.sleep(500);
         flipper.setPosition(1);
         outtake(0);
-    }
-
-    public void conveyorOn(){
-        rightConveyor.setPower(1);
-        leftConveyor.setPower(1);
-    }
-
-    public void conveyorOff(){
-        rightConveyor.setPower(0);
-        leftConveyor.setPower(0);
-    }
-
-    public void conveyorReverse(){
-        rightConveyor.setPower(-1);
-        leftConveyor.setPower(-1);
     }
 
 }

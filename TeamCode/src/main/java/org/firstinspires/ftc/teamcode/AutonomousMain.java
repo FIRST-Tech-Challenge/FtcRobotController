@@ -35,7 +35,7 @@ public class AutonomousMain extends LinearOpMode
     MainPipeline mainPipeline;
     double sensitivity;
 
-    private CRServo leftConveyor, rightConveyor, intake;
+    private DcMotor intake;
 
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -85,9 +85,7 @@ public class AutonomousMain extends LinearOpMode
         horizontal = hardwareMap.dcMotor.get("BL");
 
         //intake and conveyor
-        intake = hardwareMap.crservo.get("intake");
-        leftConveyor = hardwareMap.crservo.get("leftConveyor");
-        rightConveyor = hardwareMap.crservo.get("rightConveyor");
+        intake = hardwareMap.dcMotor.get("intake");
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -100,7 +98,7 @@ public class AutonomousMain extends LinearOpMode
 
         //Create an IMURobot object that we will use to run the robot
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
-                imu, wobbleArm, wobbleClaw, leftConveyor, rightConveyor, flipper, intake,
+                imu, wobbleArm, wobbleClaw, flipper, intake,
                 outtakeRight, outtakeLeft, this);
         robot.setupRobot();//calibrate IMU, set any required parameters
 
