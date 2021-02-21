@@ -439,6 +439,9 @@ public class Auto extends OpMode {
 
             @Override
             public State doStuffAndGetNextState() {
+
+                wobbleGoal.openGripper();
+
                 return nextState;
             }
 
@@ -460,6 +463,7 @@ public class Auto extends OpMode {
 
                 if (!wobbleStateClass.equals(WobbleGoal.AutoStowState.class)) {
                     wobbleGoal.gotoStowState();
+                    wobbleGoal.closeGripper();
                 }
 
                 return nextState;
@@ -480,6 +484,7 @@ public class Auto extends OpMode {
         stateMachine.addSequential(toTargetZone);
         stateMachine.addSequential(wobbleGoalToPlaceState);
         stateMachine.addSequential(dropWobbleGoalState);
+        stateMachine.addSequential(newDelayState("Wait to drop", 1));
         stateMachine.addSequential(wobbleGoalCoolDownState);
         stateMachine.addSequential(toParkedPosition);
         stateMachine.addSequential(newDoneState("Done!"));

@@ -29,15 +29,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import java.util.concurrent.TimeUnit;
 
 public class Intake {
-    public static final float INTAKE_POWER = 1;
+    public static final float INTAKE_POWER = -1;
 
-    public static final float OUTTAKE_POWER = -1;
+    public static final float OUTTAKE_POWER = 1;
 
     public static final float INTAKE_SERVO_POWER = 1;
 
     public static final float OUTTAKE_SERVO_POWER = -1;
 
-    // NR-3.7 Orbital: positive voltage rotation CCW, encoder/sec 3400
+    // NR-20 Orbital: positive voltage rotation CW, encoder/sec 3400
     private final DcMotorEx intakeMotor;
 
     private CRServo intakeServo;
