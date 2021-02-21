@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.stmicroelectronics.VL53L0X;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -134,6 +135,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
     private DistanceSensor leftRangeSensor;
     private DistanceSensor frontRangeSensor;
+    private LongDistanceSensor testRange;
 
     // array contains the same wheel assemblies as above variables
     //  and is convenient to use when actions have to be performed on all 4
@@ -547,9 +549,15 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             configure_IMUs(configuration, noReset);
         }
 
-        if ((auto || setRangeSensorTelemetry) && (robotVersion==1)) {
-            leftRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "leftRange");
-            frontRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "frontRange");
+        if ((auto || setRangeSensorTelemetry)) {
+
+          if (robotVersion==1) {
+              leftRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "leftRange");
+              frontRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "frontRange");
+          } else if (robotVersion==2) {
+              // testRange = configuration.getHardwareMap().get(VL53L0X.class, "testRange");
+              testRange = configuration.getHardwareMap().get(LongDistanceSensor.class, "testRange");
+          }
         }
         calibrateRobotByVersion(); //perform robot version specific calibration
 
@@ -1121,15 +1129,23 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                 }
             });
         }
-            if (frontRangeSensor != null) {
-                line.addData("rangeF", "%.1f", new Func<Double>() {
+        if (frontRangeSensor != null) {
+            line.addData("rangeF", "%.1f", new Func<Double>() {
                     @Override
                     public Double value() {
                         // return rightRangeSensor.getDistance(DistanceUnit.CM);
-                        return getDistance(SwerveChassis.Direction.FRONT);
-                    }
+                        return getDistance(SwerveChassis.Direction.FRONT); }
                 });
         }
+        if (testRange != null) {
+            line.addData("rangeT", "%.1f", new Func<Double>() {
+                @Override
+                public Double value() {
+                    // return rightRangeSensor.getDistance(DistanceUnit.CM);
+                    return testRange.getDistance(DistanceUnit.CM); }
+            });
+        }
+
         if (showEncoderDetail) {
             if (motorFL != null) {
                 line.addData("FL", "%d", new Func<Integer>() {
