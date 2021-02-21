@@ -1277,17 +1277,17 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
                     TaskManager.processTasks();
                 }
+                if (tZone == TargetZone.ZONE_A) {
+                    chassis.driveStraight(0.5, -20, 0, 1);
+                    //chassis.driveTo(auto_chassis_power, chassis.odo_x_pos_cm(), chassis.odo_y_pos_cm() - 20, chassis.odo_heading(), false, 1);
+                    chassis.rawRotateTo(0.4,-5,false,1);
+                }
             }
             else
             {
                 comboGrabber.releaseWobbleGoalFastCombo();
                 while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
                     TaskManager.processTasks();
-                }
-                if (tZone == TargetZone.ZONE_A) {
-                    chassis.driveStraight(0.5, -20, 0, 1);
-                    //chassis.driveTo(auto_chassis_power, chassis.odo_x_pos_cm(), chassis.odo_y_pos_cm() - 20, chassis.odo_heading(), false, 1);
-                    chassis.rawRotateTo(0.4,-5,false,1);
                 }
                 //comboGrabber.initWobbleGoalCombo();
             }
@@ -1613,9 +1613,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             if (tZone == TargetZone.ZONE_C){
                 chassis.driveTo(0.6, side(102), 29, 0, false, 3);
             } else if (tZone == TargetZone.ZONE_B){
-                chassis.driveTo(0.6, side(107), 29, 0, false, 3);
+                chassis.driveTo(0.6, side(107), 27, 0, false, 3);
             } else { // ZONE_A
-                chassis.driveTo(0.6, side(102), 29, 0, false, 3);
+                chassis.driveTo(0.6, side(102), 27, 0, false, 3);
             }
         } else {
             chassis.driveTo(auto_chassis_power, side(47), 30, 0, true,  3);
