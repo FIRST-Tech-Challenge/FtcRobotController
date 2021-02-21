@@ -59,7 +59,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public Hopper hopper;
     public Intake intake;
 
-    public double auto_chassis_power = .5;
+    public double auto_chassis_power = .8;
     public double auto_chassis_dist = 100;
     public double auto_chassis_heading = -90;
     public double auto_chassis_power_slow = .4;
@@ -1259,7 +1259,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 chassis.driveTo(auto_chassis_power, 25, 170, -20, false, 3);
-                chassis.rawRotateTo(0.35,-40,false,1);
+                chassis.rawRotateTo(0.4,-40,false,1);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 3);
             } else if (tZone == TargetZone.ZONE_C) {//4
@@ -1605,11 +1605,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C){
-                chassis.driveTo(auto_chassis_power, side(102), 27, 0, false, 3);
+                chassis.driveTo(0.6, side(102), 27, 0, false, 3);
             } else if (tZone == TargetZone.ZONE_B){
-                chassis.driveTo(auto_chassis_power, side(107), 27, 0, false, 3);
+                chassis.driveTo(0.6, side(107), 27, 0, false, 3);
             } else { // ZONE_A
-                chassis.driveTo(auto_chassis_power, side(102), 27, 0, false, 3);
+                chassis.driveTo(0.6, side(102), 27, 0, false, 3);
             }
         } else {
             chassis.driveTo(auto_chassis_power, side(47), 30, 0, true,  3);
