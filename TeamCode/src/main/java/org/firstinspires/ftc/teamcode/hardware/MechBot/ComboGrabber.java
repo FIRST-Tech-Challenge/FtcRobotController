@@ -286,6 +286,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
                     return slideToPos(SLIDER_POS_INIT);
                 }}, taskName);
         }
+
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
@@ -294,7 +295,17 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return moveGrabber(GRABBER_OPEN);
+                return moveArm(GRABBER_OPEN);
+            }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                grabberClose();return moveArm(ARM_UP);
+            }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                grabberClose();return moveArm(GRABBER_CLOSE);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override
