@@ -54,9 +54,31 @@ public class PIDTest extends LinearOpMode {
 
         }
 
+        ElapsedTime jmac = new ElapsedTime();
+
         waitForStart();
         if (!isStopRequested()) {
-            linearMovement(60, 4, 0.0004,0.00007, 0.000068);
+            //linearMovement(48, 10, 0.0004,0.00007, 0.000068);
+            jmac.reset();
+            mDrive.resetEncoders();
+            while (jmac.seconds() <= 1)
+            {
+                mDrive.FL.setPower(-1);
+                mDrive.FR.setPower(-1);
+                mDrive.BL.setPower(-1);
+                mDrive.BR.setPower(-1);
+                telemetry.addData("FL", mDrive.FL.getCurrentPosition());
+                telemetry.addData("FR", mDrive.FR.getCurrentPosition());
+                telemetry.addData("BL", mDrive.BL.getCurrentPosition());
+                telemetry.addData("BR", mDrive.BR.getCurrentPosition());
+                telemetry.update();
+            }
+            mDrive.FL.setPower(0);
+            mDrive.FR.setPower(0);
+            mDrive.BL.setPower(0);
+            mDrive.BR.setPower(0);
+
+            sleep(3000);
         }
         mDrive.freeze();
     }

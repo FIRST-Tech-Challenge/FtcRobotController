@@ -119,6 +119,12 @@ public class ArcadeTeleOp extends LinearOpMode {
         mDrive.FL.setPower(frontRight);
         mDrive.FR.setPower(frontLeft);
 
+        telemetry.addData("FL", mDrive.FL.getCurrentPosition());
+        telemetry.addData("FR", mDrive.FR.getCurrentPosition());
+        telemetry.addData("BL", mDrive.BL.getCurrentPosition());
+        telemetry.addData("BR", mDrive.BR.getCurrentPosition());
+        telemetry.update();
+
         currentState = MANEUVERING;
     }
 
