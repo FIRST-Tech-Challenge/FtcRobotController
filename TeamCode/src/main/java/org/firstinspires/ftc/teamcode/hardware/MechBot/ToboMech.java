@@ -1392,12 +1392,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (runtimeAuto.seconds() > 29){ return;}
         if (!keepPos) {
             if (tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C && numHighGoals == 3) {
-                chassis.driveTo(.55, side(50), 165, 0, true, 2);
+                chassis.driveTo(.55, side(50), 165, 0, true, 3);
             } else if (tZone != TargetZone.UNKNOWN) {
                 if (runtimeAuto.seconds() > 29) {
                     return;
                 }
-                chassis.driveTo(.55, side(90), 165, 0, true, 2);
+                chassis.driveTo(.55, side(90), 165, 0, true, 3);
             }
             }
         while (!TaskManager.isComplete("Transfer Up Combo")) {
@@ -1605,11 +1605,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C){
-                chassis.driveTo(0.6, side(102), 27, 0, false, 3);
+                chassis.driveTo(0.6, side(102), 29, 0, false, 3);
             } else if (tZone == TargetZone.ZONE_B){
-                chassis.driveTo(0.6, side(107), 27, 0, false, 3);
+                chassis.driveTo(0.6, side(107), 29, 0, false, 3);
             } else { // ZONE_A
-                chassis.driveTo(0.6, side(102), 27, 0, false, 3);
+                chassis.driveTo(0.6, side(102), 29, 0, false, 3);
             }
         } else {
             chassis.driveTo(auto_chassis_power, side(47), 30, 0, true,  3);
@@ -1702,7 +1702,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.driveTo(1.0, chassis.odo_x_pos_cm(), chassis.odo_y_pos_cm() + 30, chassis.getCurHeading(), false, 2);
             }
             else {
-                chassis.driveTo(1.0, chassis.odo_x_pos_cm(), 200, chassis.getCurHeading(), false, 2);
+                chassis.driveTo(1.0, chassis.odo_x_pos_cm(), 220, chassis.getCurHeading(), false, 2);
             }
         }
         else if (tZone==TargetZone.ZONE_B)
