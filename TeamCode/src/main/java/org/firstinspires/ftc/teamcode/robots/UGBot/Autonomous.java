@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.UGBot;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.VisionProvider;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.VisionProviders;
@@ -95,7 +96,8 @@ public class Autonomous {
 //            .addTimedState(3f, () -> sample(),  () -> telemetry.addData("DELAY", "DONE"))
 
             .addMineralState(ugStateProvider,
-                    () -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 3),
+                    //() -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 3),
+                    () -> robot.driveToFieldPosition(Constants.startingXOffset,1.5),
                     () -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.3), // 2.3
                     () -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 1.87)) //1.87
 

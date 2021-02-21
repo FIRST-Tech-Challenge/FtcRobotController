@@ -16,8 +16,8 @@ public class Constants {
     public static final double LAUNCHER_VERTICAL_OFFSET = 0.085;
     public static final double BASE_LAUNCH_ANGLE = 19.50244851;
 
-    public static double kpFlywheel = 0.006; //proportional constant multiplier goodish
-    public static  double kiFlywheel = 0.0; //integral constant multiplier
+    public static double kpFlywheel = 0.6; //proportional constant multiplier goodish
+    public static  double kiFlywheel = 1.0; //integral constant multiplier
     public static  double kdFlywheel= 0.0; //derivative constant multiplier
 
     // Vision
@@ -47,7 +47,7 @@ public class Constants {
     public static double POWER_SHOT_RADIUS = 1;
     public static double startingXOffset = 1.2192;
     public static double startingYOffset = .24765;
-    public static double MULTIPLIER = 1.4;
+    public static double MULTIPLIER = 1.1;
 
 
     public static int overrideTPS = 0;

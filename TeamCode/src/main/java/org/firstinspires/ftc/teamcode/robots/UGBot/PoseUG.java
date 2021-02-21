@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -381,6 +382,7 @@ public class PoseUG {
         launcher.resetEncoders();
     }
 
+
     public void sendTelemetry() {
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
@@ -423,18 +425,27 @@ public class PoseUG {
         packet.put("posex",getPoseX());
         packet.put("target angle for the thing", goalHeading);
         packet.put("avg ticks",getAverageTicks());
-        packet.put("current turret heading", turret.getHeading());
-        packet.put("target turret heading", turret.getTurretTargetHeading());
         packet.put("target", target);
-        packet.put("left dist", getDistLeftDist());
+        packet.put("right dist", getDistRightDist());
         packet.put("outliers", countOutliers);
-
+        packet.put("voltage", getBatteryVoltage());
 
         dashboard.sendTelemetryPacket(packet);
     }
 
     public double getGoalHeading() {
         return goalHeading;
+    }
+
+    double getBatteryVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+        for (VoltageSensor sensor : hwMap.voltageSensor) {
+            double voltage = sensor.getVoltage();
+            if (voltage > 0) {
+                result = Math.min(result, voltage);
+            }
+        }
+        return result;
     }
 
     /**
@@ -562,7 +573,7 @@ public class PoseUG {
     public void maintainTarget() {
         switch(target) {
             case NONE:
-                turret.setTurntableAngle(turret.getHeading());
+                turret.setTurntableAngle(turret.getTurretTargetHeading());
                 break;
             default:
                 goalHeading = getBearingTo(target.x, target.y);
@@ -678,6 +689,7 @@ public class PoseUG {
     }
 
     double prevWallVal = 0.4572;
+    double numLoops = 0;
     int countOutliers = 0;
 
     public boolean driveGenericPIDDistance(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
@@ -691,8 +703,11 @@ public class PoseUG {
             driveIMUDistanceInitialzed = true;
         }
 
-        if(Math.abs(((prevWallVal / 50) - (currentVal / 50) / 0.4572)) < .10){
+        prevWallVal += currentVal / 50;
+
+        if((targetVal / 50) / (prevWallVal / numLoops) > .10){
             countOutliers++;
+
         }
         prevWallVal = currentVal / 50;
 
@@ -827,9 +842,13 @@ public class PoseUG {
 
     public int toggleTriggerState = 0;
     public long lastTriggerTime;
+    public boolean rampedUp = false;
 
     public boolean toggleTriggerArticulation() {
         if (Math.abs(launcher.flywheelTargetTPS - launcher.flywheelTPS) / launcher.flywheelTargetTPS < 0.05) {
+            rampedUp = true;
+        }
+        if(rampedUp){
             switch (toggleTriggerState) {
                 case 0:
                     launcher.servoTrigger.setPosition(servoNormalize(2100));
@@ -838,8 +857,9 @@ public class PoseUG {
                     break;
                 case 1:
                     if (System.currentTimeMillis() - lastTriggerTime > 500) {
-                        launcher.servoTrigger.setPosition(servoNormalize(1750));
+                        launcher.servoTrigger.setPosition(servoNormalize(1790));
                         toggleTriggerState = 0;
+                        rampedUp = false;
                         return true;
                     }
                     break;

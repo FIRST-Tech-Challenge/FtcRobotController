@@ -110,10 +110,6 @@ public class Conversions {
 
     }
 
-    public static double getBatteryVoltage(){
-        return RC.h.voltageSensor.get("Motor Controller 1").getVoltage();
-    }
-
     public static long futureTime(float seconds){
         return System.nanoTime() + (long) (seconds * 1e9);
     }
