@@ -290,7 +290,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return moveArm(ARM_DOWN);
+                grabberClose();return moveArm(ARM_DOWN);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override
@@ -305,17 +305,12 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                grabberClose();return moveArm(GRABBER_CLOSE);
-            }}, taskName);
-        TaskManager.add(new Task() {
-            @Override
-            public Progress start() {
-                grabberClose();return moveArm(ARM_INIT);
-            }}, taskName);
-        TaskManager.add(new Task() {
-            @Override
-            public Progress start() {
                 return moveGrabber(GRABBER_CLOSE);
+            }}, taskName);
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return moveArm(ARM_INIT);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override
