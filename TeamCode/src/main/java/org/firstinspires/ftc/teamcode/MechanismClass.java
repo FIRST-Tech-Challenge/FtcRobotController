@@ -10,14 +10,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class MechanismClass extends LinearOpMode {
 
-    private CRServo leftConveyor, rightConveyor, intake;
+    private CRServo leftConveyor, rightConveyor;
     private DcMotor outtakeRight, outtakeLeft;
     private Servo flipper;
 
     public void runOpMode(){
 
         //intake and conveyor
-        intake = hardwareMap.crservo.get("intake");
         leftConveyor = hardwareMap.crservo.get("leftConveyor");
         rightConveyor = hardwareMap.crservo.get("rightConveyor");
 
@@ -44,7 +43,6 @@ public class MechanismClass extends LinearOpMode {
             //Release intake
 
             double intakeSpeed = gamepad1.left_trigger * intakeMod;
-            intake.setPower(intakeSpeed);
             rightConveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
             leftConveyor.setPower(intakeSpeed);
 

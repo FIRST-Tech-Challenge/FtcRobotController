@@ -17,7 +17,7 @@ public class BareTeleOp extends LinearOpMode {
     private Servo flipper;
 
     private CRServo leftIntakeServo, rightIntakeServo;
-    private CRServo leftConveyor, rightConveyor, intake, elevator;
+    private CRServo leftConveyor, rightConveyor, elevator;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -33,12 +33,10 @@ public class BareTeleOp extends LinearOpMode {
         outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
 
         //intake and conveyor
-        intake = hardwareMap.crservo.get("intake");
         leftConveyor = hardwareMap.crservo.get("leftConveyor");
         rightConveyor = hardwareMap.crservo.get("rightConveyor");
 
         rightConveyor.setDirection(CRServo.Direction.REVERSE);
-        intake.setDirection(CRServo.Direction.REVERSE);
 
         //elevator
         elevator = hardwareMap.crservo.get("elevator");
@@ -79,7 +77,6 @@ public class BareTeleOp extends LinearOpMode {
             }
 
             double intakeSpeed = gamepad1.right_trigger * intakeMod;
-            intake.setPower(intakeSpeed);
             rightConveyor.setPower(intakeSpeed);//turn conveyor on when the intake turns on
             leftConveyor.setPower(intakeSpeed);
 
