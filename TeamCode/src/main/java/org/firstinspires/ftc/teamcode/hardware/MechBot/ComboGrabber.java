@@ -39,7 +39,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private final int SLIDER_POS_MAX = 1733;
     private final int SLIDER_POS_RING = 580;
 
-    private double ARM_UP = 0.48;
+    private double ARM_UP = 0.25;
     private double ARM_INIT = 0.16;
     private double ARM_DOWN_RELEASE = 0.91;
     private double ARM_DOWN = 0.95;
@@ -47,6 +47,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
 
     private double GRABBER_OPEN = 0.52;
     private double GRABBER_CLOSE = 0.9;
+    private double GRABBER_PARTIAL_CLOSE = 0.8;
     private double GRABBER_INIT = GRABBER_CLOSE;
 
     private boolean sliderIsLow = true;
@@ -295,17 +296,17 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return moveArm(GRABBER_OPEN);
+                return moveGrabber(GRABBER_OPEN);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                grabberClose();return moveArm(ARM_UP);
+                return moveArm(ARM_UP);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return moveGrabber(GRABBER_CLOSE);
+                return moveGrabber(GRABBER_PARTIAL_CLOSE);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override
