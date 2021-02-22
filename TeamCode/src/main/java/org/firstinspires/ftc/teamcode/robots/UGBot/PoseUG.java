@@ -119,6 +119,7 @@ public class PoseUG {
     private static double poseHeading; // current heading in degrees. Might be rotated by 90 degrees from imu's heading when strafing
     private double poseHeadingRad; // current heading converted to radians
     private double poseSpeed;
+    private double velocityX, velocityY;
     private double posePitch;
     private double poseRoll;
     private long timeStamp; // timestamp of last update
@@ -397,6 +398,18 @@ public class PoseUG {
         Point robotCanvasPoint = CanvasUtils.toCanvasPoint(posePoint);
         fieldOverlay.strokeCircle(robotCanvasPoint.getX(), robotCanvasPoint.getY(), Constants.ROBOT_RADIUS);
 
+        // turret center in field coords
+        Point turretCenter = new Point(getPoseX() - Constants.TURRET_AXIS_OFFSET * Math.sin(poseHeadingRad), getPoseY() - Constants.TURRET_AXIS_OFFSET * Math.cos(poseHeadingRad));
+        //Point turretCenter = new Point(getPoseX()  * Math.sin(poseHeadingRad), (getPoseY() - Constants.TURRET_AXIS_OFFSET) * Math.cos(poseHeadingRad));
+
+        Point turretCanvasCenter = CanvasUtils.toCanvasPoint(turretCenter);
+        fieldOverlay.strokeCircle(turretCanvasCenter.getX(), turretCanvasCenter.getY(), Constants.TURRET_RADIUS * Constants.INCHES_PER_METER);
+
+        //muzzle center
+        );
+        Point muzzleCanvasCenter = CanvasUtils.toCanvasPoint(muzzleCenterField);
+        fieldOverlay.strokeCircle(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), 2.5);
+
         // power shots
         Point firstPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.FIRST_POWER_SHOT.x, Constants.Target.FIRST_POWER_SHOT.y));
         Point secondPowerShot = CanvasUtils.toCanvasPoint(new Point(Constants.Target.SECOND_POWER_SHOT.x, Constants.Target.SECOND_POWER_SHOT.y));
@@ -406,29 +419,42 @@ public class PoseUG {
         fieldOverlay.strokeCircle(secondPowerShot.getX(), secondPowerShot.getY(), Constants.POWER_SHOT_RADIUS);
         fieldOverlay.strokeCircle(thirdPowerShot.getX(), thirdPowerShot.getY(), Constants.POWER_SHOT_RADIUS);
 
-        // bearing to target (neon green)
         if(!target.equals(Constants.Target.NONE)) {
+            // bearing to offset (speed corrected) target (light green)
+            Point offsetTargetPoint = CanvasUtils.toCanvasPoint(new Point(trajSol.getxOffset(), getTarget().y));
+            fieldOverlay.setStroke("#4D934D");
+            fieldOverlay.strokeLine(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), offsetTargetPoint.getX(), offsetTargetPoint.getY());
+
+            // bearing to target (neon green)
             Point targetPoint = CanvasUtils.toCanvasPoint(new Point(getTarget().x, getTarget().y));
             fieldOverlay.setStroke("#39FF14");
-            fieldOverlay.strokeLine(robotCanvasPoint.getX(), robotCanvasPoint.getY(), targetPoint.getX(), targetPoint.getY());
+            fieldOverlay.strokeLine(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), targetPoint.getX(), targetPoint.getY());
         }
+
         // robot heading (black)
         CanvasUtils.drawVector(fieldOverlay, posePoint, 2 * Constants.ROBOT_RADIUS, poseHeading, "#000000");
 
         // turret heading (red)
-        CanvasUtils.drawVector(fieldOverlay, posePoint, 3 * Constants.ROBOT_RADIUS, turret.getHeading(), "#FF0000");
+        CanvasUtils.drawVector(fieldOverlay, turretCenter, 3 * Constants.ROBOT_RADIUS, turret.getHeading(), "#FF0000");
 
         packet.put("current flywheel velocity", launcher.getFlywheelTPS());
         packet.put("target flywheel velocity", launcher.getFlywheelTargetTPS());
         packet.put("flywheel motor power", launcher.flywheelMotor.getPower() * 200);
-        packet.put("posey",getPoseY());
-        packet.put("posex",getPoseX());
+        packet.put("pose y",getPoseY());
+        packet.put("pose x",getPoseX());
+        packet.put("velocity x", velocityX);
+        packet.put("velocity y", velocityY);
         packet.put("target angle for the thing", goalHeading);
         packet.put("avg ticks",getAverageTicks());
         packet.put("target", target);
         packet.put("right dist", getDistRightDist());
         packet.put("outliers", countOutliers);
         packet.put("voltage", getBatteryVoltage());
+        packet.put("x offset", trajSol.getxOffset());
+        packet.put("disk speed", trajSol.getVelocity());
+        packet.put("pose speed", poseSpeed);
+//        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
+//        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
         dashboard.sendTelemetryPacket(packet);
     }
@@ -532,19 +558,21 @@ public class PoseUG {
 //                displacementPrev = 0;
 //                break;
 //        }
-        displacement = (getAverageTicks() - displacementPrev);
+        displacement = (getAverageTicks() - displacementPrev) / forwardTPM;
         odometer += Math.abs(displacement);
         poseHeadingRad = Math.toRadians(poseHeading);
 
         odometer += Math.abs(displacement);
-        poseSpeed = displacement / (double) (currentTime - this.timeStamp) * 1000000; // meters per second when ticks
+        poseSpeed = displacement / ((currentTime - this.timeStamp) / 1e9); // meters per second when ticks
                                                                                       // per meter is calibrated
+        velocityX = poseSpeed * Math.sin(poseHeadingRad);
+        velocityY = poseSpeed * Math.cos(poseHeadingRad);
 
         timeStamp = currentTime;
         displacementPrev = getAverageTicks();
 
-        poseX += (displacement / forwardTPM) * Math.sin(poseHeadingRad);
-        poseY += (displacement / forwardTPM) * Math.cos(poseHeadingRad);
+        poseX += displacement * Math.sin(poseHeadingRad);
+        poseY += displacement * Math.cos(poseHeadingRad);
 
         lastXAcceleration = cachedXAcceleration;
         cachedXAcceleration = imu.getLinearAcceleration().xAccel;
@@ -553,6 +581,7 @@ public class PoseUG {
         lastUpdateTimestamp = System.currentTimeMillis();
 
         trajCalc.updatePos(poseX, poseY);
+        trajCalc.updateVel(velocityX, velocityY);
         trajCalc.setTarget(target);
         trajSol = trajCalc.getTrajectorySolution();
 
@@ -576,7 +605,7 @@ public class PoseUG {
                 turret.setTurntableAngle(turret.getTurretTargetHeading());
                 break;
             default:
-                goalHeading = getBearingTo(target.x, target.y);
+                goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
                 turret.setTurntableAngle(goalHeading);
                 launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.MULTIPLIER);
 

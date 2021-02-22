@@ -5,12 +5,16 @@ public class TrajectorySolution {
     private double elevation;
     private double distance;
     private double bearing;
+    private double xOffset;
+    private double velocity;
 
-    public TrajectorySolution(double angularVelocity, double elevation, double distance, double bearing) {
+    public TrajectorySolution(double angularVelocity, double elevation, double distance, double bearing, double xOffset, double velocity) {
         this.angularVelocity = angularVelocity;
         this.elevation = elevation;
         this.distance = distance;
         this.bearing = bearing;
+        this.xOffset = xOffset;
+        this.velocity = velocity;
     }
 
     public double getAngularVelocity() {
@@ -24,4 +28,8 @@ public class TrajectorySolution {
     public double getDistance() {return distance;}
 
     public double getBearing() {return bearing;}
+
+    public double getxOffset() {return xOffset;}
+
+    public double getVelocity() {return velocity;}
 }

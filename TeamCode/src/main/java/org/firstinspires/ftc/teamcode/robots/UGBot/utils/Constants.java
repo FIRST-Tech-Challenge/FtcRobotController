@@ -15,6 +15,14 @@ public class Constants {
     public static final double LAUNCHER_LENGTH = 0.24;
     public static final double LAUNCHER_VERTICAL_OFFSET = 0.085;
     public static final double BASE_LAUNCH_ANGLE = 19.50244851;
+    public static double MUZZLE_X_OFFSET = 0.115;
+    public static double MUZZLE_Y_OFFSET = 0.09;
+    //converting to polar we get:
+    public static double MUZZLE_DEG_OFFSET = 90-38.0470;
+    public static double MUZZLE_RAD_OFFSET = 0.906750906;
+    public static double MUZZLE_RADIUS = .146;
+    public static double TURRET_AXIS_OFFSET = 0.114;
+    public static double TURRET_RADIUS = 0.1500;
 
     public static double kpFlywheel = 0.6; //proportional constant multiplier goodish
     public static  double kiFlywheel = 1.0; //integral constant multiplier

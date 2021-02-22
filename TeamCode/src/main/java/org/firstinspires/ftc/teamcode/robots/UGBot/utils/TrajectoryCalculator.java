@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.UGBot.utils;
 public class TrajectoryCalculator {
     private double x;
     private double y;
+    private double vx, vy;
     private double distance;
     private Constants.Target target;
 
@@ -17,6 +18,11 @@ public class TrajectoryCalculator {
         this.y = y;
     }
 
+    public void updateVel(double vx, double vy) {
+        this.vx = vx;
+        this.vy = vy;
+    }
+
     public void setTarget(Constants.Target target) {
         this.target = target;
     }
@@ -24,12 +30,11 @@ public class TrajectoryCalculator {
     public TrajectorySolution getTrajectorySolution() {
         // initializing base launch height and distance
         double launchHeight = Constants.LAUNCH_HEIGHT;
-        distance = Math.hypot(target.x - x, target.y - y);
         TrajectorySolution trajectoryIterationSolution = null;
 
         // performing iterations for convergence
         for(int i = 0; i < Constants.ITERATIONS; i++) {
-            trajectoryIterationSolution = performTrajectoryIteration(distance, launchHeight);
+            trajectoryIterationSolution = performTrajectoryIteration(launchHeight);
 
             // calculating new launch height
             launchHeight = Constants.LAUNCH_HEIGHT + getLauncherHeight(trajectoryIterationSolution.getElevation());
@@ -42,14 +47,20 @@ public class TrajectoryCalculator {
         return c * Math.sin(Math.toRadians(elevation) + Math.toRadians(Constants.BASE_LAUNCH_ANGLE));
     }
 
-    private TrajectorySolution performTrajectoryIteration(double distance, double launchHeight) {
+    private TrajectorySolution performTrajectoryIteration(double launchHeight) {
         // vertical distance in meters the disk has to travel
         double travelHeight = target.height - launchHeight;
         // time the disk is in air in seconds
         double flightTime = Math.sqrt((2 * travelHeight) / Constants.GRAVITY);
 
+        // accounting for velocity of robot in x axis
+        double xOffset = target.x - vx * flightTime;
+        // horizontal distance in meters the disk has to travel
+        distance = Math.hypot(xOffset - x, target.y - y);
+
         // using pythagorean theorem to find magnitude of muzzle velocity (in m/s);
-        double horizontalVelocity = distance / flightTime;
+        // accounting for velocity of robot in y axis
+        double horizontalVelocity = distance / flightTime - vy;
         double verticalVelocity = Constants.GRAVITY * flightTime;
         double velocity = Math.hypot(horizontalVelocity, verticalVelocity);
 
@@ -58,8 +69,8 @@ public class TrajectoryCalculator {
         angularVelocity *= (Constants.ENCODER_TICKS_PER_REVOLUTION / (2 * Math.PI)) * 2; // angular velocity in ticks/s
 
         double elevation = Math.toDegrees(Math.asin((Constants.GRAVITY * flightTime) / velocity));
-        double bearing = Math.toDegrees(Math.atan2((target.x - x), (target.y -y)));
+        double bearing = Math.toDegrees(Math.atan2((xOffset- x), (target.y -y)));
 
-        return new TrajectorySolution(angularVelocity, elevation, distance, bearing);
+        return new TrajectorySolution(angularVelocity, elevation, distance, bearing, xOffset, velocity);
     }
 }
