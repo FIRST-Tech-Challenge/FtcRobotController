@@ -1057,7 +1057,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
     }
 
-    public void initAfterStart() {
+    public void initAfterStart() throws InterruptedException {
         if (tZone==TargetZone.UNKNOWN) {// TeleOp
             shooter.shootOutByRpm(WARM_UP_RPM);
         } else {
@@ -1095,7 +1095,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             positionThread.start();
     }
 
-    public void initSetup(ProgramType type, StartPosition startP, Configuration configuration) {
+    public void initSetup(ProgramType type, StartPosition startP, Configuration configuration) throws InterruptedException {
+        if (hopper != null) {
+            hopper.hopperDownCombo();
+            TaskManager.processTasks();
+        }
         if (chassis == null) return;
         // setup the parameters before the robot configuration
         // 1. enable TFOD or not
