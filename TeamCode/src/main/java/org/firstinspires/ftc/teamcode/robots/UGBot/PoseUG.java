@@ -406,6 +406,11 @@ public class PoseUG {
         fieldOverlay.strokeCircle(turretCanvasCenter.getX(), turretCanvasCenter.getY(), Constants.TURRET_RADIUS * Constants.INCHES_PER_METER);
 
         //muzzle center
+        //muzzle angle in field orientation
+        double muzzleAngleFieldRad = Math.toRadians(turret.getHeading())+Constants.MUZZLE_RAD_OFFSET;
+        Point muzzleCenterField = new Point(
+                turretCenter.getX()+Constants.MUZZLE_RADIUS*Math.sin(muzzleAngleFieldRad),
+                turretCenter.getY()+Constants.MUZZLE_RADIUS*Math.cos(muzzleAngleFieldRad)
         );
         Point muzzleCanvasCenter = CanvasUtils.toCanvasPoint(muzzleCenterField);
         fieldOverlay.strokeCircle(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), 2.5);
