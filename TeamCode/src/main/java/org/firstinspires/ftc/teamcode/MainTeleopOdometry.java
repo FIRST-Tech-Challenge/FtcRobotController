@@ -357,20 +357,21 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
-        odometryDriveToPos(55.6,2.99,0);
-        robot.shootRingsPower();
+        odometryDriveToPos(-35.3,56.7,0);
+        sleep(500);
+        //robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPos(55.6,6.6,0);
-        robot.shootRingsPower();
+        odometryDriveToPos(-40.6,56.7,0);
+        //robot.shootRingsPower();
+        sleep(500);
         //Shot 3
-        odometryDriveToPos(55.6,8.51,0);
-        robot.shootRingsPower();
+        odometryDriveToPos(-48,56.7,0);
+        //robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-18,60,0);
-        robot.shootRings();
-
+        odometryDriveToPos(-18,56.7,0);
+        //robot.shootRings();
     }
 
     public double getOdometryAngleDifference(double desiredAngle){
