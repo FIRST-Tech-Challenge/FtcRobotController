@@ -58,27 +58,9 @@ public class PIDTest extends LinearOpMode {
 
         waitForStart();
         if (!isStopRequested()) {
-            //linearMovement(48, 10, 0.0004,0.00007, 0.000068);
-            jmac.reset();
-            mDrive.resetEncoders();
-            while (jmac.seconds() <= 1)
-            {
-                mDrive.FL.setPower(-1);
-                mDrive.FR.setPower(-1);
-                mDrive.BL.setPower(-1);
-                mDrive.BR.setPower(-1);
-                telemetry.addData("FL", mDrive.FL.getCurrentPosition());
-                telemetry.addData("FR", mDrive.FR.getCurrentPosition());
-                telemetry.addData("BL", mDrive.BL.getCurrentPosition());
-                telemetry.addData("BR", mDrive.BR.getCurrentPosition());
-                telemetry.update();
-            }
-            mDrive.FL.setPower(0);
-            mDrive.FR.setPower(0);
-            mDrive.BL.setPower(0);
-            mDrive.BR.setPower(0);
+            linearMovement(48, 10, 0.0004,0.00007, 0.000068);
+            turnDegree(90, 4, 0.0118,0.005, 0.002);
 
-            sleep(3000);
         }
         mDrive.freeze();
     }
@@ -91,7 +73,7 @@ public class PIDTest extends LinearOpMode {
     }*/
 
     public void linearMovement(double distance, double timeframe, double kP, double kI, double kD) {
-        double conversionIndex = NUMBER_OF_ENCODER_TICKS_PER_REVOLUTION / MOTOR_TO_INCHES; // ticks per inch
+        double conversionIndex = 1104.04; // ticks per inch
         double timeFrame = timeframe; //distance * distanceTimeIndex;
         double errorMargin = 5;
         double powerFloor = 0;
@@ -127,9 +109,9 @@ public class PIDTest extends LinearOpMode {
             //telemetry.addData("error", error);
             //telemetry.addData("time", time);
 
-            p = Math.abs(error)  * kP;
-            i += (time - timePrev) * Math.abs(error) * kI;
-            d = Math.abs((error - errorPrev) / (time - timePrev) * kD);
+            p = Math.abs(error)  / 33.0 * kP;
+            i += (time - timePrev) * Math.abs(error) / 33.0 * kI;
+            d = Math.abs((error - errorPrev) / (time - timePrev) / 33.0 * kD);
 
             telemetry.addData("P", p);
             telemetry.addData("I", i);

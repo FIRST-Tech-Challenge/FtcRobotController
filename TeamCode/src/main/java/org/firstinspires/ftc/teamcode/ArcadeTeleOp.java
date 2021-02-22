@@ -130,9 +130,12 @@ public class ArcadeTeleOp extends LinearOpMode {
 
     public void runFlyWheel()
     {
-        double shootingVel = gamepad2.left_trigger * 1800;
+        /*double shootingVel = gamepad2.left_trigger * 2500;
         mDrive.FlyWheel1.setVelocity(shootingVel);
-        mDrive.FlyWheel2.setVelocity(shootingVel);
+        mDrive.FlyWheel2.setVelocity(shootingVel);*/
+
+        mDrive.FlyWheel1.setPower(gamepad2.left_trigger);
+        mDrive.FlyWheel2.setPower(gamepad2.left_trigger);
 
         if(gamepad2.left_trigger >= 0.2)
             currentState = SHOOTING;

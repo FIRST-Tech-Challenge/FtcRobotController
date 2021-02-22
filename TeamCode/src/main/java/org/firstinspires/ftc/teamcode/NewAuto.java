@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @SuppressWarnings("ALL")
 @Autonomous(name="Combined Auto", group="auto")
 //@Disabled
-public class CombinedAuto extends LinearOpMode {
+public class NewAuto extends LinearOpMode {
 
     DrivetrainHardware mDrive = new DrivetrainHardware();
 
@@ -65,7 +65,7 @@ public class CombinedAuto extends LinearOpMode {
             switch (ringCount)
             {
                 case 0:
-                    linearMovement(60, 4, 0.0004,0.00007, 0.000068);
+                    linearMovement(60, 3.5, 0.0004,0.00007, 0.000068);
                     turnDegree(-60, 3.5, 0.0118,0.005, 0.002);
                     mDrive.Arm.setPower(-0.75);
                     sleep(750);
