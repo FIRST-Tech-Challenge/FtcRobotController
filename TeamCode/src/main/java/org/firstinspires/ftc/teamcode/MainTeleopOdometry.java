@@ -202,11 +202,10 @@ public class MainTeleopOdometry extends LinearOpMode{
                 shootGoal();
             }
             if(gamepad1.b){
-                setOdometryAngle(0);
+                shootPowerShot();
             }
 
             if(gamepad1.x){
-                setOdometryAngle(45);
             }
 
             //everything driving
