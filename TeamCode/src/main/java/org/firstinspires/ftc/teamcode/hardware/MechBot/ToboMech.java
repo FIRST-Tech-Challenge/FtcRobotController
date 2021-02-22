@@ -1259,7 +1259,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 chassis.driveTo(auto_chassis_power, 25, 170, -20, false, 3);
-                chassis.rawRotateTo(0.4,-30,false,1);
+                chassis.rawRotateTo(0.4,-20,false,1);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 3);
             } else if (tZone == TargetZone.ZONE_C) {//4
@@ -1606,8 +1606,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         else
         {
-            chassis.driveTo(auto_chassis_power, side(70), 33, 0, true, 5);
-            chassis.rotateTo(auto_chassis_align_power, 0);
+            chassis.driveTo(auto_chassis_power, side(70), 35, 0, true, 5);
+            //chassis.rotateTo(auto_chassis_align_power, 0);
         }
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C){
@@ -1615,7 +1615,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else if (tZone == TargetZone.ZONE_B){
                 chassis.driveTo(0.6, side(107), 27, 0, false, 3);
             } else { // ZONE_A
-                chassis.driveTo(0.6, side(102), 27, 0, false, 3);
+                chassis.driveTo(0.6, side(102), 26, 0, false, 3);
             }
         } else {
             chassis.driveTo(auto_chassis_power, side(47), 30, 0, true,  3);
@@ -1636,7 +1636,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 // chassis.driveTo(.8, side(30), 40, 0, false, 2);
-                chassis.driveTo(0.9, side(17), 165, -20, true, 5);
+                chassis.driveTo(0.9, side(17), 165, -10, true, 5);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 intake.intakeIn();
@@ -1705,19 +1705,19 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 autoShootHighGoal(2, true);
                 comboGrabber.initWobbleGoalCombo();
                 TaskManager.processTasks();
-                chassis.driveTo(1.0, chassis.odo_x_pos_cm(), chassis.odo_y_pos_cm() + 30, chassis.getCurHeading(), false, 2);
+                chassis.driveTo(1.0, chassis.odo_x_pos_cm()+20, chassis.odo_y_pos_cm() + 30, chassis.getCurHeading(), false, 2);
             }
             else {
-                chassis.driveTo(1.0, chassis.odo_x_pos_cm(), 220, chassis.getCurHeading(), false, 2);
+                chassis.driveTo(1.0, chassis.odo_x_pos_cm()+20, 220, chassis.getCurHeading(), false, 2);
             }
         }
         else if (tZone==TargetZone.ZONE_B)
         {
-            chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 220, chassis.getCurHeading(), false,  0.9);
+            chassis.driveTo(1.0, Math.max(120, Math.min(chassis.odo_x_pos_cm(), 170)), 220, chassis.getCurHeading(), false,  0.9);
         }
         else
         {
-            chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 180, chassis.getCurHeading(), false,  0.9);
+            chassis.driveTo(1.0, Math.max(120, Math.min(chassis.odo_x_pos_cm(), 170)), 180, chassis.getCurHeading(), false,  0.9);
         }
         while (!TaskManager.isComplete("Transfer Down Combo")) {
             TaskManager.processTasks();
