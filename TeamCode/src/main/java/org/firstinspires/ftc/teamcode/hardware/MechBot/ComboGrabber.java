@@ -31,7 +31,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private final int grabberVersion = 1; // current version used for LeagueMeet 0
                                          // 2 is new grabber
     private final double SLIDER_POWER = 0.5;
-    private final double SLIDER_SPEED = 1000;
+    private final double SLIDER_SPEED = 2500;
     private final int SLIDER_POS_HIGH = 920;
     private final int SLIDER_POS_HIGHER = 1500;
     private final int SLIDER_POS_INIT = 0;
@@ -262,7 +262,10 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         grabber.setPosition(GRABBER_CLOSE);
         grabberIsClosed = true;
     }
-
+    public void grabberPartialClose(){
+        grabber.setPosition(GRABBER_PARTIAL_CLOSE);
+        grabberIsClosed = true;
+    }
     public void grabberAuto(){
         if (grabberIsClosed) {
             grabberOpen();
@@ -352,7 +355,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     public void initWobbleGoalCombo() { // put wobble goal to init position
         final String taskName = "init Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
-        grabberClose();
+        grabberPartialClose();
         moveArm(ARM_INIT);
         if(slider!=null)
             TaskManager.add(new Task() {

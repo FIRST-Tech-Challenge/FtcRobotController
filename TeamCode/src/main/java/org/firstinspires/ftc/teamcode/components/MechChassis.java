@@ -553,7 +553,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
           if (robotVersion==1) {
               leftRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "leftRange");
-              frontRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "frontRange");
+              // frontRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "frontRange");
           } else if (robotVersion==2) {
               // testRange = configuration.getHardwareMap().get(VL53L0X.class, "testRange");
               testRange = configuration.getHardwareMap().get(LongDistanceSensor.class, "testRange");

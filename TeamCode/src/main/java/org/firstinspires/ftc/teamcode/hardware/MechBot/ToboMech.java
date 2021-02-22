@@ -69,7 +69,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double webcam_offset_y = -14.2;
     public double shooting_dist = 0;
     public double shooting_angle = 0;
-    public double shooterAngleOffset = 2.5;
+    public double shooterAngleOffset = 3;
     final public double WARM_UP_RPM = 1380;
     final public double WARM_UP_RPM_POWER_SHOT = 1220;
     final public double WARM_UP_RPM_AUTO = 1320;
@@ -481,8 +481,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (source.isPressed(Button.BACK)) {
                         doHighGoalsAndPowerShots(3, 0, true);
                     } else {
-                        if (comboGrabber != null)
-                            comboGrabber.sliderDown(source.isPressed(Button.BACK));
+                        if (comboGrabber != null) {
+                            // comboGrabber.sliderDown(source.isPressed(Button.BACK));
+                            comboGrabber.sliderPosInit();
+                        }
                     }
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
                     if (comboGrabber != null)
@@ -1265,7 +1267,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, 25, 170, -20, false, 3);
                 chassis.rawRotateTo(0.4,-20,false,1);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 3);
+                chassis.driveTo(auto_chassis_power, 70, 230, 0, true, 3);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(1.0, 10, 290, 0, false, 3); // no rotation to make it faster
             } else {
