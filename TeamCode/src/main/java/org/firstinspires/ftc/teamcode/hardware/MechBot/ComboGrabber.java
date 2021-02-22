@@ -39,7 +39,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private final int SLIDER_POS_MAX = 1733;
     private final int SLIDER_POS_RING = 580;
 
-    private double ARM_UP = 0.25;
+    private double ARM_UP = 0.4;
     private double ARM_INIT = 0.16;
     private double ARM_DOWN_RELEASE = 0.91;
     private double ARM_DOWN = 0.95;
