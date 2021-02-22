@@ -357,13 +357,13 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
-        odometryDriveToPos(-39.85,62.9,0);
+        odometryDriveToPos(55.6,2.99,0);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPos(-50.7,49.0,0);
+        odometryDriveToPos(55.6,6.6,0);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPos(-39.8,62.8,0);
+        odometryDriveToPos(55.6,8.51,0);
         robot.shootRingsPower();
     }
 
