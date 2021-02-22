@@ -259,11 +259,11 @@ public class MainTeleopOdometry extends LinearOpMode{
             currentAngle = globalPositionUpdate.returnOrientation() - 360;
         }
 
-        double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4) + Math.toRadians(currentAngle));
+        double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
         double distance = Math.hypot(distanceX,distanceY);//0
 
-        double powerOne = 0.7 * Math.sin(angle);
-        double powerTwo = 0.7 * Math.cos(angle);
+        double powerOne = 0.5 * Math.sin(angle);
+        double powerTwo = 0.5 * Math.cos(angle);
 
         while (distance > 1.5){
             if (gamepad1.y){
@@ -280,14 +280,18 @@ public class MainTeleopOdometry extends LinearOpMode{
             distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
             distance = Math.hypot(distanceX,distanceY);
 
-            angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4) + Math.toRadians(currentAngle));
+            angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
             if (distance >= 10){
-                powerOne = 1 * Math.sin(angle);
-                powerTwo = 1 * Math.cos(angle);
+                powerOne = 0.5 * Math.sin(angle);
+                powerTwo = 0.5 * Math.cos(angle);
             }else if (distance < 10 && distance > 5){
                 powerOne = 0.4 * Math.sin(angle);
                 powerTwo = 0.4 * Math.cos(angle);
+            }else if (distance <= 5){
+                powerOne = 0.3 * Math.sin(angle);
+                powerTwo = 0.3 * Math.cos(angle);
             }
+
 
             motorFrontLeft.setPower(powerOne);
             motorFrontRight.setPower(powerTwo);
@@ -296,6 +300,8 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.addData("Distance: ", distance);
             telemetry.addData("DistanceX: ", distanceX);
             telemetry.addData("DistanceY: ", distanceY);
+            telemetry.addData("Xpos: ", globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH);
+            telemetry.addData("Ypos: ", globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH);
             telemetry.update();
         }
         robot.completeStop();
@@ -356,6 +362,9 @@ public class MainTeleopOdometry extends LinearOpMode{
                     break;
                 }
 
+            }
+            else{
+                break;
             }
         }
         robot.completeStop();
