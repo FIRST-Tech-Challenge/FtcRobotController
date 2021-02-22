@@ -62,7 +62,7 @@ public class lessButtonsConfig implements teleOpInterface {
     }
 
     public void rb(boolean pressed) {
-
+        if (pressed) {limiter1 = (pressed) ? 0.2 : 1.0;}
     }
 
     public void rt(float pressure) {
@@ -70,7 +70,7 @@ public class lessButtonsConfig implements teleOpInterface {
     }
 
     public void lb(boolean pressed) {
-
+        if (pressed) {limiter2 = (pressed) ? 0.5 : 1.0;}
     }
 
     public void lt(float pressure) {
