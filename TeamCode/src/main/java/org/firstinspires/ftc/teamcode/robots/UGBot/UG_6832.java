@@ -570,8 +570,6 @@ public class UG_6832 extends OpMode {
         pwrFwd = 0;
         pwrRot = 0;
 
-
-
         if (notdeadzone(gamepad1.left_stick_y))
             pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
         if (notdeadzone(gamepad1.right_stick_x))
@@ -583,11 +581,7 @@ public class UG_6832 extends OpMode {
             robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
         }
 
-//        //turret control
-//        if (toggleAllowed(gamepad1.b, b, 1)) {
-//            robot.turret.rotateCardinalTurret(true);
-//        }
-
+        //region good logging example
 
 //        if(toggleAllowed(gamepad1.a, a, 1) && gamepad1.y){
 //            robot.articulate(PoseUG.Articulation.toggleTrigger);
@@ -599,29 +593,20 @@ public class UG_6832 extends OpMode {
 //            cacheValidated = true;
 //        }
 
-        if(cacheValidated = true){
-            logger.UpdateLog(Double.toString(lastCachedTPS) + ","  + Double.toString(lastCachedArmTiccs) + "," + "idkguess");
-            cacheValidated = false;
-        }
-
-
-//        if(gamepad1.y){
-//            robot.launcher.setFlywheelTargetTPS(calc.getTrajectorySolution().getAngularVelocity());
-//            // robot.launcher.flywheelMotor.setPower(1);
+//        if(cacheValidated = true){
+//            logger.UpdateLog(Double.toString(lastCachedTPS) + ","  + Double.toString(lastCachedArmTiccs) + "," + "idkguess");
+//            cacheValidated = false;
 //        }
-//        else{
-//            robot.launcher.setFlywheelTargetTPS(0);
-//            //robot.launcher.flywheelMotor.setPower(0);
-//        }
+        //endregion
 
         if(toggleAllowed(gamepad1.b, b, 1))
             robot.articulate(PoseUG.Articulation.toggleTrigger);
         if(toggleAllowed(gamepad1.a, a, 1))
             robot.flywheelIsActive = !robot.flywheelIsActive;
+        if(toggleAllowed(gamepad1.y, y, 1))
+            robot.intake.toggleFullTilt();
 
-        if (toggleAllowed(gamepad1.x, x, 1)) {
-            robot.turret.rotateCardinalTurret(false);
-        }
+
 
         if (notdeadzone(gamepad1.right_trigger))
             robot.turret.rotateRight(gamepad1.right_trigger * 5);
@@ -636,45 +621,6 @@ public class UG_6832 extends OpMode {
         if (gamepad1.left_bumper)
             robot.turret.rotateLeft(.5);
 
-//        if (toggleAllowed(gamepad1.x, x, 1)) {
-//            robot.launcher.hookToggle();
-//        }
-
-
-//        if (toggleAllowed(gamepad1.y, y, 1) && toggleAllowed(gamepad1.dpad_down, dpad_down, 1)) {
-//            robot.launcher.servoGripper.setPosition(servoNormalize(800));
-//        }
-
-        // gamepad2 controls
-
-//        if (toggleAllowed(gamepad2.a, a, 2)) {
-//            robot.launcher.toggleGripper();
-//        }
-
-
-
-//        if (toggleAllowed(gamepad2.y, y, 2)) {
-//            robot.launcher.setGripperSwivelRotation(robot.launcher.swivel_Front);
-//        }
-
-//        if (gamepad2.left_bumper) {
-//            robot.launcher.swivelGripper(false);
-//        }
-//
-//        if (gamepad2.right_bumper) {
-//            robot.launcher.swivelGripper(true);
-//        }
-
-//        if (toggleAllowed(gamepad1.dpad_up, dpad_up, 2)) {
-//            robot.launcher.setElbowTargetPos(2501,1);
-//            robot.launcher.extendToPosition(1500, 1.0);
-////
-//        }
-////
-//        if (toggleAllowed(gamepad1.dpad_down, dpad_down, 2)) {
-//            robot.launcher.setElbowTargetPos(350,1);
-//            robot.launcher.extendToPosition(1200, 1.0);
-//  }
 
         if(toggleAllowed(gamepad1.dpad_right,dpad_right,1))
             robot.setTarget(Constants.Target.NONE);
@@ -711,6 +657,7 @@ public class UG_6832 extends OpMode {
 
         robot.launcher.update();
         robot.turret.update();
+        robot.intake.update();
     }
 
     private void joystickDrivePregameMode() {

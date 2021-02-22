@@ -76,6 +76,7 @@ public class PoseUG {
     private DcMotor motorBackRight = null;
     private DcMotor elbow = null;
     private DcMotor headlight = null;
+    private DcMotor intakeMotor = null;
     private DcMotorEx flywheelMotor = null;
     private DcMotor turretMotor = null;
     private Servo wobbleGripper = null;
@@ -85,6 +86,7 @@ public class PoseUG {
     public Launcher launcher = null;
     public LEDSystem ledSystem = null;
     public Turret turret = null;
+    public Intake intake = null;
 
     // All sensors
     BNO055IMU imu; // Inertial Measurement Unit: Accelerometer and Gyroscope combination sensor
@@ -297,6 +299,8 @@ public class PoseUG {
 
         this.wobbleGripper = this.hwMap.servo.get("servoGripper");
 
+        this.intakeMotor = this.hwMap.dcMotor.get("intakeMotor");
+
         this.blinkin = this.hwMap.servo.get("blinkin");
         this.distForward = this.hwMap.get(DistanceSensor.class, "distForward");
         this.distRight = this.hwMap.get(DistanceSensor.class, "distRight");
@@ -336,6 +340,7 @@ public class PoseUG {
         launcher = new Launcher(elbow, flywheelMotor, wobbleGripper);
         turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
         turret = new Turret(turretMotor, turretIMU);
+        intake = new Intake(intakeMotor);
         ledSystem = new LEDSystem(blinkin);
 
         moveMode = MoveMode.still;
@@ -592,6 +597,7 @@ public class PoseUG {
 
         launcher.update();
         turret.update();
+        intake.update();
         maintainTarget();
 
         sendTelemetry();
