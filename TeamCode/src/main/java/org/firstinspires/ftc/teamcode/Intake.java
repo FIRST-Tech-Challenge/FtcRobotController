@@ -1,46 +1,69 @@
 package org.firstinspires.ftc.teamcode;
-/*
-import com.qualcomm.robotcore.hardware.CRServo;
+
+import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
+    //This class is for the intake and will contain two motors
+    //This class will include methods to turn the intake on and off and lower the intake system to hit a touch sensor
 
-    //This class will contain the 2 motors that drive the intake system
-    //sensors include a touch sensor to stop system when sensor is hit by block (grab block when hit)
-    //Methods will include an in/off/reverse
+    /*Public OpMode Members.*/
+    public DcMotor intake  = null;
+    public DcMotor transition = null;
+    public Servo   intakeLatch = null;
 
-    public CRServo leftIntake  = null;
-    public CRServo rightIntake = null;
+    HardwareMap hwMap = null;
 
-    HardwareMap hwMap          = null;
+    /* Constructor */
+    public Intake() {
 
-    public Intake(){
     }
-
+    /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        leftIntake  = hwMap.get(CRServo.class, "left_intake");
-        rightIntake = hwMap.get(CRServo.class,"right_intake");
+        intake = hwMap.get(DcMotor.class, "intake");
+        transition = hwMap.get(DcMotor.class, "transition");
+        intakeLatch = hwMap.get(Servo.class,"intake_latch");
+        //define motor direction
+        intake.setDirection(DcMotor.Direction.REVERSE);
+        transition.setDirection(DcMotor.Direction.REVERSE);
+
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        transition.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Set all motors to zero power
+        intake.setPower(0);
+        transition.setPower(0);
+
+        // Set all motors to run without encoders.
+        // May want to use RUN_USING_ENCODERS if encoders are installed.
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        transition.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //Set servo to the closed position
+        intakeLatch.setPosition(1);
     }
 
-    //Power directions subject to change depending on how servos move when giving positive or negative powers
-    public void intakeControl(IntakeDirection direction){
-        if (direction == IntakeDirection.IN){
-            leftIntake.setPower(1d);
-            rightIntake.setPower(1d);
-        }if (direction == IntakeDirection.OUT){
-            leftIntake.setPower(-1d);
-            rightIntake.setPower(-1d);
-        }if (direction == IntakeDirection.OFF){
-            leftIntake.setPower(0d);
-            rightIntake.setPower(0d);
-        }
+    /**
+     * This method passes a power to the intake and transition motors to turn them on and off.
+     * @param power
+     */
+    public void intakePower(double power) {
+        intake.setPower(power);
+        transition.setPower(power);
     }
+
+    /**
+     * This method opens the latch holding the intake allowing it to fall
+     */
+    public void lowerIntake() {
+        intakeLatch.setPosition(.5);
+    }
+
 }
-*/

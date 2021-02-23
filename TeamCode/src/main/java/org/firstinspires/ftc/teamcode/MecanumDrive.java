@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -41,7 +42,11 @@ public class MecanumDrive {
 
     }
 
-    /* Initialize standard Hardware interfaces */
+    /**
+     * Initialize the 4 motors on the robot. Set all to break on zero power, and set power to zero.
+     * Set all to run without encoders.
+     * @param ahwMap
+     */
     public void init(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
@@ -52,10 +57,10 @@ public class MecanumDrive {
         leftFront = hwMap.get(DcMotor.class, "left_front");
         rightFront = hwMap.get(DcMotor.class, "right_front");
         //define motor direction
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
 
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -81,6 +86,12 @@ public class MecanumDrive {
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         */
     }
+
+    /**
+     * Initialize the REV IMU (Gyro sensor)
+     * Note: This needs to be calibrated.
+     * @param ahwMap
+     */
     public void initIMU(HardwareMap ahwMap) {
         // Save reference to Hardware map
         hwMap = ahwMap;
@@ -107,7 +118,7 @@ public class MecanumDrive {
         globalAngle = 0;
     }
 
-    public double getAngle() {
+    double getAngle() {
         // We experimentally determined the Z axis is the axis we want to use for heading angle.
         // We have to process the angle because the imu works in euler angles so the Z axis is
         // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
@@ -129,7 +140,7 @@ public class MecanumDrive {
         return globalAngle;
     }
 
-    void encoderDrive(double speed,
+    private void encoderDrive(double speed,
     double lBDis, double rBDis) {
         int newLBTarget;
         int newRBTarget;
@@ -184,33 +195,104 @@ public class MecanumDrive {
 
     } //end of encoder drive method
 
+    /**
+     * Encoder Drive Method that uses only the front encoders
+     * @param speed
+     * @param lBDis
+     * @param rBDis
+     */
+    private void frontEncoderDrive(double speed,
+                              double lBDis, double rBDis) {
+        //int newLBTarget;
+        //int newRBTarget;
+        int newLFTarget;
+        int newRFTarget;
+
+        //leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Determine new target position, and pass to motor controller
+        //newLBTarget = leftBack.getCurrentPosition() + (int) (lBDis * COUNTS_PER_INCH);
+        //newRBTarget = rightBack.getCurrentPosition() + (int) (rBDis * COUNTS_PER_INCH);
+        newLFTarget = leftFront.getCurrentPosition() + (int) (lBDis * COUNTS_PER_INCH);
+        newRFTarget = rightFront.getCurrentPosition() + (int) (rBDis * COUNTS_PER_INCH);
+        //leftBack.setTargetPosition(newLBTarget);
+        //rightBack.setTargetPosition(newRBTarget);
+        leftFront.setTargetPosition(newLFTarget);
+        rightFront.setTargetPosition(newRFTarget);
+
+        // Turn On RUN_TO_POSITION
+        //leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // start motion.
+        if (lBDis > 0) {
+            leftBack.setPower(Math.abs(speed));
+            rightBack.setPower(Math.abs(speed));
+        } else if (lBDis < 0) {
+            leftBack.setPower(-Math.abs(speed));
+            rightBack.setPower(-Math.abs(speed));
+        }
+        leftFront.setPower(Math.abs(speed));
+        rightFront.setPower(Math.abs(speed));
+
+        while (leftFront.isBusy() && rightFront.isBusy());
+
+        // Stop all motion;
+        leftBack.setPower(0);
+        rightBack.setPower(0);
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+
+        // Turn off RUN_TO_POSITION
+        //leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+    } //end of front encoder drive method
+
     //y = x diagonal move
-    void encoderDriveLfRb(double speed,
+    private void encoderDriveLfRb(double speed,
                         double distance) {
         int newLFTarget;
         int newRBTarget;
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Determine new target position, and pass to motor controller
         newLFTarget = leftFront.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
-        newRBTarget = rightBack.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
+        //newRBTarget = rightBack.getCurrentPosition() + (int) (distance * COUNTS_PER_INCH);
         leftFront.setTargetPosition(newLFTarget);
-        rightFront.setTargetPosition(newRBTarget);
+        //rightFront.setTargetPosition(newRBTarget);
 
         // Turn On RUN_TO_POSITION
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // start motion.
         leftFront.setPower(Math.abs(speed));
-        rightBack.setPower(Math.abs(speed));
+        if (distance > 0) {
+            rightBack.setPower(Math.abs(speed));
+        } else if (distance < 0) {
+            rightBack.setPower(-Math.abs(speed));
+        }
 
-        while (leftFront.isBusy() && rightBack.isBusy()) ;
+
+        while (leftFront.isBusy()) ;
 
         // Stop all motion;
         leftFront.setPower(0);
@@ -218,12 +300,12 @@ public class MecanumDrive {
 
         // Turn off RUN_TO_POSITION
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     } //end of encoder driveLfRb method
 
     //y = -x diagonal move
-    void encoderDriveRfLb(double speed,
+    private void encoderDriveRfLb(double speed,
                         double distance) {
         int newRFTarget;
         int newLBTarget;
@@ -261,18 +343,48 @@ public class MecanumDrive {
 
     } //end of encoder driveRfLb method
 
+    /**
+     * Tank Drive.
+     * Note: The distance value controls the direction of motion
+     * @param speed
+     * @param distance
+     */
     public void linearDrive(double speed, double distance) {
         encoderDrive(speed, distance, distance);
     }
 
-    public void sideDrive(double speed, double distance) {
-        //negative distance = left
-        oneSideEncoderDrive(speed,distance);
+    /**
+     * Tank drive method that uses only the front two encoders to tell distance traveled
+     * in an attempt to run for consistently
+     * @param speed
+     * @param distance
+     */
+    public void frontLinearDrive(double speed, double distance) {
+        frontEncoderDrive(speed, distance, distance);
     }
+
+    /**
+     * Primary side drive method.
+     * Uses only one encoder to try to limit variance.
+     * Note: The distance value controls the direction of motion
+     * @param speed
+     * @param distance
+     */
+    public void sideDrive(double speed, double distance) {
+        //negative distance = right
+        //oneSideEncoderDrive(speed,distance);
+        sideEncoderDrive(speed, distance);
+    }
+
+    /**
+     * Side drive method that uses all encoders.
+     * @param speed
+     * @param distance
+     */
     public void sideAllDrive(double speed, double distance){
         sideEncoderDrive(speed,distance);
     }
-    void sideEncoderDrive(double speed,
+    private void sideEncoderDrive(double speed,
                       double distance) {
         int newLBTarget;
         int newRBTarget;
@@ -326,7 +438,7 @@ public class MecanumDrive {
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     } //end of encoder drive method
-    void oneSideEncoderDrive(double speed,
+    private void oneSideEncoderDrive(double speed,
                           double distance) {
         //int newLBTarget;
         //int newRBTarget;
@@ -387,15 +499,22 @@ public class MecanumDrive {
 
     } //end of encoder drive method
 
+    /**
+     * This method controls diagonal motion.
+     * Note: Direction is controlled by both the distance and direction values
+     * @param speed
+     * @param distance
+     * @param direction
+     */
     public void diagonalDrive(double speed, double distance, DiagonalDirection direction) {
 
-        if (distance > 0) {
+        if (distance < 0) {
             if (direction == DiagonalDirection.LEFT) {
                 encoderDriveRfLb(speed, distance);
             } else if (direction == DiagonalDirection.RIGHT) {
                 encoderDriveLfRb(speed, distance);
             }
-        } else if (distance < 0) {
+        } else if (distance > 0) {
             if (direction == DiagonalDirection.LEFT) {
                 encoderDriveLfRb(speed, distance);
             } else if (direction == DiagonalDirection.RIGHT) {
@@ -447,16 +566,34 @@ public class MecanumDrive {
         leftFront.setPower(0);
     }
     //end internal gyro code
+
+    /**
+     * Static turn that uses the gyro sensor
+     * Note: Left is + degres, and right is - degrees.
+     * @param speed
+     * @param degrees
+     */
     public void gStatTurn(double speed, int degrees){
         rotate(degrees,speed);
         //left is + degrees
         //right is - degrees
+        getAngle();
     }
 
+    /**
+     * Determines the current facing of the robot.
+     * @return Current Angle on Gyro Sensor
+     */
     public double checkHeading(){
         return getAngle();
     }
 
+    /**
+     * Input for mecanum stick control
+     * @param speed
+     * @param direction
+     * @param rotation
+     */
     protected void MecanumController(double speed, double direction, double rotation) {
         final double v1 = speed * Math.cos(direction) + rotation;
         final double v2 = speed * Math.sin(direction) - rotation;
@@ -468,12 +605,8 @@ public class MecanumDrive {
         leftBack.setPower(v3);
         rightBack.setPower(v4);
     }
-    public int getLBencoder(){
-        return leftBack.getCurrentPosition();
-    }
-    public int getRBencoder(){
-        return rightBack.getCurrentPosition();
-    }
+    public int getLBencoder() { return leftBack.getCurrentPosition();}
+    public int getRBencoder() { return rightBack.getCurrentPosition();}
     public int getLFencoder() { return leftFront.getCurrentPosition();}
     public int getRFencoder() { return rightFront.getCurrentPosition();}
 }

@@ -27,17 +27,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import java.util.List;
+
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import java.util.List;
 
 /**
  * This 2020-2021 OpMode illustrates the basics of using the TensorFlow Object Detection API to
@@ -50,7 +52,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * is explained below.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
-@Disabled
+//@Disabled
 public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
@@ -69,7 +71,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "ATL0ncP/////AAABmT2pP6X1AUWloxNJ52z7pHEOjunJDTCB7rFvK9R38fBtenmamHFRo1IJFI/H+TzU90tguYTW4L/I0g2wBlqld9RzXISaItld+tNXARVeJUVn1GEESaZa8dG9bn9POCtVrfAysAHVgXrpzSvVI+AS+3tCxcDaVJtRbStvRaL/62OeNleqMRHJpRU8026f5odx6L0/toQbfvpWV9HUU1/naUwOhBRxeh+8yuVHVuGFOxii3qmHewAB3955neBrABR8eb8Llh9LbYg1ZCGNBDNKbqa762bGQzEPPijQTJMNcJGRbNAQZP/mPMOJGFLz9gXRByPVLzUWpjEtbsjQBohKWIKdNKzo0+vgpgcTTXWB+a5A";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -102,8 +104,10 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
             // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 16/9).
-            tfod.setZoom(2.5, 16.0/9.0);
+            // (typically 1.78 or 16/9).
+
+            // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
+            //tfod.setZoom(2.5, 1.78);
         }
 
         /** Wait for the game to begin */
