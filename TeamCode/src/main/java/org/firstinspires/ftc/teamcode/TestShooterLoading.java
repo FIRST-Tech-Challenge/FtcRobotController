@@ -21,7 +21,7 @@ public class TestShooterLoading extends LinearOpMode{
 
         robot.shooterServo1(.7);
         robot.shooterServo1(.7);
-        robot.intakeEngage(.7);
+
     }
 }
 

@@ -18,6 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
+import java.util.Date;
+
 
 public class RobotClass {
     private DcMotor frontLeft;
@@ -31,6 +33,7 @@ public class RobotClass {
     private Servo wobbleGoalGrippyThing;
     private CRServo shooterServo1;
     private CRServo shooterServo2;
+    private CRServo intakeServo;
     BNO055IMU imu;
 
     public Telemetry telemetry;
@@ -48,8 +51,11 @@ public class RobotClass {
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         shooterServo1 = hardwareMap.get(CRServo.class,"shooterServo1");
         wobbleGoalRaise = hardwareMap.dcMotor.get("wobbleLift");
+        intakeServo = hardwareMap.crservo.get("intakeServoOne");
+        shooterServo1 = hardwareMap.crservo.get("shooterServo1");
+        shooterServo2 = hardwareMap.crservo.get("shooterServo2");
 
-       motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -437,10 +443,10 @@ public class RobotClass {
         int backLeftCurrent = backLeft.getCurrentPosition();
         int backRightCurrent = backRight.getCurrentPosition();
 
-        double toPositionLeft = leftCurrent + rotations*ticks;
+        double toPositionLeft = leftCurrent - rotations*ticks;
         double toPositionRight = rightCurrent + rotations*ticks;
         double toPositionbackLeft = backLeftCurrent + rotations*ticks;
-        double toPositionbackRight = backRightCurrent + rotations*ticks;
+        double toPositionbackRight = backRightCurrent - rotations*ticks;
 
         frontLeft.setTargetPosition((int)toPositionLeft);
         frontRight.setTargetPosition((int)toPositionRight);
@@ -456,6 +462,15 @@ public class RobotClass {
         frontRight.setPower(Math.abs(speed));
         backLeft.setPower(Math.abs(speed));
         backRight.setPower(Math.abs(-speed));
+        while (this.opmode.opModeIsActive() &&
+                (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
+
+            // Display it for the driver.
+            motorTelemetry();
+        }
+        stopMotors();
+
+        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
     public void strafeRight (double speed, double rotations) {
@@ -466,8 +481,8 @@ public class RobotClass {
         int backRightCurrent = backRight.getCurrentPosition();
 
         double toPositionLeft = leftCurrent + rotations*ticks;
-        double toPositionRight = rightCurrent + rotations*ticks;
-        double toPositionbackLeft = backLeftCurrent + rotations*ticks;
+        double toPositionRight = rightCurrent - rotations*ticks;
+        double toPositionbackLeft = backLeftCurrent - rotations*ticks;
         double toPositionbackRight = backRightCurrent + rotations*ticks;
 
         frontLeft.setTargetPosition((int)toPositionLeft);
@@ -481,6 +496,15 @@ public class RobotClass {
         frontRight.setPower(Math.abs(-speed));
         backLeft.setPower(Math.abs(-speed));
         backRight.setPower(Math.abs(speed));
+        while (this.opmode.opModeIsActive() &&
+                (frontLeft.isBusy() && frontRight.isBusy() && backLeft.isBusy() && backRight.isBusy())) {
+
+            // Display it for the driver.
+            motorTelemetry();
+        }
+        stopMotors();
+
+        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     protected void motorSetMode(DcMotor.RunMode runMode){
@@ -505,9 +529,12 @@ public class RobotClass {
 //    }
     //Pretend "Engage" is actually ENGAGE!
     public void shooterEngage (double duration) {
-        shooterMotor.setVelocity(10);
+        shooterMotor.setVelocity(-5400*0.85*28/60);
+        for (int i=0; i < duration*10000; i++ );
+    }
 
-        for (int i=0; i < duration; i++ );
+    public void shooterStop () {
+        shooterMotor.setPower(0);
     }
 
     public void wobbleGoalGrippyThingGrab () {
@@ -521,8 +548,16 @@ public class RobotClass {
        shooterServo1.setPower(speed);
     }
 
+    public void shooterServo1Stop () {
+        shooterServo1.setPower(0);
+    }
+
     public void shooterServo2 (double speed) {
         shooterServo2.setPower(speed);
+    }
+
+    public void shooterServo2Stop () {
+        shooterServo2.setPower(0);
     }
 
     public void moveWobbleGoalArm (double speed, double rotation) {
@@ -533,5 +568,24 @@ public class RobotClass {
         wobbleGoalRaise.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleGoalRaise.setPower(speed);
     }
+
+    public void intakeServoEngage(double speed) {
+        intakeServo.setPower(speed);
+    }
+
+    public void intakeServoStop() {
+        intakeServo.setPower(0);
+    }
+
+    public void pause(int millis){
+        long startTime = new Date().getTime();
+        long time = 0;
+
+        while (time<millis && opmode.opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+        }
+    }
+
+
 
     }
