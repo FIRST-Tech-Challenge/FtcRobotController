@@ -287,8 +287,8 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
             if (distance >= 10){
-                powerOne = 0.5 * Math.sin(angle);
-                powerTwo = 0.5 * Math.cos(angle);
+                powerOne = 1 * Math.sin(angle);
+                powerTwo = 1 * Math.cos(angle);
             }else if (distance < 10 && distance > 5){
                 powerOne = 0.4 * Math.sin(angle);
                 powerTwo = 0.4 * Math.cos(angle);
@@ -310,6 +310,8 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.update();
         }
         robot.completeStop();
+        setOdometryAngle(direction);
+
     }
 
     public void setOdometryAngle(double desiredAngle) {
@@ -379,16 +381,16 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
-        odometryDriveToPos(-35.3,56.7,0);
+        odometryDriveToPos(-35.3,52.7,0);
         sleep(500);
 
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPos(-40.6,56.7,0);
+        odometryDriveToPos(-40.6,52.7,0);
         robot.shootRingsPower();
         sleep(500);
         //Shot 3
-        odometryDriveToPos(-48,56.7,0);
+        odometryDriveToPos(-48,52.7,0);
         robot.shootRingsPower();
     }
 
