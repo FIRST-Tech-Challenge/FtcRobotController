@@ -310,7 +310,6 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.update();
         }
         robot.completeStop();
-        setOdometryAngle(direction);
     }
 
     public void setOdometryAngle(double desiredAngle) {
@@ -395,7 +394,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void shootGoal() throws InterruptedException{
         odometryDriveToPos(-18,56.7,0);//25, -1, 233??
-        //robot.shootRings();
+        robot.shootRings();
     }
 
     public double getOdometryAngleDifference(double desiredAngle){
