@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @SuppressWarnings("ALL")
-@Autonomous(name="Combined Auto", group="auto")
+@Autonomous(name="NewAuto", group="auto")
 //@Disabled
 public class NewAuto extends LinearOpMode {
 

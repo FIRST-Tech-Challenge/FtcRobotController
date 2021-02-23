@@ -54,13 +54,13 @@ public class PIDTest extends LinearOpMode {
 
         }
 
-        ElapsedTime jmac = new ElapsedTime();
-
         waitForStart();
         if (!isStopRequested()) {
-            linearMovement(48, 10, 0.0004,0.00007, 0.000068);
-            turnDegree(90, 4, 0.0118,0.005, 0.002);
-
+            linearMovement(90, 10, 0.000425,0.000032, 0.000045);
+            sleep(5000);
+            linearMovement(-80, 10, 0.000425, 0.000036, 0.000045);
+            sleep(5000);
+            linearMovement(48, 10, 0.000485, 0.0000624, 0.0000365);
         }
         mDrive.freeze();
     }
@@ -109,7 +109,7 @@ public class PIDTest extends LinearOpMode {
             //telemetry.addData("error", error);
             //telemetry.addData("time", time);
 
-            p = Math.abs(error)  / 33.0 * kP;
+            p = Math.abs(error) / 33.0 * kP;
             i += (time - timePrev) * Math.abs(error) / 33.0 * kI;
             d = Math.abs((error - errorPrev) / (time - timePrev) / 33.0 * kD);
 
@@ -118,7 +118,7 @@ public class PIDTest extends LinearOpMode {
             telemetry.addData("D", d);
 
 
-            output = p + i + d;
+            output = p + i - d;
             telemetry.addData("output", output);
             output = Math.max(output, powerFloor);
             output = Math.min(output, powerCeiling);
@@ -130,18 +130,29 @@ public class PIDTest extends LinearOpMode {
                 raw -= 360;
             if (raw < -180)
                 raw += 360;
-            double fudgeFactor = 1 - raw / 30;
+            double fudgeFactor = 1.0 - raw / 40.0;
 
-            mDrive.FL.setPower(output);
-            mDrive.FR.setPower(output);
-            mDrive.BL.setPower(output);
-            mDrive.BR.setPower(output);
+            if (distance > 0)
+            {
+                mDrive.FL.setPower(fudgeFactor * output);
+                mDrive.FR.setPower(output);
+                mDrive.BL.setPower(fudgeFactor * output);
+                mDrive.BR.setPower(output);
+            }
+            else
+            {
+                mDrive.FL.setPower(output);
+                mDrive.FR.setPower(fudgeFactor * output);
+                mDrive.BL.setPower(output);
+                mDrive.BR.setPower(fudgeFactor * output);
+            }
+
 
             telemetry.addData("error", error);
             telemetry.update();
         }
         mDrive.freeze();
-        telemetry.addData("movement", " done.");
+        telemetry.speak("movement took" + clock.seconds() + " seconds.");
         telemetry.update();
 
     }
