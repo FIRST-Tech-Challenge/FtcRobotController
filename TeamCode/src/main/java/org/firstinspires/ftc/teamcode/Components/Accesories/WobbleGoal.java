@@ -79,7 +79,7 @@ public class WobbleGoal {
             while (wobbleGoalServoClaw.getPosition() != 0) {
                 wobbleGoalServoClaw.setPosition(0);
             }
-            op.sleep(500);
+            op.sleep(700);
         } else if(p == Position.DropOverWall){
             i = ticksForDropOverWall;
         }
