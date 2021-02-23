@@ -441,6 +441,10 @@ public class UG_6832 extends OpMode {
                         }
                         break;
                     case 2:
+                        if (auto.AutoTest.execute()) {
+                            active = false;
+                            state = 0;
+                        }
                         break;
                     case 4:
                         break;

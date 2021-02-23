@@ -127,7 +127,7 @@ public class PoseUG {
     private double poseRoll;
     private long timeStamp; // timestamp of last update
     private static boolean initialized = false;
-    public static double offsetHeading;
+    public  double offsetHeading; //todo- maybe static
     private double offsetPitch;
     private double offsetRoll;
     private double goalHeading;
@@ -464,7 +464,8 @@ public class PoseUG {
         packet.put("x offset", trajSol.getxOffset());
         packet.put("disk speed", trajSol.getVelocity());
         packet.put("pose speed", poseSpeed);
-        packet.put("bearing to", getBearingToWrapped(Constants.startingXOffset,1.5));
+        packet.put("bearing to", (360-Math.abs(getBearingToWrapped(Constants.startingXOffset-.25, 1))));
+        packet.put("bearing t2", getHeading() + getBearingToWrapped(Constants.startingXOffset-.25, 1));
         packet.put("distance to", getDistanceTo(Constants.startingXOffset,1.5));
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
@@ -838,12 +839,12 @@ public class PoseUG {
     public boolean driveToFieldPosition(double targetX, double targetY){
         switch (fieldPosState){
             case 0:
-                if(rotateIMU(getBearingToWrapped(targetX, targetY),9)) {
+                if(rotateIMU((360-Math.abs(getBearingToWrapped(targetX, targetY))),9)) {
                     fieldPosState++;
                 }
                 break;
             case 1:
-                if(driveAbsoluteDistance(.2, getBearingToWrapped(targetX, targetY), true, getDistanceTo(targetX, targetY),.1)) {
+                if(driveAbsoluteDistance(.2, (360-Math.abs(getBearingToWrapped(targetX, targetY))), true, getDistanceTo(targetX, targetY),.1)) {
                     fieldPosState = 0;
                     return true;
                 }

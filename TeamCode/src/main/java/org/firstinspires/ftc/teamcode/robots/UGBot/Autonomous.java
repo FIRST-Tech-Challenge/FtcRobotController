@@ -97,7 +97,7 @@ public class Autonomous {
 
             .addMineralState(ugStateProvider,
                     //() -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 3),
-                    () -> robot.driveToFieldPosition(Constants.startingXOffset,1),
+                    () -> robot.driveToFieldPosition(Constants.startingXOffset+.25,1),
                     () -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.3), // 2.3
                     () -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 1.87)) //1.87
 
@@ -123,6 +123,10 @@ public class Autonomous {
                     () -> true)
             .addState(() -> robot.driveIMUDistanceWithReset(.2,180,true,0))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .build();
+
+    public StateMachine AutoTest = getStateMachine(autoStage)
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset-.25,1))
             .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
