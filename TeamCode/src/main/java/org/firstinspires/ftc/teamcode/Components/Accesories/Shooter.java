@@ -82,7 +82,6 @@ public class Shooter {
         }
     }
 
-
     public void moveServo(boolean direction) {
         if (direction == true) {
             shooter_Servo.setPosition(0.59);
@@ -103,9 +102,13 @@ public class Shooter {
         shoot(highGoalVelocity, 1, rings);
     }
 
+    public void shootHighGoalTest(double speed, int distance, int rings) {
+        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shoot(speed, distance, rings);
+    }
+
     public void shootMidGoal(int rings) {
         shoot(middleGoalVelocity, 1000, 3);
-
     }
 
     public void shootLowGoal(int rings) {

@@ -247,6 +247,10 @@ public class Robot {
         shooter.shootHighGoal(rings);
     }
 
+    public void shootHighGoalTest(double speed, int distance, int rings) {
+        shooter.shootHighGoalTest(speed, distance, rings);
+    }
+
     public void shootMiddleGoal(int rings){
         shooter.shootMidGoal(rings);
     }
