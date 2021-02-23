@@ -114,7 +114,7 @@ public class OneGPTeleop extends LinearOpMode {
                     this.sleep(600);
                     robot.openWobbleGoalClaw();
                 } else if(currentWobbleGoalPosition == WobbleGoal.Position.DropOverWall){
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
+                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 }
                     else {
                     telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
