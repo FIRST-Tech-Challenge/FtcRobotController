@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="Blue_Right_Dynamic", group="Competition")
-public class BlueRightDynamic extends OpMode {
+@Autonomous(name="Blue_Right_Two_Wobble", group="Competition")
+public class BlueRightWobble extends OpMode {
 
     /****************************
      *
@@ -143,7 +143,7 @@ public class BlueRightDynamic extends OpMode {
                 break;
             case 101:
                 //Drive left into zone A
-                robot.sideDrive(.4,28);
+                robot.sideDrive(.4,40);
                 stateMachineFlow++;
                 break;
             case 102:
@@ -198,7 +198,7 @@ public class BlueRightDynamic extends OpMode {
                 break;
             case 107:
                 //Move right to be in line with goal
-                robot.sideDrive(.4, -4);
+                robot.sideDrive(.4, -16);
                 stateMachineFlow++;
                 break;
             case 108:
@@ -240,19 +240,15 @@ public class BlueRightDynamic extends OpMode {
                 }
                 intake.intakePower(0);
                 shooter.shooterPower(0);
-                stateMachineFlow++;
-                break;
-            case 111:
-                //Drive forward onto shot line
-                robot.linearDrive(.5,-7);
-                stateMachineFlow++;
+                stateMachineFlow = 400;
                 break;
                 /*
-                End...
+                to case 400
                  */
+
             case 150:
                 //Move right in line with first power shot
-                robot.sideDrive(.4,-31);
+                robot.sideDrive(.4,-41);
                 stateMachineFlow++;
                 break;
             case 151:
@@ -304,15 +300,10 @@ public class BlueRightDynamic extends OpMode {
                 //Turn off shooter and intake
                 shooter.shooterPower(0);
                 intake.intakePower(0);
-                stateMachineFlow++;
-                break;
-            case 156:
-                //Move forward onto the shot line
-                robot.linearDrive(.5,-7);
-                stateMachineFlow++;
+                stateMachineFlow = 401;
                 break;
                 /*
-                End...
+                to case 401
                  */
 
             /***************************
@@ -378,7 +369,7 @@ public class BlueRightDynamic extends OpMode {
                 break;
             case 206:
                 //Move to be in line with goal
-                robot.sideDrive(.4,22);
+                robot.sideDrive(.4,32);
                 stateMachineFlow++;
                 break;
             case 207:
@@ -420,19 +411,15 @@ public class BlueRightDynamic extends OpMode {
                 }
                 intake.intakePower(0);
                 shooter.shooterPower(0);
-                stateMachineFlow++;
-                break;
-            case 210:
-                //Drive forward onto shot line
-                robot.linearDrive(.5,-7);
-                stateMachineFlow++;
+                stateMachineFlow = 400;
                 break;
                 /*
-                End...
+                to case 400
                  */
+
             case 250:
                 //Move right in line with first power shot
-                robot.sideDrive(.4,-2);
+                robot.sideDrive(.4,-12);
                 stateMachineFlow++;
                 break;
             case 251:
@@ -484,15 +471,10 @@ public class BlueRightDynamic extends OpMode {
                 //Turn off shooter and intake
                 intake.intakePower(0);
                 shooter.shooterPower(0);
-                stateMachineFlow++;
-                break;
-            case 256:
-                //Move forward onto the shot line
-                robot.linearDrive(.5,-7);
-                stateMachineFlow++;
+                stateMachineFlow = 401;
                 break;
                 /*
-                End...
+                to case 401
                  */
 
                 /***************************
@@ -507,7 +489,7 @@ public class BlueRightDynamic extends OpMode {
                 break;
             case 301:
                 //Drive to zone C
-                robot.sideDrive(.4,30);
+                robot.sideDrive(.4,40);
                 stateMachineFlow++;
                 break;
             case 302:
@@ -562,7 +544,7 @@ public class BlueRightDynamic extends OpMode {
                 break;
             case 307:
                 //Move right to be in line with goal
-                robot.sideDrive(.4,-6);
+                robot.sideDrive(.4,-16);
                 stateMachineFlow++;
                 break;
             case 308:
@@ -604,19 +586,15 @@ public class BlueRightDynamic extends OpMode {
                 }
                 intake.intakePower(0);
                 shooter.shooterPower(0);
-                stateMachineFlow++;
-                break;
-            case 311:
-                //Drive forward onto shot line
-                robot.linearDrive(.5,-7);
-                stateMachineFlow++;
+                stateMachineFlow = 400;
                 break;
                 /*
-                End...
+                to 400
                  */
+
             case 350:
                 //Move right in line with first power shot
-                robot.sideDrive(.4,-29);
+                robot.sideDrive(.4,-39);
                 stateMachineFlow++;
                 break;
             case 351:
@@ -668,16 +646,227 @@ public class BlueRightDynamic extends OpMode {
                 //Turn off shooter and intake
                 intake.intakePower(0);
                 shooter.shooterPower(0);
-                stateMachineFlow++;
-                break;
-            case 356:
-                //Move forward onto the shot line
-                robot.linearDrive(.5,-7);
-                stateMachineFlow++;
+                stateMachineFlow = 401;
                 break;
                 /*
-                End...
+                to 401
                  */
+
+            /***************************
+             *
+             * Getting second wobble
+             *
+             **************************/
+            case 400:
+                //move robot from high goal path to end position of power shot path
+                robot.sideDrive(.4,-25);
+                stateMachineFlow++;
+                break;
+            case 401:
+                //move robot from end position of power shot back towards the wall
+                robot.linearDrive(.5,44);
+                stateMachineFlow++;
+                break;
+            case 402:
+                //lower the grabber
+                grabber.lowerGripper();
+                waitTime = 1;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 403:
+                //move to the wobble
+                robot.sideDrive(.4,26);
+                stateMachineFlow++;
+                break;
+            case 404:
+                //close the grabber
+                grabber.gripperPosition(.77);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 405:
+                //Lift the wobble goal
+                grabber.gripWrist.setPosition(.23);
+                waitTime = 1.5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 406:
+                //Use the value found by the camera scan to choose the path. The ZERO case is the default if the camera fails.
+                if (ringNumber == RingNumber.ZERO) {
+                    stateMachineFlow = 500;
+                }else if (ringNumber == RingNumber.ONE) {
+                    stateMachineFlow = 550;
+                }else if (ringNumber == RingNumber.FOUR) {
+                    stateMachineFlow = 600;
+                }
+
+                /***************************
+                 *
+                 * Zero Rings on the Field
+                 *
+                 **************************/
+            case 500:
+                //move forward to zone A
+                robot.linearDrive(.5,-61);
+                stateMachineFlow++;
+                break;
+            case 501:
+                robot.sideDrive(.4,12);
+                stateMachineFlow++;
+                break;
+            case 502:
+                //lower the wobble
+                grabber.lowerGripper();
+                waitTime = 1;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 503:
+                //let go of the wobble
+                grabber.gripperPosition(0);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 504:
+                //move away from the wobble
+                robot.sideDrive(.4,-5);
+                stateMachineFlow++;
+                break;
+            case 505:
+                //raise wobble arm
+                grabber.gripWrist.setPosition(.23);
+                waitTime = 1.5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+
+            /***************************
+             *
+             * One Ring on the Field
+             *
+             **************************/
+            case 550:
+                robot.sideDrive(.4,-26);
+                stateMachineFlow++;
+                break;
+            case 551:
+                robot.linearDrive(.5,-79);
+                stateMachineFlow++;
+                break;
+            case 552:
+                robot.sideDrive(.4,10);
+                stateMachineFlow++;
+                break;
+            case 553:
+                grabber.lowerGripper();
+                waitTime = 1;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 554:
+                grabber.gripperPosition(0);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 555:
+                robot.sideDrive(.4,-5);
+                stateMachineFlow++;
+                break;
+            case 556:
+                grabber.gripWrist.setPosition(.23);
+                waitTime = 1.5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+
+            /***************************
+             *
+             * Four Rings on the Field
+             *
+             **************************/
+            case 600:
+                robot.linearDrive(.5,-103);
+                stateMachineFlow++;
+                break;
+            case 601:
+                robot.sideDrive(.4,12);
+                stateMachineFlow++;
+                break;
+            case 602:
+                grabber.lowerGripper();
+                waitTime = 1;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 603:
+                grabber.gripperPosition(0);
+                waitTime = .5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
+            case 604:
+                robot.sideDrive(.4,-5);
+                stateMachineFlow++;
+                break;
+            case 605:
+                grabber.gripWrist.setPosition(.23);
+                waitTime = 1.5;
+                runtime.reset();
+                time = runtime.time();
+                while (waitTime > runtime.time() - time) {
+
+                }
+                stateMachineFlow++;
+                break;
 
             default:
                 //End program...

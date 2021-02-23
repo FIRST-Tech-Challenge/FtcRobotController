@@ -577,6 +577,7 @@ public class MecanumDrive {
         rotate(degrees,speed);
         //left is + degrees
         //right is - degrees
+        getAngle();
     }
 
     /**

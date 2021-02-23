@@ -100,7 +100,7 @@ public class Shooter {
     }
 
     public double scalePowerShotDynamic() {
-        return .0446064*getBatteryVoltage() - 1.39412;
+        return .0446064*getBatteryVoltage() - 1.40412;
     }
 
     public double scaleHighGoalDynamic() {
