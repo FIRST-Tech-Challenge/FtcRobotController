@@ -134,12 +134,7 @@ public class UltimateGoalTeleOp extends OpMode {
         xPower = gamepad1.left_stick_x;
         leftTriggerPower = gamepad1.left_trigger;
         rightTriggerPower = gamepad1.right_trigger;
-//        yPower = -HardwareOmnibot.cleanMotionValues(gamepad1.left_stick_y);
-//        xPower = HardwareOmnibot.cleanMotionValues(gamepad1.left_stick_x);
-        // GF used the angle system where rotating left was positive, so have to reverse the sign
-        // of the joystick.
         spin = gamepad1.right_stick_x;
-//        spin = -HardwareOmnibot.cleanMotionValues(gamepad1.right_stick_x);
         crossPressed = gamepad1.cross;
         circlePressed = gamepad1.circle;
         trianglePressed = gamepad1.triangle;
@@ -191,13 +186,11 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!triangleHeld && trianglePressed) {
             if(robot.flapPosition == UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL) {
-                UltimateGoalRobot.highGoal.x = MyPosition.worldXPosition;
-                UltimateGoalRobot.highGoal.y = MyPosition.worldYPosition;
-                UltimateGoalRobot.highGoal.angle = MyPosition.worldAngle_rad;
-                robot.startTripleInjecting();
-            } else {
-                robot.startInjecting();
+                UltimateGoalRobot.shootingError.x = MyPosition.worldXPosition - UltimateGoalRobot.highGoal.x;
+                UltimateGoalRobot.shootingError.y = MyPosition.worldYPosition - UltimateGoalRobot.highGoal.y;
+                UltimateGoalRobot.shootingError.angle = MyPosition.worldAngle_rad - UltimateGoalRobot.highGoal.angle;
             }
+            robot.startInjecting();
             triangleHeld = true;
         } else if(!trianglePressed) {
             triangleHeld = false;
@@ -217,7 +210,7 @@ public class UltimateGoalTeleOp extends OpMode {
         // This can be used for shoot alignment.
         if(!rightHeld && rightPressed) {
             if(!aligning) {
-                robot.startShotAligning(UltimateGoalRobot.highGoal, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                robot.startShotAligning(UltimateGoalRobot.powerShotRight, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
                 aligning = true;
             } else {
                 aligning = false;
@@ -229,41 +222,41 @@ public class UltimateGoalTeleOp extends OpMode {
         }
 
         if(!leftHeld && leftPressed) {
-//            if(!aligning) {
-//                robot.startShotAligning(UltimateGoalRobot.powerShotLeft, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
-//                aligning = true;
-//            } else {
-//                aligning = false;
-//                robot.stopShotAligning();
-//            }
+            if(!aligning) {
+                robot.startShotAligning(UltimateGoalRobot.powerShotLeft, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+                aligning = true;
+            } else {
+                aligning = false;
+                robot.stopShotAligning();
+            }
             leftHeld = true;
         } else if(!leftPressed) {
             leftHeld = false;
         }
 
         if(!downHeld && downPressed) {
-            robot.setShooterFlapPowerShot();
-//            if(!aligning) {
-//                robot.startShotAligning(UltimateGoalRobot.powerShotCenter, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
-//                aligning = true;
-//            } else {
-//                aligning = false;
-//                robot.stopShotAligning();
-//            }
+//            robot.setShooterFlapPowerShot();
+            if(!aligning) {
+                robot.startShotAligning(UltimateGoalRobot.powerShotCenter, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
+                aligning = true;
+            } else {
+                aligning = false;
+                robot.stopShotAligning();
+            }
             downHeld = true;
         } else if (!downPressed) {
             downHeld = false;
         }
 
         if(!upHeld && upPressed) {
-            robot.setShooterFlapHighGoal();
-//            if(!aligning) {
-//                robot.startShotAligning(UltimateGoalRobot.highGoal, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
-//                aligning = true;
-//            } else {
-//                aligning = false;
-//                robot.stopShotAligning();
-//            }
+//            robot.setShooterFlapHighGoal();
+            if(!aligning) {
+                robot.startShotAligning(UltimateGoalRobot.highGoal, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                aligning = true;
+            } else {
+                aligning = false;
+                robot.stopShotAligning();
+            }
             upHeld = true;
         } else if (!upPressed) {
             upHeld = false;
@@ -291,20 +284,17 @@ public class UltimateGoalTeleOp extends OpMode {
             leftBumperHeld = false;
         }
 
-        // This allows to reset claw, remove!!!
-//        if(robot.disableDriverCentric) {
-            if (rightTriggerPower >= 0.05) {
-                if(robot.armPot.getVoltage() > WOBBLE_ARM_MIN) {
-                    robot.setWobbleMotorPower(-rightTriggerPower);
-                } else {robot.setWobbleMotorPower(0.0);}
-            } else if (leftTriggerPower >= 0.05) {
-                if(robot.armPot.getVoltage() < WOBBLE_ARM_MAX) {
-                    robot.setWobbleMotorPower(leftTriggerPower);
-                } else {robot.setWobbleMotorPower(0.0);}
-            } else {
-                robot.setWobbleMotorPower(0.0);
-            }
-  //      }
+        if (rightTriggerPower >= 0.05) {
+            if(robot.armPot.getVoltage() > WOBBLE_ARM_MIN) {
+                robot.setWobbleMotorPower(-rightTriggerPower);
+            } else {robot.setWobbleMotorPower(0.0);}
+        } else if (leftTriggerPower >= 0.05) {
+            if(robot.armPot.getVoltage() < WOBBLE_ARM_MAX) {
+                robot.setWobbleMotorPower(leftTriggerPower);
+            } else {robot.setWobbleMotorPower(0.0);}
+        } else {
+            robot.setWobbleMotorPower(0.0);
+        }
 
 		// ********************************************************************
 		// OPERATOR JOYSTICK

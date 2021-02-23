@@ -57,7 +57,12 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
     protected WayPoint powerShotSecond;
     protected WayPoint powerShotThird;
 
+    // Starting stack pick up line up
+    protected WayPoint beforeStack;
+    protected WayPoint collectStack;
+
     // Pickup the second wobble goal.
+    protected WayPoint wobble2PickupLineup;
     protected WayPoint wobble2Pickup;
 
     // Collect the starting ring stack.

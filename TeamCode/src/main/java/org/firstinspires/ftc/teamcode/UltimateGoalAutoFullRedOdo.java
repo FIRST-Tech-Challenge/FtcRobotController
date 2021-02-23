@@ -39,32 +39,38 @@ public class UltimateGoalAutoFullRedOdo extends UltimateGoalAutoFullOdo
 
         // These waypoints maneuver the robot around the starting ring stack.
         aroundStartingStack1 = new WayPoint(89.47404, 89.47404, Math.toRadians(90.0), REGULAR_SPEED);
-        aroundStartingStack2 = new WayPoint(89.47404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+        aroundStartingStack2 = new WayPoint(89.47404, 149.7584, Math.toRadians(93.0), REGULAR_SPEED);
 
         // The powershots
-        powerShotFirst = new WayPoint(76.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+        powerShotFirst = new WayPoint(69.77404, 149.7584, Math.toRadians(93.0), REGULAR_SPEED);
         UltimateGoalRobot.powerShotLeft = powerShotFirst;
-        powerShotSecond = new WayPoint(95.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+        powerShotSecond = new WayPoint(98.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
         UltimateGoalRobot.powerShotCenter = powerShotSecond;
-        powerShotThird = new WayPoint(114.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+        powerShotThird = new WayPoint(117.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
         UltimateGoalRobot.powerShotRight = powerShotThird;
 
-        // Pickup the second wobble goal.
-        wobble2Pickup = new WayPoint(97.70872, 83.14436, Math.toRadians(85.0), REGULAR_SPEED);
+        // starting stack line up
+        beforeStack = new WayPoint(149.7584, 195.44792, Math.toRadians(270.0), REGULAR_SPEED);
+        collectStack = new WayPoint(149.7584, 135.44792, Math.toRadians(270.0), REGULAR_SPEED);
 
         // Collect the starting ring stack.
-        collectStartingStack = new WayPoint(126.8984, 97.70872, Math.toRadians(85.0), REGULAR_SPEED);
+        collectStartingStack = new WayPoint(126.8984, 97.70872, Math.toRadians(85.0), 0.5);
+
+        // Pickup the second wobble goal.
+        wobble2PickupLineup = new WayPoint(175.0, 110.0, Math.toRadians(30.0), 0.25);
+        wobble2Pickup = new WayPoint(187.0, 93.0, Math.toRadians(30.0), REGULAR_SPEED);
 
         // Shoot the collected rings in the high goal.
         highGoal = new WayPoint(164.35324, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
         UltimateGoalRobot.highGoal = highGoal;
 
-        park = new WayPoint(149.7584, 195.44792, Math.toRadians(270.0), REGULAR_SPEED);
+        park = new WayPoint(149.7584, 195.44792, Math.toRadians(135.0), REGULAR_SPEED);
     }
 
     // Sets all the route points for executing the autonomous.
     @Override
     public void setRandomizationPosition(int position) {
+
         // The location specific collection values.
         switch(position) {
             case 1:
@@ -76,14 +82,14 @@ public class UltimateGoalAutoFullRedOdo extends UltimateGoalAutoFullOdo
                 break;
             case 2:
                 // To deposit the first wobble goal, set by vision.
-                targetZone1 = new WayPoint(120.56872, 241.13744, Math.toRadians(135.0), REGULAR_SPEED);
+                targetZone1 = new WayPoint(120.56872, 257.13744, Math.toRadians(135.0), REGULAR_SPEED);
 
                 // Deliver the second wobble goal.
-                targetZone2 = new WayPoint(135.16356, 255.73228, Math.toRadians(135.0), REGULAR_SPEED);
+                targetZone2 = new WayPoint(120.56872, 237.73228, Math.toRadians(135.0), REGULAR_SPEED);
                 break;
             case 3:
                 // To deposit the first wobble goal, set by vision.
-                targetZone1 = new WayPoint(180.85308, 301.4218, Math.toRadians(135.0), REGULAR_SPEED);
+                targetZone1 = new WayPoint(190.85308, 306.4218, Math.toRadians(135.0), REGULAR_SPEED);
 
                 // Deliver the second wobble goal.
                 targetZone2 = new WayPoint(180.85308, 301.4218, Math.toRadians(135.0), REGULAR_SPEED);

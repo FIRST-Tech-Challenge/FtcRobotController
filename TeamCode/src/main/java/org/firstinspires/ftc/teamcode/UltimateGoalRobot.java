@@ -39,8 +39,8 @@ import static java.lang.Math.sqrt;
 public class UltimateGoalRobot
 {
     /* Public OpMode members. */
-    public final static double WOBBLE_ARM_MIN = 0.05;
-    public final static double WOBBLE_ARM_MAX = 3.1;
+    public final static double WOBBLE_ARM_MIN = 0.100;
+    public final static double WOBBLE_ARM_MAX = 3.2;
     public final static double SHOOT_VELOCITY = 1120;
     public final static double SHOOT_VELOCITY_ERROR = 20;
     public final static double THROTTLE_TIMEOUT = 7000;
@@ -49,9 +49,9 @@ public class UltimateGoalRobot
     public final static double MIN_FOUNDATION_SPIN_RATE = 0.19;
     public final static double MIN_FOUNDATION_DRIVE_RATE = 0.18;
     public final static double MIN_FOUNDATION_STRAFE_RATE = 0.19;
-    public final static double MIN_SPIN_RATE = 0.02;
-    public final static double MIN_DRIVE_RATE = 0.02;
-    public final static double MIN_STRAFE_RATE = 0.04;
+    public final static double MIN_SPIN_RATE = 0.07;
+    public final static double MIN_DRIVE_RATE = 0.07;
+    public final static double MIN_STRAFE_RATE = 0.06;
     public final static double MIN_DRIVE_MAGNITUDE = Math.sqrt(MIN_DRIVE_RATE*MIN_DRIVE_RATE+MIN_DRIVE_RATE*MIN_DRIVE_RATE);
     public final static double MIN_FOUNDATION_DRIVE_MAGNITUDE = Math.sqrt(MIN_FOUNDATION_DRIVE_RATE*MIN_FOUNDATION_DRIVE_RATE+MIN_FOUNDATION_DRIVE_RATE*MIN_FOUNDATION_DRIVE_RATE);
 
@@ -135,6 +135,7 @@ public class UltimateGoalRobot
     public static boolean encodersReset = false;
     public boolean forceReset = false;
     public boolean disableDriverCentric = true;
+    public static WayPoint shootingError = new WayPoint(0, 0, Math.toRadians(0), 1.0);
     public static WayPoint highGoal = new WayPoint(144.03324, 149.7584, Math.toRadians(95.0), 1.0);
     public static WayPoint powerShotRight = new WayPoint(104.06888, 149.7584, Math.toRadians(95.0), 1.0);
     public static WayPoint powerShotCenter = new WayPoint(89.47404, 149.7584, Math.toRadians(95.0), 1.0);
@@ -562,7 +563,7 @@ public class UltimateGoalRobot
 
     public double calculateLinearDriveSlowdown(double distance, double minSpeed, double maxSpeed, boolean passThrough) {
         double driveSpeed = 0.0;
-        final double fullThrottleMinDistance = 100.0;
+        final double fullThrottleMinDistance = 50.0;
 
         // Full speed above fullThrottleMinRange
         if(passThrough || distance >= fullThrottleMinDistance) {
@@ -614,7 +615,8 @@ public class UltimateGoalRobot
         double driveAngle = Math.atan2(deltaY, deltaX);
         double deltaAngle = MyPosition.AngleWrap(targetAngle - MyPosition.worldAngle_rad);
         double magnitude = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        double driveSpeed = calculateCubicDriveSlowdown(magnitude, minSpeed, maxSpeed, passThrough);
+        double driveSpeed = calculateLinearDriveSlowdown(magnitude, minSpeed, maxSpeed, passThrough);
+//        double driveSpeed = calculateCubicDriveSlowdown(magnitude, minSpeed, maxSpeed, passThrough);
         // Apparently last season angle was positive CW, this season CCW is positive.
         double turnSpeed = -Math.toDegrees(deltaAngle) * errorMultiplier;
         // Have to convert from world angles to robot centric angles.
@@ -886,10 +888,10 @@ public class UltimateGoalRobot
     }
 
     /** Moves the wobble arm to the specified position. **/
-    public static double WOBBLE_ARM_STOWED = WOBBLE_ARM_MIN;
-    public static double WOBBLE_ARM_RUNNING = 1.06;
-    public static double WOBBLE_ARM_DEPLOYING = 1.6;
-    public static double WOBBLE_ARM_GRABBING = 2.34;
+    public static double WOBBLE_ARM_STOWED = 0.300;
+    public static double WOBBLE_ARM_RUNNING = 1.400;
+    public static double WOBBLE_ARM_DEPLOYING = 2.100;
+    public static double WOBBLE_ARM_GRABBING = 3.100;
     public static double WOBBLE_ARM_ERROR = 0.1;
     public static double WOBBLE_ARM_REFINING = 0.005;
     public enum WOBBLE_ARM_ROTATOR {
@@ -954,15 +956,18 @@ public class UltimateGoalRobot
             shootingDestination = alignmentCoordinates;
             shooterFlapTarget = targetFlap;
             // If the shooter isn't on, fire it up.
-//            shooterOn();
+            shooterOn();
             // Make sure shooter flap is in the right position.
             if(shooterFlapTarget == FLAP_POSITION.POWERSHOT) {
                 setShooterFlapPowerShot();
             } else {
                 setShooterFlapHighGoal();
             }
-            driveToXY(shootingDestination.x, shootingDestination.y, shootingDestination.angle, MIN_DRIVE_MAGNITUDE,
-                    1.0, 0.014, 2.0, false);
+            driveToXY(shootingDestination.x + shootingError.x,
+                    shootingDestination.y + shootingError.y,
+                    shootingDestination.angle + shootingError.angle,
+                    MIN_DRIVE_MAGNITUDE,
+                    shootingDestination.speed, 0.014, 2.0, false);
             shotAlignmentState = SHOT_ALIGNMENT_STATE.DRIVE_TO_POSITION;
         }
     }
@@ -979,23 +984,13 @@ public class UltimateGoalRobot
                 break;
             case ANGLE_ALIGNMENT:
                 if(rotateToAngle(shootingDestination.angle, false, false)) {
-                    if(shooterFlapTarget == FLAP_POSITION.POWERSHOT) {
-//                        startInjecting();
-                    } else {
-//                        startTripleInjecting();
-                    }
+                    startInjecting();
                     shotAlignmentState = SHOT_ALIGNMENT_STATE.FIRE;
                 }
                 break;
             case FIRE:
-                if(shooterFlapTarget == FLAP_POSITION.POWERSHOT) {
-                    if(injectState == INJECTING.IDLE) {
-                        shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
-                    }
-                } else {
-                    if(tripleInjectState == TRIPLE_INJECTING.IDLE) {
-                        shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
-                    }
+                if(injectState == INJECTING.IDLE) {
+                    shotAlignmentState = SHOT_ALIGNMENT_STATE.IDLE;
                 }
                 break;
             case IDLE:

@@ -197,18 +197,51 @@ public class UltimateGoalOdometryCalibration extends OpMode {
 
         // This can be used for shoot alignment.
         if(!rightHeld && rightPressed) {
+            if(!aligning) {
+                calibrationTarget.x = 50.0;
+                calibrationTarget.y = 50.0;
+                calibrationTarget.angle = Math.toRadians(180.0);
+                calibrationTarget.speed = 1.0;
+                robot.startShotAligning(calibrationTarget, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                aligning = true;
+            } else {
+                aligning = false;
+                robot.stopShotAligning();
+            }
             rightHeld = true;
         } else if(!rightPressed) {
             rightHeld = false;
         }
 
         if(!leftHeld && leftPressed) {
+            if(!aligning) {
+                calibrationTarget.x = 0.0;
+                calibrationTarget.y = 0.0;
+                calibrationTarget.angle = Math.toRadians(90.0);
+                calibrationTarget.speed = 1.0;
+                robot.startShotAligning(calibrationTarget, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                aligning = true;
+            } else {
+                aligning = false;
+                robot.stopShotAligning();
+            }
             leftHeld = true;
         } else if(!leftPressed) {
             leftHeld = false;
         }
 
         if(!downHeld && downPressed) {
+            if(!aligning) {
+                calibrationTarget.x = 0.0;
+                calibrationTarget.y = 0.0;
+                calibrationTarget.angle = Math.toRadians(90.0);
+                calibrationTarget.speed = 1.0;
+                robot.startShotAligning(calibrationTarget, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
+                aligning = true;
+            } else {
+                aligning = false;
+                robot.stopShotAligning();
+            }
             downHeld = true;
         } else if (!downPressed) {
             downHeld = false;
@@ -216,6 +249,10 @@ public class UltimateGoalOdometryCalibration extends OpMode {
 
         if(!upHeld && upPressed) {
             if(!aligning) {
+                calibrationTarget.x = 0.0;
+                calibrationTarget.y = 150.0;
+                calibrationTarget.angle = Math.toRadians(90.0);
+                calibrationTarget.speed = 1.0;
                 robot.startShotAligning(calibrationTarget, UltimateGoalRobot.FLAP_POSITION.HIGH_GOAL);
                 aligning = true;
             } else {

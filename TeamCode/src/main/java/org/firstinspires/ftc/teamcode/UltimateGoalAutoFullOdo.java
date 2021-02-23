@@ -28,6 +28,7 @@ import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.GRABBING.IDLE;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_DEPLOYING;
+import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_GRABBING;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_RUNNING;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_STOWED;
 
@@ -151,14 +152,52 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
             }
 
             robot.shooterOff();
+            robot.setShooterFlapHighGoal();
 
             dropWobbleTargetZone();
 
-            driveToWayPoint(park, false);
-            robot.startRotatingArm(WOBBLE_ARM_STOWED);
+            driveToWayPoint(beforeStack, true);
+            robot.startRotatingArm(WOBBLE_ARM_GRABBING);
+            robot.setIntakeIn();
+
+            driveToWayPoint(collectStack, true);
+            driveToWayPoint(wobble2PickupLineup, false);
+            driveToWayPoint(wobble2Pickup, false);
+
+            robot.startClawToggle(false);
+            while(opModeIsActive() && robot.grabState != IDLE) {
+                updatePosition();
+            }
+            robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
             while(opModeIsActive() && robot.armMovement != UltimateGoalRobot.WOBBLE_ARM_ROTATOR.IDLE) {
                 updatePosition();
             }
+
+            driveToWayPoint(highGoal, false);
+            if(randomizationPosition == 2) {
+                robot.startInjecting();
+                while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+                    updatePosition();
+                }
+            } else if (randomizationPosition == 3) {
+                robot.startTripleInjecting();
+                while (opModeIsActive() && robot.tripleInjectState != UltimateGoalRobot.TRIPLE_INJECTING.IDLE) {
+                    updatePosition();
+                }
+            }
+            driveToWayPoint(targetZone2, false);
+            robot.startClawToggle(true);
+            while(opModeIsActive() && robot.grabState != IDLE) {
+                updatePosition();
+            }
+
+            // When we run out of time, the wobble goal arm keeps rotating and will break
+            // your potentiometer.
+//            robot.startRotatingArm(WOBBLE_ARM_STOWED);
+            driveToWayPoint(park, false);
+//            while(opModeIsActive() && robot.armMovement != UltimateGoalRobot.WOBBLE_ARM_ROTATOR.IDLE) {
+//                updatePosition();
+//            }
         }
 
         if (tfod != null) {
