@@ -93,12 +93,15 @@ public class MainTeleopOdometry extends LinearOpMode{
         verticalLeft = hardwareMap.dcMotor.get("wobbleArm");
         verticalRight = hardwareMap.dcMotor.get("intake");
 
+
+
         verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         outtakeRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -128,6 +131,8 @@ public class MainTeleopOdometry extends LinearOpMode{
         globalPositionUpdate = new OdometryGlobalCoordinatePosition(verticalLeft, verticalRight, horizontal, COUNTS_PER_INCH, 75);
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
+
+        globalPositionUpdate.reverseRightEncoder();
 
         while(opModeIsActive()){
 
@@ -351,6 +356,9 @@ public class MainTeleopOdometry extends LinearOpMode{
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnClockwise(0.2);
                 }
+                else{
+                    break;
+                }
             }else if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
                 if (relativeAngleDifference > 15){
                     turnCounterClockwise(0.7);
@@ -374,18 +382,19 @@ public class MainTeleopOdometry extends LinearOpMode{
         //Shot 1
         odometryDriveToPos(-35.3,56.7,0);
         sleep(500);
-        //robot.shootRingsPower();
+
+        robot.shootRingsPower();
         //Shot 2
         odometryDriveToPos(-40.6,56.7,0);
-        //robot.shootRingsPower();
+        robot.shootRingsPower();
         sleep(500);
         //Shot 3
         odometryDriveToPos(-48,56.7,0);
-        //robot.shootRingsPower();
+        robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-18,56.7,0);
+        odometryDriveToPos(-18,56.7,0);//25, -1, 233??
         //robot.shootRings();
     }
 

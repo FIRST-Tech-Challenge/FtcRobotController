@@ -90,6 +90,7 @@ public class MainTeleop extends LinearOpMode{
         //reverse the needed motors
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+        intake.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -135,7 +136,7 @@ public class MainTeleop extends LinearOpMode{
             }else{
                 intakeMod = 1.0;
             }
-            double intakeSpeed = gamepad1.left_trigger * intakeMod;
+            double intakeSpeed = gamepad1.left_trigger * intakeMod * 0.75;
             intake.setPower(intakeSpeed);
 
 
@@ -199,13 +200,7 @@ public class MainTeleop extends LinearOpMode{
 
 
          //   outtakeRight.setPower(outtakePower);
-            if(gamepad1.a){//press and hold a while running intake
-                intakeMod = -1.0;
-            }else{
-                intakeMod = 1.0;
-            }
-           // double intakeSpeed = gamepad1.left_trigger * intakeMod;
-            intake.setPower(intakeSpeed);
+
 
             double outtakeRPM = outtakePower * OUTTAKE_MOTOR_RPM * OUTTAKE_GEAR_RATIO;
             double outtakeWheelVelocity = (outtakeRPM * 2 * Math.PI * OUTTAKE_WHEEL_RADIUS_M)/60;
