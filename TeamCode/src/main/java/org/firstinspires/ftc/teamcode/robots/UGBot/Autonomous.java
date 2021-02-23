@@ -97,7 +97,7 @@ public class Autonomous {
 
             .addMineralState(ugStateProvider,
                     //() -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 3),
-                    () -> robot.driveToFieldPosition(Constants.startingXOffset,1.5),
+                    () -> robot.driveToFieldPosition(Constants.startingXOffset,1),
                     () -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.3), // 2.3
                     () -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 1.87)) //1.87
 

@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils.Point;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectorySolution;
+import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
@@ -143,7 +144,7 @@ public class PoseUG {
 
     private long turnTimer = 0;
     private boolean turnTimerInit = false;
-    private double minTurnError = 1.0;
+    private double minTurnError = 5.0;
     public boolean maintainHeadingInit = false;
 
     private double poseSavedHeading = 0.0;
@@ -463,6 +464,8 @@ public class PoseUG {
         packet.put("x offset", trajSol.getxOffset());
         packet.put("disk speed", trajSol.getVelocity());
         packet.put("pose speed", poseSpeed);
+        packet.put("bearing to", getBearingToWrapped(Constants.startingXOffset,1.5));
+        packet.put("distance to", getDistanceTo(Constants.startingXOffset,1.5));
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
@@ -728,6 +731,30 @@ public class PoseUG {
         }
     }
 
+
+    public boolean driveAbsoluteDistance(double pwr, double targetAngle, boolean forward, double targetMeters, double closeEnoughDist) {
+
+        if (!forward) {
+            moveMode = moveMode.backward;
+            targetMeters = -targetMeters;
+            pwr = -pwr;
+        } else
+            moveMode = moveMode.forward;
+
+        // if this statement is true, then the robot has not achieved its target
+        // position
+        if (Math.abs(targetMeters) > Math.abs(closeEnoughDist)) {
+            // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
+            driveIMU(kpDrive, kiDrive, kdDrive, pwr, targetAngle, false);
+            return false;
+        } // destination achieved
+        else {
+            //stopAll();
+            driveMixerDiffSteer(0, 0);
+            return true;
+        }
+    }
+
     double prevWallVal = 0.4572;
     double numLoops = 0;
     int countOutliers = 0;
@@ -806,18 +833,39 @@ public class PoseUG {
 
     }
 
+    int fieldPosState = 0;
+
     public boolean driveToFieldPosition(double targetX, double targetY){
-        if(rotateIMU(getBearingTo(targetX, targetY),999 )){
-            return driveIMUDistance(.5, getBearingTo(targetX, targetY), true, getDistanceTo(targetX, targetY));//todo- test if without reset works
+        switch (fieldPosState){
+            case 0:
+                if(rotateIMU(getBearingToWrapped(targetX, targetY),9)) {
+                    fieldPosState++;
+                }
+                break;
+            case 1:
+                if(driveAbsoluteDistance(.2, getBearingToWrapped(targetX, targetY), true, getDistanceTo(targetX, targetY),.1)) {
+                    fieldPosState = 0;
+                    return true;
+                }
+                break;
         }
         return false;
     }
 
+    int fieldPosStateToo = 0;
+
     public boolean driveToFieldPosition(double targetX, double targetY, double targetFinalHeading){
-        if(rotateIMU(getBearingTo(targetX, targetY),999 )){
-            if(driveIMUDistance(.5, getBearingTo(targetX, targetY), true, getDistanceTo(targetX, targetY))){//todo- test if without reset works
-                return rotateIMU(targetFinalHeading,999 );
-            }
+        switch (fieldPosStateToo){
+            case 0:
+                if(driveToFieldPosition(targetX, targetY)) {
+                    fieldPosStateToo++;
+                }
+                break;
+            case 1:
+                if(rotateIMU(targetFinalHeading, 6)){
+                    fieldPosStateToo = 0;
+                    return true;
+                }
         }
         return false;
     }
@@ -828,6 +876,10 @@ public class PoseUG {
 
     private double getBearingTo(double targetX, double targetY) {
         return Math.toDegrees(Math.atan2((targetX-getPoseX()), (targetY-getPoseY())));
+    }
+
+    private double getBearingToWrapped(double targetX, double targetY) {
+        return Conversions.wrapAngle(Math.toDegrees(Math.atan2((targetX-getPoseX()), (targetY-getPoseY()))));
     }
 
     /**
@@ -1414,11 +1466,11 @@ public class PoseUG {
         }
         driveIMU(kpDrive, kiDrive, kdDrive, 0, targetAngle, false); // check to see if the robot turns within a
                                                                     // threshold of the target
-        // if(Math.abs(poseHeading - targetAngle) < minTurnError) {
-        // turnTimerInit = false;
-        // driveMixerMec(0,0,0);
-        // return true;
-        // }
+         if(Math.abs(getHeading() - targetAngle) < minTurnError) {
+         turnTimerInit = false;
+         driveMixerMec(0,0,0);
+         return true;
+         }
 
         if (turnTimer < System.nanoTime()) { // check to see if the robot takes too long to turn within a threshold of
                                              // the target (e.g. it gets stuck)

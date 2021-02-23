@@ -56,7 +56,7 @@ import static org.firstinspires.ftc.teamcode.util.Conversions.notdeadzone;
  * TeleOp and Autonomous.
  */
 
-@TeleOp(name = "UltimateGoal_6832", group = "Challenge") // @Autonomous(...) is the other common choice
+@TeleOp(name = "AAAUltimateGoal_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
 @Config
 public class UG_6832 extends OpMode {
@@ -562,7 +562,6 @@ public class UG_6832 extends OpMode {
             robot.launcher.setActive(true);
         }
 
-        // robot.crane.extendToTowerHeight(0.25, Config.currentTowerHeight);
 
         reverse = -1;
         pwrDamper = .70;
@@ -605,7 +604,8 @@ public class UG_6832 extends OpMode {
             robot.flywheelIsActive = !robot.flywheelIsActive;
         if(toggleAllowed(gamepad1.y, y, 1))
             robot.intake.toggleFullTilt();
-
+        if(gamepad1.x)
+            robot.driveToFieldPosition(Constants.startingXOffset, 1.5);
 
 
         if (notdeadzone(gamepad1.right_trigger))
