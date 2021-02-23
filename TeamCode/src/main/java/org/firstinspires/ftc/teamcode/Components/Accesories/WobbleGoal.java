@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class WobbleGoal {
 
     public enum Position {
-        REST, GRAB, DriveToWall, DropOverWall, RAISE,RUN, RELEASE, DROP, STARTOFTELEEOP,START
+        REST, GRAB, DriveToWall, DropOverWall, RAISE,RUN, RELEASE, DROP, STARTOFTELEEOP,START,AutoGRAB
     }
 
     //declaring the op mode
@@ -34,6 +34,7 @@ public class WobbleGoal {
     private final int ticksForDropOverWall = -140;
     private final int ticksForRAISE = -400;
     private final int ticksForAutonomousRUN = -350;
+    private final int ticksForAutonomousGRAB = -500;
     private final int ticksForAutonomousStart = 175;
     private final int ticksForSTARTOFTELEEOP = -200;
     private final double wobbleGoalSpeed = 0.3;
@@ -74,7 +75,10 @@ public class WobbleGoal {
             i = ticksForAutonomousRUN;
         } else if (p == Position.START) {
             i = ticksForAutonomousStart;
-        } else if (p == Position.DriveToWall){
+        }
+        else if (p == Position.AutoGRAB) {
+            i = ticksForAutonomousGRAB;
+        }else if (p == Position.DriveToWall){
             i = ticksForDriveToWall;
             while (wobbleGoalServoClaw.getPosition() != 0) {
                 wobbleGoalServoClaw.setPosition(0);
