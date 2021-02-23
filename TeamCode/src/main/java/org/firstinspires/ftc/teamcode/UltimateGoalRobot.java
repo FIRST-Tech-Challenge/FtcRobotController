@@ -507,10 +507,10 @@ public class UltimateGoalRobot
      * @return - Boolean true we have reached destination, false we have not
      */
     public double lastDriveAngle;
-    public boolean rotateToAngle(double targetAngle, boolean pullingFoundation, boolean resetDriveAngle) {
+    public boolean rotateToAngle(double targetAngle, boolean resetDriveAngle) {
         boolean reachedDestination = false;
-        double errorMultiplier = pullingFoundation ? 0.04 : 0.016;
-        double minSpinRate = pullingFoundation ? MIN_FOUNDATION_SPIN_RATE : MIN_SPIN_RATE;
+        double errorMultiplier = 0.016;
+        double minSpinRate = MIN_SPIN_RATE;
         double deltaAngle = MyPosition.AngleWrap(targetAngle - MyPosition.worldAngle_rad);
         double turnSpeed = -Math.toDegrees(deltaAngle) * errorMultiplier;
 
@@ -563,13 +563,13 @@ public class UltimateGoalRobot
 
     public double calculateLinearDriveSlowdown(double distance, double minSpeed, double maxSpeed, boolean passThrough) {
         double driveSpeed = 0.0;
-        final double fullThrottleMinDistance = 50.0;
+        final double fullThrottleMinDistance = 100.0;
 
         // Full speed above fullThrottleMinRange
         if(passThrough || distance >= fullThrottleMinDistance) {
             driveSpeed = maxSpeed;
         } else {
-            driveSpeed = maxSpeed * distance / fullThrottleMinDistance;
+            driveSpeed = distance / fullThrottleMinDistance;
         }
 
         driveSpeed = max(min(driveSpeed, maxSpeed), minSpeed);
@@ -588,7 +588,6 @@ public class UltimateGoalRobot
         } else {
             double valueIn = distance / fullThrottleMinDistance;
             driveSpeed = curveSlope * Math.pow(valueIn, 3) + (1.0 - curveSlope) * valueIn;
-            driveSpeed *= maxSpeed;
         }
 
         driveSpeed = max(min(driveSpeed, maxSpeed), minSpeed);
@@ -978,12 +977,12 @@ public class UltimateGoalRobot
                 if(driveToXY(shootingDestination.x, shootingDestination.y, shootingDestination.angle, MIN_DRIVE_MAGNITUDE,
                         1.0, 0.014, 2.0, false)) {
                     // We have reached the position, need to rotate to angle.
-                    rotateToAngle(shootingDestination.angle, false, true);
+                    rotateToAngle(shootingDestination.angle, true);
                     shotAlignmentState = SHOT_ALIGNMENT_STATE.ANGLE_ALIGNMENT;
                 }
                 break;
             case ANGLE_ALIGNMENT:
-                if(rotateToAngle(shootingDestination.angle, false, false)) {
+                if(rotateToAngle(shootingDestination.angle, false)) {
                     startInjecting();
                     shotAlignmentState = SHOT_ALIGNMENT_STATE.FIRE;
                 }

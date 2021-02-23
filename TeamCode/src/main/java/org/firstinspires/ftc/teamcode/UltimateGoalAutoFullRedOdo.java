@@ -31,7 +31,8 @@ import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 @Autonomous(name="Full Red Odo", group ="Ultimate Goal Red", preselectTeleOp = "UltimateGoal: TeleOp")
 public class UltimateGoalAutoFullRedOdo extends UltimateGoalAutoFullOdo
 {
-    protected static final double REGULAR_SPEED = 0.5;
+    protected static final double REGULAR_SPEED = 1.0;
+    protected static final double SLOW_SPEED = 0.25;
     @Override
     public void setAutoWayPoints() {
         // Robot starting location
@@ -42,12 +43,33 @@ public class UltimateGoalAutoFullRedOdo extends UltimateGoalAutoFullOdo
         aroundStartingStack2 = new WayPoint(89.47404, 149.7584, Math.toRadians(93.0), REGULAR_SPEED);
 
         // The powershots
-        powerShotFirst = new WayPoint(69.77404, 149.7584, Math.toRadians(93.0), REGULAR_SPEED);
-        UltimateGoalRobot.powerShotLeft = powerShotFirst;
-        powerShotSecond = new WayPoint(98.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
-        UltimateGoalRobot.powerShotCenter = powerShotSecond;
-        powerShotThird = new WayPoint(117.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
-        UltimateGoalRobot.powerShotRight = powerShotThird;
+        switch(startShootingStyle) {
+            case STRAFE_STOP:
+            case HIGH_GOAL:
+                powerShotFirst = new WayPoint(69.77404, 149.7584, Math.toRadians(93.0), REGULAR_SPEED);
+                UltimateGoalRobot.powerShotLeft = powerShotFirst;
+                powerShotSecond = new WayPoint(98.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+                UltimateGoalRobot.powerShotCenter = powerShotSecond;
+                powerShotThird = new WayPoint(117.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+                UltimateGoalRobot.powerShotRight = powerShotThird;
+                break;
+            case STRAFE_THROUGH:
+                powerShotFirst = new WayPoint(69.77404, 149.7584, Math.toRadians(93.0), SLOW_SPEED);
+                UltimateGoalRobot.powerShotLeft = powerShotFirst;
+                powerShotSecond = new WayPoint(98.77404, 149.7584, Math.toRadians(95.0), SLOW_SPEED);
+                UltimateGoalRobot.powerShotCenter = powerShotSecond;
+                powerShotThird = new WayPoint(117.77404, 149.7584, Math.toRadians(95.0), SLOW_SPEED);
+                UltimateGoalRobot.powerShotRight = powerShotThird;
+                break;
+            case ROTATE:
+                powerShotFirst = new WayPoint(98.77404, 149.7584, Math.toRadians(93.0), REGULAR_SPEED);
+                UltimateGoalRobot.powerShotLeft = powerShotFirst;
+                powerShotSecond = new WayPoint(98.77404, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);
+                UltimateGoalRobot.powerShotCenter = powerShotSecond;
+                powerShotThird = new WayPoint(98.77404, 149.7584, Math.toRadians(97.0), REGULAR_SPEED);
+                UltimateGoalRobot.powerShotRight = powerShotThird;
+                break;
+        }
 
         // starting stack line up
         beforeStack = new WayPoint(149.7584, 195.44792, Math.toRadians(270.0), REGULAR_SPEED);
@@ -58,7 +80,7 @@ public class UltimateGoalAutoFullRedOdo extends UltimateGoalAutoFullOdo
 
         // Pickup the second wobble goal.
         wobble2PickupLineup = new WayPoint(175.0, 110.0, Math.toRadians(30.0), 0.25);
-        wobble2Pickup = new WayPoint(187.0, 93.0, Math.toRadians(30.0), REGULAR_SPEED);
+        wobble2Pickup = new WayPoint(185.0, 92.0, Math.toRadians(30.0), REGULAR_SPEED);
 
         // Shoot the collected rings in the high goal.
         highGoal = new WayPoint(164.35324, 149.7584, Math.toRadians(95.0), REGULAR_SPEED);

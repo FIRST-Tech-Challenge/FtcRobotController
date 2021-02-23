@@ -126,13 +126,13 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
         }
     }
 
-    protected void rotateToWayPointAngle(WayPoint destination, boolean pullingFoundation) {
+    protected void rotateToWayPointAngle(WayPoint destination) {
         // Move the robot away from the wall.
         updatePosition();
-        robot.rotateToAngle(destination.angle, pullingFoundation, true);
+        robot.rotateToAngle(destination.angle, true);
         // Loop until we get to destination.
         updatePosition();
-        while(!robot.rotateToAngle(destination.angle, pullingFoundation, false) && opModeIsActive()) {
+        while(!robot.rotateToAngle(destination.angle, false) && opModeIsActive()) {
             updatePosition();
         }
     }

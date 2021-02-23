@@ -22,10 +22,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.HelperClasses.WayPoint;
 import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.UltimateGoalAutoFullOdo.StartShotStyle.STRAFE_STOP;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.GRABBING.IDLE;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_DEPLOYING;
 import static org.firstinspires.ftc.teamcode.UltimateGoalRobot.WOBBLE_ARM_GRABBING;
@@ -54,6 +56,95 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
         while(opModeIsActive() && robot.grabState != IDLE) {
             updatePosition();
         }
+    }
+
+    enum StartShotStyle {
+        STRAFE_STOP,
+        ROTATE,
+        STRAFE_THROUGH,
+        HIGH_GOAL
+    }
+    StartShotStyle startShootingStyle = STRAFE_STOP;
+
+    public void shootPowerShotStrafeStopStyle() {
+        robot.setShooterFlapPowerShot();
+        robot.shooterOn();
+        driveToWayPoint(aroundStartingStack1, true);
+        driveToWayPoint(powerShotFirst, false);
+        robot.startInjecting();
+        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+            updatePosition();
+        }
+        driveToWayPoint(powerShotSecond,false);
+        robot.startInjecting();
+        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+            updatePosition();
+        }
+        driveToWayPoint(powerShotThird, false);
+        robot.startInjecting();
+        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+            updatePosition();
+        }
+
+        robot.shooterOff();
+        robot.setShooterFlapHighGoal();
+    }
+    public void shootPowerShotRotateStyle() {
+        robot.setShooterFlapPowerShot();
+        robot.shooterOn();
+        driveToWayPoint(aroundStartingStack1, true);
+        driveToWayPoint(powerShotFirst, false);
+        robot.startInjecting();
+        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+            updatePosition();
+        }
+        rotateToWayPointAngle(powerShotSecond);
+        robot.startInjecting();
+        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+            updatePosition();
+        }
+        rotateToWayPointAngle(powerShotThird);
+        robot.startInjecting();
+        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+            updatePosition();
+        }
+
+        robot.shooterOff();
+        robot.setShooterFlapHighGoal();
+    }
+    public void shootPowerShotStrafeThroughStyle() {
+        robot.setShooterFlapPowerShot();
+        robot.shooterOn();
+        driveToWayPoint(aroundStartingStack1, true);
+        driveToWayPoint(powerShotFirst, false);
+        robot.startInjecting();
+        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+            updatePosition();
+        }
+        driveToWayPoint(powerShotSecond,true);
+        robot.startInjecting();
+        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+            updatePosition();
+        }
+        driveToWayPoint(powerShotThird, true);
+        robot.startInjecting();
+        while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
+            updatePosition();
+        }
+
+        robot.shooterOff();
+        robot.setShooterFlapHighGoal();
+    }
+    public void shootHighGoal() {
+        robot.setShooterFlapHighGoal();
+        robot.shooterOn();
+        driveToWayPoint(aroundStartingStack1, true);
+        driveToWayPoint(highGoal, false);
+        robot.startTripleInjecting();
+        while(opModeIsActive() && robot.tripleInjectState != UltimateGoalRobot.TRIPLE_INJECTING.IDLE) {
+            updatePosition();
+        }
+        robot.shooterOff();
     }
 
     @Override
@@ -133,26 +224,20 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
             robot.resetReads();
             MyPosition.setPosition(startLocation.x, startLocation.y, startLocation.angle);
 
-            robot.setShooterFlapPowerShot();
-            driveToWayPoint(aroundStartingStack1, true);
-            driveToWayPoint(powerShotFirst, false);
-            robot.startInjecting();
-            while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
-                updatePosition();
+            switch(startShootingStyle) {
+                case STRAFE_STOP:
+                    shootPowerShotStrafeStopStyle();
+                    break;
+                case STRAFE_THROUGH:
+                    shootPowerShotStrafeThroughStyle();
+                    break;
+                case HIGH_GOAL:
+                    shootHighGoal();
+                    break;
+                case ROTATE:
+                    shootPowerShotRotateStyle();
+                    break;
             }
-            driveToWayPoint(powerShotSecond,false);
-            robot.startInjecting();
-            while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
-                updatePosition();
-            }
-            driveToWayPoint(powerShotThird, false);
-            robot.startInjecting();
-            while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
-                updatePosition();
-            }
-
-            robot.shooterOff();
-            robot.setShooterFlapHighGoal();
 
             dropWobbleTargetZone();
 
