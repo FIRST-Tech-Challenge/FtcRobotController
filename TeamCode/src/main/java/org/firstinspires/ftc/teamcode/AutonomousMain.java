@@ -522,7 +522,7 @@ public class AutonomousMain extends LinearOpMode
         outtakeRight.setPower(power_off);//or 0.44
         //robot.gyroStrafeCm(0.5, 90, 60);//speed up later
         robot.gyroDriveCm(0.5, 195);
-        robot.gyroStrafeCm(0.5, -90, 105);
+        robot.gyroStrafeCm(0.5, -90, 110);
 
         for(int i = 0; i < 3; i++){
             Thread.sleep(500);
