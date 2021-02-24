@@ -27,6 +27,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     private DcMotor motorFrontRight, motorFrontLeft, motorBackLeft, motorBackRight;
 
     private DcMotor intake;
+
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
     private Servo flipper, wobbleClaw;
 
@@ -51,6 +52,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
 
+        //intake and conveyor
         //intake and conveyor
         intake = hardwareMap.dcMotor.get("intake");
 
@@ -106,7 +108,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         double powerMod;
         double wobbleMod;
-        double intakeMod;
+        double intakeMod = 1.0;
 
 
         waitForStart();
@@ -130,12 +132,13 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
 
             //everything intake
-
-            //changes direction of intake
+            /*
+            Change direction of intake
+            */
             if(gamepad1.a){//press and hold a while running intake
-                intakeMod = 1.0;
-            }else{
                 intakeMod = -1.0;
+            }else{
+                intakeMod = 1.0;
             }
             double intakeSpeed = gamepad1.left_trigger * intakeMod * .85;
             intake.setPower(intakeSpeed);
@@ -234,7 +237,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryDriveToPos (double xPos, double yPos, double direction) {
-        setOdometryAngle(direction);
+        setOdometryAngle(0);
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
 
@@ -282,68 +285,13 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     }
 
-    public void odometryDriveToPosCorrected (double xPos, double yPos, double direction) {
-        if (getOdometryAngleDifference(direction) > 1.5){
-            setOdometryAngle(0);
-        }
-        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
-        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
-
-        double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
-        double distance = Math.hypot(distanceX,distanceY);//0
-
-        double powerOne = 1 * Math.sin(angle);
-        double powerTwo = 1 * Math.cos(angle);
-
-        double angleDifference = getOdometryAngleDifferenceNegative(direction);
-
-        while (distance > 1.5){
-            if (gamepad1.y){
-                break;
-            }
-
-            angleDifference = getOdometryAngleDifferenceNegative(direction);
-            double correction = angleDifference * 0.1;
-
-
-            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
-            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
-            distance = Math.hypot(distanceX,distanceY);
-
-            angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
-            if (distance >= 10){
-                powerOne = 1 * Math.sin(angle);
-                powerTwo = 1 * Math.cos(angle);
-            }else if (distance < 10 && distance > 5){
-                powerOne = 0.4 * Math.sin(angle);
-                powerTwo = 0.4 * Math.cos(angle);
-            }else if (distance <= 5){
-                powerOne = 0.3 * Math.sin(angle);
-                powerTwo = 0.3 * Math.cos(angle);
-            }
-
-
-            motorFrontLeft.setPower(powerOne+correction);
-            motorFrontRight.setPower(powerTwo-correction);
-            motorBackLeft.setPower(powerTwo+correction);
-            motorBackRight.setPower(powerOne-correction);
-            telemetry.addData("Distance: ", distance);
-            telemetry.addData("DistanceX: ", distanceX);
-            telemetry.addData("DistanceY: ", distanceY);
-            telemetry.addData("Xpos: ", globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH);
-            telemetry.addData("Ypos: ", globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH);
-            telemetry.update();
-        }
-        robot.completeStop();
-    }
-
     public void setOdometryAngle(double desiredAngle) {
 
         double rawAngleDifference = getAngleRaw(desiredAngle);
         double relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
 
-        while (relativeAngleDifference > 1.5){
+        while (relativeAngleDifference > 1){
             if (gamepad1.y){
                 break;
             }
@@ -359,6 +307,8 @@ public class MainTeleopOdometry extends LinearOpMode{
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnClockwise(0.2);
+                }else if (relativeAngleDifference > 2){
+                    turnClockwise(0.1);
                 }else{
                     break;
                 }
@@ -369,6 +319,8 @@ public class MainTeleopOdometry extends LinearOpMode{
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnCounterClockwise(0.2);
+                }else if(relativeAngleDifference < 2){
+                    turnCounterClockwise(0.1);
                 }else{
                     break;
                 }
@@ -379,8 +331,9 @@ public class MainTeleopOdometry extends LinearOpMode{
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnClockwise(0.2);
-                }
-                else{
+                }else  if (relativeAngleDifference < 2){
+                    turnClockwise(0.1);
+                }else{
                     break;
                 }
             }else if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
@@ -390,6 +343,8 @@ public class MainTeleopOdometry extends LinearOpMode{
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnCounterClockwise(0.2);
+                }else if (relativeAngleDifference < 2){
+                    turnCounterClockwise(0.1);
                 }else{
                     break;
                 }
@@ -414,7 +369,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(20,-2,315);
+        odometryDriveToPos(20,-2,0);
         robot.shootRings();
     }
 
