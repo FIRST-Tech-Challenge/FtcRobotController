@@ -19,45 +19,46 @@ public class FinalAuto extends LinearOpMode {
         robot.stopRingDetection();
         robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
         if(rings!=1&&rings!=4) {
-            robot.goToPosition( -66,-0,0, 1);//-25,60
+            robot.goToPosition( -66,-6,0, 1);//-25,60
             robot.openWobbleGoalClaw();
             sleep(250);
-            robot.goToPosition(-60.5,37.3,-2,0.8);//37,4
+            robot.goToPosition(-61.5,32.8,-2,0.8);//37,4
             robot.shootThreePowerShot();
             robot.turnInPlace(0,1.0);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.AutoGRAB);
             robot.turnInPlace(0, 1.0);
-            robot.goToPosition(-53.5+44,32+12,0,0.8);
+            robot.goToPosition(-53.5+42,32+6,0,0.8);
             robot.turnInPlace(0,0.6);
-            robot.goToPosition(-53.5+44,32+10.5-5.8,0,0.8);
+            robot.goToPosition(-53.5+43,32+10.5-5.8-3,0,0.8);
             robot.closeWobbleGoalClaw();
             sleep(600);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-            robot.goToPosition(-53.5+43.5-56.5-7,32+3-6.5-28,0,0.8);
+            robot.goToPosition(-53.5+43.5-56.5-7,32+3-6.5-24,0,0.8);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.AutoGRAB);
             robot.openWobbleGoalClaw();
             sleep(250);
-            robot.goToPosition(-53.5+43.5-59-2,32+6.5-4-23+10,0,0.6);
+            robot.goToPosition(-53.5+43.5-59-5,32+6.5-4-23+6,0,0.6);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
             robot.turnInPlace(180,0.7);
         }
         else if(rings==1) {
-            robot.goToPosition(-96,12,0,1);
+            robot.goToPosition(-36,-10,0,1);
+            robot.goToPosition(-96,14,0,1);
             robot.openWobbleGoalClaw();
             sleep(200);
-            robot.goToPosition(-59.5,25.25,-2,0.7);//yPosition - 23
+            robot.goToPosition(-56.5,27.4,-2.5,0.7);//yPosition - 23
             robot.shootThreePowerShot();
             robot.turnInPlace(0,1.0);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.AutoGRAB);
             robot.turnInPlace(0, 1.0);
-            robot.goToPosition(-53.5+44,36,0,1);//yPosition - 26
+            robot.goToPosition(-53.5+44,34,0,1);//yPosition - 26
             robot.turnInPlace(0,1.0);
-            robot.goToPosition(-53.5+44,29,0,0.8);
+            robot.goToPosition(-53.5+43,29,0,0.8);
             sleep(200);
             robot.closeWobbleGoalClaw();
             sleep(600);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-            robot.goToPosition(-88,23,0,1);
+            robot.goToPosition(-90,22,0,1);
             robot.openWobbleGoalClaw();
             sleep(250);
             robot.goToPosition(-72,19,0,1);
@@ -66,31 +67,29 @@ public class FinalAuto extends LinearOpMode {
             robot.turnInPlace(180,0.7);
         }
          else if(rings==4) {
-            robot.goToPosition(-23,-21,-13,1);
-            robot.shootHighGoalTest(1645, 100,3);
-            robot.goToPosition(-115, -10, 0,1);
+            robot.goToPosition(-23,-10,-13.5,0.9);
+            robot.shootHighGoalTest(1650, 100,3);
+            robot.goToPosition(-115, -7, 0,1);
             robot.openWobbleGoalClaw();
-            robot.goToPosition(-55,-7,0,1);
+            robot.goToPosition(-60,-2,1,1);
             robot.startIntake();
             robot.startTransfer();
-            robot.goToPosition(-50,-7,0,0.65);
-            robot.goToPosition(-47,-7,0,0.4);
+            robot.goToPosition(-45,-1,0.5,0.7);
+            robot.goToPosition(-43,0,-2,0.4);
             sleep(500);
-            robot.goToPosition(-51,-7,-2,0.9);
             robot.shootHighGoal(1);
 //            robot.startIntake();
 //            robot.startTransfer();
             sleep(250);
-            robot.goToPosition(-52,-7,0,1);
-            robot.goToPosition(-38,-7,0,1);
-            robot.goToPosition(-38,-7,-1,1);
+            robot.goToPosition(-33,0,0,1);
+            robot.goToPosition(-33,0,-2,1);
             robot.shootHighGoal(3);
             robot.stopIntake();
             robot.stopTransfer();
             sleep(250);
-            robot.goToPosition(-70,10, 0,1);
+            robot.goToPosition(-70,16, 0,1);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
-            robot.goToPosition(-70,10, -180,1);
+            robot.goToPosition(-70,16, 90,1);
             sleep(250);
         }
         stop();

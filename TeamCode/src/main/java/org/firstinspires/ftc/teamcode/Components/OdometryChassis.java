@@ -129,12 +129,16 @@ public class OdometryChassis extends BasicChassis {
         odom[2] += odomconst[2]*diff[2];
         double x =  cos((getAngle() * Math.PI / 180));
         double y = sin((getAngle() * Math.PI / 180));
-        ypos += (-y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1;
-        xpos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) - y * diff[2]/ticks_per_inch)*1;
+        ypos += (y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch)*1;
+        xpos += (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1;
         angle=getAngle();
         data[0]=xpos;
         data[1]=ypos;
         data[2]=angle;
+        op.telemetry.addData("xpos",xpos);
+        op.telemetry.addData("ypos",ypos);
+        op.telemetry.addData("angle",angle);
+        op.telemetry.update();
         return data;
     }
     public void goToPosition(double x, double y, double a, double power){
@@ -175,8 +179,8 @@ public class OdometryChassis extends BasicChassis {
                 anglePower[1] *= abs(1 / anglePower[0]);
                 anglePower[0] *= abs(1 / anglePower[0]);
             }
-            while(abs(power)<0.5){
-                power*=0.5/abs(power);
+            while(abs(power)<0.4){
+                power*=0.4/abs(power);
             }
             motorRightBack.setPower(1.4*(power * anglePower[1] + anglecorrection));
             motorRightFront.setPower(power * anglePower[0] + anglecorrection);
