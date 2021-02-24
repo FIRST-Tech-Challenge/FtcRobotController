@@ -145,6 +145,8 @@ public class AutonomousMain extends LinearOpMode {
 
         webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
+        telemetry.addLine("Ready");
+
         //Input Upright Mid Point: 240,320
         //Input Sideways Mid Point: 320,240
 
@@ -192,7 +194,6 @@ public class AutonomousMain extends LinearOpMode {
                 setOdometryAngle(0);
                 robot.gyroDriveCm(0.7,-60);
                 goToEnd();
-                setOdometryAngle(0);
                 //backup
                 //robot.gyroDriveCm(-.5, 10);
                 //odometryDriveToPos(100,100);
@@ -216,7 +217,6 @@ public class AutonomousMain extends LinearOpMode {
                 setOdometryAngle(0);
                 robot.gyroDriveCm(0.7,-60);
                 goToEnd();
-                setOdometryAngle(0);
                 //odometryDriveToPos(100,100);
                 break;
             case 3:
@@ -245,7 +245,6 @@ public class AutonomousMain extends LinearOpMode {
                 setOdometryAngle(0);
                 robot.gyroDriveCm(0.7,-150);
                 goToEnd();
-                setOdometryAngle(0);
                 //odometryDriveToPos(100,100);
                 break;
             default:
