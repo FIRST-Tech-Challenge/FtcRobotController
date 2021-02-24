@@ -444,7 +444,7 @@ public class AutonomousMain extends LinearOpMode {
 
             if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
                 if (relativeAngleDifference > 15){
-                    turnClockwise(1);
+                    turnClockwise(0.7);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -456,7 +456,7 @@ public class AutonomousMain extends LinearOpMode {
                 }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
                 if (relativeAngleDifference > 15){
-                    turnCounterClockwise(1);
+                    turnCounterClockwise(0.7);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -468,7 +468,7 @@ public class AutonomousMain extends LinearOpMode {
                 }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
                 if (relativeAngleDifference > 15){
-                    turnClockwise(1);
+                    turnClockwise(0.7);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -480,7 +480,7 @@ public class AutonomousMain extends LinearOpMode {
                 }
             }else if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
                 if (relativeAngleDifference > 15){
-                    turnCounterClockwise(1);
+                    turnCounterClockwise(0.7);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){

@@ -109,6 +109,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         double powerMod;
         double wobbleMod;
         double intakeMod = 1.0;
+        double outtakeMod;
 
 
         waitForStart();
@@ -157,15 +158,6 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             telemetry.addData("flipper position", flipper.getPosition());
 
-            //everything shooting
-
-            if (gamepad2.right_bumper){
-                shootPowerShot();
-            }
-            if (gamepad2.right_trigger > 0.3){
-                shootGoal();
-            }
-
             //everything wobble
 
             if(gamepad2.left_bumper){
@@ -193,6 +185,29 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             if(gamepad1.x){
                 goToEnd();
+            }
+
+            if(gamepad2.right_bumper){
+                outtakeMod= .57;
+                //outtakeMod = 0.32; //power shots
+            }else{
+                outtakeMod=.64;
+                // outtakeMod = 0.3225;
+            }
+            double outtakePower = outtakeMod;
+
+            if(gamepad2.right_trigger > .3) {
+
+                outtakeLeft.setPower(outtakeMod);
+                outtakeRight.setPower(0);
+                if(gamepad2.a){
+                    flipper.setPosition(0);
+                    Thread.sleep(500);
+                    flipper.setPosition(1);
+                }
+            }
+            else{
+                outtakeLeft.setPower(0);
             }
 
             //everything driving
@@ -302,7 +317,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
                 if (relativeAngleDifference > 15){
-                    turnClockwise(1);
+                    turnClockwise(0.7);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -314,7 +329,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
                 if (relativeAngleDifference > 15){
-                    turnCounterClockwise(1);
+                    turnCounterClockwise(0.7);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -326,7 +341,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
                 if (relativeAngleDifference > 15){
-                    turnClockwise(1);
+                    turnClockwise(0.7);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -338,7 +353,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 }
             }else if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
                 if (relativeAngleDifference > 15){
-                    turnCounterClockwise(1);
+                    turnCounterClockwise(0.7);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -369,7 +384,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(20,-2,0);
+        odometryDriveToPos(-2,-7,0);
         robot.shootRings();
     }
 
@@ -383,16 +398,6 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         if (angleDifference > 180){
             angleDifference = 360 - angleDifference;
-        }
-
-        return angleDifference;
-    }
-
-    public double getOdometryAngleDifferenceNegative(double desiredAngle){
-        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
-
-        if (angleDifference > 180){
-            angleDifference = angleDifference - 360;
         }
 
         return angleDifference;
