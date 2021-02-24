@@ -606,11 +606,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     }
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (comboGrabber != null)
-                        autoGrabHighWobbleGoal();
+                        autoGrabHighWobbleGoal(true);
                     //top wobble goal combos functions go here
                 } else if (source.isPressed(Button.BACK)) {
-                    //comboGrabber.collectRingCombo();
-                    comboGrabber.grabWobbleGoalCombo(true);
+                    if (comboGrabber != null)
+                        autoGrabHighWobbleGoal(false);
                 } else {
                     if (comboGrabber.isArmLow()) {
                         comboGrabber.initWobbleGoalCombo();
@@ -1738,9 +1738,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void autoGrabBottomWobbleGoal() throws InterruptedException {
         if (simulation_mode || chassis==null) return;
         comboGrabber.grabberOpen();
-        sleep(100);
+        comboGrabber.armUp();
+        sleep(200);
         comboGrabber.armDown();
-        sleep(400);
+        sleep(200);
         chassis.yMove(1, 0.5);
         sleep(200);
         chassis.yMove(1, 0.2);
@@ -1752,7 +1753,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         //chassis.stop();
     }
-    public void autoGrabHighWobbleGoal() throws InterruptedException {
+    public void autoGrabHighWobbleGoal(boolean autoTurn) throws InterruptedException {
         if (simulation_mode || chassis==null) return;
         /* comboGrabber.grabberOpen();
         sleep(100);
@@ -1770,9 +1771,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         comboGrabber.raiseWobbleGoalCombo();
         TaskManager.processTasks();
-        sleep(200);
-        chassis.rawRotateTo(0.8,130,false, 2);
-        chassis.rawRotateTo(0.2,165,false, 2);
+        if (autoTurn) {
+            sleep(200);
+            chassis.rawRotateTo(0.8, 130, false, 2);
+            chassis.rawRotateTo(0.2, 165, false, 2);
+        }
     }
 
     public void autoReleaseHighWobbleGoal() throws InterruptedException {

@@ -468,8 +468,8 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
         else {
             armIsLow = false;
         }
-        // 1200 ms per 180 degree
-        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 1200);
+        // 1000 ms per 180 degree
+        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 600);
         return new Progress() {
             @Override
             public boolean isDone() {
@@ -487,7 +487,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
             grabberIsClosed = false;
         }
         // 1200 ms per 180 degree
-        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 1200);
+        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 600);
         return new Progress() {
             @Override
             public boolean isDone() {
