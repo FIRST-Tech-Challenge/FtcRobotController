@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.provider.ContactsContract;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -62,6 +64,9 @@ public class AutonomousMain extends LinearOpMode
     private BNO055IMU imu;
 
     private IMURobot robot;
+
+    double threshold1;
+    double threshold2;
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -140,11 +145,13 @@ public class AutonomousMain extends LinearOpMode
 
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 1;
+        threshold1 = 20;
+        threshold2 = 60;
 
-            if (mainPipeline.stackHeight < 20) {
+            if (mainPipeline.stackHeight < threshold1) {
                 targetZone = 1; //A
 
-            } else if (mainPipeline.stackHeight > 60) {
+            } else if (mainPipeline.stackHeight > threshold2) {
                 targetZone = 3; //C
 
             } else {
@@ -301,6 +308,11 @@ public class AutonomousMain extends LinearOpMode
                 //Find the bounding box of the largest orange contour
                 Rect ylargestRect = Imgproc.boundingRect(ycontours.get(ymaxValIdx));
                 Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
+
+                Imgproc.line(output, new Point(0,ylargestRect.y + threshold1), new Point(640, ylargestRect.y + threshold1),new Scalar(255,255,0));
+                Imgproc.line(output, new Point(0,ylargestRect.y + ((threshold1 + threshold2)/2)), new Point(640, ylargestRect.y + ((threshold1 + threshold2)/2)),new Scalar(0,255,0));
+                Imgproc.line(output, new Point(0,ylargestRect.y + threshold2), new Point(640, ylargestRect.y + threshold2),new Scalar(255,255,0));
+
 
                 stackHeight = ylargestRect.height;
             }
