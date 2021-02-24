@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-//@Autonomous(name = "Autonomous Main")
+@Autonomous(name = "Autonomous Main")
 public class AutonomousMain extends LinearOpMode
 {
     double hue;
