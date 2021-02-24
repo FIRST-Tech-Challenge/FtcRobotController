@@ -30,9 +30,6 @@ public class MainTeleopOdometry extends LinearOpMode{
     private DcMotor outtakeRight, outtakeLeft, wobbleArm;
     private Servo flipper, wobbleClaw;
 
-    private Orientation angles, lastAngles, startAngles;
-    private double globalAngle;
-
     private BNO055IMU imu;
 
     private IMURobot robot;
