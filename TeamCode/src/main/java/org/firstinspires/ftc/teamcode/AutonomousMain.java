@@ -136,6 +136,7 @@ public class AutonomousMain extends LinearOpMode
 
         //Input Upright Mid Point: 240,320
         //Input Sideways Mid Point: 320,240
+        telemetry.addData("Ring Stack Height: ", mainPipeline.stackHeight);
 
         waitForStart();
 
@@ -144,7 +145,7 @@ public class AutonomousMain extends LinearOpMode
         positionThread.start();
 
         //targetZone: 1 = A, 2 = B, 3 = C
-        int targetZone = 1;
+        int targetZone = 0;
         threshold1 = 20;
         threshold2 = 60;
 

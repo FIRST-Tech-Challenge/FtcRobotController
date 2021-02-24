@@ -211,6 +211,7 @@ public class MainTeleopOdometry extends LinearOpMode{
             }
 
             if(gamepad1.x){
+                goToEnd();
             }
 
             //everything driving
@@ -262,8 +263,8 @@ public class MainTeleopOdometry extends LinearOpMode{
         double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
         double distance = Math.hypot(distanceX,distanceY);//0
 
-        double powerOne = 0.5 * Math.sin(angle);
-        double powerTwo = 0.5 * Math.cos(angle);
+        double powerOne = 1 * Math.sin(angle);
+        double powerTwo = 1 * Math.cos(angle);
 
         while (distance > 1.5){
             if (gamepad1.y){
@@ -304,15 +305,17 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void odometryDriveToPosCorrected (double xPos, double yPos, double direction) {
-        setOdometryAngle(direction);
+        if (getOdometryAngleDifference(direction) > 1.5){
+            setOdometryAngle(0);
+        }
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
 
         double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
         double distance = Math.hypot(distanceX,distanceY);//0
 
-        double powerOne = 0.5 * Math.sin(angle);
-        double powerTwo = 0.5 * Math.cos(angle);
+        double powerOne = 1 * Math.sin(angle);
+        double powerTwo = 1 * Math.cos(angle);
 
         double angleDifference = getOdometryAngleDifferenceNegative(direction);
 
@@ -354,8 +357,6 @@ public class MainTeleopOdometry extends LinearOpMode{
             telemetry.update();
         }
         robot.completeStop();
-        setOdometryAngle(direction);
-
     }
 
     public void setOdometryAngle(double desiredAngle) {
@@ -364,7 +365,7 @@ public class MainTeleopOdometry extends LinearOpMode{
         double relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
 
-        while (relativeAngleDifference > 2){
+        while (relativeAngleDifference > 1.5){
             if (gamepad1.y){
                 break;
             }
@@ -375,7 +376,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
                 if (relativeAngleDifference > 15){
-                    turnClockwise(0.7);
+                    turnClockwise(1);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -385,7 +386,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
                 if (relativeAngleDifference > 15){
-                    turnCounterClockwise(0.3);
+                    turnCounterClockwise(1);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -395,7 +396,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
                 if (relativeAngleDifference > 15){
-                    turnClockwise(0.7);
+                    turnClockwise(1);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -406,7 +407,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 }
             }else if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
                 if (relativeAngleDifference > 15){
-                    turnCounterClockwise(0.7);
+                    turnCounterClockwise(1);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -415,8 +416,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                     break;
                 }
 
-            }
-            else{
+            }else{
                 break;
             }
         }
@@ -425,19 +425,23 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
-        odometryDriveToPos(-35.3,53.7,350);
+        odometryDriveToPosCorrected(-35.3,54,0);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPos(-40.6,53.7,0);
+        odometryDriveToPosCorrected(-40.6,54,0);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPos(-48,53.7,350);
+        odometryDriveToPosCorrected(-48,54,0);
         robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-18,56.7,350);
+        odometryDriveToPosCorrected(-18,54,350);
         robot.shootRings();
+    }
+
+    public void goToEnd(){
+        odometryDriveToPosCorrected(-18, 60,0);
     }
 
 
