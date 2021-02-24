@@ -178,8 +178,8 @@ public class AutonomousMain extends LinearOpMode
 
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
-        threshold1 = 20;
-        threshold2 = 60;
+        threshold1 = 50;
+        threshold2 = 120;
 
             if (mainPipeline.stackHeight < threshold1) {
                 targetZone = 1; //A
@@ -206,7 +206,7 @@ public class AutonomousMain extends LinearOpMode
                 odometryDriveToPosCorrected(-15.88,69.8,0);
                 break;
             case 2: //B
-                intake.setPower(1);
+                intake.setPower(0.85);
                 robot.gyroDriveCm(-.6, 150);
                 robot.gyroDriveCm(.6, 150);
                 outtakeLeft.setPower(.65);
@@ -225,7 +225,7 @@ public class AutonomousMain extends LinearOpMode
 
                 break;
             case 3: //C
-                intake.setPower(1);
+                intake.setPower(0.85);
                 robot.gyroDriveCm(-.5, 185);
                 Thread.sleep(1000);
                 robot.gyroDriveCm(.5, 180);
@@ -248,7 +248,6 @@ public class AutonomousMain extends LinearOpMode
                 robot.gyroDriveCm(-0.75, 170);
                 dropWobble();
                 odometryDriveToPosCorrected(-15.88,69.8,0);
-
                 break;
             default:
                 break;
