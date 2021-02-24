@@ -506,7 +506,7 @@ public class AutonomousMain extends LinearOpMode {
     }
 
     public void goToEnd(){
-        odometryDriveToPos(-15.88, 69.8,0);
+        odometryDriveToPos(-15.88, 75,0);
     }
 
 
