@@ -164,7 +164,6 @@ public class AutonomousMain extends LinearOpMode
 
         //Input Upright Mid Point: 240,320
         //Input Sideways Mid Point: 320,240
-        telemetry.addData("Ring Stack Height: ", mainPipeline.stackHeight);
 
         waitForStart();
 
@@ -207,7 +206,7 @@ public class AutonomousMain extends LinearOpMode
                 odometryDriveToPosCorrected(-15.88,69.8,0);
                 break;
             case 2: //B
-                intake.setPower(0.85);
+                robot.intake(0.85);
                 robot.gyroDriveCm(-.6, 100);
                 robot.gyroDriveCm(.6, 100);
                 outtakeLeft.setPower(.65);
@@ -226,10 +225,9 @@ public class AutonomousMain extends LinearOpMode
 
                 break;
             case 3: //C
-                intake.setPower(0.85);
-                robot.gyroDriveCm(-.5, 185);
-                Thread.sleep(1000);
-                robot.gyroDriveCm(.5, 180);
+                robot.intake(0.85);
+                robot.gyroDriveCm(-.5, 100);
+                robot.gyroDriveCm(.5, 100);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(3000);
                 intake.setPower(0);

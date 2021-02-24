@@ -694,24 +694,8 @@ public class IMURobot {
      * Turn on intake
      */
 
-    public void intakeOn() {
-        intake.setPower(1);
-    }
-
-    /**
-     * Turn off intake
-     */
-
-    public void intakeOff() {
-        intake.setPower(0);
-    }
-
-    /**
-     * Reverse intake direction
-     */
-
-    public void intakeReverse() {
-        intake.setPower(-1);
+    public void intake(double power) {
+        intake.setPower(power);
     }
 
     public void outtake (double power){
@@ -740,6 +724,12 @@ public class IMURobot {
         Thread.sleep(500);
         flipper.setPosition(1);
         outtake(0);
+    }
+
+    public void gyroDriveCmIntake(double power, double cm) throws InterruptedException{
+        gyroDriveSec(power, (cm*SECONDS_PER_CM)/Math.abs(power));
+        intake.setPower(0.85);
+
     }
 
 }

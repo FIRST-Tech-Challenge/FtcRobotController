@@ -99,7 +99,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
         //horizontal = hardwareMap.dcMotor.get("BL");
         horizontal = hardwareMap.dcMotor.get("outtakeRight");
         verticalLeft = hardwareMap.dcMotor.get("wobbleArm");
-        verticalRight = hardwareMap.dcMotor.get("encoderFree");
+        verticalRight = hardwareMap.dcMotor.get("intake");
 
 
         intake = hardwareMap.dcMotor.get("intake");
