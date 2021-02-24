@@ -136,7 +136,7 @@ public class MainTeleop extends LinearOpMode{
             }else{
                 intakeMod = 1.0;
             }
-            double intakeSpeed = gamepad1.left_trigger * intakeMod * 0.75;
+            double intakeSpeed = gamepad1.left_trigger * intakeMod * .85;
             intake.setPower(intakeSpeed);
 
 
