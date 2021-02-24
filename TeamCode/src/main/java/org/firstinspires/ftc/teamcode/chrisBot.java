@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -56,6 +59,8 @@ public class chrisBot
 
     public WebcamName webcam = null;
 
+    public ColorSensor colorL = null, colorR = null;
+
     public static final double COUNTS_PER_MOTOR_REV    = 560 ;    // eg: TETRIX Motor Encoder
     public static final double DRIVE_GEAR_REDUCTION    = (double)2/(double)3 ;     // This is < 1.0 if geared UP
     public static final double WHEEL_DIAMETER_INCHES   = 2.95276 ;     // For figuring circumference
@@ -65,7 +70,6 @@ public class chrisBot
     int FLTarget = 0, FRTarget = 0, BLTarget = 0, BRTarget = 0;
 
     public static final double shootPower = chrisBotConstants.shootPower;
-    public static final double shootPowerSlow = chrisBotConstants.shootPowerSlow;
 
     public boolean shooterOn = chrisBotConstants.shooterOn, intakeOn = chrisBotConstants.intakeOn;
 
@@ -115,7 +119,7 @@ public class chrisBot
 
     private Telemetry telemetry;
 
-    public boolean shooterExists = false, intakeExists = false, webcamExists = false, intakeBottomExists = false;
+    public boolean shooterExists = false, intakeExists = false, webcamExists = false, intakeBottomExists = false, colorExists = false;
 
     /* Constructor */
     public chrisBot() { }
@@ -145,14 +149,11 @@ public class chrisBot
         /** Drive motor section */
 
         // Define and Initialize Motors
+
         motorBackLeft  = hwMap.get(DcMotor.class, "motorBackLeft");
         motorFrontLeft = hwMap.get(DcMotor.class, "motorFrontLeft");
         motorFrontRight = hwMap.get(DcMotor.class, "motorFrontRight");
         motorBackRight = hwMap.get(DcMotor.class, "motorBackRight");
-
-        imu = hwMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
 
         motorBackLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
         motorFrontLeft.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
@@ -170,12 +171,17 @@ public class chrisBot
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        imu = hwMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
+
         /** Attachment section */
 
         intakeExists = hwMap.tryGet(DcMotorSimple.class, "motorIntake") != null;
         intakeBottomExists = hwMap.tryGet(DcMotorSimple.class, "motorBottomIntake") != null;
         shooterExists = hwMap.tryGet(DcMotorSimple.class, "motorShooter1") != null && hwMap.tryGet(DcMotorSimple.class, "motorShooter2") != null;
-        webcamExists = hwMap.get(WebcamName.class, "Webcam 1") != null;
+        webcamExists = hwMap.tryGet(WebcamName.class, "Webcam 1") != null;
+        colorExists = hwMap.tryGet(ColorSensor.class, "colorL") != null && hwMap.tryGet(ColorSensor.class, "colorR") != null;
 
         if (intakeExists) {
             motorIntake = hwMap.get(DcMotorSimple.class, "motorIntake");
@@ -212,6 +218,14 @@ public class chrisBot
             webcam = hwMap.get(WebcamName.class, "Webcam 1");
 
             telemetry.addLine("Webcam initialized");
+            telemetry.update();
+        }
+
+        if (colorExists) {
+            colorL = hwMap.get(ColorSensor.class, "colorL");
+            colorR = hwMap.get(ColorSensor.class, "colorR");
+
+            telemetry.addLine("Color sensors initialized");
             telemetry.update();
         }
 
@@ -538,8 +552,8 @@ public class chrisBot
 
     public void shootOnSlow() {
         if(shooterExists) {
-            motorShooter1.setPower(shootPowerSlow);
-            motorShooter2.setPower(shootPowerSlow);
+            motorShooter1.setPower(shootPower);
+            motorShooter2.setPower(shootPower);
             shooterOn = true;
         }
     }

@@ -6,7 +6,7 @@ public class chrisBotConstants {
 
     public static final double DRIVE_SPEED = 0.3, TURN_SPEED = 0.3, JIGGLE_SPEED = 0.5;
 
-    public static final double shootPower = .28, shootPowerSlow = .235;
+    public static final double shootPower = .27, shootPowerSlow = .235;
 
     public static final boolean shooterOn = false, intakeOn = false;
 

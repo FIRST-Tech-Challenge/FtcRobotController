@@ -43,6 +43,32 @@ public class chrisBotTeleopFinalTwoControllers extends OpMode{
             double rightX = gamepadState[2];
             robot.setDrivePower(-1*r * Math.cos(robotAngle) + rightX, -1*r * Math.sin(robotAngle) - rightX, -1*r * Math.sin(robotAngle) + rightX, -1*r * Math.cos(robotAngle) - rightX);
         }
+        else if(gamepad2.dpad_left || gamepad2.dpad_up || gamepad2.dpad_right || gamepad2.dpad_down) {
+            double[] powers = {};
+            if(gamepad2.dpad_up) {
+                powers = new double[]{inchPower,inchPower,inchPower,inchPower};
+                telemetry.addLine("Slow Drive: Up");
+            }
+            if(gamepad2.dpad_down) {
+                powers = new double[]{-1*inchPower,-1*inchPower,-1*inchPower,-1*inchPower};
+                telemetry.addLine("Slow Drive: Down");
+            }
+            if(gamepad2.dpad_left) {
+                powers = new double[]{-1*inchPower,inchPower,inchPower,-1*inchPower};
+                telemetry.addLine("Slow Drive: Strafe Left");
+            }
+            if(gamepad2.dpad_right) {
+                powers = new double[]{inchPower,-1*inchPower,-1*inchPower,inchPower};
+                telemetry.addLine("Slow Drive: Strafe Right");
+            }
+            count.reset();
+            if(!Arrays.equals(powers, new double[]{})) {
+                do {
+                    robot.setDrivePower(powers);
+                } while (count.milliseconds() < inchTime);
+                robot.setAllDrivePower(0);
+            }
+        }
         else if(gamepad1.left_bumper) {
             if(count2.milliseconds() > 100) {
                 forward = !forward;
