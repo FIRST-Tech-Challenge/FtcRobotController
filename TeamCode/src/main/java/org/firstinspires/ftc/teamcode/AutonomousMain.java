@@ -297,6 +297,11 @@ public class AutonomousMain extends LinearOpMode {
                 Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
 
                 stackHeight = ylargestRect.height;
+                Imgproc.line(output, new Point(0,ylargestRect.y+50), new Point(640,ylargestRect.y+50),new Scalar(255,255,0));
+                Imgproc.line(output, new Point(0,ylargestRect.y+85), new Point(640,ylargestRect.y+85),new Scalar(255,255,0));
+                Imgproc.line(output, new Point(0,ylargestRect.y+120), new Point(640,ylargestRect.y+120),new Scalar(255,255,0));
+
+
             }
 
 
@@ -364,6 +369,55 @@ public class AutonomousMain extends LinearOpMode {
         wobbleArm.setPower(0);
 
     }
+    public void odometryDriveToPos (double xPos, double yPos, double direction) {
+        setOdometryAngle(direction);
+        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
+        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
+
+        double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
+        double distance = Math.hypot(distanceX,distanceY);//0
+
+        double powerOne = 1 * Math.sin(angle);
+        double powerTwo = 1 * Math.cos(angle);
+
+        while (distance > 1.5){
+            if (gamepad1.y){
+                break;
+            }
+
+            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
+            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
+            distance = Math.hypot(distanceX,distanceY);
+
+            angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
+            if (distance >= 10){
+                powerOne = 1 * Math.sin(angle);
+                powerTwo = 1 * Math.cos(angle);
+            }else if (distance < 10 && distance > 5){
+                powerOne = 0.4 * Math.sin(angle);
+                powerTwo = 0.4 * Math.cos(angle);
+            }else if (distance <= 5){
+                powerOne = 0.3 * Math.sin(angle);
+                powerTwo = 0.3 * Math.cos(angle);
+            }
+
+
+            motorFrontLeft.setPower(powerOne);
+            motorFrontRight.setPower(powerTwo);
+            motorBackLeft.setPower(powerTwo);
+            motorBackRight.setPower(powerOne);
+            telemetry.addData("Distance: ", distance);
+            telemetry.addData("DistanceX: ", distanceX);
+            telemetry.addData("DistanceY: ", distanceY);
+            telemetry.addData("Xpos: ", globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH);
+            telemetry.addData("Ypos: ", globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH);
+            telemetry.update();
+        }
+        robot.completeStop();
+        setOdometryAngle(direction);
+
+    }
+
     public void odometryDriveToPosCorrected (double xPos, double yPos, double direction) {
         if (getOdometryAngleDifference(direction) > 2){
             setOdometryAngle(0);
