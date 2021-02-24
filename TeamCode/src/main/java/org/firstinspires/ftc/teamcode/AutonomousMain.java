@@ -299,7 +299,7 @@ public class AutonomousMain extends LinearOpMode {
                 Imgproc.rectangle(output, new Point(ylargestRect.x, ylargestRect.y), new Point(ylargestRect.x+ylargestRect.width, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 255), 4, 8, 0);
 
                 stackHeight = ylargestRect.height;
-                Imgproc.line(output, new Point(0,ylargestRect.y+50), new Point(640,ylargestRect.y+50),new Scalar(255,255,0));
+                Imgproc.line(output, new Point(0,ylargestRect.y+70), new Point(640,ylargestRect.y+70),new Scalar(255,255,0));
                 Imgproc.line(output, new Point(0,ylargestRect.y+85), new Point(640,ylargestRect.y+85),new Scalar(255,255,0));
                 Imgproc.line(output, new Point(0,ylargestRect.y+120), new Point(640,ylargestRect.y+120),new Scalar(255,255,0));
 
