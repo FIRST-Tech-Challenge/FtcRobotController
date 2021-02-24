@@ -165,11 +165,6 @@ public class AutonomousMain extends LinearOpMode {
 
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
-        int stackThreshold = 60;
-
-
-        int stack = mainPipeline.ycontours.size();
-        telemetry.addData("Stack Height before case: ", mainPipeline.stackHeight);
 
         if (mainPipeline.stackHeight < 50) {
             targetZone = 1;
