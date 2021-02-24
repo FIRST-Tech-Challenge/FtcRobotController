@@ -205,18 +205,18 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                         return (HopperTimer.milliseconds()>=200);
                     }
                 }; }}, taskName);
-        TaskManager.add(new Task() {
-            @Override
-            public Progress start() {
-                holderOut();
-                HopperTimer.reset();
-                ringLifter.setPower(0.5);
-                return new Progress() {
-                    @Override
-                    public boolean isDone() {
-                        return (HopperTimer.milliseconds()>=10);
-                    }
-                }; }}, taskName);
+//        TaskManager.add(new Task() {
+//            @Override
+//            public Progress start() {
+//                holderOut();
+//                HopperTimer.reset();
+//                ringLifter.setPower(0.5);
+//                return new Progress() {
+//                    @Override
+//                    public boolean isDone() {
+//                        return (HopperTimer.milliseconds()>=10);
+//                    }
+//                }; }}, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
