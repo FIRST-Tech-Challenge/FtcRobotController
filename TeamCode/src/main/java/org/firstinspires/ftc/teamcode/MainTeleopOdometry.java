@@ -429,7 +429,7 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void goToEnd(){
-        odometryDriveToPosCorrected(-18, 60,0);
+        odometryDriveToPosCorrected(-15.88, 69.8,0);
     }
 
 

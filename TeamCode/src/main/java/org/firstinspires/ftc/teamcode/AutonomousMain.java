@@ -207,8 +207,8 @@ public class AutonomousMain extends LinearOpMode
                 break;
             case 2: //B
                 intake.setPower(0.85);
-                robot.gyroDriveCm(-.6, 150);
-                robot.gyroDriveCm(.6, 150);
+                robot.gyroDriveCm(-.6, 100);
+                robot.gyroDriveCm(.6, 100);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(2500);
                 intake.setPower(0);
@@ -522,7 +522,7 @@ public class AutonomousMain extends LinearOpMode
         outtakeRight.setPower(power_off);//or 0.44
         //robot.gyroStrafeCm(0.5, 90, 60);//speed up later
         robot.gyroDriveCm(0.5, 195);
-        robot.gyroStrafeCm(0.5, -90, 110);
+        robot.gyroStrafeCm(0.5, -90, 120);
 
         for(int i = 0; i < 3; i++){
             Thread.sleep(500);
