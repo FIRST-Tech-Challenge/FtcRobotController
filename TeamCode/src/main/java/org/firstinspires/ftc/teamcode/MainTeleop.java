@@ -90,7 +90,6 @@ public class MainTeleop extends LinearOpMode{
         //reverse the needed motors
         motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
         motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-        intake.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

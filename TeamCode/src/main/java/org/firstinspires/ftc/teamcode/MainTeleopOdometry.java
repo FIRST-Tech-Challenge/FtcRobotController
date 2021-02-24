@@ -87,16 +87,11 @@ public class MainTeleopOdometry extends LinearOpMode{
         verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        outtakeRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
 
         //reverse the needed motors
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -408,23 +403,23 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
-        odometryDriveToPosCorrected(-35.3,54,0);
+        odometryDriveToPos(-35.3,54,0);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPosCorrected(-40.6,54,0);
+        odometryDriveToPos(-40.6,54,0);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPosCorrected(-48,54,0);
+        odometryDriveToPos(-48,54,0);
         robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPosCorrected(-18,54,350);
+        odometryDriveToPos(-18,54,350);
         robot.shootRings();
     }
 
     public void goToEnd(){
-        odometryDriveToPosCorrected(-15.88, 69.8,0);
+        odometryDriveToPos(-16, 70,0);
     }
 
 

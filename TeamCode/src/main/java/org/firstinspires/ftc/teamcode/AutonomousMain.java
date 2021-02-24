@@ -105,15 +105,11 @@ public class AutonomousMain extends LinearOpMode {
         verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-
         intake = hardwareMap.dcMotor.get("intake");
 
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
 
         //Set zero power behaviors to brake
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -381,8 +377,8 @@ public class AutonomousMain extends LinearOpMode {
         double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
         double distance = Math.hypot(distanceX,distanceY);//0
 
-        double powerOne = 1 * Math.sin(angle);
-        double powerTwo = 1 * Math.cos(angle);
+        double powerOne = 0.7 * Math.sin(angle);
+        double powerTwo = 0.7 * Math.cos(angle);
 
         while (distance > 1.5){
             if (gamepad1.y){
@@ -395,8 +391,8 @@ public class AutonomousMain extends LinearOpMode {
 
             angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
             if (distance >= 10){
-                powerOne = 1 * Math.sin(angle);
-                powerTwo = 1 * Math.cos(angle);
+                powerOne = 0.7 * Math.sin(angle);
+                powerTwo = 0.7 * Math.cos(angle);
             }else if (distance < 10 && distance > 5){
                 powerOne = 0.4 * Math.sin(angle);
                 powerTwo = 0.4 * Math.cos(angle);
@@ -506,7 +502,7 @@ public class AutonomousMain extends LinearOpMode {
     }
 
     public void goToEnd(){
-        odometryDriveToPos(-15.88, 75,0);
+        odometryDriveToPos(-16, 75,0);
     }
 
 
