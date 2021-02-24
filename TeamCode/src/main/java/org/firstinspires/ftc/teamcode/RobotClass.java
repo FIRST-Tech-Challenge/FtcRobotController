@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.os.DropBoxManager;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -29,6 +31,7 @@ public class RobotClass {
     private DcMotorImplEx shooterMotor;
     private DcMotor wobbleGoalRaise;
     private double ticks = 537;//537
+    private double ticksTheSequel = 2786;
   //  private CRServo continuous1;
     private Servo wobbleGoalGrippyThing;
     private CRServo shooterServo1;
@@ -530,7 +533,7 @@ public class RobotClass {
     //Pretend "Engage" is actually ENGAGE!
     public void shooterEngage (double duration) {
         shooterMotor.setVelocity(-5400*0.85*28/60);
-        for (int i=0; i < duration*10000; i++ );
+
     }
 
     public void shooterStop () {
@@ -561,12 +564,25 @@ public class RobotClass {
     }
 
     public void moveWobbleGoalArm (double speed, double rotation) {
-        int currentPosition = frontLeft.getCurrentPosition();
+        int currentPosition = wobbleGoalRaise.getCurrentPosition();
+        telemetry.addData("current:",currentPosition);
+        telemetry.update();
 
-        double toPosition = currentPosition + rotation*ticks;
+        double toPosition = currentPosition + rotation*ticksTheSequel;
         wobbleGoalRaise.setTargetPosition((int)toPosition);
         wobbleGoalRaise.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleGoalRaise.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         wobbleGoalRaise.setPower(speed);
+        while (this.opmode.opModeIsActive() && wobbleGoalRaise.isBusy()) {
+            telemetry.addData("start:",currentPosition);
+            telemetry.addData("target ", toPosition);
+            telemetry.addData("current: ", wobbleGoalRaise.getCurrentPosition());
+            telemetry.update();
+        }
+        wobbleGoalRaise.setPower(0);
+        pause(5000);
+
+
     }
 
     public void intakeServoEngage(double speed) {
@@ -582,6 +598,20 @@ public class RobotClass {
         long time = 0;
 
         while (time<millis && opmode.opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+        }
+    }
+    public void depositWobbleGoal() {
+        moveWobbleGoalArm(.7,-.5);
+        wobbleGoalGrippyThingRelease();
+        moveWobbleGoalArm(.7, .5);
+    }
+
+    public void pauseButInSecondsForThePlebeians(double seconds) {
+        long startTime = new Date().getTime();
+        long time = 0;
+
+        while (time<seconds*1000 && opmode.opModeIsActive()) {
             time = new Date().getTime() - startTime;
         }
     }
