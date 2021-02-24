@@ -101,9 +101,6 @@ public class AutonomousMain extends LinearOpMode {
         verticalLeft = hardwareMap.dcMotor.get("wobbleArm");
         verticalRight = hardwareMap.dcMotor.get("intake");
 
-        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         intake = hardwareMap.dcMotor.get("intake");
 
@@ -162,12 +159,15 @@ public class AutonomousMain extends LinearOpMode {
 
         goShoot();
 
-        telemetry.addData("Stack Height before case: ", mainPipeline.stackHeight);
-
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
+        int stackThreshold = 60;
 
-        if (mainPipeline.stackHeight < 70) {
+
+        int stack = mainPipeline.ycontours.size();
+        telemetry.addData("Stack Height before case: ", mainPipeline.stackHeight);
+
+        if (mainPipeline.stackHeight < 50) {
             targetZone = 1;
 
         } else if (mainPipeline.stackHeight > 120) {
@@ -190,12 +190,15 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroTurn(-85, 0.5);
                 robot.gyroDriveCm(-0.5, 40);
                 dropWobble();
-                goToEnd();
+                robot.gyroDriveCm(0.75,45);
+                //backup
+                //robot.gyroDriveCm(-.5, 10);
+                //odometryDriveToPos(100,100);
                 break;
             case 2:
                 intake.setPower(-0.85);
-                robot.gyroDriveCm(-.5, 150);
-                robot.gyroDriveCm(.5, 150);
+                robot.gyroDriveCm(-.6, 150);
+                robot.gyroDriveCm(.6, 150);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(2500);
                 intake.setPower(0);
@@ -209,12 +212,13 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroDriveCm(-.75, 80);
                 dropWobble();
                 robot.gyroDriveCm(.75, 50);
-                goToEnd();
+                //odometryDriveToPos(100,100);
                 break;
             case 3:
                 intake.setPower(-0.85);
-                robot.gyroDriveCm(-.5, 150);
-                robot.gyroDriveCm(.5, 150);
+                robot.gyroDriveCm(-.5, 185);
+                Thread.sleep(1000);
+                robot.gyroDriveCm(.5, 180);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(3000);
                 intake.setPower(0);
@@ -233,7 +237,8 @@ public class AutonomousMain extends LinearOpMode {
                 //robot.gyroStrafeCm(0.5, -90,80);
                 robot.gyroDriveCm(-0.75, 170);
                 dropWobble();
-                goToEnd();
+                robot.gyroDriveCm(.75, 130);
+                //odometryDriveToPos(100,100);
                 break;
             default:
                 break;
@@ -292,14 +297,9 @@ public class AutonomousMain extends LinearOpMode {
                 }
                 //Find the bounding box of the largest yellow contour
                 Rect ylargestRect = Imgproc.boundingRect(ycontours.get(ymaxValIdx));
-                Imgproc.rectangle(output, new Point(ylargestRect.x, ylargestRect.y), new Point(ylargestRect.x+ylargestRect.width, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 255), 4, 8, 0);
+                Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
 
                 stackHeight = ylargestRect.height;
-                Imgproc.line(output, new Point(0,ylargestRect.y+70), new Point(640,ylargestRect.y+70),new Scalar(255,255,0));
-                Imgproc.line(output, new Point(0,ylargestRect.y+85), new Point(640,ylargestRect.y+85),new Scalar(255,255,0));
-                Imgproc.line(output, new Point(0,ylargestRect.y+120), new Point(640,ylargestRect.y+120),new Scalar(255,255,0));
-
-
             }
 
 
@@ -366,181 +366,6 @@ public class AutonomousMain extends LinearOpMode {
         }
         wobbleArm.setPower(0);
 
-    }
-    public void odometryDriveToPos (double xPos, double yPos, double direction) {
-        if (getOdometryAngleDifference(direction) > 1.5){
-            setOdometryAngle(0);
-        }
-        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
-        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
-
-        double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
-        double distance = Math.hypot(distanceX,distanceY);//0
-
-        double powerOne = 0.7 * Math.sin(angle);
-        double powerTwo = 0.7 * Math.cos(angle);
-
-        while (distance > 1.5){
-            if (gamepad1.y){
-                break;
-            }
-
-            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
-            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
-            distance = Math.hypot(distanceX,distanceY);
-
-            angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
-            if (distance >= 10){
-                powerOne = 0.7 * Math.sin(angle);
-                powerTwo = 0.7 * Math.cos(angle);
-            }else if (distance < 10 && distance > 5){
-                powerOne = 0.4 * Math.sin(angle);
-                powerTwo = 0.4 * Math.cos(angle);
-            }else if (distance <= 5){
-                powerOne = 0.3 * Math.sin(angle);
-                powerTwo = 0.3 * Math.cos(angle);
-            }
-
-
-            motorFrontLeft.setPower(powerOne);
-            motorFrontRight.setPower(powerTwo);
-            motorBackLeft.setPower(powerTwo);
-            motorBackRight.setPower(powerOne);
-            telemetry.addData("Distance: ", distance);
-            telemetry.addData("DistanceX: ", distanceX);
-            telemetry.addData("DistanceY: ", distanceY);
-            telemetry.addData("Xpos: ", globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH);
-            telemetry.addData("Ypos: ", globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH);
-            telemetry.update();
-        }
-        robot.completeStop();
-        if (getOdometryAngleDifference(direction) > 1.5){
-            setOdometryAngle(0);
-        }
-
-    }
-
-    public void setOdometryAngle(double desiredAngle) {
-
-        double rawAngleDifference = getAngleRaw(desiredAngle);
-        double relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
-
-
-        while (relativeAngleDifference > 2){
-            if (gamepad1.y){
-                break;
-            }
-
-            rawAngleDifference = getAngleRaw(desiredAngle);
-            relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
-
-
-            if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
-                if (relativeAngleDifference > 15){
-                    turnClockwise(1);
-                }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
-                    turnClockwise(0.3);
-                }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
-                    turnClockwise(0.2);
-                }else{
-                    break;
-                }
-            }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
-                if (relativeAngleDifference > 15){
-                    turnCounterClockwise(1);
-                }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
-                    turnCounterClockwise(0.3);
-                }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
-                    turnCounterClockwise(0.2);
-                }else{
-                    break;
-                }
-            }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
-                if (relativeAngleDifference > 15){
-                    turnClockwise(1);
-                }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
-                    turnClockwise(0.3);
-                }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
-                    turnClockwise(0.2);
-                }
-                else{
-                    break;
-                }
-            }else if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
-                if (relativeAngleDifference > 15){
-                    turnCounterClockwise(1);
-                }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
-                    turnCounterClockwise(0.3);
-                }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
-                    turnCounterClockwise(0.2);
-                }else{
-                    break;
-                }
-
-            }else{
-                break;
-            }
-        }
-        robot.completeStop();
-    }
-
-    public void shootPowerShot() throws InterruptedException{
-        //Shot 1
-        odometryDriveToPos(-35.3,54,0);
-        robot.shootRingsPower();
-        //Shot 2
-        odometryDriveToPos(-40.6,54,0);
-        robot.shootRingsPower();
-        //Shot 3
-        odometryDriveToPos(-48,54,0);
-        robot.shootRingsPower();
-    }
-
-    public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-18,54,350);
-        robot.shootRings();
-    }
-
-    public void goToEnd(){
-        odometryDriveToPos(-16, 75,0);
-    }
-
-
-    public double getOdometryAngleDifference(double desiredAngle){
-        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
-
-        if (angleDifference > 180){
-            angleDifference = 360 - angleDifference;
-        }
-
-        return angleDifference;
-    }
-
-    public double getOdometryAngleDifferenceNegative(double desiredAngle){
-        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
-
-        if (angleDifference > 180){
-            angleDifference = angleDifference - 360;
-        }
-
-        return angleDifference;
-    }
-
-    public double getAngleRaw (double desiredAngle){
-        return ((double) Math.abs(desiredAngle - globalPositionUpdate.returnOrientation()));
-    }
-
-    public void turnClockwise(double power){
-        motorFrontLeft.setPower(power);
-        motorBackLeft.setPower(power);
-        motorFrontRight.setPower(-power);
-        motorBackRight.setPower(-power);
-    }
-    public void turnCounterClockwise(double power){
-        motorFrontLeft.setPower(-power);
-        motorBackLeft.setPower(-power);
-        motorFrontRight.setPower(power);
-        motorBackRight.setPower(power);
     }
 
 }
