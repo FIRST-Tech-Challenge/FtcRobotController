@@ -391,7 +391,7 @@ public class AutonomousMain extends LinearOpMode {
             distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
             distance = Math.hypot(distanceX,distanceY);
 
-            angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
+            //angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
             if (distance >= 10){
                 powerOne = 1 * Math.sin(angle);
                 powerTwo = 1 * Math.cos(angle);
