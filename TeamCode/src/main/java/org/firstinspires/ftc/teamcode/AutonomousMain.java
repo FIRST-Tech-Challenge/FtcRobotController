@@ -216,9 +216,9 @@ public class AutonomousMain extends LinearOpMode {
                 break;
             case 3:
                 intake.setPower(-0.65);
-                robot.gyroDriveCm(-.4, 185);
+                robot.gyroDriveCm(-.4, 150);
                 Thread.sleep(1000);
-                robot.gyroDriveCm(.4, 180);
+                robot.gyroDriveCm(.4, 150);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(3000);
                 intake.setPower(0);
