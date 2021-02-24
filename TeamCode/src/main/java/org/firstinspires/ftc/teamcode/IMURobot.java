@@ -727,8 +727,8 @@ public class IMURobot {
     }
 
     public void gyroDriveCmIntake(double power, double cm) throws InterruptedException{
-        gyroDriveSec(power, (cm*SECONDS_PER_CM)/Math.abs(power));
         intake.setPower(0.85);
+        gyroDriveSec(power, (cm*SECONDS_PER_CM)/Math.abs(power));
 
     }
 
