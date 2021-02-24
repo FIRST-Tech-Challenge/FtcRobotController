@@ -219,9 +219,9 @@ public class AutonomousMain extends LinearOpMode {
                 break;
             case 3:
                 intake.setPower(-0.65);
-                robot.gyroDriveCm(-.5, 125);
+                robot.gyroDriveCm(-.5, 115);
                 Thread.sleep(400);
-                robot.gyroDriveCm(.5, 125);
+                robot.gyroDriveCm(.5, 115);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(1500);
                 intake.setPower(0);
@@ -391,7 +391,7 @@ public class AutonomousMain extends LinearOpMode {
             distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
             distance = Math.hypot(distanceX,distanceY);
 
-            //angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
+            angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
             if (distance >= 10){
                 powerOne = 1 * Math.sin(angle);
                 powerTwo = 1 * Math.cos(angle);
@@ -556,7 +556,8 @@ public class AutonomousMain extends LinearOpMode {
         robot.shootRings();
     }
 
-    public void goToEnd(){
+    public void goToEnd() throws InterruptedException{
+        robot.gyroDriveCm(0.7,20);
         odometryDriveToPos(-16, 70,0);
     }
 
