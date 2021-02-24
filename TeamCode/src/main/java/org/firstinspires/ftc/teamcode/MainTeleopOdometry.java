@@ -180,7 +180,7 @@ public class MainTeleopOdometry extends LinearOpMode{
                 shootGoal();
             }
             if(gamepad1.b){
-                shootPowerShot();
+                setOdometryAngle(0);
             }
 
             if(gamepad1.x){
