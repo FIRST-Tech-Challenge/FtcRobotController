@@ -194,7 +194,7 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroDriveCm(-0.5, 40);
                 dropWobble();
                 setOdometryAngle(0);
-                robot.gyroDriveCm(0.7,60);
+                robot.gyroDriveCm(0.7,-60);
                 goToEnd();
                 //backup
                 //robot.gyroDriveCm(-.5, 10);
@@ -217,15 +217,15 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroDriveCm(-.75, 80);
                 dropWobble();
                 setOdometryAngle(0);
-                robot.gyroDriveCm(0.7,60);
+                robot.gyroDriveCm(0.7,-60);
                 goToEnd();
                 //odometryDriveToPos(100,100);
                 break;
             case 3:
                 intake.setPower(-0.65);
-                robot.gyroDriveCm(-.6, 120);
+                robot.gyroDriveCm(-.6, 117);
                 Thread.sleep(400);
-                robot.gyroDriveCm(.6, 120);
+                robot.gyroDriveCm(.6, 117);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(1500);
                 intake.setPower(0);
@@ -245,7 +245,7 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroDriveCm(-0.75, 170);
                 dropWobble();
                 setOdometryAngle(0);
-                robot.gyroDriveCm(0.7,150);
+                robot.gyroDriveCm(0.7,-150);
                 goToEnd();
                 //odometryDriveToPos(100,100);
                 break;
