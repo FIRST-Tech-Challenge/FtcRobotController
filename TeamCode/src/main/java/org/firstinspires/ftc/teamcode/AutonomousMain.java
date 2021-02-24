@@ -166,7 +166,7 @@ public class AutonomousMain extends LinearOpMode {
         int stack = mainPipeline.ycontours.size();
         telemetry.addData("Stack Height before case: ", mainPipeline.stackHeight);
 
-        if (mainPipeline.stackHeight < 50) {
+        if (mainPipeline.stackHeight < 70) {
             targetZone = 1;
 
         } else if (mainPipeline.stackHeight > 120) {
@@ -223,7 +223,7 @@ public class AutonomousMain extends LinearOpMode {
                 Thread.sleep(400);
                 robot.gyroDriveCm(.6, 117);
                 outtakeLeft.setPower(.65);
-                Thread.sleep(1500);
+                Thread.sleep(2000);
                 intake.setPower(0);
                 flipper.setPosition(0);
                 Thread.sleep(500);//CHANGE!!!!!!! slower
@@ -503,7 +503,7 @@ public class AutonomousMain extends LinearOpMode {
     }
 
     public void goToEnd() throws InterruptedException{
-        odometryDriveToPos(-18, 54,0);
+        odometryDriveToPos(-15, 70,0);
     }
 
 

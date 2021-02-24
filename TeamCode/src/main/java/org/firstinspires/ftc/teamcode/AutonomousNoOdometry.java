@@ -49,11 +49,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
     private DcMotor outtakeRight;
 
     //Figures for Odometry
-    final double WHEEL_DIAMETER = 1.5;
-    final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
-    final double COUNTS_PER_REVOLUTION = 1280;
-    //final double COUNTS_PER_INCH = 307.699557;
-    final double COUNTS_PER_INCH = COUNTS_PER_REVOLUTION/WHEEL_CIRCUMFERENCE;
+    final double COUNTS_PER_INCH = 307.699557;
 
     //Odometry encoder wheels
     DcMotor verticalRight, verticalLeft, horizontal;
