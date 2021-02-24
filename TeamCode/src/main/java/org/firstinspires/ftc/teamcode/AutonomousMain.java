@@ -85,9 +85,17 @@ public class AutonomousMain extends LinearOpMode
         outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
         outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
 
-        verticalLeft = hardwareMap.dcMotor.get("FL");
-        verticalRight = hardwareMap.dcMotor.get("FR");
-        horizontal = hardwareMap.dcMotor.get("BL");
+        horizontal = hardwareMap.dcMotor.get("outtakeRight");
+        verticalLeft = hardwareMap.dcMotor.get("wobbleArm");
+        verticalRight = hardwareMap.dcMotor.get("intake");
+
+        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        outtakeRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //intake and conveyor
         intake = hardwareMap.dcMotor.get("intake");
@@ -144,6 +152,12 @@ public class AutonomousMain extends LinearOpMode
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
+        globalPositionUpdate.reverseRightEncoder();
+
+        goShoot();
+
+        sleep(5000);
+
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
         threshold1 = 20;
@@ -167,34 +181,56 @@ public class AutonomousMain extends LinearOpMode
 
         switch(targetZone){
             case 1: //A
-                //Shoot Power Shots
-                shootPowerShot();
-                //Go to Target Zone
-                odometryDriveToPos(-16,83.2,-144.1);
-                //Drop Wobble
-                dropWobble(targetZone);
-                //Drive to Line
-                odometryDriveToPos(-15.5,70,0);
+                robot.gyroDriveCm(0.5, 60);
+                robot.gyroTurn(-85, 0.5);
+                robot.gyroDriveCm(-0.5, 40);
+                dropWobble();
+                odometryDriveToPosCorrected(-15.88,69.8,0);
                 break;
             case 2: //B
-                //Shoot Power Shots
-                shootPowerShot();
-                //Go to Target Zone
-                odometryDriveToPos(-31.5,99.1,163);
-                //Drop Wobble
-                dropWobble(targetZone);
-                //Drive to Line
-                odometryDriveToPos(-15.5,70,0);
+                intake.setPower(1);
+                robot.gyroDriveCm(-.6, 150);
+                robot.gyroDriveCm(.6, 150);
+                outtakeLeft.setPower(.65);
+                Thread.sleep(2500);
+                intake.setPower(0);
+                flipper.setPosition(0);
+                Thread.sleep(500);//CHANGE!!!!!!! slower
+                flipper.setPosition(1);
+                Thread.sleep(500);//CHANGE!!!!!!!!
+                outtakeLeft.setPower(0);
+                outtakeRight.setPower(0);
+                robot.gyroTurn(165, 0.5);
+                robot.gyroDriveCm(-.75, 80);
+                dropWobble();
+                odometryDriveToPosCorrected(-15.88,69.8,0);
+
                 break;
             case 3: //C
-                //Shoot Power Shots
-                shootPowerShot();
-                //Go to Target Zone
-                odometryDriveToPos(-29.64,132.0,208);
-                //Drop Wobble
-                dropWobble(targetZone);
-                //Drive to Line
-                odometryDriveToPos(-15.5,70,0);
+                intake.setPower(1);
+                robot.gyroDriveCm(-.5, 185);
+                Thread.sleep(1000);
+                robot.gyroDriveCm(.5, 180);
+                outtakeLeft.setPower(.65);
+                Thread.sleep(3000);
+                intake.setPower(0);
+                flipper.setPosition(0);
+                Thread.sleep(500);//CHANGE!!!!!!! slower
+                flipper.setPosition(1);
+                Thread.sleep(500);//CHANGE!!!!!!!!
+                intake.setPower(0);
+                flipper.setPosition(0);
+                Thread.sleep(500);//CHANGE!!!!!!! slower
+                flipper.setPosition(1);
+                Thread.sleep(500);//CHANGE!!!!!!!!
+                outtakeLeft.setPower(0);
+                outtakeRight.setPower(0);
+                robot.gyroTurn(180, 0.5);
+                //robot.gyroStrafeCm(0.5, -90,80);
+                robot.gyroDriveCm(-0.75, 170);
+                dropWobble();
+                odometryDriveToPosCorrected(-15.88,69.8,0);
+
                 break;
             default:
                 break;
@@ -268,51 +304,59 @@ public class AutonomousMain extends LinearOpMode
     }
 
 
-    public void odometryDriveToPos (double xPos, double yPos, double direction) {
-        setOdometryAngle(direction);
+    public void odometryDriveToPosCorrected (double xPos, double yPos, double direction) {
+        if (getOdometryAngleDifference(direction) > 1.5){
+            setOdometryAngle(0);
+        }
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
-        double currentAngle = globalPositionUpdate.returnOrientation();
 
-        if (currentAngle > 180){
-            currentAngle = globalPositionUpdate.returnOrientation() - 360;
-        }
-
-        double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4) + Math.toRadians(currentAngle));
+        double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
         double distance = Math.hypot(distanceX,distanceY);//0
 
-        double powerOne = 0.7 * Math.sin(angle);
-        double powerTwo = 0.7 * Math.cos(angle);
+        double powerOne = 1 * Math.sin(angle);
+        double powerTwo = 1 * Math.cos(angle);
+
+        double angleDifference = getOdometryAngleDifferenceNegative(direction);
 
         while (distance > 1.5){
             if (gamepad1.y){
                 break;
             }
 
+            angleDifference = getOdometryAngleDifferenceNegative(direction);
+            double correction = angleDifference * 0.1;
+
+
             distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
             distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
             distance = Math.hypot(distanceX,distanceY);
 
-            angle = angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4) + Math.toRadians(currentAngle));
+            angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
             if (distance >= 10){
                 powerOne = 1 * Math.sin(angle);
                 powerTwo = 1 * Math.cos(angle);
             }else if (distance < 10 && distance > 5){
                 powerOne = 0.4 * Math.sin(angle);
                 powerTwo = 0.4 * Math.cos(angle);
+            }else if (distance <= 5){
+                powerOne = 0.3 * Math.sin(angle);
+                powerTwo = 0.3 * Math.cos(angle);
             }
 
-            motorFrontLeft.setPower(powerOne);
-            motorFrontRight.setPower(powerTwo);
-            motorBackLeft.setPower(powerTwo);
-            motorBackRight.setPower(powerOne);
+
+            motorFrontLeft.setPower(powerOne+correction);
+            motorFrontRight.setPower(powerTwo-correction);
+            motorBackLeft.setPower(powerTwo+correction);
+            motorBackRight.setPower(powerOne-correction);
             telemetry.addData("Distance: ", distance);
             telemetry.addData("DistanceX: ", distanceX);
             telemetry.addData("DistanceY: ", distanceY);
+            telemetry.addData("Xpos: ", globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH);
+            telemetry.addData("Ypos: ", globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH);
             telemetry.update();
         }
         robot.completeStop();
-        setOdometryAngle(direction);
     }
 
     public void setOdometryAngle(double desiredAngle) {
@@ -321,7 +365,7 @@ public class AutonomousMain extends LinearOpMode
         double relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
 
-        while (relativeAngleDifference > 2){
+        while (relativeAngleDifference > 1.5){
             if (gamepad1.y){
                 break;
             }
@@ -332,7 +376,7 @@ public class AutonomousMain extends LinearOpMode
 
             if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
                 if (relativeAngleDifference > 15){
-                    turnClockwise(0.7);
+                    turnClockwise(1);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -342,7 +386,7 @@ public class AutonomousMain extends LinearOpMode
                 }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
                 if (relativeAngleDifference > 15){
-                    turnCounterClockwise(0.3);
+                    turnCounterClockwise(1);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -352,15 +396,18 @@ public class AutonomousMain extends LinearOpMode
                 }
             }else if ((desiredAngle < globalPositionUpdate.returnOrientation()) && (rawAngleDifference > 180)){
                 if (relativeAngleDifference > 15){
-                    turnClockwise(0.7);
+                    turnClockwise(1);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnClockwise(0.2);
                 }
+                else{
+                    break;
+                }
             }else if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
                 if (relativeAngleDifference > 15){
-                    turnCounterClockwise(0.7);
+                    turnCounterClockwise(1);
                 }else if (relativeAngleDifference <= 15 && relativeAngleDifference > 4){
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
@@ -369,6 +416,8 @@ public class AutonomousMain extends LinearOpMode
                     break;
                 }
 
+            }else{
+                break;
             }
         }
         robot.completeStop();
@@ -376,18 +425,18 @@ public class AutonomousMain extends LinearOpMode
 
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
-        odometryDriveToPos(55.6,2.99,0);
+        odometryDriveToPosCorrected(55.6,2.99,0);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPos(55.6,6.6,0);
+        odometryDriveToPosCorrected(55.6,6.6,0);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPos(55.6,8.51,0);
+        odometryDriveToPosCorrected(55.6,8.51,0);
         robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-18,60,0);
+        odometryDriveToPosCorrected(-18,60,0);
         robot.shootRings();
 
     }
@@ -419,24 +468,57 @@ public class AutonomousMain extends LinearOpMode
         motorBackRight.setPower(power);
     }
 
-    public void dropWobble(int targetZone){
+    public void dropWobble(){
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
 
-        while(timer.milliseconds() < 1750){
-            wobbleArm.setPower(-.3);
+        while(timer.milliseconds() < 1500){
+            wobbleArm.setPower(-.5);
         }
         wobbleArm.setPower(0);
 
         wobbleClaw.setPosition(1);
 
-        if(targetZone > 1) {
-            timer.reset();
-            while (timer.milliseconds() < 750) {
-                wobbleArm.setPower(.4);
-            }
-            wobbleArm.setPower(0);
+        timer.reset();
+        while (timer.milliseconds() < 1500) {
+            wobbleArm.setPower(.5);
         }
+        wobbleArm.setPower(0);
+
+    }
+
+    public double getOdometryAngleDifferenceNegative(double desiredAngle){
+        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
+
+        if (angleDifference > 180){
+            angleDifference = angleDifference - 360;
+        }
+
+        return angleDifference;
+    }
+
+    public void goShoot() throws InterruptedException{
+        double power = .64;
+        double power_off = 0;
+
+        outtakeLeft.setPower(power);//or 0.44
+        outtakeRight.setPower(power_off);//or 0.44
+        //robot.gyroStrafeCm(0.5, 90, 60);//speed up later
+        robot.gyroDriveCm(0.5, 195);
+        robot.gyroStrafeCm(0.5, -90, 105);
+
+        for(int i = 0; i < 3; i++){
+            Thread.sleep(500);
+            flipper.setPosition(0);
+            Thread.sleep(500);//CHANGE!!!!!!! slower
+            flipper.setPosition(1);
+            Thread.sleep(500);//CHANGE!!!!!!!!
+            outtakeLeft.setPower(power);//or 0.44
+            outtakeRight.setPower(power_off);//or 0.44
+        }
+        flipper.setPosition(1);
+        outtakeLeft.setPower(power_off);
+        outtakeRight.setPower(power_off);
     }
 
 

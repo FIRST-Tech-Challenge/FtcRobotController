@@ -94,7 +94,6 @@ public class MainTeleopOdometry extends LinearOpMode{
         verticalRight = hardwareMap.dcMotor.get("intake");
 
 
-
         verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
