@@ -56,6 +56,7 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
     protected WayPoint powerShotFirst;
     protected WayPoint powerShotSecond;
     protected WayPoint powerShotThird;
+    protected WayPoint bumpStack;
 
     // Starting stack pick up line up
     protected WayPoint beforeStack;
@@ -104,18 +105,20 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
     }
 
     protected void performRobotActions() {
-        robot.resetReads();
-        robot.performInjecting();
-        robot.performTripleInjecting();
-        robot.performRotatingArm();
-        robot.performClawToggle();
-        robot.updateShooterStability();
+        if(opModeIsActive()) {
+            robot.resetReads();
+            robot.performInjecting();
+            robot.performTripleInjecting();
+            robot.performRotatingArm();
+            robot.performClawToggle();
+            robot.updateShooterStability();
+        }
     }
 
-    protected void driveToWayPoint(WayPoint destination, boolean passThrough) {
+    protected void driveToWayPoint(WayPoint destination, boolean passThrough, boolean allowError) {
         // Loop until we get to destination.
         updatePosition();
-        double allowedError = 2.0;
+        double allowedError = allowError ? 4.0 : 2.0;
         if(passThrough) {
             allowedError = 7.0;
         }

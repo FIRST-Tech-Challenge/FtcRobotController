@@ -15,7 +15,7 @@ import static java.lang.Math.toRadians;
  * Created by 7592 Roarbots.
  */
 
-@TeleOp(name="UltimateGoal: OdometryCalTeleOp", group ="TeleOp")
+//@TeleOp(name="UltimateGoal: OdometryCalTeleOp", group ="TeleOp")
 public class UltimateGoalOdometryCalibration extends OpMode {
 
     public UltimateGoalRobot robot = new UltimateGoalRobot();

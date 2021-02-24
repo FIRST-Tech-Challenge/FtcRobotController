@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.RobotUtilities.MyPosition;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
+import static java.lang.Math.copySign;
 import static java.lang.Math.cos;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -81,7 +82,8 @@ public class UltimateGoalRobot
     public FLAP_POSITION flapPosition;
     public final static double FLAP_POWERSHOT = 0.620;
     public double powerShotOffset = 0.0;
-    public final static double FLAP_HIGH_GOAL = 0.507;
+    public final static double FLAP_HIGH_GOAL = 0.509;
+//    public final static double FLAP_HIGH_GOAL = 0.507;
     public double highGoalOffset = 0.0;
     public double flapAngle;
 
@@ -525,36 +527,34 @@ public class UltimateGoalRobot
             setAllDriveZero();
             reachedDestination = true;
             // We are done when we flip signs.
-        } else if(lastDriveAngle < 0) {
-            // We have reached our destination if the delta angle sign flips from last reading
-            if(deltaAngle >= 0) {
-                setAllDriveZero();
-                reachedDestination = true;
-            } else {
-                // We still have some turning to do.
-                MovementVars.movement_x = 0;
-                MovementVars.movement_y = 0;
-                if(turnSpeed > -minSpinRate) {
-                    turnSpeed = -minSpinRate;
-                }
-                MovementVars.movement_turn = turnSpeed;
-                ApplyMovement();
-            }
+//        } else if(lastDriveAngle < 0) {
+//            // We have reached our destination if the delta angle sign flips from last reading
+//            if(deltaAngle >= 0) {
+//                setAllDriveZero();
+//                reachedDestination = true;
+//            } else {
+//                // We still have some turning to do.
+//                MovementVars.movement_x = 0;
+//                MovementVars.movement_y = 0;
+//                if(turnSpeed > -minSpinRate) {
+//                    turnSpeed = -minSpinRate;
+//                }
+//                MovementVars.movement_turn = turnSpeed;
+//                ApplyMovement();
+//            }
         } else {
-            // We have reached our destination if the delta angle sign flips
-            if(deltaAngle <= 0) {
-                setAllDriveZero();
-                reachedDestination = true;
-            } else {
+//            // We have reached our destination if the delta angle sign flips
+//            if(deltaAngle <= 0) {
+//                setAllDriveZero();
+//                reachedDestination = true;
+//            } else {
                 // We still have some turning to do.
                 MovementVars.movement_x = 0;
                 MovementVars.movement_y = 0;
-                if(turnSpeed < minSpinRate) {
-                    turnSpeed = minSpinRate;
-                }
+                turnSpeed = copySign(max(minSpinRate, abs(turnSpeed)), turnSpeed);
                 MovementVars.movement_turn = turnSpeed;
                 ApplyMovement();
-            }
+//            }
         }
         lastDriveAngle = deltaAngle;
 
@@ -843,8 +843,8 @@ public class UltimateGoalRobot
         IDLE,
         FIRING_ONE,
         FIRING_TWO,
-        FIRING_THREE,
-        FIRING_FOUR
+        FIRING_THREE
+//        FIRING_FOUR
     }
     public TRIPLE_INJECTING tripleInjectState = TRIPLE_INJECTING.IDLE;
     public void startTripleInjecting() {
@@ -870,16 +870,17 @@ public class UltimateGoalRobot
                 break;
             case FIRING_THREE:
                 if(injectState == INJECTING.IDLE) {
-                    tripleInjectState = TRIPLE_INJECTING.FIRING_FOUR;
-                    startInjecting();
-                }
-                break;
-            case FIRING_FOUR:
-                if(injectState == INJECTING.IDLE) {
                     shooterOff();
                     tripleInjectState = TRIPLE_INJECTING.IDLE;
+//                    startInjecting();
                 }
                 break;
+//            case FIRING_FOUR:
+//                if(injectState == INJECTING.IDLE) {
+//                    shooterOff();
+//                    tripleInjectState = TRIPLE_INJECTING.IDLE;
+//                }
+//                break;
             case IDLE:
             default:
                 break;
