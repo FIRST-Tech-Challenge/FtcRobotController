@@ -171,7 +171,7 @@ public class AutonomousMain extends LinearOpMode {
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
 
-        if (mainPipeline.stackHeight < 50) {
+        if (mainPipeline.stackHeight < 70) {
             targetZone = 1;
 
         } else if (mainPipeline.stackHeight > 120) {
