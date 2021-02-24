@@ -429,7 +429,7 @@ public class AutonomousMain extends LinearOpMode {
         double relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
 
-        while (relativeAngleDifference > 2){
+        while (relativeAngleDifference > 1){
             if (gamepad1.y){
                 break;
             }
@@ -445,6 +445,8 @@ public class AutonomousMain extends LinearOpMode {
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnClockwise(0.2);
+                }else if (relativeAngleDifference > 2){
+                    turnClockwise(0.1);
                 }else{
                     break;
                 }
@@ -455,6 +457,8 @@ public class AutonomousMain extends LinearOpMode {
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnCounterClockwise(0.2);
+                }else if(relativeAngleDifference < 2){
+                    turnCounterClockwise(0.1);
                 }else{
                     break;
                 }
@@ -465,8 +469,9 @@ public class AutonomousMain extends LinearOpMode {
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnClockwise(0.2);
-                }
-                else{
+                }else  if (relativeAngleDifference < 2){
+                    turnClockwise(0.1);
+                }else{
                     break;
                 }
             }else if ((desiredAngle > globalPositionUpdate.returnOrientation()) && (rawAngleDifference <= 180)){
@@ -476,6 +481,8 @@ public class AutonomousMain extends LinearOpMode {
                     turnCounterClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnCounterClockwise(0.2);
+                }else if (relativeAngleDifference < 2){
+                    turnCounterClockwise(0.1);
                 }else{
                     break;
                 }
