@@ -193,6 +193,7 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroTurn(-85, 0.5);
                 robot.gyroDriveCm(-0.5, 40);
                 dropWobble();
+                robot.gyroDriveCm(0.7,-30);
                 goToEnd();
                 //backup
                 //robot.gyroDriveCm(-.5, 10);
@@ -214,6 +215,7 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroTurn(165, 0.5);
                 robot.gyroDriveCm(-.75, 80);
                 dropWobble();
+                robot.gyroDriveCm(0.7,-30);
                 goToEnd();
                 //odometryDriveToPos(100,100);
                 break;
@@ -240,6 +242,7 @@ public class AutonomousMain extends LinearOpMode {
                 //robot.gyroStrafeCm(0.5, -90,80);
                 robot.gyroDriveCm(-0.75, 170);
                 dropWobble();
+                robot.gyroDriveCm(0.7,-30);
                 goToEnd();
                 //odometryDriveToPos(100,100);
                 break;
@@ -420,61 +423,6 @@ public class AutonomousMain extends LinearOpMode {
 
     }
 
-    public void odometryDriveToPosCorrected (double xPos, double yPos, double direction) {
-        if (getOdometryAngleDifference(direction) > 1.5){
-            setOdometryAngle(0);
-        }
-        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
-        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
-
-        double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
-        double distance = Math.hypot(distanceX,distanceY);//0
-
-        double powerOne = 1 * Math.sin(angle);
-        double powerTwo = 1 * Math.cos(angle);
-
-        double angleDifference = getOdometryAngleDifferenceNegative(direction);
-
-        while (distance > 1.5){
-            if (gamepad1.y){
-                break;
-            }
-
-            angleDifference = getOdometryAngleDifferenceNegative(direction);
-            double correction = angleDifference * 0.1;
-
-
-            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
-            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
-            distance = Math.hypot(distanceX,distanceY);
-
-            angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
-            if (distance >= 10){
-                powerOne = 1 * Math.sin(angle);
-                powerTwo = 1 * Math.cos(angle);
-            }else if (distance < 10 && distance > 5){
-                powerOne = 0.4 * Math.sin(angle);
-                powerTwo = 0.4 * Math.cos(angle);
-            }else if (distance <= 5){
-                powerOne = 0.3 * Math.sin(angle);
-                powerTwo = 0.3 * Math.cos(angle);
-            }
-
-
-            motorFrontLeft.setPower(powerOne+correction);
-            motorFrontRight.setPower(powerTwo-correction);
-            motorBackLeft.setPower(powerTwo+correction);
-            motorBackRight.setPower(powerOne-correction);
-            telemetry.addData("Distance: ", distance);
-            telemetry.addData("DistanceX: ", distanceX);
-            telemetry.addData("DistanceY: ", distanceY);
-            telemetry.addData("Xpos: ", globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH);
-            telemetry.addData("Ypos: ", globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH);
-            telemetry.update();
-        }
-        robot.completeStop();
-    }
-
     public void setOdometryAngle(double desiredAngle) {
 
         double rawAngleDifference = getAngleRaw(desiredAngle);
@@ -557,7 +505,6 @@ public class AutonomousMain extends LinearOpMode {
     }
 
     public void goToEnd() throws InterruptedException{
-        robot.gyroDriveCm(0.7,30);
         odometryDriveToPos(-18, 54,0);
     }
 
@@ -567,16 +514,6 @@ public class AutonomousMain extends LinearOpMode {
 
         if (angleDifference > 180){
             angleDifference = 360 - angleDifference;
-        }
-
-        return angleDifference;
-    }
-
-    public double getOdometryAngleDifferenceNegative(double desiredAngle){
-        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
-
-        if (angleDifference > 180){
-            angleDifference = angleDifference - 360;
         }
 
         return angleDifference;
