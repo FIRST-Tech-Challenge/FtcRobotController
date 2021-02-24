@@ -296,7 +296,7 @@ public class AutonomousMain extends LinearOpMode {
                 }
                 //Find the bounding box of the largest yellow contour
                 Rect ylargestRect = Imgproc.boundingRect(ycontours.get(ymaxValIdx));
-                Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 255), 4, 8, 0);
+                Imgproc.rectangle(output, new Point(ylargestRect.x, ylargestRect.y), new Point(ylargestRect.x+ylargestRect.width, ylargestRect.y + ylargestRect.height), new Scalar(255, 0, 255), 4, 8, 0);
 
                 stackHeight = ylargestRect.height;
                 Imgproc.line(output, new Point(0,ylargestRect.y+50), new Point(640,ylargestRect.y+50),new Scalar(255,255,0));
