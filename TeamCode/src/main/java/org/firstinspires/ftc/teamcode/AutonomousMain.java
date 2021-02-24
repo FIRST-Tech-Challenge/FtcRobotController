@@ -166,6 +166,8 @@ public class AutonomousMain extends LinearOpMode {
 
         goShoot();
 
+        telemetry.addData("Stack Height before case: ", mainPipeline.stackHeight);
+
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
 
@@ -192,7 +194,7 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroTurn(-85, 0.5);
                 robot.gyroDriveCm(-0.5, 40);
                 dropWobble();
-                odometryDriveToPosCorrected(-15.88,69.8,0);
+                goToEnd();
                 break;
             case 2:
                 intake.setPower(-0.85);
@@ -211,7 +213,7 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroDriveCm(-.75, 80);
                 dropWobble();
                 robot.gyroDriveCm(.75, 50);
-                odometryDriveToPosCorrected(-15.88,69.8,0);
+                goToEnd();
                 break;
             case 3:
                 intake.setPower(-0.85);
@@ -235,7 +237,7 @@ public class AutonomousMain extends LinearOpMode {
                 //robot.gyroStrafeCm(0.5, -90,80);
                 robot.gyroDriveCm(-0.75, 170);
                 dropWobble();
-                odometryDriveToPosCorrected(-15.88,69.8,0);
+                goToEnd();
                 break;
             default:
                 break;
@@ -294,7 +296,7 @@ public class AutonomousMain extends LinearOpMode {
                 }
                 //Find the bounding box of the largest yellow contour
                 Rect ylargestRect = Imgproc.boundingRect(ycontours.get(ymaxValIdx));
-                Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
+                Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), 1, 8, 0);
 
                 stackHeight = ylargestRect.height;
                 Imgproc.line(output, new Point(0,ylargestRect.y+50), new Point(640,ylargestRect.y+50),new Scalar(255,255,0));
@@ -370,7 +372,9 @@ public class AutonomousMain extends LinearOpMode {
 
     }
     public void odometryDriveToPos (double xPos, double yPos, double direction) {
-        setOdometryAngle(direction);
+        if (getOdometryAngleDifference(direction) > 1.5){
+            setOdometryAngle(0);
+        }
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
         double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
 
@@ -414,63 +418,10 @@ public class AutonomousMain extends LinearOpMode {
             telemetry.update();
         }
         robot.completeStop();
-        setOdometryAngle(direction);
-
-    }
-
-    public void odometryDriveToPosCorrected (double xPos, double yPos, double direction) {
-        if (getOdometryAngleDifference(direction) > 2){
+        if (getOdometryAngleDifference(direction) > 1.5){
             setOdometryAngle(0);
         }
-        double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
-        double distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);//0
 
-        double angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
-        double distance = Math.hypot(distanceX,distanceY);//0
-
-        double powerOne = 1 * Math.sin(angle);
-        double powerTwo = 1 * Math.cos(angle);
-
-        double angleDifference = getOdometryAngleDifferenceNegative(direction);
-
-        while (distance > 1.5){
-            if (gamepad1.y){
-                break;
-            }
-
-            angleDifference = getOdometryAngleDifferenceNegative(direction);
-            double correction = angleDifference * 0.01;
-
-
-            distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
-            distanceY = yPos - (globalPositionUpdate.returnYCoordinate() / COUNTS_PER_INCH);
-            distance = Math.hypot(distanceX,distanceY);
-
-            angle = (Math.atan2(distanceY,distanceX)-(Math.PI/4));
-            if (distance >= 10){
-                powerOne = 1 * Math.sin(angle);
-                powerTwo = 1 * Math.cos(angle);
-            }else if (distance < 10 && distance > 5){
-                powerOne = 0.4 * Math.sin(angle);
-                powerTwo = 0.4 * Math.cos(angle);
-            }else if (distance <= 5){
-                powerOne = 0.3 * Math.sin(angle);
-                powerTwo = 0.3 * Math.cos(angle);
-            }
-
-
-            motorFrontLeft.setPower(powerOne+correction);
-            motorFrontRight.setPower(powerTwo-correction);
-            motorBackLeft.setPower(powerTwo+correction);
-            motorBackRight.setPower(powerOne-correction);
-            telemetry.addData("Distance: ", distance);
-            telemetry.addData("DistanceX: ", distanceX);
-            telemetry.addData("DistanceY: ", distanceY);
-            telemetry.addData("Xpos: ", globalPositionUpdate.returnXCoordinate()/COUNTS_PER_INCH);
-            telemetry.addData("Ypos: ", globalPositionUpdate.returnYCoordinate()/COUNTS_PER_INCH);
-            telemetry.update();
-        }
-        robot.completeStop();
     }
 
     public void setOdometryAngle(double desiredAngle) {
@@ -539,23 +490,23 @@ public class AutonomousMain extends LinearOpMode {
 
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
-        odometryDriveToPosCorrected(-35.3,54,0);
+        odometryDriveToPos(-35.3,54,0);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPosCorrected(-40.6,54,0);
+        odometryDriveToPos(-40.6,54,0);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPosCorrected(-48,54,0);
+        odometryDriveToPos(-48,54,0);
         robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPosCorrected(-18,54,350);
+        odometryDriveToPos(-18,54,350);
         robot.shootRings();
     }
 
     public void goToEnd(){
-        odometryDriveToPosCorrected(-15.88, 69.8,0);
+        odometryDriveToPos(-15.88, 69.8,0);
     }
 
 
