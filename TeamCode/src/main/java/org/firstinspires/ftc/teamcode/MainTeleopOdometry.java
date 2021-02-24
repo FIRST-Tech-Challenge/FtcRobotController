@@ -112,6 +112,7 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         double powerMod;
         double wobbleMod;
+        double intakeMod;
 
 
         waitForStart();
@@ -137,18 +138,13 @@ public class MainTeleopOdometry extends LinearOpMode{
             //everything intake
 
             //changes direction of intake
-            if (gamepad1.a){
-                robot.intakeReverse();
+            if(gamepad1.a){//press and hold a while running intake
+                intakeMod = -1.0;
             }else{
-                //turns on intake
-                if (gamepad1.left_trigger > 0.3){
-                    robot.intakeOn();
-
-                    //turns off intake
-                }else{
-                    robot.intakeOff();
-                }
+                intakeMod = 1.0;
             }
+            double intakeSpeed = gamepad1.left_trigger * intakeMod * .85;
+            intake.setPower(intakeSpeed);
 
             //Ring flipper
             //Run by a servo, 1 is fully "flipped" position, 0 is fully "retracted" position
