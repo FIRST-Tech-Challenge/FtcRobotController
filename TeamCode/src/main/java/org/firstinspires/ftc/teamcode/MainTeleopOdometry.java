@@ -89,7 +89,6 @@ public class MainTeleopOdometry extends LinearOpMode{
 
         outtakeRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -139,9 +138,9 @@ public class MainTeleopOdometry extends LinearOpMode{
 
             //changes direction of intake
             if(gamepad1.a){//press and hold a while running intake
-                intakeMod = -1.0;
-            }else{
                 intakeMod = 1.0;
+            }else{
+                intakeMod = -1.0;
             }
             double intakeSpeed = gamepad1.left_trigger * intakeMod * .85;
             intake.setPower(intakeSpeed);

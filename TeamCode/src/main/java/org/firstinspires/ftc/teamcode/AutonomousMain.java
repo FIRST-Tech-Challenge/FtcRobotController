@@ -101,6 +101,10 @@ public class AutonomousMain extends LinearOpMode {
         verticalLeft = hardwareMap.dcMotor.get("wobbleArm");
         verticalRight = hardwareMap.dcMotor.get("intake");
 
+        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
         intake = hardwareMap.dcMotor.get("intake");
 
@@ -155,6 +159,8 @@ public class AutonomousMain extends LinearOpMode {
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
+        globalPositionUpdate.reverseRightEncoder();
+
         goShoot();
 
         //targetZone: 1 = A, 2 = B, 3 = C
@@ -188,15 +194,12 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroTurn(-85, 0.5);
                 robot.gyroDriveCm(-0.5, 40);
                 dropWobble();
-                robot.gyroDriveCm(0.75,45);
-                //backup
-                //robot.gyroDriveCm(-.5, 10);
-                //odometryDriveToPos(100,100);
+                odometryDriveToPosCorrected(-15.88,69.8,0);
                 break;
             case 2:
-                intake.setPower(-1);
-                robot.gyroDriveCm(-.6, 150);
-                robot.gyroDriveCm(.6, 150);
+                intake.setPower(-0.85);
+                robot.gyroDriveCm(-.5, 150);
+                robot.gyroDriveCm(.5, 150);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(2500);
                 intake.setPower(0);
@@ -210,10 +213,10 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroDriveCm(-.75, 80);
                 dropWobble();
                 robot.gyroDriveCm(.75, 50);
-                //odometryDriveToPos(100,100);
+                odometryDriveToPosCorrected(-15.88,69.8,0);
                 break;
             case 3:
-                intake.setPower(-1);
+                intake.setPower(-0.85);
                 robot.gyroDriveCm(-.5, 150);
                 Thread.sleep(1000);
                 robot.gyroDriveCm(.5, 150);
@@ -235,8 +238,7 @@ public class AutonomousMain extends LinearOpMode {
                 //robot.gyroStrafeCm(0.5, -90,80);
                 robot.gyroDriveCm(-0.75, 170);
                 dropWobble();
-                robot.gyroDriveCm(.75, 130);
-                //odometryDriveToPos(100,100);
+                odometryDriveToPosCorrected(-15.88,69.8,0);
                 break;
             default:
                 break;
