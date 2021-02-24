@@ -1065,8 +1065,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         } else {
             shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
         }
-        if (comboGrabber != null && tZone != TargetZone.UNKNOWN) // during autonomous
-            comboGrabber.armUp();
+        //if (comboGrabber != null && tZone != TargetZone.UNKNOWN) // during autonomous
+          //  comboGrabber.armUp();
         initializeGPSThread();
         if (chassis!=null) {
             batteryVolt = getBatteryVoltage();
@@ -1408,7 +1408,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (runtimeAuto.seconds() > 29) {
                     return;
                 }
-                chassis.driveTo(.55, side(90), 165, 0, true, 3);
+                chassis.driveTo(.55, side(90), 160, 0, true, 3);
             }
             }
         while (!TaskManager.isComplete("Transfer Up Combo")) {
