@@ -220,7 +220,7 @@ public class AutonomousMain extends LinearOpMode {
                 //odometryDriveToPos(100,100);
                 break;
             case 3:
-                intake.setPower(-0.65);
+                intake.setPower(-0.85);
                 robot.gyroDriveCm(-.6, 117);
                 Thread.sleep(400);
                 robot.gyroDriveCm(.6, 117);
