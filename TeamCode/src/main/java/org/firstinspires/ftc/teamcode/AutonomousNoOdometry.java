@@ -328,47 +328,7 @@ public class AutonomousNoOdometry extends LinearOpMode {
         outtakeLeft.setPower(power_off);
         outtakeRight.setPower(power_off);
     }
-    public void odometryNormalizeAngle(){
-        while (globalPositionUpdate.returnOrientation() > 0){
-            robot.turnCounterClockwise(1);
-        }
 
-        while (globalPositionUpdate.returnOrientation() < 0){
-            robot.turnClockwise(1);
-        }
-
-        if (globalPositionUpdate.returnOrientation() == 0){
-            robot.completeStop();
-        }
-    }
-
-    public void odometryDriveToPos (double xPos, double yPos) {
-        double C = 0;
-        while (globalPositionUpdate.returnXCoordinate() > xPos) {
-            robotStrafe(1, -90);
-        }
-        while (globalPositionUpdate.returnXCoordinate() < xPos) {
-            robotStrafe(1, 90);
-        }
-        if (globalPositionUpdate.returnXCoordinate() == xPos) {
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 1;
-        }
-
-
-        while (globalPositionUpdate.returnXCoordinate() > yPos && C == 1) {
-            robotStrafe(-1, 0);
-        }
-        while (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
-            robotStrafe(1, 0);
-        }
-        if (globalPositionUpdate.returnXCoordinate() < yPos && C == 1) {
-            robot.completeStop();
-            odometryNormalizeAngle();
-            C = 2;
-        }
-    }
     public void robotStrafe (double power, double angle){
         //restart angle tracking
         robot.resetAngle();
