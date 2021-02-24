@@ -219,9 +219,9 @@ public class AutonomousMain extends LinearOpMode {
                 break;
             case 3:
                 intake.setPower(-0.65);
-                robot.gyroDriveCm(-.5, 115);
+                robot.gyroDriveCm(-.5, 120);
                 Thread.sleep(400);
-                robot.gyroDriveCm(.5, 115);
+                robot.gyroDriveCm(.5, 120);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(1500);
                 intake.setPower(0);
@@ -557,8 +557,8 @@ public class AutonomousMain extends LinearOpMode {
     }
 
     public void goToEnd() throws InterruptedException{
-        robot.gyroDriveCm(0.7,20);
-        odometryDriveToPos(-16, 70,0);
+        robot.gyroDriveCm(0.7,30);
+        odometryDriveToPos(-18, 54,0);
     }
 
 
