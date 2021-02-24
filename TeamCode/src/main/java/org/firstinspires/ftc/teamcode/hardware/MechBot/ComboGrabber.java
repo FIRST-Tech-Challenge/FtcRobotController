@@ -45,7 +45,7 @@ public class ComboGrabber extends Logger<ComboGrabber> implements Configurable {
     private double ARM_DOWN = 0.95;
     private double ARM_COLLECT_RING = 0.53;
 
-    private double GRABBER_OPEN = 0.4;
+    private double GRABBER_OPEN = 0.35;
     private double GRABBER_CLOSE = 0.9;
     private double GRABBER_PARTIAL_CLOSE = 0.8;
     private double GRABBER_INIT = GRABBER_CLOSE;
