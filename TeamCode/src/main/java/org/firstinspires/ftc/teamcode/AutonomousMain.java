@@ -112,6 +112,9 @@ public class AutonomousMain extends LinearOpMode {
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+
         //Set zero power behaviors to brake
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -213,7 +216,6 @@ public class AutonomousMain extends LinearOpMode {
             case 3:
                 intake.setPower(-0.85);
                 robot.gyroDriveCm(-.5, 150);
-                Thread.sleep(1000);
                 robot.gyroDriveCm(.5, 150);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(3000);
@@ -363,7 +365,7 @@ public class AutonomousMain extends LinearOpMode {
 
     }
     public void odometryDriveToPosCorrected (double xPos, double yPos, double direction) {
-        if (getOdometryAngleDifference(direction) > 1.5){
+        if (getOdometryAngleDifference(direction) > 2){
             setOdometryAngle(0);
         }
         double distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);//0
@@ -383,7 +385,7 @@ public class AutonomousMain extends LinearOpMode {
             }
 
             angleDifference = getOdometryAngleDifferenceNegative(direction);
-            double correction = angleDifference * 0.1;
+            double correction = angleDifference * 0.01;
 
 
             distanceX = xPos - (globalPositionUpdate.returnXCoordinate() / COUNTS_PER_INCH);
@@ -423,7 +425,7 @@ public class AutonomousMain extends LinearOpMode {
         double relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
 
-        while (relativeAngleDifference > 1.5){
+        while (relativeAngleDifference > 2){
             if (gamepad1.y){
                 break;
             }
