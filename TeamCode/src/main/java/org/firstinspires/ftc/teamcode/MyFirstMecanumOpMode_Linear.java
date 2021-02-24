@@ -131,8 +131,9 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             if (gamepad2.right_trigger >= .87) {
                 shooterMotor.setVelocity(-5400*0.85*28/60);
             } else if(gamepad2.right_bumper == true){
-                shooterMotor.setPower(0);
+                shooterMotor.setVelocity(0);
             }
+
 
             if (gamepad2.right_bumper == true) {
                 wobbleGoalExtendMotor.setPower(-.5);

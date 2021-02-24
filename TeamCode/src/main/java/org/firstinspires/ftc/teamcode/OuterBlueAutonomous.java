@@ -30,6 +30,7 @@ public class OuterBlueAutonomous extends LinearOpMode{
         robot.pause(500);
         robot.shooterServo1(.8);
         robot.shooterServo2(.8);
+        robot.pause(500);
         robot.intakeServoEngage(.9);
         robot.pause(4500);
         robot.shooterStop();
@@ -39,6 +40,10 @@ public class OuterBlueAutonomous extends LinearOpMode{
         robot.forward(.8,-1);
         robot.strafeLeft(.6,2.1);
         robot.forward(.6,-1.5);
+        robot.pivotRight(.6,15);
+        robot.moveWobbleGoalArm(.6, .3);
+        robot.wobbleGoalGrippyThingRelease();
+        robot.moveWobbleGoalArm(.5, -.4);
 
 
 
