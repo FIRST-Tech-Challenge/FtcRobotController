@@ -37,19 +37,8 @@ public class MainTeleopOdometry extends LinearOpMode{
 
     private IMURobot robot;
 
-    //Figures for ring elevator calculations
-    private static final double PINION_CIRCUMFERENCE = 2.57;
-    private static final double ELEVATOR_HEIGHT = 5.0;
-    private static final double PINION_REVOLUTIONS = ELEVATOR_HEIGHT/PINION_CIRCUMFERENCE;
-    private static final double SERVO_RPM = 50.0;
-    private static final double ELEVATOR_TIME = PINION_REVOLUTIONS/SERVO_RPM * 60;
-
     //Figures for Odometry
-    final double WHEEL_DIAMETER = 1.5;
-    final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
-    final double COUNTS_PER_REVOLUTION = 1280;
     final double COUNTS_PER_INCH = 307.699557;
-    //final double COUNTS_PER_INCH = COUNTS_PER_REVOLUTION/WHEEL_CIRCUMFERENCE;
 
 
 

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -26,7 +27,6 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Autonomous(name = "Autonomous Main")
 public class AutonomousMain extends LinearOpMode
@@ -73,21 +73,37 @@ public class AutonomousMain extends LinearOpMode
     {
         motorFrontRight = hardwareMap.dcMotor.get("FR");
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
-        motorBackRight = hardwareMap.dcMotor.get("BR");
         motorBackLeft = hardwareMap.dcMotor.get("BL");
+        motorBackRight = hardwareMap.dcMotor.get("BR");
 
+        //intake and conveyor
+        intake = hardwareMap.dcMotor.get("intake");
+
+        //wobble and flipper
         wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
         wobbleClaw = hardwareMap.servo.get("wobbleClaw");
-
         flipper = hardwareMap.servo.get("flipper");
 
-        //launcher
+        //launcher  //Feb 7 - Jeff commmented out these motor definitions
         outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
         outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
+        //Jeff added
+        //outtakeLeft=hardwareMap.get(DcMotor.class, "outtakeLeft");
+        //outtakeRight=hardwareMap.get(DcMotor.class, "outtakeRight");
+        outtakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        outtakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //Encoders
+        /*
+        verticalLeft = hardwareMap.dcMotor.get("FL");
+        verticalRight = hardwareMap.dcMotor.get("FR");
+        horizontal = hardwareMap.dcMotor.get("BL");
+         */
         horizontal = hardwareMap.dcMotor.get("outtakeRight");
         verticalLeft = hardwareMap.dcMotor.get("wobbleArm");
         verticalRight = hardwareMap.dcMotor.get("intake");
+
 
         verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -97,17 +113,19 @@ public class AutonomousMain extends LinearOpMode
         wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        //intake and conveyor
-        intake = hardwareMap.dcMotor.get("intake");
-
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        //Set zero power behaviors to brake
+
+        //reverse the needed motors
+        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
+
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         //Create an IMURobot object that we will use to run the robot
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
