@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.provider.ContactsContract;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -28,16 +27,13 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "Autonomous Main")
-public class AutonomousMain extends LinearOpMode
-{
+@Autonomous(name = "AutonomousMain")
+public class AutonomousMain extends LinearOpMode {
     double hue;
     OpenCvCamera webcam;
     WebcamName webcam1;
     MainPipeline mainPipeline;
     double sensitivity;
-
-    private DcMotor intake;
 
     private DcMotor motorFrontRight;
     private DcMotor motorFrontLeft;
@@ -52,82 +48,71 @@ public class AutonomousMain extends LinearOpMode
     private DcMotor outtakeLeft;
     private DcMotor outtakeRight;
 
-    final double COUNTS_PER_INCH = 307.699557;
+    //Figures for Odometry
+    final double WHEEL_DIAMETER = 1.5;
+    final double WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER * Math.PI;
+    final double COUNTS_PER_REVOLUTION = 1280;
+    //final double COUNTS_PER_INCH = 307.699557;
+    final double COUNTS_PER_INCH = COUNTS_PER_REVOLUTION/WHEEL_CIRCUMFERENCE;
 
     //Odometry encoder wheels
     DcMotor verticalRight, verticalLeft, horizontal;
 
     OdometryGlobalCoordinatePosition globalPositionUpdate;
 
+    private DcMotor intake;
 
     //Declare imu
     private BNO055IMU imu;
 
     private IMURobot robot;
 
-    double threshold1;
-    double threshold2;
-
     @Override
     public void runOpMode() throws InterruptedException
     {
         motorFrontRight = hardwareMap.dcMotor.get("FR");
         motorFrontLeft = hardwareMap.dcMotor.get("FL");
-        motorBackLeft = hardwareMap.dcMotor.get("BL");
         motorBackRight = hardwareMap.dcMotor.get("BR");
+        motorBackLeft = hardwareMap.dcMotor.get("BL");
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //intake and conveyor
-        intake = hardwareMap.dcMotor.get("intake");
-
-        //wobble and flipper
         wobbleArm = hardwareMap.dcMotor.get("wobbleArm");
         wobbleClaw = hardwareMap.servo.get("wobbleClaw");
+
         flipper = hardwareMap.servo.get("flipper");
 
-        //launcher  //Feb 7 - Jeff commmented out these motor definitions
-        outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
-        outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");
-        //Jeff added
-        //outtakeLeft=hardwareMap.get(DcMotor.class, "outtakeLeft");
-        //outtakeRight=hardwareMap.get(DcMotor.class, "outtakeRight");
+        //launcher
+        /*outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
+        outtakeLeft = hardwareMap.dcMotor.get("outtakeLeft");*/
+        outtakeLeft=hardwareMap.get(DcMotor.class, "outtakeLeft");
+        outtakeRight=hardwareMap.get(DcMotor.class, "outtakeRight");
         outtakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         outtakeLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         outtakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //Encoders
-        /*
-        verticalLeft = hardwareMap.dcMotor.get("FL");
-        verticalRight = hardwareMap.dcMotor.get("FR");
-        horizontal = hardwareMap.dcMotor.get("BL");
-         */
+
+        //verticalLeft = hardwareMap.dcMotor.get("FL");
+        //verticalRight = hardwareMap.dcMotor.get("FR");
+        //horizontal = hardwareMap.dcMotor.get("BL");
         horizontal = hardwareMap.dcMotor.get("outtakeRight");
         verticalLeft = hardwareMap.dcMotor.get("wobbleArm");
         verticalRight = hardwareMap.dcMotor.get("intake");
 
 
-        verticalLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake = hardwareMap.dcMotor.get("intake");
 
-        outtakeRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-
-        //reverse the needed motors
-        motorFrontRight.setDirection(DcMotor.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotor.Direction.REVERSE);
-        intake.setDirection(DcMotor.Direction.REVERSE);
-
-
+        //Set zero power behaviors to brake
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
         //Create an IMURobot object that we will use to run the robot
         robot = new IMURobot(motorFrontRight, motorFrontLeft, motorBackRight, motorBackLeft,
@@ -156,7 +141,6 @@ public class AutonomousMain extends LinearOpMode
         webcam.openCameraDevice();
 
         mainPipeline = new MainPipeline();
-
         webcam.setPipeline(mainPipeline);
 
 
@@ -171,44 +155,48 @@ public class AutonomousMain extends LinearOpMode
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
-
         goShoot();
-
-        sleep(5000);
 
         //targetZone: 1 = A, 2 = B, 3 = C
         int targetZone = 0;
-        threshold1 = 50;
-        threshold2 = 120;
+        int stackThreshold = 60;
 
-            if (mainPipeline.stackHeight < threshold1) {
-                targetZone = 1; //A
 
-            } else if (mainPipeline.stackHeight > threshold2) {
-                targetZone = 3; //C
+        int stack = mainPipeline.ycontours.size();
+        telemetry.addData("Stack Height before case: ", mainPipeline.stackHeight);
 
-            } else {
-                targetZone = 2; //B
+        if (mainPipeline.stackHeight < 50) {
+            targetZone = 1;
 
-            }
+        } else if (mainPipeline.stackHeight > 120) {
+            targetZone = 3;
 
-            telemetry.addData("Stack Height before case: ", mainPipeline.stackHeight);
-            telemetry.addData("Stack Height: ", mainPipeline.stackHeight);
-            telemetry.addData("tz: ", targetZone);
-            telemetry.update();
+        } else {
+            targetZone = 2;
+
+        }
+
+        telemetry.addData("Stack Height: ", mainPipeline.stackHeight);
+        telemetry.addData("tz: ", targetZone);
+        telemetry.update();
+
+
 
         switch(targetZone){
-            case 1: //A
+            case 1:
                 robot.gyroDriveCm(0.5, 60);
                 robot.gyroTurn(-85, 0.5);
                 robot.gyroDriveCm(-0.5, 40);
                 dropWobble();
-                odometryDriveToPosCorrected(-15.88,69.8,0);
+                robot.gyroDriveCm(0.75,45);
+                //backup
+                //robot.gyroDriveCm(-.5, 10);
+                //odometryDriveToPos(100,100);
                 break;
-            case 2: //B
-                robot.intake(0.85);
-                robot.gyroDriveCmIntake(-.6, 100);
-                robot.gyroDriveCm(.6, 100);
+            case 2:
+                intake.setPower(-1);
+                robot.gyroDriveCm(-.6, 150);
+                robot.gyroDriveCm(.6, 150);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(2500);
                 intake.setPower(0);
@@ -221,13 +209,14 @@ public class AutonomousMain extends LinearOpMode
                 robot.gyroTurn(165, 0.5);
                 robot.gyroDriveCm(-.75, 80);
                 dropWobble();
-                odometryDriveToPosCorrected(-15.88,69.8,0);
-
+                robot.gyroDriveCm(.75, 50);
+                //odometryDriveToPos(100,100);
                 break;
-            case 3: //C
-                robot.intake(0.85);
-                robot.gyroDriveCmIntake(-.5, 100);
-                robot.gyroDriveCm(.5, 100);
+            case 3:
+                intake.setPower(-1);
+                robot.gyroDriveCm(-.5, 150);
+                Thread.sleep(1000);
+                robot.gyroDriveCm(.5, 150);
                 outtakeLeft.setPower(.65);
                 Thread.sleep(3000);
                 intake.setPower(0);
@@ -246,14 +235,14 @@ public class AutonomousMain extends LinearOpMode
                 //robot.gyroStrafeCm(0.5, -90,80);
                 robot.gyroDriveCm(-0.75, 170);
                 dropWobble();
-                odometryDriveToPosCorrected(-15.88,69.8,0);
+                robot.gyroDriveCm(.75, 130);
+                //odometryDriveToPos(100,100);
                 break;
             default:
                 break;
         }
 
         globalPositionUpdate.stop();
-
 
     }
 
@@ -290,7 +279,7 @@ public class AutonomousMain extends LinearOpMode
             //converting blurred image from BGR to HSV
             Imgproc.cvtColor(blurImg, hsvImage, Imgproc.COLOR_RGB2HSV);
 
-            //find orange contours
+            //find yellow contours
             Core.inRange(hsvImage, new Scalar((hue / 2) - sensitivity, 100, 50), new Scalar((hue / 2) + sensitivity, 255, 255), yellow);
             Imgproc.findContours(yellow, ycontours, hierachy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -304,22 +293,78 @@ public class AutonomousMain extends LinearOpMode
                         ymaxValIdx = contourIdx;
                     }
                 }
-                //Find the bounding box of the largest orange contour
+                //Find the bounding box of the largest yellow contour
                 Rect ylargestRect = Imgproc.boundingRect(ycontours.get(ymaxValIdx));
                 Imgproc.rectangle(output, new Point(0, ylargestRect.y), new Point(640, ylargestRect.y + ylargestRect.height), new Scalar(255, 255, 255), -1, 8, 0);
 
-                Imgproc.line(output, new Point(0,ylargestRect.y + threshold1), new Point(640, ylargestRect.y + threshold1),new Scalar(255,255,0));
-                Imgproc.line(output, new Point(0,ylargestRect.y + ((threshold1 + threshold2)/2)), new Point(640, ylargestRect.y + ((threshold1 + threshold2)/2)),new Scalar(0,255,0));
-                Imgproc.line(output, new Point(0,ylargestRect.y + threshold2), new Point(640, ylargestRect.y + threshold2),new Scalar(255,255,0));
-
                 stackHeight = ylargestRect.height;
             }
+
+
             return output;
         }
 
     }
+    public void goShoot() throws InterruptedException{
+        double power = .64;
+        double power_off = 0;
 
+        outtakeLeft.setPower(power);//or 0.44
+        outtakeRight.setPower(power_off);//or 0.44
+        //robot.gyroStrafeCm(0.5, 90, 60);//speed up later
+        robot.gyroDriveCm(0.5, 195);
+        robot.gyroStrafeCm(0.5, -90, 105);
 
+        for(int i = 0; i < 3; i++){
+            Thread.sleep(500);
+            flipper.setPosition(0);
+            Thread.sleep(500);//CHANGE!!!!!!! slower
+            flipper.setPosition(1);
+            Thread.sleep(500);//CHANGE!!!!!!!!
+            outtakeLeft.setPower(power);//or 0.44
+            outtakeRight.setPower(power_off);//or 0.44
+        }
+        flipper.setPosition(1);
+        outtakeLeft.setPower(power_off);
+        outtakeRight.setPower(power_off);
+    }
+
+    public void robotStrafe (double power, double angle){
+        //restart angle tracking
+        robot.resetAngle();
+
+        //convert direction (degrees) into radians
+        double newDirection = angle * Math.PI/180 + Math.PI/4;
+        //calculate powers needed using direction
+        double leftPower = Math.cos(newDirection) * power;
+        double rightPower = Math.sin(newDirection) * power;
+
+        //while(opMode.opModeIsActive()){
+        //Get a correction
+        double correction = robot.getCorrection();
+        //Use the correction to adjust robot power so robot faces straight
+        robot.correctedTankStrafe(leftPower, rightPower, correction);
+        //}
+    }
+
+    public void dropWobble(){
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+
+        while(timer.milliseconds() < 1500){
+            wobbleArm.setPower(-.5);
+        }
+        wobbleArm.setPower(0);
+
+        wobbleClaw.setPosition(1);
+
+        timer.reset();
+        while (timer.milliseconds() < 1500) {
+            wobbleArm.setPower(.5);
+        }
+        wobbleArm.setPower(0);
+
+    }
     public void odometryDriveToPosCorrected (double xPos, double yPos, double direction) {
         if (getOdometryAngleDifference(direction) > 1.5){
             setOdometryAngle(0);
@@ -441,27 +486,41 @@ public class AutonomousMain extends LinearOpMode
 
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
-        odometryDriveToPosCorrected(55.6,2.99,0);
+        odometryDriveToPosCorrected(-35.3,54,0);
         robot.shootRingsPower();
         //Shot 2
-        odometryDriveToPosCorrected(55.6,6.6,0);
+        odometryDriveToPosCorrected(-40.6,54,0);
         robot.shootRingsPower();
         //Shot 3
-        odometryDriveToPosCorrected(55.6,8.51,0);
+        odometryDriveToPosCorrected(-48,54,0);
         robot.shootRingsPower();
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPosCorrected(-18,60,0);
+        odometryDriveToPosCorrected(-18,54,350);
         robot.shootRings();
-
     }
+
+    public void goToEnd(){
+        odometryDriveToPosCorrected(-15.88, 69.8,0);
+    }
+
 
     public double getOdometryAngleDifference(double desiredAngle){
         double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
 
         if (angleDifference > 180){
             angleDifference = 360 - angleDifference;
+        }
+
+        return angleDifference;
+    }
+
+    public double getOdometryAngleDifferenceNegative(double desiredAngle){
+        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
+
+        if (angleDifference > 180){
+            angleDifference = angleDifference - 360;
         }
 
         return angleDifference;
@@ -483,59 +542,5 @@ public class AutonomousMain extends LinearOpMode
         motorFrontRight.setPower(power);
         motorBackRight.setPower(power);
     }
-
-    public void dropWobble(){
-        ElapsedTime timer = new ElapsedTime();
-        timer.reset();
-
-        while(timer.milliseconds() < 1500){
-            wobbleArm.setPower(-.5);
-        }
-        wobbleArm.setPower(0);
-
-        wobbleClaw.setPosition(1);
-
-        timer.reset();
-        while (timer.milliseconds() < 1500) {
-            wobbleArm.setPower(.5);
-        }
-        wobbleArm.setPower(0);
-
-    }
-
-    public double getOdometryAngleDifferenceNegative(double desiredAngle){
-        double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
-
-        if (angleDifference > 180){
-            angleDifference = angleDifference - 360;
-        }
-
-        return angleDifference;
-    }
-
-    public void goShoot() throws InterruptedException{
-        double power = .64;
-        double power_off = 0;
-
-        outtakeLeft.setPower(power);//or 0.44
-        outtakeRight.setPower(power_off);//or 0.44
-        //robot.gyroStrafeCm(0.5, 90, 60);//speed up later
-        robot.gyroDriveCm(0.5, 195);
-        robot.gyroStrafeCm(0.5, -90, 120);
-
-        for(int i = 0; i < 3; i++){
-            Thread.sleep(500);
-            flipper.setPosition(0);
-            Thread.sleep(500);//CHANGE!!!!!!! slower
-            flipper.setPosition(1);
-            Thread.sleep(500);//CHANGE!!!!!!!!
-            outtakeLeft.setPower(power);//or 0.44
-            outtakeRight.setPower(power_off);//or 0.44
-        }
-        flipper.setPosition(1);
-        outtakeLeft.setPower(power_off);
-        outtakeRight.setPower(power_off);
-    }
-
 
 }
