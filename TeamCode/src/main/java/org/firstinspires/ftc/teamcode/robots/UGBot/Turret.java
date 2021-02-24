@@ -39,8 +39,8 @@ public class Turret{
     double turretRoll;
     double turretPitch;
     double turretHeading;
-    static boolean initialized = false;
-    private static double offsetHeading;
+    boolean initialized = false;
+    private double offsetHeading;
     private double offsetRoll;
     private double offsetPitch;
     private double turretTargetHeading = 0.0;

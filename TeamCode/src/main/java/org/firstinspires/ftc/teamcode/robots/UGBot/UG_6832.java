@@ -492,40 +492,6 @@ public class UG_6832 extends OpMode {
     public void stop() {
     }
 
-    public boolean driveStraight() {
-        return robot.driveForward(true, 1, .5);
-    }
-
-    int tpmtuningstage = 0;
-
-    public void tpmtuning() {
-
-        switch (tpmtuningstage) {
-            case 0: // todo - this probably needs work to setup the basic articulation for odometer
-                    // distance tuning
-                // if(robot.goToPosition(0,robot.crane.pos_reverseSafeDrive,.75,.3)){
-                // }
-
-                if (toggleAllowed(gamepad1.y, y, 1)) {
-                    robot.resetMotors(true);
-                }
-
-
-                if (toggleAllowed(gamepad1.a, a, 1)) {
-                    tpmtuningstage++;
-                }
-                break;
-            case 1:
-                if (robot.driveForward(true, 2, .35)) { // calibrate forward/backward
-                    // if(robot.driveStrafe(true,2,.35)){ //calibrate strafe if capable - uncomment
-                    // only one of these at a time
-                    tpmtuningstage = 0;
-                    robot.resetMotors(true);
-                }
-                break;
-        }
-    }
-
     private void initialization_initSound() {
         telemetry.addData("Please wait", "Initializing Sound");
         // telemetry.update();
@@ -560,7 +526,6 @@ public class UG_6832 extends OpMode {
         }
 
         if (!joystickDriveStarted) {
-            robot.resetMotors(true);
             robot.setAutonSingleStep(true);
             joystickDriveStarted = true;
             robot.launcher.setActive(true);
@@ -573,15 +538,17 @@ public class UG_6832 extends OpMode {
         pwrFwd = 0;
         pwrRot = 0;
 
-        if (notdeadzone(gamepad1.left_stick_y))
-            pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
-        if (notdeadzone(gamepad1.right_stick_x))
-            pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
+        if(robot.getArticulation().equals(PoseUG.Articulation.manual)) {
+            if (notdeadzone(gamepad1.left_stick_y))
+                pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
+            if (notdeadzone(gamepad1.right_stick_x))
+                pwrRot = pwrDamper * .75 * gamepad1.right_stick_x;
 
-        if (nearZero(pwrFwd) && nearZero(pwrRot)) {
-            robot.driveMixerDiffSteer(0,0);
-        } else {
-            robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
+            if (nearZero(pwrFwd) && nearZero(pwrRot)) {
+                robot.driveMixerDiffSteer(0, 0);
+            } else {
+                robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
+            }
         }
 
         //region good logging example
@@ -608,8 +575,8 @@ public class UG_6832 extends OpMode {
             robot.flywheelIsActive = !robot.flywheelIsActive;
         if(toggleAllowed(gamepad1.y, y, 1))
             robot.intake.toggleFullTilt();
-        if(gamepad1.x)
-            robot.driveToFieldPosition(Constants.startingXOffset, 1.5);
+        if(toggleAllowed(gamepad1.x,x,1))
+            robot.articulate(PoseUG.Articulation.returnHome);
 
 
         if (notdeadzone(gamepad1.right_trigger))
@@ -741,7 +708,6 @@ public class UG_6832 extends OpMode {
                 if (state < 0) {
                     state = 10;
                 }
-                robot.resetMotors(true);
                 active = false;
             }
 
@@ -751,14 +717,12 @@ public class UG_6832 extends OpMode {
                 if (state > 10) {
                     state = 0;
                 }
-                robot.resetMotors(true);
                 active = false;
             }
 
         }
 
         if (toggleAllowed(gamepad1.start, startBtn, 1)) {
-            robot.resetMotors(true);
             active = !active;
         }
     }

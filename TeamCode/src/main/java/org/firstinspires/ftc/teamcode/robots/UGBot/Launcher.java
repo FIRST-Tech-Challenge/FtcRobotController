@@ -102,8 +102,7 @@ public class Launcher {
 
             if (FlywheelActivePID) {
                 spinPIDFlywheel(Constants.kpFlywheel, Constants.kiFlywheel, Constants.kdFlywheel, flywheelTPS, flywheelTargetTPS);
-            } else
-                flywheelTargetTPS = flywheelTPS;
+            }
 
 //
 

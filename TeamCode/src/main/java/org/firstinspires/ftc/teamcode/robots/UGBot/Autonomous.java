@@ -97,9 +97,9 @@ public class Autonomous {
 
             .addMineralState(ugStateProvider,
                     //() -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 3),
-                    () -> robot.driveToFieldPosition(Constants.startingXOffset+.25,1),
-                    () -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.3), // 2.3
-                    () -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 1.87)) //1.87
+                    () -> robot.driveWallPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 1),
+                    () -> robot.driveWallPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.3), // 2.3
+                    () -> robot.driveWallPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 1.87)) //1.87
 
             .addMineralState(ugStateProvider,
                     () -> robot.turret.rotateCardinalTurret(true),
@@ -126,7 +126,8 @@ public class Autonomous {
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset-.25,1))
+            .addState(() -> robot.driveWallPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.8))
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,7 +143,7 @@ public class Autonomous {
 //                        .stateEndAction(() -> robot.turret.maintainHeadingTurret(false)).stage(stage);
 
             return StateMachine.builder()
-                    .stateSwitchAction(() -> robot.resetMotors(true))
+                    .stateSwitchAction(() -> robot.returnTrue())
                     .stateEndAction(() -> {})
                     .stage(stage);
 

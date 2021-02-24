@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils.Point;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectorySolution;
+import org.firstinspires.ftc.teamcode.robots.tombot.PoseSkystone;
 import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
@@ -28,7 +29,9 @@ import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
+import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
 import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
+import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngleMinus;
 import static org.firstinspires.ftc.teamcode.vision.Config.ALIGN_D;
@@ -59,9 +62,9 @@ public class PoseUG {
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
     public static double brightness = 0.0; //headlamp brightness - max value should be .8 on a fully charged battery
-    public static double kpDrive = 0.02; // proportional constant multiplier
-    public static double kiDrive = 0.01; // integral constant multiplier
-    public static double kdDrive = 0.68; // derivative constant multiplier //increase
+    public static double kpDrive = 0.008; // proportional constant multiplier .02
+    public static double kiDrive = 0.0; // integral constant multiplier .01
+    public static double kdDrive = .19; // derivative constant multiplier //increase 0.68
     public static double cutout = 1.0;
 
     public double headingP = 0.007;
@@ -126,8 +129,8 @@ public class PoseUG {
     private double posePitch;
     private double poseRoll;
     private long timeStamp; // timestamp of last update
-    private static boolean initialized = false;
-    public  double offsetHeading; //todo- maybe static
+    private boolean initialized = false; //todo: this should never be static in competition
+    public double offsetHeading; //todo- maybe static
     private double offsetPitch;
     private double offsetRoll;
     private double goalHeading;
@@ -144,7 +147,7 @@ public class PoseUG {
 
     private long turnTimer = 0;
     private boolean turnTimerInit = false;
-    private double minTurnError = 5.0;
+    private double minTurnError = 1.0;
     public boolean maintainHeadingInit = false;
 
     private double poseSavedHeading = 0.0;
@@ -170,6 +173,9 @@ public class PoseUG {
         inprogress, // currently in progress to a final articulation
         manual, // target positions are all being manually overridden
         toggleTrigger,
+        cardinalBaseRight,
+        cardinalBaseLeft,
+        returnHome,
         testShot
     }
 
@@ -464,9 +470,9 @@ public class PoseUG {
         packet.put("x offset", trajSol.getxOffset());
         packet.put("disk speed", trajSol.getVelocity());
         packet.put("pose speed", poseSpeed);
-        packet.put("bearing to", (360-Math.abs(getBearingToWrapped(Constants.startingXOffset-.25, 1))));
-        packet.put("bearing t2", getHeading() + getBearingToWrapped(Constants.startingXOffset-.25, 1));
+        packet.put("bearing to", (360-Math.abs(getBearingTo(Constants.startingXOffset-.25, 1))));
         packet.put("distance to", getDistanceTo(Constants.startingXOffset,1.5));
+        packet.put("rotVelBase", rotVelBase);
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
@@ -509,7 +515,8 @@ public class PoseUG {
      * @param ticksLeft
      * @param ticksRight
      */
-
+    double rotVelBase = 0.0;
+    double prevHeading = getHeading();
     boolean flywheelIsActive = false;
     public void update(BNO055IMU imu, long ticksLeft, long ticksRight, boolean isActive) {
         long currentTime = System.nanoTime();
@@ -585,14 +592,17 @@ public class PoseUG {
         timeStamp = currentTime;
         displacementPrev = getAverageTicks();
 
+        rotVelBase = (getHeading() - prevHeading) / (loopTime / 1E9);
+        prevHeading = getHeading();
+
         poseX += displacement * Math.sin(poseHeadingRad);
         poseY += displacement * Math.cos(poseHeadingRad);
 
         lastXAcceleration = cachedXAcceleration;
         cachedXAcceleration = imu.getLinearAcceleration().xAccel;
 
-        loopTime = System.currentTimeMillis() - lastUpdateTimestamp;
-        lastUpdateTimestamp = System.currentTimeMillis();
+        loopTime = System.nanoTime() - lastUpdateTimestamp;
+        lastUpdateTimestamp = System.nanoTime();
 
         trajCalc.updatePos(poseX, poseY);
         trajCalc.updateVel(velocityX, velocityY);
@@ -601,7 +611,7 @@ public class PoseUG {
 
         launcher.update();
         turret.update();
-        intake.update();
+        intake.update(); //turnip
         maintainTarget();
 
         sendTelemetry();
@@ -618,6 +628,9 @@ public class PoseUG {
         switch(target) {
             case NONE:
                 turret.setTurntableAngle(turret.getTurretTargetHeading());
+                launcher.setFlywheelTargetTPS(0);
+                launcher.setFlywheelActivePID(false);
+//                turret.setTurntableAngle(getHeading());
                 break;
             default:
                 goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
@@ -625,10 +638,12 @@ public class PoseUG {
                 launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.MULTIPLIER);
 
                 if(flywheelIsActive){
+                    launcher.setFlywheelActivePID(true);
                     launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity());
                 }
                 else{
                     launcher.setFlywheelTargetTPS(0);
+                    launcher.setFlywheelActivePID(false);
                 }
                 break;
         }
@@ -670,13 +685,6 @@ public class PoseUG {
             resetMotors(false);
         }
         return driveIMUDistance(pwr,  targetAngle,  forward,  targetMeters);
-    }
-
-    public boolean driveGenericPIDDistanceWithReset(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
-        if (!driveIMUDistanceInitialzed) {
-            resetMotors(false);
-        }
-        return driveGenericPIDDistance(pwr, targetVal, currentVal, forward, targetMeters);
     }
 
     public boolean driveIMUUntilDistanceWithReset(double pwr, double targetAngle, boolean forward, double targetMeters) {
@@ -746,7 +754,7 @@ public class PoseUG {
         // position
         if (Math.abs(targetMeters) > Math.abs(closeEnoughDist)) {
             // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
-            driveIMU(kpDrive, kiDrive, kdDrive, pwr, targetAngle, false);
+            driveIMU(kpDrive, kiDrive, kdDrive, pwr, wrap360(targetAngle), false);
             return false;
         } // destination achieved
         else {
@@ -756,28 +764,30 @@ public class PoseUG {
         }
     }
 
-    double prevWallVal = 0.4572;
+    double WallVal = 0.0;
     double numLoops = 0;
     int countOutliers = 0;
+    double driveWallDistanceTarget = 0;
 
-    public boolean driveGenericPIDDistance(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
+    public boolean driveWallPIDDistance(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
 
         if (!driveIMUDistanceInitialzed) {
             // set what direction the robot is supposed to be moving in for the purpose of
             // the field position calculator
 
             // calculate the target position of the drive motors
-            driveIMUDistanceTarget = (long) Math.abs((targetMeters * forwardTPM)) + Math.abs(getAverageTicks());
+            driveWallDistanceTarget = (long) Math.abs((targetMeters * forwardTPM)) + Math.abs(getAverageTicks());
             driveIMUDistanceInitialzed = true;
         }
 
-        prevWallVal += currentVal / 50;
+        numLoops++;
+        WallVal += currentVal / 50;
 
-        if((targetVal / 50) / (prevWallVal / numLoops) > .10){
+        if((WallVal / numLoops) - (currentVal /50) > .03){
             countOutliers++;
-
         }
-        prevWallVal = currentVal / 50;
+
+
 
         if (!forward) {
             moveMode = moveMode.backward;
@@ -786,19 +796,33 @@ public class PoseUG {
         } else
             moveMode = moveMode.forward;
 
+        if(Math.abs(getAverageTicks() / Math.abs(driveWallDistanceTarget)) > .90){
+            if(rotVelBase < 5){
+                shiftOdometer(getHeading());
+                initialized = false;
+            }
+        }
+
         // if this statement is true, then the robot has not achieved its target
         // position
-        if (Math.abs(driveIMUDistanceTarget) > Math.abs(getAverageTicks())) {
+        if (Math.abs(driveWallDistanceTarget) > Math.abs(getAverageTicks())) {
             // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
             movegenericPIDMixer(kpDrive,kiDrive,kdDrive,pwr,0,currentVal,targetVal);
             return false;
-        } // destination achieved
+        } // destination achieved\
         else {
             //stopAll();
             driveMixerDiffSteer(0, 0);
             driveIMUDistanceInitialzed = false;
             return true;
         }
+    }
+
+    public void shiftOdometer(double newHeading){
+        double oldX = getX();
+        double oldY = getY();
+        poseX = oldX*Math.cos(Math.toRadians(newHeading)) - oldY*Math.sin(Math.toRadians(newHeading));
+        poseY = oldX*Math.sin(Math.toRadians(newHeading)) - oldY*Math.cos(Math.toRadians(newHeading));
     }
 
     public boolean driveIMUUntilDistance(double pwr, double targetAngle, boolean forward, double targetMetersAway) {
@@ -836,15 +860,15 @@ public class PoseUG {
 
     int fieldPosState = 0;
 
-    public boolean driveToFieldPosition(double targetX, double targetY){
+    public boolean driveToFieldPosition(double targetX, double targetY, boolean forward){
         switch (fieldPosState){
             case 0:
-                if(rotateIMU((360-Math.abs(getBearingToWrapped(targetX, targetY))),9)) {
+                if(rotateIMU(getBearingToWrapped(targetX, targetY),9)) {
                     fieldPosState++;
                 }
                 break;
             case 1:
-                if(driveAbsoluteDistance(.2, (360-Math.abs(getBearingToWrapped(targetX, targetY))), true, getDistanceTo(targetX, targetY),.1)) {
+                if(driveAbsoluteDistance(.6, (getBearingToWrapped(targetX, targetY)), forward, getDistanceTo(targetX, targetY),.1)) {
                     fieldPosState = 0;
                     return true;
                 }
@@ -855,10 +879,10 @@ public class PoseUG {
 
     int fieldPosStateToo = 0;
 
-    public boolean driveToFieldPosition(double targetX, double targetY, double targetFinalHeading){
+    public boolean driveToFieldPosition(double targetX, double targetY, boolean forward, double targetFinalHeading){
         switch (fieldPosStateToo){
             case 0:
-                if(driveToFieldPosition(targetX, targetY)) {
+                if(driveToFieldPosition(targetX, targetY, forward)) {
                     fieldPosStateToo++;
                 }
                 break;
@@ -880,7 +904,7 @@ public class PoseUG {
     }
 
     private double getBearingToWrapped(double targetX, double targetY) {
-        return Conversions.wrapAngle(Math.toDegrees(Math.atan2((targetX-getPoseX()), (targetY-getPoseY()))));
+        return wrap360(Math.toDegrees(Math.atan2((targetX-getPoseX()), (targetY-getPoseY()))));
     }
 
     /**
@@ -961,31 +985,50 @@ public class PoseUG {
         return false;
     }
 
-    public int testShotState = 0;
+    boolean isNavigating = false;
+    boolean autonTurnInitialized = false;
+    double autonTurnTarget = 90.0;
 
+    public boolean cardinalBaseTurn(boolean isRightTurn) {
+//        if (!autonTurnInitialized) {
+//            autonTurnTarget = nextCardinal(getHeading(), isRightTurn, 10);
+//            autonTurnInitialized = true;
+//            isNavigating = true;
+//        }
+//
+//        if (isNavigating == false)
+//            return true; // abort if drivers override
 
-    public boolean testShot(){
-        launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity());
-            switch (testShotState) {
-                case 0:
-                    testShotState++;
-                    break;
-                case 1:
-                    if (launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.MULTIPLIER)) {
-                        testShotState++;
-                    }
-                    break;
-                case 2:
-                    if (Math.abs(launcher.flywheelTargetTPS - launcher.flywheelTPS) / launcher.flywheelTargetTPS < 0.05) {
-                        if (toggleTriggerArticulation()) {
-//                            launcher.setFlywheelTargetTPS(0);
-                            testShotState = 0;
-                            return true;
-                        }
-                    }
-                    break;
-            }
-            return false;
+        if (rotateIMU(autonTurnTarget, 5.0) ) {
+//            isNavigating = false;
+//            autonTurnInitialized = false;
+            autonTurnTarget = wrap360(autonTurnTarget + 90);
+            return true;
+        }
+        return false;
+    }
+
+    int returnHomeState = 0;
+    public boolean returnHome(){
+        switch(returnHomeState){
+            case 0:
+                setTarget(Constants.Target.NONE);
+                turret.setTurntableAngle(0);
+                launcher.setElbowTargetAngle(0);
+                returnHomeState++;
+                break;
+            case 1:
+                if(driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset+.25,true,0))
+                    returnHomeState++;
+                break;
+            case 2:
+                if(driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset,true,0)){
+                    returnHomeState = 0;
+                    return true;
+                }
+                break;
+        }
+        return false;
     }
 
     public Articulation articulate(Articulation target) {
@@ -1004,9 +1047,20 @@ public class PoseUG {
                 if(toggleTriggerArticulation())
                         articulation = Articulation.manual;
                 break;
-            case testShot:
-                if(testShot())
-                    articulation = Articulation.manual;
+            case cardinalBaseLeft:
+                if (cardinalBaseTurn(false)) {
+                    articulation = PoseUG.Articulation.manual;
+                }
+                break;
+            case cardinalBaseRight:
+                if (cardinalBaseTurn(true)) {
+                    articulation = PoseUG.Articulation.manual;
+                }
+                break;
+            case returnHome:
+                if (returnHome()) {
+                    articulation = PoseUG.Articulation.manual;
+                }
                 break;
             default:
                 return target;
@@ -1467,7 +1521,7 @@ public class PoseUG {
         }
         driveIMU(kpDrive, kiDrive, kdDrive, 0, targetAngle, false); // check to see if the robot turns within a
                                                                     // threshold of the target
-         if(Math.abs(getHeading() - targetAngle) < minTurnError) {
+         if(Math.abs(getHeading() - targetAngle) < minTurnError && Math.abs(rotVelBase) < 20) {
          turnTimerInit = false;
          driveMixerMec(0,0,0);
          return true;
@@ -1802,4 +1856,7 @@ public class PoseUG {
         odometer = 0;
     }
 
+    public boolean returnTrue(){
+        return true;
+    }
 }
