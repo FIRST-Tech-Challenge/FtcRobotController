@@ -203,7 +203,7 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroDriveCm(-.6, 150);
                 robot.gyroDriveCm(.6, 150);
                 outtakeLeft.setPower(.65);
-                Thread.sleep(2500);
+                Thread.sleep(1500);
                 intake.setPower(0);
                 flipper.setPosition(0);
                 Thread.sleep(500);//CHANGE!!!!!!! slower
@@ -220,10 +220,10 @@ public class AutonomousMain extends LinearOpMode {
             case 3:
                 intake.setPower(-0.65);
                 robot.gyroDriveCm(-.5, 150);
-                Thread.sleep(1000);
+                Thread.sleep(500);
                 robot.gyroDriveCm(.5, 150);
                 outtakeLeft.setPower(.65);
-                Thread.sleep(3000);
+                Thread.sleep(1500);
                 intake.setPower(0);
                 flipper.setPosition(0);
                 Thread.sleep(500);//CHANGE!!!!!!! slower
