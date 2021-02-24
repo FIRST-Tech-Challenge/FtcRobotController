@@ -79,6 +79,8 @@ public class AutonomousMain extends LinearOpMode {
         wobbleClaw = hardwareMap.servo.get("wobbleClaw");
 
         flipper = hardwareMap.servo.get("flipper");
+        intake = hardwareMap.dcMotor.get("intake");
+
 
         //launcher
         /*outtakeRight = hardwareMap.dcMotor.get("outtakeRight");
@@ -101,9 +103,11 @@ public class AutonomousMain extends LinearOpMode {
         verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        intake = hardwareMap.dcMotor.get("intake");
-
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wobbleArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
