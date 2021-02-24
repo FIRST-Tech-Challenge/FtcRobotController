@@ -27,154 +27,144 @@ import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 @TeleOp(name = "TwoGPTeleop ")
 //@Disabled
 public class TwoGPTeleop extends LinearOpMode {
-
-    // new version of runopmode that supports inplaceturn slowmode and can toggle slowmode on and off with one button - tested by aiden jonathan ma
-    public void runOpMode() {
-
-        telemetry.addData("Status", "Before new Robot");
-        telemetry.update();
-        Robot robot=new Robot(this, BasicChassis.ChassisType.ODOMETRY, false ,false);
-        telemetry.addData("Status", "Done with new Robot");
-        telemetry.update();
-
-        double magnitude;
-        double angleInRadian;
-        double angleInDegree;
-        boolean isSlow = false;
-        boolean currSlow = false;
-        boolean slowMode = false;
-        boolean wobble_goal_servo_is_up = true;
-        boolean move_wobble_goal_servo = true;
-        WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
-
-        telemetry.addData("Status", "Ready to go");
-        telemetry.update();
-
-        //Aiden - during competition day robot disconnected so we are trying this code
-        while (!opModeIsActive() && !isStopRequested()) {
-            telemetry.addData("status", "waiting for start command...");
+        public void runOpMode() {
+            telemetry.addData("Status", "Before new Robot");
             telemetry.update();
-        }
+            Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false ,false);
+            telemetry.addData("Status", "Done with new Robot");
+            telemetry.update();
+            //robot.navigateTeleOp();
+            double magnitude;
+            double angleInRadian;
+            double angleInDegree;
+            boolean slowMode = false;
+            boolean wobble_goal_servo_is_up = true;
+            boolean move_wobble_goal_servo = true;
+            robot.openWobbleGoalClaw();
+            WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
 
-        robot.moveWobbleGoalToPosition(WobbleGoal.Position.STARTOFTELEEOP);
+            telemetry.addData("Status", "Ready to go");
+            telemetry.update();
 
-        while (!isStopRequested()) {
-
-            float left_stick_y = -gamepad1.left_stick_y;
-            float left_stick_x = -gamepad1.left_stick_x;
-            float right_stick_x = -gamepad1.right_stick_x;
-            boolean move_wobble_goal_arm = gamepad1.right_bumper;
-            boolean start_transfer_sys = gamepad1.right_bumper;
-            boolean wobble_goal_servo = gamepad1.x;
-            boolean slow = gamepad1.a;
-            boolean powershot = gamepad1.b;
-            boolean servo = gamepad2.x;
-            float shooter = gamepad2.right_trigger;
-
-            angleInRadian = Math.atan2(left_stick_y, left_stick_x);
-            angleInDegree = Math.toDegrees(angleInRadian);
-
-            /**Shooter**/
-            if (servo){
-                telemetry.addData("Servo", " SERVO Forward and Backward");
+            //Aiden - during competition day robot disconnected so we are trying this code
+            while (!opModeIsActive() && !isStopRequested()) {
+                telemetry.addData("status", "waiting for start command...");
                 telemetry.update();
-                robot.moveServo(false);
-                robot.moveServo(true);
             }
 
-            if (shooter != 0) {
-                robot.shootGoalTeleop(1000);
-            } else {
-                robot.stopShooter();
-            }
 
-            /**Speed Mode**/
-            if (slow) {
-                isSlow = true;
+            while (!isStopRequested()) {
 
-                if (currSlow) {
-                    currSlow = false;
-                } else if (currSlow == false) {
-                    currSlow = true;
+                float left_stick_y = -gamepad1.left_stick_y;
+                float left_stick_x = -gamepad1.left_stick_x;
+                float right_stick_x = -gamepad1.right_stick_x;
+                boolean move_wobble_goal_arm = gamepad2.left_bumper;
+                boolean start_transfer_sys = gamepad1.right_bumper;
+                float shooter = gamepad2.right_trigger;
+                boolean odo_powershots = gamepad1.b;
+                boolean shooter_servo = gamepad1.x;
+                boolean wobble_goal_servo = gamepad2.y;
+                boolean quick_reverse = gamepad1.a;
+
+
+                angleInRadian = Math.atan2(left_stick_y, left_stick_x);
+                angleInDegree = Math.toDegrees(angleInRadian);
+
+                /**Powershots**/
+                if(odo_powershots){
+                    robot.setPosition(0,0,0);
+                    robot.goToPosition(40,5 ,0,0.8);
+                    robot.goToPosition(40,-40,-88,0.7);
+                    robot.shootThreePowerShot();
                 }
-            } else {
-                isSlow = false;
-            }
 
-            if (isSlow) {
-                if (currSlow) {
-                    slowMode = true;
-                } else if (currSlow == false) {
-                    slowMode = false;
+                /**Shooter**/
+                if (shooter_servo){
+                    telemetry.addData("Servo", " SERVO Forward and Backward");
+                    telemetry.update();
+                    robot.moveServo(false);
+                    robot.moveServo(true);
                 }
-            }
 
-            magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
-
-            robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode);
-
-            // wobble goal movements
-            telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
-            telemetry.update();
-            if (move_wobble_goal_arm){
-                WobbleGoal.Position nextWobbleGoalPosition = WobbleGoal.Position.REST;
-                if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
-                } else if (currentWobbleGoalPosition == WobbleGoal.Position.GRAB) {
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.RAISE);
-                } else if (currentWobbleGoalPosition == WobbleGoal.Position.RAISE) {
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.RELEASE);
-                } else if (currentWobbleGoalPosition == WobbleGoal.Position.RELEASE) {
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
+                if (shooter != 0) {
+                    robot.shootGoalTeleop(1000);
                 } else {
-                    telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
-                    telemetry.update();
+                    robot.stopShooter();
+                }
+
+                magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
+
+                robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
+
+                // wobble goal movements
+                telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
+                telemetry.update();
+                if (move_wobble_goal_arm){
+                    WobbleGoal.Position nextWobbleGoalPosition = WobbleGoal.Position.REST;
+                    if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
+                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
+                    } else if (currentWobbleGoalPosition == WobbleGoal.Position.GRAB) {
+                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DriveToWall);
+                    } else if (currentWobbleGoalPosition == WobbleGoal.Position.DriveToWall) {
+                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DropOverWall);
+                        this.sleep(600);
+                        robot.openWobbleGoalClaw();
+                    } else if(currentWobbleGoalPosition == WobbleGoal.Position.DropOverWall){
+                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
+                    }
+                    else {
+                        telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
+                        telemetry.update();
+                        sleep(500);
+                    }
+                    // added by Aiden; must have this otherwise if you hold onto the button multiple
+                    // actions/movements will be executed by mistake
                     sleep(500);
+                    currentWobbleGoalPosition = nextWobbleGoalPosition;
                 }
-                // added by Aiden; must have this otherwise if you hold onto the button multiple
-                // actions/movements will be executed by mistake
-                sleep(500);
-                currentWobbleGoalPosition = nextWobbleGoalPosition;
-            }
 
-            if (wobble_goal_servo) {
-                move_wobble_goal_servo = true;
+                if (wobble_goal_servo) {
+                    move_wobble_goal_servo = true;
 
-                if (wobble_goal_servo_is_up) {
-                    wobble_goal_servo_is_up = false;
-                } else if (!wobble_goal_servo_is_up) {
-                    wobble_goal_servo_is_up = true;
+                    if (wobble_goal_servo_is_up) {
+                        wobble_goal_servo_is_up = false;
+                    } else if (!wobble_goal_servo_is_up) {
+                        wobble_goal_servo_is_up = true;
+                    }
+                } else {
+                    move_wobble_goal_servo = false;
                 }
-            } else {
-                move_wobble_goal_servo = false;
-            }
 
-            if (move_wobble_goal_servo) {
-                if (wobble_goal_servo_is_up) {
-                    telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
-                    telemetry.update();
-                    robot.closeWobbleGoalClaw();
-                } else if (!wobble_goal_servo_is_up) {
-                    telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
-                    telemetry.update();
-                    robot.openWobbleGoalClaw();
+                if (move_wobble_goal_servo) {
+                    if (wobble_goal_servo_is_up) {
+                        telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
+                        telemetry.update();
+                        robot.closeWobbleGoalClaw();
+                    } else if (!wobble_goal_servo_is_up) {
+                        telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
+                        telemetry.update();
+                        robot.openWobbleGoalClaw();
+                    }
+                }
+
+                // transfer system
+                if(start_transfer_sys){
+                    robot.startIntake();
+                    robot.startTransfer();
+                } else if (!start_transfer_sys){
+                    robot.stopIntake();
+                    robot.stopTransfer();
+                }
+
+                // quick reverse
+                if (quick_reverse){
+                    robot.reverseIntake();
+                    robot.reverseTransfer();
+                    sleep(250);
+                    robot.startIntake();
+                    robot.startTransfer();
                 }
             }
-
-            //transfer system
-            if(start_transfer_sys){
-                robot.startIntake();
-                robot.startTransfer();
-            } else if (!start_transfer_sys){
-                robot.stopIntake();
-                robot.stopTransfer();
-            }
-            if(powershot){
-                robot.goToPosition(-1.5,2,0,0.9);
-                robot.shootThreePowerShot();
-            }
-
+            idle();
         }
-        idle();
     }
-}

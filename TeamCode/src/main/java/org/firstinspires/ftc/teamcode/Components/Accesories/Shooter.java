@@ -35,8 +35,8 @@ public class Shooter {
         shooterMotor = (DcMotorEx) op.hardwareMap.dcMotor.get("ShooterMotor");//gets the name ShooterMotor from hardware map and assigns it to shooter_Motor
         shooter_Servo = op.hardwareMap.servo.get("ShooterServo");
         shooterMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        shooterMotor.setVelocityPIDFCoefficients(57, 0, 0, 17);
-        shooter_Servo.setPosition(1.0);
+        shooterMotor.setVelocityPIDFCoefficients(57, 0, 0, 15.4);
+        shooter_Servo.setPosition(0.59);
     }
 
     public void setVelocity(double velocity, int distance) {
@@ -80,21 +80,18 @@ public class Shooter {
         if(op.getRuntime()>3){
             stopShooter();
         }
-
     }
-
 
     public void moveServo(boolean direction) {
         if (direction == true) {
-            shooter_Servo.setPosition(1.0);
+            shooter_Servo.setPosition(0.59);
         } else {
-            shooter_Servo.setPosition(0.0);
+            shooter_Servo.setPosition(0.52);
         }
         op.telemetry.addData("pusher position :", direction);
         op.telemetry.update();
-        op.sleep(500);
+        op.sleep(175);
     }
-
 
     public void shootGoalTeleop(int distance) {
         setVelocity(highGoalVelocity, distance);
@@ -105,9 +102,13 @@ public class Shooter {
         shoot(highGoalVelocity, 1, rings);
     }
 
+    public void shootHighGoalTest(double speed, int distance, int rings) {
+        shooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        shoot(speed, distance, rings);
+    }
+
     public void shootMidGoal(int rings) {
         shoot(middleGoalVelocity, 1000, 3);
-
     }
 
     public void shootLowGoal(int rings) {

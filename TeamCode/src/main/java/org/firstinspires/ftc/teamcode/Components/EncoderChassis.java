@@ -362,9 +362,10 @@ public class EncoderChassis extends BasicChassis {
         }
 
     @Override
-    public void setPosition(double xPosition, double yPosition, double newangle) {
+    public void setPosition(float xPosition, float yPosition, float newangle) {
 
     }
+
 
     @Override
     public void goToPosition(double xPosition, double yPosition, double newangle, double power) {

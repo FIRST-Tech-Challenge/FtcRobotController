@@ -58,40 +58,6 @@ public class Robot {
 //            tensorFlow.runTensorFlowWaitForStart();
 //        }
     }
-    public void navigate(){
-        drivetrain.navigate();
-    }
-    public void moveVuforiaWebcam(double x, double y, double endAngle) {
-        if(!isCorgi) {
-            getVuforiaPosition();
-
-            double xdifference = x - vuforiaX;
-            double ydifference = y - vuforiaY;
-
-            double turn = endAngle - robotAngle;
-
-            double magnitude = Math.sqrt((xdifference * xdifference) + (ydifference * ydifference));
-
-            double mAngle = robotAngle - Math.toDegrees(Math.acos(ydifference / magnitude)); //move Angle
-
-            op.telemetry.addData("VuforiaX", "%.2f %.2f %.2f %.3f %.3f %.3f", vuforiaX, x, xdifference, robotAngle, getVuforiaAngle2(), endAngle);
-            op.telemetry.addData("VuforiaY", "%.2f %.2f %.2f %.2f %.3f %.3f", vuforiaY, y, ydifference, magnitude, turn, mAngle);
-            op.telemetry.update();
-            op.sleep(5000);
-            //drivetrain.moveAngle2(magnitude, mAngle, turn);
-
-            getVuforiaPosition();
-
-            op.telemetry.addData("VuforiaX", "%.2f %.2f %.2f %.3f %.3f %.3f", vuforiaX, x, xdifference, robotAngle, getVuforiaAngle2(), endAngle);
-            op.telemetry.addData("VuforiaY", "%.2f %.2f %.2f %.2f %.3f %.3f", vuforiaY, y, ydifference, magnitude, turn, mAngle);
-            op.telemetry.update();
-            op.sleep(5000);
-        }
-    }
-
-    public void startVuforia () {
-        vuforiaWebcam.start();
-    }
 
     public void stopAllMotors() {
         drivetrain.stopAllMotors();
@@ -137,7 +103,7 @@ public class Robot {
     public void moveBackward(double distance, double power) {
         drivetrain.moveBackward(distance, power);
     }
-    public void setPosition(double xPosition,double yPosition, double newAngle){drivetrain.setPosition(xPosition,yPosition,newAngle);}
+    public void setPosition(float xPosition,float yPosition, float newAngle){drivetrain.setPosition(xPosition,yPosition,newAngle);}
     public void goToPosition(double xPosition,double yPosition, double newAngle, double power){drivetrain.goToPosition(xPosition,yPosition,newAngle,power);}
     public void moveRight(double distance, double power) {
         drivetrain.moveRight(distance, power);
@@ -162,10 +128,15 @@ public class Robot {
 
     /**Navigation**/
 
-
-
+    public void navigate(){
+        drivetrain.navigate();
+    }
 
     /**Vuforia**/
+
+    public void startVuforia () {
+        vuforiaWebcam.start();
+    }
 
     public double getVuforiaAngle() {
         if(isCorgi) {
@@ -204,12 +175,7 @@ public class Robot {
     public int getRingsAndWaitForStart(){
         return tensorFlow.runTensorFlowWaitForStart();
     }
-
-    /**Odometry**/
-
-    /**
-     * wobble goal methods
-     */
+    /**wobble goal methods**/
     public WobbleGoal.Position moveWobbleGoalToPosition(WobbleGoal.Position p){
         if(isCorgi) {
             wobbleGoal.goToPosition(p);
@@ -273,13 +239,16 @@ public class Robot {
 
     //shooter
 
-
     public void moveServo(boolean direction) {
             shooter.moveServo(direction);
     }
 
     public void shootHighGoal(int rings) {
         shooter.shootHighGoal(rings);
+    }
+
+    public void shootHighGoalTest(double speed, int distance, int rings) {
+        shooter.shootHighGoalTest(speed, distance, rings);
     }
 
     public void shootMiddleGoal(int rings){
@@ -289,8 +258,6 @@ public class Robot {
     public void shootLowGoal(int rings){
         shooter.shootLowGoal(rings);;
     }
-
-
 
     public void shootGoalTeleop(int distance) {
             shooter.shootGoalTeleop(distance);
@@ -309,7 +276,7 @@ public class Robot {
         op.telemetry.addData("speed: ", shooter.getRPM());
         op.telemetry.update();
         drivetrain.turnInPlace(-1.75,1.0);
-        shooter.setVelocity(1500, 1000);
+        shooter.setVelocity(1540, 1000);
         op.sleep(1600);
         if (shooter.getRPM()*28/60 > 0) {
             op.sleep(100);

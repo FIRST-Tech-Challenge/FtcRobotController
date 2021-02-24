@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class WobbleGoal {
 
     public enum Position {
-        REST, GRAB, RAISE,RUN, RELEASE, DROP, STARTOFTELEEOP,START
+        REST, GRAB, DriveToWall, DropOverWall, RAISE,RUN, RELEASE, DROP, STARTOFTELEEOP,START,AutoGRAB
     }
 
     //declaring the op mode
@@ -30,8 +30,11 @@ public class WobbleGoal {
 
     private final int ticksForREST = 0;
     private final int ticksForGRAB = -475;
+    private final int ticksForDriveToWall = 250;
+    private final int ticksForDropOverWall = -140;
     private final int ticksForRAISE = -400;
     private final int ticksForAutonomousRUN = -350;
+    private final int ticksForAutonomousGRAB = -500;
     private final int ticksForAutonomousStart = 175;
     private final int ticksForSTARTOFTELEEOP = -200;
     private final double wobbleGoalSpeed = 0.3;
@@ -61,6 +64,9 @@ public class WobbleGoal {
             i = ticksForREST;
         } else if (p == Position.GRAB) {
             i = ticksForGRAB;
+            while (wobbleGoalServoClaw.getPosition() != 1) {
+                wobbleGoalServoClaw.setPosition(1);
+            }
         } else if (p == Position.RAISE) {
             i = ticksForRAISE;
         } else if (p == Position.STARTOFTELEEOP) {
@@ -69,7 +75,19 @@ public class WobbleGoal {
             i = ticksForAutonomousRUN;
         } else if (p == Position.START) {
             i = ticksForAutonomousStart;
-        } else {
+        }
+        else if (p == Position.AutoGRAB) {
+            i = ticksForAutonomousGRAB;
+        }else if (p == Position.DriveToWall){
+            i = ticksForDriveToWall;
+            while (wobbleGoalServoClaw.getPosition() != 0) {
+                wobbleGoalServoClaw.setPosition(0);
+            }
+            op.sleep(700);
+        } else if(p == Position.DropOverWall){
+            i = ticksForDropOverWall;
+        }
+        else {
             op.telemetry.addData("IQ Lvl", "0.00");
             op.telemetry.update();
             op.sleep(2000);
@@ -117,7 +135,6 @@ public class WobbleGoal {
 
     }
     public void  closeWobbleGoalClaw() {
-
             wobbleGoalServoClaw.setPosition(0);
             op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "closed");

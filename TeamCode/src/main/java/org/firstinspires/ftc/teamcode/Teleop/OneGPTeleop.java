@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Robot;
  * for wobblegoal
  *
  * @author  Nathan
- * @version 1.0
+ * @version 2.0
  * @since   2020-Jan-13
  *
  */
@@ -34,18 +34,17 @@ public class OneGPTeleop extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        Robot robot=new Robot(this, BasicChassis.ChassisType.ENCODER, false ,false);
+        Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false ,false);
         telemetry.addData("Status", "Done with new Robot");
         telemetry.update();
         //robot.navigateTeleOp();
         double magnitude;
         double angleInRadian;
         double angleInDegree;
-        boolean isSlow = false;
-        boolean currSlow = false;
         boolean slowMode = false;
         boolean wobble_goal_servo_is_up = true;
         boolean move_wobble_goal_servo = true;
+        robot.openWobbleGoalClaw();
         WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
 
         telemetry.addData("Status", "Ready to go");
@@ -66,11 +65,10 @@ public class OneGPTeleop extends LinearOpMode {
             boolean move_wobble_goal_arm = gamepad1.left_bumper;
             boolean start_transfer_sys = gamepad1.right_bumper;
             float shooter = gamepad1.right_trigger;
-            float reverse_transfer_sys = gamepad1.left_trigger;
-//            boolean slow = gamepad1.a;
             boolean odo_powershots = gamepad1.b;
             boolean shooter_servo = gamepad1.x;
             boolean wobble_goal_servo = gamepad1.y;
+            boolean quick_reverse = gamepad1.a;
 
 
             angleInRadian = Math.atan2(left_stick_y, left_stick_x);
@@ -78,7 +76,9 @@ public class OneGPTeleop extends LinearOpMode {
 
             /**Powershots**/
             if(odo_powershots){
-                robot.goToPosition(0,-9,-2,0.8);
+                robot.setPosition(0,0,0);
+                robot.goToPosition(40,5 ,0,0.8);
+                robot.goToPosition(40,-40,-88,0.7);
                 robot.shootThreePowerShot();
             }
 
@@ -96,27 +96,6 @@ public class OneGPTeleop extends LinearOpMode {
                 robot.stopShooter();
             }
 
-//            /**Speed Mode**/
-//            if (slow) {
-//                isSlow = true;
-//
-//                if (currSlow) {
-//                    currSlow = false;
-//                } else if (currSlow == false) {
-//                    currSlow = true;
-//                }
-//            } else {
-//                isSlow = false;
-//            }
-//
-//            if (isSlow) {
-//                if (currSlow) {
-//                    slowMode = true;
-//                } else if (currSlow == false) {
-//                    slowMode = false;
-//                }
-//            }
-
             magnitude = Math.sqrt(Math.pow(left_stick_x, 2) + Math.sqrt(Math.pow(left_stick_y, 2)));
 
             robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
@@ -129,11 +108,15 @@ public class OneGPTeleop extends LinearOpMode {
                 if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 } else if (currentWobbleGoalPosition == WobbleGoal.Position.GRAB) {
-                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
-                } else if (currentWobbleGoalPosition == WobbleGoal.Position.REST
-                ) {
+                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DriveToWall);
+                } else if (currentWobbleGoalPosition == WobbleGoal.Position.DriveToWall) {
+                    nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.DropOverWall);
+                    this.sleep(600);
+                    robot.openWobbleGoalClaw();
+                } else if(currentWobbleGoalPosition == WobbleGoal.Position.DropOverWall){
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
-                } else {
+                }
+                    else {
                     telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
                     telemetry.update();
                     sleep(500);
@@ -168,7 +151,7 @@ public class OneGPTeleop extends LinearOpMode {
                 }
             }
 
-            //transfer system
+            // transfer system
             if(start_transfer_sys){
                 robot.startIntake();
                 robot.startTransfer();
@@ -176,14 +159,15 @@ public class OneGPTeleop extends LinearOpMode {
                 robot.stopIntake();
                 robot.stopTransfer();
             }
-//            if (reverse_transfer_sys != 0) {
-//                robot.reverseIntake();
-//                robot.reverseTransfer();
-//            } else {
-//                robot.stopIntake();
-//                robot.stopTransfer();
-//            }
 
+            // quick reverse
+            if (quick_reverse){
+                robot.reverseIntake();
+                robot.reverseTransfer();
+                sleep(250);
+                robot.startIntake();
+                robot.startTransfer();
+            }
         }
         idle();
     }
