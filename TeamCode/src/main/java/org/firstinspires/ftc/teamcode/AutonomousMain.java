@@ -193,7 +193,7 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroTurn(-85, 0.5);
                 robot.gyroDriveCm(-0.5, 40);
                 dropWobble();
-                robot.gyroDriveCm(0.7,-30);
+                robot.gyroDriveCm(0.7,60);
                 goToEnd();
                 //backup
                 //robot.gyroDriveCm(-.5, 10);
@@ -215,7 +215,7 @@ public class AutonomousMain extends LinearOpMode {
                 robot.gyroTurn(165, 0.5);
                 robot.gyroDriveCm(-.75, 80);
                 dropWobble();
-                robot.gyroDriveCm(0.7,-30);
+                robot.gyroDriveCm(0.7,60);
                 goToEnd();
                 //odometryDriveToPos(100,100);
                 break;
@@ -242,7 +242,7 @@ public class AutonomousMain extends LinearOpMode {
                 //robot.gyroStrafeCm(0.5, -90,80);
                 robot.gyroDriveCm(-0.75, 170);
                 dropWobble();
-                robot.gyroDriveCm(0.7,-30);
+                robot.gyroDriveCm(0.7,150);
                 goToEnd();
                 //odometryDriveToPos(100,100);
                 break;
@@ -265,7 +265,6 @@ public class AutonomousMain extends LinearOpMode {
         Mat output = new Mat();
         Mat yellow = new Mat();
         Mat hierachy = new Mat();
-
 
         @Override
         public Mat processFrame(Mat input) {
