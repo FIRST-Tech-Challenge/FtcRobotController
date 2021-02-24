@@ -172,7 +172,6 @@ public class AutonomousMain extends LinearOpMode
         Thread positionThread = new Thread(globalPositionUpdate);
         positionThread.start();
 
-        globalPositionUpdate.reverseRightEncoder();
 
         goShoot();
 
