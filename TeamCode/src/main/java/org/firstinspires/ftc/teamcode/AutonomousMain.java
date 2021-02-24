@@ -164,88 +164,34 @@ public class AutonomousMain extends LinearOpMode
             telemetry.addData("tz: ", targetZone);
             telemetry.update();
 
-
-            //robot.gyroStrafeCm(0.5, -90, 60);
         switch(targetZone){
             case 1: //A
-                /*
-                robot.gyroDriveCm(-.5, 200); //drive forward
-                dropWobble(targetZone);
-                //robot.gyroTurn(-45, .75);
-                //robot.gyroDriveCm(-.75, 60);
-                //odometryDriveToPos(100,100);
-
-                robot.gyroStrafeCm(0.5, 90, 225); //strafe right(i think)
-                outtakeLeft.setPower(.34);
-                outtakeRight.setPower(.34);
-                robot.gyroTurn(180, .25); //turn
-                robot.gyroDriveCm(-.5, 30); //move backward behind line
-                shootRings();
-                robot.gyroDriveCm(.5, 38); //drive forward onto line
-                 */
-
+                //Shoot Power Shots
                 shootPowerShot();
                 //Go to Target Zone
                 odometryDriveToPos(-16,83.2,-144.1);
                 //Drop Wobble
                 dropWobble(targetZone);
-                //Shoot Powershot
                 //Drive to Line
                 odometryDriveToPos(-15.5,70,0);
                 break;
             case 2: //B
-                /*
-                robot.gyroDriveCm(-.5, 255); //drive forward
-                robot.gyroTurn(-45, .25); //turn right
-                robot.gyroDriveCm(-.5, 45); //drive forward into B box
-                //robot.gyroDriveCm(-.75, 40);
-                dropWobble(targetZone);
-                //robot.gyroTurn(30, 0.75);
-                //robot.gyroDriveCm(.75, 75);
-                robot.gyroDriveCm(.5, 20); //backward to line
-                robot.gyroTurn(-90, .25); //turn right
-                robot.gyroDriveCm(-.5, 50); //forward
-                robot.gyroTurn(-45, .25); //turn right
-                robot.gyroDriveCm(-.5, 50); //go forward
-                robot.gyroStrafeCm(0.5, -90, 140); //strafe left
-                robot.gyroDriveCm(-.5, 6); //drive forward
-                outtakeLeft.setPower(.34);
-                outtakeRight.setPower(.34);
-                robot.gyroTurn(10, .25); //turn towards goal
-                shootRings();
-                //odometryDriveToPos(100,100);
-                robot.gyroDriveCm(.5, 40); //drive onto line
-                 */
-
+                //Shoot Power Shots
                 shootPowerShot();
                 //Go to Target Zone
                 odometryDriveToPos(-31.5,99.1,163);
                 //Drop Wobble
                 dropWobble(targetZone);
-                //Shoot Powershot
                 //Drive to Line
                 odometryDriveToPos(-15.5,70,0);
                 break;
             case 3: //C
-                /*
-                robot.gyroDriveCm(-.5, 344); //drive forward
-                dropWobble(targetZone);
-                robot.gyroDriveCm(.5, 178); //drive backward to line
-                //odometryDriveToPos(100,100);
-                robot.gyroStrafeCm(0.5, 90, 255); //strafe right to goal
-                outtakeLeft.setPower(.34);
-                outtakeRight.setPower(.34);
-                robot.gyroTurn(180, .25); //turn left
-                shootRings();
-                robot.gyroDriveCm( .5, 40); //move onto line
-                 */
-
+                //Shoot Power Shots
                 shootPowerShot();
                 //Go to Target Zone
                 odometryDriveToPos(-29.64,132.0,208);
                 //Drop Wobble
                 dropWobble(targetZone);
-                //Shoot Powershot
                 //Drive to Line
                 odometryDriveToPos(-15.5,70,0);
                 break;
@@ -313,11 +259,8 @@ public class AutonomousMain extends LinearOpMode
                 Imgproc.line(output, new Point(0,ylargestRect.y + ((threshold1 + threshold2)/2)), new Point(640, ylargestRect.y + ((threshold1 + threshold2)/2)),new Scalar(0,255,0));
                 Imgproc.line(output, new Point(0,ylargestRect.y + threshold2), new Point(640, ylargestRect.y + threshold2),new Scalar(255,255,0));
 
-
                 stackHeight = ylargestRect.height;
             }
-
-
             return output;
         }
 

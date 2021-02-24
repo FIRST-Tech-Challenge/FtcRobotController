@@ -426,7 +426,6 @@ public class MainTeleopOdometry extends LinearOpMode{
     public void shootPowerShot() throws InterruptedException{
         //Shot 1
         odometryDriveToPos(-35.3,53.7,350);
-
         robot.shootRingsPower();
         //Shot 2
         odometryDriveToPos(-40.6,53.7,0);
@@ -437,9 +436,10 @@ public class MainTeleopOdometry extends LinearOpMode{
     }
 
     public void shootGoal() throws InterruptedException{
-        odometryDriveToPos(-18,56.7,350);//25, -1, 233??
+        odometryDriveToPos(-18,56.7,350);
         robot.shootRings();
     }
+
 
     public double getOdometryAngleDifference(double desiredAngle){
         double angleDifference = Math.abs(desiredAngle - globalPositionUpdate.returnOrientation());
