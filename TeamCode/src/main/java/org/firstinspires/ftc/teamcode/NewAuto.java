@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @SuppressWarnings("ALL")
-@Autonomous(name="Combined Auto", group="auto")
+@Autonomous(name="New Auto", group="auto")
 //@Disabled
 public class NewAuto extends LinearOpMode {
 
@@ -52,7 +52,8 @@ public class NewAuto extends LinearOpMode {
         Vision vision = new Vision(this);
 
         while (!isStarted()) {
-            ringCount = vision.ringCount('r');
+            mDrive.claw.setPosition(0);
+            ringCount = 0; // vision.ringCount('r');
             //ringCount = 1;
             telemetry.addData("Ring Count: ", ringCount);
             telemetry.update();
@@ -60,25 +61,30 @@ public class NewAuto extends LinearOpMode {
 
         waitForStart();
         if (!isStopRequested()) {
-            mDrive.claw.setPosition(1);
+            mDrive.claw.setPosition(0);
 
             switch (ringCount)
             {
                 case 0:
-                    linearMovement(60, 3.5, 0.0004,0.00007, 0.000068);
-                    turnDegree(-60, 3.5, 0.0118,0.005, 0.002);
+                    linearMovement(58, 3.5, 0.000475, 0.00006, 0.000037);
+                    turnDegree(-60, 3.5, 0.0118,0.005, 0.0015);
                     mDrive.Arm.setPower(-0.75);
-                    sleep(750);
-                    mDrive.claw.setPosition(0);
-                    mDrive.Arm.setPower(0.75);
-                    sleep(500);
+                    sleep(800);
                     mDrive.Arm.setPower(0);
-                    turnDegree(77, 4, 0.0118,0.005, 0.002);
-                    shoot();
-                    turnDegree(-17, 2.5, 0.0118,0.005, 0.002);
-                    resetShooter();
-                    linearMovement(-39, 3, 0.0004,0.00007, 0.000068);
-                    turnDegree(90, 3.5, 0.0118,0.005, 0.002);
+                    sleep(200);
+                    mDrive.claw.setPosition(1);
+                    sleep(200);
+                    mDrive.Arm.setPower(0.75);
+                    sleep(200);
+                    mDrive.claw.setPosition(0);
+                    sleep(600);
+                    mDrive.Arm.setPower(0);
+                    turnDegree(60, 3.5, 0.0118,0.005, 0.0015);
+                    /*//shoot();
+                    turnDegree(-17, 2.5, 0.0118,0.008, 0.0015);
+                    //resetShooter();
+                    linearMovement(-39, 3.5, 0.00048, 0.0000624, 0.0000365);
+                    /*
                     mDrive.Arm.setPower(-0.7);
                     sleep(500);
                     mDrive.Arm.setPower(0);
@@ -103,7 +109,7 @@ public class NewAuto extends LinearOpMode {
                     mDrive.Arm.setPower(1);
                     sleep(500);
                     mDrive.Arm.setPower(0);
-                    strafeLeft();
+                    strafeLeft();   */
                     break;
                 case 1:
                     mDrive.claw.setPosition(1);
@@ -208,7 +214,7 @@ public class NewAuto extends LinearOpMode {
     }*/
 
     public void linearMovement(double distance, double timeframe, double kP, double kI, double kD) {
-        double conversionIndex = NUMBER_OF_ENCODER_TICKS_PER_REVOLUTION / MOTOR_TO_INCHES; // ticks per inch
+        double conversionIndex = 1104.04; // ticks per inch
         double timeFrame = timeframe; //distance * distanceTimeIndex;
         double errorMargin = 5;
         double powerFloor = 0;
@@ -244,7 +250,7 @@ public class NewAuto extends LinearOpMode {
             //telemetry.addData("error", error);
             //telemetry.addData("time", time);
 
-            p = Math.abs(error)  / 33.0 * kP;
+            p = Math.abs(error) / 33.0 * kP;
             i += (time - timePrev) * Math.abs(error) / 33.0 * kI;
             d = Math.abs((error - errorPrev) / (time - timePrev) / 33.0 * kD);
 
@@ -253,7 +259,7 @@ public class NewAuto extends LinearOpMode {
             telemetry.addData("D", d);
 
 
-            output = p + i + d;
+            output = p + i - d;
             telemetry.addData("output", output);
             output = Math.max(output, powerFloor);
             output = Math.min(output, powerCeiling);
@@ -265,18 +271,29 @@ public class NewAuto extends LinearOpMode {
                 raw -= 360;
             if (raw < -180)
                 raw += 360;
-            double fudgeFactor = 1 - raw / 30;
+            double fudgeFactor = 1.0 - raw / 40.0;
 
-            mDrive.FL.setPower(output);
-            mDrive.FR.setPower(output);
-            mDrive.BL.setPower(output);
-            mDrive.BR.setPower(output);
+            if (distance > 0)
+            {
+                mDrive.FL.setPower(fudgeFactor * output);
+                mDrive.FR.setPower(output);
+                mDrive.BL.setPower(fudgeFactor * output);
+                mDrive.BR.setPower(output);
+            }
+            else
+            {
+                mDrive.FL.setPower(output);
+                mDrive.FR.setPower(fudgeFactor * output);
+                mDrive.BL.setPower(output);
+                mDrive.BR.setPower(fudgeFactor * output);
+            }
+
 
             telemetry.addData("error", error);
             telemetry.update();
         }
         mDrive.freeze();
-        telemetry.addData("movement", " done.");
+        telemetry.speak("movement took" + clock.seconds() + " seconds.");
         telemetry.update();
 
     }
@@ -383,28 +400,28 @@ public class NewAuto extends LinearOpMode {
 
     public void shoot()
     {
-        mDrive.ringHopper.setPosition(1);
-        sleep(500);
-        mDrive.Pivot.setPower(-0.75);
-        mDrive.ringHopper.setPosition(0.5);
-        mDrive.FlyWheel1.setPower(1);
-        mDrive.FlyWheel2.setPower(1);
-        sleep(500);
-        mDrive.Pivot.setPower(-0.4);
-        mDrive.ringHopper.setPosition(1);
-        sleep(1000); //first shot
-        mDrive.ringHopper.setPosition(0.5);
-        sleep(750);
-        mDrive.ringHopper.setPosition(1);
-        sleep(750); //second shot
-        mDrive.ringHopper.setPosition(0.5);
-        sleep(750);
-        mDrive.ringHopper.setPosition(1);
-        sleep(500); //third shot
-        mDrive.ringHopper.setPosition(0.5);
-        mDrive.FlyWheel1.setPower(0);
-        mDrive.FlyWheel2.setPower(0);
-        mDrive.Pivot.setPower(0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     public void resetShooter()

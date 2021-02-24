@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -6,10 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
 @SuppressWarnings("ALL")
-@Autonomous(name="PIDTest", group="auto")
+    @Autonomous(name="JMAC Auto", group="auto")
 //@Disabled
-public class PIDTest extends LinearOpMode {
+public class JmacAuto extends LinearOpMode {
 
     DrivetrainHardware mDrive = new DrivetrainHardware();
 
@@ -20,9 +22,9 @@ public class PIDTest extends LinearOpMode {
     double globalAngle;
     Orientation lastAngles = new Orientation();
 
-    public final double WHEEL_DIAMETER = 2.6; //Wheel diameter in inches
+    public final double WHEEL_DIAMETER = 4.0; //Wheel diameter in inches
     public final int MOTOR_GEAR_TEETH = 1; //# of teeth on the motor gear
-    public final int WHEEL_GEAR_TEETH = 1; //# of teeth on the wheel gear
+    public final int WHEEL_GEAR_TEETH = 15; //# of teeth on the wheel gear
     public final double GEAR_RATIO = (MOTOR_GEAR_TEETH + 0.0) / WHEEL_GEAR_TEETH; //For every full turn of the motor, the wheel turns this many rotations.
     public final double MOTOR_TO_INCHES = GEAR_RATIO * WHEEL_DIAMETER * Math.PI; //For every full turn of both motors, the wheel moves forward this many inches
     public final double NUMBER_OF_ENCODER_TICKS_PER_REVOLUTION = 28; //bruh
@@ -47,19 +49,159 @@ public class PIDTest extends LinearOpMode {
         imu.initialize(parameters);
 
         mDrive.init(hardwareMap);
-
+        Vision vision = new Vision(this);
 
         while (!isStarted()) {
-
+            mDrive.claw.setPosition(0);
+            ringCount = 0; // vision.ringCount('r');
+            telemetry.addData("Ring Count: ", ringCount);
+            telemetry.update();
         }
 
         waitForStart();
         if (!isStopRequested()) {
-            linearMovement(90, 10, 0.000425,0.000032, 0.000045);
-            sleep(5000);
-            linearMovement(-80, 10, 0.000425, 0.000036, 0.000045);
-            sleep(5000);
-            linearMovement(48, 10, 0.000485, 0.0000624, 0.0000365);
+
+            switch (ringCount)
+            {
+                case 0:
+                    linearMovement(58, 3.5, 0.000475, 0.000058, 0.000037);
+                    turnDegree(-60, 3.5, 0.0118,0.005, 0.0015);
+                    mDrive.Arm.setPower(-0.75);
+                    sleep(800);
+                    mDrive.Arm.setPower(0);
+                    sleep(200);
+                    mDrive.claw.setPosition(1);
+                    sleep(300);
+                    mDrive.Arm.setPower(0.75);
+                    sleep(200);
+                    mDrive.claw.setPosition(0);
+                    sleep(700);
+                    mDrive.Arm.setPower(0);
+                    turnDegree(60, 3.5, 0.0118,0.005, 0.0015);
+                    monkeShoot();
+
+                    /*shoot();
+                    turnDegree(-17, 2.5, 0.0118,0.005, 0.002);
+                    resetShooter();
+                    linearMovement(-39, 3, 0.0004,0.00007, 0.000068);
+                    turnDegree(90, 3.5, 0.0118,0.005, 0.002);
+                    mDrive.Arm.setPower(-0.7);
+                    sleep(500);
+                    mDrive.Arm.setPower(0);
+                    mDrive.claw.setPosition(0);
+                    sleep(500);
+                    linearMovement(18, 2, 0.0004,0.00007, 0.000068);
+                    mDrive.claw.setPosition(1);
+                    sleep(500);
+                    mDrive.Arm.setPower(1);
+                    sleep(500);
+                    mDrive.Arm.setPower(0);
+                    linearMovement(-18, 2, 0.0004,0.00007, 0.000068);
+                    turnDegree(-90, 3.5, 0.0118,0.005, 0.002);
+                    mDrive.Arm.setPower(-0.75);
+                    sleep(500);
+                    mDrive.Arm.setPower(0);
+                    linearMovement(43, 3, 0.0004,0.00007, 0.000068);
+                    turn45();
+                    //turnDegree(-30, 1);
+                    mDrive.claw.setPosition(0);
+                    sleep(500);
+                    mDrive.Arm.setPower(1);
+                    sleep(500);
+                    mDrive.Arm.setPower(0);
+                    strafeLeft();*/
+                    break;
+                case 1:
+                    mDrive.claw.setPosition(1);
+                    linearMovement(58, 5, 0.0004,0.00007, 0.000068);
+                    turnDegree(26,5, 0.0118,0.005, 0.002);
+
+                    mDrive.ringHopper.setPosition(1);
+                    sleep(500);
+                    mDrive.Pivot.setPower(-0.7);
+                    mDrive.ringHopper.setPosition(0.5);
+                    mDrive.FlyWheel1.setPower(1);
+                    mDrive.FlyWheel2.setPower(1);
+                    sleep(1000);
+                    mDrive.Pivot.setPower(0);
+                    mDrive.ringHopper.setPosition(1);
+                    sleep(1000); //first shot
+                    mDrive.ringHopper.setPosition(0.5);
+                    turn1();
+                    sleep(1000);
+                    mDrive.ringHopper.setPosition(1);
+                    sleep(500); //second shot
+                    mDrive.ringHopper.setPosition(0.5);
+                    turn2();
+                    sleep(1000);
+                    mDrive.ringHopper.setPosition(1);
+                    sleep(500); //third shot
+                    mDrive.ringHopper.setPosition(0.5);
+                    mDrive.FlyWheel1.setPower(0);
+                    mDrive.FlyWheel2.setPower(0);
+                    mDrive.Pivot.setPower(0.7);
+                    sleep(750);
+                    mDrive.Pivot.setPower(0);
+
+                    turnDegree(-28,5, 0.0118,0.005, 0.002);
+                    linearMovement(34, 5, 0.0004,0.00007, 0.000068);
+                    turnDegree(45,5, 0.0118,0.005, 0.002);
+                    mDrive.Arm.setPower(-0.75);
+                    sleep(750);
+                    mDrive.claw.setPosition(0);
+                    sleep(500);
+                    mDrive.Arm.setPower(0.5);
+                    sleep(750);
+                    mDrive.Arm.setPower(0);
+                    turnDegree(-45,5, 0.0118,0.005, 0.002);
+                    linearMovement(-18, 4, 0.0004,0.00007, 0.000068);
+                    break;
+                case 4:
+                    mDrive.claw.setPosition(1);
+                    linearMovement(58, 5, 0.0004,0.00007, 0.000068);
+                    turnDegree(26,5, 0.0118,0.005, 0.002);
+
+                    mDrive.ringHopper.setPosition(1);
+                    sleep(500);
+                    mDrive.Pivot.setPower(-0.7);
+                    mDrive.ringHopper.setPosition(0.5);
+                    mDrive.FlyWheel1.setPower(1);
+                    mDrive.FlyWheel2.setPower(1);
+                    sleep(1000);
+                    mDrive.Pivot.setPower(0);
+                    mDrive.ringHopper.setPosition(1);
+                    sleep(1000); //first shot
+                    mDrive.ringHopper.setPosition(0.5);
+                    turn1();
+                    sleep(1000);
+                    mDrive.ringHopper.setPosition(1);
+                    sleep(500); //second shot
+                    mDrive.ringHopper.setPosition(0.5);
+                    turn2();
+                    sleep(1000);
+                    mDrive.ringHopper.setPosition(1);
+                    sleep(500); //third shot
+                    mDrive.ringHopper.setPosition(0.5);
+                    mDrive.FlyWheel1.setPower(0);
+                    mDrive.FlyWheel2.setPower(0);
+                    mDrive.Pivot.setPower(0.7);
+                    sleep(750);
+                    mDrive.Pivot.setPower(0);
+
+                    turnDegree(-28,5, 0.0118,0.005, 0.002);
+                    linearMovement(56, 6, 0.0004,0.00007, 0.000068);
+                    turnDegree(-60,5, 0.0118,0.005, 0.002);
+                    mDrive.Arm.setPower(-0.75);
+                    sleep(750);
+                    mDrive.claw.setPosition(0);
+                    sleep(500);
+                    mDrive.Arm.setPower(0.5);
+                    sleep(750);
+                    mDrive.Arm.setPower(0);
+                    turnDegree(45,5, 0.0118,0.005, 0.002);
+                    linearMovement(-44, 5, 0.0004,0.00007, 0.000068);
+                    break;
+            }
         }
         mDrive.freeze();
     }
@@ -157,6 +299,7 @@ public class PIDTest extends LinearOpMode {
     }
 
 
+
     public void turnDegree(double degree, double timeframe, double kP, double kI, double kD)
     {
         telemetry.addLine("made it");
@@ -243,6 +386,7 @@ public class PIDTest extends LinearOpMode {
         mDrive.freeze();
     }
 
+
     public void turn45()
     {
         mDrive.FL.setPower(-0.4);
@@ -328,5 +472,17 @@ public class PIDTest extends LinearOpMode {
         mDrive.BL.setPower(0);
         mDrive.FR.setPower(0);
         mDrive.BR.setPower(0);
+    }
+
+    public void monkeShoot()
+    {
+        mDrive.FlyWheel1.setPower(1);
+        mDrive.FlyWheel2.setPower(1);
+        sleep(1500);
+        mDrive.Pivot.setPower(1);
+        sleep(5000);
+        mDrive.Pivot.setPower(0);
+        mDrive.FlyWheel1.setPower(0);
+        mDrive.FlyWheel2.setPower(0);
     }
 }
