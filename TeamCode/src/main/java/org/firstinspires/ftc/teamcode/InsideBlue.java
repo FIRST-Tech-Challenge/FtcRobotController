@@ -27,24 +27,41 @@ public class InsideBlue extends LinearOpMode {
         int ringNmb = 1;
         waitForStart();
 
-        robot.forward(0.5, -4);
-        //shoot here
-        robot.shooterServo1(1);
-        robot.shooterServo2(1);
-        robot.shooterEngage(5);
-        robot.forward(0.5,-2);
-        if (ringNmb == 0) {
-            //strafe right
-            robot.strafeRight(0.5, 2);
-        } else if (ringNmb == 1) {
-            robot.forward(0.5,-3);
-            robot.moveWobbleGoalArm(0.7,0.4);
-            robot.wobbleGoalGrippyThingRelease();
-            robot.forward(0.5,2);
-        } else if (ringNmb == 3) {
-            robot.forward(0.5,-4);
-            //forward+ strafe right+ wobble goal
-        }
+        robot.forward(0.5, -4.4);
+        robot.pivotLeft(0.1, 12);
+        robot.shooterEngage(4000);
+        robot.pause(1000);
 
+        robot.intakeServoEngage(.9);
+       shoot();
+        robot.pivotRight(0.1, 4);
+
+        shoot();
+        robot.pivotRight(.1, 4);
+        shoot();
+        robot.intakeServoEngage(0);
+        robot.pause(4500);
+//        robot.forward(0.5,-2);
+//        if (ringNmb == 0) {
+//            //strafe right
+//            robot.strafeRight(0.5, 2);
+//        } else if (ringNmb == 1) {
+//            robot.forward(0.5,-3);
+//            robot.moveWobbleGoalArm(0.7,0.4);
+//            robot.wobbleGoalGrippyThingRelease();
+//            robot.forward(0.5,2);
+//        } else if (ringNmb == 3) {
+//            robot.forward(0.5,-4);
+            //forward+ strafe right+ wobble goal
+//        }
+
+    }
+
+    protected void shoot(){
+        robot.shooterServo1(.8);
+        robot.shooterServo2(.8);
+        robot.pause(1000);
+        robot.shooterServo2(0);
+        robot.shooterServo1(0);
     }
 }
