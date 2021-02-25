@@ -21,13 +21,13 @@ public class HzLauncher {
     public DcMotorEx launcherFlyWheelMotor;
 
     public static final double FLYWHEEL_SUPPLY_MODE_SPEED = 0.1;
-    public double FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1680;//1560;
-    public double FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1580;//1500;
+    public double FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1560;
+    public double FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1440;
     public double flyWheelVelocityHighGoal = FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
     public double flyWheelVelocityPowerShot = FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
     public double DELTA_VELOCITY_CORRECTION = 20;
-    public static final double PLUNGER_LAUNCH_POSITION = 0.65;//0.65;//0.67;
-    public static final double PLUNGER_REST_POSITION = 0.84;//0.83;//0.84;
+    public static final double PLUNGER_LAUNCH_POSITION = 0.65;
+    public static final double PLUNGER_REST_POSITION = 0.84;
     public static final double PLUNGER_PRELAUNCH_POSITION = 0.86;
 
 
@@ -54,31 +54,40 @@ public class HzLauncher {
         launcherRingPlungerServo.setPosition(PLUNGER_REST_POSITION);
     }
 
-    //run flywheel motor at speed determined by selected target and distance from target
+    /**
+     * run flywheel motor at speed determined by selected target and distance from target
+     */
+
     public void runFlyWheelToTarget(double launcherMotorVelocity) {
         launcherFlyWheelMotor.setDirection(DcMotor.Direction.FORWARD);
         launcherFlyWheelMotor.setVelocity(launcherMotorVelocity);
         launcherState = LAUNCHER_FLYWHEEL_CONTROL.RUNNING_FOR_TARGET;
     }
 
-    //stop flywheel motor
+    /**
+     * stop flywheel motor
+     */
     public void stopFlyWheel() {
         launcherFlyWheelMotor.setVelocity(0);
         launcherState = LAUNCHER_FLYWHEEL_CONTROL.STOPPED;
     }
 
-    //run flywheel motor at speed determined by selected target and distance from target
+    /**
+     * run flywheel motor at speed determined by selected target and distance from target
+     */
     public void runFlyWheelToSupply(double launcherMotorVelocity) {
         launcherFlyWheelMotor.setDirection(DcMotor.Direction.FORWARD);
         launcherFlyWheelMotor.setVelocity(launcherMotorVelocity);
         launcherState = LAUNCHER_FLYWHEEL_CONTROL.RUNNING_FOR_SUPPLY;
     }
 
-    //run launcherRingPlungerServo to push Ring from magazine to Flywheel and retract to initial state
+    /**
+     * run launcherRingPlungerServo to push Ring from magazine to Flywheel and retract to initial state
+     */
     public void plungeRingToFlyWheel() {
         launcherRingPlungerServo.setPosition(PLUNGER_PRELAUNCH_POSITION);
         try {
-            sleep(50);
+            sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         };
@@ -92,29 +101,17 @@ public class HzLauncher {
         launcherRingPlungerServo.setPosition(PLUNGER_REST_POSITION);
     }
 
-    //run launcherRingPlungerServo to push Ring from magazine to Flywheel and retract to initial state
-    public void plungeRingToFlyWheelPersistant() {
-        launcherRingPlungerServo.setPosition(PLUNGER_LAUNCH_POSITION);
-        //plungeWait(250);
-        try {
-            sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        launcherRingPlungerServo.setPosition(PLUNGER_REST_POSITION);
-        //plungeWait(250);
-        try {
-            sleep(250);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
-
+    /**
+     * get Launcher State
+     */
     public LAUNCHER_FLYWHEEL_CONTROL getLauncherState(){
         return launcherState;
     }
 
+    /**
+     * Plunger wait
+     */
     public void plungeWait(double time){
         ElapsedTime timer = new ElapsedTime(MILLISECONDS);
         timer.reset();

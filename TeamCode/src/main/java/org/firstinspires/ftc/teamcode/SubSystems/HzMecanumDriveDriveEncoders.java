@@ -45,6 +45,8 @@ import java.util.List;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
+ * Acknowledgement to Acmerobotics Roadrunner
+ * Tuned and Customized for Hazmat
  */
 @Config
 public class HzMecanumDriveDriveEncoders extends MecanumDrive {

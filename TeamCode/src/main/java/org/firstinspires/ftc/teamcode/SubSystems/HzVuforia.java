@@ -55,6 +55,11 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 /**
+ *
+ * Vuforia implementation for Hazmat
+ *  - Integrates Tensor flow and Navigation to single code
+ *  - Updated to manage 2 cameras
+ *
  * This 2020-2021 OpMode illustrates the basics of using the Vuforia localizer to determine
  * positioning and orientation of robot on the ULTIMATE GOAL FTC field.
  * The code is structured as a LinearOpMode
@@ -227,6 +232,10 @@ public class HzVuforia {
         vuforiaState = VUFORIA_STATE.TFOD_INIT;
     }
 
+    /**
+     * Activate Vuforia Tensor Flow to determine target zone
+     * This is to be done at Init in Autonomous mode
+     */
     public void activateVuforiaTensorFlow(){
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -249,6 +258,10 @@ public class HzVuforia {
         }
     }
 
+    /**
+     * Run Tensor flow algorithm.
+     * This is to be run till the play button is pressed.. the last target zone identified is returned.
+     */
     public HzGameField.TARGET_ZONE runVuforiaTensorFlow() {
         vuforiaState = VUFORIA_STATE.TFOD_RUNNING;
 
@@ -295,6 +308,9 @@ public class HzVuforia {
         return targetZoneDetected;
     }
 
+    /**
+     * Stop Tensor Flow algorithm
+     */
     public void deactivateVuforiaTensorFlow(){
         if (tfod != null) {
             tfod.shutdown();
@@ -303,6 +319,9 @@ public class HzVuforia {
     }
 
 
+    /**
+     * Initialize Vuforia for Navigation
+     */
     public void setupVuforiaNavigation() {
 
         // Load the data sets for the trackable objects. These particular data
@@ -405,6 +424,9 @@ public class HzVuforia {
 
     }
 
+    /**
+     * Activate Vuforia Navigation
+     */
     public void activateVuforiaNavigation() {
         // WARNING:
         // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
@@ -422,6 +444,9 @@ public class HzVuforia {
         vuforiaState = VUFORIA_STATE.NAVIGATION_ACTIVE;
     }
 
+    /**
+     * Run Vuforia Navigation
+     */
     public void runVuforiaNavigation() {
         vuforiaState = VUFORIA_STATE.NAVIGATION_RUNNING;
         // check all the trackable targets to see which one (if any) is visible.
@@ -469,6 +494,9 @@ public class HzVuforia {
         //telemetry.update();
      }
 
+    /**
+     * Stop Vuforia Navigation
+     */
     public void deactivateVuforiaNavigation() {
         // Disable Tracking when we are done;
         targetsUltimateGoal.deactivate();

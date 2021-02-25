@@ -14,15 +14,15 @@ import com.qualcomm.robotcore.hardware.Gamepad;
  * The controls are as follows: <BR>
  *      <emsp>Left Stick for pan motion (gamepad1.left_stick_x and gamepad1.left_stick_y) <BR>
  *      <emsp>Right Stick for turn motion (only uses the x direction : gamepad1.right_stick_y) <BR>
- *      <emsp>Right Bumper for <TO-BE-UPDATED> (gamepad1.right_bumper) <BR>
- *      <emsp>Left Bumper for <TO-BE-UPDATED> (gamepad1.left_bumper) <BR>
- *      <emsp>Right Trigger for increasing speed to double (gamepad1.right_trigger) <BR>
- *      <emsp>Button A to <TO-BE-UPDATED> (gamepad1.a) <BR>
- *      <emsp>Button Y to <TO-BE-UPDATED> (gamepad1.y) <BR>
- *      <emsp>Button X to <TO-BE-UPDATED> (gamepad1.x) <BR>
- *      <emsp>Button B to <TO-BE-UPDATED> (gamepad1.b) <BR>
- *      <emsp>Button Dpad_up to <TO-BE-UPDATED> (gamepad1.dpad_up) <BR>
- *      <emsp>Button Dpad_down to <TO-BE-UPDATED> (gamepad1.dpad_down) <BR>
+ *      <emsp>Right Bumper for Launching Ring (gamepad1.right_bumper) <BR>
+ *      <emsp>Left Bumper for Grip Arm Servos (gamepad1.left_bumper) <BR>
+ *      <emsp>Right Trigger for Accelerating robot (gamepad1.right_trigger) <BR>
+ *      <emsp>Button A to Powershot selection (gamepad1.a) <BR>
+ *      <emsp>Button Y to High Goal selection (gamepad1.y) <BR>
+ *      <emsp>Button X to Turn delta left (gamepad1.x) <BR>
+ *      <emsp>Button B to Turn delta right (gamepad1.b) <BR>
+ *      <emsp>Button Dpad_up to Reverse Intake on (gamepad1.dpad_up) <BR>
+ *      <emsp>Button Dpad_down to Intake On (gamepad1.dpad_down) <BR>
  */
 
 public class HzGamepad {
@@ -39,8 +39,6 @@ public class HzGamepad {
     /**
      * Constructor for HzGamepad1 class that extends gamepad.
      * Assign the gamepad1 given in OpMode to the gamepad used here.
-     *
-     * @param gamepadPassed from OpMode. In the case of Hazmat Skystone, this is gamepad1
      */
     public HzGamepad(Gamepad gamepadPassed,
                      HzDrive gpDrivePassed,
@@ -59,9 +57,8 @@ public class HzGamepad {
     }
 
     /**
-     *runByGamepad sets every function used in this file, in order for it to be passed and used.
+     *runByGamepad is the main controller function that runs each subsystem controller based on states
      */
-
     public void runByGamepad(){
         runMagazineControl();
         runIntakeControl();
@@ -74,7 +71,6 @@ public class HzGamepad {
     /**
      * runByGamepadRRDriveModes sets modes for Road Runner such as ROBOT and FIELD Centric Modes. <BR>
      */
-
     // RR Drive Train
     public void runByGamepadRRDriveModes() {
 
@@ -127,7 +123,6 @@ public class HzGamepad {
     /**
      * runMagazineControl sets 2 modes for Magazine, COLLECT and LAUNCH. <BR>
      */
-
     public void runMagazineControl(){ //this function should be in IntakeControl's place after order change
         if (gpHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_COLLECT){
             gpHzLauncher.stopFlyWheel();
@@ -148,7 +143,6 @@ public class HzGamepad {
      * runIntakeControl sets the differnt intake controls, if intake should take in rings(Dpad_downPress) or the intake should run the opposite
      * direction in order for a stuck ring to be out of intake. <BR>
      */
-
     public void runIntakeControl(){ //this function should be at LaunchController's place after order change
 
         //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
@@ -206,7 +200,6 @@ public class HzGamepad {
      *     <emsp>The ButtonY sets the target to High Goal and ButtonA Press sets the target to PowerShot 2.
      *     After this function, these two buttons are set to true to be executed. </emsp> <BR>
      */
-
     public void runLaunchController(){   //this function should be in magazineControl's place after order change
         /*if (getStartPersistent() && getButtonYPress()) {
             gpHzLaunchController.toggleModeManualAutomated();
@@ -303,24 +296,26 @@ public class HzGamepad {
 
     /**
      * The runLauncher function tells if getRightBumperPress is set to true, and if it is, the Launcher plunges ring to Flywheel. <BR>
+     *     Rapid fire if launch target is high goal & single shots if it is powershot
      */
-
     public void runLauncher(){
-        if (getRightBumperPress()) {
-            if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
-                    gpHzLaunchController.launchReadiness == HzLaunchController.LAUNCH_READINESS.READY) {
-                gpHzLauncher.plungeRingToFlyWheel();
+        if (gpHzLaunchController.lcTarget == HzLaunchController.LAUNCH_TARGET.HIGH_GOAL) {
+            if (getRightBumperPersistant()) { //Rapid fire shots if bumper remains pressed
+                //if (getRightBumperPress()) {
+                if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
+                        gpHzLaunchController.launchReadiness == HzLaunchController.LAUNCH_READINESS.READY) {
+                    gpHzLauncher.plungeRingToFlyWheel();
+                }
+            }
+        } else {
+            if (getRightBumperPress()) { //Single shots on bumper press to ensure Power short is not rapid fire
+                if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
+                        gpHzLaunchController.launchReadiness == HzLaunchController.LAUNCH_READINESS.READY) {
+                    gpHzLauncher.plungeRingToFlyWheel();
+                }
             }
         }
-    }
 
-    public void runLauncherPersistant(){
-        while (getRightBumperPersistant()) {
-            if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
-                    gpHzLaunchController.launchReadiness == HzLaunchController.LAUNCH_READINESS.READY) {
-                gpHzLauncher.plungeRingToFlyWheelPersistant();
-            }
-        }
     }
 
 
@@ -329,7 +324,6 @@ public class HzGamepad {
      * at last when the button is pressed for a third time the arm moves back to resting poistion. <BR>
      * The leftBumperPress when pressed once opens the arm, and when pressed again closes the arm grip. <BR>
      */
-
     public void runArm(){
         if (getLeftTriggerPress()) {
             gpHzArm.moveArmByTrigger();
@@ -437,7 +431,7 @@ public class HzGamepad {
     }
 
     /**
-     * Methods to get the value of gamepad Left Trigger for <TO-BE-UPDATED>
+     * Methods to get the value of gamepad Left Trigger
      *
      * @return gpGamepad1.right_trigger
      */
@@ -455,7 +449,7 @@ public class HzGamepad {
     }
 
     /**
-     * Method to track if Left Bumper was pressed to <TO-BE-UPDATED>.
+     * Method to track if Left Bumper was pressed
      * To ensure that the continuous holding of the left bumper does not cause a contiual action,
      * the state of the bumper is recorded and compared against previous time.
      * Only if the previous state is unpressed and current state is pressed would
@@ -475,7 +469,7 @@ public class HzGamepad {
 
 
     /**
-     * Method to track if Right Bumper was pressed to <TO-BE-UPDATED>.
+     * Method to track if Right Bumper was pressed
      * To ensure that the continuous holding of the right bumper does not cause a continual action,
      * the state of the bumper is recorded and compared against previous time.
      * Only if the previous state is unpressed and current state is pressed would
@@ -498,7 +492,7 @@ public class HzGamepad {
     }
 
     /**
-     * Method to track if Button A was pressed to <TO-BE-UPDATED>.
+     * Method to track if Button A was pressed
      * To ensure that the continuous holding of Button A does not send continual triggers,
      * the state of the button is recorded and compared against previous time.
      * Only if the previous state is unpressed and current state is pressed would
@@ -517,7 +511,7 @@ public class HzGamepad {
     }
 
     /**
-     * Method to track if Button Y was pressed to <TO-BE-UPDATED>.
+     * Method to track if Button Y was pressed
      * To ensure that the continuous holding of Button Y does not send continual triggers,
      * the state of the button is recorded and compared against previous time.
      * Only if the previous state is unpressed and current state is pressed would
@@ -536,7 +530,7 @@ public class HzGamepad {
     }
 
     /**
-     * Method to track if Button X was pressed to <TO-BE-UPDATED>.
+     * Method to track if Button X was pressed
      * To ensure that the continuous holding of Button X does not send continual triggers,
      * the state of the button is recorded and compared against previous time.
      * Only if the previous state is unpressed and current state is pressed would
@@ -555,7 +549,7 @@ public class HzGamepad {
     }
 
     /**
-     * Method to track if Button B was pressed to move Arm to <TO-BE-UPDATED>.
+     * Method to track if Button B was pressed to move Arm
      * To ensure that the continuous holding of Button Y does not send continual triggers,
      * the state of the button is recorded and compared against previous time.
      * Only if the previous state is unpressed and current state is pressed would
@@ -574,7 +568,7 @@ public class HzGamepad {
     }
 
     /**
-     * Method to track if Dpad_up was pressed to <TO-BE-UPDATED>.
+     * Method to track if Dpad_up was pressed
      * To ensure that the continuous holding of Dpad_up does not send continual triggers,
      * the state of the button is recorded and compared against previous time.
      * Only if the previous state is unpressed and current state is pressed would
@@ -601,7 +595,7 @@ public class HzGamepad {
     }
 
     /**
-     * Method to track if Dpad_down was pressed to <TO-BE-UPDATED>.
+     * Method to track if Dpad_down was pressed
      * To ensure that the continuous holding of Dpad_up does not send continual triggers,
      * the state of the button is recorded and compared against previous time.
      * Only if the previous state is unpressed and current state is pressed would

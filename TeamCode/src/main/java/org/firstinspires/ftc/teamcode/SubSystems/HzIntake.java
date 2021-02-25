@@ -36,7 +36,7 @@ public class HzIntake {
 
     public INTAKE_MOTOR_STATE intakeMotorState = INTAKE_MOTOR_STATE.STOPPED;
 
-    public double intakePower = 0.8;//0.9;
+    public double intakePower = 0.9;//0.9;
     public double intakeReversePower = 0.8;
 
     public enum INTAKE_BUTTON_STATE {
@@ -62,6 +62,9 @@ public class HzIntake {
 
     }
 
+    /**
+     * runIntakeMotor checks if the intake is not running and runs the intake
+     */
     public void runIntakeMotor() {
         if(intakeMotorState != INTAKE_MOTOR_STATE.RUNNING) {
             intakeMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -70,6 +73,10 @@ public class HzIntake {
         }
     }
 
+    /**
+     * stopIntakeMotor checks if the intake has stopped and if its not, it sets the intake power to 0
+     * and sets intakeMotorState to INTAKE_MOTOR_STATE.STOPPED
+     */
     public void stopIntakeMotor() {
         if(intakeMotorState != INTAKE_MOTOR_STATE.STOPPED) {
             intakeMotor.setPower(0.0);
@@ -77,6 +84,10 @@ public class HzIntake {
        }
     }
 
+    /**
+     * reverseIntakeMotor checks if the intake is not reversing, and sets the intake motor to FORWARD, then also
+     * ets intake motor state to REVERSING
+     */
     public void reverseIntakeMotor() {
         if(intakeMotorState != INTAKE_MOTOR_STATE.REVERSING) {
             intakeMotor.setDirection((DcMotor.Direction.FORWARD));
@@ -85,14 +96,23 @@ public class HzIntake {
         }
     }
 
+    /**
+     * set Intake gripper position to hold.. to ensure intake is within robot dimensions at start
+     */
     public void setIntakeReleaseHold(){
         intakeRelease.setPosition(INTAKE_RELEASE_HOLD);
     }
 
+    /**
+     * set Intake gripper position to release
+     */
     public void setIntakeReleaseOpen(){
         intakeRelease.setPosition(INTAKE_RELEASE_OPEN);
     }
 
+    /**
+     * Returns Intake motor state
+     */
     public INTAKE_MOTOR_STATE getIntakeState() {
         return intakeMotorState;
     }

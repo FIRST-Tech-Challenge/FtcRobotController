@@ -15,12 +15,10 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzMagazine;
 
 
 /**
- * This opmode demonstrates how one would implement field centric control using
- * `SampleMecanumDrive.java`. This file is essentially just `TeleOpDrive.java` with the addition of
- * field centric control. To achieve field centric control, the only modification one needs is to
- * rotate the input vector by the current heading before passing it into the inverse kinematics.
- * <p>
- * See lines 42-57.
+ * Ultimate Goal TeleOp mode <BR>
+ *
+ *  This code defines the TeleOp mode is done by Hazmat Robot for Ultimate Goal.<BR>
+ *
  */
 @TeleOp(name = "Hazmat TeleOp RR", group = "00-Teleop")
 public class HzTeleOpRR extends LinearOpMode {
@@ -222,9 +220,10 @@ public class HzTeleOpRR extends LinearOpMode {
         telemetry.addData("hzLaunchController.lcTarget : ", hzLaunchController.lcTarget);
         telemetry.addData("hzLaunchController.lcTargetVector", hzLaunchController.lcTargetVector);
         telemetry.addData("hzLaunchController.distanceFromTarget : ", hzLaunchController.distanceFromTarget);
-        telemetry.addData("hzLaunchController.lclaunchMotorPower : ", hzLaunchController.lclaunchMotorPower);
         telemetry.addData("hzLauncher.launcherFlyWheelMotor.getPower() : ", hzLauncher.launcherFlyWheelMotor.getPower());
         telemetry.addData("hzLaunchController.lclaunchMotorVelocity : ", hzLaunchController.lclaunchMotorVelocity);
+        telemetry.addData("hzLauncher.flyWheelVelocityPowerShot : ", hzLauncher.flyWheelVelocityPowerShot);
+        telemetry.addData("hzLauncher.flyWheelVelocityHighGoal : ", hzLauncher.flyWheelVelocityHighGoal);
         telemetry.addData("hzLauncher.launcherFlyWheelMotor.getVelocity() : ", hzLauncher.launcherFlyWheelMotor.getVelocity());
         telemetry.addData("hzDrive.drivePointToAlign : ", hzDrive.drivePointToAlign);
 

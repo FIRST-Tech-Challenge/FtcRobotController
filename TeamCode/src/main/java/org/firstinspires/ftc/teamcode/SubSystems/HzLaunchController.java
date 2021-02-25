@@ -3,6 +3,12 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+/**
+ * Launch Controller Class that manages the actions and state of intake, Magazine and Launcher to
+ * ensure that launch button is enabled and happens only when everything is ready for launch
+ * The controller also protects that launcher is disabled and magazine moved to collect state when
+ * intake is turned on.
+ */
 public class HzLaunchController {
 
     public enum LAUNCH_MODE{
@@ -67,6 +73,9 @@ public class HzLaunchController {
         lcHzHardwareMap = lcHzhardwareMapPassed;
     }
 
+    /**
+     * In case of battery dependency, this is used to set launcher velocity based on battery state
+     */
     public void setLauncherFlyWheelNominalVelocityBasedOnBattery(){
         double batteryVoltage = lcHzDrive.getBatteryVoltage(lcHzHardwareMap);
         if (batteryVoltage > 13.0){
@@ -83,6 +92,10 @@ public class HzLaunchController {
 
     public boolean activateLaunchReadinessState;
 
+    /**
+     * Launch readiness is verified and activated
+     * @return launch readiness state
+     */
     public LAUNCH_READINESS activateLaunchReadiness() {
         launchActivation = LAUNCH_ACTIVATION.ACTIVATED;
 
@@ -130,6 +143,9 @@ public class HzLaunchController {
 
     public boolean deactivateLaunchReadinessState = false;
 
+    /**
+     * Launch readiness is deactivated
+     */
     public void deactivateLaunchReadiness(){
         launchActivation = HzLaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
         lcHzLauncher.stopFlyWheel();
@@ -137,12 +153,19 @@ public class HzLaunchController {
         deactivateLaunchReadinessState = false;
     }
 
+    /**
+     * Determine distance from target and determine launch velocity
+     */
     public void runLauncherByDistanceToTarget(){
         getDistanceFromTarget();
         setLaunchMotorVelocity();
         lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
     }
 
+    /**
+     * Set the launch target based on key input or position of launch and sets the launcher
+     * to run at correct velocity
+     */
     public void determineLaunchTarget(){
         //determineLaunchTarget : Determine the launch target based on current zone of the robot
         //and Y,X,A,B button pressed. Returns launchTargetSelected
@@ -205,6 +228,9 @@ public class HzLaunchController {
         }
     }
 
+    /**
+     * In automated mode, robot turns to target zone
+     */
     public void turnRobotToTarget(){
         //If MODE_AUTOMATED, turnRobotToTarget : turn the robot to face the target based on angle determined.
         // Ensure this function is on time out, or on a parallel thread where drivers can override,
@@ -216,6 +242,9 @@ public class HzLaunchController {
         }
     }
 
+    /**
+     * Return robot for target pointed control to Normal control
+     */
     public void turnRobotToNormalControl(){
         lcHzDrive.driveMode = HzDrive.DriveMode.NORMAL_CONTROL;
         //lcDrive.driveTrainPointFieldModes();
@@ -225,10 +254,16 @@ public class HzLaunchController {
         return robotZone;
     }
 
+    /**
+     * Get distance from target
+     */
     public void getDistanceFromTarget() {
         distanceFromTarget = lcTargetVector.distTo(lcHzDrive.poseEstimate.vec());
     }
 
+    /**
+     * Set Launch velocity based on distance
+     */
     public void setLaunchMotorVelocity() {
         if (distanceFromTarget > 66 && distanceFromTarget < 138) {
             switch (lcTarget) {
@@ -247,10 +282,16 @@ public class HzLaunchController {
 
     }
 
+    /**
+     * get launch mode
+     */
     public LAUNCH_MODE getLaunchMode(){
         return launchMode;
     }
 
+    /**
+     * Toggle between automated turn to target and manual control modes
+     */
     public void toggleModeManualAutomated() {
         if (launchMode == LAUNCH_MODE.AUTOMATED) {
             launchMode = LAUNCH_MODE.MANUAL;

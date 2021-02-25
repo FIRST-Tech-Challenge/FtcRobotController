@@ -3,6 +3,13 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
+/**
+ * Static Class to define Gamefield Vector positions.
+ * These are used in start Position estimates and in automatic targetic.
+ *
+ * The static class also has PosStorage defined, to pass the last position in autonomous mode
+ * to following TeleOp mode
+ */
 public class HzGameField {
     // Declare a target vector you'd like your bot to align with
     // Can be any x/y coordinate of your choosing

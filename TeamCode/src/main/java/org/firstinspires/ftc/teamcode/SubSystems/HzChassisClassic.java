@@ -12,9 +12,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *      Chassis : New robot : 5202 Series Yellow Jacket Planetary Gear Motor (13.7:1 Ratio, 435 RPM, 3.3 - 5V Encoder) <BR>
  *         Encoder Countable Events Per Revolution (Output Shaft)	383.6 (Rises & Falls of Ch A & B) <BR>
  *
- *      Test Robot : 5202 Series Yellow Jacket Planetary Gear Motor (19.2:1 Ratio, 312 RPM, 3.3 - 5V Encoder)
- *         Encoder Countable Events Per Revolution (Output Shaft)	537.6 (Rises & Falls of Ch A & B) <BR>
- *
  *
  * @ChassisMethods : Chassis(HardwareMap) - Constructor
  * @ChassisMethods : initChassis()
