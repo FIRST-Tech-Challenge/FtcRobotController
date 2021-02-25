@@ -21,9 +21,24 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     signingConfigs {
+        release {
+            def apkStoreFile = System.getenv("APK_SIGNING_STORE_FILE")
+            if (apkStoreFile != null) {
+                keyAlias System.getenv("APK_SIGNING_KEY_ALIAS")
+                keyPassword System.getenv("APK_SIGNING_KEY_PASSWORD")
+                storeFile file(System.getenv("APK_SIGNING_STORE_FILE"))
+                storePassword System.getenv("APK_SIGNING_STORE_PASSWORD")
+            } else {
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+                storeFile rootProject.file('libs/ftc.debug.keystore')
+                storePassword 'android'
+            }
+        }
+
         debug {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
@@ -75,8 +90,8 @@ android {
     // http://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.BuildType.html
     buildTypes {
         release {
-            // Disable debugging for release versions so it can be uploaded to Google Play.
-            //debuggable true
+            signingConfig signingConfigs.release
+
             ndk {
                 abiFilters "armeabi-v7a", "arm64-v8a"
             }
@@ -100,6 +115,7 @@ android {
         jni.srcDirs = []
         jniLibs.srcDir rootProject.file('libs')
     }
+    ndkVersion '21.3.6528147'
 }
 
 repositories {
@@ -107,4 +123,4 @@ repositories {
         dirs rootProject.file('libs')
     }
 }
-apply from: 'build.release.gradle'
+
