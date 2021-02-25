@@ -86,6 +86,12 @@ public class MainTeleopOdometry extends LinearOpMode{
         verticalRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wobbleArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         //Initialize imu
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
