@@ -10,11 +10,7 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.MineralStateProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
-import org.firstinspires.ftc.teamcode.vision.SkystoneVisionProvider;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
-import org.firstinspires.ftc.teamcode.robots.UGBot.vision.VisionProvider;
-
-import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
 
 /**
  * Class to keep all autonomous-related functions and state-machines in
@@ -93,13 +89,7 @@ public class Autonomous {
 
 
     public StateMachine AutoFull = getStateMachine(autoStage)
-//            .addTimedState(3f, () -> sample(),  () -> telemetry.addData("DELAY", "DONE"))
-
-            .addMineralState(ugStateProvider,
-                    //() -> robot.driveGenericPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 3),
-                    () -> robot.driveWallPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 1),
-                    () -> robot.driveWallPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.3), // 2.3
-                    () -> robot.driveWallPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 1.87)) //1.87
+            .addState(() -> robot.calibrationRun(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.7432))
 
             .addMineralState(ugStateProvider,
                     () -> robot.turret.rotateCardinalTurret(true),
@@ -107,26 +97,45 @@ public class Autonomous {
                     () -> robot.turret.rotateCardinalTurret(true))
 
             .addMineralState(ugStateProvider,
-                    () -> robot.rotateIMU(270,3),
-                    () -> robot.rotateIMU(90,3),
-                    () -> robot.rotateIMU(270,3))
+                    () -> true,
+                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.19456, false),
+                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 1.65608, false))
+
+            //drop wobble goal
+
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 1.36652, false))
 
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            //.addState(() -> robot.launcher.toggleGripper())
+            .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
-            .addState(() -> robot.rotateIMU(0,3))
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset + .25, false, 90))
+            .addState(() -> robot.turret.rotateCardinalTurret(false))
+
+
+            //back up and grab second wobble goal
+
+            .addState(() -> robot.turret.rotateCardinalTurret(true))
 
             .addMineralState(ugStateProvider,
-                    () -> robot.driveIMUDistanceWithReset(.7, 0, false, 1), //1, backwards
-                    () -> robot.driveIMUDistanceWithReset(.7, 0, false, .5), // .5
-                    () -> true)
-            .addState(() -> robot.driveIMUDistanceWithReset(.2,180,true,0))
+                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.19456, true,0),
+                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.19456, true,0),
+                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 1.65608, true,0))
+
+            .addMineralState(ugStateProvider,
+                    () -> robot.turret.rotateCardinalTurret(true),
+                    () -> robot.turret.rotateCardinalTurret(false),
+                    () -> robot.turret.rotateCardinalTurret(true))
+
+            //drop wobble goal
+
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 1.397, true,0))
+
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
-            .addState(() -> robot.driveWallPIDDistance(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.8))
+            .addState(() -> robot.calibrationRun(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.8))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 

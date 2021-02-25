@@ -769,7 +769,7 @@ public class PoseUG {
     int countOutliers = 0;
     double driveWallDistanceTarget = 0;
 
-    public boolean driveWallPIDDistance(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
+    public boolean calibrationRun(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
 
         if (!driveIMUDistanceInitialzed) {
             // set what direction the robot is supposed to be moving in for the purpose of
@@ -981,6 +981,24 @@ public class PoseUG {
                     }
                     break;
             }
+        }
+        return false;
+    }
+
+    int shootRingStage = 0;
+
+    public boolean shootRingAuton(Constants.Target newTarget){
+        switch(shootRingStage){
+            case 0:
+                setTarget(newTarget);
+                flywheelIsActive = !flywheelIsActive;
+                shootRingStage++;
+                break;
+            case 1:
+                if(toggleTriggerArticulation()){
+                    shootRingStage = 0;
+                    return true;
+                }
         }
         return false;
     }
