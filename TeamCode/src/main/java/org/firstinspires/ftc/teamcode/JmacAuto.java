@@ -79,7 +79,7 @@ public class JmacAuto extends LinearOpMode {
                     mDrive.Arm.setPower(0);
                     turnDegree(60, 3.5, 0.0118,0.005, 0.0015);
                     monkeShoot();
-                    linearMovement(-42, 4, 0.000485, 0.00007, 0.0000365);
+                    linearMovement(-41, 4, 0.000485, 0.00008, 0.0000365);
                     turnDegree(90, 3.5, 0.0118,0.005, 0.0015);
                     mDrive.Arm.setPower(-0.6);
                     sleep(200);
@@ -98,7 +98,7 @@ public class JmacAuto extends LinearOpMode {
                     sleep(600);
                     mDrive.Arm.setPower(0);
                     linearMovement(43, 4, 0.000485, 0.000065, 0.0000365);
-                    turn45();
+                    turnDegree(-75, 3.5, 0.0120,0.005, 0.0015);
                     mDrive.claw.setPosition(1);
                     strafeLeft();
                     break;
