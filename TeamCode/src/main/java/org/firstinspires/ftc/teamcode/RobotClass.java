@@ -580,7 +580,7 @@ public class RobotClass {
             telemetry.update();
         }
         wobbleGoalRaise.setPower(0);
-        pause(5000);
+
 
 
     }
@@ -603,7 +603,9 @@ public class RobotClass {
     }
     public void depositWobbleGoal() {
         moveWobbleGoalArm(.7,-.5);
+        pause(500);
         wobbleGoalGrippyThingRelease();
+        pause(350);
         moveWobbleGoalArm(.7, .5);
     }
 
@@ -614,6 +616,32 @@ public class RobotClass {
         while (time<seconds*1000 && opmode.opModeIsActive()) {
             time = new Date().getTime() - startTime;
         }
+    }
+
+    public void startShooting() {
+        shooterEngage(4000);
+        pause(750);
+        shooterServo1(.8);
+        shooterServo2(.8);
+        pause(500);
+        intakeServoEngage(.9);
+
+    }
+
+    public void stopShooting() {
+        shooterStop();
+        shooterServo1Stop();
+        shooterServo2Stop();
+        intakeServoStop();
+    }
+
+    public void stopTimingBelt() {
+        shooterServo1Stop();
+        shooterServo2Stop();
+    }
+    public void startTimingBelt() {
+        shooterServo1(.8);
+        shooterServo2(.8);
     }
 
 
