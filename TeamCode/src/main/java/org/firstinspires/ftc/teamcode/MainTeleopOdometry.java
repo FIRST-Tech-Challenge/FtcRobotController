@@ -182,8 +182,8 @@ public class MainTeleopOdometry extends LinearOpMode{
                 wobbleClaw.setPosition(1);
             }
 
-            if(gamepad1.x){
-                setOdometryAngle(0);
+            if(gamepad1.left_bumper){
+                shootGoal();
             }
 
             if(gamepad2.right_bumper){

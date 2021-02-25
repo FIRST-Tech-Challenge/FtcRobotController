@@ -27,7 +27,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "MainAuto")
+@Autonomous(name = "TestAuto")
 public class TestAutonomous extends LinearOpMode {
     double hue;
     OpenCvCamera webcam;
