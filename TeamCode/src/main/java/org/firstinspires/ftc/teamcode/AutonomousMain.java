@@ -393,7 +393,7 @@ public class AutonomousMain extends LinearOpMode {
         double powerOne = 1 * Math.sin(angle);
         double powerTwo = 1 * Math.cos(angle);
 
-        while (distance > 1.5){
+        while (distance > 1){
             if (gamepad1.y){
                 break;
             }
@@ -437,7 +437,7 @@ public class AutonomousMain extends LinearOpMode {
         double relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
 
-        while (Math.abs(desiredAngle-globalPositionUpdate.returnOrientation()) > 1){
+        while (relativeAngleDifference > 1){
             if (gamepad1.y){
                 break;
             }
