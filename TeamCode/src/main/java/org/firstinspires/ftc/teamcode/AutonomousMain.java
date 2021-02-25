@@ -521,7 +521,6 @@ public class AutonomousMain extends LinearOpMode {
 
     public void goToEnd() throws InterruptedException{
         odometryDriveToPos(-15, 70,0);
-        setOdometryAngle(350);
     }
 
 
