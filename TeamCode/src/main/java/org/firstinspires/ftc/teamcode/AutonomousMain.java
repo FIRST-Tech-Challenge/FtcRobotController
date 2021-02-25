@@ -437,7 +437,7 @@ public class AutonomousMain extends LinearOpMode {
         double relativeAngleDifference = getOdometryAngleDifference(desiredAngle);
 
 
-        while (relativeAngleDifference > 0.5){
+        while (Math.abs(desiredAngle-globalPositionUpdate.returnOrientation()) > 1){
             if (gamepad1.y){
                 break;
             }
