@@ -19,5 +19,16 @@ public class TestTele extends OpMode {
         double turn = -gamepad1.left_stick_x;
 
         bot.move(forward,strafe,turn);
+
+        if(gamepad1.right_bumper){
+            bot.intaking = true;
+        }else if(gamepad1.left_bumper){
+            bot.intaking = false;
+            bot.intake(-0.5);
+        }else if(bot.intaking){
+            bot.intake(1);
+        }else{
+            bot.intake(0);
+        }
     }
 }
