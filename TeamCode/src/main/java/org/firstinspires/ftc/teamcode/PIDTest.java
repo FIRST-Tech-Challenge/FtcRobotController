@@ -260,12 +260,12 @@ public class PIDTest extends LinearOpMode {
     {
         mDrive.ringHopper.setPosition(1);
         sleep(500);
-        mDrive.Pivot.setPower(-0.75);
+        mDrive.Intake.setPower(-0.75);
         mDrive.ringHopper.setPosition(0.5);
         mDrive.FlyWheel1.setPower(1);
         mDrive.FlyWheel2.setPower(1);
         sleep(500);
-        mDrive.Pivot.setPower(-0.4);
+        mDrive.Intake.setPower(-0.4);
         mDrive.ringHopper.setPosition(1);
         sleep(1000); //first shot
         mDrive.ringHopper.setPosition(0.5);
@@ -279,15 +279,15 @@ public class PIDTest extends LinearOpMode {
         mDrive.ringHopper.setPosition(0.5);
         mDrive.FlyWheel1.setPower(0);
         mDrive.FlyWheel2.setPower(0);
-        mDrive.Pivot.setPower(0);
+        mDrive.Intake.setPower(0);
     }
 
     public void resetShooter()
     {
         mDrive.ringHopper.setPosition(0);
-        mDrive.Pivot.setPower(0.7);
+        mDrive.Intake.setPower(0.7);
         sleep(750);
-        mDrive.Pivot.setPower(0);
+        mDrive.Intake.setPower(0);
         mDrive.ringHopper.setPosition(0.5);
     }
 

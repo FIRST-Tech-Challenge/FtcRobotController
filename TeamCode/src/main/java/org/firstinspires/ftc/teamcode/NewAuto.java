@@ -118,12 +118,12 @@ public class NewAuto extends LinearOpMode {
 
                     mDrive.ringHopper.setPosition(1);
                     sleep(500);
-                    mDrive.Pivot.setPower(-0.7);
+                    mDrive.Intake.setPower(-0.7);
                     mDrive.ringHopper.setPosition(0.5);
                     mDrive.FlyWheel1.setPower(1);
                     mDrive.FlyWheel2.setPower(1);
                     sleep(1000);
-                    mDrive.Pivot.setPower(0);
+                    mDrive.Intake.setPower(0);
                     mDrive.ringHopper.setPosition(1);
                     sleep(1000); //first shot
                     mDrive.ringHopper.setPosition(0.5);
@@ -139,9 +139,9 @@ public class NewAuto extends LinearOpMode {
                     mDrive.ringHopper.setPosition(0.5);
                     mDrive.FlyWheel1.setPower(0);
                     mDrive.FlyWheel2.setPower(0);
-                    mDrive.Pivot.setPower(0.7);
+                    mDrive.Intake.setPower(0.7);
                     sleep(750);
-                    mDrive.Pivot.setPower(0);
+                    mDrive.Intake.setPower(0);
 
                     turnDegree(-28,5, 0.0118,0.005, 0.002);
                     linearMovement(34, 5, 0.0004,0.00007, 0.000068);
@@ -163,12 +163,12 @@ public class NewAuto extends LinearOpMode {
 
                     mDrive.ringHopper.setPosition(1);
                     sleep(500);
-                    mDrive.Pivot.setPower(-0.7);
+                    mDrive.Intake.setPower(-0.7);
                     mDrive.ringHopper.setPosition(0.5);
                     mDrive.FlyWheel1.setPower(1);
                     mDrive.FlyWheel2.setPower(1);
                     sleep(1000);
-                    mDrive.Pivot.setPower(0);
+                    mDrive.Intake.setPower(0);
                     mDrive.ringHopper.setPosition(1);
                     sleep(1000); //first shot
                     mDrive.ringHopper.setPosition(0.5);
@@ -184,9 +184,9 @@ public class NewAuto extends LinearOpMode {
                     mDrive.ringHopper.setPosition(0.5);
                     mDrive.FlyWheel1.setPower(0);
                     mDrive.FlyWheel2.setPower(0);
-                    mDrive.Pivot.setPower(0.7);
+                    mDrive.Intake.setPower(0.7);
                     sleep(750);
-                    mDrive.Pivot.setPower(0);
+                    mDrive.Intake.setPower(0);
 
                     turnDegree(-28,5, 0.0118,0.005, 0.002);
                     linearMovement(56, 6, 0.0004,0.00007, 0.000068);
@@ -427,9 +427,9 @@ public class NewAuto extends LinearOpMode {
     public void resetShooter()
     {
         mDrive.ringHopper.setPosition(0);
-        mDrive.Pivot.setPower(0.7);
+        mDrive.Intake.setPower(0.7);
         sleep(750);
-        mDrive.Pivot.setPower(0);
+        mDrive.Intake.setPower(0);
         mDrive.ringHopper.setPosition(0.5);
     }
 

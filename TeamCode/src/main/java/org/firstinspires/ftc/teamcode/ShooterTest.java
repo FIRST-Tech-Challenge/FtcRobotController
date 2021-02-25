@@ -60,7 +60,7 @@ public class ShooterTest extends LinearOpMode {
             else if(gamepad2.left_bumper)
                 mDrive.FlyWheel1.setVelocity(0);
 
-            mDrive.Pivot.setPower(3 * gamepad2.left_stick_y / 4);
+            mDrive.Intake.setPower(3 * gamepad2.left_stick_y / 4);
 
             if (gamepad2.dpad_up)
                 mDrive.ringHopper.setPosition(1);

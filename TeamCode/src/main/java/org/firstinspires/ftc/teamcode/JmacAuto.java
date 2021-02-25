@@ -66,51 +66,45 @@ public class JmacAuto extends LinearOpMode {
                 case 0:
                     linearMovement(58, 3.5, 0.000475, 0.000058, 0.000037);
                     turnDegree(-60, 3.5, 0.0118,0.005, 0.0015);
-                    mDrive.Arm.setPower(-0.75);
+                    mDrive.Arm.setPower(-0.7);
                     sleep(800);
                     mDrive.Arm.setPower(0);
                     sleep(200);
                     mDrive.claw.setPosition(1);
                     sleep(300);
-                    mDrive.Arm.setPower(0.75);
+                    mDrive.Arm.setPower(0.6);
                     sleep(200);
                     mDrive.claw.setPosition(0);
-                    sleep(700);
+                    sleep(500);
                     mDrive.Arm.setPower(0);
                     turnDegree(60, 3.5, 0.0118,0.005, 0.0015);
                     monkeShoot();
-
-                    /*shoot();
-                    turnDegree(-17, 2.5, 0.0118,0.005, 0.002);
-                    resetShooter();
-                    linearMovement(-39, 3, 0.0004,0.00007, 0.000068);
-                    turnDegree(90, 3.5, 0.0118,0.005, 0.002);
-                    mDrive.Arm.setPower(-0.7);
-                    sleep(500);
-                    mDrive.Arm.setPower(0);
-                    mDrive.claw.setPosition(0);
-                    sleep(500);
-                    linearMovement(18, 2, 0.0004,0.00007, 0.000068);
+                    linearMovement(-42, 4, 0.000485, 0.00007, 0.0000365);
+                    turnDegree(90, 3.5, 0.0118,0.005, 0.0015);
+                    mDrive.Arm.setPower(-0.6);
+                    sleep(200);
                     mDrive.claw.setPosition(1);
-                    sleep(500);
-                    mDrive.Arm.setPower(1);
-                    sleep(500);
+                    sleep(400);
                     mDrive.Arm.setPower(0);
-                    linearMovement(-18, 2, 0.0004,0.00007, 0.000068);
-                    turnDegree(-90, 3.5, 0.0118,0.005, 0.002);
-                    mDrive.Arm.setPower(-0.75);
-                    sleep(500);
-                    mDrive.Arm.setPower(0);
-                    linearMovement(43, 3, 0.0004,0.00007, 0.000068);
-                    turn45();
-                    //turnDegree(-30, 1);
+                    linearMovement(14, 2, 0.0004,0.000075, 0.0000365);
                     mDrive.claw.setPosition(0);
                     sleep(500);
-                    mDrive.Arm.setPower(1);
-                    sleep(500);
+                    mDrive.Arm.setPower(0.65);
+                    sleep(400);
                     mDrive.Arm.setPower(0);
-                    strafeLeft();*/
+                    linearMovement(-14, 2, 0.0004,0.000075, 0.0000365);
+                    turnDegree(-90, 3.5, 0.0118,0.005, 0.0015);
+                    mDrive.Arm.setPower(-0.65);
+                    sleep(600);
+                    mDrive.Arm.setPower(0);
+                    linearMovement(43, 4, 0.000485, 0.000065, 0.0000365);
+                    turn45();
+                    mDrive.claw.setPosition(1);
+                    strafeLeft();
                     break;
+
+
+
                 case 1:
                     mDrive.claw.setPosition(1);
                     linearMovement(58, 5, 0.0004,0.00007, 0.000068);
@@ -118,12 +112,12 @@ public class JmacAuto extends LinearOpMode {
 
                     mDrive.ringHopper.setPosition(1);
                     sleep(500);
-                    mDrive.Pivot.setPower(-0.7);
+                    mDrive.Intake.setPower(-0.7);
                     mDrive.ringHopper.setPosition(0.5);
                     mDrive.FlyWheel1.setPower(1);
                     mDrive.FlyWheel2.setPower(1);
                     sleep(1000);
-                    mDrive.Pivot.setPower(0);
+                    mDrive.Intake.setPower(0);
                     mDrive.ringHopper.setPosition(1);
                     sleep(1000); //first shot
                     mDrive.ringHopper.setPosition(0.5);
@@ -139,9 +133,9 @@ public class JmacAuto extends LinearOpMode {
                     mDrive.ringHopper.setPosition(0.5);
                     mDrive.FlyWheel1.setPower(0);
                     mDrive.FlyWheel2.setPower(0);
-                    mDrive.Pivot.setPower(0.7);
+                    mDrive.Intake.setPower(0.7);
                     sleep(750);
-                    mDrive.Pivot.setPower(0);
+                    mDrive.Intake.setPower(0);
 
                     turnDegree(-28,5, 0.0118,0.005, 0.002);
                     linearMovement(34, 5, 0.0004,0.00007, 0.000068);
@@ -163,12 +157,12 @@ public class JmacAuto extends LinearOpMode {
 
                     mDrive.ringHopper.setPosition(1);
                     sleep(500);
-                    mDrive.Pivot.setPower(-0.7);
+                    mDrive.Intake.setPower(-0.7);
                     mDrive.ringHopper.setPosition(0.5);
                     mDrive.FlyWheel1.setPower(1);
                     mDrive.FlyWheel2.setPower(1);
                     sleep(1000);
-                    mDrive.Pivot.setPower(0);
+                    mDrive.Intake.setPower(0);
                     mDrive.ringHopper.setPosition(1);
                     sleep(1000); //first shot
                     mDrive.ringHopper.setPosition(0.5);
@@ -184,9 +178,9 @@ public class JmacAuto extends LinearOpMode {
                     mDrive.ringHopper.setPosition(0.5);
                     mDrive.FlyWheel1.setPower(0);
                     mDrive.FlyWheel2.setPower(0);
-                    mDrive.Pivot.setPower(0.7);
+                    mDrive.Intake.setPower(0.7);
                     sleep(750);
-                    mDrive.Pivot.setPower(0);
+                    mDrive.Intake.setPower(0);
 
                     turnDegree(-28,5, 0.0118,0.005, 0.002);
                     linearMovement(56, 6, 0.0004,0.00007, 0.000068);
@@ -393,7 +387,7 @@ public class JmacAuto extends LinearOpMode {
         mDrive.BL.setPower(-0.4);
         mDrive.FR.setPower(0.4);
         mDrive.BR.setPower(0.4);
-        sleep(500);
+        sleep(600);
         mDrive.FL.setPower(0);
         mDrive.BL.setPower(0);
         mDrive.FR.setPower(0);
@@ -404,12 +398,12 @@ public class JmacAuto extends LinearOpMode {
     {
         mDrive.ringHopper.setPosition(1);
         sleep(500);
-        mDrive.Pivot.setPower(-0.75);
+        mDrive.Intake.setPower(-0.75);
         mDrive.ringHopper.setPosition(0.5);
         mDrive.FlyWheel1.setPower(1);
         mDrive.FlyWheel2.setPower(1);
         sleep(500);
-        mDrive.Pivot.setPower(-0.4);
+        mDrive.Intake.setPower(-0.4);
         mDrive.ringHopper.setPosition(1);
         sleep(1000); //first shot
         mDrive.ringHopper.setPosition(0.5);
@@ -423,15 +417,15 @@ public class JmacAuto extends LinearOpMode {
         mDrive.ringHopper.setPosition(0.5);
         mDrive.FlyWheel1.setPower(0);
         mDrive.FlyWheel2.setPower(0);
-        mDrive.Pivot.setPower(0);
+        mDrive.Intake.setPower(0);
     }
 
     public void resetShooter()
     {
         mDrive.ringHopper.setPosition(0);
-        mDrive.Pivot.setPower(0.7);
+        mDrive.Intake.setPower(0.7);
         sleep(750);
-        mDrive.Pivot.setPower(0);
+        mDrive.Intake.setPower(0);
         mDrive.ringHopper.setPosition(0.5);
     }
 
@@ -476,12 +470,24 @@ public class JmacAuto extends LinearOpMode {
 
     public void monkeShoot()
     {
-        mDrive.FlyWheel1.setPower(1);
-        mDrive.FlyWheel2.setPower(1);
+        mDrive.FlyWheel1.setPower(0.9);
+        mDrive.FlyWheel2.setPower(0.9);
         sleep(1500);
-        mDrive.Pivot.setPower(1);
-        sleep(5000);
-        mDrive.Pivot.setPower(0);
+        mDrive.ringHopper.setPosition(1);
+        sleep(500);
+        mDrive.ringHopper.setPosition(0.5);
+        sleep(750);
+        mDrive.ringHopper.setPosition(1);
+        sleep(500);
+        mDrive.ringHopper.setPosition(0.5);
+        sleep(750);
+        mDrive.ringHopper.setPosition(1);
+        sleep(500);
+        mDrive.ringHopper.setPosition(0.5);
+        sleep(750);
+        mDrive.ringHopper.setPosition(1);
+        sleep(500);
+        mDrive.ringHopper.setPosition(0.5);
         mDrive.FlyWheel1.setPower(0);
         mDrive.FlyWheel2.setPower(0);
     }
