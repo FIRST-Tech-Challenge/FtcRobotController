@@ -29,7 +29,7 @@ public class InsideBlue extends LinearOpMode {
 
         robot.forward(0.5, -4.4);
         robot.pivotLeft(0.1, 12);
-        robot.shooterEngage(4000);
+        robot.shooterEngage();
         robot.pause(1000);
 
         robot.intakeServoEngage(.9);
