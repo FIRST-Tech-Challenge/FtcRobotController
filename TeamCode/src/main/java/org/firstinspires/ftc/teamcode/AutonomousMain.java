@@ -453,7 +453,7 @@ public class AutonomousMain extends LinearOpMode {
                     turnClockwise(0.3);
                 }else if (relativeAngleDifference <= 4 && relativeAngleDifference > 2){
                     turnClockwise(0.2);
-                }else if (relativeAngleDifference > 2){
+                }else if (relativeAngleDifference < 2){
                     turnClockwise(0.1);
                 }else{
                     break;
