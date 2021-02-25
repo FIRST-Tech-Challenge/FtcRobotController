@@ -16,15 +16,15 @@ public class DrivetrainHardware {
     public DcMotor BR; //Motor 2 - RM2
     public DcMotor FR; //Motor 3 - RM3
     // public ;
-    public DcMotor Pivot; //Motor 0
+    public DcMotor Intake; //Motor 0
     public DcMotorEx FlyWheel1; //Motor 1
     public DcMotorEx FlyWheel2; //Motor 2
     public DcMotor Arm; //Motor 3
 
-    public Servo ringHopper, claw;
-    public CRServo intake1, intake2;
+    public Servo ringHopper, claw; //0, 1
+    public CRServo intake1; // intake2; //2, 3
 
-    public BNO055IMU imu;
+    public BNO055IMU imu; //bus 0
 
 
     // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
@@ -38,7 +38,7 @@ public class DrivetrainHardware {
     public DistanceSensor distanceBackRight;
     */
 
-    public RevBlinkinLedDriver blink;
+    public RevBlinkinLedDriver blink; //3
 
     //public VoltageSensor voltageSensor;
 
@@ -52,9 +52,9 @@ public class DrivetrainHardware {
         FR = null;
         FlyWheel1 = null;
         FlyWheel2 = null;
-        Pivot = null;
+        Intake = null;
         intake1 = null;
-        intake2 = null;
+        //intake2 = null;
         hardwareMap = null;
         ringHopper = null;
         Arm = null;
@@ -80,13 +80,13 @@ public class DrivetrainHardware {
         BL = hardwareMap.get(DcMotor.class, "M3");
         FlyWheel1 = hardwareMap.get(DcMotorEx.class, "FW1");
         FlyWheel2 = hardwareMap.get(DcMotorEx.class, "FW2");
-        Pivot = hardwareMap.get(DcMotor.class, "Pivot");
+        Intake = hardwareMap.get(DcMotor.class, "Intake");
         Arm = hardwareMap.get(DcMotor.class, "Arm");
 
-        ringHopper = hardwareMap.get(Servo.class, "hopper"); //1
-        claw = hardwareMap.get(Servo.class, "claw");
-        intake1 = hardwareMap.get(CRServo.class, "intake1");
-        intake2 = hardwareMap.get(CRServo.class, "intake2");
+        ringHopper = hardwareMap.get(Servo.class, "hopper"); //0
+        claw = hardwareMap.get(Servo.class, "claw"); //1
+        //intake1 = hardwareMap.get(CRServo.class, "intake1");
+        //intake2 = hardwareMap.get(CRServo.class, "intake2");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode                = BNO055IMU.SensorMode.IMU;
@@ -115,7 +115,7 @@ public class DrivetrainHardware {
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FlyWheel1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         FlyWheel2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        Pivot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         freeze();
 
@@ -125,7 +125,7 @@ public class DrivetrainHardware {
         FR.setDirection(DcMotor.Direction.REVERSE);
         FlyWheel1.setDirection(DcMotor.Direction.REVERSE);
         FlyWheel2.setDirection(DcMotor.Direction.REVERSE);
-        Pivot.setDirection(DcMotor.Direction.FORWARD);
+        Intake.setDirection(DcMotor.Direction.FORWARD);
         Arm.setDirection(DcMotor.Direction.FORWARD);
 
         resetEncoders();
@@ -142,7 +142,7 @@ public class DrivetrainHardware {
         FR.setPower(0);
         FlyWheel1.setPower(0);
         FlyWheel2.setPower(0);
-        Pivot.setPower(0);
+        Intake.setPower(0);
         Arm.setPower(0);
     }
 

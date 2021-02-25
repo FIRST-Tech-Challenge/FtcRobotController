@@ -60,7 +60,7 @@ public class ArcadeTeleOp extends LinearOpMode {
         {
             currentState = IDLE;
             drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-            runIntake();
+            //runIntake();
             runFlyWheel();
             runPivot();
             runServos();
@@ -141,7 +141,7 @@ public class ArcadeTeleOp extends LinearOpMode {
             currentState = SHOOTING;
     }
 
-    public void runIntake() {
+    /*public void runIntake() {
         if (gamepad1.left_trigger > 0.2) {
             mDrive.intake1.setPower(1);
             mDrive.intake2.setPower(-1);
@@ -154,7 +154,7 @@ public class ArcadeTeleOp extends LinearOpMode {
             mDrive.intake1.setPower(0);
             mDrive.intake2.setPower(0);
         }
-    }
+    }*/
 
     public void doArm()
     {
@@ -167,7 +167,7 @@ public class ArcadeTeleOp extends LinearOpMode {
     public void runPivot()
 
     {
-        mDrive.Pivot.setPower(3 * gamepad2.left_stick_y / 4);
+        mDrive.Intake.setPower(3 * gamepad2.left_stick_y / 4);
     }
 
     public void runServos()
