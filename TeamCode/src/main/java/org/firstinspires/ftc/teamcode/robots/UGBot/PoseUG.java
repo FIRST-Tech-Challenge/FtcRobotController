@@ -61,7 +61,7 @@ public class PoseUG {
     PIDController alignPID = new PIDController(ALIGN_P, ALIGN_I, ALIGN_D);
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
-    public static double brightness = 0.0; //headlamp brightness - max value should be .8 on a fully charged battery
+    public double brightness = 0.0; //headlamp brightness - max value should be .8 on a fully charged battery
     public static double kpDrive = 0.008; // proportional constant multiplier .02
     public static double kiDrive = 0.0; // integral constant multiplier .01
     public static double kdDrive = .19; // derivative constant multiplier //increase 0.68
@@ -114,7 +114,7 @@ public class PoseUG {
     private double powerBackRight = 0;
 
     // PID values
-    public static int forwardTPM = 1304;// todo- use drive IMU to get this perfect
+    public int forwardTPM = 1304;// todo- use drive IMU to get this perfect
     int rightTPM = 1304; // todo - these need to be tuned for each robot
     int leftTPM = 1304; // todo - these need to be tuned for each robot
     private int strafeTPM = 1909; // todo - fix value high priority this current value is based on Kraken -
@@ -473,6 +473,7 @@ public class PoseUG {
         packet.put("bearing to", (360-Math.abs(getBearingTo(Constants.startingXOffset-.25, 1))));
         packet.put("distance to", getDistanceTo(Constants.startingXOffset,1.5));
         packet.put("rotVelBase", rotVelBase);
+        packet.put("intake power", intake.getIntakeSpeed());
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
@@ -628,7 +629,6 @@ public class PoseUG {
         switch(target) {
             case NONE:
                 turret.setTurntableAngle(turret.getTurretTargetHeading());
-                launcher.setFlywheelTargetTPS(0);
                 launcher.setFlywheelActivePID(false);
 //                turret.setTurntableAngle(getHeading());
                 break;
@@ -636,15 +636,14 @@ public class PoseUG {
                 goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
                 turret.setTurntableAngle(goalHeading);
                 launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.MULTIPLIER);
-
                 if(flywheelIsActive){
                     launcher.setFlywheelActivePID(true);
                     launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity());
                 }
                 else{
-                    launcher.setFlywheelTargetTPS(0);
                     launcher.setFlywheelActivePID(false);
                 }
+
                 break;
         }
     }

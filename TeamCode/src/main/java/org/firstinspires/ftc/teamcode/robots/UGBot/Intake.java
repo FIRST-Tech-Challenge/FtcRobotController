@@ -8,7 +8,7 @@ public class Intake {
 
     public DcMotor intakeMotor = null;
     private double speed;
-    boolean active;
+    private boolean active = true;
 
     public Intake(DcMotor intakeMotor) {
         this.intakeMotor = intakeMotor;
@@ -21,12 +21,19 @@ public class Intake {
         if(active){
             intakeMotor.setPower(speed);
         }
+        else{
+            intakeMotor.setPower(0);
+        }
     }
 
     //region getters and setters
 
     public void setIntakeSpeed(double speed){
         this.speed = speed;
+    }
+
+    public double getIntakeSpeed(){
+        return speed;
     }
 
     public void setActive(boolean active){this.active = active;}

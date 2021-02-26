@@ -97,11 +97,12 @@ public class Launcher {
 
             prevNanoTime = System.nanoTime();
             prevMotorTicks = flywheelMotor.getCurrentPosition();
-            if(prevOverride != Constants.overrideTPS)
-                flywheelTargetTPS = Constants.overrideTPS;
 
             if (FlywheelActivePID) {
                 spinPIDFlywheel(Constants.kpFlywheel, Constants.kiFlywheel, Constants.kdFlywheel, flywheelTPS, flywheelTargetTPS);
+            }
+            else{
+                flywheelMotor.setPower(0);
             }
 
 //
