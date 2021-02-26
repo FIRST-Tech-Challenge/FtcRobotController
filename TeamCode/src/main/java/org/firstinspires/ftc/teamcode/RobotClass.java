@@ -580,8 +580,6 @@ public class RobotClass {
             telemetry.update();
         }
         wobbleGoalRaise.setPower(0);
-        pause(5000);
-
 
     }
 
