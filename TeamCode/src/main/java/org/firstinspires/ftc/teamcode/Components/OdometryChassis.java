@@ -90,10 +90,10 @@ public class OdometryChassis extends BasicChassis {
         //navigation.setPosition(x,y,angle);
         xpos=x;
         ypos=y;
-        globalAngle=-newAngle;
-        odom1 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
-        odom3 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
-        odom2 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightBack");
+        //globalAngle=-newAngle;
+//        odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        odom3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         track();
     }
     public void stopAllMotors() {
