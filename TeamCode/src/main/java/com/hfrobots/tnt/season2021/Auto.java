@@ -371,13 +371,10 @@ public class Auto extends OpMode {
                         trajectoryBuilder.forward(58);
                         break;
                     case B:
-                        trajectoryBuilder.forward(82);
+                        // Instead, use A, + park from A
+                        // before placing the wobble goal:
+                        trajectoryBuilder.forward(58).strafeLeft(34).forward(6);
 
-                        if(currentAlliance == Constants.Alliance.RED) {
-                            trajectoryBuilder.strafeLeft(28);
-                        } else {
-                            trajectoryBuilder.strafeRight(24); //blue Needs testing
-                        }
                         break;
                     case C:
                         trajectoryBuilder.forward(106);
@@ -437,7 +434,7 @@ public class Auto extends OpMode {
                         trajectoryBuilder.strafeLeft(22).forward(12);
                         break;
                     case B:
-                        trajectoryBuilder.back(14);
+                        trajectoryBuilder.back(2);
                         break;
                     case C:
                         trajectoryBuilder.back(38);
