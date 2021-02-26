@@ -26,8 +26,8 @@ public class OuterBlueAutonomous extends LinearOpMode{
         waitForStart();
 
         robot.forward(.8,-2);
-        robot.shooterEngage(4000);
-        robot.pause(500);
+        robot.shooterEngageAlt();
+        robot.pause(800);
         robot.shooterServo1(.8);
         robot.shooterServo2(.8);
         robot.pause(500);
@@ -39,12 +39,9 @@ public class OuterBlueAutonomous extends LinearOpMode{
         robot.intakeServoStop();
         robot.forward(.8,-1);
         robot.strafeLeft(.6,2.1);
-        robot.forward(.6,-1.5);
+        robot.forward(.6,-1.75);
         robot.pivotRight(.6,15);
-        robot.moveWobbleGoalArm(.6, .3);
-        robot.wobbleGoalGrippyThingRelease();
-        robot.moveWobbleGoalArm(.5, -.4);
-
+        robot.depositWobbleGoal();
 
 
 
@@ -55,7 +52,5 @@ public class OuterBlueAutonomous extends LinearOpMode{
 //        robot.moveWobbleGoalArm(.3,.5);
 //        robot.wobbleGoalGrippyThingRelease();
 //
-        // I loathe you all.
-        //Ég óska ​​þess að þessi heimur endi í eldi.
     }
 }

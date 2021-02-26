@@ -22,27 +22,25 @@ public class OuterRedAutonomous extends LinearOpMode {
         waitForStart();
 
         robot.strafeLeft(.5,.2);
-        robot.forward(.6,-2.2);
+        robot.forward(.6,-2);
         robot.pivotLeft(.5,27);
-        robot.shooterEngage(4000);
+        robot.startShooting();
+        robot.stopTimingBelt();
+        robot.pause(950);
+        robot.startTimingBelt();
         robot.pause(500);
-        robot.shooterServo1(.8);
-        robot.shooterServo2(.8);
-        robot.pause(500);
-        robot.intakeServoEngage(.9);
-        robot.pause(4500);
-        robot.shooterStop();
-        robot.shooterServo1Stop();
-        robot.shooterServo2Stop();
-        robot.intakeServoStop();
+        robot.stopTimingBelt();
+        robot.pause(750);
+        robot.startTimingBelt();
+        robot.pause(1700);
+        robot.stopShooting();
         robot.pivotRight(.5, 27);
-        robot.forward(.8,-1.8);
+        robot.forward(.8,-2);
         robot.strafeRight(.6,2.1);
         robot.forward(.6,-1.5);
-        robot.pivotRight(.8,105);
-        robot.moveWobbleGoalArm(.8,.3);
-        robot.wobbleGoalGrippyThingRelease();
-        robot.moveWobbleGoalArm(.7, -.4);
+        robot.pivotRight(.5,105);
+        robot.pause(500);
+        robot.depositWobbleGoal();
 
     }
 }

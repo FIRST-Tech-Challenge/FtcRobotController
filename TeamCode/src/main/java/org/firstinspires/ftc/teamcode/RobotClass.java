@@ -530,10 +530,21 @@ public class RobotClass {
 ////            telemetry.update();
 //
 //    }
-    //Pretend "Engage" is actually ENGAGE!
-    public void shooterEngage (double duration) {
-        shooterMotor.setVelocity(-5400*0.85*28/60);
+    //Pretend "Engage" is actually "ENGAGE!"
+    public void shooterEngage () {
+        double targetVelocity = -5400*0.75*28/60;
+        shooterMotor.setVelocity(targetVelocity);
+        while (shooterMotor.getVelocity()<targetVelocity && this.opmode.opModeIsActive()) {
 
+        }
+    }
+
+    public void shooterEngageAlt () {
+        double targetVelocity = -5400*0.85*28/60;
+        shooterMotor.setVelocity(targetVelocity);
+        while (shooterMotor.getVelocity()<targetVelocity && this.opmode.opModeIsActive()) {
+
+        }
     }
 
     public void shooterStop () {
@@ -581,6 +592,8 @@ public class RobotClass {
         }
         wobbleGoalRaise.setPower(0);
 
+
+
     }
 
     public void intakeServoEngage(double speed) {
@@ -601,7 +614,9 @@ public class RobotClass {
     }
     public void depositWobbleGoal() {
         moveWobbleGoalArm(.7,-.5);
+        pause(500);
         wobbleGoalGrippyThingRelease();
+        pause(350);
         moveWobbleGoalArm(.7, .5);
     }
 
@@ -614,6 +629,31 @@ public class RobotClass {
         }
     }
 
+    public void startShooting() {
+        shooterEngage();
+        shooterServo1(.8);
+        shooterServo2(.8);
+        pause(500);
+        intakeServoEngage(.9);
+
+
+    }
+
+    public void stopShooting() {
+        shooterStop();
+        shooterServo1Stop();
+        shooterServo2Stop();
+        intakeServoStop();
+    }
+
+    public void stopTimingBelt() {
+        shooterServo1Stop();
+        shooterServo2Stop();
+    }
+    public void startTimingBelt() {
+        shooterServo1(.8);
+        shooterServo2(.8);
+    }
 
 
     }
