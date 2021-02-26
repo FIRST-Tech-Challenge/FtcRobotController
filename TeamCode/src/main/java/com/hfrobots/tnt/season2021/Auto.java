@@ -68,11 +68,29 @@ public class Auto extends OpMode {
         }
     };
 
+    // State machine uses this to automate ring feeding
+    private boolean feedRing = false;
+
+    // This is the "interface" to the mechanism for now, rather than
+    // changing too much
+    private OnOffButton feedRingButton = new OnOffButton() {
+        @Override
+        public boolean isPressed() {
+            return feedRing;
+        }
+
+        @Override
+        public DebouncedButton debounced() {
+            return null;
+        }
+    };
+
     private RoadRunnerMecanumDriveREV driveBase;
 
     private StateMachine stateMachine;
     private StarterStackDetectorPipeline starterStackDetectorPipeline;
     private WobbleGoal wobbleGoal;
+    private ScoringMechanism scoringMechanism;
 
     // The routes our robot knows how to do
     private enum Routes {
@@ -119,7 +137,7 @@ public class Auto extends OpMode {
 
         setupOpenCvCameraAndPipeline();
 
-        ScoringMechanism scoringMechanism = ScoringMechanism.builder()
+        scoringMechanism = ScoringMechanism.builder()
                 .hardwareMap(hardwareMap)
                 .telemetry(telemetry)
                 .ticker(Ticker.systemTicker()).build();
@@ -132,6 +150,9 @@ public class Auto extends OpMode {
         operatorControls = OperatorControls.builder().operatorGamepad(new NinjaGamePad(gamepad2))
                 .scoringMechanism(scoringMechanism)
                 .wobbleGoal(wobbleGoal).build();
+
+        // Override the launch button so auto can take control
+        scoringMechanism.setLaunchTrigger(feedRingButton);
 
         blinkinLed = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         blinkinLed.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY);
@@ -281,7 +302,7 @@ public class Auto extends OpMode {
             }
 
             stateMachine.doOneStateLoop();
-
+            scoringMechanism.periodicTask();
 
             telemetry.update(); // send all telemetry to the drivers' station
         } catch (Throwable t) {
@@ -491,6 +512,29 @@ public class Auto extends OpMode {
 
             }
         };
+
+        // TODO: To be able to launch rings, we need to
+        //
+        //  (1) create a state class that calls scoringMechanism.toPreloadRings() somewhere,
+        //      probably early, so the launcher can get up
+        //
+        //  (2) After we get to the launch zone (for now, this could be right after park, then
+        //      figure out the real distance later, have a State class that checks that the
+        //      launcher is up to speed - you would do it like line 218 in ScoringMechanismTest
+        //      if it is, go to (3), otherwise keep checking
+        //
+        //  (3) Repeat a, b, c, d steps 3 times:
+        //
+        //     (a) Have a state that sets feedRing to true
+        //
+        //     (b) Wait some amount of time for the feeder servo to extend
+        //         (right now, you can add a newDelayState(1) which
+        //         will be too slow, but will work
+        //
+        //     (c) Have another state that sets feedRing to false
+        //
+        //     (d) Wait some amount of time for the feeder servo to return
+        //
 
         stateMachine.addSequential(detectorState);
         stateMachine.addSequential(toTargetZone);

@@ -90,6 +90,7 @@ public class ScoringMechanism {
     private OnOffButton jankyServo;
 
     private State currentState;
+    private final PreloadRings preloadRings;
 
     @Builder
     private ScoringMechanism(HardwareMap hardwareMap,
@@ -114,7 +115,7 @@ public class ScoringMechanism {
         intakeStalled.setIdleState(idleState);
         intakeMoving.setIntakeStalled(intakeStalled);
 
-        PreloadRings preloadRings = new PreloadRings(telemetry, ticker);
+        preloadRings = new PreloadRings(telemetry, ticker);
         idleState.setPreloadRings(preloadRings);
         intakeMoving.setPreloadRings(preloadRings);
         preloadRings.setIdleState(idleState);
@@ -144,6 +145,10 @@ public class ScoringMechanism {
 
     public void toDeployedPosition() {
         launcher.launcherToHighPosition();
+    }
+
+    public void toPreloadRingsState() {
+        currentState = preloadRings;
     }
 
     public void periodicTask() {
