@@ -25,6 +25,7 @@
 
             <Servo name="aimServo" port="0" />
             <Servo name="shooterServo" port="1" />
+            <Servo name="intakeServo" port="2"/>
             <RevRobotics20HDHexMotor name="shooterMotorFront" port="0" />
             <RevRobotics20HDHexMotor name="shooterMotorBack" port="1" />
 
