@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous (name="Inside Blue")
-public class InsideBlue extends LinearOpMode {
+@Autonomous (name="Inside Red")
+public class InsideRed extends LinearOpMode {
 
     DcMotor wobbleGoalExtendMotor = null;
     DcMotor wobbleGoalRaiseMotor = null;
@@ -28,6 +28,7 @@ public class InsideBlue extends LinearOpMode {
         waitForStart();
 
         robot.forward(0.5, -4.4);
+        robot.strafeRight(0.5, 0.4);
         robot.pivotLeft(0.1, 17);
         robot.shooterEngage(4000);
         robot.pause(1000);
@@ -40,11 +41,12 @@ public class InsideBlue extends LinearOpMode {
         robot.pivotRight(.1, 6);
         shoot();
         robot.intakeServoEngage(0);
-        //# of rings matter
-        robot.pivotRight(0.1, 5);
+        // this is where the number of rings matter
+        robot.pivotRight(.1, 5);
         robot.forward(0.5, -4);
+        robot.pivotRight(0.4, 175);
         robot.depositWobbleGoal();
-        robot.forward(0.5, 3);
+        robot.forward(0.5, -3);
 
 //        robot.forward(0.5,-2);
 //        if (ringNmb == 0) {
@@ -70,3 +72,4 @@ public class InsideBlue extends LinearOpMode {
         robot.shooterServo1(0);
     }
 }
+
