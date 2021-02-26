@@ -66,13 +66,13 @@ public class JmacAuto extends LinearOpMode {
                 case 0:
                     linearMovement(58, 3.5, 0.000475, 0.000058, 0.000037);
                     turnDegree(-60, 3.5, 0.0118,0.005, 0.0015);
-                    mDrive.Arm.setPower(-0.7);
-                    sleep(800);
+                    mDrive.Arm.setPower(-0.5);
+                    sleep(400);
                     mDrive.Arm.setPower(0);
                     sleep(200);
                     mDrive.claw.setPosition(1);
                     sleep(300);
-                    mDrive.Arm.setPower(0.6);
+                    mDrive.Arm.setPower(0.5);
                     sleep(200);
                     mDrive.claw.setPosition(0);
                     sleep(500);
@@ -81,7 +81,7 @@ public class JmacAuto extends LinearOpMode {
                     monkeShoot();
                     linearMovement(-41, 4, 0.000485, 0.00008, 0.0000365);
                     turnDegree(90, 3.5, 0.0118,0.005, 0.0015);
-                    mDrive.Arm.setPower(-0.6);
+                    mDrive.Arm.setPower(-0.5);
                     sleep(200);
                     mDrive.claw.setPosition(1);
                     sleep(400);
@@ -89,13 +89,13 @@ public class JmacAuto extends LinearOpMode {
                     linearMovement(14, 2, 0.0004,0.000075, 0.0000365);
                     mDrive.claw.setPosition(0);
                     sleep(500);
-                    mDrive.Arm.setPower(0.65);
+                    mDrive.Arm.setPower(0.5);
                     sleep(400);
                     mDrive.Arm.setPower(0);
-                    linearMovement(-14, 2, 0.0004,0.000075, 0.0000365);
+                    linearMovement(-14.5, 2, 0.0004,0.000075, 0.0000365);
                     turnDegree(-90, 3.5, 0.0118,0.005, 0.0015);
-                    mDrive.Arm.setPower(-0.65);
-                    sleep(600);
+                    mDrive.Arm.setPower(-0.5);
+                    sleep(500);
                     mDrive.Arm.setPower(0);
                     linearMovement(43, 4, 0.000485, 0.000065, 0.0000365);
                     turnDegree(-75, 3.5, 0.0120,0.005, 0.0015);
@@ -151,6 +151,45 @@ public class JmacAuto extends LinearOpMode {
                     linearMovement(-18, 4, 0.0004,0.00007, 0.000068);
                     break;
                 case 4:
+
+                    linearMovement(93, 3.5, 0.000475, 0.000058, 0.000037);
+                    turnDegree(-60, 3.5, 0.0118,0.005, 0.0015);
+                    mDrive.Arm.setPower(-0.5);
+                    sleep(800);
+                    mDrive.Arm.setPower(0);
+                    sleep(200);
+                    mDrive.claw.setPosition(1);
+                    sleep(300);
+                    mDrive.Arm.setPower(0.5);
+                    sleep(200);
+                    mDrive.claw.setPosition(0);
+                    sleep(500);
+                    mDrive.Arm.setPower(0);
+                    turnDegree(60, 3.5, 0.0118,0.005, 0.0015);
+                    linearMovement(-76, 4, 0.000485, 0.00008, 0.0000365);
+                    turnDegree(90, 3.5, 0.0118,0.005, 0.0015);
+                    mDrive.Arm.setPower(-0.5);
+                    sleep(200);
+                    mDrive.claw.setPosition(1);
+                    sleep(400);
+                    mDrive.Arm.setPower(0);
+                    linearMovement(49, 2, 0.0004,0.000075, 0.0000365);
+                    mDrive.claw.setPosition(0);
+                    sleep(500);
+                    mDrive.Arm.setPower(0.5);
+                    sleep(400);
+                    mDrive.Arm.setPower(0);
+                    linearMovement(-49, 2, 0.0004,0.000075, 0.0000365);
+                    turnDegree(-90, 3.5, 0.0118,0.005, 0.0015);
+                    mDrive.Arm.setPower(-0.5);
+                    sleep(600);
+                    mDrive.Arm.setPower(0);
+                    linearMovement(78, 4, 0.000485, 0.000065, 0.0000365);
+                    turnDegree(-75, 3.5, 0.0120,0.005, 0.0015);
+                    mDrive.claw.setPosition(1);
+                    strafeLeft();
+                    break;
+                    /*
                     mDrive.claw.setPosition(1);
                     linearMovement(58, 5, 0.0004,0.00007, 0.000068);
                     turnDegree(26,5, 0.0118,0.005, 0.002);
@@ -195,6 +234,8 @@ public class JmacAuto extends LinearOpMode {
                     turnDegree(45,5, 0.0118,0.005, 0.002);
                     linearMovement(-44, 5, 0.0004,0.00007, 0.000068);
                     break;
+                    */
+
             }
         }
         mDrive.freeze();
