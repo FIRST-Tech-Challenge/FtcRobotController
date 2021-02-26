@@ -35,8 +35,8 @@ public class TensorFlowTest extends LinearOpMode {
         TensorFlow tensorFlow = new TensorFlow(this);
         ElapsedTime runtime = new ElapsedTime();
 
-//        tensorFlow.moveTensorFlowServo(0.35);
-//        sleep(5000);
+        tensorFlow.moveTensorFlowServo(0.35);
+        sleep(5000);
 
         int rings = -1;
         int i = 0;
