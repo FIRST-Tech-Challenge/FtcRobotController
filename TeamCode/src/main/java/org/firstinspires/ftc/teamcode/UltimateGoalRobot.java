@@ -39,6 +39,8 @@ import static java.lang.Math.sqrt;
  */
 public class UltimateGoalRobot
 {
+    public static WayPoint finalAutoPosition;
+
     /* Public OpMode members. */
     public final static double WOBBLE_ARM_MIN = 0.100;
     public final static double WOBBLE_ARM_MAX = 3.2;
@@ -137,11 +139,15 @@ public class UltimateGoalRobot
     public static boolean encodersReset = false;
     public boolean forceReset = false;
     public boolean disableDriverCentric = true;
+
     public static WayPoint shootingError = new WayPoint(0, 0, Math.toRadians(0), 1.0);
-    public static WayPoint highGoal = new WayPoint(144.03324, 149.7584, Math.toRadians(95.0), 1.0);
-    public static WayPoint powerShotRight = new WayPoint(104.06888, 149.7584, Math.toRadians(95.0), 1.0);
-    public static WayPoint powerShotCenter = new WayPoint(89.47404, 149.7584, Math.toRadians(95.0), 1.0);
-    public static WayPoint powerShotLeft = new WayPoint(74.8792, 149.7584, Math.toRadians(95.0), 1.0);
+    public static WayPoint highGoal = new WayPoint(0, 0, Math.toRadians(95.0), 1.0);
+    public static WayPoint powerShotRight = new WayPoint(0, 0, Math.toRadians(0), 1.0);
+    public static WayPoint powerShotCenter = new WayPoint(0, 0, Math.toRadians(0), 1.0);
+    public static WayPoint powerShotLeft = new WayPoint(0, 0, Math.toRadians(0), 1.0);
+    public static WayPoint powerShotRightOffset = new WayPoint(40, 0, Math.toRadians(0), 1.0);
+    public static WayPoint powerShotCenterOffset = new WayPoint(59, 0, Math.toRadians(0), 1.0);
+    public static WayPoint powerShotLeftOffset = new WayPoint(78, 0, Math.toRadians(0), 1.0);
 
     public double xAngle, yAngle, zAngle;
     /* local OpMode members. */
@@ -230,14 +236,6 @@ public class UltimateGoalRobot
         // Let's try to tweak the PIDs
         shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(200,
                 3, 0, 0, MotorControlAlgorithm.PIDF));
-//		  frontLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10,
-//                3, 0, 12, MotorControlAlgorithm.PIDF));
-//        frontRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10,
-//                3, 0, 12, MotorControlAlgorithm.PIDF));
-//        rearLeft.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10,
-//                3, 0, 12, MotorControlAlgorithm.PIDF));
-//        rearRight.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(10,
-//                3, 0, 12, MotorControlAlgorithm.PIDF));
 
         // Define and initialize sensors
         armPot = hwMap.get(AnalogInput.class, ARM_POT);
@@ -526,35 +524,13 @@ public class UltimateGoalRobot
             // We have reached our destination if the angle is close enough
             setAllDriveZero();
             reachedDestination = true;
-            // We are done when we flip signs.
-//        } else if(lastDriveAngle < 0) {
-//            // We have reached our destination if the delta angle sign flips from last reading
-//            if(deltaAngle >= 0) {
-//                setAllDriveZero();
-//                reachedDestination = true;
-//            } else {
-//                // We still have some turning to do.
-//                MovementVars.movement_x = 0;
-//                MovementVars.movement_y = 0;
-//                if(turnSpeed > -minSpinRate) {
-//                    turnSpeed = -minSpinRate;
-//                }
-//                MovementVars.movement_turn = turnSpeed;
-//                ApplyMovement();
-//            }
         } else {
-//            // We have reached our destination if the delta angle sign flips
-//            if(deltaAngle <= 0) {
-//                setAllDriveZero();
-//                reachedDestination = true;
-//            } else {
-                // We still have some turning to do.
-                MovementVars.movement_x = 0;
-                MovementVars.movement_y = 0;
-                turnSpeed = copySign(max(minSpinRate, abs(turnSpeed)), turnSpeed);
-                MovementVars.movement_turn = turnSpeed;
-                ApplyMovement();
-//            }
+            // We still have some turning to do.
+            MovementVars.movement_x = 0;
+            MovementVars.movement_y = 0;
+            turnSpeed = copySign(max(minSpinRate, abs(turnSpeed)), turnSpeed);
+            MovementVars.movement_turn = turnSpeed;
+            ApplyMovement();
         }
         lastDriveAngle = deltaAngle;
 
@@ -881,6 +857,41 @@ public class UltimateGoalRobot
 //                    tripleInjectState = TRIPLE_INJECTING.IDLE;
 //                }
 //                break;
+            case IDLE:
+            default:
+                break;
+        }
+    }
+
+    public enum INJECTING_JIGGLE {
+        IDLE,
+        RESETTING,
+        HOMING
+    }
+
+    public INJECTING_JIGGLE injectJiggleState = INJECTING_JIGGLE.IDLE;
+    public void startInjectingJiggle() {
+        if(injectJiggleState == INJECTING_JIGGLE.IDLE) {
+            injectJiggleState = INJECTING_JIGGLE.RESETTING;
+            injector.setPosition(INJECTOR_RESET);
+            injectTimer.reset();
+        }
+    }
+
+    public void performInjectingJiggle() {
+        switch(injectJiggleState) {
+            case RESETTING:
+                if(injectTimer.milliseconds() >= INJECTOR_RESET_TIME) {
+                    injector.setPosition(INJECTOR_HOME);
+                    injectTimer.reset();
+                    injectJiggleState = INJECTING_JIGGLE.HOMING;
+                }
+                break;
+            case HOMING:
+                if(injectTimer.milliseconds() >= INJECTOR_HOME_TIME) {
+                    injectJiggleState = INJECTING_JIGGLE.IDLE;
+                }
+                break;
             case IDLE:
             default:
                 break;

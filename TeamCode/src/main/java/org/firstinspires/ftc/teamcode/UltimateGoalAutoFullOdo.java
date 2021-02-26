@@ -71,6 +71,7 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
         driveToWayPoint(aroundStartingStack1, true, true);
         robot.startRotatingArm(WOBBLE_ARM_DEPLOYING);
         driveToWayPoint(powerShotFirst, false, false);
+        sleep(500);
         robot.startInjecting();
         while(opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
             updatePosition();
@@ -246,13 +247,22 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
 
             dropWobbleTargetZone();
 
-            driveToWayPoint(beforeStack, true, true);
-            robot.startRotatingArm(WOBBLE_ARM_GRABBING);
-            robot.setIntakeIn();
+            if(randomizationPosition != 3) {
+                driveToWayPoint(beforeStack, true, true);
+                robot.startRotatingArm(WOBBLE_ARM_GRABBING);
+                robot.setIntakeIn();
 
-            driveToWayPoint(collectStack, true, true);
-            driveToWayPoint(wobble2PickupLineup, true, false);
-            driveToWayPoint(wobble2Pickup, false, false);
+                driveToWayPoint(collectStack, true, true);
+                driveToWayPoint(wobble2PickupLineup, true, false);
+                driveToWayPoint(wobble2Pickup, false, false);
+            } else {
+                driveToWayPoint(wobblePullAway, true, true);
+                driveToWayPoint(beforeStack, true, true);
+                robot.startRotatingArm(WOBBLE_ARM_GRABBING);
+                driveToWayPoint(wobble2PickupLineup, true, false);
+                driveToWayPoint(wobble2Pickup, false, false);
+
+            }
 
             robot.startClawToggle(false);
             while(opModeIsActive() && robot.grabState != IDLE) {
@@ -263,13 +273,17 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
                 updatePosition();
             }
 
-            if(randomizationPosition == 2) {
+            if(randomizationPosition == 1) {
+                driveToWayPoint(highGoal, true, true);
+            } else if(randomizationPosition == 2) {
+                robot.startInjectingJiggle();
                 driveToWayPoint(highGoal, false, false);
                 robot.startInjecting();
                 while (opModeIsActive() && robot.injectState != UltimateGoalRobot.INJECTING.IDLE) {
                     updatePosition();
                 }
             } else if (randomizationPosition == 3) {
+                robot.startInjectingJiggle();
                 driveToWayPoint(highGoal, true, true);
 //                robot.startTripleInjecting();
 //                while (opModeIsActive() && robot.tripleInjectState != UltimateGoalRobot.TRIPLE_INJECTING.IDLE) {
@@ -287,11 +301,12 @@ public abstract class UltimateGoalAutoFullOdo extends UltimateGoalAutoBase
 //            robot.startRotatingArm(WOBBLE_ARM_STOWED);
             driveToWayPoint(park, false, true);
             robot.startClawToggle(false);
-//            while(opModeIsActive() && robot.armMovement != UltimateGoalRobot.WOBBLE_ARM_ROTATOR.IDLE) {
-//                updatePosition();
-//            }
+            while(opModeIsActive() && robot.grabState != IDLE) {
+                updatePosition();
+            }
         }
 
+        robot.finalAutoPosition = new WayPoint(MyPosition.worldXPosition, MyPosition.worldYPosition, MyPosition.worldAngle_rad, 1.0);
         if (tfod != null) {
             tfod.shutdown();
         }

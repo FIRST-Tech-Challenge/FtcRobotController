@@ -115,8 +115,8 @@ public class UltimateGoalTeleOp extends OpMode {
                     robot.getRightEncoderWheelPosition(),
                     robot.getStrafeEncoderWheelPosition());
         }
-        MyPosition.setPosition(MyPosition.worldXPosition, MyPosition.worldYPosition,
-                MyPosition.worldAngle_rad);
+        MyPosition.setPosition(robot.finalAutoPosition.x, robot.finalAutoPosition.y,
+                robot.finalAutoPosition.angle);
     }
 
     @Override
@@ -210,6 +210,9 @@ public class UltimateGoalTeleOp extends OpMode {
         // This can be used for shoot alignment.
         if(!rightHeld && rightPressed) {
             if(!aligning) {
+                robot.powerShotRight = new WayPoint(UltimateGoalRobot.highGoal.x - UltimateGoalRobot.powerShotRightOffset.x,
+                        UltimateGoalRobot.highGoal.y - UltimateGoalRobot.powerShotRightOffset.y,
+                        UltimateGoalRobot.highGoal.angle - UltimateGoalRobot.powerShotRightOffset.angle, 1.0);
                 robot.startShotAligning(UltimateGoalRobot.powerShotRight, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
                 aligning = true;
             } else {
@@ -223,6 +226,9 @@ public class UltimateGoalTeleOp extends OpMode {
 
         if(!leftHeld && leftPressed) {
             if(!aligning) {
+                robot.powerShotLeft = new WayPoint(UltimateGoalRobot.highGoal.x - UltimateGoalRobot.powerShotLeftOffset.x,
+                        UltimateGoalRobot.highGoal.y - UltimateGoalRobot.powerShotLeftOffset.y,
+                        UltimateGoalRobot.highGoal.angle - UltimateGoalRobot.powerShotLeftOffset.angle, 1.0);
                 robot.startShotAligning(UltimateGoalRobot.powerShotLeft, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
                 aligning = true;
             } else {
@@ -237,6 +243,9 @@ public class UltimateGoalTeleOp extends OpMode {
         if(!downHeld && downPressed) {
 //            robot.setShooterFlapPowerShot();
             if(!aligning) {
+                robot.powerShotCenter = new WayPoint(UltimateGoalRobot.highGoal.x - UltimateGoalRobot.powerShotCenterOffset.x,
+                        UltimateGoalRobot.highGoal.y - UltimateGoalRobot.powerShotCenterOffset.y,
+                        UltimateGoalRobot.highGoal.angle - UltimateGoalRobot.powerShotCenterOffset.angle, 1.0);
                 robot.startShotAligning(UltimateGoalRobot.powerShotCenter, UltimateGoalRobot.FLAP_POSITION.POWERSHOT);
                 aligning = true;
             } else {
@@ -407,6 +416,9 @@ public class UltimateGoalTeleOp extends OpMode {
         if(!robot.disableDriverCentric) {
             telemetry.addData("Gyro Angle: ", robot.readIMU());
         }
+        telemetry.addData("Final Auto X Position: ", robot.finalAutoPosition.x);
+        telemetry.addData("Final Auto Y Position: ", robot.finalAutoPosition.y);
+        telemetry.addData("Final Auto Angle: ", Math.toDegrees(robot.finalAutoPosition.angle));
         telemetry.addData("World X Position: ", MyPosition.worldXPosition);
         telemetry.addData("World Y Position: ", MyPosition.worldYPosition);
         telemetry.addData("World Angle: ", Math.toDegrees(MyPosition.worldAngle_rad));

@@ -78,6 +78,8 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
     // End of auto parking spot.
     protected WayPoint park;
 
+    protected WayPoint wobblePullAway;
+
     protected ElapsedTime autoTimer = new ElapsedTime();
     protected ElapsedTime autoTaskTimer = new ElapsedTime();
 
@@ -111,6 +113,7 @@ public abstract class UltimateGoalAutoBase extends LinearOpMode {
             robot.performTripleInjecting();
             robot.performRotatingArm();
             robot.performClawToggle();
+            robot.performInjectingJiggle();
             robot.updateShooterStability();
         }
     }
