@@ -25,6 +25,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.ftc9929.corelib.control.NinjaGamePad;
 import com.ftc9929.corelib.state.State;
 import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
+import com.google.common.base.Supplier;
 import com.google.common.base.Ticker;
 import com.hfrobots.tnt.corelib.Constants;
 import com.hfrobots.tnt.corelib.drive.Turn;
@@ -44,18 +45,33 @@ public class TurnState extends StopwatchTimeoutSafetyState {
 
     protected final RoadRunnerMecanumDriveBase driveBase;
 
-    private double angleRadians;
+    private final Supplier<Turn> delayedDecisionTurn;
+
 
     public TurnState(@NonNull String name,
                      @NonNull Telemetry telemetry,
-                     Turn turn,
+                     @NonNull final Turn turn,
+                     @NonNull RoadRunnerMecanumDriveBase driveBase,
+                     @NonNull Ticker ticker,
+                     long safetyTimeoutMillis) {
+        this(name, telemetry, new Supplier<Turn>(){
+            @Override
+            public Turn get() {
+                return turn;
+            }
+        }, driveBase, ticker, safetyTimeoutMillis);
+    }
+
+    public TurnState(@NonNull String name,
+                     @NonNull Telemetry telemetry,
+                     Supplier<Turn> delayedDecisionTurn,
                      @NonNull RoadRunnerMecanumDriveBase driveBase,
                      @NonNull Ticker ticker,
                      long safetyTimeoutMillis) {
         super(name, telemetry, ticker, safetyTimeoutMillis);
 
         this.driveBase = driveBase;
-        this.angleRadians = Math.toRadians(turn.getHeading());
+        this.delayedDecisionTurn = delayedDecisionTurn;
     }
 
     @Override
@@ -67,6 +83,7 @@ public class TurnState extends StopwatchTimeoutSafetyState {
         }
 
         if (!initialized) {
+            double angleRadians = Math.toRadians(delayedDecisionTurn.get().getHeading());
             driveBase.turn(angleRadians);
 
             initialized = true;
