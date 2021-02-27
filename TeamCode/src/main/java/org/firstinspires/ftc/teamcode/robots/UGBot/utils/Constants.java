@@ -57,7 +57,8 @@ public class Constants {
     public static double POWER_SHOT_RADIUS = 1;
     public static double startingXOffset = 1.2192;
     public static double startingYOffset = .24765;
-    public static double MULTIPLIER = 1.2;
+    public static double HEIGHT_MULTIPLIER = 1.2;
+    public static double RPS_MULTIPLIER = 1.1;
 
 
     public static int overrideTPS = 0;

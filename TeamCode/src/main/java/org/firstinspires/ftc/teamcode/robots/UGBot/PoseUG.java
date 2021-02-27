@@ -480,6 +480,8 @@ public class PoseUG {
         packet.put("distance to", getDistanceTo(Constants.startingXOffset,1.5));
         packet.put("rotVelBase", rotVelBase);
         packet.put("intake power", intake.getIntakeSpeed());
+        packet.put("laggy counter", laggyCounter);
+        packet.put("numLoops", numLoops);
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
@@ -525,6 +527,8 @@ public class PoseUG {
     double rotVelBase = 0.0;
     double prevHeading = getHeading();
     boolean flywheelIsActive = false;
+    int numLoops = 0;
+    int laggyCounter = 0;
     public void update(BNO055IMU imu, long ticksLeft, long ticksRight, boolean isActive) {
         long currentTime = System.nanoTime();
 
@@ -609,6 +613,12 @@ public class PoseUG {
         cachedXAcceleration = imu.getLinearAcceleration().xAccel;
 
         loopTime = System.nanoTime() - lastUpdateTimestamp;
+
+        if(loopTime / 1E9 > .10){
+            laggyCounter++;
+        }
+        numLoops++;
+
         lastUpdateTimestamp = System.nanoTime();
 
         trajCalc.updatePos(poseX, poseY);
@@ -618,7 +628,7 @@ public class PoseUG {
 
         launcher.update();
         turret.update();
-        intake.update(); //turnip
+        intake.update(); //watermelon
         maintainTarget();
 
         sendTelemetry();
@@ -641,10 +651,10 @@ public class PoseUG {
             default:
                 goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
                 turret.setTurntableAngle(goalHeading);
-                launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.MULTIPLIER);
+                launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.HEIGHT_MULTIPLIER);
                 if(flywheelIsActive){
                     launcher.setFlywheelActivePID(true);
-                    launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity());
+                    launcher.setFlywheelTargetTPS(trajSol.getAngularVelocity() * Constants.RPS_MULTIPLIER);
                 }
                 else{
                     launcher.setFlywheelActivePID(false);
@@ -770,7 +780,7 @@ public class PoseUG {
     }
 
     double WallVal = 0.0;
-    double numLoops = 0;
+
     int countOutliers = 0;
     double driveWallDistanceTarget = 0;
 
@@ -783,13 +793,6 @@ public class PoseUG {
             // calculate the target position of the drive motors
             driveWallDistanceTarget = (long) Math.abs((targetMeters * forwardTPM)) + Math.abs(getAverageTicks());
             driveIMUDistanceInitialzed = true;
-        }
-
-        numLoops++;
-        WallVal += currentVal / 50;
-
-        if((WallVal / numLoops) - (currentVal /50) > .03){
-            countOutliers++;
         }
 
 

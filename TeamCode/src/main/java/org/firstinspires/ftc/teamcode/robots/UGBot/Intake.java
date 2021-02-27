@@ -42,7 +42,7 @@ public class Intake {
     public void toggleFullTilt(){
         fullTilt = !fullTilt;
         if(fullTilt){
-            speed = 1;
+            speed = -1;
         }
         else{
             speed = 0;

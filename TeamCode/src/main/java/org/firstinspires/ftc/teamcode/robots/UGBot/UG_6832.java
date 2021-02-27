@@ -339,18 +339,18 @@ public class UG_6832 extends OpMode {
                 if (robot.articulation == PoseUG.Articulation.manual)
                     joystickDrivePregameMode();
 
-                if (auto.visionProviderFinalized) {
-                    StackHeight sp = auto.vp.detect();
-                    if (sp != StackHeight.NONE_FOUND)
-                        initStackHeightTest = sp;
-                    telemetry.addData("Vision", "Prep detection: %s%s", initStackHeightTest,
-                            sp == StackHeight.NONE_FOUND ? " (NONE_FOUND)" : "");
-                    robot.setDetection(initStackHeightTest);
-
-                } else {
-                    auto.visionProviderState = 0;
-                    auto.initVisionProvider(); // this is blocking
-                }
+//                if (auto.visionProviderFinalized) {
+//                    StackHeight sp = auto.vp.detect();
+//                    if (sp != StackHeight.NONE_FOUND)
+//                        initStackHeightTest = sp;
+//                    telemetry.addData("Vision", "Prep detection: %s%s", initStackHeightTest,
+//                            sp == StackHeight.NONE_FOUND ? " (NONE_FOUND)" : "");
+//                    robot.setDetection(initStackHeightTest);
+//
+//                } else {
+//                    auto.visionProviderState = 0;
+//                    auto.initVisionProvider(); // this is blocking
+//                }
 
             }
 
@@ -540,7 +540,6 @@ public class UG_6832 extends OpMode {
         pwrFwd = 0;
         pwrRot = 0;
 
-        if(robot.getArticulation().equals(PoseUG.Articulation.manual)) {
             if (notdeadzone(gamepad1.left_stick_y))
                 pwrFwd = reverse * direction * pwrDamper * gamepad1.left_stick_y;
             if (notdeadzone(gamepad1.right_stick_x))
@@ -550,8 +549,7 @@ public class UG_6832 extends OpMode {
                 robot.driveMixerDiffSteer(0, 0);
             } else {
                 robot.driveMixerDiffSteer(pwrFwd * pwrDamper, pwrRot);
-            }
-        }
+                }
 
         //region good logging example
 

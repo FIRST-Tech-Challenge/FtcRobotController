@@ -103,13 +103,16 @@ public class Autonomous {
 
             //drop wobble goal
 
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 1.6764, true,180))
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 1.7227540, true,180))
 
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
-            .addTimedState(4f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(() -> robot.launcher.setElbowTargetAngle(0))
 //
 //            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset + .5, true, 0))
+//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
 //            .addState(() -> robot.turret.rotateCardinalTurret(false))
 //
 //
@@ -129,7 +132,7 @@ public class Autonomous {
 //
 //            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 2.1336, true,0))
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 2.02240, true,0))
 
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
