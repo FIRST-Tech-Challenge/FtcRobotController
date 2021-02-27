@@ -50,7 +50,6 @@ public class RedFullRR extends LinearOpMode {
 
 ////////Program start////////////////////////////////////////////////////////////////////////
         //init servos
-        wobbleArm.setPosition(1);
         blocker.setPosition(.2);
         //wobbleArmMotor.setTargetPosition(ARM_UP);
         //wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -148,7 +147,6 @@ public class RedFullRR extends LinearOpMode {
 
                 //move arm down
                 wobbleClaw.setPosition(1);
-                wobbleArm.setPosition(.5); //down
                 wobbleArmMotor.setTargetPosition(ARM_DOWN);
                 wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 wobbleArmMotor.setPower(ARM_POWER);
@@ -181,7 +179,6 @@ public class RedFullRR extends LinearOpMode {
 
                 //move arm down
                 wobbleClaw.setPosition(1);
-                wobbleArm.setPosition(.5); //down
                 wobbleArmMotor.setTargetPosition(ARM_DOWN);
                 wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 wobbleArmMotor.setPower(ARM_POWER);
@@ -216,7 +213,7 @@ public class RedFullRR extends LinearOpMode {
 
                 //move arm down
                 wobbleClaw.setPosition(1);
-                wobbleArm.setPosition(.5); //down
+
                 wobbleArmMotor.setTargetPosition(ARM_DOWN);
                 wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 wobbleArmMotor.setPower(ARM_POWER);
@@ -268,7 +265,6 @@ public class RedFullRR extends LinearOpMode {
     private void pickUpWobble(){
         wobbleClaw.setPosition(0); //closed
         sleep(1000);
-        wobbleArm.setPosition(1); //up
         wobbleArmMotor.setTargetPosition(ARM_UP);
         wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleArmMotor.setPower(ARM_POWER);
@@ -280,14 +276,12 @@ public class RedFullRR extends LinearOpMode {
     }
 
     private void ejectWobbleGoal() {
-        wobbleArm.setPosition(.5); //down
         wobbleArmMotor.setTargetPosition(ARM_DOWN);
         wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleArmMotor.setPower(ARM_POWER);
         while (wobbleArmMotor.getCurrentPosition() < ARM_DOWN - 30){}
         wobbleClaw.setPosition(1);
         sleep(1000);
-        wobbleArm.setPosition(1); //up
         wobbleArmMotor.setTargetPosition(ARM_UP);
         wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleArmMotor.setPower(ARM_POWER);

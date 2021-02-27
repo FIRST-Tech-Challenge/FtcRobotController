@@ -69,37 +69,6 @@ public class TeleopV1 extends LinearOpMode {
             boolean dpadLeft2 = gamepad2.dpad_left;
 
 
-            boolean abxy1 = false;
-
-
-
-            if(a1){
-                leftfront.setPower(1);
-            } else {
-                leftfront.setPower(0);
-            }
-            if(b1){
-                leftback.setPower(1);
-            } else {
-                leftback.setPower(0);
-            }
-            if(x1){
-                rightfront.setPower(1);
-            } else {
-                rightfront.setPower(0);
-            }
-            if(y1){
-                rightback.setPower(1);
-            } else {
-                rightback.setPower(0);
-            }
-            if(a1 || b1 || x1 || y1) { //Do not use abxy1 buttons in any form while using sticks1/triggers1
-                abxy1 = true;
-            } else {
-                abxy1 = false;
-            }
-
-
             //diagonal driving
             if (Math.abs(LStickX) > 0 || Math.abs(LStickY) > 0 || Math.abs(RStickX) > 0) {
                 if (Math.abs(LStickX) < .05 && Math.abs(RStickX) < .05) {
@@ -126,11 +95,7 @@ public class TeleopV1 extends LinearOpMode {
             }
             else if (Math.abs(RTrigger1) > 0) {
                 SetPower(.5 * RTrigger1, -.5 * RTrigger1, .5 * RTrigger1, -.5 * RTrigger1);
-            }
-            else if (abxy1) {
-                //allow for partially unjanking abxy1 buttons
-            }
-            else {
+            } else {
                     SetPower(0,0,0,0);
             }
 
