@@ -47,7 +47,6 @@ public class OpenCVIntegration implements VisionProvider {
     List<MatOfPoint> findContoursOutput = new ArrayList<>();
     List<MatOfPoint> filterContoursOutput = new ArrayList<>();
     Mat overlay;
-    private int state = 0;
 
 
     private void initVuforia(HardwareMap hardwareMap, Viewpoint viewpoint) {
@@ -75,14 +74,7 @@ public class OpenCVIntegration implements VisionProvider {
 
     @Override
     public void shutdownVision() {}
-
-    private void sendState() {
-        state++;
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.put("vision state", state);
-        dashboard.sendTelemetryPacket(packet);
-    }
-
+    
     @Override
     public StackHeight detect() {
 //        TelemetryPacket packet = new TelemetryPacket();
@@ -100,14 +92,14 @@ public class OpenCVIntegration implements VisionProvider {
         Bitmap bm = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.RGB_565);
         bm.copyPixelsFromBuffer(img.getPixels());
 
-        overlay = VisionUtils.bitmapToMat(bm, CvType.CV_8UC3);
+        overlay = process(VisionUtils.bitmapToMat(bm, CvType.CV_8UC3));
 
-        if(enableDashboard) {
+//        if(enableDashboard) {
             Bitmap overlayBitmap = Bitmap.createBitmap(overlay.width(), overlay.height(), Bitmap.Config.RGB_565);
             Utils.matToBitmap(overlay, overlayBitmap);
             dashboard.sendImage(overlayBitmap);
             overlay.release();
-        }
+//        }
 
         if(blobs.isEmpty())
             return StackHeight.ZERO;
@@ -131,7 +123,6 @@ public class OpenCVIntegration implements VisionProvider {
     public Mat process(Mat source0) {
         // Step crop:
         cropOutput = crop(source0, new Point(Constants.TOP_LEFT_X, Constants.TOP_LEFT_Y), new Point(Constants.BOTTOM_RIGHT_X, Constants.BOTTOM_RIGHT_Y));
-        sendState();
 
         // Step Normalize0:
         Mat normalizeInput = cropOutput;
@@ -139,14 +130,12 @@ public class OpenCVIntegration implements VisionProvider {
         double normalizeAlpha = Constants.NORMALIZE_ALPHA;
         double normalizeBeta = Constants.NORMALIZE_BETA;
         normalize(normalizeInput, normalizeType, normalizeAlpha, normalizeBeta, normalizeOutput);
-        sendState();
 
         // Step Blur0:
         Mat blurInput = normalizeOutput;
         BlurType blurType = BlurType.get("Gaussian Blur");
             double blurRadius = Constants.BLUR_RADIUS;
         blur(blurInput, blurType, blurRadius, blurOutput);
-        sendState();
 
         // Step HSV_Threshold0:
         Mat hsvThresholdInput = blurOutput;
@@ -154,13 +143,11 @@ public class OpenCVIntegration implements VisionProvider {
         double[] hsvThresholdSaturation = {Constants.HSV_THRESHOLD_SATURATION_MIN, Constants.HSV_THRESHOLD_SATURATION_MAX};
         double[] hsvThresholdValue = {Constants.HSV_THRESHOLD_VALUE_MIN, Constants.HSV_THRESHOLD_VALUE_MAX};
         hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
-        sendState();
 
         // Step Find_Contours0:
         Mat findContoursInput = hsvThresholdOutput;
         boolean findContoursExternalOnly = false;
         findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
-        sendState();
 
         // Find max contour area
         double maxArea = 0;
@@ -171,7 +158,6 @@ public class OpenCVIntegration implements VisionProvider {
             if (area > maxArea)
                 maxArea = area;
         }
-        sendState();
 
         // Filter contours by area and resize to fit the original image size
         blobs.clear();
@@ -193,8 +179,19 @@ public class OpenCVIntegration implements VisionProvider {
             }
             Imgproc.drawContours(overlay, filterContoursOutput, -1, new Scalar(0,255,0,255), 3);
         }
-        sendState();
-        return overlay;
+        
+        switch(Constants.visionView) {
+            case 0:
+                return cropOutput;
+            case 1:
+                return normalizeOutput;
+            case 2:
+                return blurOutput;
+            case 3:
+                return hsvThresholdOutput;
+            default:
+                return source0;
+        }
     }
 
     private Mat crop(Mat image, Point topLeftCorner, Point bottomRightCorner) {

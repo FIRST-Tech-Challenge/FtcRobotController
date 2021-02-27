@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils.Point;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectorySolution;
+import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.robots.tombot.PoseSkystone;
 import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
@@ -395,6 +396,10 @@ public class PoseUG {
         launcher.resetEncoders();
     }
 
+    private StackHeight detection = StackHeight.HOLD_STATE;
+
+    public void setDetection(StackHeight detection) {this.detection = detection;}
+    public StackHeight getDetection() {return detection;}
 
     public void sendTelemetry() {
         TelemetryPacket packet = new TelemetryPacket();
@@ -454,6 +459,7 @@ public class PoseUG {
         // turret heading (red)
         CanvasUtils.drawVector(fieldOverlay, turretCenter, 3 * Constants.ROBOT_RADIUS, turret.getHeading(), "#FF0000");
 
+        packet.put("detection", detection);
         packet.put("current flywheel velocity", launcher.getFlywheelTPS());
         packet.put("target flywheel velocity", launcher.getFlywheelTargetTPS());
         packet.put("flywheel motor power", launcher.flywheelMotor.getPower() * 200);
@@ -795,12 +801,12 @@ public class PoseUG {
         } else
             moveMode = moveMode.forward;
 
-        if(Math.abs(getAverageTicks() / Math.abs(driveWallDistanceTarget)) > .90){
-            if(rotVelBase < 5){
-                shiftOdometer(getHeading());
-                initialized = false;
-            }
-        }
+//        if(Math.abs(getAverageTicks() / Math.abs(driveWallDistanceTarget)) > .90){
+//            if(rotVelBase < 5){
+//                shiftOdometer(getHeading());
+//                initialized = false;
+//            }
+//        }
 
         // if this statement is true, then the robot has not achieved its target
         // position
@@ -867,7 +873,7 @@ public class PoseUG {
                 }
                 break;
             case 1:
-                if(driveAbsoluteDistance(.6, (getBearingToWrapped(targetX, targetY)), forward, getDistanceTo(targetX, targetY),.1)) {
+                if(driveAbsoluteDistance(.5, (getBearingToWrapped(targetX, targetY)), forward, getDistanceTo(targetX, targetY),.1)) {
                     fieldPosState = 0;
                     return true;
                 }
@@ -985,19 +991,38 @@ public class PoseUG {
     }
 
     int shootRingStage = 0;
+    int ringsShot = 0;
+    double shootTime = 0;
 
-    public boolean shootRingAuton(Constants.Target newTarget){
+    public boolean shootRingAuton(Constants.Target newTarget, int numShots){
         switch(shootRingStage){
             case 0:
                 setTarget(newTarget);
-                flywheelIsActive = !flywheelIsActive;
+                flywheelIsActive = true;
                 shootRingStage++;
                 break;
             case 1:
                 if(toggleTriggerArticulation()){
-                    shootRingStage = 0;
-                    return true;
+                    ringsShot++;
+                    shootRingStage++;
+                    shootTime = System.nanoTime();
                 }
+                break;
+            case 2:
+                if(ringsShot == numShots){
+                    shootRingStage++;
+                }
+
+                if(System.nanoTime() - shootTime > 2 * 1E9){
+                    shootRingStage--;
+                }
+                break;
+            case 3:
+                shootRingStage = 0;
+                setTarget(Constants.Target.NONE);
+                flywheelIsActive = false;
+                ringsShot = 0;
+                return true;
         }
         return false;
     }

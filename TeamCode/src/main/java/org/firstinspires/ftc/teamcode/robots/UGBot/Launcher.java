@@ -104,9 +104,6 @@ public class Launcher {
             else{
                 flywheelMotor.setPower(0);
             }
-
-//
-
         }
     }
 
@@ -117,6 +114,7 @@ public class Launcher {
         update();
         active = false;
     }
+
     public void restart(double elbowPwr, double extendABobPwr){
         setElbowPwr(elbowPwr);
         active = true;

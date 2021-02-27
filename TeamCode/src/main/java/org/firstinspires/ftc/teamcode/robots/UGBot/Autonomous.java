@@ -91,51 +91,51 @@ public class Autonomous {
     public StateMachine AutoFull = getStateMachine(autoStage)
             .addState(() -> robot.calibrationRun(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.7432))
 
-            .addMineralState(ugStateProvider,
-                    () -> robot.turret.rotateCardinalTurret(true),
-                    () -> robot.turret.rotateCardinalTurret(false),
-                    () -> robot.turret.rotateCardinalTurret(true))
-
-            .addMineralState(ugStateProvider,
-                    () -> true,
-                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.19456, false),
-                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 1.65608, false))
-
-            //drop wobble goal
-
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 1.36652, false))
-
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL))
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset + .25, false, 90))
-            .addState(() -> robot.turret.rotateCardinalTurret(false))
-
-
-            //back up and grab second wobble goal
-
-            .addState(() -> robot.turret.rotateCardinalTurret(true))
-
-            .addMineralState(ugStateProvider,
-                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.19456, true,0),
-                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.19456, true,0),
-                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 1.65608, true,0))
-
-            .addMineralState(ugStateProvider,
-                    () -> robot.turret.rotateCardinalTurret(true),
-                    () -> robot.turret.rotateCardinalTurret(false),
-                    () -> robot.turret.rotateCardinalTurret(true))
+//            .addMineralState(ugStateProvider,
+//                    () -> robot.turret.rotateCardinalTurret(true),
+//                    () -> robot.turret.rotateCardinalTurret(false),
+//                    () -> robot.turret.rotateCardinalTurret(true))
+//
+//            .addMineralState(ugStateProvider,
+//                    () -> true,
+//                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.19456, true),
+//                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 1.65608, true))
 
             //drop wobble goal
 
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 1.397, true,0))
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 1.6764, true,180))
+
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
+            .addTimedState(4f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//
+//            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset + .5, true, 0))
+//            .addState(() -> robot.turret.rotateCardinalTurret(false))
+//
+//
+//            //back up and grab second wobble goal
+//
+//            .addMineralState(ugStateProvider,
+//                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.7432, true,0),
+//                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.19456, true,0),
+//                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 1.65608, true,0))
+//
+//            .addMineralState(ugStateProvider,
+//                    () -> robot.turret.rotateCardinalTurret(true),
+//                    () -> robot.turret.rotateCardinalTurret(false),
+//                    () -> robot.turret.rotateCardinalTurret(true))
+//
+//            //drop wobble goal
+//
+//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 2.1336, true,0))
 
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
-            .addState(() -> robot.calibrationRun(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.8))
+            .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 

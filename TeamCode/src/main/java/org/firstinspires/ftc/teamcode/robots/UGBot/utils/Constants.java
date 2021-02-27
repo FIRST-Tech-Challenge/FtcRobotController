@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class Constants {
     //misc
+
+    public static int visionView = 0;
     public static final double LAUNCH_HEIGHT = 0.41;
     public static final int ENCODER_TICKS_PER_REVOLUTION = 28;
     public static final double FLYWHEEL_RADIUS = 0.0765;
@@ -29,7 +31,7 @@ public class Constants {
     public static  double kdFlywheel= 0.0; //derivative constant multiplier
 
     // Vision
-    public static int TOP_LEFT_X = 224;
+    public static int TOP_LEFT_X = 184;
     public static int TOP_LEFT_Y = 303;
     public static int BOTTOM_RIGHT_X = 484;
     public static int BOTTOM_RIGHT_Y = 448;
@@ -40,13 +42,13 @@ public class Constants {
     public static double BLUR_RADIUS = 8.558558558558557;
 
     public static double HSV_THRESHOLD_HUE_MIN = 0.4668065215846204;
-    public static double HSV_THRESHOLD_HUE_MAX = 30.044343858627744;
+    public static double HSV_THRESHOLD_HUE_MAX = 1000;
     public static double HSV_THRESHOLD_SATURATION_MIN = 40.13039568345324;
     public static double HSV_THRESHOLD_SATURATION_MAX = 255.0;
     public static double HSV_THRESHOLD_VALUE_MIN = 109.84730100784292;
     public static double HSV_THRESHOLD_VALUE_MAX = 255.0;
 
-    public static double MIN_CONTOUR_AREA = 1000;
+    public static double MIN_CONTOUR_AREA = .1;
 
     //odometry positions all in meters
     public static double goalX = 0.9144;
@@ -55,7 +57,7 @@ public class Constants {
     public static double POWER_SHOT_RADIUS = 1;
     public static double startingXOffset = 1.2192;
     public static double startingYOffset = .24765;
-    public static double MULTIPLIER = 1.1;
+    public static double MULTIPLIER = 1.2;
 
 
     public static int overrideTPS = 0;

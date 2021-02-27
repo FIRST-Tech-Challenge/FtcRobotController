@@ -339,6 +339,19 @@ public class UG_6832 extends OpMode {
                 if (robot.articulation == PoseUG.Articulation.manual)
                     joystickDrivePregameMode();
 
+                if (auto.visionProviderFinalized) {
+                    StackHeight sp = auto.vp.detect();
+                    if (sp != StackHeight.NONE_FOUND)
+                        initStackHeightTest = sp;
+                    telemetry.addData("Vision", "Prep detection: %s%s", initStackHeightTest,
+                            sp == StackHeight.NONE_FOUND ? " (NONE_FOUND)" : "");
+                    robot.setDetection(initStackHeightTest);
+
+                } else {
+                    auto.visionProviderState = 0;
+                    auto.initVisionProvider(); // this is blocking
+                }
+
             }
 
             else { // if inactive we are in configuration mode
@@ -360,13 +373,6 @@ public class UG_6832 extends OpMode {
                     auto.enableTelemetry = !auto.enableTelemetry; // enable/disable FtcDashboard telemetry
                     // CenterOfGravityCalculator.drawRobotDiagram =
                     // !CenterOfGravityCalculator.drawRobotDiagram;
-                }
-                if (auto.visionProviderFinalized && gamepad1.left_trigger > 0.3) {
-                    StackHeight sp = auto.vp.detect();
-                    if (sp != StackHeight.NONE_FOUND)
-                        initStackHeightTest = sp;
-                    telemetry.addData("Vision", "Prep detection: %s%s", initStackHeightTest,
-                            sp == StackHeight.NONE_FOUND ? " (NONE_FOUND)" : "");
                 }
 
                 if (soundState == 0 && toggleAllowed(gamepad1.right_stick_button, right_stick_button, 1)) {
@@ -452,14 +458,10 @@ public class UG_6832 extends OpMode {
                         demo();
                         break;
                     case 7:
-                        robot.driveIMUDistanceWithReset(.6,robot.getHeading(),true,.470);
                         break;
                     case 8:
-                        demo();
                         break;
                     case 9:
-                        if (auto.simultaneousStateTest.execute())
-                            active = false;
                         break;
                     case 10:
 
