@@ -38,7 +38,7 @@ public class SkystoneGripIntegration implements SkystoneVisionProvider {
     private Telemetry telemetry;
     private FtcDashboard dashboard;
     private ColorBlobDetector blobDetector;
-    private SkystoneQuarryGripPipeline pipeline;
+    //private SkystoneQuarryGripPipeline pipeline;
     private boolean enableTelemetry;
     SkystoneTargetInfo target;
     boolean redAlliance;
@@ -71,7 +71,7 @@ public class SkystoneGripIntegration implements SkystoneVisionProvider {
         if (enableTelemetry)
             dashboard = FtcDashboard.getInstance();
         blobDetector = new ColorBlobDetector();
-        pipeline = new SkystoneQuarryGripPipeline();
+        //pipeline = new SkystoneQuarryGripPipeline();
         //blobDetector.setHsvColor(new Scalar(44, 75, 100));
 
     }
@@ -108,7 +108,7 @@ public class SkystoneGripIntegration implements SkystoneVisionProvider {
                 mat = VisionUtils.bitmapToMat(bm, CvType.CV_8UC3);
                 break;
             case 1:
-                pipeline.process(mat);
+                //pipeline.process(mat);
                 //mat.release();
                 contours = blobDetector.getContours();
                 _numbefOfContours = contours.size();
