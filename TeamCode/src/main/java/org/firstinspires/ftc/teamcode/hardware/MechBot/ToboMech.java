@@ -72,7 +72,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooterAngleOffset = 3.5;
     final public double WARM_UP_RPM = 1385;
     final public double WARM_UP_RPM_POWER_SHOT = 1220;
-    static final public double WARM_UP_RPM_AUTO = 1360;
+    static final public double WARM_UP_RPM_AUTO = 1380;
     final public double SEMI_AUTO_RPM = 1400;
     final public double SEMI_POWER_SHOT_RPM = 1220;
     public double shooting_rpm = WARM_UP_RPM;
