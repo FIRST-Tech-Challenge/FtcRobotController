@@ -77,7 +77,7 @@ public class YellowDriveOdo extends LinearOpMode {
 
             telemetry.update();
 
-            locator = new RobotCoordinatePosition(robot, new Point(30, 24), 0,75);
+            locator = new RobotCoordinatePosition(robot, new Point(30, 24), 0,RobotCoordinatePosition.THREAD_INTERVAL);
             locator.reverseHorEncoder();
             Thread positionThread = new Thread(locator);
             positionThread.start();

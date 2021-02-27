@@ -595,7 +595,7 @@ public class MasterCalib extends LinearOpMode {
         RobotCoordinatePosition locator = null;
         try {
             //tracker
-            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation, 75);
+            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation, RobotCoordinatePosition.THREAD_INTERVAL);
             locator.reverseHorEncoder();
             Thread positionThread = new Thread(locator);
             positionThread.start();
@@ -729,7 +729,7 @@ public class MasterCalib extends LinearOpMode {
         RobotCoordinatePosition locator = null;
         try {
             //tracker
-            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation,75);
+            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation,RobotCoordinatePosition.THREAD_INTERVAL);
             locator.reverseHorEncoder();
             Thread positionThread = new Thread(locator);
             positionThread.start();
@@ -789,7 +789,7 @@ public class MasterCalib extends LinearOpMode {
     private void calibMove(){
         RobotCoordinatePosition locator = null;
         try {
-            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation,75);
+            locator = new RobotCoordinatePosition(bot, new Point(startX, startY), lastOrientation,RobotCoordinatePosition.THREAD_INTERVAL);
             locator.reverseHorEncoder();
             Thread positionThread = new Thread(locator);
             positionThread.start();
