@@ -349,7 +349,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
                     if (intake != null)
                         intake.stop();
-                    if (hopper != null) hopper.hopperUpCombo();
+                    if (hopper != null) hopper.hopperUpCombo(false);
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (shooter != null)
                         shooter.shootSpeedInc();
@@ -1188,7 +1188,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
         if (hopper != null) {
-            hopper.hopperUpCombo();
+            hopper.hopperUpCombo(true);
             TaskManager.processTasks();
         }
         if (side == ProgramType.AUTO_BLUE) {
@@ -1347,7 +1347,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
 
         if (hopper != null) {
-            hopper.hopperUpCombo();
+            hopper.hopperUpCombo(true);
             TaskManager.processTasks();
         }
         if (intake != null)
@@ -1414,7 +1414,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         shooter.shootOutByRpm(SEMI_AUTO_RPM);
         shooting_rpm = SEMI_AUTO_RPM;
         if (hopper != null) {
-            hopper.hopperUpCombo();
+            hopper.hopperUpCombo(false);
             TaskManager.processTasks();
         }
         if (intake!=null)
@@ -1462,7 +1462,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
         shooting_rpm = SEMI_POWER_SHOT_RPM;
         if (hopper != null) {
-            hopper.hopperUpCombo();
+            hopper.hopperUpCombo(false);
             TaskManager.processTasks();
         }
         if (intake!=null)
@@ -1631,7 +1631,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     }
     public void autoShootHighGoal(int n, boolean keepPos) throws InterruptedException {
         shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
-        hopper.hopperUpCombo();
+        hopper.hopperUpCombo(true);
         TaskManager.processTasks();
         doHighGoalsAndPowerShots(n, 0, keepPos);
         hopper.hopperDownCombo();
@@ -1643,7 +1643,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         }
         if (tZone== TargetZone.ZONE_C){
             shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
-            hopper.hopperUpCombo();
+            hopper.hopperUpCombo(true);
             TaskManager.processTasks();
             if (runtimeAuto.seconds() < 26) {
                 chassis.driveTo(1.0, side(70), 185, 0, false, 5);

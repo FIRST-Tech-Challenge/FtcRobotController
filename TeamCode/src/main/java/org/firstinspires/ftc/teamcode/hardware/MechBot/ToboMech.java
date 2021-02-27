@@ -70,7 +70,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_dist = 0;
     public double shooting_angle = 0;
     public double shooterAngleOffset = 3.5;
-    final public double WARM_UP_RPM = 1380;
+    final public double WARM_UP_RPM = 1385;
     final public double WARM_UP_RPM_POWER_SHOT = 1220;
     static final public double WARM_UP_RPM_AUTO = 1360;
     final public double SEMI_AUTO_RPM = 1400;
@@ -363,7 +363,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 } else if (source.isPressed(Button.RIGHT_BUMPER)) {
                     if (intake != null)
                         intake.stop();
-                    if (hopper != null) hopper.hopperUpCombo();
+                    if (hopper != null) hopper.hopperUpCombo(false);
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (shooter != null)
                         shooter.shootSpeedInc();
@@ -497,7 +497,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                                 shooter.getCurrentRPM()<WARM_UP_RPM-100) {
                             shooting_rpm = WARM_UP_RPM;
                             shooter.shootOutByRpm(shooting_rpm);
-                            hopper.hopperUpCombo();
+                            hopper.hopperUpCombo(false);
                             targetHighGoal = true;
                         } else {
                             doHighGoalsSemi(false, 1);
@@ -554,7 +554,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     shooter.getCurrentRPM()<WARM_UP_RPM_POWER_SHOT-100) {
                         shooting_rpm = WARM_UP_RPM_POWER_SHOT;
                         shooter.shootOutByRpm(shooting_rpm);
-                        hopper.hopperUpCombo();
+                        hopper.hopperUpCombo(false);
                         targetHighGoal = false;
                     } else {
                         doPowerShotsSemi(1,false);
@@ -1231,7 +1231,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
         if (hopper != null) {
-            hopper.hopperUpCombo();
+            hopper.hopperUpCombo(true);
             TaskManager.processTasks();
         }
         if (side == ProgramType.AUTO_BLUE) {
@@ -1341,20 +1341,34 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         hopper.feederAuto();
     }
 
-    public void autoShootFast() throws InterruptedException {
-        if (shooter == null || hopper == null) return;
+    public boolean autoShootFast(boolean forAuto) throws InterruptedException {
+        if (shooter == null || hopper == null) return false;
         double iniTime = System.currentTimeMillis();
         int target = shooter.getShooterSpeed();
-        shooter.shootOutByRpm(target - 80);
+        if (forAuto) {
+            shooter.shootOutByRpm(target - 80);
+        } else {
+            shooter.shootOutByRpm(SEMI_AUTO_RPM-150);
+        }
+        int timeout_ms = (forAuto?500:800);
         // Stage-2 make sure rpm difference is within 11 error range
-        while (Math.abs(shooter.getCurrentRPM() - target) > 11 && (System.currentTimeMillis() - iniTime < 500)) { // timeout 5 sec
+        while (Math.abs(shooter.getCurrentRPM() - target) > 11 && (System.currentTimeMillis() - iniTime < timeout_ms)) { // timeout 5 sec
             sleep(5);
         }
+        // for TeleOp, timeout will not shoot
+        //if (Math.abs(shooter.getCurrentRPM() - target) > 20 && forAuto==false)
+        //    return false;
+
         if (useIMUforOdometryAngleCorrection){
             chassis.getGPS().correctAngleUsingIMU();
         }
-        shooter.shootOutByRpm(target - 60);
+        if (forAuto) {
+            shooter.shootOutByRpm(target - 60);
+        } else {
+            shooter.shootOutByRpm(SEMI_AUTO_RPM-150);
+        }
         hopper.feederAuto();
+        return true;
     }
 
     public void doPowerShots() throws InterruptedException {
@@ -1395,7 +1409,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
 
         if (hopper != null) {
-            hopper.hopperUpCombo();
+            hopper.hopperUpCombo(true);
             TaskManager.processTasks();
         }
         if (intake != null)
@@ -1423,7 +1437,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             if (i == 0) {
                 autoShoot();
             } else {
-                autoShootFast();
+                autoShootFast(true);
             }
             sleep(200);
         }
@@ -1432,14 +1446,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             shooter.shootOutByRpm(1260);
             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
             //shoot
-            autoShootFast();
+            autoShootFast(true);
         }
         if (numPowerShots > 1) {
             if (runtimeAuto.seconds() > 29){ return;}
             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_M, false);
             //chassis.driveTo(.55, side(150), 170, 0, false,  2);
             //shoot
-            autoShootFast();
+            autoShootFast(true);
             //sleep(500);
         }
         if (numPowerShots > 2) {
@@ -1447,7 +1461,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R, false);
             //chassis.driveTo(.55, side(170), 170, 0, false,  2);
             //shoot
-            autoShootFast();
+            autoShootFast(true);
             sleep(200);
             shooter.shootOutByRpm(0);
         }
@@ -1463,7 +1477,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooting_rpm = SEMI_AUTO_RPM;
         boolean hopperMoving = hopper.getTransferIsDown();
         if (hopper != null) {
-            hopper.hopperUpCombo();
+            hopper.hopperUpCombo(true);
             TaskManager.processTasks();
         }
         if (intake!=null)
@@ -1498,7 +1512,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 sleep(200);
             }
             else {
-                autoShootFast();
+                autoShootFast(false);
                 if (i==1) {
                     sleep(250);
                 }
@@ -1512,7 +1526,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
         shooting_rpm = SEMI_POWER_SHOT_RPM;
         if (hopper != null) {
-            hopper.hopperUpCombo();
+            hopper.hopperUpCombo(true);
             TaskManager.processTasks();
         }
         if (intake!=null)
@@ -1690,7 +1704,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
     public void autoShootHighGoal(int n, boolean keepPos) throws InterruptedException {
         shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
-        hopper.hopperUpCombo();
+        hopper.hopperUpCombo(true);
         TaskManager.processTasks();
         doHighGoalsAndPowerShots(n, 0, keepPos);
         hopper.hopperDownCombo();
@@ -1702,7 +1716,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (tZone==TargetZone.ZONE_C){
             shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
-            hopper.hopperUpCombo();
+            hopper.hopperUpCombo(true);
             TaskManager.processTasks();
             if (runtimeAuto.seconds() < 26) {
                 chassis.driveTo(1.0, side(70), 185, 0, false, 5);

@@ -178,7 +178,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         transferIsDown = false;
     }
 
-    public void transferUpCombo() throws InterruptedException {
+    public void transferUpCombo(boolean forAuto) throws InterruptedException {
         if (ringLifter == null) return;
         final String taskName = "Transfer Up Combo";
         if (!TaskManager.isComplete(taskName)) return;
@@ -205,18 +205,20 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                         return (HopperTimer.milliseconds()>=200);
                     }
                 }; }}, taskName);
-//        TaskManager.add(new Task() {
-//            @Override
-//            public Progress start() {
-//                holderOut();
-//                HopperTimer.reset();
-//                ringLifter.setPower(0.5);
-//                return new Progress() {
-//                    @Override
-//                    public boolean isDone() {
-//                        return (HopperTimer.milliseconds()>=10);
-//                    }
-//                }; }}, taskName);
+        if (!forAuto) {
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                holderOut();
+                HopperTimer.reset();
+                ringLifter.setPower(0.5);
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (HopperTimer.milliseconds()>=10);
+                    }
+                }; }}, taskName);
+        }
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
@@ -251,11 +253,11 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         transferDownCombo();
     }
 
-    public void hopperUpCombo() throws InterruptedException {
+    public void hopperUpCombo(boolean forAuto) throws InterruptedException {
         if (ringLifter == null) return;
         if (!transferIsDown) return;
         ringLifter.setPower(-1);
-        transferUpCombo();
+        transferUpCombo(forAuto);
     }
 
     public void transferDownCombo() throws InterruptedException {
