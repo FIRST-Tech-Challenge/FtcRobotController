@@ -1153,7 +1153,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             case AUTO_BLUE:
                 if (startP == StartPosition.OUT) {
                     if (chassis != null)
-                        chassis.set_init_pos(side(60), 23, 0);
+                        chassis.set_init_pos(side(58), 23, 0);
                     useVuforia = false;
                     useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
@@ -1269,7 +1269,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 230, 0, true, 3);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(1.0, 10, 290, 5, false, 3); // no rotation to make it faster
+                chassis.driveTo(1.0, 10, 290, 2, false, 3); // no rotation to make it faster
             } else {
                 return;
             }

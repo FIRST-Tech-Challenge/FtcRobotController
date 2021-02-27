@@ -703,7 +703,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                 TaskManager.processTasks();
             }
             //move
-            motorPowers = angleMove(desiredDegree, powerUsed, true,
+            boolean headingCorrection = Math.abs(desiredDegree) <90;
+            motorPowers = angleMove(desiredDegree, powerUsed, headingCorrection,
                     (autoDriveMode== AutoDriveMode.CONTINUE_NO_CORRECTION?desiredDegree:target_heading));
 
             remDistance = Math.hypot(target_x- cur_x, target_y - cur_y);
