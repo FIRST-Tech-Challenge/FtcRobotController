@@ -24,7 +24,6 @@ public abstract class AutoBase extends OdoBase {
         catch (Exception ex){
             telemetry.addData("Error", ex);
             telemetry.update();
-            sleep(5000);
         } finally {
             stopLocator();
             bot.stopDetection();

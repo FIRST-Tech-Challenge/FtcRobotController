@@ -46,6 +46,8 @@ public class RobotCoordinatePosition implements Runnable {
 
     private double botHalfLength = bot.ROBOT_CENTER_Y* bot.COUNTS_PER_INCH_REV;
 
+    public static final int THREAD_INTERVAL = 75;
+
     private static final String TAG = "RobotCoordinatePosition";
 
     public RobotCoordinatePosition(YellowBot bot, int sleepTimeMS){

@@ -73,7 +73,7 @@ public class UltimateMode extends LinearOpMode {
             }
             telemetry.update();
 
-            locator = new RobotCoordinatePosition(robot, 75);
+            locator = new RobotCoordinatePosition(robot, RobotCoordinatePosition.THREAD_INTERVAL);
             locator.reverseHorEncoder();
             Thread positionThread = new Thread(locator);
             positionThread.start();
