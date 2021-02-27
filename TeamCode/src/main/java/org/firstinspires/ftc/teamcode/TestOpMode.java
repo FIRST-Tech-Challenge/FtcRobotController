@@ -10,13 +10,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 
 public class TestOpMode extends LinearOpMode {
-
     private Gyroscope imu;
     private DcMotor frontLeft;
     private DcMotor frontRight;
     private DcMotor BackLeft;
     private DcMotor BackRight;
-    private DcMotor loading;
+    private DcMotor loading;*/
     private DcMotor shoot;
     private DcMotor ramp;
     private DcMotor belt;
@@ -29,7 +28,7 @@ public class TestOpMode extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         BackLeft = hardwareMap.get(DcMotor.class, "backLeft");
         BackRight = hardwareMap.get(DcMotor.class, "backRight");
-        loading = hardwareMap.get(DcMotor.class, "load");
+        loading = hardwareMap.get(DcMotor.class, "load");*/
         shoot = hardwareMap.get(DcMotor.class, "shoot");
         ramp = hardwareMap.get(DcMotor.class, "ramp");
         belt = hardwareMap.get(DcMotor.class, "belt");
@@ -39,6 +38,7 @@ public class TestOpMode extends LinearOpMode {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         BackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         BackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        belt.setDirection(DcMotorSimple.Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -54,25 +54,34 @@ public class TestOpMode extends LinearOpMode {
         boolean loader;
         boolean shooter;
         boolean AngleOfAttackUp;
+        double beltDrivepos;
+        double beltDriveneg;
         boolean AngleOfAttackDown;
 
-        BackRight.setPower(0);
-        BackLeft.setPower(0);
-        frontRight.setPower(0);
-        frontLeft.setPower(0);
-        //loading.setPower(0);
         sleep(1000);
 
         while (opModeIsActive()) {
+            belt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
             turn = this.gamepad1.left_stick_x;
             throttleL = this.gamepad1.right_stick_y;
             throttleR = -this.gamepad1.right_stick_y;
             leftStrafe = this.gamepad1.left_bumper;
             rightStrafe = this.gamepad1.right_bumper;
-            loader = this.gamepad1.a;
+            loader = this.gamepad1.x;
             shooter = this.gamepad1.b;
             AngleOfAttackUp = this.gamepad1.dpad_up;
             AngleOfAttackDown = this.gamepad1.dpad_down;
+            beltDrivepos = this.gamepad1.right_trigger;
+            beltDriveneg = this.gamepad1.left_trigger;
+
+            if (beltDrivepos > 0){
+                belt.setPower(1);
+            }else if (beltDriveneg < 0){
+                belt.setPower(-1);
+            }else{
+                belt.setPower(0);
+            }
 
             if (shooter) {
                 shoot.setPower(1);
