@@ -159,9 +159,14 @@ public class UltimateMode extends LinearOpMode {
                     changedclaw = !changedclaw;
                 }
 
+//                if (gamepad1.y && buttonpressable) {
+//                    startdelay = runtime.milliseconds();
+//                    shooterslower = !shooterslower;
+//                }
+
                 if (gamepad1.y && buttonpressable) {
                     startdelay = runtime.milliseconds();
-                    shooterslower = !shooterslower;
+                    robot.guardDown();
                 }
 
                 // move intake
