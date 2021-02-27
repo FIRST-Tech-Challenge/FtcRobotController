@@ -29,17 +29,16 @@ public class InsideBlue extends LinearOpMode {
 
         robot.forward(0.5, -4.4);
         robot.pivotLeft(0.1, 17);
-        robot.shooterEngage(4000);
+        robot.shooterEngageAlt();
         robot.pause(1000);
 
-        robot.intakeServoEngage(.9);
         shoot();
         robot.pivotRight(0.1, 6);
-
         shoot();
         robot.pivotRight(.1, 6);
         shoot();
         robot.intakeServoEngage(0);
+        robot.stopShooting();
         //# of rings matter
         robot.pivotRight(0.1, 5);
         robot.forward(0.5, -4);
@@ -65,8 +64,11 @@ public class InsideBlue extends LinearOpMode {
     protected void shoot(){
         robot.shooterServo1(.8);
         robot.shooterServo2(.8);
-        robot.pause(1000);
+        robot.pause(200);
+        robot.intakeServoEngage(.9);
+        robot.pause(800);
         robot.shooterServo2(0);
         robot.shooterServo1(0);
     }
+
 }

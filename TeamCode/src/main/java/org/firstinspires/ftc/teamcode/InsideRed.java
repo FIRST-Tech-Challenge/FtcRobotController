@@ -28,25 +28,27 @@ public class InsideRed extends LinearOpMode {
         waitForStart();
 
         robot.forward(0.5, -4.4);
-        robot.strafeRight(0.5, 0.4);
+        robot.strafeRight(0.4, 0.3);
         robot.pivotLeft(0.1, 17);
-        robot.shooterEngage(4000);
+        robot.shooterEngageAlt();
         robot.pause(1000);
 
-        robot.intakeServoEngage(.9);
         shoot();
         robot.pivotRight(0.1, 6);
 
         shoot();
-        robot.pivotRight(.1, 6);
+        robot.pivotRight(.1, 5);
         shoot();
         robot.intakeServoEngage(0);
+        robot.stopShooting();
         // this is where the number of rings matter
         robot.pivotRight(.1, 5);
-        robot.forward(0.5, -4);
-        robot.pivotRight(0.4, 175);
-        robot.depositWobbleGoal();
         robot.forward(0.5, -3);
+        robot.strafeLeft(0.3, 0.2);
+        robot.pivotRight(0.4, 170);
+        //robot.pivotRight(0.1, 7);
+        robot.depositWobbleGoal();
+        robot.forward(0.5, -1.8);
 
 //        robot.forward(0.5,-2);
 //        if (ringNmb == 0) {
@@ -63,13 +65,21 @@ public class InsideRed extends LinearOpMode {
 //        }
 
     }
-
     protected void shoot(){
         robot.shooterServo1(.8);
         robot.shooterServo2(.8);
-        robot.pause(1000);
+        robot.pause(200);
+        robot.intakeServoEngage(.9);
+        robot.pause(800);
         robot.shooterServo2(0);
         robot.shooterServo1(0);
     }
+//    protected void shootLast(){
+//        robot.shooterServo1(.8);
+//        robot.shooterServo2(.8);
+//        robot.pause(1200);
+//        robot.shooterServo2(0);
+//        robot.shooterServo1(0);
+//    }
 }
 
