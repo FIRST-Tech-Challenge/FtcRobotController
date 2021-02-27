@@ -53,7 +53,7 @@ public class JmacAuto extends LinearOpMode {
 
         while (!isStarted()) {
             mDrive.claw.setPosition(0);
-            ringCount = 0; // vision.ringCount('r');
+            ringCount = 4; // vision.ringCount('r');
             telemetry.addData("Ring Count: ", ringCount);
             telemetry.update();
         }
@@ -65,9 +65,9 @@ public class JmacAuto extends LinearOpMode {
             {
                 case 0:
                     linearMovement(58, 3.5, 0.000475, 0.000058, 0.000040);
-                    turnDegree(-60, 3.5, 0.0118,0.005, 0.0015);
+                    turnDegree(-60, 3, 0.0118,0.005, 0.0015);
                     mDrive.Arm.setPower(-0.5);
-                    sleep(400);
+                    sleep(350);
                     mDrive.Arm.setPower(0);
                     sleep(200);
                     mDrive.claw.setPosition(1);
@@ -75,30 +75,30 @@ public class JmacAuto extends LinearOpMode {
                     mDrive.Arm.setPower(0.5);
                     sleep(200);
                     mDrive.claw.setPosition(0);
-                    sleep(500);
+                    sleep(200);
                     mDrive.Arm.setPower(0);
-                    turnDegree(60, 3.5, 0.0118,0.005, 0.0015);
+                    turnDegree(60, 3, 0.0118,0.005, 0.0015);
                     monkeShoot();
                     linearMovement(-43.5, 4, 0.000485, 0.00008, 0.0000365);
                     turnDegree(90, 3.5, 0.0118,0.005, 0.0015);
                     mDrive.Arm.setPower(-0.5);
                     sleep(200);
                     mDrive.claw.setPosition(1);
-                    sleep(400);
+                    sleep(200);
                     mDrive.Arm.setPower(0);
-                    linearMovement(14.5, 2, 0.0004,0.000075, 0.0000365);
+                    linearMovement(14, 2, 0.0008,0.00008, 0.0000365);
                     mDrive.claw.setPosition(0);
                     sleep(500);
                     mDrive.Arm.setPower(0.5);
                     sleep(400);
                     mDrive.Arm.setPower(0);
-                    linearMovement(-15, 2.5,0.0006,0.000075, 0.0000385);
-                    turnDegree(-90, 3.15, 0.0118,0.005, 0.0015);
-                    mDrive.Arm.setPower(-0.5);
-                    sleep(500);
-                    mDrive.Arm.setPower(0);
+                    linearMovement(-15, 2,0.0008,0.00008, 0.0000385);
+                    turnDegree(-90, 3.5, 0.0118,0.005, 0.0015);
                     linearMovement(43, 3.5, 0.000485, 0.000065, 0.0000365);
-                    turnDegree(-75, 3.15, 0.0120,0.005, 0.0015);
+                    mDrive.Arm.setPower(-0.5);
+                    sleep(350);
+                    mDrive.Arm.setPower(0);
+                    turnDegree(-75, 3, 0.0120,0.005, 0.0015);
                     mDrive.claw.setPosition(1);
                     strafeLeft();
                     break;
@@ -152,91 +152,46 @@ public class JmacAuto extends LinearOpMode {
                     break;
                 case 4:
 
-                    linearMovement(93, 3.5, 0.000475, 0.000058, 0.000037);
-                    turnDegree(-60, 3.5, 0.0118,0.005, 0.0015);
+                    linearMovement(98, 3.5, 0.00042,0.00003, 0.0000475);
+                    turnDegree(-60, 2.5, 0.0118,0.005, 0.0015);
                     mDrive.Arm.setPower(-0.5);
-                    sleep(800);
+                    sleep(350);
                     mDrive.Arm.setPower(0);
                     sleep(200);
                     mDrive.claw.setPosition(1);
-                    sleep(300);
+                    sleep(200);
                     mDrive.Arm.setPower(0.5);
                     sleep(200);
                     mDrive.claw.setPosition(0);
-                    sleep(500);
+                    sleep(200);
                     mDrive.Arm.setPower(0);
-                    turnDegree(60, 3.5, 0.0118,0.005, 0.0015);
-                    linearMovement(-41, 4, 0.000485, 0.00008, 0.0000365);
+                    turnDegree(60, 3, 0.0118,0.005, 0.0015);
+                    linearMovement(-39, 3, 0.000485, 0.00008, 0.0000375);
                     monkeShoot();
-                    linearMovement(-35, 4, 0.000485, 0.00008, 0.0000365);
+                    linearMovement(-45, 3.5, 0.000485, 0.00008, 0.0000375);
                     turnDegree(90, 3.5, 0.0118,0.005, 0.0015);
                     mDrive.Arm.setPower(-0.5);
                     sleep(200);
                     mDrive.claw.setPosition(1);
-                    sleep(400);
+                    sleep(200);
                     mDrive.Arm.setPower(0);
-                    linearMovement(49, 2, 0.0004,0.000075, 0.0000365);
+                    go5();
+                    //linearMovement(8, 2, 0.002,0.0002, 0.0000365);
                     mDrive.claw.setPosition(0);
-                    sleep(500);
+                    sleep(200);
                     mDrive.Arm.setPower(0.5);
-                    sleep(400);
+                    sleep(350);
                     mDrive.Arm.setPower(0);
-                    linearMovement(-49, 2, 0.0004,0.000075, 0.0000365);
-                    turnDegree(-90, 3.5, 0.0118,0.005, 0.0015);
+                    linearMovement(-20, 1.5,0.001,0.0002, 0.0000385);
+                    turnDegree(-90, 3.2, 0.0118,0.005, 0.0015);
+                    linearMovement(90, 2.75, 0.00042, 0.00003, 0.000045);
                     mDrive.Arm.setPower(-0.5);
-                    sleep(600);
+                    sleep(300);
                     mDrive.Arm.setPower(0);
-                    linearMovement(78, 4, 0.000485, 0.000065, 0.0000365);
-                    turnDegree(-75, 3.5, 0.0120,0.005, 0.0015);
+                    turnDegree(-80, 2, 0.015,0.005, 0.0015);
                     mDrive.claw.setPosition(1);
-                    linearMovement(-44, 4, 0.000485, 0.000065, 0.0000365);
+                    backOff();
                     break;
-                    /*
-                    mDrive.claw.setPosition(1);
-                    linearMovement(58, 5, 0.0004,0.00007, 0.000068);
-                    turnDegree(26,5, 0.0118,0.005, 0.002);
-
-                    mDrive.ringHopper.setPosition(1);
-                    sleep(500);
-                    mDrive.Intake.setPower(-0.7);
-                    mDrive.ringHopper.setPosition(0.5);
-                    mDrive.FlyWheel1.setPower(1);
-                    mDrive.FlyWheel2.setPower(1);
-                    sleep(1000);
-                    mDrive.Intake.setPower(0);
-                    mDrive.ringHopper.setPosition(1);
-                    sleep(1000); //first shot
-                    mDrive.ringHopper.setPosition(0.5);
-                    turn1();
-                    sleep(1000);
-                    mDrive.ringHopper.setPosition(1);
-                    sleep(500); //second shot
-                    mDrive.ringHopper.setPosition(0.5);
-                    turn2();
-                    sleep(1000);
-                    mDrive.ringHopper.setPosition(1);
-                    sleep(500); //third shot
-                    mDrive.ringHopper.setPosition(0.5);
-                    mDrive.FlyWheel1.setPower(0);
-                    mDrive.FlyWheel2.setPower(0);
-                    mDrive.Intake.setPower(0.7);
-                    sleep(750);
-                    mDrive.Intake.setPower(0);
-
-                    turnDegree(-28,5, 0.0118,0.005, 0.002);
-                    linearMovement(56, 6, 0.0004,0.00007, 0.000068);
-                    turnDegree(-60,5, 0.0118,0.005, 0.002);
-                    mDrive.Arm.setPower(-0.75);
-                    sleep(750);
-                    mDrive.claw.setPosition(0);
-                    sleep(500);
-                    mDrive.Arm.setPower(0.5);
-                    sleep(750);
-                    mDrive.Arm.setPower(0);
-                    turnDegree(45,5, 0.0118,0.005, 0.002);
-                    linearMovement(-44, 5, 0.0004,0.00007, 0.000068);
-                    break;
-                    */
 
             }
         }
@@ -483,6 +438,33 @@ public class JmacAuto extends LinearOpMode {
         mDrive.BL.setPower(0);
         mDrive.FR.setPower(0);
         mDrive.BR.setPower(0);
+    }
+
+    public void backOff()
+    {
+        mDrive.FL.setPower(1);
+        mDrive.BL.setPower(1);
+        mDrive.FR.setPower(0.5);
+        mDrive.BR.setPower(0.5);
+        sleep(900);
+        mDrive.FL.setPower(0);
+        mDrive.BL.setPower(0);
+        mDrive.FR.setPower(0);
+        mDrive.BR.setPower(0);
+    }
+
+    public void go5()
+    {
+        mDrive.FL.setPower(-0.6);
+        mDrive.BL.setPower(-0.6);
+        mDrive.FR.setPower(-0.6);
+        mDrive.BR.setPower(-0.6);
+        sleep(200);
+        mDrive.FL.setPower(0);
+        mDrive.BL.setPower(0);
+        mDrive.FR.setPower(0);
+        mDrive.BR.setPower(0);
+        sleep(500);
     }
 
     public void turn1()
