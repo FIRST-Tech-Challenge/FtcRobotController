@@ -95,8 +95,8 @@ prior to clicking to the green Run arrow.
 
 Warning:  This is not for the inexperienced Software developer.
 You will need to be comfortable with File manipulations and managing Android Studio Modules.
-These changes are performed OUTSIDE of Android Studios, so close Android Studios before you do this.
- 
+These changes  performed OUTSIDE of Android Studios, so close Android Studios before you do this.
+
 Also.. Make a full project backup before you start this :)
 
 To clone TeamCode, do the following:
@@ -117,5 +117,5 @@ Note: Some names start with "Team" and others start with "team".  This is intent
          package="org.firstinspires.ftc.team0417"
 
 5)  Add:    include ':Team0417' to the "/settings.gradle" file.
-    
+
 6)  Open up Android Studios and clean out any old files by using the menu to "Build/Clean Project""

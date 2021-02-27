@@ -43,16 +43,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 /**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ This program tests our EasyOpenCV Pipeline that gets the size of rings on the field.
+ *It includes all the neccessary bones for the camera to function.
+ * At the bottom, it calls pipeline.getLocation() in a telemetry line
  */
 
 @TeleOp(name="camera test")
@@ -62,6 +55,7 @@ public class CameraTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        //Finding & Defining webcam, hardwaremap;
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam"), cameraMonitorViewId);
 

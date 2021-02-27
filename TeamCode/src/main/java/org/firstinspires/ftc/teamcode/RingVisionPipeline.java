@@ -19,6 +19,7 @@ public class RingVisionPipeline extends OpenCvPipeline {
     Mat mat2 = new Mat();
     Date date = new Date();
     List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+
     public enum Location {
         C_FULL_STACK,
         B_HALF_STACK,
@@ -26,11 +27,12 @@ public class RingVisionPipeline extends OpenCvPipeline {
     }
     private Location location;
 
+    //HSV color parameters, determine w/ Python live update program
     private int hueMin = 10;
     private int hueMax = 26;
     private int satMin = 116;
     private int satMax = 255;
-    private int valMin = 120; //68
+    private int valMin = 120;
     private int valMax = 255;
     private ArrayList<Double> ringAreaArray;
     static double PERCENT_COLOR_THRESHOLD = 0.4;
@@ -59,7 +61,7 @@ public class RingVisionPipeline extends OpenCvPipeline {
         Imgproc.findContours(mat, contours, mat2, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_NONE);
         ringAreaArray = getContourArea(mat);
         telemetry.addData("timer", date.getTime());
-        telemetry.addData("Contor area: ", getContourArea(mat));
+        telemetry.addData("Contour area: ", getContourArea(mat));
         telemetry.update();
 
         return mat;

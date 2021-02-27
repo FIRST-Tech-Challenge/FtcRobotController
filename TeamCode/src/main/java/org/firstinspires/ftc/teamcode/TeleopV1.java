@@ -40,30 +40,34 @@ public class TeleopV1 extends LinearOpMode {
             boolean x1 = gamepad1.x;
             boolean y1 = gamepad1.y;
 
-            boolean a2 = gamepad2.a;
-            boolean b2 = gamepad2.b;
-            boolean x2 = gamepad2.x;
-            boolean y2 = gamepad2.y;
-
-            double LTrigger2 = gamepad2.left_trigger;
-            double RTrigger2 = gamepad2.right_trigger;
-            boolean LBumper2 = gamepad2.left_bumper;
-            boolean RBumper2 = gamepad2.right_bumper;
-
-            double RStickY2 = -gamepad2.right_stick_y;
-            double RStickX2 = gamepad2.right_stick_x;
-            double LStickY2 = -gamepad2.left_stick_y;
-            double LStickX2 = gamepad2.left_stick_x;
-
             boolean dpadUp1 = gamepad1.dpad_up;
             boolean dpadRight1 = gamepad1.dpad_right;
             boolean dpadLeft1 = gamepad1.dpad_left;
             boolean dpadDown1 = gamepad1.dpad_down;
 
+
+
+            boolean LBumper2 = gamepad2.left_bumper;
+            boolean RBumper2 = gamepad2.right_bumper;
+
+            double LStickY2 = -gamepad2.left_stick_y;
+            double LStickX2 = gamepad2.left_stick_x;
+            double RStickY2 = -gamepad2.right_stick_y;
+            double RStickX2 = gamepad2.right_stick_x;
+
+            double LTrigger2 = gamepad2.left_trigger;
+            double RTrigger2 = gamepad2.right_trigger;
+
+            boolean a2 = gamepad2.a;
+            boolean b2 = gamepad2.b;
+            boolean x2 = gamepad2.x;
+            boolean y2 = gamepad2.y;
+
             boolean dpadUP2 = gamepad2.dpad_up;
             boolean dpadDOWN2 =gamepad2.dpad_down;
             boolean dpadRight2 = gamepad2.dpad_right;
             boolean dpadLeft2 = gamepad2.dpad_left;
+
 
             boolean abxy1 = false;
 
