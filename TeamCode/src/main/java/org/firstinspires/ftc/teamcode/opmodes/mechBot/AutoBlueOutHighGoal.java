@@ -58,6 +58,9 @@ public class AutoBlueOutHighGoal extends LinearOpMode {
         waitForStart();
 
         if (!robot.isSimulationMode())
+            if (robot.shooter!= null) {
+                robot.shooter.shootOutByRpm(ToboMech.WARM_UP_RPM_AUTO);
+            }
             robot.initAfterStart();
 
         robot.runtime.reset();
@@ -65,7 +68,7 @@ public class AutoBlueOutHighGoal extends LinearOpMode {
         // run until the end of the match (driver presses STOP or timeout)
         if (opModeIsActive()) {
             try {
-                robot.shooter.shootOutByRpm(1320);
+                robot.shooter.shootOutByRpm(ToboMech.WARM_UP_RPM_AUTO);
                 // write the program here
                 //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive()
                 robot.detectPosition();

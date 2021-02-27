@@ -69,10 +69,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double webcam_offset_y = -14.2;
     public double shooting_dist = 0;
     public double shooting_angle = 0;
-    public double shooterAngleOffset = 3;
+    public double shooterAngleOffset = 3.5;
     final public double WARM_UP_RPM = 1380;
     final public double WARM_UP_RPM_POWER_SHOT = 1220;
-    final public double WARM_UP_RPM_AUTO = 1320;
+    static final public double WARM_UP_RPM_AUTO = 1360;
     final public double SEMI_AUTO_RPM = 1400;
     final public double SEMI_POWER_SHOT_RPM = 1220;
     public double shooting_rpm = WARM_UP_RPM;
@@ -1403,12 +1403,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (runtimeAuto.seconds() > 29){ return;}
         if (!keepPos) {
             if (tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C && numHighGoals == 3) {
-                chassis.driveTo(.55, side(50), 165, 0, true, 3);
+                chassis.driveTo(.52, side(50), 165, 0, true, 4);
             } else if (tZone != TargetZone.UNKNOWN) {
                 if (runtimeAuto.seconds() > 29) {
                     return;
                 }
-                chassis.driveTo(.55, side(90), 160, 0, true, 3);
+                chassis.driveTo(.55, side(90), 165, 0, true, 4);
             }
             }
         while (!TaskManager.isComplete("Transfer Up Combo")) {
