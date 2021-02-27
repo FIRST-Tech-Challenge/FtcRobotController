@@ -1677,7 +1677,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     TaskManager.processTasks();
                 }
                 intake.intakeIn();
-                chassis.driveTo(1.0, side(10), 285, 0, false, 2.5);
+                chassis.driveTo(1.0, side(5), 295, 0, false, 2.5);
                 intake.stop();
             } else {
                 return;
