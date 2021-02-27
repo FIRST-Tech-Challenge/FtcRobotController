@@ -15,7 +15,7 @@ public class TestOpMode extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor BackLeft;
     private DcMotor BackRight;
-    private DcMotor loading;*/
+    private DcMotor loading;
     private DcMotor shoot;
     private DcMotor ramp;
     private DcMotor belt;
@@ -28,7 +28,7 @@ public class TestOpMode extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         BackLeft = hardwareMap.get(DcMotor.class, "backLeft");
         BackRight = hardwareMap.get(DcMotor.class, "backRight");
-        loading = hardwareMap.get(DcMotor.class, "load");*/
+        loading = hardwareMap.get(DcMotor.class, "load");
         shoot = hardwareMap.get(DcMotor.class, "shoot");
         ramp = hardwareMap.get(DcMotor.class, "ramp");
         belt = hardwareMap.get(DcMotor.class, "belt");
