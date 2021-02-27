@@ -1,5 +1,6 @@
 package developing;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -13,6 +14,8 @@ public class TestRobot {
 
     public DcMotor in;
 
+    public CRServo rh;
+
 
     public boolean intaking = false;
 
@@ -25,12 +28,15 @@ public class TestRobot {
 
         in = hwMap.get(DcMotor.class, "in");
 
+        rh = hwMap.get(CRServo.class, "rh");
+
         l1.setPower(0);
         l2.setPower(0);
         r1.setPower(0);
         r2.setPower(0);
 
         in.setPower(0);
+        rh.setPower(0);
 
         l1.setDirection(DcMotorSimple.Direction.FORWARD);
         l2.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -38,6 +44,8 @@ public class TestRobot {
         r2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         in.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        rh.setDirection(DcMotorSimple.Direction.FORWARD);
 
         l1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         l2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -64,5 +72,7 @@ public class TestRobot {
 
     public void intake(double p){
         in.setPower(p);
+        rh.setPower(p);
     }
+
 }
