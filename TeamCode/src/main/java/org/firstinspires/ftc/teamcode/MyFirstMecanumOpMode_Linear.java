@@ -75,7 +75,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             telemetry.update();
 
             double y = -gamepad1.left_stick_y;
-            double x = gamepad1.left_stick_x * 1.3;
+            double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
             double leftFrontPower = y + x - rx;
