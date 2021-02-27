@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,11 +19,17 @@ public class TeleopV1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         initMotors(this);
         initIMU(this);
+        //inits roadrunner localizer
+        MainMecanumDrive localizer = new MainMecanumDrive(hardwareMap);
+        localizer.setPoseEstimate(new Pose2d(-10, 2, Math.toRadians(0)));
 
         waitForStart();
 
 
         while(opModeIsActive()) {
+            //update localization position
+            localizer.update();
+
 
             boolean LBumper1 = gamepad1.left_bumper;
             boolean RBumper1 = gamepad1.right_bumper;
@@ -206,12 +213,15 @@ public class TeleopV1 extends LinearOpMode {
 
 
             //telementry////////////////////////////////////////////////////////////////////////////////////////////
-            telemetry.addData("hi", "hi ");
             telemetry.addData("angle: ", getAngle());
             telemetry.addData("Belt encoder value: ", blocker.getPosition());
             telemetry.addData("arm encoder: ", wobbleArmMotor.getCurrentPosition());
             telemetry.addData("wheel encoder: ", leftfront.getCurrentPosition());
             telemetry.addData("launcher Power: ", launcher2.getPower());
+            Pose2d myPose = localizer.getPoseEstimate();
+            telemetry.addData("x: ", myPose.getX());
+            telemetry.addData("y: ", myPose.getY());
+            telemetry.addData("heading: ", myPose.getHeading());
             telemetry.update();
         }
     }
