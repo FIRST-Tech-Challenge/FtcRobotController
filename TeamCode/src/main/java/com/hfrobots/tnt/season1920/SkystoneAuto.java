@@ -43,6 +43,7 @@ import com.hfrobots.tnt.season1920.opencv.DetectionZone;
 import com.hfrobots.tnt.season1920.opencv.EasyOpenCvPipelineAndCamera;
 import com.hfrobots.tnt.season1920.opencv.TntSkystoneDetector;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -56,6 +57,7 @@ import lombok.NonNull;
 import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 
 @Autonomous(name="Skystone Auto", group = "Old")
+@Disabled
 @SuppressWarnings("unused")
 public class SkystoneAuto extends OpMode {
     private Ticker ticker;

@@ -24,7 +24,7 @@ import com.acmerobotics.roadrunner.quickstart.drive.mecanum.SampleMecanumDriveRE
  */
 @Config
 @Autonomous(group = "drive")
-//@Disabled
+@Disabled
 public class TrackWidthTuner extends LinearOpMode {
     public static double ANGLE = Math.toRadians(180);
     public static int NUM_TRIALS = 5;
