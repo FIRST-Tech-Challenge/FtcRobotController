@@ -496,7 +496,6 @@ public class Auto extends OpMode {
 
                 if (!wobbleStateClass.equals(WobbleGoal.AutoStowState.class)) {
                     wobbleGoal.gotoStowState();
-                    wobbleGoal.closeGripper();
                 }
 
                 return nextState;
