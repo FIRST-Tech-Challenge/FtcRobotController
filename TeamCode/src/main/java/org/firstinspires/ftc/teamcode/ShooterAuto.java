@@ -38,6 +38,9 @@ public class ShooterAuto extends LinearOpMode {
                 ticks++;
             }
         }
+        elapsedTime.reset();
+
+        while(elapsedTime.seconds() < 1);
 
 
         stop();
