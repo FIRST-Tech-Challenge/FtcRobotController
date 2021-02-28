@@ -31,6 +31,7 @@ import com.ftc9929.corelib.state.State;
 import com.ftc9929.corelib.state.StateMachine;
 import com.ftc9929.corelib.state.StopwatchDelayState;
 import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
+import com.google.common.base.Supplier;
 import com.google.common.base.Ticker;
 import com.hfrobots.tnt.corelib.Constants;
 import com.hfrobots.tnt.corelib.drive.Turn;
@@ -461,16 +462,13 @@ public class Auto extends OpMode {
 
                 switch (deliverToTarget) {
                     case A:
-                        // FIXME:
-                        trajectoryBuilder.strafeLeft(22).forward(12);
+                        trajectoryBuilder.strafeLeft(22).forward(12 + 19);
                         break;
                     case B:
-                        // FIXME:
-                        trajectoryBuilder.back(2);
+                        trajectoryBuilder.forward(20);
                         break;
                     case C:
-                        // FIXME:
-                        trajectoryBuilder.back(1);
+                        trajectoryBuilder.forward(28);
                         break;
                 }
 
@@ -524,29 +522,6 @@ public class Auto extends OpMode {
             }
         };
 
-        // TODO: To be able to launch rings, we need to
-        //
-        //  (1) create a state class that calls scoringMechanism.toPreloadRings() somewhere,
-        //      probably early, so the launcher can get up
-        //
-        //  (2) After we get to the launch zone (for now, this could be right after park, then
-        //      figure out the real distance later, have a State class that checks that the
-        //      launcher is up to speed - you would do it like line 218 in ScoringMechanismTest
-        //      if it is, go to (3), otherwise keep checking
-        //
-        //  (3) Repeat a, b, c, d steps 3 times:
-        //
-        //     (a) Have a state that sets feedRing to true
-        //
-        //     (b) Wait some amount of time for the feeder servo to extend
-        //         (right now, you can add a newDelayState(1) which
-        //         will be too slow, but will work
-        //
-        //     (c) Have another state that sets feedRing to false
-        //
-        //     (d) Wait some amount of time for the feeder servo to return
-        //
-
         State toLaunchPosition = new TrajectoryFollowerState("Shooting Position",
                 telemetry, driveBase, ticker, TimeUnit.SECONDS.toMillis(20 * 1000)) {
             @Override
@@ -571,17 +546,27 @@ public class Auto extends OpMode {
             }
         };
 
-        State autoLauncherReadyCheck = new State("Autonomous Launcher Check", telemetry) {
+        State autoLauncherReadyCheck = new StopwatchTimeoutSafetyState(
+                "Autonomous Launcher Check", telemetry, ticker, TimeUnit.SECONDS.toMillis(2)) {
             @Override
             public State doStuffAndGetNextState() {
-                Class<? extends State> currentLauncherStateClass = scoringMechanism.getCurrentState().getClass();
+                if (isTimedOut()) {
+                    resetTimer();
+                    Log.e(LOG_TAG, "Timed out waiting for launcher to get to speed");
 
-                if(currentLauncherStateClass.equals(ScoringMechanism.LauncherReady.class)) {
-                    telemetry.addLine("Ready");
                     return nextState;
                 }
 
-                telemetry.addLine("Not Ready");
+                Class<? extends State> currentLauncherStateClass = scoringMechanism.getCurrentState().getClass();
+
+                if (currentLauncherStateClass.equals(ScoringMechanism.LauncherReady.class)) {
+                    telemetry.addLine("Ready");
+
+                    return nextState;
+                }
+
+                telemetry.addLine("Launcher not Ready");
+
                 return this;
             }
 
@@ -596,11 +581,29 @@ public class Auto extends OpMode {
             }
         };
 
-        TurnState turnToLaunch = new TurnState("Turn to launch",
+        // Used to provide a turn to use after auto has already started (because target zones
+        // have different routes and turns!)
+        Supplier<Turn> turnToLaunchSupplier = new Supplier<Turn>() {
+
+            @Override
+            public Turn get() {
+                switch (deliverToTarget) {
+                    case A:
+                    case C:
+                        return new Turn(Rotation.CCW, 5);  // FIXME: This needs the angles for a, c
+                    case B:
+                        return new Turn(Rotation.CW, 19);
+                    default:
+                        return new Turn(Rotation.CCW, 5);  // FIXME: This needs the angles for a, c
+                }
+            }
+        };
+
+        TurnState turnToLaunch = new TurnState("Turn to aim launcher",
                 telemetry,
-                new Turn(Rotation.CW, 19),
+                turnToLaunchSupplier,
                 driveBase,
-               ticker,2000);
+                ticker,2000);
 
         stateMachine.addSequential(detectorState);
         stateMachine.addSequential(toTargetZone);
@@ -609,21 +612,25 @@ public class Auto extends OpMode {
         stateMachine.addSequential(newDelayState("Wait to drop", 3));
         stateMachine.addSequential(wobbleGoalCoolDownState);
         stateMachine.addSequential(newDelayState("Wait to stow", 3));
-//        stateMachine.addSequential(toParkedPosition);
+
         stateMachine.addSequential(toLaunchPosition);
         stateMachine.addSequential(turnToLaunch);
         stateMachine.addSequential(autoLauncherReadyCheck);
+
         stateMachine.addSequential(newAutoLaunch());
         stateMachine.addSequential(newMsDelayState("Wait to feed", 400));
         stateMachine.addSequential(newAutoLaunchReset());
-        stateMachine.addSequential(newMsDelayState("Wait to feed", 400));
+        stateMachine.addSequential(newMsDelayState("Wait to return", 400));
         stateMachine.addSequential(newAutoLaunch());
         stateMachine.addSequential(newMsDelayState("Wait to feed", 400));
         stateMachine.addSequential(newAutoLaunchReset());
-        stateMachine.addSequential(newMsDelayState("Wait to feed", 400));
+        stateMachine.addSequential(newMsDelayState("Wait to return", 400));
         stateMachine.addSequential(newAutoLaunch());
         stateMachine.addSequential(newMsDelayState("Wait to feed", 400));
-        stateMachine.addSequential(newAutoLaunchReset());
+        stateMachine.addSequential(newAutoLaunchReset()); // FIXME: Question - why aren't we waiting for a return here?
+
+        stateMachine.addSequential(toParkedPosition);
+
         stateMachine.addSequential(newDoneState("Done!"));
     }
 
