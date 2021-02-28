@@ -135,6 +135,10 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
         return degrees;
     }
 
+    public double returnOrientationRaw(){
+        return Math.toDegrees(robotOrientationRadians) % 360;
+    }
+
     public double returnOrientationRadians(){return robotOrientationRadians % (2 * Math.PI);}
 
     /**
