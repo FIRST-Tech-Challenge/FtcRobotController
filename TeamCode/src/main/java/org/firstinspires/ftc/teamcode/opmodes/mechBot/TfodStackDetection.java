@@ -102,7 +102,7 @@ public class TfodStackDetection extends LinearOpMode {
             configuration.apply();
             robot.initSetup(Robot2.ProgramType.AUTO_BLUE, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(false);
-            robot.showStatus();
+            robot.showStatus(getRuntime());
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);

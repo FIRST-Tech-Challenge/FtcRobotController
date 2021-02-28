@@ -58,7 +58,7 @@ public class AutoTestGPS extends LinearOpMode {
             robot.reset(true);
             eventManager1 = new EventManager(gamepad1, true);
             robot.mainTeleOp(eventManager1);
-            robot.showStatus();
+            robot.showStatus(getRuntime());
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);

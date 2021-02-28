@@ -142,7 +142,8 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 // chassis.simOS = new FileOutputStream(new File(simEventFile.getParentFile(), simEventFile.getName()));
                 chassis.simOS = new FileOutputStream(new File(simEventFile.getParent(), simEventFile.getName()));
             }
-            chassis.enableImuTelemetry(configuration);
+            // Enable the following line to init and show IMU
+            // chassis.enableImuTelemetry(configuration);
             if (autoside == ProgramType.DIAGNOSIS) {
                 // enable imu for diagnosis
                 // chassis.enableImuTelemetry(configuration);
@@ -605,7 +606,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
 
     }
 
-    public void showStatus() throws InterruptedException {
+    public void showStatus(double init_time) throws InterruptedException {
         String mode = "";
         if (side == ProgramType.TELE_OP) mode = "TeleOp";
         else if (side == ProgramType.DIAGNOSIS) mode = "Diagnosis";
@@ -638,7 +639,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 telemetry.addData("Warning", "IMU is not initialized.");
             }
         }
-        telemetry.addData("Robot is ready", "Press Play");
+        telemetry.addData("Robot is ready", "(init-time=%2.1f) Press Play",init_time);
         telemetry.update();
     }
 
@@ -1070,16 +1071,19 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         startPos = startP;
         switch (type) {
             case TELE_OP:
-                useVuforia = true;
+                useVuforia = false;
                 useTfod = false;
                 if (cameraDetector != null)
                     cameraDetector.set_cam_pos(cameraDetector.CAM_TELE_OP);
                 if (chassis.orientationSensor == null) {
                     // chassis.enableImuTelemetry(configuration);
-                    chassis.configure_IMUs(configuration, isTeleOpAfterAuto);
-                    // Enable the following line only for the debugging purpose
-                    // chassis.setupIMUTelemetry(telemetry);
+
+                    // Use the following line if enable IMU after Autonomous
+                    // chassis.configure_IMUs(configuration, isTeleOpAfterAuto);
                 }
+                // Enable the following line only for the debugging purpose
+                // chassis.setupIMUTelemetry(telemetry);
+
                 if (chassis != null) {
                     if (isTeleOpAfterAuto) {
                         chassis.initOdoFromJson();

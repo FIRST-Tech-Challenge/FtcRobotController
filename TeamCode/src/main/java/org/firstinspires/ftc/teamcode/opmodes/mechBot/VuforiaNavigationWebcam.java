@@ -111,7 +111,7 @@ public class VuforiaNavigationWebcam extends LinearOpMode {
             configuration.apply();
             robot.reset(false);
             robot.initSetup(Robot2.ProgramType.TELE_OP, ToboMech.StartPosition.OUT, configuration);
-            robot.showStatus();
+            robot.showStatus(getRuntime());
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);

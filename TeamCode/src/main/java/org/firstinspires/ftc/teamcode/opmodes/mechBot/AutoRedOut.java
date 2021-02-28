@@ -47,7 +47,7 @@ public class AutoRedOut extends LinearOpMode {
             configuration.apply();
             robot.initSetup(Robot2.ProgramType.AUTO_BLUE, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(true);
-            robot.showStatus();
+            robot.showStatus(getRuntime());
 
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());

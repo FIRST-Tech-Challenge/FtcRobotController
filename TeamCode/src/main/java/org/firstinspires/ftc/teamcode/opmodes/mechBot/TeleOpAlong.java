@@ -47,7 +47,7 @@ public class TeleOpAlong extends LinearOpMode {
 
             robot.mainTeleOp(eventManager1);
 
-            robot.showStatus();
+            robot.showStatus(getRuntime());
 
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());

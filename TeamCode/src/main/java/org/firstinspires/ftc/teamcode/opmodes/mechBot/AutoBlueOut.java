@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.mechBot;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.components.Robot2;
@@ -16,7 +17,7 @@ import java.io.IOException;
 /**
  * Created by 28761 on 6/29/2019.
  */
-//@Disabled
+@Disabled
 @Autonomous(name = "Blue Out", group = "MechBot")
 public class AutoBlueOut extends LinearOpMode {
     private ToboSigma.SkystoneLocation StoneLoc;
@@ -48,7 +49,7 @@ public class AutoBlueOut extends LinearOpMode {
             configuration.apply();
             robot.initSetup(Robot2.ProgramType.AUTO_BLUE, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(true);
-            robot.showStatus();
+            robot.showStatus(getRuntime());
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
             handleException(E);

@@ -641,7 +641,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     }
 
-    public void showStatus() throws InterruptedException {
+    public void showStatus(double init_time) throws InterruptedException {
         String mode = "";
         if (side == ProgramType.TELE_OP) mode = "TeleOp";
         else if (side == ProgramType.DIAGNOSIS) mode = "Diagnosis";
@@ -675,7 +675,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 telemetry.addData("Warning", "IMU is not initialized.");
             }
         }
-        telemetry.addData("Robot is ready", "Press Play");
+        telemetry.addData("Robot is ready", "(init-time=%2.1f) Press Play",init_time);
         telemetry.update();
     }
 
@@ -1113,16 +1113,19 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         startPos = startP;
         switch (type) {
             case TELE_OP:
-                useVuforia = true;
+                useVuforia = false;
                 useTfod = false;
                 if (cameraDetector != null)
                     cameraDetector.set_cam_pos(cameraDetector.CAM_TELE_OP);
-                if (chassis.orientationSensor == null) {
+                /*if (chassis.orientationSensor == null) {
                     // chassis.enableImuTelemetry(configuration);
+
+                    // Use the following line if enable IMU after Autonomous
                     chassis.configure_IMUs(configuration, isTeleOpAfterAuto);
+
                     // Enable the following line only for the debugging purpose
                     // chassis.setupIMUTelemetry(telemetry);
-                }
+                }*/
                 if (chassis != null) {
                     if (isTeleOpAfterAuto) {
                         chassis.initOdoFromJson();

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes.Beta;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.events.EventManager;
 import org.firstinspires.ftc.teamcode.support.hardware.Configuration;
 import org.firstinspires.ftc.teamcode.support.tasks.TaskManager;
-
+@Disabled
 @TeleOp(name="TeleOp-Beta", group="Beta")
 public class TeleOpBeta extends LinearOpMode {
     protected static int LOG_LEVEL = Log.INFO;
@@ -40,7 +41,7 @@ public class TeleOpBeta extends LinearOpMode {
             robot.configure(configuration, telemetry, Robot2.ProgramType.TELE_OP);
             configuration.apply();
             robot.isTeleOpAfterAuto = false;
-            // robot.initSetup(Robot2.ProgramType.TELE_OP, ToboBeta.StartPosition.OUT, configuration); // check
+            robot.initSetup(Robot2.ProgramType.TELE_OP, ToboBeta.StartPosition.OUT, configuration); // check
             robot.reset(false);
 
             eventManager1 = new EventManager(gamepad1, true);
@@ -48,7 +49,7 @@ public class TeleOpBeta extends LinearOpMode {
 
             robot.mainTeleOp(eventManager1);
 
-            robot.showStatus();
+            robot.showStatus(getRuntime());
 
         } catch (Exception E) {
             telemetry.addData("Init Failed", E.getMessage());
