@@ -54,7 +54,7 @@ public class StarterStackDetectorPipeline extends OpenCvPipeline {
     private final AtomicReference<RingsDetected> ringsDetected = new AtomicReference(RingsDetected.UNKNOWN);
 
     @Setter
-    private volatile boolean startLookingForRings = false;
+    private volatile boolean startLookingForRings;
 
     @Override
     public Mat processFrame(Mat input) {

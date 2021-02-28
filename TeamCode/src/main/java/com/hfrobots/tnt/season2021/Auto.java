@@ -169,6 +169,7 @@ public class Auto extends OpMode {
 
     private void setupOpenCvCameraAndPipeline() {
         starterStackDetectorPipeline = StarterStackDetectorPipeline.builder().telemetry(telemetry).build();
+        starterStackDetectorPipeline.setStartLookingForRings(false);
 
         com.hfrobots.tnt.corelib.vision.EasyOpenCvPipelineAndCamera.EasyOpenCvPipelineAndCameraBuilder pipelineBuilder =
                 com.hfrobots.tnt.corelib.vision.EasyOpenCvPipelineAndCamera.builder();
