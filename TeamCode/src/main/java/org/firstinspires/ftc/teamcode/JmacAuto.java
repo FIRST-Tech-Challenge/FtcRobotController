@@ -53,7 +53,7 @@ public class JmacAuto extends LinearOpMode {
 
         while (!isStarted()) {
             mDrive.claw.setPosition(0);
-            ringCount = 0; // vision.ringCount('r');
+            ringCount = 1; // vision.ringCount('r');
             telemetry.addData("Ring Count: ", ringCount);
             telemetry.update();
         }
@@ -106,50 +106,48 @@ public class JmacAuto extends LinearOpMode {
 
 
                 case 1:
+                    linearMovement(80,3.5, 0.000425, 0.000036, 0.000045);
+                    //turnDegree(26,5, 0.0118,0.005, 0.002);
+                    mDrive.Arm.setPower(-0.5);
+                    sleep(350);
+                    mDrive.Arm.setPower(0);
+                    sleep(200);
                     mDrive.claw.setPosition(1);
-                    linearMovement(58, 5, 0.0004,0.00007, 0.000068);
-                    turnDegree(26,5, 0.0118,0.005, 0.002);
+                    sleep(300);
+                    mDrive.Arm.setPower(0.5);
+                    sleep(200);
+                    mDrive.claw.setPosition(0);
+                    sleep(200);
+                    mDrive.Arm.setPower(0);
 
-                    mDrive.ringHopper.setPosition(1);
-                    sleep(500);
-                    mDrive.Intake.setPower(-0.7);
-                    mDrive.ringHopper.setPosition(0.5);
-                    mDrive.FlyWheel1.setPower(1);
-                    mDrive.FlyWheel2.setPower(1);
-                    sleep(1000);
-                    mDrive.Intake.setPower(0);
-                    mDrive.ringHopper.setPosition(1);
-                    sleep(1000); //first shot
-                    mDrive.ringHopper.setPosition(0.5);
-                    turn1();
-                    sleep(1000);
-                    mDrive.ringHopper.setPosition(1);
-                    sleep(500); //second shot
-                    mDrive.ringHopper.setPosition(0.5);
-                    turn2();
-                    sleep(1000);
-                    mDrive.ringHopper.setPosition(1);
-                    sleep(500); //third shot
-                    mDrive.ringHopper.setPosition(0.5);
-                    mDrive.FlyWheel1.setPower(0);
-                    mDrive.FlyWheel2.setPower(0);
-                    mDrive.Intake.setPower(0.7);
-                    sleep(750);
-                    mDrive.Intake.setPower(0);
+                    linearMovement(-21, 3, 0.00049, 0.000085, 0.0000365);
+                    monkeShoot();
 
-                    turnDegree(-28,5, 0.0118,0.005, 0.002);
-                    linearMovement(34, 5, 0.0004,0.00007, 0.000068);
-                    turnDegree(45,5, 0.0118,0.005, 0.002);
-                    mDrive.Arm.setPower(-0.75);
-                    sleep(750);
+                    linearMovement(-42.5, 4, 0.000485, 0.00008, 0.0000365);
+                    turnDegree(90, 3.5, 0.0118,0.005, 0.0015);
+                    mDrive.Arm.setPower(-0.5);
+                    sleep(200);
+                    mDrive.claw.setPosition(1);
+                    sleep(200);
+                    mDrive.Arm.setPower(0);
+                    linearMovement(14, 2, 0.0008,0.00008, 0.0000365);
                     mDrive.claw.setPosition(0);
                     sleep(500);
                     mDrive.Arm.setPower(0.5);
-                    sleep(750);
+                    sleep(400);
                     mDrive.Arm.setPower(0);
-                    turnDegree(-45,5, 0.0118,0.005, 0.002);
-                    linearMovement(-18, 4, 0.0004,0.00007, 0.000068);
+                    turnDegree(-90, 3.5, 0.0118,0.005, 0.0015);
+                    linearMovement(65,3.5, 0.000485, 0.00007, 0.0000375);
+                    mDrive.Arm.setPower(-0.5);
+                    sleep(400);
+                    mDrive.Arm.setPower(0);
+                    turnDegree(-25, 2, 0.015,0.006, 0.0015);
+                    mDrive.claw.setPosition(1);
+                    sleep(200);
+                    //turnDegree(15, 2, 0.012,0.0055, 0.0015);
+                    back1();
                     break;
+
                 case 4:
 
                     linearMovement(98, 3.5, 0.00042,0.00003, 0.0000475);
@@ -487,6 +485,19 @@ public class JmacAuto extends LinearOpMode {
         mDrive.FR.setPower(-0.3);
         mDrive.BR.setPower(-0.3);
         sleep(90);
+        mDrive.FL.setPower(0);
+        mDrive.BL.setPower(0);
+        mDrive.FR.setPower(0);
+        mDrive.BR.setPower(0);
+    }
+
+    public void back1()
+    {
+        mDrive.FL.setPower(0.5);
+        mDrive.BL.setPower(0.5);
+        mDrive.FR.setPower(0.5);
+        mDrive.BR.setPower(0.5);
+        sleep(250);
         mDrive.FL.setPower(0);
         mDrive.BL.setPower(0);
         mDrive.FR.setPower(0);

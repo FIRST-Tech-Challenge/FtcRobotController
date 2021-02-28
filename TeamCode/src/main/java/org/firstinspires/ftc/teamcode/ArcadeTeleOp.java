@@ -60,9 +60,9 @@ public class ArcadeTeleOp extends LinearOpMode {
         {
             currentState = IDLE;
             drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-            //runIntake();
+            runIntake();
             runFlyWheel();
-            runPivot();
+            //runPivot();
             runServos();
             doArm();
             //doVarious();
@@ -77,7 +77,7 @@ public class ArcadeTeleOp extends LinearOpMode {
 
         double magnitude = Math.sqrt(x * x + y * y);
         double distance = Math.atan2(y, x);
-        double turn = t/2;
+        double turn = 4* t / 5;
 
 
         //calculate power with angle and magnitude
@@ -137,24 +137,22 @@ public class ArcadeTeleOp extends LinearOpMode {
         mDrive.FlyWheel1.setPower(gamepad2.left_trigger);
         mDrive.FlyWheel2.setPower(gamepad2.left_trigger);
 
-        if(gamepad2.left_trigger >= 0.2)
-            currentState = SHOOTING;
+        if (gamepad2.right_trigger > 0.4)
+            mDrive.ringHopper.setPosition(1);
+        else
+            mDrive.ringHopper.setPosition(0.5);
     }
 
-    /*public void runIntake() {
-        if (gamepad1.left_trigger > 0.2) {
-            mDrive.intake1.setPower(1);
-            mDrive.intake2.setPower(-1);
-            currentState = COLLECTING;
-        } else if (gamepad1.right_trigger > 0.2) {
-            mDrive.intake2.setPower(1);
-            mDrive.intake1.setPower(-1);
-            currentState = COLLECTING;
-        } else {
-            mDrive.intake1.setPower(0);
-            mDrive.intake2.setPower(0);
-        }
-    }*/
+    public void runIntake() {
+        if (gamepad1.right_trigger > 0.2)
+            mDrive.Intake.setPower(gamepad1.right_trigger);
+        else if (gamepad1.left_trigger > 0.2)
+            mDrive.Intake.setPower(-gamepad1.left_trigger);
+        else if (Math.abs(gamepad2.left_stick_y) > 0.2)
+            mDrive.Intake.setPower(gamepad2.left_stick_y);
+        else
+            mDrive.Intake.setPower(0);
+    }
 
     public void doArm()
     {
@@ -172,16 +170,9 @@ public class ArcadeTeleOp extends LinearOpMode {
 
     public void runServos()
     {
-        if (gamepad2.dpad_up)
-            mDrive.ringHopper.setPosition(1);
-        else if (gamepad2.dpad_down)
-            mDrive.ringHopper.setPosition(0);
-        else
-            mDrive.ringHopper.setPosition(0.5);
-
-        if(gamepad2.x)
+        if(gamepad2.left_bumper)
             mDrive.claw.setPosition(1);
-        else if (gamepad2.y)
+        else if (gamepad2.right_bumper)
             mDrive.claw.setPosition(0);
     }
     public void doVarious()
