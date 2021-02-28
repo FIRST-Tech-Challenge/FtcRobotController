@@ -1712,7 +1712,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     }
     public void park() throws InterruptedException {
         if (tZone==TargetZone.ZONE_A){
-            chassis.driveTo(auto_chassis_power+0.2, side(110), 165, 0, false, 2);
+            chassis.driveTo(1, side(110), 165, 0, false, 2);
         }
         if (tZone==TargetZone.ZONE_C){
             shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
@@ -1737,7 +1737,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         else
         {
-            chassis.driveTo(1.0, Math.max(120, Math.min(chassis.odo_x_pos_cm(), 170)), 180, chassis.getCurHeading(), false,  0.9);
+            chassis.driveTo(1.0, Math.max(120, Math.min(chassis.odo_x_pos_cm(), 170)), 190, chassis.getCurHeading(), false,  0.9);
         }
         while (!TaskManager.isComplete("Transfer Down Combo")) {
             TaskManager.processTasks();
