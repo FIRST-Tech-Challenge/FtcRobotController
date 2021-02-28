@@ -29,11 +29,14 @@ import com.ftc9929.corelib.control.OnOffButton;
 import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.state.State;
 import com.ftc9929.corelib.state.StateMachine;
+import com.ftc9929.corelib.state.StopwatchDelayState;
 import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
 import com.google.common.base.Ticker;
 import com.hfrobots.tnt.corelib.Constants;
+import com.hfrobots.tnt.corelib.drive.Turn;
 import com.hfrobots.tnt.corelib.drive.mecanum.RoadRunnerMecanumDriveREV;
 import com.hfrobots.tnt.corelib.drive.mecanum.TrajectoryFollowerState;
+import com.hfrobots.tnt.corelib.drive.mecanum.TurnState;
 import com.hfrobots.tnt.corelib.util.RealSimplerHardwareMap;
 import com.hfrobots.tnt.season1920.CapstoneMechanism;
 import com.hfrobots.tnt.season1920.DeliveryMechanism;
@@ -45,7 +48,11 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
+
 import java.util.concurrent.TimeUnit;
+
+import lombok.NonNull;
 
 import static com.hfrobots.tnt.corelib.Constants.LOG_TAG;
 
@@ -176,6 +183,7 @@ public class Auto extends OpMode {
     @Override
     public void start() {
         super.start();
+        scoringMechanism.toDeployedPosition();
         starterStackDetectorPipeline.setStartLookingForRings(true);
     }
 
@@ -452,13 +460,16 @@ public class Auto extends OpMode {
 
                 switch (deliverToTarget) {
                     case A:
+                        // FIXME:
                         trajectoryBuilder.strafeLeft(22).forward(12);
                         break;
                     case B:
+                        // FIXME:
                         trajectoryBuilder.back(2);
                         break;
                     case C:
-                        trajectoryBuilder.back(38);
+                        // FIXME:
+                        trajectoryBuilder.back(1);
                         break;
                 }
 
@@ -535,6 +546,61 @@ public class Auto extends OpMode {
         //     (d) Wait some amount of time for the feeder servo to return
         //
 
+        State toLaunchPosition = new TrajectoryFollowerState("Shooting Position",
+                telemetry, driveBase, ticker, TimeUnit.SECONDS.toMillis(20 * 1000)) {
+            @Override
+            protected Trajectory createTrajectory() {
+                TrajectoryBuilder trajectoryBuilder = driveBase.trajectoryBuilder();
+
+                switch (deliverToTarget) {
+                    case A:
+                        trajectoryBuilder.back(16);
+                        break;
+                    case B:
+                        trajectoryBuilder.back(26);
+                        break;
+                    case C:
+                        trajectoryBuilder.back(64);
+                        break;
+                }
+
+                scoringMechanism.toPreloadRingsState();
+
+                return trajectoryBuilder.build();
+            }
+        };
+
+        State autoLauncherReadyCheck = new State("Autonomous Launcher Check", telemetry) {
+            @Override
+            public State doStuffAndGetNextState() {
+                Class<? extends State> currentLauncherStateClass = scoringMechanism.getCurrentState().getClass();
+
+                if(currentLauncherStateClass.equals(ScoringMechanism.LauncherReady.class)) {
+                    telemetry.addLine("Ready");
+                    return nextState;
+                }
+
+                telemetry.addLine("Not Ready");
+                return this;
+            }
+
+            @Override
+            public void resetToStart() {
+
+            }
+
+            @Override
+            public void liveConfigure(NinjaGamePad gamePad) {
+
+            }
+        };
+
+        TurnState turnToLaunch = new TurnState("Turn to launch",
+                telemetry,
+                new Turn(Rotation.CW, 19),
+                driveBase,
+               ticker,2000);
+
         stateMachine.addSequential(detectorState);
         stateMachine.addSequential(toTargetZone);
         stateMachine.addSequential(wobbleGoalToPlaceState);
@@ -542,7 +608,21 @@ public class Auto extends OpMode {
         stateMachine.addSequential(newDelayState("Wait to drop", 3));
         stateMachine.addSequential(wobbleGoalCoolDownState);
         stateMachine.addSequential(newDelayState("Wait to stow", 3));
-        stateMachine.addSequential(toParkedPosition);
+//        stateMachine.addSequential(toParkedPosition);
+        stateMachine.addSequential(toLaunchPosition);
+        stateMachine.addSequential(turnToLaunch);
+        stateMachine.addSequential(autoLauncherReadyCheck);
+        stateMachine.addSequential(newAutoLaunch());
+        stateMachine.addSequential(newMsDelayState("Wait to feed", 400));
+        stateMachine.addSequential(newAutoLaunchReset());
+        stateMachine.addSequential(newMsDelayState("Wait to feed", 400));
+        stateMachine.addSequential(newAutoLaunch());
+        stateMachine.addSequential(newMsDelayState("Wait to feed", 400));
+        stateMachine.addSequential(newAutoLaunchReset());
+        stateMachine.addSequential(newMsDelayState("Wait to feed", 400));
+        stateMachine.addSequential(newAutoLaunch());
+        stateMachine.addSequential(newMsDelayState("Wait to feed", 400));
+        stateMachine.addSequential(newAutoLaunchReset());
         stateMachine.addSequential(newDoneState("Done!"));
     }
 
@@ -616,6 +696,10 @@ public class Auto extends OpMode {
         unlockButton = new DebouncedButton(driversGamepad.getRightStickButton());
     }
 
+    protected State newMsDelayState(String name, final int numberOfMillis) {
+        return new StopwatchDelayState(name, telemetry, ticker, numberOfMillis, TimeUnit.MILLISECONDS);
+    }
+
     protected State newDelayState(String name, final int numberOfSeconds) {
         return new State(name, telemetry) {
 
@@ -681,5 +765,51 @@ public class Auto extends OpMode {
 
             }
         };
+    }
+
+    private State newAutoLaunchReset() {
+        State autoLaunchReset = new State("Reset", telemetry) {
+            @Override
+            public State doStuffAndGetNextState() {
+                feedRing = false;
+                telemetry.addLine("Resetting");
+                return nextState;
+            }
+
+            @Override
+            public void resetToStart() {
+
+            }
+
+            @Override
+            public void liveConfigure(NinjaGamePad gamePad) {
+
+            }
+        };
+
+        return autoLaunchReset;
+    }
+
+    private State newAutoLaunch() {
+        State autoLaunch = new State("Launch", telemetry) {
+            @Override
+            public State doStuffAndGetNextState() {
+                feedRing = true;
+                telemetry.addLine("Launching");
+                return nextState;
+            }
+
+            @Override
+            public void resetToStart() {
+
+            }
+
+            @Override
+            public void liveConfigure(NinjaGamePad gamePad) {
+
+            }
+        };
+
+        return autoLaunch;
     }
 }
