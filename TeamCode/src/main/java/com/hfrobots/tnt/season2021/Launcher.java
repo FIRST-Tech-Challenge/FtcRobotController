@@ -63,9 +63,9 @@ public class Launcher {
 
     public final static double RING_FEEDER_PARKED_POSITION = 1.0;
 
-    public final static double LAUNCHER_LIFT_STOWED_POSITION = 0.5;
+    public final static double LAUNCHER_LIFT_STOWED_POSITION = 0.52;
 
-    public final static double LAUNCHER_LIFT_HIGH_POSITION = 1.0;
+    public final static double LAUNCHER_LIFT_HIGH_POSITION = .82;
 
     private final VelocityTracker frontVelocityTracker;
 
