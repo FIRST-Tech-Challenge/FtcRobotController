@@ -1272,7 +1272,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 65, 230, 0, true, 3);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(1.0, 5, 290, 5, false, 3); // no rotation to make it faster
+                chassis.driveTo(1.0, 5, 290, 0, false, 3); // no rotation to make it faster
             } else {
                 return;
             }
@@ -1625,7 +1625,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if(tZone == TargetZone.ZONE_C)
         {
-            chassis.driveTo(1, side(50), 37, 5, false, 4);
+            chassis.driveTo(1, side(60), 37, 0, false, 4);
         }
         else
         {
