@@ -25,7 +25,7 @@ public class TestRobot {
     public Servo rp;
 
 
-    public Cycle pushControl;
+    public Cycle pushControl = new Cycle(0.1, 0.3);
 
 
 
