@@ -703,7 +703,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
                 TaskManager.processTasks();
             }
             //move
-            boolean headingCorrection = Math.abs(desiredDegree) <90;
+            boolean headingCorrection = true; // Math.abs(desiredDegree) <90;
             motorPowers = angleMove(desiredDegree, powerUsed, headingCorrection,
                     (autoDriveMode== AutoDriveMode.CONTINUE_NO_CORRECTION?desiredDegree:target_heading));
 
@@ -822,6 +822,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         // auto_travel_p = directionAngle;
 
         double cur_heading = odo_heading();
+
         double degree_diff = Math.abs(cur_heading-fixed_heading);
 
         // adjust max power by the battery voltage level
@@ -834,9 +835,9 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         boolean slow_down_left=false, slow_down_right=false;
         if (headingCorrection && (degree_diff>1.0) && power>slowDownSpeed) { // for Y axle correction
             slow_down_left = ((cur_heading-fixed_heading>0) && directionAngle>-65 && directionAngle<65) ||
-                    (((cur_heading-fixed_heading<0) && directionAngle>115 && directionAngle<-115));
+                    (((cur_heading-fixed_heading<0) && (directionAngle>115 || directionAngle<-115)));
             slow_down_right = ((cur_heading-fixed_heading<0) && directionAngle>-65 && directionAngle<65) ||
-                    (((cur_heading-fixed_heading>0) && directionAngle>115 && directionAngle<-115));
+                    (((cur_heading-fixed_heading>0) && (directionAngle>115 || directionAngle<-115)));
             if (slow_down_left||slow_down_right) {
                 cur_left_to_right_ratio = (1.0 - degree_diff * 0.05);
                 if (cur_left_to_right_ratio<0.7) cur_left_to_right_ratio=0.7;
