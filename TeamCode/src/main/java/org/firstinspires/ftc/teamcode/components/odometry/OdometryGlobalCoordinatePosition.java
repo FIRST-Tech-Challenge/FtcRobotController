@@ -134,7 +134,8 @@ public class OdometryGlobalCoordinatePosition implements Runnable{
 
     }
     public void correctAngleUsingIMU(){
-        robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
+        if (orientationSensor!=null)
+            robotOrientationRadians = Math.toRadians(orientationSensor.getHeading())+initRadians;
     }
 
     /**
