@@ -30,5 +30,12 @@ public class TestTele extends OpMode {
         }else{
             bot.intake(0);
         }
+
+        bot.outtake(gamepad2.right_stick_y);
+
+
+        bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
+
+
     }
 }
