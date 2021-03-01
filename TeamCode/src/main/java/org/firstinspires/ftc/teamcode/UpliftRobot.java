@@ -73,7 +73,7 @@ public class UpliftRobot {
     public double shooter1RawVel = -1;
     public double shooter2RawVel = -1;
     public double highGoalVelocity = 1900;
-    public double powerShotVelocity = 825;
+    public double powerShotVelocity = 1050;
 
     public File odometryFileWorldX, odometryFileWorldY, odometryFileWorldAngle, transferFile;
 

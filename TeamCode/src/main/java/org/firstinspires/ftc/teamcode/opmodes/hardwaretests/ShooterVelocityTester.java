@@ -35,8 +35,8 @@ public class ShooterVelocityTester extends UpliftAuto {
 
         Log.i("PID", robot.shooter1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER) + "");
 
-        robot.shooter1.setVelocity(1900);
-        robot.shooter2.setVelocity(1900);
+        robot.shooter1.setVelocity(robot.powerShotVelocity);
+        robot.shooter2.setVelocity(robot.powerShotVelocity);
 
 
         double initialTime = System.currentTimeMillis();

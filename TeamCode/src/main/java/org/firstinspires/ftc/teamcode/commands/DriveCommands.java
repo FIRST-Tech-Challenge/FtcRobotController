@@ -38,8 +38,8 @@ public class DriveCommands extends Command {
         double turnValue;
         // initialize the gamepad stick values to the three needed axes
         double leftY = Range.clip((-opMode.gamepad1.left_stick_y), -1, 1);
-        double rightX = Range.clip((opMode.gamepad1.right_stick_x), -1, 1);
-        double leftX = Range.clip(Math.pow(opMode.gamepad1.left_stick_x,3), -1, 1);
+        double rightX = Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 3), -1, 1);
+        double leftX = Range.clip(opMode.gamepad1.left_stick_x, -1, 1);
         // Note: The following algorithm was inspired by the webpage https://seamonsters-2605.github.io/archive/mecanum/. It explains this concept very well.
         // find the angle of the left joystick
         double joystickAngle = Math.toDegrees(MathFunctions.atan2UL(leftY, leftX));
