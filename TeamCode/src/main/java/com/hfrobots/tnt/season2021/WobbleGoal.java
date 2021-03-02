@@ -213,9 +213,7 @@ public class WobbleGoal {
                 return motionState;
             }
 
-            if (unsafe.isPressed()){
-                handleGripperServo();
-            }
+            handleGripperServo();
 
             return this;
         }
@@ -330,12 +328,7 @@ public class WobbleGoal {
                 shoulderMotor.setPower(0);
             }
 
-            if (unsafe.isPressed()) {
-                handleGripperServo();
-            }
-
-
-            // TODO: Doubtful (because of gearing), but we may need feedforward to hold position?
+            handleGripperServo();
 
             return this;
         }

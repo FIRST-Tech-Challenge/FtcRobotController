@@ -124,7 +124,7 @@ public class WobbleGoalTest {
         causeButtonToRiseForNextPeriodTask(gripperButton);
         wobbleGoal.periodicTask();
 
-        assertEquals(initialServoPos, gripperServo.getPortNumber(), 0.05); // FIXME
+        assertEquals(initialServoPos, gripperServo.getPosition(), 0.05);
 
         // Continue to move "forwards" until the arm activates the "placed" limit switch
         // what should happen?
@@ -133,24 +133,16 @@ public class WobbleGoalTest {
         placeLimitSwitch.setState(false);
         wobbleGoal.periodicTask();
 
-        assertEquals(WobbleGoal.PlaceState.class, wobbleGoal.getCurrentState().getClass()); // FIXME
+        assertEquals(WobbleGoal.PlaceState.class, wobbleGoal.getCurrentState().getClass());
 
         // What can be done with the servo when the arm is in this position/state?
 
         causeButtonToRiseForNextPeriodTask(gripperButton);
         wobbleGoal.periodicTask();
 
-        final double expectedPosition;
+        assertEquals(WobbleGoal.CLOSED_GRIPPER_POS, gripperServo.getPosition(), 0.05);
 
-        // FIXME: We should not know these values!
-        if (gripperToggle.isToggledTrue()) {
-            expectedPosition = WobbleGoal.OPEN_GRIPPER_POS;
-        } else {
-            expectedPosition = WobbleGoal.CLOSED_GRIPPER_POS;
-        }
-
-        assertEquals(expectedPosition, gripperServo.getPosition(), 0.05); // FIXME
-
+        // Toggle the gripper opposite
         initialServoPos = gripperServo.getPosition();
         causeButtonToRiseForNextPeriodTask(gripperButton);
         wobbleGoal.periodicTask();
