@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,17 +18,11 @@ public class TeleopV1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         initMotors(this);
         initIMU(this);
-        //inits roadrunner localizer
-        MainMecanumDrive localizer = new MainMecanumDrive(hardwareMap);
-        localizer.setPoseEstimate(new Pose2d(-10, 2, Math.toRadians(0)));
 
         waitForStart();
 
 
         while(opModeIsActive()) {
-            //update localization position
-            localizer.update();
-
 
             boolean LBumper1 = gamepad1.left_bumper;
             boolean RBumper1 = gamepad1.right_bumper;
@@ -47,33 +40,60 @@ public class TeleopV1 extends LinearOpMode {
             boolean x1 = gamepad1.x;
             boolean y1 = gamepad1.y;
 
-            boolean dpadUp1 = gamepad1.dpad_up;
-            boolean dpadRight1 = gamepad1.dpad_right;
-            boolean dpadLeft1 = gamepad1.dpad_left;
-            boolean dpadDown1 = gamepad1.dpad_down;
-
-
-
-            boolean LBumper2 = gamepad2.left_bumper;
-            boolean RBumper2 = gamepad2.right_bumper;
-
-            double LStickY2 = -gamepad2.left_stick_y;
-            double LStickX2 = gamepad2.left_stick_x;
-            double RStickY2 = -gamepad2.right_stick_y;
-            double RStickX2 = gamepad2.right_stick_x;
-
-            double LTrigger2 = gamepad2.left_trigger;
-            double RTrigger2 = gamepad2.right_trigger;
-
             boolean a2 = gamepad2.a;
             boolean b2 = gamepad2.b;
             boolean x2 = gamepad2.x;
             boolean y2 = gamepad2.y;
 
+            double LTrigger2 = gamepad2.left_trigger;
+            double RTrigger2 = gamepad2.right_trigger;
+            boolean LBumper2 = gamepad2.left_bumper;
+            boolean RBumper2 = gamepad2.right_bumper;
+
+            double RStickY2 = -gamepad2.right_stick_y;
+            double RStickX2 = gamepad2.right_stick_x;
+            double LStickY2 = -gamepad2.left_stick_y;
+            double LStickX2 = gamepad2.left_stick_x;
+
+            boolean dpadUp1 = gamepad1.dpad_up;
+            boolean dpadRight1 = gamepad1.dpad_right;
+            boolean dpadLeft1 = gamepad1.dpad_left;
+            boolean dpadDown1 = gamepad1.dpad_down;
+
             boolean dpadUP2 = gamepad2.dpad_up;
             boolean dpadDOWN2 =gamepad2.dpad_down;
             boolean dpadRight2 = gamepad2.dpad_right;
             boolean dpadLeft2 = gamepad2.dpad_left;
+
+            boolean abxy1 = false;
+
+
+
+            if(a1){
+                leftfront.setPower(1);
+            } else {
+                leftfront.setPower(0);
+            }
+            if(b1){
+                leftback.setPower(1);
+            } else {
+                leftback.setPower(0);
+            }
+            if(x1){
+                rightfront.setPower(1);
+            } else {
+                rightfront.setPower(0);
+            }
+            if(y1){
+                rightback.setPower(1);
+            } else {
+                rightback.setPower(0);
+            }
+            if(a1 || b1 || x1 || y1) { //Do not use abxy1 buttons in any form while using sticks1/triggers1
+                abxy1 = true;
+            } else {
+                abxy1 = false;
+            }
 
 
             //diagonal driving
@@ -102,8 +122,12 @@ public class TeleopV1 extends LinearOpMode {
             }
             else if (Math.abs(RTrigger1) > 0) {
                 SetPower(.5 * RTrigger1, -.5 * RTrigger1, .5 * RTrigger1, -.5 * RTrigger1);
-            } else {
-                    SetPower(0,0,0,0);
+            }
+            else if (abxy1) {
+                //allow for partially unjanking abxy1 buttons
+            }
+            else {
+                SetPower(0,0,0,0);
             }
 
 
@@ -164,7 +188,7 @@ public class TeleopV1 extends LinearOpMode {
                 blocker.setPosition(0.2); //open
             } else {
                 launchPower = 0;
-                blocker.setPosition(0.47); //closed
+                blocker.setPosition(0.55); //closed
             }
 
             //feeder servo
@@ -213,15 +237,12 @@ public class TeleopV1 extends LinearOpMode {
 
 
             //telementry////////////////////////////////////////////////////////////////////////////////////////////
+            telemetry.addData("hi", "hi ");
             telemetry.addData("angle: ", getAngle());
             telemetry.addData("Belt encoder value: ", blocker.getPosition());
             telemetry.addData("arm encoder: ", wobbleArmMotor.getCurrentPosition());
             telemetry.addData("wheel encoder: ", leftfront.getCurrentPosition());
             telemetry.addData("launcher Power: ", launcher2.getPower());
-            Pose2d myPose = localizer.getPoseEstimate();
-            telemetry.addData("x: ", myPose.getX());
-            telemetry.addData("y: ", myPose.getY());
-            telemetry.addData("heading: ", myPose.getHeading());
             telemetry.update();
         }
     }
