@@ -8,8 +8,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.drive.HzDriveConstantsDriveEncoders;
-import org.firstinspires.ftc.teamcode.drive.HzMecanumDriveDriveEncoders;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
 //import org.firstinspires.ftc.teamcode.drive.DriveConstants;
@@ -17,6 +15,13 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 //import org.firstinspires.ftc.teamcode.drive.DriveConstantsDeadWheelEncoder;
 //import org.firstinspires.ftc.teamcode.drive.MecanumDriveDeadWheelsEncoder;
 
+/**
+ * Drive Class that implements Mecanum drive using roadrunner using Drive Encoders
+ * Customized for Hazmat from Acmerobotics Roadrunner code.
+ *
+ * Coded for Field Centric and Robot Centric drive mode, to be selected based on driver comfort
+ * Also include Align to direction and delta turn functions to be used in teleOp
+ */
 //public class HzDrive extends SampleMecanumDrive {
 public class HzDrive extends HzMecanumDriveDriveEncoders {
     //double DriveConstants_kV = DriveConstants.kV;
@@ -81,6 +86,9 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
     public Vector2d gamepadInput = new Vector2d(0,0);
     public double gamepadInputTurn = 0;
 
+    /**
+     * Field Centric drive logix
+     */
     public void driveTrainFieldCentric(){
 
         //poseEstimate = getPoseEstimate();
@@ -100,10 +108,15 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
     }
 
 
-
+    /**
+     * Main drive modes implemented here
+     *  - Robot or Field centric selection
+     *  - Augmented control to be used in TeleOp
+     *      - Turn to Center lie (0 deg)
+     *      - Delta turn by 5 degrees (left and right)
+     */
     public void driveTrainPointFieldModes(){
         //poseEstimate = getPoseEstimate();
-        //TODO : TESTING VUFORIA RUNNING IN PARALLEL
 
         // Set input bounds for the heading controller
         // Automatically handles overflow
@@ -208,10 +221,6 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
 
         // Update the localizer
         getLocalizer().update();
-
-        //TODO : TRY UPDATING TO Vuforia POS estimate here.
-
-
 
         // Send telemetry packet off to dashboard
         FtcDashboard.getInstance().sendTelemetryPacket(packet);

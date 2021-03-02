@@ -6,7 +6,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
+/**
+ * Class Description of the Magazine Subsystem
+ *
+ * Magazine collects the rings and moves up and down to the launcher on an elevator and is
+ * controlled by a continuous servomotor.
+ */
 public class HzMagazine {
     public CRServo magazineServo;
 
@@ -45,8 +50,10 @@ public class HzMagazine {
 
     }
 
-    public void initMagazine(LinearOpMode opModepassed){
-        this.opModepassed = opModepassed;
+    /**
+     * Initialize Magazine
+     */
+    public void initMagazine(){
         senseMagazinePosition();
         switch (magazinePosition){
             case AT_LAUNCH:
@@ -61,6 +68,10 @@ public class HzMagazine {
         }
     }
 
+    /**
+     * Sense the position of magazine based on touch sensor.
+     * if in between states mark as error
+     */
     public void senseMagazinePosition(){
         MAGAZINE_TOUCH_SENSORS_STATE magazine_touch_sensors_state = getMagazineTouchSensorsState();
         if (magazine_touch_sensors_state == MAGAZINE_TOUCH_SENSORS_STATE.LAUNCH_TS_PRESSED) {
@@ -74,6 +85,9 @@ public class HzMagazine {
         }
     }
 
+    /**
+     * Find statr of magazine touch sensors
+     */
     public MAGAZINE_TOUCH_SENSORS_STATE getMagazineTouchSensorsState(){
         MAGAZINE_TOUCH_SENSORS_STATE magazine_touch_sensors_state;
         MAGAZINE_TOUCH_SENSORS_STATE magazine_launch_touch_sensors_state;
@@ -104,8 +118,9 @@ public class HzMagazine {
         return magazine_touch_sensors_state;
     }
 
-    //public boolean moveMagazineToCollectState = false;
-
+    /**
+     * Move Magazine to Collect position
+     */
     public void moveMagazineToCollect(){
         if (magazineCollectTouchSensor.isPressed()) {
             magazineServo.setPower(0.0);
@@ -115,24 +130,30 @@ public class HzMagazine {
         }
     }
 
-
-    //public boolean moveMagazineToLaunchState = false;
-
+    /**
+     * Move Magazine to Launch position
+     */
     public void moveMagazineToLaunch() {
         if (magazineLaunchTouchSensor.isPressed()) {
             magazineServo.setPower(0.0);
             magazinePosition = MAGAZINE_POSITION.AT_LAUNCH;
         } else {
-            magazineServo.setPower(0.5);
+            magazineServo.setPower(0.8);
         }
     }
 
 
+    /**
+     * Return Magazine Position
+     */
     public MAGAZINE_POSITION getMagazinePosition(){
         senseMagazinePosition();
         return magazinePosition;
     }
 
+    /**
+     * Shake Magazine to shake rings in
+     */
     public void shakeMagazine(int timeInMilliseconds){
         ElapsedTime timer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         ElapsedTime shaketimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);

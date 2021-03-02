@@ -3,6 +3,12 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+/**
+ * Launch Controller Class that manages the actions and state of intake, Magazine and Launcher to
+ * ensure that launch button is enabled and happens only when everything is ready for launch
+ * The controller also protects that launcher is disabled and magazine moved to collect state when
+ * intake is turned on.
+ */
 public class HzLaunchController {
 
     public enum LAUNCH_MODE{
@@ -51,16 +57,6 @@ public class HzLaunchController {
     public double distanceFromTarget, lclaunchMotorPower, angleToTarget;
     public double lclaunchMotorVelocity;
 
-    //public Servo launchControllerBeaconServo;
-
-    //TODO : AMJAD : Use servo to flag if beacon is not working
-    /*public static final double launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_AUTO = 0.2;
-    public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_AUTO = 0.4;
-    public static final double launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_MANUAL = 0.6;
-    public static final double launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL = 0.8;
-    public static final double launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE = 0.0;
-     */
-
     public HzLauncher lcHzLauncher;
     public HzIntake lcHzIntake;
     public HzMagazine lcHzMagazine;
@@ -75,10 +71,11 @@ public class HzLaunchController {
         lcHzIntake = lcHzIntakePassed;
         lcHzDrive = lcHzDrivePassed;
         lcHzHardwareMap = lcHzhardwareMapPassed;
-
-        //launchControllerBeaconServo = hardwareMap.servo.get("launch_beacon_servo");
     }
 
+    /**
+     * In case of battery dependency, this is used to set launcher velocity based on battery state
+     */
     public void setLauncherFlyWheelNominalVelocityBasedOnBattery(){
         double batteryVoltage = lcHzDrive.getBatteryVoltage(lcHzHardwareMap);
         if (batteryVoltage > 13.0){
@@ -95,6 +92,10 @@ public class HzLaunchController {
 
     public boolean activateLaunchReadinessState;
 
+    /**
+     * Launch readiness is verified and activated
+     * @return launch readiness state
+     */
     public LAUNCH_READINESS activateLaunchReadiness() {
         launchActivation = LAUNCH_ACTIVATION.ACTIVATED;
 
@@ -104,13 +105,11 @@ public class HzLaunchController {
             turnRobotToNormalControl();
         }
 
-        //lcMagazine.senseMagazinePosition();
         if (lcHzIntake.intakeMotorState != HzIntake.INTAKE_MOTOR_STATE.STOPPED){
             lcHzIntake.stopIntakeMotor();
         }
-        //lcHzMagazine.moveMagazineToLaunchState = true;
-        lcHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.LAUNCH;
 
+        lcHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.LAUNCH;
 
         if (lcHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_LAUNCH){
             activateLaunchReadinessState = false;
@@ -129,16 +128,12 @@ public class HzLaunchController {
 
         if (launchMode == LAUNCH_MODE.MANUAL && launchReadiness == LAUNCH_READINESS.READY) {
             if (lcTarget == LAUNCH_TARGET.HIGH_GOAL){
-                //lcHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_HIGH_GOAL);
-                //lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
                 lclaunchMotorVelocity = lcHzLauncher.flyWheelVelocityHighGoal;
                 lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
             }
             if (lcTarget == LAUNCH_TARGET.POWER_SHOT1 ||
                     lcTarget ==LAUNCH_TARGET.POWER_SHOT2 ||
                     lcTarget == LAUNCH_TARGET.POWER_SHOT3) {
-                //lcHzLauncher.runFlyWheelToTarget(HzLauncher.FLYWHEEL_NOMINAL_POWER_POWERSHOT);
-                //lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
                 lclaunchMotorVelocity = lcHzLauncher.flyWheelVelocityPowerShot;
                 lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
             }
@@ -148,6 +143,9 @@ public class HzLaunchController {
 
     public boolean deactivateLaunchReadinessState = false;
 
+    /**
+     * Launch readiness is deactivated
+     */
     public void deactivateLaunchReadiness(){
         launchActivation = HzLaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED;
         lcHzLauncher.stopFlyWheel();
@@ -155,12 +153,19 @@ public class HzLaunchController {
         deactivateLaunchReadinessState = false;
     }
 
+    /**
+     * Determine distance from target and determine launch velocity
+     */
     public void runLauncherByDistanceToTarget(){
         getDistanceFromTarget();
         setLaunchMotorVelocity();
         lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
     }
 
+    /**
+     * Set the launch target based on key input or position of launch and sets the launcher
+     * to run at correct velocity
+     */
     public void determineLaunchTarget(){
         //determineLaunchTarget : Determine the launch target based on current zone of the robot
         //and Y,X,A,B button pressed. Returns launchTargetSelected
@@ -223,105 +228,70 @@ public class HzLaunchController {
         }
     }
 
+    /**
+     * In automated mode, robot turns to target zone
+     */
     public void turnRobotToTarget(){
-        //If MODE_AUTOMATED, turnRobotToTarget : turn the robot to face the target based on angle determined. Ensure this function is on time out, or on a parallel thread where drivers can override, so that robot does not get locked in this function. (Driver has to manually turn the robot in MODE_AUTOMATED) [Priority : This is second priority after all other basic functionality is done]
+        //If MODE_AUTOMATED, turnRobotToTarget : turn the robot to face the target based on angle determined.
+        // Ensure this function is on time out, or on a parallel thread where drivers can override,
+        // so that robot does not get locked in this function.
+        // (Driver has to manually turn the robot in MODE_AUTOMATED)
         if (getLaunchMode() == LAUNCH_MODE.AUTOMATED) {
             lcHzDrive.driveMode = HzDrive.DriveMode.ALIGN_TO_POINT;
             lcHzDrive.driveTrainPointFieldModes();
         }
     }
 
+    /**
+     * Return robot for target pointed control to Normal control
+     */
     public void turnRobotToNormalControl(){
         lcHzDrive.driveMode = HzDrive.DriveMode.NORMAL_CONTROL;
         //lcDrive.driveTrainPointFieldModes();
     }
 
-    /*public void senseLaunchReadiness() {
-        launchReadiness = LAUNCH_READINESS.READY;
-    }
-
-    public void indicateLaunchReadiness() {
-        if (launchActivation == LAUNCH_ACTIVATION.ACTIVATED) {
-            if (launchReadiness == LAUNCH_READINESS.READY) {
-                if (getLaunchMode() == LAUNCH_MODE.AUTOMATED) {
-                    turnlaunchControllerBeaconGreen();
-                } else {
-                    turnlaunchControllerBeaconYellow();
-                }
-            } else {
-                if (getLaunchMode() == LAUNCH_MODE.MANUAL) {
-                    turnlaunchControllerBeaconRed();
-                } else {
-                    turnlaunchControllerBeaconBlue();
-                }
-            }
-        } else {
-            turnlaunchControllerBeaconOff();
-        }
-
-    }*/
-
     public ROBOT_ZONE getRobotZone() {
         return robotZone;
     }
 
+    /**
+     * Get distance from target
+     */
     public void getDistanceFromTarget() {
-        //Vector2d difference = lcDrive.drivePointToAlign.minus(lcDrive.poseEstimate.vec());
-        //distanceFromTarget = Math.sqrt(Math.pow(difference.getX(), 2) + Math.pow(difference.getY(), 2));
         distanceFromTarget = lcTargetVector.distTo(lcHzDrive.poseEstimate.vec());
-        /*distanceFromTarget = Math.sqrt(Math.pow(lcTargetVector.getX()-lcTargetVector.getX(), 2)
-                + Math.pow(lcTargetVector.getY()-lcTargetVector.getY(), 2));*/
     }
 
+    /**
+     * Set Launch velocity based on distance
+     */
     public void setLaunchMotorVelocity() {
         if (distanceFromTarget > 66 && distanceFromTarget < 138) {
             switch (lcTarget) {
                 case POWER_SHOT1:
                 case POWER_SHOT2:
                 case POWER_SHOT3:
-                    //lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1550, 0.66, 1740);
                     lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
                     break;
                 case HIGH_GOAL:
-                    //lclaunchMotorVelocity = Range.scale(distanceFromTarget, 66.0, 1560, 1640, 1830);
                     lclaunchMotorVelocity = lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
                     break;
             }
         } else {
-            //lclaunchMotorPower = 0.0;
             lclaunchMotorVelocity = 0;
         }
 
     }
 
+    /**
+     * get launch mode
+     */
     public LAUNCH_MODE getLaunchMode(){
         return launchMode;
     }
 
-    /*public void setLaunchReadyIndicator(LAUNCH_READINESS launchStatus) {
-        launchReadiness = launchStatus;
-    }
-
-    public void turnlaunchControllerBeaconRed() {
-        launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_AUTO);
-    }
-
-    public void turnlaunchControllerBeaconGreen() {
-        launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_AUTO);
-    }
-
-    public void turnlaunchControllerBeaconYellow() {
-        launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_NOT_ALIGNED_MANUAL);
-    }
-
-    public void turnlaunchControllerBeaconBlue() {
-        launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_ALIGNED_MANUAL);
-    }
-
-    public void turnlaunchControllerBeaconOff() {
-        launchControllerBeaconServo.setPosition(launchControllerBeaconServo_LAUNCH_TARGET_INACTIVE);
-    }*/
-
+    /**
+     * Toggle between automated turn to target and manual control modes
+     */
     public void toggleModeManualAutomated() {
         if (launchMode == LAUNCH_MODE.AUTOMATED) {
             launchMode = LAUNCH_MODE.MANUAL;

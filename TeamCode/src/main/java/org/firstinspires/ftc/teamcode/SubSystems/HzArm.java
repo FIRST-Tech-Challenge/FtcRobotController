@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
-/*
-An arm with two grip mechanisms and rotatable on a motor to almost 225 degrees.
-Arm is controlled by trigger button and has fast motion from parked position to
-position for dropping ring in low goal, and from there slow motion to position
-for dropping ring on wobble goal, picking wobble goal position and picking ring
-from floor position
+/**
+ * An arm with two grip mechanisms and rotatable on a motor to almost 225 degrees.
+ * Arm is controlled by trigger button and has fast motion from parked position to
+ * position for dropping ring in low goal, and from there slow motion to position
+ * for dropping ring on wobble goal, picking wobble goal position and picking ring
+ * from floor position
 */
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -31,16 +31,16 @@ public class HzArm {
         PICK_RING
     }
 
-    public static int baselineEncoderCount = 0;//130;
+    public static int baselineEncoderCount = 0;
     public static int ARM_PARKED_POSITION_COUNT = 0;
-    public static int ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT = -250;//-350 ;
+    public static int ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT = -250;
     public static int ARM_DROP_WOBBLE_RING_POSITION_COUNT = -500 ;
     public static int ARM_DROP_WOBBLE_AUTONOMOUS_POSITION = -700;
     public static int ARM_PICK_WOBBLE_POSITION_COUNT = -725 ;
     public static int ARM_PICK_RING_POSITION_COUNT = -900 ;
 
-    public static double POWER_NO_WOBBLEGOAL = 0.6;
-    public static double POWER_WITH_WOBBLEGOAL = 0.6;
+    public static double POWER_NO_WOBBLEGOAL = 0.5;
+    public static double POWER_WITH_WOBBLEGOAL = 0.3;
 
     public ARM_POSITION currentArmPosition = ARM_POSITION.PARKED;
     public ARM_POSITION previousArmPosition = ARM_POSITION.PARKED;;
@@ -55,18 +55,19 @@ public class HzArm {
     public GRIP_SERVO_STATE gripServoState = GRIP_SERVO_STATE.OPENED ;
 
     public HzArm(HardwareMap hardwareMap) {
-        //armMotor = hardwareMap.dcMotor.get("arm_rotate");
         armMotor = hardwareMap.get(DcMotorEx.class, "arm_rotate");
         armGripServo = hardwareMap.servo.get("arm_grip");
     }
 
     LinearOpMode opModepassed;
 
-    public void initArm(/*LinearOpMode opModepassed1*/){
-        //this.opModepassed = opModepassed1;
+    /**
+     * Initialization for the Arm
+     */
+    public void initArm(){
+
         armMotor.setPositionPIDFCoefficients(5.0);
         armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        //baselineEncoderCount = armMotor.getCurrentPosition();
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         resetArm();
         moveArmParkedPosition();
@@ -74,6 +75,9 @@ public class HzArm {
         initGrip();
     }
 
+    /**
+     * Reset Arm Encoder
+     */
     public void resetArm(){
         DcMotor.RunMode runMode = armMotor.getMode();
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -87,7 +91,6 @@ public class HzArm {
      */
     public void turnArmBrakeModeOn(){
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //armMotor.setPower(0.0);
     }
 
     /**
@@ -97,17 +100,14 @@ public class HzArm {
      */
     public void turnArmBrakeModeOff(){
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        //armMotor.setPower(0.0);
     }
-
-    /**
-     * Method to run motor to set to the set position
-     */
-
 
     public boolean runArmToLevelState = false;
     public double motorPowerToRun = POWER_NO_WOBBLEGOAL;
 
+    /**
+     * Method to run motor to set to the set position
+     */
     public void runArmToLevel(double power){
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if (runArmToLevelState == true || armMotor.isBusy() == true){
@@ -118,6 +118,9 @@ public class HzArm {
         }
     }
 
+    /**
+     * Move Arm to Park Position
+     */
     public void moveArmParkedPosition() {
         turnArmBrakeModeOff();
         armMotor.setTargetPosition(ARM_PARKED_POSITION_COUNT + baselineEncoderCount);
@@ -126,6 +129,9 @@ public class HzArm {
         currentArmPosition = ARM_POSITION.PARKED;
     }
 
+    /**
+     * Move Arm to Holding up position of Wobble and Ring in TeleOp Mode
+     */
     public void moveArmHoldUpWobbleRingPosition() {
         turnArmBrakeModeOn();
         armMotor.setTargetPosition(ARM_HOLD_UP_WOBBLE_RING_POSITION_COUNT + baselineEncoderCount);
@@ -134,6 +140,10 @@ public class HzArm {
         currentArmPosition = ARM_POSITION.HOLD_UP_WOBBLE_RING;
     }
 
+
+    /**
+     * Move Arm to Drop Wobble goal and Ring in TeleOp Mode
+     */
     public void moveArmDropWobbleRingPosition() {
         turnArmBrakeModeOn();
         armMotor.setTargetPosition(ARM_DROP_WOBBLE_RING_POSITION_COUNT + baselineEncoderCount);
@@ -142,15 +152,21 @@ public class HzArm {
         currentArmPosition = ARM_POSITION.DROP_WOBBLE_RING;
     }
 
+    /**
+     * Move Arm to Drop Wobble Goal in autonomous
+     */
     public void moveArmDropWobbleAutonomousPosition() {
         turnArmBrakeModeOn();
         armMotor.setTargetPosition(ARM_DROP_WOBBLE_AUTONOMOUS_POSITION + baselineEncoderCount);
-        motorPowerToRun = POWER_NO_WOBBLEGOAL;
+        motorPowerToRun = POWER_WITH_WOBBLEGOAL;
         runArmToLevelState = true;
         currentArmPosition = ARM_POSITION.DROP_WOBBLE_AUTONOMOUS;
     }
 
 
+    /**
+     * Move arm to Pick Wobble Position
+     */
     public void moveArmPickWobblePosition() {
         turnArmBrakeModeOn();
         armMotor.setTargetPosition(ARM_PICK_WOBBLE_POSITION_COUNT + baselineEncoderCount);
@@ -159,6 +175,9 @@ public class HzArm {
         currentArmPosition = ARM_POSITION.PICK_WOBBLE;
     }
 
+    /**
+     * Move Arm to Pick Ring Position
+     */
     public void moveArmPickRingPosition() {
         turnArmBrakeModeOn();
         armMotor.setTargetPosition(ARM_PICK_RING_POSITION_COUNT + baselineEncoderCount);
@@ -167,6 +186,11 @@ public class HzArm {
         currentArmPosition = ARM_POSITION.PICK_RING;
     }
 
+    /**
+     * Method for moving arm based on trigger inputs.
+     * Depending on the grip condition in the pick wobble goal position or the pic ring position
+     * the next motion is determined
+     */
     public void moveArmByTrigger() {
         if ((currentArmPosition== ARM_POSITION.PARKED)) {
             previousArmPosition = currentArmPosition;
@@ -241,6 +265,9 @@ public class HzArm {
         gripServoState = GRIP_SERVO_STATE.CLOSED;
     }
 
+    /**
+     * Open Arm Grip
+     */
     public void openGrip() {
         if((currentArmPosition!= ARM_POSITION.PARKED) &&
                 (currentArmPosition!= ARM_POSITION.HOLD_UP_WOBBLE_RING))  {
@@ -249,16 +276,25 @@ public class HzArm {
         }
     }
 
+    /**
+     * Close Arm grip)
+     */
     public void closeGrip() {
         armGripServo.setPosition(GRIP_CLOSE);
         gripServoState = GRIP_SERVO_STATE.CLOSED;
     }
 
-    // grips ring with hand of the arm by running armRingGripServo
+
+    /**
+     * Return the current Arm Position
+     */
     public ARM_POSITION getCurrentArmPosition() {
         return currentArmPosition;
     }
 
+    /**
+     * Return the current Grip position
+     */
     public GRIP_SERVO_STATE getGripServoState() {
         return gripServoState;
     }

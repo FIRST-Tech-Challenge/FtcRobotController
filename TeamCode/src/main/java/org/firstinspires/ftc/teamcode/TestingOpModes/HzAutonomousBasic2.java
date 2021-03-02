@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.GameOpModes;
+package org.firstinspires.ftc.teamcode.TestingOpModes;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -33,6 +34,7 @@ import static com.qualcomm.robotcore.util.ElapsedTime.Resolution.MILLISECONDS;
  *
  */
 @Autonomous(name = "Hazmat Autonomous 2", group = "00-Autonomous" , preselectTeleOp = "Hazmat TeleOp RR")
+@Disabled
 public class HzAutonomousBasic2 extends LinearOpMode {
 
     public boolean HzDEBUG_FLAG = true;
@@ -394,10 +396,9 @@ public class HzAutonomousBasic2 extends LinearOpMode {
             hzDrive.followTrajectory(traj);
 
             //Set turn angles prior to launching
-            turnAnglePowershot12 = Math.toRadians(-5); //turnAnglePowershot21 = Math.toRadians(-5);
-            turnAnglePowershot23 = Math.toRadians(-5); //turnAnglePowershot12 = Math.toRadians(5);
-            launch3RingsToPowerShots(); //turnAnglePowershot23 = Math.toRadians(5);
-            //launch3RingsToPowerShots();
+            turnAnglePowershot12 = Math.toRadians(-5);
+            turnAnglePowershot23 = Math.toRadians(-5);
+            launch3RingsToPowerShots();
         }
 
 
@@ -407,7 +408,6 @@ public class HzAutonomousBasic2 extends LinearOpMode {
                         .lineToLinearHeading(new Pose2d(-10,af*48,Math.toRadians(af*-135)))
                         .build();
                 hzDrive.followTrajectory(traj);
-                //Consider just turn(Math.toRadians(-120);
                 break;
             case B:
                 traj = hzDrive.trajectoryBuilder(hzDrive.getPoseEstimate())
@@ -640,9 +640,6 @@ public class HzAutonomousBasic2 extends LinearOpMode {
         telemetry.addData("Enter PLaying Alliance :", "(Blue: (X),    Red: (B))");
         telemetry.update();
 
-        /*HzGameField.playingAlliance = HzGameField.PLAYING_ALLIANCE.BLUE_ALLIANCE;
-        startPose = HzGameField.BLUE_INNER_START_LINE;
-        activeWebcam = HzVuforia.ACTIVE_WEBCAM.RIGHT;*/
 
         while (!isStopRequested()) {
             if (hzGamepad.getButtonBPress()) {
@@ -664,7 +661,6 @@ public class HzAutonomousBasic2 extends LinearOpMode {
         hzWait(200);
 
         //***** Select Start Pose ******
-        //timer.reset();
         telemetry.addData("Enter Start Pose :", "(Inner: (A) ,    Outer: (Y))");
         while (!isStopRequested()) {
             if (HzGameField.playingAlliance == HzGameField.PLAYING_ALLIANCE.RED_ALLIANCE) {
@@ -731,12 +727,13 @@ public class HzAutonomousBasic2 extends LinearOpMode {
             telemetry.addData("hzAutoControl.autoLaunchAim : ", hzAutoControl.autoLaunchAim);
             telemetry.addLine();
             telemetry.addData("Please select option for Picking rings from target markers and launching : ", "");
-            telemetry.addData("    (X):","Pick rings and launch after Wobble Goal, and park");
-            telemetry.addData("    (Y):","Pick rings after Wobble Goal and park (No launching)");
-            telemetry.addData("    (A):","Park after Wobble Goal (No ring Pick)");
-            telemetry.addData("    (B):","Pick rings and launch after Wobble Goal, move second Wobble Goal and park");
+            telemetry.addData("    (Y):","Launch and park");
+            telemetry.addData("    (A):","Launch, drop WG and park");
+            telemetry.addData("    (X):","Launch, drop WG, Pick rings, launch and park");
+            telemetry.addData("    (B):","Launch, drop WG, Pick rings, launch, move WG2 and park");
 
-            if (hzGamepad.getButtonAPress()) {
+            if (hzGamepad.getButtonYPress()) {
+                hzAutoControl.dropFirstWobbleGoal = false;
                 hzAutoControl.pickRingFromTargetMarker = false;
                 hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = false;
                 hzAutoControl.pickAndDropSecondWobbleGoal = false;
@@ -745,28 +742,35 @@ public class HzAutonomousBasic2 extends LinearOpMode {
                 telemetry.addData("hzAutoControl.pickAndDropSecondWobbleGoal: ", hzAutoControl.pickAndDropSecondWobbleGoal);
                 break;
             }
-            if (hzGamepad.getButtonYPress()) {
-                hzAutoControl.pickRingFromTargetMarker = true;
+
+            if (hzGamepad.getButtonAPress()) {
+                hzAutoControl.dropFirstWobbleGoal = true;
+                hzAutoControl.pickRingFromTargetMarker = false;
                 hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = false;
                 hzAutoControl.pickAndDropSecondWobbleGoal = false;
+                telemetry.addData("hzAutoControl.dropFirstWobbleGoal : ", hzAutoControl.dropFirstWobbleGoal);
                 telemetry.addData("hzAutoControl.pickRingFromTargetMarker : ", hzAutoControl.pickRingFromTargetMarker);
                 telemetry.addData("hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal  : ", hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal);
                 telemetry.addData("hzAutoControl.pickAndDropSecondWobbleGoal: ", hzAutoControl.pickAndDropSecondWobbleGoal);
                 break;
             }
             if (hzGamepad.getButtonXPress()) {
+                hzAutoControl.dropFirstWobbleGoal = true;
                 hzAutoControl.pickRingFromTargetMarker = true;
                 hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = true;
                 hzAutoControl.pickAndDropSecondWobbleGoal = false;
+                telemetry.addData("hzAutoControl.dropFirstWobbleGoal : ", hzAutoControl.dropFirstWobbleGoal);
                 telemetry.addData("hzAutoControl.pickRingFromTargetMarker : ", hzAutoControl.pickRingFromTargetMarker);
                 telemetry.addData("hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal  : ", hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal);
                 telemetry.addData("hzAutoControl.pickAndDropSecondWobbleGoal: ", hzAutoControl.pickAndDropSecondWobbleGoal);
                 break;
             }
             if (hzGamepad.getButtonBPress()) {
+                hzAutoControl.dropFirstWobbleGoal = true;
                 hzAutoControl.pickRingFromTargetMarker = true;
                 hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal = true;
                 hzAutoControl.pickAndDropSecondWobbleGoal = true;
+                telemetry.addData("hzAutoControl.dropFirstWobbleGoal : ", hzAutoControl.dropFirstWobbleGoal);
                 telemetry.addData("hzAutoControl.pickRingFromTargetMarker : ", hzAutoControl.pickRingFromTargetMarker);
                 telemetry.addData("hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal  : ", hzAutoControl.launchRingsPickedFromTargetMarkerToHighGoal);
                 telemetry.addData("hzAutoControl.pickAndDropSecondWobbleGoal: ", hzAutoControl.pickAndDropSecondWobbleGoal);
@@ -869,13 +873,6 @@ public class HzAutonomousBasic2 extends LinearOpMode {
             }
         }
 
-
-
-
-        //***** Arm Debug ****
-        //telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
-        //telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
-
         switch (hzArm.getGripServoState()){
             case OPENED  : {
                 telemetry.addData("hzArm.getGripServoState()", "OPENED");
@@ -886,12 +883,6 @@ public class HzAutonomousBasic2 extends LinearOpMode {
                 break;
             }
         }
-
-        //telemetry.addData("armMotor.getCurrentPosition()", hzArm.armMotor.getCurrentPosition());
-        //telemetry.addData("armMotor.getTargetPosition()", hzArm.armMotor.getTargetPosition());
-
-        //telemetry.addData("armGripServo.getCurrentPosition()", hzArm.armGripServo.getPosition());
-        //telemetry.addData("hzGamepad.getLeftTriggerPress()", hzGamepad.getLeftTriggerPress());
 
         switch (hzArm.getCurrentArmPosition()){
             case PARKED: {

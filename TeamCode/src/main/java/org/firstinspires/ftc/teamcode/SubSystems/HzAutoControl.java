@@ -3,25 +3,11 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 /**
- * Defenition of the HzGamepad Class <BR>
+ * Defenition of the AutoControl Class <BR>
  *
- * HzGamepad consists of system provided gamepad(s) and adds functionality to the selection 
- * made on gamepads <BR>
+ * HzAutoControl consists of methods to control the robot subsystems in autonomous mode <BR>
+ * This is set up as a state machine. And replicates all commands as in the gamepad <BR>
  * 
- * For Hazmat Skystone, only one Gamepad is used (gamepad1) <BR>
- *
- * The controls are as follows: <BR>
- *      <emsp>Left Stick for pan motion (gamepad1.left_stick_x and gamepad1.left_stick_y) <BR>
- *      <emsp>Right Stick for turn motion (only uses the x direction : gamepad1.right_stick_y) <BR>
- *      <emsp>Right Bumper for <TO-BE-UPDATED> (gamepad1.right_bumper) <BR>
- *      <emsp>Left Bumper for <TO-BE-UPDATED> (gamepad1.left_bumper) <BR>
- *      <emsp>Right Trigger for increasing speed to double (gamepad1.right_trigger) <BR>
- *      <emsp>Button A to <TO-BE-UPDATED> (gamepad1.a) <BR>
- *      <emsp>Button Y to <TO-BE-UPDATED> (gamepad1.y) <BR>
- *      <emsp>Button X to <TO-BE-UPDATED> (gamepad1.x) <BR>
- *      <emsp>Button B to <TO-BE-UPDATED> (gamepad1.b) <BR>
- *      <emsp>Button Dpad_up to <TO-BE-UPDATED> (gamepad1.dpad_up) <BR>
- *      <emsp>Button Dpad_down to <TO-BE-UPDATED> (gamepad1.dpad_down) <BR>
  */
 
 public class HzAutoControl {
@@ -41,6 +27,8 @@ public class HzAutoControl {
     public AutoLaunchAim autoLaunchAim = AutoLaunchAim.HIGHGOAL;
 
     public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
+
+    public boolean dropFirstWobbleGoal = false;
     public boolean pickRingFromTargetMarker = false;
     public boolean launchRingsPickedFromTargetMarkerToHighGoal = false;
     public boolean pickAndDropSecondWobbleGoal = false;
@@ -65,6 +53,9 @@ public class HzAutoControl {
         acHzArm = gpHzArmPassed;
     }
 
+    /**
+     * Main control function that calls the runs of each of the subsystems in sequence
+     */
     public void runAutoControl(){
         int counter = 0;
         while (counter < 5) {
@@ -77,16 +68,25 @@ public class HzAutoControl {
         }
     }
 
+    /**
+     * set Magazine To Collect state
+     */
     public void setMagazineToCollect(){
         acHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.COLLECT;
         runAutoControl();
     }
 
+    /**
+     * set Magazine To Launch state
+     */
     public void setMagazineToLaunch(){
         acHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.LAUNCH;
         runAutoControl();
     }
 
+    /**
+     * run MagazineControl State machine response
+     */
     public void runMagazineControl(){
         if (acHzMagazine.magazinePosition == HzMagazine.MAGAZINE_POSITION.AT_COLLECT){
             acHzLauncher.stopFlyWheel();
@@ -103,11 +103,17 @@ public class HzAutoControl {
 
     }
 
+    /**
+     * set Intake to Start state
+     */
     public void setIntakeStart(){
         autoIntakeState = AUTO_INTAKE_STATE.START;
         runAutoControl();
     }
 
+    /**
+     * set Intake to Stop state
+     */
     public void setIntakeStop(){
         autoIntakeState = AUTO_INTAKE_STATE.STOP;
         runAutoControl();
@@ -119,6 +125,10 @@ public class HzAutoControl {
     }
     AUTO_INTAKE_STATE autoIntakeState = AUTO_INTAKE_STATE.STOP;
 
+    /**
+     * run Intake Control State machine response
+     * Also deactivate Launch readiness when Intake is started
+     */
     public void runIntakeControl(){
 
         if (autoIntakeState == AUTO_INTAKE_STATE.START){
@@ -130,20 +140,6 @@ public class HzAutoControl {
         if (autoIntakeState == AUTO_INTAKE_STATE.STOP){
             acHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.OFF;
         }
-
-
-
-        //Run Intake motors - start when Dpad_down is pressed once, and stop when it is pressed again
-        /*if (getDpad_downPress()) {
-            if (acHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
-                acHzLaunchController.activateLaunchReadinessState = false;
-                acHzLaunchController.deactivateLaunchReadinessState = true;
-                acHzMagazine.moveMagazineTo = HzMagazine.MOVE_MAGAZINE_TO.COLLECT;
-                acHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.ON;
-            } else if(acHzIntake.getIntakeState() == HzIntake.INTAKE_MOTOR_STATE.RUNNING) {
-                acHzIntake.intakeButtonState = HzIntake.INTAKE_BUTTON_STATE.OFF;
-            }
-        }*/
 
         if (autoIntakeState == AUTO_INTAKE_STATE.START &&
                 acHzIntake.getIntakeState() != HzIntake.INTAKE_MOTOR_STATE.RUNNING &&
@@ -166,35 +162,49 @@ public class HzAutoControl {
     }
     AUTO_LAUNCH_TARGET autoLaunchtarget = AUTO_LAUNCH_TARGET.OFF;
 
+    /**
+     * set Launch Target to HighGoal State
+     */
     public void setLaunchTargetHighGoal(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.HIGH_GOAL;
         runAutoControl();
     }
 
+    /**
+     * set Launch Target PowerShot1 state
+     */
     public void setLaunchTargetPowerShot1(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT1;
         runAutoControl();
-        //runAutoControl();
     }
 
+    /**
+     * set Launch Target PowerShot2 state
+     */
     public void setLaunchTargetPowerShot2(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT2;
         runAutoControl();
-        //runAutoControl();
     }
 
+    /**
+     * set Launch Target PowerShot3 state
+     */
     public void setLaunchTargetPowerShot3(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.POWER_SHOT3;
         runAutoControl();
-        //runAutoControl();
     }
 
+    /**
+     * set Launch Target to Off state
+     */
     public void setLaunchTargetOff(){
         autoLaunchtarget = AUTO_LAUNCH_TARGET.OFF;
         runAutoControl();
-        //runAutoControl();
     }
 
+    /**
+     * run LaunchController state machine logic
+     */
     public void runLaunchController(){
 
         if (acHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.NOT_ACTIVATED) {
@@ -256,23 +266,29 @@ public class HzAutoControl {
             acHzLaunchController.activateLaunchReadiness();
         }
 
-        //acHzLaunchController.indicateLaunchReadiness();
-
     }
 
     boolean autoRunLauncher = false;
 
+    /**
+     * set Run Launcher True state to launch rings
+     */
     public void setRunLauncherTrue(){
         autoRunLauncher = true;
         runAutoControl();
     }
 
-
+    /**
+     * set Run Launcher False state
+     */
     public void setRunLauncherFalse(){
         autoRunLauncher = false;
         runAutoControl();
     }
 
+    /**
+     * run Launcher state machine logic
+     */
     public void runLauncher(){
         if (autoRunLauncher) {
             if (acHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
@@ -291,55 +307,78 @@ public class HzAutoControl {
     }
     AUTO_MOVE_ARM autoMoveArm = AUTO_MOVE_ARM.PARKED;
 
+    /**
+     * set Move Arm to Parked state
+     */
     public void setMoveArmParked(){
         autoMoveArm = AUTO_MOVE_ARM.PARKED;
         runAutoControl();
     }
 
+    /**
+     * set MoveArm to HoldUpWobbleRing state
+     */
     public void setMoveArmHoldUpWobbleRing(){
         autoMoveArm = AUTO_MOVE_ARM.HOLD_UP_WOBBLE_RING;
         runAutoControl();
     }
 
+    /**
+     * set MoveArm to DropWobble state for Autonoumous
+     */
     public void setMoveArmDropWobbleAutonoumous(){
         autoMoveArm = AUTO_MOVE_ARM.DROP_WOBBLE_AUTONOMOUS;
         runAutoControl();
     }
 
+    /**
+     * set MoveArm to PickWobble state
+     */
     public void setMoveArmPickWobble(){
         autoMoveArm = AUTO_MOVE_ARM.PICK_WOBBLE;
         runAutoControl();
     }
 
+    /**
+     * runArm state machine logic
+     */
     public void runArm(){
         switch (autoMoveArm){
             case PARKED:
                 acHzArm.moveArmParkedPosition();
+                acHzArm.motorPowerToRun = acHzArm.POWER_NO_WOBBLEGOAL;
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
                 acHzArm.closeGrip();
                 break;
             case HOLD_UP_WOBBLE_RING:
                 acHzArm.moveArmHoldUpWobbleRingPosition();
+                acHzArm.motorPowerToRun = acHzArm.POWER_WITH_WOBBLEGOAL;
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
-                //acHzArm.closeGrip();
                 break;
             case PICK_WOBBLE:
                 acHzArm.moveArmPickWobblePosition();
+                acHzArm.motorPowerToRun = acHzArm.POWER_WITH_WOBBLEGOAL;
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
-                //acHzArm.openGrip();
                 break;
             case DROP_WOBBLE_AUTONOMOUS:
                 acHzArm.moveArmDropWobbleAutonomousPosition();
+                acHzArm.motorPowerToRun = acHzArm.POWER_WITH_WOBBLEGOAL;
                 acHzArm.runArmToLevel(acHzArm.motorPowerToRun);
-                //acHzArm.openGrip();
+                break;
         }
     }
 
+    /**
+     * Open Arm Grip
+     */
     public void runOpenGrip(){
         acHzArm.openGrip();
         runAutoControl();
     }
 
+    /**
+     * Close Atn Grip
+     */
     public void runCloseGrip(){
         acHzArm.closeGrip();
         runAutoControl();

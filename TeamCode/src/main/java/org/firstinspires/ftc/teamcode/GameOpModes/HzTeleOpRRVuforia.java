@@ -17,12 +17,11 @@ import org.firstinspires.ftc.teamcode.SubSystems.HzVuforia;
 
 
 /**
- * This opmode demonstrates how one would implement field centric control using
- * `SampleMecanumDrive.java`. This file is essentially just `TeleOpDrive.java` with the addition of
- * field centric control. To achieve field centric control, the only modification one needs is to
- * rotate the input vector by the current heading before passing it into the inverse kinematics.
- * <p>
- * See lines 42-57.
+ * Ultimate Goal TeleOp mode with Vuforia Odometry correction <BR>
+ *
+ *  This code defines the TeleOp mode is done by Hazmat Robot for Ultimate Goal.<BR>
+ *  This code uses Vuforia additional to roadrunner to correct for Odometry errors <BR>
+ *
  */
 @Disabled
 @TeleOp(name = "HzTeleOp RR Viewforia", group = "00-Teleop")

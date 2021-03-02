@@ -30,7 +30,7 @@ public class Test_Magazine extends LinearOpMode {
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 
-        hzMagazine.initMagazine(this);
+        hzMagazine.initMagazine();
 
         int keyCount = 0;
         //Wait for pressing plan on controller

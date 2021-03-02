@@ -31,8 +31,6 @@ public class Test_Launcher extends LinearOpMode {
 
         telemetry.addData("Hazmat TeleOp Mode", "v:1.0");
 
-        hzLauncher.initLauncher();
-
         //Wait for pressing plan on controller
         waitForStart();
 
