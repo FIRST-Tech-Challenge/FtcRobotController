@@ -18,7 +18,9 @@ public class AutoReplayBase extends AutoBase {
     @Override
     protected void act() {
         super.act();
-        runRoute();
+        if (opModeIsActive()) {
+            runRoute();
+        }
     }
 
     protected String getModeName() {
