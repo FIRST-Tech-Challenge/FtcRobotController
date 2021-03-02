@@ -20,22 +20,14 @@ public class TestTele extends OpMode {
 
         bot.move(forward,strafe,turn);
 
-        if(gamepad1.right_bumper){
-            bot.intaking = true;
-        }else if(gamepad1.left_bumper){
-            bot.intaking = false;
-            bot.intake(-0.5);
-        }else if(bot.intaking){
-            bot.intake(1);
-        }else{
-            bot.intake(0);
-        }
+        bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
 
-        bot.outtake(gamepad2.right_stick_y);
+        bot.setCompassMode();
 
+        bot.outtakeWithCalculations();
+//        bot.outtake(gamepad2.right_stick_y);
 
         bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
-
 
     }
 }
