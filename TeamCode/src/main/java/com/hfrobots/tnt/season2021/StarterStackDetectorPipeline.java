@@ -58,6 +58,8 @@ public class StarterStackDetectorPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        telemetry.addData("viz", "pipeline active");
+
         input.copyTo(displayMat);
 
         gripPipeline.process(input);
@@ -134,7 +136,7 @@ public class StarterStackDetectorPipeline extends OpenCvPipeline {
                     ringsDetected.set(RingsDetected.SOME);
                 }
 
-                telemetry.addData("SDet", largestBoundingRect.width + " x " + largestBoundingRect.height + " -> " + ringsDetected.get().toString());
+                telemetry.addData(STACK_DETECTOR_TEL_CAPTION, largestBoundingRect.width + " x " + largestBoundingRect.height + " -> " + ringsDetected.get().toString());
 
                 Log.d(LOG_TAG,
                         "Rings detected: " + largestBoundingRect.width + " x " + largestBoundingRect.height + " -> " + ringsDetected.get().toString());
