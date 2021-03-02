@@ -24,8 +24,8 @@ public class RingDetector implements Runnable{
 
     private AutoDot recogZone = null;
 
-    private static String MODEL_FILE_NAME = "rings_float.tflite";
-    private static String LABEL_FILE_NAME = "labels.txt";
+    private static String MODEL_FILE_NAME = "croppedRingRec.tflite";//"rings_float.tflite";
+    private static String LABEL_FILE_NAME = "croppedLabels.txt";//"labels.txt";
     private static Classifier.Model MODEl_TYPE = Classifier.Model.FLOAT_EFFICIENTNET;
     private static final String LABEL_A = "None";
     private static final String LABEL_B = "Single";
@@ -102,6 +102,8 @@ public class RingDetector implements Runnable{
                             }
                             targetZone = zone.getDotName();
                             telemetry.addData("Zone", targetZone);
+                            telemetry.addData("left", r.getLocation().left);
+                            telemetry.addData("right", r.getLocation().right);
                         }
                     }
                 }
@@ -139,6 +141,8 @@ public class RingDetector implements Runnable{
                             }
                             targetZone = this.recogZone.getDotName();
                             telemetry.addData("Zone", targetZone);
+                            telemetry.addData("left", r.getLocation().left);
+                            telemetry.addData("right", r.getLocation().right);
                         }
                     }
                 }
