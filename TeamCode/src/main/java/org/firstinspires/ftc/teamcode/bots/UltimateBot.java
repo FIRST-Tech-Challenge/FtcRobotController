@@ -22,6 +22,7 @@ public class UltimateBot extends YellowBot {
     private Servo wobbleClaw2 = null;
     private Servo ringCamera = null;
     private Servo shooterServo = null;
+    private Servo ringGuard = null;
     private DcMotorEx shooter = null;
 
     private SwingPosition swingPosition = SwingPosition.Init;
@@ -71,14 +72,14 @@ public class UltimateBot extends YellowBot {
         // claw starts closed
         try {
             wobbleClaw1 = hwMap.get(Servo.class, "claw1");
-            wobbleClaw1.setPosition(0.23);
+            wobbleClaw1.setPosition(0.3);
         } catch (Exception ex) {
             throw new Exception("Issues with wobbleClaw1. Check the controller config", ex);
         }
 
         try {
             wobbleClaw2 = hwMap.get(Servo.class, "claw2");
-            wobbleClaw2.setPosition(0.77);
+            wobbleClaw2.setPosition(0.7);
         } catch (Exception ex) {
             throw new Exception("Issues with wobbleClaw2. Check the controller config", ex);
         }
@@ -101,6 +102,13 @@ public class UltimateBot extends YellowBot {
             wobbleSwing.setPosition(SWING_BACK_POS);
         } catch (Exception ex) {
             throw new Exception("Issues with wobbleSwing. Check the controller config", ex);
+        }
+
+        try {
+            ringGuard = hwMap.get(Servo.class, "rguard");
+            ringGuard.setPosition(1);
+        } catch (Exception ex) {
+            throw new Exception("Issues with ringGuard. Check the controller config", ex);
         }
 
         telemetry.addData("Init", "Ultimate is ready");
@@ -180,6 +188,16 @@ public class UltimateBot extends YellowBot {
         }
     }
 
+    @BotAction(displayName = "Guard Down", defaultReturn =  "")
+    public void guardDown() {
+        ringGuard.setPosition(0);
+    }
+
+    @BotAction(displayName = "Guard Up", defaultReturn =  "")
+    public void guardUp() {
+        ringGuard.setPosition(1);
+    }
+
     @BotAction(displayName = "Stop Shooter", defaultReturn = "")
     public void stopshooter() {
         if (shooter != null) {
@@ -190,8 +208,8 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Close Claw", defaultReturn = "")
     public void closeWobbleClaw() {
         if ((wobbleClaw1 != null) && (wobbleClaw2 != null)) {
-            wobbleClaw1.setPosition(0.23);
-            wobbleClaw2.setPosition(0.77);
+            wobbleClaw1.setPosition(0.3);
+            wobbleClaw2.setPosition(0.7);
         }
 
     }
