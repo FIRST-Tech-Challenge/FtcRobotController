@@ -706,7 +706,7 @@ public class HzAutonomousBasic extends LinearOpMode {
     public void launch3RingsToHighGoal(){
         hzAutoControl.setLaunchTargetHighGoal();
         hzAutoControl.setMagazineToLaunch();
-        hzWait(450); //400
+        hzWait(800); //400
         hzAutoControl.setRunLauncherTrue();
         hzAutoControl.setRunLauncherTrue();
         hzAutoControl.setRunLauncherTrue();
@@ -716,7 +716,7 @@ public class HzAutonomousBasic extends LinearOpMode {
             hzAutoControl.setRunLauncherTrue();
             hzAutoControl.setRunLauncherTrue();
         }
-        hzWait(600);
+        hzWait(400);
 
         hzAutoControl.setLaunchTargetOff();
         hzAutoControl.setMagazineToCollect();
@@ -755,10 +755,10 @@ public class HzAutonomousBasic extends LinearOpMode {
     public void dropWobbleGoalInTarget(){
         hzAutoControl.setMoveArmDropWobbleAutonoumous();
         //hzWait(1000);
-        hzWait(500);
+        hzWait(800);
         hzAutoControl.runOpenGrip();
-        hzWait(500);
-        hzAutoControl.setMoveArmHoldUpWobbleRing();
+        hzWait(700);
+        //hzAutoControl.setMoveArmHoldUpWobbleRing();
         hzAutoControl.setMoveArmParked();
     }
 
@@ -950,6 +950,8 @@ public class HzAutonomousBasic extends LinearOpMode {
         //telemetry.addData("Visible Target : ", hzVuforia1.visibleTargetName);
         // Print pose to telemetry
         //telemetry.addData("PoseVuforia :",hzVuforia1.poseVuforia);
+
+        telemetry.addData("targetZone identified: ", targetZone);
 
         //******* Magazine Debug ********
         switch (hzMagazine.getMagazinePosition()) {

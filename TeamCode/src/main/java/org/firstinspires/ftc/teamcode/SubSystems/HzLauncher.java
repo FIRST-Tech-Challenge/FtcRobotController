@@ -21,7 +21,7 @@ public class HzLauncher {
     public DcMotorEx launcherFlyWheelMotor;
 
     public static final double FLYWHEEL_SUPPLY_MODE_SPEED = 0.1;
-    public double FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1560;
+    public double FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1540;
     public double FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1440;
     public double flyWheelVelocityHighGoal = FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
     public double flyWheelVelocityPowerShot = FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
@@ -87,7 +87,7 @@ public class HzLauncher {
     public void plungeRingToFlyWheel() {
         launcherRingPlungerServo.setPosition(PLUNGER_PRELAUNCH_POSITION);
         try {
-            sleep(100);
+            sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         };
