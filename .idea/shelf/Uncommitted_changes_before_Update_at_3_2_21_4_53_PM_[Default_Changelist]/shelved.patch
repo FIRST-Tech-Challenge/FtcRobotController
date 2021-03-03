@@ -1,0 +1,13 @@
+Index: TeamCode/src/main/java/global/Constants.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- TeamCode/src/main/java/global/Constants.java	(date 1614732831000)
++++ TeamCode/src/main/java/global/Constants.java	(date 1614732831000)
+@@ -0,0 +1,5 @@
++package global;
++
++public class Constants {
++
++}

@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import global.Constants;
 import telefunctions.Cycle;
 
 public class TestRobot {
@@ -43,9 +44,9 @@ public class TestRobot {
 
     public double rpStart = 0.1;
 
-    public final double MAX_OUTTAKE_SPEED = 200 * Math.PI; // rad/s
-    public final double LR_TO_OUTTAKE = 0.2;
-    public final double FR_TO_OUTTAKE = 0.2;
+//    public final double MAX_OUTTAKE_SPEED = 200 * Math.PI; // rad/s
+//    public final double LR_TO_OUTTAKE = 0.2;
+//    public final double FR_TO_OUTTAKE = 0.2;
 
 
 
@@ -114,15 +115,17 @@ public class TestRobot {
     }
 
     public void outtakeWithCalculations() {
+        double p = autoAimer.getOuttakePower(compassSensor.getDirection(), lr.getDistance(DistanceUnit.METER), fr.getDistance(DistanceUnit.METER));
+        outr.setPower(p);
+        outl.setPower(p);
+
+    }
+
+    public double getRobotToGoalAngle() {
         double robotTheta = compassSensor.getDirection() * Math.PI/180;
-        double leftDis = lr.getDistance(DistanceUnit.CM)/100 * Math.cos(robotTheta) + LR_TO_OUTTAKE;
-        double frontDis = fr.getDistance(DistanceUnit.CM)/100 * Math.cos(robotTheta) + FR_TO_OUTTAKE;
-        outtake(MAX_OUTTAKE_SPEED/autoAimer.calcSpeed(frontDis, leftDis));
-
-        // add angle robot has to be to shoot
-        // make new class
-        // use localizer sketch code
-
+        double x = autoAimer.getDisFromCenter(lr.getDistance(DistanceUnit.METER), robotTheta) - Constants.GOAL_FROM_LEFT;
+        double y = autoAimer.getDisFromCenter(fr.getDistance(DistanceUnit.METER), robotTheta);
+        return Math.atan2(y, x);
     }
 
     public void outtake(double p){

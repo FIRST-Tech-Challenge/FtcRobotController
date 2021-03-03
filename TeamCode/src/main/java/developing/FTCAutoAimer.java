@@ -1,27 +1,32 @@
 package developing;
 
 
+import global.Constants;
+import util.Geometry;
+
 public class FTCAutoAimer {
-    // Set these to their actual values
-    public final double boardAngle = 20 * Math.PI/180; // degrees -> radians
-    public final double goalFromLeft = 0.9; // meters
-    public final double goalHeight = 0.9; // meters
-    public final double shooterHeight = 0.25; // meters
-    public final double shooterWheelRadius = 0.05; // meters
+    private final FTCAutoAimer autoAimer = new FTCAutoAimer();
+    private final Geometry geometry = new Geometry();
 
-//    public static void main(String[] args) {
-//        setSpeed(calcSpeed(1.5, 0.9));
-//    }
+    public double getOuttakePower(double robotTheta, double lrDis, double frDis) {
+        robotTheta *= Math.PI/180;
+        double leftDis = getDisFromCenter(lrDis, robotTheta);
+        double frontDis = getDisFromCenter(frDis, robotTheta);
+        return calcSpeed(frontDis, leftDis)/Constants.MAX_OUTTAKE_SPEED;
+    }
+    
+    public double getDisFromCenter (double len, double robotTheta){
+        double d = geometry.lawOfCosinesC(len, Constants.ROBOT_RADIUS, Constants.CENTER_THETA);
+        double phi = geometry.lawOfSinesAngle(Constants.ROBOT_RADIUS, d, Constants.CENTER_THETA);
 
-    public double calcSpeed(double disFromFront, double disFromLeft) {
-        double disToGoal = Math.sqrt(Math.pow(disFromFront, 2) + Math.pow(disFromLeft - goalFromLeft, 2));
-        double deltaHeight = goalHeight - shooterHeight;
-        double linearSpeed = disToGoal/Math.cos(boardAngle) * Math.sqrt(4.9/(disToGoal * Math.tan(boardAngle) - deltaHeight));
-        return linearSpeed/shooterWheelRadius;
+        return d * Math.cos(robotTheta + phi);
     }
 
-//    public void setSpeed(double speed) {
-//        // The PID Controller
-//        System.out.println("Set speed to " + speed + " rad/s, or " + (speed*shooterWheelRadius) + " m/s");
-//    }
+    public double calcSpeed(double disFromFront, double disFromLeft) {
+        double disToGoal = Math.sqrt(Math.pow(disFromFront, 2) + Math.pow(disFromLeft - Constants.GOAL_FROM_LEFT, 2));
+        double deltaHeight = Constants.GOAL_HEIGHT - Constants.SHOOTER_HEIGHT;
+        double linearSpeed = disToGoal/Math.cos(Constants.OUTTAKE_ANGLE) * Math.sqrt(4.9/(disToGoal * Math.tan(Constants.OUTTAKE_ANGLE) - deltaHeight));
+        return linearSpeed/Constants.SHOOTER_WHEEL_RADIUS;
+    }
+
 }
