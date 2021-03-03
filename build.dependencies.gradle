@@ -1,0 +1,28 @@
+
+repositories {
+    mavenCentral()
+    google() // Needed for androidx
+    jcenter()  // Needed for tensorflow-lite
+    flatDir {
+        dirs rootProject.file('libs')
+    }
+}
+
+dependencies {
+    implementation 'org.firstinspires.ftc:Inspection:6.2.1'
+    implementation 'org.firstinspires.ftc:Blocks:6.2.1'
+    implementation 'org.firstinspires.ftc:RobotCore:6.2.1'
+    implementation 'org.firstinspires.ftc:RobotServer:6.2.1'
+    implementation 'org.firstinspires.ftc:OnBotJava:6.2.1'
+    implementation 'org.firstinspires.ftc:Hardware:6.2.1'
+    implementation 'org.firstinspires.ftc:FtcCommon:6.2.1'
+    implementation 'org.firstinspires.ftc:tfod:1.0.2'
+    implementation 'org.tensorflow:tensorflow-lite:1.10.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+
+    //Copied from https://www.learnroadrunner.com/installing.html#method-2-installing-rr-on-your-project
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.2'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
+}
+

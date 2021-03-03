@@ -29,6 +29,7 @@ public class HzTeleOpRR extends LinearOpMode {
     public HzDrive hzDrive;
     public HzMagazine hzMagazine;
     public HzIntake hzIntake;
+
     public HzLaunchController hzLaunchController;
     public HzLauncher hzLauncher;
     public HzArm hzArm;
