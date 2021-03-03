@@ -138,6 +138,11 @@ public class TestRobot {
         double leftDis = lr.getDistance(DistanceUnit.CM)/100 * Math.cos(robotTheta) + LR_TO_OUTTAKE;
         double frontDis = fr.getDistance(DistanceUnit.CM)/100 * Math.cos(robotTheta) + FR_TO_OUTTAKE;
         outtake(MAX_OUTTAKE_SPEED/autoAimer.calcSpeed(frontDis, leftDis));
+
+        // add angle robot has to be to shoot
+        // make new class
+        // use localizer sketch code
+
     }
 
     public void outtake(double p){
