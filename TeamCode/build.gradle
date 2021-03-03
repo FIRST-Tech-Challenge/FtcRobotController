@@ -18,4 +18,8 @@ apply from: '../build.dependencies.gradle'
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'com.acmerobotics.roadrunner:core:0.5.3'
+    implementation 'com.arcrobotics:ftclib:1.1.6'
+    // the following is optional if you want vision
+    implementation 'com.arcrobotics.ftclib:vision:1.1.0'
 }
