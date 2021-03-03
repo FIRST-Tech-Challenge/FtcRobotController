@@ -23,6 +23,7 @@ public class RedTopRR extends LinearOpMode {
     final int ARM_DOWN = 388;
     final int ARM_UP = 0;
     final double ARM_POWER = 0.4;
+    private Trajectory moveToZoneAgain = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -77,13 +78,13 @@ public class RedTopRR extends LinearOpMode {
         }
 
         //move to first pos
-        Trajectory shot = drive.trajectoryBuilder(startPose,true)
+        Trajectory initForward = drive.trajectoryBuilder(startPose,true)
                 .splineTo(new Vector2d(-4,20), Math.toRadians(180))
                 .build();
-        drive.followTrajectory(shot);
+        drive.followTrajectory(initForward);
 
         //move to first shot
-        Trajectory shot1 = drive.trajectoryBuilder(shot.end())
+        Trajectory shot1 = drive.trajectoryBuilder(initForward.end())
                 .lineToLinearHeading(new Pose2d(-6, 58, Math.toRadians(0)))
                 .build();
         drive.followTrajectory(shot1);
@@ -110,151 +111,24 @@ public class RedTopRR extends LinearOpMode {
         launcher1.setPower(0);
         launcher2.setPower(0);
 
-        //move to mid field
-        Trajectory shot3 = drive.trajectoryBuilder(startPose,true)
-                .splineTo(new Vector2d(-2,21.5), Math.toRadians(180))
-                .build();
-        //drive.followTrajectory(shot3);
-
         ///////////three different paths depending on drop zone of wobble goal////////////
-        Trajectory moveToZone;
-        Trajectory moveToWobble2;
-        Trajectory approachWobble2;
-        Trajectory moveToZoneAgain;
+
+
         switch (stackPos) {
             case 3:
                 //FULL Stack rings
-                Trajectory backUp;
-                moveToZone = drive.trajectoryBuilder(shot1.end(),true)
-                        //.splineTo(new Vector2d(-48,50), Math.toRadians(-45))
-                        .lineToLinearHeading(new Pose2d(-53, 59, Math.toRadians(145)))
-                        .build();
-                drive.followTrajectory(moveToZone);
-                ejectWobbleGoal();
-                backUp = drive.trajectoryBuilder(moveToZone.end())
-                        .lineToLinearHeading(new Pose2d(-30, 40, Math.toRadians(180)))
-                        .build();
-                drive.followTrajectory(backUp);
-
-                /*
-
-                moveToZone = drive.trajectoryBuilder(shot3.end(),true)
-                        .splineTo(new Vector2d(-48,50), Math.toRadians(-45))
-                        .build();
-                drive.followTrajectory(moveToZone);
-                ejectWobbleGoal();
-
-                backUp = drive.trajectoryBuilder(moveToZone.end())
-                        .back(20)
-                        .build();
-                drive.followTrajectory(backUp);
-                 */
-
-                moveToWobble2 = drive.trajectoryBuilder(backUp.end())
-                        .splineTo(new Vector2d(13.7,47), Math.toRadians(0))
-                        .build();
-                drive.followTrajectory(moveToWobble2);
-
-                //move arm down
-                wobbleClaw.setPosition(1);
-                wobbleArmMotor.setTargetPosition(ARM_DOWN);
-                wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wobbleArmMotor.setPower(ARM_POWER);
-                while (wobbleArmMotor.getCurrentPosition() < ARM_DOWN - 10){}
-
-                approachWobble2 = drive.trajectoryBuilder(moveToWobble2.end(),true)
-                        .forward(13)
-                        .build();
-                drive.followTrajectory(approachWobble2);
-                pickUpWobble();
-
-                moveToZoneAgain = drive.trajectoryBuilder(approachWobble2.end(),true)
-                        .splineTo(new Vector2d(-46,48), Math.toRadians(-45))
-                        .build();
-                drive.followTrajectory(moveToZoneAgain);
+                zoneC(drive, shot1);
                 break;
-
-
             case 2:
                 //HALF stack rings
-                drive.followTrajectory(shot3);
-                moveToZone = drive.trajectoryBuilder(shot3.end(),true)
-                        .splineTo(new Vector2d(-34.5,32), Math.toRadians(-45))
-                        .build();
-                drive.followTrajectory(moveToZone);
-                ejectWobbleGoal();
-                moveToWobble2 = drive.trajectoryBuilder(moveToZone.end(),true)
-                        .splineTo(new Vector2d(1,43.8), Math.toRadians(180))
-                        .build();
-                drive.followTrajectory(moveToWobble2);
-
-                //move arm down
-                wobbleClaw.setPosition(1);
-                wobbleArmMotor.setTargetPosition(ARM_DOWN);
-                wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wobbleArmMotor.setPower(ARM_POWER);
-                while (wobbleArmMotor.getCurrentPosition() < ARM_DOWN - 30){}
-
-                approachWobble2 = drive.trajectoryBuilder(moveToWobble2.end(),true)
-                        .forward(13.8)
-                        .build();
-                drive.followTrajectory(approachWobble2);
-                pickUpWobble();
-
-                moveToZoneAgain = drive.trajectoryBuilder(approachWobble2.end(),true)
-                        .splineTo(new Vector2d(-28,22), Math.toRadians(-45))
-                        .build();
-                drive.followTrajectory(moveToZoneAgain);
-
-
+                zoneB(drive, shot1);
                 break;
-
-
             case 1:
                 //NO rings
-                drive.followTrajectory(shot3);
-                moveToZone = drive.trajectoryBuilder(shot3.end(),true)
-                        .splineTo(new Vector2d(-17,54), Math.toRadians(-60))
-                        .build();
-                drive.followTrajectory(moveToZone);
-                ejectWobbleGoal();
-                moveToWobble2 = drive.trajectoryBuilder(moveToZone.end(),true)
-                        .splineTo(new Vector2d(6,43), Math.toRadians(180))
-                        .build();
-                drive.followTrajectory(moveToWobble2);
-
-                //move arm down
-                wobbleClaw.setPosition(1);
-                wobbleArmMotor.setTargetPosition(ARM_DOWN);
-                wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wobbleArmMotor.setPower(ARM_POWER);
-                while (wobbleArmMotor.getCurrentPosition() < ARM_DOWN - 30){}
-
-                approachWobble2 = drive.trajectoryBuilder(moveToWobble2.end(),true)
-                        .forward(13)
-                        .build();
-                drive.followTrajectory(approachWobble2);
-                pickUpWobble();
-
-                Trajectory moveRight = drive.trajectoryBuilder(moveToWobble2.end(),true)
-                        .strafeRight(13)
-                        .build();
-                drive.followTrajectory(moveRight);
-
-                moveToZoneAgain = drive.trajectoryBuilder(shot.end())
-                        .lineToLinearHeading(new Pose2d(-14, 42, Math.toRadians(145)))
-                        .build();
-                drive.followTrajectory(moveToZoneAgain);
-                /*
-                moveToZoneAgain = drive.trajectoryBuilder(moveRight.end(),true)
-                        .splineTo(new Vector2d(-14,42), Math.toRadians(-30))
-                        .build();
-                drive.followTrajectory(moveToZoneAgain);
-
-                 */
+                zoneA(drive, shot1);
                 break;
             default:
-                moveToZoneAgain = drive.trajectoryBuilder(shot3.end(),true)
+                moveToZoneAgain = drive.trajectoryBuilder(shot1.end(),true)
                         .splineTo(new Vector2d(-5,40), Math.toRadians(-90))
                         .build();
                 drive.followTrajectory(moveToZoneAgain);
@@ -262,6 +136,7 @@ public class RedTopRR extends LinearOpMode {
 
 
         ejectWobbleGoal();
+
         Trajectory moveToLine = drive.trajectoryBuilder(moveToZoneAgain.end(),true)
                 .splineTo(new Vector2d(-19,2), Math.toRadians(0))
                 .build();
@@ -272,13 +147,110 @@ public class RedTopRR extends LinearOpMode {
         wobbleArmMotor.setPower(ARM_POWER);
 
 
-
-
-
         if (isStopRequested()) return;
         sleep(2000);
-
     }
+
+
+    private void zoneA(MainMecanumDrive drive, Trajectory shot1){
+        Trajectory moveToZone;
+        Trajectory moveToWobble2;
+        Trajectory approachWobble2;
+        moveToZone = drive.trajectoryBuilder(shot1.end(),true)
+                .lineToLinearHeading(new Pose2d(-12, 54, Math.toRadians(115)))
+                .build();
+        drive.followTrajectory(moveToZone);
+        ejectWobbleGoal();
+        moveToWobble2 = drive.trajectoryBuilder(moveToZone.end(), true)
+                //.splineTo(new Vector2d(7,43), Math.toRadians(180))
+                .lineToLinearHeading(new Pose2d(8.5, 48, Math.toRadians(0)))
+                .build();
+        drive.followTrajectory(moveToWobble2);
+
+        //move arm down
+        moveWobbleArmDown();
+
+        approachWobble2 = drive.trajectoryBuilder(moveToWobble2.end(),true)
+                .forward(13)
+                .build();
+        drive.followTrajectory(approachWobble2);
+
+        pickUpWobble();
+
+        moveToZoneAgain = drive.trajectoryBuilder(moveToWobble2.end())
+                .lineToLinearHeading(new Pose2d(-6, 48, Math.toRadians(143)))
+                .build();
+        drive.followTrajectory(moveToZoneAgain);
+    }
+
+    private void zoneB(MainMecanumDrive drive, Trajectory shot1){
+        Trajectory moveToZone;
+        Trajectory moveToWobble2;
+        Trajectory approachWobble2;
+        moveToZone = drive.trajectoryBuilder(shot1.end(),true)
+                .splineTo(new Vector2d(-34.5,32), Math.toRadians(-45))
+                .build();
+        drive.followTrajectory(moveToZone);
+        ejectWobbleGoal();
+        moveToWobble2 = drive.trajectoryBuilder(moveToZone.end(),true)
+                .splineTo(new Vector2d(1,43.8), Math.toRadians(180))
+                .build();
+        drive.followTrajectory(moveToWobble2);
+
+        //move arm down
+        moveWobbleArmDown();
+
+        approachWobble2 = drive.trajectoryBuilder(moveToWobble2.end(),true)
+                .forward(13.8)
+                .build();
+        drive.followTrajectory(approachWobble2);
+        pickUpWobble();
+
+        moveToZoneAgain = drive.trajectoryBuilder(approachWobble2.end(),true)
+                .splineTo(new Vector2d(-28,22), Math.toRadians(-45))
+                .build();
+        drive.followTrajectory(moveToZoneAgain);
+    }
+
+    private void zoneC(MainMecanumDrive drive, Trajectory shot1){
+        Trajectory moveToZone;
+        Trajectory moveToWobble2;
+        Trajectory approachWobble2;
+        Trajectory backUp;
+        moveToZone = drive.trajectoryBuilder(shot1.end(),true)
+                //.splineTo(new Vector2d(-48,50), Math.toRadians(-45))
+                .lineToLinearHeading(new Pose2d(-53, 59, Math.toRadians(145)))
+                .build();
+        drive.followTrajectory(moveToZone);
+        ejectWobbleGoal();
+        backUp = drive.trajectoryBuilder(moveToZone.end())
+                .lineToLinearHeading(new Pose2d(-30, 40, Math.toRadians(180)))
+                .build();
+        drive.followTrajectory(backUp);
+
+        moveToWobble2 = drive.trajectoryBuilder(backUp.end())
+                .splineTo(new Vector2d(13.7,47), Math.toRadians(0))
+                .build();
+        drive.followTrajectory(moveToWobble2);
+
+        //move arm down
+        moveWobbleArmDown();
+
+        approachWobble2 = drive.trajectoryBuilder(moveToWobble2.end(),true)
+                .forward(13)
+                .build();
+        drive.followTrajectory(approachWobble2);
+        pickUpWobble();
+
+        moveToZoneAgain = drive.trajectoryBuilder(approachWobble2.end(),true)
+                .splineTo(new Vector2d(-46,48), Math.toRadians(-45))
+                .build();
+        drive.followTrajectory(moveToZoneAgain);
+    }
+
+
+
+
 
     private void pickUpWobble(){
         wobbleClaw.setPosition(0); //closed
@@ -305,5 +277,14 @@ public class RedTopRR extends LinearOpMode {
         wobbleArmMotor.setPower(ARM_POWER);
         while (wobbleArmMotor.getCurrentPosition() > ARM_UP + 30){}
         wobbleClaw.setPosition(0);
+    }
+
+    private void moveWobbleArmDown(){
+        //move arm down
+        wobbleClaw.setPosition(1);
+        wobbleArmMotor.setTargetPosition(ARM_DOWN);
+        wobbleArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleArmMotor.setPower(ARM_POWER);
+        while (wobbleArmMotor.getCurrentPosition() < ARM_DOWN - 10){}
     }
 }

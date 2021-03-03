@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,11 +19,17 @@ public class TeleopV1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         initMotors(this);
         initIMU(this);
+        //inits roadrunner localizer
+        //MainMecanumDrive localizer = new MainMecanumDrive(hardwareMap);
+        //localizer.setPoseEstimate(new Pose2d(-10, 2, Math.toRadians(0)));
 
         waitForStart();
 
 
         while(opModeIsActive()) {
+
+            //update localization position
+            //localizer.update();
 
             boolean LBumper1 = gamepad1.left_bumper;
             boolean RBumper1 = gamepad1.right_bumper;
@@ -65,37 +72,6 @@ public class TeleopV1 extends LinearOpMode {
             boolean dpadRight2 = gamepad2.dpad_right;
             boolean dpadLeft2 = gamepad2.dpad_left;
 
-            boolean abxy1 = false;
-
-
-
-            if(a1){
-                leftfront.setPower(1);
-            } else {
-                leftfront.setPower(0);
-            }
-            if(b1){
-                leftback.setPower(1);
-            } else {
-                leftback.setPower(0);
-            }
-            if(x1){
-                rightfront.setPower(1);
-            } else {
-                rightfront.setPower(0);
-            }
-            if(y1){
-                rightback.setPower(1);
-            } else {
-                rightback.setPower(0);
-            }
-            if(a1 || b1 || x1 || y1) { //Do not use abxy1 buttons in any form while using sticks1/triggers1
-                abxy1 = true;
-            } else {
-                abxy1 = false;
-            }
-
-
             //diagonal driving
             if (Math.abs(LStickX) > 0 || Math.abs(LStickY) > 0 || Math.abs(RStickX) > 0) {
                 if (Math.abs(LStickX) < .05 && Math.abs(RStickX) < .05) {
@@ -122,9 +98,6 @@ public class TeleopV1 extends LinearOpMode {
             }
             else if (Math.abs(RTrigger1) > 0) {
                 SetPower(.5 * RTrigger1, -.5 * RTrigger1, .5 * RTrigger1, -.5 * RTrigger1);
-            }
-            else if (abxy1) {
-                //allow for partially unjanking abxy1 buttons
             }
             else {
                 SetPower(0,0,0,0);
@@ -188,7 +161,7 @@ public class TeleopV1 extends LinearOpMode {
                 blocker.setPosition(0.2); //open
             } else {
                 launchPower = 0;
-                blocker.setPosition(0.55); //closed
+                blocker.setPosition(0.50); //closed
             }
 
             //feeder servo
@@ -237,12 +210,15 @@ public class TeleopV1 extends LinearOpMode {
 
 
             //telementry////////////////////////////////////////////////////////////////////////////////////////////
-            telemetry.addData("hi", "hi ");
             telemetry.addData("angle: ", getAngle());
             telemetry.addData("Belt encoder value: ", blocker.getPosition());
             telemetry.addData("arm encoder: ", wobbleArmMotor.getCurrentPosition());
             telemetry.addData("wheel encoder: ", leftfront.getCurrentPosition());
             telemetry.addData("launcher Power: ", launcher2.getPower());
+            //Pose2d myPose = localizer.getPoseEstimate();
+            //telemetry.addData("x: ", myPose.getX());
+            //telemetry.addData("y: ", myPose.getY());
+            //telemetry.addData("heading: ", myPose.getHeading());
             telemetry.update();
         }
     }
