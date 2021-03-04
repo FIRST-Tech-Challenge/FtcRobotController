@@ -251,6 +251,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         holderIn();
         ringLifter.setPower(1);
         transferDownCombo();
+        TaskManager.processTasks();
     }
 
     public void hopperUpCombo(boolean forAuto) throws InterruptedException {
@@ -258,6 +259,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
         if (!transferIsDown) return;
         ringLifter.setPower(-1);
         transferUpCombo(forAuto);
+        TaskManager.processTasks();
     }
 
     public void transferDownCombo() throws InterruptedException {
