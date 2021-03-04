@@ -136,8 +136,16 @@ public class GripPipelineHulls {
 	 */
 	private void hsvThreshold(Mat input, double[] hue, double[] sat, double[] val,
 	    Mat out) {
-		//Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
+		// EasyOpenCV delivers RGB frames, but desktop OpenCV (what you may be used to)
+		// delivers BGR frames. Beware when porting code between the two!
+		//
+		// The following line is what was in the GRIP generated code, so that we can
+		// remember to identify it, and change it
+		//
+		// Imgproc.cvtColor(input, out, Imgproc.COLOR_BGR2HSV);
+
 		Imgproc.cvtColor(input, out, Imgproc.COLOR_RGB2HSV);
+
 		Core.inRange(out, new Scalar(hue[0], sat[0], val[0]),
 			new Scalar(hue[1], sat[1], val[1]), out);
 	}
