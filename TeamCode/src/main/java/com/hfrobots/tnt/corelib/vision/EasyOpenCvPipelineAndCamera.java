@@ -71,7 +71,9 @@ public class EasyOpenCvPipelineAndCamera {
              */
             cvCamera.setPipeline(openCvPipeline);
 
-            cvCamera.showFpsMeterOnViewport(false);
+            // This is a good proxy for "things are working" that is visible in the "camera stream"
+            // view on the drivers' station, now that we no longer have displays on-robot.
+            cvCamera.showFpsMeterOnViewport(true);
 
             /*
              * Tell the camera to start streaming images to us! Note that you must make sure
