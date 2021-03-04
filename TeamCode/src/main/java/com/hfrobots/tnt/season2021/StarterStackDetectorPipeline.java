@@ -24,6 +24,7 @@ import android.util.Log;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -58,8 +59,6 @@ public class StarterStackDetectorPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        telemetry.addData("viz", "pipeline active");
-
         input.copyTo(displayMat);
 
         gripPipeline.process(input);
@@ -85,6 +84,9 @@ public class StarterStackDetectorPipeline extends OpenCvPipeline {
         if (largestBoundingRect != null) {
             Imgproc.rectangle(displayMat, largestBoundingRect.tl(), largestBoundingRect.br(), new Scalar(0, 0, 255), 2); // Draw rect
         }
+
+        // Show that pipeline is "alive" to the camera stream
+        Imgproc.rectangle(displayMat, new Point(0, 0), new Point(319, 240), new Scalar(0, 255, 0), 2);
 
         if (startLookingForRings) {
             // How do we detect whether this is 0 rings, 1 ring or 4 rings?
