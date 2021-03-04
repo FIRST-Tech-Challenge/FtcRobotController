@@ -190,7 +190,7 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Guard Down", defaultReturn =  "")
     public void guardDown() {
-        ringGuard.setPosition(0);
+        ringGuard.setPosition(0.05);
     }
 
     @BotAction(displayName = "Guard Up", defaultReturn =  "")
