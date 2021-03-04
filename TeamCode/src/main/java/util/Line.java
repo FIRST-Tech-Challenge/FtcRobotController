@@ -1,12 +1,12 @@
 package util;
 
 public class Line {
-    public double x1 = 0;
-    public double y1 = 0;
-    public double x2 = 0;
-    public double y2 = 0;
-    public double mx = 0;
-    public double my = 0;
+    public double x1;
+    public double y1;
+    public double x2;
+    public double y2;
+    public double mx;
+    public double my;
 
     public Line(double x1, double y1, double x2, double y2){
         this.x1 = x1;

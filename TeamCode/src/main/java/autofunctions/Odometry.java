@@ -1,6 +1,6 @@
 package autofunctions;
 
-import global.TerraBot;
+//import global.TerraBot;
 import util.Vector;
 
 public class Odometry {

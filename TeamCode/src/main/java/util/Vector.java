@@ -34,23 +34,6 @@ public class Vector {
         return new Vector(Math.cos(ang)*radius, Math.sin(ang)*radius);
     }
 
-    public Vector reverse() {
-        return new Vector(-this.x, -this.y);
-    }
-
-    public Vector addVector(Vector vec) {
-        return new Vector(this.x+vec.getX(), this.y+vec.getY());
-    }
-
-    public Vector subtractVector(Vector vec) {
-        return this.addVector(vec.reverse());
-    }
-
-
-    public double dotProduct(Vector vec) {
-        return this.x * vec.getX() + this.y * vec.getY();
-    }
-
     public double getX() {
         return this.x;
     }

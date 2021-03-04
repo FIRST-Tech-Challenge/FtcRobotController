@@ -1,7 +1,6 @@
 package telefunctions;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.util.ArrayList;
 

@@ -5,7 +5,6 @@ import global.Constants;
 import util.Geometry;
 
 public class FTCAutoAimer {
-    private final FTCAutoAimer autoAimer = new FTCAutoAimer();
     private final Geometry geometry = new Geometry();
 
     public double getOuttakePower(double robotTheta, double lrDis, double frDis) {
@@ -14,7 +13,7 @@ public class FTCAutoAimer {
         double frontDis = getDisFromCenter(frDis, robotTheta);
         return calcSpeed(frontDis, leftDis)/Constants.MAX_OUTTAKE_SPEED;
     }
-    
+
     public double getDisFromCenter (double len, double robotTheta){
         double d = geometry.lawOfCosinesC(len, Constants.ROBOT_RADIUS, Constants.CENTER_THETA);
         double phi = geometry.lawOfSinesAngle(Constants.ROBOT_RADIUS, d, Constants.CENTER_THETA);

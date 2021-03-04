@@ -11,9 +11,6 @@ public class OdoTele extends OpMode {
 
     TerraBot bot = new TerraBot();
 
-
-
-
     @Override
     public void init() {
 
@@ -25,7 +22,6 @@ public class OdoTele extends OpMode {
         telemetry.update();
 
     }
-
 
     @Override
     public void start() {
@@ -40,7 +36,6 @@ public class OdoTele extends OpMode {
         double turn = -gamepad1.left_stick_x;
 
         bot.move(forward, strafe, turn);
-
 
         telemetry.addData("Heading", bot.getHeading());
         telemetry.addData("deltaX", bot.odometry.testx);

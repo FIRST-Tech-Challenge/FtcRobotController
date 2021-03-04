@@ -27,12 +27,10 @@ public class Rect {
     public int getY2(){
         return y+h;
     }
-    public int getWidth(){return w;}
-    public int getHeight(){return h;}
 
     public Rect crop(int left, int top, int right, int bottom){
         return new Rect(x+left, y+top,  w-left-right, h-top-bottom);
     }
 
-    public String toString(){return Integer.toString(getX1()) + "," +Integer.toString(getY1()) + "," + Integer.toString(getX2()) + "," + Integer.toString(getY2());}
+    public String toString(){return getX1() + "," + getY1() + "," + getX2() + "," + getY2();}
 }

@@ -5,7 +5,6 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.CompassSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -44,11 +43,7 @@ public class TestRobot {
 
     public double rpStart = 0.1;
 
-//    public final double MAX_OUTTAKE_SPEED = 200 * Math.PI; // rad/s
-//    public final double LR_TO_OUTTAKE = 0.2;
-//    public final double FR_TO_OUTTAKE = 0.2;
-
-
+    public boolean fastMode = true;
 
     public void init(HardwareMap hwMap) {
 
@@ -67,12 +62,12 @@ public class TestRobot {
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, rpStart);
 
 
-        compassSensor = hwMap.get(ModernRoboticsI2cCompassSensor.class, "compass");
-
-        lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
-        fr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "fr");
-
-        compassSensor.setMode(CompassSensor.CompassMode.CALIBRATION_MODE);
+//        compassSensor = hwMap.get(ModernRoboticsI2cCompassSensor.class, "compass");
+//
+//        lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
+//        fr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "fr");
+//
+//        compassSensor.setMode(CompassSensor.CompassMode.CALIBRATION_MODE);
 
     }
 
@@ -94,7 +89,7 @@ public class TestRobot {
     public CRServo getCRServo(HardwareMap hwMap, String name, CRServo.Direction dir){
         CRServo crServo = hwMap.get(CRServo.class, name);
         crServo.setPower(0);
-        crServo.setDirection(CRServo.Direction.FORWARD);
+        crServo.setDirection(dir);
         return crServo;
     }
 
@@ -150,6 +145,14 @@ public class TestRobot {
         if (calibratingCompass && !compassSensor.isCalibrating()) {
             compassSensor.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE);
             calibratingCompass = false;
+        }
+    }
+
+    public void moveTeleOp(double f, double s, double t){
+        if(fastMode) {
+            move((f*0.95) + Math.signum(f)*0.05, (s*0.9)+Math.signum(s)*0.1, Math.signum(t)*t*t*0.7 + (Math.signum(t) * 0.3));
+        }else{
+            move((f*0.2) + Math.signum(f)*0.05, (s*0.2)+Math.signum(s)*0.1, (t*0.2)+Math.signum(t)*0.3);
         }
     }
 
