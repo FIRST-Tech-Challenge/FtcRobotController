@@ -132,6 +132,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @SuppressWarnings("WeakerAccess")
 public class FtcRobotControllerActivity extends Activity
   {
+
+    public boolean FtcDashboard_FLAG = true;
   public static final String TAG = "RCActivity";
   public String getTag() { return TAG; }
 
@@ -313,7 +315,7 @@ public class FtcRobotControllerActivity extends Activity
           }
         });
         popupMenu.inflate(R.menu.ftc_robot_controller);
-        FtcDashboard.populateMenu(popupMenu.getMenu());
+        if (FtcDashboard_FLAG) FtcDashboard.populateMenu(popupMenu.getMenu()); //FTC Dashboard Code */
         popupMenu.show();
       }
     });
@@ -384,7 +386,7 @@ public class FtcRobotControllerActivity extends Activity
 
     FtcAboutActivity.setBuildTimeFromBuildConfig(BuildConfig.BUILD_TIME);
 
-    FtcDashboard.start();
+    if (FtcDashboard_FLAG) FtcDashboard.start(); //FTCDashboard Code */
   }
 
   protected UpdateUI createUpdateUI() {
@@ -465,7 +467,7 @@ public class FtcRobotControllerActivity extends Activity
 
     RobotLog.cancelWriteLogcatToDisk();
 
-    FtcDashboard.stop();
+    if (FtcDashboard_FLAG) FtcDashboard.stop(); //FTCDashboard Code */
   }
 
   protected void bindToService() {
@@ -531,7 +533,7 @@ public class FtcRobotControllerActivity extends Activity
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.ftc_robot_controller, menu);
-    FtcDashboard.populateMenu(menu);
+    if (FtcDashboard_FLAG) FtcDashboard.populateMenu(menu); //FTCDashboard Code */
     return true;
   }
 
@@ -688,7 +690,7 @@ public class FtcRobotControllerActivity extends Activity
       }
     });
 
-    FtcDashboard.attachWebServer(service.getWebServer());
+    if (FtcDashboard_FLAG) FtcDashboard.attachWebServer(service.getWebServer()); //FTCDashboard Code */
   }
 
   private void updateUIAndRequestRobotSetup() {
@@ -729,7 +731,7 @@ public class FtcRobotControllerActivity extends Activity
     passReceivedUsbAttachmentsToEventLoop();
     AndroidBoard.showErrorIfUnknownControlHub();
 
-    FtcDashboard.attachEventLoop(eventLoop);
+    if (FtcDashboard_FLAG) FtcDashboard.attachEventLoop(eventLoop); //FTCDashboard Code */
   }
 
   protected OpModeRegister createOpModeRegister() {

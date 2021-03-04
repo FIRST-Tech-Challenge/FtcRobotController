@@ -24,6 +24,8 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
  */
 //public class HzDrive extends SampleMecanumDrive {
 public class HzDrive extends HzMecanumDriveDriveEncoders {
+    public boolean FtcDashboard_FLAG = true;
+
     //double DriveConstants_kV = DriveConstants.kV;
     //double DriveConstants_kV = DriveConstantsDeadWheelEncoder.kV;
     double DriveConstants_kV = HzDriveConstantsDriveEncoders.kV;
@@ -197,22 +199,30 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
                         headingInput
                 );
 
-                // Draw the target on the field
-                fieldOverlay.setStroke("#dd2c00");
-                fieldOverlay.strokeCircle(drivePointToAlign.getX(), drivePointToAlign.getY(), DRAWING_TARGET_RADIUS);
+                /*FTCDashBoard Code*/
+                if (FtcDashboard_FLAG) {
+                    // Draw the target on the field
+                    fieldOverlay.setStroke("#dd2c00");
+                    fieldOverlay.strokeCircle(drivePointToAlign.getX(), drivePointToAlign.getY(), DRAWING_TARGET_RADIUS);
 
-                // Draw lines to target
-                fieldOverlay.setStroke("#b89eff");
-                fieldOverlay.strokeLine(drivePointToAlign.getX(), drivePointToAlign.getY(), poseEstimate.getX(), poseEstimate.getY());
-                fieldOverlay.setStroke("#ffce7a");
-                fieldOverlay.strokeLine(drivePointToAlign.getX(), drivePointToAlign.getY(), drivePointToAlign.getX(), poseEstimate.getY());
-                fieldOverlay.strokeLine(drivePointToAlign.getX(), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
+                    // Draw lines to target
+                    fieldOverlay.setStroke("#b89eff");
+                    fieldOverlay.strokeLine(drivePointToAlign.getX(), drivePointToAlign.getY(), poseEstimate.getX(), poseEstimate.getY());
+                    fieldOverlay.setStroke("#ffce7a");
+                    fieldOverlay.strokeLine(drivePointToAlign.getX(), drivePointToAlign.getY(), drivePointToAlign.getX(), poseEstimate.getY());
+                    fieldOverlay.strokeLine(drivePointToAlign.getX(), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
+                    //END FTCDashboard Code*/
+                }
                 break;
         }
 
-        // Draw bot on canvas
-        fieldOverlay.setStroke("#3F51B5");
-        DashboardUtil.drawRobot(fieldOverlay, poseEstimate);
+        /*FTCDashBoard Code*/
+        if (FtcDashboard_FLAG) {
+            // Draw bot on canvas
+            fieldOverlay.setStroke("#3F51B5");
+            DashboardUtil.drawRobot(fieldOverlay, poseEstimate);
+            //END FTCDashboard Code*/
+        }
 
         setWeightedDrivePower(driveDirection);
 
@@ -223,7 +233,7 @@ public class HzDrive extends HzMecanumDriveDriveEncoders {
         getLocalizer().update();
 
         // Send telemetry packet off to dashboard
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        if (FtcDashboard_FLAG) FtcDashboard.getInstance().sendTelemetryPacket(packet); //FTCDashBoard Code */
     }
 
 
