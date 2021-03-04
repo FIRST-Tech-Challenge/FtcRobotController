@@ -21,8 +21,8 @@ public class HzLauncher {
     public DcMotorEx launcherFlyWheelMotor;
 
     public static final double FLYWHEEL_SUPPLY_MODE_SPEED = 0.1;
-    public double FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1500;
-    public double FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1400;
+    public double FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1540;
+    public double FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1440;
     public double flyWheelVelocityHighGoal = FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL;
     public double flyWheelVelocityPowerShot = FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT;
     public double DELTA_VELOCITY_CORRECTION = 20;

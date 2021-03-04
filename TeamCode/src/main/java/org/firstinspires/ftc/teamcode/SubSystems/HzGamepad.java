@@ -304,6 +304,7 @@ public class HzGamepad {
                 //if (getRightBumperPress()) {
                 if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
                         gpHzLaunchController.launchReadiness == HzLaunchController.LAUNCH_READINESS.READY) {
+                    gpHzLaunchController.setLaunchMotorVelocity();
                     gpHzLauncher.plungeRingToFlyWheel();
                 }
             }
@@ -311,6 +312,7 @@ public class HzGamepad {
             if (getRightBumperPress()) { //Single shots on bumper press to ensure Power short is not rapid fire
                 if (gpHzLaunchController.launchActivation == HzLaunchController.LAUNCH_ACTIVATION.ACTIVATED &&
                         gpHzLaunchController.launchReadiness == HzLaunchController.LAUNCH_READINESS.READY) {
+                    gpHzLaunchController.setLaunchMotorVelocity();
                     gpHzLauncher.plungeRingToFlyWheel();
                 }
             }

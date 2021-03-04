@@ -708,12 +708,16 @@ public class HzAutonomousBasic extends LinearOpMode {
         hzAutoControl.setMagazineToLaunch();
         hzWait(800); //400
         hzAutoControl.setRunLauncherTrue();
+        hzAutoControl.setLaunchTargetHighGoal();
         hzAutoControl.setRunLauncherTrue();
+        hzAutoControl.setLaunchTargetHighGoal();
         hzAutoControl.setRunLauncherTrue();
 
         // Run 4th just in case
         if (!hzAutoControl.pickAndDropSecondWobbleGoal) {
+            hzAutoControl.setLaunchTargetHighGoal();
             hzAutoControl.setRunLauncherTrue();
+            hzAutoControl.setLaunchTargetHighGoal();
             hzAutoControl.setRunLauncherTrue();
         }
         hzWait(400);

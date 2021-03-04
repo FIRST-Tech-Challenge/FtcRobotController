@@ -81,6 +81,7 @@ import com.qualcomm.ftccommon.configuration.EditParameters;
 import com.qualcomm.ftccommon.configuration.FtcLoadFileActivity;
 import com.qualcomm.ftccommon.configuration.RobotConfigFile;
 import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
+import com.qualcomm.ftcrobotcontroller.BuildConfig;
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.hardware.HardwareFactory;
 import com.qualcomm.robotcore.eventloop.EventLoopManager;
@@ -381,7 +382,7 @@ public class FtcRobotControllerActivity extends Activity
       initWifiMute(true);
     }
 
-    // AMJAD FtcAboutActivity.setBuildTimeFromBuildConfig(BuildConfig.BUILD_TIME);
+    FtcAboutActivity.setBuildTimeFromBuildConfig(BuildConfig.BUILD_TIME);
 
     FtcDashboard.start();
   }
