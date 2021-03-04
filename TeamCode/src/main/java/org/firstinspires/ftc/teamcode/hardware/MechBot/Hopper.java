@@ -256,7 +256,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
 
     public void hopperUpCombo(boolean forAuto) throws InterruptedException {
         if (ringLifter == null) return;
-        if (!transferIsDown) return;
+        // if (!transferIsDown) return;
         ringLifter.setPower(-1);
         transferUpCombo(forAuto);
         TaskManager.processTasks();

@@ -1412,7 +1412,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
 
         if (hopper != null) {
-            hopper.hopperUpCombo(true);
+            if (hopper.getTransferIsDown())
+                hopper.hopperUpCombo(true);
             TaskManager.processTasks();
         }
         if (intake != null)
@@ -1480,7 +1481,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooting_rpm = SEMI_AUTO_RPM;
         boolean hopperMoving = hopper.getTransferIsDown();
         if (hopper != null) {
-            hopper.hopperUpCombo(true);
+            if (hopper.getTransferIsDown())
+                hopper.hopperUpCombo(true);
             TaskManager.processTasks();
         }
         if (intake!=null)
@@ -1528,7 +1530,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void doPowerShotsSemi(int n, boolean angleCollection) throws InterruptedException {
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
         shooting_rpm = SEMI_POWER_SHOT_RPM;
-        if (hopper != null) {
+        if (hopper != null && hopper.getTransferIsDown()) {
             hopper.hopperUpCombo(true);
             TaskManager.processTasks();
         }
