@@ -24,13 +24,9 @@ import com.ftc9929.corelib.control.DebouncedButton;
 import com.ftc9929.corelib.control.LowPassFilteredRangeInput;
 import com.ftc9929.corelib.control.NinjaGamePad;
 import com.ftc9929.corelib.control.OnOffButton;
-import com.ftc9929.corelib.control.ParametricScaledRangeInput;
 import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.control.RangeInputButton;
 import com.ftc9929.corelib.control.ToggledButton;
-import com.google.common.base.Ticker;
-
-import java.nio.charset.CharacterCodingException;
 
 import lombok.Builder;
 
@@ -88,9 +84,9 @@ public class OperatorControls {
 
     private OnOffButton jankyServo;
 
-    private DebouncedButton raiseLauncher;
+    private DebouncedButton launcherToHighPosition;
 
-    private DebouncedButton lowerLauncher;
+    private DebouncedButton launcherToMiddlePosition;
 
     private ScoringMechanism scoringMechanism;
 
@@ -152,8 +148,8 @@ public class OperatorControls {
         scoringMechanism.setStopLauncher(stopLauncher);
         scoringMechanism.setInvertHopper(invertHopper);
         scoringMechanism.setJankyServo(jankyServo);
-        scoringMechanism.setLowerLauncher(lowerLauncher);
-        scoringMechanism.setRaiseLauncher(raiseLauncher);
+        scoringMechanism.setLauncherToMiddlePosition(launcherToMiddlePosition);
+        scoringMechanism.setLauncherToHighPosition(launcherToHighPosition);
 
         this.wobbleGoal = wobbleGoal;
         this.wobbleGoal.setShoulderThrottle(new LowPassFilteredRangeInput(wobbleShoulderThrottle, 0.85F));
@@ -195,8 +191,8 @@ public class OperatorControls {
         jankyServo = leftBumper;
         unsafe = new RangeInputButton( leftTrigger, 0.65f);
 
-        lowerLauncher = dpadLeft;
-        raiseLauncher = dpadRight;
+        launcherToMiddlePosition = dpadLeft;
+        launcherToHighPosition = dpadRight;
     }
 
     public void periodicTask() {

@@ -19,8 +19,6 @@
 
 package com.hfrobots.tnt.season2021;
 
-import android.widget.ToggleButton;
-
 import com.ftc9929.corelib.control.DebouncedButton;
 import com.ftc9929.corelib.control.ToggledButton;
 import com.ftc9929.corelib.state.State;
@@ -82,8 +80,8 @@ public class ScoringMechanismTest {
         scoringMechanism.setStopLauncher(stopLaunchingDebounced);
         scoringMechanism.setInvertHopper(invertHopper);
         scoringMechanism.setJankyServo(jankyServo);
-        scoringMechanism.setRaiseLauncher(new FakeOnOffButton().debounced());
-        scoringMechanism.setLowerLauncher(new FakeOnOffButton().debounced());
+        scoringMechanism.setLauncherToHighPosition(new FakeOnOffButton().debounced());
+        scoringMechanism.setLauncherToMiddlePosition(new FakeOnOffButton().debounced());
 
         intakeMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "intakeMotor");
         frontLauncherMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "frontLauncherMotor");

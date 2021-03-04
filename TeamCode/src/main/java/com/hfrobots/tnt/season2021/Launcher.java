@@ -65,6 +65,8 @@ public class Launcher {
 
     public final static double LAUNCHER_LIFT_STOWED_POSITION = 0.52;
 
+    public final static double LAUNCHER_LIFT_MID_POSITION = ((.82 - .1) + (.82 - .2)) / 2;
+
     public final static double LAUNCHER_LIFT_HIGH_POSITION = .82;
 
     private final VelocityTracker frontVelocityTracker;
@@ -96,34 +98,24 @@ public class Launcher {
 
     public void launcherToStowedPosition() {
         launcherLiftServo.setPosition(LAUNCHER_LIFT_STOWED_POSITION);
+
+        telemetry.addData("Lch", "launch: stowed");
+    }
+
+    public void launcherToMiddlePosition() {
+        launcherLiftServo.setPosition(LAUNCHER_LIFT_MID_POSITION);
+
+        telemetry.addData("Lch", "launch: mid");
     }
 
     public void launcherToHighPosition() {
         launcherLiftServo.setPosition(LAUNCHER_LIFT_HIGH_POSITION);
+
+        telemetry.addData("Lch", "launch: high");
     }
 
-    public void raiseLauncher() {
-        adjustLauncher(1);
-    }
-
-    public void lowerLauncher() {
-        adjustLauncher(-1);
-    }
-
-    private void adjustLauncher(int magnitude) {
-        double currentPosition = launcherLiftServo.getPosition();
-
-        if (magnitude > 1 && currentPosition + LIFT_ADJUSTMENT_VALUE > 1.0) {
-            return;
-        }
-
-        if (magnitude < 1 && currentPosition - LIFT_ADJUSTMENT_VALUE < LAUNCHER_LIFT_STOWED_POSITION) {
-            return;
-        }
-
-        launcherLiftServo.setPosition(currentPosition + (double)magnitude * LIFT_ADJUSTMENT_VALUE);
-
-        telemetry.addData("Lch", "lift: %.2f", launcherLiftServo.getPosition());
+    public boolean launcherIsInMiddlePosition() {
+        return Math.abs(LAUNCHER_LIFT_MID_POSITION - launcherLiftServo.getPosition()) < 0.05;
     }
 
     public void pulldownHopper() {

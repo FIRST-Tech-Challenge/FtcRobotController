@@ -81,10 +81,10 @@ public class ScoringMechanism {
     private DebouncedButton stopLauncher;
 
     @Setter
-    private DebouncedButton raiseLauncher;
+    private DebouncedButton launcherToHighPosition;
 
     @Setter
-    private DebouncedButton lowerLauncher;
+    private DebouncedButton launcherToMiddlePosition;
 
     @Setter
     private OnOffButton jankyServo;
@@ -175,10 +175,10 @@ public class ScoringMechanism {
     }
 
     private void handleLauncherAdjustment() {
-        if (lowerLauncher.getRise()) {
-            launcher.lowerLauncher();
-        } else if (raiseLauncher.getRise()) {
-            launcher.raiseLauncher();
+        if (launcherToMiddlePosition.getRise()) {
+            launcher.launcherToMiddlePosition();
+        } else if (launcherToHighPosition.getRise()) {
+            launcher.launcherToHighPosition();
         }
     }
 
@@ -525,7 +525,12 @@ public class ScoringMechanism {
 
         @Override
         public State doStuffAndGetNextState() {
-            setBlinkinLedPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
+            if (launcher.launcherIsInMiddlePosition()) {
+                setBlinkinLedPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
+            } else {
+                setBlinkinLedPattern(RevBlinkinLedDriver.BlinkinPattern.DARK_GREEN);
+            }
+
             // FIXME: For *now* would like ability to do "whatever" with intake during launching
 
             // Intake:Not Moving  (unless unsafe)
