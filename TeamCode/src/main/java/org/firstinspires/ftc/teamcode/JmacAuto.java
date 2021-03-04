@@ -53,7 +53,7 @@ public class JmacAuto extends LinearOpMode {
 
         while (!isStarted()) {
             mDrive.claw.setPosition(0);
-            ringCount = 1; // vision.ringCount('r');
+            ringCount = vision.ringCount('r');
             telemetry.addData("Ring Count: ", ringCount);
             telemetry.update();
         }
