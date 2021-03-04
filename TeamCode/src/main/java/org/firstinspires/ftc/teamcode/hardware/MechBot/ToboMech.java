@@ -514,8 +514,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             public void buttonUp(EventManager source, Button button) throws InterruptedException {
                 if (comboGrabber != null)
                     comboGrabber.sliderStop();
-                if (hopper != null)
-                    hopper.transferStop();
+                //if (hopper != null)
+                //    hopper.transferStop();
 
             }
         }, new Button[]{Button.A});
@@ -571,8 +571,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (source.isPressed(Button.RIGHT_BUMPER)) {
                     ;
                 }
-                if (hopper != null)
-                    hopper.transferStop();
+                //if (hopper != null)
+                //    hopper.transferStop();
             }
         }, new Button[]{Button.Y});
 
