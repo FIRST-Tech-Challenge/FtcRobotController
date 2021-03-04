@@ -22,15 +22,12 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectorySolution;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
-import org.firstinspires.ftc.teamcode.robots.tombot.PoseSkystone;
-import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
-import static org.firstinspires.ftc.teamcode.util.Conversions.nextCardinal;
 import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
 import static org.firstinspires.ftc.teamcode.util.Conversions.wrapAngle;
@@ -159,6 +156,8 @@ public class PoseUG {
     public double autonomousIMUOffset = 0;
 
     private int craneArticulation = 0;
+
+    public boolean rangeIsHot = true;
 
     // vision related
     public SkystoneGripPipeline pipeline;
@@ -529,6 +528,9 @@ public class PoseUG {
     boolean flywheelIsActive = false;
     int numLoops = 0;
     int laggyCounter = 0;
+
+    boolean inObstacleBandTurret = false;
+    boolean inObstacleBandLauncher = false;
     public void update(BNO055IMU imu, long ticksLeft, long ticksRight, boolean isActive) {
         long currentTime = System.nanoTime();
 
@@ -626,7 +628,7 @@ public class PoseUG {
         trajCalc.setTarget(target);
         trajSol = trajCalc.getTrajectorySolution();
 
-        launcher.update();
+        launcher.update(getHeading(), turret.getHeading());
         turret.update();
         intake.update(); //watermelon
         maintainTarget();
@@ -973,7 +975,7 @@ public class PoseUG {
         if (Math.abs(launcher.flywheelTargetTPS - launcher.flywheelTPS) / launcher.flywheelTargetTPS < 0.05) {
             rampedUp = true;
         }
-        if(rampedUp){
+        if(rampedUp && launcher.getNotObstructed()){
             switch (toggleTriggerState) {
                 case 0:
                     launcher.servoTrigger.setPosition(servoNormalize(2100));

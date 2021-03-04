@@ -81,6 +81,7 @@ public class Turret{
 
     }
 
+    private double offsetMuzzleOffset = 0.0;
     public void update(){
         //IMU Update
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
@@ -100,6 +101,8 @@ public class Turret{
             maintainHeadingTurret(true);
 
     }
+
+
 
     /**
      * assign the current heading of the robot to a specific angle

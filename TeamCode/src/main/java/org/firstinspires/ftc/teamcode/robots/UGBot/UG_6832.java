@@ -522,7 +522,7 @@ public class UG_6832 extends OpMode {
     boolean cacheValidated = false;
 
 
-    private void joystickDrive() {
+    private void joystickDrive() { //apple
         if (notdeadzone(gamepad1.right_stick_y)) {
             robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
         }
@@ -626,7 +626,7 @@ public class UG_6832 extends OpMode {
         }
 
 
-        robot.launcher.update();
+        robot.launcher.update(robot.getHeading(), robot.turret.getHeading());
         robot.turret.update();
         robot.intake.update();
     }

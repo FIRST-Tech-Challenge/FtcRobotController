@@ -6,9 +6,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.util.Conversions;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
+import static org.firstinspires.ftc.teamcode.util.Conversions.wrap360;
 
 /**
  * Created by 2938061 on 11/10/2017.
@@ -82,14 +84,21 @@ public class Launcher {
 
     long prevNanoTime;
     int prevMotorTicks;
-    int prevOverride = Constants.overrideTPS;
+    private boolean notObstructed = true;
 
-    public void update(){
+    public void update(double baseHeading, double turretHeading){
         if(active) {
             if(elbowActivePID)
-                movePIDElbow(kpElbow, kiElbow, kdElbow, elbow.getCurrentPosition(), elbowPos);
+                if(Conversions.between(wrap360((turretHeading)- baseHeading), 350,10)){
+                    movePIDElbow(kpElbow, kiElbow, kdElbow, elbow.getCurrentPosition(), Math.min(elbowPos, 20 * ticksPerDegree)); //gets the lowest of the 2
+                    notObstructed = false;
+                }
+                else {
+                    movePIDElbow(kpElbow, kiElbow, kdElbow, elbow.getCurrentPosition(), elbowPos);
+                    notObstructed = true;
+                }
             else
-                elbowPos = elbow.getCurrentPosition();
+                elbow.setPower(0);
 
 
 
@@ -107,11 +116,13 @@ public class Launcher {
         }
     }
 
+    public boolean getNotObstructed(){return notObstructed;}
+
     public void stopAll(){
         setElbowPwr(0);
         setElbowActivePID(false);
         setFlywheelActivePID(false);
-        update();
+        update(0,0);
         active = false;
     }
 
