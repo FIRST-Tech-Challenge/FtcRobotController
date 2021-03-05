@@ -94,6 +94,12 @@ public class RobotClass {
             telemetry.update();
         }
     }
+//    public void innitDisplayTelemetryGyro() {
+//        while(!opmode.opModeIsActive()) {
+//            telemetry.addData("Current Gyro Reading: ", getAngleFromGyro());
+//            telemetry.update();
+//        }
+//    }
     public double getAngleFromGyro() {
 
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -618,11 +624,11 @@ public class RobotClass {
         }
     }
     public void depositWobbleGoal() {
-        moveWobbleGoalArm(.7,-.5);
-        pause(500);
-        wobbleGoalGrippyThingRelease();
-        pause(350);
-        moveWobbleGoalArm(.7, .5);
+            moveWobbleGoalArm(.7,-.5);
+            pause(500);
+            wobbleGoalGrippyThingRelease();
+            pause(350);
+            moveWobbleGoalArm(.7, .5);
     }
 
     public void pauseButInSecondsForThePlebeians(double seconds) {
