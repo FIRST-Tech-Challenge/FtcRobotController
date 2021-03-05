@@ -22,6 +22,9 @@ SOFTWARE.
     <Webcam name="webcam" serialNumber="7B2F4FD0" />
 
     <!-- Control Hub #1 -->
+
+    <!-- 9929-R-RC has a port#, parentModuleAddress of "173" - it will need to be changed
+         here to swap it in as a replacement! -->
     <LynxUsbDevice name="Control Hub" serialNumber="(embedded)" parentModuleAddress="2">
         <LynxModule name="Main Hub" port="2">
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
