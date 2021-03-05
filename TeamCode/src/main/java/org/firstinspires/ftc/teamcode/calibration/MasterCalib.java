@@ -1753,10 +1753,12 @@ public class MasterCalib extends LinearOpMode {
     private void saveCurrentConfig(){
         saveConfigMoveForward(templateMRForward);
         saveConfigMoveBack(templateMRBack);
-
+        saveConfigStrafe(templateStrafeLeft, templateStrafeRight);
         telemetry.addData("Config", "Saved the following configs:");
         showMotorReductionCalib(templateMRForward);
         showMotorReductionCalib(templateMRBack);
+        showMotorReductionCalib(templateStrafeLeft);
+        showMotorReductionCalib(templateStrafeRight);
         telemetry.update();
     }
 
@@ -1810,16 +1812,17 @@ public class MasterCalib extends LinearOpMode {
 
         MotorReductionBot originalRight = config.getStrafeRightReduction();
 
-        boolean changed = false;
-        if (mrLeft.compare(originalLeft)){
-            config.setStrafeLeftReduction(mrLeft);
-            changed = true;
-        }
+        boolean changed = true;
 
-        if (mrRight.compare(originalRight)) {
-            config.setStrafeRightReduction(mrRight);
-            changed = true;
-        }
+//        if (mrLeft.compare(originalLeft)){
+//            config.setStrafeLeftReduction(mrLeft);
+//            changed = true;
+//        }
+//
+//        if (mrRight.compare(originalRight)) {
+//            config.setStrafeRightReduction(mrRight);
+//            changed = true;
+//        }
 
         if (changed) {
             ReadWriteFile.writeFile(bot.getCalibConfigFile(), config.serialize());
