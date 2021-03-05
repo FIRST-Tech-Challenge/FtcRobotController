@@ -23,7 +23,7 @@ public class RingDetector implements Runnable{
     private boolean isRunning = true;
 
     private AutoDot recogZone = null;
-
+//a
     private static String MODEL_FILE_NAME = "rings_float.tflite"; //"croppedRingRec.tflite";
     private static String LABEL_FILE_NAME = "labels.txt"; //"croppedLabels.txt";
     private static Classifier.Model MODEl_TYPE = Classifier.Model.FLOAT_EFFICIENTNET;
