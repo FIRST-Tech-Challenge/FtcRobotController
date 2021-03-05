@@ -506,8 +506,8 @@ public class JmacAuto extends LinearOpMode {
 
     public void monkeShoot()
     {
-        mDrive.FlyWheel1.setPower(0.9);
-        mDrive.FlyWheel2.setPower(0.9);
+        mDrive.FlyWheel1.setPower(1.0);
+        mDrive.FlyWheel2.setPower(1.0);
         sleep(1500);
         mDrive.ringHopper.setPosition(1);
         sleep(500);

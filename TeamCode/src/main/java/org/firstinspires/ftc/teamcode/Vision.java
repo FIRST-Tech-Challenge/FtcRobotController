@@ -71,7 +71,7 @@ public class Vision {
             x = bitmap.getWidth() * 1000 / 1280;
         } else //red side
         {
-            x = 23;
+            x = 0;
         }
 
         int highY = 8964;
@@ -101,7 +101,7 @@ public class Vision {
         }
         else if (highY <= 100)
         {
-            return 4;
+            return 0;
         }
         else {
             for (int y = highY - 100; y <= highY - 10; y++) {
@@ -119,7 +119,7 @@ public class Vision {
             }
 
             int yRange = highY - lowY;
-
+            //return yRange;
             /*
             opMode.telemetry.addData("highY", highY);
             opMode.telemetry.addData("lowY", lowY);
@@ -127,7 +127,7 @@ public class Vision {
             opMode.telemetry.update();
             */
 
-            if (yRange < 83)
+            if (yRange < 65)
             {
                 return 1;
             } else {
