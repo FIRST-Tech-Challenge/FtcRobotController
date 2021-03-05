@@ -537,8 +537,14 @@ public class RobotClass {
 //
 //    }
     //Pretend "Engage" is actually "ENGAGE!"
+
+    public void shooterEngageTeleop () {
+        double targetVelocity = -5400*0.85*28/60;
+        shooterMotor.setVelocity(targetVelocity);
+
+    }
     public void shooterEngage () {
-        double targetVelocity = -5400*0.75*28/60;
+        double targetVelocity = -5400*0.80*28/60;
         shooterMotor.setVelocity(targetVelocity);
         while (shooterMotor.getVelocity()<targetVelocity && this.opmode.opModeIsActive()) {
 
@@ -548,8 +554,7 @@ public class RobotClass {
     public void shooterEngageAlt () {
         double targetVelocity = -5400*0.85*28/60;
         shooterMotor.setVelocity(targetVelocity);
-        while (shooterMotor.getVelocity()<targetVelocity && this.opmode.opModeIsActive()) {
-
+        while (shooterMotor.getVelocity()<targetVelocity && this.opmode.opModeIsActive()){
         }
     }
 
@@ -636,7 +641,7 @@ public class RobotClass {
     }
 
     public void startShooting() {
-        shooterEngage();
+        shooterEngageAlt();
         shooterServo1(.8);
         shooterServo2(.8);
         pause(500);
