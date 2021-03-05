@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous (name="Inside Red")
-public class InsideRed extends LinearOpMode {
+@Autonomous (name="Inside Red B")
+public class InsideRedB extends LinearOpMode {
 
     DcMotor wobbleGoalExtendMotor = null;
     DcMotor wobbleGoalRaiseMotor = null;
@@ -24,7 +24,7 @@ public class InsideRed extends LinearOpMode {
         robot.wobbleGoalGrippyThingGrab();
         // here you detect rings
 
-        int ringNmb = 0;
+        int ringNmb = 1;
         waitForStart();
 
         robot.forward(0.5, -4.4);
@@ -42,11 +42,10 @@ public class InsideRed extends LinearOpMode {
         robot.pivotRight(.1, 5);
 
         if (ringNmb == 0) {
-            robot.forward(0.5,-1.5);
+            robot.forward(0.5,-2);
             robot.strafeLeft(0.5,2);
             robot.pivotLeft(0.3, 175);
             robot.depositWobbleGoal();
-            robot.strafeLeft(0.5, 2);
         } else if (ringNmb == 1) {
             robot.forward(0.5, -3);
             robot.strafeLeft(0.3, 0.2);
@@ -54,13 +53,13 @@ public class InsideRed extends LinearOpMode {
             robot.depositWobbleGoal();
             robot.forward(0.5, -1.8);
         } else if (ringNmb == 4) {
-            robot.forward(0.5,-5);
+            robot.forward(0.5,-6);
             robot.strafeLeft(0.5,2);
             robot.pivotLeft(0.3,175);
             robot.depositWobbleGoal();
-            robot.pivotRight(0.3,175);
+            robot.strafeRight(0.3,175);
             robot.strafeRight(0.5,2);
-            robot.forward(0.5,4);
+            robot.forward(0.5,5);
         }
 
     }
@@ -81,4 +80,3 @@ public class InsideRed extends LinearOpMode {
 //        robot.shooterServo1(0);
 //    }
 }
-

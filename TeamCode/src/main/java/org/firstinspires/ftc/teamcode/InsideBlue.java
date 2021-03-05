@@ -22,42 +22,40 @@ public class InsideBlue extends LinearOpMode {
         robot= new RobotClass(hardwareMap, telemetry, this);
 
         robot.wobbleGoalGrippyThingGrab();
-        // here you detect rings, no rings=0 and so on
+        // here you detect rings
 
-        int ringNmb = 1;
+        int ringNmb = 0;
         waitForStart();
 
         robot.forward(0.5, -4.4);
         robot.pivotLeft(0.1, 17);
-        robot.shooterEngageAlt();
+//        robot.shooterEngageAlt();
         robot.pause(1000);
-
-        shoot();
+//        shoot();
         robot.pivotRight(0.1, 6);
-        shoot();
+//        shoot();
         robot.pivotRight(.1, 6);
-        shoot();
-        robot.intakeServoEngage(0);
-        robot.stopShooting();
-        //# of rings matter
+//        shoot();
+//        robot.intakeServoEngage(0);
+//        robot.stopShooting();
         robot.pivotRight(0.1, 5);
-        robot.forward(0.5, -4);
-        robot.depositWobbleGoal();
-        robot.forward(0.5, 3);
 
-//        robot.forward(0.5,-2);
-//        if (ringNmb == 0) {
-//            //strafe right
-//            robot.strafeRight(0.5, 2);
-//        } else if (ringNmb == 1) {
-//            robot.forward(0.5,-3);
-//            robot.moveWobbleGoalArm(0.7,0.4);
-//            robot.wobbleGoalGrippyThingRelease();
-//            robot.forward(0.5,2);
-//        } else if (ringNmb == 3) {
-//            robot.forward(0.5,-4);
-        //forward+ strafe right+ wobble goal
-//        }
+        if (ringNmb == 0) {
+            robot.forward(0.5, -1.5);
+            robot.strafeRight(0.5, 2);
+            robot.depositWobbleGoal();
+            robot.strafeLeft(0.5,2);
+        } else if (ringNmb == 1) {
+            robot.forward(0.5, -4);
+            robot.depositWobbleGoal();
+            robot.forward(0.5, 3);
+        } else if (ringNmb == 4) {
+            robot.forward(0.5,-5);
+            robot.strafeRight(0.5, 2.2);
+            robot.depositWobbleGoal();
+            robot.strafeLeft(0.5,2.2);
+            robot.forward(0.5,3.5);
+        }
 
     }
 
