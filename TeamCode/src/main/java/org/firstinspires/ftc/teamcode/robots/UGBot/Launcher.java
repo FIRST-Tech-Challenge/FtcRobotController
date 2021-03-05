@@ -26,6 +26,7 @@ public class Launcher {
     DcMotor elbow = null;
     DcMotorEx flywheelMotor = null;
     Servo servoTrigger = null;
+    Servo servoGripper = null;
 
     //flywheel variables
     public long lastUpdateTime;
@@ -56,11 +57,12 @@ public class Launcher {
     public int elbowMid = (actualElbowMax + elbowMin)/2;
     public int elbowMaxSafetyOffset = 70; //makes sure that the robot doesn't try and extend to the elbow max exactly
 
-    public Launcher(DcMotor elbow, DcMotorEx flywheelMotor, Servo servoTrigger){
+    public Launcher(DcMotor elbow, DcMotorEx flywheelMotor, Servo servoTrigger, Servo servoGripper){
 
         this.elbow = elbow;
         this.flywheelMotor = flywheelMotor;
         this.servoTrigger = servoTrigger;
+        this.servoGripper = servoGripper;
 
         this.elbow.setTargetPosition(elbow.getCurrentPosition());
         this.elbow.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -85,7 +87,7 @@ public class Launcher {
     long prevNanoTime;
     int prevMotorTicks;
     private boolean notObstructed = true;
-
+    int gripperTargetPos = 1920;
     public void update(double baseHeading, double turretHeading){
         if(active) {
             if(elbowActivePID)
@@ -100,7 +102,7 @@ public class Launcher {
             else
                 elbow.setPower(0);
 
-
+            servoGripper.setPosition(servoNormalize(gripperTargetPos));
 
             flywheelTPS = (flywheelMotor.getCurrentPosition() - prevMotorTicks) / ((System.nanoTime() - prevNanoTime) / 1E9);
 
@@ -141,6 +143,25 @@ public class Launcher {
         flywheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
+
+    //gripper methods
+
+    public void setGripperPos(int pos){gripperTargetPos = pos;}
+
+    boolean toggleGripperState = true;
+
+    public boolean toggleGripper(){
+        if(toggleGripperState){
+            toggleGripperState = false;
+            gripperTargetPos = 900;
+            return true;
+        }
+        else{
+            toggleGripperState = true;
+            gripperTargetPos = 1920;
+            return false;
+        }
+    }
 
     //flywheel methods
 

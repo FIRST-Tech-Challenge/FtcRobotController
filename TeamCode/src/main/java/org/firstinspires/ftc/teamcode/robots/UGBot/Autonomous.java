@@ -89,6 +89,9 @@ public class Autonomous {
 
 
     public StateMachine AutoFull = getStateMachine(autoStage)
+            .addState(() -> robot.launcher.toggleGripper())
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(() -> robot.launcher.setElbowTargetAngle(0))
             .addState(() -> robot.calibrationRun(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.7432))
 
 //            .addMineralState(ugStateProvider,

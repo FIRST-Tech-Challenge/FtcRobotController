@@ -81,7 +81,8 @@ public class PoseUG {
     private DcMotor intakeMotor = null;
     private DcMotorEx flywheelMotor = null;
     private DcMotor turretMotor = null;
-    private Servo wobbleGripper = null;
+    private Servo triggerServo = null;
+    private Servo gripperServo = null;
     Servo blinkin = null;
 
     // All Subsystems
@@ -304,7 +305,8 @@ public class PoseUG {
         this.headlight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         brightness = .8;
 
-        this.wobbleGripper = this.hwMap.servo.get("servoGripper");
+        this.triggerServo = this.hwMap.servo.get("triggerServo");
+        this.gripperServo = this.hwMap.servo.get("gripperServo");
 
         this.intakeMotor = this.hwMap.dcMotor.get("intakeMotor");
 
@@ -344,7 +346,7 @@ public class PoseUG {
          * driveRight.setDirection(DcMotorSimple.Direction.FORWARD); }
          */
         // setup subsystems
-        launcher = new Launcher(elbow, flywheelMotor, wobbleGripper);
+        launcher = new Launcher(elbow, flywheelMotor, triggerServo, gripperServo);
         turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
         turret = new Turret(turretMotor, turretIMU);
         intake = new Intake(intakeMotor);

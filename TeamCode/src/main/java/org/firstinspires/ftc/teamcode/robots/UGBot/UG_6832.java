@@ -576,7 +576,8 @@ public class UG_6832 extends OpMode {
         if(toggleAllowed(gamepad1.y, y, 1))
             robot.intake.toggleFullTilt();
         if(toggleAllowed(gamepad1.x,x,1))
-            robot.articulate(PoseUG.Articulation.returnHome);
+            //robot.articulate(PoseUG.Articulation.returnHome);
+            robot.launcher.toggleGripper();
 
 
         if (notdeadzone(gamepad1.right_trigger))
@@ -586,8 +587,8 @@ public class UG_6832 extends OpMode {
             robot.turret.rotateLeft(gamepad1.left_trigger * 5);
 
 
-        if (gamepad1.right_bumper)
-            robot.turret.rotateRight(.5);
+        if (toggleAllowed(gamepad1.right_bumper, right_bumper,1))
+
 
         if (gamepad1.left_bumper)
             robot.turret.rotateLeft(.5);
