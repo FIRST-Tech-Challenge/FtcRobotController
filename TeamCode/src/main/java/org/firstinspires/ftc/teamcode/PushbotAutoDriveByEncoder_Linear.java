@@ -1,28 +1,76 @@
+/* Copyright (c) 2017 FIRST. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted (subject to the limitations in the disclaimer below) provided that
+ * the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list
+ * of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this
+ * list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * Neither the name of FIRST nor the names of its contributors may be used to endorse or
+ * promote products derived from this software without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+ * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.vision.UGContourRingPipeline;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
+/**
+ * This file illustrates the concept of driving a path based on encoder counts.
+ * It uses the common Pushbot hardware class to define the drive on the robot.
+ * The code is structured as a LinearOpMode
+ *
+ * The code REQUIRES that you DO have encoders on the wheels,
+ *   otherwise you would use: PushbotAutoDriveByTime;
+ *
+ *  This code ALSO requires that the drive Motors have been configured such that a positive
+ *  power command moves them forwards, and causes the encoders to count UP.
+ *
+ *   The desired path in this example is:
+ *   - Drive forward for 48 inches
+ *   - Spin right for 12 Inches
+ *   - Drive Backwards for 24 inches
+ *   - Stop and close the claw.
+ *
+ *  The code is written using a method called: encoderDrive(speed, leftInches, rightInches, timeoutS)
+ *  that performs the actual movement.
+ *  This methods assumes that each movement is relative to the last stopping place.
+ *  There are other ways to perform encoder based moves, but this method is probably the simplest.
+ *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
+ *
+ * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ */
 
-@Autonomous(name="Auto", group="Auto")
+@Autonomous(name="Pushbot: Auto Drive By Encoder", group="Pushbot")
 @Disabled
-public class Auto extends LinearOpMode {
+public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
-    //Declare motors/servos variables
+    /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
-    //Initialize Motors
+    //Wheels
     private DcMotor leftFront = null;
     private DcMotor rightFront = null;
     private DcMotor leftBack = null;
@@ -33,32 +81,26 @@ public class Auto extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
+                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
-
-    //Vision
-    private static final int CAMERA_WIDTH = 1280; // width  of wanted camera resolution
-    private static final int CAMERA_HEIGHT = 720; // height of wanted camera resolution
-
-    private static final int HORIZON = 100; // horizon value to tune
-
-    private static final boolean DEBUG = false; // if debug is wanted, change to true
-
-    private static final boolean USING_WEBCAM = true; // change to true if using webcam
-    private static final String WEBCAM_NAME = "Webcam"; // insert webcam name from configuration if using webcam
-
-    private UGContourRingPipeline pipeline;
-    private OpenCvCamera camera;
 
     @Override
     public void runOpMode() {
 
-        //Hardware Map wheels
+        /*
+         * Initialize the drive system variables.
+         * The init() method of the hardware class does all the work here
+         */
+        //Wheels
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Status", "Resetting Encoders");    //
+        telemetry.update();
 
         //Set motor run modes
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -71,58 +113,14 @@ public class Auto extends LinearOpMode {
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //Set Directions
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-
-//        int cameraMonitorViewId = this
-//                .hardwareMap
-//                .appContext
-//                .getResources().getIdentifier(
-//                        "cameraMonitorViewId",
-//                        "id",
-//                        hardwareMap.appContext.getPackageName()
-//                );
-////        if (USING_WEBCAM) {
-//        camera = OpenCvCameraFactory
-//                .getInstance()
-//                .createWebcam(hardwareMap.get(WebcamName.class, WEBCAM_NAME), cameraMonitorViewId);
-////        } else {
-////            camera = OpenCvCameraFactory
-////                    .getInstance()
-////                    .createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-////        }
-//
-//        camera.setPipeline(pipeline = new UGContourRingPipeline(telemetry, DEBUG));
-//
-//        UGContourRingPipeline.Config.setCAMERA_WIDTH(CAMERA_WIDTH);
-//
-//        UGContourRingPipeline.Config.setHORIZON(HORIZON);
-//
-//        camera.openCameraDeviceAsync(() -> camera.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT));
-
-        //Initialized
-        telemetry.addData("Status", "Initialized");
-
-//        String height = String.valueOf(pipeline.getHeight());
+//        // Send telemetry message to indicate successful Encoder reset
+//        telemetry.addData("Path0",  "Starting at %7d :%7d",
+//                          robot.leftDrive.getCurrentPosition(),
+//                          robot.rightDrive.getCurrentPosition());
+//        telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
-//        switch (height) {
-//            case "ZERO":
-//                telemetry.addData("Path", "Running Path 0");
-//                break;
-//            case "ONE":
-//                telemetry.addData("Path", "Running Path 1");
-//                break;
-//            case "FOUR":
-//                telemetry.addData("Path", "Running Path 4");
-//                break;
-//            default:
-//        }
 
         //Movement
         encoderDrive(DRIVE_SPEED /*Or TURN_SPEED*/,  48,  48, 48, 48, 2);
@@ -133,6 +131,14 @@ public class Auto extends LinearOpMode {
         telemetry.update();
     }
 
+    /*
+     *  Method to perform a relative move, based on encoder counts.
+     *  Encoders are not reset as the move is based on the current position.
+     *  Move will stop if any of three conditions occur:
+     *  1) Move gets to the desired position
+     *  2) Move runs out of time
+     *  3) Driver stops the opmode running.
+     */
     public void encoderDrive(double speed,
                              double leftFrontInches, double rightFrontInches, double leftBackInches, double rightBackInches,
                              double timeoutS) {
@@ -175,8 +181,8 @@ public class Auto extends LinearOpMode {
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy())) {
+                   (runtime.seconds() < timeoutS) &&
+                   (leftFront.isBusy() && rightFront.isBusy() && leftBack.isBusy() && rightBack.isBusy())) {
 
 //                // Display it for the driver.
 //                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
@@ -201,6 +207,4 @@ public class Auto extends LinearOpMode {
             //  sleep(250);   // optional pause after each move
         }
     }
-
 }
-
