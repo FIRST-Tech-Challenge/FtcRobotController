@@ -55,6 +55,7 @@ public class UltimateMode extends LinearOpMode {
     boolean intakeReverse = false;
     boolean buttonpressable = true;
     boolean shooterslower = false;
+    boolean changedguard = false;
     double delaytime = 200;
     double startdelay = 0;
     double grabdelay = 0;
@@ -122,6 +123,12 @@ public class UltimateMode extends LinearOpMode {
                     robot.openWobbleClaw();
                 }
 
+                if (changedguard) {
+                    robot.guardDown();
+                } else {
+                    robot.guardUp();
+                }
+
                 // move swing thread
 //                if (gamepad1.dpad_up) {
 //                    bta = new BotThreadAction(robot, telemetry, "wobbleforward", this);
@@ -166,7 +173,7 @@ public class UltimateMode extends LinearOpMode {
 
                 if (gamepad1.y && buttonpressable) {
                     startdelay = runtime.milliseconds();
-                    robot.guardDown();
+                    changedguard = !changedguard;
                 }
 
                 // move intake
@@ -200,7 +207,7 @@ public class UltimateMode extends LinearOpMode {
                     if (shooterslower) {
                         robot.shooterpeg();
                     } else {
-                        robot.shooter();
+                        robot.shooterB();
                     }
                 } else {
                     robot.stopshooter();
