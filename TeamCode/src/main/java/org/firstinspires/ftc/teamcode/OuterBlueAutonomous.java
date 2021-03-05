@@ -24,7 +24,7 @@ public class OuterBlueAutonomous extends LinearOpMode{
 
         robot.wobbleGoalGrippyThingGrab();
 
-        robot.innitDisplayTelemetryGyro();
+       // robot.innitDisplayTelemetryGyro();
 
         waitForStart();
 
