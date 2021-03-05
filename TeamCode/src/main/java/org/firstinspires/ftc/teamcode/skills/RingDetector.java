@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.tfrec.Detector;
 import org.firstinspires.ftc.teamcode.tfrec.classification.Classifier;
@@ -23,9 +22,9 @@ public class RingDetector implements Runnable{
     private boolean isRunning = true;
 
     private AutoDot recogZone = null;
-//a
-    private static String MODEL_FILE_NAME = "rings_float.tflite"; //"croppedRingRec.tflite";
-    private static String LABEL_FILE_NAME = "labels.txt"; //"croppedLabels.txt";
+
+    private String modelFileName = "rings_float.tflite";
+    private String labelFileName = "labels.txt";
     private static Classifier.Model MODEl_TYPE = Classifier.Model.FLOAT_EFFICIENTNET;
     private static final String LABEL_A = "None";
     private static final String LABEL_B = "Single";
@@ -46,6 +45,22 @@ public class RingDetector implements Runnable{
         hardwareMap = hMap;
         telemetry = t;
         lights = led;
+        initDetector();
+        activateDetector();
+        this.side = side;
+        this.caller = caller;
+        if (namedCoordinates != null) {
+            this.namedCoordinates = namedCoordinates;
+        }
+        configZones(side);
+    }
+
+    public RingDetector(HardwareMap hMap, String side, LinearOpMode caller, ArrayList<AutoDot> namedCoordinates, Led led, Telemetry t, String model, String labels) throws Exception {
+        hardwareMap = hMap;
+        telemetry = t;
+        lights = led;
+        setModelFileName(model);
+        setLabelFileName(labels);
         initDetector();
         activateDetector();
         this.side = side;
@@ -167,7 +182,7 @@ public class RingDetector implements Runnable{
     }
 
     public void initDetector() throws Exception {
-        tfDetector = new Detector(MODEl_TYPE, MODEL_FILE_NAME, LABEL_FILE_NAME, hardwareMap.appContext, telemetry);
+        tfDetector = new Detector(MODEl_TYPE, getModelFileName(), getLabelFileName(), hardwareMap.appContext, telemetry);
     }
 
     protected void activateDetector() throws Exception {
@@ -206,5 +221,21 @@ public class RingDetector implements Runnable{
 
     public void setRecogZone(AutoDot recogZone) {
         this.recogZone = recogZone;
+    }
+
+    public String getModelFileName() {
+        return modelFileName;
+    }
+
+    public void setModelFileName(String modelFileName) {
+        this.modelFileName = modelFileName;
+    }
+
+    public String getLabelFileName() {
+        return labelFileName;
+    }
+
+    public void setLabelFileName(String labelFileName) {
+        this.labelFileName = labelFileName;
     }
 }

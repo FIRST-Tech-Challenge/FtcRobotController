@@ -1194,7 +1194,7 @@ public class MasterCalib extends LinearOpMode {
         strafeBot(templateStrafeLeft, templateStrafeRight);
 //        restoreHead();
         led.none();
-        saveConfigStrafe(templateStrafeLeft, templateStrafeRight);
+//        saveConfigStrafe(templateStrafeLeft, templateStrafeRight);
         showMotorReductionCalib(templateStrafeLeft);
         showMotorReductionCalib(templateStrafeRight);
         telemetry.update();
@@ -1808,11 +1808,13 @@ public class MasterCalib extends LinearOpMode {
             config = new BotCalibConfig();
         }
 
-        MotorReductionBot originalLeft = config.getStrafeLeftReduction();
-
-        MotorReductionBot originalRight = config.getStrafeRightReduction();
+//        MotorReductionBot originalLeft = config.getStrafeLeftReduction();
+//
+//        MotorReductionBot originalRight = config.getStrafeRightReduction();
 
         boolean changed = true;
+        config.setStrafeLeftReduction(mrLeft);
+        config.setStrafeRightReduction(mrRight);
 
 //        if (mrLeft.compare(originalLeft)){
 //            config.setStrafeLeftReduction(mrLeft);
