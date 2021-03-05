@@ -105,6 +105,10 @@ public class OdoBase extends LinearOpMode {
         }
 
         Log.d(TAG, String.format("Executing Step: %s", instruction.toString()));
+        if (locator != null){
+            Log.d(TAG, String.format("Location: %.2f, %.2f. Orientation: %.2f", locator.getXInches(), locator.getYInches(), locator.getOrientation()));
+        }
+
 
         try {
 
@@ -236,10 +240,10 @@ public class OdoBase extends LinearOpMode {
             sleep(locator.getThreadSleepTime());
             BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(desiredHead, instruction.getTopSpeed(), locator);
             if (Math.abs(profile.getAngleChange()) < 30){
-                profile.setTopSpeed(0.3);
+                profile.setTopSpeed(0.1);
             }
             else{
-                profile.setTopSpeed(0.5);
+                profile.setTopSpeed(0.2);
             }
             spin(profileSpin);
         }
@@ -254,6 +258,7 @@ public class OdoBase extends LinearOpMode {
     private void spin(BotMoveProfile profile){
         try {
             if (profile != null) {
+                Log.d(TAG, String.format("Spin. Angle change: %.2f", profile.getAngleChange()));
                 bot.spin(profile, locator);
             }
         }catch (Exception ex){

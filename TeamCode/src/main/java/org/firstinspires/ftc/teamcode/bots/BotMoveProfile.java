@@ -44,6 +44,7 @@ public class BotMoveProfile {
     private double initialSpeed = 0;
     private double speedIncrement = 0.05;
     private double minSpeed = 0.3;
+    private double minSpeedSpin = 0.1;
     private double speedDecrement = 0.05;
 
     private boolean continuous = false;
@@ -578,10 +579,10 @@ public class BotMoveProfile {
         profile.setTopSpeed(topSpeed);
         if(next != null && next == MoveStrategy.Straight){
             if (Math.abs(profile.getAngleChange()) < 30){
-                profile.setTopSpeed(0.3);
+                profile.setTopSpeed(0.1);
             }
             else{
-                profile.setTopSpeed(0.5);
+                profile.setTopSpeed(0.2);
             }
         }
         profile.setNextStep(next);
@@ -791,5 +792,13 @@ public class BotMoveProfile {
 
     public double getLowVelocity() {
         return getLowSpeed() * YellowBot.MAX_VELOCITY;
+    }
+
+    public double getMinSpeedSpin() {
+        return minSpeedSpin;
+    }
+
+    public void setMinSpeedSpin(double minSpeedSpin) {
+        this.minSpeedSpin = minSpeedSpin;
     }
 }

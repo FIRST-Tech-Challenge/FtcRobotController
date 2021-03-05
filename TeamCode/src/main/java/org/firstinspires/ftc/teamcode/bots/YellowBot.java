@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.bots;
 
 import android.graphics.Point;
+import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -71,6 +72,8 @@ public class YellowBot implements OdoBot {
     public static String RIGHT_BACK = "backRight";
 
     protected ArrayList<AutoDot> namedCoordinates = new ArrayList<>();
+
+    private static final String TAG = "YellowBot";
 
 
     public YellowBot() {
@@ -691,6 +694,7 @@ public class YellowBot implements OdoBot {
             double rightDesiredSpeed = speed;
 
             double startHead = locator.getOrientation();
+            Log.d(TAG, String.format("Bot Spin. Orientation: %.2f. Degrees Raw: %.2f", startHead, degrees));
 
 
             MotorReductionBot reduction;
@@ -705,10 +709,10 @@ public class YellowBot implements OdoBot {
             double desired = Math.abs(degrees);
             double slowdownMark = Math.abs(degrees) * reduction.getBreakPoint(profile.getTopSpeed());
             //adjust slow down by 100ms to account for processing time
-            double ticksAdjustment = MAX_VELOCITY_PER_PROC_DELAY*profile.getTopSpeed();
-            double ticksAdjustmentDegrees = ticksAdjustment/botConfig.getHorizontalTicksDegree();
-            slowdownMark = slowdownMark - ticksAdjustmentDegrees;
-            desired = desired - ticksAdjustmentDegrees;
+//            double ticksAdjustment = MAX_VELOCITY_PER_PROC_DELAY*profile.getTopSpeed();
+//            double ticksAdjustmentDegrees = ticksAdjustment/botConfig.getHorizontalTicksDegree();
+//            slowdownMark = slowdownMark - ticksAdjustmentDegrees;
+//            desired = desired - ticksAdjustmentDegrees;
 
 
             if (!profile.shouldStop()) {
@@ -726,7 +730,7 @@ public class YellowBot implements OdoBot {
 
             boolean stop = false;
             int step = 0;
-            double minSpeed = profile.getMinSpeed();
+            double minSpeed = profile.getMinSpeedSpin();
 
             double speedDropStep = profile.getSpeedDecrement();
             while (!stop && this.owner.opModeIsActive()) {
