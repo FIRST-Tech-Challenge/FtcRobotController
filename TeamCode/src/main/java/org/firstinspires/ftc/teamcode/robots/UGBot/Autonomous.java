@@ -87,12 +87,23 @@ public class Autonomous {
         return false;
     }).build();
 
+    private Constants.Position targetPose;
 
     public StateMachine AutoFull = getStateMachine(autoStage)
             .addState(() -> robot.launcher.toggleGripper())
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.launcher.setElbowTargetAngle(0))
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.calibrationRun(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.7432))
+
+            .addMineralState(ugStateProvider,
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1, true))
+
+            //drop wobble goal
+            .addState( () -> robot.launcher.WobbleRelease()) //stow the gripper
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
 //            .addMineralState(ugStateProvider,
 //                    () -> robot.turret.rotateCardinalTurret(true),
@@ -105,14 +116,17 @@ public class Autonomous {
 //                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 1.65608, true))
 
             //drop wobble goal
-
+/*
             .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 1.7227540, true,180))
 
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.launcher.setElbowTargetAngle(0))
+
+
 //
+ */
 //            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset + .5, true, 0))
 //            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
@@ -135,7 +149,7 @@ public class Autonomous {
 //
 //            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 2.02240, true,0))
+//            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 2.02240, true,0))
 
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();

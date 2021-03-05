@@ -79,6 +79,7 @@ public class PoseUG {
     private DcMotor elbow = null;
     private DcMotor headlight = null;
     private DcMotor intakeMotor = null;
+    private DcMotor tiltMotor = null;
     private DcMotorEx flywheelMotor = null;
     private DcMotor turretMotor = null;
     private Servo triggerServo = null;
@@ -309,6 +310,7 @@ public class PoseUG {
         this.gripperServo = this.hwMap.servo.get("gripperServo");
 
         this.intakeMotor = this.hwMap.dcMotor.get("intakeMotor");
+        this.tiltMotor = this.hwMap.dcMotor.get("tiltMotor");
 
         this.blinkin = this.hwMap.servo.get("blinkin");
         this.distForward = this.hwMap.get(DistanceSensor.class, "distForward");
@@ -349,7 +351,7 @@ public class PoseUG {
         launcher = new Launcher(elbow, flywheelMotor, triggerServo, gripperServo);
         turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
         turret = new Turret(turretMotor, turretIMU);
-        intake = new Intake(intakeMotor);
+        intake = new Intake(intakeMotor, tiltMotor);
         ledSystem = new LEDSystem(blinkin);
 
         moveMode = MoveMode.still;
@@ -414,7 +416,7 @@ public class PoseUG {
 
         // robot location
         Point robotCanvasPoint = CanvasUtils.toCanvasPoint(posePoint);
-        fieldOverlay.strokeCircle(robotCanvasPoint.getX(), robotCanvasPoint.getY(), Constants.ROBOT_RADIUS);
+        fieldOverlay.strokeCircle(robotCanvasPoint.getX(), robotCanvasPoint.getY(), Constants.ROBOT_RADIUS_INCHES);
 
         // turret center in field coords
         Point turretCenter = new Point(getPoseX() - Constants.TURRET_AXIS_OFFSET * Math.sin(poseHeadingRad), getPoseY() - Constants.TURRET_AXIS_OFFSET * Math.cos(poseHeadingRad));
@@ -455,10 +457,10 @@ public class PoseUG {
         }
 
         // robot heading (black)
-        CanvasUtils.drawVector(fieldOverlay, posePoint, 2 * Constants.ROBOT_RADIUS, poseHeading, "#000000");
+        CanvasUtils.drawVector(fieldOverlay, posePoint, 2 * Constants.ROBOT_RADIUS_INCHES, poseHeading, "#000000");
 
         // turret heading (red)
-        CanvasUtils.drawVector(fieldOverlay, turretCenter, 3 * Constants.ROBOT_RADIUS, turret.getHeading(), "#FF0000");
+        CanvasUtils.drawVector(fieldOverlay, turretCenter, 3 * Constants.ROBOT_RADIUS_INCHES, turret.getHeading(), "#FF0000");
 
         packet.put("detection", detection);
         packet.put("current flywheel velocity", launcher.getFlywheelTPS());
@@ -483,6 +485,7 @@ public class PoseUG {
         packet.put("intake power", intake.getIntakeSpeed());
         packet.put("laggy counter", laggyCounter);
         packet.put("numLoops", numLoops);
+        packet.put("IntakeTiltTics", intake.getTiltPositionActual());
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
@@ -900,6 +903,31 @@ public class PoseUG {
                 break;
             case 1:
                 if(rotateIMU(targetFinalHeading, 6)){
+                    fieldPosStateToo = 0;
+                    return true;
+                }
+        }
+        return false;
+    }
+
+    public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward){
+        switch (fieldPosStateToo){
+            case 0:
+                if(targetPose.launchElevation > -.01){ //set elevation
+                    launcher.setElbowTargetAngle(targetPose.launchElevation);
+                }
+                if(targetPose.launchHeading > -.01) {//set turret heading
+                    launcher.setElbowTargetAngle(targetPose.launchHeading);
+
+                }
+                if(driveToFieldPosition(targetPose.x, targetPose.y, forward)) {
+                    fieldPosStateToo++;
+                }
+                break;
+            case 1:
+
+                //rotate the chassis to final heading
+                if(rotateIMU(targetPose.baseHeading, 2)){
                     fieldPosStateToo = 0;
                     return true;
                 }

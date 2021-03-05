@@ -163,6 +163,9 @@ public class Launcher {
         }
     }
 
+    public boolean WobbleGrip(){gripperTargetPos = Constants.WOBBLE_GRIPPER_CLOSED;return true;}
+    public boolean WobbleRelease(){gripperTargetPos = Constants.WOBBLE_GRIPPER_STOWED;return true;}
+
     //flywheel methods
 
 
