@@ -211,9 +211,9 @@ public class UltimateMode extends LinearOpMode {
 
                 if (changedshooter) {
                     if (shooterslower) {
-                        robot.shooterpeg();
+                        robot.shootermed();
                     } else {
-                        robot.shooterB();
+                        robot.shooter();
                     }
                 } else {
                     robot.stopshooter();
