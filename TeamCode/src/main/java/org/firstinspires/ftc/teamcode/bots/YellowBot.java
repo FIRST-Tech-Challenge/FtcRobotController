@@ -709,10 +709,10 @@ public class YellowBot implements OdoBot {
             double desired = Math.abs(degrees);
             double slowdownMark = Math.abs(degrees) * reduction.getBreakPoint(profile.getTopSpeed());
             //adjust slow down by 100ms to account for processing time
-//            double ticksAdjustment = MAX_VELOCITY_PER_PROC_DELAY*profile.getTopSpeed();
-//            double ticksAdjustmentDegrees = ticksAdjustment/botConfig.getHorizontalTicksDegree();
-//            slowdownMark = slowdownMark - ticksAdjustmentDegrees;
-//            desired = desired - ticksAdjustmentDegrees;
+            double ticksAdjustment = MAX_VELOCITY_PER_PROC_DELAY*profile.getTopSpeed();
+            double ticksAdjustmentDegrees = ticksAdjustment/botConfig.getHorizontalTicksDegree();
+            slowdownMark = slowdownMark - ticksAdjustmentDegrees;
+            desired = desired - ticksAdjustmentDegrees;
 
 
             if (!profile.shouldStop()) {
