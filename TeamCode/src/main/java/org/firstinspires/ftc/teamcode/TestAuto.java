@@ -17,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 @Autonomous(name="Auto", group="Autonomous")
-@Disabled
+//@Disabled
 public class TestAuto extends LinearOpMode {
 
     //Declare motors/servos variables
@@ -29,9 +29,9 @@ public class TestAuto extends LinearOpMode {
     private DcMotor rightBack = null;
 
     //NEED TO FIND THESE NUMBERS. LEFT AT DEFAULT FOR NOW
-    static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_MOTOR_REV    = 537.6 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.6;
@@ -125,7 +125,7 @@ public class TestAuto extends LinearOpMode {
 //        }
 
         //Movement
-        encoderDrive(DRIVE_SPEED /*Or TURN_SPEED*/,  48,  48, 48, 48, 2);
+        encoderDrive(0.1,  48,  48, 48, 48, 10);
 
         sleep(1000);     // pause for servos to move
 

@@ -82,7 +82,7 @@ public class teleOp extends OpMode
         rightBack = new Motor(hardwareMap, "rightBack", Motor.GoBILDA.RPM_435);
 
 //        shooter = new Motor(hardwareMap, "shooter", 28, 6000);
-        backIntake = new Motor(hardwareMap, "intake", 5, 6);
+        backIntake = new Motor(hardwareMap, "backIntake", 5, 6);
 
         //leftLift = new CRServo(hardwareMap, "leftLift");
         //rightLift = new CRServo(hardwareMap, "rightLift");
