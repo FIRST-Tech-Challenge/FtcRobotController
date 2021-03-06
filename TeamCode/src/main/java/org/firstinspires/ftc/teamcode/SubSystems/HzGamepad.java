@@ -54,6 +54,7 @@ public class HzGamepad {
         gpHzLaunchController = gpHzLaunchControllerPassed;
         gpHzLauncher = gpHzLauncherPassed;
         gpHzArm = gpHzArmPassed;
+        gpHzLaunchController.batterCorrectionFlag = false;
     }
 
     /**

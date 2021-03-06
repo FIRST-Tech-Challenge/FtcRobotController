@@ -28,6 +28,11 @@ public class HzGameField {
     public static final Pose2d RED_INNER_START_LINE =  new Pose2d(-57,-26,Math.toRadians(-90)); //y=-26
     public static final Pose2d RED_OUTER_START_LINE =  new Pose2d(-57,-47,Math.toRadians(90));
 
+    public static final Pose2d BLUE_INNER_START_LINE_EDGE =  new Pose2d(-57,26,Math.toRadians(90));
+    public static final Pose2d BLUE_OUTER_START_LINE_EDGE =  new Pose2d(-57,44,Math.toRadians(-90));
+    public static final Pose2d RED_INNER_START_LINE_EDGE =  new Pose2d(-57,-26,Math.toRadians(-90)); //y=-26
+    public static final Pose2d RED_OUTER_START_LINE_EDGE =  new Pose2d(-57,-47,Math.toRadians(90));
+
     public static final Pose2d calibPoint = new Pose2d(0,0,Math.toRadians(0));
 
     public enum PLAYING_ALLIANCE{

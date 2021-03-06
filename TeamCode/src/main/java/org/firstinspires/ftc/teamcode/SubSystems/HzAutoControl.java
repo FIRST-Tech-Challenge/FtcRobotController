@@ -28,6 +28,7 @@ public class HzAutoControl {
 
     public Pose2d startPose = HzGameField.BLUE_INNER_START_LINE;
 
+    public boolean launchHighGoalOrPowerShot = false;
     public boolean dropFirstWobbleGoal = false;
     public boolean pickRingFromTargetMarker = false;
     public boolean launchRingsPickedFromTargetMarkerToHighGoal = false;
@@ -51,6 +52,8 @@ public class HzAutoControl {
         acHzLaunchController = gpHzLaunchControllerPassed;
         acHzLauncher = gpHzLauncherPassed;
         acHzArm = gpHzArmPassed;
+        acHzLaunchController.batterCorrectionFlag = true;
+
     }
 
     /**

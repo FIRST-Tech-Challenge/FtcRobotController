@@ -56,13 +56,13 @@ public class HzLaunchController {
 
     public double distanceFromTarget, lclaunchMotorPower, angleToTarget;
     public double lclaunchMotorVelocity;
+    public boolean batterCorrectionFlag = false;
 
     public HzLauncher lcHzLauncher;
     public HzIntake lcHzIntake;
     public HzMagazine lcHzMagazine;
     public HzDrive lcHzDrive;
     public HardwareMap lcHzHardwareMap;
-
 
     public HzLaunchController(HardwareMap lcHzhardwareMapPassed, HzLauncher lcHzLauncherPassed, HzIntake lcHzIntakePassed, HzMagazine lcHzMagazinePassed,
                               HzDrive lcHzDrivePassed){
@@ -76,9 +76,20 @@ public class HzLaunchController {
     /**
      * In case of battery dependency, this is used to set launcher velocity based on battery state
      */
-    public void setLauncherFlyWheelNominalVelocityBasedOnBattery(){
+    public double batteryCorrectFlyWheelVelocity(double flywheelVelcityToCorrect){
         double batteryVoltage = lcHzDrive.getBatteryVoltage(lcHzHardwareMap);
-        if (batteryVoltage > 13.0){
+        double batteryCorrectedFlyWheelVelocity = 1500;
+        if (batterCorrectionFlag) {
+            batteryCorrectedFlyWheelVelocity = flywheelVelcityToCorrect
+                    - (batteryVoltage - 12.5) * 2 * lcHzLauncher.FLYWHEEL_BATTERY_CORRECTION;
+        } else {
+            batteryCorrectedFlyWheelVelocity = flywheelVelcityToCorrect;
+        }
+        return batteryCorrectedFlyWheelVelocity;
+        /*if (batteryVoltage > 13.0){
+            lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1500;
+            lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1440;
+        } else if (batteryVoltage > 13.0){
             lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1500;
             lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1440;
         } else if (batteryVoltage > 12.5) {
@@ -87,7 +98,7 @@ public class HzLaunchController {
         } else if (batteryVoltage > 12.0) {
             lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_HIGH_GOAL = 1580;
             lcHzLauncher.FLYWHEEL_NOMINAL_VELOCITY_POWERSHOT = 1500;
-        }
+        }*/
     }
 
     public boolean activateLaunchReadinessState;
@@ -128,7 +139,7 @@ public class HzLaunchController {
 
         if (launchMode == LAUNCH_MODE.MANUAL && launchReadiness == LAUNCH_READINESS.READY) {
             if (lcTarget == LAUNCH_TARGET.HIGH_GOAL){
-                lclaunchMotorVelocity = lcHzLauncher.flyWheelVelocityHighGoal;
+                lclaunchMotorVelocity = batteryCorrectFlyWheelVelocity(lcHzLauncher.flyWheelVelocityHighGoal);
                 lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
             }
             if (lcTarget == LAUNCH_TARGET.POWER_SHOT1 ||
