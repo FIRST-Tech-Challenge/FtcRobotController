@@ -86,13 +86,13 @@ public class JmacAuto extends LinearOpMode {
                     mDrive.claw.setPosition(1);
                     sleep(200);
                     mDrive.Arm.setPower(0);
-                    linearMovement(14, 2, 0.0008,0.00008, 0.0000365);
+                    linearMovement(11, 2, 0.0008,0.00008, 0.0000365);
                     mDrive.claw.setPosition(0);
                     sleep(500);
                     mDrive.Arm.setPower(0.5);
                     sleep(400);
                     mDrive.Arm.setPower(0);
-                    linearMovement(-15, 2,0.0008,0.00008, 0.0000385);
+                    linearMovement(-12, 2,0.0008,0.00008, 0.0000385);
                     turnDegree(-90, 3.5, 0.0118,0.005, 0.0015);
                     linearMovement(40, 3.5, 0.000485, 0.000065, 0.0000365);
                     mDrive.Arm.setPower(-0.5);
@@ -106,7 +106,7 @@ public class JmacAuto extends LinearOpMode {
 
 
                 case 1:
-                    linearMovement(80,3.5, 0.000425, 0.000036, 0.000045);
+                    linearMovement(75,3.5, 0.000425, 0.000036, 0.000045);
                     //turnDegree(26,5, 0.0118,0.005, 0.002);
                     mDrive.Arm.setPower(-0.5);
                     sleep(350);
@@ -120,7 +120,7 @@ public class JmacAuto extends LinearOpMode {
                     sleep(200);
                     mDrive.Arm.setPower(0);
 
-                    linearMovement(-21, 3, 0.00049, 0.000085, 0.0000365);
+                    linearMovement(-16, 3, 0.00049, 0.000085, 0.0000365);
                     monkeShoot();
 
                     linearMovement(-42.5, 4, 0.000485, 0.00008, 0.0000365);
@@ -130,7 +130,7 @@ public class JmacAuto extends LinearOpMode {
                     mDrive.claw.setPosition(1);
                     sleep(200);
                     mDrive.Arm.setPower(0);
-                    linearMovement(14, 2, 0.0008,0.00008, 0.0000365);
+                    linearMovement(11, 2, 0.0008,0.00008, 0.0000365);
                     mDrive.claw.setPosition(0);
                     sleep(500);
                     mDrive.Arm.setPower(0.5);
@@ -144,13 +144,14 @@ public class JmacAuto extends LinearOpMode {
                     turnDegree(-25, 2, 0.015,0.006, 0.0015);
                     mDrive.claw.setPosition(1);
                     sleep(200);
+                    turn1();
                     //turnDegree(15, 2, 0.012,0.0055, 0.0015);
                     back1();
                     break;
 
                 case 4:
 
-                    linearMovement(98, 3.5, 0.00042,0.00003, 0.0000475);
+                    linearMovement(103, 3.5, 0.00042,0.00003, 0.0000475);
                     turnDegree(-60, 2.5, 0.0118,0.005, 0.0015);
                     mDrive.Arm.setPower(-0.5);
                     sleep(350);
@@ -164,7 +165,7 @@ public class JmacAuto extends LinearOpMode {
                     sleep(200);
                     mDrive.Arm.setPower(0);
                     turnDegree(60, 3, 0.0118,0.005, 0.0015);
-                    linearMovement(-41, 3, 0.000485, 0.00008, 0.0000375);
+                    linearMovement(-46, 3, 0.000485, 0.00008, 0.0000375);
                     monkeShoot();
                     linearMovement(-40, 3.5, 0.000485, 0.00008, 0.0000375);
                     turnDegree(90, 3.5, 0.0118,0.005, 0.0015);
@@ -457,7 +458,7 @@ public class JmacAuto extends LinearOpMode {
         mDrive.BL.setPower(-0.5);
         mDrive.FR.setPower(-0.5);
         mDrive.BR.setPower(-0.5);
-        sleep(200);
+        sleep(100);
         mDrive.FL.setPower(0);
         mDrive.BL.setPower(0);
         mDrive.FR.setPower(0);
@@ -467,10 +468,10 @@ public class JmacAuto extends LinearOpMode {
 
     public void turn1()
     {
-        mDrive.FL.setPower(0.3);
-        mDrive.BL.setPower(0.3);
-        mDrive.FR.setPower(-0.3);
-        mDrive.BR.setPower(-0.3);
+        mDrive.FL.setPower(0.5);
+        mDrive.BL.setPower(0.5);
+        mDrive.FR.setPower(-0.5);
+        mDrive.BR.setPower(-0.5);
         sleep(110);
         mDrive.FL.setPower(0);
         mDrive.BL.setPower(0);
