@@ -35,12 +35,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.bots.DummyBot;
 import org.firstinspires.ftc.teamcode.bots.SwingPosition;
 import org.firstinspires.ftc.teamcode.bots.UltimateBot;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.BotThreadAction;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
+
+import java.util.concurrent.TimeUnit;
 
 // Main Op Mode
 @TeleOp(name = "Ultimate", group = "Robot15173")
@@ -62,6 +65,8 @@ public class UltimateMode extends LinearOpMode {
     private BotThreadAction bta = null;
     Thread btaThread = null;
     RobotCoordinatePosition locator = null;
+    Deadline gamepadRateLimit;
+    private final static int GAMEPAD_LOCKOUT = 500;
 
     @Override
     public void runOpMode() {
@@ -73,6 +78,7 @@ public class UltimateMode extends LinearOpMode {
                 telemetry.addData("Init", ex.getMessage());
             }
             telemetry.update();
+            gamepadRateLimit = new Deadline(GAMEPAD_LOCKOUT, TimeUnit.MILLISECONDS);
 
             locator = new RobotCoordinatePosition(robot, RobotCoordinatePosition.THREAD_INTERVAL);
             locator.reverseHorEncoder();
@@ -219,6 +225,8 @@ public class UltimateMode extends LinearOpMode {
                     robot.shootServo();
                 }
 
+                runShootPegSequence();
+
                 telemetry.addData("X ", locator.getXInches() );
                 telemetry.addData("Y ", locator.getYInches() );
                 telemetry.addData("Orientation (Degrees)", locator.getOrientation());
@@ -236,6 +244,16 @@ public class UltimateMode extends LinearOpMode {
             if (locator != null){
                 locator.stop();
             }
+        }
+    }
+
+    private void runShootPegSequence(){
+        if (!gamepadRateLimit.hasExpired()) {
+            return;
+        }
+        if (gamepad2.x){
+            robot.shootPegSequence(locator);
+            gamepadRateLimit.reset();
         }
     }
 }

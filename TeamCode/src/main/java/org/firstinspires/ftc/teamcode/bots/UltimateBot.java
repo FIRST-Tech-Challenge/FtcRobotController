@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.bots;
 
 import android.graphics.Point;
+import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -158,6 +159,13 @@ public class UltimateBot extends YellowBot {
     public void shooterpeg() {
         if (shooter != null) {
             shooter.setVelocity(MAX_VELOCITY*0.77);
+        }
+    }
+
+    @BotAction(displayName = "Move Peg Shooter Low", defaultReturn = "")
+    public void shooterpeglow() {
+        if (shooter != null) {
+            shooter.setVelocity(MAX_VELOCITY*0.6);
         }
     }
 
@@ -383,6 +391,84 @@ public class UltimateBot extends YellowBot {
             }
         }
         return target;
+    }
+
+    public void shootPegSequence(RobotCoordinatePosition locator){
+
+        //start shooter
+        shooterpeglow();
+
+        //wait for the locator to stabilize
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while(timer.milliseconds() < 500 && this.owner.opModeIsActive()){
+        }
+
+        //get the orientation as the locator knows it. we'll use it later for corrections
+        double originalOrientation = locator.getAdjustedCurrentHeading();
+        Log.d("UltimateBot", String.format("original orientation: %.2f", originalOrientation));
+        double strafeSpeed = 0.5;
+        double spinSpeed = 0.1;
+        double strafeToFirst = 10;
+        double strafeBetweenPegs = 2.2;
+        //FirstPeg
+        //strafe to align the robot with the first peg
+        strafeTo(strafeSpeed, strafeToFirst, true);
+        //let locator settle
+        timer.reset();
+        while(timer.milliseconds() < 200 && this.owner.opModeIsActive()){
+        }
+        double newOrientation = locator.getAdjustedCurrentHeading();
+        int marginError = 6;
+        Log.d("UltimateBot", String.format("newOrientation 1: %.2f", newOrientation));
+        //spin to the desired orientation
+//        double diff = newOrientation - originalOrientation;
+//        if (Math.abs(diff ) > marginError) {
+//            double updated = originalOrientation + diff/2;
+//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+//            spin(profileSpin, locator);
+//        }
+        //shoot
+        shootServo();
+
+        //Second Peg
+        //strafe to the next peg
+        strafeTo(strafeSpeed, strafeBetweenPegs, true);
+//        //let locator settle
+        timer.reset();
+        while(timer.milliseconds() < 200 && this.owner.opModeIsActive()){
+        }
+        newOrientation = locator.getAdjustedCurrentHeading();
+        Log.d("UltimateBot", String.format("newOrientation 2: %.2f", newOrientation));
+        //spin to the desired orientation
+//        diff = newOrientation - originalOrientation;
+//        if (Math.abs(diff ) > marginError) {
+//            double updated = originalOrientation + diff/2;
+//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+//            spin(profileSpin, locator);
+//        }
+        //shoot
+        shootServo();
+
+        //Third Peg
+        //strafe to the next peg
+        strafeTo(strafeSpeed, strafeBetweenPegs, true);
+        //let locator settle
+        timer.reset();
+        while(timer.milliseconds() < 200 && this.owner.opModeIsActive()){
+        }
+        newOrientation = locator.getAdjustedCurrentHeading();
+        Log.d("UltimateBot", String.format("newOrientation 2: %.2f", newOrientation));
+        //spin to the desired orientation
+//        double diff = newOrientation - originalOrientation;
+//        if (Math.abs(diff ) > marginError) {
+//            double updated = newOrientation - 2;
+//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+//            spin(profileSpin, locator);
+//        }
+        //shoot
+        shootServo();
+
     }
 
 }
