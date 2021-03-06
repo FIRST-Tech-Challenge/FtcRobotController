@@ -76,7 +76,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     public double shooting_angle = 0;
     public double shooterAngleOffset = 2.5;
     final public double WARM_UP_RPM = 1320;
-    final public double WARM_UP_RPM_AUTO = 1320;
+    static final public double WARM_UP_RPM_AUTO = 1320;
     final public double SEMI_AUTO_RPM = 1400;
     final public double SEMI_POWER_SHOT_RPM = 1220;
     public double shooting_rpm = WARM_UP_RPM;
@@ -88,12 +88,13 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     private boolean useChassis = true;
     public boolean useVuforia = false;
     public boolean useTfod = false;
-    public boolean useGrabber = true;
+    public boolean useGrabber = false;
     public boolean useHopper = false;
     public boolean useShooter = false;
     public boolean useIntake = false;
     public boolean isTeleOpAfterAuto = false;
     private boolean useIMUforOdometryAngleCorrection = false; // use IMU for radian correction
+
 
 
     public void set_simulation_mode(boolean value) {
@@ -1259,7 +1260,82 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
 
         //sleep(1000);
     }
+    public void deliverFirstWobbleGoalBeta() throws InterruptedException {
+        // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
+        // still need to change positions to be far left for blue side
+        if (side == ProgramType.AUTO_BLUE) {
+            if (tZone == TargetZone.ZONE_A) {//0
+                chassis.driveTo(auto_chassis_power, 65, 175, 45, false, 3);
+                chassis.rawRotateTo(0.35,45,false,2);
+            } else if (tZone == TargetZone.ZONE_B) {//1
+                chassis.driveTo(auto_chassis_power, 100, 245, 0,true, 5);
+                chassis.rawRotateTo(0.35,45,false,2);
+            } else if (tZone == TargetZone.ZONE_C) {//4
+                chassis.driveTo(1.0, 40, 300, 0, false, 5); // no rotation to make it faster
+                chassis.rawRotateTo(0.35,45,false,2);
+            } else {
+                return;
+            }
 
+        }
+        if (grabber != null) {
+            if(tZone != TargetZone.ZONE_C) // Zone A and B
+            {
+                grabber.releaseWobbleGoalCombo();
+                while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
+                    TaskManager.processTasks();
+                }
+            }
+            else
+            {
+                grabber.releaseWobbleGoalFastCombo();
+                while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
+                    TaskManager.processTasks();
+                }
+                //comboGrabber.initWobbleGoalCombo();
+            }
+            grabber.initWobbleGoalCombo();
+            TaskManager.processTasks();
+        }
+    }
+    public void deliverSecondWobbleGoalBeta() throws InterruptedException {
+        // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
+        // still need to change positions to be far left for blue side
+        if (side == ProgramType.AUTO_BLUE) {
+            if (tZone == TargetZone.ZONE_A) {//0
+                chassis.driveTo(auto_chassis_power, 65, 175, 45, false, 3);
+                chassis.rawRotateTo(0.35,45,false,2);
+            } else if (tZone == TargetZone.ZONE_B) {//1
+                chassis.driveTo(auto_chassis_power, 100, 245, 0,true, 5);
+                chassis.rawRotateTo(0.35,45,false,2);
+            } else if (tZone == TargetZone.ZONE_C) {//4
+                chassis.driveTo(1.0, 40, 300, 0, false, 5); // no rotation to make it faster
+                chassis.rawRotateTo(0.35,45,false,2);
+            } else {
+                return;
+            }
+
+        }
+        if (grabber != null) {
+            if(tZone != TargetZone.ZONE_C) // Zone A and B
+            {
+                grabber.releaseWobbleGoalCombo();
+                while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
+                    TaskManager.processTasks();
+                }
+            }
+            else
+            {
+                grabber.releaseWobbleGoalFastCombo();
+                while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
+                    TaskManager.processTasks();
+                }
+                //comboGrabber.initWobbleGoalCombo();
+            }
+            grabber.initWobbleGoalCombo();
+            TaskManager.processTasks();
+        }
+    }
     public void autoShoot() throws InterruptedException {
         if (shooter == null || hopper == null) return;
         double iniTime = System.currentTimeMillis();
@@ -1411,6 +1487,28 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             shooter.shootOutByRpm(0);
     }
 
+    public void getBonusRingsBeta() throws InterruptedException{
+        if (side == ProgramType.AUTO_BLUE) {
+            if (tZone == TargetZone.ZONE_A) {//0
+                return;
+            } else if (tZone == TargetZone.ZONE_B) {//1
+                shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
+                intake.intakeIn();
+                chassis.driveTo(auto_chassis_power, side(80), 120, 0, false, 5);
+                sleep(500); //to allow time for intaking the bonus ring
+                intake.stop();
+            } else if (tZone == TargetZone.ZONE_C) {//4
+                shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
+                //chassis.driveTo(.8, side(30), 60, 0, false, 5);
+                chassis.driveTo(1.0, side(90), 120, 0, false, 2);
+                autoIntakeRings(3, true);//not sure?????
+                chassis.driveTo(1.0, side(90), 165, 0, false, 1);
+                intake.intakeIn();
+                intake.stop();
+            } else {
+                return;
+            }}
+    }
     public void doHighGoalsSemi(boolean angleCollection) throws InterruptedException {
         shooter.shootOutByRpm(SEMI_AUTO_RPM);
         shooting_rpm = SEMI_AUTO_RPM;
@@ -1536,6 +1634,9 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         }
 
         // sleep(1000);
+    }
+    public void getSecondWobbleGoalBeta() throws InterruptedException {
+        chassis.driveTo(auto_chassis_power, side(102), 65, -20, false, 3);
     }
     public void getSecondWobbleGoalAfterHighGoal() throws InterruptedException {
         if (hopper != null) {
