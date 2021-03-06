@@ -56,7 +56,7 @@ public class HzLaunchController {
 
     public double distanceFromTarget, lclaunchMotorPower, angleToTarget;
     public double lclaunchMotorVelocity;
-    public boolean batterCorrectionFlag = false;
+    public boolean batteryCorrectionFlag = false;
 
     public HzLauncher lcHzLauncher;
     public HzIntake lcHzIntake;
@@ -79,9 +79,9 @@ public class HzLaunchController {
     public double batteryCorrectFlyWheelVelocity(double flywheelVelcityToCorrect){
         double batteryVoltage = lcHzDrive.getBatteryVoltage(lcHzHardwareMap);
         double batteryCorrectedFlyWheelVelocity = 1500;
-        if (batterCorrectionFlag) {
+        if ((batteryCorrectionFlag) && (batteryVoltage >13.0)) {
             batteryCorrectedFlyWheelVelocity = flywheelVelcityToCorrect
-                    - (batteryVoltage - 12.5) * 2 * lcHzLauncher.FLYWHEEL_BATTERY_CORRECTION;
+                    - (batteryVoltage - 13.0) * lcHzLauncher.FLYWHEEL_BATTERY_CORRECTION;
         } else {
             batteryCorrectedFlyWheelVelocity = flywheelVelcityToCorrect;
         }
@@ -139,12 +139,14 @@ public class HzLaunchController {
 
         if (launchMode == LAUNCH_MODE.MANUAL && launchReadiness == LAUNCH_READINESS.READY) {
             if (lcTarget == LAUNCH_TARGET.HIGH_GOAL){
-                lclaunchMotorVelocity = batteryCorrectFlyWheelVelocity(lcHzLauncher.flyWheelVelocityHighGoal);
+                //lclaunchMotorVelocity = batteryCorrectFlyWheelVelocity(lcHzLauncher.flyWheelVelocityHighGoal);
+                lclaunchMotorVelocity = lcHzLauncher.flyWheelVelocityHighGoal;
                 lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
             }
             if (lcTarget == LAUNCH_TARGET.POWER_SHOT1 ||
                     lcTarget ==LAUNCH_TARGET.POWER_SHOT2 ||
                     lcTarget == LAUNCH_TARGET.POWER_SHOT3) {
+                //lclaunchMotorVelocity = batteryCorrectFlyWheelVelocity(lcHzLauncher.flyWheelVelocityPowerShot);
                 lclaunchMotorVelocity = lcHzLauncher.flyWheelVelocityPowerShot;
                 lcHzLauncher.runFlyWheelToTarget(lclaunchMotorVelocity);
             }

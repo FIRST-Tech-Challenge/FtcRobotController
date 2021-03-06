@@ -52,7 +52,7 @@ public class HzAutoControl {
         acHzLaunchController = gpHzLaunchControllerPassed;
         acHzLauncher = gpHzLauncherPassed;
         acHzArm = gpHzArmPassed;
-        acHzLaunchController.batterCorrectionFlag = true;
+        acHzLaunchController.batteryCorrectionFlag = true;
 
     }
 
