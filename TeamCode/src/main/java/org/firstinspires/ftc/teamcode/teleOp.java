@@ -65,7 +65,7 @@ public class teleOp extends OpMode
     Motor leftBack;
     Motor rightBack;
 
-    Motor shooter;
+//    Motor shooter;
     Motor backIntake;
 
     //Set Servo objects
@@ -81,7 +81,7 @@ public class teleOp extends OpMode
         leftBack = new Motor(hardwareMap, "leftBack", Motor.GoBILDA.RPM_435);
         rightBack = new Motor(hardwareMap, "rightBack", Motor.GoBILDA.RPM_435);
 
-        shooter = new Motor(hardwareMap, "shooter", 28, 6000);
+//        shooter = new Motor(hardwareMap, "shooter", 28, 6000);
         backIntake = new Motor(hardwareMap, "intake", 5, 6);
 
         //leftLift = new CRServo(hardwareMap, "leftLift");
@@ -93,7 +93,7 @@ public class teleOp extends OpMode
         leftBack.setRunMode(Motor.RunMode.RawPower);
         rightBack.setRunMode(Motor.RunMode.RawPower);
 
-        shooter.setRunMode(Motor.RunMode.RawPower);
+//        shooter.setRunMode(Motor.RunMode.RawPower);
         backIntake.setRunMode(Motor.RunMode.RawPower);
 
         //Set Directions
@@ -101,8 +101,8 @@ public class teleOp extends OpMode
         rightFront.setInverted(false);
         leftBack.setInverted(true);
         rightBack.setInverted(false);
-
-        shooter.setInverted(false);
+//
+//        shooter.setInverted(false);
         backIntake.setInverted(false);
 
         //Initialized
@@ -185,8 +185,8 @@ public class teleOp extends OpMode
         //GAMEPAD 2//
         /////////////
 
-        //Shooter
-        shooter.set(gamepad2.left_stick_y);
+//        //Shooter
+//        shooter.set(gamepad2.left_stick_y);
 
         // Send power to wheel motors
         leftFront.set(leftFrontPower);
