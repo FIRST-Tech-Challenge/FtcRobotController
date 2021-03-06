@@ -63,8 +63,8 @@ public class Constants {
     public static double goalY = 3.6576;
     public static double GOAL_RADIUS = 8;
     public static double POWER_SHOT_RADIUS = 1;
-    public static double startingXOffset = 1.2192;
-    public static double startingYOffset = .24765;
+    public static double startingXOffset = 49/INCHES_PER_METER;
+    public static double startingYOffset = ROBOT_RADIUS_INCHES/INCHES_PER_METER;
     public static double HEIGHT_MULTIPLIER = 1.2;
     public static double RPS_MULTIPLIER = 1.1;
 
@@ -99,23 +99,24 @@ public class Constants {
     public enum Position {
         //headings and elevations that are negative means don't apply them to ending position - let other behaviors control
         START(48/INCHES_PER_METER, ROBOT_RADIUS_INCHES/INCHES_PER_METER,0,0,0),
-        WOBBLE_ONE_GRAB(48/INCHES_PER_METER, (ROBOT_RADIUS_INCHES+3)/INCHES_PER_METER,0,340,0),
+        //WOBBLE_ONE_GRAB(48/INCHES_PER_METER, (ROBOT_RADIUS_INCHES+3)/INCHES_PER_METER,0,340,0),
+        WOBBLE_ONE_GRAB(48/INCHES_PER_METER, 24/INCHES_PER_METER,0,340,45),
         CALIBRATION_RESET(48/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,170,-1),
         //turret needs to rotate counter clockwise to deposit wobble goals A and C - use intermediate turret heading of 170
-        TARGET_C_1(48/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,60+45,0),
-        TARGET_C_2((48+7)/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, 0,45+45,0),
-        TARGET_B_1((48-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,0),
-        TARGET_B_2((48+7)/INCHES_PER_METER, 8*12/INCHES_PER_METER, 0,0,0),
-        TARGET_A_1((48+7)/INCHES_PER_METER, 7.75*12/INCHES_PER_METER, 0,45+45,0),
-        TARGET_A_2((48-7)/INCHES_PER_METER, 7*12/INCHES_PER_METER, 0,45+45,0),
+        TARGET_C_1(48/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,60+45,5),
+        TARGET_C_2((48+7)/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, 0,45+45,5),
+        TARGET_B_1((48-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5),
+        TARGET_B_2((48+7)/INCHES_PER_METER, 8*12/INCHES_PER_METER, 0,0,5),
+        TARGET_A_1((48+7)/INCHES_PER_METER, 7.75*12/INCHES_PER_METER, 0,45+45,5),
+        TARGET_A_2((48-7)/INCHES_PER_METER, 7*12/INCHES_PER_METER, 0,45+45,5),
         RING_STACK(36/INCHES_PER_METER, 48/INCHES_PER_METER,-1,-1, -1),
         RING_STACK_APPROACH(36/INCHES_PER_METER, (48+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0),
         //sweep needs to be very slow
         RING_STACK_SWEEPTO(36/INCHES_PER_METER, (48-10+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0),
         WOBBLE_TWO(24/INCHES_PER_METER, 23/INCHES_PER_METER,-1,-1, -1),
         WOBBLE_TWO_APPROACH(35/INCHES_PER_METER, (23+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 0, 0,0),
-        WOBBLE_TWO_GRAB (35/INCHES_PER_METER, (23-6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 0, 0,0),
-        NAVIGATE(3*12/INCHES_PER_METER, 7*12/INCHES_PER_METER,-1,-1, -1),
+        WOBBLE_TWO_GRAB (35/INCHES_PER_METER, (23)/INCHES_PER_METER, 0, 0,0),
+        NAVIGATE(48/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1),
         LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,270,-1, -1);
 
         public double x, y, baseHeading, launchHeading, launchElevation;

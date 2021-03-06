@@ -79,7 +79,7 @@ public class PoseUG {
     private DcMotor elbow = null;
     private DcMotor headlight = null;
     private DcMotor intakeMotor = null;
-    private DcMotor tiltMotor = null;
+    private Servo tiltServo = null;
     private DcMotorEx flywheelMotor = null;
     private DcMotor turretMotor = null;
     private Servo triggerServo = null;
@@ -310,7 +310,7 @@ public class PoseUG {
         this.gripperServo = this.hwMap.servo.get("gripperServo");
 
         this.intakeMotor = this.hwMap.dcMotor.get("intakeMotor");
-        this.tiltMotor = this.hwMap.dcMotor.get("tiltMotor");
+        this.tiltServo = this.hwMap.servo.get("tiltServo");
 
         this.blinkin = this.hwMap.servo.get("blinkin");
         this.distForward = this.hwMap.get(DistanceSensor.class, "distForward");
@@ -351,7 +351,7 @@ public class PoseUG {
         launcher = new Launcher(elbow, flywheelMotor, triggerServo, gripperServo);
         turretIMU = hwMap.get(BNO055IMU.class, "turretIMU");
         turret = new Turret(turretMotor, turretIMU);
-        intake = new Intake(intakeMotor, tiltMotor);
+        intake = new Intake(intakeMotor, tiltServo);
         ledSystem = new LEDSystem(blinkin);
 
         moveMode = MoveMode.still;
@@ -485,7 +485,6 @@ public class PoseUG {
         packet.put("intake power", intake.getIntakeSpeed());
         packet.put("laggy counter", laggyCounter);
         packet.put("numLoops", numLoops);
-        packet.put("IntakeTiltTics", intake.getTiltPositionActual());
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
@@ -910,27 +909,25 @@ public class PoseUG {
         return false;
     }
 
+    int getFieldPosStateThree = 0;
     public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward){
-        switch (fieldPosStateToo){
+        switch (getFieldPosStateThree){
             case 0:
-                if(targetPose.launchElevation > -.01){ //set elevation
-                    launcher.setElbowTargetAngle(targetPose.launchElevation);
-                }
-                if(targetPose.launchHeading > -.01) {//set turret heading
-                    launcher.setElbowTargetAngle(targetPose.launchHeading);
-
-                }
-                if(driveToFieldPosition(targetPose.x, targetPose.y, forward)) {
-                    fieldPosStateToo++;
+                if(driveToFieldPosition(targetPose.x, targetPose.y,true, targetPose.baseHeading)) {
+                    getFieldPosStateThree++;
+                    return true;
                 }
                 break;
             case 1:
-
-                //rotate the chassis to final heading
-                if(rotateIMU(targetPose.baseHeading, 2)){
-                    fieldPosStateToo = 0;
-                    return true;
+                if(targetPose.launchElevation > -.01) { //set elevation{
+                    launcher.setElbowTargetAngle(targetPose.launchElevation);
                 }
+                if(driveToFieldPosition(targetPose.x, targetPose.y, forward)) {
+                    turret.setTurntableAngle(targetPose.launchHeading);
+                }
+                getFieldPosStateThree = 0;
+                break;
+
         }
         return false;
     }
@@ -1935,5 +1932,9 @@ public class PoseUG {
 
     public boolean returnTrue(){
         return true;
+    }
+
+    public boolean fortnight(){
+        return false; //why are you here
     }
 }

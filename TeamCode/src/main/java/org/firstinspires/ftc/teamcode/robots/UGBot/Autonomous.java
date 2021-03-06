@@ -28,7 +28,7 @@ public class Autonomous {
 
     // vision-related configuration
     public VisionProvider vp;
-    public int visionProviderState = 2;
+    public int visionProviderState = 0;
     public boolean visionProviderFinalized;
     public boolean enableTelemetry = true;
     public static final Class<? extends VisionProvider>[] visionProviders = VisionProviders.visionProviders;
@@ -90,74 +90,55 @@ public class Autonomous {
     private Constants.Position targetPose;
 
     public StateMachine AutoFull = getStateMachine(autoStage)
-            .addState(() -> robot.launcher.toggleGripper())
-            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.launcher.setElbowTargetAngle(0))
-            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.calibrationRun(.5,-0.4572*50, -robot.getDistRightDist()*50,true, 2.7432))
-
-            .addMineralState(ugStateProvider,
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true),
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true),
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1, true))
-
-            //drop wobble goal
-            .addState( () -> robot.launcher.WobbleRelease()) //stow the gripper
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-
-//            .addMineralState(ugStateProvider,
-//                    () -> robot.turret.rotateCardinalTurret(true),
-//                    () -> robot.turret.rotateCardinalTurret(false),
-//                    () -> robot.turret.rotateCardinalTurret(true))
+//            .addState(() -> robot.intake.setTiltTargetPosition(1240)) //1240
+//            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.NAVIGATE,true))
+//            .addState(() -> robot.launcher.setElbowTargetAngle(0))
+//            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//            .addState( () -> robot.launcher.WobbleGrip())
+//            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//            .addState(() -> robot.calibrationRun(.5,0.4572*50, robot.getDistRightDist()*50,true, 2.7432))
+//
 //
 //            .addMineralState(ugStateProvider,
-//                    () -> true,
-//                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.19456, true),
-//                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 1.65608, true))
-
-            //drop wobble goal
-/*
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 1.7227540, true,180))
-
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.launcher.setElbowTargetAngle(0))
-
-
-//
- */
-//            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset + .5, true, 0))
-//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-
-//            .addState(() -> robot.turret.rotateCardinalTurret(false))
-//
-//
-//            //back up and grab second wobble goal
+//                    ()-> robot.turret.rotateCardinalTurret(false),
+//                    ()-> robot.returnTrue(),
+//                    ()-> robot.turret.rotateCardinalTurret(false))
 //
 //            .addMineralState(ugStateProvider,
-//                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.7432, true,0),
-//                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 2.19456, true,0),
-//                    () -> robot.driveToFieldPosition(Constants.startingXOffset, 1.65608, true,0))
-//
-//            .addMineralState(ugStateProvider,
-//                    () -> robot.turret.rotateCardinalTurret(true),
-//                    () -> robot.turret.rotateCardinalTurret(false),
-//                    () -> robot.turret.rotateCardinalTurret(true))
+//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true),
+//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true),
+//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1, true))
 //
 //            //drop wobble goal
-//
+//            .addState( () -> robot.launcher.WobbleRelease()) //stow the gripper
 //            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-
-//            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, 2.02240, true,0))
-
+//            .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,true))
+//            .addState(()-> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
+//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, true))
+//            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB, true))
+//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//            .addState( () -> robot.launcher.WobbleGrip())
+//
+//            .addMineralState(ugStateProvider,
+//                    ()-> robot.turret.rotateCardinalTurret(false),
+//                    ()-> robot.returnTrue(),
+//                    ()-> robot.turret.rotateCardinalTurret(false))
+//
+//            .addMineralState(ugStateProvider,
+//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true),
+//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true),
+//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1, true))
+//            .addState( () -> robot.launcher.WobbleRelease()) //stow the gripper
+//
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
-            .addState(() -> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .build();
+            .addState(() -> robot.launcher.setElbowTargetAngle(0))
+        .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+        .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // //

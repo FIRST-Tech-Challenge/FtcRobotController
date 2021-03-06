@@ -2,22 +2,26 @@ package org.firstinspires.ftc.teamcode.robots.UGBot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.util.Conversions;
 
 public class Intake {
 
     public DcMotor intakeMotor = null;
-    public DcMotor tiltMotor = null;
+    public Servo tiltServo = null;
     private double speed;
     private boolean active = true;
-    private int tiltPosition = 0;
+    private int tiltTargetPosition = 1300;
 
 
-    public Intake(DcMotor intakeMotor, DcMotor tiltMotor) {
+
+    public Intake(DcMotor intakeMotor, Servo tiltServo) {
         this.intakeMotor = intakeMotor;
         this.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.tiltMotor = tiltMotor;
-        this.tiltMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.tiltServo = tiltServo;
         speed = 0;
     }
 
@@ -29,6 +33,8 @@ public class Intake {
         else{
             intakeMotor.setPower(0);
         }
+
+        tiltServo.setPosition(Conversions.servoNormalize(tiltTargetPosition));
     }
 
     //region getters and setters
@@ -37,11 +43,9 @@ public class Intake {
         this.speed = speed;
     }
 
-    public void setTiltPosition(int positionTics){this.tiltPosition = positionTics;}
+    public boolean setTiltTargetPosition(int tiltTargetPosition){this.tiltTargetPosition = tiltTargetPosition; return true;}
 
-    public int getTiltPosition(){return this.tiltPosition;}
-
-    public int getTiltPositionActual(){return tiltMotor.getCurrentPosition();}
+    public int getTiltTargetPosition(){return this.tiltTargetPosition;}
 
     public double getIntakeSpeed(){
         return speed;
@@ -54,9 +58,11 @@ public class Intake {
         fullTilt = !fullTilt;
         if(fullTilt){
             speed = -1;
+            setTiltTargetPosition(1450);
         }
         else{
             speed = 0;
+            setTiltTargetPosition(1240);
         }
     }
 

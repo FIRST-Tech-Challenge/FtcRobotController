@@ -140,7 +140,7 @@ public class Launcher {
         elbow.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         flywheelMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elbow.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        flywheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //flywheelMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
 
