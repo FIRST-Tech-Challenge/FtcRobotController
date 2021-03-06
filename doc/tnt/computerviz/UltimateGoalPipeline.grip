@@ -1,0 +1,161 @@
+<grip:Pipeline>
+  <sources>
+    <grip:Camera>
+      <property name="deviceNumber" value="0"/>
+    </grip:Camera>
+  </sources>
+  <steps>
+    <grip:Step name="HSV Threshold">
+      <grip:Input step="0" socket="0"/>
+      <grip:Input step="0" socket="1">
+        <value>
+          <double>0.0</double>
+          <double>17.346568110980726</double>
+        </value>
+      </grip:Input>
+      <grip:Input step="0" socket="2">
+        <value>
+          <double>107.77877697841726</double>
+          <double>255.0</double>
+        </value>
+      </grip:Input>
+      <grip:Input step="0" socket="3">
+        <value>
+          <double>123.83093525179855</double>
+          <double>255.0</double>
+        </value>
+      </grip:Input>
+      <grip:Output step="0" socket="0" previewed="true"/>
+    </grip:Step>
+    <grip:Step name="CV cvtColor">
+      <grip:Input step="1" socket="0"/>
+      <grip:Input step="1" socket="1">
+        <value>COLOR_RGB2YCrCb</value>
+      </grip:Input>
+      <grip:Output step="1" socket="0" previewed="false"/>
+    </grip:Step>
+    <grip:Step name="CV extractChannel">
+      <grip:Input step="2" socket="0"/>
+      <grip:Input step="2" socket="1">
+        <value>2.0</value>
+      </grip:Input>
+      <grip:Output step="2" socket="0" previewed="true"/>
+    </grip:Step>
+    <grip:Step name="Blur">
+      <grip:Input step="3" socket="0"/>
+      <grip:Input step="3" socket="1">
+        <value>BOX</value>
+      </grip:Input>
+      <grip:Input step="3" socket="2">
+        <value>21.69811320754717</value>
+      </grip:Input>
+      <grip:Output step="3" socket="0" previewed="false"/>
+    </grip:Step>
+    <grip:Step name="CV add">
+      <grip:Input step="4" socket="0"/>
+      <grip:Input step="4" socket="1"/>
+      <grip:Output step="4" socket="0" previewed="true"/>
+    </grip:Step>
+    <grip:Step name="New Point">
+      <grip:Input step="5" socket="0">
+        <value>0.0</value>
+      </grip:Input>
+      <grip:Input step="5" socket="1">
+        <value>0.0</value>
+      </grip:Input>
+      <grip:Output step="5" socket="0" previewed="false"/>
+    </grip:Step>
+    <grip:Step name="New Point">
+      <grip:Input step="6" socket="0">
+        <value>0.0</value>
+      </grip:Input>
+      <grip:Input step="6" socket="1">
+        <value>100.0</value>
+      </grip:Input>
+      <grip:Output step="6" socket="0" previewed="false"/>
+    </grip:Step>
+    <grip:Step name="CV rectangle">
+      <grip:Input step="7" socket="0"/>
+      <grip:Input step="7" socket="1"/>
+      <grip:Input step="7" socket="2"/>
+      <grip:Input step="7" socket="3"/>
+      <grip:Input step="7" socket="4">
+        <value>0</value>
+      </grip:Input>
+      <grip:Input step="7" socket="5">
+        <value>LINE_8</value>
+      </grip:Input>
+      <grip:Input step="7" socket="6">
+        <value>1.0</value>
+      </grip:Input>
+      <grip:Output step="7" socket="0" previewed="true"/>
+    </grip:Step>
+    <grip:Step name="Switch">
+      <grip:Input step="8" socket="0">
+        <value>true</value>
+      </grip:Input>
+      <grip:LinkedInput step="8" socket="1"/>
+      <grip:LinkedInput step="8" socket="2"/>
+      <grip:Output step="8" socket="0" previewed="false"/>
+    </grip:Step>
+    <grip:Step name="Find Lines">
+      <grip:Input step="9" socket="0"/>
+      <grip:Output step="9" socket="0" previewed="false"/>
+    </grip:Step>
+  </steps>
+  <connections>
+    <grip:Connection>
+      <grip:Output step="2" socket="0" previewed="true"/>
+      <grip:Input step="4" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output source="0" socket="0" previewed="true"/>
+      <grip:Input step="1" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="1" socket="0" previewed="false"/>
+      <grip:Input step="2" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="4" socket="0" previewed="true"/>
+      <grip:Input step="7" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="6" socket="0" previewed="false"/>
+      <grip:Input step="7" socket="2"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="3" socket="0" previewed="false"/>
+      <grip:Input step="4" socket="1"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="5" socket="0" previewed="false"/>
+      <grip:Input step="7" socket="1"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="0" socket="0" previewed="true"/>
+      <grip:Input step="3" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output source="0" socket="0" previewed="true"/>
+      <grip:Input step="0" socket="0"/>
+    </grip:Connection>
+  </connections>
+  <settings>
+    <teamNumber>0</teamNumber>
+    <publishAddress>roboRIO-0-FRC.local</publishAddress>
+    <deployAddress>roboRIO-0-FRC.local</deployAddress>
+    <deployDir>/home/lvuser</deployDir>
+    <deployUser>lvuser</deployUser>
+    <deployJavaHome>/usr/local/frc/JRE/</deployJavaHome>
+    <deployJvmOptions>-Xmx50m -XX:-OmitStackTraceInFastThrow -XX:+HeapDumpOnOutOfMemoryError -XX:MaxNewSize=16m</deployJvmOptions>
+  </settings>
+  <codeGenerationSettings>
+    <language>Java</language>
+    <className>GripPipeline</className>
+    <implementWpilibPipeline>false</implementWpilibPipeline>
+    <saveDir>/Users/ftc/GRIP</saveDir>
+    <packageName></packageName>
+    <moduleName>grip</moduleName>
+  </codeGenerationSettings>
+</grip:Pipeline>
