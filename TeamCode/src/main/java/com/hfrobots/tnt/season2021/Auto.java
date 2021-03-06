@@ -404,7 +404,7 @@ public class Auto extends OpMode {
                     case B:
                         // Instead, use A, + park from A
                         // before placing the wobble goal:
-                        trajectoryBuilder.forward(58).strafeLeft(34).forward(6);
+                        trajectoryBuilder.forward(58).strafeLeft(34+4).forward(6+5);
 
                         break;
                     case C:
@@ -481,7 +481,7 @@ public class Auto extends OpMode {
             public State doStuffAndGetNextState() {
                 runWobbleGoalStateMachine = false;
 
-                wobbleGoal.openGripper();
+                wobbleGoal.openAutoGripper();
 
                 return nextState;
             }
@@ -533,7 +533,7 @@ public class Auto extends OpMode {
                         trajectoryBuilder.back(16);
                         break;
                     case B:
-                        trajectoryBuilder.back(26);
+                        trajectoryBuilder.back(26+5);
                         break;
                     case C:
                         trajectoryBuilder.back(64);
