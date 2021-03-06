@@ -840,6 +840,9 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 positionThread.start();
             }
         }
+        // showing IMU
+        chassis.enableImuTelemetry(cfg);
+
         if (interrupted()) return;
         chassis.auto_target_y = chassis.getInit_y_cm();
         chassis.auto_target_x = chassis.getInit_x_cm();
@@ -871,7 +874,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                     tZone = TargetZone.ZONE_A;
                     doPowerShots();
                 } else if (!source.isPressed(Button.START)) {
-                    chassis.driveTo(auto_chassis_power, chassis.auto_target_x, chassis.auto_target_y, auto_rotate_degree, true, 5);
+                    chassis.driveTo(auto_chassis_power, chassis.auto_target_x, chassis.auto_target_y, auto_rotate_degree, false, 5);
                 }
             }
         }, new Button[]{Button.Y});
