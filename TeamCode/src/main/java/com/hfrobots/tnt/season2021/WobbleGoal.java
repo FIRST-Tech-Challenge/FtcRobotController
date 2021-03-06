@@ -70,6 +70,8 @@ public class WobbleGoal {
 
     public final static double OPEN_GRIPPER_POS = .25;
 
+    public final static double OPEN_GRIPPER_AUTO_POS = .35;
+
     public final static double CLOSED_GRIPPER_POS = 0;
 
     public static final float TOWARDS_STOW_POWER_MAGNITUDE = -1;
@@ -150,6 +152,10 @@ public class WobbleGoal {
 
     public void openGripper() {
         gripperServo.setPosition(OPEN_GRIPPER_POS);
+    }
+
+    public void openAutoGripper() {
+        gripperServo.setPosition(OPEN_GRIPPER_AUTO_POS);
     }
 
     public void closeGripper() {
