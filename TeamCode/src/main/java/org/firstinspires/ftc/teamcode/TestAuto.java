@@ -16,9 +16,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
-@Autonomous(name="Auto", group="Auto")
+@Autonomous(name="Auto", group="Autonomous")
 @Disabled
-public class Auto extends LinearOpMode {
+public class TestAuto extends LinearOpMode {
 
     //Declare motors/servos variables
     private ElapsedTime runtime = new ElapsedTime();
