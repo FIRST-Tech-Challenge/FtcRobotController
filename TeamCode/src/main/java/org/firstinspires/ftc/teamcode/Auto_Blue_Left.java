@@ -19,7 +19,7 @@ public class Auto_Blue_Left extends LinearOpMode {
     private DcMotor rf;
     private DcMotor lb;
     private DcMotor rb;
-    private Servo collector;
+    private Servo SoN;
     private Servo pushover;
     private DcMotor spindoctor;
     double distance;
@@ -34,7 +34,7 @@ public class Auto_Blue_Left extends LinearOpMode {
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
         spindoctor = hardwareMap.get(DcMotorEx.class, "spindoctor");
-        collector = hardwareMap.get(Servo.class, " collector");
+        SoN = hardwareMap.get(Servo.class, " SoN");
         pushover = hardwareMap.get(Servo.class, "pushover");
 
         lf.setDirection(DcMotor.Direction.FORWARD);
@@ -55,7 +55,7 @@ public class Auto_Blue_Left extends LinearOpMode {
                 rf.setPower(0);
                 lb.setPower(0);
                 rb.setPower(0);
-                collector.setPosition(0);
+                SoN.setPosition(0);
                 pushover.setPosition(0);
                 sleep(1000);
 
@@ -67,7 +67,7 @@ public class Auto_Blue_Left extends LinearOpMode {
                 rf.setPower(0);
                 lb.setPower(0);
                 rb.setPower(0);
-                collector.setPosition(180);
+                SoN.setPosition(180);
                 pushover.setPosition(0);
                 sleep(1000);
 
@@ -79,7 +79,7 @@ public class Auto_Blue_Left extends LinearOpMode {
                     rf.setPower(0);
                     lb.setPower(0);
                     rb.setPower(0);
-                    collector.setPosition(0);
+                    SoN.setPosition(0);
                     pushover.setPosition(0);
                     sleep(1000);
 

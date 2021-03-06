@@ -20,8 +20,9 @@ public class Final_Teleop extends LinearOpMode {
     private DcMotor rf = null;
     private DcMotor lb = null;
     private DcMotor rb = null;
-    private CRServo collector = null;
+    private CRServo SoN = null;
     private DcMotor spindoctor = null;
+    private DcMotor factory = null;
 
     @Override
     public void runOpMode() {
@@ -32,17 +33,20 @@ public class Final_Teleop extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
-        collector = hardwareMap.get(CRServo.class, "collector");
+        SoN = hardwareMap.get(CRServo.class, "SoN");
         spindoctor = hardwareMap.get(DcMotor.class, "spin");
+        factory = hardwareMap.get(DcMotor.class,"factory");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
-        collector.setDirection(CRServo.Direction.FORWARD);
+        SoN.setDirection(CRServo.Direction.FORWARD);
         spindoctor.setDirection(DcMotorSimple.Direction.FORWARD);
+        factory.setDirection(DcMotor.Direction.FORWARD);
 
-        double cPower = 0;
+
+        double SPower = 0;
 
         waitForStart();
         runtime.reset();
@@ -54,11 +58,13 @@ public class Final_Teleop extends LinearOpMode {
             double lbPower;
             double rbPower;
             double spinPower;
+            double factoryPower;
 
             lfPower = 0.0f;
             rfPower = 0.0f;
             lbPower = 0.0f;
             rbPower = 0.0f;
+            factoryPower = 0.0f;
 
 
             if (abs(gamepad1.left_stick_y) < 0.2 && abs(gamepad1.left_stick_x) > 0.2) {
@@ -111,25 +117,34 @@ public class Final_Teleop extends LinearOpMode {
             }
 
             if (gamepad2.right_trigger >= 0.2) {
-                cPower = 1;
-            } else if (gamepad2.left_trigger >= 0.2) {
-                cPower = -1;
-            } else {
-                cPower = 0;
-            }
-            if (gamepad2.a) {
                 spinPower = 1;
-            } else if (gamepad2.b) {
+            } else if (gamepad2.left_trigger >= 0.2) {
                 spinPower = -1;
             } else {
                 spinPower = 0;
             }
-            collector.setPower(cPower);
+            if (gamepad2.a) {
+                SPower = 1;
+            } else if (gamepad2.b) {
+                SPower = -1;
+            } else {
+                SPower = 0;
+            }
+            if (gamepad2.x) {
+                factoryPower = 1;
+            } else if (gamepad2.y) {
+                factoryPower = -1;
+            } else {
+                factoryPower = 0;
+            }
+
+            SoN.setPower(SPower);
             spindoctor.setPower(spinPower);
+            factory.setPower(factoryPower);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f),leftback (%.2f), rightback (%.2f)", lfPower, rfPower, lbPower, rbPower);
-            telemetry.addData("Servos", "power (%.2f)", cPower);
+            telemetry.addData("Servos", "power (%.2f)", SPower);
             telemetry.update();
         }
     }

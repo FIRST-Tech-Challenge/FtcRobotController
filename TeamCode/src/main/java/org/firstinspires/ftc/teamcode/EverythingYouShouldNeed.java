@@ -17,7 +17,7 @@
             double rfPower;
             double lbPower;
             double rbPower;
-            double collectorPower;
+            double SoNPower;
 
             lfPower = 0.0f ;
             rfPower = 0.0f ;
@@ -77,11 +77,11 @@
                 lb.setPower(lbPower *0.25);
                 rb.setPower(rbPower *0.25);
             }*/
-//Collector
+//SoN
 /*
-    private CRServo collector = null;
-        collector = hardwareMap.get(CRServo.class, "collector");
-        collector.setDirection(CRServo.Direction.FORWARD);
+    private CRServo SoN = null;
+        SoN = hardwareMap.get(CRServo.class, "SoN");
+        SoN.setDirection(CRServo.Direction.FORWARD);
         double cPower = 0;
             if(gamepad2.a){
                 cPower = 1;
@@ -92,7 +92,7 @@
             else {
                 cPower = 0;
             }
-            collector.setPower(cPower);
+            SoN.setPower(cPower);
  */
 //Shooter
 /*

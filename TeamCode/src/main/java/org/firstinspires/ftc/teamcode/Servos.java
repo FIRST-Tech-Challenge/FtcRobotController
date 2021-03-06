@@ -21,7 +21,7 @@ public class Servos extends LinearOpMode {
     private DcMotor rf = null;
     private DcMotor lb = null;
     private DcMotor rb = null;
-    private CRServo collector = null;
+    private CRServo SoN = null;
 
     @Override
     public void runOpMode() {
@@ -33,15 +33,15 @@ public class Servos extends LinearOpMode {
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
 
-        collector = hardwareMap.get(CRServo.class, "collector");
+        SoN = hardwareMap.get(CRServo.class, "SoN");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
-        collector.setDirection(CRServo.Direction.FORWARD);
+        SoN.setDirection(CRServo.Direction.FORWARD);
 
-        //collector.setPosition(0);
+        //SoN.setPosition(0);
         double cPower = 0;
 
         waitForStart();
@@ -116,7 +116,7 @@ public class Servos extends LinearOpMode {
                 rb.setPower(rbPower *0.25);
             }
 
-            //cPos = collector.getPosition();
+            //cPos = SoN.getPosition();
             if(gamepad2.a){
                 cPower = 1;
             }
@@ -126,7 +126,7 @@ public class Servos extends LinearOpMode {
             else {
                 cPower = 0;
             }
-            collector.setPower(cPower);
+            SoN.setPower(cPower);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f),leftback (%.2f), rightback (%.2f)", lfPower, rfPower,lbPower ,rbPower);

@@ -25,7 +25,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
     private DcMotor lb = null;
     private DcMotor rb = null;
 
-    private DcMotor collector = null;
+    private DcMotor SoN = null;
 
     @Override
     public void runOpMode() {
@@ -37,7 +37,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
 
-        collector = hardwareMap.get(DcMotor.class, "collector");
+        SoN = hardwareMap.get(DcMotor.class, "SoN");
 
         //left side needs to be reversed because the motors are upside down, forehead
         lf.setDirection(DcMotor.Direction.REVERSE);
@@ -45,7 +45,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
 
-        collector.setDirection(DcMotor.Direction.FORWARD);
+        SoN.setDirection(DcMotor.Direction.FORWARD);
 
         float lfPower;
         float rfPower;
@@ -62,7 +62,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
         double deadzone = 0.1;
         double basePwrMult = 0.3;
         double highPwrMult = 0.6;
-        double collectorPwrMult = -1;
+        double SoNPwrMult = -1;
 
         waitForStart();
         runtime.reset();
@@ -106,7 +106,7 @@ public class EXP_Teleop_wheels extends LinearOpMode {
             }
 
 
-            //TODO put collector on gamepad2
+            //TODO put SoN on gamepad2
             //sticking with gamepad1 for ease of testing at this point
             collectPwr = gamepad1.right_trigger;
 
@@ -130,11 +130,11 @@ public class EXP_Teleop_wheels extends LinearOpMode {
                 rb.setPower(rbPower * basePwrMult);
             }
 
-            collector.setPower(collectPwr * collectorPwrMult);
+            SoN.setPower(collectPwr * SoNPwrMult);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f), leftback (%.2f), rightback (%.2f), collector (%.2f)", lfPower, rfPower, lbPower ,rbPower, collectPwr);
-            telemetry.addData("Power Multipliers", "normal (%.2f), sprint (%.2f), collector (%.2f)", basePwrMult, highPwrMult, collectorPwrMult);
+            telemetry.addData("Motors", "leftfront (%.2f), rightfront (%.2f), leftback (%.2f), rightback (%.2f), SoN (%.2f)", lfPower, rfPower, lbPower ,rbPower, collectPwr);
+            telemetry.addData("Power Multipliers", "normal (%.2f), sprint (%.2f), SoN (%.2f)", basePwrMult, highPwrMult, SoNPwrMult);
             telemetry.addData("Direction", "fw (%.2f), side (%.2f), turn (%.2f)", SFPwr, SSPwr, turnPwr);
             telemetry.update();
         }

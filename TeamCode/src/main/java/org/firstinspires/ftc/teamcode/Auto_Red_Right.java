@@ -19,7 +19,7 @@ public class Auto_Red_Right extends LinearOpMode {
     private DcMotor rf;
     private DcMotor lb;
     private DcMotor rb;
-    private DcMotorEx collector;
+    private DcMotorEx SoN;
     private Servo sensorArm;
     private Servo pushover;
     private DcMotor spindoctor;
@@ -34,7 +34,7 @@ public class Auto_Red_Right extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
-        collector = hardwareMap.get(DcMotorEx.class, "collector");
+        SoN = hardwareMap.get(DcMotorEx.class, "SoN");
         spindoctor = hardwareMap.get(DcMotorEx.class, "spindoctor");
         sensorArm = hardwareMap.get(Servo.class, "sensorArm");
         pushover = hardwareMap.get(Servo.class, "pushover");
@@ -43,7 +43,7 @@ public class Auto_Red_Right extends LinearOpMode {
         rf.setDirection(DcMotor.Direction.REVERSE);
         lb.setDirection(DcMotor.Direction.FORWARD);
         rb.setDirection(DcMotor.Direction.FORWARD);
-        collector.setDirection(DcMotor.Direction.FORWARD);
+        SoN.setDirection(DcMotor.Direction.FORWARD);
         spindoctor.setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
@@ -54,7 +54,7 @@ public class Auto_Red_Right extends LinearOpMode {
 
                 // Autonomous A: four rings
                 spindoctor.setPower(0);
-                collector.setPower(0);
+                SoN.setPower(0);
                 lf.setPower(0);
                 rf.setPower(0);
                 lb.setPower(0);
@@ -67,7 +67,7 @@ public class Auto_Red_Right extends LinearOpMode {
 
                 // check for Autonomous B
                 spindoctor.setPower(0);
-                collector.setPower(0);
+                SoN.setPower(0);
                 lf.setPower(0);
                 rf.setPower(0);
                 lb.setPower(0);
@@ -80,7 +80,7 @@ public class Auto_Red_Right extends LinearOpMode {
 
                     // Autonomous B: one ring
                     spindoctor.setPower(0);
-                    collector.setPower(0);
+                    SoN.setPower(0);
                     lf.setPower(0);
                     rf.setPower(0);
                     lb.setPower(0);
@@ -93,7 +93,7 @@ public class Auto_Red_Right extends LinearOpMode {
 
                     //Autonomous C: no rings
                     spindoctor.setPower(0);
-                    collector.setPower(0);
+                    SoN.setPower(0);
                     lf.setPower(0);
                     rf.setPower(0);
                     lb.setPower(0);

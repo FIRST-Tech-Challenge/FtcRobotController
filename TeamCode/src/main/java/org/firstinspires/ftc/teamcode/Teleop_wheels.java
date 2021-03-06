@@ -46,15 +46,15 @@ public class Teleop_wheels extends LinearOpMode {
             double rfPower;
             double lbPower;
             double rbPower;
-            double collectorPower;
+            double SoNPower;
 
             lfPower = 0.0f ;
             rfPower = 0.0f ;
             lbPower = 0.0f ;
             rbPower = 0.0f ;
 
-            collectorPower = gamepad2.left_stick_y;
-            collecter.setPower(collectorPower);
+            SoNPower = gamepad2.left_stick_y;
+            collecter.setPower(SoNPower);
 
             if (abs(gamepad1.left_stick_y) < 0.2 && abs(gamepad1.left_stick_x) > 0.2){
                 lfPower = -gamepad1.left_stick_x;

@@ -18,7 +18,7 @@ public class Autonomous_Proto2 extends LinearOpMode {
     private DcMotor rf;
     private DcMotor lb;
     private DcMotor rb;
-    private DcMotorEx collector;
+    private DcMotorEx SoN;
     private Servo sensorArm;
     private Servo pushover;
     private DcMotor spindoctor1;
@@ -33,7 +33,7 @@ public class Autonomous_Proto2 extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
-        collector = hardwareMap.get(DcMotorEx.class, "collector");
+        SoN = hardwareMap.get(DcMotorEx.class, "SoN");
         spindoctor1 = hardwareMap.get(DcMotorEx.class, "spindoctor1");
         sensorArm = hardwareMap.get(Servo.class, "sensorArm");
         pushover = hardwareMap.get(Servo.class, "pushover");
@@ -42,7 +42,7 @@ public class Autonomous_Proto2 extends LinearOpMode {
         rf.setDirection(DcMotor.Direction.REVERSE);
         lb.setDirection(DcMotor.Direction.FORWARD);
         rb.setDirection(DcMotor.Direction.FORWARD);
-        collector.setDirection(DcMotor.Direction.FORWARD);
+        SoN.setDirection(DcMotor.Direction.FORWARD);
         spindoctor1.setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
@@ -50,7 +50,7 @@ public class Autonomous_Proto2 extends LinearOpMode {
         while (opModeIsActive() && (runtime.seconds() < 30.0)) {
 
             spindoctor1.setPower(0);
-            collector.setPower(0);
+            SoN.setPower(0);
             lf.setPower(0);
             rf.setPower(0);
             lb.setPower(0);

@@ -19,7 +19,7 @@ public class Caleb_drive extends LinearOpMode {
     private DcMotor rf = null;
     private DcMotor lb = null;
     private DcMotor rb = null;
-    private DcMotor collector = null;
+    private DcMotor SoN = null;
 
     @Override
     public void runOpMode() {
@@ -30,13 +30,13 @@ public class Caleb_drive extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
-        collector = hardwareMap.get(DcMotor.class, "collector");
+        SoN = hardwareMap.get(DcMotor.class, "SoN");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
-        collector.setDirection(DcMotor.Direction.FORWARD);
+        SoN.setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
         runtime.reset();
@@ -47,7 +47,7 @@ public class Caleb_drive extends LinearOpMode {
             double rfPower;
             double lbPower;
             double rbPower;
-            double collectorPower;
+            double SoNPower;
             double multiply;
 
             lfPower = 0.0f ;
@@ -56,8 +56,8 @@ public class Caleb_drive extends LinearOpMode {
             rbPower = 0.0f ;
             multiply = 1/(1-gamepad1.right_trigger)*(1-gamepad1.left_trigger)*0.25;
 
-            collectorPower = gamepad2.left_stick_y;
-            collector.setPower(collectorPower);
+            SoNPower = gamepad2.left_stick_y;
+            SoN.setPower(SoNPower);
 
             if (abs(gamepad1.left_stick_y) < 0.2 && abs(gamepad1.left_stick_x) > 0.2){
                 lfPower = -gamepad1.left_stick_x;
