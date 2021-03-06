@@ -65,12 +65,13 @@ public class teleOp extends OpMode
     Motor leftBack;
     Motor rightBack;
 
-//    Motor shooter;
+    Motor shooter;
     Motor backIntake;
+    Motor frontIntake;
 
     //Set Servo objects
-    //CRServo leftLift;
-    //CRServo rightLift;
+    CRServo leftLift;
+    CRServo rightLift;
 
     //Initialize
     @Override
@@ -81,11 +82,12 @@ public class teleOp extends OpMode
         leftBack = new Motor(hardwareMap, "leftBack", Motor.GoBILDA.RPM_435);
         rightBack = new Motor(hardwareMap, "rightBack", Motor.GoBILDA.RPM_435);
 
-//        shooter = new Motor(hardwareMap, "shooter", 28, 6000);
+        shooter = new Motor(hardwareMap, "shooter", 28, 6000);
         backIntake = new Motor(hardwareMap, "backIntake", 5, 6);
+        frontIntake = new Motor(hardwareMap, "frontIntake", 5, 6);
 
-        //leftLift = new CRServo(hardwareMap, "leftLift");
-        //rightLift = new CRServo(hardwareMap, "rightLift");
+        leftLift = new CRServo(hardwareMap, "leftLift");
+        rightLift = new CRServo(hardwareMap, "rightLift");
 
         //Set Run modes
         leftFront.setRunMode(Motor.RunMode.RawPower);
@@ -93,17 +95,19 @@ public class teleOp extends OpMode
         leftBack.setRunMode(Motor.RunMode.RawPower);
         rightBack.setRunMode(Motor.RunMode.RawPower);
 
-//        shooter.setRunMode(Motor.RunMode.RawPower);
+        shooter.setRunMode(Motor.RunMode.RawPower);
         backIntake.setRunMode(Motor.RunMode.RawPower);
+        frontIntake.setRunMode(Motor.RunMode.RawPower);
 
         //Set Directions
         leftFront.setInverted(true);
         rightFront.setInverted(false);
         leftBack.setInverted(true);
         rightBack.setInverted(false);
-//
-//        shooter.setInverted(false);
-        backIntake.setInverted(false);
+
+        shooter.setInverted(true);
+        backIntake.setInverted(true);
+        frontIntake.setInverted(true);
 
         //Initialized
         telemetry.addData("Status", "Initialized");
@@ -170,23 +174,16 @@ public class teleOp extends OpMode
             //This is normal.  Don't put anything here.
         }
 
-        //Intake
-
-        //Back
-        if (gamepad1.left_trigger > 0.1) {
-            //Outake takes priority
-            backIntake.set(gamepad1.left_trigger);
-        } else {
-            //Intake
-            backIntake.set(gamepad1.right_trigger);
-        }
-
         /////////////
         //GAMEPAD 2//
         /////////////
 
-//        //Shooter
-//        shooter.set(gamepad2.left_stick_y);
+        //Intake
+        backIntake.set(gamepad2.left_stick_y);
+        frontIntake.set(gamepad2.left_stick_y);
+
+        //Shooter
+        shooter.set(gamepad2.right_trigger);
 
         // Send power to wheel motors
         leftFront.set(leftFrontPower);
@@ -194,6 +191,9 @@ public class teleOp extends OpMode
         leftBack.set(leftBackPower);
         rightBack.set(rightBackPower);
 
+        //Lift
+        leftLift.set(gamepad2.right_stick_y);
+        rightLift.set(gamepad2.right_stick_y);
     }
 
     //Stop code

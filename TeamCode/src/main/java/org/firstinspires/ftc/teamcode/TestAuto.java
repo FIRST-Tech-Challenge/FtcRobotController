@@ -125,7 +125,7 @@ public class TestAuto extends LinearOpMode {
 //        }
 
         //Movement
-        encoderDrive(0.1,  48,  48, 48, 48, 10);
+        encoderDrive(0.2,  24,  24, 24, 24, 10);
 
         sleep(1000);     // pause for servos to move
 
