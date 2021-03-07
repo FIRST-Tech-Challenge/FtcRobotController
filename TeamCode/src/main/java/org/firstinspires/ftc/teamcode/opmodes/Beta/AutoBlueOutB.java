@@ -75,17 +75,17 @@ public class AutoBlueOutB extends LinearOpMode {
                 robot.doHighGoalsAndPowerShots(3, 0, false);
                 robot.getBonusRingsBeta();
                 robot.deliverFirstWobbleGoalBeta();
-                if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
-                    robot.getSecondWobbleGoalBeta();
-                    robot.deliverSecondWobbleGoalBeta();
-                }
+//                if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+//                    robot.getSecondWobbleGoalBeta();
+//                    robot.deliverSecondWobbleGoalBeta();
+//                }
 
                // robot.park();
 
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());
                 handleException(E);
-                Thread.sleep(5000);
+                Thread.sleep(10000);
             }
         }
         try {

@@ -294,7 +294,9 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         GPS.set_orientationSensor(orientationSensor);
         // GPS.reverseRightEncoder();
         // GPS.reverseLeftEncoder();
-        // GPS.reverseNormalEncoder();
+        if (robotVersion==2) {
+            // GPS.reverseNormalEncoder();
+        }
         GPS.set_init_pos(init_x_cm*odo_count_per_cm(), init_y_cm*odo_count_per_cm(), init_heading);
         setupGPSTelemetry(telemetry);
     }

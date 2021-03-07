@@ -1086,7 +1086,8 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                     if (isTeleOpAfterAuto) {
                         chassis.initOdoFromJson();
                     } else {
-                        chassis.set_init_pos(side(120), 155, 0);
+                        // chassis.set_init_pos(side(120), 155, 0);
+                        chassis.set_init_pos(side(58), 23, 0);
                     }
                 }
                 break;
@@ -1436,12 +1437,12 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         if (runtimeAuto.seconds() > 29){ return;}
         if (!keepPos) {
             if (tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C && numHighGoals == 3) {
-                chassis.driveTo(.55, side(50), 170, 0, true, 2);
+                chassis.driveTo(.55, side(50), 170, 0, true, 4);
             } else if (tZone != TargetZone.UNKNOWN) {
                 if (runtimeAuto.seconds() > 29) {
                     return;
                 }
-                chassis.driveTo(.55, side(90), 170, 0, true, 2);
+                chassis.driveTo(.55, side(90), 170, 0, true, 4);
             }
             }
         while (!TaskManager.isComplete("Transfer Up Combo")) {
@@ -1462,7 +1463,8 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         }
         if (numPowerShots > 0) {
             if (runtimeAuto.seconds() > 29){ return;}
-            shooter.shootOutByRpm(1260);
+            if (shooter!=null)
+                shooter.shootOutByRpm(1260);
             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
             //shoot
             autoShootFast();
@@ -1482,13 +1484,16 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             //shoot
             autoShootFast();
             sleep(200);
-            shooter.shootOutByRpm(0);
+            if (shooter!=null)
+                shooter.shootOutByRpm(0);
         }
 
-        if (tZone == TargetZone.UNKNOWN)
-            shooter.shootOutByRpm(WARM_UP_RPM_AUTO); // for teleop keep the shooter at WARM_UP_RPM
-        else
-            shooter.shootOutByRpm(0);
+        if (shooter!=null) {
+            if (tZone == TargetZone.UNKNOWN)
+                shooter.shootOutByRpm(WARM_UP_RPM_AUTO); // for teleop keep the shooter at WARM_UP_RPM
+            else
+                shooter.shootOutByRpm(0);
+        }
     }
 
     public void getBonusRingsBeta() throws InterruptedException{
@@ -1499,10 +1504,10 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 if (shooter!= null) {
                     shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 }
-                intake.intakeIn();
+                if (intake!=null) intake.intakeIn();
                 chassis.driveTo(auto_chassis_power, side(80), 120, 0, false, 5);
                 sleep(500); //to allow time for intaking the bonus ring
-                intake.stop();
+                if (intake!=null) intake.stop();
                 chassis.driveTo(1.0, side(90), 165, 0, false, 1);
                 doHighGoalsAndPowerShots(1, 0, true);
             } else if (tZone == TargetZone.ZONE_C) {//4
@@ -1939,7 +1944,8 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         double v = getVelocityToShoot(shooting_dist, target_height);
         double rpm = getRpmFromVelocity(v);
         shooting_rpm = rpm;
-        shooter.shootOutByRpm(rpm);
+        if (shooter!=null)
+            shooter.shootOutByRpm(rpm);
         // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
         shooting_angle = Math.toDegrees(Math.atan2(target_x - chassis.odo_x_pos_cm() - shooter_offset, target_y - chassis.odo_y_pos_cm()));
         // to-do: need to adjust the angle (to right) when dist is > 200 cm 0.047 degree/cm
