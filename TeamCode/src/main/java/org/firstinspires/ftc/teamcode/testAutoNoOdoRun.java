@@ -25,6 +25,9 @@ public class testAutoNoOdoRun extends testAutoNoOdo{
             telemetry.addData("Powers", autoOmniMovement.wheelPowers[1]);
             telemetry.addData("Powers", autoOmniMovement.wheelPowers[2]);
             telemetry.addData("Powers", autoOmniMovement.wheelPowers[3]);
+            if (drivetrain.robot.odometryTest) {
+                telemetry.addData("Encoder Value", drivetrain.robot.horizontal.getCurrentPosition());
+            }
             telemetry.update();
         }
         autoOmniMovement.resetPowers();
