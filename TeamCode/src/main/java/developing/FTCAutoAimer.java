@@ -1,6 +1,9 @@
 package developing;
 
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import global.AngularPosition;
 import global.Constants;
 import util.Geometry;
 
@@ -27,5 +30,6 @@ public class FTCAutoAimer {
         double linearSpeed = disToGoal/Math.cos(Constants.OUTTAKE_ANGLE) * Math.sqrt(4.9/(disToGoal * Math.tan(Constants.OUTTAKE_ANGLE) - deltaHeight));
         return linearSpeed/Constants.SHOOTER_WHEEL_RADIUS;
     }
+
 
 }

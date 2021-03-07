@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import global.AngularPosition;
 import global.Constants;
 import telefunctions.Cycle;
 
@@ -31,19 +32,24 @@ public class TestRobot {
 
     public Cycle pushControl = new Cycle(0.1, 0.3);
 
-    public ModernRoboticsI2cCompassSensor compassSensor;
-
     public ModernRoboticsI2cRangeSensor lr;
     public ModernRoboticsI2cRangeSensor fr;
 
+
+
+
     public FTCAutoAimer autoAimer = new FTCAutoAimer();
 
+    public AngularPosition angularPosition = new AngularPosition();
+
     public boolean intaking = false;
-    public boolean calibratingCompass = true;
+
 
     public double rpStart = 0.1;
 
     public boolean fastMode = true;
+
+
 
     public void init(HardwareMap hwMap) {
 
@@ -58,16 +64,17 @@ public class TestRobot {
         outl = getMotor(hwMap, "outl", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-        rh = getCRServo(hwMap, "rh", CRServo.Direction.FORWARD);
+        rh = getCRServo(hwMap, "rh", CRServo.Direction.REVERSE);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, rpStart);
 
+        angularPosition.init(hwMap);
 
-//        compassSensor = hwMap.get(ModernRoboticsI2cCompassSensor.class, "compass");
+
 //
 //        lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
 //        fr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "fr");
-//
-//        compassSensor.setMode(CompassSensor.CompassMode.CALIBRATION_MODE);
+
+
 
     }
 
@@ -109,19 +116,6 @@ public class TestRobot {
         rp.setPosition(pos);
     }
 
-    public void outtakeWithCalculations() {
-        double p = autoAimer.getOuttakePower(compassSensor.getDirection(), lr.getDistance(DistanceUnit.METER), fr.getDistance(DistanceUnit.METER));
-        outr.setPower(p);
-        outl.setPower(p);
-
-    }
-
-    public double getRobotToGoalAngle() {
-        double robotTheta = compassSensor.getDirection() * Math.PI/180;
-        double x = autoAimer.getDisFromCenter(lr.getDistance(DistanceUnit.METER), robotTheta) - Constants.GOAL_FROM_LEFT;
-        double y = autoAimer.getDisFromCenter(fr.getDistance(DistanceUnit.METER), robotTheta);
-        return Math.atan2(y, x);
-    }
 
     public void outtake(double p){
         outr.setPower(p);
@@ -141,12 +135,7 @@ public class TestRobot {
         }
     }
 
-    public void setCompassMode () {
-        if (calibratingCompass && !compassSensor.isCalibrating()) {
-            compassSensor.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE);
-            calibratingCompass = false;
-        }
-    }
+
 
     public void moveTeleOp(double f, double s, double t){
         if(fastMode) {
@@ -156,4 +145,27 @@ public class TestRobot {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+    public void outtakeWithCalculations() {
+        double p = autoAimer.getOuttakePower(angularPosition.getHeadingCS(), lr.getDistance(DistanceUnit.METER), fr.getDistance(DistanceUnit.METER));
+        outr.setPower(p);
+        outl.setPower(p);
+
+    }
+
+    public double getRobotToGoalAngle() {
+        double robotTheta = angularPosition.getHeadingCS() * Math.PI/180;
+        double x = autoAimer.getDisFromCenter(lr.getDistance(DistanceUnit.METER), robotTheta) - Constants.GOAL_FROM_LEFT;
+        double y = autoAimer.getDisFromCenter(fr.getDistance(DistanceUnit.METER), robotTheta);
+        return Math.atan2(y, x);
+    }
 }
