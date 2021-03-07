@@ -23,10 +23,11 @@ public class lessButtonsConfig implements teleOpInterface {
 
     public void b(boolean pressed) {
         if (pressed && System.currentTimeMillis()-button>=500) {
-            outtakeC = (intake == 0.0) ? 1.0 : 0.0;
-            outtakeW = outtakeC;
-            intake = (outtakeC == 0.0) ? 1.0 : 0.0;
+            outtakeW = (outtakeC==1.0) ? 0.0 : 1.0;
+            outtakeC = outtakeW;
+            intake = (outtakeC==1.0) ? 0.0 : 1.0;
             currOverride = teleConfigRohit2.overrides.NONE;
+
             button = System.currentTimeMillis();
         }
     }
@@ -62,7 +63,7 @@ public class lessButtonsConfig implements teleOpInterface {
     }
 
     public void rb(boolean pressed) {
-        if (pressed) {limiter1 = (pressed) ? 0.2 : 1.0;}
+        if (pressed) {limiter1 = 0.2;} else {limiter1 = 1.0;}
     }
 
     public void rt(float pressure) {
@@ -70,7 +71,7 @@ public class lessButtonsConfig implements teleOpInterface {
     }
 
     public void lb(boolean pressed) {
-        if (pressed) {limiter2 = (pressed) ? 0.5 : 1.0;}
+        if (pressed) {limiter2 =  0.5;} else {limiter2 = 1.0;}
     }
 
     public void lt(float pressure) {
@@ -86,7 +87,11 @@ public class lessButtonsConfig implements teleOpInterface {
     }
 
     public void rjoyb(boolean pressed) {
-
+        if (pressed){
+            outtakeC = 0.0;
+            outtakeW = 0.0;
+            intake = 0.0;
+        }
     }
 
     public void ljoyb(boolean pressed) {

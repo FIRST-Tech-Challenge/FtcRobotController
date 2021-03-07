@@ -85,6 +85,7 @@ public class UltimateGoalTeleop extends OpMode{
         configs.add(teleConfigRohit.class);
 //        configs.add(teleConfigSamih.class);
         configs.add(teleConfigRohit2.class);
+        configs.add(lessButtonsConfig.class);
 
 
         // Send telemetry message to signify robot waiting;
@@ -136,6 +137,8 @@ public class UltimateGoalTeleop extends OpMode{
 //                  t = new teleConfigSamih(robot);
                 } else if (configs.get(index).getName().equals(teleConfigRohit2.class.getName())) {
                     t = new teleConfigRohit2(robot);
+                } else if (configs.get(index).getName().equals(lessButtonsConfig.class.getName())) {
+                    t = new lessButtonsConfig(robot);
                 }
                 switching = false;
             }
@@ -197,6 +200,8 @@ public class UltimateGoalTeleop extends OpMode{
 //            t = new teleConfigSamih(robot);
         }else if (configs.get(index).getName().equals(teleConfigRohit2.class.getName())){
             t = new teleConfigRohit2(robot);
+        }else if (configs.get(index).getName().equals(lessButtonsConfig.class.getName())) {
+            t = new lessButtonsConfig(robot);
         }
     }
 

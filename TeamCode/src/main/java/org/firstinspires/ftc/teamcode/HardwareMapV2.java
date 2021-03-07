@@ -70,6 +70,8 @@ public class HardwareMapV2 {
         }
         if (odometryTest){
             horizontal.setDirection(DcMotorSimple.Direction.REVERSE);
+            horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         //conveyor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftTilt.setDirection(Servo.Direction.REVERSE);
@@ -80,6 +82,9 @@ public class HardwareMapV2 {
         rightTilt.setPosition(0.5);
         leftTilt.setPosition(0.5);
         wobble.setPosition(0.0);
+
+        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 
