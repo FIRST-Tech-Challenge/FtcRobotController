@@ -1175,14 +1175,14 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     }
 
     public void detectPosition() {//startPos = 1 = out, 2 = in
-        tZone = TargetZone.ZONE_c;
+        tZone = TargetZone.ZONE_C;
         // use camera (Tensorflow) to detect position
 //        tZone = TargetZone.ZONE_C;
 //        return;
         /*if (cameraDetector == null) {
             tZone = TargetZone.ZONE_A; // assuming zone_A for simulation purpose
             return;
-        */}
+        */
         // tZone = TargetZone.ZONE_A;
         //tZone = cameraDetector.getTargetZone();
     }
