@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -58,6 +59,7 @@ public class teleOp extends OpMode
 {
     //Declare runtime variable
     private ElapsedTime runtime = new ElapsedTime();
+    double currentTime;
 
     //Set Motor objects
     Motor leftFront;
@@ -72,6 +74,17 @@ public class teleOp extends OpMode
     //Set Servo objects
     CRServo leftLift;
     CRServo rightLift;
+
+    SimpleServo kicker;
+    SimpleServo shootFlap;
+
+    double kickerInit = 0.4;
+    double kickerTo = 0.7;
+
+    boolean kickerHasRun = false;
+    boolean kickerMethodRun = false;
+
+    double flapAngle = 0.0725 ;
 
     //Initialize
     @Override
@@ -88,6 +101,9 @@ public class teleOp extends OpMode
 
         leftLift = new CRServo(hardwareMap, "leftLift");
         rightLift = new CRServo(hardwareMap, "rightLift");
+
+        kicker = new SimpleServo(hardwareMap, "kicker") ;
+        shootFlap = new SimpleServo(hardwareMap, "shootFlap") ;
 
         //Set Run modes
         leftFront.setRunMode(Motor.RunMode.RawPower);
@@ -108,6 +124,10 @@ public class teleOp extends OpMode
         shooter.setInverted(true);
         backIntake.setInverted(true);
         frontIntake.setInverted(true);
+
+        //Initialize Servo Positions
+        kicker.setPosition(kickerInit);
+        shootFlap.setPosition(flapAngle);
 
         //Initialized
         telemetry.addData("Status", "Initialized");
@@ -179,11 +199,11 @@ public class teleOp extends OpMode
         /////////////
 
         //Intake
-        backIntake.set(gamepad2.left_stick_y);
+       //backIntake.set(gamepad2.left_stick_y);
         frontIntake.set(gamepad2.left_stick_y);
 
         //Shooter
-        shooter.set(gamepad2.right_trigger);
+        shooter.set(gamepad2.right_trigger * 0.90);
 
         // Send power to wheel motors
         leftFront.set(leftFrontPower);
@@ -194,6 +214,24 @@ public class teleOp extends OpMode
         //Lift
         leftLift.set(gamepad2.right_stick_y);
         rightLift.set(gamepad2.right_stick_y);
+
+        //Kicker
+        if (gamepad2.a && !kickerHasRun && !gamepad2.start) {
+            currentTime = runtime.milliseconds();
+            kicker.setPosition(kickerTo);
+            kickerHasRun = true;
+        }
+
+        if (runtime.milliseconds() > currentTime+ 135) {
+            kicker.setPosition(kickerInit);
+            kickerMethodRun = true;
+        }
+
+        if (kickerMethodRun && !gamepad2.a) {
+            kickerMethodRun = false;
+            kickerHasRun = false;
+        }
+
     }
 
     //Stop code

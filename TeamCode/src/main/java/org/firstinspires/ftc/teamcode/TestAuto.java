@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
@@ -22,11 +23,19 @@ public class TestAuto extends LinearOpMode {
 
     //Declare motors/servos variables
     private ElapsedTime runtime = new ElapsedTime();
-    //Initialize Motors
+    //Initialize Motors/Servos
     private DcMotor leftFront = null;
     private DcMotor rightFront = null;
     private DcMotor leftBack = null;
     private DcMotor rightBack = null;
+
+    private DcMotor shooter = null;
+    private Servo kicker = null;
+    double kickerInit = 0.4;
+    double kickerTo = 0.7;
+    private Servo shootFlap;
+    double flapAngle = 0.055;
+
 
     //NEED TO FIND THESE NUMBERS. LEFT AT DEFAULT FOR NOW
     static final double     COUNTS_PER_MOTOR_REV    = 537.6 ;    // eg: TETRIX Motor Encoder
@@ -54,11 +63,21 @@ public class TestAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        //Hardware Map wheels
+        //Hardware Maps
+        //Wheels
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+
+        //Servos
+        shooter = hardwareMap.get(DcMotor.class, "shooter");
+        kicker = hardwareMap.get(Servo.class, "kicker");
+        kicker.setPosition(kickerInit);
+        shootFlap = hardwareMap.get(Servo.class, "shootFlap");
+        shootFlap.setPosition(flapAngle);
+
+
 
         //Set motor run modes
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -76,6 +95,9 @@ public class TestAuto extends LinearOpMode {
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.FORWARD);
+
+        shooter.setDirection(DcMotor.Direction.REVERSE);
+
 
 //        int cameraMonitorViewId = this
 //                .hardwareMap
@@ -125,14 +147,44 @@ public class TestAuto extends LinearOpMode {
 //        }
 
         //Movement
-        encoderDrive(0.2,  24,  24, 24, 24, 10);
-
-        sleep(1000);     // pause for servos to move
+        encoderDrive(0.3,  2,  2, 2, 2, 2);
+        sleep(500);
+        //Strafe
+        encoderDrive(0.3,  -19,  19, 19, -19, 5);
+        sleep(500);
+        //Forward
+        encoderDrive(0.3,  39,  39, 39, 39, 5);
+        //Turn on Fly Wheel
+        shooter.setPower(1);
+        sleep(5000);
+        kick(1);
+        //2nd Goal
+        encoderDrive(0.3,  6.5,  -6.5, -6.5, 6.5, 5);
+        kick(1);
+        //3rd Goal
+        encoderDrive(0.3,  7,  -7, -7, 7, 5);
+        kick(1);
+        //Strafe right and rotate toward high goal
+        shootFlap.setPosition(flapAngle + 0);
+        encoderDrive(0.3,  8,  -8, -8, 8, 5);
+        encoderDrive(0.3,  2,  -2, 2, -2, 5);
+        kick (4);
+        shooter.setPower(0);
+        //Park
+        encoderDrive(0.3,  8,  8, 8, 8, 5);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
 
+    public void kick (int kickCount) {
+        for (int i = 0; i < kickCount; i++) {
+            kicker.setPosition(kickerTo);
+            sleep(135);
+            kicker.setPosition(kickerInit);
+            sleep(200);
+        }
+    }
     public void encoderDrive(double speed,
                              double leftFrontInches, double rightFrontInches, double leftBackInches, double rightBackInches,
                              double timeoutS) {
