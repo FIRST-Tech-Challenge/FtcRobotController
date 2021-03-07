@@ -12,8 +12,6 @@ public class FlyWheel {
     private double flywheelSpeed = 0;
     private double flywheelDirection = Vals.flywheel_direction;
 
-    private static final int MIN_SPEED = 920;
-    private static final int MAX_SPEED = 960;
 
     private int ticks = 0;
 
@@ -60,7 +58,7 @@ public class FlyWheel {
 
     public boolean isReady() {
         double velocity = Math.abs(flywheel.getCorrectedVelocity());
-        if(velocity >= MIN_SPEED && velocity <= MAX_SPEED) ticks++;
+        if(velocity >= Vals.flywheel_ready_min_speed && velocity <= Vals.flywheel_ready_max_speed) ticks++;
         else ticks = 0;
 
         if(ticks >= Vals.flywheel_ready_ticks) {

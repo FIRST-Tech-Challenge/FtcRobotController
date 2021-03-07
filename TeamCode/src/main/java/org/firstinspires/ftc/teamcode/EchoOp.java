@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robot.FlyWheel;
 import org.firstinspires.ftc.robot_utilities.GamePadController;
 import org.firstinspires.ftc.robot.Hitter;
+import org.firstinspires.ftc.robot_utilities.Vals;
 
 @TeleOp(name = "EchoOp")
 public class EchoOp extends OpMode {
@@ -100,7 +101,7 @@ public class EchoOp extends OpMode {
 
 
         telemetry.addData("Flywheel Speed", flywheel.flywheel.get());
-        telemetry.addData("Flywheel Velocity", flywheel.flywheel.encoder.getRawVelocity());
+        telemetry.addData("Flywheel Velocity", flywheel.flywheel.getCorrectedVelocity());
         telemetry.addData("Flywheel Position", flywheel.flywheel.getCurrentPosition());
         telemetry.addData("Hitter Position", hitter.hitter.getPosition());
         telemetry.addData("Left Speed", leftSpeed);
