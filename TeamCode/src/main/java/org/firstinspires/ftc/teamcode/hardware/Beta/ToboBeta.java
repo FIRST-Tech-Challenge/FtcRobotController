@@ -1294,7 +1294,9 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 }
                 //comboGrabber.initWobbleGoalCombo();
             }
-            grabber.initWobbleGoalCombo();
+            if(grabber != null) {
+                grabber.initWobbleGoalCombo();
+            }
             TaskManager.processTasks();
         }
     }
@@ -1303,18 +1305,17 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         // still need to change positions to be far left for blue side
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 65, 175, 45, false, 3);
-                chassis.rawRotateTo(0.35,45,false,2);
+                chassis.driveTo(auto_chassis_power, 75, 175, 45, false, 3);
+                chassis.rotateTo(1,135,2);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 100, 245, 0,true, 5);
-                chassis.rawRotateTo(0.35,45,false,2);
+                chassis.driveTo(auto_chassis_power, 110, 245, 0,true, 5);
+                chassis.rotateTo(1,135,2);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(1.0, 40, 300, 0, false, 5); // no rotation to make it faster
-                chassis.rawRotateTo(0.35,45,false,2);
+                chassis.driveTo(1.0, 50, 300, 0, false, 5); // no rotation to make it faster
+                chassis.rotateTo(1,135,2);
             } else {
                 return;
             }
-            autoReleaseHighWobbleGoal();
         }
         if (grabber != null) {
             if(tZone != TargetZone.ZONE_C) // Zone A and B
@@ -1332,7 +1333,9 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 }
                 //comboGrabber.initWobbleGoalCombo();
             }
-            grabber.initWobbleGoalCombo();
+            if(grabber != null) {
+                grabber.initWobbleGoalCombo();
+            }
             TaskManager.processTasks();
         }
     }
@@ -1642,40 +1645,10 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         // sleep(1000);
     }
     public void getSecondWobbleGoalBeta() throws InterruptedException {
-        if (side == ProgramType.AUTO_BLUE) {
-            if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 75, 175, 45, false, 3);
-                chassis.rotateTo(1,135,2);
-            } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 110, 245, 0,true, 5);
-                chassis.rotateTo(1,135,2);
-            } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(1.0, 50, 300, 0, false, 5); // no rotation to make it faster
-                chassis.rotateTo(1,135,2);
-            } else {
-                return;
-            }
-        }
-        if (grabber != null) {
-            if(tZone != TargetZone.ZONE_C) // Zone A and B
-            {
-                grabber.releaseWobbleGoalCombo();
-                while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
-                    TaskManager.processTasks();
-                }
-            }
-            else
-            {
-                grabber.releaseWobbleGoalFastCombo();
-                while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
-                    TaskManager.processTasks();
-                }
-                //comboGrabber.initWobbleGoalCombo();
-            }
-            grabber.initWobbleGoalCombo();
-            TaskManager.processTasks();
-        }
-    }
+        chassis.rotateTo(1,0,2);
+        chassis.driveTo(auto_chassis_power, side(102), 100, -20, false, 3);
+        autoGrabBottomWobbleGoal();
+
 
     }
     public void getSecondWobbleGoalAfterHighGoal() throws InterruptedException {
