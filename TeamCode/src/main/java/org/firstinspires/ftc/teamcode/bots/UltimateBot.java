@@ -28,8 +28,8 @@ public class UltimateBot extends YellowBot {
 
     private SwingPosition swingPosition = SwingPosition.Init;
     private static double SWING_BACK_POS = 1;
-    private static double SWING_PLACE_POS = 0.3;
-    private static double SWING_LIFT_AND_HOLD = 0.45;
+    private static double SWING_PLACE_POS = 0.25;
+    private static double SWING_LIFT_AND_HOLD = 0.55;
     private static double SWING_LIFT_WALL = 0.7;
     private static double SHOOT_SERVO = 0.7;
 
@@ -73,14 +73,14 @@ public class UltimateBot extends YellowBot {
         // claw starts closed
         try {
             wobbleClaw1 = hwMap.get(Servo.class, "claw1");
-            wobbleClaw1.setPosition(0.3);
+            wobbleClaw1.setPosition(0);
         } catch (Exception ex) {
             throw new Exception("Issues with wobbleClaw1. Check the controller config", ex);
         }
 
         try {
             wobbleClaw2 = hwMap.get(Servo.class, "claw2");
-            wobbleClaw2.setPosition(0.7);
+            wobbleClaw2.setPosition(1);
         } catch (Exception ex) {
             throw new Exception("Issues with wobbleClaw2. Check the controller config", ex);
         }
@@ -165,7 +165,7 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Move Peg Shooter Low", defaultReturn = "")
     public void shooterpeglow() {
         if (shooter != null) {
-            shooter.setVelocity(MAX_VELOCITY*0.6);
+            shooter.setVelocity(MAX_VELOCITY*0.63);
         }
     }
 
@@ -224,10 +224,9 @@ public class UltimateBot extends YellowBot {
     @BotAction(displayName = "Close Claw", defaultReturn = "")
     public void closeWobbleClaw() {
         if ((wobbleClaw1 != null) && (wobbleClaw2 != null)) {
-            wobbleClaw1.setPosition(0.3);
-            wobbleClaw2.setPosition(0.7);
+            wobbleClaw1.setPosition(0);
+            wobbleClaw2.setPosition(1);
         }
-
     }
 
     @BotAction(displayName = "Open Claw", defaultReturn = "")
@@ -415,10 +414,10 @@ public class UltimateBot extends YellowBot {
         //get the orientation as the locator knows it. we'll use it later for corrections
         double originalOrientation = locator.getAdjustedCurrentHeading();
         Log.d("UltimateBot", String.format("original orientation: %.2f", originalOrientation));
-        double strafeSpeed = 0.5;
+        double strafeSpeed = 0.4;
         double spinSpeed = 0.1;
-        double strafeToFirst = 10;
-        double strafeBetweenPegs = 2.2;
+        double strafeToFirst = 11;
+        double strafeBetweenPegs = 5;
         //FirstPeg
         //strafe to align the robot with the first peg
         strafeTo(strafeSpeed, strafeToFirst, true);
@@ -449,12 +448,12 @@ public class UltimateBot extends YellowBot {
         newOrientation = locator.getAdjustedCurrentHeading();
         Log.d("UltimateBot", String.format("newOrientation 2: %.2f", newOrientation));
         //spin to the desired orientation
-//        diff = newOrientation - originalOrientation;
-//        if (Math.abs(diff ) > marginError) {
-//            double updated = originalOrientation + diff/2;
-//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
-//            spin(profileSpin, locator);
-//        }
+        double diff = newOrientation - originalOrientation;
+        if (Math.abs(diff ) > marginError) {
+            double updated = originalOrientation + diff/2;
+            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+            spin(profileSpin, locator);
+        }
         //shoot
         shootServo();
 
@@ -468,12 +467,12 @@ public class UltimateBot extends YellowBot {
         newOrientation = locator.getAdjustedCurrentHeading();
         Log.d("UltimateBot", String.format("newOrientation 2: %.2f", newOrientation));
         //spin to the desired orientation
-//        double diff = newOrientation - originalOrientation;
-//        if (Math.abs(diff ) > marginError) {
-//            double updated = newOrientation - 2;
-//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
-//            spin(profileSpin, locator);
-//        }
+        diff = newOrientation - originalOrientation;
+        if (Math.abs(diff ) > marginError) {
+            double updated = newOrientation - 2;
+            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+            spin(profileSpin, locator);
+        }
         //shoot
         shootServo();
 

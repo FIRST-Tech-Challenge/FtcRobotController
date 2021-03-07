@@ -177,10 +177,10 @@ public class UltimateMode extends LinearOpMode {
 //                    shooterslower = !shooterslower;
 //                }
 
-                if (gamepad1.y && buttonpressable) {
-                    startdelay = runtime.milliseconds();
-                    changedguard = !changedguard;
-                }
+//                if (gamepad1.y && buttonpressable) {
+//                    startdelay = runtime.milliseconds();
+//                    changedguard = !changedguard;
+//                }
 
                 // move intake
                 if (gamepad1.a && buttonpressable) {
@@ -205,6 +205,11 @@ public class UltimateMode extends LinearOpMode {
 
                 // move shooter
                 if (gamepad1.left_bumper && buttonpressable) {
+                    startdelay = runtime.milliseconds();
+                    changedshooter = !changedshooter;
+                }
+
+                if (gamepad2.left_bumper && buttonpressable) {
                     startdelay = runtime.milliseconds();
                     changedshooter = !changedshooter;
                 }
@@ -251,7 +256,7 @@ public class UltimateMode extends LinearOpMode {
         if (!gamepadRateLimit.hasExpired()) {
             return;
         }
-        if (gamepad2.x){
+        if (gamepad1.y){
             robot.shootPegSequence(locator);
             gamepadRateLimit.reset();
         }

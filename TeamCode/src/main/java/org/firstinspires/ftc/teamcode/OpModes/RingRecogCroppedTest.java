@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.skills.RingDetector;
 // adb.exe connect 192.168.43.1:5555
 
 @TeleOp(name = "Single Ring Rec", group = "Robot15173")
-//@Disabled
+@Disabled
 public class RingRecogCroppedTest extends LinearOpMode {
 
     // Declare OpMode members.
