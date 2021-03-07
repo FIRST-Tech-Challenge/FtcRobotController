@@ -64,7 +64,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     public Hopper hopper;
     public Intake intake;
 
-    public double auto_chassis_power = .5;
+    public double auto_chassis_power = 1.0;
     public double auto_chassis_dist = 100;
     public double auto_chassis_heading = -90;
     public double auto_chassis_power_slow = .4;
@@ -1270,8 +1270,8 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, 65, 175, 45, false, 3);
                 chassis.rotateTo(1,135,2);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 70, 310, 0,true, 5);
-                chassis.rotateTo(1,135,2);
+                chassis.driveTo(auto_chassis_power, 110, 265, 0,true, 5);
+                chassis.rotateTo(1,90,2);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(1.0, 40, 300, 0, false, 5); // no rotation to make it faster
                 chassis.rotateTo(1,135,2);
@@ -1505,7 +1505,8 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                     shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 }
                 if (intake!=null) intake.intakeIn();
-                chassis.driveTo(auto_chassis_power, side(80), 120, 0, false, 5);
+                chassis.driveTo(auto_chassis_power, side(90), 150, 0, false, 2);
+                chassis.driveTo(auto_chassis_power, side(90), 120, 0, false, 2);
                 sleep(500); //to allow time for intaking the bonus ring
                 if (intake!=null) intake.stop();
                 chassis.driveTo(1.0, side(90), 165, 0, false, 1);
@@ -1651,6 +1652,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     }
     public void getSecondWobbleGoalBeta() throws InterruptedException {
         if (tZone == TargetZone.ZONE_B) {
+            chassis.rotateTo(1, 0, 2);
             chassis.driveTo(auto_chassis_power, side(95), 100, -20, false, 5);
         } else if (tZone == TargetZone.ZONE_C) {
             chassis.rotateTo(1,0,2);

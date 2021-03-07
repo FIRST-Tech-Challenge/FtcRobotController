@@ -80,7 +80,7 @@ public class AutoBlueOutB extends LinearOpMode {
                     robot.deliverSecondWobbleGoalBeta();
                 }
 
-               // robot.park();
+               robot.park();
 
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());
