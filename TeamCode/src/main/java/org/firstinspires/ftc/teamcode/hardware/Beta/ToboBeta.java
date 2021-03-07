@@ -1188,80 +1188,6 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         //tZone = cameraDetector.getTargetZone();
     }
 
-    public void deliverFirstWobbleGoal() throws InterruptedException {
-        // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
-        // still need to change positions to be far left for blue side
-        if (hopper != null) {
-            hopper.hopperUpCombo(true);
-            TaskManager.processTasks();
-        }
-        if (side == ProgramType.AUTO_BLUE) {
-            if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 25, 180, -50, true, 3);
-            } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
-            } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(1.0, 10, 300, -40, true, 6);
-            } else {
-                return;
-            }
-
-        }
-        while (!TaskManager.isComplete("Transfer Up Combo")) {
-            TaskManager.processTasks();
-        }
-        if (grabber != null) {
-            grabber.releaseWobbleGoalFastCombo();
-            while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
-                TaskManager.processTasks();
-            }
-            grabber.initWobbleGoalCombo();
-        }
-        //sleep(1000);
-    }
-
-    public void deliverFirstWobbleGoalAfterHighGoal() throws InterruptedException {
-        // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
-        // still need to change positions to be far left for blue side
-        if (side == ProgramType.AUTO_BLUE) {
-            if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 25, 170, -20, false, 3);
-                chassis.rawRotateTo(0.35,-40,false,1);
-            } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 3);
-            } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(1.0, 10, 290, 0, false, 3); // no rotation to make it faster
-            } else {
-                return;
-            }
-
-        }
-
-        if (grabber != null) {
-            if(tZone != TargetZone.ZONE_C) // Zone A and B
-            {
-                grabber.releaseWobbleGoalCombo();
-                while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
-                    TaskManager.processTasks();
-                }
-            }
-            else
-            {
-                grabber.releaseWobbleGoalFastCombo();
-                while (!TaskManager.isComplete("release Wobble Goal Fast Combo") && !interrupted()) {
-                    TaskManager.processTasks();
-                }
-                //comboGrabber.initWobbleGoalCombo();
-            }
-            grabber.initWobbleGoalCombo();
-            TaskManager.processTasks();
-        }
-        /*if (tZone == TargetZone.ZONE_C) {
-            chassis.rawRotateTo(0.3, -2.5, true, 0.5);
-        }*/
-
-        //sleep(1000);
-    }
     public void deliverFirstWobbleGoalBeta() throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
@@ -1270,7 +1196,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, 65, 175, 45, false, 3);
                 chassis.rotateTo(1,135,2);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 110, 265, 0,true, 5);
+                chassis.driveTo(auto_chassis_power, 140, 270, 0,false, 5);
                 chassis.rotateTo(1,90,2);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(1.0, 40, 300, 0, false, 5); // no rotation to make it faster
@@ -1309,7 +1235,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, 75, 175, 45, false, 3);
                 chassis.rotateTo(1,135,2);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 105, 220, 0,true, 5);
+                chassis.driveTo(auto_chassis_power, 120, 220, 0,true, 5);
                 chassis.rotateTo(1,170,2);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(1.0, 50, 300, 0, false, 5); // no rotation to make it faster
@@ -1653,7 +1579,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     public void getSecondWobbleGoalBeta() throws InterruptedException {
         if (tZone == TargetZone.ZONE_B) {
             chassis.rotateTo(1, 0, 2);
-            chassis.driveTo(auto_chassis_power, side(95), 100, -20, false, 5);
+            chassis.driveTo(auto_chassis_power, side(95), 100, 0, false, 5);
         } else if (tZone == TargetZone.ZONE_C) {
             chassis.rotateTo(1,0,2);
             chassis.driveTo(auto_chassis_power, side(102), 100, -20, false, 5);
