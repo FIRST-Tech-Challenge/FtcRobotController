@@ -75,10 +75,10 @@ public class AutoBlueOutB extends LinearOpMode {
                 robot.doHighGoalsAndPowerShots(3, 0, false);
                 robot.getBonusRingsBeta();
                 robot.deliverFirstWobbleGoalBeta();
-//                if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
-//                    robot.getSecondWobbleGoalBeta();
-//                    robot.deliverSecondWobbleGoalBeta();
-//                }
+                if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+                    robot.getSecondWobbleGoalBeta();
+                    robot.deliverSecondWobbleGoalBeta();
+                }
 
                // robot.park();
 

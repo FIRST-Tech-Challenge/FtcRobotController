@@ -1270,7 +1270,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, 65, 175, 45, false, 3);
                 chassis.rotateTo(1,135,2);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 100, 245, 0,true, 5);
+                chassis.driveTo(auto_chassis_power, 70, 310, 0,true, 5);
                 chassis.rotateTo(1,135,2);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(1.0, 40, 300, 0, false, 5); // no rotation to make it faster
@@ -1309,8 +1309,8 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, 75, 175, 45, false, 3);
                 chassis.rotateTo(1,135,2);
             } else if (tZone == TargetZone.ZONE_B) {//1
-                chassis.driveTo(auto_chassis_power, 110, 245, 0,true, 5);
-                chassis.rotateTo(1,135,2);
+                chassis.driveTo(auto_chassis_power, 105, 220, 0,true, 5);
+                chassis.rotateTo(1,170,2);
             } else if (tZone == TargetZone.ZONE_C) {//4
                 chassis.driveTo(1.0, 50, 300, 0, false, 5); // no rotation to make it faster
                 chassis.rotateTo(1,135,2);
@@ -1650,8 +1650,13 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         // sleep(1000);
     }
     public void getSecondWobbleGoalBeta() throws InterruptedException {
-        chassis.rotateTo(1,0,2);
-        chassis.driveTo(auto_chassis_power, side(102), 100, -20, false, 3);
+        if (tZone == TargetZone.ZONE_B) {
+            chassis.driveTo(auto_chassis_power, side(95), 100, -20, false, 5);
+        } else if (tZone == TargetZone.ZONE_C) {
+            chassis.rotateTo(1,0,2);
+            chassis.driveTo(auto_chassis_power, side(102), 100, -20, false, 5);
+        }
+
         autoGrabBottomWobbleGoal();
 
 
@@ -1780,7 +1785,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         }
         else if (tZone== TargetZone.ZONE_B)
         {
-            chassis.driveTo(1.0, Math.max(90, Math.min(chassis.odo_x_pos_cm(), 170)), 220, chassis.getCurHeading(), false,  0.9);
+            chassis.rotateTo(1.0, 0);
         }
         else
         {
