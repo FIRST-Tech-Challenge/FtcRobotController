@@ -31,10 +31,16 @@ public class TestAuto extends LinearOpMode {
 
     private DcMotor shooter = null;
     private Servo kicker = null;
-    double kickerInit = 0.4;
-    double kickerTo = 0.7;
+    double kickerInit = 0.2;
+    double kickerTo = 0.56;
     private Servo shootFlap;
-    double flapAngle = 0.055;
+    double flapAngle = 0.06; //Higher = Steeper
+
+    private Servo leftLift = null;
+    private Servo rightLift = null;
+
+    double leftLiftUp = 1 - 0.92; //0 Top
+    double rightLiftUp = 0.89; //1 Top
 
 
     //NEED TO FIND THESE NUMBERS. LEFT AT DEFAULT FOR NOW
@@ -77,7 +83,11 @@ public class TestAuto extends LinearOpMode {
         shootFlap = hardwareMap.get(Servo.class, "shootFlap");
         shootFlap.setPosition(flapAngle);
 
+        leftLift = hardwareMap.get(Servo.class, "leftLift");
+        rightLift = hardwareMap.get(Servo.class, "rightLift");
 
+        leftLift.setPosition(leftLiftUp);
+        rightLift.setPosition(rightLiftUp);
 
         //Set motor run modes
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -150,7 +160,7 @@ public class TestAuto extends LinearOpMode {
         encoderDrive(0.3,  2,  2, 2, 2, 2);
         sleep(500);
         //Strafe
-        encoderDrive(0.3,  -19,  19, 19, -19, 5);
+        encoderDrive(0.3,  -18,  18, 18, -18, 5);
         sleep(500);
         //Forward
         encoderDrive(0.3,  39,  39, 39, 39, 5);
@@ -180,7 +190,7 @@ public class TestAuto extends LinearOpMode {
     public void kick (int kickCount) {
         for (int i = 0; i < kickCount; i++) {
             kicker.setPosition(kickerTo);
-            sleep(135);
+            sleep(200);
             kicker.setPosition(kickerInit);
             sleep(200);
         }

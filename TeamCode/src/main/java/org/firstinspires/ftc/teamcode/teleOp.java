@@ -72,19 +72,25 @@ public class teleOp extends OpMode
     Motor frontIntake;
 
     //Set Servo objects
-    CRServo leftLift;
-    CRServo rightLift;
+    SimpleServo leftLift;
+    SimpleServo rightLift;
+
+    double leftLiftUp = 1 - 0.92; //0 Top
+    double rightLiftUp = 0.89; //1 Top
+
+    double leftLiftDown = 0.6;
+    double rightLiftDown = 0.4;
 
     SimpleServo kicker;
     SimpleServo shootFlap;
 
-    double kickerInit = 0.4;
-    double kickerTo = 0.7;
+    double kickerInit = 0.2;
+    double kickerTo = 0.56;
 
     boolean kickerHasRun = false;
     boolean kickerMethodRun = false;
 
-    double flapAngle = 0.0725 ;
+    double flapAngle = 0.05; //Higher = Steeper
 
     //Initialize
     @Override
@@ -99,8 +105,8 @@ public class teleOp extends OpMode
         backIntake = new Motor(hardwareMap, "backIntake", 5, 6);
         frontIntake = new Motor(hardwareMap, "frontIntake", 5, 6);
 
-        leftLift = new CRServo(hardwareMap, "leftLift");
-        rightLift = new CRServo(hardwareMap, "rightLift");
+        leftLift = new SimpleServo(hardwareMap, "leftLift");
+        rightLift = new SimpleServo(hardwareMap, "rightLift");
 
         kicker = new SimpleServo(hardwareMap, "kicker") ;
         shootFlap = new SimpleServo(hardwareMap, "shootFlap") ;
@@ -199,8 +205,24 @@ public class teleOp extends OpMode
         /////////////
 
         //Intake
-       //backIntake.set(gamepad2.left_stick_y);
-        frontIntake.set(gamepad2.left_stick_y);
+        //backIntake.set(gamepad2.left_stick_y);
+        //frontIntake.set(gamepad2.left_stick_y);
+
+        //Test Intakes:
+        if (!gamepad2.b) {
+            frontIntake.set(gamepad2.left_stick_y);
+            backIntake.set(0);
+        } else {
+            frontIntake.set(0);
+            backIntake.set(gamepad2.left_stick_y);
+        }
+
+        //If intake is active, bring lift down
+        if(gamepad2.left_stick_y > 0.1 || gamepad2.left_stick_y < -0.1) {
+            leftLift.setPosition(leftLiftDown);
+            rightLift.setPosition(rightLiftDown);
+        }
+
 
         //Shooter
         shooter.set(gamepad2.right_trigger * 0.90);
@@ -212,8 +234,15 @@ public class teleOp extends OpMode
         rightBack.set(rightBackPower);
 
         //Lift
-        leftLift.set(gamepad2.right_stick_y);
-        rightLift.set(gamepad2.right_stick_y);
+        if (gamepad2.dpad_up) {
+            //Up
+            leftLift.setPosition(leftLiftUp);
+            rightLift.setPosition((rightLiftUp));
+        } else if (gamepad2.dpad_down) {
+            //Down
+            leftLift.setPosition(leftLiftDown);
+            rightLift.setPosition(rightLiftDown);
+        }
 
         //Kicker
         if (gamepad2.a && !kickerHasRun && !gamepad2.start) {
@@ -222,7 +251,7 @@ public class teleOp extends OpMode
             kickerHasRun = true;
         }
 
-        if (runtime.milliseconds() > currentTime+ 135) {
+        if (runtime.milliseconds() > currentTime + 200) {
             kicker.setPosition(kickerInit);
             kickerMethodRun = true;
         }
