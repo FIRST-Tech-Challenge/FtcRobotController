@@ -15,16 +15,15 @@ class WobbleArmServoVals {
 public class WobbleArmTest extends OpMode {
 
     double motorPosition = 0.0;
-    private Motor wobbleArmMotor;
-
     double servoPosition = 0.0;
+    private Motor wobbleArmMotor;
     private Servo wobbleArmServo;
 
     @Override
     public void init() {
 
         wobbleArmServo = hardwareMap.servo.get("wobbleArmServo");
-        wobbleArmMotor = new Motor (hardwareMap, "wobbleArmMotor");
+        wobbleArmMotor = new Motor(hardwareMap, "wobbleArmMotor");
     }
 
     @Override
@@ -47,9 +46,19 @@ public class WobbleArmTest extends OpMode {
 
             motorPosition = 0.625;
 
-        } else if (gamepad1.dpad_down) {
+        } else {
 
-            motorPosition= -0.625;
+            motorPosition = 0.0;
+
+        }
+
+        if (gamepad1.dpad_down) {
+
+            motorPosition = -0.625;
+
+        } else {
+
+            motorPosition = 0.0;
 
         }
 
