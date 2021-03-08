@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <!-- REV -->
+    <LynxUsbDevice parentModuleAddress="173" serialNumber="(embedded)" name="Control Hub Portal 1">
+
+        <LynxModule name="Expansion Hub 1" port="1">
+
+            <RevRobotics20HDHexMotor name="m0" port="0"/>
+            <RevRobotics20HDHexMotor name="m1" port="1"/>
+            <RevRobotics20HDHexMotor name="m2" port="2"/>
+            <RevRobotics20HDHexMotor name="m3" port="3"/>
+
+            <LynxEmbeddedIMU name="imu" port="0" bus="0"/>
+
+            <Servo name="wobbleGoalHold" port="4" />
+            <Servo name="wobbleGoalLift" port="5" />
+        </LynxModule>
+
+        <LynxModule name="Control Hub" port="173">
+
+            <RevRobotics20HDHexMotor name="omniX" port="2"/>
+            <RevRobotics20HDHexMotor name="intakeMotor" port="3"/> <!-- omni Y -->
+
+            <LynxEmbeddedIMU name="imu 1" port="0" bus="0"/>
+
+            <Servo name="aimServo" port="0" />
+            <Servo name="shooterServo" port="1" />
+            <Servo name="intakeServo" port="2"/>
+            <RevRobotics20HDHexMotor name="shooterMotorFront" port="0" />
+            <RevRobotics20HDHexMotor name="shooterMotorBack" port="1" />
+
+        </LynxModule>
+    </LynxUsbDevice>
+
+    <Webcam name="Webcam 1" serialNumber="4927E1A0" />
+</Robot>
