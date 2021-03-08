@@ -47,11 +47,11 @@ public class WobbleArmTest extends OpMode {
 
         } else if (gamepad1.dpad_down) {
 
-            motorPosition= 0.0;
+            motorPosition= -0.625;
 
         }
 
-        wobbleArmMotor.setTargetDistance(motorPosition);
+        wobbleArmMotor.set(motorPosition);
 
     }
 }
