@@ -36,7 +36,7 @@ public class HzIntake {
 
     public INTAKE_MOTOR_STATE intakeMotorState = INTAKE_MOTOR_STATE.STOPPED;
 
-    public double intakePower = 0.9;//0.9;
+    public double intakePower = 0.95;//0.9;
     public double intakeReversePower = 0.8;
 
     public enum INTAKE_BUTTON_STATE {
