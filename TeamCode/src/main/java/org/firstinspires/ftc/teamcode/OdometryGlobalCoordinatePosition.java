@@ -50,7 +50,7 @@ public class OdometryGlobalCoordinatePosition implements Runnable {
     @Override
     public void run() {
         while (isRunning) {
-            updatePositions(robot.leftVertical.getCurrentPosition(), robot.rightVertical.getCurrentPosition(), robot.horizontal.getCurrentPosition());
+            updatePositions(robot.frontLeft.getCurrentPosition(), robot.frontRight.getCurrentPosition(), robot.intake.getCurrentPosition());
             try {
                 Thread.sleep(75);
             } catch (InterruptedException e) {

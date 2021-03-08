@@ -15,7 +15,6 @@ import java.util.Arrays;
 
 public class HardwareMapV2 {
     public DcMotor frontRight = null, frontLeft = null, backRight = null, backLeft = null, intake = null, outtake = null;
-    public DcMotor leftVertical = null, rightVertical = null, horizontal = null;
 
     public CRServo conveyor = null;
     public Servo leftTilt = null, rightTilt = null, wobble = null;
@@ -23,7 +22,7 @@ public class HardwareMapV2 {
     boolean odometryTest = false;
 
     ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake, outtake));
-    ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(leftVertical, rightVertical, horizontal));
+    ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, intake));
     ArrayList<? extends HardwareDevice> servos = new ArrayList<>(Arrays.asList(conveyor, leftTilt, rightTilt, wobble));
 
     ModernRoboticsI2cGyro realgyro1;
@@ -44,12 +43,10 @@ public class HardwareMapV2 {
         outtake = hwMap.get(DcMotor.class, "spit");
 
         if (odometry) {
-            leftVertical = hwMap.dcMotor.get("left_vertical");
-            rightVertical = hwMap.dcMotor.get("right_vertical");
-            horizontal = hwMap.dcMotor.get("horizontal");
+
         }
         if (odometryTest){
-            horizontal = hwMap.dcMotor.get("horizontal");
+
         }
         conveyor = hwMap.get(CRServo.class, "convey");
         leftTilt = hwMap.get(Servo.class, "left_tilt");
@@ -64,14 +61,11 @@ public class HardwareMapV2 {
         outtake.setDirection(DcMotor.Direction.REVERSE);
 
         if (odometry) {
-            leftVertical.setDirection(DcMotorSimple.Direction.REVERSE);
-            rightVertical.setDirection(DcMotorSimple.Direction.FORWARD);
-            horizontal.setDirection(DcMotorSimple.Direction.REVERSE);
+
         }
         if (odometryTest){
-            horizontal.setDirection(DcMotorSimple.Direction.REVERSE);
-            horizontal.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            horizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         //conveyor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftTilt.setDirection(Servo.Direction.REVERSE);
@@ -82,9 +76,6 @@ public class HardwareMapV2 {
         rightTilt.setPosition(0.5);
         leftTilt.setPosition(0.5);
         wobble.setPosition(0.0);
-
-        intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
     }
 

@@ -63,9 +63,9 @@ public class OdometryCalibration extends LinearOpMode {
             telemetry.update();
         }
 
-        double verticalEncoderTickOffsetPerDegree = robot.leftVertical.getCurrentPosition() - robot.rightVertical.getCurrentPosition();
-        double leftWheelDistance = (robot.leftVertical.getCurrentPosition()*180)/(360*Math.PI);
-        double rightWheelDistance = (robot.rightVertical.getCurrentPosition()*180)/(360*Math.PI);
+        double verticalEncoderTickOffsetPerDegree = robot.frontLeft.getCurrentPosition() - robot.frontRight.getCurrentPosition();
+        double leftWheelDistance = (robot.frontLeft.getCurrentPosition()*180)/(360*Math.PI);
+        double rightWheelDistance = (robot.frontRight.getCurrentPosition()*180)/(360*Math.PI);
 
         while(opModeIsActive()){
             telemetry.addData("Odometry System Calibration Status", "Calibration Complete");
@@ -75,9 +75,9 @@ public class OdometryCalibration extends LinearOpMode {
 
             //Display raw values
             telemetry.addData("IMU Angle", getZAngle());
-            telemetry.addData("Vertical Left Position", robot.leftVertical.getCurrentPosition());
-            telemetry.addData("Vertical Right Position", robot.rightVertical.getCurrentPosition());
-            telemetry.addData("Horizontal Position", robot.horizontal.getCurrentPosition());
+            telemetry.addData("Vertical Left Position", robot.frontLeft.getCurrentPosition());
+            telemetry.addData("Vertical Right Position", robot.frontRight.getCurrentPosition());
+            telemetry.addData("Horizontal Position", robot.intake.getCurrentPosition());
             telemetry.addData("Vertical Encoder Offset", verticalEncoderTickOffsetPerDegree);
             telemetry.addData("Left Wheel Radius", leftWheelDistance);
             telemetry.addData("Right Wheel Radius", rightWheelDistance);
