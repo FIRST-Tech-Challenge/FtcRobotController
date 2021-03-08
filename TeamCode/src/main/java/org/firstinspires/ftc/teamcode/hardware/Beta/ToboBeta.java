@@ -380,7 +380,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         em.onButtonDown(new Events.Listener() {
             @Override
             public void buttonDown(EventManager source, Button button) throws InterruptedException {
-                chassis.toggleSlowMode();
+                if (chassis!=null) chassis.toggleSlowMode();
             }
         }, new Button[]{Button.LEFT_STICK});
 
@@ -565,7 +565,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 if (source.getTrigger(Events.Side.LEFT) > 0.3) {
                     if (grabber != null) {
                         autoGrabBottomWobbleGoal();
-                        chassis.stop();
+                        if (chassis!=null) chassis.stop();
                         // comboGrabber.grabWobbleGoalCombo(false);
                     }
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
