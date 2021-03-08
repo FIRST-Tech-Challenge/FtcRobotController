@@ -41,6 +41,7 @@ public class WobbleArmTest extends OpMode {
 
         wobbleArmServo.setPosition(servoPosition);
 
+        // Motor movement.
         if (gamepad1.dpad_up) {
 
             motorPosition = 0.625;
