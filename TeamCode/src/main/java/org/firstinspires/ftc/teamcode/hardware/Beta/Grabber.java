@@ -32,15 +32,15 @@ public class Grabber extends Logger<Grabber> implements Configurable {
                                          // 2 is new grabber
     private final double ARM_POWER = 0.5;
     private final double ARM_SPEED = 2500;
-    private int ARM_POS_MAX = 2500;
+    private int ARM_POS_MAX = 170;
     private int ARM_POS_INIT = 0;
-    private int ARM_POS_UP = 1000;
-    private int ARM_POS_UP_UP = 1500;
-    private int ARM_POS_DOWN = 0;
+    private int ARM_POS_UP = 60;
+    private int ARM_POS_UP_UP = 17;
+    private int ARM_POS_DOWN = 150;
 
-    private double GRABBER_OPEN = 0.35;
-    private double GRABBER_CLOSE = 0.9;
-    private double GRABBER_PARTIAL_CLOSE = 0.8;
+    private double GRABBER_OPEN = 0.82;
+    private double GRABBER_CLOSE = 0.5;
+    private double GRABBER_PARTIAL_CLOSE = 0.56;
     private double GRABBER_INIT = GRABBER_CLOSE;
 
     private boolean armIsLow = false;
@@ -88,10 +88,10 @@ public class Grabber extends Logger<Grabber> implements Configurable {
 
         arm = configuration.getHardwareMap().get(DcMotorEx.class, "arm");
         if (arm != null) {
-            arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            // armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            arm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            arm.setDirection(DcMotorEx.Direction.REVERSE);
         }
         configuration.register(this);
         // servoInit();
@@ -151,10 +151,12 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int pos = arm.getCurrentPosition();
         if ((pos>= ARM_POS_MAX) && !forced) {
-            armStop();
-            return;
+            //armStop();
+            //return;
+            pos = Math.min(pos + 3, ARM_POS_MAX);
+        } else {
+            pos = pos + 3;
         }
-        pos = Math.min(pos+100, ARM_POS_MAX);
         arm.setTargetPosition(pos);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setVelocity(ARM_SPEED);
@@ -165,10 +167,12 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int pos = arm.getCurrentPosition();
         if (pos<= ARM_POS_INIT && !forced) {
-            armStop();
-            return;
+            //armStop();
+            //return;
+            pos = Math.max(pos-3, ARM_POS_INIT);
+        } else {
+            pos = pos-3;
         }
-        pos=Math.max(pos-100, ARM_POS_INIT);
         arm.setTargetPosition(pos);
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setVelocity(-ARM_SPEED);

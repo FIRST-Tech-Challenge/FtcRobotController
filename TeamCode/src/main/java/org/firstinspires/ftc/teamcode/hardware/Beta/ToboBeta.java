@@ -85,10 +85,10 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     public double auto_rotate_degree = 0;
 
     private boolean simulation_mode = false;
-    private boolean useChassis = true;
+    private boolean useChassis = false;
     public boolean useVuforia = false;
     public boolean useTfod = false;
-    public boolean useGrabber = false;
+    public boolean useGrabber = true;
     public boolean useHopper = false;
     public boolean useShooter = false;
     public boolean useIntake = false;
@@ -154,6 +154,10 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         if (simulation_mode) { // need to call after chassis is initialized
             set_simulation_mode(true);
         }
+        if (useGrabber && !simulation_mode) {
+            grabber = new Grabber(core);
+            grabber.configure(configuration, (autoside != ProgramType.TELE_OP));
+        }
 
         info("ToboBeta configure() after init Chassis (run time = %.2f sec)", (runtime.seconds() - ini_time));
     }
@@ -169,7 +173,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             grabber.servoInit();
         if (hopper != null)
             hopper.servoInit();
-        if (!auto) {
+        if (!auto && chassis!=null) {
             chassis.setupTelemetry(telemetry);
         }
     }
@@ -1176,7 +1180,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     }
 
     public void detectPosition() {//startPos = 1 = out, 2 = in
-        tZone = TargetZone.ZONE_C;
+        tZone = TargetZone.ZONE_B;
         // use camera (Tensorflow) to detect position
 //        tZone = TargetZone.ZONE_C;
 //        return;
