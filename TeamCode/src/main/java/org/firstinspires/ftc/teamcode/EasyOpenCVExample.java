@@ -41,7 +41,7 @@ public class EasyOpenCVExample extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
             }
         });
 
@@ -81,8 +81,8 @@ public class EasyOpenCVExample extends LinearOpMode {
          */
         static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(181,98);
 
-        static final int REGION_WIDTH = 35;
-        static final int REGION_HEIGHT = 25;
+        static final int REGION_WIDTH = 70;
+        static final int REGION_HEIGHT = 50;
 
         final int FOUR_RING_THRESHOLD = 150;
         final int ONE_RING_THRESHOLD = 135;
