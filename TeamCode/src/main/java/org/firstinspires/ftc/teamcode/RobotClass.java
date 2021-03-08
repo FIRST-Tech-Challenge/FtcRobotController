@@ -1,26 +1,33 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.os.DropBoxManager;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
 import java.util.Date;
+
+//import org.opencv.core.Core;
+//import org.opencv.core.Mat;
+//import org.opencv.core.Point;
+//import org.opencv.core.Rect;
+//import org.opencv.core.Scalar;
+//import org.opencv.imgproc.Imgproc;
+//import org.openftc.easyopencv.OpenCvCamera;
+//import org.openftc.easyopencv.OpenCvCameraFactory;
+//import org.openftc.easyopencv.OpenCvCameraRotation;
+//import org.openftc.easyopencv.OpenCvInternalCamera;
+//import org.openftc.easyopencv.OpenCvPipeline;
 
 
 public class RobotClass {
@@ -44,6 +51,10 @@ public class RobotClass {
 
     LinearOpMode opmode;
 
+   // OpenCvInternalCamera phoneCam;
+//    EasyOpenCVExample.SkystoneDeterminationPipeline pipeline;
+
+
     public RobotClass(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opmode) {
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft" );
         frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
@@ -57,6 +68,7 @@ public class RobotClass {
         intakeServo = hardwareMap.crservo.get("intakeServoOne");
         shooterServo1 = hardwareMap.crservo.get("shooterServo1");
         shooterServo2 = hardwareMap.crservo.get("shooterServo2");
+        colorSensor = hardwareMap.colorSensor.get("colorSensor");
 
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -362,7 +374,7 @@ public class RobotClass {
         telemetry.addData("Completed Gyro Angle: ", getAngleFromGyro());
         telemetry.update();
     }
-    public void forwardToWhite (double speed, double rotations, double speed2) throws InterruptedException {
+    public void forwardToWhite (double speed, double rotations, double speed2) {
         forward(speed,rotations);
         frontLeft.setPower(speed2);
         frontRight.setPower(speed2);
@@ -666,5 +678,26 @@ public class RobotClass {
         shooterServo2(.8);
     }
 
+//    public void openCVInnitShenanigans() {
+//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+//        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+//        pipeline = new EasyOpenCVExample.SkystoneDeterminationPipeline();
+//        phoneCam.setPipeline(pipeline);
+//
+//        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
+//        // out when the RC activity is in portrait. We do our actual image processing assuming
+//        // landscape orientation, though.
+//        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+//
+//        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//        {
+//            @Override
+//            public void onOpened()
+//            {
+//                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+//            }
+//        });
+//
+//    }
 
     }

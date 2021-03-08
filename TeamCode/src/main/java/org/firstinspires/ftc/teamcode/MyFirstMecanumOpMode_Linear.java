@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -28,7 +27,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
   //  CRServo intakeTwo = null;
     CRServo shooterServo1 = null;
     CRServo shooterServo2 = null;
-
+    RobotClass robot;
 
     @Override
     public void runOpMode() {
@@ -37,7 +36,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
 //        digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
 //        sensorColorRange = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
 //        servoTest = hardwareMap.get(Servo.class, "servoTest");
-
+        robot= new RobotClass(hardwareMap, telemetry, this);
 
         leftFrontMotor = hardwareMap.dcMotor.get("frontLeft");
         rightFrontMotor = hardwareMap.dcMotor.get("frontRight");
@@ -148,7 +147,12 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             } else if (gamepad2.x){
                 intakeOne.setPower(0);
             }
-
+            /*beep boop
+            *
+            * robot thigd
+            *
+            *
+            * */
             if (gamepad2.y) {
                 if (!yPressed) {
                     if (yOpen) {
@@ -162,6 +166,10 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
                 yPressed=true;
             } else {
                 yPressed = false;
+            }
+            if (gamepad1.a) {
+                robot.forwardToWhite(.9,.5,.3);
+                robot.forward(.6, -2.4);
             }
 
         }
