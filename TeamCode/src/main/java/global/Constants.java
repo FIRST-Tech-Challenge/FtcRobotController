@@ -14,4 +14,8 @@ public class Constants {
     public static final double ROBOT_RADIUS = Math.sqrt(Math.pow(ROBOT_WIDTH/2, 2) + Math.pow(ROBOT_LENGTH/2, 2)); // meters
     public static final double CENTER_THETA = Math.PI - Math.atan2(ROBOT_LENGTH, ROBOT_WIDTH); // radians
 
+    public static final int AUTOMODULE_REFRESH_RATE = 100; // hertz
+
+
+
 }

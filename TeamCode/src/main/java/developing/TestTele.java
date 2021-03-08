@@ -21,15 +21,26 @@ public class TestTele extends OpMode {
 
         bot.moveTeleOp(forward, strafe, turn);
 
-        bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
+        if(!bot.areAutomodulesRunning()) {
+            bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
 
-//        bot.setCompassMode();
+            bot.outtake(gamepad2.right_stick_y);
 
-//        bot.outtakeWithCalculations();
-        bot.outtake(gamepad2.right_stick_y);
-
-        bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
+            bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
 
 
+        }
+
+        if(gamepad1.a){
+            bot.testModule.start();
+        }
+
+
+
+    }
+
+    @Override
+    public void stop() {
+        bot.stopAllAutomodules();
     }
 }

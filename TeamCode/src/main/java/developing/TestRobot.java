@@ -11,9 +11,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import java.util.ArrayList;
+
 import global.AngularPosition;
 import global.Constants;
+import telefunctions.AutoModule;
 import telefunctions.Cycle;
+import util.CodeSeg;
+import util.ThreadHandler;
 
 public class TestRobot {
 
@@ -30,7 +35,7 @@ public class TestRobot {
 
     public Servo rp;
 
-    public Cycle pushControl = new Cycle(0.1, 0.3);
+    public Cycle pushControl = new Cycle(0.1, 0.27, 0.35);
 
     public ModernRoboticsI2cRangeSensor lr;
     public ModernRoboticsI2cRangeSensor fr;
@@ -50,6 +55,11 @@ public class TestRobot {
     public boolean fastMode = true;
 
 
+    public AutoModule2 testModule = new AutoModule2(); // 0
+
+    public ArrayList<AutoModule2> autoModule2s = new ArrayList<>();
+
+
 
     public void init(HardwareMap hwMap) {
 
@@ -67,12 +77,19 @@ public class TestRobot {
         rh = getCRServo(hwMap, "rh", CRServo.Direction.REVERSE);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, rpStart);
 
-        angularPosition.init(hwMap);
+        //angularPosition.init(hwMap);
 
 
 //
 //        lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
 //        fr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "fr");
+
+        testModule.addStage(in, 1, 1.0);
+        testModule.addStage(in, 0, 0.1);
+
+        autoModule2s.add(testModule);
+
+
 
 
 
@@ -142,6 +159,18 @@ public class TestRobot {
             move((f*0.95) + Math.signum(f)*0.05, (s*0.9)+Math.signum(s)*0.1, Math.signum(t)*t*t*0.7 + (Math.signum(t) * 0.3));
         }else{
             move((f*0.2) + Math.signum(f)*0.05, (s*0.2)+Math.signum(s)*0.1, (t*0.2)+Math.signum(t)*0.3);
+        }
+    }
+
+    public boolean areAutomodulesRunning(){
+        for (AutoModule2 a:autoModule2s) {
+            if (a.isExecuting()) { return true; }
+        }
+        return false;
+    }
+    public void stopAllAutomodules(){
+        for (AutoModule2 a:autoModule2s) {
+            a.stop();
         }
     }
 

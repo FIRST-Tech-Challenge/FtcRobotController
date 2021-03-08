@@ -20,6 +20,8 @@ public class TerraOp extends OpMode {
     @Override
     public void init() {
 
+
+
         telemetry.addData("Status: ","Not Ready");
         telemetry.update();
         bot.init(hardwareMap);

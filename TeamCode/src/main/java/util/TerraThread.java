@@ -43,5 +43,6 @@ public class TerraThread implements Runnable{
                 try {Thread.sleep(updateMs); } catch (InterruptedException e) {}
             }
         }
+
     }
 }
