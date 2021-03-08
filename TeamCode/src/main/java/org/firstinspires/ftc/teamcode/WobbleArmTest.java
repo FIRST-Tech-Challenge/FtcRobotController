@@ -44,7 +44,7 @@ public class WobbleArmTest extends OpMode {
         // Motor movement.
         if (gamepad1.dpad_up) {
 
-            motorPosition = 0.325;
+            motorPosition = 0.525;
 
         } else {
 
@@ -56,7 +56,7 @@ public class WobbleArmTest extends OpMode {
 
         if (gamepad1.dpad_down) {
 
-            motorPosition = -0.325;
+            motorPosition = -0.525;
 
         } else {
 
