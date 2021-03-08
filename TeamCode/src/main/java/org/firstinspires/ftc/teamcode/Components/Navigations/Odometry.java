@@ -28,13 +28,9 @@ public class Odometry extends Thread {
     float[] odom = new float[3];
     private LinearOpMode op = null;
     private BNO055IMU imu;
-    private Orientation             lastAngles = new Orientation();
+    private Orientation lastAngles = new Orientation();
     private float globalAngle;
-            private double power = .30, correction;
-
-
-    //set true to enable imu vice versa
-    final boolean enableIMU = true;
+    double power = .30, correction;
 
     public Odometry(LinearOpMode opMode) {
 
@@ -74,7 +70,7 @@ public class Odometry extends Thread {
     }
     public void run() {
         while(!isInterrupted()) {
-            //if(!getInVuforia()) {//getInVuforia
+            if(!getInVuforia()) {//getInVuforia
                 float diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
                 odom[0] += odomconst[0]*diff[0];
                 odom[1] += odomconst[1]*diff[1];
@@ -82,12 +78,12 @@ public class Odometry extends Thread {
                 float a = getAngle();
                 float x =  (float)cos((a * Math.PI / 180));
                 float y = (float)sin((a * Math.PI / 180));
-                setPosition(getXposition()+ (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1,getYposition()+(y * (diff[0]+diff[1])/(2*ticks_per_inch) + x * diff[2]/ticks_per_inch)*-1,a);
+                setPosition(getXposition()+ (x * (diff[0]+diff[1])/(2*ticks_per_inch) + y * diff[2]/ticks_per_inch)*1,getYposition()+(y * (diff[0]+diff[1])/(2*ticks_per_inch) - x * diff[2]/ticks_per_inch),a);
                 op.telemetry.addData("x",getXposition());
                 op.telemetry.addData("y",getYposition());
                 op.telemetry.addData("a",getAngle());
                 op.telemetry.update();
-            //}
+            }
         }
     }
     public float getAngle() {
@@ -102,10 +98,10 @@ public class Odometry extends Thread {
         else if (deltaAngle > 180)
             deltaAngle -= 360;
 
-        globalAngle += deltaAngle;
+        globalAngle = (float) (Navigation.getAngle()-deltaAngle);
 
         lastAngles = angles;
 
-        return -globalAngle;
+        return globalAngle;
     }
 }
