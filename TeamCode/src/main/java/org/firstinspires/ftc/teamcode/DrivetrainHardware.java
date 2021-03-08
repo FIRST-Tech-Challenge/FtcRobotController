@@ -168,10 +168,14 @@ public class DrivetrainHardware {
         FlyWheel1.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         FlyWheel2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        Arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         FlyWheel1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         FlyWheel2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);

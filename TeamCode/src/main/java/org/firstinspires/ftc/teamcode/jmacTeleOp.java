@@ -33,9 +33,11 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="Arcade", group="Arcade")
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+@TeleOp(name="jmac", group="Arcade")
 //@Disabled
-public class ArcadeTeleOp extends LinearOpMode {
+public class jmacTeleOp extends LinearOpMode {
 
     DrivetrainHardware mDrive = new DrivetrainHardware();
 
@@ -65,7 +67,7 @@ public class ArcadeTeleOp extends LinearOpMode {
             //runPivot();
             runServos();
             doArm();
-            //doVarious();
+            doVarious();
             runVoltageLED();
             //runRGBPatternSwitch();
         }
@@ -160,6 +162,8 @@ public class ArcadeTeleOp extends LinearOpMode {
              mDrive.Arm.setPower(gamepad2.right_stick_y);
          else
              mDrive.Arm.setPower(gamepad2.right_stick_y / 2);
+
+        telemetry.addData("Arm", mDrive.Arm.getCurrentPosition());
     }
 
     public void runPivot()
