@@ -226,8 +226,8 @@ public class OdometryChassis extends BasicChassis {
         if (newTarget>180){newTarget=newTarget-360;}
         if (newTarget<=-180){newTarget=newTarget+360;}
 
-        if(abs(error)<10){
-            while (op.opModeIsActive() && (error > 0.25  || error < -0.25))
+        if(abs(error)<20){
+            while (op.opModeIsActive() && (error > 0.2  || error < -0.2))
             {
                 currentAngle = (float)track()[2];
                 error = newTarget - currentAngle;
@@ -238,11 +238,11 @@ public class OdometryChassis extends BasicChassis {
                 }
                 rightPower = -direction*min(abs(power*gain*error),abs(power));
                 leftPower = -rightPower;
-                if(abs(leftPower)<0.315){
-                    leftPower*=0.3/abs(leftPower);
+                if(abs(leftPower)<0.28){
+                    leftPower*=0.28/abs(leftPower);
                 }
-                if(abs(rightPower)<0.315){
-                    rightPower*=0.3/abs(rightPower);
+                if(abs(rightPower)<0.28){
+                    rightPower*=0.28/abs(rightPower);
                 }
                 motorLeftBack.setPower(leftPower);
                 motorLeftFront.setPower(leftPower);

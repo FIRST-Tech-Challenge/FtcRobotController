@@ -67,6 +67,7 @@ public class OneGPTeleop extends LinearOpMode {
             float shooter = gamepad1.right_trigger;
             boolean odo_powershots = gamepad1.b;
             boolean shooter_servo = gamepad1.x;
+            boolean wobble_goal_arm2=gamepad1.dpad_left;
             boolean wobble_goal_servo = gamepad1.y;
             boolean quick_reverse = gamepad1.a;
 
@@ -125,6 +126,11 @@ public class OneGPTeleop extends LinearOpMode {
                 // actions/movements will be executed by mistake
                 sleep(500);
                 currentWobbleGoalPosition = nextWobbleGoalPosition;
+            }
+            if (wobble_goal_arm2){
+                robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
+                sleep(500);
+                robot.openWobbleGoalClaw();
             }
 
             if (wobble_goal_servo) {
