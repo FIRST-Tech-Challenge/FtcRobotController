@@ -70,6 +70,7 @@ public class OneGPTeleop extends LinearOpMode {
             boolean wobble_goal_arm2=gamepad1.dpad_left;
             boolean wobble_goal_servo = gamepad1.y;
             boolean quick_reverse = gamepad1.a;
+            boolean move_sticks = gamepad1.dpad_down;
 
 
             angleInRadian = Math.atan2(left_stick_y, left_stick_x);
@@ -81,6 +82,20 @@ public class OneGPTeleop extends LinearOpMode {
                 robot.goToPosition(5,5 ,0,0.8);
                 //robot.goToPosition(40,-40,-88,0.7);
                 //robot.shootThreePowerShot();
+            }
+
+            /**Sticks**/
+            boolean sticksUp = true;
+            if (move_sticks) {
+                if(sticksUp) {
+                    robot.moveLeftStick(1);
+                    robot.moveRightStick(1);
+                    sticksUp = false;
+                } else if(!sticksUp) {
+                    robot.moveLeftStick(0);
+                    robot.moveRightStick(0);
+                    sticksUp = true;
+                }
             }
 
             /**Shooter**/

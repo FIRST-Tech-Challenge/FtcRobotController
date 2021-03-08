@@ -8,7 +8,8 @@ import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
-@Autonomous(name= "FinalAuto")
+@Autonomous(name= "FinalAuto", preselectTeleOp = "OneGPTeleop")
+
 public class FinalAuto extends LinearOpMode {
     @Override
     public void runOpMode(){

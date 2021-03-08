@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.Intake;
 import org.firstinspires.ftc.teamcode.Components.Accesories.Shooter;
+import org.firstinspires.ftc.teamcode.Components.Accesories.Sticks;
 import org.firstinspires.ftc.teamcode.Components.Accesories.Transfer;
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
@@ -28,6 +29,7 @@ public class Robot {
     private Shooter shooter = null;
     private VuforiaWebcam vuforiaWebcam = null;
     private TensorFlow tensorFlow = null;
+    private Sticks sticks = null;
 
     private double vuforiaX = 0;
     private double vuforiaY = 0;
@@ -53,6 +55,7 @@ public class Robot {
             transfer = new Transfer(op);
             wobbleGoal = new WobbleGoal(op);
             shooter = new Shooter(op);
+            sticks = new Sticks(op);
 
 //        if (objectDetectionNeeded) {
 //            tensorFlow.runTensorFlowWaitForStart();
@@ -235,6 +238,15 @@ public class Robot {
         if (isCorgi) {
             transfer.stopTransfer();
         }
+    }
+
+    //sticks
+    public void moveLeftStick(double distance) {
+        sticks.moveLeftStick(distance);
+    }
+
+    public void moveRightStick(double distance) {
+        sticks.moveRightStick(distance);
     }
 
     //shooter
