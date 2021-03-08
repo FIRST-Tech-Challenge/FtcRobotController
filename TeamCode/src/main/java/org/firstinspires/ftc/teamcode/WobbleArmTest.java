@@ -30,6 +30,7 @@ public class WobbleArmTest extends OpMode {
     @Override
     public void loop() {
 
+        // Servo motor.
         if (gamepad1.a) {
 
             servoPosition = 1.0;
