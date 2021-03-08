@@ -39,6 +39,7 @@ public class OdometryChassis extends BasicChassis {
     private float globalAngle;
     double power = .30, correction;
     float xpos,ypos,angle;
+    private Navigation navigation = null;
 
 
 
@@ -80,21 +81,14 @@ public class OdometryChassis extends BasicChassis {
         op.telemetry.addData("Mode", "waiting for start");
         op.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         op.telemetry.update();
-        //navigation = new Navigation(op);
+        navigation = new Navigation(op);
     }
-    public void navigate(){//navigation.navigate(op);
+    public void navigate(){navigation.navigate(op);
         }
-    public void navigateTeleOp(){//navigation.navigateTeleOp(op)
+    public void navigateTeleOp(){navigation.navigateTeleOp(op);
         }
     public void setPosition(float x, float y, float newAngle){
-        //navigation.setPosition(x,y,angle);
-        xpos=x;
-        ypos=y;
-        //globalAngle=-newAngle;
-//        odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        odom3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        track();
+        navigation.setPosition(x,y,angle);
     }
     public void stopAllMotors() {
         motorLeftBack.setPower(0);
@@ -103,7 +97,7 @@ public class OdometryChassis extends BasicChassis {
         motorRightFront.setPower(0);
     }
     public float getAngle() {
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        /*Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         //op.telemetry.addData("first angle: ", (int)angles.firstAngle);
         //op.telemetry.update();
         //op.sleep(1000);
@@ -118,10 +112,11 @@ public class OdometryChassis extends BasicChassis {
 
         lastAngles = angles;
 
-        return -globalAngle;
+        return -globalAngle;*/
+        return navigation.getAngle();
     }
     public double[] track() {
-        double data[]={0,0,0};
+        /*double data[]={0,0,0};
         double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),
                 odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
         odom[0] += odomconst[0]*diff[0];
@@ -139,7 +134,8 @@ public class OdometryChassis extends BasicChassis {
         op.telemetry.addData("ypos",ypos);
         op.telemetry.addData("angle",angle);
         op.telemetry.update();
-        return data;
+        return data;*/
+        return navigation.getPosition();
     }
     public void goToPosition(double x, double y, double a, double power){
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);

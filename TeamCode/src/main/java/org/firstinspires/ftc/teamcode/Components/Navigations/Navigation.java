@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
 public class Navigation {
     private static double xPosition;
     private static double yPosition;
-    private static double angle;
+    private static float angle;
     private static boolean inVuforia = false;
     Thread odometry = null;
     Thread vuforia=null;
@@ -37,7 +37,7 @@ public class Navigation {
         yPosition = newValue;
     }
 
-    public static double getAngle() {
+    public static float getAngle() {
         return angle;
     }
 
@@ -46,13 +46,13 @@ public class Navigation {
         return pos;
     }
 
-    public static void setPosition(double x, double y, double newAngle){
+    public static void setPosition(double x, double y, float newAngle){
         xPosition = x;
         yPosition = y;
         angle = newAngle;
     }
 
-    public static void setAngle(double newAngle) {
+    public static void setAngle(float newAngle) {
         angle = newAngle;
     }
 
