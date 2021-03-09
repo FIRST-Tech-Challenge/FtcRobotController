@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robot.DriveTrain;
 import org.firstinspires.ftc.robot.FlyWheel;
 import org.firstinspires.ftc.robot_utilities.GamePadController;
 import org.firstinspires.ftc.robot.Hitter;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.robot_utilities.Vals;
 @TeleOp(name = "EchoOp")
 public class EchoOp extends OpMode {
     private GamePadController gamepad;
-    private Motor driveLeft, driveRight;
+    private DriveTrain driveTrain;
     private FlyWheel flywheel;
     private Hitter hitter;
     private Motor intake1, intake2;
@@ -27,12 +28,8 @@ public class EchoOp extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         gamepad = new GamePadController(gamepad1);
 
-        driveLeft = new Motor(hardwareMap, "dl");
-        driveRight = new Motor(hardwareMap, "dr");
-        driveLeft.setRunMode(Motor.RunMode.VelocityControl);
-        driveRight.setRunMode(Motor.RunMode.VelocityControl);
-        driveLeft.setVeloCoefficients(0.05, 0, 0);
-        driveRight.setVeloCoefficients(0.05, 0, 0);
+        driveTrain = new DriveTrain(new Motor(hardwareMap, "dl"),
+                                    new Motor(hardwareMap, "dr"));
 
         intake1 = new Motor(hardwareMap, "in1");
         intake2 = new Motor(hardwareMap, "in2");
@@ -51,7 +48,7 @@ public class EchoOp extends OpMode {
         gamepad.update();
 
 
-        double leftSpeed = -gamepad1.left_stick_y;
+        double leftSpeed = gamepad1.left_stick_y;
         double rightSpeed = gamepad1.right_stick_y;
         if(gamepad1.right_trigger >= 0.1) {
             intakeSpeed = 0.7;
@@ -93,8 +90,7 @@ public class EchoOp extends OpMode {
             hitter.reset();
         }
 
-        driveLeft.set(leftSpeed);
-        driveRight.set(rightSpeed);
+        driveTrain.setSpeed(leftSpeed, rightSpeed);
 
         intake1.set(intakeSpeed);
         intake2.set(intakeSpeed);
