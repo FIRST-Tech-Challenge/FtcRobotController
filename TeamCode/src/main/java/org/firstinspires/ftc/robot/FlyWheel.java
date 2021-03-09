@@ -68,13 +68,14 @@ public class FlyWheel {
             lastTimeStamp = System.nanoTime() / 1e9;
         } else {
             double currentTime = System.nanoTime() / 1e9;
-            double dt = currentTime - lastTimeStamp;
+            double dt = lastTimeStamp - currentTime;
             lastTimeStamp = currentTime;
 
-            double k = Math.exp(-dt / TIME_CONSTANT);
+            double k = Math.exp(dt / TIME_CONSTANT);
 
             double newVelocity = k * lastVelocity + (1 - k) * velocity;
             lastVelocity = newVelocity;
+            Vals.flywheel_tuned_speed = lastVelocity;
         }
 
         if(lastVelocity >= Vals.flywheel_ready_min_speed && lastVelocity <= Vals.flywheel_ready_max_speed) ticks++;

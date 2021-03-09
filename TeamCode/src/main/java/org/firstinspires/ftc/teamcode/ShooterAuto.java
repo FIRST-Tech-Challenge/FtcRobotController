@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robot.FlyWheel;
 import org.firstinspires.ftc.robot.Hitter;
+import org.firstinspires.ftc.robot_utilities.Vals;
 
 @Autonomous(name="ShooterAuto")
 public class ShooterAuto extends LinearOpMode {
@@ -32,6 +33,7 @@ public class ShooterAuto extends LinearOpMode {
         int ticks = 0;
 
         while(ticks < 3 && elapsedTime.seconds() < 28) {
+            telemetry.addData("Corrected Velocity", Vals.flywheel_tuned_speed);
             flywheel.on();
             if(flywheel.isReady()) {
                 hitter.hitFullMotion(0.7);

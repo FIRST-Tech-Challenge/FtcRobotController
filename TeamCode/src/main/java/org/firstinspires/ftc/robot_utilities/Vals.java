@@ -24,6 +24,6 @@ public class Vals {
     public static double hitter_start = 0.4;
     public static double hitter_end = .7;
 
-    public static double heading = 0;
+    public static double flywheel_tuned_speed = 0;
 
 }
