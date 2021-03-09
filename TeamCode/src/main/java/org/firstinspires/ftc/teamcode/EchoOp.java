@@ -58,7 +58,7 @@ public class EchoOp extends OpMode {
             intakeSpeed = 0;
         }
 
-        if(gamepad.isARelease()) {
+        if(gamepad.isYRelease()) {
             flywheel.flipDirection();
         }
 

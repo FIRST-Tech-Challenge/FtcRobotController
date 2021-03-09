@@ -22,6 +22,10 @@ public class DriveTrain {
         driveRight.set(rightSpeed);
     }
 
+    public int[] getEncoderCounts() {
+        return new int[]{driveLeft.getCurrentPosition(), driveRight.getCurrentPosition()};
+    }
+
 
 
 }

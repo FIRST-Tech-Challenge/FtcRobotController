@@ -12,6 +12,10 @@ public class FlyWheel {
     private double flywheelSpeed = 0;
     private double flywheelDirection = Vals.flywheel_direction;
 
+    private double lastTimeStamp = 0;
+    private double lastVelocity = 0;
+    private final double TIME_CONSTANT = 0.5;
+
 
     private int ticks = 0;
 
@@ -58,10 +62,27 @@ public class FlyWheel {
 
     public boolean isReady() {
         double velocity = Math.abs(flywheel.getCorrectedVelocity());
-        if(velocity >= Vals.flywheel_ready_min_speed && velocity <= Vals.flywheel_ready_max_speed) ticks++;
+
+        if(lastTimeStamp == 0) {
+            lastVelocity = velocity;
+            lastTimeStamp = System.nanoTime() / 1e9;
+        } else {
+            double currentTime = System.nanoTime() / 1e9;
+            double dt = currentTime - lastTimeStamp;
+            lastTimeStamp = currentTime;
+
+            double k = Math.exp(-dt / TIME_CONSTANT);
+
+            double newVelocity = k * lastVelocity + (1 - k) * velocity;
+            lastVelocity = newVelocity;
+        }
+
+        if(lastVelocity >= Vals.flywheel_ready_min_speed && lastVelocity <= Vals.flywheel_ready_max_speed) ticks++;
         else ticks = 0;
 
         if(ticks >= Vals.flywheel_ready_ticks) {
+            lastVelocity = 0;
+            lastTimeStamp = 0;
             ticks = 0;
             return true;
         }
