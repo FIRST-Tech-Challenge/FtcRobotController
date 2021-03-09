@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
@@ -98,31 +99,31 @@ public class UpliftRobot {
         hardwareMap = opMode.hardwareMap;
 
         //initialize the motors into the hardware map
-//        leftFront = hardwareMap.get(DcMotor.class,"lf_motor");//Declares two left motors
-//        leftBack = hardwareMap.get(DcMotor.class,"lb_motor");
-//        rightFront = hardwareMap.get(DcMotor.class,"rf_motor"); //Declares two right motors
-//        rightBack = hardwareMap.get(DcMotor.class,"rb_motor");
-//
-//        flicker = hardwareMap.get(Servo.class,"flicker");
-//        transfer = hardwareMap.get(DcMotor.class, "transfer");
+        leftFront = hardwareMap.get(DcMotor.class,"lf_motor");//Declares two left motors
+        leftBack = hardwareMap.get(DcMotor.class,"lb_motor");
+        rightFront = hardwareMap.get(DcMotor.class,"rf_motor"); //Declares two right motors
+        rightBack = hardwareMap.get(DcMotor.class,"rb_motor");
+
+        flicker = hardwareMap.get(Servo.class,"flicker");
+        transfer = hardwareMap.get(DcMotor.class, "transfer");
         shooter1 = hardwareMap.get(DcMotorEx.class, "shooter_1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "shooter_2");
-//        intake = hardwareMap.get(DcMotor.class, "intake");
+        intake = hardwareMap.get(DcMotor.class, "intake");
 //        intakeSensor = hardwareMap.get(DistanceSensor.class,"d1");
         wobbleTop = hardwareMap.get(Servo.class, "wobble1");
         wobbleBottom = hardwareMap.get(Servo.class, "wobble2");
         clamp = hardwareMap.get(Servo.class, "clamp");
-//        digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "sensor_digital");
-//        digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
-//        digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
-//        digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
+        digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+        digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
+        digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
+        digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
 
         //setup imu (gyro)
 //        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        imu.initialize(parameters);
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        imu.initialize(parameters);
 
 //        byte AXIS_MAP_CONFIG_BYTE = 0x6; //swap x and z axis
 //        byte AXIS_MAP_SIGN_BYTE = 0x1; //negate z axis
@@ -134,13 +135,13 @@ public class UpliftRobot {
 //        imu.write8(BNO055IMU.Register.OPR_MODE, BNO055IMU.SensorMode.IMU.bVal & 0x0F);
 //        safeSleep(100);
 
-        ringDetector = new RingDetector();
+//        ringDetector = new RingDetector();
 //        webcamName = hardwareMap.get(WebcamName.class,"webcam");
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id",hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        camera.openCameraDevice();
-        camera.setPipeline(ringDetector);
-        camera.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id",hardwareMap.appContext.getPackageName());
+//        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+//        camera.openCameraDevice();
+//        camera.setPipeline(ringDetector);
+//        camera.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
 
         // setup file system
         odometryFileWorldX = AppUtil.getInstance().getSettingsFile("odometryX.txt");

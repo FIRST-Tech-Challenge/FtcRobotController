@@ -54,38 +54,37 @@ public class WobbleSubsystem extends Subsystem {
     }
 
     public void highWobble() {
-        wobbleTop.setPosition(0.65);
-        wobbleBottom.setPosition(0.65);
+        wobbleTop.setPosition(1 - 0.85);
+        wobbleBottom.setPosition(0.85);
         robot.safeSleep(500);
     }
 
     public void liftWobble() {
-        wobbleTop.setPosition(0.2);
+        wobbleTop.setPosition(1 - 0.2);
         wobbleBottom.setPosition(0.2);
         robot.safeSleep(500);
     }
 
     public void dropWobble() {
-        wobbleTop.setPosition(0);
+        wobbleTop.setPosition(1 - 0);
         wobbleBottom.setPosition(0);
         robot.safeSleep(500);
     }
 
     public void endgameWobble() {
-        wobbleTop.setPosition(0.3);
-        wobbleBottom.setPosition(0.3);
+        wobbleTop.setPosition(1 - 0.5);
+        wobbleBottom.setPosition(0.5);
         robot.safeSleep(500);
     }
 
     public void closeWobble() {
+        clamp.setPosition(0.8);
         clamp.setPosition(0.3);
-        clamp.setPosition(0.88);
-        robot.safeSleep(500);
+        robot.safeSleep(1000);
     }
 
     public void openWobble() {
-        clamp.setPosition(0.88);
-        clamp.setPosition(0.3);
+        clamp.setPosition(0.8);
         robot.safeSleep(500);
     }
 

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 import org.firstinspires.ftc.teamcode.toolkit.opencvtoolkit.RingDetector;
 
-@Autonomous(name = "Red Auto", group = "opModes")
+@Autonomous(name = "Meet 5 Auto", group = "opModes")
 public class Meet5Auto extends UpliftAuto {
     UpliftRobot robot;
     WobbleSubsystem wobbleSub;
