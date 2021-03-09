@@ -61,5 +61,9 @@ public class EncoderTuner extends OpMode {
         telemetry.addData("Right Set Speed", DriveTrainTuner.rightSpeed);
         telemetry.addData("Left Distance", distances[0]);
         telemetry.addData("Right Distance", distances[1]);
+        telemetry.addData("Left Distance", driveTrain.driveLeft.getCurrentPosition());
+        telemetry.addData("Right Distance", driveTrain.driveRight.getCurrentPosition());
+        telemetry.addData("Left Revolutions", driveTrain.driveLeft.encoder.getRevolutions());
+        telemetry.addData("Right Revolutions", driveTrain.driveRight.encoder.getRevolutions());
     }
 }
