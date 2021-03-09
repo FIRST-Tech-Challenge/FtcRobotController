@@ -18,7 +18,6 @@ public class Teleop_wheels extends LinearOpMode {
     private DcMotor rf = null;
     private DcMotor lb = null;
     private DcMotor rb = null;
-    private DcMotor collecter = null;
 
     @Override
     public void runOpMode() {
@@ -29,13 +28,11 @@ public class Teleop_wheels extends LinearOpMode {
         rf = hardwareMap.get(DcMotor.class, "rf");
         lb  = hardwareMap.get(DcMotor.class, "lb");
         rb = hardwareMap.get(DcMotor.class, "rb");
-        collecter = hardwareMap.get(DcMotor.class, "collecter");
 
         lf.setDirection(DcMotor.Direction.REVERSE);
         rf.setDirection(DcMotor.Direction.FORWARD);
         lb.setDirection(DcMotor.Direction.REVERSE);
         rb.setDirection(DcMotor.Direction.FORWARD);
-        collecter.setDirection(DcMotor.Direction.FORWARD);
 
         waitForStart();
         runtime.reset();
@@ -46,15 +43,12 @@ public class Teleop_wheels extends LinearOpMode {
             double rfPower;
             double lbPower;
             double rbPower;
-            double SoNPower;
 
             lfPower = 0.0f ;
             rfPower = 0.0f ;
             lbPower = 0.0f ;
             rbPower = 0.0f ;
 
-            SoNPower = gamepad2.left_stick_y;
-            collecter.setPower(SoNPower);
 
             if (abs(gamepad1.left_stick_y) < 0.2 && abs(gamepad1.left_stick_x) > 0.2){
                 lfPower = -gamepad1.left_stick_x;
