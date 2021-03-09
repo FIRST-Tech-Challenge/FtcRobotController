@@ -141,11 +141,11 @@ public class DriveSubsystem extends Subsystem {
 
         if(turnAngle > 30) {
             if(turnDirection == CLOCKWISE) {
-                turnVal = Range.clip(60 / initialDistToPt * (180 / Math.abs(turnAngle)), -1, 1);
+                turnVal = Range.clip((60 / initialDistToPt) * (180 / Math.abs(turnAngle)), -1, 1);
             } else if(turnDirection == COUNTER_CLOCKWISE) {
-                turnVal = -Range.clip(60 / initialDistToPt * (180 / Math.abs(turnAngle)), -1, 1);
+                turnVal = -Range.clip((60 / initialDistToPt) * (180 / Math.abs(turnAngle)), -1, 1);
             } else {
-                turnVal = Range.clip(60 / initialDistToPt * (180 / Math.abs(turnAngle)), -1, 1);
+                turnVal = Range.clip((60 / initialDistToPt) * (180 / Math.abs(turnAngle)), -1, 1);
             }
         } else if(turnAngle > 5) {
             turnVal = 0.15;
@@ -162,27 +162,6 @@ public class DriveSubsystem extends Subsystem {
         } else {
             turnVal = 0;
         }
-
-//        if(turnAngle > 10) {
-//            if (turnDirection == CLOCKWISE) {
-//                turnVal = Range.clip(MathFunctions.slowTurnDriving(1, turnAngle, 30, 10), -1, 1);
-//            } else if (turnDirection == COUNTER_CLOCKWISE) {
-//                turnVal = -Range.clip(MathFunctions.slowTurnDriving(1, turnAngle - 360, 30, 10), -1, 1);
-//            } else {
-//                turnVal = Range.clip(MathFunctions.slowTurnDriving(1, turnAngle, 30, 10), -1, 1);
-//            }
-//        } else if(turnAngle > 5)
-//        } else if(turnAngle < -10) {
-//            if(turnDirection == CLOCKWISE) {
-//                turnVal = Range.clip(MathFunctions.slowTurnDriving(1, turnAngle + 360, 30, 10), -1, 1);
-//            } else if(turnDirection == COUNTER_CLOCKWISE) {
-//                turnVal = -Range.clip(MathFunctions.slowTurnDriving(1, turnAngle, 30, 10), -1, 1);
-//            } else {
-//                turnVal = -Range.clip(MathFunctions.slowTurnDriving(1, turnAngle, 30, 10), -1, 1);
-//            }
-//        } else if(turnAngle < -5) {
-//            // NOTHING...
-//        }
 
         double lf = sin(toRadians(90 - relativeAngleToPoint) + (0.25 * PI)) * speedVal + turnVal;
         double rf = sin(toRadians(90 - relativeAngleToPoint) - (0.25 * PI)) * speedVal - turnVal;
