@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robot.DriveTrain;
 import org.firstinspires.ftc.robot_utilities.GamePadController;
@@ -13,6 +16,7 @@ class DriveTrainTuner {
     public static double rightSpeed = 0.3;
 }
 
+@TeleOp(name = "EncoderTuner")
 public class EncoderTuner extends OpMode {
     DriveTrain driveTrain;
     GamePadController gamepad;
@@ -22,6 +26,7 @@ public class EncoderTuner extends OpMode {
 
     @Override
     public void init() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         driveTrain = new DriveTrain(new Motor(hardwareMap, "dl"),
                                     new Motor(hardwareMap, "dr"));
         gamepad = new GamePadController(gamepad1);
@@ -36,14 +41,16 @@ public class EncoderTuner extends OpMode {
             DriveTrainTuner.rightSpeed *= -1;
         }
 
-        if(gamepad.isBRelease()) {
-            if(leftSpeed == 0) {
-                leftSpeed = DriveTrainTuner.leftSpeed;
-                rightSpeed = DriveTrainTuner.rightSpeed;
-            } else {
-                leftSpeed = 0;
-                rightSpeed = 0;
-            }
+        if(gamepad.isYRelease()) {
+            driveTrain.resetEncoders();
+        }
+
+        if(gamepad1.b) {
+            leftSpeed = DriveTrainTuner.leftSpeed;
+            rightSpeed = DriveTrainTuner.rightSpeed;
+        } else {
+            leftSpeed = 0;
+            rightSpeed = 0;
         }
 
         driveTrain.setSpeed(leftSpeed, rightSpeed);

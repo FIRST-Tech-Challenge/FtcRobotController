@@ -75,7 +75,7 @@ public class FlyWheel {
 
             double newVelocity = k * lastVelocity + (1 - k) * velocity;
             lastVelocity = newVelocity;
-            Vals.flywheel_tuned_speed = lastVelocity;
+//            Vals.flywheel_tuned_speed = lastVelocity;
         }
 
         if(lastVelocity >= Vals.flywheel_ready_min_speed && lastVelocity <= Vals.flywheel_ready_max_speed) ticks++;

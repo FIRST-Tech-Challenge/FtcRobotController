@@ -26,6 +26,11 @@ public class DriveTrain {
         return new int[]{driveLeft.getCurrentPosition(), driveRight.getCurrentPosition()};
     }
 
+    public void resetEncoders() {
+        driveLeft.resetEncoder();
+        driveRight.resetEncoder();
+    }
+
 
 
 }
