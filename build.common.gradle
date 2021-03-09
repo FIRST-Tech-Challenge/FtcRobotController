@@ -7,7 +7,7 @@
  *
  * This file contains the necessary content of the 'build.gradle' files for robot controller
  * applications built using the FTC SDK. Each individual 'build.gradle' in those applications
- * can simply contain the one line:
+ * can simply contain the one line: apply plugin: 'java'
  *
  *      apply from: '../build.common.gradle'
  *
