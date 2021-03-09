@@ -98,27 +98,27 @@ public class UpliftRobot {
         hardwareMap = opMode.hardwareMap;
 
         //initialize the motors into the hardware map
-        leftFront = hardwareMap.get(DcMotor.class,"lf_motor");//Declares two left motors
-        leftBack = hardwareMap.get(DcMotor.class,"lb_motor");
-        rightFront = hardwareMap.get(DcMotor.class,"rf_motor"); //Declares two right motors
-        rightBack = hardwareMap.get(DcMotor.class,"rb_motor");
-
-        flicker = hardwareMap.get(Servo.class,"flicker");
-        transfer = hardwareMap.get(DcMotor.class, "transfer");
+//        leftFront = hardwareMap.get(DcMotor.class,"lf_motor");//Declares two left motors
+//        leftBack = hardwareMap.get(DcMotor.class,"lb_motor");
+//        rightFront = hardwareMap.get(DcMotor.class,"rf_motor"); //Declares two right motors
+//        rightBack = hardwareMap.get(DcMotor.class,"rb_motor");
+//
+//        flicker = hardwareMap.get(Servo.class,"flicker");
+//        transfer = hardwareMap.get(DcMotor.class, "transfer");
         shooter1 = hardwareMap.get(DcMotorEx.class, "shooter_1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "shooter_2");
-        intake = hardwareMap.get(DcMotor.class, "intake");
+//        intake = hardwareMap.get(DcMotor.class, "intake");
 //        intakeSensor = hardwareMap.get(DistanceSensor.class,"d1");
         wobbleTop = hardwareMap.get(Servo.class, "wobble1");
         wobbleBottom = hardwareMap.get(Servo.class, "wobble2");
         clamp = hardwareMap.get(Servo.class, "clamp");
-        digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "sensor_digital");
-        digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
-        digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
-        digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
+//        digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+//        digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
+//        digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
+//        digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
 
         //setup imu (gyro)
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -135,7 +135,7 @@ public class UpliftRobot {
 //        safeSleep(100);
 
         ringDetector = new RingDetector();
-        webcamName = hardwareMap.get(WebcamName.class,"webcam");
+//        webcamName = hardwareMap.get(WebcamName.class,"webcam");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id",hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         camera.openCameraDevice();
