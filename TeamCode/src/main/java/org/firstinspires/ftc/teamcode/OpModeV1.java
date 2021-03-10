@@ -34,7 +34,7 @@ public class OpModeV1 extends LinearOpMode {
         ramp = hardwareMap.get(DcMotor.class, "ramp");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -65,15 +65,15 @@ public class OpModeV1 extends LinearOpMode {
 
             // Driving
             if (strafeRight){
-                frontLeft.setPower(0.5);
+                frontLeft.setPower(-0.5);
                 backLeft.setPower(-0.5);
                 frontRight.setPower(-0.5);
                 backRight.setPower(0.5);
             }else if (strafeLeft){
-                frontLeft.setPower(-0.5);
-                backLeft.setPower(0.5);
-                frontRight.setPower(0.5);
-                backRight.setPower(-0.5);
+                frontLeft.setPower(0.5);
+                backLeft.setPower(-0.5);
+                frontRight.setPower(-0.5);
+                backRight.setPower(0.5);
             }else{
                 frontLeft.setPower(throttle);
                 frontRight.setPower(throttle);
@@ -81,12 +81,12 @@ public class OpModeV1 extends LinearOpMode {
                 backRight.setPower(throttle);
 
                 frontLeft.setPower(-pivot);
-                frontRight.setPower(pivot);
+                frontRight.setPower(-pivot);
                 backLeft.setPower(-pivot);
                 backRight.setPower(pivot);
             }
 
-            ramp.setPower(rampDirection);
+            ramp.setPower(0.25*rampDirection);
 
             if (shooterPower >= 0.5){
                 shooter.setPower(1);

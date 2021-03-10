@@ -56,6 +56,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 
 @TeleOp(name="Vuforia Wall Photos Webcam", group ="Concept")
+@Disabled
 public class VuforiaWallPhotos extends LinearOpMode {
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
@@ -91,6 +92,8 @@ public class VuforiaWallPhotos extends LinearOpMode {
     private float phoneXRotate    = 0;
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
+
+
 
     @Override public void runOpMode() {
         /*
