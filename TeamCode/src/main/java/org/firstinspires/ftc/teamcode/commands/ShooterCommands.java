@@ -35,18 +35,17 @@ public class ShooterCommands extends Command {
         if(opMode.gamepad2.a){
             shooter.setShooterPower(1);
         }
+
         if(opMode.gamepad2.b) {
             shooter.setShooterPower(0);
         }
 
         if(opMode.gamepad2.y) {
-            shooter.shooter1.setVelocity(robot.highGoalVelocity);
-            shooter.shooter2.setVelocity(robot.highGoalVelocity);
+            shooter.setShooterVelocity(robot.highGoalVelocity);
         }
 
-        if(opMode.gamepad2.x||opMode.gamepad2.right_bumper) {
-            shooter.shooter1.setVelocity(robot.powerShotVelocity);
-            shooter.shooter2.setVelocity(robot.powerShotVelocity);
+        if(opMode.gamepad2.x || opMode.gamepad2.right_bumper || robot.shootingState == UpliftRobot.ShootingState.PREPARING_POWERSHOT) {
+            shooter.setShooterVelocity(robot.powerShotVelocity);
         }
 
         if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {

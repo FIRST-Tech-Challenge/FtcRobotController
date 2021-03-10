@@ -35,15 +35,29 @@ public class FlickerCommands extends Command {
             flicker.flickRing();
         }
 
-        // Method for shooting (only flicks rings)
+        // Method for shooting (only flicks 3 rings, then tells transfer to drop and shooter to slow)
         if(opMode.gamepad1.y) {
-            flicker.setFlickerPos(0.15);
             for(int i = 0; i < 2; i++) {
                 flicker.flickRing();
                 robot.safeSleep(100);
             }
             flicker.flickRing();
             robot.setShootingState(UpliftRobot.ShootingState.DONE_SHOOTING);
+        }
+
+        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS1) {
+            flicker.flickRing();
+            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS1);
+        }
+
+        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS2) {
+            flicker.flickRing();
+            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS2);
+        }
+
+        if(robot.shootingState == UpliftRobot.ShootingState.SHOOTING_PS3) {
+            flicker.flickRing();
+            robot.setShootingState(UpliftRobot.ShootingState.DONE_PS3);
         }
 
     }

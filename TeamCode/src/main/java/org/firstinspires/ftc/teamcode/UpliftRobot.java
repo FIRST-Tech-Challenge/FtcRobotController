@@ -328,8 +328,15 @@ public class UpliftRobot {
     public ShootingState shootingState;
     public enum ShootingState {
         IDLE,
-        PREPARING_TO_SHOOT,
-        SHOOTING,
+        PREPARING_HIGHGOAL,
+        PREPARING_POWERSHOT,
+        SHOOTING_HIGHGOAL,
+        SHOOTING_PS1,
+        SHOOTING_PS2,
+        SHOOTING_PS3,
+        DONE_PS1,
+        DONE_PS2,
+        DONE_PS3,
         DONE_SHOOTING,
     }
     public void setShootingState(ShootingState state) {

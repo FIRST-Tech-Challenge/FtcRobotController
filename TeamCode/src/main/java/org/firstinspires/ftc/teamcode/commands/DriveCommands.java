@@ -13,6 +13,7 @@ public class DriveCommands extends Command {
     public DriveSubsystem drive;
     public UpliftTele opMode;
     UpliftRobot robot;
+    boolean aPressed = false;
 
     public DriveCommands(UpliftTele opMode, UpliftRobot robot, DriveSubsystem driveSubsystem) {
         super(opMode, driveSubsystem);
@@ -23,7 +24,7 @@ public class DriveCommands extends Command {
 
     @Override
     public void init() {
-
+        drive.robot.slowMode = false;
     }
 
     @Override
@@ -33,7 +34,63 @@ public class DriveCommands extends Command {
 
     @Override
     public void loop() {
-        drive.robot.slowMode = false;
+        // slow mode toggle ON/OFF (toggles on press, holding does not do anything)
+        if(opMode.gamepad1.a) {
+            if (!aPressed) {
+                robot.slowMode = !robot.slowMode;
+                aPressed = true;
+            }
+        } else {
+            aPressed = false;
+        }
+
+        // if x is pressed on DRIVER gamepad (when robot is up to the line and pressed against wall)
+        if(opMode.gamepad1.x) {
+            // set shooting state to PREPARING_POWERSHOT in order to raise transfer and set shooter vel to the powershot target vel
+            robot.setShootingState(UpliftRobot.ShootingState.PREPARING_POWERSHOT);
+
+            // set the odometry position (CHANGE/CHECK THESE VALUES LATER)
+            drive.robot.odometry.setOdometryPosition(9.25, 63.5,0);
+
+            // move to the first powershot shooting position
+            drive.driveToPosition(DriveSubsystem.powershotShootingPt1.x, DriveSubsystem.powershotShootingPt1.y, 0.5, 0);
+            robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS1);
+            while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS1 && !robot.driverCancel && opMode.opModeIsActive()) {
+                // while shooter not done with first powershot, wait
+                robot.safeSleep(5);
+            }
+
+            // move to second powershot shooting position and set the shooter state to SHOOTING_PS2 to tell the flicker to flick the ring
+            drive.driveToPosition(DriveSubsystem.powershotShootingPt2.x, DriveSubsystem.powershotShootingPt2.y, 0.5, 0);
+            robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS2);
+            while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS2 && !robot.driverCancel && opMode.opModeIsActive()) {
+                // while shooter not done with second powershot, wait
+                robot.safeSleep(5);
+            }
+
+            // move to third powershot shooting position and set the shooter state to SHOOTING_PS3 to tell the flicker to flick the ring
+            drive.driveToPosition(DriveSubsystem.powershotShootingPt3.x, DriveSubsystem.powershotShootingPt3.y, 0.5, 0);
+            robot.setShootingState(UpliftRobot.ShootingState.SHOOTING_PS3);
+            while(robot.shootingState != UpliftRobot.ShootingState.DONE_PS3 && !robot.driverCancel && opMode.opModeIsActive()) {
+                // while shooter not done with third powershot, wait
+                robot.safeSleep(5);
+            }
+
+            // set the shooting state to DONE_SHOOTING in order to move the shooter to an idle speed and drop the transfer
+            robot.setShootingState(UpliftRobot.ShootingState.DONE_SHOOTING);
+        }
+
+        teleOpDrive();
+
+    }
+
+    @Override
+    public void stop() {
+        drive.stopMotors();
+    }
+
+    public void teleOpDrive() {
+        // Note: The following algorithm was inspired by the webpage https://seamonsters-2605.github.io/archive/mecanum/. It explains this concept very well.
         double magnitude;
         double turnValue;
         // initialize the gamepad stick values to the three needed axes
@@ -45,55 +102,22 @@ public class DriveCommands extends Command {
             rightX = Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 2), -1, 1);
         }
         double leftX = Range.clip(opMode.gamepad1.left_stick_x, -1, 1);
-        // Note: The following algorithm was inspired by the webpage https://seamonsters-2605.github.io/archive/mecanum/. It explains this concept very well.
+
         // find the angle of the left joystick
         double joystickAngle = Math.toDegrees(MathFunctions.atan2UL(leftY, leftX));
 
-        // find the magnitude, or hypotenuse of the left joystick and scale it down by dividing by the max
-        if(opMode.gamepad1.a){
-            robot.slowMode = ! robot.slowMode;
-        }
-  
-        if( robot.slowMode) {
-            magnitude = ((Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2)))/2);
-            turnValue = ((0.7 * rightX)/2);
+        if(robot.slowMode) {
+            magnitude = Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2)) / 2;
+            turnValue = rightX / 2;
         }
         else {
-            magnitude =  Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2));
-            turnValue = 0.7 * rightX;
+            magnitude = Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2));
+            turnValue = rightX;
         }
 
         // find the turnValue directly from the rightX input value (scaled for smoothness)
         // set the powers using the 2 specific equations and clip the result
         drive.teleDrive(magnitude, joystickAngle, turnValue);
-
-        // if dpad right is pressed on DRIVER gamepad, reset the current angle to 0
-        if(opMode.gamepad1.x) {
-            drive.robot.odometry.setOdometryPosition(robot.worldX, robot.worldY, 0);
-        }
-
-        // if y is pressed on DRIVER gamepad, move to the high-goal shooting position
-//        if(opMode.gamepad1.y) {
-//            drive.slideToPosition(DriveSubsystem.highGoalShootingPt.x, DriveSubsystem.highGoalShootingPt.y, 0.7, 0, 0.5);
-//        }
-//        // if x is pressed on DRIVER gamepad, move to the powershot shooting position
-//        if(opMode.gamepad1.x) {
-//            drive.slideToPosition(DriveSubsystem.powershotShootingPt.x, DriveSubsystem.powershotShootingPt.y, 0.7, 0, 0.5);
-//        }
-//        // if y is pressed on OPERATOR gamepad, set new shooting position
-//        if(opMode.gamepad2.y) {
-//            DriveSubsystem.highGoalShootingPt = new Point(robot.worldX, robot.worldY, robot.worldAngle);
-//        }
-//        // if x is pressed on OPERATOR gamepad, set new shooting position
-//        if(opMode.gamepad2.x) {
-//            DriveSubsystem.powershotShootingPt = new Point(robot.worldX, robot.worldY, robot.worldAngle);
-//        }
-
-    }
-
-    @Override
-    public void stop() {
-        drive.stopMotors();
     }
 
 }
