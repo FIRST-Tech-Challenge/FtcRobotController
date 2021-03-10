@@ -69,10 +69,12 @@ public class EncoderTuner extends OpMode {
             rightSpeed = 0;
         }
 
-        driveTrain.setSpeed(leftSpeed, rightSpeed);
+        driveLeft.set(-leftSpeed);
+        driveRight.set(rightSpeed);
 
         int[] distances = driveTrain.getEncoderCounts();
 
+        telemetry.addData("Target Distance", DriveTrainTuner.targetDistance);
         telemetry.addData("Left Speed", leftSpeed);
         telemetry.addData("Right Speed", rightSpeed);
         telemetry.addData("Left Set Speed", DriveTrainTuner.leftSpeed);
