@@ -1586,8 +1586,8 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             chassis.rotateTo(1, 0, 2);
             chassis.driveTo(auto_chassis_power, side(95), 100, 0, false, 5);
         } else if (tZone == TargetZone.ZONE_C) {
-            chassis.rotateTo(1,0,2);
-            chassis.driveTo(auto_chassis_power, side(102), 100, -20, false, 5);
+            chassis.rotateTo(1,-10,2);
+            chassis.driveTo(auto_chassis_power, side(90), 80, -10, false, 5);
         }
 
         autoGrabBottomWobbleGoal();
