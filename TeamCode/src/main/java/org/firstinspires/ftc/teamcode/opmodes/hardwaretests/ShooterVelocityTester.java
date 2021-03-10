@@ -56,8 +56,6 @@ public class ShooterVelocityTester extends UpliftAuto {
 
     @Override
     public void exit() {
-        robot.odometry.stopUpdatingPos();
-        robot.cancelClass.stopUpdatingCancel();
-        velocityData.stopUpdatingVelocity();
+        robot.stopThreads();
     }
 }

@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.toolkit.background;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
+import org.firstinspires.ftc.teamcode.toolkit.core.Background;
 import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 @Disabled
-public class AutoTimeout extends Background{
+public class AutoTimeout extends Background {
 
     UpliftRobot robot;
     int loopCounter = 0;

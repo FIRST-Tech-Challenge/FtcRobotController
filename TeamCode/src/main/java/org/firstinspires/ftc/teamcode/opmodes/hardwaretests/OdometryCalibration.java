@@ -89,7 +89,7 @@ public class OdometryCalibration extends UpliftTele {
 
     @Override
     public void exit() {
-        odom.stopUpdatingPos();
+        odom.stop();
     }
 
     private double getZAngle(){

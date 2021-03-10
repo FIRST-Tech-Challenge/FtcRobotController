@@ -262,11 +262,14 @@ public class UpliftRobot {
 
     public void initBackground() {
         cancelClass = new Cancel(this);
+        cancelClass.enable();
         if(driveInitialized) {
             odometry = new Odometry(this);
+            odometry.enable();
         }
         if(shooterInitialized) {
             velocityData = new VelocityData(this);
+            velocityData.enable();
         }
     }
 
