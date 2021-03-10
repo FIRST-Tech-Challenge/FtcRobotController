@@ -32,7 +32,7 @@ public class Shooter extends Logger<Shooter>  {
 
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;
-    private int shooterSpeed = SHOOT_FAST;
+    int shooterSpeed = SHOOT_FAST;
     private boolean shooterOn = false;
 
 

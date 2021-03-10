@@ -85,10 +85,10 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     public double auto_rotate_degree = 0;
 
     private boolean simulation_mode = false;
-    private boolean useChassis = false;
+    private boolean useChassis = true;
     public boolean useVuforia = false;
     public boolean useTfod = false;
-    public boolean useGrabber = true;
+    public boolean useGrabber = false;
     public boolean useHopper = false;
     public boolean useShooter = false;
     public boolean useIntake = false;
@@ -1180,7 +1180,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     }
 
     public void detectPosition() {//startPos = 1 = out, 2 = in
-        tZone = TargetZone.ZONE_B;
+        tZone = TargetZone.ZONE_C;
         // use camera (Tensorflow) to detect position
 //        tZone = TargetZone.ZONE_C;
 //        return;

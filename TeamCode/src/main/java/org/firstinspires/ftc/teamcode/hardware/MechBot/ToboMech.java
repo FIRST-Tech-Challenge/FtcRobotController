@@ -365,8 +365,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         intake.stop();
                     if (hopper != null) hopper.hopperUpCombo(false);
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
-                    if (shooter != null)
+                    if (shooter != null) {
                         shooter.shootSpeedInc();
+                        shooting_rpm = shooter.shooterSpeed;
+                    }
                 } else if (source.getTrigger(Events.Side.LEFT) > 0.2 && chassis != null) { // shoot high goal using Vuforia (x,y)
                     rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
                 } else if (source.getTrigger(Events.Side.RIGHT) < 0.2 && source.getTrigger(Events.Side.LEFT) < 0.2) {
@@ -400,8 +402,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         shooter.stop();
                     hopper.hopperDownCombo();
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
-                    if (shooter != null)
+                    if (shooter != null) {
                         shooter.shootSpeedDec();
+                        shooting_rpm = shooter.shooterSpeed;
+                    }
                 } else {
                     if (chassis != null) {
                         if (source.isPressed(Button.BACK)) {
@@ -502,6 +506,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                         } else {
                             doHighGoalsSemi(false, 1);
                         }
+
                         // hopper.feederAuto();
                         // autoShoot();
                     }
