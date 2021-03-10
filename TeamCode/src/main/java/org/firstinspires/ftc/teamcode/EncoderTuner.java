@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robot_utilities.GamePadController;
 
 @Config
 class DriveTrainTuner {
-    public static double leftSpeed = 0.3;
+    public static double leftSpeed = -0.3;
     public static double rightSpeed = 0.3;
 
     public static int targetDistance = 0;
@@ -70,9 +70,13 @@ public class EncoderTuner extends OpMode {
         if(gamepad1.b) {
             if(!driveLeft.atTargetPosition()) {
                 leftSpeed = DriveTrainTuner.leftSpeed;
+            } else {
+                leftSpeed = 0;
             }
             if(!driveRight.atTargetPosition()) {
                 rightSpeed = DriveTrainTuner.rightSpeed;
+            } else {
+                rightSpeed = 0;
             }
         } else {
             leftSpeed = 0;

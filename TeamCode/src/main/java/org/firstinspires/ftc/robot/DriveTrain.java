@@ -31,6 +31,16 @@ public class DriveTrain {
         driveRight.set(rightSpeed);
     }
 
+    public void setTargetPosition(int targetPosition) {
+        driveLeft.setTargetPosition(-targetPosition);
+        driveLeft.setTargetPosition(targetPosition);
+    }
+
+    public void setTargetPosition(int leftTargetPosition, int rightTargetPosition) {
+        driveLeft.setTargetPosition(-leftTargetPosition);
+        driveLeft.setTargetPosition(rightTargetPosition);
+    }
+
     public int[] getPosition() {
         return new int[]{driveLeft.getCurrentPosition(), driveRight.getCurrentPosition()};
     }
