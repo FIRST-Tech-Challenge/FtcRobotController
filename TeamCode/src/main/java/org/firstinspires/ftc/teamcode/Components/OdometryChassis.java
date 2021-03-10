@@ -26,19 +26,6 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 //2.0,1.7,1.1
 public class OdometryChassis extends BasicChassis {
-    DcMotorEx odom1;
-    DcMotorEx odom2;
-    DcMotorEx odom3;
-    int[] odomconst = {-1,1,-1};
-    float ticks_per_inch = (float)(8640*2.54/38*Math.PI)*72/76;
-    float robot_diameter = (float)sqrt(619.84);
-    float[] odom = new float[3];
-    private LinearOpMode op = null;
-    private BNO055IMU imu;
-    private Orientation lastAngles = new Orientation();
-    private float globalAngle;
-    double power = .30, correction;
-    float xpos,ypos,angle;
     private Navigation navigation = null;
 
 
@@ -51,7 +38,7 @@ public class OdometryChassis extends BasicChassis {
         op = opMode;
 
         // Chassis encoders
-        odom1 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
+        /*odom1 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
         odom3 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
         odom2 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightBack");
         // reset encoder count.
@@ -80,7 +67,7 @@ public class OdometryChassis extends BasicChassis {
 
         op.telemetry.addData("Mode", "waiting for start");
         op.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
-        op.telemetry.update();
+        op.telemetry.update();*/
         navigation = new Navigation(op);
     }
     public void navigate(){navigation.navigate(op);
@@ -88,7 +75,7 @@ public class OdometryChassis extends BasicChassis {
     public void navigateTeleOp(){navigation.navigateTeleOp(op);
         }
     public void setPosition(float x, float y, float newAngle){
-        navigation.setPosition(x,y,angle);
+        navigation.setPosition(x,y,newAngle);
     }
     public void stopAllMotors() {
         motorLeftBack.setPower(0);
