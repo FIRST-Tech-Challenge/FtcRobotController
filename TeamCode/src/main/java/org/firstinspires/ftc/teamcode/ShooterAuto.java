@@ -33,6 +33,8 @@ public class ShooterAuto extends LinearOpMode {
         int ticks = 0;
 
         while(ticks < 3 && elapsedTime.seconds() < 28) {
+            telemetry.addData("FlyWheel Filtered Velocity", Vals.flywheel_filtered_speed);
+            telemetry.update();
             flywheel.on();
             if(flywheel.isReady()) {
                 hitter.hitFullMotion(0.7);

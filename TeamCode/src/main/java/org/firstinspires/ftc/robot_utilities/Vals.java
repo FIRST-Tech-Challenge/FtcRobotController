@@ -14,6 +14,7 @@ public class Vals {
     public static int flywheel_ready_ticks = 70;
     public static int flywheel_ready_min_speed = 1320;
     public static int flywheel_ready_max_speed = 1330;
+    public static double flywheel_filtered_speed = 0;
 
     public static double rotate_kp = .015;
     public static double rotate_ki = .11;
@@ -21,9 +22,9 @@ public class Vals {
     public static double rotate_tolerance = 1;
     public static double rotate_target = 0;
 
+    public static final double TICKS_PER_INCH = 40.58;
+
     public static double hitter_start = 0.4;
     public static double hitter_end = .7;
-
-    public static double flywheel_tuned_speed = 0;
 
 }
