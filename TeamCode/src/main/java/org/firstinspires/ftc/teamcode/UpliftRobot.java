@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FlickerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SticksSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.background.Cancel;
@@ -46,6 +47,7 @@ public class UpliftRobot {
     public ShooterSubsystem shooterSub;
     public FlickerSubsystem flickerSub;
     public WobbleSubsystem wobbleSub;
+    public SticksSubsystem sticksSub;
 
     public HardwareMap hardwareMap;
     public DcMotor leftFront, leftBack, rightFront, rightBack;
@@ -53,6 +55,7 @@ public class UpliftRobot {
     public DcMotor intake, transfer;
     public Servo wobbleTop, wobbleBottom;
     public Servo flicker, clamp;
+    public Servo stickLeft, stickRight;
     public DigitalChannel digitalTouchBottom, digitalTouchTop;
 //    public DistanceSensor intakeSensor;
 
@@ -78,7 +81,7 @@ public class UpliftRobot {
 
     public File odometryFileWorldX, odometryFileWorldY, odometryFileWorldAngle, transferFile;
 
-    public boolean driveInitialized, flickerInitialized, intakeInitialized, shooterInitialized, transferInitialized, wobbleInitialized, imuInitialized, visionInitialized;
+    public boolean driveInitialized, flickerInitialized, intakeInitialized, shooterInitialized, transferInitialized, wobbleInitialized, sticksInitialized, imuInitialized, visionInitialized;
 
     // values specific to the drivetrain
     public static double ticksPerQuarterRotation = 720;
@@ -194,6 +197,17 @@ public class UpliftRobot {
         }
 
         try {
+            stickLeft = hardwareMap.get(Servo.class, "stick_left");
+            stickRight = hardwareMap.get(Servo.class, "stick_right");
+
+            sticksInitialized = true;
+        } catch (Exception ex) {
+            sticksInitialized = false;
+            opMode.telemetry.addData("Sticks initialization failed: ", ex.getMessage());
+            opMode.telemetry.update();
+        }
+
+        try {
             imu = hardwareMap.get(BNO055IMU.class, "imu");
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
             parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -257,6 +271,9 @@ public class UpliftRobot {
         }
         if(wobbleInitialized) {
             wobbleSub = new WobbleSubsystem(this);
+        }
+        if(sticksInitialized) {
+            sticksSub = new SticksSubsystem(this);
         }
     }
 
