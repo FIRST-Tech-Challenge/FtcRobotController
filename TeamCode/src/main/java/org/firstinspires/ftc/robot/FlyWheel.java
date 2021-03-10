@@ -22,7 +22,7 @@ public class FlyWheel {
     public FlyWheel(Motor flywheel) {
         this.flywheel = flywheel;
 
-
+        this.flywheel.ACHIEVABLE_MAX_TICKS_PER_SECOND = Vals.flywheel_max_achievable_ticks;
         this.flywheel.setRunMode(Motor.RunMode.VelocityControl);
         this.flywheel.setVeloCoefficients(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
         this.flywheel.setFeedforwardCoefficients(Vals.flywheel_ks, Vals.flywheel_kv);
