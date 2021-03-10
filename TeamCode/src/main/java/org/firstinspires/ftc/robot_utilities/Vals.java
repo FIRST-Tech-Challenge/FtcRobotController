@@ -22,7 +22,7 @@ public class Vals {
     public static double rotate_tolerance = 1;
     public static double rotate_target = 0;
 
-    public static final double TICKS_PER_INCH = 40.58;
+    public static final double TICKS_PER_INCH_MOVEMENT = 40.58;
 
     public static double hitter_start = 0.4;
     public static double hitter_end = .7;

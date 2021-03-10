@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robot.DriveTrain;
 import org.firstinspires.ftc.robot.FlyWheel;
@@ -98,6 +99,8 @@ public class EchoOp extends OpMode {
 
         telemetry.addData("Flywheel Speed", flywheel.flywheel.get());
         telemetry.addData("Flywheel Velocity", flywheel.flywheel.getCorrectedVelocity());
+        telemetry.addData("Flywheel DcMotorEx Velocity", ((DcMotorEx)(flywheel.flywheel)).getVelocity());
+        telemetry.addData("Flywheel Filtered Speed", Vals.flywheel_filtered_speed);
         telemetry.addData("Flywheel Position", flywheel.flywheel.getCurrentPosition());
         telemetry.addData("Hitter Position", hitter.hitter.getPosition());
         telemetry.addData("Left Speed", leftSpeed);
