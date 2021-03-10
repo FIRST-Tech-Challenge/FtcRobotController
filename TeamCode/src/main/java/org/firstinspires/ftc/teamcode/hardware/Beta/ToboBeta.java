@@ -1242,8 +1242,10 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 chassis.driveTo(auto_chassis_power, 120, 220, 0,true, 5);
                 chassis.rotateTo(1,170,2);
             } else if (tZone == TargetZone.ZONE_C) {//4
-                chassis.driveTo(1.0, 50, 300, 0, false, 5); // no rotation to make it faster
-                chassis.rotateTo(1,135,2);
+                chassis.driveTo(1.0, 60, 290, 0, false, 5); // no rotation to make it faster
+                chassis.rotateTo(1,170,2);
+                chassis.driveTo(1.0, 70, 210, 170, false, 5); // no rotation to make it faster
+                chassis.rotateTo(1,0,2);
             } else {
                 return;
             }
@@ -1700,21 +1702,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             chassis.driveTo(auto_chassis_power+0.2, side(110), 165, 0, false, 2);
         }
         if (tZone== TargetZone.ZONE_C){
-            shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
-            hopper.hopperUpCombo(true);
-            TaskManager.processTasks();
-            if (runtimeAuto.seconds() < 26) {
-                chassis.driveTo(1.0, side(70), 185, 0, false, 5);
-                grabber.initWobbleGoalCombo();
-                TaskManager.processTasks();
-                autoShootHighGoal(2, true);
-                grabber.initWobbleGoalCombo();
-                TaskManager.processTasks();
-                chassis.driveTo(1.0, chassis.odo_x_pos_cm(), chassis.odo_y_pos_cm() + 30, chassis.getCurHeading(), false, 2);
-            }
-            else {
-                chassis.driveTo(1.0, chassis.odo_x_pos_cm(), 200, chassis.getCurHeading(), false, 2);
-            }
+            return;
         }
         else if (tZone== TargetZone.ZONE_B)
         {
