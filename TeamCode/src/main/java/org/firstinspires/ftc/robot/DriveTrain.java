@@ -15,6 +15,15 @@ public class DriveTrain {
 //        driveLeft.setInverted(true);
         driveLeft.setVeloCoefficients(0.05, 0, 0);
         driveRight.setVeloCoefficients(0.05, 0, 0);
+        driveLeft.setPositionCoefficient(0.05);
+        driveRight.setPositionCoefficient(0.05);
+    }
+
+    public DriveTrain(Motor driveLeft, Motor driveRight, Motor.RunMode runMode) {
+        this(driveLeft, driveRight);
+
+        this.driveLeft.setRunMode(runMode);
+        this.driveRight.setRunMode(runMode);
     }
 
     public void setSpeed(double leftSpeed, double rightSpeed) {

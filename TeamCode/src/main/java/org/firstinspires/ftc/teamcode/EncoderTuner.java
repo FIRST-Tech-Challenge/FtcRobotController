@@ -20,7 +20,7 @@ class DriveTrainTuner {
 
 @TeleOp(name = "EncoderTuner")
 public class EncoderTuner extends OpMode {
-    DriveTrain driveTrain;
+//    DriveTrain driveTrain;
     GamePadController gamepad;
     Motor driveLeft, driveRight;
 
@@ -54,7 +54,9 @@ public class EncoderTuner extends OpMode {
         }
 
         if(gamepad.isYRelease()) {
-            driveTrain.resetEncoders();
+//            driveTrain.resetEncoders();
+            driveLeft.resetEncoder();
+            driveRight.resetEncoder();
         }
 
         if(gamepad1.b) {
@@ -72,18 +74,18 @@ public class EncoderTuner extends OpMode {
         driveLeft.set(-leftSpeed);
         driveRight.set(rightSpeed);
 
-        int[] distances = driveTrain.getEncoderCounts();
+//        int[] distances = driveTrain.getEncoderCounts();
 
         telemetry.addData("Target Distance", DriveTrainTuner.targetDistance);
         telemetry.addData("Left Speed", leftSpeed);
         telemetry.addData("Right Speed", rightSpeed);
         telemetry.addData("Left Set Speed", DriveTrainTuner.leftSpeed);
         telemetry.addData("Right Set Speed", DriveTrainTuner.rightSpeed);
-        telemetry.addData("Left Distance", distances[0]);
-        telemetry.addData("Right Distance", distances[1]);
-        telemetry.addData("Left Distance", driveTrain.driveLeft.getCurrentPosition());
-        telemetry.addData("Right Distance", driveTrain.driveRight.getCurrentPosition());
-        telemetry.addData("Left Revolutions", driveTrain.driveLeft.encoder.getRevolutions());
-        telemetry.addData("Right Revolutions", driveTrain.driveRight.encoder.getRevolutions());
+        telemetry.addData("Left Distance", driveLeft.getDistance());
+        telemetry.addData("Right Distance", driveRight.getDistance());
+        telemetry.addData("Left Distance", driveLeft.getCurrentPosition());
+        telemetry.addData("Right Distance", driveRight.getCurrentPosition());
+        telemetry.addData("Left Revolutions", driveLeft.encoder.getRevolutions());
+        telemetry.addData("Right Revolutions", driveRight.encoder.getRevolutions());
     }
 }
