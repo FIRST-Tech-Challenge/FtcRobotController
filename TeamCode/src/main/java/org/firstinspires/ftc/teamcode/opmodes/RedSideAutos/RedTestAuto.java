@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
-import org.firstinspires.ftc.teamcode.toolkit.PID.ShooterPIDController;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 
 @Autonomous(name = "Red Test Auto", group = "opModes")

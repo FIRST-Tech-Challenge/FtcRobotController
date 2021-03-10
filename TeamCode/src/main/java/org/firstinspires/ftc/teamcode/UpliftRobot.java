@@ -78,6 +78,8 @@ public class UpliftRobot {
 
     public File odometryFileWorldX, odometryFileWorldY, odometryFileWorldAngle, transferFile;
 
+    public boolean driveInitialized, flickerInitialized, intakeInitialized, shooterInitialized, transferInitialized, wobbleInitialized, imuInitialized, visionInitialized;
+
     // values specific to the drivetrain
     public static double ticksPerQuarterRotation = 720;
     public static double wheelRadius = 19/25.4; // in inches
@@ -92,38 +94,111 @@ public class UpliftRobot {
         getHardware();
         initSubsystems();
         initBackground();
-        initGameState();
     }
 
     public void getHardware() {
         hardwareMap = opMode.hardwareMap;
 
-        //initialize the motors into the hardware map
-        leftFront = hardwareMap.get(DcMotor.class,"lf_motor");//Declares two left motors
-        leftBack = hardwareMap.get(DcMotor.class,"lb_motor");
-        rightFront = hardwareMap.get(DcMotor.class,"rf_motor"); //Declares two right motors
-        rightBack = hardwareMap.get(DcMotor.class,"rb_motor");
+        try {
+            leftFront = hardwareMap.get(DcMotor.class, "lf_motor");//Declares two left motors
+            leftBack = hardwareMap.get(DcMotor.class, "lb_motor");
+            rightFront = hardwareMap.get(DcMotor.class, "rf_motor"); //Declares two right motors
+            rightBack = hardwareMap.get(DcMotor.class, "rb_motor");
 
-        flicker = hardwareMap.get(Servo.class,"flicker");
-        transfer = hardwareMap.get(DcMotor.class, "transfer");
-        shooter1 = hardwareMap.get(DcMotorEx.class, "shooter_1");
-        shooter2 = hardwareMap.get(DcMotorEx.class, "shooter_2");
-        intake = hardwareMap.get(DcMotor.class, "intake");
+            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+            rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            driveInitialized = true;
+        } catch (Exception ex) {
+            driveInitialized = false;
+            opMode.telemetry.addData("Drivetrain initialization failed: ", ex.getMessage());
+            opMode.telemetry.update();
+        }
+
+        try {
+            flicker = hardwareMap.get(Servo.class, "flicker");
+            flickerInitialized = true;
+        } catch (Exception ex) {
+            flickerInitialized = false;
+            opMode.telemetry.addData("Flicker initialization failed: ", ex.getMessage());
+            opMode.telemetry.update();
+        }
+
+        try {
+            transfer = hardwareMap.get(DcMotor.class, "transfer");
+            transfer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+            digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
+            digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
+            digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
+
+            transferInitialized = true;
+        } catch (Exception ex) {
+            transferInitialized = false;
+            opMode.telemetry.addData("Transfer initialization failed: ", ex.getMessage());
+            opMode.telemetry.update();
+        }
+
+        try {
+            shooter1 = hardwareMap.get(DcMotorEx.class, "shooter_1");
+            shooter2 = hardwareMap.get(DcMotorEx.class, "shooter_2");
+            shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            shooterInitialized = true;
+        } catch (Exception ex) {
+            shooterInitialized = false;
+            opMode.telemetry.addData("Shooter initialization failed: ", ex.getMessage());
+            opMode.telemetry.update();
+        }
+
+        try {
+            intake = hardwareMap.get(DcMotor.class, "intake");
 //        intakeSensor = hardwareMap.get(DistanceSensor.class,"d1");
-        wobbleTop = hardwareMap.get(Servo.class, "wobble1");
-        wobbleBottom = hardwareMap.get(Servo.class, "wobble2");
-        clamp = hardwareMap.get(Servo.class, "clamp");
-        digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "sensor_digital");
-        digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
-        digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
-        digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
 
-        //setup imu (gyro)
-//        imu = hardwareMap.get(BNO055IMU.class, "imu");
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-//        imu.initialize(parameters);
+            intakeInitialized = true;
+        } catch (Exception ex) {
+            intakeInitialized = false;
+            opMode.telemetry.addData("Intake initialization failed: ", ex.getMessage());
+            opMode.telemetry.update();
+        }
+
+        try {
+            wobbleTop = hardwareMap.get(Servo.class, "wobble1");
+            wobbleBottom = hardwareMap.get(Servo.class, "wobble2");
+            clamp = hardwareMap.get(Servo.class, "clamp");
+
+            wobbleInitialized = true;
+        } catch (Exception ex) {
+            wobbleInitialized = false;
+            opMode.telemetry.addData("Wobble initialization failed: ", ex.getMessage());
+            opMode.telemetry.update();
+        }
+
+        try {
+            imu = hardwareMap.get(BNO055IMU.class, "imu");
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            imu.initialize(parameters);
 
 //        byte AXIS_MAP_CONFIG_BYTE = 0x6; //swap x and z axis
 //        byte AXIS_MAP_SIGN_BYTE = 0x1; //negate z axis
@@ -135,13 +210,26 @@ public class UpliftRobot {
 //        imu.write8(BNO055IMU.Register.OPR_MODE, BNO055IMU.SensorMode.IMU.bVal & 0x0F);
 //        safeSleep(100);
 
-//        ringDetector = new RingDetector();
-//        webcamName = hardwareMap.get(WebcamName.class,"webcam");
-//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id",hardwareMap.appContext.getPackageName());
-//        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-//        camera.openCameraDevice();
-//        camera.setPipeline(ringDetector);
-//        camera.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+            imuInitialized = true;
+        } catch (Exception ex) {
+            imuInitialized = false;
+            opMode.telemetry.addData("IMU initialization failed: ", ex.getMessage());
+            opMode.telemetry.update();
+        }
+
+        try {
+            ringDetector = new RingDetector();
+            webcamName = hardwareMap.get(WebcamName.class,"webcam");
+            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id",hardwareMap.appContext.getPackageName());
+            camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+            camera.openCameraDevice();
+            camera.setPipeline(ringDetector);
+            camera.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+        } catch (Exception ex) {
+            visionInitialized = false;
+            opMode.telemetry.addData("Vision initialization failed: ", ex.getMessage());
+            opMode.telemetry.update();
+        }
 
         // setup file system
         odometryFileWorldX = AppUtil.getInstance().getSettingsFile("odometryX.txt");
@@ -149,47 +237,37 @@ public class UpliftRobot {
         odometryFileWorldAngle = AppUtil.getInstance().getSettingsFile("odometryTheta.txt");
         transferFile = AppUtil.getInstance().getSettingsFile("transferFile.txt");
 
-        //setup the motors
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        shooter1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        transfer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
     }
 
     public void initSubsystems() {
-        driveSub = new DriveSubsystem(this);
-        transferSub = new TransferSubsystem(this);
-        intakeSub = new IntakeSubsystem(this);
-        shooterSub = new ShooterSubsystem(this);
-        flickerSub = new FlickerSubsystem(this);
-        wobbleSub = new WobbleSubsystem(this);
+        if(driveInitialized) {
+            driveSub = new DriveSubsystem(this);
+        }
+        if(transferInitialized) {
+            transferSub = new TransferSubsystem(this);
+        }
+        if(intakeInitialized) {
+            intakeSub = new IntakeSubsystem(this);
+        }
+        if(shooterInitialized) {
+            shooterSub = new ShooterSubsystem(this);
+        }
+        if(flickerInitialized) {
+            flickerSub = new FlickerSubsystem(this);
+        }
+        if(wobbleInitialized) {
+            wobbleSub = new WobbleSubsystem(this);
+        }
     }
 
     public void initBackground() {
         cancelClass = new Cancel(this);
-        odometry = new Odometry(this);
-        velocityData = new VelocityData(this);
+        if(driveInitialized) {
+            odometry = new Odometry(this);
+        }
+        if(shooterInitialized) {
+            velocityData = new VelocityData(this);
+        }
     }
 
     public void writePositionToFiles() {
@@ -240,14 +318,6 @@ public class UpliftRobot {
         cancelClass.stopUpdatingCancel();
     }
 
-    public void initGameState() {
-        if(opMode instanceof UpliftAuto) {
-            setGameState(GameState.AUTO);
-        } else {
-            setGameState(GameState.TELEOP);
-        }
-    }
-
     public ShootingState shootingState;
     public enum ShootingState {
         IDLE,
@@ -257,16 +327,6 @@ public class UpliftRobot {
     }
     public void setShootingState(ShootingState state) {
         shootingState = state;
-    }
-
-    public GameState gameState;
-    public enum GameState {
-        AUTO,
-        TELEOP,
-        ENDGAME
-    }
-    public void setGameState(GameState state) {
-        gameState = state;
     }
 
 }

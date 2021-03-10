@@ -1,29 +1,15 @@
-package org.firstinspires.ftc.teamcode.opmodes.hardwaretests;
-
-import android.util.Log;
+package org.firstinspires.ftc.teamcode.toolkit.ftcdashboard;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
-import org.firstinspires.ftc.teamcode.commands.DriveCommands;
-import org.firstinspires.ftc.teamcode.commands.FlickerCommands;
-import org.firstinspires.ftc.teamcode.commands.IntakeCommands;
-import org.firstinspires.ftc.teamcode.commands.ShooterCommands;
-import org.firstinspires.ftc.teamcode.commands.TransferCommands;
-import org.firstinspires.ftc.teamcode.commands.WobbleCommands;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
-import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
-import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
 
-import static org.firstinspires.ftc.teamcode.opmodes.hardwaretests.DashboardConstants.SERVO_VAL;
+import static org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants.SERVO_VAL;
 
 @Autonomous
 public class DashboardTesting extends UpliftAuto {

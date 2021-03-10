@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmodes.hardwaretests;
+package org.firstinspires.ftc.teamcode.toolkit.ftcdashboard;
 
 import com.acmerobotics.dashboard.config.Config;
 
