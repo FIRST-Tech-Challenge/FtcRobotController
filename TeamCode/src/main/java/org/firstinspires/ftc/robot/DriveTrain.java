@@ -31,8 +31,16 @@ public class DriveTrain {
         driveRight.set(rightSpeed);
     }
 
-    public int[] getEncoderCounts() {
+    public int[] getPosition() {
         return new int[]{driveLeft.getCurrentPosition(), driveRight.getCurrentPosition()};
+    }
+
+    public double[] getDistance() {
+        return new double[]{driveLeft.getDistance(), driveRight.getDistance()};
+    }
+
+    public double[] getRevolutions() {
+        return new double[]{driveLeft.encoder.getRevolutions(), driveRight.encoder.getRevolutions()};
     }
 
     public void resetEncoders() {

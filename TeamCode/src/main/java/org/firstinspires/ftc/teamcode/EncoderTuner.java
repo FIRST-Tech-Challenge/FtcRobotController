@@ -42,11 +42,19 @@ public class EncoderTuner extends OpMode {
         driveRight.setPositionTolerance(13.6);
 
         DriveTrainTuner.targetDistance = (int)(2.5 * driveLeft.getCPR());
+
+        driveLeft.setTargetPosition(-DriveTrainTuner.targetDistance);
+        driveRight.setTargetPosition(DriveTrainTuner.targetDistance);
     }
 
     @Override
     public void loop() {
         gamepad.update();
+
+        if(gamepad.isXRelease()) {
+            driveLeft.setTargetPosition(-DriveTrainTuner.targetDistance);
+            driveRight.setTargetPosition(DriveTrainTuner.targetDistance);
+        }
 
         if(gamepad.isARelease()) {
             DriveTrainTuner.leftSpeed *= -1;
