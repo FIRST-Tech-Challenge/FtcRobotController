@@ -14,12 +14,15 @@ import org.firstinspires.ftc.robot_utilities.GamePadController;
 class DriveTrainTuner {
     public static double leftSpeed = 0.3;
     public static double rightSpeed = 0.3;
+
+    public static int targetDistance = 0;
 }
 
 @TeleOp(name = "EncoderTuner")
 public class EncoderTuner extends OpMode {
     DriveTrain driveTrain;
     GamePadController gamepad;
+    Motor driveLeft, driveRight;
 
     double leftSpeed = 0;
     double rightSpeed = 0;
@@ -27,9 +30,18 @@ public class EncoderTuner extends OpMode {
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        driveTrain = new DriveTrain(new Motor(hardwareMap, "dl"),
-                                    new Motor(hardwareMap, "dr"));
         gamepad = new GamePadController(gamepad1);
+
+        driveLeft = new Motor(hardwareMap, "dl");
+        driveRight = new Motor(hardwareMap, "dr");
+        driveLeft.setRunMode(Motor.RunMode.PositionControl);
+        driveRight.setRunMode(Motor.RunMode.PositionControl);
+        driveLeft.setPositionCoefficient(0.05);
+        driveRight.setPositionCoefficient(0.05);
+        driveLeft.setPositionTolerance(13.6);
+        driveRight.setPositionTolerance(13.6);
+
+        DriveTrainTuner.targetDistance = (int)(2.5 * driveLeft.getCPR());
     }
 
     @Override
@@ -46,8 +58,12 @@ public class EncoderTuner extends OpMode {
         }
 
         if(gamepad1.b) {
-            leftSpeed = DriveTrainTuner.leftSpeed;
-            rightSpeed = DriveTrainTuner.rightSpeed;
+            if(!driveLeft.atTargetPosition()) {
+                leftSpeed = DriveTrainTuner.leftSpeed;
+            }
+            if(!driveRight.atTargetPosition()) {
+                rightSpeed = DriveTrainTuner.rightSpeed;
+            }
         } else {
             leftSpeed = 0;
             rightSpeed = 0;
@@ -57,6 +73,8 @@ public class EncoderTuner extends OpMode {
 
         int[] distances = driveTrain.getEncoderCounts();
 
+        telemetry.addData("Left Speed", leftSpeed);
+        telemetry.addData("Right Speed", rightSpeed);
         telemetry.addData("Left Set Speed", DriveTrainTuner.leftSpeed);
         telemetry.addData("Right Set Speed", DriveTrainTuner.rightSpeed);
         telemetry.addData("Left Distance", distances[0]);

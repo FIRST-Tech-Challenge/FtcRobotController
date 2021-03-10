@@ -12,13 +12,13 @@ public class DriveTrain {
 
         driveLeft.setRunMode(Motor.RunMode.VelocityControl);
         driveRight.setRunMode(Motor.RunMode.VelocityControl);
-        driveLeft.setInverted(true);
+//        driveLeft.setInverted(true);
         driveLeft.setVeloCoefficients(0.05, 0, 0);
         driveRight.setVeloCoefficients(0.05, 0, 0);
     }
 
     public void setSpeed(double leftSpeed, double rightSpeed) {
-        driveLeft.set(leftSpeed);
+        driveLeft.set(-leftSpeed);
         driveRight.set(rightSpeed);
     }
 
