@@ -53,13 +53,13 @@ public class InsideRedC extends LinearOpMode {
             robot.depositWobbleGoal();
             robot.forward(0.5, -1.8);
         } else if (ringNmb == 4) {
-            robot.forward(0.5,-5);
-            robot.strafeLeft(0.5,2);
+            robot.forward(0.5,-5.5);
+            robot.strafeLeft(0.5,2.2);
             robot.pivotLeft(0.3,175);
             robot.depositWobbleGoal();
             robot.pivotRight(0.3,175);
-            robot.strafeRight(0.5,2);
-            robot.forward(0.5,4);
+            robot.strafeRight(0.5,2.2);
+            robot.forward(0.5,3.7);
         }
 
     }

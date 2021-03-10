@@ -49,11 +49,11 @@ public class InsideBlueC extends LinearOpMode {
             robot.depositWobbleGoal();
             robot.forward(0.5, 3);
         } else if (ringNmb == 4) {
-            robot.forward(0.5,-5);
-            robot.strafeRight(0.5, 2.2);
+            robot.forward(0.5,-5.3);
+            robot.strafeRight(0.5, 2.3);
             robot.depositWobbleGoal();
-            robot.strafeLeft(0.5,2.2);
-            robot.forward(0.5,3.5);
+            robot.strafeLeft(0.5,2.5);
+            robot.forward(0.5,3.8);
         }
 
     }
