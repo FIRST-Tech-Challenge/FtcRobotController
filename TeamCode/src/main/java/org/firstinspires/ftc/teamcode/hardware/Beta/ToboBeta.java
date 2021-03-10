@@ -1446,6 +1446,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                     shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 }
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
+                chassis.driveTo(auto_chassis_power, side(90), 150, 0, false, 2);
                 chassis.driveTo(1.0, side(90), 120, 0, false, 2);
                 autoIntakeRings(3, true);//not sure?????
                 chassis.driveTo(1.0, side(90), 165, 0, false, 1);
