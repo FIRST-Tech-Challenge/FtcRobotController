@@ -50,7 +50,7 @@ public class RobotClass {
     ColorSensor colorSensor;
 
     OpenCvInternalCamera phoneCam;
-    EasyOpenCVExample.SkystoneDeterminationPipeline pipeline;
+    SkystoneDeterminationPipelineInnerBlueOuterRed pipeline;
 
     LinearOpMode opmode;
     HardwareMap hardwareMap;
@@ -96,6 +96,11 @@ public class RobotClass {
         this.opmode = opmode;
 
 
+    }
+
+    public SkystoneDeterminationPipelineInnerBlueOuterRed.RingPosition analyze() {
+        pipeline.getAnalysis();
+        return pipeline.position;
     }
 
     public void testGyro(){
@@ -240,69 +245,6 @@ public class RobotClass {
             telemetry.update();
         }
 
-//        public void turnRight (double speed, double angle) {
-//        double anglemult = 1.5;
-//
-//            int leftCurrent = frontLeft.getCurrentPosition();
-//            int rightCurrent = frontRight.getCurrentPosition();
-//            int backLeftCurrent = backLeft.getCurrentPosition();
-//            int backRightCurrent = backRight.getCurrentPosition();
-//
-//            double toPositionLeft = leftCurrent + anglemult  * angle;
-//            double toPositionRight = rightCurrent - anglemult * angle;
-//            double toPositionbackLeft = backLeftCurrent + anglemult * angle;
-//            double toPositionbackRight = backRightCurrent - anglemult * angle;
-//
-//            frontLeft.setTargetPosition((int) toPositionLeft);
-//            frontRight.setTargetPosition((int) toPositionRight);
-//            backLeft.setTargetPosition((int) toPositionbackLeft);
-//            backRight.setTargetPosition((int) toPositionbackRight);
-//
-//            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//            frontLeft.setPower(speed);
-//            frontRight.setPower(speed);
-//            backLeft.setPower(speed);
-//            backRight.setPower(speed);
-//
-//    }
-//    public void turnLeft (double speed, double angle) {
-//        double anglemult = 1.5;
-//
-//        int leftCurrent = frontLeft.getCurrentPosition();
-//        int rightCurrent = frontRight.getCurrentPosition();
-//        int backLeftCurrent = backLeft.getCurrentPosition();
-//        int backRightCurrent = backRight.getCurrentPosition();
-//
-//        double toPositionLeft = leftCurrent - anglemult * angle;
-//        double toPositionRight = rightCurrent + anglemult * angle;
-//        double toPositionBackLeft = backLeftCurrent - anglemult * angle;
-//        double toPositionBackRight = backRightCurrent + anglemult * angle;
-//
-//        frontLeft.setTargetPosition((int) toPositionLeft);
-//        frontRight.setTargetPosition((int) toPositionRight);
-//        backLeft.setTargetPosition((int) toPositionBackLeft);
-//        backRight.setTargetPosition((int) toPositionBackRight);
-//
-//        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//        frontLeft.setPower(speed);
-//        frontRight.setPower(speed);
-//        backLeft.setPower(speed);
-//        backRight.setPower(speed);
-
-//        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
-//        telemetry.addData("Target Front Right Motor Position", toPositionRight);
-//        telemetry.addData("Target Back Left Motor Position", toPositionBackLeft);
-//        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
-//        telemetry.update();
-  //  }
 
     public void pivotRightSloppy (double speed, double angle) {
         setSpeedForTurnRight(speed);
@@ -682,8 +624,8 @@ public class RobotClass {
 
     public void openCVInnitShenanigans() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        pipeline = new EasyOpenCVExample.SkystoneDeterminationPipeline();
+        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.FRONT, cameraMonitorViewId);
+        pipeline = new SkystoneDeterminationPipelineInnerBlueOuterRed();
         phoneCam.setPipeline(pipeline);
 
 
@@ -697,7 +639,7 @@ public class RobotClass {
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
             }
         });
 
@@ -723,7 +665,7 @@ public class RobotClass {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(68,176);
+        static  Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(68,176);
 //inner blue 68,176 size 30,42
         //outer blue 192, 176 size 30,42
         //inside red, the same as outer blue
@@ -752,7 +694,7 @@ public class RobotClass {
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile RingPosition position = SkystoneDeterminationPipeline.RingPosition.FOUR;
+        public volatile RingPosition position = RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -805,121 +747,27 @@ public class RobotClass {
             return input;
         }
 
+
         public int getAnalysis()
         {
             return avg1;
         }
     }
-    public static class SkystoneDeterminationPipelineOuterBlueInnerRed extends OpenCvPipeline
+    public static class SkystoneDeterminationPipelineOuterBlueInnerRed extends SkystoneDeterminationPipelineInnerBlueOuterRed
     {
-        /*
-         * An enum to define the skystone position
-         */
-        public enum RingPosition
-        {
-            FOUR,
-            ONE,
-            NONE
+        public SkystoneDeterminationPipelineOuterBlueInnerRed(){
+            REGION1_TOPLEFT_ANCHOR_POINT = new Point(192,176);
         }
 
-        /*
-         * Some color constants
-         */
-        static final Scalar BLUE = new Scalar(0, 0, 255);
-        static final Scalar GREEN = new Scalar(0, 255, 0);
 
-        /*
-         * The core values which define the location and size of the sample regions
-         */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(192,176);
 //inner blue 68,176 size 30,42
         //outer blue 192, 176 size 30,42
         //inside red, the same as outer blue
         //outer red, the same as inside blue
 
 
-        static final int REGION_WIDTH = 30;
-        static final int REGION_HEIGHT = 42;
-
-        final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 135;
-
-        Point region1_pointA = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x,
-                REGION1_TOPLEFT_ANCHOR_POINT.y);
-        Point region1_pointB = new Point(
-                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
-                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
-
-        /*
-         * Working variables
-         */
-        Mat region1_Cb;
-        Mat YCrCb = new Mat();
-        Mat Cb = new Mat();
-        int avg1;
-
-        // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR;
-
-        /*
-         * This function takes the RGB frame, converts to YCrCb,
-         * and extracts the Cb channel to the 'Cb' variable
-         */
-        void inputToCb(Mat input)
-        {
-            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
-            Core.extractChannel(YCrCb, Cb, 1);
-        }
-
-        @Override
-        public void init(Mat firstFrame)
-        {
-            inputToCb(firstFrame);
-
-            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
-        }
-
-        @Override
-        public Mat processFrame(Mat input)
-        {
-            inputToCb(input);
-
-            avg1 = (int) Core.mean(region1_Cb).val[0];
-
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
-                    2); // Thickness of the rectangle lines
-
-            position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
-            if(avg1 > FOUR_RING_THRESHOLD){
-                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR;
-            }else if (avg1 > ONE_RING_THRESHOLD){
-                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.ONE;
-            }else{
-                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.NONE;
-            }
-
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    region1_pointA, // First point which defines the rectangle
-                    region1_pointB, // Second point which defines the rectangle
-                    GREEN, // The color the rectangle is drawn in
-                    -1); // Negative thickness means solid fill
-
-            return input;
-        }
-
-        public int getAnalysis()
-        {
-            return avg1;
-        }
     }
-    public EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition analyze() {
-        pipeline.getAnalysis();
-        return pipeline.position;
-    }
+
+
+
     }
