@@ -7,9 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 
-public class VelocityData implements Runnable{
-
-    Thread t;
+public class VelocityData extends Background {
 
     UpliftRobot robot;
     LinearOpMode opMode;
@@ -17,27 +15,19 @@ public class VelocityData implements Runnable{
     private static final int TICKS_PER_SHOOTER_WHEEL_ROTATION = 28;
 
     public VelocityData(UpliftRobot robot) {
-        t = new Thread(this);
+        super(robot);
         this.robot = robot;
         this.opMode = robot.opMode;
-        t.start();
     }
 
     @Override
-    public void run() {
-        opMode.waitForStart();
-        while(t != null && opMode.opModeIsActive() && !opMode.isStopRequested()) {
-            getShooter1RawVelocity();
-            getShooter2RawVelocity();
-            getShooter1SmoothVelocity();
-            getShooter2SmoothVelocity();
+    public void loop() {
+        getShooter1RawVelocity();
+        getShooter2RawVelocity();
+        getShooter1SmoothVelocity();
+        getShooter2SmoothVelocity();
 //            Log.i("Shooter1Velocity", robot.shooter1SmoothVel + "");
 //            Log.i("Shooter2Velocity", robot.shooter2SmoothVel + "");
-        }
-    }
-
-    public void stopUpdatingVelocity() {
-        t = null;
     }
 
     public boolean isHighGoalShooterReady() {

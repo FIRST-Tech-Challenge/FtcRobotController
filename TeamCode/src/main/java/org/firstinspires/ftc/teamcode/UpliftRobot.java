@@ -313,9 +313,13 @@ public class UpliftRobot {
     }
 
     public void stopThreads() {
-        odometry.stopUpdatingPos();
-        velocityData.stopUpdatingVelocity();
-        cancelClass.stopUpdatingCancel();
+        if(driveInitialized) {
+            odometry.stop();
+        }
+        if(shooterInitialized) {
+            velocityData.stop();
+        }
+        cancelClass.stop();
     }
 
     public ShootingState shootingState;

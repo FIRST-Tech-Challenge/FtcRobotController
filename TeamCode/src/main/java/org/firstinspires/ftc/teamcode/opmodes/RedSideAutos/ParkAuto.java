@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 
-@Autonomous(name = "Red Park Auto", group = "opModes")
-public class RedParkAuto extends UpliftAuto {
+@Autonomous(name = "Park Auto", group = "opModes")
+public class ParkAuto extends UpliftAuto {
 
     UpliftRobot robot;
     Odometry odom;
@@ -27,8 +27,8 @@ public class RedParkAuto extends UpliftAuto {
     @Override
     public void body() {
         // create empty path list
-        odom.setOdometryPosition(102, 6, 0);
-        robot.driveSub.driveToPosition(102, 78, 0.7, 0);
+        odom.setOdometryPosition(105.25, 8.5, 0);
+        robot.driveSub.driveToPosition(105.25, 78, 0.7, 0);
 
     }
 

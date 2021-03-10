@@ -15,8 +15,8 @@ import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 import org.firstinspires.ftc.teamcode.toolkit.opencvtoolkit.RingDetector;
 
-@Autonomous(name = "Red Auto", group = "opModes")
-public class RedAuto extends UpliftAuto {
+@Autonomous(name = "Meet 5 Powershot Auto", group = "opModes")
+public class Meet5PowershotAuto extends UpliftAuto {
     UpliftRobot robot;
     WobbleSubsystem wobbleSub;
     DriveSubsystem driveSub;
@@ -45,38 +45,31 @@ public class RedAuto extends UpliftAuto {
     public void initAction() {
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
-        robot.flickerSub.setFlickerPos(0.25);
+        robot.flickerSub.setFlickerPos(0.15);
         robot.shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(5, 0, 0, 25));
         robot.shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(5, 0, 0, 25));
     }
 
     @Override
     public void body() throws InterruptedException {
-
-        // extra safety measure to ensure that program does not run if stopped initially
-        if(isStopRequested() || !opModeIsActive()) {
-            return;
-        }
-
         double startTime = System.currentTimeMillis();
         // set the initial position
         odom.setOdometryPosition(105.25, 8.5, 0);
         stack = robot.ringDetector.ringCount;
-        robot.shooter1.setVelocity(robot.highGoalVelocity);
-        robot.shooter2.setVelocity(robot.highGoalVelocity);
-        robot.flickerSub.setFlickerPos(0.15);
+        robot.shooter1.setVelocity(robot.powerShotVelocity);
+        robot.shooter2.setVelocity(robot.powerShotVelocity);
         transferSub.raiseTransfer();
 
-
         if (stack == 0) {
-            driveSub.driveToPosition(DriveSubsystem.highGoalShootingPt.x, DriveSubsystem.highGoalShootingPt.y, 1, 0);
-            autoHighGoalShoot();
+            driveSub.driveToPosition(DriveSubsystem.powershotShootingPt1.x, DriveSubsystem.powershotShootingPt1.y, 1, 0);
+            autoPowerShotShoot();
             // drop off first wobble
             driveSub.driveToPosition(130, 74, 1, 180, DriveSubsystem.CLOCKWISE);
             wobbleSub.dropOff();
             driveSub.driveToPosition(130, 70, 1, 180);
 
             // go to pick up second wobble
+            wobbleSub.highWobble();
             getSecondWobble();
 
             // go to drop off second wobble
@@ -89,88 +82,78 @@ public class RedAuto extends UpliftAuto {
 
         } else if (stack == 1) {
             driveSub.passThroughPosition(94, 24, 1, 0);
-            driveSub.driveToPosition(DriveSubsystem.highGoalShootingPt.x, DriveSubsystem.highGoalShootingPt.y, 1, 0);
-            autoHighGoalShoot();
+            driveSub.driveToPosition(DriveSubsystem.powershotShootingPt1.x, DriveSubsystem.powershotShootingPt1.y, 1, 0);
+            autoPowerShotShoot();
 
             // drop off first wobble
-            driveSub.driveToPosition(116, 96, 1, 180);
+            driveSub.driveToPosition(114, 100, 1, 180);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(106, 80, 0.7, 180);
+            driveSub.passThroughPosition(114, 90, 0.7, 180);
 
             // drive to pick up second wobble
+            driveSub.passThroughPosition(130, 70, 0.7, 180);
+            getSecondWobble();
+
+            // intake the 1 ring from the stack while going to drop off the second wobble
             intakeSub.setIntakePower(1);
-            driveSub.passThroughPosition(106, 44, 0.7, 180);
+            driveSub.passThroughPosition(108, 20, 1, 0);
+            driveSub.passThroughPosition(108, 60, 0.5, 0);
+
+            // drop off the second wobble goal
+            driveSub.driveToPosition(108, 90, 1, 180);
+            intakeSub.setIntakePower(0);
+            wobbleSub.dropOff();
+
+            // jerk the intake to make sure ring is not stuck, while backing up from drop-off point
+            intakeSub.setIntakePower(-0.3);
+            intakeSub.setIntakePower(1);
+            driveSub.passThroughPosition(108, 80, 0.7, 180);
+            intakeSub.setIntakePower(0);
+
+            // shoot one high-goal
             robot.shooter1.setVelocity(robot.highGoalVelocity);
             robot.shooter2.setVelocity(robot.highGoalVelocity);
-            driveSub.driveToPosition(115, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
-            driveSub.driveToPosition(115, 32, 0.5, 0.5, 0, 0);
-            wobbleSub.pickUp();
-            intakeSub.setIntakePower(0);
             driveSub.driveToPosition(DriveSubsystem.highGoalShootingPt.x, DriveSubsystem.highGoalShootingPt.y, 1, 0);
             transferSub.raiseTransfer();
             flickerSub.flickRing();
-            robot.safeSleep(100);
-            flickerSub.flickRing();
             transferSub.dropTransfer();
             shooterSub.setShooterPower(0);
-
-
-
-            // drop off the second wobble goal
-            driveSub.driveToPosition(110, 90, 1, 180);
-            wobbleSub.dropOff();
-            driveSub.driveToPosition(110, 80, 1, 180);
-
-
-//            // jerk the intake to make sure ring is not stuck, while backing up from drop-off point
-//            intakeSub.setIntakePower(-0.3);
-//            intakeSub.setIntakePower(1);
-//            driveSub.passThroughPosition(108, 80, 0.7, 180);
-//            intakeSub.setIntakePower(0);
-//
-//            // shoot one powershot
-//            robot.shooter1.setVelocity(robot.powerShotVelocity);
-//            robot.shooter2.setVelocity(robot.powerShotVelocity);
-//            driveSub.driveToPosition(DriveSubsystem.powershotShootingPt2.x, DriveSubsystem.powershotShootingPt2.y, 1, 0);
-//            transferSub.raiseTransfer();
-//            flickerSub.flickRing();
-//            transferSub.dropTransfer();
-//            shooterSub.setShooterPower(0);
 
             // park
             park();
 
         } else if (stack == 4) {
             driveSub.passThroughPosition(92, 24, 1, 0);
-            driveSub.driveToPosition(DriveSubsystem.highGoalShootingPt.x, DriveSubsystem.highGoalShootingPt.y, 1, 0);
-            autoHighGoalShoot();
+            driveSub.driveToPosition(DriveSubsystem.powershotShootingPt1.x, DriveSubsystem.powershotShootingPt1.y, 1, 0);
+            autoPowerShotShoot();
 
             // drive to drop off first wobble
             driveSub.driveToPosition(134, 122, 1, 180);
             wobbleSub.dropOff();
             driveSub.driveToPosition(134, 112, 1, 180);
+            wobbleSub.highWobble();
 
             // drive to pick up second wobble
-            driveSub.driveToPosition(115, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
-            driveSub.driveToPosition(115, 32, 0.5, 0.5, 0, 0);
-            wobbleSub.pickUp();
+            wobbleSub.highWobble();
+            getSecondWobble();
 
             // drop off second wobble
-            driveSub.driveToPosition(134, 116, 1, -135);
+            driveSub.driveToPosition(138, 116, 1, 180);
             wobbleSub.dropOff();
-            driveSub.driveToPosition(124, 106, 1, -135);
+            driveSub.driveToPosition(138, 106, 1, 180);
 
             // put wobble mechanism up for teleop
             wobbleSub.highWobble();
 
             // park by driving forward to the line
-            park();
+            driveSub.driveToPosition(138, 84, 1,180);
+            driveSub.stopMotors();
 
         } else {
             // shoot in high-goal
             driveSub.passThroughPosition(92, 24, 1, 0);
-            driveSub.driveToPosition(DriveSubsystem.highGoalShootingPt.x, DriveSubsystem.highGoalShootingPt.y, 1, 0);            autoHighGoalShoot();
-            autoHighGoalShoot();
+            driveSub.driveToPosition(DriveSubsystem.powershotShootingPt1.x, DriveSubsystem.powershotShootingPt1.y, 1, 0);
+            autoPowerShotShoot();
 
             // park
             park();
@@ -192,33 +175,33 @@ public class RedAuto extends UpliftAuto {
     }
 
     public void getSecondWobble() {
-        driveSub.driveToPosition(117, 43, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
-        driveSub.driveToPosition(117, 32, 0.5, 0.5, 0, 0);
+        driveSub.driveToPosition(117.25, 42, 0.7, 0, DriveSubsystem.COUNTER_CLOCKWISE);
+        driveSub.driveToPosition(117.25, 34, 1, 0.5, 0, 0);
         wobbleSub.pickUp();
     }
 
-    public void autoHighGoalShoot() {
+    public void autoPowerShotShoot() {
         double initialTime = System.currentTimeMillis();
-        while(!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && opModeIsActive()) {
+        while(!robot.velocityData.isPowerShotShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && opModeIsActive()) {
             robot.safeSleep(1);
         }
-        if(System.currentTimeMillis() - initialTime >= 2000) {
-            robot.safeSleep(100);
-            flickerSub.flickRing();
-            robot.safeSleep(100);
-            flickerSub.flickRing();
-            robot.safeSleep(100);
-            flickerSub.flickRing();
+        if(System.currentTimeMillis() - initialTime > 2000) {
+            robot.flickerSub.flickRing();
+            driveSub.driveToPosition(DriveSubsystem.powershotShootingPt2.x, DriveSubsystem.powershotShootingPt2.y, 1, 0);
+            robot.flickerSub.flickRing();
+            driveSub.driveToPosition(DriveSubsystem.powershotShootingPt3.x, DriveSubsystem.powershotShootingPt3.y, 1, 0);
+            robot.flickerSub.flickRing();
         } else {
-            for(int i = 0; i < 3 && opModeIsActive(); i++) {
-                while (!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && opModeIsActive()) {
-                    robot.safeSleep(1);
-                }
-                flickerSub.flickRing();
+            robot.flickerSub.flickRing();
+            driveSub.driveToPosition(DriveSubsystem.powershotShootingPt2.x, DriveSubsystem.powershotShootingPt2.y, 1, 0);
+            while(!robot.velocityData.isPowerShotShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && opModeIsActive()) {
+                robot.safeSleep(1);
             }
+            robot.flickerSub.flickRing();
+            driveSub.driveToPosition(DriveSubsystem.powershotShootingPt3.x, DriveSubsystem.powershotShootingPt2.y, 1, 0);
         }
-        shooterSub.setShooterPower(0);
-        transferSub.dropTransfer();
+        robot.shooterSub.setShooterPower(0);
+        robot.transferSub.dropTransfer();
     }
 
 }

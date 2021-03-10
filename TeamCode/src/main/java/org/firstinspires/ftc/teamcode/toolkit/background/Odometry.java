@@ -8,9 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.misc.MathFunctions;
 
-public class Odometry implements Runnable {
-
-    Thread t;
+public class Odometry extends Background {
 
     LinearOpMode opMode;
     UpliftRobot robot;
@@ -20,28 +18,19 @@ public class Odometry implements Runnable {
     private double initialLeftDistance, initialRightDistance, initialCenterDistance;
 
     public Odometry(UpliftRobot robot) {
-        t = new Thread(this);
+        super(robot);
         this.robot = robot;
+        this.opMode = robot.opMode;
         this.leftEncoder = robot.leftFront;
         this.rightEncoder = robot.rightFront;
         this.centerEncoder = robot.rightBack;
-        this.opMode = robot.opMode;
-        t.start();
     }
 
     @Override
-    public void run() {
-        opMode.waitForStart();
-        while(t != null && !opMode.isStopRequested() && opMode.opModeIsActive()) {
-            updatePosition();
-            Log.i("Odometry:", "X: " + robot.worldX + "   Y: " + robot.worldY + "   Angle: " + robot.worldAngle);
-        }
+    public void loop() {
+        updatePosition();
+        Log.i("Odometry:", "X: " + robot.worldX + "   Y: " + robot.worldY + "   Angle: " + robot.worldAngle);
     }
-
-    public void stopUpdatingPos() {
-        t = null;
-    }
-
 
     // method to update the current position and angle of the robot (relative to left-rear edge of robot and left-rear field corner)
     public void updatePosition() {
