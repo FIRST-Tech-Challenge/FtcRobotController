@@ -47,7 +47,7 @@ public class EasyOpenCVExample extends LinearOpMode
     {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.FRONT, cameraMonitorViewId);
         pipeline = new SkystoneDeterminationPipeline();
         phoneCam.setPipeline(pipeline);
 
@@ -61,7 +61,7 @@ public class EasyOpenCVExample extends LinearOpMode
             @Override
             public void onOpened()
             {
-                phoneCam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPSIDE_DOWN);
             }
         });
 
@@ -99,10 +99,15 @@ public class EasyOpenCVExample extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(181,98);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(68,176);
+//inner blue 68,176 size 30,42
+        //outer blue 192, 176 size 30,42
+        //inside red, the same as outer blue
+        //outer red, the same as inside blue
 
-        static final int REGION_WIDTH = 35;
-        static final int REGION_HEIGHT = 25;
+
+        static final int REGION_WIDTH = 30;
+        static final int REGION_HEIGHT = 42;
 
         final int FOUR_RING_THRESHOLD = 150;
         final int ONE_RING_THRESHOLD = 135;
@@ -123,7 +128,7 @@ public class EasyOpenCVExample extends LinearOpMode
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile RingPosition position = RingPosition.FOUR;
+        public volatile RingPosition position = RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -180,5 +185,9 @@ public class EasyOpenCVExample extends LinearOpMode
         {
             return avg1;
         }
+
+
     }
+
+
 }
