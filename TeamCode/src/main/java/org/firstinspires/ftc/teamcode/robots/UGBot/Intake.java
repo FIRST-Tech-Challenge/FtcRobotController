@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.Conversions;
 
 public class Intake {
@@ -58,11 +59,11 @@ public class Intake {
         fullTilt = !fullTilt;
         if(fullTilt){
             speed = -1;
-            setTiltTargetPosition(1450);
+            setTiltTargetPosition(Constants.INTAKE_SERVO_TRANSIT);
         }
         else{
             speed = 0;
-            setTiltTargetPosition(1240);
+            setTiltTargetPosition(Constants.INTAKE_SERVO_VERTICAL);
         }
     }
 

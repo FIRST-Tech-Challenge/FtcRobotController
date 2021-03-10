@@ -19,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.CanvasUtils.Point;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.KinematicModel;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectorySolution;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
@@ -26,6 +27,8 @@ import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
+
+import java.util.Arrays;
 
 import static org.firstinspires.ftc.teamcode.util.Conversions.futureTime;
 import static org.firstinspires.ftc.teamcode.util.Conversions.servoNormalize;
@@ -71,6 +74,8 @@ public class PoseUG {
     public double balanceP = .35;
     public double balanceD = 3.1444;
 
+    public long[] visionTimes = new long[] {};
+
     // All Actuators
     private DcMotor motorFrontRight = null;
     private DcMotor motorBackLeft = null;
@@ -91,6 +96,8 @@ public class PoseUG {
     public LEDSystem ledSystem = null;
     public Turret turret = null;
     public Intake intake = null;
+
+    private KinematicModel model;
 
     // All sensors
     BNO055IMU imu; // Inertial Measurement Unit: Accelerometer and Gyroscope combination sensor
@@ -178,7 +185,8 @@ public class PoseUG {
         cardinalBaseRight,
         cardinalBaseLeft,
         returnHome,
-        testShot
+        testShot,
+        intakeDisk
     }
 
     public enum RobotType {
@@ -379,6 +387,12 @@ public class PoseUG {
 
         // dashboard
         dashboard = FtcDashboard.getInstance();
+
+        model = new KinematicModel();
+    }
+
+    public void setVisionTimes(long[] visionTimes) {
+        this.visionTimes = visionTimes;
     }
 
     private void initVuforia(HardwareMap hardwareMap, Viewpoint viewpoint) {
@@ -419,7 +433,7 @@ public class PoseUG {
         fieldOverlay.strokeCircle(robotCanvasPoint.getX(), robotCanvasPoint.getY(), Constants.ROBOT_RADIUS_INCHES);
 
         // turret center in field coords
-        Point turretCenter = new Point(getPoseX() - Constants.TURRET_AXIS_OFFSET * Math.sin(poseHeadingRad), getPoseY() - Constants.TURRET_AXIS_OFFSET * Math.cos(poseHeadingRad));
+        Point turretCenter = new Point(model.getTurretX(), model.getTurretY());
         //Point turretCenter = new Point(getPoseX()  * Math.sin(poseHeadingRad), (getPoseY() - Constants.TURRET_AXIS_OFFSET) * Math.cos(poseHeadingRad));
 
         Point turretCanvasCenter = CanvasUtils.toCanvasPoint(turretCenter);
@@ -427,11 +441,8 @@ public class PoseUG {
 
         //muzzle center
         //muzzle angle in field orientation
-        double muzzleAngleFieldRad = Math.toRadians(turret.getHeading())+Constants.MUZZLE_RAD_OFFSET;
-        Point muzzleCenterField = new Point(
-                turretCenter.getX()+Constants.MUZZLE_RADIUS*Math.sin(muzzleAngleFieldRad),
-                turretCenter.getY()+Constants.MUZZLE_RADIUS*Math.cos(muzzleAngleFieldRad)
-        );
+
+        Point muzzleCenterField = new Point(model.getMuzzleX(), model.getMuzzleY());
         Point muzzleCanvasCenter = CanvasUtils.toCanvasPoint(muzzleCenterField);
         fieldOverlay.strokeCircle(muzzleCanvasCenter.getX(), muzzleCanvasCenter.getY(), 2.5);
 
@@ -463,6 +474,11 @@ public class PoseUG {
         CanvasUtils.drawVector(fieldOverlay, turretCenter, 3 * Constants.ROBOT_RADIUS_INCHES, turret.getHeading(), "#FF0000");
 
         packet.put("detection", detection);
+        packet.put("vision times", Arrays.toString(visionTimes));
+        long totalTime = 0;
+        for(long time: visionTimes)
+            totalTime += time;
+        packet.put("total time", totalTime);
         packet.put("current flywheel velocity", launcher.getFlywheelTPS());
         packet.put("target flywheel velocity", launcher.getFlywheelTargetTPS());
         packet.put("flywheel motor power", launcher.flywheelMotor.getPower() * 200);
@@ -627,6 +643,17 @@ public class PoseUG {
 
         lastUpdateTimestamp = System.nanoTime();
 
+        model.update(
+          getPoseX(), getPoseY(), poseHeadingRad, turret.getHeading(), launcher.getElbowAngle() ,turret.getTurretTargetHeading(), intake.getTiltTargetPosition(), powerLeft, powerRight
+        );
+
+        powerLeft = model.getLeftPower();
+        powerRight = model.getRightPower();
+        motorBackLeft.setPower(clampMotor(powerBackLeft));
+        motorBackRight.setPower(clampMotor(powerBackRight));
+
+        turret.setTurntableAngle(model.getTurretHeading());
+
         trajCalc.updatePos(poseX, poseY);
         trajCalc.updateVel(velocityX, velocityY);
         trajCalc.setTarget(target);
@@ -636,6 +663,7 @@ public class PoseUG {
         turret.update();
         intake.update(); //watermelon
         maintainTarget();
+
 
         sendTelemetry();
     }
@@ -882,7 +910,9 @@ public class PoseUG {
                 }
                 break;
             case 1:
-                if(driveAbsoluteDistance(.5, (getBearingToWrapped(targetX, targetY)), forward, getDistanceTo(targetX, targetY),.1)) {
+                double distance = getDistanceTo(targetX, targetY);
+                double power =  distance < 0.1524 ? 0 : 0.5;
+                if(driveAbsoluteDistance(power, (getBearingToWrapped(targetX, targetY)), forward, getDistanceTo(targetX, targetY),.1)) {
                     fieldPosState = 0;
                     return true;
                 }
@@ -938,6 +968,10 @@ public class PoseUG {
 
     private double getBearingTo(double targetX, double targetY) {
         return Math.toDegrees(Math.atan2((targetX-getPoseX()), (targetY-getPoseY())));
+    }
+
+    private double getBearingFromTo(double fromX, double fromY, double targetX, double targetY) {
+        return Math.toDegrees(Math.atan2((targetX-fromX), (targetY-fromY)));
     }
 
     private double getBearingToWrapped(double targetX, double targetY) {
@@ -1226,13 +1260,6 @@ public class PoseUG {
         powerBackLeft += rotate;
         powerFrontRight += -rotate;
         powerBackRight += -rotate;
-
-        // provide power to the motors
-        // motorFrontLeft.setPower(clampMotor(powerFrontLeft));
-        motorBackLeft.setPower(clampMotor(powerBackLeft));
-        // motorFrontRight.setPower(clampMotor(powerFrontRight));
-        motorBackRight.setPower(clampMotor(powerBackRight));
-
     }
 
     public void driveMixerTank(double forward, double rotate) {

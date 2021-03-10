@@ -69,6 +69,7 @@ public class Launcher {
 
         this.flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        gripperTargetPos = Constants.LAUNCHER_TRIGGER_STARTING;
 
         //PID
         lastUpdateTime = System.currentTimeMillis();
@@ -153,12 +154,12 @@ public class Launcher {
     public boolean toggleGripper(){
         if(toggleGripperState){
             toggleGripperState = false;
-            gripperTargetPos = 900;
+            gripperTargetPos = Constants.LAUNCHER_TRIGGER_STOWED;
             return true;
         }
         else{
             toggleGripperState = true;
-            gripperTargetPos = 1920;
+            gripperTargetPos = Constants.LAUNCHER_TRIGGER_SHOOT;
             return false;
         }
     }
@@ -236,6 +237,10 @@ public class Launcher {
     public boolean setElbowTargetAngle(double angleDegrees){
         setElbowTargetPos((int) (ticksPerDegree* angleDegrees) + 141); //plus the offset to zero
         return true;
+    }
+
+    public double getElbowAngle() {
+        return (getElbowCurrentPos() - 141) / ticksPerDegree; //plus the offset to zero
     }
 
     public int getElbowTargetPos(){

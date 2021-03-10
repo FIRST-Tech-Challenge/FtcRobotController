@@ -70,6 +70,18 @@ public class Constants {
 
     public static int WOBBLE_GRIPPER_CLOSED = 900;
     public static int WOBBLE_GRIPPER_STOWED = 1920;
+    public static int INTAKE_SERVO_STOWED = 1200;
+    public static int INTAKE_SERVO_VERTICAL = 1240;
+    public static int INTAKE_SERVO_TRANSIT = 1345;
+    public static int INTAKE_SERVO_REACH = 1450;
+
+    public static int LAUNCHER_TRIGGER_STOWED = 900;
+    public static int LAUNCHER_TRIGGER_SHOOT = 1920;
+    public static int LAUNCHER_TRIGGER_STARTING = 1700;
+
+    //inner conflicts
+    public static double TURRET_HEADING_OFFSET = 30;
+    public static double ELBOW_LEGAL_ANGLE = 35;
 
     public static int overrideTPS = 0;
 
@@ -100,7 +112,8 @@ public class Constants {
         //headings and elevations that are negative means don't apply them to ending position - let other behaviors control
         START(48/INCHES_PER_METER, ROBOT_RADIUS_INCHES/INCHES_PER_METER,0,0,0),
         //WOBBLE_ONE_GRAB(48/INCHES_PER_METER, (ROBOT_RADIUS_INCHES+3)/INCHES_PER_METER,0,340,0),
-        WOBBLE_ONE_GRAB(48/INCHES_PER_METER, 24/INCHES_PER_METER,0,340,45),
+        WOBBLE_ONE_GRAB(48/INCHES_PER_METER, (8 + ROBOT_RADIUS_INCHES)/INCHES_PER_METER,0,0,0),
+        //340, 45
         CALIBRATION_RESET(48/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,170,-1),
         //turret needs to rotate counter clockwise to deposit wobble goals A and C - use intermediate turret heading of 170
         TARGET_C_1(48/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,60+45,5),
@@ -127,7 +140,6 @@ public class Constants {
             this.baseHeading=baseHeading;
             this.launchHeading=launchHeading;
             this.launchElevation=launchElevation;
-
         }
     }
 }

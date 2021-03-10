@@ -40,6 +40,7 @@ public class OpenCVIntegration implements VisionProvider {
     private boolean enableDashboard;
     private List<BlobStats> blobs = new ArrayList<>();
     private FtcDashboard dashboard;
+    Mat flipOutput = new Mat();
     Mat cropOutput;
     Mat normalizeOutput = new Mat();
     Mat blurOutput = new Mat();
@@ -47,6 +48,8 @@ public class OpenCVIntegration implements VisionProvider {
     List<MatOfPoint> findContoursOutput = new ArrayList<>();
     List<MatOfPoint> filterContoursOutput = new ArrayList<>();
     Mat overlay;
+
+    public long startTime, getImageTime, rotateTime, cropTime, hsvTime, normalizeTime, blurTime, momentsTime, contourTime;
 
 
     private void initVuforia(HardwareMap hardwareMap, Viewpoint viewpoint) {
@@ -77,9 +80,7 @@ public class OpenCVIntegration implements VisionProvider {
     
     @Override
     public StackHeight detect() {
-//        TelemetryPacket packet = new TelemetryPacket();
-//        packet.put("q size", q.size());
-//        dashboard.sendTelemetryPacket(packet);
+        startTime = System.currentTimeMillis();
         if (q.isEmpty())
             return StackHeight.HOLD_STATE;
         VuforiaLocalizer.CloseableFrame frame;
@@ -91,6 +92,7 @@ public class OpenCVIntegration implements VisionProvider {
         Image img = VisionUtils.getImageFromFrame(frame, PIXEL_FORMAT.RGB565);
         Bitmap bm = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.RGB_565);
         bm.copyPixelsFromBuffer(img.getPixels());
+        getImageTime = System.currentTimeMillis();
 
         overlay = process(VisionUtils.bitmapToMat(bm, CvType.CV_8UC3));
 
@@ -121,8 +123,14 @@ public class OpenCVIntegration implements VisionProvider {
      * This is the primary method that runs the entire pipeline and updates the outputs.
      */
     public Mat process(Mat source0) {
+
+        // flipping image
+        Core.rotate(source0, flipOutput, Core.ROTATE_180);
+        rotateTime = System.currentTimeMillis();
+
         // Step crop:
-        cropOutput = crop(source0, new Point(Constants.TOP_LEFT_X, Constants.TOP_LEFT_Y), new Point(Constants.BOTTOM_RIGHT_X, Constants.BOTTOM_RIGHT_Y));
+        cropOutput = crop(flipOutput, new Point(Constants.TOP_LEFT_X, Constants.TOP_LEFT_Y), new Point(Constants.BOTTOM_RIGHT_X, Constants.BOTTOM_RIGHT_Y));
+        cropTime = System.currentTimeMillis();
 
         // Step Normalize0:
         Mat normalizeInput = cropOutput;
@@ -130,12 +138,14 @@ public class OpenCVIntegration implements VisionProvider {
         double normalizeAlpha = Constants.NORMALIZE_ALPHA;
         double normalizeBeta = Constants.NORMALIZE_BETA;
         normalize(normalizeInput, normalizeType, normalizeAlpha, normalizeBeta, normalizeOutput);
+        normalizeTime = System.currentTimeMillis();
 
         // Step Blur0:
         Mat blurInput = normalizeOutput;
-        BlurType blurType = BlurType.get("Gaussian Blur");
+        BlurType blurType = BlurType.get("Median Blur");
             double blurRadius = Constants.BLUR_RADIUS;
         blur(blurInput, blurType, blurRadius, blurOutput);
+        blurTime = System.currentTimeMillis();
 
         // Step HSV_Threshold0:
         Mat hsvThresholdInput = blurOutput;
@@ -143,11 +153,15 @@ public class OpenCVIntegration implements VisionProvider {
         double[] hsvThresholdSaturation = {Constants.HSV_THRESHOLD_SATURATION_MIN, Constants.HSV_THRESHOLD_SATURATION_MAX};
         double[] hsvThresholdValue = {Constants.HSV_THRESHOLD_VALUE_MIN, Constants.HSV_THRESHOLD_VALUE_MAX};
         hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
+        hsvTime = System.currentTimeMillis();
+
 
         // Step Find_Contours0:
         Mat findContoursInput = hsvThresholdOutput;
         boolean findContoursExternalOnly = false;
         findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
+        contourTime = System.currentTimeMillis();
+
 
         // Find max contour area
         double maxArea = 0;
@@ -175,19 +189,22 @@ public class OpenCVIntegration implements VisionProvider {
                 Rect blobBox = Imgproc.boundingRect(contour);
                 BlobStats blob = new BlobStats(p,x,y,blobBox.width,blobBox.height,area);
                 blobs.add(blob); //put it in the List
-                Imgproc.circle(overlay, new Point(x, y), 5, new Scalar(0,255,0,255), -1);
+//                Imgproc.circle(overlay, new Point(x, y), 5, new Scalar(0,255,0,255), -1);
             }
-            Imgproc.drawContours(overlay, filterContoursOutput, -1, new Scalar(0,255,0,255), 3);
+//            Imgproc.drawContours(overlay, filterContoursOutput, -1, new Scalar(0,255,0,255), 3);
         }
+        momentsTime= System.currentTimeMillis();
         
         switch(Constants.visionView) {
             case 0:
-                return cropOutput;
+                return flipOutput;
             case 1:
-                return normalizeOutput;
+                return cropOutput;
             case 2:
-                return blurOutput;
+                return normalizeOutput;
             case 3:
+                return blurOutput;
+            case 4:
                 return hsvThresholdOutput;
             default:
                 return source0;

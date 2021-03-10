@@ -45,6 +45,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
+import org.firstinspires.ftc.teamcode.robots.UGBot.vision.OpenCVIntegration;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.CsvLogKeeper;
 
@@ -338,6 +339,29 @@ public class UG_6832 extends OpMode {
                 // active
                 if (robot.articulation == PoseUG.Articulation.manual)
                     joystickDrivePregameMode();
+
+                if(!auto.visionProviderFinalized) {
+                    auto.visionProviderState = 0;
+                    auto.initVisionProvider();
+                } else {
+                    auto.sample();
+                    telemetry.addData("Vision", "Prep detection: %s%s", auto.height,
+                            auto.height == StackHeight.NONE_FOUND ? " (NONE_FOUND)" : "");
+                    robot.setDetection(auto.height);
+                    if(auto.vp instanceof OpenCVIntegration) {
+                        OpenCVIntegration vp = (OpenCVIntegration) auto.vp;
+                        robot.setVisionTimes(new long[] {
+                                vp.getImageTime - vp.startTime,
+                                vp.rotateTime - vp.getImageTime,
+                                vp.cropTime - vp.rotateTime,
+                                vp.normalizeTime - vp.cropTime,
+                                vp.blurTime - vp.normalizeTime,
+                                vp.hsvTime - vp.blurTime,
+                                vp.contourTime - vp.hsvTime,
+                                vp.momentsTime - vp.contourTime
+                        });
+                    }
+                }
 
 //                if (auto.visionProviderFinalized) {
 //                    StackHeight sp = auto.vp.detect();

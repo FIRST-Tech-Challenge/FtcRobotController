@@ -33,6 +33,7 @@ public class Autonomous {
     public boolean enableTelemetry = true;
     public static final Class<? extends VisionProvider>[] visionProviders = VisionProviders.visionProviders;
     public static final Viewpoint viewpoint = Viewpoint.WEBCAM;
+    public StackHeight height = StackHeight.HOLD_STATE;
     public int ugState = 0;
     private MineralStateProvider ugStateProvider = () -> ugState;
 
@@ -55,6 +56,7 @@ public class Autonomous {
     public boolean sample() {
         // Turn on camera to see which is gold
         StackHeight gp = vp.detect();
+        height = gp;
         // Hold state lets us know that we haven't finished looping through detection
         if (gp != StackHeight.NONE_FOUND) {
             switch (gp) {
@@ -71,7 +73,7 @@ public class Autonomous {
                     break;
             }
             telemetry.addData("Vision Detection", "Stack Height: %s", gp.toString());
-            vp.shutdownVision();
+//            vp.shutdownVision();
             return true;
         } else {
             telemetry.addData("Vision Detection", "NONE_FOUND (still looping through internally)");
@@ -90,9 +92,16 @@ public class Autonomous {
     private Constants.Position targetPose;
 
     public StateMachine AutoFull = getStateMachine(autoStage)
-//            .addState(() -> robot.intake.setTiltTargetPosition(1240)) //1240
+            .addState(() -> robot.driveToFieldPosition(Constants.Position.WOBBLE_ONE_GRAB,true))
+            .addState(() -> robot.intake.setTiltTargetPosition(Constants.INTAKE_SERVO_REACH)) //1240
+            .addTimedState(1f, () -> robot.launcher.setElbowTargetAngle(45), () -> robot.turret.setHeading(315))
+            .addTimedState(1f, ()-> robot.launcher.setElbowTargetAngle(0), () -> robot.launcher.WobbleGrip())
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> {
+                telemetry.addData("DELAY", "STOPPED");
+                robot.launcher.setElbowTargetAngle(5);
+            })
 //            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-            .addState(() -> robot.driveToFieldPosition(Constants.Position.NAVIGATE,true))
+//            .addState(() -> robot.driveToFieldPosition(Constants.Position.NAVIGATE,true))
 //            .addState(() -> robot.launcher.setElbowTargetAngle(0))
 //            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 //            .addState( () -> robot.launcher.WobbleGrip())
@@ -104,11 +113,13 @@ public class Autonomous {
 //                    ()-> robot.turret.rotateCardinalTurret(false),
 //                    ()-> robot.returnTrue(),
 //                    ()-> robot.turret.rotateCardinalTurret(false))
-//
-//            .addMineralState(ugStateProvider,
-//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true),
-//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true),
-//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1, true))
+////
+            .addState(() -> robot.intake.setTiltTargetPosition(Constants.INTAKE_SERVO_VERTICAL)) //1240
+            .addState(() -> robot.calibrationRun(.5,0.4572*50, robot.getDistRightDist()*50,true, 2.7432))
+            .addMineralState(ugStateProvider,
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1, true))
 //
 //            //drop wobble goal
 //            .addState( () -> robot.launcher.WobbleRelease()) //stow the gripper
@@ -131,8 +142,8 @@ public class Autonomous {
 //                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true),
 //                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1, true))
 //            .addState( () -> robot.launcher.WobbleRelease()) //stow the gripper
-//
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+////
+//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
