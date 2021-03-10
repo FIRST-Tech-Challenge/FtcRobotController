@@ -119,9 +119,9 @@ public class VuforiaWebcam extends Thread {
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
 
         // Set Webcam Location
-        final float CAMERA_FORWARD_DISPLACEMENT = -1.5f;//5.5
-        final float CAMERA_VERTICAL_DISPLACEMENT = 8f;//10
-        final float CAMERA_LEFT_DISPLACEMENT = 9.0f;//7.25
+        final float CAMERA_FORWARD_DISPLACEMENT = -1.625f;//5.5
+        final float CAMERA_VERTICAL_DISPLACEMENT = 9.125f;//10
+        final float CAMERA_LEFT_DISPLACEMENT = -8.9375f;//7.25
 
         OpenGLMatrix phoneLocationOnRobot = OpenGLMatrix.translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 180, -90, 0)); //YZX 0, 90, -90 //XYZ 0, -90, 0
@@ -158,21 +158,24 @@ public class VuforiaWebcam extends Thread {
             if (targetVisible) {
                 setInVuforia(true);
                 VectorF translation = lastLocation.getTranslation();
-                op.telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+                op.telemetry.addData("Pos (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getAngle(), getXposition(), getYposition());
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))>=24.5 && VuforiaWebcam.isTargetVisible()==true) {
+                if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))<=46.5 && VuforiaWebcam.isTargetVisible()==true) {
                     setXposition(translation.get(0) / mmPerInch);
                     setYposition((translation.get(1) / mmPerInch));
+                    op.telemetry.addData("PosIf (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getAngle(), getXposition(), getYposition());
+
+//                    op.telemetry.addData("OVERWRITING...", null);
+//                    op.telemetry.update();
                 }
-                xpos = translation.get(0) / mmPerInch;
-                ypos = translation.get(1) / mmPerInch;
-                angle = rotation.thirdAngle;
+//                xpos = translation.get(0) / mmPerInch;
+//                ypos = translation.get(1) / mmPerInch;
+//                angle = rotation.thirdAngle;
                 setInVuforia(false);
                 //op.telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
             }
             else {
-                //op.telemetry.addData("Visible Target", "none");
+//                op.telemetry.addData("Visible Target", "none");
             }
         }
     }
