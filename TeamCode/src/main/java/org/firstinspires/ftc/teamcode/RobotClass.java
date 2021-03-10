@@ -752,7 +752,7 @@ public class RobotClass {
         int avg1;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR;
+        public volatile RingPosition position = SkystoneDeterminationPipeline.RingPosition.FOUR;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -786,13 +786,13 @@ public class RobotClass {
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
-            position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR; // Record our analysis
+            position = RingPosition.FOUR; // Record our analysis
             if(avg1 > FOUR_RING_THRESHOLD){
-                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.FOUR;
+                position = RingPosition.FOUR;
             }else if (avg1 > ONE_RING_THRESHOLD){
-                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.ONE;
+                position = RingPosition.ONE;
             }else{
-                position = EasyOpenCVExample.SkystoneDeterminationPipeline.RingPosition.NONE;
+                position = RingPosition.NONE;
             }
 
             Imgproc.rectangle(
