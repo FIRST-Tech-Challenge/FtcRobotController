@@ -29,31 +29,21 @@ public class OuterBlueAutonomous extends LinearOpMode{
         waitForStart();
 
         robot.forward(.8,-2);
-        robot.shooterEngageAlt();
+//        robot.shooterEngageAlt();
         robot.pause(800);
-        robot.shooterServo1(.8);
-        robot.shooterServo2(.8);
+//        robot.shooterServo1(.8);
+//        robot.shooterServo2(.8);
         robot.pause(200);
-        robot.intakeServoEngage(.9);
+//        robot.intakeServoEngage(.9);
         robot.pause(4500);
-        robot.shooterStop();
-        robot.shooterServo1Stop();
-        robot.shooterServo2Stop();
-        robot.intakeServoStop();
+//        robot.shooterStop();
+//        robot.shooterServo1Stop();
+//        robot.shooterServo2Stop();
+//        robot.intakeServoStop();
         robot.forward(.6,-1);
         robot.strafeLeft(.5,2.1);
         robot.forward(.6,-1.85);
         robot.pivotRight(.4,15);
         robot.depositWobbleGoal();
-
-
-
-
-//        robot.forward(.8,-6);
-//        robot.pivotRight(.4,90);
-//        robot.pivotRight(.4,90);
-//        robot.moveWobbleGoalArm(.3,.5);
-//        robot.wobbleGoalGrippyThingRelease();
-//
     }
 }

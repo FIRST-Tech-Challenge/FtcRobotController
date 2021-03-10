@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -8,23 +9,27 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "OuterRedAutonomous")
-public class OuterRedAutonomous extends LinearOpMode {
+import java.util.Timer;
+
+@Autonomous(name = "OuterBlueAutonomous C")
+public class OuterBlueAutonomousC extends LinearOpMode{
 
     RobotClass robot;
 
+
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         robot= new RobotClass(hardwareMap, telemetry, this);
+
         robot.wobbleGoalGrippyThingGrab();
+
+        // robot.innitDisplayTelemetryGyro();
 
         waitForStart();
 
-        robot.strafeLeft(.5,.2);
-        robot.forward(.6,-2.6);
-        robot.pivotLeft(.3,27);
-//        robot.shooterEngage();
+        robot.forward(.8,-2);
+//        robot.shooterEngageAlt();
         robot.pause(800);
 //        robot.shooterServo1(.8);
 //        robot.shooterServo2(.8);
@@ -35,23 +40,9 @@ public class OuterRedAutonomous extends LinearOpMode {
 //        robot.shooterServo1Stop();
 //        robot.shooterServo2Stop();
 //        robot.intakeServoStop();
-
-//        robot.startShooting();
-//        robot.stopTimingBelt();
-//        robot.pause(950);
-//        robot.startTimingBelt();
-//        robot.pause(500);
-//        robot.stopTimingBelt();
-//        robot.pause(750);
-//        robot.startTimingBelt();
-//        robot.pause(2000);
-//        robot.stopShooting();
-        robot.pivotRight(.5, 27);
-        robot.strafeRight(0.5,2);
-        robot.forward(0.5,-3.4);
-        robot.pivotRight(0.4,180);
-        robot.pause(500);
+        robot.forward(.6,-6);
+        robot.pivotRight(.4,90);
         robot.depositWobbleGoal();
-
+        robot.strafeLeft(0.5,3);
     }
 }

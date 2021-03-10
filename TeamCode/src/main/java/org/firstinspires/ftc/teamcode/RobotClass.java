@@ -57,6 +57,7 @@ public class RobotClass {
         intakeServo = hardwareMap.crservo.get("intakeServoOne");
         shooterServo1 = hardwareMap.crservo.get("shooterServo1");
         shooterServo2 = hardwareMap.crservo.get("shooterServo2");
+        colorSensor = hardwareMap.colorSensor.get("colorSensor");
 
         motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
 

@@ -41,20 +41,20 @@ public class InsideBlue extends LinearOpMode {
         robot.pivotRight(0.1, 5);
 
         if (ringNmb == 0) {
-            robot.forward(0.5, -1.5);
+            robot.forward(0.5, -1.7);
             robot.strafeRight(0.5, 2);
             robot.depositWobbleGoal();
-            robot.strafeLeft(0.5,2);
+            robot.strafeLeft(0.5,2.2);
         } else if (ringNmb == 1) {
             robot.forward(0.5, -4);
             robot.depositWobbleGoal();
             robot.forward(0.5, 3);
         } else if (ringNmb == 4) {
-            robot.forward(0.5,-5);
-            robot.strafeRight(0.5, 2.2);
+            robot.forward(0.5,-5.3);
+            robot.strafeRight(0.5, 2.3);
             robot.depositWobbleGoal();
-            robot.strafeLeft(0.5,2.2);
-            robot.forward(0.5,3.5);
+            robot.strafeLeft(0.5,2.5);
+            robot.forward(0.5,3.8);
         }
 
     }

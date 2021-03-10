@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name = "OuterRedAutonomous")
-public class OuterRedAutonomous extends LinearOpMode {
+@Autonomous(name = "OuterRedAutonomous C")
+public class OuterRedAutonomousC extends LinearOpMode {
 
     RobotClass robot;
 
@@ -47,11 +47,11 @@ public class OuterRedAutonomous extends LinearOpMode {
 //        robot.pause(2000);
 //        robot.stopShooting();
         robot.pivotRight(.5, 27);
-        robot.strafeRight(0.5,2);
-        robot.forward(0.5,-3.4);
-        robot.pivotRight(0.4,180);
+        robot.forward(.8,-5.4);
+        robot.pivotRight(0.4,90);
         robot.pause(500);
         robot.depositWobbleGoal();
+        robot.strafeLeft(0.5,2.2);
 
     }
 }
