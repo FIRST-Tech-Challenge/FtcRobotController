@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.autonomous.AutoDot;
+import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
@@ -398,6 +399,49 @@ public class UltimateBot extends YellowBot {
             }
         }
         return target;
+    }
+
+
+    public int checkRingPos() {
+        float ringCenter = 0;
+        int strafeAmnt = 0;
+        if (rf != null) {
+            try {
+                ringCenter = rf.detectRingsPos(2, telemetry, owner);
+            } finally {
+//                if (rf != null) {
+//                    rf.stopDetection();
+//                }
+            }
+        }
+
+        if (ringCenter > 15) {
+            strafeAmnt = 1;
+        } else {
+            strafeAmnt = -1;
+        }
+
+        return strafeAmnt;
+    }
+
+    @BotAction(displayName = "Adjust to Ring Stack", defaultReturn = "")
+    public void adjustToCameraRing(RobotCoordinatePosition locator){
+        int strafeAmnt = checkRingPos();
+
+        //wait for the locator to stabilize
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        while(timer.milliseconds() < 500 && this.owner.opModeIsActive()){
+        }
+
+        //get the orientation as the locator knows it. we'll use it later for corrections
+        double originalOrientation = locator.getAdjustedCurrentHeading();
+        double originalx = locator.getX();
+        Log.d("UltimateBot", String.format("original orientation: %.2f", originalOrientation));
+
+        //strafe to align the robot with ring stack
+        strafeTo(0.2, originalx + strafeAmnt, true);
+
     }
 
     public void shootPegSequence(RobotCoordinatePosition locator){

@@ -1,2 +1,3 @@
-0 C
-1 B
+0 Quad
+1 Single
+2 None

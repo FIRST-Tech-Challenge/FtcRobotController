@@ -12,13 +12,14 @@ import org.firstinspires.ftc.teamcode.skills.RingDetector;
 // Control Hub ADB Terminal Command for Reference
 // adb.exe connect 192.168.43.1:5555
 
-@TeleOp(name = "Single Ring Rec", group = "Robot15173")
-@Disabled
+@TeleOp(name = "Ring Cropped Test", group = "Robot15173")
+//@Disabled
 public class RingRecogCroppedTest extends LinearOpMode {
 
     // Declare OpMode members.
     private RingDetector rf = null;
     private AutoDot wobdot = new AutoDot();
+    private float centercoord = 0;
 
     @Override
     public void runOpMode() {
@@ -44,12 +45,15 @@ public class RingRecogCroppedTest extends LinearOpMode {
             rf.stopDetection();
 
             wobdot = rf.getRecogZone();
+            centercoord = rf.getRingCenter();
+
 
             // run until the end of the match (driver presses STOP)
             while (opModeIsActive()) {
                 telemetry.addData("Zone", wobdot.getDotName());
                 telemetry.addData("X-Coord", wobdot.getX());
                 telemetry.addData("Y-Coord", wobdot.getY());
+                telemetry.addData("Center", centercoord);
                 telemetry.update();
             }
         } catch (Exception ex) {

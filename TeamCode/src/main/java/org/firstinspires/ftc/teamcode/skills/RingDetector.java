@@ -22,6 +22,7 @@ public class RingDetector implements Runnable{
     private boolean isRunning = true;
 
     private AutoDot recogZone = null;
+    private float distance = 0;
 
     private String modelFileName = "rings_float.tflite";//"croppedRingRec.tflite";
     private String labelFileName = "labels.txt";//"croppedLabels.txt";
@@ -115,7 +116,10 @@ public class RingDetector implements Runnable{
                             else if(r.getTitle().contains(LABEL_A)){
                                 zone = zoneA;
                             }
+
                             targetZone = zone.getDotName();
+                            distance = (r.getLocation().left + r.getLocation().right)/2;
+
                             telemetry.addData("Zone", targetZone);
                             telemetry.addData("left", r.getLocation().left);
                             telemetry.addData("right", r.getLocation().right);
@@ -127,6 +131,49 @@ public class RingDetector implements Runnable{
         }
 
         return zone;
+    }
+
+    public float detectRingsPos(int timeout, Telemetry telemetry, LinearOpMode caller) {
+//        configZones(side);
+        AutoDot zone = zoneB;
+
+        ElapsedTime runtime = new ElapsedTime();
+        runtime.reset();
+        boolean fromConfig = this.namedCoordinates.size() > 0;
+        while (runtime.seconds() <= timeout) {
+            telemetry.addData("this.namedCoordinates.size() > 0", fromConfig);
+            if (tfDetector != null) {
+                List<Classifier.Recognition> results = tfDetector.getLastResults();
+                if (results == null || results.size() == 0) {
+                    telemetry.addData("Nada", "No results");
+                } else {
+                    for (Classifier.Recognition r : results) {
+                        if (r.getConfidence() >= 0.5) {
+                            telemetry.addData("PrintZone", r.getTitle());
+                            if (r.getTitle().contains(LABEL_C)) {
+                                zone = zoneC;
+                            }
+                            else if(r.getTitle().contains(LABEL_B)){
+                                zone = zoneB;
+                            }
+                            else if(r.getTitle().contains(LABEL_A)){
+                                zone = zoneA;
+                            }
+
+                            targetZone = zone.getDotName();
+                            distance = (r.getLocation().left + r.getLocation().right)/2;
+
+                            telemetry.addData("CroppedCenter", distance);
+                            telemetry.addData("left", r.getLocation().left);
+                            telemetry.addData("right", r.getLocation().right);
+                        }
+                    }
+                }
+            }
+            telemetry.update();
+        }
+
+        return distance;
     }
 
     public void detectRingThread() {
@@ -154,7 +201,10 @@ public class RingDetector implements Runnable{
                             else if(r.getTitle().contains(LABEL_A)){
                                 this.recogZone = zoneA;
                             }
+
+                            distance = (r.getLocation().left + r.getLocation().right)/2;
                             targetZone = this.recogZone.getDotName();
+
                             telemetry.addData("Zone", targetZone);
                             telemetry.addData("left", r.getLocation().left);
                             telemetry.addData("right", r.getLocation().right);
@@ -218,6 +268,8 @@ public class RingDetector implements Runnable{
     public AutoDot getRecogZone() {
         return recogZone;
     }
+
+    public float getRingCenter() { return distance;}
 
     public void setRecogZone(AutoDot recogZone) {
         this.recogZone = recogZone;
