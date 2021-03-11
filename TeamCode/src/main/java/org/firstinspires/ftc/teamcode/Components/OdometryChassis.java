@@ -81,16 +81,16 @@ public class OdometryChassis extends BasicChassis {
             vuforia.start();
         }
     }
-    public static float getXpos(){
+    public float getXpos(){
         return xpos;
     }
-    public static float getYpos(){
+    public float getYpos(){
         return ypos;
     }
-    public static void setXpos(float newXpos){
+    public void setXpos(float newXpos){
         xpos=newXpos;
     }
-    public static void setYpos(float newYpos){
+    public void setYpos(float newYpos){
         ypos=newYpos;
     }
     public void setAngle(float newAngle){
@@ -112,7 +112,7 @@ public class OdometryChassis extends BasicChassis {
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
     }
-    public static float getAngle() {
+    public float getAngle() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         //op.telemetry.addData("first angle: ", (int)angles.firstAngle);
         //op.telemetry.update();
