@@ -9,12 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.Components.Navigations.Navigation;
-import org.firstinspires.ftc.teamcode.Components.Navigations.Odometry;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import org.firstinspires.ftc.teamcode.Components.BasicChassis;
+import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
@@ -26,7 +22,7 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 //2.0,1.7,1.1
 public class OdometryChassis extends BasicChassis {
-    private Navigation navigation = null;
+    private Thread vuforia = null;
     DcMotorEx odom1;
     DcMotorEx odom2;
     DcMotorEx odom3;
@@ -80,7 +76,25 @@ public class OdometryChassis extends BasicChassis {
         op.telemetry.addData("Mode", "waiting for start");
         op.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
         op.telemetry.update();
-        //navigation = new Navigation(op);
+        if(navigator){
+            vuforia = new Thread(new VuforiaWebcam(op));
+            vuforia.start();
+        }
+    }
+    public static float getXpos(){
+        return xpos;
+    }
+    public static float getYpos(){
+        return ypos;
+    }
+    public static void setXpos(float newXpos){
+        xpos=newXpos;
+    }
+    public static void setYpos(float newYpos){
+        ypos=newYpos;
+    }
+    public void setAngle(float newAngle){
+        angle=newAngle;
     }
     public void navigate(){//navigation.navigate(op);
         }
@@ -98,7 +112,7 @@ public class OdometryChassis extends BasicChassis {
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
     }
-    public float getAngle() {
+    public static float getAngle() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         //op.telemetry.addData("first angle: ", (int)angles.firstAngle);
         //op.telemetry.update();

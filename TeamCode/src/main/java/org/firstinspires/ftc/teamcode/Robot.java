@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Components.Accesories.Intake;
@@ -11,8 +10,6 @@ import org.firstinspires.ftc.teamcode.Components.Accesories.Transfer;
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Components.ChassisFactory;
-import org.firstinspires.ftc.teamcode.Components.Navigations.Navigation;
-import org.firstinspires.ftc.teamcode.Components.Navigations.Odometry;
 import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
 import org.firstinspires.ftc.teamcode.Components.ObjectDetection.TensorFlow;
 

@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.Components.Navigations;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Components.Navigations.Odometry;
-import org.firstinspires.ftc.teamcode.Components.Navigations.VuforiaWebcam;
-
 public class Navigation {
     private static double xPosition;
     private static double yPosition;

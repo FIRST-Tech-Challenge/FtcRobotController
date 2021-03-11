@@ -14,7 +14,6 @@
 
 package org.firstinspires.ftc.teamcode.Components.Navigations;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -30,13 +29,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.firstinspires.ftc.teamcode.Components.OdometryChassis;
 import org.firstinspires.ftc.teamcode.key;
-import static org.firstinspires.ftc.teamcode.Components.Navigations.Navigation.*;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
-import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 public class VuforiaWebcam extends Thread {
     private OpMode op;
@@ -156,14 +154,14 @@ public class VuforiaWebcam extends Thread {
 
             // Return Location Data (Last Known Location)
             if (targetVisible) {
-                setInVuforia(true);
+                //setInVuforia(true);
                 VectorF translation = lastLocation.getTranslation();
-                op.telemetry.addData("Pos (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getAngle(), getXposition(), getYposition());
+                op.telemetry.addData("Pos (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, OdometryChassis.getAngle(), OdometryChassis.getXpos(), OdometryChassis.getYpos());
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
                 if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))<=46.5 && VuforiaWebcam.isTargetVisible()==true) {
-                    setXposition(translation.get(0) / mmPerInch);
-                    setYposition((translation.get(1) / mmPerInch));
-                    op.telemetry.addData("PosIf (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getAngle(), getXposition(), getYposition());
+                    OdometryChassis.setXpos(translation.get(0) / mmPerInch);
+                    OdometryChassis.setYpos((translation.get(1) / mmPerInch));
+                    op.telemetry.addData("PosIf (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, OdometryChassis.getAngle(), OdometryChassis.getXpos(), OdometryChassis.getYpos());
 
 //                    op.telemetry.addData("OVERWRITING...", null);
 //                    op.telemetry.update();
@@ -171,7 +169,7 @@ public class VuforiaWebcam extends Thread {
 //                xpos = translation.get(0) / mmPerInch;
 //                ypos = translation.get(1) / mmPerInch;
 //                angle = rotation.thirdAngle;
-                setInVuforia(false);
+                //setInVuforia(false);
                 //op.telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
             }
             else {
