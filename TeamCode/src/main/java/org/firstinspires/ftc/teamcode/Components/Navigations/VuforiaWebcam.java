@@ -156,12 +156,12 @@ public class VuforiaWebcam extends Thread {
             if (targetVisible) {
                 //setInVuforia(true);
                 VectorF translation = lastLocation.getTranslation();
-                op.telemetry.addData("Pos (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, OdometryChassis.getAngle(), OdometryChassis.getXpos(), OdometryChassis.getYpos());
+                op.telemetry.addData("Pos (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, OdometryChassis.getCurrentAngle(), OdometryChassis.getXpos(), OdometryChassis.getYpos());
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
                 if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))<=46.5 && VuforiaWebcam.isTargetVisible()==true) {
                     OdometryChassis.setXpos(translation.get(0) / mmPerInch);
                     OdometryChassis.setYpos((translation.get(1) / mmPerInch));
-                    op.telemetry.addData("PosIf (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, OdometryChassis.getAngle(), OdometryChassis.getXpos(), OdometryChassis.getYpos());
+                    op.telemetry.addData("PosIf (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, OdometryChassis.getCurrentAngle(), OdometryChassis.getXpos(), OdometryChassis.getYpos());
 
 //                    op.telemetry.addData("OVERWRITING...", null);
 //                    op.telemetry.update();

@@ -34,7 +34,9 @@ public class OdometryChassis extends BasicChassis {
     private BNO055IMU imu;
     private Orientation lastAngles = new Orientation();
     private float globalAngle;
-    float xpos,ypos,angle;
+    public static float xpos;
+    public static float ypos;
+    public static float angle;
     double power = .30, correction;
 
 
@@ -72,10 +74,6 @@ public class OdometryChassis extends BasicChassis {
             op.sleep(50);
             op.idle();
         }
-
-        op.telemetry.addData("Mode", "waiting for start");
-        op.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
-        op.telemetry.update();
         if(navigator){
             vuforia = new Thread(new VuforiaWebcam(op));
             vuforia.start();
@@ -84,16 +82,16 @@ public class OdometryChassis extends BasicChassis {
     public static float getXpos(){
         return xpos;
     }
-    public static float getYpos(){
+    public  static float getYpos(){
         return ypos;
     }
     public static void setXpos(float newXpos){
         xpos=newXpos;
     }
-    public static void setYpos(float newYpos){
+    public  static void setYpos(float newYpos){
         ypos=newYpos;
     }
-    public void setAngle(float newAngle){
+    public static void setAngle(float newAngle){
         angle=newAngle;
     }
     public void navigate(){//navigation.navigate(op);
@@ -101,9 +99,9 @@ public class OdometryChassis extends BasicChassis {
     public void navigateTeleOp(){//navigation.navigateTeleOp(op);
         }
     public void setPosition(float x, float y, float newAngle){
-        xpos=0;
-        ypos=0;
-        globalAngle=0;
+        xpos=x;
+        ypos=y;
+        globalAngle=newAngle;
         //navigation.setPosition(x,y,newAngle);
     }
     public void stopAllMotors() {
@@ -112,7 +110,10 @@ public class OdometryChassis extends BasicChassis {
         motorLeftFront.setPower(0);
         motorRightFront.setPower(0);
     }
-    public static float getAngle() {
+    public static float getCurrentAngle(){
+        return angle;
+    }
+    public float getAngle() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         //op.telemetry.addData("first angle: ", (int)angles.firstAngle);
         //op.telemetry.update();
