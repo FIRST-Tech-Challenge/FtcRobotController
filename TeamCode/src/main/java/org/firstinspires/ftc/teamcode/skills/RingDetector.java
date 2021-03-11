@@ -190,7 +190,7 @@ public class RingDetector implements Runnable{
                     telemetry.addData("Nada", "No results");
                 } else {
                     for (Classifier.Recognition r : results) {
-                        if (r.getConfidence() >= 0.8) {
+                        if (r.getConfidence() >= 0.6) {
                             telemetry.addData("PrintZone", r.getTitle());
                             if (r.getTitle().contains(LABEL_C)) {
                                 this.recogZone = zoneC;
@@ -206,6 +206,7 @@ public class RingDetector implements Runnable{
                             targetZone = this.recogZone.getDotName();
 
                             telemetry.addData("Zone", targetZone);
+                            telemetry.addData("CenterX", distance);
                             telemetry.addData("left", r.getLocation().left);
                             telemetry.addData("right", r.getLocation().right);
                         }
