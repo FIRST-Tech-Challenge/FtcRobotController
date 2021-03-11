@@ -28,6 +28,7 @@ public class track extends LinearOpMode {
 //        sleep(5000);
 //        robot.goToPosition(23.5,-23.5,0,0.5);
         //robot.navigate();
+        odom.navigate();
         while(!isStopRequested()){
             odom.track();
         }

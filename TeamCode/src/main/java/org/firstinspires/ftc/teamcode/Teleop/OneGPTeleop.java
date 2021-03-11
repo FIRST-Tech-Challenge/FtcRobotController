@@ -79,9 +79,9 @@ public class OneGPTeleop extends LinearOpMode {
             /**Powershots**/
             if(odo_powershots){
                 robot.setPosition(0,0,0);
-                robot.goToPosition(5,5 ,0,0.8);
+                robot.goToPosition(5,6 ,0,0.8);
                 //robot.goToPosition(40,-40,-88,0.7);
-                //robot.shootThreePowerShot();
+                robot.shootThreePowerShot();
             }
 
             /**Sticks**/
@@ -100,8 +100,8 @@ public class OneGPTeleop extends LinearOpMode {
 
             /**Shooter**/
             if (shooter_servo){
-                telemetry.addData("Servo", " SERVO Forward and Backward");
-                telemetry.update();
+                //telemetry.addData("Servo", " SERVO Forward and Backward");
+                //telemetry.update();
                 robot.moveServo(false);
                 robot.moveServo(true);
             }
@@ -117,8 +117,8 @@ public class OneGPTeleop extends LinearOpMode {
             robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
 
             // wobble goal movements
-            telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
-            telemetry.update();
+            //telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
+            //telemetry.update();
             if (move_wobble_goal_arm){
                 WobbleGoal.Position nextWobbleGoalPosition = WobbleGoal.Position.REST;
                 if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
@@ -133,8 +133,8 @@ public class OneGPTeleop extends LinearOpMode {
                     nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                 }
                     else {
-                    telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
-                    telemetry.update();
+                    //telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
+                    //telemetry.update();
                     sleep(500);
                 }
                 // added by Aiden; must have this otherwise if you hold onto the button multiple
@@ -162,12 +162,12 @@ public class OneGPTeleop extends LinearOpMode {
 
             if (move_wobble_goal_servo) {
                 if (wobble_goal_servo_is_up) {
-                    telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
-                    telemetry.update();
+                   // telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
+                    //telemetry.update();
                     robot.closeWobbleGoalClaw();
                 } else if (!wobble_goal_servo_is_up) {
-                    telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
-                    telemetry.update();
+                   // telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
+                    //telemetry.update();
                     robot.openWobbleGoalClaw();
                 }
             }

@@ -65,6 +65,7 @@ public abstract class BasicChassis {
     abstract public void goToPosition(double xPosition, double yPosition, double newangle, double power);
     abstract public void navigate();
     abstract public void navigateTeleOp();
+    abstract public double[] track();
     public void moveMultidirectional(double power, double angle, float rightStick, boolean isSlow) {
         double angleInRadian;
         angleInRadian = Math.toRadians(angle);
@@ -85,6 +86,7 @@ public abstract class BasicChassis {
             motorLeftFront.setPower(Math.sin(angleInRadian + Math.PI / 4) * power - rightStick);
             motorRightFront.setPower(Math.sin(angleInRadian - Math.PI / 4) * power + rightStick);
         }
+        track();
     }
 
 }

@@ -15,8 +15,8 @@ public class FinalAuto extends LinearOpMode {
     public void runOpMode(){
         Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
         ElapsedTime runtime = new ElapsedTime();
-
         int rings = robot.getRingsAndWaitForStart();
+        robot.navigate();
         robot.stopRingDetection();
         robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
         if(rings!=1&&rings!=4) {
