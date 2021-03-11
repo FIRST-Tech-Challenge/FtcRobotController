@@ -147,9 +147,12 @@ public class Autonomous {
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
-            .addState(() -> robot.launcher.setElbowTargetAngle(0))
-        .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-        .build();
+            //.addSingleState(() -> robot.articulate(PoseUG.Articulation.autoIntake))
+            .addState(()-> robot.driveToFieldPosition(Constants.startingXOffset,2.5,true))
+            .addTimedState(5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.START,false))
+            .addTimedState(5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .build();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // //

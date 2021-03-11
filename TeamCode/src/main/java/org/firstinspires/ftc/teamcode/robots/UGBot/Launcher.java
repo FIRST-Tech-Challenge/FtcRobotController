@@ -235,12 +235,12 @@ public class Launcher {
 
 
     public boolean setElbowTargetAngle(double angleDegrees){
-        setElbowTargetPos((int) (ticksPerDegree* angleDegrees) + 141); //plus the offset to zero
+        setElbowTargetPos((int) (ticksPerDegree* angleDegrees) + Constants.ELBOW_ZERO_DEGREES_OFFSET); //plus the offset to zero
         return true;
     }
 
     public double getElbowAngle() {
-        return (getElbowCurrentPos() - 141) / ticksPerDegree; //plus the offset to zero
+        return (getElbowCurrentPos() - Constants.ELBOW_ZERO_DEGREES_OFFSET) / ticksPerDegree; //plus the offset to zero
     }
 
     public int getElbowTargetPos(){

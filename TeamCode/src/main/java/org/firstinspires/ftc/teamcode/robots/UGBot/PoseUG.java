@@ -185,6 +185,7 @@ public class PoseUG {
         cardinalBaseRight,
         cardinalBaseLeft,
         returnHome,
+        autoIntake,
         testShot,
         intakeDisk
     }
@@ -901,18 +902,30 @@ public class PoseUG {
     }
 
     int fieldPosState = 0;
-
     public boolean driveToFieldPosition(double targetX, double targetY, boolean forward){
+        double headingHeading = getBearingToWrapped(targetX, targetY);
         switch (fieldPosState){
             case 0:
-                if(rotateIMU(getBearingToWrapped(targetX, targetY),9)) {
+                headingHeading = getBearingToWrapped(targetX, targetY);
+
+                if(!forward){
+                    headingHeading = wrapAngle(headingHeading,180);
+                }
+
+                if(rotateIMU(headingHeading,9)) {
                     fieldPosState++;
                 }
                 break;
             case 1:
                 double distance = getDistanceTo(targetX, targetY);
                 double power =  distance < 0.1524 ? 0 : 0.5;
-                if(driveAbsoluteDistance(power, (getBearingToWrapped(targetX, targetY)), forward, getDistanceTo(targetX, targetY),.1)) {
+
+                headingHeading = getBearingToWrapped(targetX, targetY);
+                if(!forward){
+                    headingHeading = wrapAngle(headingHeading,180);
+                }
+
+                if(driveAbsoluteDistance(power, headingHeading , forward, getDistanceTo(targetX, targetY),.1)) {
                     fieldPosState = 0;
                     return true;
                 }
@@ -943,21 +956,19 @@ public class PoseUG {
     public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward){
         switch (getFieldPosStateThree){
             case 0:
-                if(driveToFieldPosition(targetPose.x, targetPose.y,true, targetPose.baseHeading)) {
+                if(driveToFieldPosition(targetPose.x, targetPose.y, forward, targetPose.baseHeading)) {
                     getFieldPosStateThree++;
-                    return true;
                 }
                 break;
             case 1:
                 if(targetPose.launchElevation > -.01) { //set elevation{
                     launcher.setElbowTargetAngle(targetPose.launchElevation);
                 }
-                if(driveToFieldPosition(targetPose.x, targetPose.y, forward)) {
+                if(targetPose.launchHeading > -.01) {
                     turret.setTurntableAngle(targetPose.launchHeading);
                 }
                 getFieldPosStateThree = 0;
-                break;
-
+                return true;
         }
         return false;
     }
@@ -1026,6 +1037,35 @@ public class PoseUG {
     public boolean articulate(Articulation target, boolean setAndForget) {
         articulate(target);
         return true;
+    }
+
+    private int autoIntakeState = 0;
+    private double autoIntakeTimer = 0;
+    public boolean autoIntake(){
+        switch(autoIntakeState){
+            case 0:
+                intake.setTiltTargetPosition(Constants.INTAKE_SERVO_TRANSIT);
+                intake.setIntakeSpeed(1);
+                autoIntakeTimer = System.nanoTime();
+                autoIntakeState++;
+                break;
+            case 1:
+                if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_FIRST * 1E9) {
+                    intake.setTiltTargetPosition(Constants.INTAKE_SERVO_STOWED);
+                    autoIntakeTimer = System.nanoTime();
+                    autoIntakeState++;
+                }
+                break;
+            case 2:
+                if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_SECOND * 1E9) {
+                    intake.setTiltTargetPosition(Constants.INTAKE_SERVO_VERTICAL);
+                    intake.setIntakeSpeed(0);
+                    autoIntakeState = 0;
+                    return true;
+                }
+                break;
+        }
+        return false;
     }
 
     public int toggleTriggerState = 0;
@@ -1154,6 +1194,11 @@ public class PoseUG {
             case toggleTrigger:
                 if(toggleTriggerArticulation())
                         articulation = Articulation.manual;
+                break;
+            case autoIntake:
+                if(autoIntake()){
+                    articulation = Articulation.manual;
+                }
                 break;
             case cardinalBaseLeft:
                 if (cardinalBaseTurn(false)) {

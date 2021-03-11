@@ -21,7 +21,7 @@ public class Intake {
     public Intake(DcMotor intakeMotor, Servo tiltServo) {
         this.intakeMotor = intakeMotor;
         this.intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        //this.intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         this.tiltServo = tiltServo;
         speed = 0;
     }
@@ -58,7 +58,7 @@ public class Intake {
     public void toggleFullTilt(){
         fullTilt = !fullTilt;
         if(fullTilt){
-            speed = -1;
+            speed = 1;
             setTiltTargetPosition(Constants.INTAKE_SERVO_TRANSIT);
         }
         else{

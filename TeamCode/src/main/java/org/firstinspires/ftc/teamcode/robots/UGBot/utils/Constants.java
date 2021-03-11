@@ -67,6 +67,7 @@ public class Constants {
     public static double startingYOffset = ROBOT_RADIUS_INCHES/INCHES_PER_METER;
     public static double HEIGHT_MULTIPLIER = 1.2;
     public static double RPS_MULTIPLIER = 1.1;
+    public static int  ELBOW_ZERO_DEGREES_OFFSET = 141;
 
     public static int WOBBLE_GRIPPER_CLOSED = 900;
     public static int WOBBLE_GRIPPER_STOWED = 1920;
@@ -74,6 +75,9 @@ public class Constants {
     public static int INTAKE_SERVO_VERTICAL = 1240;
     public static int INTAKE_SERVO_TRANSIT = 1345;
     public static int INTAKE_SERVO_REACH = 1450;
+    public static double AUTO_INTAKE_FIRST = .65;
+    public static double AUTO_INTAKE_SECOND = .75;
+
 
     public static int LAUNCHER_TRIGGER_STOWED = 900;
     public static int LAUNCHER_TRIGGER_SHOOT = 1920;
@@ -83,9 +87,6 @@ public class Constants {
     public static double TURRET_HEADING_OFFSET = 30;
     public static double ELBOW_LEGAL_ANGLE = 35;
 
-    public static int overrideTPS = 0;
-
-    public static double  DUMMYVAL = 0.0;
 
     public enum Target {
         NONE(0, 0, 0),
