@@ -112,7 +112,6 @@ public class TestOpMode extends LinearOpMode {
             BackRight.setPower(throttleR);
             BackLeft.setPower(throttleL);
 
-
             if (leftStrafe){
                 frontLeft.setPower(.5);
                 frontRight.setPower(.5);
