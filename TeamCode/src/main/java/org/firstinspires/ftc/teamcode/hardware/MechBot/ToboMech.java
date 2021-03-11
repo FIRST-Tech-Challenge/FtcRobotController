@@ -70,11 +70,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_dist = 0;
     public double shooting_angle = 0;
     public double shooterAngleOffset = 3.5;
-    final public double WARM_UP_RPM = 1385;
-    final public double WARM_UP_RPM_POWER_SHOT = 1220;
-    static final public double WARM_UP_RPM_AUTO = 1360;
-    final public double SEMI_AUTO_RPM = 1400;
-    final public double SEMI_POWER_SHOT_RPM = 1220;
+    final public double WARM_UP_RPM = 1600;
+    final public double WARM_UP_RPM_POWER_SHOT = 1420;
+    static final public double WARM_UP_RPM_AUTO = 1600;
+    final public double SEMI_AUTO_RPM = 1640;
+    final public double SEMI_POWER_SHOT_RPM = 1420;
     public double shooting_rpm = WARM_UP_RPM;
     public double batteryVolt = 0;
 
@@ -91,8 +91,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public boolean isTeleOpAfterAuto = false;
     public boolean targetHighGoal = true; // when false, it target power shot
     private boolean useIMUforOdometryAngleCorrection = true; // use IMU for radian correction
-
-
 
     public void set_simulation_mode(boolean value) {
         simulation_mode = value;
@@ -1386,7 +1384,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveStraight(1.0, -100, chassis.odo_heading() + 10, 5);
         }
 
-        shooter.shootOutByRpm(1260);
+        shooter.shootOutByRpm(WARM_UP_RPM_POWER_SHOT);
         if (tZone == TargetZone.ZONE_C) {
             chassis.driveTo(1.0, side(130), 170, 0, false, 3);
         } else {
@@ -1452,7 +1450,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (numPowerShots > 0) {
             if (runtimeAuto.seconds() > 29){ return;}
-            shooter.shootOutByRpm(1260);
+            shooter.shootOutByRpm(WARM_UP_RPM_POWER_SHOT);
             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
             //shoot
             autoShootFast(true);
@@ -1953,10 +1951,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
     }
 
-
-    public double  getRpmFromVelocity(double velocity){
-        double a = 225.686;
-        double b = -35.9631;
+    public double getRpmFromVelocity(double velocity){
+        double a = 159.647; // 225.686;
+        double b = 290.359; // -35.9631;
         double ideal_rpm = a*velocity+b;
         double real_rpm = (int)(ideal_rpm/20) * 20;
         double error = ideal_rpm - real_rpm;
@@ -1973,13 +1970,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //unit conversion - meters, inches, centimeters
         dHorizontal = dHorizontal/ 100.;
         dVertical  = dVertical /100.- 0.381;
-        double shooterAngle = 31;
+        double shooterAngle = 22;
         double vSquared = (4.905/Math.cos(Math.toRadians(shooterAngle))
                 /Math.cos(Math.toRadians(shooterAngle)))*dHorizontal*dHorizontal
                 /(dHorizontal*Math.tan(Math.toRadians(shooterAngle))-dVertical);
         if (vSquared < 0){ return -1;}
         return Math.sqrt(vSquared);
     }
+
     public double getShootingAngleErrorFromRPM(double rpm){
         // 1600rpm = -4.216304
         // 1200rpm = 0.537228
@@ -1988,6 +1986,5 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double a1= -0.00919319;
         return a1*rpm + a0;
     }
-
 
 }
