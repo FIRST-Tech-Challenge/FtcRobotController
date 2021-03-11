@@ -33,7 +33,7 @@ public class OpModeV1 extends LinearOpMode {
         belt = hardwareMap.get(DcMotor.class, "belt");
         ramp = hardwareMap.get(DcMotor.class, "ramp");
 
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);

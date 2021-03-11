@@ -19,7 +19,7 @@ public class finalAutonomous extends LinearOpMode{
         backLeft = hardwareMap.get(DcMotor.class,"backLeft");
         backRight = hardwareMap.get(DcMotor.class,"backRight");
 
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
