@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -51,7 +52,7 @@ import java.util.List;
  * is explained below.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
-//@Disabled
+@Disabled
 public class TensorFlowTest extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_QUAD = "Quad";
@@ -59,7 +60,7 @@ public class TensorFlowTest extends LinearOpMode {
 
     private static ftcsecrets.secrets appSecrets = new ftcsecrets.secrets();
 
-    private static final String VUFORIA_KEY = appSecrets.VUFORIA_KEY;
+    private static final String VUFORIA_KEY = ftcsecrets.secrets.VUFORIA_KEY;
 
 
     private VuforiaLocalizer vuforia;

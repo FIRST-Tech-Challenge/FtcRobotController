@@ -1,67 +1,134 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
+@Disabled
 
-public class TestOpMode extends LinearOpMode{
-    /*private DcMotor frontLeft;
+public class TestOpMode extends LinearOpMode {
+    private Gyroscope imu;
+    private DcMotor frontLeft;
     private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;*/
-    private DcMotor rampLeft;
-    private DcMotor rampRight;
+    private DcMotor BackLeft;
+    private DcMotor BackRight;
+    private DcMotor loading;
+    private DcMotor shoot;
+    private DcMotor ramp;
+    private DcMotor belt;
 
-    public void runOpMode(){
-        /*frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+
+
+
+    public void runOpMode() {
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight = hardwareMap.get(DcMotor.class, "backRight");*/
+        BackLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        BackRight = hardwareMap.get(DcMotor.class, "backRight");
+        loading = hardwareMap.get(DcMotor.class, "load");
+        shoot = hardwareMap.get(DcMotor.class, "shoot");
+        ramp = hardwareMap.get(DcMotor.class, "ramp");
+        belt = hardwareMap.get(DcMotor.class, "belt");
 
-        rampLeft = hardwareMap.get(DcMotor.class, "rampLeft");
-        rampRight = hardwareMap.get(DcMotor.class, "rampRight");
 
+        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        BackLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        BackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        belt.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+        // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        double throttle = 0;
-        double turnL = 0;
-        double turnR = 0;
-        double throttle2 = 0;
+        // run until the end of the match (driver presses STOP)
+        double turn = 0;
+        double throttleL = 0;
+        double throttleR = 0;
+        boolean leftStrafe;
+        boolean rightStrafe;
+        boolean loader;
+        boolean shooter;
+        boolean AngleOfAttackUp;
+        double beltDrivepos;
+        double beltDriveneg;
+        boolean AngleOfAttackDown;
 
-        /*backRight.setPower(0);
-        backLeft.setPower(0);
-        frontRight.setPower(0);
-        frontLeft.setPower(0);*/
+        sleep(1000);
 
-        rampLeft.setPower(0);
-        rampRight.setPower(0);
-//test
-        while (opModeIsActive()){
-            throttle = this.gamepad1.left_stick_y;
-            turnL = this.gamepad1.right_stick_x;
-            turnR = -this.gamepad1.right_stick_x;
-            throttle = throttle*.25;
+        while (opModeIsActive()) {
+            belt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+            turn = this.gamepad1.left_stick_x;
+            throttleL = this.gamepad1.right_stick_y;
+            throttleR = -this.gamepad1.right_stick_y;
+            leftStrafe = this.gamepad1.left_bumper;
+            rightStrafe = this.gamepad1.right_bumper;
+            loader = this.gamepad1.x;
+            shooter = this.gamepad1.b;
+            AngleOfAttackUp = this.gamepad1.dpad_up;
+            AngleOfAttackDown = this.gamepad1.dpad_down;
+            beltDrivepos = this.gamepad1.right_trigger;
+            beltDriveneg = this.gamepad1.left_trigger;
 
+            if (beltDrivepos > 0){
+                belt.setPower(1);
+            }else if (beltDriveneg < 0){
+                belt.setPower(-1);
+            }else{
+                belt.setPower(0);
+            }
 
-            rampLeft.setPower(throttle);
-            rampRight.setPower(throttle);
+            if (shooter) {
+                shoot.setPower(1);
+            }else{
+                shoot.setPower(0);
+            }
 
-            /*frontLeft.setPower(throttle);
-            frontRight.setPower(throttle);
-            backLeft.setPower(throttle);
-            backRight.setPower(throttle);
+            if (AngleOfAttackUp){
+                ramp.setPower(.5);
+            }else if (AngleOfAttackDown){
+                ramp.setPower(-.25);
+            }else{
+                ramp.setPower(0);
+            }
 
-            frontLeft.setPower(turnL);
-            frontRight.setPower(turnR);
-            backLeft.setPower(turnL);
-            backRight.setPower(turnR);*/
+            if (loader) {
+                loading.setPower(.75);
+                sleep(1000);
+                loading.setPower(1);
+            }else {
+                loading.setPower(0);
+            }
+
+            frontLeft.setPower(throttleL);
+            frontRight.setPower(throttleR);
+            BackRight.setPower(throttleR);
+            BackLeft.setPower(throttleL);
+
+            if (leftStrafe){
+                frontLeft.setPower(.5);
+                frontRight.setPower(.5);
+                BackLeft.setPower(-1);
+                BackRight.setPower(-1);
+            }
+
+            if (rightStrafe) {
+                frontLeft.setPower(-.5);
+                frontRight.setPower(-.5);
+                BackLeft.setPower(1);
+                BackRight.setPower(1);
+            }
+
+            telemetry.addData("Status", "Running");
+            telemetry.update();
+
         }
     }
 }
