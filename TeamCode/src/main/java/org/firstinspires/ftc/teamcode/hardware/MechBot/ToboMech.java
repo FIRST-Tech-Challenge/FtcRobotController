@@ -70,6 +70,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_dist = 0;
     public double shooting_angle = 0;
     public double shooterAngleOffset = 3.5;
+    final public double MAX_RPM = 1720;
     final public double WARM_UP_RPM = 1600;
     final public double WARM_UP_RPM_POWER_SHOT = 1420;
     static final public double WARM_UP_RPM_AUTO = 1600;
@@ -1960,6 +1961,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (error > 10){
             real_rpm += 20;
         }
+        if (real_rpm>MAX_RPM) // cap rpm to MAX_RPM to fit 16 feet limit
+            real_rpm = MAX_RPM;
         return real_rpm;
     }
 

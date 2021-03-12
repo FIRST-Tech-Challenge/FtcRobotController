@@ -88,7 +88,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     private boolean useChassis = true;
     public boolean useVuforia = false;
     public boolean useTfod = false;
-    public boolean useGrabber = false;
+    public boolean useGrabber = true;
     public boolean useHopper = false;
     public boolean useShooter = false;
     public boolean useIntake = false;
@@ -1100,7 +1100,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                     if (chassis != null)
                         chassis.set_init_pos(side(300), 23, 0);
                     useVuforia = false;
-                    useTfod = false;
+                    useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
                     if (cameraDetector != null)
                         cameraDetector.set_cam_pos(cameraDetector.CAM_RED_OUT);
@@ -1119,7 +1119,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                     if (chassis != null)
                         chassis.set_init_pos(side(58), 23, 0);
                     useVuforia = false;
-                    useTfod = false;
+                    useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
                     if (cameraDetector != null)
                         cameraDetector.set_cam_pos(cameraDetector.CAM_BLUE_OUT);
@@ -1127,7 +1127,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                     if (chassis != null)
                         chassis.set_init_pos(side(120), 23, 0);
                     useVuforia = false;
-                    useTfod = false;
+                    useTfod = true;
                     //setup WebCam servo position for autonomous during initialization
                     if (cameraDetector != null)
                         cameraDetector.set_cam_pos(cameraDetector.CAM_BLUE_IN);
