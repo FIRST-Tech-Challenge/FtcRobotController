@@ -16,15 +16,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class HardwareMapV2 {
-    public DcMotor frontRight = null, frontLeft = null, backRight = null, backLeft = null/*, intake = null, outtake = null*/;
+    public DcMotor frontRight = null, frontLeft = null, backRight = null, backLeft = null, intake = null, outtake = null;
 
     public CRServo conveyor = null;
     public Servo leftTilt = null, rightTilt = null, wobble = null;
     boolean odometry = false;
     boolean odometryTest = false;
 
-    ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight/*, intake, outtake*/));
-    ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(frontRight, frontLeft/*, intake*/));
+    ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake, outtake));
+    ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(frontRight, frontLeft));
     ArrayList<? extends HardwareDevice> servos = new ArrayList<>(Arrays.asList(conveyor, leftTilt, rightTilt, wobble));
 
     ModernRoboticsI2cGyro realgyro1;
@@ -54,8 +54,8 @@ public class HardwareMapV2 {
         frontRight = hwMap.get(DcMotor.class, "front_right");
         backRight = hwMap.get(DcMotor.class, "back_right");
         backLeft = hwMap.get(DcMotor.class, "back_left");
-//        intake = hwMap.get(DcMotor.class, "succ");
-//        outtake = hwMap.get(DcMotor.class, "spit");
+        intake = hwMap.get(DcMotor.class, "succ");
+        outtake = hwMap.get(DcMotor.class, "spit");
 
         if (odometry) {
 
@@ -72,15 +72,15 @@ public class HardwareMapV2 {
         frontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         backRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
-//        intake.setDirection(DcMotor.Direction.REVERSE);
-//        outtake.setDirection(DcMotor.Direction.REVERSE);
+        intake.setDirection(DcMotor.Direction.REVERSE);
+        outtake.setDirection(DcMotor.Direction.REVERSE);
 
         if (odometry) {
 
         }
         if (odometryTest){
-//            intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//            intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         //conveyor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftTilt.setDirection(Servo.Direction.REVERSE);
