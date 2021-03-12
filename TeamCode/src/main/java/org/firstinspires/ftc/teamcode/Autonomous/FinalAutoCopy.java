@@ -44,7 +44,8 @@ public class FinalAutoCopy extends LinearOpMode {
         }
         else if(rings==1) {
             robot.goToPosition(-23,-10,-13.5,0.9);
-            robot.shootHighGoalTest(1650, 100,3);
+            robot.shootHighGoal(3);
+//            robot.shootHighGoalTest(1670, 100,3);
             robot.goToPosition(-96,14,0,1);
             robot.openWobbleGoalClaw();
             robot.goToPosition(-60,4,1,0.6);
@@ -66,7 +67,7 @@ public class FinalAutoCopy extends LinearOpMode {
             robot.closeWobbleGoalClaw();
             sleep(600);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.RUN);
-            robot.goToPosition(-73.5,4.5,0,0.8);
+            robot.goToPosition(-91,14,0,0.8);
             robot.moveWobbleGoalToPosition(WobbleGoal.Position.AutoGRAB);
             robot.openWobbleGoalClaw();
             sleep(250);
