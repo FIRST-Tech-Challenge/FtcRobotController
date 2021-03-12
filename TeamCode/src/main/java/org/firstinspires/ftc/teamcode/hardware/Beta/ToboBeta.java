@@ -114,6 +114,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         if (!useTfod && !useVuforia) return;
         if (!simulation_mode) {
             cameraDetector = new CameraDetector();
+            cameraDetector.setRobotVersion(2);
             cameraDetector.configure(configuration, useTfod);
         }
     }

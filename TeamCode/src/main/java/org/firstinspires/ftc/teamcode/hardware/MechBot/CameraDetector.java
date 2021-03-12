@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.Pif;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
@@ -71,17 +72,18 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
     private AdjustableServo camLR; // webcam left/right servo
     private Telemetry tl;
     private double camPos = 0;
+    private int robotVersion = 1;
 
     private double stoneYpos = 250;//390
 
-    public final double CAM_MIN = 0.01;
-    public final double CAM_MAX = 0.99;
-    public final double CAM_INIT = 0.51;
-    public final double CAM_BLUE_IN = 0.56;
-    public final double CAM_BLUE_OUT = 0.29;
-    public final double CAM_RED_IN = 0.29;
-    public final double CAM_RED_OUT = 0.56;
-    public final double CAM_TELE_OP = 0.51;
+    public double CAM_MIN = 0.01;
+    public double CAM_MAX = 0.99;
+    public double CAM_INIT = 0.51;
+    public double CAM_BLUE_IN = 0.56;
+    public double CAM_BLUE_OUT = 0.29;
+    public double CAM_RED_IN = 0.29;
+    public double CAM_RED_OUT = 0.56;
+    public double CAM_TELE_OP = 0.51;
 
     //multipliers for alternative detection
     double[][] relativePointsQuad = new double[][]{{0,-50}, {-50,-30}, {+50, -30}, {-50,20}, {+50,20}, {-50,-60}, {0, -67}, {+50,-60}, {-85, -60}, {+85, -60}, {-85, 0}, {+85, 0}, {-50,50}, {+50,50}, {0, -95}};
@@ -103,6 +105,7 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
     private static final float mmPerInch        = 25.4f;
     private static final float mmPerCm          = 10.0f;
     private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
+
 
 
     private class Filter //recognition class
@@ -184,6 +187,8 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
         set_cam_pos(pos);
     }
 
+    public void setRobotVersion(int version){robotVersion = version;}
+
     public void configure(Configuration configuration, boolean isTFOD) {
         logger.verbose("Start Configuration");
         /*
@@ -194,6 +199,15 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
         );
         camLR.configure(configuration.getHardwareMap(), "camLR");
         configuration.register(camLR);
+        if(robotVersion==2)
+        {
+            CAM_INIT = 0.51;
+            CAM_BLUE_IN = 0.56;
+            CAM_BLUE_OUT = 0.29;
+            CAM_RED_IN = 0.29;
+            CAM_RED_OUT = 0.56;
+            CAM_TELE_OP = 0.51;
+        }
         set_cam_pos(CAM_INIT);
 
         VuforiaLocalizer.Parameters parameters;
