@@ -9,24 +9,29 @@ import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class HardwareMapV2 {
-    public DcMotor frontRight = null, frontLeft = null, backRight = null, backLeft = null, intake = null, outtake = null;
+    public DcMotor frontRight = null, frontLeft = null, backRight = null, backLeft = null/*, intake = null, outtake = null*/;
 
     public CRServo conveyor = null;
     public Servo leftTilt = null, rightTilt = null, wobble = null;
     boolean odometry = false;
     boolean odometryTest = false;
 
-    ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake, outtake));
-    ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, intake));
+    ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight/*, intake, outtake*/));
+    ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(frontRight, frontLeft/*, intake*/));
     ArrayList<? extends HardwareDevice> servos = new ArrayList<>(Arrays.asList(conveyor, leftTilt, rightTilt, wobble));
 
     ModernRoboticsI2cGyro realgyro1;
     HardwareMap hwMap = null;
+
+    BNO055IMU               imu;
+
 
     public HardwareMapV2 (){
 
@@ -34,13 +39,23 @@ public class HardwareMapV2 {
 
     public void init (HardwareMap awhMap) {
 
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.mode                = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled      = false;
+
+
         hwMap = awhMap;
+        imu = hwMap.get(BNO055IMU.class, "imu");
+
         frontLeft = hwMap.get(DcMotor.class, "front_left");
         frontRight = hwMap.get(DcMotor.class, "front_right");
         backRight = hwMap.get(DcMotor.class, "back_right");
         backLeft = hwMap.get(DcMotor.class, "back_left");
-        intake = hwMap.get(DcMotor.class, "succ");
-        outtake = hwMap.get(DcMotor.class, "spit");
+//        intake = hwMap.get(DcMotor.class, "succ");
+//        outtake = hwMap.get(DcMotor.class, "spit");
 
         if (odometry) {
 
@@ -57,15 +72,15 @@ public class HardwareMapV2 {
         frontRight.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         backRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
-        intake.setDirection(DcMotor.Direction.REVERSE);
-        outtake.setDirection(DcMotor.Direction.REVERSE);
+//        intake.setDirection(DcMotor.Direction.REVERSE);
+//        outtake.setDirection(DcMotor.Direction.REVERSE);
 
         if (odometry) {
 
         }
         if (odometryTest){
-            intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         //conveyor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftTilt.setDirection(Servo.Direction.REVERSE);
