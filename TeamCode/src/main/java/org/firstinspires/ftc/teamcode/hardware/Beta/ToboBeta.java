@@ -618,10 +618,10 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             else
                 mode = "Red-Out";
         }
-        //if (cameraDetector != null) {
-          //  sleep(2000);
-            //tZone = cameraDetector.getTargetZone();
-        //}
+        if (cameraDetector != null) {
+            sleep(2000);
+            tZone = cameraDetector.getTargetZone();
+        }
         telemetry.addData("Config._1", "%s | Simu.=%s | Chassis=%s",
                 mode, (simulation_mode ? "Yes" : "No"), (useChassis ? "Yes" : "No"));
         telemetry.addData("Config._2", "Tensorflow=%s(%s) | Vuforia=%s",
