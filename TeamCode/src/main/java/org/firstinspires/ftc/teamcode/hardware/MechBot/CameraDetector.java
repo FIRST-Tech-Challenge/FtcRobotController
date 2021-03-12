@@ -203,8 +203,8 @@ public class CameraDetector extends Logger<CameraDetector> implements Configurab
         {
             CAM_INIT = 0.51;
             CAM_BLUE_IN = 0.56;
-            CAM_BLUE_OUT = 0.29;
-            CAM_RED_IN = 0.29;
+            CAM_BLUE_OUT = 0.31;
+            CAM_RED_IN = 0.31;
             CAM_RED_OUT = 0.56;
             CAM_TELE_OP = 0.51;
         }

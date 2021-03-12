@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.hardware.MechBot.ComboGrabber;
 import org.firstinspires.ftc.teamcode.hardware.MechBot.Hopper;
 import org.firstinspires.ftc.teamcode.hardware.MechBot.Intake;
 import org.firstinspires.ftc.teamcode.hardware.MechBot.Shooter;
+import org.firstinspires.ftc.teamcode.hardware.MechBot.ToboMech;
 import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.CoreSystem;
 import org.firstinspires.ftc.teamcode.support.Logger;
@@ -34,16 +35,12 @@ import static java.lang.Thread.sleep;
 
 public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
 
-    public enum TargetZone {
-        ZONE_A, ZONE_B, ZONE_C, UNKNOWN
-    }
-
     public enum StartPosition {
         IN, OUT, NA;
     }
 
     public final double MIN_STICK_VAL = 0.1;
-    public TargetZone tZone = TargetZone.UNKNOWN;
+    public ToboMech.TargetZone tZone = ToboMech.TargetZone.UNKNOWN;
     public ProgramType side = ProgramType.AUTO_BLUE; // default to blue
     public StartPosition startPos = StartPosition.OUT; // default to OUT position
 
@@ -871,7 +868,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 } else if (source.getTrigger(Events.Side.LEFT) > 0.5) {
                     chassis.auto_target_y += 10;
                 } else if (source.getTrigger(Events.Side.RIGHT) > 0.5) { // doPowerShots
-                    tZone = TargetZone.ZONE_A;
+                    tZone = ToboMech.TargetZone.ZONE_A;
                     doPowerShots();
                 } else if (!source.isPressed(Button.START)) {
                     chassis.driveTo(auto_chassis_power, chassis.auto_target_x, chassis.auto_target_y, auto_rotate_degree, false, 5);
@@ -1030,7 +1027,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         if (shooter!=null) {
             shooter.shootOutByRpm(WARM_UP_RPM);
         }
-        if (grabber != null && tZone != TargetZone.UNKNOWN) // during autonomous
+        if (grabber != null && tZone != ToboMech.TargetZone.UNKNOWN) // during autonomous
             grabber.armUp();
         initializeGPSThread();
         if (chassis!=null) {
@@ -1181,29 +1178,29 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     }
 
     public void detectPosition() {//startPos = 1 = out, 2 = in
-        tZone = TargetZone.ZONE_C;
+        //tZone = TargetZone.ZONE_C;
         // use camera (Tensorflow) to detect position
 //        tZone = TargetZone.ZONE_C;
 //        return;
-        /*if (cameraDetector == null) {
-            tZone = TargetZone.ZONE_A; // assuming zone_A for simulation purpose
+        if (cameraDetector == null) {
+            tZone = ToboMech.TargetZone.ZONE_A; // assuming zone_A for simulation purpose
             return;
-        */
-        // tZone = TargetZone.ZONE_A;
-        //tZone = cameraDetector.getTargetZone();
+        }
+        //tZone = TargetZone.ZONE_A;
+        tZone = cameraDetector.getTargetZone();
     }
 
     public void deliverFirstWobbleGoalBeta() throws InterruptedException {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
         if (side == ProgramType.AUTO_BLUE) {
-            if (tZone == TargetZone.ZONE_A) {//0
+            if (tZone == ToboMech.TargetZone.ZONE_A) {//0
                 chassis.driveTo(auto_chassis_power, 65, 175, 45, false, 3);
                 chassis.rotateTo(1,135,2);
-            } else if (tZone == TargetZone.ZONE_B) {//1
+            } else if (tZone == ToboMech.TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 140, 270, 0,false, 5);
                 chassis.rotateTo(1,90,2);
-            } else if (tZone == TargetZone.ZONE_C) {//4
+            } else if (tZone == ToboMech.TargetZone.ZONE_C) {//4
                 chassis.driveTo(1.0, 40, 300, 0, false, 5); // no rotation to make it faster
                 chassis.rotateTo(1,135,2);
             } else {
@@ -1211,7 +1208,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             }
         }
         if (grabber != null) {
-            if(tZone != TargetZone.ZONE_C) // Zone A and B
+            if(tZone != ToboMech.TargetZone.ZONE_C) // Zone A and B
             {
                 grabber.releaseWobbleGoalCombo();
                 while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
@@ -1236,13 +1233,13 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
         if (side == ProgramType.AUTO_BLUE) {
-            if (tZone == TargetZone.ZONE_A) {//0
+            if (tZone == ToboMech.TargetZone.ZONE_A) {//0
                 chassis.driveTo(auto_chassis_power, 75, 175, 45, false, 3);
                 chassis.rotateTo(1,135,2);
-            } else if (tZone == TargetZone.ZONE_B) {//1
+            } else if (tZone == ToboMech.TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 120, 220, 0,true, 5);
                 chassis.rotateTo(1,170,2);
-            } else if (tZone == TargetZone.ZONE_C) {//4
+            } else if (tZone == ToboMech.TargetZone.ZONE_C) {//4
                 chassis.driveTo(1.0, 60, 290, 0, false, 5); // no rotation to make it faster
                 chassis.rotateTo(1,170,2);
                 chassis.driveTo(1.0, 70, 210, 170, false, 5); // no rotation to make it faster
@@ -1252,7 +1249,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             }
         }
         if (grabber != null) {
-            if(tZone != TargetZone.ZONE_C) // Zone A and B
+            if(tZone != ToboMech.TargetZone.ZONE_C) // Zone A and B
             {
                 grabber.releaseWobbleGoalCombo();
                 while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
@@ -1324,14 +1321,14 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     }
 
     public void doPowerShots() throws InterruptedException {
-        if (tZone == TargetZone.ZONE_A) {
+        if (tZone == ToboMech.TargetZone.ZONE_A) {
             chassis.driveTo(auto_chassis_power, side(60), 165, chassis.odo_heading(), false, 5);
-        } else if (tZone == TargetZone.ZONE_C) {
+        } else if (tZone == ToboMech.TargetZone.ZONE_C) {
             chassis.driveStraight(1.0, -100, chassis.odo_heading() + 10, 5);
         }
 
         shooter.shootOutByRpm(1260);
-        if (tZone == TargetZone.ZONE_C) {
+        if (tZone == ToboMech.TargetZone.ZONE_C) {
             chassis.driveTo(1.0, side(130), 170, 0, false, 3);
         } else {
             chassis.driveTo(.6, side(150), 170, 0, false, 5); // need to do something about this
@@ -1369,9 +1366,9 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             intake.stop();
         if (runtimeAuto.seconds() > 29){ return;}
         if (!keepPos) {
-            if (tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C && numHighGoals == 3) {
+            if (tZone == ToboMech.TargetZone.ZONE_B || tZone == ToboMech.TargetZone.ZONE_C && numHighGoals == 3) {
                 chassis.driveTo(.55, side(50), 170, 0, true, 4);
-            } else if (tZone != TargetZone.UNKNOWN) {
+            } else if (tZone != ToboMech.TargetZone.UNKNOWN) {
                 if (runtimeAuto.seconds() > 29) {
                     return;
                 }
@@ -1422,7 +1419,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         }
 
         if (shooter!=null) {
-            if (tZone == TargetZone.UNKNOWN)
+            if (tZone == ToboMech.TargetZone.UNKNOWN)
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO); // for teleop keep the shooter at WARM_UP_RPM
             else
                 shooter.shootOutByRpm(0);
@@ -1431,9 +1428,9 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
 
     public void getBonusRingsBeta() throws InterruptedException{
         if (side == ProgramType.AUTO_BLUE) {
-            if (tZone == TargetZone.ZONE_A) {//0
+            if (tZone == ToboMech.TargetZone.ZONE_A) {//0
                 return;
-            } else if (tZone == TargetZone.ZONE_B) {//1
+            } else if (tZone == ToboMech.TargetZone.ZONE_B) {//1
                 if (shooter!= null) {
                     shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 }
@@ -1444,7 +1441,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 if (intake!=null) intake.stop();
                 chassis.driveTo(1.0, side(90), 165, 0, false, 1);
                 doHighGoalsAndPowerShots(1, 0, true);
-            } else if (tZone == TargetZone.ZONE_C) {//4
+            } else if (tZone == ToboMech.TargetZone.ZONE_C) {//4
                 if (shooter!= null) {
                     shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 }
@@ -1558,14 +1555,14 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             hopper.hopperDownCombo();
             TaskManager.processTasks();
         }
-        if (tZone == TargetZone.ZONE_C) {
+        if (tZone == ToboMech.TargetZone.ZONE_C) {
             chassis.driveTo(1.0, side(165), 40, 0, true,  5);
         }
         else {
             chassis.driveTo(auto_chassis_power, side(165), 40, 0, true, 5);
         }
         if(startPos == StartPosition.OUT){
-            if (tZone == TargetZone.ZONE_C) {
+            if (tZone == ToboMech.TargetZone.ZONE_C) {
                 chassis.driveTo(1.0, side(117), 30, 0, true, 3);
             }
             else {
@@ -1585,10 +1582,10 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         // sleep(1000);
     }
     public void getSecondWobbleGoalBeta() throws InterruptedException {
-        if (tZone == TargetZone.ZONE_B) {
+        if (tZone == ToboMech.TargetZone.ZONE_B) {
             chassis.rotateTo(1, 0, 2);
             chassis.driveTo(auto_chassis_power, side(95), 100, 0, false, 5);
-        } else if (tZone == TargetZone.ZONE_C) {
+        } else if (tZone == ToboMech.TargetZone.ZONE_C) {
             chassis.rotateTo(1,-10,2);
             chassis.driveTo(auto_chassis_power, side(90), 80, -10, false, 5);
         }
@@ -1603,13 +1600,13 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             TaskManager.processTasks();
         }
 
-        if(tZone == TargetZone.ZONE_B){
+        if(tZone == ToboMech.TargetZone.ZONE_B){
             chassis.driveTo(auto_chassis_power, side(50), 170, 0, false,  5);
         }
-        if(tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C){
+        if(tZone == ToboMech.TargetZone.ZONE_B || tZone == ToboMech.TargetZone.ZONE_C){
             shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
         }
-        if(tZone == TargetZone.ZONE_C)
+        if(tZone == ToboMech.TargetZone.ZONE_C)
         {
             chassis.driveTo(1, side(65), 40, 0, true, 5);
         }
@@ -1618,9 +1615,9 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             chassis.driveTo(auto_chassis_power, side(70), 40, 0, true, 5);
         }
         if(startPos == StartPosition.OUT){
-            if (tZone == TargetZone.ZONE_C){
+            if (tZone == ToboMech.TargetZone.ZONE_C){
                 chassis.driveTo(auto_chassis_power, side(102), 35, 0, false, 3);
-            } else if (tZone == TargetZone.ZONE_B){
+            } else if (tZone == ToboMech.TargetZone.ZONE_B){
                 chassis.driveTo(auto_chassis_power, side(107), 35, 0, false, 3);
             } else { // ZONE_A
                 chassis.driveTo(auto_chassis_power, side(102), 35, 0, false, 3);
@@ -1642,10 +1639,10 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
 
         // need to change positions
         if (side == ProgramType.AUTO_BLUE) {
-            if (tZone == TargetZone.ZONE_A) {//0
+            if (tZone == ToboMech.TargetZone.ZONE_A) {//0
                 // chassis.driveTo(.8, side(30), 40, 0, false, 2);
                 chassis.driveTo(0.9, side(17), 165, -20, true, 5);
-            } else if (tZone == TargetZone.ZONE_B) {//1
+            } else if (tZone == ToboMech.TargetZone.ZONE_B) {//1
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 intake.intakeIn();
                 chassis.driveTo(auto_chassis_power, side(80), 165, 0, false, 5);
@@ -1653,7 +1650,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                 intake.stop();
                 autoShootHighGoal(1, true);
                 chassis.driveTo(auto_chassis_power, side(70), 225, 0, false, 5);
-            } else if (tZone == TargetZone.ZONE_C) {//4
+            } else if (tZone == ToboMech.TargetZone.ZONE_C) {//4
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
                 chassis.driveTo(1.0, side(90), 123, 0, false, 2);
@@ -1672,7 +1669,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             }
         }
         if (grabber !=null) {
-            if(tZone != TargetZone.ZONE_C) // Zone A and B
+            if(tZone != ToboMech.TargetZone.ZONE_C) // Zone A and B
             {
                 grabber.releaseWobbleGoalCombo();
                 while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
@@ -1699,13 +1696,13 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         TaskManager.processTasks();
     }
     public void park() throws InterruptedException {
-        if (tZone== TargetZone.ZONE_A){
+        if (tZone== ToboMech.TargetZone.ZONE_A){
             chassis.driveTo(auto_chassis_power+0.2, side(110), 165, 0, false, 2);
         }
-        if (tZone== TargetZone.ZONE_C){
+        if (tZone== ToboMech.TargetZone.ZONE_C){
             return;
         }
-        else if (tZone== TargetZone.ZONE_B)
+        else if (tZone== ToboMech.TargetZone.ZONE_B)
         {
             chassis.rotateTo(1.0, 0);
         }
