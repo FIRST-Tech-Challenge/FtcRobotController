@@ -71,11 +71,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooting_angle = 0;
     public double shooterAngleOffset = 3.5;
     final public double MAX_RPM = 1720;
-    final public double WARM_UP_RPM = 1600;
-    final public double WARM_UP_RPM_POWER_SHOT = 1420;
-    static final public double WARM_UP_RPM_AUTO = 1600;
-    final public double SEMI_AUTO_RPM = 1640;
-    final public double SEMI_POWER_SHOT_RPM = 1420;
+    final public double WARM_UP_RPM = 1660;
+    static final public double WARM_UP_RPM_AUTO = 1640;
+    final public double SEMI_AUTO_RPM = 1660;
+    final public double WARM_UP_RPM_POWER_SHOT = 1500;
+    final public double SEMI_POWER_SHOT_RPM = 1500;
     public double shooting_rpm = WARM_UP_RPM;
     public double batteryVolt = 0;
 
@@ -142,7 +142,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 // enable imu for diagnosis
                 // chassis.enableImuTelemetry(configuration);
             }
-            chassis.configure(configuration, (autoside != ProgramType.TELE_OP), isTeleOpAfterAuto);
+            chassis.configure(configuration, true, isTeleOpAfterAuto);
+            // chassis.configure(configuration, (autoside != ProgramType.TELE_OP), isTeleOpAfterAuto);
         }
         if (simulation_mode) { // need to call after chassis is initialized
             set_simulation_mode(true);
@@ -1344,7 +1345,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (useIMUforOdometryAngleCorrection){
             chassis.getGPS().correctAngleUsingIMU();
         }
-        shooter.shootOutByRpm(target - 70);
+        //shooter.shootOutByRpm(target - 70);
         hopper.feederAuto();
     }
 
@@ -1352,12 +1353,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (shooter == null || hopper == null) return false;
         double iniTime = System.currentTimeMillis();
         int target = shooter.getShooterSpeed();
-        if (forAuto) {
-            shooter.shootOutByRpm(target - 80);
-        } else {
-            shooter.shootOutByRpm(SEMI_AUTO_RPM-150);
-        }
-        int timeout_ms = (forAuto?500:800);
+//        if (forAuto) {
+//            shooter.shootOutByRpm(target - 80);
+//        } else {
+//            shooter.shootOutByRpm(SEMI_AUTO_RPM-150);
+//        }
+        int timeout_ms = (forAuto?500:500);
         // Stage-2 make sure rpm difference is within 11 error range
         while (Math.abs(shooter.getCurrentRPM() - target) > 11 && (System.currentTimeMillis() - iniTime < timeout_ms)) { // timeout 5 sec
             sleep(5);
@@ -1369,11 +1370,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (useIMUforOdometryAngleCorrection){
             chassis.getGPS().correctAngleUsingIMU();
         }
-        if (forAuto) {
-            shooter.shootOutByRpm(target - 60);
-        } else {
-            shooter.shootOutByRpm(SEMI_AUTO_RPM-150);
-        }
+//        if (forAuto) {
+//            shooter.shootOutByRpm(target - 60);
+//        } else {
+//            shooter.shootOutByRpm(SEMI_AUTO_RPM-150);
+//        }
         hopper.feederAuto();
         return true;
     }
@@ -1422,12 +1423,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (intake != null)
             intake.stop();
-        if (runtimeAuto.seconds() > 29){ return;}
+        if (side!=ProgramType.TELE_OP && runtimeAuto.seconds() > 29){ return;}
         if (!keepPos) {
             if (tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C && numHighGoals == 3) {
                 chassis.driveTo(.52, side(45), 165, 0, true, 4);
             } else if (tZone != TargetZone.UNKNOWN) {
-                if (runtimeAuto.seconds() > 29) {
+                if (side!=ProgramType.TELE_OP &&runtimeAuto.seconds() > 29) {
                     return;
                 }
                 chassis.driveTo(.55, side(90), 165, 0, true, 4);
@@ -1441,7 +1442,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         rotateToTargetAndStartShooter(MechChassis.ShootingTarget.TOWER, false);
         //shoot
         for (int i = 0; i < numHighGoals; i++) {
-            if (runtimeAuto.seconds() > 29){ return;}
+            if (side!=ProgramType.TELE_OP && runtimeAuto.seconds() > 29){ return;}
             if (i == 0) {
                 autoShoot();
             } else {
@@ -1450,14 +1451,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             sleep(200);
         }
         if (numPowerShots > 0) {
-            if (runtimeAuto.seconds() > 29){ return;}
+            if (side!=ProgramType.TELE_OP && runtimeAuto.seconds() > 29){ return;}
             shooter.shootOutByRpm(WARM_UP_RPM_POWER_SHOT);
             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
             //shoot
             autoShootFast(true);
         }
         if (numPowerShots > 1) {
-            if (runtimeAuto.seconds() > 29){ return;}
+            if (side!=ProgramType.TELE_OP && runtimeAuto.seconds() > 29){ return;}
             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_M, false);
             //chassis.driveTo(.55, side(150), 170, 0, false,  2);
             //shoot
@@ -1465,7 +1466,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             //sleep(500);
         }
         if (numPowerShots > 2) {
-            if (runtimeAuto.seconds() > 29){ return;}
+            if (side!=ProgramType.TELE_OP && runtimeAuto.seconds() > 29){ return;}
             rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R, false);
             //chassis.driveTo(.55, side(170), 170, 0, false,  2);
             //shoot

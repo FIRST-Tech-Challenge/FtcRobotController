@@ -36,9 +36,9 @@ public class TeleOpAfterAuto extends LinearOpMode {
 
         try {
             // configure robot and reset all hardware
+            robot.isTeleOpAfterAuto = true;
             robot.configure(configuration, telemetry, Robot2.ProgramType.TELE_OP);
             configuration.apply();
-            robot.isTeleOpAfterAuto = true;
             robot.initSetup(Robot2.ProgramType.TELE_OP, ToboMech.StartPosition.OUT, configuration); // check
             robot.reset(false);
 
