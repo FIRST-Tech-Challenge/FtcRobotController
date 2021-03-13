@@ -36,7 +36,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 public abstract class BaseAuto extends LinearOpMode {
 
-    HardwareMapV2 robot = null;
+    HardwareMapV2 robot = new HardwareMapV2();
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -88,9 +88,11 @@ public abstract class BaseAuto extends LinearOpMode {
     // initializes hardware  and vuforia; calibrates gyro
     public void inithardware(){
 
-        HardwareMapV2 robot = new HardwareMapV2();
 
         robot.init(hardwareMap);
+
+        robot.setEncoders(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.setEncoders(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous(name = "BlueSideAuto",group = "SkyStone")
 public class BlueSideAuto extends BaseAuto {
@@ -37,15 +38,28 @@ public class BlueSideAuto extends BaseAuto {
 //        telemetry.addData("imu", getAverageGyro());
 //        telemetry.update();
 
-        wait(1000);
+        sleep(1000);
         telemetry.addData("Position", pipeline.position);
         telemetry.update();
 
+        sleep(1000);
         if (pipeline.position.toString() == "FOUR"){
-            
+            telemetry.addData("Going with four", "");
+            telemetry.update();
+            sleep(1000);
+            encoderMecanumDrive(0.3, 20, 3, 0, -1);
+
+
+
         } else if (pipeline.position.toString() == "ONE"){
+            telemetry.addData("Going with one", "");
+            telemetry.update();
+            sleep(1000);
 
         } else {
+            telemetry.addData("Going with none", "");
+            telemetry.update();
+            sleep(1000);
 
         }
 
