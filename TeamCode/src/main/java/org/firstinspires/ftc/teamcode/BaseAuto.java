@@ -44,9 +44,9 @@ public abstract class BaseAuto extends LinearOpMode {
 
     // define and initialize variables
 
-    static final double     COUNTS_PER_MOTOR_REV    = 767.2 ;    // eg: TETRIX Motor Encoder
+    static final double     COUNTS_PER_MOTOR_REV    = /*767.2*/ 383.5 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_CM       = 10.0 ;     // This measurement is more exact than inches
+    static final double     WHEEL_DIAMETER_CM       = 9.6 ;     // This measurement is more exact than inches
     static final double     COUNTS_PER_CM         = ((COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_CM * Math.PI));
     static final double     DRIVE_SPEED             = 0.9;
     static final double     TURBO_SPEED             = 0.7;
@@ -122,20 +122,20 @@ public abstract class BaseAuto extends LinearOpMode {
 
         imu.initialize(parameters);
 
-//        // Send telemetry message to alert driver that we are calibrating;
-//        telemetry.addData("Calibrating Gyro:", "Dont do anything");    //
-//        telemetry.update();
-//
-//        while (!isStopRequested() && !imu.isGyroCalibrated())
-//        {
-//            sleep(50);
-//            idle();
-//        }
-
-        telemetry.addData("Calibrating Gyro: ", "Wait 3 seconds");    //
+        // Send telemetry message to alert driver that we are calibrating;
+        telemetry.addData("Calibrating Gyro:", "Dont do anything");    //
         telemetry.update();
 
-        sleep(3000);
+        while (!isStopRequested() && !imu.isGyroCalibrated())
+        {
+            sleep(50);
+            idle();
+        }
+
+//        telemetry.addData("Calibrating Gyro: ", "Wait 3 seconds");    //
+//        telemetry.update();
+
+//        sleep(3000);
 
         telemetry.addData("Ready! ", "Let's go");    //
         telemetry.update();

@@ -53,8 +53,8 @@ public class BlueSideAuto extends BaseAuto {
             telemetry.addData("Going with four", "");
             telemetry.update();
             sleep(1000);
-            encoderMecanumDrive(0.3, 20, 3, 0, -1);
-
+//            encoderMecanumDrive(0.3, 20, 3, 0, -1);
+            encoderMecanumDrive(0.5, 185, 5, -0.464,-1);
 
 
         } else if (pipeline.position.toString() == "ONE"){
@@ -68,7 +68,10 @@ public class BlueSideAuto extends BaseAuto {
             sleep(1000);
 
         }
-
+        drivetrain.tilt(0.35);
+        sleep(300);
+        gyroTurn(0.3, getAverageGyro()-20);
+        sleep(1000);
 
 
 
