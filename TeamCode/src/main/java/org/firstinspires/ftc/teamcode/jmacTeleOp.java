@@ -56,6 +56,14 @@ public class jmacTeleOp extends LinearOpMode {
 
         Vision vision = new Vision(this);
         currentState = IDLE;
+        /*
+        mDrive.FlyWheel1.setVelocityPIDFCoefficients(1.38, 0.138, 0, 13.77);
+        mDrive.FlyWheel2.setVelocityPIDFCoefficients(1.38,0.138, 0, 13.77);
+        mDrive.FlyWheel1.setPositionPIDFCoefficients(5.0);
+        mDrive.FlyWheel2.setPositionPIDFCoefficients(5.0);
+
+
+         */
         waitForStart();
 
         while (opModeIsActive())
@@ -126,7 +134,6 @@ public class jmacTeleOp extends LinearOpMode {
         telemetry.addData("BL", mDrive.BL.getCurrentPosition());
         telemetry.addData("BR", mDrive.BR.getCurrentPosition());
         telemetry.update();
-
         currentState = MANEUVERING;
     }
 
@@ -135,10 +142,8 @@ public class jmacTeleOp extends LinearOpMode {
         /*double shootingVel = gamepad2.left_trigger * 2500;
         mDrive.FlyWheel1.setVelocity(shootingVel);
         mDrive.FlyWheel2.setVelocity(shootingVel);*/
-
         mDrive.FlyWheel1.setPower(gamepad2.left_trigger);
         mDrive.FlyWheel2.setPower(gamepad2.left_trigger);
-
         if (gamepad2.right_trigger > 0.4)
             mDrive.ringHopper.setPosition(1);
         else
