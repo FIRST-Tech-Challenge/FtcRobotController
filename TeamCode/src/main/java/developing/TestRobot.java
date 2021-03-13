@@ -38,7 +38,7 @@ public class TestRobot {
     public Cycle pushControl = new Cycle(0.1, 0.27, 0.35);
 
     public ModernRoboticsI2cRangeSensor lr;
-    public ModernRoboticsI2cRangeSensor fr;
+    public ModernRoboticsI2cRangeSensor br;
 
 
 
@@ -59,6 +59,8 @@ public class TestRobot {
 
     public ArrayList<AutoModule2> autoModule2s = new ArrayList<>();
 
+    public SpeedController2 rightSpeedController = new SpeedController2();
+
 
 
     public void init(HardwareMap hwMap) {
@@ -77,12 +79,11 @@ public class TestRobot {
         rh = getCRServo(hwMap, "rh", CRServo.Direction.REVERSE);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, rpStart);
 
-//        angularPosition.init(hwMap);
-//
+        angularPosition.init(hwMap);
 
-//
-//        lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
-//        fr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "fr");
+
+        lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
+        br = hwMap.get(ModernRoboticsI2cRangeSensor.class, "br");
 
         shooter.addStage(rp, pushControl, 1 , 0.3);
         shooter.addStage(0.8, outl);
@@ -161,7 +162,6 @@ public class TestRobot {
 
 
     public void moveTeleOp(double f, double s, double t){
-
         double restForwardPow = 0.05;
         double restStrafePow = 0.1;
         double restTurnPow = 0.1;
@@ -171,6 +171,7 @@ public class TestRobot {
         }else{
             move((f*0.2) + Math.signum(f)*restForwardPow, (s*0.2)+Math.signum(s)*restStrafePow, (t*0.2)+Math.signum(t)*restTurnPow);
         }
+
     }
 
     public boolean areAutomodulesRunning(){
@@ -187,6 +188,12 @@ public class TestRobot {
 
 
 
+    public double getRightAngPos(){
+        return (outr.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
+    }
+
+
+
 
 
 
@@ -196,21 +203,20 @@ public class TestRobot {
     public double getLeftDistance(){
         return lr.getDistance(DistanceUnit.CM);
     }
-    public double getFrontDistance(){
-        return fr.getDistance(DistanceUnit.CM);
+    public double getBackDistance(){
+        return br.getDistance(DistanceUnit.CM);
     }
 
     public void outtakeWithCalculations() {
-        double p = autoAimer.getOuttakePower(angularPosition.getHeadingCS(), lr.getDistance(DistanceUnit.METER), fr.getDistance(DistanceUnit.METER));
+        double p = autoAimer.getOuttakePower(angularPosition.getHeadingCS(), lr.getDistance(DistanceUnit.METER), br.getDistance(DistanceUnit.METER));
         outr.setPower(p);
         outl.setPower(p);
-
     }
 
     public double getRobotToGoalAngle() {
         double robotTheta = angularPosition.getHeadingCS() * Math.PI/180;
         double x = autoAimer.getDisFromCenter(getLeftDistance()/100, robotTheta) - Constants.GOAL_FROM_LEFT;
-        double y = autoAimer.getDisFromCenter(getFrontDistance()/100, robotTheta);
+        double y = autoAimer.getDisFromCenter(getBackDistance()/100, robotTheta);
         return Math.atan2(y, x);
     }
 }

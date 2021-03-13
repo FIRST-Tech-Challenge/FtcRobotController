@@ -1,7 +1,8 @@
 package global;
 
+
 public class Constants {
-    public static final double MAX_OUTTAKE_SPEED = 200 * Math.PI; // rad/s
+    public static final double MAX_OUTTAKE_SPEED = 100 * 2* Math.PI; // rad/s
 
     public static final double OUTTAKE_ANGLE = 20 * Math.PI/180; // degrees -> radians
     public static final double GOAL_FROM_LEFT = 0.9; // meters
@@ -16,6 +17,11 @@ public class Constants {
 
     public static final int AUTOMODULE_REFRESH_RATE = 100; // hertz
 
+    public static final double NEVEREST256_TICKS = 7168;
+    public static final double NEV_DEGREES_TO_TICKS = NEVEREST256_TICKS/360;
+    public static final double GOBUILDA1_Ticks = 28;
+    public static final double GO_DEGREES_TO_TICKS = GOBUILDA1_Ticks/360;
 
+    public static final double pi2 = Math.PI*2;
 
 }
