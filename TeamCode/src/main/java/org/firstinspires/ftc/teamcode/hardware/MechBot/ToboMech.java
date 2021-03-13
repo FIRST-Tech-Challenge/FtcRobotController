@@ -1554,7 +1554,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 }
                 int i=0;
                 while (Math.abs(chassis.odo_heading() - heading)>1 && i<2) {
-                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin, heading, false, 0.5);
+                    //chassis.rawRotateTo(chassis.chassisAligmentPowerMin, heading, false, 0.5);
+                    chassis.driveStraight(0.5, 19, 90, 2);
                     i++;
                 }
                 //sleep(200);
