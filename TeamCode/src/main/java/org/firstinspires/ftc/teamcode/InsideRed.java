@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.Date;
+
 @Autonomous (name="Inside Red")
 public class InsideRed extends LinearOpMode {
 
@@ -19,48 +21,62 @@ public class InsideRed extends LinearOpMode {
         wobbleGoalExtendMotor = hardwareMap.dcMotor.get("wobbleExtendo");
         wobbleGoalRaiseMotor = hardwareMap.dcMotor.get("wobbleLift");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
-        robot= new RobotClass(hardwareMap, telemetry, this);
+        robot= new RobotClass(hardwareMap, telemetry, this, "red");
 
         robot.wobbleGoalGrippyThingGrab();
         // here you detect rings
+        robot.openCVInnitShenanigans();
 
-        int ringNmb = 0;
+        RobotClass.RingPosition ringNmb = null;
         waitForStart();
+        robot.forward(0.1, -0.3);
+        robot.strafeLeft(0.4,1.7);
 
-        robot.forward(0.5, -4.4);
-        robot.strafeRight(0.4, 0.3);
+        long startTime = new Date().getTime();
+        long time = 0;
+        while (time < 500 && opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+             ringNmb = robot.analyze();
+
+            telemetry.addData("Position", ringNmb);
+            telemetry.update();
+        }
+        robot.strafeRight(0.5,2.3);
+        robot.forward(0.6, -4.1);
+        //robot.strafeRight(0.4, 0.3);
         robot.pivotLeft(0.1, 17);
-//        robot.shooterEngageAlt();
-        robot.pause(1000);
-//        shoot();
+        robot.shooterEngageAlt();
+        robot.pause(500);
+        shoot();
         robot.pivotRight(0.1, 6);
-//        shoot();
+        shoot();
         robot.pivotRight(.1, 5);
-//        shoot();
-//        robot.intakeServoEngage(0);
-//        robot.stopShooting();
-        robot.pivotRight(.1, 5);
+        shoot();
+        robot.intakeServoEngage(0);
+        robot.pause(200);
+        robot.stopShooting();
+        robot.pivotRight(.1, 6);
 
-        if (ringNmb == 0) {
+        if (ringNmb == RobotClass.RingPosition.NONE) {
             robot.forward(0.5,-1.5);
             robot.strafeLeft(0.5,2);
-            robot.pivotLeft(0.3, 175);
+            robot.pivotLeft(0.3, 170);
             robot.depositWobbleGoal();
-            robot.strafeLeft(0.5, 2);
-        } else if (ringNmb == 1) {
+            robot.strafeLeft(0.4, 2);
+        } else if (ringNmb == RobotClass.RingPosition.ONE) {
             robot.forward(0.5, -3);
             robot.strafeLeft(0.3, 0.2);
             robot.pivotRight(0.4, 170);
             robot.depositWobbleGoal();
             robot.forward(0.5, -1.8);
-        } else if (ringNmb == 4) {
-            robot.forward(0.5,-5.5);
-            robot.strafeLeft(0.5,2.2);
-            robot.pivotLeft(0.3,175);
+        } else if (ringNmb == RobotClass.RingPosition.FOUR) {
+            robot.forward(0.8,-4.5);
+            robot.strafeLeft(0.8,3.2);
+            robot.pivotLeft(0.4,170);
             robot.depositWobbleGoal();
-            robot.pivotRight(0.3,175);
-            robot.strafeRight(0.5,2.2);
-            robot.forward(0.5,3.7);
+           // robot.pivotRight(0.3,175);
+            robot.strafeLeft(0.8,1);
+            robot.forward(0.8,-2.8);
         }
 
     }

@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.Date;
+
 @Autonomous(name = "OuterRedAutonomous")
 public class OuterRedAutonomous extends LinearOpMode {
 
@@ -16,25 +18,38 @@ public class OuterRedAutonomous extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot= new RobotClass(hardwareMap, telemetry, this);
+        robot= new RobotClassInnerBlueOuterRed(hardwareMap, telemetry, this, "red");
         robot.wobbleGoalGrippyThingGrab();
+        robot.openCVInnitShenanigans();
+
+        RobotClass.RingPosition ringNmb = null;
 
         waitForStart();
+        long startTime = new Date().getTime();
+        long time = 0;
 
-        robot.strafeLeft(.5,.2);
-        robot.forward(.6,-2.6);
-        robot.pivotLeft(.3,27);
-//        robot.shooterEngage();
+        while (time < 200 && opModeIsActive()) {
+            time = new Date().getTime() - startTime;
+            ringNmb = robot.analyze();
+
+            telemetry.addData("Position", ringNmb);
+            telemetry.update();
+        }
+        robot.forward(.1, -0.3);
+        robot.strafeLeft(.3,1.1);
+        robot.forward(.3,-1.7);
+        robot.pivotLeft(.3,26);
+        robot.shooterEngage();
         robot.pause(800);
-//        robot.shooterServo1(.8);
-//        robot.shooterServo2(.8);
+        robot.shooterServo1(.8);
+        robot.shooterServo2(.8);
         robot.pause(200);
-//        robot.intakeServoEngage(.9);
+        robot.intakeServoEngage(.9);
         robot.pause(4500);
-//        robot.shooterStop();
-//        robot.shooterServo1Stop();
-//        robot.shooterServo2Stop();
-//        robot.intakeServoStop();
+        robot.shooterStop();
+        robot.shooterServo1Stop();
+        robot.shooterServo2Stop();
+        robot.intakeServoStop();
 
 //        robot.startShooting();
 //        robot.stopTimingBelt();
@@ -45,13 +60,28 @@ public class OuterRedAutonomous extends LinearOpMode {
 //        robot.pause(750);
 //        robot.startTimingBelt();
 //        robot.pause(2000);
-//        robot.stopShooting();
-        robot.pivotRight(.5, 27);
-        robot.strafeRight(0.5,2);
-        robot.forward(0.5,-3.4);
-        robot.pivotRight(0.4,180);
-        robot.pause(500);
-        robot.depositWobbleGoal();
+ //       robot.stopShooting();
+        if (ringNmb == RobotClass.RingPosition.NONE) {
+            robot.pivotRight(.5, 27);
+            robot.strafeRight(0.5, 2);
+            robot.forward(0.5, -4);
+            robot.pivotRight(0.4, 170);
+            robot.pause(500);
+            robot.depositWobbleGoal();
+        } else if (ringNmb == RobotClass.RingPosition.ONE) {
+            robot.pivotRight(.5, 27);
+            robot.forward(.4,-6.5);
+            robot.depositWobbleGoal();
+            robot.forward(0.5, 2);
+        } else if (ringNmb == RobotClass.RingPosition.FOUR) {
+            robot.pivotRight(.3, 27);
+            robot.forward(.5,-6);
+            robot.pivotRight(0.4,90);
+            robot.pause(500);
+           // robot.forward(0.2,-1);
+            robot.depositWobbleGoal();
+            robot.strafeLeft(0.5,2.2);
+        }
 
     }
 }

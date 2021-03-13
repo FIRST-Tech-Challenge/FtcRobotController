@@ -23,7 +23,7 @@ public class TestCVAutonomous extends LinearOpMode {
 
         while (time < 200 && opModeIsActive()) {
             time = new Date().getTime() - startTime;
-            RobotClass.SkystoneDeterminationPipelineInnerBlueOuterRed.RingPosition position = robot.analyze();
+            RobotClass.RingPosition position = robot.analyze();
 
             telemetry.addData("Position", position);
             telemetry.update();

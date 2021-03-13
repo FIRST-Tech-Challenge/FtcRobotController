@@ -169,7 +169,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             }
             if (gamepad1.a) {
                 robot.forwardToWhite(.9,.5,.3);
-                robot.forward(.6, -2.4);
+                robot.forward(.5, -2.7);
             }
 
         }

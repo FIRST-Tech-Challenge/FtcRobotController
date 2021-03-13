@@ -24,6 +24,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -48,7 +49,7 @@ public class EasyOpenCVExample extends LinearOpMode
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.FRONT, cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipeline();
+        pipeline = new SkystoneDeterminationPipeline(telemetry);
         phoneCam.setPipeline(pipeline);
 
         // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
@@ -80,6 +81,11 @@ public class EasyOpenCVExample extends LinearOpMode
 
     public static class SkystoneDeterminationPipeline extends OpenCvPipeline
     {
+        Telemetry telemetry;
+        public SkystoneDeterminationPipeline(Telemetry telemetry){
+            this.telemetry= telemetry;
+        }
+
         /*
          * An enum to define the skystone position
          */
@@ -99,7 +105,7 @@ public class EasyOpenCVExample extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(68,176);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(192,176);
 //inner blue 68,176 size 30,42
         //outer blue 192, 176 size 30,42
         //inside red, the same as outer blue
@@ -163,6 +169,8 @@ public class EasyOpenCVExample extends LinearOpMode
                     2); // Thickness of the rectangle lines
 
             position = RingPosition.FOUR; // Record our analysis
+            telemetry.addData("value", avg1);
+            telemetry.update();
             if(avg1 > FOUR_RING_THRESHOLD){
                 position = RingPosition.FOUR;
             }else if (avg1 > ONE_RING_THRESHOLD){
@@ -170,6 +178,8 @@ public class EasyOpenCVExample extends LinearOpMode
             }else{
                 position = RingPosition.NONE;
             }
+
+
 
             Imgproc.rectangle(
                     input, // Buffer to draw on
