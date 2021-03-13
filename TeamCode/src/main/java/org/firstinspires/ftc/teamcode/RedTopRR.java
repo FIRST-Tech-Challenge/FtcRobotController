@@ -16,7 +16,7 @@ import static org.firstinspires.ftc.teamcode.Robot.*;
 /*
  * This is an example of a more complex path to really test the tuning.
  */
-@Autonomous(name = "Auto Red Top RR")
+@Autonomous(name = "Auto Red Top RR", preselectTeleOp = "teleop")
 public class RedTopRR extends LinearOpMode {
 
     OpenCvCamera webcam;
@@ -83,6 +83,8 @@ public class RedTopRR extends LinearOpMode {
                 .build();
         drive.followTrajectory(initForward);
 
+        //Ramp up launcher
+        launcher2.setPower(0.83);
         //move to first shot
         Trajectory shot1 = drive.trajectoryBuilder(initForward.end())
                 .lineToLinearHeading(new Pose2d(-6, 58, Math.toRadians(0)))
@@ -90,7 +92,6 @@ public class RedTopRR extends LinearOpMode {
         drive.followTrajectory(shot1);
 
         //launch ring1
-        launcher2.setPower(0.83);
         sleep(1500);
         launcherbelt.setTargetPosition(900);
         launcherbelt.setMode(DcMotor.RunMode.RUN_TO_POSITION);

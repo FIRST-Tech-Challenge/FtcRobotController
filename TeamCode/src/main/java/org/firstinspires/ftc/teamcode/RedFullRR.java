@@ -16,7 +16,7 @@ import static org.firstinspires.ftc.teamcode.Robot.*;
 /*
  * This is an example of a more complex path to really test the tuning.
  */
-@Autonomous(name = "Auto Red Full RR")
+@Autonomous(name = "Auto Red Full RR", preselectTeleOp = "teleop")
 public class RedFullRR extends LinearOpMode {
 
     OpenCvCamera webcam;

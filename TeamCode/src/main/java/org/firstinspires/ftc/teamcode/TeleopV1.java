@@ -72,6 +72,7 @@ public class TeleopV1 extends LinearOpMode {
             boolean dpadRight2 = gamepad2.dpad_right;
             boolean dpadLeft2 = gamepad2.dpad_left;
 
+
             //diagonal driving
             if (Math.abs(LStickX) > 0 || Math.abs(LStickY) > 0 || Math.abs(RStickX) > 0) {
                 if (Math.abs(LStickX) < .05 && Math.abs(RStickX) < .05) {

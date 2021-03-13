@@ -15,7 +15,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import static org.firstinspires.ftc.teamcode.Robot.*;
 
 
-@Autonomous(name = "Auto Red Minimum RR")
+@Autonomous(name = "Auto Red Minimum RR", preselectTeleOp = "teleop")
 public class RedMinimumRR extends LinearOpMode {
 
     @Override
