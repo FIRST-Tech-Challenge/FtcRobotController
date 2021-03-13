@@ -8,10 +8,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +80,8 @@ public abstract class BaseAuto extends LinearOpMode {
     static final double  BRAKING_DISTANCE_COUNTS  = (40 * COUNTS_PER_CM);
     static final double  ACCELERATING_DISTANCE_COUNTS  = (20 * COUNTS_PER_CM);
 
+    SkystoneDeterminationPipeline pipeline;
+
     BNO055IMU imu;
 
 
@@ -90,18 +103,24 @@ public abstract class BaseAuto extends LinearOpMode {
 
         imu.initialize(parameters);
 
-        // Send telemetry message to alert driver that we are calibrating;
-        telemetry.addData("Calibrating Gyro:", "Dont do anything");    //
+//        // Send telemetry message to alert driver that we are calibrating;
+//        telemetry.addData("Calibrating Gyro:", "Dont do anything");    //
+//        telemetry.update();
+//
+//        while (!isStopRequested() && !imu.isGyroCalibrated())
+//        {
+//            sleep(50);
+//            idle();
+//        }
+
+        telemetry.addData("Calibrating Gyro: ", "Wait 3 seconds");    //
         telemetry.update();
 
-        while (!isStopRequested() && !imu.isGyroCalibrated())
-        {
-            sleep(50);
-            idle();
-        }
+        sleep(3000);
 
-        telemetry.addData(">", "haddi ready.");    //
+        telemetry.addData("Ready! ", "Let's go");    //
         telemetry.update();
+
 
 
     }
@@ -115,7 +134,7 @@ public abstract class BaseAuto extends LinearOpMode {
     }
 
 
-    // Only for mecanum drive; uses gyro to move robot at a specific angle and distance (cm)
+/*    // Only for mecanum drive; uses gyro to move robot at a specific angle and distance (cm)
     public void gyroMecanumDrive ( double speed, double distance, double angle) {
 
         int     newFrontLeftTarget;
@@ -240,7 +259,7 @@ public abstract class BaseAuto extends LinearOpMode {
         }
     }
 
-
+*/
 
     // checks to make sure that all motors which should be running are running
     public boolean areMotorsRunning(MecanumWheels wheels){
@@ -426,7 +445,7 @@ public abstract class BaseAuto extends LinearOpMode {
     }
 
 
-    // NOT USED; uses encoders to drive - no gyro - tank drive
+/*    // NOT USED; uses encoders to drive - no gyro - tank drive
     public void encoderDrive(double speed, double leftCm, double rightCm, double timeoutS) {
         int newLeftTarget;
         int newRightTarget;
@@ -477,7 +496,7 @@ public abstract class BaseAuto extends LinearOpMode {
 
         }
     }
-
+*/
     // turn to an angle using gyro
     public void gyroTurn (  double speed, double angle) {
 
@@ -551,4 +570,140 @@ public abstract class BaseAuto extends LinearOpMode {
     }
 
 
+    public void initializeOpenCV() {
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "webcam");
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        final OpenCvCamera phoneCam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        pipeline = new SkystoneDeterminationPipeline();
+        phoneCam.setPipeline(pipeline);
+
+        // We set the viewport policy to optimized view so the preview doesn't appear 90 deg
+        // out when the RC activity is in portrait. We do our actual image processing assuming
+        // landscape orientation, though.
+        phoneCam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
+
+        phoneCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                phoneCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+            }
+        });
+
+    }
+
+    public static class SkystoneDeterminationPipeline extends OpenCvPipeline
+    {
+        /*
+         * An enum to define the skystone position
+         */
+        public enum RingPosition
+        {
+            FOUR,
+            ONE,
+            NONE
+        }
+
+        /*
+         * Some color constants
+         */
+        static final Scalar BLUE = new Scalar(0, 0, 255);
+        static final Scalar GREEN = new Scalar(0, 255, 0);
+
+        /*
+         * The core values which define the location and size of the sample regions
+         */
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(165,63);
+
+        static final int REGION_WIDTH = 95;
+        static final int REGION_HEIGHT = 80;
+
+        final int FOUR_RING_THRESHOLD = 137;
+        final int ONE_RING_THRESHOLD = 130;
+
+//        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,0);
+//
+//        static final int REGION_WIDTH = 320;
+//        static final int REGION_HEIGHT = 240;
+//
+//        final int FOUR_RING_THRESHOLD = 150;
+//        final int ONE_RING_THRESHOLD = 135;
+
+        Point region1_pointA = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x,
+                REGION1_TOPLEFT_ANCHOR_POINT.y);
+        Point region1_pointB = new Point(
+                REGION1_TOPLEFT_ANCHOR_POINT.x + REGION_WIDTH,
+                REGION1_TOPLEFT_ANCHOR_POINT.y + REGION_HEIGHT);
+
+        /*
+         * Working variables
+         */
+        Mat region1_Cb;
+        Mat YCrCb = new Mat();
+        Mat Cb = new Mat();
+        int avg1;
+
+        // Volatile since accessed by OpMode thread w/o synchronization
+        public volatile RingPosition position = RingPosition.FOUR;
+
+        /*
+         * This function takes the RGB frame, converts to YCrCb,
+         * and extracts the Cb channel to the 'Cb' variable
+         */
+        void inputToCb(Mat input)
+        {
+            Imgproc.cvtColor(input, YCrCb, Imgproc.COLOR_RGB2YCrCb);
+            Core.extractChannel(YCrCb, Cb, 1);
+        }
+
+        @Override
+        public void init(Mat firstFrame)
+        {
+            inputToCb(firstFrame);
+
+            region1_Cb = Cb.submat(new Rect(region1_pointA, region1_pointB));
+        }
+
+        @Override
+        public Mat processFrame(Mat input)
+        {
+            inputToCb(input);
+
+            avg1 = (int) Core.mean(region1_Cb).val[0];
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region1_pointA, // First point which defines the rectangle
+                    region1_pointB, // Second point which defines the rectangle
+                    BLUE, // The color the rectangle is drawn in
+                    2); // Thickness of the rectangle lines
+
+            position = RingPosition.FOUR; // Record our analysis
+            if(avg1 >= FOUR_RING_THRESHOLD){
+                position = RingPosition.FOUR;
+            }else if (avg1 >= ONE_RING_THRESHOLD){
+                position = RingPosition.ONE;
+            }else{
+                position = RingPosition.NONE;
+            }
+
+            Imgproc.rectangle(
+                    input, // Buffer to draw on
+                    region1_pointA, // First point which defines the rectangle
+                    region1_pointB, // Second point which defines the rectangle
+                    GREEN, // The color the rectangle is drawn in
+                    1); // Negative thickness means solid fill
+
+            return input;
+        }
+
+        public int getAnalysis()
+        {
+            return avg1;
+        }
+    }
+
 }
+

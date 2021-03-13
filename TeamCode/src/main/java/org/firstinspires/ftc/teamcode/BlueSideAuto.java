@@ -11,19 +11,46 @@ public class BlueSideAuto extends BaseAuto {
         //Initialize the hardware using BaseAutonomous Function
         inithardware();
 
-        telemetry.update();
-        int x =1;
+        initializeOpenCV();
 
 
         //Wait for the start button to be pressed
         waitForStart();
 
-        while (true) {
+        /*while (opModeIsActive())
+        {
+
             double gyroangle = getAverageGyro();
-            telemetry.addData("angle: ",gyroangle);
+            telemetry.addData("angle: ", gyroangle);
+            telemetry.addData("Analysis", pipeline.getAnalysis());
+            telemetry.addData("Position", pipeline.position);
             telemetry.update();
-            sleep(100);
+
+            // Don't burn CPU cycles busy-looping in this sample
+            sleep(50);
+        }*/
+
+//        encoderMecanumDrive(0.3, 20, 3, 0, 1);
+//        telemetry.addData("imu", getAverageGyro());
+//        telemetry.update();
+//        gyroTurn(0.3,90);
+//        telemetry.addData("imu", getAverageGyro());
+//        telemetry.update();
+
+        wait(1000);
+        telemetry.addData("Position", pipeline.position);
+        telemetry.update();
+
+        if (pipeline.position.toString() == "FOUR"){
+            
+        } else if (pipeline.position.toString() == "ONE"){
+
+        } else {
+
         }
+
+
+
 
 //        encoderMecanumDrive(DRIVE_SPEED,50,4,-1,0);
 //        encoderMecanumDrive(DRIVE_SPEED,50,4,0,-1);
