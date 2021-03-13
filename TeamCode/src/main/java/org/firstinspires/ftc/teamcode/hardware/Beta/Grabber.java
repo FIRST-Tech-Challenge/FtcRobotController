@@ -34,9 +34,9 @@ public class Grabber extends Logger<Grabber> implements Configurable {
     private final double ARM_SPEED = 2500;
     private int ARM_POS_MAX = 800;
     private int ARM_POS_INIT = 0;
-    private int ARM_POS_UP = 250;
-    private int ARM_POS_UP_UP = 130;
-    private int ARM_POS_DOWN = 550;
+    private int ARM_POS_UP = 0;
+    private int ARM_POS_UP_UP = -100;
+    private int ARM_POS_DOWN = 230;
     private int ARM_UNIT = 30;
 
     private double GRABBER_OPEN = 0.82;
@@ -114,6 +114,11 @@ public class Grabber extends Logger<Grabber> implements Configurable {
     public Progress armToPos(int pos) {
         if (arm ==null) return null;
         arm.setTargetPosition(pos);
+        if (pos > ARM_POS_DOWN - 100) {
+            armIsLow = true;
+        } else if (pos < ARM_POS_UP - 50) {
+            armIsLow = false;
+        }
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         arm.setVelocity(ARM_SPEED);
         return new Progress() {
