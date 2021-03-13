@@ -18,7 +18,6 @@ public class OpModeV1 extends LinearOpMode {
     private DcMotor backRight;
     private DcMotor shooter;
     private DcMotor belt;
-    private DcMotor ramp;
 
     //code to play once the OpMode is active
     public void runOpMode() {
@@ -31,16 +30,14 @@ public class OpModeV1 extends LinearOpMode {
 
         shooter = hardwareMap.get(DcMotor.class, "buzz");
         belt = hardwareMap.get(DcMotor.class, "belt");
-        ramp = hardwareMap.get(DcMotor.class, "ramp");
 
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         shooter.setDirection(DcMotorSimple.Direction.FORWARD);
         belt.setDirection(DcMotorSimple.Direction.REVERSE);
-        ramp.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -66,9 +63,9 @@ public class OpModeV1 extends LinearOpMode {
             // Driving
             if (strafeRight){
                 frontLeft.setPower(-0.5);
-                backLeft.setPower(-0.5);
-                frontRight.setPower(-0.5);
-                backRight.setPower(0.5);
+                backLeft.setPower(0.5);
+                frontRight.setPower(0.5);
+                backRight.setPower(-0.5);
             }else if (strafeLeft){
                 frontLeft.setPower(0.5);
                 backLeft.setPower(-0.5);
@@ -80,16 +77,14 @@ public class OpModeV1 extends LinearOpMode {
                 backLeft.setPower(throttle);
                 backRight.setPower(throttle);
 
-                frontLeft.setPower(-pivot);
+                frontLeft.setPower(pivot);
                 frontRight.setPower(-pivot);
-                backLeft.setPower(-pivot);
-                backRight.setPower(pivot);
+                backLeft.setPower(pivot);
+                backRight.setPower(-pivot);
             }
 
-            ramp.setPower(0.25*rampDirection);
-
-            if (shooterPower >= 0.5){
-                shooter.setPower(1);
+            if (shooterPower >= 0.75){
+                shooter.setPower(0.75);
             }else{
                 shooter.setPower(shooterPower);
             }
