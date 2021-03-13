@@ -50,13 +50,16 @@ public class RobotClass {
     ColorSensor colorSensor;
 
     OpenCvInternalCamera phoneCam;
-    SkystoneDeterminationPipelineInnerBlueOuterRed pipeline;
+    SkystoneDeterminationPipeline pipeline;
 
     LinearOpMode opmode;
     HardwareMap hardwareMap;
+    String color;
+
+    static Point REGION1_TOPLEFT_ANCHOR_POINT;
 
 
-    public RobotClass(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opmode) {
+    public RobotClass(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opmode, String color) {
         this.hardwareMap= hardwareMap;
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft" );
         frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
@@ -94,11 +97,55 @@ public class RobotClass {
         imu.initialize(parameters);
 
         this.opmode = opmode;
-
+        REGION1_TOPLEFT_ANCHOR_POINT = new Point(192,176);
+this.color= color;
 
     }
 
-    public SkystoneDeterminationPipelineInnerBlueOuterRed.RingPosition analyze() {
+    public RobotClass(HardwareMap hardwareMap, Telemetry telemetry, LinearOpMode opmode) {
+        this.hardwareMap= hardwareMap;
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft" );
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight" );
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft" );
+        backRight = hardwareMap.get(DcMotor.class, "backRight" );
+        shooterMotor = hardwareMap.get(DcMotorImplEx.class, "shooterMotor");
+        // continuous1 = hardwareMap.get(CRServo.class, "cRServo1");
+        wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
+        shooterServo1 = hardwareMap.get(CRServo.class,"shooterServo1");
+        wobbleGoalRaise = hardwareMap.dcMotor.get("wobbleLift");
+        intakeServo = hardwareMap.crservo.get("intakeServoOne");
+        shooterServo1 = hardwareMap.crservo.get("shooterServo1");
+        shooterServo2 = hardwareMap.crservo.get("shooterServo2");
+        colorSensor = hardwareMap.colorSensor.get("colorSensor");
+
+        motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
+
+        this.telemetry = telemetry;
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        // parameters.calibrationDataFile = "AdafruitIMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm=null;//= new JustLoggingAccelerationIntegrator();
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu1");
+        imu.initialize(parameters);
+
+        this.opmode = opmode;
+        REGION1_TOPLEFT_ANCHOR_POINT = new Point(192,176);
+        this.color= "blue";
+
+    }
+
+    public RingPosition analyze() {
         pipeline.getAnalysis();
         return pipeline.position;
     }
@@ -625,7 +672,7 @@ public class RobotClass {
     public void openCVInnitShenanigans() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.FRONT, cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationPipelineInnerBlueOuterRed();
+        pipeline = new SkystoneDeterminationPipeline(color);
         phoneCam.setPipeline(pipeline);
 
 
@@ -644,17 +691,26 @@ public class RobotClass {
         });
 
     }
-    public static class SkystoneDeterminationPipelineInnerBlueOuterRed extends OpenCvPipeline
+
+    public enum RingPosition
     {
+        FOUR,
+        ONE,
+        NONE
+    }
+    public static class SkystoneDeterminationPipeline extends OpenCvPipeline
+    {
+
+        public SkystoneDeterminationPipeline(String color){
+            if ("red".equalsIgnoreCase(color)){
+                int FOUR_RING_THRESHOLD = 150;
+                int ONE_RING_THRESHOLD = 140;
+            }
+        }
         /*
          * An enum to define the skystone position
          */
-        public enum RingPosition
-        {
-            FOUR,
-            ONE,
-            NONE
-        }
+
 
         /*
          * Some color constants
@@ -665,7 +721,7 @@ public class RobotClass {
         /*
          * The core values which define the location and size of the sample regions
          */
-        static  Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(68,176);
+
 //inner blue 68,176 size 30,42
         //outer blue 192, 176 size 30,42
         //inside red, the same as outer blue
@@ -675,8 +731,8 @@ public class RobotClass {
         static final int REGION_WIDTH = 30;
         static final int REGION_HEIGHT = 42;
 
-        final int FOUR_RING_THRESHOLD = 150;
-        final int ONE_RING_THRESHOLD = 135;
+         int FOUR_RING_THRESHOLD = 150;
+         int ONE_RING_THRESHOLD = 135;
 
         Point region1_pointA = new Point(
                 REGION1_TOPLEFT_ANCHOR_POINT.x,
@@ -753,21 +809,13 @@ public class RobotClass {
             return avg1;
         }
     }
-    public static class SkystoneDeterminationPipelineOuterBlueInnerRed extends SkystoneDeterminationPipelineInnerBlueOuterRed
-    {
-        public SkystoneDeterminationPipelineOuterBlueInnerRed(){
-            REGION1_TOPLEFT_ANCHOR_POINT = new Point(192,176);
-        }
+
 
 
 //inner blue 68,176 size 30,42
         //outer blue 192, 176 size 30,42
         //inside red, the same as outer blue
         //outer red, the same as inside blue
-
-
-    }
-
 
 
     }
