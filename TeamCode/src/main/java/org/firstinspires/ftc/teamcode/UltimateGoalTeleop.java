@@ -45,7 +45,7 @@ import java.util.ArrayList;
  *
  */
 
-@TeleOp(name="Ultimate Goal Teleop", group="UltimateGoal")
+@TeleOp(name="Ultimate Goal poop", group="UltimateGoal")
 public class UltimateGoalTeleop extends OpMode{
 
 
@@ -167,11 +167,16 @@ public class UltimateGoalTeleop extends OpMode{
             for (String caption : t.telemetryDM.keySet()){
                 telemetry.addData(caption, t.telemetryDM.get(caption));
             }
-            telemetry.addData("Configuration: ", t.getName());
+            telemetry.addData("Configuration1: ", t.getName());
+            telemetry.addData("FL", robot.frontLeft.getCurrentPosition());
+            telemetry.addData("FR", robot.frontRight.getCurrentPosition());
+            telemetry.addData("BL", robot.backLeft.getCurrentPosition());
+            telemetry.addData("BR", robot.backRight.getCurrentPosition());
             telemetry.update();
             t.updateTelemetryDM();
 
             t.loop();
+
         }
 
     }

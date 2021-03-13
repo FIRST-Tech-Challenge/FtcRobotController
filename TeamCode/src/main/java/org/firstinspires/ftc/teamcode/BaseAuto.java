@@ -40,6 +40,8 @@ public abstract class BaseAuto extends LinearOpMode {
 
     ElapsedTime runtime = new ElapsedTime();
 
+
+
     // define and initialize variables
 
     static final double     COUNTS_PER_MOTOR_REV    = 767.2 ;    // eg: TETRIX Motor Encoder
@@ -88,11 +90,26 @@ public abstract class BaseAuto extends LinearOpMode {
     // initializes hardware  and vuforia; calibrates gyro
     public void inithardware(){
 
-
+        robot = new HardwareMapV2();
         robot.init(hardwareMap);
 
-        robot.setEncoders(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.setEncoders(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+//        robot.setEncoders(robot.motors, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.setEncoders(robot.motors, DcMotor.RunMode.RUN_USING_ENCODER);
+
+        robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 

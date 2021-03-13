@@ -92,6 +92,16 @@ public class HardwareMapV2 {
         leftTilt.setPosition(0.5);
         wobble.setPosition(0.0);
 
+        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     public void setEncoders(ArrayList<DcMotor> motors, DcMotor.RunMode mode){
@@ -102,7 +112,7 @@ public class HardwareMapV2 {
 
     public void setEncoders(DcMotor.RunMode mode){
         setEncoders(motors, mode);
-        setEncoders(odomotors, mode);
+//        setEncoders(odomotors, mode);
     }
 
     public void setPowerAll(double power){

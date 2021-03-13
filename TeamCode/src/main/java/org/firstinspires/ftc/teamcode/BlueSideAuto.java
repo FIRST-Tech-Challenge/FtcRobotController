@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @Autonomous(name = "BlueSideAuto",group = "SkyStone")
 public class BlueSideAuto extends BaseAuto {
 
+    Drivetrain drivetrain;
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -13,6 +16,9 @@ public class BlueSideAuto extends BaseAuto {
         inithardware();
 
         initializeOpenCV();
+
+
+        drivetrain = new Drivetrain(robot);
 
 
         //Wait for the start button to be pressed
