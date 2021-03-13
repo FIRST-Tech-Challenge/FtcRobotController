@@ -69,7 +69,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double webcam_offset_y = -14.2;
     public double shooting_dist = 0;
     public double shooting_angle = 0;
-    public double shooterAngleOffset = 3.5;
+    public double shooterAngleOffset = 4;
     final public double MAX_RPM = 1720;
     final public double WARM_UP_RPM = 1660;
     static final public double WARM_UP_RPM_AUTO = 1640;
@@ -1675,6 +1675,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 intake.stop();
                 autoShootHighGoal(1, true);
                 chassis.driveTo(auto_chassis_power, side(75), 225, 0, false, 5);
+                while (!TaskManager.isComplete("Transfer Down Combo") && !interrupted()) {
+                    TaskManager.processTasks();
+                }
             } else if (tZone == TargetZone.ZONE_C) {//4
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
