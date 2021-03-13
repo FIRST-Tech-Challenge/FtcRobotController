@@ -55,7 +55,7 @@ public class TestRobot {
     public boolean fastMode = true;
 
 
-    public AutoModule2 testModule = new AutoModule2(); // 0
+    public AutoModule2 shooter = new AutoModule2(); // 0
 
     public ArrayList<AutoModule2> autoModule2s = new ArrayList<>();
 
@@ -70,24 +70,30 @@ public class TestRobot {
         r2 = getMotor(hwMap, "r2", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         in = getMotor(hwMap, "in", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outr = getMotor(hwMap, "outr", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        outl = getMotor(hwMap, "outl", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outr = getMotor(hwMap, "outr", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outl = getMotor(hwMap, "outl", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         rh = getCRServo(hwMap, "rh", CRServo.Direction.REVERSE);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, rpStart);
 
-        //angularPosition.init(hwMap);
-
+//        angularPosition.init(hwMap);
+//
 
 //
 //        lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
 //        fr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "fr");
 
-        testModule.addStage(in, 1, 1.0);
-        testModule.addStage(in, 0, 0.1);
-
-        autoModule2s.add(testModule);
+        shooter.addStage(rp, pushControl, 1 , 0.3);
+        shooter.addStage(0.8, outl);
+        shooter.addStage( 0.4, outr);
+        shooter.addPause();
+        for(int i = 0; i < 3; i++) {
+            shooter.addStage(rp, pushControl, 2, 0.3);
+            shooter.addStage(rp, pushControl, 1, 0.3);
+        }
+        shooter.addStage(rp, pushControl, 0, 0.3);
+        autoModule2s.add(shooter);
 
 
 
@@ -155,10 +161,15 @@ public class TestRobot {
 
 
     public void moveTeleOp(double f, double s, double t){
+
+        double restForwardPow = 0.05;
+        double restStrafePow = 0.1;
+        double restTurnPow = 0.1;
+
         if(fastMode) {
-            move((f*0.95) + Math.signum(f)*0.05, (s*0.9)+Math.signum(s)*0.1, Math.signum(t)*t*t*0.7 + (Math.signum(t) * 0.3));
+            move((f*(1-restForwardPow)) + Math.signum(f)*restForwardPow, (s*(1-restStrafePow))+Math.signum(s)*restStrafePow, 0.9*t*(1-restTurnPow)+ (Math.signum(t) * restTurnPow));
         }else{
-            move((f*0.2) + Math.signum(f)*0.05, (s*0.2)+Math.signum(s)*0.1, (t*0.2)+Math.signum(t)*0.3);
+            move((f*0.2) + Math.signum(f)*restForwardPow, (s*0.2)+Math.signum(s)*restStrafePow, (t*0.2)+Math.signum(t)*restTurnPow);
         }
     }
 
@@ -182,7 +193,12 @@ public class TestRobot {
 
 
 
-
+    public double getLeftDistance(){
+        return lr.getDistance(DistanceUnit.CM);
+    }
+    public double getFrontDistance(){
+        return fr.getDistance(DistanceUnit.CM);
+    }
 
     public void outtakeWithCalculations() {
         double p = autoAimer.getOuttakePower(angularPosition.getHeadingCS(), lr.getDistance(DistanceUnit.METER), fr.getDistance(DistanceUnit.METER));
@@ -193,8 +209,8 @@ public class TestRobot {
 
     public double getRobotToGoalAngle() {
         double robotTheta = angularPosition.getHeadingCS() * Math.PI/180;
-        double x = autoAimer.getDisFromCenter(lr.getDistance(DistanceUnit.METER), robotTheta) - Constants.GOAL_FROM_LEFT;
-        double y = autoAimer.getDisFromCenter(fr.getDistance(DistanceUnit.METER), robotTheta);
+        double x = autoAimer.getDisFromCenter(getLeftDistance()/100, robotTheta) - Constants.GOAL_FROM_LEFT;
+        double y = autoAimer.getDisFromCenter(getFrontDistance()/100, robotTheta);
         return Math.atan2(y, x);
     }
 }

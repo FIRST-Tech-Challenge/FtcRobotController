@@ -19,21 +19,36 @@ public class TestTele extends OpMode {
         double strafe = gamepad1.right_stick_x;
         double turn = -gamepad1.left_stick_x;
 
+
         bot.moveTeleOp(forward, strafe, turn);
+
+        if(gamepad1.right_trigger > 0){
+            bot.fastMode = true;
+        }else if(gamepad1.left_trigger > 0){
+            bot.fastMode = false;
+        }
 
         if(!bot.areAutomodulesRunning()) {
             bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
 
-            bot.outtake(gamepad2.right_stick_y);
+            bot.outtake(-gamepad2.right_stick_y);
 
             bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
 
-
         }
 
-        if(gamepad1.a){
-            bot.testModule.start();
+        if(gamepad2.y){
+            bot.shooter.start();
         }
+
+//
+//        telemetry.addData("gyro", bot.angularPosition.getHeadingGY());
+//        telemetry.addData("compass", bot.angularPosition.getHeadingCS());
+//        telemetry.addData("left distance", bot.getLeftDistance());
+//        telemetry.addData("front distance", bot.getFrontDistance());
+//        telemetry.update();
+
+
 
 
 

@@ -19,8 +19,8 @@ public class AngularPosition {
     public double heading = 0;
 
     public void init(HardwareMap hwMap){
-        compassSensor = hwMap.get(ModernRoboticsI2cCompassSensor.class, "compass");
-        gyroSensor = hwMap.get(BNO055IMU.class, "imu1");
+        compassSensor = hwMap.get(ModernRoboticsI2cCompassSensor.class, "cp");
+        gyroSensor = hwMap.get(BNO055IMU.class, "gyro");
 
         compassSensor.setMode(CompassSensor.CompassMode.MEASUREMENT_MODE);
 
@@ -62,4 +62,5 @@ public class AngularPosition {
         lastAngle = ca;
         return heading;
     }
+
 }

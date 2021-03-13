@@ -17,10 +17,9 @@ public class FTCAutoAimer {
         return calcSpeed(frontDis, leftDis)/Constants.MAX_OUTTAKE_SPEED;
     }
 
-    public double getDisFromCenter (double len, double robotTheta){
+    public double getDisFromCenter(double len, double robotTheta){
         double d = geometry.lawOfCosinesC(len, Constants.ROBOT_RADIUS, Constants.CENTER_THETA);
         double phi = geometry.lawOfSinesAngle(Constants.ROBOT_RADIUS, d, Constants.CENTER_THETA);
-
         return d * Math.cos(robotTheta + phi);
     }
 

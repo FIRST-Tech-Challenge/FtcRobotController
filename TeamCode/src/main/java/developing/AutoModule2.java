@@ -19,6 +19,9 @@ public class AutoModule2 {
     public ArrayList<Stage> stages = new ArrayList<>();
 
 
+    public boolean pausing = false;
+
+
 
 
     public void start(){
@@ -29,6 +32,7 @@ public class AutoModule2 {
             Thread t = new Thread(testThread);
             t.start();
         }
+        pausing = false;
     }
 
     public boolean isExecuting(){
@@ -104,6 +108,24 @@ public class AutoModule2 {
                 return in > t;
             }
         });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                mot.setPower(0);
+                return true;
+            }
+        });
+    }
+    public void addStage(final double pow, final DcMotor ...mots) {
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                for (DcMotor mot: mots) {
+                    mot.setPower(pow);
+                }
+                return true;
+            }
+        });
     }
 
     public void addStage(final Servo s, final double pos, final double t) {
@@ -112,6 +134,33 @@ public class AutoModule2 {
             public boolean run(double in) {
                 s.setPosition(pos);
                 return in > t;
+            }
+        });
+    }
+
+    public void addStage(final Servo s, final Cycle cycle, final int idx, final double t) {
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                cycle.curr = idx;
+                s.setPosition(cycle.getPos(idx));
+                return in > t;
+            }
+        });
+    }
+
+    public void addPause() {
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                pausing = true;
+                return true;
+            }
+        });
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                return !pausing;
             }
         });
     }
