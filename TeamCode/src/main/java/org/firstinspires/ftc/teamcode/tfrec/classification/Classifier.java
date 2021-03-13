@@ -247,32 +247,40 @@ public abstract class Classifier {
 
     /** Runs inference and returns the classification results. */
     public List<Recognition> recognizeImage(final Bitmap bitmap, int sensorOrientation) {
-        // Logs this method so that it can be analyzed with systrace.
-        Trace.beginSection("recognizeImage");
+        List<Recognition> recognitonList = new ArrayList<>();
 
-        Trace.beginSection("loadImage");
-        long startTimeForLoadImage = SystemClock.uptimeMillis();
-        inputImageBuffer = loadImage(bitmap, sensorOrientation);
-        long endTimeForLoadImage = SystemClock.uptimeMillis();
-        Trace.endSection();
-        Log.v(TAG, "Time to load the image: " + (endTimeForLoadImage - startTimeForLoadImage));
+        try {
+            // Logs this method so that it can be analyzed with systrace.
+            Trace.beginSection("recognizeImage");
 
-        // Runs the inference call.
-        Trace.beginSection("runInference");
-        long startTimeForReference = SystemClock.uptimeMillis();
-        tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer().rewind());
-        long endTimeForReference = SystemClock.uptimeMillis();
-        Trace.endSection();
-        Log.v(TAG, "Time to run model inference: " + (endTimeForReference - startTimeForReference));
+            Trace.beginSection("loadImage");
+            long startTimeForLoadImage = SystemClock.uptimeMillis();
+            inputImageBuffer = loadImage(bitmap, sensorOrientation);
+            long endTimeForLoadImage = SystemClock.uptimeMillis();
+            Trace.endSection();
+            Log.v(TAG, "Time to load the image: " + (endTimeForLoadImage - startTimeForLoadImage));
 
-        // Gets the map of label and probability.
-        Map<String, Float> labeledProbability =
-                new TensorLabel(labels, probabilityProcessor.process(outputProbabilityBuffer))
-                        .getMapWithFloatValue();
-        Trace.endSection();
+            // Runs the inference call.
+            Trace.beginSection("runInference");
+            long startTimeForReference = SystemClock.uptimeMillis();
+            tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer().rewind());
+            long endTimeForReference = SystemClock.uptimeMillis();
+            Trace.endSection();
+            Log.v(TAG, "Time to run model inference: " + (endTimeForReference - startTimeForReference));
 
-        // Gets top-k results.
-        return getTopKProbability(labeledProbability);
+            // Gets the map of label and probability.
+            Map<String, Float> labeledProbability =
+                    new TensorLabel(labels, probabilityProcessor.process(outputProbabilityBuffer))
+                            .getMapWithFloatValue();
+            Trace.endSection();
+
+            // Gets top-k results.
+            recognitonList = getTopKProbability(labeledProbability);
+        } catch (Exception ex) {
+            Log.e(TAG, String.format("Error in recognizeImage. %s", ex.toString()));
+        }
+
+        return recognitonList;
     }
 
     /** Closes the interpreter and model to release resources. */

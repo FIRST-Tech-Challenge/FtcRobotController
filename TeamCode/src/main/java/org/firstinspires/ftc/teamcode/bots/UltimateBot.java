@@ -29,9 +29,9 @@ public class UltimateBot extends YellowBot {
 
     private SwingPosition swingPosition = SwingPosition.Init;
     private static double SWING_BACK_POS = 1;
-    private static double SWING_PLACE_POS = 0.25;
-    private static double SWING_LIFT_AND_HOLD = 0.55;
-    private static double SWING_LIFT_WALL = 0.7;
+    private static double SWING_PLACE_POS = 0.17;
+    private static double SWING_LIFT_AND_HOLD = 0.35;
+    private static double SWING_LIFT_WALL = 0.6;
     private static double SHOOT_SERVO = 0.7;
 
     private static int TIMEOUT = 2500;

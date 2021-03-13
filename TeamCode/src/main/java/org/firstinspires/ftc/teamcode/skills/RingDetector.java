@@ -118,11 +118,11 @@ public class RingDetector implements Runnable{
                             }
 
                             targetZone = zone.getDotName();
-                            distance = (r.getLocation().left + r.getLocation().right)/2;
+                            distance = (r.getLocation().centerX());
 
                             telemetry.addData("Zone", targetZone);
-                            telemetry.addData("left", r.getLocation().left);
-                            telemetry.addData("right", r.getLocation().right);
+                            telemetry.addData("left", r.getLocation().centerX());
+                            telemetry.addData("right", r.getLocation().centerY());
                         }
                     }
                 }
@@ -202,13 +202,13 @@ public class RingDetector implements Runnable{
                                 this.recogZone = zoneA;
                             }
 
-                            distance = (r.getLocation().left + r.getLocation().right)/2;
+                            distance = r.getLocation().centerX();
                             targetZone = this.recogZone.getDotName();
 
                             telemetry.addData("Zone", targetZone);
                             telemetry.addData("CenterX", distance);
-                            telemetry.addData("left", r.getLocation().left);
-                            telemetry.addData("right", r.getLocation().right);
+                            telemetry.addData("left", r.getLocation().centerX());
+                            telemetry.addData("right", r.getLocation().centerY());
                         }
                     }
                 }
