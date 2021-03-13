@@ -32,11 +32,11 @@ public class Grabber extends Logger<Grabber> implements Configurable {
                                          // 2 is new grabber
     private final double ARM_POWER = 0.5;
     private final double ARM_SPEED = 2500;
-    private int ARM_POS_MAX = 800;
+    private int ARM_POS_MAX = 460;
     private int ARM_POS_INIT = 0;
     private int ARM_POS_UP = 0;
     private int ARM_POS_UP_UP = -100;
-    private int ARM_POS_DOWN = 230;
+    private int ARM_POS_DOWN = 370;
     private int ARM_UNIT = 30;
 
     private double GRABBER_OPEN = 0.82;
@@ -107,8 +107,9 @@ public class Grabber extends Logger<Grabber> implements Configurable {
 
     public void armStop() {
         if (arm ==null) return;
-        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        arm.setPower(0);
+        armToPos (arm.getCurrentPosition());
+        //arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //arm.setPower(0);
     }
 
     public Progress armToPos(int pos) {
@@ -116,7 +117,7 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         arm.setTargetPosition(pos);
         if (pos > ARM_POS_DOWN - 100) {
             armIsLow = true;
-        } else if (pos < ARM_POS_UP - 50) {
+        } else if (pos < ARM_POS_UP + 50) {
             armIsLow = false;
         }
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -163,9 +164,7 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         } else {
             pos = pos + ARM_UNIT;
         }
-        arm.setTargetPosition(pos);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setVelocity(ARM_SPEED);
+        armToPos(pos);
     }
 
     public void armDownInc(boolean forced) {
@@ -179,9 +178,7 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         } else {
             pos = pos-ARM_UNIT;
         }
-        arm.setTargetPosition(pos);
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setVelocity(-ARM_SPEED);
+        armToPos(pos);
     }
 
     public void grabberOpen(){
@@ -261,16 +258,18 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         final String taskName = "grab Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
         isGrabFromBottom = !isHigh;
-        TaskManager.add(new Task() {
-            @Override
-            public Progress start() {
-                return moveGrabber(GRABBER_OPEN);
-            }}, taskName);
-        TaskManager.add(new Task() {
-            @Override
-            public Progress start() {
-                return armToPos(ARM_POS_DOWN);
-            }}, taskName);
+        if (!armIsLow) {
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    return moveGrabber(GRABBER_OPEN);
+                }}, taskName);
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    return armToPos(ARM_POS_DOWN);
+                }}, taskName);
+        }
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
@@ -323,7 +322,7 @@ public class Grabber extends Logger<Grabber> implements Configurable {
             grabberIsClosed = false;
         }
         // 1200 ms per 180 degree
-        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 600);
+        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 800);
         return new Progress() {
             @Override
             public boolean isDone() {

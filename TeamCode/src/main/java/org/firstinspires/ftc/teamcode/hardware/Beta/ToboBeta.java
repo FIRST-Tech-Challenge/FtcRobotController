@@ -488,8 +488,8 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         em.onButtonUp(new Events.Listener() {
             @Override
             public void buttonUp(EventManager source, Button button) throws InterruptedException {
-                if (grabber != null)
-                    grabber.armStop();
+                //if (grabber != null)
+                  //  grabber.armStop();
                 if (hopper != null)
                     hopper.transferStop();
 
@@ -529,7 +529,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             @Override
             public void buttonUp(EventManager source, Button button) throws InterruptedException {
                 if (grabber != null)
-                    grabber.armStop();
+                    //grabber.armStop();
                 if (source.isPressed(Button.RIGHT_BUMPER)) {
                     ;
                 }
@@ -1723,12 +1723,11 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     public void autoGrabBottomWobbleGoal() throws InterruptedException {
         if (simulation_mode || chassis==null|| grabber==null) return;
         grabber.grabberOpen();
-        sleep(100);
         grabber.armDown();
-        sleep(400);
-        chassis.yMove(1, 0.5);
+        sleep(250);
+        chassis.yMove( -1, 0.5);
         sleep(200);
-        chassis.yMove(1, 0.2);
+        chassis.yMove(-1, 0.2);
         if (grabber !=null) {
             grabber.grabWobbleGoalCombo(false);
             while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
@@ -1744,7 +1743,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         comboGrabber.armDown();
         sleep(200);
          */
-        chassis.yMove(1, 0.3);
+        chassis.yMove(-1, 0.3);
         sleep(200);
         chassis.stop();
         if (grabber !=null) {
@@ -1775,15 +1774,15 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     public void autoIntakeRings(int n, boolean callFromAuto) throws InterruptedException {
         if (simulation_mode || chassis==null|| intake ==null) return;
         if(!callFromAuto) {
-            chassis.yMove(1, 1.0);
+            chassis.yMove(-1, 1.0);
             sleep(400);
             chassis.stop();
-            chassis.yMove(1, -0.4);
+            chassis.yMove(-1, -0.4);
             sleep(300);
         }
-        chassis.yMove(1, -0.35);
+        chassis.yMove(-1, -0.35);
         sleep(200);
-        chassis.yMove(1, 0.17);
+        chassis.yMove(-1, 0.17);
         intake.intakeIn();
         for (int i = 0; i < n; i++) {
             sleep(700);
@@ -1803,24 +1802,6 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             sleep(400);
             intake.stop();
         }*/
-    }
-
-
-    public void endGameGrabCombo() throws InterruptedException {
-        if (grabber ==null) return;
-        grabber.releaseWobbleGoalCombo();
-        while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
-            TaskManager.processTasks();
-        }
-        chassis.yMove(-1, 0.2);
-        sleep(400);
-        chassis.yMove(1, 0.2);
-        sleep(450);
-        chassis.stop();
-        grabber.grabWobbleGoalCombo(true);
-        while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
-            TaskManager.processTasks();
-        }
     }
 
     public void rotateToTargetAndStartShooter(MechChassis.ShootingTarget target, boolean useVuforia) {
