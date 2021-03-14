@@ -69,7 +69,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double webcam_offset_y = -14.2;
     public double shooting_dist = 0;
     public double shooting_angle = 0;
-    public double shooterAngleOffset = 3;
+    public double shooterAngleOffset = 2.5;
     final public double MAX_RPM = 1720;
     final public double WARM_UP_RPM = 1660;
     static final public double WARM_UP_RPM_AUTO = 1600;
