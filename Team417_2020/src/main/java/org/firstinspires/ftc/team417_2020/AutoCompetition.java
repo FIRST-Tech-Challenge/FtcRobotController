@@ -9,25 +9,29 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name="Competition Auto")
-public class AutoCompetition extends MasterAutonomous{
+public class AutoCompetition extends MasterAutonomous {
 
     int allianceSide = 1;
     Toggler rightBumper = new Toggler();
 
+    // Constants
+    static final int MINIMUM_RING_AREA = 1800;
+    static final int PARKING_Y_POSITION = 84;
+    static final int A_C_TARGET_ZONE_X_POSITION = -24;
+    static final int A_TARGET_ZONE_Y_POSITION = 72;
+    static final int B_TARGET_ZONE_Y_POSITION = 96;
+    static final int C_TARGET_ZONE_Y_POSITION = 120;
+
     RingDetectionOpenCV ringDetector = new RingDetectionOpenCV();
     OpenCvCamera webcam;
     int numRings;
-
-
 
     @Override
     public void runOpMode() throws InterruptedException {
         autoInitializeRobot();
         initializeRingCounter();
 
-
         telemetry.addLine("waiting for start");
-        telemetry.update();
 
         while (!opModeIsActive()) {
             countRings();
@@ -35,41 +39,42 @@ public class AutoCompetition extends MasterAutonomous{
             telemetry.update();
         }
 
-
         waitForStart();
 
         // 0 rings -> Zone A
         // 1 rings -> Zone B
         // 4 rings -> Zone C
-        if (numRings == 0) {
-            // Nagivate to Zone A
-            move(0, 72, 0.7);
-            move(-24, 72, 0.7);
-            openWobbleGoalArm();
-            move(-24, 48, 0.7);
-            move(0, 84, 0.7);
+        switch (numRings) {
+            case 0:
+                // Nagivate to Zone A
+                move(0, A_TARGET_ZONE_Y_POSITION, 0.7);
+                move(A_C_TARGET_ZONE_X_POSITION, A_TARGET_ZONE_Y_POSITION, 0.7);
+                openWobbleGoalArm();
+                move(A_C_TARGET_ZONE_X_POSITION, 48, 0.7);
 
-        } else if (numRings == 1) {
-            // Navigate to Zone B
-            move(0, 96, 0.7);
-            openWobbleGoalArm();
-            move(0, 84, 0.7);
+            case 1:
+                // Navigate to Zone B
+                move(0, B_TARGET_ZONE_Y_POSITION, 0.7);
+                openWobbleGoalArm();
 
-        } else if (numRings == 4) {
-            // Navigate to Zone C
-            move(0, 120, 0.7);
-            move( -24, 120, 0.7);
-            openWobbleGoalArm();
-            move(0, 84, 0.7);
-
+            case 4:
+                // Navigate to Zone C
+                move(0, C_TARGET_ZONE_Y_POSITION, 0.7);
+                move(A_C_TARGET_ZONE_X_POSITION, C_TARGET_ZONE_Y_POSITION, 0.7);
+                openWobbleGoalArm();
         }
+
+        // Park over white line
+        move(0, PARKING_Y_POSITION, 0.7);
 
     }
 
+    // todo program Wobble Goal arm
     public void openWobbleGoalArm() {
 
     }
 
+    // Uses gamepad to pick alliance side
     public int pickAllianceSide() {
         boolean isRedSide = rightBumper.toggle(gamepad1.right_bumper);
         if (isRedSide) {
@@ -82,17 +87,12 @@ public class AutoCompetition extends MasterAutonomous{
         return allianceSide;
     }
 
+    // Determines number of rings based on area and aspect ratio of orange rectangle
     public int countRings() {
         telemetry.addData("max rectangle", ringDetector.maxRect.toString());
 
-        // area at 30 inches away (for threshold of 0 rings):
-
-        // 4 rings area: 105x75
-        // 1 ring area: 105x23
-
-        // area has to be greater than 2000, otherwise there are 0 rings
-
-        if (ringDetector.maxRect.area() < 1800) {
+        // area has to be greater than 1800, otherwise there are 0 rings
+        if (ringDetector.maxRect.area() < MINIMUM_RING_AREA) {
             numRings = 0;
         }
         else if (ringDetector.maxRect.width / ringDetector.maxRect.height > 2.5) {
@@ -102,6 +102,7 @@ public class AutoCompetition extends MasterAutonomous{
         }
         telemetry.addData("Number of rings", numRings);
 
+        // Use gamepad to adjust U threshold for filtering orange in different lighting conditions
         if (gamepad1.a) {
             ringDetector.uThreshold ++;
             sleep(200);
@@ -114,6 +115,7 @@ public class AutoCompetition extends MasterAutonomous{
         return numRings;
     }
 
+    // Set up webcam streaming for counting Rings
     public void initializeRingCounter() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 

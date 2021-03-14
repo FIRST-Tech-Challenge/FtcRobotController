@@ -33,7 +33,6 @@ public class RingDetectionOpenCV extends OpenCvPipeline {
 
         // copy input frame to different Mat as to not alter input
         input.copyTo(displayMat);
-        //displayMat = displayMat.submat(rectCrop);
         // blur image
         Imgproc.GaussianBlur(input, blurred, new Size(15,15), 0);
         // convert color space to YUV
@@ -46,13 +45,8 @@ public class RingDetectionOpenCV extends OpenCvPipeline {
         List<MatOfPoint> contours = new ArrayList<>();
         // find contours
         Imgproc.findContours(u, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-            /*for (int i = 0; i < contours.size(); i++) {
-                Imgproc.drawContours(displayMat, contours, i, new Scalar(0,0,0), 2);
-            }
 
-            */
-        // find largest contour and assign to variable maxRect
-
+        // find largest contour and assign to maxRect
         double maxArea = 0.0;
         for (MatOfPoint contour: contours){
             rect = Imgproc.boundingRect(contour);
@@ -75,8 +69,6 @@ public class RingDetectionOpenCV extends OpenCvPipeline {
                 new Scalar(0,0,0), 4);
         Imgproc.putText(displayMat, "" + maxRect.toString(), new Point(x,y), 0, 1, new Scalar(0,0,0));
 
-
         return displayMat;
-        //return u;
     }
 }

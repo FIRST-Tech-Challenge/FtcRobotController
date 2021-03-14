@@ -31,12 +31,10 @@ public class GoalDetectionOpenCV extends OpenCvPipeline {
     Mat blueDisplayMat = new Mat();
     Rect rect = new Rect();
 
-
     // white detection
     Mat whiteMask = new Mat();
     Mat whiteThreshold = new Mat();
     List<MatOfPoint> whiteContours = new ArrayList<>();
-
 
     @Override
     public Mat processFrame(Mat input) {
@@ -45,20 +43,12 @@ public class GoalDetectionOpenCV extends OpenCvPipeline {
 
         return blueDetection(blue);
 
-        //---------------------------------------
-
-
-        //---------------------------------------
-
-
     }
 
     public Mat blueDetection(Mat input) {
-
         input.copyTo(blueDisplayMat);
         Imgproc.medianBlur(input, blueBlurred, 15);
         Imgproc.cvtColor(blueBlurred, hsv, Imgproc.COLOR_BGR2HSV);
-
 
         Scalar blueLower = new Scalar(0, 100, 135); // 100, 135, 0
         Scalar blueUpper = new Scalar(254, 254, 254); // 254, 254, 254
@@ -68,7 +58,6 @@ public class GoalDetectionOpenCV extends OpenCvPipeline {
                 Imgproc.CHAIN_APPROX_SIMPLE);
 
         // find largest contour
-
         double maxArea = 0.0;
         for (MatOfPoint contour : blueContours) {
             rect = Imgproc.boundingRect(contour);
@@ -88,12 +77,11 @@ public class GoalDetectionOpenCV extends OpenCvPipeline {
         blueGoal = input.submat(blueRect);
 
         return blueGoal;
-        //return blueGoal;
-        //return blueThreshold;
+
     }
 
+    // todo test white filtering parameters on field
     public Mat whiteDetection(Mat input) {
-
 
         Scalar whiteLower = new Scalar(200, 200, 200);
         Scalar whiteUpper = new Scalar(255, 255, 255);
@@ -102,6 +90,7 @@ public class GoalDetectionOpenCV extends OpenCvPipeline {
         Imgproc.findContours(blueThreshold, blueContours, blueHierarchy, Imgproc.RETR_EXTERNAL,
                 Imgproc.CHAIN_APPROX_SIMPLE);
         double maxArea = 0.0;
+        // find largest contour
         for (MatOfPoint contour : whiteContours) {
             rect = Imgproc.boundingRect(contour);
             double area = Imgproc.contourArea(contour);
@@ -109,10 +98,6 @@ public class GoalDetectionOpenCV extends OpenCvPipeline {
                 
             }
         }
-
-
-
-
         return whiteMask;
     }
 }
