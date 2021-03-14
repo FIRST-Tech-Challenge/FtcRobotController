@@ -71,10 +71,9 @@ public class Constants {
 
     public static int WOBBLE_GRIPPER_CLOSED = 900;
     public static int WOBBLE_GRIPPER_STOWED = 1920;
-    public static int INTAKE_SERVO_STOWED = 1200;
-    public static int INTAKE_SERVO_VERTICAL = 1240;
-    public static int INTAKE_SERVO_TRANSIT = 1345;
-    public static int INTAKE_SERVO_REACH = 1450;
+    public static int INTAKE_SERVO_TRAVEL = 1232;
+    public static int INTAKE_SERVO_HANDOFF = 1159;
+    public static int INTAKE_SERVO_PICKUP = 1525;
     public static double AUTO_INTAKE_FIRST = .65;
     public static double AUTO_INTAKE_SECOND = .75;
 
@@ -86,6 +85,8 @@ public class Constants {
     //inner conflicts
     public static double TURRET_HEADING_OFFSET = 30;
     public static double ELBOW_LEGAL_ANGLE = 35;
+
+    public static int WALL_FOLLOW_MULTIPLIER = 50;
 
 
     public enum Target {

@@ -14,7 +14,7 @@ public class Intake {
     public Servo tiltServo = null;
     private double speed;
     private boolean active = true;
-    private int tiltTargetPosition = 1300;
+    private int tiltTargetPosition = Constants.INTAKE_SERVO_TRAVEL;
 
 
 
@@ -53,19 +53,6 @@ public class Intake {
     }
 
     public void setActive(boolean active){this.active = active;}
-
-    private boolean fullTilt = false;
-    public void toggleFullTilt(){
-        fullTilt = !fullTilt;
-        if(fullTilt){
-            speed = 1;
-            setTiltTargetPosition(Constants.INTAKE_SERVO_TRANSIT);
-        }
-        else{
-            speed = 0;
-            setTiltTargetPosition(Constants.INTAKE_SERVO_VERTICAL);
-        }
-    }
 
     //endregion
 

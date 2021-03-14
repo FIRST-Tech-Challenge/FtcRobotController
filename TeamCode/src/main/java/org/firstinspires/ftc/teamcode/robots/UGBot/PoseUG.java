@@ -499,9 +499,9 @@ public class PoseUG {
         packet.put("bearing to", (360-Math.abs(getBearingTo(Constants.startingXOffset-.25, 1))));
         packet.put("distance to", getDistanceTo(Constants.startingXOffset,1.5));
         packet.put("rotVelBase", rotVelBase);
-        packet.put("intake power", intake.getIntakeSpeed());
-        packet.put("laggy counter", laggyCounter);
-        packet.put("numLoops", numLoops);
+        packet.put("zero indicator", 0);
+        packet.put("actual thing", 0.4572*70);
+        packet.put("target Thing", getDistRightDist() * 70);
 //        packet.put("exit point x", turretCenter.getX() + Constants.LAUNCHER_Y_OFFSET * Math.sin(Math.toRadians(turret.getHeading())));
 //        packet.put("exit point y",  turretCenter.getY() + Constants.LAUNCHER_X_OFFSET * Math.cos(Math.toRadians(turret.getHeading())));
 
@@ -1044,21 +1044,21 @@ public class PoseUG {
     public boolean autoIntake(){
         switch(autoIntakeState){
             case 0:
-                intake.setTiltTargetPosition(Constants.INTAKE_SERVO_TRANSIT);
+                intake.setTiltTargetPosition(Constants.INTAKE_SERVO_PICKUP);
                 intake.setIntakeSpeed(1);
                 autoIntakeTimer = System.nanoTime();
                 autoIntakeState++;
                 break;
             case 1:
                 if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_FIRST * 1E9) {
-                    intake.setTiltTargetPosition(Constants.INTAKE_SERVO_STOWED);
+                    intake.setTiltTargetPosition(Constants.INTAKE_SERVO_HANDOFF);
                     autoIntakeTimer = System.nanoTime();
                     autoIntakeState++;
                 }
                 break;
             case 2:
                 if(System.nanoTime() - autoIntakeTimer > Constants.AUTO_INTAKE_SECOND * 1E9) {
-                    intake.setTiltTargetPosition(Constants.INTAKE_SERVO_VERTICAL);
+                    intake.setTiltTargetPosition(Constants.INTAKE_SERVO_TRAVEL);
                     intake.setIntakeSpeed(0);
                     autoIntakeState = 0;
                     return true;

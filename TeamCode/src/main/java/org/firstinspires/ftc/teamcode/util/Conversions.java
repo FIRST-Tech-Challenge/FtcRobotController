@@ -4,7 +4,7 @@ import org.firstinspires.ftc.teamcode.RC;
 
 public class Conversions {
 
-    private static double deadzone = 0.2;
+    private static double deadzone = 0.4;
     private static double nearzero = .0000001;
 
     public Conversions(){}
