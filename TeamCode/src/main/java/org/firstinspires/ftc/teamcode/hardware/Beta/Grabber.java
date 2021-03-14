@@ -31,13 +31,18 @@ public class Grabber extends Logger<Grabber> implements Configurable {
     private final int grabberVersion = 1; // current version used for LeagueMeet 0
                                          // 2 is new grabber
     private final double ARM_POWER = 0.5;
-    private final double ARM_SPEED = 600;
+    private final double ARM_SPEED = 1200;
+    private final double ARM_SPEED_SLOW = 900;
     private int ARM_POS_MIN = -200;
     private int ARM_POS_MAX = 460;
     private int ARM_POS_INIT = 0;
-    private int ARM_POS_UP = -15;
+    private int ARM_POS_UP_AUTO = 0;
+    private int ARM_POS_UP = -30;
     private int ARM_POS_UP_UP = -100;
-    private int ARM_POS_DOWN = 360;
+    private int ARM_POS_DROP_HIGH = 100;
+    private int ARM_POS_DROP = 300;
+    private int ARM_POS_DOWN = 380;
+    private int ARM_POS_DOWN_DOWN = 420;
     private int ARM_UNIT = 30;
 
     private double GRABBER_OPEN = 0.82;
@@ -114,8 +119,11 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         //arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //arm.setPower(0);
     }
-
     public Progress armToPos(int pos) {
+      return armToPos(pos, false);
+    }
+
+    public Progress armToPos(int pos, boolean slow) {
         if (arm ==null) return null;
         arm.setTargetPosition(pos);
         if (pos > ARM_POS_DOWN - 100) {
@@ -124,10 +132,10 @@ public class Grabber extends Logger<Grabber> implements Configurable {
             armIsLow = false;
         }
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm.setVelocity(ARM_SPEED);
+        arm.setVelocity((slow?ARM_SPEED_SLOW:ARM_SPEED));
         return new Progress() {
             public boolean isDone() {
-                if (Math.abs(arm.getCurrentPosition() - arm.getTargetPositionTolerance()) < 50) {
+                if (Math.abs(arm.getCurrentPosition() - arm.getTargetPositionTolerance()) < 5) {
                     return true;
                 }
                 return !arm.isBusy();
@@ -204,15 +212,38 @@ public class Grabber extends Logger<Grabber> implements Configurable {
             grabberClose();
         }
     }
-    public void releaseWobbleGoalCombo() {
+    public void releaseWobbleGoalCombo(boolean forAuto) {
         final String taskName = "release Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
-
-        TaskManager.add(new Task() {
-            @Override
-            public Progress start() {
-                grabberClose();return armToPos(ARM_POS_DOWN);
-            }}, taskName);
+        if (forAuto) {
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    grabberClose();
+                    return armToPos(ARM_POS_DROP,true);
+                }
+            }, taskName);
+            TaskManager.add(new Task() { // wait for 0.3 sec
+                @Override
+                public Progress start() {
+                    runtime.reset();
+                    return new Progress() {
+                        @Override
+                        public boolean isDone() {
+                            return (runtime.seconds() >= 0.3);
+                        }
+                    };
+                }
+            }, taskName);
+        } else {
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    grabberClose();
+                    return armToPos(ARM_POS_DROP_HIGH,true);
+                }
+            }, taskName);
+        }
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
@@ -241,8 +272,20 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return armToPos(ARM_POS_DOWN);
+                return armToPos(ARM_POS_DROP);
             }}, taskName);
+        TaskManager.add(new Task() { // wait for 0.3 sec
+            @Override
+            public Progress start() {
+                runtime.reset();
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (runtime.seconds() >= 0.3);
+                    }
+                };
+            }
+        }, taskName);
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
@@ -257,13 +300,24 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         armToPos(ARM_POS_INIT);
     }
 
-    public void armUpCombo() { // put wobble goal to init position
+    public void armUpCombo() { // put wobble goal to up position
         final String taskName = "arm Up Combo";
         if (!TaskManager.isComplete(taskName)) return;
         grabberPartialClose();
         armToPos(ARM_POS_UP);
     }
-
+    public void armDownCombo() { // put wobble goal down position
+        final String taskName = "arm Down Combo";
+        if (!TaskManager.isComplete(taskName)) return;
+        grabberOpen();
+        armToPos(ARM_POS_DOWN);
+    }
+    public void armDownDownCombo() { // put wobble goal down position
+        final String taskName = "arm Down Combo";
+        if (!TaskManager.isComplete(taskName)) return;
+        grabberOpen();
+        armToPos(ARM_POS_DOWN_DOWN);
+    }
     public void grabWobbleGoalCombo(boolean isHigh) {
         final String taskName = "grab Wobble Goal Combo";
         if (!TaskManager.isComplete(taskName)) return;
@@ -279,7 +333,25 @@ public class Grabber extends Logger<Grabber> implements Configurable {
                 public Progress start() {
                     return armToPos(ARM_POS_DOWN);
                 }}, taskName);
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    runtime.reset();
+                    return new Progress() {
+                        @Override
+                        public boolean isDone() {
+                            return (runtime.seconds() >= 0.1);
+                        }
+                    };
+                }
+            }, taskName);
         }
+        TaskManager.add(new Task() {
+            @Override
+            public Progress start() {
+                return armToPos(ARM_POS_DOWN_DOWN);
+            }}, taskName);
+
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
@@ -288,8 +360,30 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return armToPos(ARM_POS_UP);
-            }}, taskName);
+                runtime.reset();
+                return new Progress() {
+                    @Override
+                    public boolean isDone() {
+                        return (runtime.seconds() >= 0.2);
+                    }
+                };
+            }
+        }, taskName);
+        if (isHigh) {
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    return armToPos(ARM_POS_UP);
+                }
+            }, taskName);
+        } else {
+            TaskManager.add(new Task() {
+                @Override
+                public Progress start() {
+                    return armToPos(ARM_POS_UP_AUTO);
+                }
+            }, taskName);
+        }
     }
 
     public void grabWobbleGoalFastCombo() {
@@ -304,7 +398,7 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         TaskManager.add(new Task() {
             @Override
             public Progress start() {
-                return armToPos(ARM_POS_DOWN);
+                return armToPos(ARM_POS_DOWN_DOWN);
             }}, taskName);
         TaskManager.add(new Task() {
             @Override public Progress start() {
@@ -332,7 +426,7 @@ public class Grabber extends Logger<Grabber> implements Configurable {
             grabberIsClosed = false;
         }
         // 1200 ms per 180 degree
-        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 800);
+        final long doneBy = System.currentTimeMillis() + Math.round(adjustment * 600);
         return new Progress() {
             @Override
             public boolean isDone() {

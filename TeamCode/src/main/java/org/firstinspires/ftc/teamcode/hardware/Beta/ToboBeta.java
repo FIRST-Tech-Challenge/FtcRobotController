@@ -544,14 +544,16 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
 
                 if (source.getTrigger(Events.Side.LEFT) > 0.3) {
                     if (grabber != null) {
-                        grabber.releaseWobbleGoalCombo();
+                        grabber.releaseWobbleGoalCombo(true);
                     }
                 } else if (source.isPressed(Button.LEFT_BUMPER)) {
                     if (grabber != null) {
                         autoReleaseHighWobbleGoal();
                     }
                 } else if (source.isPressed(Button.BACK)) {
-                    grabber.releaseWobbleGoalCombo();
+                    if (grabber != null) grabber.releaseWobbleGoalCombo(false);
+                } else {
+                    if (grabber != null) grabber.grabberAuto();
                 }
             }
         }, new Button[]{Button.X});
@@ -577,7 +579,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                     if (grabber.isArmLow()) {
                         grabber.armUpCombo();
                     } else {
-                        grabber.releaseWobbleGoalFastCombo(); // arm Down and open grabber
+                        grabber.armDownCombo(); // arm Down and open grabber
                     }
                 }
             }
@@ -1210,7 +1212,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         if (grabber != null) {
             if(tZone != ToboMech.TargetZone.ZONE_C) // Zone A and B
             {
-                grabber.releaseWobbleGoalCombo();
+                grabber.releaseWobbleGoalCombo(true);
                 while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
                     TaskManager.processTasks();
                 }
@@ -1251,7 +1253,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         if (grabber != null) {
             if(tZone != ToboMech.TargetZone.ZONE_C) // Zone A and B
             {
-                grabber.releaseWobbleGoalCombo();
+                grabber.releaseWobbleGoalCombo(true);
                 while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
                     TaskManager.processTasks();
                 }
@@ -1671,7 +1673,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         if (grabber !=null) {
             if(tZone != ToboMech.TargetZone.ZONE_C) // Zone A and B
             {
-                grabber.releaseWobbleGoalCombo();
+                grabber.releaseWobbleGoalCombo(true);
                 while (!TaskManager.isComplete("release Wobble Goal Combo") && !interrupted()) {
                     TaskManager.processTasks();
                 }
@@ -1722,19 +1724,18 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     }
     public void autoGrabBottomWobbleGoal() throws InterruptedException {
         if (simulation_mode || chassis==null|| grabber==null) return;
-        grabber.grabberOpen();
-        grabber.armDown();
-        sleep(250);
-        chassis.yMove( -1, 0.5);
+        grabber.armDownCombo();
+        sleep(100);
+        chassis.yMove( -1, 0.4);
         sleep(200);
-        chassis.yMove(-1, 0.2);
+        chassis.stop();
+        // chassis.yMove(-1, 0.2);
         if (grabber !=null) {
             grabber.grabWobbleGoalCombo(false);
             while (!TaskManager.isComplete("grab Wobble Goal Combo") && !interrupted()) {
                 TaskManager.processTasks();
             }
         }
-        //chassis.stop();
     }
     public void autoGrabHighWobbleGoal() throws InterruptedException {
         if (simulation_mode || chassis==null) return;
@@ -1765,7 +1766,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             grabber.grabberOpen();
         }
         sleep(200);
-        grabber.releaseWobbleGoalCombo();
+        grabber.releaseWobbleGoalCombo(false);
         TaskManager.processTasks();
         chassis.rawRotateTo(0.8,50,false, 2);
         chassis.rawRotateTo(0.2,15,false, 2);
