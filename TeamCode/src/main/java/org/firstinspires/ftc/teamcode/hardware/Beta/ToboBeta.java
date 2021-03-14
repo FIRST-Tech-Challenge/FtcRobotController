@@ -575,9 +575,9 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
                     grabber.grabWobbleGoalCombo(true);
                 } else {
                     if (grabber.isArmLow()) {
-                        grabber.initWobbleGoalCombo();
+                        grabber.armUpCombo();
                     } else {
-                        grabber.releaseWobbleGoalFastCombo();
+                        grabber.releaseWobbleGoalFastCombo(); // arm Down and open grabber
                     }
                 }
             }

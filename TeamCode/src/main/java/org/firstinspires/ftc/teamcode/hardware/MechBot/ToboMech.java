@@ -69,7 +69,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double webcam_offset_y = -14.2;
     public double shooting_dist = 0;
     public double shooting_angle = 0;
-    public double shooterAngleOffset = 4;
+    public double shooterAngleOffset = 3.5;
     final public double MAX_RPM = 1720;
     final public double WARM_UP_RPM = 1660;
     static final public double WARM_UP_RPM_AUTO = 1640;
@@ -1353,11 +1353,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (shooter == null || hopper == null) return false;
         double iniTime = System.currentTimeMillis();
         int target = shooter.getShooterSpeed();
-//        if (forAuto) {
-//            shooter.shootOutByRpm(target - 80);
-//        } else {
-//            shooter.shootOutByRpm(SEMI_AUTO_RPM-150);
-//        }
+        if (forAuto) {
+            shooter.shootOutByRpm(target - 60);
+        } else {
+            // shooter.shootOutByRpm(SEMI_AUTO_RPM-150);
+        }
         int timeout_ms = (forAuto?500:500);
         // Stage-2 make sure rpm difference is within 11 error range
         while (Math.abs(shooter.getCurrentRPM() - target) > 11 && (System.currentTimeMillis() - iniTime < timeout_ms)) { // timeout 5 sec
@@ -1370,11 +1370,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (useIMUforOdometryAngleCorrection){
             chassis.getGPS().correctAngleUsingIMU();
         }
-//        if (forAuto) {
-//            shooter.shootOutByRpm(target - 60);
-//        } else {
-//            shooter.shootOutByRpm(SEMI_AUTO_RPM-150);
-//        }
+        if (forAuto) {
+            shooter.shootOutByRpm(target - 60);
+        } else {
+            // shooter.shootOutByRpm(SEMI_AUTO_RPM-150);
+        }
         hopper.feederAuto();
         return true;
     }

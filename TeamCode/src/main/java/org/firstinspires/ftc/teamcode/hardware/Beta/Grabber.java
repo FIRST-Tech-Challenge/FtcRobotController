@@ -31,12 +31,13 @@ public class Grabber extends Logger<Grabber> implements Configurable {
     private final int grabberVersion = 1; // current version used for LeagueMeet 0
                                          // 2 is new grabber
     private final double ARM_POWER = 0.5;
-    private final double ARM_SPEED = 2500;
+    private final double ARM_SPEED = 600;
+    private int ARM_POS_MIN = -200;
     private int ARM_POS_MAX = 460;
     private int ARM_POS_INIT = 0;
-    private int ARM_POS_UP = 0;
+    private int ARM_POS_UP = -15;
     private int ARM_POS_UP_UP = -100;
-    private int ARM_POS_DOWN = 370;
+    private int ARM_POS_DOWN = 360;
     private int ARM_UNIT = 30;
 
     private double GRABBER_OPEN = 0.82;
@@ -102,6 +103,8 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         if (grabber!=null)
             grabber.setPosition(GRABBER_INIT);
         grabberIsClosed = true;
+        armIsLow = false;
+        armStop();
         // configuration.register(this);
     }
 
@@ -171,10 +174,10 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         if (arm ==null) return;
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         int pos = arm.getCurrentPosition();
-        if (pos<= ARM_POS_INIT && !forced) {
+        if (pos<= ARM_POS_MIN && !forced) {
             //armStop();
             //return;
-            pos = Math.max(pos-ARM_UNIT, ARM_POS_INIT);
+            pos = Math.max(pos-ARM_UNIT, ARM_POS_MIN);
         } else {
             pos = pos-ARM_UNIT;
         }
@@ -252,6 +255,13 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         if (!TaskManager.isComplete(taskName)) return;
         grabberPartialClose();
         armToPos(ARM_POS_INIT);
+    }
+
+    public void armUpCombo() { // put wobble goal to init position
+        final String taskName = "arm Up Combo";
+        if (!TaskManager.isComplete(taskName)) return;
+        grabberPartialClose();
+        armToPos(ARM_POS_UP);
     }
 
     public void grabWobbleGoalCombo(boolean isHigh) {
