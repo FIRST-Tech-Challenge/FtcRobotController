@@ -15,8 +15,6 @@ public class FlyWheel {
     private double lastTimeStamp = 0;
     private double lastVelocity = 0;
     private final double TIME_CONSTANT = 0.5;
-
-
     private int ticks = 0;
 
     public FlyWheel(Motor flywheel) {

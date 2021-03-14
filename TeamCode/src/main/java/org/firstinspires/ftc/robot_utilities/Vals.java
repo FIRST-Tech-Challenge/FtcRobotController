@@ -11,9 +11,9 @@ public class Vals {
     public static double flywheel_kv = 0.03;
     public static double flywheel_speed = 0.5;
     public static double flywheel_direction = -1;
-    public static int flywheel_ready_ticks = 70;
-    public static int flywheel_ready_min_speed = 1320;
-    public static int flywheel_ready_max_speed = 1330;
+    public static int flywheel_ready_ticks = 40;
+    public static int flywheel_ready_min_speed = 1120;
+    public static int flywheel_ready_max_speed = 1140;
     public static double flywheel_filtered_speed = 0;
     public static int flywheel_max_achievable_ticks = 1360;
 

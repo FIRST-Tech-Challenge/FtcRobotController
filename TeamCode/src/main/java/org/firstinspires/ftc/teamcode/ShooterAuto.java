@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robot.FlyWheel;
@@ -34,6 +35,10 @@ public class ShooterAuto extends LinearOpMode {
 
         while(ticks < 3 && elapsedTime.seconds() < 28) {
             telemetry.addData("FlyWheel Filtered Velocity", Vals.flywheel_filtered_speed);
+            telemetry.addData("Flywheel Speed", flywheel.flywheel.get());
+            telemetry.addData("Flywheel Power", flywheel.flywheel.motor.getPower());
+            telemetry.addData("Flywheel Velocity", flywheel.flywheel.getCorrectedVelocity());
+            telemetry.addData("Flywheel Position", flywheel.flywheel.getCurrentPosition());
             telemetry.update();
             flywheel.on();
             if(flywheel.isReady()) {
