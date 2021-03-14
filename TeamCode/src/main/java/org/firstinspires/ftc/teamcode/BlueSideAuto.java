@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class BlueSideAuto extends BaseAuto {
 
     Drivetrain drivetrain;
+    String numOfRings = "";
 
 
     @Override
@@ -44,35 +45,70 @@ public class BlueSideAuto extends BaseAuto {
 //        telemetry.addData("imu", getAverageGyro());
 //        telemetry.update();
 
-        sleep(1000);
+        sleep(500);
         telemetry.addData("Position", pipeline.position);
         telemetry.update();
 
-        sleep(1000);
+        sleep(500);
         if (pipeline.position.toString() == "FOUR"){
             telemetry.addData("Going with four", "");
-            telemetry.update();
-            sleep(1000);
 //            encoderMecanumDrive(0.3, 20, 3, 0, -1);
-            encoderMecanumDrive(0.5, 185, 5, -0.464,-1);
-
-
         } else if (pipeline.position.toString() == "ONE"){
             telemetry.addData("Going with one", "");
-            telemetry.update();
-            sleep(1000);
-
         } else {
             telemetry.addData("Going with none", "");
-            telemetry.update();
-            sleep(1000);
-
         }
+        telemetry.update();
+        numOfRings = pipeline.position.toString();
+        sleep(500);
+
+        encoderMecanumDrive(0.5, 215, 6, -0.464,-1);
+        drivetrain.tilt(0.37);
+        sleep(300);
+        gyroTurn(0.3, getAverageGyro()+5);
+//        encoderMecanumDrive(0.3, 10, 3, 1, 0);
+        encoderMecanumDrive(0.3, 15, 3, -1, 0);//slide to reach 3rd power shot
+        drivetrain.outtakeAll(1.0, 1.0);//ramp
+        sleep(1750);
+        encoderMecanumDrive(0.3, 20, 3, 1, 0);//shoots 3rd then moves
         drivetrain.tilt(0.35);
         sleep(300);
-        gyroTurn(0.3, getAverageGyro()-20);
+        encoderMecanumDrive(0.3, 15, 3, 1, 0);//shoots 2nd then moves hopefully
+//        encoderMecanumDrive(0.3, 15, 3, 1, 0)
         sleep(1000);
+        drivetrain.outtakeAll(0.0);
 
+        switch (numOfRings){
+            case "FOUR":
+                encoderMecanumDrive(0.7, 200, 3, 0.5, -1);
+                sleep(300);
+                robot.wobble.setPosition(1.0);
+                sleep(300);
+                encoderMecanumDrive(0.3, 20, 3, -1, 0);
+                encoderMecanumDrive(0.7, 1109, 3, 0, 1);
+                break;
+            case "ONE":
+                encoderMecanumDrive(0.5, 80, 3, 0, -1);//forward
+                sleep(300);
+                robot.wobble.setPosition(1.0); //release
+                sleep(300);
+                encoderMecanumDrive(0.3, 20, 3, -1, 0);//move out
+                encoderMecanumDrive(0.5, 50, 3, 0, 1);//move to line
+                break;
+            case "NONE":
+                encoderMecanumDrive(0.3, 110, 3, 1, -0.6);
+                sleep(300);
+                robot.wobble.setPosition(1.0);
+                encoderMecanumDrive(0.3, 20, 3, -1, 0);
+                break;
+        }
+        robot.wobble.setPosition(0.0);
+        sleep(300);
+
+//        sleep(300);
+//        encoderMecanumDrive(0.8, 120, 5, 0, 1);
+//        sleep(500);
+//        encoderMecanumDrive(0.5, 90, 3, 1, 0);
 
 
 //        encoderMecanumDrive(DRIVE_SPEED,50,4,-1,0);
