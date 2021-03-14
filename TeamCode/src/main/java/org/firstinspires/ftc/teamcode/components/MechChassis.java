@@ -1452,6 +1452,13 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         rotateTo(power, finalHeading, timeout_sec, true,true);
     }
 
+    public void rotateToFast(double power, double finalHeading, double timeout_sec) throws InterruptedException {
+        double save_align_power = chassisAligmentPower;
+        chassisAligmentPower = 0.4;
+        rotateTo(power, finalHeading, timeout_sec, true,true);
+        chassisAligmentPower = save_align_power;
+    }
+
     public void rotateTo(double power, double finalHeading, double timeout_sec, boolean changePower, boolean finalCorrection) throws InterruptedException {
         if (simulation_mode) { // simulation mode
             set_pos_for_simulation(odo_x_pos_cm(),odo_y_pos_cm(),finalHeading);
@@ -1548,7 +1555,8 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             sleep(90);
 
         //**************Check for overshoot and correction**************
-        if (autoDriveMode== AutoDriveMode.STOP||autoDriveMode== AutoDriveMode.CONTINUE) {
+        if ((autoDriveMode== AutoDriveMode.STOP||autoDriveMode== AutoDriveMode.CONTINUE) &&
+                (chassisAligmentPower<=0.3)){
             currentHeading = odo_heading();
             currentAbsDiff = abs(finalHeading - currentHeading) > 180 ? 360 - abs(finalHeading - currentHeading) : abs(finalHeading - currentHeading);
             if ((currentAbsDiff > 1) && !Thread.interrupted()) {

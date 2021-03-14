@@ -1197,8 +1197,8 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         // still need to change positions to be far left for blue side
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == ToboMech.TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 65, 175, 45, false, 3);
-                chassis.rotateTo(1,135,2);
+                chassis.driveTo(auto_chassis_power, 60, 200, chassis.odo_heading(), false, 3);
+                chassis.rotateToFast(1,100,2);
             } else if (tZone == ToboMech.TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 140, 270, 0,false, 5);
                 chassis.rotateTo(1,90,2);
@@ -1552,91 +1552,22 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
     }
 
-    public void getSecondWobbleGoal() throws InterruptedException {
-        if (hopper != null) {
-            hopper.hopperDownCombo();
-            TaskManager.processTasks();
-        }
-        if (tZone == ToboMech.TargetZone.ZONE_C) {
-            chassis.driveTo(1.0, side(165), 40, 0, true,  5);
-        }
-        else {
-            chassis.driveTo(auto_chassis_power, side(165), 40, 0, true, 5);
-        }
-        if(startPos == StartPosition.OUT){
-            if (tZone == ToboMech.TargetZone.ZONE_C) {
-                chassis.driveTo(1.0, side(117), 30, 0, true, 3);
-            }
-            else {
-                chassis.driveTo(auto_chassis_power, side(109), 33, 0, true, 3);
-            }
-        } else {
-            chassis.driveTo(auto_chassis_power, side(47), 30, 0, true,  3);
-        }
-        while (!TaskManager.isComplete("Transfer Down Combo")) {
-            TaskManager.processTasks();
-        }
-        //grab the wobble goal
-        if (!simulation_mode) {
-            autoGrabBottomWobbleGoal();
-        }
-
-        // sleep(1000);
-    }
     public void getSecondWobbleGoalBeta() throws InterruptedException {
         if (tZone == ToboMech.TargetZone.ZONE_B) {
-            chassis.rotateTo(1, 0, 2);
+            chassis.rotateToFast(1, 0, 2);
             chassis.driveTo(auto_chassis_power, side(95), 100, 0, false, 5);
         } else if (tZone == ToboMech.TargetZone.ZONE_C) {
-            chassis.rotateTo(1,-10,2);
+            chassis.rotateTo(1, -10, 2);
             chassis.driveTo(auto_chassis_power, side(90), 80, -10, false, 5);
+        } else {
+            chassis.rotateToFast(1, -15, 2);
+            chassis.driveTo(auto_chassis_power, side(90), 92, -15, false, 5);
         }
-
         autoGrabBottomWobbleGoal();
 
 
     }
-    public void getSecondWobbleGoalAfterHighGoal() throws InterruptedException {
-        if (hopper != null) {
-            hopper.hopperDownCombo();
-            TaskManager.processTasks();
-        }
 
-        if(tZone == ToboMech.TargetZone.ZONE_B){
-            chassis.driveTo(auto_chassis_power, side(50), 170, 0, false,  5);
-        }
-        if(tZone == ToboMech.TargetZone.ZONE_B || tZone == ToboMech.TargetZone.ZONE_C){
-            shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
-        }
-        if(tZone == ToboMech.TargetZone.ZONE_C)
-        {
-            chassis.driveTo(1, side(65), 40, 0, true, 5);
-        }
-        else
-        {
-            chassis.driveTo(auto_chassis_power, side(70), 40, 0, true, 5);
-        }
-        if(startPos == StartPosition.OUT){
-            if (tZone == ToboMech.TargetZone.ZONE_C){
-                chassis.driveTo(auto_chassis_power, side(102), 35, 0, false, 3);
-            } else if (tZone == ToboMech.TargetZone.ZONE_B){
-                chassis.driveTo(auto_chassis_power, side(107), 35, 0, false, 3);
-            } else { // ZONE_A
-                chassis.driveTo(auto_chassis_power, side(102), 35, 0, false, 3);
-            }
-        } else {
-            chassis.driveTo(auto_chassis_power, side(47), 30, 0, true,  3);
-        }
-        while (!TaskManager.isComplete("Transfer Down Combo")) {
-            TaskManager.processTasks();
-        }
-        //grab the wobble goal
-        if (!simulation_mode) {
-            autoGrabBottomWobbleGoal();
-        }
-
-        // sleep(1000);
-    }
     public void deliverSecondWobbleGoalAndShootBonusRings() throws InterruptedException { // we may need to go around the other wobble goal
 
         // need to change positions
