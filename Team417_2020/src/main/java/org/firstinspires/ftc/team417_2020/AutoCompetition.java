@@ -43,17 +43,30 @@ public class AutoCompetition extends MasterAutonomous{
         // 4 rings -> Zone C
         if (numRings == 0) {
             // Nagivate to Zone A
+            move(0, 72, 0.7);
+            move(-24, 72, 0.7);
+            openWobbleGoalArm();
+            move(-24, 48, 0.7);
+            move(0, 84, 0.7);
 
         } else if (numRings == 1) {
             // Navigate to Zone B
+            move(0, 96, 0.7);
+            openWobbleGoalArm();
+            move(0, 84, 0.7);
 
         } else if (numRings == 4) {
             // Navigate to Zone C
+            move(0, 120, 0.7);
+            move( -24, 120, 0.7);
+            openWobbleGoalArm();
+            move(0, 84, 0.7);
 
         }
 
-        // Park on white line
+    }
 
+    public void openWobbleGoalArm() {
 
     }
 
