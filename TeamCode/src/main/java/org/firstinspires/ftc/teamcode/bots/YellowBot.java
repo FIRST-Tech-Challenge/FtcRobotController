@@ -1061,7 +1061,7 @@ public class YellowBot implements OdoBot {
 
         double overage = 0;
 
-        if (left == false) {
+        if (!left) {
             distance = -distance;
         }
 
@@ -1071,7 +1071,7 @@ public class YellowBot implements OdoBot {
 
         while (!stop && this.owner.opModeIsActive()) {
             currentPos = this.getHorizontalOdometer();
-            if ((left && currentPos >= target) || (left == false && currentPos <= target)) {
+            if ((left && currentPos >= target) || (!left && currentPos <= target)) {
                 stop = true;
             }
 
@@ -1085,6 +1085,74 @@ public class YellowBot implements OdoBot {
                 this.backRight.setVelocity(MAX_VELOCITY *-speed * calib.getRB());
                 this.frontLeft.setVelocity(MAX_VELOCITY *-speed * calib.getLF());
                 this.frontRight.setVelocity(MAX_VELOCITY *speed * calib.getRF());
+            }
+        }
+
+        stop();
+        double newPos = this.getHorizontalOdometer();
+        double diff = Math.abs(newPos - target);
+        overage = diff / distance * 100;
+        return overage;
+    }
+
+
+    public double strafeToCalibPriya(double speed, double inches, boolean left, MotorReductionBot calib) {
+        double currentPos = this.getHorizontalOdometer();
+        double distance = inches * COUNTS_PER_INCH_REV;
+
+
+        double overage = 0;
+
+        if (!left) {
+            distance = -distance;
+        }
+
+        double target = currentPos + distance;
+
+        boolean stop = false;
+
+        // breaking and slowing down variables
+        double slowdownMark = target * calib.getBreakPoint(speed);
+        double ticksAdjustment = MAX_VELOCITY_PER_PROC_DELAY*speed;
+        slowdownMark = slowdownMark - ticksAdjustment;
+        int step = 0;
+        double power = 0;
+        double minSpeed = 0.1;
+        double speedIncrement = 0.05;
+        double speedDropStep = 0.05;
+        double currentSpeed = 0;
+
+        while (!stop && this.owner.opModeIsActive()) {
+            currentPos = this.getHorizontalOdometer();
+            if ((left && currentPos >= target) || (!left && currentPos <= target)) {
+                stop = true;
+            }
+            if (currentPos >= slowdownMark) {
+                // slow down
+                step++;
+                power = currentSpeed + speedDropStep*step;
+                if (power >= minSpeed) {
+                    power = minSpeed;
+                }
+            } else {
+                // accelerate
+                if (power+speedIncrement <= speed) {
+                    power+=speedIncrement;
+                    currentSpeed = power;
+                }
+            }
+
+            // move the motors
+            if (left) {
+                this.backLeft.setVelocity(MAX_VELOCITY * -power * calib.getLB());
+                this.backRight.setVelocity(MAX_VELOCITY * power * calib.getRB());
+                this.frontLeft.setVelocity(MAX_VELOCITY * power * calib.getLF());
+                this.frontRight.setVelocity(MAX_VELOCITY * -power * calib.getRF());
+            } else {
+                this.backLeft.setVelocity(MAX_VELOCITY * power * calib.getLB());
+                this.backRight.setVelocity(MAX_VELOCITY * -power * calib.getRB());
+                this.frontLeft.setVelocity(MAX_VELOCITY * -power * calib.getLF());
+                this.frontRight.setVelocity(MAX_VELOCITY * power * calib.getRF());
             }
         }
 
