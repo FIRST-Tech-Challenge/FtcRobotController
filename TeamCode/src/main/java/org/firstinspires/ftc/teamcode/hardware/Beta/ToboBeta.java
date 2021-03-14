@@ -1236,8 +1236,8 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
         // still need to change positions to be far left for blue side
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == ToboMech.TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 75, 175, 45, false, 3);
-                chassis.rotateTo(1,135,2);
+                chassis.driveTo(auto_chassis_power, 75, 200, chassis.odo_heading(), false, 3);
+                chassis.rotateTo(1,100,2);
             } else if (tZone == ToboMech.TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 120, 220, 0,true, 5);
                 chassis.rotateTo(1,170,2);
@@ -1561,6 +1561,10 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
             chassis.driveTo(auto_chassis_power, side(90), 80, -10, false, 5);
         } else {
             chassis.rotateToFast(1, -15, 2);
+            if(grabber!=null)
+            {
+                grabber.armDownCombo();
+            }
             chassis.driveTo(auto_chassis_power, side(90), 92, -15, false, 5);
         }
         autoGrabBottomWobbleGoal();
@@ -1630,7 +1634,7 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     }
     public void park() throws InterruptedException {
         if (tZone== ToboMech.TargetZone.ZONE_A){
-            chassis.driveTo(auto_chassis_power+0.2, side(110), 165, 0, false, 2);
+            chassis.driveTo(auto_chassis_power, side(90), chassis.odo_y_pos_cm(), 0, true, 2);
         }
         if (tZone== ToboMech.TargetZone.ZONE_C){
             return;
