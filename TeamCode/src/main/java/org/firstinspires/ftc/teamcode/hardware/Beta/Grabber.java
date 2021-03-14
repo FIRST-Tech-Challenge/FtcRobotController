@@ -33,16 +33,16 @@ public class Grabber extends Logger<Grabber> implements Configurable {
     private final double ARM_POWER = 0.5;
     private final double ARM_SPEED = 1200;
     private final double ARM_SPEED_SLOW = 900;
-    private int ARM_POS_MIN = -200;
-    private int ARM_POS_MAX = 460;
+    private int ARM_POS_MIN = 0;
+    private int ARM_POS_MAX = 585;
     private int ARM_POS_INIT = 0;
-    private int ARM_POS_UP_AUTO = 0;
-    private int ARM_POS_UP = -30;
-    private int ARM_POS_UP_UP = -100;
-    private int ARM_POS_DROP_HIGH = 100;
-    private int ARM_POS_DROP = 300;
-    private int ARM_POS_DOWN = 380;
-    private int ARM_POS_DOWN_DOWN = 420;
+    private int ARM_POS_UP_AUTO = 125;
+    private int ARM_POS_UP = 95;
+    private int ARM_POS_UP_UP = 25;
+    private int ARM_POS_DROP_HIGH = 225;
+    private int ARM_POS_DROP = 425;
+    private int ARM_POS_DOWN = 505;
+    private int ARM_POS_DOWN_DOWN = 545;
     private int ARM_UNIT = 30;
 
     private double GRABBER_OPEN = 0.82;
