@@ -72,7 +72,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public double shooterAngleOffset = 3;
     final public double MAX_RPM = 1720;
     final public double WARM_UP_RPM = 1660;
-    static final public double WARM_UP_RPM_AUTO = 1640;
+    static final public double WARM_UP_RPM_AUTO = 1600;
     final public double SEMI_AUTO_RPM = 1660;
     final public double WARM_UP_RPM_POWER_SHOT = 1500;
     final public double SEMI_POWER_SHOT_RPM = 1500;
@@ -1915,7 +1915,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double dy = target_y - shooter_position[1];
         shooting_dist = Math.hypot(dx,dy);
         double v = getVelocityToShoot(shooting_dist, target_height);
-        double rpm = getRpmFromVelocity(v);
+        double rpm = getRpmFromVelocity(v)-40;
         shooting_rpm = rpm;
         shooter.shootOutByRpm(rpm);
         // Use current position (odo_x_pos_cm(), odo_y_pos_cm()) and (target_x, target_y) to determine the rotateTo() angle
