@@ -36,7 +36,7 @@ public class FlyWheel {
         updateVelocity();
         double power = 0;
         if(this.flywheelSpeed > 0) {
-            power = Math.max(pidFlywheel.calculate(lastVelocity, this.flywheelSpeed) + 0.00827, 1);
+            power = Math.min(pidFlywheel.calculate(lastVelocity, this.flywheelSpeed) + 0.00827, 1);
         }
         this.flywheel.set(this.flywheelDirection * power);
     }
