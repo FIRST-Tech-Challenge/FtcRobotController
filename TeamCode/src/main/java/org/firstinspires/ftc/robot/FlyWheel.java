@@ -40,11 +40,12 @@ public class FlyWheel {
         double power = 0;
         double pidOutput = pidFlywheel.calculate(lastVelocity, this.flywheelSpeed);
         if(this.flywheelSpeed > 0) {
-            power = Math.min(pidOutput + 0.00827, 1);
+            power = Math.min(pidOutput + Vals.flywheel_ff, 1);
         }
         telemtry.addData("Flywheel Set Power: ", power);
         telemtry.addData("Flywheel PID Output: ", pidOutput);
         telemtry.addData("Flywheel Set Speed", this.flywheelSpeed);
+        telemtry.addData("Flywheel Last Velocity", lastVelocity);
         this.flywheel.set(this.flywheelDirection * power);
     }
 

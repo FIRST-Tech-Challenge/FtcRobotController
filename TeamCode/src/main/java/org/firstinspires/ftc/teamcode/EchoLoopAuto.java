@@ -35,7 +35,7 @@ public class EchoLoopAuto extends LinearOpMode {
         intake1.setVeloCoefficients(0.05, 0, 0);
         intake2.setVeloCoefficients(0.05, 0, 0);
 
-        flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE));
+        flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE), telemetry);
     }
     @Override
     public void runOpMode() {
