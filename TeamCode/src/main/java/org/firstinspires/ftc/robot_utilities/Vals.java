@@ -31,7 +31,7 @@ public class  Vals {
     public static double initialServoPosition = 0.0;
     public static double servoOpenUp = 1.0;
     public static double servoCloseUp = 0.0;
-    public static double motorMoveUp = 0.525;
-    public static double motorMoveDown = -0.525;
+    public static double motorMoveUp = 0.8;
+    public static double motorMoveDown = -0.8;
     public static double motorReturnToDefault = 0.0;
 }
