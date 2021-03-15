@@ -63,13 +63,18 @@ public class FlyWheel {
     }
 
     public void off() {
-        if(this.isOn()) {
-            this.flywheel.setRunMode(Motor.RunMode.RawPower);
-            this.flywheelSpeed = 0;
-            this.lastTimeStamp = 0;
-            this.lastVelocity = 0;
-            pidFlywheel.reset();
-        }
+//        if(this.isOn()) {
+//            this.flywheel.setRunMode(Motor.RunMode.RawPower);
+//            this.flywheelSpeed = 0;
+//            this.lastTimeStamp = 0;
+//            this.lastVelocity = 0;
+//            pidFlywheel.reset();
+//        }
+        this.flywheel.setRunMode(Motor.RunMode.RawPower);
+        this.flywheelSpeed = 0;
+        this.lastTimeStamp = 0;
+        this.lastVelocity = 0;
+        pidFlywheel.reset();
 
         this.set();
     }
@@ -85,14 +90,11 @@ public class FlyWheel {
     }
 
     public boolean isReady() {
-//        updateVelocity();
 
         if(this.lastVelocity >= Vals.flywheel_ready_min_speed && lastVelocity <= Vals.flywheel_ready_max_speed) ticks++;
         else ticks = 0;
 
         if(ticks >= Vals.flywheel_ready_ticks) {
-//            lastVelocity = 0;
-//            lastTimeStamp = 0;
             ticks = 0;
             return true;
         }
@@ -104,6 +106,8 @@ public class FlyWheel {
         if(lastTimeStamp == 0) {
             lastVelocity = velocity;
             lastTimeStamp = System.nanoTime() / 1e9;
+        } else if(velocity < 1e-6) {
+            lastVelocity = 0;
         } else {
             double currentTime = (double)System.nanoTime() / 1e9;
             double dt = lastTimeStamp - currentTime;
@@ -116,5 +120,6 @@ public class FlyWheel {
             lastVelocity = newVelocity;
             Vals.flywheel_filtered_speed = lastVelocity;
         }
+        Vals.flywheel_filtered_speed = lastVelocity;
     }
 }

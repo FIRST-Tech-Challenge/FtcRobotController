@@ -28,6 +28,7 @@ public class ShooterAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         initRobot();
+        waitForStart();
 
         elapsedTime.reset();
 
