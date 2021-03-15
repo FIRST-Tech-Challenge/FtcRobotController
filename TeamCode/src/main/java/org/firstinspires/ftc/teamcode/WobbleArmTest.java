@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robot_utilities.Vals;
+
 @Config
 class WobbleArmServoVals {
     public static double position = 0;
@@ -14,8 +16,8 @@ class WobbleArmServoVals {
 @TeleOp(name = "WobbleArmServoTest")
 public class WobbleArmTest extends OpMode {
 
-    double motorPosition = 0.0;
-    double servoPosition = 0.0;
+    double motorPosition = Vals.initialMotorPosition;
+    double servoPosition = Vals.initialServoPosition;
     private Motor wobbleArmMotor;
     private Servo wobbleArmServo;
 
@@ -32,11 +34,11 @@ public class WobbleArmTest extends OpMode {
         // Servo motor.
         if (gamepad1.a) {
 
-            servoPosition = 1.0;
+            servoPosition = Vals.servoOpenUp;
 
         } else {
 
-            servoPosition = 0.0;
+            servoPosition = Vals.servoCloseUp;
         }
 
         wobbleArmServo.setPosition(servoPosition);
@@ -44,11 +46,11 @@ public class WobbleArmTest extends OpMode {
         // Motor movement.
         if (gamepad1.dpad_up) {
 
-            motorPosition = 0.525;
+            motorPosition = Vals.motorMoveUp;
 
         } else {
 
-            motorPosition = 0.0;
+            motorPosition = Vals.motorReturnToDefault;
 
         }
 
@@ -56,11 +58,11 @@ public class WobbleArmTest extends OpMode {
 
         if (gamepad1.dpad_down) {
 
-            motorPosition = -0.525;
+            motorPosition = Vals.motorMoveDown;
 
         } else {
 
-            motorPosition = 0.0;
+            motorPosition = Vals.motorReturnToDefault;
 
         }
 

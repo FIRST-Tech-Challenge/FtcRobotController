@@ -3,7 +3,7 @@ package org.firstinspires.ftc.robot_utilities;
 import com.acmerobotics.dashboard.config.Config;
 
 @Config
-public class Vals {
+public class  Vals {
     public static double flywheel_kp = 40;
     public static double flywheel_ki = 0.1;
     public static double flywheel_kd = 0;
@@ -26,4 +26,12 @@ public class Vals {
 
     public static double heading = 0;
 
+    // Wobble Arm Values
+    public static double initialMotorPosition = 0.0;
+    public static double initialServoPosition = 0.0;
+    public static double servoOpenUp = 1.0;
+    public static double servoCloseUp = 0.0;
+    public static double motorMoveUp = 0.525;
+    public static double motorMoveDown = -0.525;
+    public static double motorReturnToDefault = 0.0;
 }
