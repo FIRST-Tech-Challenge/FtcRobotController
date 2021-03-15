@@ -47,7 +47,6 @@ public class Robot {
 //        if(objectDetectionNeeded && vuforiaNAVIGATIONneeded){
 //            throw new RuntimeException("They both can't be true.");
 //        }
-        drivetrain= ChassisFactory.getChassis(chassisType,op,vuforiaNAVIGATIONneeded);
             intake = new Intake(op);
             transfer = new Transfer(op);
             wobbleGoal = new WobbleGoal(op);

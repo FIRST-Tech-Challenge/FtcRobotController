@@ -22,20 +22,20 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 //2.0,1.7,1.1
 public class OdometryChassis extends BasicChassis {
-    private Thread vuforia = null;
-    DcMotorEx odom1;
-    DcMotorEx odom2;
-    DcMotorEx odom3;
+   VuforiaWebcam vuforia = null;
+    static DcMotorEx odom1;
+    static DcMotorEx odom2;
+    static DcMotorEx odom3;
     int[] odomconst = {-1,1,-1};
     float ticks_per_inch = (float)(8640*2.54/38*Math.PI)*72/76;
     float robot_diameter = (float)sqrt(619.84);
-    float[] odom = new float[3];
+    static float[] odom = new float[3];
     private LinearOpMode op = null;
     private BNO055IMU imu;
-    private Orientation lastAngles = new Orientation();
-    private float globalAngle;
-    public static float xpos;
-    public static float ypos;
+    private Orientation lastAngles;
+    public static float globalAngle;
+    public static float xpos=0;
+    public static float ypos=0;
     public static float angle;
     double power = .30, correction;
 
@@ -46,7 +46,9 @@ public class OdometryChassis extends BasicChassis {
     public OdometryChassis(LinearOpMode opMode,boolean navigator) {
         super(opMode);
         op = opMode;
-
+        xpos=0;
+        ypos=0;
+        angle=0;
         // Chassis encoders
         odom1 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
         odom3 = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
@@ -55,28 +57,26 @@ public class OdometryChassis extends BasicChassis {
         odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         odom3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lastAngles  = new Orientation();
-
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = false;
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
 
         imu = op.hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            lastAngles = new Orientation();
+            lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+
 
         // make sure the imu gyro is calibrated before continuing.
-        while (!op.isStopRequested() && !imu.isGyroCalibrated())
-        {
+        while (!op.isStopRequested() && !imu.isGyroCalibrated()) {
             op.sleep(50);
             op.idle();
         }
         if(navigator){
-            vuforia = new Thread(new VuforiaWebcam(op));
-            vuforia.start();
+            vuforia = new VuforiaWebcam(op);
         }
     }
     public static float getXpos(){
@@ -86,6 +86,12 @@ public class OdometryChassis extends BasicChassis {
         return ypos;
     }
     public static void setXpos(float newXpos){
+        odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        odom3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        odom[0]=0;
+        odom[1]=0;
+        odom[2]=0;
         xpos=newXpos;
     }
     public  static void setYpos(float newYpos){
@@ -126,6 +132,7 @@ public class OdometryChassis extends BasicChassis {
             deltaAngle -= 360;
 
         globalAngle += deltaAngle;
+        globalAngle%=360;
 
         lastAngles = angles;
 
@@ -133,6 +140,7 @@ public class OdometryChassis extends BasicChassis {
         //return navigation.getAngle();
     }
     public double[] track() {
+        vuforia.runVuforia();
         double data[]={0,0,0};
         double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),
                 odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
@@ -199,12 +207,12 @@ public class OdometryChassis extends BasicChassis {
             motorRightFront.setPower(power * anglePower[0] + anglecorrection);
             motorLeftBack.setPower(power * anglePower[0] - anglecorrection);
             motorLeftFront.setPower(power * anglePower[1] - anglecorrection);
-            op.telemetry.addData("leftBack",power * anglePower[0] - anglecorrection);
-            op.telemetry.addData("rightBack",power * anglePower[1] + anglecorrection);
-            op.telemetry.addData("leftFront",power * anglePower[1] - anglecorrection);
-            op.telemetry.addData("rightFront",power * anglePower[0] + anglecorrection);
+//            op.telemetry.addData("leftBack",power * anglePower[0] - anglecorrection);
+//            op.telemetry.addData("rightBack",power * anglePower[1] + anglecorrection);
+//            op.telemetry.addData("leftFront",power * anglePower[1] - anglecorrection);
+//            op.telemetry.addData("rightFront",power * anglePower[0] + anglecorrection);
             difference = abs(sqrt((x) * (x) + (y) * (y)));
-            op.telemetry.addData("distance", difference);
+//            op.telemetry.addData("distance", difference);
             op.telemetry.update();
         }
         stopAllMotors();

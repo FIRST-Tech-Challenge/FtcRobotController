@@ -134,10 +134,9 @@ public class VuforiaWebcam extends Thread {
         targetsUltimateGoal.activate();
     }
 
-    @Override
-    public void run() {
+    public boolean runVuforia() {
         // Run until Thread is Interrupted
-        while (!isInterrupted()) {
+//        while (!isInterrupted()) {
             targetVisible = false;
             // Look for Trackable, Update Robot Location if Possible
             for (VuforiaTrackable trackable : allTrackables) {
@@ -173,6 +172,12 @@ public class VuforiaWebcam extends Thread {
                 }
                 xpos = translation.get(0) / mmPerInch;
                 ypos = translation.get(1) / mmPerInch;
+                try {
+                    this.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                return true;
 
                 //setInVuforia(false);
                 //op.telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
@@ -180,7 +185,8 @@ public class VuforiaWebcam extends Thread {
             else {
 //                op.telemetry.addData("Visible Target", "none");
             }
-        }
+            return false;
+        //}
     }
 
     public static double getVuforiaX() {
