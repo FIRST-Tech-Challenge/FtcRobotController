@@ -105,6 +105,7 @@ public class FlyWheel {
         } else {
             double currentTime = (double)System.nanoTime() / 1e9;
             double dt = lastTimeStamp - currentTime;
+            telemtry.addData("Delta T", dt);
             lastTimeStamp = currentTime;
 
             double k = Math.exp(dt / TIME_CONSTANT);
