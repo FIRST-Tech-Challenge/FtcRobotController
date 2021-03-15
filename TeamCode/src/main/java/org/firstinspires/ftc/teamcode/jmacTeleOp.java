@@ -47,6 +47,9 @@ public class jmacTeleOp extends LinearOpMode {
     static final int SHOOTING = 2;
     static final int COLLECTING = 3;
 
+    double mode = 1;
+
+
     @Override
     public void runOpMode()
     {
@@ -56,28 +59,28 @@ public class jmacTeleOp extends LinearOpMode {
 
         Vision vision = new Vision(this);
         currentState = IDLE;
-        /*
-        mDrive.FlyWheel1.setVelocityPIDFCoefficients(1.38, 0.138, 0, 13.77);
-        mDrive.FlyWheel2.setVelocityPIDFCoefficients(1.38,0.138, 0, 13.77);
+
+        mDrive.FlyWheel1.setVelocityPIDFCoefficients(1.37, 0.137, 0, 13.65);
+        mDrive.FlyWheel2.setVelocityPIDFCoefficients(1.37,0.137, 0, 13.65);
         mDrive.FlyWheel1.setPositionPIDFCoefficients(5.0);
         mDrive.FlyWheel2.setPositionPIDFCoefficients(5.0);
 
 
-         */
+
         waitForStart();
 
         while (opModeIsActive())
         {
             currentState = IDLE;
-            drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
-            runIntake();
-            runFlyWheel();
-            //runPivot();
-            runServos();
-            doArm();
-            doVarious();
-            runVoltageLED();
-            //runRGBPatternSwitch();
+           drive(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+           runIntake();
+           runFlyWheel();
+           runPivot();
+           runServos();
+           doArm();
+           doVarious();
+           runVoltageLED();
+           runRGBPatternSwitch();
         }
     }
 
@@ -139,15 +142,38 @@ public class jmacTeleOp extends LinearOpMode {
 
     public void runFlyWheel()
     {
-        /*double shootingVel = gamepad2.left_trigger * 2500;
-        mDrive.FlyWheel1.setVelocity(shootingVel);
-        mDrive.FlyWheel2.setVelocity(shootingVel);*/
-        mDrive.FlyWheel1.setPower(gamepad2.left_trigger);
-        mDrive.FlyWheel2.setPower(gamepad2.left_trigger);
+        if(gamepad2.dpad_down == true){
+            mode = 0;
+
+        }
+        if(gamepad2.dpad_up == true){
+            mode = 1;
+
+
+        }
+        if(mode == 0){
+            double shootingVelocity = (gamepad2.left_trigger*0.8*2500);
+            mDrive.FlyWheel2.setVelocity(shootingVelocity);
+            mDrive.FlyWheel1.setVelocity(shootingVelocity);
+            telemetry.addLine("Powershot mode");
+            telemetry.update();
+
+        }
+        if(mode == 1){
+            double shootingVelocity = (gamepad2.left_trigger*2500);
+            mDrive.FlyWheel2.setVelocity(shootingVelocity);
+            mDrive.FlyWheel1.setVelocity(shootingVelocity);
+            telemetry.addLine("highgoal mode");
+            telemetry.update();
+        }
+
+
         if (gamepad2.right_trigger > 0.4)
             mDrive.ringHopper.setPosition(1);
         else
             mDrive.ringHopper.setPosition(0.5);
+
+
     }
 
     public void runIntake() {
