@@ -56,6 +56,9 @@ public class FlyWheel {
 //            this.flywheel.setRunMode(Motor.RunMode.VelocityControl);
             pidFlywheel.setPID(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
             pidFlywheel.setTolerance(Vals.flywheel_tolerance);
+            this.lastTimeStamp = 0;
+            this.lastVelocity = 0;
+            pidFlywheel.reset();
             this.flywheelSpeed = Vals.flywheel_speed;
         }
 
@@ -63,18 +66,18 @@ public class FlyWheel {
     }
 
     public void off() {
-//        if(this.isOn()) {
-//            this.flywheel.setRunMode(Motor.RunMode.RawPower);
-//            this.flywheelSpeed = 0;
-//            this.lastTimeStamp = 0;
-//            this.lastVelocity = 0;
-//            pidFlywheel.reset();
-//        }
-        this.flywheel.setRunMode(Motor.RunMode.RawPower);
-        this.flywheelSpeed = 0;
-        this.lastTimeStamp = 0;
-        this.lastVelocity = 0;
-        pidFlywheel.reset();
+        if(this.isOn()) {
+            this.flywheel.setRunMode(Motor.RunMode.RawPower);
+            this.flywheelSpeed = 0;
+            this.lastTimeStamp = 0;
+            this.lastVelocity = 0;
+            pidFlywheel.reset();
+        }
+//        this.flywheel.setRunMode(Motor.RunMode.RawPower);
+//        this.flywheelSpeed = 0;
+//        this.lastTimeStamp = 0;
+//        this.lastVelocity = 0;
+
 
         this.set();
     }
