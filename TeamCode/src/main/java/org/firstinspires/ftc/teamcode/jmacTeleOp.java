@@ -196,10 +196,10 @@ public class jmacTeleOp extends LinearOpMode {
         telemetry.addData("maximum velocity 2", maxVelocity2);
         telemetry.update();
         */
-        //mDrive.FlyWheel1.setVelocity(gamepad2.left_trigger * 2540);
-        //mDrive.FlyWheel2.setVelocity(gamepad2.left_trigger * 2540);
-        mDrive.FlyWheel1.setPower(gamepad2.left_trigger);
-        mDrive.FlyWheel2.setPower(gamepad2.left_trigger);
+        mDrive.FlyWheel1.setVelocity(gamepad2.left_trigger * 2540);
+        mDrive.FlyWheel2.setVelocity(gamepad2.left_trigger * 2540);
+        //mDrive.FlyWheel1.setPower(gamepad2.left_trigger);
+        //mDrive.FlyWheel2.setPower(gamepad2.left_trigger);
         if (gamepad2.right_trigger > 0.4)
             mDrive.ringHopper.setPosition(1);
         else
