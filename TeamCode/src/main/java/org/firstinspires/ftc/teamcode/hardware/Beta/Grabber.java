@@ -31,19 +31,19 @@ public class Grabber extends Logger<Grabber> implements Configurable {
     private final int grabberVersion = 1; // current version used for LeagueMeet 0
                                          // 2 is new grabber
     private final double ARM_POWER = 0.5;
-    private final double ARM_SPEED = 1200;
-    private final double ARM_SPEED_SLOW = 900;
+    private final double ARM_SPEED = 2500;
+    private final double ARM_SPEED_SLOW = 2000;
     private int ARM_POS_MIN = 0;
-    private int ARM_POS_MAX = 585;
+    private int ARM_POS_MAX = 1300;
     private int ARM_POS_INIT = 0;
-    private int ARM_POS_UP_AUTO = 125;
-    private int ARM_POS_UP = 95;
-    private int ARM_POS_UP_UP = 25;
-    private int ARM_POS_DROP_HIGH = 225;
-    private int ARM_POS_DROP = 425;
-    private int ARM_POS_DOWN = 505;
-    private int ARM_POS_DOWN_DOWN = 545;
-    private int ARM_UNIT = 30;
+    private int ARM_POS_UP_AUTO = 250;
+    private int ARM_POS_UP = 190;
+    private int ARM_POS_UP_UP = 50;
+    private int ARM_POS_DROP_HIGH = 500;
+    private int ARM_POS_DROP = 950;
+    private int ARM_POS_DOWN = 1050;
+    private int ARM_POS_DOWN_DOWN = 1190;
+    private int ARM_UNIT = 50;
 
     private double GRABBER_OPEN = 0.82;
     private double GRABBER_CLOSE = 0.5;
@@ -98,7 +98,7 @@ public class Grabber extends Logger<Grabber> implements Configurable {
             arm.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             arm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             arm.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            arm.setDirection(DcMotorEx.Direction.REVERSE);
+            // arm.setDirection(DcMotorEx.Direction.REVERSE);
         }
         configuration.register(this);
         // servoInit();
@@ -128,7 +128,7 @@ public class Grabber extends Logger<Grabber> implements Configurable {
         arm.setTargetPosition(pos);
         if (pos > ARM_POS_DOWN - 100) {
             armIsLow = true;
-        } else if (pos < ARM_POS_UP + 50) {
+        } else if (pos < ARM_POS_UP_AUTO + 100) {
             armIsLow = false;
         }
         arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -230,7 +230,7 @@ public class Grabber extends Logger<Grabber> implements Configurable {
                     return new Progress() {
                         @Override
                         public boolean isDone() {
-                            return (runtime.seconds() >= 0.3);
+                            return (runtime.seconds() >= 0.1);
                         }
                     };
                 }
@@ -281,7 +281,7 @@ public class Grabber extends Logger<Grabber> implements Configurable {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (runtime.seconds() >= 0.3);
+                        return (runtime.seconds() >= 0.1);
                     }
                 };
             }

@@ -1659,8 +1659,11 @@ public class ToboBeta extends Logger<ToboBeta> implements Robot2 {
     }
     public void autoGrabBottomWobbleGoal() throws InterruptedException {
         if (simulation_mode || chassis==null|| grabber==null) return;
-        grabber.armDownCombo();
-        sleep(100);
+        if (!grabber.isArmLow()) {
+            grabber.armDownCombo();
+            sleep(200);
+        }
+        grabber.armDownDownCombo();
         chassis.yMove( -1, 0.4);
         sleep(200);
         chassis.stop();
