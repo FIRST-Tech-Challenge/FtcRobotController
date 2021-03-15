@@ -21,7 +21,7 @@ public class ShooterAuto extends LinearOpMode {
     public void initRobot() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE));
+        flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE), telemetry);
         hitter = new Hitter(hardwareMap.servo.get("sv"));
         elapsedTime = new ElapsedTime();
     }

@@ -98,9 +98,7 @@ public class EchoOp extends OpMode {
 
 
         telemetry.addData("Flywheel Speed", flywheel.flywheel.get());
-        telemetry.addData("Flywheel Power", flywheel.flywheel.motor.getPower());
         telemetry.addData("Flywheel Velocity", flywheel.flywheel.getCorrectedVelocity());
-        telemetry.addData("Flywheel DcMotorEx Velocity", ((DcMotorEx)(flywheel.flywheel.motor)).getVelocity());
         telemetry.addData("Flywheel Filtered Speed", Vals.flywheel_filtered_speed);
         telemetry.addData("Flywheel Position", flywheel.flywheel.getCurrentPosition());
         telemetry.addData("Hitter Position", hitter.hitter.getPosition());

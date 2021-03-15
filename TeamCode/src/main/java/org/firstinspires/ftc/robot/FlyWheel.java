@@ -24,7 +24,7 @@ public class FlyWheel {
     public FlyWheel(Motor flywheel, Telemetry telemetry) {
         this.telemtry = telemetry;
         pidFlywheel = new PIDController(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
-        pidFlywheel.setTolerance(Vals.rotate_tolerance);
+        pidFlywheel.setTolerance(Vals.flywheel_tolerance);
 
         this.flywheel = flywheel;
 
@@ -44,12 +44,14 @@ public class FlyWheel {
         }
         telemtry.addData("Flywheel Set Power: ", power);
         telemtry.addData("Flywheel PID Output: ", pidOutput);
+        telemtry.addData("Flywheel Set Speed", this.flywheelSpeed);
         this.flywheel.set(this.flywheelDirection * power);
     }
 
     public void on() {
         if(!this.isOn()) {
 //            this.flywheel.setRunMode(Motor.RunMode.VelocityControl);
+            pidFlywheel.setPID(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
             this.flywheelSpeed = Vals.flywheel_speed;
         }
 
@@ -62,6 +64,7 @@ public class FlyWheel {
             this.flywheelSpeed = 0;
             this.lastTimeStamp = 0;
             this.lastVelocity = 0;
+            pidFlywheel.reset();
         }
 
         this.set();
