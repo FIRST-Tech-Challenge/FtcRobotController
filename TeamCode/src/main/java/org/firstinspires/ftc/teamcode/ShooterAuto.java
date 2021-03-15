@@ -39,6 +39,9 @@ public class ShooterAuto extends LinearOpMode {
             telemetry.addData("Flywheel Power", flywheel.flywheel.motor.getPower());
             telemetry.addData("Flywheel Velocity", flywheel.flywheel.getCorrectedVelocity());
             telemetry.addData("Flywheel Position", flywheel.flywheel.getCurrentPosition());
+            telemetry.addData("Flywheel P", flywheel.pidFlywheel.getP());
+            telemetry.addData("Flywheel I", flywheel.pidFlywheel.getI());
+            telemetry.addData("Flywheel D", flywheel.pidFlywheel.getD());
             telemetry.update();
             flywheel.on();
             if(flywheel.isReady()) {

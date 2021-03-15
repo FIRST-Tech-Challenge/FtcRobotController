@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class FlyWheel {
 
     public Motor flywheel;
-    private PIDController pidFlywheel;
+    public PIDController pidFlywheel;
     private Telemetry telemtry;
 
     private double flywheelSpeed = 0;
@@ -33,6 +33,8 @@ public class FlyWheel {
 //        this.flywheel.setVeloCoefficients(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
 //        this.flywheel.setFeedforwardCoefficients(Vals.flywheel_ks, Vals.flywheel_kv);
         this.flywheel.setRunMode(Motor.RunMode.RawPower);
+        lastTimeStamp = 0;
+        lastVelocity = 0;
     }
 
     private void set() {
