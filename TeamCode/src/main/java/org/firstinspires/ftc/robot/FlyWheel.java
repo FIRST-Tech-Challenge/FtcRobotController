@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.robot;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import org.firstinspires.ftc.robot_utilities.Vals;
@@ -10,6 +11,7 @@ public class FlyWheel {
 
     public Motor flywheel;
     private PIDController pidFlywheel;
+    private Telemetry telemtry;
 
     private double flywheelSpeed = 0;
     private double flywheelDirection = Vals.flywheel_direction;
@@ -19,7 +21,8 @@ public class FlyWheel {
     private final double TIME_CONSTANT = 0.5;
     private int ticks = 0;
 
-    public FlyWheel(Motor flywheel) {
+    public FlyWheel(Motor flywheel, Telemetry telemetry) {
+        this.telemtry = telemetry;
         pidFlywheel = new PIDController(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
         pidFlywheel.setTolerance(Vals.rotate_tolerance);
 
@@ -35,9 +38,12 @@ public class FlyWheel {
     private void set() {
         updateVelocity();
         double power = 0;
+        double pidOutput = pidFlywheel.calculate(lastVelocity, this.flywheelSpeed);
         if(this.flywheelSpeed > 0) {
-            power = Math.min(pidFlywheel.calculate(lastVelocity, this.flywheelSpeed) + 0.00827, 1);
+            power = Math.min(pidOutput + 0.00827, 1);
         }
+        telemtry.addData("Flywheel Set Power: ", power);
+        telemtry.addData("Flywheel PID Output: ", pidOutput);
         this.flywheel.set(this.flywheelDirection * power);
     }
 

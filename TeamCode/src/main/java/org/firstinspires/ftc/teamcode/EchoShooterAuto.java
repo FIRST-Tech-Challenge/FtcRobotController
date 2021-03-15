@@ -48,7 +48,7 @@ public class EchoShooterAuto extends LinearOpMode {
         intake1.setVeloCoefficients(0.05, 0, 0);
         intake2.setVeloCoefficients(0.05, 0, 0);
 
-        flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE));
+        flywheel = new FlyWheel(new Motor(hardwareMap, "fw", Motor.GoBILDA.BARE), telemetry);
         hitter = new Hitter(hardwareMap.servo.get("sv"));
 
         pidRotate = new PIDController(Vals.rotate_kp, Vals.rotate_ki, Vals.rotate_kd);
