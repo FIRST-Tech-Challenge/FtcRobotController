@@ -53,6 +53,7 @@ public class FlyWheel {
         if(!this.isOn()) {
 //            this.flywheel.setRunMode(Motor.RunMode.VelocityControl);
             pidFlywheel.setPID(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
+            pidFlywheel.setTolerance(Vals.flywheel_tolerance);
             this.flywheelSpeed = Vals.flywheel_speed;
         }
 
