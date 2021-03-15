@@ -22,9 +22,9 @@ public class SpeedController {
 
     double changeTime = 0;
 
-    double oldPos = 0;
+    double oldPos;
 
-    public double pow = 0;
+    public double pow;
 
     public double k;
     public double d;
@@ -43,7 +43,7 @@ public class SpeedController {
         lastTime = -0.1;
         lastError = 0;
         oldPos = 0;
-        pid.setCoeffecients(k,d,i);
+        pid.setCoefficients(k,d,i);
         this.k = k;
         this.d = d;
         this.i = i;
@@ -54,10 +54,9 @@ public class SpeedController {
         pow = startPow;
     }
 
-
-    public void scaleK(double scale){
-        pid.setCoeffecients(k*scale,d,i);
-    }
+//    public void scaleK(double scale){
+//        pid.setCoefficients(k*scale,d,i);
+//    }
 
     public double getMotorSpeed(double currPos){
         double changePos = currPos-lastPos;
@@ -90,10 +89,9 @@ public class SpeedController {
         return isReady;
     }
 
-    public double getPercentageError(){
-        return ((currError/targetSpeed))*100;
-    }
-
+//    public double getPercentageError(){
+//        return ((currError/targetSpeed))*100;
+//    }
 
     public double getPow(){
         if(Math.abs(currError) < 2000) {

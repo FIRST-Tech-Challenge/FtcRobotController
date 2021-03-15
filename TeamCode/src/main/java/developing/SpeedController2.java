@@ -1,7 +1,6 @@
 package developing;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import util.PID;
 
@@ -16,10 +15,10 @@ public class SpeedController2 {
     public double lastError;
 
     public double currError = 0;
-    public double currAccel = 0;
+    public double derivativeOfError = 0;
     public double integralOfError = 0;
 
-    public double targetSpeed = 0; // radians/s
+    public double targetSpeed = 0; // rad/s
     public double currSpeed = 0;
 
     double changeTime = 0;
@@ -35,8 +34,8 @@ public class SpeedController2 {
     public SpeedController2(){
         lastError = -0.1;
         pid.Kp = 0.01;
-        pid.Kd = 0.01;
-        pid.Ki = 0.01;
+        pid.Kd = 0;
+        pid.Ki = 0;
     }
 
     public double getMotorSpeed(double currPos){
@@ -54,16 +53,15 @@ public class SpeedController2 {
         integralOfError = 0;
     }
 
-
     public double getMotorPower(double currPos){
         currSpeed = getMotorSpeed(currPos);
         currError = targetSpeed-currSpeed;
 
-        currAccel = (currError-lastError)/changeTime;
+        derivativeOfError = (currError-lastError)/changeTime;
         lastError = currError;
         integralOfError += currError*changeTime;
 
-        return  pid.getPower(currError, currAccel, integralOfError);
+        return pid.getPower(currError, derivativeOfError, integralOfError);
     }
 
     public boolean isReady(){

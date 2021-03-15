@@ -1,20 +1,29 @@
 package developing;
 
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import global.AngularPosition;
 import global.Constants;
 import util.Geometry;
 
 public class FTCAutoAimer {
     private final Geometry geometry = new Geometry();
+    public SpeedController2 outlController = new SpeedController2();
+    public SpeedController2 outrController = new SpeedController2();
 
-    public double getOuttakePower(double robotTheta, double lrDis, double frDis) {
+    public void update(double robotTheta, double lrDis, double frDis) {
         robotTheta *= Math.PI/180;
         double leftDis = getDisFromCenter(lrDis, robotTheta);
         double frontDis = getDisFromCenter(frDis, robotTheta);
-        return calcSpeed(frontDis, leftDis)/Constants.MAX_OUTTAKE_SPEED;
+        double s = calcSpeed(frontDis, leftDis);
+        outlController.setTargetSpeed(Constants.MAX_OUTTAKE_SPEED/3);
+        outrController.setTargetSpeed(Constants.MAX_OUTTAKE_SPEED/3);
+    }
+
+    public double getOutlPow(double outlPos) {
+        return outlController.getMotorPower(outlPos);
+    }
+
+    public double getOutrPow(double outrPos) {
+        return outrController.getMotorPower(outrPos);
     }
 
     public double getDisFromCenter(double len, double robotTheta){

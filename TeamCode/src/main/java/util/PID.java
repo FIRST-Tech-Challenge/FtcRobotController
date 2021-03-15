@@ -5,7 +5,7 @@ public class PID {
     public double Kd = 0;
     public double Ki = 0;
 
-    public void setCoeffecients(double k, double d, double i){
+    public void setCoefficients(double k, double d, double i){
         Kp = k;
         Kd = d;
         Ki = i;

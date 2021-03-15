@@ -98,9 +98,9 @@ public class Path {
     public Path(double sx, double sy, double sh){
         poses.add(new double[]{sx, sy, sh});
         posetypes.add(Posetype.SETPOINT);
-        xControl.setCoeffecients(ks[0], ds[0], is[0]);
-        yControl.setCoeffecients(ks[1], ds[1], is[1]);
-        hControl.setCoeffecients(ks[2], ds[2], is[2]);
+        xControl.setCoefficients(ks[0], ds[0], is[0]);
+        yControl.setCoefficients(ks[1], ds[1], is[1]);
+        hControl.setCoefficients(ks[2], ds[2], is[2]);
         timer.reset();
     }
 
@@ -113,14 +113,14 @@ public class Path {
     }
 
     public void scaleKs(double sx, double sy, double sh){
-        xControl.setCoeffecients(ks[0]*sx, xControl.Kd, xControl.Ki);
-        yControl.setCoeffecients(ks[1]*sy, yControl.Kd, yControl.Ki);
-        hControl.setCoeffecients(ks[2]*sh, hControl.Kd, hControl.Ki);
+        xControl.setCoefficients(ks[0]*sx, xControl.Kd, xControl.Ki);
+        yControl.setCoefficients(ks[1]*sy, yControl.Kd, yControl.Ki);
+        hControl.setCoefficients(ks[2]*sh, hControl.Kd, hControl.Ki);
     }
     public void scaleDs(double sx, double sy, double sh){
-        xControl.setCoeffecients(xControl.Kp, ds[0]*sx, xControl.Ki);
-        yControl.setCoeffecients(yControl.Kp, ds[1]*sy, yControl.Ki);
-        hControl.setCoeffecients(hControl.Kp, ds[2]*sh, hControl.Ki);
+        xControl.setCoefficients(xControl.Kp, ds[0]*sx, xControl.Ki);
+        yControl.setCoefficients(yControl.Kp, ds[1]*sy, yControl.Ki);
+        hControl.setCoefficients(hControl.Kp, ds[2]*sh, hControl.Ki);
     }
 
     public void resetIs(){

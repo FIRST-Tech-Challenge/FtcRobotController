@@ -1,9 +1,7 @@
 package developing;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.CompassSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -15,10 +13,7 @@ import java.util.ArrayList;
 
 import global.AngularPosition;
 import global.Constants;
-import telefunctions.AutoModule;
 import telefunctions.Cycle;
-import util.CodeSeg;
-import util.ThreadHandler;
 
 public class TestRobot {
 
@@ -40,47 +35,44 @@ public class TestRobot {
     public ModernRoboticsI2cRangeSensor lr;
     public ModernRoboticsI2cRangeSensor br;
 
-
-
-
     public FTCAutoAimer autoAimer = new FTCAutoAimer();
 
     public AngularPosition angularPosition = new AngularPosition();
 
     public boolean intaking = false;
-
+    public boolean outtaking = false;
 
     public double rpStart = 0.1;
 
     public boolean fastMode = true;
 
-
     public AutoModule2 shooter = new AutoModule2(); // 0
 
     public ArrayList<AutoModule2> autoModule2s = new ArrayList<>();
 
-    public SpeedController2 rightSpeedController = new SpeedController2();
-
+    public ButtonController outtakeButtonController = new ButtonController();
 
 
     public void init(HardwareMap hwMap) {
 
-
-        l1 = getMotor(hwMap, "l1", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        l2 = getMotor(hwMap, "l2", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        r1 = getMotor(hwMap, "r1", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        r2 = getMotor(hwMap, "r2", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        l1 = getMotor(hwMap, "l1", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        l2 = getMotor(hwMap, "l2", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        r1 = getMotor(hwMap, "r1", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        r2 = getMotor(hwMap, "r2", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         in = getMotor(hwMap, "in", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outr = getMotor(hwMap, "outr", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl = getMotor(hwMap, "outl", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        outr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         rh = getCRServo(hwMap, "rh", CRServo.Direction.REVERSE);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, rpStart);
 
         angularPosition.init(hwMap);
-
 
         lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
         br = hwMap.get(ModernRoboticsI2cRangeSensor.class, "br");
@@ -95,9 +87,6 @@ public class TestRobot {
         }
         shooter.addStage(rp, pushControl, 0, 0.3);
         autoModule2s.add(shooter);
-
-
-
 
 
     }
@@ -186,19 +175,15 @@ public class TestRobot {
         }
     }
 
-
+    public void toggleOuttake(boolean in) {
+        if (outtakeButtonController.isPressing(in)) {
+            outtaking = !outtaking;
+        }
+    }
 
     public double getRightAngPos(){
         return (outr.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
     }
-
-
-
-
-
-
-
-
 
     public double getLeftDistance(){
         return lr.getDistance(DistanceUnit.CM);
@@ -208,9 +193,15 @@ public class TestRobot {
     }
 
     public void outtakeWithCalculations() {
-        double p = autoAimer.getOuttakePower(angularPosition.getHeadingCS(), lr.getDistance(DistanceUnit.METER), br.getDistance(DistanceUnit.METER));
-        outr.setPower(p);
-        outl.setPower(p);
+        if (outtaking) {
+//            autoAimer.update(angularPosition.getHeadingGY(), lr.getDistance(DistanceUnit.METER), br.getDistance(DistanceUnit.METER));
+            autoAimer.update(0, 1.25,1.5);
+            outr.setPower(autoAimer.getOutrPow(outr.getCurrentPosition()));
+            outl.setPower(autoAimer.getOutlPow(outl.getCurrentPosition()));
+        } else {
+            outr.setPower(0);
+            outl.setPower(0);
+        }
     }
 
     public double getRobotToGoalAngle() {

@@ -15,7 +15,6 @@ public class TestTele extends OpMode {
     @Override
     public void init() {
         bot.init(hardwareMap);
-        bot.rightSpeedController.setTargetSpeed(Constants.MAX_OUTTAKE_SPEED/2);
     }
 
     @Override
@@ -37,6 +36,8 @@ public class TestTele extends OpMode {
             bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
 
             bot.outtake(-gamepad2.right_stick_y);
+//            bot.toggleOuttake(gamepad2.x);
+//            bot.outtakeWithCalculations();
 
             bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
 
@@ -55,8 +56,13 @@ public class TestTele extends OpMode {
 //        telemetry.addData("distance to center: ", bot.autoAimer.getDisFromCenter(bot.getLeftDistance(), bot.angularPosition.getHeadingGY()));
 //        telemetry.update();
 
-        telemetry.addData("right wheel angular pos", bot.getRightAngPos());
-        telemetry.addData("target angular velocity", bot.rightSpeedController.targetSpeed);
+        telemetry.addData("Right Outtake Position", bot.outr.getCurrentPosition());
+        telemetry.addData("Left Outtake Position", bot.outl.getCurrentPosition());
+
+//        telemetry.addData("Outl Target Power", bot.autoAimer.outlController.getMotorPower(bot.outl.getCurrentPosition()));
+
+//        telemetry.addData("right wheel angular pos", bot.getRightAngPos());
+//        telemetry.addData("target angular velocity", bot.rightSpeedController.targetSpeed);
         telemetry.update();
 
 
