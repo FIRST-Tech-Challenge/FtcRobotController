@@ -49,6 +49,9 @@ public class jmacTeleOp extends LinearOpMode {
 
     double mode = 1;
 
+    double maxVelocity = 0;
+    double maxVelocity2 = 0;
+
 
     @Override
     public void runOpMode()
@@ -60,8 +63,8 @@ public class jmacTeleOp extends LinearOpMode {
         Vision vision = new Vision(this);
         currentState = IDLE;
 
-        mDrive.FlyWheel1.setVelocityPIDFCoefficients(1.37, 0.137, 0, 13.65);
-        mDrive.FlyWheel2.setVelocityPIDFCoefficients(1.37,0.137, 0, 13.65);
+        mDrive.FlyWheel1.setVelocityPIDFCoefficients(1.25, 0.125, 0, 12.5);
+        mDrive.FlyWheel2.setVelocityPIDFCoefficients(1.25,0.125, 0, 12.5);
         mDrive.FlyWheel1.setPositionPIDFCoefficients(5.0);
         mDrive.FlyWheel2.setPositionPIDFCoefficients(5.0);
 
@@ -132,16 +135,19 @@ public class jmacTeleOp extends LinearOpMode {
         mDrive.FL.setPower(frontRight);
         mDrive.FR.setPower(frontLeft);
 
+        /*
         telemetry.addData("FL", mDrive.FL.getCurrentPosition());
         telemetry.addData("FR", mDrive.FR.getCurrentPosition());
         telemetry.addData("BL", mDrive.BL.getCurrentPosition());
         telemetry.addData("BR", mDrive.BR.getCurrentPosition());
-        telemetry.update();
+        telemetry.update();*/
         currentState = MANEUVERING;
     }
 
     public void runFlyWheel()
     {
+
+        /*
         if(gamepad2.dpad_down == true){
             mode = 0;
 
@@ -168,6 +174,32 @@ public class jmacTeleOp extends LinearOpMode {
         }
 
 
+
+         */
+        /*
+        mDrive.FlyWheel1.setPower(1);
+        mDrive.FlyWheel2.setPower(1);
+
+        double currentVelocity = mDrive.FlyWheel1.getVelocity();
+        double currentVelocity2 = mDrive.FlyWheel2.getVelocity();
+
+        if (currentVelocity > maxVelocity) {
+            maxVelocity = currentVelocity;
+        }
+        if (currentVelocity2 > maxVelocity2) {
+            maxVelocity2 = currentVelocity2;
+        }
+
+        telemetry.addData("current velocity", currentVelocity);
+        telemetry.addData("maximum velocity", maxVelocity);
+        telemetry.addData("current velocity 2", currentVelocity2);
+        telemetry.addData("maximum velocity 2", maxVelocity2);
+        telemetry.update();
+        */
+        //mDrive.FlyWheel1.setVelocity(gamepad2.left_trigger * 2540);
+        //mDrive.FlyWheel2.setVelocity(gamepad2.left_trigger * 2540);
+        mDrive.FlyWheel1.setPower(gamepad2.left_trigger);
+        mDrive.FlyWheel2.setPower(gamepad2.left_trigger);
         if (gamepad2.right_trigger > 0.4)
             mDrive.ringHopper.setPosition(1);
         else
