@@ -50,6 +50,7 @@ public class ShooterAuto extends LinearOpMode {
                 ticks++;
             }
         }
+        flywheel.off();
         elapsedTime.reset();
 
         while(elapsedTime.seconds() < 1);

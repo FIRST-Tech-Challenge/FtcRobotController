@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 public class Vals {
     public static double flywheel_kp = 0.053; //40
     public static double flywheel_ki = 0.1;
-    public static double flywheel_kd = 0.002;
+    public static double flywheel_kd = 0.007;
     public static double flywheel_ks = 0;
     public static double flywheel_kv = 0.03;
     public static double flywheel_ff = 0.00827;
