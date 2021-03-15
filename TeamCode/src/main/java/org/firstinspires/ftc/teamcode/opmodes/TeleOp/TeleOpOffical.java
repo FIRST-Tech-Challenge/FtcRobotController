@@ -65,13 +65,15 @@ public class TeleOpOffical extends UpliftTele {
 
         robot.readPositionFiles();
 
-        shooter.shooter.setShooterPIDF(5, 0, 0, 25);
+        if(robot.shooterInitialized) {
+            shooter.shooter.setShooterPIDF(5, 0, 0, 25);
+        }
 
     }
 
     @Override
     public void bodyLoop() {
-        logData(robot);
+//        logData(robot);
         displayFullTelemetry(robot);
     }
 

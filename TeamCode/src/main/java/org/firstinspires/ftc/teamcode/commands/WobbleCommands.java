@@ -35,7 +35,7 @@ public class WobbleCommands extends Command {
         }
 
         if (opMode.gamepad2.dpad_down) {
-            wobble.dropOff();   
+            wobble.dropOff();
         }
 
         if(opMode.gamepad2.dpad_right){

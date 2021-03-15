@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
@@ -23,7 +22,6 @@ import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.background.Cancel;
 import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.background.VelocityData;
-import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 import org.firstinspires.ftc.teamcode.toolkit.opencvtoolkit.RingDetector;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -53,7 +51,7 @@ public class UpliftRobot {
     public DcMotor leftFront, leftBack, rightFront, rightBack;
     public DcMotorEx shooter1, shooter2;
     public DcMotor intake, transfer;
-    public Servo wobbleTop, wobbleBottom;
+    public Servo wobbleLeft, wobbleRight;
     public Servo flicker, clamp;
     public Servo stickLeft, stickRight;
     public DigitalChannel digitalTouchBottom, digitalTouchTop;
@@ -130,7 +128,7 @@ public class UpliftRobot {
         } catch (Exception ex) {
             driveInitialized = false;
             opMode.telemetry.addData("Drivetrain initialization failed: ", ex.getMessage());
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
         }
 
         try {
@@ -139,7 +137,7 @@ public class UpliftRobot {
         } catch (Exception ex) {
             flickerInitialized = false;
             opMode.telemetry.addData("Flicker initialization failed: ", ex.getMessage());
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
         }
 
         try {
@@ -155,7 +153,7 @@ public class UpliftRobot {
         } catch (Exception ex) {
             transferInitialized = false;
             opMode.telemetry.addData("Transfer initialization failed: ", ex.getMessage());
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
         }
 
         try {
@@ -170,7 +168,7 @@ public class UpliftRobot {
         } catch (Exception ex) {
             shooterInitialized = false;
             opMode.telemetry.addData("Shooter initialization failed: ", ex.getMessage());
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
         }
 
         try {
@@ -181,19 +179,19 @@ public class UpliftRobot {
         } catch (Exception ex) {
             intakeInitialized = false;
             opMode.telemetry.addData("Intake initialization failed: ", ex.getMessage());
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
         }
 
         try {
-            wobbleTop = hardwareMap.get(Servo.class, "wobble1");
-            wobbleBottom = hardwareMap.get(Servo.class, "wobble2");
+            wobbleLeft = hardwareMap.get(Servo.class, "wobble_left");
+            wobbleRight = hardwareMap.get(Servo.class, "wobble_right");
             clamp = hardwareMap.get(Servo.class, "clamp");
 
             wobbleInitialized = true;
         } catch (Exception ex) {
             wobbleInitialized = false;
             opMode.telemetry.addData("Wobble initialization failed: ", ex.getMessage());
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
         }
 
         try {
@@ -204,7 +202,7 @@ public class UpliftRobot {
         } catch (Exception ex) {
             sticksInitialized = false;
             opMode.telemetry.addData("Sticks initialization failed: ", ex.getMessage());
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
         }
 
         try {
@@ -228,7 +226,7 @@ public class UpliftRobot {
         } catch (Exception ex) {
             imuInitialized = false;
             opMode.telemetry.addData("IMU initialization failed: ", ex.getMessage());
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
         }
 
         try {
@@ -242,8 +240,10 @@ public class UpliftRobot {
         } catch (Exception ex) {
             visionInitialized = false;
             opMode.telemetry.addData("Vision initialization failed: ", ex.getMessage());
-            opMode.telemetry.update();
+//            opMode.telemetry.update();
         }
+
+//        opMode.telemetry.update();
 
         // setup file system
         odometryFileWorldX = AppUtil.getInstance().getSettingsFile("odometryX.txt");

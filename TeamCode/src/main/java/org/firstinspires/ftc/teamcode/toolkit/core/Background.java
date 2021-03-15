@@ -11,6 +11,7 @@ public abstract class Background implements Runnable{
     LinearOpMode opMode;
 
     public Background(UpliftRobot robot) {
+        t = new Thread(this);
         this.robot = robot;
         this.opMode = robot.opMode;
     }

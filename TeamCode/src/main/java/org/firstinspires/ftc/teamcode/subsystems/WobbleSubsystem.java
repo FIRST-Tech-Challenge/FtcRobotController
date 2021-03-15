@@ -8,15 +8,15 @@ import org.firstinspires.ftc.teamcode.toolkit.core.Subsystem;
 public class WobbleSubsystem extends Subsystem {
 
     private UpliftRobot robot;
-    public Servo wobbleTop;
-    public Servo wobbleBottom;
+    public Servo wobbleLeft;
+    public Servo wobbleRight;
     public Servo clamp;
 
     public WobbleSubsystem(UpliftRobot robot) {
         super(robot);
         this.robot = robot;
-        this.wobbleTop = robot.wobbleTop;
-        this.wobbleBottom = robot.wobbleBottom;
+        this.wobbleLeft = robot.wobbleLeft;
+        this.wobbleRight = robot.wobbleRight;
         this.clamp = robot.clamp;
     }
 
@@ -39,7 +39,13 @@ public class WobbleSubsystem extends Subsystem {
     public void safeDisable() {
         // ADD SAFE POSITION HERE
     }
-    public void pickUp(){
+
+    public void setWobblePosition(double pos) {
+        wobbleLeft.setPosition(1 - pos);
+        wobbleRight.setPosition(pos);
+    }
+
+    public void pickUp() {
         closeWobble();
         liftWobble();
     }
@@ -54,33 +60,28 @@ public class WobbleSubsystem extends Subsystem {
     }
 
     public void highWobble() {
-        wobbleTop.setPosition(1 - 0.85);
-        wobbleBottom.setPosition(0.85);
+        setWobblePosition(0.85);
         robot.safeSleep(500);
     }
 
     public void liftWobble() {
-        wobbleTop.setPosition(1 - 0.2);
-        wobbleBottom.setPosition(0.2);
+        setWobblePosition(0.2);
         robot.safeSleep(500);
     }
 
     public void dropWobble() {
-        wobbleTop.setPosition(1 - 0);
-        wobbleBottom.setPosition(0);
-        robot.safeSleep(500);
+        setWobblePosition(0);
+        robot.safeSleep(750);
     }
 
     public void endgameWobble() {
-        wobbleTop.setPosition(1 - 0.5);
-        wobbleBottom.setPosition(0.5);
+        setWobblePosition(0.5);
         robot.safeSleep(500);
     }
 
     public void closeWobble() {
-        clamp.setPosition(0.8);
         clamp.setPosition(0.3);
-        robot.safeSleep(1000);
+        robot.safeSleep(500);
     }
 
     public void openWobble() {

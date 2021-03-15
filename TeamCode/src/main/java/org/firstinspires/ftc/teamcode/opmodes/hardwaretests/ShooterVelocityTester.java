@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.opmodes.hardwaretests;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.background.VelocityData;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
@@ -16,6 +18,8 @@ public class ShooterVelocityTester extends UpliftAuto {
 
     UpliftRobot robot;
     VelocityData velocityData;
+    FtcDashboard ftcDashboard;
+    Telemetry dashTelem;
 
     @Override
     public void initHardware() {
@@ -27,6 +31,9 @@ public class ShooterVelocityTester extends UpliftAuto {
     public void initAction() {
         robot.shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(5, 0, 0, 25));
         robot.shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(5, 0, 0, 25));
+
+        ftcDashboard = FtcDashboard.getInstance();
+        dashTelem = ftcDashboard.getTelemetry();
     }
 
     @Override
@@ -35,15 +42,20 @@ public class ShooterVelocityTester extends UpliftAuto {
 
         Log.i("PID", robot.shooter1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER) + "");
 
-        robot.shooter1.setVelocity(robot.powerShotVelocity);
-        robot.shooter2.setVelocity(robot.powerShotVelocity);
 
+//        robot.shooter1.setVelocity(robot.powerShotVelocity);
+//        robot.shooter2.setVelocity(robot.powerShotVelocity);
+
+        robot.shooter1.setPower(1);
+        robot.shooter2.setPower(1);
 
         double initialTime = System.currentTimeMillis();
         double timeElapsed = 0;
         while(timeElapsed < 10000 && opModeIsActive()) {
             Log.d("Shooter1 Velocity", robot.shooter1SmoothVel + "");
-            Log.d("Shooter2 Velocity", robot.shooter2SmoothVel + "");
+//            Log.d("Shooter2 Velocity", robot.shooter2SmoothVel + "");
+            dashTelem.addData("Shooter 1 Velocity", robot.shooter1SmoothVel + "");
+            dashTelem.update();
             Log.d("Time Elapsed", timeElapsed + "");
             Utils.sleep(50);
             timeElapsed = System.currentTimeMillis() - initialTime;

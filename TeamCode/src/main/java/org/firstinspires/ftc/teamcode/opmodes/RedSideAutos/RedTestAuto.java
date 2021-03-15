@@ -20,6 +20,7 @@ public class RedTestAuto extends UpliftAuto {
         robot = new UpliftRobot(this);
         drive = robot.driveSub;
         autoTimeout = new AutoTimeout(robot);
+        autoTimeout.enable();
     }
 
     @Override
