@@ -1054,7 +1054,7 @@ public class YellowBot implements OdoBot {
         return overage;
     }
 
-    public double strafeToCalib(double speed, double inches, boolean left, MotorReductionBot calib) {
+    public double strafeToCalibOG(double speed, double inches, boolean left, MotorReductionBot calib) {
         double currentPos = this.getHorizontalOdometer();
         double distance = inches * COUNTS_PER_INCH_REV;
 
@@ -1096,7 +1096,7 @@ public class YellowBot implements OdoBot {
     }
 
 
-    public double strafeToCalibPriya(double speed, double inches, boolean left, MotorReductionBot calib) {
+    public double strafeToCalib(double speed, double inches, boolean left, MotorReductionBot calib) {
         double currentPos = this.getHorizontalOdometer();
         double distance = inches * COUNTS_PER_INCH_REV;
 
