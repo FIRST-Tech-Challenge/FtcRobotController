@@ -10,7 +10,7 @@ import static java.lang.StrictMath.abs;
 
 
 @TeleOp(name="Teleop_wheels", group="Teleop")
-@Disabled
+//@Disabled
 public class Teleop_wheels extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
