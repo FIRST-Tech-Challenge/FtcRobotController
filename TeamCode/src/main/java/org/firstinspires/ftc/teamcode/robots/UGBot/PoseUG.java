@@ -796,7 +796,7 @@ public class PoseUG {
 
 
     public boolean driveAbsoluteDistance(double pwr, double targetAngle, boolean forward, double targetMeters, double closeEnoughDist) {
-
+        //driveAbsoluteDistance(MaxPower, heading, forward, distance,.1)
         if (!forward) {
             moveMode = moveMode.backward;
             targetMeters = -targetMeters;
@@ -804,16 +804,18 @@ public class PoseUG {
         } else
             moveMode = moveMode.forward;
 
+        targetAngle= wrap360(targetAngle);  //this was probably already done but repeated as a safety
+
         // if this statement is true, then the robot has not achieved its target
         // position
         if (Math.abs(targetMeters) > Math.abs(closeEnoughDist)) {
-            // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
-            driveIMU(turnP, turnI, turnD, pwr, wrap360(targetAngle), false);
+            //driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
+            //driveIMU(turnP, turnI, turnD, pwr, wrap360(targetAngle), false);
+            movePIDMixer(pwr, targetMeters,0,getHeading(),targetAngle);
             return false;
         } // destination achieved
         else {
-            //stopAll();
-            driveMixerDiffSteer(0, 0);
+            stopChassis(); //todo: maybe this should be optional when you are stringing moves together
             return true;
         }
     }
@@ -906,17 +908,18 @@ public class PoseUG {
     }
 
     int fieldPosState = 0;
-    public boolean driveToFieldPosition(double targetX, double targetY, boolean forward){
-        double headingHeading = getBearingToWrapped(targetX, targetY);
+    public boolean driveToFieldPosition(double targetX, double targetY, boolean forward, double maxPower){
+
+        double heading = getBearingToWrapped(targetX, targetY);
+
+        if(!forward){ //need to reverse heading when driving backwards
+            heading = wrapAngle(heading,180);
+        }
+
         switch (fieldPosState){
-            case 0:
-                headingHeading = getBearingToWrapped(targetX, targetY);
+            case 0: //initially rotate to align with target location
 
-                if(!forward){
-                    headingHeading = wrapAngle(headingHeading,180);
-                }
-
-                if(rotateIMU(headingHeading,2)) {
+                if(rotateIMU(heading,2)) {
                     fieldPosState++;
                 }
                 break;
@@ -925,14 +928,10 @@ public class PoseUG {
 
                 //this seems to be a way to slow down when close to a target location
                 //todo: better PID pased position closing
-                double power =  distance < 0.1524 ? 0 : 0.5;
+                //double power =  distance < 0.1524 ? 0 : 0.5;
+                //double maxPower = .5; // (as a magnituded)
 
-                headingHeading = getBearingToWrapped(targetX, targetY);
-                if(!forward){
-                    headingHeading = wrapAngle(headingHeading,180);
-                }
-
-                if(driveAbsoluteDistance(power, headingHeading , forward, getDistanceTo(targetX, targetY),.1)) {
+                if(driveAbsoluteDistance(maxPower, heading, forward, distance,.1)) {
                     fieldPosState = 0;
                     return true;
                 }
@@ -945,10 +944,10 @@ public class PoseUG {
 
 
     // drive with a final heading
-        public boolean driveToFieldPosition(double targetX, double targetY, boolean forward, double targetFinalHeading){
+        public boolean driveToFieldPosition(double targetX, double targetY, boolean forward, double maxPower, double targetFinalHeading){
         switch (fieldPosStateToo){
             case 0:
-                if(driveToFieldPosition(targetX, targetY, forward)) {
+                if(driveToFieldPosition(targetX, targetY, forward, maxPower)) {
                     fieldPosStateToo++;
                 }
                 break;
@@ -963,10 +962,10 @@ public class PoseUG {
 
     int getFieldPosStateThree = 0;
         //drive to a fully defined Position
-    public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward){
+    public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward, double maxPower){
         switch (getFieldPosStateThree){
             case 0:
-                if(driveToFieldPosition(targetPose.x, targetPose.y, forward, targetPose.baseHeading)) {
+                if(driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower, targetPose.baseHeading)) {
                     getFieldPosStateThree++;
                 }
                 break;
@@ -1176,11 +1175,11 @@ public class PoseUG {
                 returnHomeState++;
                 break;
             case 1:
-                if(driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset+.25,true,0))
+                if(driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset+.25,true,.5, 0))
                     returnHomeState++;
                 break;
             case 2:
-                if(driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset,true,0)){
+                if(driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset,true,0.5, 0)){
                     returnHomeState = 0;
                     return true;
                 }
@@ -1272,6 +1271,10 @@ public class PoseUG {
         launcher.stopAll();
         turret.stopAll();
         driveMixerMec(0, 0, 0);
+    }
+
+    public void stopChassis() {
+        driveMixerDiffSteer(0, 0);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////
