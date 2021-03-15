@@ -18,6 +18,9 @@ import org.firstinspires.ftc.teamcode.autonomous.AutoRoute;
 import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 import org.firstinspires.ftc.teamcode.skills.RingDetector;
 
+// Control Hub ADB Terminal Command for Reference
+// adb.exe connect 192.168.43.1:5555
+
 public class UltimateBot extends YellowBot {
     private Servo wobbleSwing = null;
     private Servo wobbleClaw1 = null;
