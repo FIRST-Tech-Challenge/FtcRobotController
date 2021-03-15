@@ -58,14 +58,18 @@ public class PoseUG {
 
     // setup
     HardwareMap hwMap;
-    PIDController drivePID = new PIDController(0, 0, 0);
+    PIDController turnPID = new PIDController(0, 0, 0);
+    PIDController distPID = new PIDController(0, 0, 0);
     PIDController alignPID = new PIDController(ALIGN_P, ALIGN_I, ALIGN_D);
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
     public double brightness = 0.0; //headlamp brightness - max value should be .8 on a fully charged battery
-    public static double kpDrive = 0.008; // proportional constant multiplier .02
-    public static double kiDrive = 0.0; // integral constant multiplier .01
-    public static double kdDrive = .19; // derivative constant multiplier //increase 0.68
+    public static double turnP = 0.008; // proportional constant applied to error in degrees
+    public static double turnI = 0.0; // integral constant
+    public static double turnD = .19; // derivative constant
+    public static double distP = 0.5; // proportional constant applied to error in meters
+    public static double distI = 0.0; // integral constant
+    public static double distD = .19; // derivative constant
     public static double cutout = 1.0;
 
     public double headingP = 0.007;
@@ -779,7 +783,7 @@ public class PoseUG {
         // position
         if (Math.abs(driveIMUDistanceTarget) > Math.abs(getAverageTicks())) {
             // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
-            driveIMU(kpDrive, kiDrive, kdDrive, pwr, targetAngle, false);
+            driveIMU(turnP, turnI, turnD, pwr, targetAngle, false);
             return false;
         } // destination achieved
         else {
@@ -804,7 +808,7 @@ public class PoseUG {
         // position
         if (Math.abs(targetMeters) > Math.abs(closeEnoughDist)) {
             // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
-            driveIMU(kpDrive, kiDrive, kdDrive, pwr, wrap360(targetAngle), false);
+            driveIMU(turnP, turnI, turnD, pwr, wrap360(targetAngle), false);
             return false;
         } // destination achieved
         else {
@@ -819,7 +823,7 @@ public class PoseUG {
     int countOutliers = 0;
     double driveWallDistanceTarget = 0;
 
-    public boolean calibrationRun(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
+    public boolean alignmentRun(double pwr, double targetVal, double currentVal, boolean forward, double targetMeters) {
 
         if (!driveIMUDistanceInitialzed) {
             // set what direction the robot is supposed to be moving in for the purpose of
@@ -850,7 +854,7 @@ public class PoseUG {
         // position
         if (Math.abs(driveWallDistanceTarget) > Math.abs(getAverageTicks())) {
             // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
-            movegenericPIDMixer(kpDrive,kiDrive,kdDrive,pwr,0,currentVal,targetVal);
+            movegenericPIDMixer(turnP, turnI, turnD,pwr,0,currentVal,targetVal);
             return false;
         } // destination achieved\
         else {
@@ -880,7 +884,7 @@ public class PoseUG {
         // position
         if (Math.abs(targetMetersAway) > Math.abs(getDistForwardDist())) {
             // driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
-            driveIMU(kpDrive, kiDrive, kdDrive, pwr, targetAngle, false);
+            driveIMU(turnP, turnI, turnD, pwr, targetAngle, false);
             return false;
         } // destination achieved
         else {
@@ -912,12 +916,15 @@ public class PoseUG {
                     headingHeading = wrapAngle(headingHeading,180);
                 }
 
-                if(rotateIMU(headingHeading,9)) {
+                if(rotateIMU(headingHeading,2)) {
                     fieldPosState++;
                 }
                 break;
             case 1:
                 double distance = getDistanceTo(targetX, targetY);
+
+                //this seems to be a way to slow down when close to a target location
+                //todo: better PID pased position closing
                 double power =  distance < 0.1524 ? 0 : 0.5;
 
                 headingHeading = getBearingToWrapped(targetX, targetY);
@@ -936,7 +943,9 @@ public class PoseUG {
 
     int fieldPosStateToo = 0;
 
-    public boolean driveToFieldPosition(double targetX, double targetY, boolean forward, double targetFinalHeading){
+
+    // drive with a final heading
+        public boolean driveToFieldPosition(double targetX, double targetY, boolean forward, double targetFinalHeading){
         switch (fieldPosStateToo){
             case 0:
                 if(driveToFieldPosition(targetX, targetY, forward)) {
@@ -953,6 +962,7 @@ public class PoseUG {
     }
 
     int getFieldPosStateThree = 0;
+        //drive to a fully defined Position
     public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward){
         switch (getFieldPosStateThree){
             case 0:
@@ -1483,6 +1493,56 @@ public class PoseUG {
     }
 
     /**
+     *
+     * Moves the chassis under PID control applied to the
+     * heading and speed of the robot with support for mecanum drives.
+     * This version can drive forwards/backwards and strafe
+     * simultaneously. If called with strafe set to zero, this can be used for normal
+     * 4 motor or 2 motor differential drive robots
+     *
+     * @param maxPwrFwd       base forwards/backwards motor power before correction is
+     *                     applied
+     * @param dist         the distance in meters still to go - this is effectively the distance error
+     * @param pwrStf       base left/right motor power before correction is applied
+     * @param currentAngle current angle of the robot in the coordinate system of
+     *                     the sensor that provides it- should be updated every
+     *                     cycle
+     * @param targetAngle  the target angle of the robot in the coordinate system of
+     *                     the sensor that provides the current angle
+     */
+    public void movePIDMixer(double maxPwrFwd, double dist, double pwrStf, double currentAngle,
+                             double targetAngle) {
+
+        // setup turnPID
+        turnPID.setOutputRange(-.5, .5);
+        turnPID.setIntegralCutIn(cutout);
+        turnPID.setPID(turnP, turnI, turnD);
+        turnPID.setSetpoint(targetAngle);
+        turnPID.setInputRange(0, 360);
+        turnPID.setContinuous();
+        turnPID.setInput(currentAngle);
+        turnPID.enable();
+
+        // setup distPID
+        distPID.setOutputRange(-maxPwrFwd, maxPwrFwd);
+        distPID.setIntegralCutIn(cutout); //todo - cutout was for turning and probably needs to be changed for distance if integral is needed
+        distPID.setPID(distP, distI, distD);
+        distPID.setSetpoint(0); //trying to get to a zero distance
+        distPID.setInput(dist);
+        distPID.enable();
+
+        // calculate the angular correction to apply
+        double turnCorrection = turnPID.performPID();
+        // calculate chassis power
+        double basePwr = distPID.performPID();
+
+        // performs the drive with the correction applied
+        driveMixerMec(basePwr, pwrStf, turnCorrection);
+    }
+
+
+    /**
+     * OLD METHOD - only applies  PID to turns, not base power
      * Moves the omnidirectional (mecanum) platform under PID control applied to the
      * rotation of the robot. This version can drive forwards/backwards and strafe
      * simultaneously. If called with strafe set to zero, this will work for normal
@@ -1507,22 +1567,22 @@ public class PoseUG {
 
         // initialization of the PID calculator's output range, target value and
         // multipliers
-        drivePID.setOutputRange(-.5, .5);
-        drivePID.setIntegralCutIn(cutout);
-        drivePID.setPID(Kp, Ki, Kd);
-        drivePID.setSetpoint(targetAngle);
-        drivePID.enable();
+        turnPID.setOutputRange(-.5, .5);
+        turnPID.setIntegralCutIn(cutout);
+        turnPID.setPID(Kp, Ki, Kd);
+        turnPID.setSetpoint(targetAngle);
+        turnPID.enable();
 
         // initialization of the PID calculator's input range and current value
-        drivePID.setInputRange(0, 360);
-        drivePID.setContinuous();
-        drivePID.setInput(currentAngle);
+        turnPID.setInputRange(0, 360);
+        turnPID.setContinuous();
+        turnPID.setInput(currentAngle);
 
         // calculates the angular correction to apply
-        double correction = drivePID.performPID();
+        double turnCorrection = turnPID.performPID();
 
         // performs the drive with the correction applied
-        driveMixerMec(pwrFwd, pwrStf, correction);
+        driveMixerMec(pwrFwd, pwrStf, turnCorrection);
 
         // logging section that can be reactivated for debugging
         /*
@@ -1548,18 +1608,18 @@ public class PoseUG {
 
         // initialization of the PID calculator's output range, target value and
         // multipliers
-        drivePID.setOutputRange(-.5, .5);
-        drivePID.setIntegralCutIn(cutout);
-        drivePID.setPID(Kp, Ki, Kd);
-        drivePID.setSetpoint(targetVal);
-        drivePID.enable();
+        turnPID.setOutputRange(-.5, .5);
+        turnPID.setIntegralCutIn(cutout);
+        turnPID.setPID(Kp, Ki, Kd);
+        turnPID.setSetpoint(targetVal);
+        turnPID.enable();
 
         // initialization of the PID calculator's input range and current value
-        drivePID.setContinuous();
-        drivePID.setInput(currentVal);
+        turnPID.setContinuous();
+        turnPID.setInput(currentVal);
 
         // calculates the angular correction to apply
-        double correction = drivePID.performPID();
+        double correction = turnPID.performPID();
 
         // performs the drive with the correction applied
         driveMixerMec(pwrFwd, pwrStf, correction);
@@ -1640,7 +1700,7 @@ public class PoseUG {
         // if this statement is true, then the robot has not achieved its target
         // position
         if (Math.abs(targetPos) < Math.abs(getAverageAbsTicks())) {
-            driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle, strafe);
+            driveIMU(Kp, turnI, turnD, pwr, targetAngle, strafe);
             return false;
         }
 
@@ -1665,7 +1725,7 @@ public class PoseUG {
             turnTimer = System.nanoTime() + (long) (maxTime * (long) 1e9);
             turnTimerInit = true;
         }
-        driveIMU(kpDrive, kiDrive, kdDrive, 0, targetAngle, false); // check to see if the robot turns within a
+        driveIMU(turnP, turnI, turnD, 0, targetAngle, false); // check to see if the robot turns within a
                                                                     // threshold of the target
          if(Math.abs(getHeading() - targetAngle) < minTurnError && Math.abs(rotVelBase) < 20) {
          turnTimerInit = false;
@@ -1715,7 +1775,7 @@ public class PoseUG {
                 maintainHeadingInit = true;
             }
             // hold the saved heading with PID
-            driveIMU(kpDrive, kiDrive, kdDrive, 0, poseSavedHeading, false);
+            driveIMU(turnP, turnI, turnD, 0, poseSavedHeading, false);
         }
 
         // if the button is not down, set to make sure the correct heading will be saved

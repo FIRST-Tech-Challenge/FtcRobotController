@@ -97,7 +97,7 @@ public class Autonomous {
             .addState(() -> robot.launcher.WobbleGrip())
             .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.launcher.setElbowTargetAngle(0))
-            .addState(() -> robot.calibrationRun(.5,-0.4572 * Constants.WALL_FOLLOW_MULTIPLIER, -robot.getDistRightDist() * Constants.WALL_FOLLOW_MULTIPLIER,true, 2.7432))
+            .addState(() -> robot.alignmentRun(.5,-0.4572 * Constants.WALL_FOLLOW_MULTIPLIER, -robot.getDistRightDist() * Constants.WALL_FOLLOW_MULTIPLIER,true, 2.7432))
             .addMineralState(ugStateProvider,
                     ()-> robot.turret.rotateCardinalTurret(false),
                     ()-> robot.returnTrue(),
@@ -136,7 +136,7 @@ public class Autonomous {
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
-            .addState(() -> robot.calibrationRun(.5,-0.4572 * Constants.WALL_FOLLOW_MULTIPLIER, -robot.getDistRightDist() * Constants.WALL_FOLLOW_MULTIPLIER,true, 2.7432))
+            .addState(() -> robot.driveToFieldPosition(-1,Constants.startingYOffset,false))
             .addTimedState(5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
