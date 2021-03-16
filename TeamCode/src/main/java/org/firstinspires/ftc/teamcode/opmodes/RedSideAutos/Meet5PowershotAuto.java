@@ -45,8 +45,6 @@ public class Meet5PowershotAuto extends UpliftAuto {
     public void initAction() {
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
-        robot.shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(5, 0, 0, 25));
-        robot.shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(5, 0, 0, 25));
     }
 
     @Override

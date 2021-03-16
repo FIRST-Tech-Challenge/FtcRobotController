@@ -43,7 +43,6 @@ public class Meet5Auto extends UpliftAuto {
     public void initAction() {
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
-        shooterSub.setShooterPIDF(5, 0, 0, 25);
     }
 
     @Override

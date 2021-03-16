@@ -74,8 +74,12 @@ public class UpliftRobot {
     public double shooter2SmoothVel = -1;
     public double shooter1RawVel = -1;
     public double shooter2RawVel = -1;
-    public double highGoalVelocity = 1900;
+    public double highGoalVelocity = 1500;
     public double powerShotVelocity = 1050;
+    public double kP = 50;
+    public double kI = 0;
+    public double kD = 0;
+    public double kF = 13;
 
     public File odometryFileWorldX, odometryFileWorldY, odometryFileWorldAngle, transferFile;
 
@@ -163,6 +167,8 @@ public class UpliftRobot {
             shooter2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
+            shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
             shooterInitialized = true;
         } catch (Exception ex) {
@@ -265,6 +271,7 @@ public class UpliftRobot {
         }
         if(shooterInitialized) {
             shooterSub = new ShooterSubsystem(this);
+            shooterSub.setShooterPIDF(kP, kI, kD, kF);
         }
         if(flickerInitialized) {
             flickerSub = new FlickerSubsystem(this);
