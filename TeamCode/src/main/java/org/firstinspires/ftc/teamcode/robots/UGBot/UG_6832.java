@@ -652,7 +652,7 @@ public class UG_6832 extends OpMode {
         }
 
 
-        robot.launcher.update(robot.getHeading(), robot.turret.getHeading());
+        robot.launcher.update();
         robot.turret.update();
         robot.intake.update();
     }
