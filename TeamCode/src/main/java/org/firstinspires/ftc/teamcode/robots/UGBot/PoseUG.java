@@ -799,8 +799,8 @@ public class PoseUG {
         //driveAbsoluteDistance(MaxPower, heading, forward, distance,.1)
         if (!forward) {
             moveMode = moveMode.backward;
-            targetMeters = -targetMeters;
-            pwr = -pwr;
+            //targetMeters = -targetMeters;
+            //pwr = -pwr;
         } else
             moveMode = moveMode.forward;
 
@@ -811,7 +811,7 @@ public class PoseUG {
         if (Math.abs(targetMeters) > Math.abs(closeEnoughDist)) {
             //driveIMU(Kp, kiDrive, kdDrive, pwr, targetAngle);
             //driveIMU(turnP, turnI, turnD, pwr, wrap360(targetAngle), false);
-            movePIDMixer(pwr, targetMeters,0,getHeading(),targetAngle);
+            movePIDMixer(pwr, forward, targetMeters,0,getHeading(),targetAngle);
             return false;
         } // destination achieved
         else {
@@ -1513,7 +1513,7 @@ public class PoseUG {
      * @param targetAngle  the target angle of the robot in the coordinate system of
      *                     the sensor that provides the current angle
      */
-    public void movePIDMixer(double maxPwrFwd, double dist, double pwrStf, double currentAngle,
+    public void movePIDMixer(double maxPwrFwd,  boolean forward, double dist, double pwrStf, double currentAngle,
                              double targetAngle) {
 
         // setup turnPID
@@ -1530,14 +1530,15 @@ public class PoseUG {
         distPID.setOutputRange(-maxPwrFwd, maxPwrFwd);
         distPID.setIntegralCutIn(cutout); //todo - cutout was for turning and probably needs to be changed for distance if integral is needed
         distPID.setPID(distP, distI, distD);
-        distPID.setSetpoint(0); //trying to get to a zero distance
-        distPID.setInput(dist);
+        distPID.setSetpoint(dist); //trying to get to a zero distance
+        distPID.setInput(0);
         distPID.enable();
 
         // calculate the angular correction to apply
         double turnCorrection = turnPID.performPID();
         // calculate chassis power
         double basePwr = distPID.performPID();
+        if (!forward) basePwr *=-1;
 
         // performs the drive with the correction applied
         driveMixerMec(basePwr, pwrStf, turnCorrection);
