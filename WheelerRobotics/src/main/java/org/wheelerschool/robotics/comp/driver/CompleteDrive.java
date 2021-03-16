@@ -38,7 +38,7 @@ public class CompleteDrive extends OpMode {
             driveMode = false;
         }
 
-        float driveFactor = (driveMode)? 1 : -1;
+        float driveFactor = (driveMode)? -1 : 1;
         float forward = driveFactor * gamepad1.left_stick_y;
         float strafe = driveFactor * gamepad1.left_stick_x;
         float rotate = gamepad1.right_stick_x;
@@ -50,13 +50,7 @@ public class CompleteDrive extends OpMode {
                 forward + rotate - strafe
         );
 
-        if (gamepad1.a) {
-            launchMode = true;
-        } else if (gamepad1.b) {
-            launchMode = false;
-        }
-
-        hw.launcher(launchMode);
+        hw.launcher(driveMode);
 
         hw.launchPush(gamepad1.right_bumper);
 
@@ -73,7 +67,6 @@ public class CompleteDrive extends OpMode {
 
         wobbleCtl.update(gamepad1.dpad_left);
         hw.setWobbleGrab(wobbleCtl.state);
-
 
         if (gamepad1.dpad_up) {
             hw.setWobbleArm(CompBot.WobblePosition.UP);
