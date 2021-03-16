@@ -36,11 +36,13 @@ public class CompBot {
     public CompBot(HardwareMap hw) {
         launchLeft = hw.dcMotor.get("launchLeft");
         launchLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        launchLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        launchLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        launchLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         launchRight = hw.dcMotor.get("launchRight");
         launchRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        launchRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        launchRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        launchRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         launchPush = hw.servo.get("launchPush");
 
@@ -86,7 +88,7 @@ public class CompBot {
     }
 
     public void launchPush(boolean mode) {
-        float pos = mode ? 0.45f : 0.2f;
+        float pos = mode ? 0.65f : 0.1f;
         launchPush.setPosition(pos);
     }
 
@@ -116,7 +118,7 @@ public class CompBot {
         } else if (pos == WobblePosition.UP) {
             wobbleArm.setTargetPosition(-300);
         } else if (pos == WobblePosition.GRAB) {
-            wobbleArm.setTargetPosition(-650);
+            wobbleArm.setTargetPosition(-750);
         }
         wobbleArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleArm.setPower(0.5f);

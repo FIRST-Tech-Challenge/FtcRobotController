@@ -1,4 +1,4 @@
-package org.wheelerschool.robotics.comp.test;
+package org.wheelerschool.robotics.comp.driver;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -6,15 +6,23 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.wheelerschool.robotics.comp.CompBot;
+import org.wheelerschool.robotics.lib.StatefulButton;
 
 @TeleOp
 public class CompleteDrive extends OpMode {
     CompBot hw;
     boolean launchMode = false;
 
+    StatefulButton intakeCtl;
+    StatefulButton wobbleCtl;
+    boolean driveMode = true;
+
     @Override
     public void init() {
         hw = new CompBot(hardwareMap);
+
+        intakeCtl = new StatefulButton(false);
+        wobbleCtl = new StatefulButton(true);
     }
 
     @Override
@@ -24,8 +32,15 @@ public class CompleteDrive extends OpMode {
 
     @Override
     public void loop() {
-        float forward = gamepad1.left_stick_y;
-        float strafe = gamepad1.left_stick_x;
+        if (gamepad1.y) {
+            driveMode = true;
+        } else if (gamepad1.x) {
+            driveMode = false;
+        }
+
+        float driveFactor = (driveMode)? 1 : -1;
+        float forward = driveFactor * gamepad1.left_stick_y;
+        float strafe = driveFactor * gamepad1.left_stick_x;
         float rotate = gamepad1.right_stick_x;
 
         hw.setDrive(
@@ -45,15 +60,19 @@ public class CompleteDrive extends OpMode {
 
         hw.launchPush(gamepad1.right_bumper);
 
-        if (gamepad1.left_bumper) {
-            hw.intakeMode(CompBot.IntakeMode.IN);
-        } else if (gamepad1.left_trigger > 0.2f) {
+        intakeCtl.update(gamepad1.left_bumper);
+
+        if (gamepad1.left_trigger > 0.2f) {
+            intakeCtl.state = false;
             hw.intakeMode(CompBot.IntakeMode.OUT);
+        } else if (intakeCtl.state) {
+            hw.intakeMode(CompBot.IntakeMode.IN);
         } else {
             hw.intakeMode(CompBot.IntakeMode.STOP);
         }
 
-        hw.setWobbleGrab(gamepad1.y);
+        wobbleCtl.update(gamepad1.dpad_left);
+        hw.setWobbleGrab(wobbleCtl.state);
 
 
         if (gamepad1.dpad_up) {
