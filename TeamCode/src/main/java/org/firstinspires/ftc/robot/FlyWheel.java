@@ -42,7 +42,7 @@ public class FlyWheel {
         double power = 0;
         double pidOutput = pidFlywheel.calculate(lastVelocity, this.flywheelSpeed);
         if(this.flywheelSpeed > 0) {
-            power = Math.min(pidOutput + Vals.flywheel_ff, 1);
+            power = Math.min(pidOutput, 1);
         }
         telemtry.addData("Flywheel Set Power: ", power);
         telemtry.addData("Flywheel PID Output: ", pidOutput);
@@ -83,7 +83,7 @@ public class FlyWheel {
     }
 
     public boolean isOn() {
-        return this.flywheelSpeed != 0;
+        return Math.abs(this.flywheel.getCorrectedVelocity()) > 10;
     }
 
     public void flipDirection() {
