@@ -87,19 +87,12 @@ public class Launcher {
 
     long prevNanoTime;
     int prevMotorTicks;
-    private boolean notObstructed = true;
     int gripperTargetPos = 1920;
-    public void update(double baseHeading, double turretHeading){
+    public void update(){
         if(active) {
             if(elbowActivePID)
-                if(Conversions.between(wrap360((turretHeading)- baseHeading), 350,10)){
-                    movePIDElbow(kpElbow, kiElbow, kdElbow, elbow.getCurrentPosition(), Math.min(elbowPos, 20 * ticksPerDegree)); //gets the lowest of the 2
-                    notObstructed = false;
-                }
-                else {
                     movePIDElbow(kpElbow, kiElbow, kdElbow, elbow.getCurrentPosition(), elbowPos);
-                    notObstructed = true;
-                }
+
             else
                 elbow.setPower(0);
 
@@ -119,13 +112,11 @@ public class Launcher {
         }
     }
 
-    public boolean getNotObstructed(){return notObstructed;}
-
     public void stopAll(){
         setElbowPwr(0);
         setElbowActivePID(false);
         setFlywheelActivePID(false);
-        update(0,0);
+        update();
         active = false;
     }
 

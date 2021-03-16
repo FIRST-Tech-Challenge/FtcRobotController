@@ -664,7 +664,7 @@ public class PoseUG {
         trajCalc.setTarget(target);
         trajSol = trajCalc.getTrajectorySolution();
 
-        launcher.update(getHeading(), turret.getHeading());
+        launcher.update();
         turret.update();
         intake.update(); //watermelon
         maintainTarget();
@@ -1085,7 +1085,7 @@ public class PoseUG {
         if (Math.abs(launcher.flywheelTargetTPS - launcher.flywheelTPS) / launcher.flywheelTargetTPS < 0.05) {
             rampedUp = true;
         }
-        if(rampedUp && launcher.getNotObstructed()){
+        if(rampedUp){
             switch (toggleTriggerState) {
                 case 0:
                     launcher.servoTrigger.setPosition(servoNormalize(2100));

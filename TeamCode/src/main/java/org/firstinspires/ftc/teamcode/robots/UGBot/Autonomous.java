@@ -136,10 +136,10 @@ public class Autonomous {
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset+2,true, .5))
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset-.5, Constants.startingYOffset+1,false, .5))
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset-1, Constants.startingYOffset+2,true, .5))
-            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset+1,false, .5))
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset+2,true, .8))
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset-.5, Constants.startingYOffset+1,false, .8))
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset-1, Constants.startingYOffset+2,true, .8))
+            .addState(() -> robot.driveToFieldPosition(Constants.startingXOffset, Constants.startingYOffset+1,false, .8))
             .addTimedState(5f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
