@@ -5,7 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
 public class CompBot {
+    public WebcamName webcam;
+
     public DcMotor launchLeft;
     public DcMotor launchRight;
     public Servo launchPush;
@@ -34,6 +38,8 @@ public class CompBot {
 
 
     public CompBot(HardwareMap hw) {
+        webcam = hw.get(WebcamName.class, "Webcam 1");
+
         launchLeft = hw.dcMotor.get("launchLeft");
         launchLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         launchLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
