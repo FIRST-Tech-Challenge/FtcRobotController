@@ -16,11 +16,11 @@ public class AutoCompetition extends MasterAutonomous {
 
     // Constants
     static final int MINIMUM_RING_AREA = 1800;
-    static final int PARKING_Y_POSITION = 84;
-    static final int A_C_TARGET_ZONE_X_POSITION = -24;
-    static final int A_TARGET_ZONE_Y_POSITION = 72;
-    static final int B_TARGET_ZONE_Y_POSITION = 96;
-    static final int C_TARGET_ZONE_Y_POSITION = 120;
+    static final int PARKING_Y_POSITION = 73;
+    static final int A_C_TARGET_ZONE_X_POSITION = -29;
+    static final int A_TARGET_ZONE_Y_POSITION = 60;
+    static final int B_TARGET_ZONE_Y_POSITION = 90;
+    static final int C_TARGET_ZONE_Y_POSITION = 114;
 
     RingDetectionOpenCV ringDetector = new RingDetectionOpenCV();
     OpenCvCamera webcam;
@@ -41,27 +41,33 @@ public class AutoCompetition extends MasterAutonomous {
 
         waitForStart();
 
+        move(-6, 0, 0.7);
+        pivot(90, 0.4);
         // 0 rings -> Zone A
         // 1 rings -> Zone B
         // 4 rings -> Zone C
         switch (numRings) {
             case 0:
                 // Nagivate to Zone A
-                move(0, A_TARGET_ZONE_Y_POSITION, 0.7);
+                //move(0, A_TARGET_ZONE_Y_POSITION, 0.7);
                 move(A_C_TARGET_ZONE_X_POSITION, A_TARGET_ZONE_Y_POSITION, 0.7);
                 openWobbleGoalArm();
-                move(A_C_TARGET_ZONE_X_POSITION, 48, 0.7);
-
+                move(A_C_TARGET_ZONE_X_POSITION, (A_TARGET_ZONE_Y_POSITION - 20), 0.7);
+                break;
             case 1:
                 // Navigate to Zone B
+                move(A_C_TARGET_ZONE_X_POSITION, 24, 0.7);
                 move(0, B_TARGET_ZONE_Y_POSITION, 0.7);
                 openWobbleGoalArm();
+                break;
 
             case 4:
                 // Navigate to Zone C
-                move(0, C_TARGET_ZONE_Y_POSITION, 0.7);
+                move(A_C_TARGET_ZONE_X_POSITION, 24, 0.7);
                 move(A_C_TARGET_ZONE_X_POSITION, C_TARGET_ZONE_Y_POSITION, 0.7);
                 openWobbleGoalArm();
+                break;
+
         }
 
         // Park over white line

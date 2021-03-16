@@ -25,9 +25,9 @@ public class Robot {
     public void updatePosition() {
         // divide by 4 because we are averaging them (scaling)
         // plug in motor values to check the equations below
-        // multiply currentX by 0.85 to account for x movement being 15% short in testing
-        // todo Properly account for this factor (will be eliminated in odometry)
-        currentX = ( (float) (master.motorFL.getCurrentPosition() - master.motorBL.getCurrentPosition() - master.motorFR.getCurrentPosition() + master.motorBR.getCurrentPosition()) ) / ( 4 * master.COUNTS_PER_INCH );
+        // multiply currentX by 0.91 to account for x movement being 9% short in testing
+        // todo Properly account for this factor
+        currentX = ( (float) 0.91 * (master.motorFL.getCurrentPosition() - master.motorBL.getCurrentPosition() - master.motorFR.getCurrentPosition() + master.motorBR.getCurrentPosition()) ) / ( 4 * master.COUNTS_PER_INCH );
         currentY = ( (float) (master.motorFL.getCurrentPosition() + master.motorBL.getCurrentPosition() + master.motorFR.getCurrentPosition() + master.motorBR.getCurrentPosition()) ) / ( 4 * master.COUNTS_PER_INCH );
 
         curAngle = getCorrectedHeading();
