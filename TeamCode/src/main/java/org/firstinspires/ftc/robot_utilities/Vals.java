@@ -12,7 +12,7 @@ public class Vals {
     public static double flywheel_ff = 0.00827;
     public static double flywheel_tolerance = 1;
     public static double flywheel_speed = 1200;
-    public static double flywheel_powershot_speed = 1100;
+    public static double flywheel_powershot_speed = 850;
     public static double flywheel_direction = -1;
     public static int flywheel_ready_ticks = 5;
     public static int flywheel_ready_min_speed = 1110;

@@ -65,6 +65,19 @@ public class FlyWheel {
         this.set();
     }
 
+    public void on_slow() {
+        if(!this.isOn()) {
+            pidFlywheel.setPID(Vals.flywheel_kp, Vals.flywheel_ki, Vals.flywheel_kd);
+            pidFlywheel.setTolerance(Vals.flywheel_tolerance);
+            this.lastTimeStamp = 0;
+            this.lastVelocity = 0;
+            pidFlywheel.reset();
+            this.flywheelSpeed = Vals.flywheel_powershot_speed;
+        }
+
+        this.set();
+    }
+
     public void off() {
         if(this.isOn()) {
             this.flywheel.setRunMode(Motor.RunMode.RawPower);
@@ -108,7 +121,7 @@ public class FlyWheel {
         double velocity = Math.abs(flywheel.getCorrectedVelocity());
         if(lastTimeStamp == 0) {
             lastVelocity = velocity;
-            lastTimeStamp = System.nanoTime() / 1e9;
+            lastTimeStamp = (double)System.nanoTime() / 1e9;
         } else if(velocity < 1e-6) {
             lastVelocity = 0;
         } else {

@@ -37,6 +37,7 @@ public class EchoOp extends OpMode {
     private double wobbleHandPos = Vals.wobble_hand_close;
     private double wobbleArmVelocity = 0;
     private boolean flywheelOn = false;
+    private boolean flywheelPowershot = false;
 
     @Override
     public void init() {
@@ -100,6 +101,9 @@ public class EchoOp extends OpMode {
         }
 
 
+        if(gamepad.isXRelease()) {
+            flywheelPowershot = !flywheelPowershot;
+        }
         if(gamepad.isYRelease()) {
             flywheel.flipDirection();
         }
@@ -113,7 +117,11 @@ public class EchoOp extends OpMode {
         }
 
         if(flywheelOn) {
-            flywheel.on();
+            if(flywheelPowershot) {
+                flywheel.on_slow();
+            } else {
+                flywheel.on();
+            }
         } else {
             flywheel.off();
         }
