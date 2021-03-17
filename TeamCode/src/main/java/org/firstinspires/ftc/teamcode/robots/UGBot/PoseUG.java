@@ -657,7 +657,7 @@ public class PoseUG {
         motorBackLeft.setPower(clampMotor(powerBackLeft));
         motorBackRight.setPower(clampMotor(powerBackRight));
 
-        turret.setTurntableAngle(model.getTurretHeading());
+        //turret.setTurntableAngle(model.getTurretHeading());
 
         trajCalc.updatePos(poseX, poseY);
         trajCalc.updateVel(velocityX, velocityY);
@@ -683,13 +683,13 @@ public class PoseUG {
     public void maintainTarget() {
         switch(target) {
             case NONE:
-                turret.setTurntableAngle(turret.getTurretTargetHeading());
+                //turret.setTurntableAngle(turret.getTurretTargetHeading());
                 launcher.setFlywheelActivePID(false);
 //                turret.setTurntableAngle(getHeading());
                 break;
             default:
                 goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
-                turret.setTurntableAngle(goalHeading);
+                turret.setTurntableAngle(model.getTurretHeading());
                 launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.HEIGHT_MULTIPLIER);
                 if(flywheelIsActive){
                     launcher.setFlywheelActivePID(true);
@@ -960,21 +960,49 @@ public class PoseUG {
         return false;
     }
 
-    int getFieldPosStateThree = 0;
+        int getFieldPosStateThree = 0;
+        double originalDist = 0.0;
         //drive to a fully defined Position
-    public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward, double maxPower){
+    public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward, double donePercent , double maxPower){
         switch (getFieldPosStateThree){
             case 0:
-                if(driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower, targetPose.baseHeading)) {
+                originalDist = getDistanceTo(targetPose.x, targetPose.y);
+
+                if(donePercent < 0.01){
+                    if(targetPose.launchElevation > -.01) { //set elevation{
+                        launcher.setElbowTargetAngle(targetPose.launchElevation);
+                    }
+                    if(targetPose.launchHeading > -.01) {
+                        turret.setTurntableAngle(targetPose.launchHeading);
+                    }
+                    getFieldPosStateThree++;
+                }
+                else{
                     getFieldPosStateThree++;
                 }
                 break;
             case 1:
-                if(targetPose.launchElevation > -.01) { //set elevation{
-                    launcher.setElbowTargetAngle(targetPose.launchElevation);
+                if(originalDist - (getDistanceTo(targetPose.x, targetPose.y)) / originalDist >= donePercent && !(donePercent == 0.0)){
+                    if(targetPose.launchElevation > -.01) { //set elevation{
+                        launcher.setElbowTargetAngle(targetPose.launchElevation);
+                    }
+                    if(targetPose.launchHeading > -.01) {
+                        turret.setTurntableAngle(targetPose.launchHeading);
+                    }
                 }
-                if(targetPose.launchHeading > -.01) {
-                    turret.setTurntableAngle(targetPose.launchHeading);
+
+                if(driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower, targetPose.baseHeading)) {
+                    getFieldPosStateThree++;
+                }
+                break;
+            case 2:
+                if(donePercent >= .99) {
+                    if (targetPose.launchElevation > -.01) { //set elevation{
+                        launcher.setElbowTargetAngle(targetPose.launchElevation);
+                    }
+                    if (targetPose.launchHeading > -.01) {
+                        turret.setTurntableAngle(targetPose.launchHeading);
+                    }
                 }
                 getFieldPosStateThree = 0;
                 return true;

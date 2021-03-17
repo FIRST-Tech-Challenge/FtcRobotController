@@ -92,7 +92,6 @@ public class Launcher {
         if(active) {
             if(elbowActivePID)
                     movePIDElbow(kpElbow, kiElbow, kdElbow, elbow.getCurrentPosition(), elbowPos);
-
             else
                 elbow.setPower(0);
 
@@ -254,7 +253,7 @@ public class Launcher {
     }
 
     public void adjustElbowAngle(double speed){
-        setElbowTargetPos(getElbowCurrentPos() + (int)(150 * speed));
+        setElbowTargetPos(getElbowCurrentPos() + (int)(100 * speed));
     }
 
     public void decreaseElbowAngle(){

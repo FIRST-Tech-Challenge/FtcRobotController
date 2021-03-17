@@ -547,9 +547,6 @@ public class UG_6832 extends OpMode {
 
 
     private void joystickDrive() { //apple
-        if (notdeadzone(gamepad1.right_stick_y)) {
-            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
-        }
 
         if (!joystickDriveStarted) {
             robot.setAutonSingleStep(true);
@@ -604,20 +601,15 @@ public class UG_6832 extends OpMode {
         if(toggleAllowed(gamepad1.x,x,1))
             robot.launcher.toggleGripper();
 
+        if (notdeadzone(gamepad1.right_stick_y)) {
+            robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
+        }
 
-        if (notdeadzone(gamepad1.right_trigger))
-            robot.turret.rotateRight(gamepad1.right_trigger * 5);
+        if (gamepad1.right_trigger > .01)
+            robot.turret.rotateRight(gamepad1.right_trigger * 2);
 
-        if (notdeadzone(gamepad1.left_trigger))
-            robot.turret.rotateLeft(gamepad1.left_trigger * 5);
-
-
-        if (toggleAllowed(gamepad1.right_bumper, right_bumper,1))
-
-
-        if (gamepad1.left_bumper)
-            robot.turret.rotateLeft(.5);
-
+        if (gamepad1.left_trigger > .01)
+            robot.turret.rotateLeft(gamepad1.left_trigger * 2);
 
         if(toggleAllowed(gamepad1.dpad_right,dpad_right,1))
             robot.setTarget(Constants.Target.NONE);

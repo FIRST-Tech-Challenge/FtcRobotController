@@ -47,7 +47,7 @@ public class Turret{
     Orientation imuAngles;
     boolean maintainHeadingInit;
     private final double angleIncrement = 10;
-    private boolean isMaintainingHeading = true;
+    public boolean isMaintainingHeading = true;
 
     //sensors
     //DigitalChannel magSensor;
@@ -81,7 +81,6 @@ public class Turret{
 
     }
 
-    private double offsetMuzzleOffset = 0.0;
     public void update(){
         //IMU Update
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
@@ -99,7 +98,8 @@ public class Turret{
         //execute PID calcs
         if(isMaintainingHeading)
             maintainHeadingTurret(true);
-
+        else
+            maintainHeadingTurret(false);
     }
 
 
@@ -131,17 +131,6 @@ public class Turret{
 
     public void rotateRight(double speed) {
         setTurntableAngle(getHeading(), angleIncrement * speed);
-    }
-
-    public boolean rotateUntil(boolean right, boolean otherActionToDoIsDone){
-        if(right && !otherActionToDoIsDone){
-            rotateRight(.5);
-            return false; }
-        else if (!right && !otherActionToDoIsDone){
-            rotateLeft(.5);
-            return false; }
-        else{
-            return true;}
     }
 
     public void rotateLeft(double speed){

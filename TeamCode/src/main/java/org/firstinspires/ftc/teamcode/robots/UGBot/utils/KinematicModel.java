@@ -20,7 +20,7 @@ public class KinematicModel {
 //            else if(minDistance < maxDistance && minDistance > 0)
 //                turretHeading = heading - Constants.TURRET_HEADING_OFFSET;
 //        } else {
-            turretHeading = targetTurretHeading;
+            //turretHeading = targetTurretHeading;
 //        }
 
         // drivetrain & ringevator interactions

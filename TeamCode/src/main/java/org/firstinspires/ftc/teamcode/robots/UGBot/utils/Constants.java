@@ -132,7 +132,8 @@ public class Constants {
         WOBBLE_TWO_APPROACH(35/INCHES_PER_METER, (23+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 0, 0,0),
         WOBBLE_TWO_GRAB (35/INCHES_PER_METER, (23)/INCHES_PER_METER, 0, 0,0),
         NAVIGATE(48/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1),
-        LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,270,-1, -1);
+        LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,270,-1, -1),
+        TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,270,30, 10);
 
         public double x, y, baseHeading, launchHeading, launchElevation;
 
