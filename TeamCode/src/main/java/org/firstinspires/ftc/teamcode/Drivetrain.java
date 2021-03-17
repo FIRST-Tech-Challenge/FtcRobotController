@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 public class Drivetrain {
     HardwareMapV2 robot;
-    Drivetrain (HardwareMapV2 robot) { this.robot = robot; }
+    public Drivetrain(HardwareMapV2 robot) { this.robot = robot; }
     enum tiltDirect{
         UP, DOWN
     }

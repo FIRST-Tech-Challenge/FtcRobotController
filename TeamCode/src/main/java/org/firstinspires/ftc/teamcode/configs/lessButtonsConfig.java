@@ -1,4 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.configs;
+
+import org.firstinspires.ftc.teamcode.Drivetrain;
+import org.firstinspires.ftc.teamcode.HardwareMapV2;
+import org.firstinspires.ftc.teamcode.configs.teleConfigRohit2;
+import org.firstinspires.ftc.teamcode.configs.teleOpInterface;
 
 public class lessButtonsConfig implements teleOpInterface {
 
@@ -9,7 +14,7 @@ public class lessButtonsConfig implements teleOpInterface {
     enum overrides{INTAKE, CONVEYOR, OUTTAKE, NONE}
     teleConfigRohit2.overrides currOverride;
 
-    lessButtonsConfig(HardwareMapV2 robot){
+    public lessButtonsConfig(HardwareMapV2 robot){
         this.robot = robot;
         drivetrain = new Drivetrain(robot);
     }

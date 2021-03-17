@@ -98,15 +98,16 @@ public abstract class BaseAuto extends LinearOpMode {
 //        robot.setEncoders(robot.motors, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        robot.setEncoders(robot.motors, DcMotor.RunMode.RUN_USING_ENCODER);
 
-        robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        robot.frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//
+//        robot.frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        robot.frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        robot.backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.setMotorEncoders();
 
 
 

@@ -33,6 +33,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.configs.lessButtonsConfig;
+import org.firstinspires.ftc.teamcode.configs.teleConfigEx;
+import org.firstinspires.ftc.teamcode.configs.teleConfigRohit;
+import org.firstinspires.ftc.teamcode.configs.teleConfigRohit2;
+import org.firstinspires.ftc.teamcode.configs.teleConfigSamih;
+import org.firstinspires.ftc.teamcode.configs.teleOpInterface;
+
 import java.util.ArrayList;
 
 
@@ -83,7 +90,7 @@ public class UltimateGoalTeleop extends OpMode{
 
         configs.add(teleConfigEx.class);
         configs.add(teleConfigRohit.class);
-//        configs.add(teleConfigSamih.class);
+        configs.add(teleConfigSamih.class);
         configs.add(teleConfigRohit2.class);
         configs.add(lessButtonsConfig.class);
 
@@ -201,8 +208,8 @@ public class UltimateGoalTeleop extends OpMode{
             t = new teleConfigEx(robot);
         }else if (configs.get(index).getName().equals(teleConfigRohit.class.getName())){
             t = new teleConfigRohit(robot);
-//        }else if (configs.get(index).getName().equals(teleConfigSamih.class.getName())){
-//            t = new teleConfigSamih(robot);
+        }else if (configs.get(index).getName().equals(teleConfigSamih.class.getName())){
+            t = new teleConfigSamih(robot);
         }else if (configs.get(index).getName().equals(teleConfigRohit2.class.getName())){
             t = new teleConfigRohit2(robot);
         }else if (configs.get(index).getName().equals(lessButtonsConfig.class.getName())) {

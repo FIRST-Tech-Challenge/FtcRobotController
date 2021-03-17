@@ -1,4 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.configs;
+
+import org.firstinspires.ftc.teamcode.Drivetrain;
+import org.firstinspires.ftc.teamcode.HardwareMapV2;
 
 public class teleConfigSamih implements teleOpInterface {
     HardwareMapV2 robot;
@@ -6,7 +9,7 @@ public class teleConfigSamih implements teleOpInterface {
     double angle = 0;
     double outlimiter = 1f;
 
-    teleConfigSamih(HardwareMapV2 robot){
+    public teleConfigSamih(HardwareMapV2 robot){
         this.robot = robot;
         drivetrain = new Drivetrain(robot);
     }

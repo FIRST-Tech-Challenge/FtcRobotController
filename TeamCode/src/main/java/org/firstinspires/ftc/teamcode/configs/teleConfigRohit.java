@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.configs;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Drivetrain;
+import org.firstinspires.ftc.teamcode.HardwareMapV2;
 
 public class teleConfigRohit implements teleOpInterface {
     HardwareMapV2 robot;
@@ -15,7 +16,7 @@ public class teleConfigRohit implements teleOpInterface {
     static double outtakePower = 0.0;
     static double conveyorPower = 1.0;
 
-    teleConfigRohit(HardwareMapV2 robot){
+    public teleConfigRohit(HardwareMapV2 robot){
         this.robot = robot;
         drivetrain = new Drivetrain(robot);
     }

@@ -1,4 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.configs;
+
+import org.firstinspires.ftc.teamcode.Drivetrain;
+import org.firstinspires.ftc.teamcode.HardwareMapV2;
 
 public class teleConfigRohit2 implements teleOpInterface {
     HardwareMapV2 robot;
@@ -7,7 +10,7 @@ public class teleConfigRohit2 implements teleOpInterface {
     overrides currOverride;
     double limiter2, limiter1, outtakeC, outtakeW, intake = 1.0;
     double intakeTime, outtakeTime, xTime, yTime, dTime, button, dpad;
-    teleConfigRohit2(HardwareMapV2 robot){
+    public teleConfigRohit2(HardwareMapV2 robot){
         this.robot = robot;
         drivetrain = new Drivetrain(robot);
     }

@@ -23,7 +23,7 @@ public class HardwareMapV2 {
     boolean odometry = false;
     boolean odometryTest = false;
 
-    ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight, intake, outtake));
+    ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight));
     ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(frontRight, frontLeft));
     ArrayList<? extends HardwareDevice> servos = new ArrayList<>(Arrays.asList(conveyor, leftTilt, rightTilt, wobble));
 
@@ -91,7 +91,27 @@ public class HardwareMapV2 {
         rightTilt.setPosition(0.5);
         leftTilt.setPosition(0.5);
         wobble.setPosition(0.0);
+    }
 
+    public void setEncoders(ArrayList<DcMotor> motors, DcMotor.RunMode... modes){
+        for (DcMotor motor: motors){
+            for (DcMotor.RunMode mode: modes)
+                motor.setMode(mode);
+        }
+    }
+
+    public void setEncoders(DcMotor.RunMode... mode){
+        setEncoders(motors, mode);
+        setEncoders(odomotors, mode);
+    }
+
+    public void setPowerAll(double power){
+        for (DcMotor motor: motors){
+            motor.setPower(power);
+        }
+    }
+
+    public void setMotorEncoders(){
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -101,24 +121,6 @@ public class HardwareMapV2 {
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
-
-    public void setEncoders(ArrayList<DcMotor> motors, DcMotor.RunMode mode){
-        for (DcMotor motor: motors){
-            motor.setMode(mode);
-        }
-    }
-
-    public void setEncoders(DcMotor.RunMode mode){
-        setEncoders(motors, mode);
-//        setEncoders(odomotors, mode);
-    }
-
-    public void setPowerAll(double power){
-        for (DcMotor motor: motors){
-            motor.setPower(power);
-        }
     }
 
 }

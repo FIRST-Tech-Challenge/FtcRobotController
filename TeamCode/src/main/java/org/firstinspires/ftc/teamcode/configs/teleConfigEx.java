@@ -1,4 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.configs;
+
+import org.firstinspires.ftc.teamcode.Drivetrain;
+import org.firstinspires.ftc.teamcode.HardwareMapV2;
 
 public class teleConfigEx implements teleOpInterface {
     HardwareMapV2 robot;
@@ -7,7 +10,7 @@ public class teleConfigEx implements teleOpInterface {
     double perfectval = 0.33;
     int reverseIntake = 1;
 
-    teleConfigEx (HardwareMapV2 robot) {
+    public teleConfigEx(HardwareMapV2 robot) {
         this.robot = robot;
         drivetrain = new Drivetrain(robot);
     }
