@@ -1,60 +1,69 @@
 package org.firstinspires.ftc.team6220_2020;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.team6220_2020.ResourceClasses.DriverInput;
 
 public abstract class MasterOpMode extends LinearOpMode
 {
     //Motors
-    DcMotor motorFrontLeft;
-    DcMotor motorFrontRight;
-    DcMotor motorBackLeft;
-    DcMotor motorBackRight;
+    DcMotor motorFL;
+    DcMotor motorFR;
+    DcMotor motorBL;
+    DcMotor motorBR;
 
     //Other Devices
 
+    // Create drivers
+    public DriverInput driver1;
+    public DriverInput driver2;
+
+    //This method initializes the motors.
     public void Initialize(){
         //Initialize
-        motorFrontLeft = hardwareMap.dcMotor.get("motorFL");
-        motorFrontRight = hardwareMap.dcMotor.get("motorFR");
-        motorBackLeft = hardwareMap.dcMotor.get("motorBL");
-        motorBackRight = hardwareMap.dcMotor.get("motorBR");
+        motorFL = hardwareMap.dcMotor.get("motorFL");
+        motorFR = hardwareMap.dcMotor.get("motorFR");
+        motorBL = hardwareMap.dcMotor.get("motorBL");
+        motorBR = hardwareMap.dcMotor.get("motorBR");
 
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void driveMecanum(double driveAngle, double drivePower, double w)
+    //This method drives mecanum when given an angle drive power and turning power
+    public void driveMecanum(double driveAngle, double drivePower, double turningPower)
     {
         double x = drivePower * Math.cos(driveAngle);
         double y = drivePower * Math.sin(driveAngle);
 
-        double motorFLPower = x + y + -w;
-        double motorFRPower = x + -y + -w;
-        double motorBLPower = -x + y + -w;
-        double motorBRPower = -x + -y + -w;
+        double motorFLPower = x + y + -turningPower;
+        double motorFRPower = x + -y + -turningPower;
+        double motorBLPower = -x + y + -turningPower;
+        double motorBRPower = -x + -y + -turningPower;
 
         double scaleFactor = Math.max(Math.max(motorFLPower, motorFRPower), Math.max(motorBLPower, motorBRPower));
 
         if(scaleFactor > 1){
-            motorFrontLeft.setPower(motorFLPower / scaleFactor);
-            motorFrontRight.setPower(motorFRPower / scaleFactor);
-            motorBackLeft.setPower(motorBLPower / scaleFactor);
-            motorBackRight.setPower(motorBRPower / scaleFactor);
+            motorFL.setPower(motorFLPower / scaleFactor);
+            motorFR.setPower(motorFRPower / scaleFactor);
+            motorBL.setPower(motorBLPower / scaleFactor);
+            motorBR.setPower(motorBRPower / scaleFactor);
         } else {
-            motorFrontLeft.setPower(motorFLPower);
-            motorFrontRight.setPower(motorFRPower);
-            motorBackLeft.setPower(motorBLPower);
-            motorBackRight.setPower(motorBRPower);
+            motorFL.setPower(motorFLPower);
+            motorFR.setPower(motorFRPower);
+            motorBL.setPower(motorBLPower);
+            motorBR.setPower(motorBRPower);
         }
 
     }
+
+
 }
 
