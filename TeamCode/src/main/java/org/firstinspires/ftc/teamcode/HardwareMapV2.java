@@ -22,6 +22,7 @@ public class HardwareMapV2 {
     public Servo leftTilt = null, rightTilt = null, wobble = null;
     boolean odometry = false;
     boolean odometryTest = false;
+    boolean initIMU;
 
     ArrayList<DcMotor> motors = new ArrayList<>(Arrays.asList(frontRight, frontLeft, backLeft, backRight));
     ArrayList<DcMotor> odomotors = new ArrayList<>(Arrays.asList(frontRight, frontLeft));
@@ -33,8 +34,8 @@ public class HardwareMapV2 {
     BNO055IMU               imu;
 
 
-    public HardwareMapV2 (){
-
+    public HardwareMapV2 (boolean initIMU){
+        this.initIMU = initIMU;
     }
 
     public void init (HardwareMap awhMap) {
@@ -49,6 +50,7 @@ public class HardwareMapV2 {
 
         hwMap = awhMap;
         imu = hwMap.get(BNO055IMU.class, "imu");
+
 
         frontLeft = hwMap.get(DcMotor.class, "front_left");
         frontRight = hwMap.get(DcMotor.class, "front_right");
@@ -91,6 +93,11 @@ public class HardwareMapV2 {
         rightTilt.setPosition(0.5);
         leftTilt.setPosition(0.5);
         wobble.setPosition(0.0);
+
+        if (initIMU){
+            imu.initialize(parameters);
+        }
+
     }
 
     public void setEncoders(ArrayList<DcMotor> motors, DcMotor.RunMode... modes){

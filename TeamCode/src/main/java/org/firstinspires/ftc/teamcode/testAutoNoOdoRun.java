@@ -10,6 +10,7 @@ public class testAutoNoOdoRun extends testAutoNoOdo{
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
+        //DOES NOT INIT PROPERLY MAYBE I THINK COMPARE WITH BASE AUTO
 
         telemetry.addData("what", "Do u want");
         telemetry.update();

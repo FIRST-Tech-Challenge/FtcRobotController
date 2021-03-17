@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.configs;
 
 public class teleConfigTESTING_R implements teleOpInterface{
     public void a(boolean pressed) {
-        
+
     }
 
     public void b(boolean pressed) {

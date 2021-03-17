@@ -60,7 +60,7 @@ public class UltimateGoalTeleop extends OpMode{
     MecanumDriveTrain vroom;
 
     /* Declare OpMode members. */
-    HardwareMapV2 robot = new HardwareMapV2(); // use the class created to define a RoverRuckus's hardware
+    HardwareMapV2 robot = new HardwareMapV2(true); // use the class created to define a RoverRuckus's hardware
 
     teleOpInterface t = new teleConfigEx(robot);
     ArrayList<Class<? extends teleOpInterface>> configs = new ArrayList<>();

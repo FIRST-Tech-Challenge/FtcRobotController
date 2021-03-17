@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode;
 public class Drivetrain {
     HardwareMapV2 robot;
     public Drivetrain(HardwareMapV2 robot) { this.robot = robot; }
-    enum tiltDirect{
+    public enum tiltDirect{
         UP, DOWN
     }
-    enum moveDirection {
+    public enum moveDirection {
         FORWARD, BACKWARD, LEFT, RIGHT
     }
     static int pos = 0;

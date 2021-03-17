@@ -36,7 +36,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 public abstract class BaseAuto extends LinearOpMode {
 
-    HardwareMapV2 robot = new HardwareMapV2();
+    HardwareMapV2 robot = new HardwareMapV2(true);
 
     ElapsedTime runtime = new ElapsedTime();
 
@@ -84,15 +84,30 @@ public abstract class BaseAuto extends LinearOpMode {
 
     SkystoneDeterminationPipeline pipeline;
 
-    BNO055IMU imu;
+//    BNO055IMU imu;
 
 
     // initializes hardware  and vuforia; calibrates gyro
     public void inithardware(){
 
-        robot = new HardwareMapV2();
+        robot = new HardwareMapV2(true);
         robot.init(hardwareMap);
+        while (!isStopRequested() && !robot.imu.isGyroCalibrated())
+        {
+            sleep(50);
+            idle();
+        }
 
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//
+//        parameters.mode                = BNO055IMU.SensorMode.IMU;
+//        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        parameters.loggingEnabled      = false;
+//
+//        imu.initialize(parameters);
 
 
 //        robot.setEncoders(robot.motors, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -109,29 +124,9 @@ public abstract class BaseAuto extends LinearOpMode {
 //        robot.backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.setMotorEncoders();
 
-
-
-
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = false;
-
-        imu.initialize(parameters);
-
         // Send telemetry message to alert driver that we are calibrating;
         telemetry.addData("Calibrating Gyro:", "Dont do anything");    //
         telemetry.update();
-
-        while (!isStopRequested() && !imu.isGyroCalibrated())
-        {
-            sleep(50);
-            idle();
-        }
 
 //        telemetry.addData("Calibrating Gyro: ", "Wait 3 seconds");    //
 //        telemetry.update();
@@ -148,7 +143,7 @@ public abstract class BaseAuto extends LinearOpMode {
     public double getAverageGyro(){
         /*int sum = robot.realgyro.getIntegratedZValue() + robot.realgyro2.getIntegratedZValue();
         return sum/2;*/
-        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, DEGREES);
+        Orientation angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, DEGREES);
         double heading = angles.firstAngle;
         return heading;
     }
