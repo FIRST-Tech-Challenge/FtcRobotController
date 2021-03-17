@@ -58,6 +58,7 @@ public class UltimateGoalTeleop extends OpMode{
 
     // declaring variables
     MecanumDriveTrain vroom;
+    Drivetrain drivetrain;
 
     /* Declare OpMode members. */
     HardwareMapV2 robot = new HardwareMapV2(true); // use the class created to define a RoverRuckus's hardware
@@ -67,6 +68,9 @@ public class UltimateGoalTeleop extends OpMode{
     int index = 0;
     double duTimer, ddTimer;
     boolean switching = false;
+    static final double     P_TURN_COEFF            = 0.03;
+
+    double startingAngle;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -98,6 +102,8 @@ public class UltimateGoalTeleop extends OpMode{
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Haddi", "Haddi");
         telemetry.update();
+
+        startingAngle = drivetrain.getAverageGyro();
 
     }
 
@@ -174,15 +180,22 @@ public class UltimateGoalTeleop extends OpMode{
             for (String caption : t.telemetryDM.keySet()){
                 telemetry.addData(caption, t.telemetryDM.get(caption));
             }
-            telemetry.addData("Configuration1: ", t.getName());
+            telemetry.addData("Configuration: ", t.getName());
             telemetry.addData("FL", robot.frontLeft.getCurrentPosition());
             telemetry.addData("FR", robot.frontRight.getCurrentPosition());
             telemetry.addData("BL", robot.backLeft.getCurrentPosition());
             telemetry.addData("BR", robot.backRight.getCurrentPosition());
+            telemetry.addData("Gpad 1 a?", gamepad1.a);
             telemetry.update();
             t.updateTelemetryDM();
 
             t.loop();
+
+            if (gamepad1.a){
+                gyroTurn(0.5, startingAngle-30);
+                telemetry.addData("ok", "yes");
+                telemetry.update();
+            }
 
         }
 
@@ -214,6 +227,16 @@ public class UltimateGoalTeleop extends OpMode{
             t = new teleConfigRohit2(robot);
         }else if (configs.get(index).getName().equals(lessButtonsConfig.class.getName())) {
             t = new lessButtonsConfig(robot);
+        }
+    }
+    // turn to an angle using gyro
+    public void gyroTurn (  double speed, double angle) {
+
+        // keep looping while we are still active, and not on heading.
+        while (!gamepad1.x && !drivetrain.onHeading(speed, angle, P_TURN_COEFF)) {
+            // Update telemetry & Allow time for other processes to run.
+            telemetry.addData("current_heading", drivetrain.getAverageGyro());
+            telemetry.update();
         }
     }
 

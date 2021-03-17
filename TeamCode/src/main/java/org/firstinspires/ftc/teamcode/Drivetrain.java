@@ -1,5 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
+
 public class Drivetrain {
     HardwareMapV2 robot;
     public Drivetrain(HardwareMapV2 robot) { this.robot = robot; }
@@ -10,6 +18,8 @@ public class Drivetrain {
         FORWARD, BACKWARD, LEFT, RIGHT
     }
     static int pos = 0;
+    static final double     P_TURN_COEFF            = 0.03;
+    static final double     HEADING_THRESHOLD       = 1 ;
 
     public void forward(double power){
         setMotorPowers(power, power, power, power);
@@ -80,6 +90,77 @@ public class Drivetrain {
     }
     public void incrementaltiltLeft(double amount){
         robot.leftTilt.setPosition(robot.leftTilt.getPosition()+amount);
+    }
+
+
+    // NOT USED; gets average gyro value for more accurate angles
+    public double getAverageGyro(){
+        /*int sum = robot.realgyro.getIntegratedZValue() + robot.realgyro2.getIntegratedZValue();
+        return sum/2;*/
+        Orientation angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, DEGREES);
+        double heading = angles.firstAngle;
+        return heading;
+    }
+
+    // checks distance for gyroTurn/Drive - slows down when closer to end
+    boolean onHeading(double speed, double angle, double PCoeff) {
+        double   error ;
+        double   steer ;
+        boolean  onTarget = false ;
+        double leftSpeed;
+        double rightSpeed;
+
+        // determine turn power based on +/- error
+        error = getError(angle);
+
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
+            steer = 0.0;
+            leftSpeed  = 0.0;
+            rightSpeed = 0.0;
+            onTarget = true;
+        }
+        else {
+            steer = getSteer(error, PCoeff);
+            rightSpeed  = speed * steer;
+            leftSpeed   = -rightSpeed;
+        }
+
+        // Send desired speeds to motors.
+        robot.frontLeft.setPower(leftSpeed);
+        robot.frontRight.setPower(rightSpeed);
+        robot.backLeft.setPower(leftSpeed);
+        robot.backRight.setPower(rightSpeed);
+
+
+//        // Display it for the driver.
+//        telemetry.addData("Target", "%5.2f", angle);
+//        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+//        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+
+        return onTarget;
+    }
+
+    //show the error in gyro angle
+    public double getError(double targetAngle) {
+
+        double robotError;
+
+        // calculate error in -179 to +180 range  (
+        robotError = targetAngle - getAverageGyro();
+        while (robotError > 180)  robotError -= 360;
+        while (robotError <= -180) robotError += 360;
+        return robotError;
+    }
+
+    /**
+     * returns desired steering force.  +/- 1 range.  +ve = steer left
+     * @param error   Error angle in robot relative degrees
+     * @param PCoeff  Proportional Gain Coefficient
+     * @return
+     */
+
+    public double getSteer(double error, double PCoeff) {
+        return Range.clip(error * PCoeff, -1, 1);
     }
 
 }

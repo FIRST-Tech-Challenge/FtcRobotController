@@ -104,8 +104,6 @@ public class teleConfigEx implements teleOpInterface {
         telemetryDM.put("Left Tilt", String.valueOf(robot.leftTilt.getPosition()));
         telemetryDM.put("Right Tilt", String.valueOf(robot.rightTilt.getPosition()));
         telemetryDM.put("Wobble", String.valueOf(robot.wobble.getPosition()));
-        telemetryDM.put("A", String.valueOf(robot.frontRight.getCurrentPosition()));
-        telemetryDM.put("B", String.valueOf(robot.frontLeft.getCurrentPosition()));
     }
 
     public void loop() {
