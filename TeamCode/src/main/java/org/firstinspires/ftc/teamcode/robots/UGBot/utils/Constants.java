@@ -112,37 +112,38 @@ public class Constants {
 
     public enum Position {
         //headings and elevations that are negative means don't apply them to ending position - let other behaviors control
-        START(48/INCHES_PER_METER, ROBOT_RADIUS_INCHES/INCHES_PER_METER,0,0,0),
+        START(48/INCHES_PER_METER, ROBOT_RADIUS_INCHES/INCHES_PER_METER,0,0,0, 1),
         //WOBBLE_ONE_GRAB(48/INCHES_PER_METER, (ROBOT_RADIUS_INCHES+3)/INCHES_PER_METER,0,340,0),
-        WOBBLE_ONE_GRAB(48/INCHES_PER_METER, (8 + ROBOT_RADIUS_INCHES)/INCHES_PER_METER,0,0,0),
+        WOBBLE_ONE_GRAB(48/INCHES_PER_METER, (8 + ROBOT_RADIUS_INCHES)/INCHES_PER_METER,0,0,1,1),
         //340, 45
-        CALIBRATION_RESET(48/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,170,-1),
+        ALIGNMENT_RESET(48/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,170,-1,1),
         //turret needs to rotate counter clockwise to deposit wobble goals A and C - use intermediate turret heading of 170
-        TARGET_C_1(48/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,60+45,5),
-        TARGET_C_2((48+7)/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, 0,45+45,5),
-        TARGET_B_1((48-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5),
-        TARGET_B_2((48+7)/INCHES_PER_METER, 8*12/INCHES_PER_METER, 0,0,5),
-        TARGET_A_1((48+7)/INCHES_PER_METER, 7.75*12/INCHES_PER_METER, 0,45+45,5),
-        TARGET_A_2((48-7)/INCHES_PER_METER, 7*12/INCHES_PER_METER, 0,45+45,5),
-        RING_STACK(36/INCHES_PER_METER, 48/INCHES_PER_METER,-1,-1, -1),
-        RING_STACK_APPROACH(36/INCHES_PER_METER, (48+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0),
+        TARGET_C_1(48/INCHES_PER_METER, 11*12/INCHES_PER_METER, 0,60+45,5,1),
+        TARGET_C_2((48+7)/INCHES_PER_METER, 10.5*12/INCHES_PER_METER, 0,45+45,5,1),
+        TARGET_B_1((48-7)/INCHES_PER_METER, 8.5*12/INCHES_PER_METER, 0,0,5,1),
+        TARGET_B_2((48+7)/INCHES_PER_METER, 8*12/INCHES_PER_METER, 0,0,5,1),
+        TARGET_A_1((48+7)/INCHES_PER_METER, 7.75*12/INCHES_PER_METER, 0,45+45,5,1),
+        TARGET_A_2((48-7)/INCHES_PER_METER, 7*12/INCHES_PER_METER, 0,45+45,5,1),
+        RING_STACK(36/INCHES_PER_METER, 48/INCHES_PER_METER,-1,-1, -1,0),
+        RING_STACK_APPROACH(36/INCHES_PER_METER, (48+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1),
         //sweep needs to be very slow
-        RING_STACK_SWEEPTO(36/INCHES_PER_METER, (48-10+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0),
-        WOBBLE_TWO(24/INCHES_PER_METER, 23/INCHES_PER_METER,-1,-1, -1),
-        WOBBLE_TWO_APPROACH(35/INCHES_PER_METER, (23+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 0, 0,0),
-        WOBBLE_TWO_GRAB (35/INCHES_PER_METER, (23)/INCHES_PER_METER, 0, 0,0),
-        NAVIGATE(48/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1),
-        LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,270,-1, -1),
-        TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,270,30, 10);
+        RING_STACK_SWEEPTO(36/INCHES_PER_METER, (48-10+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 180, 270,0,1),
+        WOBBLE_TWO(24/INCHES_PER_METER, 23/INCHES_PER_METER,-1,-1, -1,1),
+        WOBBLE_TWO_APPROACH(35/INCHES_PER_METER, (23+6+ ROBOT_RADIUS_INCHES)/INCHES_PER_METER, 0, 0,0, .5),
+        WOBBLE_TWO_GRAB (35/INCHES_PER_METER, (23)/INCHES_PER_METER, 0, 0,0,0),
+        NAVIGATE(48/INCHES_PER_METER, 6.5*12/INCHES_PER_METER,-1,-1, -1, .5),
+        LAUNCH_PREFERRED(3*12/INCHES_PER_METER, 5.5*12/INCHES_PER_METER,270,-1, -1,0),
+        TEST_POS_FOR_TESTING(startingXOffset, startingYOffset+2,270,30, 10, .5);
 
-        public double x, y, baseHeading, launchHeading, launchElevation;
+        public double x, y, baseHeading, launchHeading, launchElevation, launchStart;
 
-        private Position(double x, double y, double baseHeading, double launchHeading, double launchElevation) {
+        private Position(double x, double y, double baseHeading, double launchHeading, double launchElevation, double launchStart) {
             this.x = x;
             this.y = y;
-            this.baseHeading=baseHeading;
-            this.launchHeading=launchHeading;
-            this.launchElevation=launchElevation;
+            this.baseHeading=baseHeading; //-1 means take no action on changing
+            this.launchHeading=launchHeading; //-1 means take no action on changing
+            this.launchElevation=launchElevation; //-1 means take no action on changing
+            this.launchStart=launchStart;  //number 0.0 to 1.0 - progression of travel where launcher actions should start
         }
     }
 }

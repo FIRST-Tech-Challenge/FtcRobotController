@@ -961,28 +961,21 @@ public class PoseUG {
     }
 
         int getFieldPosStateThree = 0;
-        double originalDist = 0.0;
+        double launchMoveDist = 0.0; // the distance at which launcher movements should start
         //drive to a fully defined Position
     public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward, double donePercent , double maxPower){
         switch (getFieldPosStateThree){
             case 0:
-                originalDist = getDistanceTo(targetPose.x, targetPose.y);
+                //calc the distance remaining when the launcher movements should kick-in
+                launchMoveDist = getDistanceTo(targetPose.x, targetPose.y);
+                launchMoveDist-= launchMoveDist* targetPose.launchStart;
 
-                if(donePercent < 0.01){
-                    if(targetPose.launchElevation > -.01) { //set elevation{
-                        launcher.setElbowTargetAngle(targetPose.launchElevation);
-                    }
-                    if(targetPose.launchHeading > -.01) {
-                        turret.setTurntableAngle(targetPose.launchHeading);
-                    }
-                    getFieldPosStateThree++;
-                }
-                else{
-                    getFieldPosStateThree++;
-                }
+                getFieldPosStateThree++;
+
                 break;
-            case 1:
-                if(originalDist - (getDistanceTo(targetPose.x, targetPose.y)) / originalDist >= donePercent && !(donePercent == 0.0)){
+            case 1: //driving to target location
+                if(getDistanceTo(targetPose.x, targetPose.y)<=launchMoveDist){
+                    //kick in launcher adjustments if requested
                     if(targetPose.launchElevation > -.01) { //set elevation{
                         launcher.setElbowTargetAngle(targetPose.launchElevation);
                     }
@@ -990,23 +983,30 @@ public class PoseUG {
                         turret.setTurntableAngle(targetPose.launchHeading);
                     }
                 }
-
+                //(continue to) drive there
                 if(driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower, targetPose.baseHeading)) {
                     getFieldPosStateThree++;
                 }
                 break;
-            case 2:
-                if(donePercent >= .99) {
-                    if (targetPose.launchElevation > -.01) { //set elevation{
+            case 2: //end of travel
+                // if we haven't kicked in launcher adjustments yet, now is the time to do it
+                if (targetPose.launchElevation > -.01) { //set elevation{
                         launcher.setElbowTargetAngle(targetPose.launchElevation);
                     }
-                    if (targetPose.launchHeading > -.01) {
+                if (targetPose.launchHeading > -.01) {
                         turret.setTurntableAngle(targetPose.launchHeading);
                     }
+
+                if (targetPose.baseHeading<0){ //not asking for a change in heading at the end
+                    getFieldPosStateThree = 0;
+                    return true;
+                } else if (rotateIMU(targetPose.baseHeading, 2.0)){
+                    getFieldPosStateThree = 0;
+                    return true;
+                    }
+
+                break;
                 }
-                getFieldPosStateThree = 0;
-                return true;
-        }
         return false;
     }
 
