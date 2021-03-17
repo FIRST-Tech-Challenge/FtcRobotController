@@ -157,6 +157,8 @@ public class EchoOp extends OpMode {
                 .setFill("blue")
                 .fillRect(pose.getX(), pose.getY(), 40, 40);
 
+        dashboard.sendTelemetryPacket(packet);
+
 
     }
 }
