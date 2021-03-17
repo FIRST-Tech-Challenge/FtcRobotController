@@ -32,9 +32,9 @@ public class UltimateBot extends YellowBot {
 
     private SwingPosition swingPosition = SwingPosition.Init;
     private static double SWING_BACK_POS = 1;
-    private static double SWING_PLACE_POS = 0.17;
-    private static double SWING_LIFT_AND_HOLD = 0.35;
-    private static double SWING_LIFT_WALL = 0.6;
+    private static double SWING_PLACE_POS = 0.42;
+    private static double SWING_LIFT_AND_HOLD = 0.55;
+    private static double SWING_LIFT_WALL = 0.75;
     private static double SHOOT_SERVO = 0.7;
 
     private static int TIMEOUT = 2500;
@@ -210,7 +210,7 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Guard Down", defaultReturn =  "")
     public void guardDown() {
-        ringGuard.setPosition(0.05);
+        ringGuard.setPosition(0.09);
     }
 
     @BotAction(displayName = "Guard Up", defaultReturn =  "")

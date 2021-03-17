@@ -1112,7 +1112,8 @@ public class YellowBot implements OdoBot {
         boolean stop = false;
 
         // breaking and slowing down variables
-        double slowdownMark = target * calib.getBreakPoint(speed);
+//        double slowdownMark = target * calib.getBreakPoint(speed);
+        double slowdownMark = target * 0.9;
         double ticksAdjustment = MAX_VELOCITY_PER_PROC_DELAY*speed;
         slowdownMark = slowdownMark - ticksAdjustment;
         int step = 0;
@@ -1122,16 +1123,21 @@ public class YellowBot implements OdoBot {
         double speedDropStep = 0.05;
         double currentSpeed = 0;
 
+        Log.d(TAG, "SlowdownMark: " + slowdownMark);
+        Log.d(TAG, "Target: " + target);
+        Log.d(TAG, "CurrentPosition: " + currentPos);
+
         while (!stop && this.owner.opModeIsActive()) {
             currentPos = this.getHorizontalOdometer();
+//            Log.d(TAG, "CurrentPosition: " + currentPos);
             if ((left && currentPos >= target) || (!left && currentPos <= target)) {
                 stop = true;
             }
-            if (currentPos >= slowdownMark) {
+            if ((left && currentPos >= slowdownMark) || (!left && currentPos <= slowdownMark)) {
                 // slow down
                 step++;
-                power = currentSpeed + speedDropStep*step;
-                if (power >= minSpeed) {
+                power = currentSpeed - speedDropStep*step;
+                if (power <= minSpeed) {
                     power = minSpeed;
                 }
             } else {
