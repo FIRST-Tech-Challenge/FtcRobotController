@@ -18,7 +18,7 @@ public class BotNav {
     private float maxPower = 0.75f;
     private float targetDeadband = 50; // mm
     private float targetRamp = 500; // mm
-    private float angleDeadband = (float) Math.PI / 12; // rad
+    private float angleDeadband = (float) Math.PI / 24; // rad
     private float angleRamp = (float) Math.PI / 4; // rad
 
     public BotNav(CompBot bot) {
@@ -65,20 +65,26 @@ public class BotNav {
         if (botVis.targetVisible) {
 
             VectorF delta = getTargetDelta(botVis.getLastTranslation(), target);
-            VectorF robotDelta = rotateToFrame(delta, botVis.getLastOrientation().thirdAngle);
+            VectorF robotDelta = rotateToFrame(delta, -botVis.getLastOrientation().thirdAngle);
 
             float angleDelta = (float) angleDifference(angle.thirdAngle, botVis.getLastOrientation().thirdAngle);
             float rotate = Range.clip(angleDelta / angleRamp, -1, 1) * maxPower;
             float forward = maxPower * Range.clip(-robotDelta.get(1)/targetRamp, -1, 1);
-            float strafe = maxPower * Range.clip(robotDelta.get(0)/targetRamp, -1, 1);
+            float strafe = maxPower * Range.clip(-robotDelta.get(0)/targetRamp, -1, 1);
 
+            Log.d("DELTA", String.format("x: %.3f, y: %.3f, z: %.3f,",
+                    robotDelta.get(0), robotDelta.get(1), robotDelta.get(2)));
+            Log.d("POSITION", String.format("x: %.3f, y: %.3f, z: %.3f,",
+                    botVis.getLastTranslation().get(0), botVis.getLastTranslation().get(1), botVis.getLastTranslation().get(2)));
             Log.d("DELTAS", String.format("rot: %.3f, fwd: %.3f, stf: %.3f,",
                     rotate, forward, strafe));
 
-            bot.setDrive(forward + rotate - strafe,
+            bot.setDrive(forward, strafe, rotate);
+
+            /*bot.setDriveDirect(forward + rotate - strafe,
                     forward - rotate + strafe,
                     forward + rotate + strafe,
-                    forward - rotate - strafe);
+                    forward - rotate - strafe);*/
 
             onTarget = (
                     (Math.abs(angleDelta) < angleDeadband)
@@ -86,7 +92,7 @@ public class BotNav {
                     && (Math.abs(robotDelta.get(0)) < targetDeadband)
             );
         } else {
-            bot.setDrive(0,0,0,0);
+            bot.setDriveDirect(0,0,0,0);
         }
 
         return onTarget;

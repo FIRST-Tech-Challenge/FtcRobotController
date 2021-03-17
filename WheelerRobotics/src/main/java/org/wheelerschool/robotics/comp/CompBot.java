@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
@@ -23,6 +24,8 @@ public class CompBot {
     public DcMotor driveBRight;
 
     public DcMotor intake;
+
+    private ElapsedTime jiggleTime = new ElapsedTime();
 
     public enum IntakeMode {
         IN,
@@ -79,11 +82,74 @@ public class CompBot {
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void setDrive(float fLeft, float fRight, float bLeft, float bRight) {
+    public void setDriveDirect(float fLeft, float fRight, float bLeft, float bRight) {
         driveFLeft.setPower(fLeft);
         driveFRight.setPower(fRight);
         driveBLeft.setPower(bLeft);
         driveBRight.setPower(bRight);
+    }
+
+    public void setDrive(float forward, float strafe, float rotate) {
+        setDriveDirect(
+                forward + rotate + strafe,
+                forward - rotate - strafe,
+                forward + rotate - strafe,
+                forward - rotate + strafe
+        );
+    }
+
+    public void setDriveMotorMode(DcMotor.RunMode mode) {
+        driveFLeft.setMode(mode);
+        driveFRight.setMode(mode);
+        driveBLeft.setMode(mode);
+        driveBRight.setMode(mode);
+    }
+
+    private void runDriveEncoder(float power, int fLeft, int fRight, int bLeft, int bRight) {
+        setDriveDirect(0,0,0,0);
+        setDriveMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        driveFLeft.setTargetPosition(fLeft);
+        driveFRight.setTargetPosition(fRight);
+        driveBLeft.setTargetPosition(bLeft);
+        driveBRight.setTargetPosition(bRight);
+
+        setDriveMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        setDriveDirect(power, power, power, power);
+
+        setDriveMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void setDriveEncTranslate(float power, float forward, float strafe) {
+
+        int forwardEnc = (int) (forward * 10000f / 2830f);
+        int strafeEnc = (int) (strafe * 10000f / 1940f);
+
+        runDriveEncoder(power, forwardEnc + strafeEnc,
+                forwardEnc - strafeEnc,
+                forwardEnc - strafeEnc,
+                forwardEnc + strafeEnc);
+    }
+
+    public void setDriveEncRotate(float power, int rotate) {
+        runDriveEncoder(power, rotate, -rotate, rotate, -rotate);
+    }
+
+    public void jiggle() {
+        // Yes
+        float jiggleDir = 1;
+        if (jiggleTime.milliseconds() > 100) {
+            jiggleTime.reset();
+        } else if (jiggleTime.milliseconds() > 50) {
+            jiggleDir = -1;
+        }
+
+        setDrive(jiggleDir, 0, 0);
+    }
+
+    public boolean atDriveTarget() {
+        return !driveBLeft.isBusy() && !driveBRight.isBusy() && !driveFLeft.isBusy() && !driveFRight.isBusy();
     }
 
     public void launcher(boolean mode) {
@@ -132,6 +198,6 @@ public class CompBot {
 
     public void stop() {
         launcher(false);
-        setDrive(0,0,0,0);
+        setDriveDirect(0,0,0,0);
     }
 }

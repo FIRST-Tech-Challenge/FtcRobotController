@@ -3,14 +3,21 @@ package org.wheelerschool.robotics.comp.driver;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.wheelerschool.robotics.comp.CompBot;
+import org.wheelerschool.robotics.comp.auto.BotNav;
 import org.wheelerschool.robotics.lib.StatefulButton;
+
+import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 
 @TeleOp
 public class CompleteDrive extends OpMode {
     CompBot hw;
+    BotNav nav;
     boolean launchMode = false;
 
     StatefulButton intakeCtl;
@@ -20,9 +27,12 @@ public class CompleteDrive extends OpMode {
     @Override
     public void init() {
         hw = new CompBot(hardwareMap);
+        nav = new BotNav(hw);
 
         intakeCtl = new StatefulButton(false);
         wobbleCtl = new StatefulButton(true);
+
+        nav.activate();
     }
 
     @Override
@@ -38,17 +48,16 @@ public class CompleteDrive extends OpMode {
             driveMode = false;
         }
 
-        float driveFactor = (driveMode)? -1 : 1;
-        float forward = driveFactor * gamepad1.left_stick_y;
-        float strafe = driveFactor * gamepad1.left_stick_x;
-        float rotate = gamepad1.right_stick_x;
+        if (gamepad1.b) {
+            nav.moveTowardsTarget(new VectorF(-140, 1100, 0), new Orientation(EXTRINSIC, XYZ, RADIANS, 0, 0, (float) (Math.PI/2), 0));
+        } else {
+            float driveFactor = (driveMode) ? -1 : 1;
+            float forward = driveFactor * gamepad1.left_stick_y;
+            float strafe = driveFactor * -gamepad1.left_stick_x;
+            float rotate = -gamepad1.right_stick_x;
 
-        hw.setDrive(
-                forward - rotate - strafe,
-                forward + rotate + strafe,
-                forward - rotate + strafe,
-                forward + rotate - strafe
-        );
+            hw.setDrive(forward, strafe, rotate);
+        }
 
         hw.launcher(driveMode);
 
@@ -76,6 +85,10 @@ public class CompleteDrive extends OpMode {
 
         telemetry.addData("Arm current", hw.wobbleArm.getCurrentPosition());
         telemetry.addData("Arm target", hw.wobbleArm.getTargetPosition());
+
+        if (gamepad1.a) {
+            hw.jiggle();
+        }
     }
 
     @Override

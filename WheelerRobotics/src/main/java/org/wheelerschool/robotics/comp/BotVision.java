@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,7 @@ public class BotVision {
     // Class Members
     private OpenGLMatrix lastLocation = null;
     private VuforiaLocalizer vuforia = null;
+    private TFObjectDetector tfod = null;
 
     /**
      * This is the webcam we are to use. As with other hardware devices such as motors and
@@ -53,6 +56,10 @@ public class BotVision {
     private float phoneXRotate    = 0;
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
+
+    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Quad";
+    private static final String LABEL_SECOND_ELEMENT = "Single";
 
     public BotVision(CompBot hw) {
         /*
@@ -166,10 +173,17 @@ public class BotVision {
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
         }
+
+        /* TensorFlow initialization */
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters();
+        tfodParameters.minResultConfidence = 0.8f;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 
     public void activate() {
         targetsUltimateGoal.activate();
+        tfod.activate();
     }
 
     public OpenGLMatrix getLocation() {
@@ -202,7 +216,25 @@ public class BotVision {
                 Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, RADIANS) : null;
     }
 
+    public String ringDetect() {
+        if (tfod != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                // step through the list of recognitions and display boundary info.
+                int i = 0;
+                for (Recognition recognition : updatedRecognitions) {
+                    return recognition.getLabel();
+                }
+            }
+        }
+
+        return null;
+    }
+
     public void deactivate() {
+        tfod.shutdown();
         targetsUltimateGoal.deactivate();
     }
 }
