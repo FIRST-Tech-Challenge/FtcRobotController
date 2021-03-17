@@ -9,13 +9,17 @@ public class FTCAutoAimer {
     public SpeedController2 outlController = new SpeedController2();
     public SpeedController2 outrController = new SpeedController2();
 
-    public void update(double robotTheta, double lrDis, double frDis) {
+    public void update(double robotTheta, double lrDis, double brDis) {
         robotTheta *= Math.PI/180;
         double leftDis = getDisFromCenter(lrDis, robotTheta);
-        double frontDis = getDisFromCenter(frDis, robotTheta);
-        double s = calcSpeed(frontDis, leftDis);
-        outlController.setTargetSpeed(Constants.MAX_OUTTAKE_SPEED/3);
-        outrController.setTargetSpeed(Constants.MAX_OUTTAKE_SPEED/3);
+        double frontDis = Constants.FIELD_LENGTH - getDisFromCenter(brDis, robotTheta);
+
+
+//        double s = calcSpeed(frontDis, leftDis);
+
+        double s = calcSpeed(2.07, 1);
+        outlController.setTargetSpeed(s);
+        outrController.setTargetSpeed(s);
     }
 
     public double getOutlPow(double outlPos) {
@@ -37,6 +41,11 @@ public class FTCAutoAimer {
         double deltaHeight = Constants.GOAL_HEIGHT - Constants.SHOOTER_HEIGHT;
         double linearSpeed = disToGoal/Math.cos(Constants.OUTTAKE_ANGLE) * Math.sqrt(4.9/(disToGoal * Math.tan(Constants.OUTTAKE_ANGLE) - deltaHeight));
         return linearSpeed/Constants.SHOOTER_WHEEL_RADIUS;
+    }
+
+    public void resetOuttake(double outlPos, double outrPos){
+        outlController.reset(outlPos);
+        outrController.reset(outrPos);
     }
 
 

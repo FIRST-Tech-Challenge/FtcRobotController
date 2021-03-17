@@ -2,6 +2,7 @@ package developing;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import global.Constants;
 import util.PID;
 
 public class SpeedController2 {
@@ -18,6 +19,9 @@ public class SpeedController2 {
     public double derivativeOfError = 0;
     public double integralOfError = 0;
 
+    public double derivativeOfPower = 0;
+    public double power = 0;
+
     public double targetSpeed = 0; // rad/s
     public double currSpeed = 0;
 
@@ -33,35 +37,45 @@ public class SpeedController2 {
 
     public SpeedController2(){
         lastError = -0.1;
-        pid.Kp = 0.01;
-        pid.Kd = 0;
-        pid.Ki = 0;
+        lastTime = -0.1;
+        pid.Kp = 0.003;
+        pid.Kd = 0.0001;
+        pid.Ki = 0.0001;
     }
 
-    public double getMotorSpeed(double currPos){
+    public void updateMotorSpeed(double currPos){
         double changePos = currPos-lastPos;
         lastPos = currPos;
         changeTime = timer.seconds()-lastTime;
         lastTime = timer.seconds();
-        return changePos/changeTime;
+        currSpeed = changePos/changeTime;
     }
 
     public void setTargetSpeed(double ts){
         targetSpeed = ts;
     }
-    public void reset(){
+
+    public void reset(double currPos){
+        lastError = -0.1;
+        lastTime = -0.1;
         integralOfError = 0;
+        lastPos = currPos;
+        power = targetSpeed/Constants.MAX_OUTTAKE_SPEED;
+        timer.reset();
     }
 
     public double getMotorPower(double currPos){
-        currSpeed = getMotorSpeed(currPos);
+        updateMotorSpeed(currPos);
+
         currError = targetSpeed-currSpeed;
 
         derivativeOfError = (currError-lastError)/changeTime;
         lastError = currError;
         integralOfError += currError*changeTime;
 
-        return pid.getPower(currError, derivativeOfError, integralOfError);
+        derivativeOfPower = pid.getPower(currError, derivativeOfError, integralOfError);
+        power += derivativeOfPower*changeTime;
+        return power;
     }
 
     public boolean isReady(){

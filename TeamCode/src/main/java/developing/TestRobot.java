@@ -178,11 +178,15 @@ public class TestRobot {
     public void toggleOuttake(boolean in) {
         if (outtakeButtonController.isPressing(in)) {
             outtaking = !outtaking;
+            autoAimer.resetOuttake(getLeftAngPos(), getRightAngPos());
         }
     }
 
     public double getRightAngPos(){
         return (outr.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
+    }
+    public double getLeftAngPos(){
+        return (outl.getCurrentPosition()/Constants.GOBUILDA1_Ticks)*Constants.pi2;
     }
 
     public double getLeftDistance(){
@@ -196,12 +200,13 @@ public class TestRobot {
         if (outtaking) {
 //            autoAimer.update(angularPosition.getHeadingGY(), lr.getDistance(DistanceUnit.METER), br.getDistance(DistanceUnit.METER));
             autoAimer.update(0, 1.25,1.5);
-            outr.setPower(autoAimer.getOutrPow(outr.getCurrentPosition()));
-            outl.setPower(autoAimer.getOutlPow(outl.getCurrentPosition()));
+            outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
+            outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
         } else {
             outr.setPower(0);
             outl.setPower(0);
         }
+        //remove when make automodule
     }
 
     public double getRobotToGoalAngle() {

@@ -35,13 +35,13 @@ public class TestTele extends OpMode {
         if(!bot.areAutomodulesRunning()) {
             bot.updateIntake(gamepad1.left_bumper, gamepad1.right_bumper);
 
-            bot.outtake(-gamepad2.right_stick_y);
-//            bot.toggleOuttake(gamepad2.x);
-//            bot.outtakeWithCalculations();
+            bot.toggleOuttake(gamepad2.x);
+            bot.outtakeWithCalculations();
 
             bot.pushRings(bot.pushControl.update(gamepad2.left_bumper, gamepad2.right_bumper));
 
         }
+
 
         if(gamepad2.y){
             bot.shooter.start();
@@ -58,6 +58,20 @@ public class TestTele extends OpMode {
 
         telemetry.addData("Right Outtake Position", bot.outr.getCurrentPosition());
         telemetry.addData("Left Outtake Position", bot.outl.getCurrentPosition());
+        telemetry.addData("Right Outtake Angular Velocity", bot.autoAimer.outrController.currSpeed);
+        telemetry.addData("Left Outtake Angular Velocity", bot.autoAimer.outlController.currSpeed);
+        telemetry.addData("Right Outtake Error", bot.autoAimer.outrController.currError);
+        telemetry.addData("Left Outtake Error", bot.autoAimer.outlController.currError);
+        telemetry.addData("Right Outtake Power", bot.autoAimer.outrController.power);
+        telemetry.addData("Left Outtake Power", bot.autoAimer.outlController.power);
+        telemetry.addData("Right Outtake Change Time", bot.autoAimer.outrController.changeTime);
+        telemetry.addData("Left Outtake Change Time", bot.autoAimer.outlController.changeTime);
+        telemetry.addData("Right Outtake Derivative Power", bot.autoAimer.outrController.derivativeOfPower);
+        telemetry.addData("Left Outtake Derivative Power", bot.autoAimer.outlController.derivativeOfPower);
+        telemetry.addData("Right Outtake Target Speed", bot.autoAimer.outrController.targetSpeed);
+        telemetry.addData("Left Outtake Target Speed", bot.autoAimer.outlController.targetSpeed);
+
+
 
 //        telemetry.addData("Outl Target Power", bot.autoAimer.outlController.getMotorPower(bot.outl.getCurrentPosition()));
 

@@ -12,7 +12,7 @@ public class PID {
     }
 
     public double getPower(double ce, double cv, double ci){
-        return (Kp*abs(ce) - Kd*abs(cv) + Ki*abs(ci));
+        return Math.signum(ce)*(Kp*abs(ce) - Kd*abs(cv) + Ki*abs(ci));
     }
 
     public double abs(double in){
