@@ -8,6 +8,7 @@ public class BlueSideAuto extends BaseAuto {
 
     Drivetrain drivetrain;
     String numOfRings = "";
+    double startingAngle;
 
 
     @Override
@@ -61,7 +62,7 @@ public class BlueSideAuto extends BaseAuto {
         telemetry.update();
         numOfRings = pipeline.position.toString();
         sleep(500);
-
+        startingAngle = getAverageGyro();
         encoderMecanumDrive(0.5, 215, 6, -0.464,-1);
         drivetrain.tilt(0.37);
         sleep(300);
@@ -103,6 +104,7 @@ public class BlueSideAuto extends BaseAuto {
                 break;
         }
         robot.wobble.setPosition(0.0);
+        gyroTurn(0.5, startingAngle);
         sleep(300);
 
 //        sleep(300);

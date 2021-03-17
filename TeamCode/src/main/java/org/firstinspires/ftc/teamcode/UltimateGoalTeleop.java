@@ -52,7 +52,7 @@ import java.util.ArrayList;
  *
  */
 
-@TeleOp(name="Ultimate Goal poop", group="UltimateGoal")
+@TeleOp(name="Ultimate Goal TeleOp", group="UltimateGoal")
 public class UltimateGoalTeleop extends OpMode{
 
 
@@ -70,7 +70,7 @@ public class UltimateGoalTeleop extends OpMode{
     boolean switching = false;
     static final double     P_TURN_COEFF            = 0.03;
 
-    double startingAngle;
+    double startingAngle, turnTimer;
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -79,7 +79,7 @@ public class UltimateGoalTeleop extends OpMode{
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
-
+        drivetrain = new Drivetrain(robot);
         robot.init(hardwareMap);
         robot.frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Set to REVERSE if using AndyMark motors
         robot.frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);// Set to FORWARD if using AndyMark motors
@@ -192,7 +192,8 @@ public class UltimateGoalTeleop extends OpMode{
             t.loop();
 
             if (gamepad1.a){
-                gyroTurn(0.5, startingAngle-30);
+                turnTimer = System.currentTimeMillis() + 1500;
+                gyroTurn(0.5, startingAngle-15);
                 telemetry.addData("ok", "yes");
                 telemetry.update();
             }
@@ -233,7 +234,7 @@ public class UltimateGoalTeleop extends OpMode{
     public void gyroTurn (  double speed, double angle) {
 
         // keep looping while we are still active, and not on heading.
-        while (!gamepad1.x && !drivetrain.onHeading(speed, angle, P_TURN_COEFF)) {
+        while (!gamepad1.x && !drivetrain.onHeading(speed, angle, P_TURN_COEFF) && System.currentTimeMillis() < turnTimer) {
             // Update telemetry & Allow time for other processes to run.
             telemetry.addData("current_heading", drivetrain.getAverageGyro());
             telemetry.update();
