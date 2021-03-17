@@ -30,7 +30,7 @@ public class TwoGPTeleop extends LinearOpMode {
         public void runOpMode() {
             telemetry.addData("Status", "Before new Robot");
             telemetry.update();
-            Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false ,false);
+            Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false ,true);
             telemetry.addData("Status", "Done with new Robot");
             telemetry.update();
             //robot.navigateTeleOp();
@@ -42,6 +42,8 @@ public class TwoGPTeleop extends LinearOpMode {
             boolean move_wobble_goal_servo = true;
             robot.openWobbleGoalClaw();
             WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
+            robot.moveLeftStick(0);
+            robot.moveRightStick(1);
 
             telemetry.addData("Status", "Ready to go");
             telemetry.update();
@@ -58,14 +60,15 @@ public class TwoGPTeleop extends LinearOpMode {
                 float left_stick_y = -gamepad1.left_stick_y;
                 float left_stick_x = -gamepad1.left_stick_x;
                 float right_stick_x = -gamepad1.right_stick_x;
-                boolean move_wobble_goal_arm = gamepad2.left_bumper;
+                boolean move_wobble_goal_arm = gamepad2.b;
                 boolean start_transfer_sys = gamepad1.right_bumper;
                 float shooter = gamepad2.right_trigger;
                 boolean odo_powershots = gamepad1.b;
                 boolean shooter_servo = gamepad1.x;
                 boolean wobble_goal_servo = gamepad2.y;
                 boolean quick_reverse = gamepad1.a;
-                boolean move_sticks = gamepad2.dpad_down;
+                boolean move_sticks_down = gamepad2.dpad_up;
+                boolean move_sticks_up = gamepad2.dpad_down;
 
 
 
@@ -81,17 +84,15 @@ public class TwoGPTeleop extends LinearOpMode {
                 }
 
                 /**Sticks**/
-                boolean sticksUp = true;
-                if (move_sticks) {
-                    if(sticksUp) {
-                        robot.moveLeftStick(1);
-                        robot.moveRightStick(1);
-                        sticksUp = false;
-                    } else if(!sticksUp) {
-                        robot.moveLeftStick(0);
-                        robot.moveRightStick(0);
-                        sticksUp = true;
-                    }
+
+                if (move_sticks_down) {
+                    robot.moveLeftStick(1);
+                    robot.moveRightStick(0);
+                }
+
+                if (move_sticks_up){
+                    robot.moveLeftStick(0.3);
+                    robot.moveRightStick(0.8);
                 }
 
                 /**Shooter**/
@@ -126,7 +127,7 @@ public class TwoGPTeleop extends LinearOpMode {
                         this.sleep(600);
                         robot.openWobbleGoalClaw();
                     } else if(currentWobbleGoalPosition == WobbleGoal.Position.DropOverWall){
-                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.REST);
+                        nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                     }
                     else {
                         telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");

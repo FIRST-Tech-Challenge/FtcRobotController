@@ -12,7 +12,7 @@ public class Sticks {
         leftStick = op.hardwareMap.servo.get("leftStick");
         rightStick = op.hardwareMap.servo.get("rightStick");
 
-        moveLeftStick(0);
+        moveLeftStick(1);
         moveRightStick(0);
 
     }
