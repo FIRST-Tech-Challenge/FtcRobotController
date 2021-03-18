@@ -202,7 +202,7 @@ public class Hopper extends Logger<Hopper> implements Configurable {
                 return new Progress() {
                     @Override
                     public boolean isDone() {
-                        return (HopperTimer.milliseconds()>=200);
+                        return (HopperTimer.milliseconds()>=300);
                     }
                 }; }}, taskName);
         if (!forAuto) {

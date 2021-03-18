@@ -620,7 +620,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                     if (comboGrabber.isArmLow()) {
                         comboGrabber.initWobbleGoalCombo();
                     } else {
-                        comboGrabber.releaseWobbleGoalFastCombo();
+                        comboGrabber.readyGrabCombo();
                     }
                 }
             }

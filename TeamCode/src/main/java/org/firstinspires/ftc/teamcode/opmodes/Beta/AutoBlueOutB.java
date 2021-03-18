@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.Beta;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.components.Robot2;
@@ -17,7 +18,7 @@ import java.io.IOException;
 /**
  * Created by 28761 on 6/29/2019.
  */
-//@Disabled
+@Disabled
 @Autonomous(name = "Blue Out Beta", group = "Beta")
 public class AutoBlueOutB extends LinearOpMode {
 
