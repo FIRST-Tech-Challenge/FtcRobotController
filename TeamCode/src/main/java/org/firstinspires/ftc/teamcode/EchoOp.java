@@ -51,7 +51,7 @@ public class EchoOp extends OpMode {
 
         rotationController = new RotationController(hardwareMap.get(BNO055IMU.class, "imu"));
 
-        odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), new Pose2d(45,  0, new Rotation2d(0)));
+        odometry = new DifferentialDriveOdometry(new Rotation2d(rotationController.getAngleRadians()), new Pose2d(45,  -300, new Rotation2d(Math.PI/2)));
 
         intake1 = new Motor(hardwareMap, "in1");
         intake2 = new Motor(hardwareMap, "in2");
@@ -172,12 +172,12 @@ public class EchoOp extends OpMode {
         telemetry.addData("Heading: ", pose.getHeading());
 
 
-//        TelemetryPacket packet = new TelemetryPacket();
-//        packet.fieldOverlay()
-//                .setFill("blue")
-//                .fillRect(pose.getX(), pose.getY(), 40, 40);
-//
-//        dashboard.sendTelemetryPacket(packet);
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay()
+                .setFill("blue")
+                .fillRect(pose.getX(), pose.getY(), 10, 10);
+
+        dashboard.sendTelemetryPacket(packet);
 
 
     }
