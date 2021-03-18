@@ -10,7 +10,6 @@ import com.arcrobotics.ftclib.kinematics.wpilibkinematics.DifferentialDriveOdome
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robot.DriveTrain;
@@ -41,8 +40,8 @@ public class EchoOp extends OpMode {
 
     @Override
     public void init() {
-//        dashboard = FtcDashboard.getInstance();
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        dashboard = FtcDashboard.getInstance();
+        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         gamepad = new GamePadController(gamepad1);
 
         driveTrain = new DriveTrain(new Motor(hardwareMap, "dl"),
@@ -165,7 +164,7 @@ public class EchoOp extends OpMode {
                 .setFill("blue")
                 .fillRect(pose.getX(), pose.getY(), 40, 40);
 
-//        dashboard.sendTelemetryPacket(packet);
+        dashboard.sendTelemetryPacket(packet);
 
 
     }
