@@ -74,8 +74,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     final public double WARM_UP_RPM = 1660;
     static final public double WARM_UP_RPM_AUTO = 1600;
     final public double SEMI_AUTO_RPM = 1660;
-    final public double WARM_UP_RPM_POWER_SHOT = 1500;
-    final public double SEMI_POWER_SHOT_RPM = 1500;
+    final public double WARM_UP_RPM_POWER_SHOT = 1440;
+    final public double SEMI_POWER_SHOT_RPM = 1440;
     public double shooting_rpm = WARM_UP_RPM;
     public double batteryVolt = 0;
 
@@ -1572,10 +1572,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         //sleep(200);
         // move to center power shot
-        shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
+        //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
         // chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+19,chassis.odo_y_pos_cm(),chassis.odo_heading(),false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+19,chassis.odo_y_pos_cm(),chassis.odo_heading()-1,false,1);
         hopper.feederAuto();
         if (n==2) {
             shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
@@ -1583,11 +1583,11 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         //sleep(500);
         // move to right power shot
-        shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
+        //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
 
         //chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+19,chassis.odo_y_pos_cm(),chassis.odo_heading(),false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+19,chassis.odo_y_pos_cm(),chassis.odo_heading()-1,false,1);
         hopper.feederAuto();
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
     }
