@@ -46,7 +46,7 @@ public class DriveTrain {
     }
 
     public double[] getDistance() {
-        return new double[]{driveLeft.getDistance(), driveRight.getDistance()};
+        return new double[]{driveLeft.getDistance(), -driveRight.getDistance()};
     }
 
     public double[] getRevolutions() {

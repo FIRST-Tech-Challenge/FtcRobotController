@@ -71,8 +71,9 @@ public class EchoOp extends OpMode {
     @Override
     public void loop() {
         gamepad.update();
-        double leftDistanceInch = driveTrain.driveLeft.getDistance() / Vals.TICKS_PER_INCH_MOVEMENT;
-        double rightDistanceInch = driveTrain.driveRight.getDistance() / Vals.TICKS_PER_INCH_MOVEMENT;
+        double[] driveTrainDistance = driveTrain.getDistance();
+        double leftDistanceInch = driveTrainDistance[0] / Vals.TICKS_PER_INCH_MOVEMENT;
+        double rightDistanceInch = driveTrainDistance[1] / Vals.TICKS_PER_INCH_MOVEMENT;
         odometry.update(new Rotation2d(rotationController.getAngleRadians()), leftDistanceInch, rightDistanceInch);
 
 
@@ -160,8 +161,8 @@ public class EchoOp extends OpMode {
         telemetry.addData("Hitter Position", hitter.hitter.getPosition());
         telemetry.addData("Left Speed", leftSpeed);
         telemetry.addData("Right Speed", rightSpeed);
-        telemetry.addData("Left Distance", driveTrain.driveLeft.getDistance());
-        telemetry.addData("Right Distance", driveTrain.driveRight.getDistance());
+        telemetry.addData("Left Distance", driveTrainDistance[0]);
+        telemetry.addData("Right Distance", driveTrainDistance[1]);
         telemetry.addData("Intake Speed", intakeSpeed);
         telemetry.addData("Flywheel Ready State", isReady);
 
