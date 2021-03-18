@@ -78,7 +78,7 @@ public class OneGPTeleop extends LinearOpMode {
             /**Powershots**/
             if(odo_powershots){
                 //robot.setPosition(0,0,0);
-                robot.goToPosition(0,-26 ,0,0.8);
+                robot.goToPosition(4,-20 ,0,0.8);
                 //robot.goToPosition(40,-40,-88,0.7);
                 robot.shootThreePowerShot();
             }

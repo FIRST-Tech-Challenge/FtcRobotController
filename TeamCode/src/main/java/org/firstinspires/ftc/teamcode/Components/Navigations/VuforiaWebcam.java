@@ -107,12 +107,12 @@ public class VuforiaWebcam extends Thread {
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0)));
         frontWallTarget.setLocation(OpenGLMatrix
                 .translation(-halfField, 0, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , 90)));
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 90)));
 
         // The tower goal targets are located a quarter field length from the ends of the back perimeter wall.
         blueTowerGoalTarget.setLocation(OpenGLMatrix
                 .translation(halfField, quarterField, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , -90)));
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
         redTowerGoalTarget.setLocation(OpenGLMatrix
                 .translation(halfField, -quarterField, mmTargetHeight)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
@@ -134,14 +134,14 @@ public class VuforiaWebcam extends Thread {
         targetsUltimateGoal.activate();
     }
 
-    public boolean runVuforia() {
+    public void run() {
         // Run until Thread is Interrupted
-//        while (!isInterrupted()) {
+        while (!isInterrupted()) {
             targetVisible = false;
             // Look for Trackable, Update Robot Location if Possible
             for (VuforiaTrackable trackable : allTrackables) {
                 if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
-                   // op.telemetry.addData("Visible Target ", trackable.getName());
+                    // op.telemetry.addData("Visible Target ", trackable.getName());
                     targetVisible = true;
 
                     OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
@@ -159,12 +159,16 @@ public class VuforiaWebcam extends Thread {
 //                op.telemetry.addData("Pos (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch);
 //                op.telemetry.addData("Pos (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getCurrentAngle(), getXpos(), getYpos());
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                if(Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2))>=24.5 && VuforiaWebcam.isTargetVisible()==true) {
+                if (Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2)) >= 24.5 && VuforiaWebcam.isTargetVisible() == true) {
 //                    setXposition(translation.get(0) / mmPerInch);
 //                    setYposition((translation.get(1) / mmPerInch));
 //                    op.telemetry.addData("PosIf (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getAngle(), getXposition(), getYposition());
-                    OdometryChassis.setXpos(translation.get(0) / mmPerInch);
-                    OdometryChassis.setYpos((translation.get(1) / mmPerInch));
+                    xpos = translation.get(0) / mmPerInch;
+                    ypos = translation.get(1) / mmPerInch;
+                    if(xpos>-5&&xpos<5&&ypos>-60&&ypos<-50) {
+                        OdometryChassis.setXpos(translation.get(0) / mmPerInch);
+                        OdometryChassis.setYpos((translation.get(1) / mmPerInch));
+                    }
 //                    op.telemetry.addData("PosIf (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getCurrentAngle(), getXpos(), getYpos());
 
 //                    op.telemetry.addData("OVERWRITING...", null);
@@ -177,16 +181,13 @@ public class VuforiaWebcam extends Thread {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                return true;
 
                 //setInVuforia(false);
                 //op.telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-            }
-            else {
+            } else {
 //                op.telemetry.addData("Visible Target", "none");
             }
-            return false;
-        //}
+        }
     }
 
     public static double getVuforiaX() {

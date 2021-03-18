@@ -77,6 +77,7 @@ public class OdometryChassis extends BasicChassis {
         }
         if(navigator){
             vuforia = new VuforiaWebcam(op);
+            vuforia.start();
         }
     }
     public static float getXpos(){
@@ -86,12 +87,15 @@ public class OdometryChassis extends BasicChassis {
         return ypos;
     }
     public static void setXpos(float newXpos){
-        odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        odom3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        odom[0]=0;
-        odom[1]=0;
-        odom[2]=0;
+//        odom1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        odom2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        odom3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        odom1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        odom2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        odom3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        odom[0]=0;
+//        odom[1]=0;
+//        odom[2]=0;
         xpos=newXpos;
     }
     public  static void setYpos(float newYpos){
@@ -136,11 +140,10 @@ public class OdometryChassis extends BasicChassis {
 
         lastAngles = angles;
 
-        return -globalAngle;
+        return -globalAngle%360;
         //return navigation.getAngle();
     }
     public double[] track() {
-        vuforia.runVuforia();
         double data[]={0,0,0};
         double diff[]={odomconst[0]*(odom1.getCurrentPosition() - odom[0]),odomconst[1]*(odom2.getCurrentPosition() - odom[1]),
                 odomconst[2]*(odom3.getCurrentPosition() - odom[2])};
