@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
@@ -26,6 +25,7 @@ import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 
 @TeleOp(name = "TwoGPTeleop ")
 //@Disabled
+
 public class TwoGPTeleop extends LinearOpMode {
         public void runOpMode() {
             telemetry.addData("Status", "Before new Robot");
@@ -42,8 +42,11 @@ public class TwoGPTeleop extends LinearOpMode {
             boolean move_wobble_goal_servo = true;
             robot.openWobbleGoalClaw();
             WobbleGoal.Position currentWobbleGoalPosition = WobbleGoal.Position.REST;
-            robot.moveLeftStick(0);
+            robot.moveLeftStick(0.3);
             robot.moveRightStick(1);
+            double yShootingPosition = 0;
+            double xShootingPosition = 0;
+            double angleShootingPosition = 0;
 
             telemetry.addData("Status", "Ready to go");
             telemetry.update();
@@ -56,7 +59,7 @@ public class TwoGPTeleop extends LinearOpMode {
 
 
             while (!isStopRequested()) {
-
+                robot.track();
                 float left_stick_y = -gamepad1.left_stick_y;
                 float left_stick_x = -gamepad1.left_stick_x;
                 float right_stick_x = -gamepad1.right_stick_x;
@@ -69,6 +72,8 @@ public class TwoGPTeleop extends LinearOpMode {
                 boolean quick_reverse = gamepad1.a;
                 boolean move_sticks_down = gamepad2.dpad_up;
                 boolean move_sticks_up = gamepad2.dpad_down;
+                boolean save_Shooting_Position = gamepad2.a;
+                boolean goToShootingPosition = gamepad2.x;
 
 
 
@@ -180,6 +185,20 @@ public class TwoGPTeleop extends LinearOpMode {
                     sleep(250);
                     robot.startIntake();
                     robot.startTransfer();
+                }
+
+
+
+                if (save_Shooting_Position){
+                    yShootingPosition = robot.track()[0];
+                    xShootingPosition = robot.track()[1];
+                    angleShootingPosition = robot.track()[2];
+                }
+
+                if (goToShootingPosition){
+                    //robot.shootGoalTeleop(1000);
+                    robot.goToPosition(xShootingPosition, yShootingPosition, angleShootingPosition, 0.8);
+                    //robot.shootHighGoal(3);
                 }
             }
             idle();
