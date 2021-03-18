@@ -176,8 +176,13 @@ public class EchoOp extends OpMode {
         packet.fieldOverlay()
                 .setFill("blue")
                 .fillRect(pose.getX(), pose.getY(), 10, 10);
+        TelemetryPacket packet2 = new TelemetryPacket();
+        packet2.fieldOverlay()
+                .setFill("red")
+                .fillRect(0, 0, 30, 30);
 
         dashboard.sendTelemetryPacket(packet);
+        dashboard.sendTelemetryPacket(packet2);
 
 
     }
