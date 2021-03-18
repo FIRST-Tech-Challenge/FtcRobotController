@@ -1,6 +1,17 @@
 package org.firstinspires.ftc.teamcode.configs;
 
+import org.firstinspires.ftc.teamcode.Drivetrain;
+import org.firstinspires.ftc.teamcode.HardwareMapV2;
+
 public class teleConfigTESTING_S implements teleOpInterface{
+    HardwareMapV2 robot;
+    Drivetrain drivetrain;
+
+    public teleConfigTESTING_S(HardwareMapV2 robot) {
+        this.robot = robot;
+        drivetrain = new Drivetrain(robot);
+    }
+
     public void a(boolean pressed) {
 
     }

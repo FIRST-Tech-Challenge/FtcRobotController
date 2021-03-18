@@ -38,6 +38,8 @@ import org.firstinspires.ftc.teamcode.configs.teleConfigEx;
 import org.firstinspires.ftc.teamcode.configs.teleConfigRohit;
 import org.firstinspires.ftc.teamcode.configs.teleConfigRohit2;
 import org.firstinspires.ftc.teamcode.configs.teleConfigSamih;
+import org.firstinspires.ftc.teamcode.configs.teleConfigTESTING_R;
+import org.firstinspires.ftc.teamcode.configs.teleConfigTESTING_S;
 import org.firstinspires.ftc.teamcode.configs.teleOpInterface;
 
 import java.util.ArrayList;
@@ -97,6 +99,7 @@ public class UltimateGoalTeleop extends OpMode{
         configs.add(teleConfigSamih.class);
         configs.add(teleConfigRohit2.class);
         configs.add(lessButtonsConfig.class);
+        configs.add(teleConfigTESTING_R.class);
 
 
         // Send telemetry message to signify robot waiting;
@@ -152,6 +155,10 @@ public class UltimateGoalTeleop extends OpMode{
                     t = new teleConfigRohit2(robot);
                 } else if (configs.get(index).getName().equals(lessButtonsConfig.class.getName())) {
                     t = new lessButtonsConfig(robot);
+                } else if (configs.get(index).getName().equals(teleConfigTESTING_R.class.getName())) {
+                    t = new teleConfigTESTING_R(robot);
+                } else if (configs.get(index).getName().equals(teleConfigTESTING_S.class.getName())) {
+                    t = new teleConfigTESTING_S(robot);
                 }
                 switching = false;
             }
