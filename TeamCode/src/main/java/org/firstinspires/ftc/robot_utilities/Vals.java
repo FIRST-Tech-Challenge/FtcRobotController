@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class Vals {
-    public static double flywheel_kp = 0.06; //40
+    public static double flywheel_kp = 0.053; //40
     public static double flywheel_ki = 0.3;
     public static double flywheel_kd = 0.007;
     public static double flywheel_ks = 0;
@@ -31,7 +31,8 @@ public class Vals {
     public static double hitter_start = 0.4;
     public static double hitter_end = .7;
 
-    public static double wobble_arm_speed = 0.8;
+    public static double wobble_arm_down_velocity = -0.25;
+    public static double wobble_arm_up_velocity = 0.8;
     public static double wobble_hand_open = 1.0;
     public static double wobble_hand_close = 0;
 

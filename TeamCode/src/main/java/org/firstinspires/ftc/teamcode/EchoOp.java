@@ -33,6 +33,7 @@ public class EchoOp extends OpMode {
     RotationController rotationController;
 
     private double intakeSpeed = 0;
+    private boolean wobbleHandOpen = false;
     private double wobbleHandPos = Vals.wobble_hand_close;
     private double wobbleArmVelocity = 0;
     private boolean flywheelOn = false;
@@ -85,16 +86,20 @@ public class EchoOp extends OpMode {
             intakeSpeed = 0;
         }
 
-        if(gamepad1.a) {
+        if(gamepad.isARelease()) {
+            wobbleHandOpen = !wobbleHandOpen;
+        }
+
+        if(wobbleHandOpen) {
             wobbleHandPos = Vals.wobble_hand_open;
         } else {
             wobbleHandPos = Vals.wobble_hand_close;
         }
 
         if(gamepad1.dpad_up) {
-            wobbleArmVelocity = Vals.wobble_arm_speed;
+            wobbleArmVelocity = Vals.wobble_arm_up_velocity;
         } else if(gamepad1.dpad_down) {
-            wobbleArmVelocity = -Vals.wobble_arm_speed;
+            wobbleArmVelocity = Vals.wobble_arm_down_velocity;
         } else {
             wobbleArmVelocity = 0;
         }
