@@ -159,12 +159,17 @@ public class EchoOp extends OpMode {
         telemetry.addData("Flywheel Ready State", isReady);
 
         Pose2d pose = odometry.getPoseMeters();
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.fieldOverlay()
-                .setFill("blue")
-                .fillRect(pose.getX(), pose.getY(), 40, 40);
+        telemetry.addData("X Pos: ", pose.getX());
+        telemetry.addData("Y Pos: ", pose.getY());
+        telemetry.addData("Heading: ", pose.getHeading());
 
-        dashboard.sendTelemetryPacket(packet);
+
+//        TelemetryPacket packet = new TelemetryPacket();
+//        packet.fieldOverlay()
+//                .setFill("blue")
+//                .fillRect(pose.getX(), pose.getY(), 40, 40);
+//
+//        dashboard.sendTelemetryPacket(packet);
 
 
     }
