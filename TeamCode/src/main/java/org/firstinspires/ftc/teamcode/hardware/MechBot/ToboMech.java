@@ -1574,8 +1574,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // move to center power shot
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
-        chassis.driveStraight(0.5, 19, 90, 2);
-
+        // chassis.driveStraight(0.5, 19, 90, 2);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+19,chassis.odo_y_pos_cm(),chassis.odo_heading(),false,1);
         hopper.feederAuto();
         if (n==2) {
             shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
@@ -1586,7 +1586,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
 
-        chassis.driveStraight(0.5, 19, 90, 2);
+        //chassis.driveStraight(0.5, 19, 90, 2);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+19,chassis.odo_y_pos_cm(),chassis.odo_heading(),false,1);
         hopper.feederAuto();
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
     }
