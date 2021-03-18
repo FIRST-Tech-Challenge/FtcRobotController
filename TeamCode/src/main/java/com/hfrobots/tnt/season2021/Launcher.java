@@ -59,7 +59,7 @@ public class Launcher {
 
     private final Servo launcherLiftServo;
 
-    public final static double RING_FEEDER_FEEDING_POSITION = 0.5;
+    public final static double RING_FEEDER_FEEDING_POSITION = 0.7;
 
     public final static double RING_FEEDER_PARKED_POSITION = 1.0;
 

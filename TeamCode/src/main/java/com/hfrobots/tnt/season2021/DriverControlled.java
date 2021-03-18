@@ -19,12 +19,21 @@
 
 package com.hfrobots.tnt.season2021;
 
+import android.util.Log;
+
 import com.ftc9929.corelib.control.NinjaGamePad;
+import com.ftc9929.metrics.RobotMetricsSampler;
+import com.ftc9929.metrics.StatsdMetricsReporter;
 import com.google.common.base.Ticker;
-import com.hfrobots.tnt.corelib.sensors.TotalCurrentSensor;
+import com.hfrobots.tnt.corelib.metrics.StatsDMetricSampler;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import java.util.List;
+
+import static com.ftc9929.corelib.Constants.LOG_TAG;
 
 @TeleOp(name = "00 UltGoal TeleOp")
 public class DriverControlled extends OpMode {
@@ -37,16 +46,22 @@ public class DriverControlled extends OpMode {
 
     private RevBlinkinLedDriver blinkinLed;
 
-    private TotalCurrentSensor totalCurrentSensor;
+    private StatsDMetricSampler legacyMetricsSampler;
+
+    private RobotMetricsSampler newMetricsSampler;
+
+    private boolean useLegacyMetricsSampler = true;
+
+    private List<LynxModule> allHubs;
 
     @Override
     public void init() {
         drivebase = new Drivebase(hardwareMap);
 
-        totalCurrentSensor = new TotalCurrentSensor(hardwareMap);
+        NinjaGamePad driversGamepad = new NinjaGamePad(gamepad1);
 
         driverControls = DriverControls.builder()
-                .driversGamepad(new NinjaGamePad(gamepad1))
+                .driversGamepad(driversGamepad)
                 .kinematics(drivebase).build();
 
         ScoringMechanism scoringMechanism = ScoringMechanism.builder()
@@ -59,32 +74,72 @@ public class DriverControlled extends OpMode {
         WobbleGoal wobbleGoal = WobbleGoal.builder().hardwareMap(hardwareMap)
                 .telemetry(telemetry).ticker(Ticker.systemTicker()).build();
 
-        operatorControls = OperatorControls.builder().operatorGamepad(new NinjaGamePad(gamepad2))
+        NinjaGamePad operatorGamepad = new NinjaGamePad(gamepad2);
+
+        operatorControls = OperatorControls.builder().operatorGamepad(operatorGamepad)
                 .scoringMechanism(scoringMechanism)
                 .wobbleGoal(wobbleGoal).build();
 
         blinkinLed = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         blinkinLed.setPattern(RevBlinkinLedDriver.BlinkinPattern.BREATH_GRAY);
+
+        try {
+            if (useLegacyMetricsSampler) {
+                legacyMetricsSampler = new StatsDMetricSampler(hardwareMap, driversGamepad, operatorGamepad);
+            } else {
+                StatsdMetricsReporter metricsReporter = StatsdMetricsReporter.builder()
+                        .metricsServerHost("192.168.43.78").
+                                metricsServerPortNumber(8126).build();
+
+                newMetricsSampler = RobotMetricsSampler.builder()
+                        .metricsReporter(metricsReporter)
+                        .hardwareMap(hardwareMap)
+                        .driverControls(driversGamepad)
+                        .operatorControls(operatorGamepad).build();
+
+            }
+        } catch (Exception ex) {
+            Log.w(LOG_TAG, "Unable to setup metrics sampler", ex);
+        }
+
+        allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            Log.d(LOG_TAG, String.format("Setting hub %s to BulkCachingMode.MANUAL", hub));
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
     }
 
     @Override
     public void init_loop() {
+        clearHubsBulkCaches(); // important, do not remove this line, or reads from robot break!
+
         // Let operator work with wobble goal gripper during setup
         operatorControls.periodicTask();
     }
 
+    private void clearHubsBulkCaches() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
+    }
+
     @Override
     public void loop() {
+        clearHubsBulkCaches(); // important, do not remove this line, or reads from robot break!
+
         driverControls.periodicTask();
         operatorControls.periodicTask();
 
-        totalCurrentSensor.update();
-
-        double averageCurrent = totalCurrentSensor.getAverageCurrent();
-        double maxCurrent = totalCurrentSensor.getMaxCurrent();
-        double cur = totalCurrentSensor.getCurrentCurrent();
-
-        telemetry.addData("C", "%.1fA max: %.1fA avg: %.1fA", cur, maxCurrent, averageCurrent);
+        if (useLegacyMetricsSampler) {
+            if (legacyMetricsSampler != null) {
+                legacyMetricsSampler.doSamples();
+            }
+        } else {
+            if (newMetricsSampler != null) {
+                newMetricsSampler.doSamples();
+            }
+        }
 
         telemetry.update();
     }

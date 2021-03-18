@@ -186,11 +186,103 @@ public class ScoringMechanismTest {
         assertTrue(frontLauncherMotor.getVelocity() > 1500);
         assertTrue(rearLauncherMotor.getVelocity() > 1500);
 
+        toPreloadRingsWithAsserts();
+
+        toLauncherReadyWithAsserts();
+
+        // Launch a ring...
+        launchTrigger.setPressed(true);
+        scoringMechanism.periodicTask();
+        assertEquals(ringFeedServo.getPosition(), Launcher.RING_FEEDER_FEEDING_POSITION, 0.05);
+
+        // Let feeder return to park
+        launchTrigger.setPressed(false);
+        scoringMechanism.periodicTask();
+        assertEquals(ringFeedServo.getPosition(), Launcher.RING_FEEDER_PARKED_POSITION, 0.05);
+
+        // Stop the launcher
+        causeButtonToRiseForNextPeriodTask(stopLaunchingButton);
+        scoringMechanism.periodicTask();
+
+        // We should be back at idle state if everything is working
+        assertEquals(ScoringMechanism.IdleState.class, shouldBeIdleState.getClass());
+        scoringMechanism.periodicTask();
+
+        assertEquals(hopperPullDownServo.getPosition(), Launcher.HOPPER_PULLED_DOWN_POSITION, 0.05);
+        assertEquals(ringFeedServo.getPosition(), Launcher.RING_FEEDER_PARKED_POSITION, 0.05);
+    }
+
+    private void toPreloadRingsWithAsserts() {
         // Move into "Launch Mode"
         launchTrigger.setPressed(true);
         scoringMechanism.periodicTask();
         scoringMechanism.periodicTask();
         assertEquals(Launcher.HOPPER_FLOAT_POSITION, hopperPullDownServo.getPosition(), 0.05);
+    }
+
+    @Test
+    public void ringHoldDown() {
+        FakeServo ringHoldDownServo = (FakeServo)UltimateGoalTestConstants.HARDWARE_MAP
+                .get(Servo.class, "ringHoldDownServo");
+
+        State shouldBeIdleState = scoringMechanism.getCurrentState();
+        assertEquals(ScoringMechanism.IdleState.class, shouldBeIdleState.getClass());
+
+        assertEquals(RingHoldDown.UP_POSITION, ringHoldDownServo.getPosition(), 0.01);
+
+        toPreloadRingsWithAsserts();
+        assertEquals(RingHoldDown.THREE_RINGS_POSITION, ringHoldDownServo.getPosition(), 0.01);
+
+        toLauncherReadyWithAsserts();
+
+        launchOneRing();
+        assertEquals(RingHoldDown.TWO_RINGS_POSITION, ringHoldDownServo.getPosition(), 0.01);
+
+        scoringMechanism.periodicTask(); // Clear the debounced button state
+
+        launchOneRing();
+        assertEquals(RingHoldDown.ONE_RINGS_POSITION, ringHoldDownServo.getPosition(), 0.01);
+
+        scoringMechanism.periodicTask(); // Clear the debounced button state
+
+        launchOneRing();
+        assertEquals(RingHoldDown.UP_POSITION, ringHoldDownServo.getPosition(), 0.01);
+
+        // Go to Idle (to do another test)
+        stopAndCheckIdleAssertions(ringHoldDownServo);
+
+        toPreloadRingsWithAsserts();
+        assertEquals(RingHoldDown.THREE_RINGS_POSITION, ringHoldDownServo.getPosition(), 0.01);
+
+        toLauncherReadyWithAsserts();
+
+        // "Crash stop" (operator changes mind)
+        stopAndCheckIdleAssertions(ringHoldDownServo);
+    }
+
+    private void stopAndCheckIdleAssertions(FakeServo ringHoldDownServo) {
+        State shouldBeIdleState;
+        stopLaunchingButton.setPressed(true);
+        scoringMechanism.periodicTask();
+        stopLaunchingButton.setPressed(false);
+
+        shouldBeIdleState = scoringMechanism.getCurrentState();
+        assertEquals(ScoringMechanism.IdleState.class, shouldBeIdleState.getClass());
+        assertEquals(RingHoldDown.UP_POSITION, ringHoldDownServo.getPosition(), 0.01);
+    }
+
+    private void launchOneRing() {
+        launchTrigger.setPressed(true);
+        scoringMechanism.periodicTask();
+        launchTrigger.setPressed(false);
+        scoringMechanism.periodicTask(); // start the stopwatch
+        fakeTicker.advance(500, TimeUnit.MILLISECONDS);
+        scoringMechanism.periodicTask(); // get through delay
+        scoringMechanism.periodicTask(); // move the servo
+    }
+
+    private void toLauncherReadyWithAsserts() {
+
 
         fakeTicker.advance(5000, TimeUnit.MILLISECONDS);
         scoringMechanism.periodicTask();
@@ -214,27 +306,6 @@ public class ScoringMechanismTest {
         scoringMechanism.periodicTask();
 
         assertEquals(ScoringMechanism.LauncherReady.class, scoringMechanism.getCurrentState().getClass());
-
-        // Launch a ring...
-        launchTrigger.setPressed(true);
-        scoringMechanism.periodicTask();
-        assertEquals(ringFeedServo.getPosition(), Launcher.RING_FEEDER_FEEDING_POSITION, 0.05);
-
-        // Let feeder return to park
-        launchTrigger.setPressed(false);
-        scoringMechanism.periodicTask();
-        assertEquals(ringFeedServo.getPosition(), Launcher.RING_FEEDER_PARKED_POSITION, 0.05);
-
-        // Stop the launcher
-        causeButtonToRiseForNextPeriodTask(stopLaunchingButton);
-        scoringMechanism.periodicTask();
-
-        // We should be back at idle state if everything is working
-        assertEquals(ScoringMechanism.IdleState.class, shouldBeIdleState.getClass());
-        scoringMechanism.periodicTask();
-
-        assertEquals(hopperPullDownServo.getPosition(), Launcher.HOPPER_PULLED_DOWN_POSITION, 0.05);
-        assertEquals(ringFeedServo.getPosition(), Launcher.RING_FEEDER_PARKED_POSITION, 0.05);
     }
 
     // TODO: These are probably a good shared method somewhere

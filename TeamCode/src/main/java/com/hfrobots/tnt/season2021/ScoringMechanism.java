@@ -60,6 +60,8 @@ public class ScoringMechanism {
 
     private Intake intake;
 
+    private RingHoldDown ringHoldDown;
+
     private RevBlinkinLedDriver blinkinLed;
 
     @Setter
@@ -90,7 +92,10 @@ public class ScoringMechanism {
     private OnOffButton jankyServo;
 
     private State currentState;
+
     private final PreloadRings preloadRings;
+
+    private DebouncedButton launchTriggerReleased;
 
     @Builder
     private ScoringMechanism(HardwareMap hardwareMap,
@@ -100,6 +105,7 @@ public class ScoringMechanism {
                             Ticker ticker) {
         launcher = new Launcher(hardwareMap, telemetry, ticker);
         intake = new Intake(hardwareMap, ticker);
+        ringHoldDown = new RingHoldDown(hardwareMap, telemetry, ticker);
 
         blinkinLed = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
@@ -152,6 +158,10 @@ public class ScoringMechanism {
     }
 
     public void periodicTask() {
+        if (launchTriggerReleased == null) {
+            launchTriggerReleased = launchTrigger.debounced();
+        }
+
         if (currentState != null) {
             State nextState = currentState.doStuffAndGetNextState();
 
@@ -166,6 +176,8 @@ public class ScoringMechanism {
         } else {
             Log.e(LOG_TAG, "No state machine setup!");
         }
+
+        ringHoldDown.periodicTask();
 
         if (unsafe.isPressed()) {
             setBlinkinLedPattern(RevBlinkinLedDriver.BlinkinPattern.RED_ORANGE);
@@ -252,6 +264,8 @@ public class ScoringMechanism {
 
             launcher.parkRingFeeder();
 
+            ringHoldDown.resetToUpPosition();
+
             if (intakeVelocity.getPosition() != 0) {
                 return intakeMoving;
             } else if (launchTrigger.isPressed()) {
@@ -281,6 +295,7 @@ public class ScoringMechanism {
         // Intake:Moving
         //  Intake Direction: Operator Controlled 
         // Launcher: Not Moving
+        // Hold-down: Up
 
         @Setter
         private IdleState idleState;
@@ -307,6 +322,8 @@ public class ScoringMechanism {
                     return intakeStalled;
                 }
             }
+
+            ringHoldDown.resetToUpPosition();
 
             commonLauncherSpeedHandling();
             jankyServoHandling();
@@ -404,6 +421,8 @@ public class ScoringMechanism {
 
             intake.stop();
             launcher.launcherToFullSpeed();
+
+            ringHoldDown.holdThreePosition();
 
             invertHopperFromFloating();
             unsafeIntakeOperations();
@@ -551,7 +570,15 @@ public class ScoringMechanism {
                 invertHopperFromFloating();
             }
 
+            // This isn't in the launch trigger if above, because debounce logic requires
+            // us to see the state every loop!
+            if (launchTriggerReleased.getFall()) {
+                ringHoldDown.launchedARing();
+            }
+
             if (stopLauncher.getRise()) {
+                ringHoldDown.resetToUpPosition();
+
                 return idleState;
             }
 
