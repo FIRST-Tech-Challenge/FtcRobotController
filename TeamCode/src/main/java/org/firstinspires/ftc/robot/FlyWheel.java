@@ -96,7 +96,7 @@ public class FlyWheel {
     }
 
     public boolean isOn() {
-        return Math.abs(this.flywheel.getCorrectedVelocity()) > 10;
+        return Math.abs(this.flywheel.getCorrectedVelocity()) > 10 && this.flywheelSpeed != 0;
     }
 
     public void flipDirection() {
