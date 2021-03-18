@@ -160,6 +160,8 @@ public class EchoOp extends OpMode {
         telemetry.addData("Hitter Position", hitter.hitter.getPosition());
         telemetry.addData("Left Speed", leftSpeed);
         telemetry.addData("Right Speed", rightSpeed);
+        telemetry.addData("Left Distance", driveTrain.driveLeft.getDistance());
+        telemetry.addData("Right Distance", driveTrain.driveRight.getDistance());
         telemetry.addData("Intake Speed", intakeSpeed);
         telemetry.addData("Flywheel Ready State", isReady);
 
