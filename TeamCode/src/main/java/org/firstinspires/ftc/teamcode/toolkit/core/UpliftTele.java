@@ -38,7 +38,7 @@ public abstract class UpliftTele extends LinearOpMode {
         telemetry.addData("Body", "Started");
         telemetry.update();
 
-        while(opModeIsActive() && !isStopRequested() && !forceStop) {
+        while(!isStopRequested()) {
             isLooping = true;
             bodyLoop();
         }

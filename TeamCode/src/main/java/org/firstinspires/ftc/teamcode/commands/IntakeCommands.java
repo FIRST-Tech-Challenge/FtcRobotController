@@ -22,12 +22,14 @@ public class IntakeCommands extends Command {
 
     @Override
     public void init() {
-
+        intake.raiseSticks();
+        intake.initRoller();
     }
 
     @Override
     public void start() {
-
+        intake.dropRoller();
+        intake.dropSticks();
     }
 
     @Override

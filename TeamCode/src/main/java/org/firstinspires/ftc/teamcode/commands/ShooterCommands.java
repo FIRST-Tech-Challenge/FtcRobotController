@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.core.Command;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
+import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 
 public class ShooterCommands extends Command {
 
@@ -51,6 +53,13 @@ public class ShooterCommands extends Command {
         if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
             shooter.setShooterPower(0.1);
         }
+
+//        if (robot.shooterSensor.getDistance(DistanceUnit.CM) < 5){
+//            while(robot.shooterSensor.getDistance(DistanceUnit.CM) < 5){
+//                Utils.sleep(1);
+//            }
+//            robot.shotCount += 1;
+//        }
 
     }
 

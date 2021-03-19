@@ -7,18 +7,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FlickerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.SticksSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.background.Cancel;
@@ -49,7 +48,6 @@ public class UpliftRobot {
     public ShooterSubsystem shooterSub;
     public FlickerSubsystem flickerSub;
     public WobbleSubsystem wobbleSub;
-    public SticksSubsystem sticksSub;
 
     public HardwareMap hardwareMap;
     public DcMotor leftFront, leftBack, rightFront, rightBack;
@@ -61,7 +59,7 @@ public class UpliftRobot {
     public Servo stickLeft, stickRight;
     public CRServo sweeperLeft, sweeperRight;
     public DigitalChannel digitalTouchBottom, digitalTouchTop;
-//    public DistanceSensor intakeSensor;
+    public DistanceSensor shooterSensor;
 
     public BNO055IMU imu;
 
@@ -73,21 +71,21 @@ public class UpliftRobot {
     public double worldY = 0;
     public double rawAngle = 0;
     public double worldAngle = 0;
-    public int count = 0;
+    public int shotCount = 0;
     public double constant = 0;
     public boolean slowMode = false;
     public double shooter1Vel = -1;
     public double shooter2Vel = -1;
-    public double highGoalVelocity = 1800;
+    public double highGoalVelocity = 2200;
     public double powerShotVelocity = 1050;
     public double kP = 50;
     public double kI = 0;
     public double kD = 0;
-    public double kF = 13;
+    public double kF = 15;
 
     public File odometryFileWorldX, odometryFileWorldY, odometryFileWorldAngle, transferFile;
 
-    public boolean driveInitialized, flickerInitialized, intakeInitialized, shooterInitialized, transferInitialized, wobbleInitialized, sticksInitialized, imuInitialized, visionInitialized;
+    public boolean driveInitialized, flickerInitialized, intakeInitialized, shooterInitialized, transferInitialized, wobbleInitialized, imuInitialized, visionInitialized;
 
     // values specific to the drivetrain
     public static double ticksPerQuarterRotation = 720;
@@ -136,7 +134,6 @@ public class UpliftRobot {
         } catch (Exception ex) {
             driveInitialized = false;
             opMode.telemetry.addData("Drivetrain initialization failed: ", ex.getMessage());
-//            opMode.telemetry.update();
         }
 
         try {
@@ -145,14 +142,13 @@ public class UpliftRobot {
         } catch (Exception ex) {
             flickerInitialized = false;
             opMode.telemetry.addData("Flicker initialization failed: ", ex.getMessage());
-//            opMode.telemetry.update();
         }
 
         try {
             transfer = hardwareMap.get(DcMotor.class, "transfer");
             transfer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+            digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "touch_bottom");
             digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
             digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
             digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
@@ -161,7 +157,6 @@ public class UpliftRobot {
         } catch (Exception ex) {
             transferInitialized = false;
             opMode.telemetry.addData("Transfer initialization failed: ", ex.getMessage());
-//            opMode.telemetry.update();
         }
 
         try {
@@ -174,23 +169,27 @@ public class UpliftRobot {
             shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
             shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
+//            shooterSensor = hardwareMap.get(DistanceSensor.class, "shooter_sensor");
+
             shooterInitialized = true;
         } catch (Exception ex) {
             shooterInitialized = false;
             opMode.telemetry.addData("Shooter initialization failed: ", ex.getMessage());
-//            opMode.telemetry.update();
         }
 
         try {
             intake = hardwareMap.get(DcMotor.class, "intake");
-//        intakeSensor = hardwareMap.get(DistanceSensor.class,"d1");
             intakeLifter = hardwareMap.get(Servo.class, "intake_lifter");
+
+            stickLeft = hardwareMap.get(Servo.class, "stick_left");
+            stickRight = hardwareMap.get(Servo.class, "stick_right");
+            sweeperLeft = hardwareMap.get(CRServo.class, "sweeper_left");
+            sweeperRight = hardwareMap.get(CRServo.class, "sweeper_right");
 
             intakeInitialized = true;
         } catch (Exception ex) {
             intakeInitialized = false;
             opMode.telemetry.addData("Intake initialization failed: ", ex.getMessage());
-//            opMode.telemetry.update();
         }
 
         try {
@@ -202,19 +201,6 @@ public class UpliftRobot {
         } catch (Exception ex) {
             wobbleInitialized = false;
             opMode.telemetry.addData("Wobble initialization failed: ", ex.getMessage());
-//            opMode.telemetry.update();
-        }
-
-        try {
-            stickLeft = hardwareMap.get(Servo.class, "stick_left");
-            stickRight = hardwareMap.get(Servo.class, "stick_right");
-            sweeperLeft = hardwareMap.get(CRServo.class, "sweeper_left");
-            sweeperRight = hardwareMap.get(CRServo.class, "sweeper_right");
-
-            sticksInitialized = true;
-        } catch (Exception ex) {
-            sticksInitialized = false;
-            opMode.telemetry.addData("Sticks initialization failed: ", ex.getMessage());
 //            opMode.telemetry.update();
         }
 
@@ -253,10 +239,7 @@ public class UpliftRobot {
         } catch (Exception ex) {
             visionInitialized = false;
             opMode.telemetry.addData("Vision initialization failed: ", ex.getMessage());
-//            opMode.telemetry.update();
         }
-
-//        opMode.telemetry.update();
 
         // setup file system
         odometryFileWorldX = AppUtil.getInstance().getSettingsFile("odometryX.txt");
@@ -285,9 +268,6 @@ public class UpliftRobot {
         }
         if(wobbleInitialized) {
             wobbleSub = new WobbleSubsystem(this);
-        }
-        if(sticksInitialized) {
-            sticksSub = new SticksSubsystem(this);
         }
     }
 

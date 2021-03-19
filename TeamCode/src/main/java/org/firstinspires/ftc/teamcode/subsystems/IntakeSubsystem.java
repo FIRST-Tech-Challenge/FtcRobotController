@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -13,6 +14,10 @@ public class IntakeSubsystem extends Subsystem {
     private UpliftRobot robot;
     private DcMotor intake;
     private Servo intakeLifter;
+    public Servo stickLeft;
+    public Servo stickRight;
+    public CRServo sweeperLeft;
+    public CRServo sweeperRight;
 
 
     public IntakeSubsystem(UpliftRobot robot){
@@ -20,6 +25,10 @@ public class IntakeSubsystem extends Subsystem {
         this.robot = robot;
         this.intake = robot.intake;
         this.intakeLifter = robot.intakeLifter;
+        this.stickLeft = robot.stickLeft;
+        this.stickRight = robot.stickRight;
+        this.sweeperLeft = robot.sweeperLeft;
+        this.sweeperRight = robot.sweeperRight;
     }
 
     @Override
@@ -55,11 +64,30 @@ public class IntakeSubsystem extends Subsystem {
 //        }
 //    }
 
+    public void initRoller() {
+        intakeLifter.setPosition(1);
+    }
+
     public void liftRoller() {
-        intakeLifter.setPosition(0.9);
+        intakeLifter.setPosition(0.85);
     }
 
     public void dropRoller() {
-        intakeLifter.setPosition(0.7);
+        intakeLifter.setPosition(0.65);
+    }
+
+    public void dropSticks() {
+        stickLeft.setPosition(0.175);
+        stickRight.setPosition(0.825);
+    }
+
+    public void raiseSticks() {
+        stickLeft.setPosition(0.5);
+        stickRight.setPosition(0.5);
+    }
+
+    public void sweepersOn() {
+        sweeperLeft.setPower(1);
+        sweeperRight.setPower(-1);
     }
 }

@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes.TeleOp;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.teamcode.commands.WobbleCommands;
 import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
@@ -69,8 +65,7 @@ public class TeleOpOffical extends UpliftTele {
 
     @Override
     public void bodyLoop() {
-//        logData(robot);
-        displayFullTelemetry(robot);
+        robot.safeSleep(1);
     }
 
     @Override

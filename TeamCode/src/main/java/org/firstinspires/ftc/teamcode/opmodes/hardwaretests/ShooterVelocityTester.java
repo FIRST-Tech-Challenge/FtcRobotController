@@ -56,12 +56,6 @@ public class ShooterVelocityTester extends UpliftAuto {
 //            robot.shooter2.setPower(1);
             Log.d("Shooter1 Velocity", robot.shooter1Vel + "");
             Log.d("Shooter2 Velocity", robot.shooter2Vel + "");
-            dashTelem.addData("Shooter 1 Velocity", robot.shooter1Vel + "");
-            dashTelem.addData("Shooter 2 Velocity", robot.shooter2Vel + "");
-            dashTelem.addData("Target vel", DashboardConstants.targetVel);
-            dashTelem.addData("Low bound", 1000);
-            dashTelem.addData("High bound", 2500);
-            dashTelem.update();
             Log.d("Time Elapsed", timeElapsed + "");
             Utils.sleep(50);
             timeElapsed = System.currentTimeMillis() - initialTime;
