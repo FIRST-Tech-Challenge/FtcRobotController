@@ -1,3 +1,7 @@
+//  This is a class meant for practicing coding with the driver bot.
+//  You can install this program to the rev control hub without any edits.
+//  Using the logitech controller, you can move the driver bot in a 360 degree range of motion.
+
 package org.firstinspires.ftc.team6220_2020.TestClasses;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
