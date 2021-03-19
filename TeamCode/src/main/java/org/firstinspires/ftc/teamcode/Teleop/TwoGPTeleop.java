@@ -73,7 +73,7 @@ public class TwoGPTeleop extends LinearOpMode {
                 boolean move_sticks_down = gamepad2.dpad_up;
                 boolean move_sticks_up = gamepad2.dpad_down;
                 boolean save_Shooting_Position = gamepad2.a;
-                boolean goToShootingPosition = gamepad2.x;
+                float goToShootingPosition = gamepad2.left_trigger;
 
 
 
@@ -82,10 +82,10 @@ public class TwoGPTeleop extends LinearOpMode {
 
                 /**Powershots**/
                 if(odo_powershots){
-                    robot.setPosition(0,0,0);
-                    robot.goToPosition(40,5 ,0,0.8);
-                    robot.goToPosition(40,-40,-88,0.7);
-                    robot.shootThreePowerShot();
+                        //robot.setPosition(0,0,0);
+                        robot.goToPosition(4,-20 ,0,0.8);
+                        //robot.goToPosition(40,-40,-88,0.7);
+                        robot.shootThreePowerShot();
                 }
 
                 /**Sticks**/
@@ -195,10 +195,9 @@ public class TwoGPTeleop extends LinearOpMode {
                     angleShootingPosition = robot.track()[2];
                 }
 
-                if (goToShootingPosition){
-                    //robot.shootGoalTeleop(1000);
-                    robot.goToPosition(xShootingPosition, yShootingPosition, angleShootingPosition, 0.8);
-                    //robot.shootHighGoal(3);
+                if (goToShootingPosition==1){
+                    robot.shootGoalTeleop(1000);
+                    robot.goToPosition(yShootingPosition, xShootingPosition, angleShootingPosition, 0.9);
                 }
             }
             idle();
