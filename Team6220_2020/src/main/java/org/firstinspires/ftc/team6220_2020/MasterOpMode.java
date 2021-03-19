@@ -54,7 +54,5 @@ public abstract class MasterOpMode extends LinearOpMode
             motorBackLeft.setPower(motorBLPower);
             motorBackRight.setPower(motorBRPower);
         }
-
     }
 }
-
