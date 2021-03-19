@@ -60,6 +60,7 @@ public class ScoringMechanismTest {
     private FakeOnOffButton unsafeButton = new FakeOnOffButton();
     private FakeOnOffButton invertHopper = new FakeOnOffButton();
     private FakeOnOffButton jankyServo = new FakeOnOffButton();
+    private FakeOnOffButton disableHoldDown = new FakeOnOffButton();
 
     // "Derived"
     private DebouncedButton stopLaunchingDebounced = stopLaunchingButton.debounced();
@@ -82,6 +83,7 @@ public class ScoringMechanismTest {
         scoringMechanism.setJankyServo(jankyServo);
         scoringMechanism.setLauncherToHighPosition(new FakeOnOffButton().debounced());
         scoringMechanism.setLauncherToMiddlePosition(new FakeOnOffButton().debounced());
+        scoringMechanism.setDisableRingHoldDown(disableHoldDown.debounced());
 
         intakeMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "intakeMotor");
         frontLauncherMotor = (FakeDcMotorEx) UltimateGoalTestConstants.HARDWARE_MAP.get(DcMotorEx.class, "frontLauncherMotor");
@@ -258,6 +260,16 @@ public class ScoringMechanismTest {
 
         // "Crash stop" (operator changes mind)
         stopAndCheckIdleAssertions(ringHoldDownServo);
+
+        // Check disable button works
+        disableHoldDown.setPressed(true);
+        scoringMechanism.periodicTask();
+
+        toPreloadRingsWithAsserts();
+        assertEquals(RingHoldDown.UP_POSITION, ringHoldDownServo.getPosition(), 0.01);
+
+        toLauncherReadyWithAsserts();
+        assertEquals(RingHoldDown.UP_POSITION, ringHoldDownServo.getPosition(), 0.01);
     }
 
     private void stopAndCheckIdleAssertions(FakeServo ringHoldDownServo) {

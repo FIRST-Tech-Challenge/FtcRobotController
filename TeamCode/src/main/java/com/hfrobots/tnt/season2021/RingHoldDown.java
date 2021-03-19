@@ -100,13 +100,21 @@ public class RingHoldDown {
         oneRingPosition.setNextPosition(upPosition);
 
         ringHolderPosition = upPosition;
+        positionRingHolderServoState.doStuffAndGetNextState();
     }
 
     public void emergencyDisable() {
         disabled = true;
+        resetToUpPosition();
     }
 
     public void holdThreePosition() {
+        if (disabled) {
+            resetToUpPosition();
+
+            return;
+        }
+
         ringHolderPosition = threeRingsPosition;
 
         currentState = positionRingHolderServoState;
