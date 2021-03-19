@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 
-@Autonomous(name= "FinalAutoCopy", preselectTeleOp = "OneGPTeleop")
+@Autonomous(name= "FinalAutoHighGoal", preselectTeleOp = "OneGPTeleop")
 
-public class FinalAutoCopy extends LinearOpMode {
+public class FinalAutoHighGoal extends LinearOpMode {
     @Override
     public void runOpMode(){
         Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, true, false);
