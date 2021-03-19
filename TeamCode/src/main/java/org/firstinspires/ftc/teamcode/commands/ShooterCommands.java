@@ -40,7 +40,7 @@ public class ShooterCommands extends Command {
             shooter.setShooterPower(0);
         }
 
-        if(opMode.gamepad2.y) {
+        if(opMode.gamepad2.y || opMode.gamepad2.left_bumper || robot.shootingState == UpliftRobot.ShootingState.PREPARING_HIGHGOAL) {
             shooter.setShooterVelocity(robot.highGoalVelocity);
         }
 
@@ -50,10 +50,6 @@ public class ShooterCommands extends Command {
 
         if(robot.shootingState == UpliftRobot.ShootingState.DONE_SHOOTING) {
             shooter.setShooterPower(0.1);
-        }
-
-        if(opMode.gamepad2.left_bumper) {
-            shooter.setShooterVelocity(robot.highGoalVelocity);
         }
 
     }

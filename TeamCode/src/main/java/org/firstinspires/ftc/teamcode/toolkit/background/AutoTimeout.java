@@ -9,11 +9,13 @@ import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 public class AutoTimeout extends Background {
 
     UpliftRobot robot;
+    Odometry odom;
     int loopCounter = 0;
 
     public AutoTimeout(UpliftRobot robot) {
         super(robot);
         this.robot = robot;
+        this.odom = robot.odometry;
     }
 
     @Override
@@ -27,8 +29,9 @@ public class AutoTimeout extends Background {
         double deltaAngle = Math.abs(robot.rawAngle - initialAngle);
         boolean isPowered = robot.leftFront.getPower() != 0 || robot.leftBack.getPower() != 0 || robot.rightFront.getPower() != 0 || robot.rightBack.getPower() != 0;
         boolean notMoving = deltaX < 0.5 && deltaY < 0.5 && deltaAngle < 1;
+        boolean encoderZero = odom.getLeftTicks() == 0 || odom.getRightTicks() == 0 || odom.getCenterTicks() == 0;
         // if robot has not moved much, but at least one of the drive motors is receiving power...
-        if (notMoving && isPowered) {
+        if ((notMoving || encoderZero) && isPowered) {
             //increment the loop counter
             loopCounter++;
             if (loopCounter >= 5) {

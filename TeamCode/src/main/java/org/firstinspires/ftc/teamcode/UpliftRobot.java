@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.teamcode.subsystems.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.background.Cancel;
 import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
+import org.firstinspires.ftc.teamcode.toolkit.background.UpliftTelemetry;
 import org.firstinspires.ftc.teamcode.toolkit.background.VelocityData;
 import org.firstinspires.ftc.teamcode.toolkit.opencvtoolkit.RingDetector;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -34,6 +36,7 @@ public class UpliftRobot {
 
     public LinearOpMode opMode;
 
+    public UpliftTelemetry upliftTelemetry;
     public Cancel cancelClass;
     public Odometry odometry;
     public VelocityData velocityData;
@@ -289,6 +292,8 @@ public class UpliftRobot {
     }
 
     public void initBackground() {
+        upliftTelemetry = new UpliftTelemetry(this);
+        upliftTelemetry.enable();
         cancelClass = new Cancel(this);
         cancelClass.enable();
         if(driveInitialized) {

@@ -69,6 +69,6 @@ public class TransferCommands extends Command {
 
     @Override
     public void stop() {
-
+        transfer.setTransferPower(0);
     }
 }

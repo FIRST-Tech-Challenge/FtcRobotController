@@ -30,7 +30,8 @@ public class SticksCommands extends Command {
 
     @Override
     public void loop() {
-
+        sticks.sweeperRight.setPower(1);
+        sticks.sweeperLeft.setPower(-1); // CHANGE VALUE BASED ON CORRECT DIRECTION
     }
 
     @Override

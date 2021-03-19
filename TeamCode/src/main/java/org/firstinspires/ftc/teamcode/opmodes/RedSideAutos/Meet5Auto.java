@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
+import org.firstinspires.ftc.teamcode.toolkit.background.AutoTimeout;
 import org.firstinspires.ftc.teamcode.toolkit.background.Odometry;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 import org.firstinspires.ftc.teamcode.toolkit.opencvtoolkit.RingDetector;
@@ -23,6 +24,7 @@ public class Meet5Auto extends UpliftAuto {
     TransferSubsystem transferSub;
     FlickerSubsystem flickerSub;
     Odometry odom;
+    AutoTimeout autoTimeout;
     int stack;
     RingDetector detector;
 
@@ -37,10 +39,13 @@ public class Meet5Auto extends UpliftAuto {
         transferSub = robot.transferSub;
         flickerSub = robot.flickerSub;
         detector = robot.ringDetector;
+        autoTimeout = new AutoTimeout(robot);
+        autoTimeout.enable();
     }
 
     @Override
     public void initAction() {
+        intakeSub.liftRoller();
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
     }
@@ -53,9 +58,10 @@ public class Meet5Auto extends UpliftAuto {
             return;
         }
 
-        // set the initial position, ring stack count, and prepare shooter/transfer
+        // set the initial position, ring stack count, and prepare shooter/transfer/intake
         odom.setOdometryPosition(105.25, 8.5, 0);
         stack = robot.ringDetector.ringCount;
+        intakeSub.dropRoller();
         shooterSub.setShooterVelocity(robot.highGoalVelocity);
         transferSub.raiseTransfer();
 
@@ -171,7 +177,6 @@ public class Meet5Auto extends UpliftAuto {
             robot.safeSleep(1);
         }
         if(System.currentTimeMillis() - initialTime >= 2000) {
-            robot.safeSleep(100);
             flickerSub.flickRing();
             robot.safeSleep(100);
             flickerSub.flickRing();

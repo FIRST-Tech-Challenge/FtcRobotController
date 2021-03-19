@@ -16,7 +16,7 @@ public class TransferSubsystem extends Subsystem {
     public DigitalChannel transferTouchBottom;
     public DigitalChannel transferTouchTop;
 
-    public int TRANSFER_TARGET = 760;
+    public int TRANSFER_TARGET = 700;
     public int transferOffset = 0;
 
     public TransferSubsystem(UpliftRobot robot){
@@ -59,10 +59,21 @@ public class TransferSubsystem extends Subsystem {
     }
 
     public void initTransferPos() {
-        while(transferTouchBottom.getState() && !robot.operatorCancel) {
-            dropTransfer();
-        }
+        dropTransfer();
     }
+
+//    public void resetTransfer() {
+//        double initialTime = System.currentTimeMillis();
+//        while(transferTouchBottom.getState()) {
+//            transfer.setPower(-0.25);
+//        }
+//        transfer.setPower(0);
+//        transferOffset = transfer.getCurrentPosition();
+//    }
+
+//    public void raiseTransfer() {
+//        transfer.setTargetPosition(transferOffset + TRANSFER_TARGET);
+//    }
 
     public void raiseTransfer() {
         while(transferTouchTop.getState() && !robot.operatorCancel) {

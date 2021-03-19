@@ -60,18 +60,4 @@ public abstract class UpliftTele extends LinearOpMode {
         Log.i("RB Motor Power:", robot.rightBack.getPower() + "");
     }
 
-    public void displayFullTelemetry(UpliftRobot robot) {
-        if(robot.driveInitialized) {
-            telemetry.addData("WorldX:\t", MathFunctions.truncate(robot.worldX));
-            telemetry.addData("WorldY:\t", MathFunctions.truncate(robot.worldY));
-            telemetry.addData("WorldOrientationAngle\t", robot.worldAngle);
-            telemetry.addData("Left Encoder pos:\t", robot.odometry.getLeftTicks() / UpliftRobot.COUNTS_PER_INCH);
-            telemetry.addData("Right Encoder pos:\t", robot.odometry.getRightTicks() / UpliftRobot.COUNTS_PER_INCH);
-            telemetry.addData("Center Encoder pos:\t", robot.odometry.getCenterTicks() / UpliftRobot.COUNTS_PER_INCH);
-            telemetry.addData("Slow Mode:\t", robot.slowMode);
-        }
-        telemetry.addData("Shooting State\t",  robot.shootingState + "");
-        telemetry.update();
-    }
-
 }
