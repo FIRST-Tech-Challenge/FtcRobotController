@@ -10,6 +10,7 @@ public class CVRoi implements Comparable<CVRoi> {
     private double angle = 0;
     private boolean clockwise = false;
     private int index = -1;
+    private double meanVal = 0;
 
     public Mat getInput() {
         return input;
@@ -66,5 +67,13 @@ public class CVRoi implements Comparable<CVRoi> {
     @Override
     public int hashCode() {
         return Objects.hash(getIndex());
+    }
+
+    public double getMeanVal() {
+        return meanVal;
+    }
+
+    public void setMeanVal(double meanVal) {
+        this.meanVal = meanVal;
     }
 }

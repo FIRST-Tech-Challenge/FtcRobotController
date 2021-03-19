@@ -48,6 +48,7 @@ public class CVRingSearchTest extends LinearOpMode {
                         telemetry.addData("Number of targets", list.size());
                         for(int i = 0; i < list.size(); i++) {
                             CVRoi target = list.get(i);
+                            telemetry.addData(String.format("%.2f, Angle", i), target.getMeanVal());
                             telemetry.addData(String.format("%d, Angle", i), target.getAngle());
                             telemetry.addData(String.format("%d, Clockwise", i), target.isClockwise());
                             telemetry.addData(String.format("%d, Distance", i), target.getDistance());

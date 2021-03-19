@@ -88,7 +88,7 @@ public class CVRingSearchPipeline extends CVPipelineBase {
             double mean = (int) Core.mean(roi.getInput()).val[0];
 
            if(mean < SINGLE_MAX && !getTargets().contains(roi)) {
-               Log.d(TAG, String.format("Adding Roi: %d to targets", i));
+               roi.setMeanVal(mean);
                getTargets().add(roi);
             }
         }
