@@ -963,7 +963,7 @@ public class PoseUG {
         int getFieldPosStateThree = 0;
         double launchMoveDist = 0.0; // the distance at which launcher movements should start
         //drive to a fully defined Position
-    public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward, double donePercent , double maxPower){
+    public boolean driveToFieldPosition(Constants.Position targetPose, boolean forward, double maxPower){
         switch (getFieldPosStateThree){
             case 0:
                 //calc the distance remaining when the launcher movements should kick-in
@@ -997,7 +997,7 @@ public class PoseUG {
                         turret.setTurntableAngle(targetPose.launchHeading);
                     }
 
-                if (targetPose.baseHeading<0){ //not asking for a change in heading at the end
+                if (targetPose.baseHeading > -.01){ //not asking for a change in heading at the end
                     getFieldPosStateThree = 0;
                     return true;
                 } else if (rotateIMU(targetPose.baseHeading, 2.0)){
@@ -2101,4 +2101,6 @@ public class PoseUG {
     public boolean fortnight(){
         return false; //why are you here
     }
+
+
 }

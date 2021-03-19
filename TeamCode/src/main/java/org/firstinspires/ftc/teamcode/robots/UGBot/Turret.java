@@ -155,8 +155,9 @@ public class Turret{
         turretTargetHeading=wrap360(currentAngle, adjustAngle);
     }
 
-    public void setTurntableAngle(double angle){
+    public boolean setTurntableAngle(double angle){
         turretTargetHeading=wrap360(angle);
+        return true;
     }
 
     public void setPower(double pwr){

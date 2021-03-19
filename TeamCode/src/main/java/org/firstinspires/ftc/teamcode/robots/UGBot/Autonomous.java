@@ -92,51 +92,69 @@ public class Autonomous {
     private Constants.Position targetPose;
 
     public StateMachine AutoFull = getStateMachine(autoStage)
-            .addState(() -> robot.driveToFieldPosition(Constants.Position.WOBBLE_ONE_GRAB,true,1,.5))
-            .addState(() -> robot.intake.setTiltTargetPosition(Constants.INTAKE_SERVO_TRAVEL)) //1240
-            .addState(() -> robot.launcher.WobbleGrip())
-            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addState(() -> robot.launcher.setElbowTargetAngle(0))
+            .addState(() -> robot.intake.setTiltTargetPosition(Constants.INTAKE_SERVO_TRAVEL)) //1240
+//            .addState(() -> robot.launcher.WobbleGrip())
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(() -> robot.launcher.setElbowTargetAngle(10))
             .addState(() -> robot.alignmentRun(.5,-0.4572 * Constants.WALL_FOLLOW_MULTIPLIER, -robot.getDistRightDist() * Constants.WALL_FOLLOW_MULTIPLIER,true, 2.7432))
+            .addTimedState(1f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .addMineralState(ugStateProvider,
-                    ()-> robot.turret.rotateCardinalTurret(false),
+                    ()-> robot.turret.setTurntableAngle(190) && (robot.turret.getHeading() < 210 && robot.turret.getHeading() > 10),
                     ()-> robot.returnTrue(),
-                    ()-> robot.turret.rotateCardinalTurret(false))
+                    ()-> robot.turret.setTurntableAngle(190)
+                            && (robot.turret.getHeading() < 210 && robot.turret.getHeading() > 10)
+                            && (robot.intake.setTiltTargetPosition(Constants.INTAKE_SERVO_PICKUP)))
 
             .addMineralState(ugStateProvider,
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true, 1, .5),
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true,1, .5),
-                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1, true, 1, .5))
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,false,  .5),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, false, .5),
+                    ()-> robot.turret.setTurntableAngle(115) && (robot.turret.getHeading() < 120))
+
 
 //
-//            //drop wobble goal
-            .addState( () -> robot.launcher.WobbleRelease()) //stow the gripper
-            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-
-            .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,true,1, .5))
+////
+////            //drop wobble goal
+//            .addState( () -> robot.launcher.WobbleRelease()) //stow the gripper
+//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+//
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.LAUNCH_PREFERRED,false, .5))
             .addState(()-> robot.shootRingAuton(Constants.Target.HIGH_GOAL,3))
-//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
-//            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, true))
-//            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB, true))
-//            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_APPROACH, true ,.5))
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.WOBBLE_TWO_GRAB, true, .5))
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 //            .addState( () -> robot.launcher.WobbleGrip())
 //
-//            .addMineralState(ugStateProvider,
-//                    ()-> robot.turret.rotateCardinalTurret(false),
-//                    ()-> robot.returnTrue(),
-//                    ()-> robot.turret.rotateCardinalTurret(false))
-//
-//            .addMineralState(ugStateProvider,
-//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_1,true),
-//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_1, true),
-//                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_1, true))
+
+            .addMineralState(ugStateProvider,
+                    ()-> robot.turret.setTurntableAngle(190) && (robot.turret.getHeading() < 210 && robot.turret.getHeading() > 10),
+                    ()-> robot.returnTrue(),
+                    ()-> robot.turret.setTurntableAngle(190)
+                            && (robot.turret.getHeading() < 210 && robot.turret.getHeading() > 10)
+                            && (robot.intake.setTiltTargetPosition(Constants.INTAKE_SERVO_PICKUP)))
+
+            .addMineralState(ugStateProvider,
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_A_2,false,  .5),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_B_2, false, .5),
+                    ()-> robot.driveToFieldPosition(Constants.Position.TARGET_C_2, false, .5))
+
+            .addMineralState(ugStateProvider,
+                    ()-> robot.returnTrue(),
+                    ()-> robot.returnTrue(),
+                    ()-> robot.turret.setTurntableAngle(115) && (robot.turret.getHeading() < 120))
+
+            .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
+
+            .addState(()-> robot.driveToFieldPosition(Constants.Position.NAVIGATE, true, .5))
 //            .addState( () -> robot.launcher.WobbleRelease()) //stow the gripper
 ////
             .addTimedState(2f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
             .build();
 
     public StateMachine AutoTest = getStateMachine(autoStage)
-            .addState(() -> robot.driveToFieldPosition(Constants.Position.TEST_POS_FOR_TESTING,true,.5, .5))
+//            .addState(() -> robot.driveToFieldPosition(Constants.Position.TEST_POS_FOR_TESTING,true,.5, .5))
+            .addState(() -> robot.turret.rotateCardinalTurret(false))
             .addTimedState(6f, () -> telemetry.addData("DELAY", "STARTED"), () -> telemetry.addData("DELAY", "DONE"))
 
             .build();

@@ -671,17 +671,6 @@ public class UG_6832 extends OpMode {
         if (notdeadzone(gamepad1.left_trigger))
             robot.turret.rotateLeft(gamepad1.left_trigger * 5);
 
-        // Pad1 Bumbers - Rotate Cardinal
-        if (toggleAllowed(gamepad1.right_bumper, right_bumper, 1)) {
-            robot.turret.rotateCardinalTurret(true);
-        }
-        if (toggleAllowed(gamepad1.left_bumper, left_bumper, 1)) {
-            robot.turret.rotateCardinalTurret(false);
-
-        }
-
-
-
         if (notdeadzone(gamepad1.right_stick_y)) {
             robot.launcher.adjustElbowAngle(-gamepad1.right_stick_y);
         }
