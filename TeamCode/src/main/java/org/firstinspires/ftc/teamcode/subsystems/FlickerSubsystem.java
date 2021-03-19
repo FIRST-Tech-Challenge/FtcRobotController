@@ -41,13 +41,16 @@ public class FlickerSubsystem extends Subsystem {
     }
 
     public void flickRing() {
-        flicker.setPosition(0.5);
-        if(!robot.safeSleep(350)){
+        // move in
+        flicker.setPosition(0.25);
+        if(!robot.safeSleep(500)){
             safeDisable();
             return;
         }
-        flicker.setPosition(0.15);//0.15
-        if(!robot.safeSleep(350)) {
+
+        // move out
+        flicker.setPosition(0.10);
+        if(!robot.safeSleep(500)) {
             safeDisable();
             return;
         }

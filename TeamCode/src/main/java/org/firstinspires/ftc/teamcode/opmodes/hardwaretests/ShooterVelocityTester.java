@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes.hardwaretests;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 import org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants;
 import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 
-@TeleOp(name = "Shooter Velocity Tester", group = "Hardware Testers")
+@Autonomous(name = "Shooter Velocity Tester", group = "Hardware Testers")
 public class ShooterVelocityTester extends UpliftAuto {
 
     UpliftRobot robot;
@@ -54,10 +54,10 @@ public class ShooterVelocityTester extends UpliftAuto {
             robot.shooter2.setVelocity(DashboardConstants.targetVel);
 //            robot.shooter1.setPower(1);
 //            robot.shooter2.setPower(1);
-            Log.d("Shooter1 Velocity", robot.shooter1SmoothVel + "");
-            Log.d("Shooter2 Velocity", robot.shooter2SmoothVel + "");
-            dashTelem.addData("Shooter 1 Velocity", robot.shooter1SmoothVel + "");
-            dashTelem.addData("Shooter 2 Velocity", robot.shooter2SmoothVel + "");
+            Log.d("Shooter1 Velocity", robot.shooter1Vel + "");
+            Log.d("Shooter2 Velocity", robot.shooter2Vel + "");
+            dashTelem.addData("Shooter 1 Velocity", robot.shooter1Vel + "");
+            dashTelem.addData("Shooter 2 Velocity", robot.shooter2Vel + "");
             dashTelem.addData("Target vel", DashboardConstants.targetVel);
             dashTelem.addData("Low bound", 1000);
             dashTelem.addData("High bound", 2500);

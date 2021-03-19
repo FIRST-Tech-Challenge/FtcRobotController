@@ -12,12 +12,14 @@ public class IntakeSubsystem extends Subsystem {
 
     private UpliftRobot robot;
     private DcMotor intake;
+    private Servo intakeLifter;
 
 
     public IntakeSubsystem(UpliftRobot robot){
         super(robot);
         this.robot = robot;
         this.intake = robot.intake;
+        this.intakeLifter = robot.intakeLifter;
     }
 
     @Override
@@ -52,4 +54,12 @@ public class IntakeSubsystem extends Subsystem {
 //            robot.count += 1;
 //        }
 //    }
+
+    public void liftRoller() {
+        intakeLifter.setPosition(0.9);
+    }
+
+    public void dropRoller() {
+        intakeLifter.setPosition(0.7);
+    }
 }

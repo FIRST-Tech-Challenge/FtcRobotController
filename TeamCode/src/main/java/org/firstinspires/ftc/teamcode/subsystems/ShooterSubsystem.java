@@ -55,18 +55,4 @@ public class ShooterSubsystem extends Subsystem {
         shooter2.setVelocity(targetVelocity);
     }
 
-    public void shooterFunctionTest() {
-        setShooterPower(1);
-        if(!robot.safeSleep(5000)) {
-            safeDisable();
-            return;
-        }
-        setShooterPower(0.5);
-        if(!robot.safeSleep(5000)) {
-            safeDisable();
-            return;
-        }
-        setShooterPower(0);
-    }
-
 }

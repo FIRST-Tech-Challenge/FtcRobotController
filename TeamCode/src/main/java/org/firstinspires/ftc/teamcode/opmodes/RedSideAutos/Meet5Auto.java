@@ -53,9 +53,7 @@ public class Meet5Auto extends UpliftAuto {
             return;
         }
 
-        double startTime = System.currentTimeMillis();
-
-        // set the initial position
+        // set the initial position, ring stack count, and prepare shooter/transfer
         odom.setOdometryPosition(105.25, 8.5, 0);
         stack = robot.ringDetector.ringCount;
         shooterSub.setShooterVelocity(robot.highGoalVelocity);

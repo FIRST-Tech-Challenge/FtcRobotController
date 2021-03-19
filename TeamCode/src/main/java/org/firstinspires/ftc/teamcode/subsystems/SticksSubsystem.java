@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -11,12 +12,16 @@ public class SticksSubsystem extends Subsystem {
     private UpliftRobot robot;
     public Servo stickLeft;
     public Servo stickRight;
+    public CRServo sweeperLeft;
+    public CRServo sweeperRight;
 
     public SticksSubsystem(UpliftRobot robot) {
         super(robot);
         this.robot = robot;
         this.stickLeft = robot.stickLeft;
         this.stickRight = robot.stickRight;
+        this.sweeperLeft = robot.sweeperLeft;
+        this.sweeperRight = robot.sweeperRight;
     }
 
     @Override
@@ -41,12 +46,12 @@ public class SticksSubsystem extends Subsystem {
 
     public void dropSticks() {
         // CHANGE THESE VALUES
-        stickLeft.setPosition(0);
+        stickLeft.setPosition(0.7);
         stickRight.setPosition(1);
     }
 
     public void raiseSticks() {
-        stickLeft.setPosition(0.5);
+        stickLeft.setPosition(1);
         stickRight.setPosition(0.5);
     }
 

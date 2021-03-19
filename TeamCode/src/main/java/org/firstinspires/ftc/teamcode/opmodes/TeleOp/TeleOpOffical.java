@@ -65,10 +65,6 @@ public class TeleOpOffical extends UpliftTele {
 
         robot.readPositionFiles();
 
-        if(robot.shooterInitialized) {
-            shooter.shooter.setShooterPIDF(5, 0, 0, 25);
-        }
-
     }
 
     @Override

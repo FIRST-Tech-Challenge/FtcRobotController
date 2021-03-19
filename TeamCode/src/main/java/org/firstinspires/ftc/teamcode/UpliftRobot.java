@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -51,9 +52,11 @@ public class UpliftRobot {
     public DcMotor leftFront, leftBack, rightFront, rightBack;
     public DcMotorEx shooter1, shooter2;
     public DcMotor intake, transfer;
+    public Servo intakeLifter;
     public Servo wobbleLeft, wobbleRight;
     public Servo flicker, clamp;
     public Servo stickLeft, stickRight;
+    public CRServo sweeperLeft, sweeperRight;
     public DigitalChannel digitalTouchBottom, digitalTouchTop;
 //    public DistanceSensor intakeSensor;
 
@@ -70,11 +73,9 @@ public class UpliftRobot {
     public int count = 0;
     public double constant = 0;
     public boolean slowMode = false;
-    public double shooter1SmoothVel = -1;
-    public double shooter2SmoothVel = -1;
-    public double shooter1RawVel = -1;
-    public double shooter2RawVel = -1;
-    public double highGoalVelocity = 1500;
+    public double shooter1Vel = -1;
+    public double shooter2Vel = -1;
+    public double highGoalVelocity = 1800;
     public double powerShotVelocity = 1050;
     public double kP = 50;
     public double kI = 0;
@@ -180,6 +181,7 @@ public class UpliftRobot {
         try {
             intake = hardwareMap.get(DcMotor.class, "intake");
 //        intakeSensor = hardwareMap.get(DistanceSensor.class,"d1");
+            intakeLifter = hardwareMap.get(Servo.class, "intake_lifter");
 
             intakeInitialized = true;
         } catch (Exception ex) {
@@ -203,6 +205,8 @@ public class UpliftRobot {
         try {
             stickLeft = hardwareMap.get(Servo.class, "stick_left");
             stickRight = hardwareMap.get(Servo.class, "stick_right");
+            sweeperLeft = hardwareMap.get(CRServo.class, "sweeper_left");
+            sweeperRight = hardwareMap.get(CRServo.class, "sweeper_right");
 
             sticksInitialized = true;
         } catch (Exception ex) {

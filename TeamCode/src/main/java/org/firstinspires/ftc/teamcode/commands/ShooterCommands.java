@@ -52,6 +52,10 @@ public class ShooterCommands extends Command {
             shooter.setShooterPower(0.1);
         }
 
+        if(opMode.gamepad2.left_bumper) {
+            shooter.setShooterVelocity(robot.highGoalVelocity);
+        }
+
     }
 
     @Override
