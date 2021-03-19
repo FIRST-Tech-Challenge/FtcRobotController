@@ -12,9 +12,14 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CVDetector {
     private HardwareMap hwMap;
     private OpenCvCamera webcam = null;
+    private int resX = 320;
+    private int resY = 240;
 
     private CVPipelineBase activePipeline = null;
 
@@ -43,9 +48,9 @@ public class CVDetector {
             }
 
             if (mode == CVDetectMode.Stack) {
-                activePipeline = new CVRingStackPipeline();
+                activePipeline = new CVRingStackPipeline(resX, resY);
             } else if (mode == CVDetectMode.Search) {
-                activePipeline = new CVRingSearchPipeline();
+                activePipeline = new CVRingSearchPipeline(resX, resY);
             }
             if (webcam == null) {
                 Log.d(TAG, String.format("Webcam %s cannot be initialized", camID));
@@ -67,7 +72,7 @@ public class CVDetector {
             webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                    webcam.startStreaming(resX, resY, OpenCvCameraRotation.UPRIGHT);
                     Log.d(TAG, "CV Detector camera streaming started");
                 }
             });
@@ -97,5 +102,12 @@ public class CVDetector {
             return activePipeline.getMeanVal();
         }
         return -1;
+    }
+
+    public List<CVRoi> getTargets() {
+        if (activePipeline != null){
+            return activePipeline.getTargets();
+        }
+        return null;
     }
 }

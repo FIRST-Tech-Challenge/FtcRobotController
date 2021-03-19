@@ -17,15 +17,16 @@ public class CVRingStackPipeline extends CVPipelineBase {
     static final int REGION_WIDTH = 60;
     static final int REGION_HEIGHT = 60;
 
-    static final int QUAD_MAX = 108;
-    static final int SINGLE_MAX = 118;
-
     Point region_pointA = new Point(
             REGION_ANCHOR_POINT.x,
             REGION_ANCHOR_POINT.y);
     Point region_pointB = new Point(
             REGION_ANCHOR_POINT.x + REGION_WIDTH,
             REGION_ANCHOR_POINT.y + REGION_HEIGHT);
+
+    public CVRingStackPipeline(int resX, int resY){
+        super(resX, resY);
+    }
 
     @Override
     public void init(Mat mat) {
