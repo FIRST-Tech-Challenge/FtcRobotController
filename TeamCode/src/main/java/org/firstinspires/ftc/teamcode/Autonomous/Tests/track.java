@@ -13,7 +13,7 @@ public class track extends LinearOpMode {
     public void runOpMode(){
         //Robot robot = new Robot(this, BasicChassis.ChassisType.ODOMETRY, false, false);
         ElapsedTime op = new ElapsedTime();
-        OdometryChassis odom = new OdometryChassis(this, false);
+        OdometryChassis odom = new OdometryChassis(this, false,true);
 
         //ElapsedTime runtime = new ElapsedTime();
 
@@ -25,7 +25,6 @@ public class track extends LinearOpMode {
 //        sleep(5000);
 //        robot.goToPosition(23.5,-23.5,0,0.5);
         //robot.navigate();
-        odom.navigate();
         while(!isStopRequested()){
             odom.track();
         }

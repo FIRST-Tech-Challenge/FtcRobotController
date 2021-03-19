@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Components.ObjectDetection.TensorFlow;
 public class Robot {
 
     private LinearOpMode op = null;
-    final boolean isCorgi = true;
+    final boolean isCorgi = false;
 
     // Hardware Objects
     private BasicChassis drivetrain = null;
@@ -35,7 +35,7 @@ public class Robot {
     public Robot(LinearOpMode opMode, BasicChassis.ChassisType chassisType, boolean objectDetectionNeeded, boolean vuforiaNAVIGATIONneeded ) {
         op = opMode;
         //This link has a easy to understand explanation. https://www.tutorialspoint.com/design_pattern/factory_pattern.htm
-        drivetrain= ChassisFactory.getChassis(chassisType,op,vuforiaNAVIGATIONneeded);
+        drivetrain= ChassisFactory.getChassis(chassisType,op,vuforiaNAVIGATIONneeded,isCorgi);
 
         if(objectDetectionNeeded){
             tensorFlow = new TensorFlow(op);
@@ -177,20 +177,20 @@ public class Robot {
     }
     /**wobble goal methods**/
     public WobbleGoal.Position moveWobbleGoalToPosition(WobbleGoal.Position p){
-        if(isCorgi) {
+        if(!isCorgi) {
             wobbleGoal.goToPosition(p);
         }
         return (p);
     }
 
     public void printCurrentWobbleGoalLocation(){
-        if(isCorgi) {
+        if(!isCorgi) {
             wobbleGoal.printCurrentLocation();
         }
     }
 
     public void stopWobbleGoal(){
-        if(isCorgi) {
+        if(!isCorgi) {
             wobbleGoal.stop();
         }
     }
@@ -205,7 +205,7 @@ public class Robot {
 
     // intake
     public void startIntake(){
-        if(isCorgi) {
+        if(!isCorgi) {
             intake.startIntake();
         }
     }
@@ -215,14 +215,14 @@ public class Robot {
     }
 
     public void stopIntake(){
-        if(isCorgi) {
+        if(!isCorgi) {
             intake.stopIntake();
         }
     }
 
     //transfer
     public void startTransfer(){
-        if(isCorgi) {
+        if(!isCorgi) {
             transfer.startTransfer();
         }
     }
@@ -232,7 +232,7 @@ public class Robot {
     }
 
     public void stopTransfer() {
-        if (isCorgi) {
+        if (!isCorgi) {
             transfer.stopTransfer();
         }
     }

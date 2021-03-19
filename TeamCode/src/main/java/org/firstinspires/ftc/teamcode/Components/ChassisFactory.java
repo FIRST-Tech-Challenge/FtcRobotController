@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public class ChassisFactory {
-    public static BasicChassis getChassis(BasicChassis.ChassisType chassisType, LinearOpMode op, boolean navigator){
+    public static BasicChassis getChassis(BasicChassis.ChassisType chassisType, LinearOpMode op, boolean navigator, boolean isCorgi){
          if(chassisType==BasicChassis.ChassisType.ENCODER){
             return new EncoderChassis(op);
         }
@@ -10,7 +10,7 @@ public class ChassisFactory {
             return new IMUChassis(op);
         }
         else if(chassisType==BasicChassis.ChassisType.ODOMETRY){
-            return new OdometryChassis(op,navigator);
+            return new OdometryChassis(op,navigator,isCorgi);
         }
         return null;
     }

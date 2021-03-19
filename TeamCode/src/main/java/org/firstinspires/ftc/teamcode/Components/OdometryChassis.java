@@ -41,9 +41,9 @@ public class OdometryChassis extends BasicChassis {
 
 
     //set true to enable imu vice versa
-    final boolean enableIMU = true;
+    boolean isCorgi;
 
-    public OdometryChassis(LinearOpMode opMode,boolean navigator) {
+    public OdometryChassis(LinearOpMode opMode,boolean navigator, boolean tobeCorgiornottobeCorgi) {
         super(opMode);
         op = opMode;
         xpos=0;
@@ -75,10 +75,13 @@ public class OdometryChassis extends BasicChassis {
             op.sleep(50);
             op.idle();
         }
-        if(navigator){
-            vuforia = new VuforiaWebcam(op);
-            vuforia.start();
+        if(!tobeCorgiornottobeCorgi) {
+            if (navigator) {
+                vuforia = new VuforiaWebcam(op);
+                vuforia.start();
+            }
         }
+        isCorgi=tobeCorgiornottobeCorgi;
     }
     public static float getXpos(){
         return xpos;
@@ -137,6 +140,12 @@ public class OdometryChassis extends BasicChassis {
 
         globalAngle += deltaAngle;
         globalAngle%=360;
+        if(globalAngle>180){
+            globalAngle-=360;
+        }
+        if(globalAngle<-180){
+            globalAngle+=360;
+        }
 
         lastAngles = angles;
 
@@ -166,62 +175,122 @@ public class OdometryChassis extends BasicChassis {
         //return navigation.getPosition();
     }
     public void goToPosition(double x, double y, double a, double power){
-        motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
-        motorRightFront.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
-        motorRightBack.setDirection(DcMotor.Direction.FORWARD);
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        double[] currentPosition = track();
-        double[] target_position = {0, 0, 0};
-        double anglecorrection=0;
-        target_position[0] = x;
-        target_position[1] = y-0.15;
-        target_position[2] = a;
-        double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
-        double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
-        double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
-        double startpower=power;
-        while (op.opModeIsActive() && (difference >= 1)) {
-            currentPosition = track();
-            power=difference/15;
-            if(power>startpower){
-                power=startpower;
-            }
-            x = target_position[0] - currentPosition[0];
-            y = target_position[1] - currentPosition[1];
-            angleInRadians = atan2(x, y*1.5) - (target_position[2]+((currentPosition[2] * PI / 180)-target_position[2])/1);
-            anglePower[0] = sin(angleInRadians + PI / 4);
-            anglePower[1] = sin(angleInRadians - PI / 4);
-            anglecorrection = (currentPosition[2] - target_position[2])%360 * 0.03;
-            if (abs(anglePower[1]) > abs(anglePower[0])) {
-                anglePower[1] *= abs(1 / anglePower[1]);
-                anglePower[0] *= abs(1 / anglePower[1]);
-            } else {
-                anglePower[1] *= abs(1 / anglePower[0]);
-                anglePower[0] *= abs(1 / anglePower[0]);
-            }
-            while(abs(power)<0.4){
-                power*=0.4/abs(power);
-            }
-            motorRightBack.setPower(1.4*(power * anglePower[1] + anglecorrection));
-            motorRightFront.setPower(power * anglePower[0] + anglecorrection);
-            motorLeftBack.setPower(power * anglePower[0] - anglecorrection);
-            motorLeftFront.setPower(power * anglePower[1] - anglecorrection);
+        if(!isCorgi) {
+            motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
+            motorRightFront.setDirection(DcMotor.Direction.FORWARD);
+            motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
+            motorRightBack.setDirection(DcMotor.Direction.FORWARD);
+            motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            double[] currentPosition = track();
+            double[] target_position = {0, 0, 0};
+            double anglecorrection = 0;
+            target_position[0] = x;
+            target_position[1] = y - 0.15;
+            target_position[2] = a;
+            double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
+            double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
+            double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
+            double startpower = power;
+            while (op.opModeIsActive() && (difference >= 1)) {
+                currentPosition = track();
+                power = difference / 15;
+                if (power > startpower) {
+                    power = startpower;
+                }
+                x = target_position[0] - currentPosition[0];
+                y = target_position[1] - currentPosition[1];
+                angleInRadians = atan2(x, y * 1.5) - (target_position[2] + ((currentPosition[2] * PI / 180) - target_position[2]) / 1);
+                anglePower[0] = sin(angleInRadians + PI / 4);
+                anglePower[1] = sin(angleInRadians - PI / 4);
+                anglecorrection = (currentPosition[2] - target_position[2]) % 360 * 0.03;
+                if (abs(anglePower[1]) > abs(anglePower[0])) {
+                    anglePower[1] *= abs(1 / anglePower[1]);
+                    anglePower[0] *= abs(1 / anglePower[1]);
+                } else {
+                    anglePower[1] *= abs(1 / anglePower[0]);
+                    anglePower[0] *= abs(1 / anglePower[0]);
+                }
+                while (abs(power) < 0.4) {
+                    power *= 0.4 / abs(power);
+                }
+                motorRightBack.setPower(1.4 * (power * anglePower[1] + anglecorrection));//1.4 IF YOU ARE USING WALRUS MULTIPLY THIS BY 1.4
+                motorRightFront.setPower(power * anglePower[0] + anglecorrection);
+                motorLeftBack.setPower(power * anglePower[0] - anglecorrection);
+                motorLeftFront.setPower(power * anglePower[1] - anglecorrection);
 //            op.telemetry.addData("leftBack",power * anglePower[0] - anglecorrection);
 //            op.telemetry.addData("rightBack",power * anglePower[1] + anglecorrection);
 //            op.telemetry.addData("leftFront",power * anglePower[1] - anglecorrection);
 //            op.telemetry.addData("rightFront",power * anglePower[0] + anglecorrection);
-            difference = abs(sqrt((x) * (x) + (y) * (y)));
+                difference = abs(sqrt((x) * (x) + (y) * (y)));
 //            op.telemetry.addData("distance", difference);
-            op.telemetry.update();
+                op.telemetry.update();
+            }
+            stopAllMotors();
+            turnInPlace(a, 1.0);
+            stopAllMotors();
+            op.telemetry.addData("done", true);
         }
-        stopAllMotors();
-        turnInPlace(a,1.0);
-        stopAllMotors();
-        op.telemetry.addData("done", true);
+        else if(isCorgi) {
+            motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
+            motorRightFront.setDirection(DcMotor.Direction.FORWARD);
+            motorLeftBack.setDirection(DcMotor.Direction.REVERSE);
+            motorRightBack.setDirection(DcMotor.Direction.FORWARD);
+            motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            double[] currentPosition = track();
+            double[] target_position = {0, 0, 0};
+            double anglecorrection = 0;
+            target_position[0] = x;
+            target_position[1] = y - 0.15;
+            target_position[2] = a;
+            double difference = sqrt((target_position[0] - currentPosition[0]) * (target_position[0] - currentPosition[0]) + (target_position[1] - currentPosition[1]) * (target_position[1] - currentPosition[1]));
+            double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
+            double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
+            double startpower = power;
+            while (op.opModeIsActive() && (difference >= 1)) {
+                currentPosition = track();
+                power = difference*startpower / 30;
+                if (power > startpower) {
+                    power = startpower;
+                }
+                x = target_position[0] - currentPosition[0];
+                y = target_position[1] - currentPosition[1];
+                angleInRadians = atan2(x, -y*2) - (target_position[2] + ((currentPosition[2] * PI / 180) - target_position[2]) / 1);
+                anglePower[0] = sin(angleInRadians + PI / 4);
+                anglePower[1] = sin(angleInRadians - PI / 4);
+                anglecorrection = (currentPosition[2] - target_position[2]) % 360 * 0.03;
+                if (abs(anglePower[1]) > abs(anglePower[0])) {
+                    anglePower[1] *= abs(1 / anglePower[1]);
+                    anglePower[0] *= abs(1 / anglePower[1]);
+                } else {
+                    anglePower[1] *= abs(1 / anglePower[0]);
+                    anglePower[0] *= abs(1 / anglePower[0]);
+                }
+                while (abs(power) < 0.18) {
+                    power *= 0.18 / abs(power);
+                }
+                motorRightBack.setPower((power * anglePower[1] + anglecorrection));
+                motorRightFront.setPower(power * anglePower[0] + anglecorrection);
+                motorLeftBack.setPower(power * anglePower[0] - anglecorrection);
+                motorLeftFront.setPower(power * anglePower[1] - anglecorrection);
+//            op.telemetry.addData("leftBack",power * anglePower[0] - anglecorrection);
+//            op.telemetry.addData("rightBack",power * anglePower[1] + anglecorrection);
+//            op.telemetry.addData("leftFront",power * anglePower[1] - anglecorrection);
+//            op.telemetry.addData("rightFront",power * anglePower[0] + anglecorrection);
+                difference = abs(sqrt((x) * (x) + (y) * (y)));
+//            op.telemetry.addData("distance", difference);
+                op.telemetry.update();
+            }
+            stopAllMotors();
+            turnInPlace(a, 1.0);
+            stopAllMotors();
+            op.telemetry.addData("done", true);
+        }
     }
     public void turnInPlace(double target, double power) {
         motorLeftFront.setDirection(DcMotor.Direction.REVERSE);
@@ -262,11 +331,21 @@ public class OdometryChassis extends BasicChassis {
                 }
                 rightPower = -direction*min(abs(power*gain*error),abs(power));
                 leftPower = -rightPower;
-                if(abs(leftPower)<0.28){
-                    leftPower*=0.28/abs(leftPower);
+                if(isCorgi) {
+                    if (abs(leftPower) < 0.1) {
+                        leftPower *= 0.1 / abs(leftPower);
+                    }
+                    if (abs(rightPower) < 0.1) {
+                        rightPower *= 0.1 / abs(rightPower);
+                    }
                 }
-                if(abs(rightPower)<0.28){
-                    rightPower*=0.28/abs(rightPower);
+                else{
+                    if (abs(leftPower) < 0.28) {
+                        leftPower *= 0.28 / abs(leftPower);
+                    }
+                    if (abs(rightPower) < 0.28) {
+                        rightPower *= 0.28 / abs(rightPower);
+                    }
                 }
                 motorLeftBack.setPower(leftPower);
                 motorLeftFront.setPower(leftPower);
