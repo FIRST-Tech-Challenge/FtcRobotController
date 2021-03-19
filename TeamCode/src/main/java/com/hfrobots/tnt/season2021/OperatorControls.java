@@ -20,6 +20,7 @@
 package com.hfrobots.tnt.season2021;
 
 
+import com.ftc9929.corelib.control.AnyButton;
 import com.ftc9929.corelib.control.DebouncedButton;
 import com.ftc9929.corelib.control.LowPassFilteredRangeInput;
 import com.ftc9929.corelib.control.NinjaGamePad;
@@ -65,6 +66,8 @@ public class OperatorControls {
 
     private NinjaGamePad operatorGamepad;
 
+    private NinjaGamePad driverGamepad;
+
     // Derived
     private RangeInput intakeVelocity;
 
@@ -87,6 +90,8 @@ public class OperatorControls {
     private DebouncedButton launcherToHighPosition;
 
     private DebouncedButton launcherToMiddlePosition;
+
+    private DebouncedButton disableRingHoldDown;
 
     private ScoringMechanism scoringMechanism;
 
@@ -114,10 +119,13 @@ public class OperatorControls {
                              RangeInput leftTrigger,
                              RangeInput rightTrigger,
                              NinjaGamePad operatorGamepad,
+                             NinjaGamePad driverGamepad,
                              ScoringMechanism scoringMechanism,
                              WobbleGoal wobbleGoal) {
         if (operatorGamepad != null) {
             this.operatorGamepad = operatorGamepad;
+            this.driverGamepad = driverGamepad;
+
             setupFromGamepad();
         } else {
             this.leftStickX = leftStickX;
@@ -150,6 +158,7 @@ public class OperatorControls {
         scoringMechanism.setJankyServo(jankyServo);
         scoringMechanism.setLauncherToMiddlePosition(launcherToMiddlePosition);
         scoringMechanism.setLauncherToHighPosition(launcherToHighPosition);
+        scoringMechanism.setDisableRingHoldDown(disableRingHoldDown);
 
         this.wobbleGoal = wobbleGoal;
         this.wobbleGoal.setShoulderThrottle(new LowPassFilteredRangeInput(wobbleShoulderThrottle, 0.85F));
@@ -180,19 +189,42 @@ public class OperatorControls {
     }
 
     private void setupDerivedControls() {
-        intakeVelocity = leftStickY;
-        launchTrigger = rightBumper;
-        upToSpeedToggle = new ToggledButton(new RangeInputButton( rightTrigger, 0.65f));
-        stopLauncher = bRedButton;
-        invertHopper = operatorGamepad.getDpadDown();
+        // Launch-related controls - mirror if using real gamepads
+        if (driverGamepad != null) {
+            // Debounced example
+            stopLauncher = new AnyButton(operatorGamepad.getBButton(), driverGamepad.getBButton()).debounced();
+
+            // Left bumper for driver, because right stick is already steering
+            launchTrigger = new AnyButton(rightBumper, driverGamepad.getLeftBumper()); // On-off example
+
+            disableRingHoldDown = new AnyButton(operatorGamepad.getYButton(), driverGamepad.getYButton()).debounced();
+
+            // This button will have to be different on the drivers gamepad, right bumper?
+
+            upToSpeedToggle = new ToggledButton(new AnyButton(new RangeInputButton(rightTrigger, 0.65f),
+                    driverGamepad.getRightBumper()));
+
+            stopLauncher = new AnyButton(operatorGamepad.getBButton(), driverGamepad.getBButton()).debounced();
+
+            invertHopper = new AnyButton(operatorGamepad.getDpadDown(), driverGamepad.getDpadDown());
+
+            launcherToMiddlePosition = new AnyButton(operatorGamepad.getDpadLeft(), driverGamepad.getDpadLeft()).debounced(); // FIXME
+            launcherToHighPosition = new AnyButton(operatorGamepad.getDpadRight(), driverGamepad.getDpadRight()).debounced();// FIXME
+        } else {
+            intakeVelocity = leftStickY;
+            launchTrigger = rightBumper;
+            disableRingHoldDown = yYellowButton;
+            upToSpeedToggle = new ToggledButton(new RangeInputButton(rightTrigger, 0.65f));
+            stopLauncher = bRedButton;
+            invertHopper = operatorGamepad.getDpadDown();
+            launcherToMiddlePosition = dpadLeft;
+            launcherToHighPosition = dpadRight;
+        }
 
         toggleWobbleGripper = operatorGamepad.getXButton();
         wobbleShoulderThrottle = rightStickY;
         jankyServo = leftBumper;
         unsafe = new RangeInputButton( leftTrigger, 0.65f);
-
-        launcherToMiddlePosition = dpadLeft;
-        launcherToHighPosition = dpadRight;
     }
 
     public void periodicTask() {

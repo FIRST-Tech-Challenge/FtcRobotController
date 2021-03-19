@@ -28,9 +28,6 @@ import com.ftc9929.corelib.control.ParametricScaledRangeInput;
 import com.ftc9929.corelib.control.RangeInput;
 import com.ftc9929.corelib.control.RangeInputButton;
 import com.ftc9929.corelib.drive.OpenLoopMecanumKinematics;
-import com.hfrobots.tnt.season1920.FoundationGripMechanism;
-import com.hfrobots.tnt.season1920.ParkingSticks;
-import com.hfrobots.tnt.season1920.StationKeeping;
 
 import lombok.Builder;
 
@@ -81,10 +78,6 @@ public class DriverControls {
     protected OnOffButton driveInvertedButton;
 
     protected OnOffButton driveFastButton;
-
-    protected OnOffButton driveBumpStrafeRightButton;
-
-    protected OnOffButton driveBumpStrafeLeftButton;
 
     private NinjaGamePad driversGamepad;
 
@@ -190,9 +183,6 @@ public class DriverControls {
     private void setupDerivedControls() {
         driveFastButton = new RangeInputButton(leftTrigger, 0.65f);
         driveInvertedButton = new RangeInputButton(rightTrigger, 0.65f);
-        driveBumpStrafeLeftButton = leftBumper;
-        driveBumpStrafeRightButton = rightBumper;
-
     }
 
     private boolean gripUpFirstTime = false;
@@ -223,20 +213,6 @@ public class DriverControls {
         double yScaled = y;
         double rotateScaled = rot;
 
-        // we check both bumpers - because both being pressed is driver 'panic', and we
-        // don't want unexpected behavior!
-        if (driveBumpStrafeLeftButton.isPressed() && !driveBumpStrafeRightButton.isPressed()) {
-            xScaled = -.6;
-            yScaled = 0;
-            rotateScaled = 0;
-        } else if (driveBumpStrafeRightButton.isPressed() && !driveBumpStrafeLeftButton.isPressed()) {
-            xScaled = .6;
-            yScaled = 0;
-            rotateScaled = 0;
-        }
-
         kinematics.driveCartesian(xScaled, yScaled, rotateScaled, driveInverted);
     }
-
-
 }

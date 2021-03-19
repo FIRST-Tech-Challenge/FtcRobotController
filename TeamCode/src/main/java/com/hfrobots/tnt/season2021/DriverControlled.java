@@ -77,6 +77,7 @@ public class DriverControlled extends OpMode {
         NinjaGamePad operatorGamepad = new NinjaGamePad(gamepad2);
 
         operatorControls = OperatorControls.builder().operatorGamepad(operatorGamepad)
+                .driverGamepad(driversGamepad) // Allow driver to do some launching
                 .scoringMechanism(scoringMechanism)
                 .wobbleGoal(wobbleGoal).build();
 

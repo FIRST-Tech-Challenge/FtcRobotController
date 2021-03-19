@@ -46,7 +46,7 @@ public class RingHoldDown {
 
     public final static double TWO_RINGS_POSITION = 0.66;
 
-    public final static double ONE_RINGS_POSITION = 0.58;
+    public final static double ONE_RINGS_POSITION = 0.646;
 
     private final Servo ringHoldDownServo;
 

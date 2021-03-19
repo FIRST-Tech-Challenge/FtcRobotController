@@ -185,6 +185,8 @@ public class Auto extends OpMode {
     @Override
     public void start() {
         super.start();
+
+        scoringMechanism.setIdleRingHold(true);
         scoringMechanism.toDeployedPosition();
         starterStackDetectorPipeline.setStartLookingForRings(true);
     }

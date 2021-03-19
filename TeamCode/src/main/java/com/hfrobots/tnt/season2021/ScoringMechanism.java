@@ -91,11 +91,17 @@ public class ScoringMechanism {
     @Setter
     private OnOffButton jankyServo;
 
+    @Setter
+    private DebouncedButton disableRingHoldDown;
+
     private State currentState;
 
     private final PreloadRings preloadRings;
 
     private DebouncedButton launchTriggerReleased;
+
+    @Setter
+    private boolean idleRingHold;
 
     @Builder
     private ScoringMechanism(HardwareMap hardwareMap,
@@ -106,6 +112,7 @@ public class ScoringMechanism {
         launcher = new Launcher(hardwareMap, telemetry, ticker);
         intake = new Intake(hardwareMap, ticker);
         ringHoldDown = new RingHoldDown(hardwareMap, telemetry, ticker);
+        idleRingHold = false; // don't go to hold position unless auto asks us to
 
         blinkinLed = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
 
@@ -160,6 +167,10 @@ public class ScoringMechanism {
     public void periodicTask() {
         if (launchTriggerReleased == null) {
             launchTriggerReleased = launchTrigger.debounced();
+        }
+
+        if (disableRingHoldDown != null && disableRingHoldDown.getRise()) {
+            ringHoldDown.emergencyDisable();
         }
 
         if (currentState != null) {
@@ -264,7 +275,11 @@ public class ScoringMechanism {
 
             launcher.parkRingFeeder();
 
-            ringHoldDown.resetToUpPosition();
+            if (!idleRingHold) {
+                ringHoldDown.resetToUpPosition();
+            } else {
+                ringHoldDown.holdThreePosition(); // used in auto
+            }
 
             if (intakeVelocity.getPosition() != 0) {
                 return intakeMoving;
