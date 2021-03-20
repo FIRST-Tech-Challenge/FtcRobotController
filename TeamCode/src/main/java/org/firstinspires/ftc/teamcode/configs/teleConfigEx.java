@@ -110,6 +110,10 @@ public class teleConfigEx implements teleOpInterface {
 
     }
 
+    public void clearTelemetryDM() {
+        telemetryDM.clear();
+    }
+
     public String getName() {
         return "teleConfigEx";
     }

@@ -122,6 +122,10 @@ public class lessButtonsConfig implements teleOpInterface {
         robot.intake.setPower(intake*limiter1*limiter2);
     }
 
+    public void clearTelemetryDM() {
+        telemetryDM.clear();
+    }
+
     public String getName() {
         return "Less Buttons Config";
     }

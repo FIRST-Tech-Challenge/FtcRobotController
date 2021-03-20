@@ -138,6 +138,10 @@ public class teleConfigTESTING_R implements teleOpInterface{
         robot.intake.setPower(intake* switcher * varPower);
     }
 
+    public void clearTelemetryDM() {
+        telemetryDM.clear();
+    }
+
     public String getName() {
         return "HardwareTesting_R";
     }

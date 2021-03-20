@@ -150,6 +150,10 @@ public class teleConfigRohit2 implements teleOpInterface {
         robot.intake.setPower(intake*limiter1*limiter2);
     }
 
+    public void clearTelemetryDM() {
+        telemetryDM.clear();
+    }
+
     public String getName() {
         return "teleConfigRohit2";
     }

@@ -105,15 +105,20 @@ public class teleConfigRohit implements teleOpInterface {
     }
 
     public void updateTelemetryDM() {
-        telemetryDM.put("Intake Power: ", String.valueOf(inttakePower));
+        /*telemetryDM.put("Intake Power: ", String.valueOf(inttakePower));
         telemetryDM.put("Outtake Power: ", String.valueOf(outtakePower));
         telemetryDM.put("Conveyor Power: ", String.valueOf(conveyorPower));
         telemetryDM.put("Tilt Angle: ", String.valueOf(robot.leftTilt.getPosition()));
         telemetryDM.put("Tilt mode: ", String.valueOf(tiltmode));
+         */
     }
 
     @Override
     public void loop() {}
+
+    public void clearTelemetryDM() {
+        telemetryDM.clear();
+    }
 
     public String getName() {
         return "teleConfigRohit";

@@ -37,6 +37,8 @@ public interface teleOpInterface {
 
     void loop();
 
+    void clearTelemetryDM();
+
     String getName();
 
 }

@@ -163,6 +163,7 @@ public class UltimateGoalTeleop extends OpMode{
                 } else if (configs.get(index).getName().equals(teleConfigTESTING_S.class.getName())) {
                     t = new teleConfigTESTING_S(robot);
                 }
+
                 switching = false;
             }
         } else {
@@ -187,11 +188,15 @@ public class UltimateGoalTeleop extends OpMode{
             t.rjoyb(gamepad2.right_stick_button);
             t.ljoyb(gamepad2.left_stick_button);
 
-//            for (String caption : t.telemetryDM.keySet()){
-//                telemetry.addData(caption, t.telemetryDM.get(caption));
-//            }
+            t.clearTelemetryDM();
+            t.updateTelemetryDM();
+
+            for (String caption : t.telemetryDM.keySet()){
+                telemetry.addData(caption, t.telemetryDM.get(caption));
+            }
             telemetry.addData("Version: ", "2.2.2");
             telemetry.addData("Configuration: ", t.getName());
+
             telemetry.addData("FL", robot.frontLeft.getCurrentPosition());
             telemetry.addData("FR", robot.frontRight.getCurrentPosition());
             telemetry.addData("BL", robot.backLeft.getCurrentPosition());
@@ -207,8 +212,6 @@ public class UltimateGoalTeleop extends OpMode{
 
             telemetry.addData("Gpad 1 a?", gamepad1.a);
             telemetry.update();
-            t.updateTelemetryDM();
-
             t.loop();
 
             if (gamepad1.a){

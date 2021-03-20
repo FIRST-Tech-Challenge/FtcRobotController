@@ -23,6 +23,10 @@ public class teleConfigSamih implements teleOpInterface {
 
     }
 
+    public void clearTelemetryDM() {
+        telemetryDM.clear();
+    }
+
     public String getName() {
         return "teleConfigSamih";
     }
