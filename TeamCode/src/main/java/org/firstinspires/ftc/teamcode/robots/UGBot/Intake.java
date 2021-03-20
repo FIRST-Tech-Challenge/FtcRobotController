@@ -29,7 +29,6 @@ public class Intake {
     public void update(){
         if(active){
             intakeMotor.setPower(speed);
-            //tiltMotor.setTargetPosition(tiltPosition);
         }
         else{
             intakeMotor.setPower(0);

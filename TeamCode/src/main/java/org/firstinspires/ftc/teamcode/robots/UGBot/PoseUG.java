@@ -64,9 +64,9 @@ public class PoseUG {
     private int autoAlignStage = 0;
     FtcDashboard dashboard;
     public double brightness = 0.0; //headlamp brightness - max value should be .8 on a fully charged battery
-    public static double turnP = 0.008; // proportional constant applied to error in degrees
+    public static double turnP = 0.0055; // proportional constant applied to error in degrees
     public static double turnI = 0.0; // integral constant
-    public static double turnD = .19; // derivative constant
+    public static double turnD = .01; // derivative constant
     public static double distP = 0.5; // proportional constant applied to error in meters
     public static double distI = 0.0; // integral constant
     public static double distD = .19; // derivative constant
@@ -689,7 +689,8 @@ public class PoseUG {
                 break;
             default:
                 goalHeading = getBearingTo(trajSol.getxOffset(), target.y);
-                turret.setTurntableAngle(model.getTurretHeading());
+                turret.setTurntableAngle(model.getTurretHeading() + Constants.MUZZLE_ANGLE_OFFSET_IN_TELE_OP);
+
                 launcher.setElbowTargetAngle(trajSol.getElevation() * Constants.HEIGHT_MULTIPLIER);
                 if(flywheelIsActive){
                     launcher.setFlywheelActivePID(true);
@@ -919,7 +920,7 @@ public class PoseUG {
         switch (fieldPosState){
             case 0: //initially rotate to align with target location
 
-                if(rotateIMU(heading,2)) {
+                if(rotateIMU(heading,1)) {
                     fieldPosState++;
                 }
                 break;
@@ -952,7 +953,7 @@ public class PoseUG {
                 }
                 break;
             case 1:
-                if(rotateIMU(targetFinalHeading, 6)){
+                if(rotateIMU(targetFinalHeading, 1)){
                     fieldPosStateToo = 0;
                     return true;
                 }
@@ -968,7 +969,7 @@ public class PoseUG {
             case 0:
                 //calc the distance remaining when the launcher movements should kick-in
                 launchMoveDist = getDistanceTo(targetPose.x, targetPose.y);
-                launchMoveDist-= launchMoveDist* targetPose.launchStart;
+                launchMoveDist-= launchMoveDist * targetPose.launchStart;
 
                 getFieldPosStateThree++;
 
@@ -983,9 +984,16 @@ public class PoseUG {
                         turret.setTurntableAngle(targetPose.launchHeading);
                     }
                 }
-                //(continue to) drive there
-                if(driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower, targetPose.baseHeading)) {
-                    getFieldPosStateThree++;
+
+                if(targetPose.baseHeading > -.01) {
+                    if (driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower, targetPose.baseHeading)) {
+                        getFieldPosStateThree++;
+                    }
+                }
+                else{
+                    if (driveToFieldPosition(targetPose.x, targetPose.y, forward, maxPower)) {
+                        getFieldPosStateThree++;
+                    }
                 }
                 break;
             case 2: //end of travel
@@ -997,15 +1005,9 @@ public class PoseUG {
                         turret.setTurntableAngle(targetPose.launchHeading);
                     }
 
-                if (targetPose.baseHeading > -.01){ //not asking for a change in heading at the end
-                    getFieldPosStateThree = 0;
-                    return true;
-                } else if (rotateIMU(targetPose.baseHeading, 2.0)){
-                    getFieldPosStateThree = 0;
-                    return true;
-                    }
+                getFieldPosStateThree = 0;
+                return true;
 
-                break;
                 }
         return false;
     }
@@ -1599,7 +1601,7 @@ public class PoseUG {
 
         // initialization of the PID calculator's output range, target value and
         // multipliers
-        turnPID.setOutputRange(-.5, .5);
+        turnPID.setOutputRange(-.3, .3);
         turnPID.setIntegralCutIn(cutout);
         turnPID.setPID(Kp, Ki, Kd);
         turnPID.setSetpoint(targetAngle);

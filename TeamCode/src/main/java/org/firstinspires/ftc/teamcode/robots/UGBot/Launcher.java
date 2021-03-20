@@ -45,7 +45,7 @@ public class Launcher {
     public static  double kdElbow= 0.0; //derivative constant multiplier
     double elbowCorrection = 0.00; //correction to apply to elbow motor
     boolean elbowActivePID = true;
-    int elbowPos = 0;
+    int elbowPos = Constants.ELBOW_ZERO_DEGREES_OFFSET;
     double elbowPwr = 0;
 
     //elbow safety limits
@@ -79,7 +79,7 @@ public class Launcher {
         elbowPID.setIntegralCutIn(40);
         elbowPID.enableIntegralZeroCrossingReset(false);
 
-        servoTrigger.setPosition(servoNormalize(1800));
+        servoTrigger.setPosition(servoNormalize(2000));
 
     }
 
@@ -87,7 +87,7 @@ public class Launcher {
 
     long prevNanoTime;
     int prevMotorTicks;
-    int gripperTargetPos = 1920;
+    int gripperTargetPos = Constants.WOBBLE_GRIPPER_STOWED;
     public void update(){
         if(active) {
             if(elbowActivePID)
