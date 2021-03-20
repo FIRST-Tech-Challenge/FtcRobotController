@@ -21,18 +21,10 @@ public class ConfigOpMode extends CommandOpMode implements Loggable {
         pivot = new Servo("indexpivot");
         arm = new Servo("indexarm");
         super.telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
-    }
-
-    @Override
-    public void uponStart() {
-    }
-
-    @Override
-    public void runLoop() {
         driverGamepad.dpad.up.whenPressed(new InstantCommand(()->pivot.setPosition(pivot.getPosition()+0.05)));
         driverGamepad.dpad.down.whenPressed(new InstantCommand(()->pivot.setPosition(pivot.getPosition()-0.05)));
         driverGamepad.dpad.left.whenPressed(new InstantCommand(()->arm.setPosition(arm.getPosition()+0.05)));
         driverGamepad.dpad.right.whenPressed(new InstantCommand(()->arm.setPosition(arm.getPosition()-0.05)));
-
     }
+    
 }
