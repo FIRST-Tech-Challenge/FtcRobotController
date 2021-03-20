@@ -20,6 +20,7 @@ public class Robot implements Loggable {
     public DrivebaseSubsystem drivebaseSubsystem;
 
     //index
+    @Log.NumberBar(name = "Ring Capacity", index = 1, color = Color.DARK_GRAY, completeBarColor = Color.YELLOW, incompleteBarColor = Color.LIGHT_GRAY)
     public IndexSubsystem indexSubsystem;
 
     //intake
@@ -30,7 +31,7 @@ public class Robot implements Loggable {
     public ShooterSubsystem shooterSubsystem;
 
     //wobble
-    @Log(name = "Wobble", index = 1, color = Color.RED)
+    @Log(name = "Wobble", index = 2, color = Color.RED)
     public WobbleSubsystem wobbleSubsystem;
 
     public Robot(){
@@ -38,9 +39,9 @@ public class Robot implements Loggable {
 
         drivebaseSubsystem = new DrivebaseSubsystem(hardware.flDriveMotor, hardware.frDriveMotor, hardware.rlDriveMotor, hardware.rrDriveMotor, hardware.imu);
 
-        indexSubsystem = new IndexSubsystem(hardware.indexMotor);
+        indexSubsystem = new IndexSubsystem(hardware.indexPivotServo, hardware.indexArmServo);
 
-        intakeSubsystem = new IntakeSubsystem(hardware.intakeMotor);
+        intakeSubsystem = new IntakeSubsystem(hardware.intakeMotorGroup);
 
         shooterSubsystem = new ShooterSubsystem(hardware.shooterMotor1, hardware.shooterMotor2);
 

@@ -5,6 +5,7 @@ import com.technototes.library.control.gamepad.CommandButton;
 import com.technototes.library.control.gamepad.CommandGamepad;
 
 import org.firstinspires.ftc.teamcode.commands.drivebase.DriveCommand;
+import org.firstinspires.ftc.teamcode.commands.index.SendRingToShooterCommand;
 import org.firstinspires.ftc.teamcode.commands.intake.IntakeInCommand;
 import org.firstinspires.ftc.teamcode.commands.intake.IntakeOutCommand;
 import org.firstinspires.ftc.teamcode.commands.intake.IntakeStopCommand;
@@ -30,14 +31,22 @@ public class OperatorInterface {
 
     public CommandButton wobbleClawButton, wobbleArmButton;
 
+    public CommandButton indexFeedButton;
+
     public OperatorInterface(CommandGamepad driver, CommandGamepad codriver, Robot r){
 
         //instantiate objects
         driverGamepad = driver;
         codriverGamepad = codriver;
         robot = r;
+
+        //set buttons
         intakeMainButton = driverGamepad.a;
         intakeSpitButton = driverGamepad.x;
+
+        indexFeedButton = codriverGamepad.a;
+
+        indexFeedButton.whenPressed(new SendRingToShooterCommand(robot.indexSubsystem));
 
         //intake commands
         intakeMainButton.whenToggled(new IntakeInCommand(robot.intakeSubsystem))

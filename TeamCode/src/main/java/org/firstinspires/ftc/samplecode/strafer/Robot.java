@@ -8,12 +8,13 @@ public class Robot implements Loggable {
 
     public Hardware hardware;
 
+
     public DrivebaseSubsystem drivebaseSubsystem;
 
 
 
     public Robot(){
         hardware = new Hardware();
-        drivebaseSubsystem = new DrivebaseSubsystem(hardware.flMotor, hardware.frMotor, hardware.rlMotor, hardware.rrMotor, hardware.rangeSensor);
+        drivebaseSubsystem = new DrivebaseSubsystem(hardware.flMotor, hardware.frMotor, hardware.rlMotor, hardware.rrMotor);
     }
 }

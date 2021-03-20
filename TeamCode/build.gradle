@@ -18,8 +18,11 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.acmerobotics.roadrunner:core:0.5.2'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.3'
 
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+
+    //implementation 'com.acmerobotics.dashboard:dashboard:0.4.1'
 
 
     //annotationProessor files('lib/OpModeAnnotationProcessor.jar')

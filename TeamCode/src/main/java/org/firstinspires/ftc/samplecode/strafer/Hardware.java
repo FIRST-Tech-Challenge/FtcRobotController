@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.samplecode.strafer;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.technototes.library.hardware.motor.EncodedMotor;
 import com.technototes.library.hardware.motor.Motor;
 import com.technototes.library.hardware.sensor.IMU;
 import com.technototes.library.hardware.sensor.RangeSensor;
@@ -10,30 +11,25 @@ import com.technototes.logger.Loggable;
 public class Hardware implements Loggable {
     //drive motors
     @Log.Number(name = "flmotor")
-    public Motor<DcMotor> flMotor;
+    public EncodedMotor<DcMotor> flMotor;
     @Log.Number(name = "frmotor")
-    public Motor<DcMotor> frMotor;
+    public EncodedMotor<DcMotor> frMotor;
     @Log.Number(name = "rlmotor")
-    public Motor<DcMotor> rlMotor;
+    public EncodedMotor<DcMotor> rlMotor;
     @Log.Number(name = "rrmotor")
-    public Motor<DcMotor> rrMotor;
+    public EncodedMotor<DcMotor> rrMotor;
     // hellooooooo
     public IMU imu;
 
-    //new stuff
-    public RangeSensor rangeSensor;
-
 
     public Hardware(){
-        flMotor = new Motor<>("fl");
-        frMotor = new Motor<>("fr");
-        rlMotor = new Motor<>("rl");
-        rrMotor = new Motor<>("rr");
+        flMotor = new EncodedMotor<>("fl");
+        frMotor = new EncodedMotor<>("fr");
+        rlMotor = new EncodedMotor<>("rl");
+        rrMotor = new EncodedMotor<>("rr");
 
         imu = new IMU("imu1");
-
-
-        rangeSensor = new RangeSensor("range");
+        
     }
 
 }
