@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team6220_2020.TestClasses;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,7 +21,8 @@ public class LauncherTest extends LinearOpMode{
 
         while (opModeIsActive()) {
 
-            // If/Else statement to detect whether or notthe
+            // If/Else statement to detect whether or not the "a" button is pressed on the controller.
+            // Determines whether the motor is running or stopped.
             if (gamepad1.a) {
                 motorLauncher.setPower(1.0);
             }
@@ -31,7 +31,7 @@ public class LauncherTest extends LinearOpMode{
                 motorLauncher.setPower(0.0);
             }
 
-            //Telemetry
+            // Telemetry
             telemetry.addData("Launcher Motor Power: ", motorLauncher.getPower());
             telemetry.update();
 
