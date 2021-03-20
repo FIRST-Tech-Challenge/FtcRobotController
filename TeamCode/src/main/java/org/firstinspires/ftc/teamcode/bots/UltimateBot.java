@@ -210,7 +210,7 @@ public class UltimateBot extends YellowBot {
 
     @BotAction(displayName = "Guard Down", defaultReturn =  "")
     public void guardDown() {
-        ringGuard.setPosition(0.09);
+        ringGuard.setPosition(0.03);
     }
 
     @BotAction(displayName = "Guard Up", defaultReturn =  "")
@@ -463,7 +463,7 @@ public class UltimateBot extends YellowBot {
         Log.d("UltimateBot", String.format("original orientation: %.2f", originalOrientation));
         double strafeSpeed = 0.4;
         double spinSpeed = 0.1;
-        double strafeToFirst = 11;
+        double strafeToFirst = 10;
         double strafeBetweenPegs = 5;
         //FirstPeg
         //strafe to align the robot with the first peg
