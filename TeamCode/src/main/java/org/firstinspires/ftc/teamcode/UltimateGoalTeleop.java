@@ -188,7 +188,7 @@ public class UltimateGoalTeleop extends OpMode{
 //            for (String caption : t.telemetryDM.keySet()){
 //                telemetry.addData(caption, t.telemetryDM.get(caption));
 //            }
-            telemetry.addData("Version: ", "2.1.5");
+            telemetry.addData("Version: ", "2.2");
             telemetry.addData("Configuration: ", t.getName());
             telemetry.addData("FL", robot.frontLeft.getCurrentPosition());
             telemetry.addData("FR", robot.frontRight.getCurrentPosition());

@@ -55,7 +55,7 @@ public class Drivetrain {
     public void moveSlapper(slapperPos Slapper){
         switch (Slapper){
             case IN:
-                robot.slapper.setPosition(0.34);
+                robot.slapper.setPosition(0.35);
                 break;
             case OUT:
                 robot.slapper.setPosition(0.0);
@@ -87,7 +87,7 @@ public class Drivetrain {
         pause(100);
     }
     public void tilt(double pos){
-        if (0.0 <= pos && pos <= 1.0) {
+        if (0.0 <= pos && pos <= 4.0) {
             robot.leftTilt.setPosition(pos);
             robot.rightTilt.setPosition(pos);
         }
@@ -98,7 +98,7 @@ public class Drivetrain {
         }else if(direct == tiltDirect.DOWN && pos != 0){
             pos--;
         }
-        tilt((pos==0) ? 0.35 : (pos==1) ? 0.5 : 0.7);
+        tilt((pos==0) ? 0.3 : (pos==1) ? 0.35 : 0.4);
     }
     public void incrementtilt(double amount){
         incrementtilt(amount, amount);
