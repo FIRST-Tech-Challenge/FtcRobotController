@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IndexSubsystem;
 public class SendRingToShooterCommand extends SequentialCommandGroup {
     public IndexSubsystem indexSubsystem;
     public SendRingToShooterCommand(IndexSubsystem subsystem){
-        addRequirements(subsystem);
+        //addRequirements(subsystem);
         indexSubsystem = subsystem;
         addCommand(new ArmExtendCommand(subsystem)).addCommand(new ArmRetractCommand(subsystem));
     }

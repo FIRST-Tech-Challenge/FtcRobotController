@@ -26,5 +26,5 @@ public class ConfigOpMode extends CommandOpMode implements Loggable {
         driverGamepad.dpad.left.whenPressed(new InstantCommand(()->arm.setPosition(arm.getPosition()+0.05)));
         driverGamepad.dpad.right.whenPressed(new InstantCommand(()->arm.setPosition(arm.getPosition()-0.05)));
     }
-    
+
 }

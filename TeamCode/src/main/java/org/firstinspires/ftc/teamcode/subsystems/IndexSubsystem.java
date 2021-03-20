@@ -35,22 +35,18 @@ public class IndexSubsystem extends ServoSubsystem implements Stated<Integer> {
     }
 
     public void raiseToShooter(){
-        //TODO get position values
-        pivot.setPosition(1);
+        pivot.setPosition(0.62);
     }
     public void lowerToIntake(){
-        //TODO get position values
-        pivot.setPosition(0);
+        pivot.setPosition(0.4);
     }
 
     public void extendArm(){
-        //TODO get position values
-        arm.setPosition(1);
+        arm.setPosition(0.45);
     }
 
     public void retractArm(){
-        //TODO get position values
-        arm.setPosition(0);
+        arm.setPosition(0.2);
     }
     public int getNumRings(){
         return indexState.getNumRings();

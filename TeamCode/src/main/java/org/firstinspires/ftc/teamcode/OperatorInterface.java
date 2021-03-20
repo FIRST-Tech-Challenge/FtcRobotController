@@ -66,8 +66,8 @@ public class OperatorInterface {
         CommandScheduler.getInstance().scheduleJoystick(new DriveCommand(robot.drivebaseSubsystem, driverGamepad.leftStick, driverGamepad.rightStick), ()->true);
 
 
-        driverGamepad.dpad.up.whenPressed(new IndexPivotUpCommand(robot.indexSubsystem));
-        driverGamepad.dpad.down.whenPressed(new IndexPivotDownCommand(robot.indexSubsystem));
+        driverGamepad.y.whenToggled(new IndexPivotUpCommand(robot.indexSubsystem));
+        driverGamepad.y.whenInverseToggled(new IndexPivotDownCommand(robot.indexSubsystem));
         driverGamepad.dpad.left.whenPressed(new ArmExtendCommand(robot.indexSubsystem));
         driverGamepad.dpad.right.whenPressed(new ArmRetractCommand(robot.indexSubsystem));
         //TODO fix trigger threshold
