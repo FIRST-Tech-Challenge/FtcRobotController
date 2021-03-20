@@ -1139,11 +1139,29 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             }
         });
         if (leftRangeSensor != null) {
-            line.addData("rangeL", "%.1f", new Func<Double>() {
+            line.addData("ran-L", "%.1f", new Func<Double>() {
                 @Override
                 public Double value() {
                     // return frontRangeSensor.getDistance(DistanceUnit.CM);
                     return getDistance(SwerveChassis.Direction.LEFT);
+                }
+            });
+        }
+        if (rightFrontRangeSensor != null) {
+            line.addData("ran-RF", "%.1f", new Func<Double>() {
+                @Override
+                public Double value() {
+                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
+                    return getDistance(SwerveChassis.Direction.RIGHT_FRONT);
+                }
+            });
+        }
+        if (rightBackRangeSensor != null) {
+            line.addData("ran-RB", "%.1f", new Func<Double>() {
+                @Override
+                public Double value() {
+                    // return frontRangeSensor.getDistance(DistanceUnit.CM);
+                    return getDistance(SwerveChassis.Direction.RIGHT_BACK);
                 }
             });
         }
@@ -1316,6 +1334,10 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             case FRONT_RIGHT:
             case FRONT:
                 rangeSensor = frontRangeSensor;
+            case RIGHT_FRONT:
+                rangeSensor = rightFrontRangeSensor;
+            case RIGHT_BACK:
+                rangeSensor = rightBackRangeSensor;
             default:
                 rangeSensor = null;
         }

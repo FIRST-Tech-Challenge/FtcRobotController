@@ -1138,7 +1138,7 @@ public class SwerveChassis extends Logger<SwerveChassis> implements Configurable
 
 
     public enum Direction {
-        FRONT, LEFT, RIGHT, BACK, FRONT_LEFT, FRONT_RIGHT, LEFT_HI, RIGHT_HI;
+        FRONT, LEFT, RIGHT, BACK, FRONT_LEFT, FRONT_RIGHT, LEFT_HI, RIGHT_HI, RIGHT_FRONT, RIGHT_BACK;
     }
 
     public double getCurHeading() {
