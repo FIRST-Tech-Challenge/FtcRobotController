@@ -5,6 +5,7 @@ import com.technototes.library.command.CommandScheduler;
 import com.technototes.library.structure.CommandOpMode;
 import com.technototes.logger.Loggable;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.OperatorInterface;
 import org.firstinspires.ftc.teamcode.Robot;
 
@@ -26,6 +27,7 @@ public class TeleOpV1 extends CommandOpMode implements Loggable {
     public void uponInit() {
         robot = new Robot();
         operatorInterface = new OperatorInterface(driverGamepad, codriverGamepad, robot);
+        super.telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
     }
 
 }

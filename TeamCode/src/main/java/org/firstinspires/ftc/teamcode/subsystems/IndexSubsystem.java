@@ -13,6 +13,7 @@ public class IndexSubsystem extends ServoSubsystem implements Stated<Integer> {
 
     public Servo pivot, arm;
 
+
     public enum IndexState{
         EMPTY(0), ONE_RING(1), TWO_RINGS(2), FULL(3);
         public int numRings;
@@ -30,6 +31,7 @@ public class IndexSubsystem extends ServoSubsystem implements Stated<Integer> {
     public IndexSubsystem(Servo p, Servo a){
         pivot = p;
         arm = a;
+        indexState = IndexState.EMPTY;
     }
 
     public void raiseToShooter(){
@@ -60,5 +62,8 @@ public class IndexSubsystem extends ServoSubsystem implements Stated<Integer> {
         return getNumRings();
     }
 
+    public boolean isFull() {
+        return getNumRings()==3;
+    }
 
 }
