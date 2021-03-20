@@ -1159,7 +1159,7 @@ public class PoseUG {
                 }
 
                 if(System.nanoTime() - shootTime > 2 * 1E9){
-                    shootRingStage--;
+                    shootRingStage--;//ben was here
                 }
                 break;
             case 3:
