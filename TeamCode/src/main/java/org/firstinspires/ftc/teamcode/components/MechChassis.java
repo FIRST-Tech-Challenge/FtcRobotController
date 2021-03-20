@@ -137,6 +137,10 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private DistanceSensor leftRangeSensor;
     private DistanceSensor frontRangeSensor;
     private LongDistanceSensor testRange;
+    private DistanceSensor rightFrontRangeSensor;
+    private DistanceSensor rightBackRangeSensor;
+
+
 
     // array contains the same wheel assemblies as above variables
     //  and is convenient to use when actions have to be performed on all 4
@@ -475,6 +479,12 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         this.initY = y;
     }
 
+    @Adjustable(min = -180, max = 180, step = 1)
+    public double getInitHeading() { return initHeading; }
+    public void setInitHeading(double h) {
+        this.initHeading = h;
+    }
+
     @Override
     public String getUniqueName() {
         return "chassis";
@@ -556,6 +566,9 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
 
           if (robotVersion==1) {
               leftRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "leftRange");
+              rightFrontRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "RFRange");
+              rightBackRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "RBRange");
+
               // frontRangeSensor = configuration.getHardwareMap().get(DistanceSensor.class, "frontRange");
           } else if (robotVersion==2) {
               // testRange = configuration.getHardwareMap().get(VL53L0X.class, "testRange");

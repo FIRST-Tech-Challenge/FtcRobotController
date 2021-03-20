@@ -48,7 +48,7 @@ public class CombinedOrientationSensor extends Logger<CombinedOrientationSensor>
             warn("No orientation sensors were found!");
             return;
         }
-        if (!noReset)
+        //if (!noReset)
            reset();
     }
 
