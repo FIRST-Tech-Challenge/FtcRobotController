@@ -51,7 +51,6 @@ public class WobbleSubsystem extends ServoSubsystem implements Stated<String> {
     public void setClawPosition(ClawPosition pos){
         if(clawPosition != pos) {
             servo1.setPosition(servo1.getPosition() - pos.getPosition());
-            //TODO servo1.addToPosition(-pos.getPosition());
             servo2.setPosition(servo2.getPosition() + pos.getPosition());
             clawPosition = pos;
         }

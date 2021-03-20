@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.intake;
 
 import com.technototes.library.command.Command;
+import com.technototes.library.command.ConditionalCommand;
 
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 
