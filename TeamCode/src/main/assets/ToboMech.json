@@ -41,6 +41,7 @@
     "maxPower": 0.999,
     "minPower": 0.1,
     "initX": 0,
-    "initY": 0
+    "initY": 0,
+    "initHeading": 0
   }
 }

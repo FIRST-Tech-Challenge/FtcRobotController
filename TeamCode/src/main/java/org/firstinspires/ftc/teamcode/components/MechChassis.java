@@ -117,6 +117,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     private double minPowerHorizontal = 0.3;
     private double initX = 0;
     private double initY = 0;
+    private double initHeading = 0;
 
     private double maxRange = 127; // max range sensor detectable
     private double defaultScale = 1.0;
@@ -1582,9 +1583,10 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
     public void updateInitPosFromOdo(){
         initX = odo_x_pos_cm();
         initY = odo_y_pos_cm();
+        initHeading = odo_heading();
     }
 
     public void initOdoFromJson(){
-        set_init_pos(initX, initY, odo_heading());
+        set_init_pos(initX, initY, initHeading);
     }
 }
