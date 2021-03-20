@@ -45,7 +45,6 @@ public class Final_Teleop extends LinearOpMode {
         factory.setDirection(DcMotor.Direction.FORWARD);
 
 
-        double SPower = 0;
 
         waitForStart();
         runtime.reset();
@@ -58,13 +57,13 @@ public class Final_Teleop extends LinearOpMode {
             double rbPower;
             double spinPower;
             double factoryPower;
+            double SPower;
 
             lfPower = 0.0f;
             rfPower = 0.0f;
             lbPower = 0.0f;
             rbPower = 0.0f;
             factoryPower = 0.0f;
-
 
             if (abs(gamepad1.left_stick_y) < 0.2 && abs(gamepad1.left_stick_x) > 0.2) {
                 lfPower = -gamepad1.left_stick_x;
