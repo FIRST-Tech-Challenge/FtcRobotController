@@ -9,7 +9,7 @@ configurations {
 }
 
 buildscript {
-    repositories {
+    repositories {//sdfljkfsdkjllkfdskljfdslksdfkljjjjjjjjjjjjjjjjjjjjjjjjjkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk  I've escaped the boundaries of the univers ha HA
         mavenCentral()
         google()
         jcenter()
@@ -18,7 +18,15 @@ buildscript {
         classpath 'com.android.tools.build:gradle:4.0.1'
     }
 }
-
+/*
+JOKE AHHAHHHAHHAHHHAHHAHAHHAHHAHHAHHAH
+I did a silly.
+Congratulations random person probably just me later on, you found a practical joke
+Muahahahahahah
+3/17/2021
+THE FUTURE
+6/31/2027
+ */
 // This is now required because aapt2 has to be downloaded from the
 // google() repository beginning with version 3.2 of the Android Gradle Plugin
 allprojects {
