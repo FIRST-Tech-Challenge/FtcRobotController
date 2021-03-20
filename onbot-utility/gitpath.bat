@@ -1,0 +1,1 @@
+PATH=%PATH%;C:\Users\micro\AppData\Local\GitHubDesktop\app-2.3.1\resources\app\git\cmd
