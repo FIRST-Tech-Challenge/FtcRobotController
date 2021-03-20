@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.components.MechChassis;
 import org.firstinspires.ftc.teamcode.components.Robot2;
+import org.firstinspires.ftc.teamcode.components.SwerveChassis;
 import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.CoreSystem;
 import org.firstinspires.ftc.teamcode.support.Logger;
@@ -1417,6 +1418,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public void doHighGoalsAndPowerShots(int numHighGoals, int numPowerShots, boolean keepPos) throws InterruptedException {
         shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
 
+
         if (hopper != null) {
             if (hopper.getTransferIsDown())
                 hopper.hopperUpCombo(true);
@@ -1589,6 +1591,74 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
         //chassis.driveStraight(0.5, 19, 90, 2);
         chassis.driveTo(0.5, chassis.odo_x_pos_cm()+19,chassis.odo_y_pos_cm(),chassis.odo_heading()-0.5,false,1);
+        hopper.feederAuto();
+        shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
+    }
+    public void doPowerShotsSemiNew(int n, boolean angleCollection) throws InterruptedException {
+        shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
+        shooting_rpm = SEMI_POWER_SHOT_RPM;
+
+        chassis.rotateTo(0.3, 0);
+        sleep(200);
+        double idealRightDist = 45.5;
+        double rightDist = (chassis.getDistance(SwerveChassis.Direction.RIGHT_FRONT)+chassis.getDistance(SwerveChassis.Direction.RIGHT_FRONT))/2;
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-(idealRightDist-rightDist),chassis.odo_y_pos_cm(),chassis.odo_heading(),false,1);
+        chassis.rotateTo(0.3, 0);//delete?
+
+        if (hopper != null && hopper.getTransferIsDown()) {
+            hopper.hopperUpCombo(true);
+            TaskManager.processTasks();
+        }
+        if (intake!=null)
+            intake.stop();
+
+        while (!TaskManager.isComplete("Transfer Up Combo")) {
+            TaskManager.processTasks();
+        }
+
+        if(angleCollection){
+            double heading = 0;
+            if (Math.abs(chassis.odo_heading() - heading) > 0.8) {
+                if (Math.abs(chassis.odo_heading() - heading) > 10) {
+                    chassis.rotateTo(0.3, heading);
+                    sleep(100);
+                }
+                int i=0;
+                while (Math.abs(chassis.odo_heading() - heading)>1 && i<2) {
+                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin, heading, false, 0.5);
+                    i++;
+                }
+                //sleep(200);
+            }
+        }
+
+
+        //chassis.resetOdometry(true); // use rangeSensor to correct Odometry
+        //shoot
+
+        hopper.feederAuto();
+        if (n==1) {
+            shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
+            return;
+        }
+        //sleep(200);
+        // move to center power shot
+        //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
+        //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
+        // chassis.driveStraight(0.5, 19, 90, 2);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(),chassis.odo_heading()-0.5,false,1);
+        hopper.feederAuto();
+        if (n==2) {
+            shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
+            return;
+        }
+        //sleep(500);
+        // move to right power shot
+        //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
+        //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
+
+        //chassis.driveStraight(0.5, 19, 90, 2);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()-19,chassis.odo_y_pos_cm(),chassis.odo_heading()-0.5,false,1);
         hopper.feederAuto();
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
     }

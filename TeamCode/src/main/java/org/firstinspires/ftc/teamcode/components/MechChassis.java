@@ -1334,10 +1334,13 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             case FRONT_RIGHT:
             case FRONT:
                 rangeSensor = frontRangeSensor;
+                break;
             case RIGHT_FRONT:
                 rangeSensor = rightFrontRangeSensor;
+                break;
             case RIGHT_BACK:
                 rangeSensor = rightBackRangeSensor;
+                break;
             default:
                 rangeSensor = null;
         }
