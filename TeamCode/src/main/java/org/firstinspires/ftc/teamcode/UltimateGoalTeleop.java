@@ -108,6 +108,7 @@ public class UltimateGoalTeleop extends OpMode{
 
         startingAngle = drivetrain.getAverageGyro();
 
+
     }
 
     /*
@@ -122,6 +123,7 @@ public class UltimateGoalTeleop extends OpMode{
      */
     @Override
     public void start() {
+        drivetrain.tilt(0.4);
     }
 
     /*
@@ -188,7 +190,7 @@ public class UltimateGoalTeleop extends OpMode{
 //            for (String caption : t.telemetryDM.keySet()){
 //                telemetry.addData(caption, t.telemetryDM.get(caption));
 //            }
-            telemetry.addData("Version: ", "2.2");
+            telemetry.addData("Version: ", "2.2.2");
             telemetry.addData("Configuration: ", t.getName());
             telemetry.addData("FL", robot.frontLeft.getCurrentPosition());
             telemetry.addData("FR", robot.frontRight.getCurrentPosition());

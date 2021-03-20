@@ -89,8 +89,8 @@ public class HardwareMapV2 {
         wobble.setDirection(Servo.Direction.FORWARD);
         slapper.setDirection(Servo.Direction.FORWARD);
 
-        rightTilt.setPosition(0.4);
-        leftTilt.setPosition(0.4);
+        rightTilt.setPosition(0.5);
+        leftTilt.setPosition(0.5);
         wobble.setPosition(0.0);
         slapper.setPosition(0.0);
 

@@ -55,7 +55,7 @@ public class Drivetrain {
     public void moveSlapper(slapperPos Slapper){
         switch (Slapper){
             case IN:
-                robot.slapper.setPosition(0.35);
+                robot.slapper.setPosition(0.4);
                 break;
             case OUT:
                 robot.slapper.setPosition(0.0);
@@ -82,7 +82,7 @@ public class Drivetrain {
     }
     public void singleCycle(){
         moveSlapper(slapperPos.OUT);
-        pause(200);
+        pause(300);
         moveSlapper(slapperPos.IN);
         pause(100);
     }
