@@ -76,6 +76,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     final public double SEMI_AUTO_RPM = 1660;
     final public double WARM_UP_RPM_POWER_SHOT = 1420;
     final public double SEMI_POWER_SHOT_RPM = 1420;
+    final public double SEMI_HIGHGOAL_HEADING = -9; // 0 for tile-2, -9 for tile-3
     public double shooting_rpm = WARM_UP_RPM;
     public double batteryVolt = 0;
 
@@ -1481,7 +1482,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             shooter.shootOutByRpm(0);
     }
 
-    public void doHighGoalsSemi(boolean angleCollection, int nshots) throws InterruptedException {
+    public void doHighGoalsSemi(boolean angleCorrection, int nshots) throws InterruptedException {
         shooter.shootOutByRpm(SEMI_AUTO_RPM);
         shooting_rpm = SEMI_AUTO_RPM;
         boolean hopperMoving = hopper.getTransferIsDown();
@@ -1497,8 +1498,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (hopperMoving) sleep(300); // delay 0.3 sec for hopper to lock up
 
-        if(angleCollection){
-            double heading = 0;
+        if(angleCorrection){
+            double heading = SEMI_HIGHGOAL_HEADING;
             if (Math.abs(chassis.odo_heading() - heading) > 0.8) {
                 if (Math.abs(chassis.odo_heading() - heading) > 10) {
                     chassis.rotateTo(0.3, heading);
