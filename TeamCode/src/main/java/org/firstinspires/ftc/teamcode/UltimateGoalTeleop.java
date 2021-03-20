@@ -143,6 +143,7 @@ public class UltimateGoalTeleop extends OpMode{
             for (Class<? extends teleOpInterface> t : configs){
                 telemetry.addData(t.getName(), (index==configs.indexOf(t)) ? " <" : "");
             }
+
             telemetry.update();
             if (gamepad2.x) {
                 if (configs.get(index).getName().equals(teleConfigEx.class.getName())) {
@@ -184,14 +185,24 @@ public class UltimateGoalTeleop extends OpMode{
             t.rjoyb(gamepad2.right_stick_button);
             t.ljoyb(gamepad2.left_stick_button);
 
-            for (String caption : t.telemetryDM.keySet()){
-                telemetry.addData(caption, t.telemetryDM.get(caption));
-            }
+//            for (String caption : t.telemetryDM.keySet()){
+//                telemetry.addData(caption, t.telemetryDM.get(caption));
+//            }
+            telemetry.addData("Version: ", "2.1.5");
             telemetry.addData("Configuration: ", t.getName());
             telemetry.addData("FL", robot.frontLeft.getCurrentPosition());
             telemetry.addData("FR", robot.frontRight.getCurrentPosition());
             telemetry.addData("BL", robot.backLeft.getCurrentPosition());
             telemetry.addData("BR", robot.backRight.getCurrentPosition());
+
+            telemetry.addData("Intake: ", robot.intake.getPower());
+            telemetry.addData("Outtake", robot.outtake.getPower());
+
+            telemetry.addData("Left Tilt", robot.leftTilt.getPosition());
+            telemetry.addData("Right Tilt", robot.rightTilt.getPosition());
+            telemetry.addData("Wobble", robot.wobble.getPosition());
+            telemetry.addData("Slapper", robot.slapper.getPosition());
+
             telemetry.addData("Gpad 1 a?", gamepad1.a);
             telemetry.update();
             t.updateTelemetryDM();

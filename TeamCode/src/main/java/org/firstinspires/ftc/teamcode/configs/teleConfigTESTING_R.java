@@ -20,7 +20,7 @@ public class teleConfigTESTING_R implements teleOpInterface{
     public void a(boolean pressed) {
         //Intake
         if (pressed && System.currentTimeMillis()-button >= 500){
-            robot.intake.setPower((robot.intake.getPower() == 0) ? 1.0 : 0.0);
+            intake = (robot.intake.getPower() == 0) ? 1.0 : 0.0;
             button = System.currentTimeMillis();
         }
     }
@@ -28,7 +28,7 @@ public class teleConfigTESTING_R implements teleOpInterface{
     public void b(boolean pressed) {
         //Outtake
         if (pressed && System.currentTimeMillis()-button >= 500){
-            robot.outtake.setPower((robot.outtake.getPower() == 0) ? 1.0 : 0.0);
+            outtakeW = (robot.outtake.getPower() == 0) ? 1.0 : 0.0;
             button = System.currentTimeMillis();
         }
     }
@@ -36,7 +36,7 @@ public class teleConfigTESTING_R implements teleOpInterface{
     public void x(boolean pressed) {
         //Conveyor
         if (pressed && System.currentTimeMillis()-button >= 500){
-            robot.conveyor.setPower((robot.conveyor.getPower() == 0) ? 1.0 : 0.0);
+            robot.slapper.setPosition((robot.slapper.getPosition() == 0) ? 1.0 : 0.0);
             button = System.currentTimeMillis();
         }
     }

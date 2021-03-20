@@ -52,11 +52,17 @@ public class lessButtonsConfig implements teleOpInterface {
     }
 
     public void dd(boolean pressed) {
-
+        if (pressed && System.currentTimeMillis()-button>=500){
+            outtakeW = (outtakeW==0) ? 1 : 0;
+            button = System.currentTimeMillis();
+        }
     }
 
     public void dp(boolean pressed) {
-
+        if (pressed && System.currentTimeMillis()-button>=500) {
+            drivetrain.singleCycle();
+            button = System.currentTimeMillis();
+        }
     }
 
     public void dl(boolean pressed) {

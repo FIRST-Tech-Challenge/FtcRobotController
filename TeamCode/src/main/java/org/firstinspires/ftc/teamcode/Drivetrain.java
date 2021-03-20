@@ -11,6 +11,9 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 public class Drivetrain {
     HardwareMapV2 robot;
     public Drivetrain(HardwareMapV2 robot) { this.robot = robot; }
+    public enum slapperPos{
+        OUT, IN
+    }
     public enum tiltDirect{
         UP, DOWN
     }
@@ -49,6 +52,16 @@ public class Drivetrain {
                 break;
         }
     }
+    public void moveSlapper(slapperPos Slapper){
+        switch (Slapper){
+            case IN:
+                robot.slapper.setPosition(0.34);
+                break;
+            case OUT:
+                robot.slapper.setPosition(0.0);
+                break;
+        }
+    }
     public void spin(boolean right, double power){
         power = (right) ? power : -power;
         setMotorPowers(power, -power, power, -power);
@@ -57,8 +70,21 @@ public class Drivetrain {
         outtakeAll(power, power);
     }
     public void outtakeAll(double conveyor, double outtake){
-        robot.conveyor.setPower(conveyor);
         robot.outtake.setPower(outtake);
+    }
+    public void newOuttakeAll(double power, int cycles){
+        robot.outtake.setPower(power);
+        pause(300);
+        for (int i=0; i<cycles; i++){
+            singleCycle();
+        }
+        robot.outtake.setPower(0.0);
+    }
+    public void singleCycle(){
+        moveSlapper(slapperPos.OUT);
+        pause(200);
+        moveSlapper(slapperPos.IN);
+        pause(100);
     }
     public void tilt(double pos){
         if (0.0 <= pos && pos <= 1.0) {
@@ -92,7 +118,10 @@ public class Drivetrain {
         robot.leftTilt.setPosition(robot.leftTilt.getPosition()+amount);
     }
 
-
+    public void pause(double milis){
+        double time = System.currentTimeMillis() + milis;
+        while (time >= System.currentTimeMillis()) {}
+    }
     // NOT USED; gets average gyro value for more accurate angles
     public double getAverageGyro(){
         /*int sum = robot.realgyro.getIntegratedZValue() + robot.realgyro2.getIntegratedZValue();

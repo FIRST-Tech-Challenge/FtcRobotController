@@ -114,7 +114,7 @@ public class teleConfigRohit2 implements teleOpInterface {
                 robot.outtake.setPower(y);
                 break;
             case CONVEYOR:
-                robot.conveyor.setPower(y);
+                robot.slapper.setPosition(y);
                 break;
         }
     }

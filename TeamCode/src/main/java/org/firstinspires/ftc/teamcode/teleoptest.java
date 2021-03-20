@@ -24,7 +24,7 @@ public class teleoptest extends OpMode {
 //        robot.backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        robot.backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        robot.intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.setEncoders(robot.motors, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        robot.setEncoders(robot.motors, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         vroom = new MecanumDriveTrain(robot, gamepad1,telemetry);
 
         telemetry.addData("Haddi", "Haddi");
