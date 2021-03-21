@@ -27,10 +27,11 @@ public class TestRobot {
     public DcMotor in;
 
     public CRServo rh;
+    public CRServo rh2;
 
     public Servo rp;
 
-    public Cycle pushControl = new Cycle(0.1, 0.25, 0.32); // 0.1, 0.27, 0.35
+    public Cycle pushControl = new Cycle(0.1, 0.25, 0.32);
 
     public ModernRoboticsI2cRangeSensor lr;
     public ModernRoboticsI2cRangeSensor br;
@@ -70,19 +71,27 @@ public class TestRobot {
         outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         rh = getCRServo(hwMap, "rh", CRServo.Direction.FORWARD);
+        rh2 = getCRServo(hwMap, "rh2", DcMotorSimple.Direction.REVERSE);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, rpStart);
 
         angularPosition.init(hwMap);
 
         lr = hwMap.get(ModernRoboticsI2cRangeSensor.class, "lr");
         br = hwMap.get(ModernRoboticsI2cRangeSensor.class, "br");
-
-        shooter.addStage(rp, pushControl, 1 , 0.3);
+        shooter.addStage(rh, -1);
+        shooter.addStage(rh2, -1);
+        shooter.addStage(rp, pushControl, 1 , 0.5);
+        shooter.addStage(rh2, 0);
+        shooter.addStage(rh, 1);
+        shooter.addWait(0.3);
+        shooter.addStage(rh, 0);
         shooter.addStage(0.8, outl);
         shooter.addStage( 0.4, outr);
         shooter.addPause();
         for(int i = 0; i < 3; i++) {
+            shooter.addStage(rh, -1);
             shooter.addStage(rp, pushControl, 2, 0.3);
+            shooter.addStage(rh, 0);
             shooter.addStage(rp, pushControl, 1, 0.3);
         }
         shooter.addStage(rp, pushControl, 0, 0.3);
@@ -122,6 +131,8 @@ public class TestRobot {
 
     public void intake(double p){
         in.setPower(p);
+        rh.setPower(p);
+        rh2.setPower(p);
     }
 
     public void pushRings(double pos){
@@ -140,10 +151,8 @@ public class TestRobot {
         }else if(left_bumper){
             intaking = false;
             intake(-0.5);
-            rh.setPower(-0.5);
         }else if(intaking){
             intake(1);
-            rh.setPower(1);
         }else{
             intake(0);
             if (!outtaking) { rh.setPower(0); }
