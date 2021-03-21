@@ -10,7 +10,6 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.components.MechChassis;
 import org.firstinspires.ftc.teamcode.components.Robot2;
 import org.firstinspires.ftc.teamcode.components.SwerveChassis;
-import org.firstinspires.ftc.teamcode.hardware.Sigma.ToboSigma;
 import org.firstinspires.ftc.teamcode.support.CoreSystem;
 import org.firstinspires.ftc.teamcode.support.Logger;
 import org.firstinspires.ftc.teamcode.support.diagnostics.MenuEntry;
@@ -30,6 +29,19 @@ import static java.lang.Thread.sleep;
 
 public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
+    public class AutoPara {
+        boolean doPowerShots = false;
+        boolean isDone = false;
+
+        public boolean isDone() {
+            return isDone;
+        }
+        public boolean isDoPowerShots() {
+            return doPowerShots;
+        }
+
+    }
+
     public enum TargetZone {
         ZONE_A, ZONE_B, ZONE_C, UNKNOWN
     }
@@ -42,6 +54,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public TargetZone tZone = TargetZone.UNKNOWN;
     public ProgramType side = ProgramType.AUTO_BLUE; // default to blue
     public StartPosition startPos = StartPosition.OUT; // default to OUT position
+    public AutoPara autoPara = null;
 
     Thread positionThread;
     private Telemetry telemetry;
@@ -128,6 +141,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double ini_time = runtime.seconds();
         this.telemetry = telemetry;
         simEventFile = AppUtil.getInstance().getSettingsFile("ToboMech_events.txt"); // at First/settings directory
+        autoPara = new ToboMech.AutoPara();
 
         // simFile = Paths.get("ToboMech_events.txt");
         this.core = new CoreSystem();
@@ -648,24 +662,46 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }, new Button[]{Button.RIGHT_BUMPER});
 
     }
+    public void showInitStatus(double init_time) throws InterruptedException {
+        telemetry.addData("Robot is ready", "(init-time=%2.1f) Press Play",init_time);
+        telemetry.update();
+    }
 
     public void showStatus(double init_time) throws InterruptedException {
         String mode = "";
         if (side == ProgramType.TELE_OP) mode = "TeleOp";
         else if (side == ProgramType.DIAGNOSIS) mode = "Diagnosis";
         else if (side == ProgramType.AUTO_BLUE) {
-            if (startPos == StartPosition.IN)
-                mode = "Blue-In";
-            else
-                mode = "Blue-Out";
-        } else {
-            if (startPos == StartPosition.IN)
-                mode = "Red-In";
-            else
-                mode = "Red-Out";
+            if (startPos == StartPosition.IN) {
+                if (autoPara.doPowerShots) {
+                    mode = "Blue-In-PS";
+                } else {
+                    mode = "Blue-In-HG";
+                }
+            } else {
+                if (autoPara.doPowerShots) {
+                    mode = "Blue-Out-PS";
+                } else {
+                    mode = "Blue-Out-HG";
+                }
+            }
+        } else { // Red
+            if (startPos == StartPosition.IN) {
+                if (autoPara.doPowerShots) {
+                    mode = "Red-In-PS";
+                } else {
+                    mode = "Red-In-HG";
+                }
+            } else {
+                if (autoPara.doPowerShots) {
+                    mode = "Red-Out-PS";
+                } else {
+                    mode = "Red-Out-HG";
+                }
+            }
         }
         if (cameraDetector != null) {
-            sleep(2000);
+            sleep(500);
             tZone = cameraDetector.getTargetZone();
         }
         telemetry.addData("Config._1", "%s | Simu.=%s | Chassis=%s",
@@ -683,7 +719,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 telemetry.addData("Warning", "IMU is not initialized.");
             }
         }
-        telemetry.addData("Robot is ready", "(init-time=%2.1f) Press Play",init_time);
         telemetry.update();
     }
 
@@ -721,19 +756,28 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (chassis!=null) {
             chassis.set_auto_power_scale_by_voltage(batteryVolt);
         }
-        line.addData(" | Shooting (dist,angle,rpm, volt) =", new Func<String>() {
-            @Override
-            public String value() {
-                return String.format("(%1.0f,%1.0f,%1.0f, %2.1f)\n",
-                        shooting_dist, shooting_angle, shooting_rpm, getBatteryVoltage());
-            }
-        });
-        if (useVuforia && (cameraDetector != null)) {
-            line.addData(" | Vuforia (X,Y) =", new Func<String>() {
+        if (side==ProgramType.TELE_OP) { // TeleOp
+            line.addData(" | Shooting (dist,angle,rpm, volt) =", new Func<String>() {
+                @Override
+                public String value() {
+                    return String.format("(%1.0f,%1.0f,%1.0f, %2.1f)\n",
+                            shooting_dist, shooting_angle, shooting_rpm, getBatteryVoltage());
+                }
+            });
+            if (useVuforia && (cameraDetector != null)) {
+                line.addData(" | Vuforia (X,Y) =", new Func<String>() {
                 @Override
                 public String value() {
                     double[] vuforia_position = cameraDetector.getPositionFromVuforia();
                     return String.format("(%1.0f,%1.0f)\n", vuforia_position[0] + webcam_offset_x, vuforia_position[1] + webcam_offset_y);
+                }
+                });
+            }
+        } else { // Autonomous
+            line.addData("<Y> Mode", new Func<String>() {
+                @Override
+                public String value() {
+                    return String.format("%s\n", (autoPara.doPowerShots ? "Power-shots" : "High-goals-only"));
                 }
             });
         }
@@ -1059,12 +1103,26 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     }
 
-    @MenuEntry(label = "Tensorflow Test", group = "Test Chassis")
-    public void testSkystoneDetection()//loc = 1 left, 2 center, 3 right
-    {
-        if (cameraDetector != null) {
-            ToboSigma.SkystoneLocation location = cameraDetector.getSkystonePositionTF(true);
-        }
+    @MenuEntry(label = "Auto-Menu", group = "Competition-Auto")
+    public void AutoMenu(EventManager em) {
+        telemetry.addLine().addData(" | <X>", "Done").setRetained(true);
+        setupTelemetry(telemetry);
+
+        em.updateTelemetry(telemetry, 100);
+        em.onButtonDown(new Events.Listener() {
+            @Override
+            public void buttonDown(EventManager source, Button button) throws InterruptedException {
+                autoPara.doPowerShots = !autoPara.doPowerShots;
+            }
+        }, new Button[]{Button.Y});
+
+        em.onButtonDown(new Events.Listener() {
+            @Override
+            public void buttonDown(EventManager source, Button button) throws InterruptedException {
+                autoPara.isDone = true;
+            }
+        }, new Button[]{Button.X});
+
     }
 
     public void initAfterStart() throws InterruptedException {
