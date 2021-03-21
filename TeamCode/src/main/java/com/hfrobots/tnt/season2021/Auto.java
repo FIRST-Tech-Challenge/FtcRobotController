@@ -89,7 +89,7 @@ public class Auto extends OpMode {
 
         @Override
         public DebouncedButton debounced() {
-            return null;
+            return new DebouncedButton(this);
         }
     };
 
