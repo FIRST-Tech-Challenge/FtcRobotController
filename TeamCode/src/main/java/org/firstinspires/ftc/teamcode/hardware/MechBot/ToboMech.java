@@ -1758,12 +1758,12 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 chassis.driveTo(1.0, side(87), 165, 0, false, 1);
                 autoShootHighGoal(3, true);
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
-                intake.intakeIn();
-                chassis.driveTo(1.0, side(5), 287, 0, false, 2.5);
-                intake.stop();
                 while (!TaskManager.isComplete("Transfer Down Combo")) {
                     TaskManager.processTasks();
                 }
+                intake.intakeIn();
+                chassis.driveTo(1.0, side(5), 287, 0, false, 2.5);
+                intake.stop();
             } else {
                 return;
             }
