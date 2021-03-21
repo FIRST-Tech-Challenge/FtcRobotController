@@ -211,7 +211,6 @@ public class OperatorControls {
             launcherToMiddlePosition = new AnyButton(operatorGamepad.getDpadLeft(), driverGamepad.getDpadLeft()).debounced(); // FIXME
             launcherToHighPosition = new AnyButton(operatorGamepad.getDpadRight(), driverGamepad.getDpadRight()).debounced();// FIXME
         } else {
-            intakeVelocity = leftStickY;
             launchTrigger = rightBumper;
             disableRingHoldDown = yYellowButton;
             upToSpeedToggle = new ToggledButton(new RangeInputButton(rightTrigger, 0.65f));
@@ -220,6 +219,8 @@ public class OperatorControls {
             launcherToMiddlePosition = dpadLeft;
             launcherToHighPosition = dpadRight;
         }
+
+        intakeVelocity = leftStickY;
 
         toggleWobbleGripper = operatorGamepad.getXButton();
         wobbleShoulderThrottle = rightStickY;
