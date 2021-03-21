@@ -1,5 +1,6 @@
 package developing;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -116,6 +117,15 @@ public class AutoModule2 {
             }
         });
     }
+    public void addStage(final CRServo crs, final double pow) {
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                crs.setPower(pow);
+                return true;
+            }
+        });
+    }
     public void addStage(final double pow, final DcMotor ...mots) {
         stages.add(new Stage() {
             @Override
@@ -137,6 +147,7 @@ public class AutoModule2 {
             }
         });
     }
+
 
     public void addStage(final Servo s, final Cycle cycle, final int idx, final double t) {
         stages.add(new Stage() {
@@ -161,6 +172,15 @@ public class AutoModule2 {
             @Override
             public boolean run(double in) {
                 return !pausing;
+            }
+        });
+    }
+
+    public void addWait(final double t){
+        stages.add(new Stage() {
+            @Override
+            public boolean run(double in) {
+                return in > t;
             }
         });
     }
