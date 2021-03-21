@@ -36,9 +36,9 @@ public class OuterRedAutonomous extends LinearOpMode {
             telemetry.update();
         }
         robot.forward(.1, -0.3);
-        robot.strafeLeft(.3,1.1);
+        robot.strafeLeft(.3,1);
         robot.forward(.3,-1.7);
-        robot.pivotLeft(.3,26);
+        robot.pivotLeft(.3,28);
         robot.shooterEngage();
         robot.pause(800);
         robot.shooterServo1(.8);
@@ -62,20 +62,49 @@ public class OuterRedAutonomous extends LinearOpMode {
 //        robot.pause(2000);
  //       robot.stopShooting();
         if (ringNmb == RobotClass.RingPosition.NONE) {
-            robot.pivotRight(.5, 27);
+            robot.pivotRight(.5, 28);
             robot.strafeRight(0.5, 2);
             robot.forward(0.5, -4);
             robot.pivotRight(0.4, 170);
             robot.pause(500);
             robot.depositWobbleGoal();
         } else if (ringNmb == RobotClass.RingPosition.ONE) {
-            robot.pivotRight(.5, 27);
+            robot.pivotRight(.5, 28);
+            robot.forward(0.3, -.6);
+            robot.intakeServoEngage(.9);
+            robot.pivotRight(0.3,90);
+            robot.forward(0.5,2);
+            robot.forward(0.5, 1.8);
+            robot.shooterServo1(.8);
+            robot.shooterServo2(.8);
+            robot.pause(1000);
+            robot.shooterServo1Stop();
+            robot.shooterServo2Stop();
+            robot.intakeServoStop();
+            robot.pivotLeft(0.3, 90);
+            robot.forward(0.3, .6);
+            robot.pivotLeft(.3,28);
+
+            robot.shooterEngage();
+            robot.pause(800);
+            robot.shooterServo1(.8);
+            robot.shooterServo2(.8);
+            robot.pause(200);
+            robot.intakeServoEngage(.9);
+            robot.pause(4500);
+            robot.shooterStop();
+            robot.shooterServo1Stop();
+            robot.shooterServo2Stop();
+            robot.intakeServoStop();
+
+            robot.pivotRight(.5, 28);
             robot.forward(.4,-6.5);
             robot.depositWobbleGoal();
             robot.forward(0.5, 2);
         } else if (ringNmb == RobotClass.RingPosition.FOUR) {
-            robot.pivotRight(.3, 27);
-            robot.forward(.5,-6);
+            robot.pause(4000);
+            robot.pivotRight(.3, 28);
+            robot.forward(.5,-6.15);
             robot.pivotRight(0.4,90);
             robot.pause(500);
            // robot.forward(0.2,-1);

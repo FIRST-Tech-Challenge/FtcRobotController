@@ -31,10 +31,10 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 
 public class RobotClass {
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
+    public DcMotor frontLeft;
+    public DcMotor frontRight;
+    public DcMotor backLeft;
+    public DcMotor backRight;
     private DcMotorImplEx shooterMotor;
     private DcMotor wobbleGoalRaise;
     private double ticks = 537;//537
@@ -412,7 +412,6 @@ this.color= color;
         backLeft.setPower(y - x);
         frontRight.setPower(y - x);
         backRight.setPower(y + x);
-
 
 
         stopMotors();
