@@ -2,7 +2,6 @@ package global;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.CompassSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -15,8 +14,13 @@ public class AngularPosition {
     public BNO055IMU gyroSensor;
     public boolean calibratingCompass = true;
 
-    public double lastAngle = 0;
-    public double heading = 0;
+//    public double lastHeadingGY = 0;
+//    public double headingGY = 0;
+
+    public double addGY = 0;
+
+    public boolean isFailing = false;
+
 
     public void init(HardwareMap hwMap){
         compassSensor = hwMap.get(ModernRoboticsI2cCompassSensor.class, "cp");
@@ -27,6 +31,26 @@ public class AngularPosition {
         initGyro();
         resetGyro();
 
+    }
+
+    public double getHeading(double robotTheta) {
+        double headingGY = getHeadingGY();
+        double headingCS = getHeadingCS();
+        boolean gyAccurate = Math.abs(robotTheta - headingGY) < Constants.ANGLE_ACCURACY;
+        boolean csAccurate = Math.abs(robotTheta - headingCS) < Constants.ANGLE_ACCURACY;
+        isFailing = !gyAccurate && !csAccurate;
+        if (gyAccurate && csAccurate) {
+            return 0.5 * (headingGY + headingCS);
+        } else if (gyAccurate) {
+            return headingGY;
+        } else if (csAccurate) {
+            return headingCS;
+        }
+        return 0;
+    }
+
+    public double getHeading() {
+        return 0.5 * (getHeadingGY() + getHeadingCS());
     }
 
     public double getHeadingCS(){
@@ -48,19 +72,21 @@ public class AngularPosition {
     }
 
     public void resetGyro() {
-        lastAngle = (int) gyroSensor.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        heading = 0;
+        addGY = (int) gyroSensor.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+//        headingGY = 0;
     }
     public double getHeadingGY() {
-        double ca = gyroSensor.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        double da = ca - lastAngle;
-        if (da < -180)
-            da += 360;
-        else if (da > 180)
-            da -= 360;
-        heading += da;
-        lastAngle = ca;
-        return heading;
+//        double ca = gyroSensor.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+//        double da = ca - lastHeading;
+//        if (da < -180)
+//            da += 360;
+//        else if (da > 180)
+//            da -= 360;
+//        headingGY += da;
+//        lastHeadingGY = ca;
+        double ang = gyroSensor.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle + addGY;
+        ang = ang < -180 ? (ang + 360) : (ang > 180 ? (ang - 360):ang);
+        return ang;
     }
 
 }

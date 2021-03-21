@@ -24,5 +24,6 @@ public class Constants {
     public static final double GO_DEGREES_TO_TICKS = GOBUILDA1_Ticks/360;
 
     public static final double pi2 = Math.PI*2;
+    public static final double ANGLE_ACCURACY = 3.5;
 
 }

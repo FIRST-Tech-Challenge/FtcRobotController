@@ -30,7 +30,7 @@ public class TestRobot {
 
     public Servo rp;
 
-    public Cycle pushControl = new Cycle(0.1, 0.27, 0.35);
+    public Cycle pushControl = new Cycle(0.1, 0.25, 0.32); // 0.1, 0.27, 0.35
 
     public ModernRoboticsI2cRangeSensor lr;
     public ModernRoboticsI2cRangeSensor br;
@@ -69,7 +69,7 @@ public class TestRobot {
         outr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         outl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        rh = getCRServo(hwMap, "rh", CRServo.Direction.REVERSE);
+        rh = getCRServo(hwMap, "rh", CRServo.Direction.FORWARD);
         rp = getServo(hwMap, "rp", Servo.Direction.FORWARD, rpStart);
 
         angularPosition.init(hwMap);
@@ -122,7 +122,6 @@ public class TestRobot {
 
     public void intake(double p){
         in.setPower(p);
-        rh.setPower(p);
     }
 
     public void pushRings(double pos){
@@ -141,10 +140,13 @@ public class TestRobot {
         }else if(left_bumper){
             intaking = false;
             intake(-0.5);
+            rh.setPower(-0.5);
         }else if(intaking){
             intake(1);
+            rh.setPower(1);
         }else{
             intake(0);
+            if (!outtaking) { rh.setPower(0); }
         }
     }
 
@@ -202,9 +204,11 @@ public class TestRobot {
             autoAimer.update(0, 1.25,1.5);
             outr.setPower(autoAimer.getOutrPow(getRightAngPos()));
             outl.setPower(autoAimer.getOutlPow(getLeftAngPos()));
+            rh.setPower(-0.5);
         } else {
             outr.setPower(0);
             outl.setPower(0);
+            if (!intaking) { rh.setPower(0); }
         }
         //remove when make automodule
     }
