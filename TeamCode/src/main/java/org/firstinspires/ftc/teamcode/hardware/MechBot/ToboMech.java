@@ -1438,7 +1438,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 if (side!=ProgramType.TELE_OP &&runtimeAuto.seconds() > 29) {
                     return;
                 }
-                chassis.driveTo(.55, side(90), 165, 0, true, 4);
+                chassis.driveTo(.6, side(90), 165, 0, true, 4);
             }
             }
         while (!TaskManager.isComplete("Transfer Up Combo")) {

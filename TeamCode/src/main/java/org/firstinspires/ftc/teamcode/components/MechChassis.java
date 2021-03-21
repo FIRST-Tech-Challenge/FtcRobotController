@@ -708,7 +708,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
             //auto_max_yspeed = Math.max(odo_y_speed_cm(), auto_max_yspeed);
             if (autoDriveMode!= AutoDriveMode.CONTINUE_NO_CORRECTION) {
                 if (traveledPercent > slowDownPercent && cur_s > 30 && powerUsed > slowDownSpeed) {
-                    powerUsed = 0.4;
+                    powerUsed = 0.5;
                 }
             }
             if (traveledPercent<0.9) {
@@ -842,7 +842,7 @@ public class MechChassis extends Logger<MechChassis> implements Configurable {
         double degree_diff = Math.abs(cur_heading-fixed_heading);
 
         // adjust max power by the battery voltage level
-       if (power>=0.6) { // Voltage > 13 will scale down
+       if (power>=0.4) { // Voltage > 13 will scale down
             power *= auto_power_scale_by_voltage;
         }
 
