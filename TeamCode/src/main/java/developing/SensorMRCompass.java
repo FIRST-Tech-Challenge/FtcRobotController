@@ -1,33 +1,4 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package developing;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -38,23 +9,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 
-/**
- * The {@link SensorMRCompass} op mode provides a demonstration of the
- * functionality provided by the Modern Robotics compass sensor.
- *
- * The op mode assumes that the MR compass is configured with a name of "compass".
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- *
- * @see <a href="http://www.modernroboticsinc.com/compass">MR Compass Sensor</a>
- */
 @TeleOp(name = "Sensor: MR compass", group = "Sensor")
-//@Disabled   // comment out or remove this line to enable this opmode
+@Disabled   // comment out or remove this line to enable this opmode
 public class SensorMRCompass extends LinearOpMode {
 
     ModernRoboticsI2cCompassSensor compass;
-    ElapsedTime                    timer = new ElapsedTime();
+    ElapsedTime timer = new ElapsedTime();
+    TestRobot bot = new TestRobot();
 
     @Override public void runOpMode() {
 
@@ -72,11 +33,20 @@ public class SensorMRCompass extends LinearOpMode {
         telemetry.log().add("compass in a full 360 degree circle while keeping");
         telemetry.log().add("it level. When complete, press 'B'.");
 
+        bot.init(hardwareMap);
+
         // wait for the start button to be pressed
         waitForStart();
         telemetry.log().clear();
 
         while (opModeIsActive()) {
+
+            double forward = -gamepad1.right_stick_y;
+            double strafe = gamepad1.right_stick_x;
+            double turn = -gamepad1.left_stick_x;
+
+
+            bot.moveTeleOp(forward, strafe, turn);
 
             // If the A button is pressed, start calibration and wait for the A button to rise
             if (gamepad1.a && !compass.isCalibrating()) {
@@ -146,3 +116,4 @@ public class SensorMRCompass extends LinearOpMode {
         telemetry.update();
     }
 }
+

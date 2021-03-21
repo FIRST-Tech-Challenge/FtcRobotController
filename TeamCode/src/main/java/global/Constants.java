@@ -25,5 +25,6 @@ public class Constants {
 
     public static final double pi2 = Math.PI*2;
     public static final double ANGLE_ACCURACY = 3.5;
+    public static final double COMPASS_START = 163;
 
 }

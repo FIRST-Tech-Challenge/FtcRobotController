@@ -7,10 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.ArrayList;
 
+import autofunctions.Odometry;
 import global.AngularPosition;
 import global.Constants;
 import telefunctions.Cycle;
@@ -52,6 +54,8 @@ public class TestRobot {
 
     public ButtonController outtakeButtonController = new ButtonController();
 
+    public Odometry odometry = new Odometry();
+
 
     public void init(HardwareMap hwMap) {
 
@@ -87,6 +91,8 @@ public class TestRobot {
         }
         shooter.addStage(rp, pushControl, 0, 0.3);
         autoModule2s.add(shooter);
+
+        odometry.init(getLeftOdo(), getCenterOdo(), getRightOdo());
 
 
     }
@@ -218,5 +224,39 @@ public class TestRobot {
         double x = autoAimer.getDisFromCenter(getLeftDistance()/100, robotTheta) - Constants.GOAL_FROM_LEFT;
         double y = autoAimer.getDisFromCenter(getBackDistance()/100, robotTheta);
         return Math.atan2(y, x);
+    }
+
+    public int getLeftOdo() {
+        return r1.getCurrentPosition();
+    }
+
+    public int getRightOdo() {
+        return l2.getCurrentPosition();
+    }
+
+    public int getCenterOdo() {
+        return r2.getCurrentPosition();
+    }
+
+    public void updateOdometry() {
+        odometry.updateGlobalPosition(getLeftOdo(), getCenterOdo(), getRightOdo(), angularPosition.getHeadingGY());
+    }
+
+    public Telemetry addOuttakeTelemetry(Telemetry telemetry) {
+        telemetry.addData("Right Outtake Position", outr.getCurrentPosition());
+        telemetry.addData("Left Outtake Position", outl.getCurrentPosition());
+        telemetry.addData("Right Outtake Angular Velocity", autoAimer.outrController.currSpeed);
+        telemetry.addData("Left Outtake Angular Velocity", autoAimer.outlController.currSpeed);
+        telemetry.addData("Right Outtake Error", autoAimer.outrController.currError);
+        telemetry.addData("Left Outtake Error", autoAimer.outlController.currError);
+        telemetry.addData("Right Outtake Power", autoAimer.outrController.power);
+        telemetry.addData("Left Outtake Power", autoAimer.outlController.power);
+        telemetry.addData("Right Outtake Change Time", autoAimer.outrController.changeTime);
+        telemetry.addData("Left Outtake Change Time", autoAimer.outlController.changeTime);
+        telemetry.addData("Right Outtake Derivative Power", autoAimer.outrController.derivativeOfPower);
+        telemetry.addData("Left Outtake Derivative Power", autoAimer.outlController.derivativeOfPower);
+        telemetry.addData("Right Outtake Target Speed", autoAimer.outrController.targetSpeed);
+        telemetry.addData("Left Outtake Target Speed", autoAimer.outlController.targetSpeed);
+        return telemetry;
     }
 }
