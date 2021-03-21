@@ -21,6 +21,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     DcMotor rightRearMotor = null;
     DcMotor wobbleGoalExtendMotor = null;
     DcMotor wobbleGoalRaiseMotor = null;
+    DcMotor elevator = null;
     DcMotorImplEx shooterMotor = null;
     Servo wobbleGoalGrippyThing = null;
     CRServo intakeOne = null;
@@ -28,6 +29,8 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     CRServo shooterServo1 = null;
     CRServo shooterServo2 = null;
     RobotClass robot;
+    private double ticks = 537;//537
+
 
     private double ticks = 537;//537
 
@@ -47,6 +50,7 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         rightRearMotor = hardwareMap.dcMotor.get("backRight");
         wobbleGoalExtendMotor = hardwareMap.dcMotor.get("wobbleExtendo");
         wobbleGoalRaiseMotor = hardwareMap.dcMotor.get("wobbleLift");
+        elevator = hardwareMap.dcMotor.get("");
         shooterMotor = (DcMotorImplEx) hardwareMap.dcMotor.get("shooterMotor");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         intakeOne = hardwareMap.crservo.get("intakeServoOne");
@@ -66,6 +70,8 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         boolean shooterServoOn= false;
         boolean intake = false;
         wobbleGoalGrippyThing.setPosition(0.9);
+        boolean elevatorGoal = true;
+        boolean elevatorPosition = true;
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -173,6 +179,43 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             if (gamepad1.a) {
                 forwardToWhite(.9,.5,.3);
                 forward(.5, -2.7);
+            }
+
+            if (gamepad2.left_stick_y > .87) {
+                elevatorGoal = true;
+
+                //Numbers completely arbitrary for theoretical purposes.
+                elevator.setTargetPosition((int)7);
+                elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator.setPower(Math.abs(2));
+
+            }
+            if (gamepad2.left_stick_y < -.87) {
+                elevatorGoal = false;
+
+                //Numbers completely arbitrary for theoretical purposes.
+                elevator.setTargetPosition((int)-3);
+                elevator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator.setPower(Math.abs(2));
+
+            }
+            if (elevatorGoal) {
+                if (elevator.getCurrentPosition() >= 7) {
+                    elevatorPosition = true;
+                    elevator.setPower(0);
+                }
+            } else if (!elevatorGoal) {
+                if (elevator.getCurrentPosition() <= -3) {
+                    elevatorPosition = false;
+                    elevator.setPower(0);
+                }
+            }
+            while (gamepad2.dpad_left) {
+                /*
+                servo.setPosition(.7);
+                robot.pause();
+                servo.setPosition(.2);
+                 */
             }
 
         }
