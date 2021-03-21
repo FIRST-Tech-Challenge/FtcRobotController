@@ -1247,7 +1247,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 25, 165, -50, true, 3);
+                chassis.driveTo(auto_chassis_power, 25, 165, 0, false, 2);
+                chassis.rotateToFast(1,-45,0.5);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
@@ -1384,7 +1385,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
     public void doPowerShots() throws InterruptedException {
         if (tZone == TargetZone.ZONE_A) {
-            chassis.driveTo(auto_chassis_power, side(60), 165, chassis.odo_heading(), false, 5);
+            chassis.driveTo(auto_chassis_power, side(60), 170, chassis.odo_heading(), false, 1);
+            chassis.rotateTo(1, 0,1);
         } else if (tZone == TargetZone.ZONE_C) {
             chassis.driveStraight(1.0, -100, chassis.odo_heading() + 10, 5);
         }
@@ -1549,20 +1551,21 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         while (!TaskManager.isComplete("Transfer Up Combo")) {
             TaskManager.processTasks();
         }
+        double target_heading = chassis.odo_heading();
 
         if(angleCollection){
-            double heading = 0;
-            if (Math.abs(chassis.odo_heading() - heading) > 0.8) {
-                if (Math.abs(chassis.odo_heading() - heading) > 10) {
-                    chassis.rotateTo(0.3, heading);
+            target_heading=0;
+            if (Math.abs(chassis.odo_heading() - target_heading) > 0.5) {
+                if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
+                    chassis.rotateTo(0.3, target_heading);
                     sleep(100);
                 }
                 int i=0;
-                while (Math.abs(chassis.odo_heading() - heading)>1 && i<2) {
-                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin, heading, false, 0.5);
+                while (Math.abs(chassis.odo_heading() - target_heading)>1 && i<2) {
+                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin, target_heading, false, 0.5);
                     i++;
                 }
-                //sleep(200);
+                sleep(100);
             }
         }
 
@@ -1580,7 +1583,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
         // chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+19,chassis.odo_y_pos_cm(),chassis.odo_heading()-0.5,false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+18,chassis.odo_y_pos_cm(),target_heading-0.5,false,1);
+        sleep(200);
         hopper.feederAuto();
         if (n==2) {
             shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
@@ -1592,8 +1596,10 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
 
         //chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+19,chassis.odo_y_pos_cm(),chassis.odo_heading()-0.5,false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+18,chassis.odo_y_pos_cm(),target_heading-0.5,false,1);
+        sleep(200);
         hopper.feederAuto();
+        sleep(100);
         shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM);
     }
     public void doPowerShotsSemiNew(int n, boolean angleCollection) throws InterruptedException {
@@ -1657,14 +1663,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(1.0, side(165), 33, 0, true,  5);
         }
         else {
-            chassis.driveTo(auto_chassis_power, side(165), 30, 0, true, 5);
+            chassis.driveTo(auto_chassis_power, side(165), 32, 0, true, 5);
         }
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C) {
                 chassis.driveTo(0.6, side(105), 29, 0, false, 3);
             }
             else {
-                chassis.driveTo(0.6, side(105), 28, 0, false, 3);
+                chassis.driveTo(0.6, side(105), 27, 0, false, 3);
             }
         } else {
             chassis.driveTo(auto_chassis_power, side(47), 29, 0, true,  3);
@@ -1727,7 +1733,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 // chassis.driveTo(.8, side(30), 40, 0, false, 2);
-                chassis.driveTo(0.9, side(12), 165, -25, true, 5);
+                chassis.driveTo(0.9, side(12), 165, -25, false, 3);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
                 intake.intakeIn();
