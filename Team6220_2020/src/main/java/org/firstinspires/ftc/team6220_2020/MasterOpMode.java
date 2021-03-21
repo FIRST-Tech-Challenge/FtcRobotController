@@ -11,6 +11,8 @@ public abstract class MasterOpMode extends LinearOpMode
     DcMotor motorFrontRight;
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
+    // Todo - move to miscallenous motors.
+    DcMotor motorLauncher;
 
     //Other Devices
 
@@ -20,6 +22,9 @@ public abstract class MasterOpMode extends LinearOpMode
         motorFrontRight = hardwareMap.dcMotor.get("motorFR");
         motorBackLeft = hardwareMap.dcMotor.get("motorBL");
         motorBackRight = hardwareMap.dcMotor.get("motorBR");
+        // Todo - move to miscallenous motors.
+        motorLauncher = hardwareMap.dcMotor.get("motorLauncher");
+
 
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -29,6 +34,9 @@ public abstract class MasterOpMode extends LinearOpMode
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // Todo - move to miscallenous motors.
+        motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void driveMecanum(double driveAngle, double drivePower, double w)
@@ -54,5 +62,28 @@ public abstract class MasterOpMode extends LinearOpMode
             motorBackLeft.setPower(motorBLPower);
             motorBackRight.setPower(motorBRPower);
         }
+    }
+
+    public void driveLauncher(double power) {
+        motorLauncher.setPower(power);
+    }
+
+    public void getMotorSpeed(DcMotor motor, int delayInMillis) {
+        long startTime = System.currentTimeMillis();
+        int startPosition = motor.getCurrentPosition();
+        long endTime;
+        int endPosition;
+        int positionChange;
+        long timeChange;
+
+        while (true) {
+            if (System.currentTimeMillis() - startTime >= 100) break;
+        }
+
+        endTime = System.currentTimeMillis();
+        endPosition = motor.getCurrentPosition();
+
+        positionChange = endPosition - startPosition;
+        timeChange = endTime - startTime;
     }
 }
