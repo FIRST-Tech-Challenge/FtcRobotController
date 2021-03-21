@@ -12,7 +12,7 @@ public abstract class MasterOpMode extends LinearOpMode
     DcMotor motorBackLeft;
     DcMotor motorBackRight;
     // Todo - move to miscallenous motors.
-    DcMotor motorLauncher;
+    public DcMotor motorLauncher;
 
     //Other Devices
 
@@ -68,7 +68,7 @@ public abstract class MasterOpMode extends LinearOpMode
         motorLauncher.setPower(power);
     }
 
-    public void getMotorSpeed(DcMotor motor, int delayInMillis) {
+    public double getMotorSpeed(DcMotor motor, int delayInMillis) {
         long startTime = System.currentTimeMillis();
         int startPosition = motor.getCurrentPosition();
         long endTime;
@@ -85,5 +85,7 @@ public abstract class MasterOpMode extends LinearOpMode
 
         positionChange = endPosition - startPosition;
         timeChange = endTime - startTime;
+
+        return (positionChange/(timeChange / 60000) / Constants.AM_37_TICKS_PER_ROTATION);
     }
 }

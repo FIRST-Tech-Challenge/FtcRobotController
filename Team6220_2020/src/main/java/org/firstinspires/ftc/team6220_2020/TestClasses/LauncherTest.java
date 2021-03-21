@@ -15,6 +15,8 @@ public class LauncherTest extends MasterTeleOp {
 
         while (opModeIsActive()) {
             driveLauncherWithController();
+            
+            telemetry.addData("Launcher RPM", getMotorSpeed(motorLauncher, 100));
 
             idle();
         }
