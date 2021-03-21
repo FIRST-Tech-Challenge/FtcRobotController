@@ -60,7 +60,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
     public Hopper hopper;
     public Intake intake;
 
-    public double auto_chassis_power = .8;
+    public double auto_chassis_power = 1.0;
     public double auto_chassis_dist = 100;
     public double auto_chassis_heading = -90;
     public double auto_chassis_power_slow = .4;
@@ -1247,7 +1247,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         }
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
-                chassis.driveTo(auto_chassis_power, 25, 180, -50, true, 3);
+                chassis.driveTo(auto_chassis_power, 25, 165, -50, true, 3);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
@@ -1393,26 +1393,27 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (tZone == TargetZone.ZONE_C) {
             chassis.driveTo(1.0, side(130), 170, 0, false, 3);
         } else {
-            chassis.driveTo(.6, side(150), 170, 0, false, 5); // need to do something about this
+            chassis.driveTo(.8, side(135), 170, 0, false, 5); // need to do something about this
         }
 //        if (tZone == TargetZone.ZONE_C) { // temporarily disable the shooting
 //            shooter.shootOutByRpm(0);
 //            return;
 //        }
-        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
+            doPowerShotsSemi(3, true);
+       // rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_L, false);
         //shoot
-        autoShoot();
+        //autoShoot();
         //sleep(500);
-        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_M, false);
+        //rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_M, false);
         //chassis.driveTo(.55, side(150), 170, 0, false,  2);
         //shoot
-        autoShoot();
+        //autoShoot();
         //sleep(500);
-        rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R, false);
+        //rotateToTargetAndStartShooter(MechChassis.ShootingTarget.PSHOT_R, false);
         //chassis.driveTo(.55, side(170), 170, 0, false,  2);
         //shoot
-        autoShoot();
-        sleep(200);
+        //autoShoot();
+        //sleep(200);
         shooter.shootOutByRpm(0);
     }
 
@@ -1653,20 +1654,20 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             TaskManager.processTasks();
         }
         if (tZone == TargetZone.ZONE_C) {
-            chassis.driveTo(1.0, side(165), 40, 0, true,  5);
+            chassis.driveTo(1.0, side(165), 33, 0, true,  5);
         }
         else {
-            chassis.driveTo(auto_chassis_power, side(165), 40, 0, true, 5);
+            chassis.driveTo(auto_chassis_power, side(165), 30, 0, true, 5);
         }
         if(startPos == StartPosition.OUT){
             if (tZone == TargetZone.ZONE_C) {
-                chassis.driveTo(1.0, side(117), 30, 0, true, 3);
+                chassis.driveTo(0.6, side(105), 29, 0, false, 3);
             }
             else {
-                chassis.driveTo(auto_chassis_power, side(109), 33, 0, true, 3);
+                chassis.driveTo(0.6, side(105), 28, 0, false, 3);
             }
         } else {
-            chassis.driveTo(auto_chassis_power, side(47), 30, 0, true,  3);
+            chassis.driveTo(auto_chassis_power, side(47), 29, 0, true,  3);
         }
         while (!TaskManager.isComplete("Transfer Down Combo")) {
             TaskManager.processTasks();
