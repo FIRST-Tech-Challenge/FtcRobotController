@@ -6,9 +6,12 @@ import org.firstinspires.ftc.teamcode.HardwareMapV2;
 public class teleConfigTESTING_S implements teleOpInterface{
     HardwareMapV2 robot;
     Drivetrain drivetrain;
-    double intakeTime, outtakeTime, xTime, yTime, dTime, somePause;
+    double intakeTime, outtakeTime, xTime, yTime, dTime, somePause, button;
+    boolean negIntake, intakeOn, outtakeOn;
     double perfectval = 0.33;
     int reverseIntake = 1;
+    int unnecessarynegintake = 1;
+    double limiter = 1;
 
     public teleConfigTESTING_S(HardwareMapV2 robot) {
         this.robot = robot;
@@ -27,7 +30,8 @@ public class teleConfigTESTING_S implements teleOpInterface{
         if (pressed) {
             if (confignumber == 0 || confignumber == 1) {
                 if (pressed && System.currentTimeMillis() - intakeTime >= 700) {
-                    robot.intake.setPower((robot.intake.getPower() != 0.0) ? 0 : 0.4);
+                    intakeOn = (!(robot.intake.getPower() > 0));
+                    negIntake = false;
                     intakeTime = System.currentTimeMillis();
                 }
             } else if (confignumber == 2) {
@@ -49,17 +53,14 @@ public class teleConfigTESTING_S implements teleOpInterface{
         if (pressed) {
             if (confignumber == 0) {
                 if (pressed && System.currentTimeMillis() - intakeTime >= 700) {
-                    robot.intake.setPower((robot.intake.getPower() != 0.0) ? 0 : -0.4);
+                    intakeOn = !(robot.intake.getPower() > 0);
+                    negIntake = !(negIntake);
                     intakeTime = System.currentTimeMillis();
                 }
             } else if (confignumber == 1) {
                 if (pressed && System.currentTimeMillis() - outtakeTime >= 700) {
-                    drivetrain.outtakeAll(0, (((robot.outtake.getPower() >= 0.1) ? 0 : 1)));
+                    outtakeOn = (!(robot.outtake.getPower() > 0));
                     somePause = System.currentTimeMillis();
-                    if (robot.outtake.getPower() >= 0.1) {
-                        while (System.currentTimeMillis() - somePause >= 500) {
-                        }
-                        drivetrain.outtakeAll(1.0);
                     }
                     outtakeTime = System.currentTimeMillis();
                 }
@@ -70,41 +71,53 @@ public class teleConfigTESTING_S implements teleOpInterface{
                 }
             }
         }
-    }
+
 
     public void x(boolean pressed) {
-        if (pressed) {
+        if (pressed && System.currentTimeMillis()-button>=500) {
             confignumber += 1;
             if (confignumber > 3) {
                 confignumber = 0;
             }
             switch (confignumber) {
+                case 0:
+                    configname = "1a = intake in, b = intake out";
+                    break;
                 case 1:
-                    configname = "a = intake in, b = intake out";
-                    break;
-                case 2:
-                     configname = "a = intake in, b = outtake out";
+                     configname = "2a = intake in, b = outtake out, y = slap";
                      break;
-                case 3:
-                    configname = "a = bring wobble up/down";
+                case 2:
+                    configname = "3a = bring wobble up/down";
                     break;
-                case 4:
-                    configname = "a = outtake angle up, b = outtake angle down";
+                case 3:
+                    configname = "4a = outtake angle up, b = outtake angle down";
             }
+            button = System.currentTimeMillis();
         }
     }
 
     public void y(boolean pressed) {
-        if (pressed) {
-            robot.setPowerAll(0);
+        if (pressed && System.currentTimeMillis()-button>=500) {
+            if (confignumber == 1) {
+                drivetrain.singleCycle();
+            }
+            button = System.currentTimeMillis();
         }
     }
 
     public void dd(boolean pressed) {
+        if (pressed && System.currentTimeMillis()-button>=500) {
+            limiter -= 0.1;
+        }
+        button = System.currentTimeMillis();
 
     }
 
     public void dp(boolean pressed) {
+        if (pressed && System.currentTimeMillis()-button>=500) {
+            limiter += 0.1;
+        }
+        button = System.currentTimeMillis();
 
     }
 
@@ -153,11 +166,21 @@ public class teleConfigTESTING_S implements teleOpInterface{
     }
 
     public void updateTelemetryDM() {
-        telemetryDM.put("Instructions: ", configname);
+        telemetryDM.put("Instructions: ", configname); telemetryDM.put("Limiter:", (String.valueOf(limiter)));
     }
 
     public void loop() {
+        if (negIntake) {unnecessarynegintake = -1;} else if (!negIntake) {unnecessarynegintake = 1;}
+        if (intakeOn) {
+            robot.intake.setPower(0.4*unnecessarynegintake);
+        } else if(!intakeOn) {
+            robot.intake.setPower(0);
+        }
 
+        if (outtakeOn) {
+            robot.outtake.setPower(1*limiter);
+        } else if (!outtakeOn) { robot.outtake.setPower(0);
+        }
     }
 
     public void clearTelemetryDM() {

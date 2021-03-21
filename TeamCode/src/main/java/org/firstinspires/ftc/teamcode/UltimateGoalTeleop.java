@@ -100,6 +100,7 @@ public class UltimateGoalTeleop extends OpMode{
         configs.add(teleConfigRohit2.class);
         configs.add(lessButtonsConfig.class);
         configs.add(teleConfigTESTING_R.class);
+        configs.add(teleConfigTESTING_S.class);
 
 
         // Send telemetry message to signify robot waiting;
