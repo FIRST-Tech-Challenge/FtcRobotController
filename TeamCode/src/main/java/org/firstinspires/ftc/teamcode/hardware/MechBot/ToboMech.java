@@ -555,7 +555,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
 
                 } else if (source.isPressed(Button.BACK)) {
                     // semi power shot
-                    doPowerShotsSemi(3,false);
+                    // doPowerShotsSemi(3,false);
+                    doPowerShotsSemiNew(3,true);
                 } else {
                     if (hopper.getTransferIsDown() || Math.abs(shooting_rpm-WARM_UP_RPM_POWER_SHOT)>20 ||
                     shooter.getCurrentRPM()<WARM_UP_RPM_POWER_SHOT-100) {
@@ -1615,23 +1616,6 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         while (!TaskManager.isComplete("Transfer Up Combo")) {
             TaskManager.processTasks();
         }
-
-        if(angleCollection){
-            double heading = 0;
-            if (Math.abs(chassis.odo_heading() - heading) > 0.8) {
-                if (Math.abs(chassis.odo_heading() - heading) > 10) {
-                    chassis.rotateTo(0.3, heading);
-                    sleep(100);
-                }
-                int i=0;
-                while (Math.abs(chassis.odo_heading() - heading)>1 && i<2) {
-                    chassis.rawRotateTo(chassis.chassisAligmentPowerMin, heading, false, 0.5);
-                    i++;
-                }
-                //sleep(200);
-            }
-        }
-
 
         //chassis.resetOdometry(true); // use rangeSensor to correct Odometry
         //shoot
