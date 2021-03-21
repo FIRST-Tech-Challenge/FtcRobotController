@@ -1073,8 +1073,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         } else {
             shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
         }
-        //if (comboGrabber != null && tZone != TargetZone.UNKNOWN) // during autonomous
-          //  comboGrabber.armUp();
+        if (comboGrabber != null && tZone != TargetZone.UNKNOWN) // during autonomous
+            comboGrabber.armUpAuto();
         initializeGPSThread();
         if (chassis!=null) {
             batteryVolt = getBatteryVoltage();
@@ -1433,7 +1433,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (side!=ProgramType.TELE_OP && runtimeAuto.seconds() > 29){ return;}
         if (!keepPos) {
             if (tZone == TargetZone.ZONE_B || tZone == TargetZone.ZONE_C && numHighGoals == 3) {
-                chassis.driveTo(.52, side(45), 165, 0, true, 4);
+                chassis.driveTo(.6, side(45), 165, 0, true, 4);
             } else if (tZone != TargetZone.UNKNOWN) {
                 if (side!=ProgramType.TELE_OP &&runtimeAuto.seconds() > 29) {
                     return;
@@ -1455,7 +1455,8 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             } else {
                 autoShootFast(true);
             }
-            sleep(200);
+            if (i < numHighGoals - 1)
+                sleep(200);
         }
         if (numPowerShots > 0) {
             if (side!=ProgramType.TELE_OP && runtimeAuto.seconds() > 29){ return;}
@@ -1750,15 +1751,19 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
                 //chassis.driveTo(.8, side(30), 60, 0, false, 5);
                 chassis.driveTo(1.0, side(87), 123, 0, false, 2);
                 autoIntakeRings(3, true);
+                if (hopper != null) {
+                    hopper.hopperUpCombo(true);
+                    TaskManager.processTasks();
+                }
                 chassis.driveTo(1.0, side(87), 165, 0, false, 1);
                 autoShootHighGoal(3, true);
                 shooter.shootOutByRpm(WARM_UP_RPM_AUTO);
-                while (!TaskManager.isComplete("Transfer Down Combo")) {
-                    TaskManager.processTasks();
-                }
                 intake.intakeIn();
                 chassis.driveTo(1.0, side(5), 287, 0, false, 2.5);
                 intake.stop();
+                while (!TaskManager.isComplete("Transfer Down Combo")) {
+                    TaskManager.processTasks();
+                }
             } else {
                 return;
             }
