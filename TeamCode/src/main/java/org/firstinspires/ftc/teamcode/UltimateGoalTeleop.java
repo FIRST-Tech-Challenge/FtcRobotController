@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.configs.lessButtonsConfig;
 import org.firstinspires.ftc.teamcode.configs.teleConfigEx;
 import org.firstinspires.ftc.teamcode.configs.teleConfigRohit;
@@ -136,38 +137,14 @@ public class UltimateGoalTeleop extends OpMode{
         //Mecanum Drivetrain function to set powers
         vroom.loop();
 
-        if (gamepad2.start){
+        //Pressing starts initiates changing config. Press x to exit.
+        if (gamepad2.start) {
             switching = true;
         }
-
         if (switching) {
-            if (gamepad2.dpad_down && index!=(configs.size()-1) && System.currentTimeMillis()-ddTimer>=500){index++; ddTimer = System.currentTimeMillis();}
-            if (gamepad2.dpad_up && index!=0 && System.currentTimeMillis()-duTimer>=500){index--; duTimer = System.currentTimeMillis();}
-            for (Class<? extends teleOpInterface> t : configs){
-                telemetry.addData(t.getName(), (index==configs.indexOf(t)) ? " <" : "");
-            }
-
-            telemetry.update();
-            if (gamepad2.x) {
-                if (configs.get(index).getName().equals(teleConfigEx.class.getName())) {
-                    t = new teleConfigEx(robot);
-                } else if (configs.get(index).getName().equals(teleConfigRohit.class.getName())) {
-                    t = new teleConfigRohit(robot);
-//              }else if (configs.get(index).getName().equals(teleConfigSamih.class.getName())){
-//                  t = new teleConfigSamih(robot);
-                } else if (configs.get(index).getName().equals(teleConfigRohit2.class.getName())) {
-                    t = new teleConfigRohit2(robot);
-                } else if (configs.get(index).getName().equals(lessButtonsConfig.class.getName())) {
-                    t = new lessButtonsConfig(robot);
-                } else if (configs.get(index).getName().equals(teleConfigTESTING_R.class.getName())) {
-                    t = new teleConfigTESTING_R(robot);
-                } else if (configs.get(index).getName().equals(teleConfigTESTING_S.class.getName())) {
-                    t = new teleConfigTESTING_S(robot);
-                }
-
-                switching = false;
-            }
+            changeConfig();
         } else {
+            //looping through all buttons, passing either False or True
             t.a(gamepad2.a);
             t.b(gamepad2.b);
             t.x(gamepad2.x);
@@ -192,6 +169,7 @@ public class UltimateGoalTeleop extends OpMode{
             t.clearTelemetryDM();
             t.updateTelemetryDM();
 
+            //Telemetry from unique Config folowed by telemtry of all motors and servos
             for (String caption : t.telemetryDM.keySet()){
                 telemetry.addData(caption, t.telemetryDM.get(caption));
             }
@@ -211,10 +189,10 @@ public class UltimateGoalTeleop extends OpMode{
             telemetry.addData("Wobble", robot.wobble.getPosition());
             telemetry.addData("Slapper", robot.slapper.getPosition());
 
-            telemetry.addData("Gpad 1 a?", gamepad1.a);
             telemetry.update();
             t.loop();
 
+            //If A is pressed turn to shooting angle
             if (gamepad1.a){
                 turnTimer = System.currentTimeMillis() + 1500;
                 gyroTurn(0.5, startingAngle-15);
@@ -233,25 +211,33 @@ public class UltimateGoalTeleop extends OpMode{
     public void stop() {
     }
 
-    public void changeConfig() throws InterruptedException {
-        while (!gamepad2.x) {
-            if (gamepad2.dpad_down && index!=(configs.size()-1) && System.currentTimeMillis()-ddTimer>=500){index++; ddTimer = System.currentTimeMillis();}
-            if (gamepad2.dpad_up && index!=0 && System.currentTimeMillis()-duTimer>=500){index--; duTimer = System.currentTimeMillis();}
-            for (Class<? extends teleOpInterface> t : configs){
-                telemetry.addData(t.getName(), (index==configs.indexOf(t)) ? " <" : "");
-            }
-            telemetry.update();
+    public void changeConfig() {
+        if (gamepad2.dpad_down && index!=(configs.size()-1) && System.currentTimeMillis()-ddTimer>=500){index++; ddTimer = System.currentTimeMillis();}
+        if (gamepad2.dpad_up && index!=0 && System.currentTimeMillis()-duTimer>=500){index--; duTimer = System.currentTimeMillis();}
+        for (Class<? extends teleOpInterface> t : configs){
+            String[] arr = t.getName().split("\\.");
+            telemetry.addData("Name " + arr[arr.length-1], (index==configs.indexOf(t)) ? " <" : "");
         }
-        if (configs.get(index).getName().equals(teleConfigEx.class.getName())){
-            t = new teleConfigEx(robot);
-        }else if (configs.get(index).getName().equals(teleConfigRohit.class.getName())){
-            t = new teleConfigRohit(robot);
-        }else if (configs.get(index).getName().equals(teleConfigSamih.class.getName())){
-            t = new teleConfigSamih(robot);
-        }else if (configs.get(index).getName().equals(teleConfigRohit2.class.getName())){
-            t = new teleConfigRohit2(robot);
-        }else if (configs.get(index).getName().equals(lessButtonsConfig.class.getName())) {
-            t = new lessButtonsConfig(robot);
+
+        telemetry.update();
+        if (gamepad2.x) {
+            if (configs.get(index).getName().equals(teleConfigEx.class.getName())) {
+                t = new teleConfigEx(robot);
+            } else if (configs.get(index).getName().equals(teleConfigRohit.class.getName())) {
+                t = new teleConfigRohit(robot);
+//              }else if (configs.get(index).getName().equals(teleConfigSamih.class.getName())){
+//                  t = new teleConfigSamih(robot);
+            } else if (configs.get(index).getName().equals(teleConfigRohit2.class.getName())) {
+                t = new teleConfigRohit2(robot);
+            } else if (configs.get(index).getName().equals(lessButtonsConfig.class.getName())) {
+                t = new lessButtonsConfig(robot);
+            } else if (configs.get(index).getName().equals(teleConfigTESTING_R.class.getName())) {
+                t = new teleConfigTESTING_R(robot);
+            } else if (configs.get(index).getName().equals(teleConfigTESTING_S.class.getName())) {
+                t = new teleConfigTESTING_S(robot);
+            }
+
+            switching = false;
         }
     }
     // turn to an angle using gyro
