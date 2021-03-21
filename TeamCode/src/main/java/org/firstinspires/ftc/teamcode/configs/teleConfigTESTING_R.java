@@ -123,14 +123,7 @@ public class teleConfigTESTING_R implements teleOpInterface{
     }
 
     public void updateTelemetryDM() {
-        telemetryDM.put("Hardware: ","DONT BREAK IT");
-        telemetryDM.put("Left Tilt ", String.valueOf(robot.leftTilt.getPosition()));
-        telemetryDM.put("Right Tilt ", String.valueOf(robot.rightTilt.getPosition()));
-        telemetryDM.put("Wobble ", String.valueOf(robot.wobble.getPosition()));
-        telemetryDM.put("Intake ", String.valueOf(robot.intake.getPower()));
-        telemetryDM.put("Outtake ", String.valueOf(robot.outtake.getPower()));
-        telemetryDM.put("Set Power ", String.valueOf(varPower));
-        telemetryDM.put("Invert ", String.valueOf(switcher));
+        
     }
 
     public void loop() {
