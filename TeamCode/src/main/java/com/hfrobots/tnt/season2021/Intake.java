@@ -65,31 +65,34 @@ public class Intake {
     }
 
     public void runJankyServo() {
-        safeServoSetPower(INTAKE_SERVO_POWER);
+        //safeServoSetPower(INTAKE_SERVO_POWER);
     }
 
     public void backwardsRunJankyServo() {
-        safeServoSetPower(OUTTAKE_SERVO_POWER);
+        //safeServoSetPower(OUTTAKE_SERVO_POWER);
     }
 
     public void stopJankyServo() {
-        safeServoSetPower(0);
+        //safeServoSetPower(0);
     }
 
-    public void intake(float speed){
+    public void intake(float speed) {
         intakeMotor.setPower(INTAKE_POWER * Math.abs(speed));
+        safeServoSetPower(-INTAKE_SERVO_POWER);
     }
 
-    public void outtake(float speed){
+    public void outtake(float speed) {
         intakeMotor.setPower(OUTTAKE_POWER * Math.abs(speed));
+        safeServoSetPower(-OUTTAKE_SERVO_POWER);
     }
 
     public void stop() {
         intakeMotor.setPower(0);
+        safeServoSetPower(0);
     }
 
     private void safeServoSetPower(float power) {
-        if(intakeServo != null) {
+        if (intakeServo != null) {
             intakeServo.setPower(power);
         }
     }
