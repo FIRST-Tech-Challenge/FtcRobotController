@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public abstract class MasterOpMode extends LinearOpMode
 {
     //Motors
-    DcMotor motorFrontLeft;
+    /*DcMotor motorFrontLeft;
     DcMotor motorFrontRight;
     DcMotor motorBackLeft;
-    DcMotor motorBackRight;
+    DcMotor motorBackRight;*/
     // Todo - move to miscallenous motors.
     public DcMotor motorLauncher;
 
@@ -18,28 +18,28 @@ public abstract class MasterOpMode extends LinearOpMode
 
     public void Initialize(){
         //Initialize
-        motorFrontLeft = hardwareMap.dcMotor.get("motorFL");
-        motorFrontRight = hardwareMap.dcMotor.get("motorFR");
-        motorBackLeft = hardwareMap.dcMotor.get("motorBL");
-        motorBackRight = hardwareMap.dcMotor.get("motorBR");
+        //motorFrontLeft = hardwareMap.dcMotor.get("motorFL");
+        //motorFrontRight = hardwareMap.dcMotor.get("motorFR");
+        //motorBackLeft = hardwareMap.dcMotor.get("motorBL");
+        //motorBackRight = hardwareMap.dcMotor.get("motorBR");
         // Todo - move to miscallenous motors.
         motorLauncher = hardwareMap.dcMotor.get("motorLauncher");
 
 
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        /*motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
         // Todo - move to miscallenous motors.
         motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public void driveMecanum(double driveAngle, double drivePower, double w)
+    /*public void driveMecanum(double driveAngle, double drivePower, double w)
     {
         double x = drivePower * Math.cos(driveAngle);
         double y = drivePower * Math.sin(driveAngle);
@@ -62,22 +62,22 @@ public abstract class MasterOpMode extends LinearOpMode
             motorBackLeft.setPower(motorBLPower);
             motorBackRight.setPower(motorBRPower);
         }
-    }
+    }*/
 
-    public void driveLauncher(double power) {
+    public void driveLauncher(double power){
         motorLauncher.setPower(power);
     }
 
     public double getMotorSpeed(DcMotor motor, int delayInMillis) {
-        long startTime = System.currentTimeMillis();
-        int startPosition = motor.getCurrentPosition();
-        long endTime;
-        int endPosition;
-        int positionChange;
-        long timeChange;
+        double startTime = System.currentTimeMillis();
+        double startPosition = motor.getCurrentPosition();
+        double endTime;
+        double endPosition;
+        double positionChange;
+        double timeChange;
 
         while (true) {
-            if (System.currentTimeMillis() - startTime >= 100) break;
+            if (System.currentTimeMillis() - startTime >= delayInMillis) break;
         }
 
         endTime = System.currentTimeMillis();
@@ -86,6 +86,14 @@ public abstract class MasterOpMode extends LinearOpMode
         positionChange = endPosition - startPosition;
         timeChange = endTime - startTime;
 
-        return (positionChange/(timeChange / 60000) / Constants.AM_37_TICKS_PER_ROTATION);
+        double timeChangeInMin = timeChange / 60000;
+        double ticksPerMinute = positionChange/timeChangeInMin;
+
+        if(timeChange != 0){
+            return (ticksPerMinute / Constants.AM_37_TICKS_PER_ROTATION);
+        } else{
+            return 0;
+        }
+
     }
 }

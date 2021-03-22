@@ -12,7 +12,7 @@ public class Constants
     public static final int US_DIGITAL_TICKS_PER_ROTATION = 1440;   // For odometry wheels
     public static final double MM_PER_INCH = 25.4;
     public static final double IN_FIELD_SIZE = 140.94;  // Not 144" due to interlocking pieces being cut off on field edge.
-    public static final int AM_37_TICKS_PER_ROTATION = 104;
+    public static final double AM_37_TICKS_PER_ROTATION = 103.6;
     //---------------------------------------------------------------
 
 
