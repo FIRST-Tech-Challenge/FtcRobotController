@@ -88,19 +88,31 @@ public class AutoMenu extends LinearOpMode {
         // run until the end of the match (driver presses STOP or timeout)
         if (opModeIsActive()) {
             try {
-                robot.shooter.shootOutByRpm(ToboMech.WARM_UP_RPM_AUTO);
-                // write the program here
-                //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive()
                 robot.detectPosition();
-                robot.doHighGoalsAndPowerShots(3, 0, false);
-                robot.deliverFirstWobbleGoalAfterHighGoal();
-                if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
-                    robot.getSecondWobbleGoalAfterHighGoal();
-                    robot.deliverSecondWobbleGoalAndShootBonusRings();
+                if (robot.autoPara.isDoPowerShots() && robot.tZone!= ToboMech.TargetZone.ZONE_C) {
+                    robot.deliverFirstWobbleGoal();
+                    if ((robot.runtimeAuto.seconds() < 20) && opModeIsActive()) {
+                        robot.doPowerShots();
+                        if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+                            robot.getSecondWobbleGoal();
+                            robot.deliverSecondWobbleGoalAndShootBonusRings();
+                        }
+                    }
+                    robot.park();
+                } else {
+                    robot.shooter.shootOutByRpm(ToboMech.WARM_UP_RPM_AUTO);
+                    // write the program here
+                    //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive()
+                    robot.detectPosition();
+                    robot.doHighGoalsAndPowerShots(3, 0, false);
+                    robot.deliverFirstWobbleGoalAfterHighGoal();
+                    if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+                        robot.getSecondWobbleGoalAfterHighGoal();
+                        robot.deliverSecondWobbleGoalAndShootBonusRings();
+                    }
+
+                    robot.park();
                 }
-
-                robot.park();
-
             } catch (Exception E) {
                 telemetry.addData("Error in event handler", E.getMessage());
                 handleException(E);
