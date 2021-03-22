@@ -44,8 +44,6 @@ public class Final_Teleop extends LinearOpMode {
         spindoctor.setDirection(DcMotorSimple.Direction.FORWARD);
         factory.setDirection(DcMotor.Direction.FORWARD);
 
-
-
         waitForStart();
         runtime.reset();
 
@@ -122,9 +120,9 @@ public class Final_Teleop extends LinearOpMode {
                 spinPower = 0;
             }
             if (gamepad2.a) {
-                SPower = -1;
+                SPower = -0.5;
             } else if (gamepad2.b) {
-                SPower = 1;
+                SPower = 0.5;
             } else {
                 SPower = 0;
             }
