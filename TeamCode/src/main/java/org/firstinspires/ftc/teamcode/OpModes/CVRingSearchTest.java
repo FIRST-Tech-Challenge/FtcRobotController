@@ -1,14 +1,19 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
+import android.graphics.Point;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetectMode;
 import org.firstinspires.ftc.teamcode.CVRec.CVDetector;
 import org.firstinspires.ftc.teamcode.CVRec.CVRoi;
+import org.firstinspires.ftc.teamcode.bots.BotMoveProfile;
+import org.firstinspires.ftc.teamcode.bots.UltimateBot;
+import org.firstinspires.ftc.teamcode.odometry.RobotCoordinatePosition;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +27,9 @@ public class CVRingSearchTest extends LinearOpMode {
     CVDetector detector;
     Deadline gamepadRateLimit;
     private final static int GAMEPAD_LOCKOUT = 500;
+    RobotCoordinatePosition locator = null;
+    UltimateBot robot   = new UltimateBot();
+    ElapsedTime timer = new ElapsedTime();
 
     @Override
     public void runOpMode() {
@@ -36,26 +44,72 @@ public class CVRingSearchTest extends LinearOpMode {
             telemetry.addData("Info", "Detector initialized");
             telemetry.update();
 
+            try {
+                robot.init(this, this.hardwareMap, telemetry);
+                robot.initGyro();
+                robot.initCalibData();
+            }
+            catch (Exception ex){
+                telemetry.addData("Init", ex.getMessage());
+            }
+
+            locator = new RobotCoordinatePosition(robot, new Point(30, 24), 0,RobotCoordinatePosition.THREAD_INTERVAL);
+            locator.reverseHorEncoder();
+            Thread positionThread = new Thread(locator);
+            positionThread.start();
+
             waitForStart();
 
 
-            // run until the end of the match (driver presses STOP)
+            double nextHead = 0;
             while (opModeIsActive()) {
+
+                CVRoi closest = detector.getNearestTarget();;
+                CVRoi next = detector.getSecondTarget();
+
+                if (closest != null) {
+                    telemetry.addData("Nearest Index", closest.getIndex());
+                    telemetry.addData("Nearest Val", closest.getMeanVal());
+                    telemetry.addData("Nearest Angle", closest.getAngle());
+                    telemetry.addData("Nearest Clockwise", closest.isClockwise());
+                    telemetry.addData("Nearest Distance", closest.getDistance());
+                    telemetry.addData("Nearest Is Merged", closest.isMerged());
+                    double curHead = locator.getAdjustedCurrentHeading();
+                    if (closest.isClockwise()) {
+                        nextHead = curHead + closest.getAngle();
+                        if (nextHead > 360) {
+                            nextHead = nextHead - 360;
+                        }
+                    } else {
+                        nextHead = curHead - closest.getAngle();
+                        if (nextHead < 0) {
+                            nextHead = 360 + nextHead;
+                        }
+                    }
+                    telemetry.addData("Robot", String.format("Turn to %.2f degrees", nextHead));
+                }
+
+                if (next != null){
+                    telemetry.addData("Next Index", next.getIndex());
+                    telemetry.addData("Next Val", next.getMeanVal());
+                    telemetry.addData("Next Angle", next.getAngle());
+                    telemetry.addData("Next Clockwise", next.isClockwise());
+                    telemetry.addData("Next Distance", next.getDistance());
+                }
+
                 if (gamepad1.x){
                     gamepadRateLimit.reset();
-                    List<CVRoi> list = detector.getTargets();
-                    if (list != null && list.size() > 0){
-                        telemetry.addData("Number of targets", list.size());
-                        for(int i = 0; i < list.size(); i++) {
-                            CVRoi target = list.get(i);
-                            telemetry.addData(String.format("%.2f, Angle", i), target.getMeanVal());
-                            telemetry.addData(String.format("%d, Angle", i), target.getAngle());
-                            telemetry.addData(String.format("%d, Clockwise", i), target.isClockwise());
-                            telemetry.addData(String.format("%d, Distance", i), target.getDistance());
-                        }
-                        telemetry.update();
+                    BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(nextHead, 0.3, locator);
+                    robot.spin(profileSpin, locator);
+
+                    timer.reset();
+                    while (timer.milliseconds() < 1000){
+                        //do nothing
                     }
+                    nextHead = locator.getAdjustedCurrentHeading();
                 }
+
+                telemetry.update();
             }
         } catch (Exception ex) {
             telemetry.addData("Init Error", ex.getMessage());
@@ -63,6 +117,9 @@ public class CVRingSearchTest extends LinearOpMode {
         } finally {
             if (detector != null) {
                 detector.stopDetection();
+            }
+            if (locator != null){
+                locator.stop();
             }
         }
     }

@@ -8,8 +8,12 @@ import java.util.List;
 
 public abstract class CVPipelineBase extends OpenCvPipeline {
     protected volatile RingStackSize stackSize = RingStackSize.Undefined;
-    private List<CVRoi> targets;
+    protected List<CVRoi> targets;
     protected volatile int meanVal;
+    protected double PIXELS_PER_INCH = 9.5;
+    protected double ROBOT_CENTER = 9;
+    protected CVRoi nearestTarget = null;
+    protected CVRoi secondTarget = null;
 
     protected static final int QUAD_MAX = 108;
     protected static final int SINGLE_MAX = 118;
@@ -49,5 +53,27 @@ public abstract class CVPipelineBase extends OpenCvPipeline {
 
     public List<CVRoi> getTargets() {
         return targets;
+    }
+
+    public void clearTargets() {
+         if (targets != null){
+             targets.clear();
+         }
+    }
+
+    public CVRoi getNearestTarget() {
+        return nearestTarget;
+    }
+
+    public void setNearestTarget(CVRoi nearestTarget) {
+        this.nearestTarget = nearestTarget;
+    }
+
+    public CVRoi getSecondTarget() {
+        return secondTarget;
+    }
+
+    public void setSecondTarget(CVRoi secondTarget) {
+        this.secondTarget = secondTarget;
     }
 }

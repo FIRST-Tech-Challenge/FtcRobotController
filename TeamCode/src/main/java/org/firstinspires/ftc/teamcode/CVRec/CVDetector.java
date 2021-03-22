@@ -72,8 +72,13 @@ public class CVDetector {
             webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    webcam.startStreaming(resX, resY, OpenCvCameraRotation.UPRIGHT);
-                    Log.d(TAG, "CV Detector camera streaming started");
+                    try {
+                        webcam.startStreaming(resX, resY, OpenCvCameraRotation.UPRIGHT);
+                        Log.d(TAG, "CV Detector camera streaming started");
+                    }
+                    catch (Exception ex){
+                        Log.e(TAG, String.format("Cannot start streaming. %s", ex.toString()));
+                    }
                 }
             });
         }
@@ -109,5 +114,25 @@ public class CVDetector {
             return activePipeline.getTargets();
         }
         return null;
+    }
+
+    public CVRoi getNearestTarget() {
+        if (activePipeline != null){
+            return activePipeline.getNearestTarget();
+        }
+        return null;
+    }
+
+    public CVRoi getSecondTarget() {
+        if (activePipeline != null){
+            return activePipeline.getSecondTarget();
+        }
+        return null;
+    }
+
+    public void resetTargets() {
+        if (activePipeline != null){
+            activePipeline.clearTargets();
+        }
     }
 }

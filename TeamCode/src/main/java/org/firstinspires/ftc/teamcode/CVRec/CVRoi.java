@@ -2,15 +2,17 @@ package org.firstinspires.ftc.teamcode.CVRec;
 
 import org.opencv.core.Mat;
 
+import java.util.Comparator;
 import java.util.Objects;
 
-public class CVRoi implements Comparable<CVRoi> {
+public class CVRoi implements Comparable<CVRoi>{
     private Mat input;
     private double distance = 0;
     private double angle = 0;
     private boolean clockwise = false;
     private int index = -1;
     private double meanVal = 0;
+    private boolean merged = false;
 
     public Mat getInput() {
         return input;
@@ -57,6 +59,7 @@ public class CVRoi implements Comparable<CVRoi> {
         return Integer.compare(this.getIndex(), cvRoi.getIndex());
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -75,5 +78,13 @@ public class CVRoi implements Comparable<CVRoi> {
 
     public void setMeanVal(double meanVal) {
         this.meanVal = meanVal;
+    }
+
+    public boolean isMerged() {
+        return merged;
+    }
+
+    public void setMerged(boolean merged) {
+        this.merged = merged;
     }
 }
