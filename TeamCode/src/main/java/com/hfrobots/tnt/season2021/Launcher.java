@@ -63,7 +63,7 @@ public class Launcher {
 
     public final static double RING_FEEDER_PARKED_POSITION = 1.0;
 
-    public final static double LAUNCHER_LIFT_STOWED_POSITION = 0.52;
+    public final static double LAUNCHER_LIFT_STOWED_POSITION = 0.45;
 
     public final static double LAUNCHER_LIFT_MID_POSITION = ((.82 - .1) + (.82 - .2)) / 2;
 
