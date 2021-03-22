@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Components.Accesories.WobbleGoal;
+import org.firstinspires.ftc.teamcode.Components.OdometryChassis;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Components.BasicChassis;
 
@@ -59,7 +60,6 @@ public class TwoGPTeleop extends LinearOpMode {
 
 
             while (!isStopRequested()) {
-                robot.track();
                 float left_stick_y = -gamepad1.left_stick_y;
                 float left_stick_x = -gamepad1.left_stick_x;
                 float right_stick_x = -gamepad1.right_stick_x;
@@ -74,12 +74,25 @@ public class TwoGPTeleop extends LinearOpMode {
                 boolean move_sticks_up = gamepad2.dpad_down;
                 boolean save_Shooting_Position = gamepad2.a;
                 float goToShootingPosition = gamepad2.left_trigger;
+                boolean vuforia_on = gamepad1.y;;
+                boolean gotoPosition_off= gamepad1.dpad_down;;
 
 
 
                 angleInRadian = Math.atan2(left_stick_y, left_stick_x);
                 angleInDegree = Math.toDegrees(angleInRadian);
-
+                if(vuforia_on){
+                    OdometryChassis.vuforia_on=true;
+                }
+                else{
+                    OdometryChassis.vuforia_on=false;
+                }
+                if(gotoPosition_off){
+                    OdometryChassis.gotoPosition_off=true;
+                }
+                else{
+                    OdometryChassis.gotoPosition_off=false;
+                }
                 /**Powershots**/
                 if(odo_powershots){
                         //robot.setPosition(0,0,0);
@@ -102,8 +115,6 @@ public class TwoGPTeleop extends LinearOpMode {
 
                 /**Shooter**/
                 if (shooter_servo){
-                    telemetry.addData("Servo", " SERVO Forward and Backward");
-                    telemetry.update();
                     robot.moveServo(false);
                     robot.moveServo(true);
                 }
@@ -119,8 +130,6 @@ public class TwoGPTeleop extends LinearOpMode {
                 robot.moveMultidirectional(magnitude, angleInDegree, right_stick_x, slowMode); // It is 0.95, because the robot DCs at full power.
 
                 // wobble goal movements
-                telemetry.addData("Wobble Goal Toggle", move_wobble_goal_arm + ", " + currentWobbleGoalPosition);
-                telemetry.update();
                 if (move_wobble_goal_arm){
                     WobbleGoal.Position nextWobbleGoalPosition = WobbleGoal.Position.REST;
                     if (currentWobbleGoalPosition == WobbleGoal.Position.REST){
@@ -135,9 +144,6 @@ public class TwoGPTeleop extends LinearOpMode {
                         nextWobbleGoalPosition = robot.moveWobbleGoalToPosition(WobbleGoal.Position.GRAB);
                     }
                     else {
-                        telemetry.addData("Wobble Goal", "u have made a STUPID MISTAKE");
-                        telemetry.update();
-                        sleep(500);
                     }
                     // added by Aiden; must have this otherwise if you hold onto the button multiple
                     // actions/movements will be executed by mistake
@@ -159,12 +165,8 @@ public class TwoGPTeleop extends LinearOpMode {
 
                 if (move_wobble_goal_servo) {
                     if (wobble_goal_servo_is_up) {
-                        telemetry.addData("Wobble Goal Servo", " Wobble Goal UP y_button");
-                        telemetry.update();
                         robot.closeWobbleGoalClaw();
                     } else if (!wobble_goal_servo_is_up) {
-                        telemetry.addData("Wobble Goal Servo", " Wobble Goal DOWN y_button");
-                        telemetry.update();
                         robot.openWobbleGoalClaw();
                     }
                 }

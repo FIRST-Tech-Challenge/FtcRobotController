@@ -39,7 +39,7 @@ import static org.firstinspires.ftc.teamcode.Components.OdometryChassis.*;
 
 public class VuforiaWebcam extends Thread {
     private OpMode op;
-    private static double xpos, ypos, angle;
+    private static float xpos, ypos, angle;
     private double vuforiaAngle = 90.0;
 
     //It is used on line 193 for debugging purposes. This is why it isn't currently in use.
@@ -159,23 +159,24 @@ public class VuforiaWebcam extends Thread {
 //                op.telemetry.addData("Pos (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch);
 //                op.telemetry.addData("Pos (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getCurrentAngle(), getXpos(), getYpos());
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                if (Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2)) >= 24.5 && VuforiaWebcam.isTargetVisible() == true) {
+//                if (Math.sqrt(Math.pow(VuforiaWebcam.getVuforiaX(), 2) + Math.pow(VuforiaWebcam.getVuforiaY(), 2)) >= 24.5 && VuforiaWebcam.isTargetVisible() == true) {
 //                    setXposition(translation.get(0) / mmPerInch);
 //                    setYposition((translation.get(1) / mmPerInch));
 //                    op.telemetry.addData("PosIf (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getAngle(), getXposition(), getYposition());
                     xpos = translation.get(0) / mmPerInch;
                     ypos = translation.get(1) / mmPerInch;
-                    if(xpos>-5&&xpos<5&&ypos>-60&&ypos<-50) {
-                        OdometryChassis.setXpos(translation.get(0) / mmPerInch);
-                        OdometryChassis.setYpos((translation.get(1) / mmPerInch));
+                    angle = rotation.thirdAngle;
+                    if(xpos>-15&&xpos<15&&ypos>-60&&ypos<-38&&vuforia_on) {
+                        OdometryChassis.setXpos(-xpos);
+                        OdometryChassis.setYpos(ypos);
+                        OdometryChassis.setAngle(angle);
+
                     }
 //                    op.telemetry.addData("PosIf (in)", "{X, Y, Angle, getX, getY} = %.1f, %.1f, %.1f, %.1f, %.1f",translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, getCurrentAngle(), getXpos(), getYpos());
 
 //                    op.telemetry.addData("OVERWRITING...", null);
 //                    op.telemetry.update();
-                }
-                xpos = translation.get(0) / mmPerInch;
-                ypos = translation.get(1) / mmPerInch;
+//                }
                 try {
                     this.sleep(500);
                 } catch (InterruptedException e) {

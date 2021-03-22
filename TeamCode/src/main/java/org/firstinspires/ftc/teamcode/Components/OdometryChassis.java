@@ -26,6 +26,8 @@ public class OdometryChassis extends BasicChassis {
     static DcMotorEx odom1;
     static DcMotorEx odom2;
     static DcMotorEx odom3;
+    public static boolean gotoPosition_off=false;
+    public static boolean vuforia_on=false;
     int[] odomconst = {-1,1,-1};
     float ticks_per_inch = (float)(8640*2.54/38*Math.PI)*72/76;
     float robot_diameter = (float)sqrt(619.84);
@@ -105,7 +107,7 @@ public class OdometryChassis extends BasicChassis {
         ypos=newYpos;
     }
     public static void setAngle(float newAngle){
-        angle=newAngle;
+        globalAngle=newAngle+181;
     }
     public void navigate(){//navigation.navigate(op);
         }
@@ -194,7 +196,7 @@ public class OdometryChassis extends BasicChassis {
             double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
             double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
             double startpower = power;
-            while (op.opModeIsActive() && (difference >= 1)) {
+            while (op.opModeIsActive() && (difference >= 1)&&!gotoPosition_off) {
                 currentPosition = track();
                 power = difference / 15;
                 if (power > startpower) {
@@ -252,7 +254,7 @@ public class OdometryChassis extends BasicChassis {
             double angleInRadians = atan2(x, y) - getAngle() * PI / 180;
             double[] anglePower = {sin(angleInRadians + PI / 4), sin(angleInRadians - PI / 4)};
             double startpower = power;
-            while (op.opModeIsActive() && (difference >= 1)) {
+            while (op.opModeIsActive() && (difference >= 1)&&!gotoPosition_off) {
                 currentPosition = track();
                 power = difference*startpower / 30;
                 if (power > startpower) {
