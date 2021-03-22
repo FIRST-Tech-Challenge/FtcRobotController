@@ -21,6 +21,7 @@ package com.hfrobots.tnt.season2021;
 
 import android.util.Log;
 
+import com.ftc9929.corelib.control.DebouncedButton;
 import com.ftc9929.corelib.control.NinjaGamePad;
 import com.ftc9929.corelib.control.OnOffButton;
 import com.ftc9929.corelib.control.RangeInput;
@@ -66,13 +67,14 @@ public class WobbleGoal {
     @Setter
     private OnOffButton unsafe;
 
-    private final static int PLACE_POS_ENCODER_COUNT = 0; //FIXME this is not correct
+    @Setter
+    private DebouncedButton operatorRequestsAutoPlace;
 
-    public final static double OPEN_GRIPPER_POS = .25;
+    public final static double OPEN_GRIPPER_POS = .0;
 
-    public final static double OPEN_GRIPPER_AUTO_POS = .35;
+    public final static double OPEN_GRIPPER_AUTO_POS = 0;
 
-    public final static double CLOSED_GRIPPER_POS = 0;
+    public final static double CLOSED_GRIPPER_POS = .7111;
 
     public static final float TOWARDS_STOW_POWER_MAGNITUDE = -1;
 
@@ -114,6 +116,12 @@ public class WobbleGoal {
         autoStowState = new AutoStowState(telemetry,ticker);
         autoStowState.setNextState(stowState);
 
+        AutoPlaceWithOpenLoopState autoPlaceWithOpenLoopState = new AutoPlaceWithOpenLoopState(telemetry, ticker);
+        autoPlaceWithOpenLoopState.setMotionState(motionState);
+        autoPlaceWithOpenLoopState.setNextState(placeState);
+        stowState.setAutoPlaceWithOpenLoopState(autoPlaceWithOpenLoopState);
+        motionState.setAutoPlaceWithOpenLoopState(autoPlaceWithOpenLoopState);
+
         // because of circular dependencies during construction, we need to post-check
         // that all of the transitions have been setup correctly
 
@@ -121,7 +129,6 @@ public class WobbleGoal {
             checkMe.checkReady();
         }
 
-        // FIXME: Why does this work? (or more - how do we make sure this works, to start this way?)
         currentState = motionState;
     }
 
@@ -209,6 +216,9 @@ public class WobbleGoal {
         @Setter
         private MotionState motionState;
 
+        @Setter
+        private AutoPlaceWithOpenLoopState autoPlaceWithOpenLoopState;
+
         protected StowState(Telemetry telemetry) {
             super("StowState", telemetry);
         }
@@ -219,6 +229,10 @@ public class WobbleGoal {
                 return motionState;
             }
 
+            if (operatorRequestsAutoPlace != null && operatorRequestsAutoPlace.getRise()) {
+                return autoPlaceWithOpenLoopState;
+            }
+
             handleGripperServo();
 
             return this;
@@ -227,6 +241,7 @@ public class WobbleGoal {
         @Override
         public void checkReady() {
             Preconditions.checkNotNull(motionState);
+            Preconditions.checkNotNull(autoPlaceWithOpenLoopState);
         }
     }
 
@@ -286,6 +301,32 @@ public class WobbleGoal {
         }
     }
 
+    class AutoPlaceWithOpenLoopState extends AutoPlaceState {
+        @Setter
+        private MotionState motionState;
+
+        protected AutoPlaceWithOpenLoopState(Telemetry telemetry, Ticker ticker) {
+            super(telemetry, ticker);
+            readyCheckables.add(this);
+        }
+
+        @Override
+        public State doStuffAndGetNextState() {
+            if (requestTowardsPlace() || requestTowardsStow()) {
+                return motionState;
+            }
+
+            handleGripperServo();
+
+            return super.doStuffAndGetNextState();
+        }
+
+        @Override
+        public void checkReady() {
+            super.checkReady();
+            Preconditions.checkNotNull(motionState);
+        }
+    }
 
     // Handles the motion when not placing, and not stowed. Needs to detect when
     // when the arm reaches either of those positions and do change to the
@@ -297,6 +338,9 @@ public class WobbleGoal {
 
         @Setter
         private StowState stowState;
+
+        @Setter
+        private AutoPlaceWithOpenLoopState autoPlaceWithOpenLoopState;
 
         protected MotionState(Telemetry telemetry) {
             super("MotionState", telemetry);
@@ -329,8 +373,9 @@ public class WobbleGoal {
                 setShoulderMotorPower(TOWARDS_PLACE_POWER_MAGNITUDE);
 
                 return this;
+            } else if (operatorRequestsAutoPlace != null && operatorRequestsAutoPlace.getRise()) {
+                return autoPlaceWithOpenLoopState;
             } else {
-                // FIXME: What case is this? (not asking for forward or backward motion)
                 shoulderMotor.setPower(0);
             }
 
@@ -343,6 +388,7 @@ public class WobbleGoal {
         public void checkReady() {
             Preconditions.checkNotNull(placeState);
             Preconditions.checkNotNull(stowState);
+            Preconditions.checkNotNull(autoPlaceWithOpenLoopState);
         }
     }
 

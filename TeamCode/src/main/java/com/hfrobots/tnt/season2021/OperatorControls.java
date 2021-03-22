@@ -93,6 +93,8 @@ public class OperatorControls {
 
     private DebouncedButton disableRingHoldDown;
 
+    private DebouncedButton autoPlaceOpenLoop;
+
     private ScoringMechanism scoringMechanism;
 
     private WobbleGoal wobbleGoal;
@@ -164,6 +166,7 @@ public class OperatorControls {
         this.wobbleGoal.setShoulderThrottle(new LowPassFilteredRangeInput(wobbleShoulderThrottle, 0.85F));
         this.wobbleGoal.setGripperButton(new ToggledButton(toggleWobbleGripper));
         this.wobbleGoal.setUnsafe(unsafe);
+        this.wobbleGoal.setOperatorRequestsAutoPlace(autoPlaceOpenLoop);
     }
 
 
@@ -226,6 +229,8 @@ public class OperatorControls {
         wobbleShoulderThrottle = rightStickY;
         jankyServo = leftBumper;
         unsafe = new RangeInputButton( leftTrigger, 0.65f);
+
+        autoPlaceOpenLoop = aGreenButton;
     }
 
     public void periodicTask() {

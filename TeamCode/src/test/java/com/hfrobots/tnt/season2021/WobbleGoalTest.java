@@ -108,7 +108,7 @@ public class WobbleGoalTest {
         causeButtonToRiseForNextPeriodTask(gripperButton);
         wobbleGoal.periodicTask();
 
-        assertEquals(initialServoPos, gripperServo.getPortNumber(), 0.05);
+        assertNotEquals(initialServoPos, gripperServo.getPortNumber(), 0.05);
 
         // Move "forwards", what state should the wobble goal mechanism be in?
 
