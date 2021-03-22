@@ -504,6 +504,8 @@ public class Auto extends OpMode {
             public State doStuffAndGetNextState() {
                 runWobbleGoalStateMachine = true;
 
+                wobbleGoal.closeGripper();
+
                 Class<? extends State> wobbleStateClass = wobbleGoal.getCurrentState().getClass();
 
                 if (!wobbleStateClass.equals(WobbleGoal.AutoStowState.class)) {
