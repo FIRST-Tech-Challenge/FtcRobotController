@@ -51,7 +51,7 @@ public class WobbleGoal {
         wobbleGoalMotor.setDirection(DcMotor.Direction.FORWARD);
         wobbleGoalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wobbleGoalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wobbleGoalServoClaw.setPosition(0);
+        wobbleGoalServoClaw.setPosition(1);
         goToPosition(Position.START);
         opMode.sleep(500);
 
@@ -128,14 +128,14 @@ public class WobbleGoal {
     }
     // moves the wobble goal servo
     public void openWobbleGoalClaw() {
-            wobbleGoalServoClaw.setPosition(1);
+            wobbleGoalServoClaw.setPosition(0.5);
             op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "closed");
             op.telemetry.update();
 
     }
     public void  closeWobbleGoalClaw() {
-            wobbleGoalServoClaw.setPosition(0);
+            wobbleGoalServoClaw.setPosition(1);
             op.sleep(200);
             op.telemetry.addData(" Wobble Goal Claw: ", "closed");
             op.telemetry.update();
