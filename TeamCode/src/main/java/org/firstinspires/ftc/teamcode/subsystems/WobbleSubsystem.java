@@ -1,18 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.technototes.library.hardware.motor.Motor;
 import com.technototes.library.hardware.servo.Servo;
-import com.technototes.library.subsystem.motor.MotorSubsystem;
 import com.technototes.library.subsystem.servo.ServoSubsystem;
 import com.technototes.logger.Stated;
 
 public class WobbleSubsystem extends ServoSubsystem implements Stated<String> {
-    public Servo servo1;
-    public Servo servo2;
+
+    public Servo armServo;
+    public Servo clawServo;
 
     public enum ArmPosition{
-        RAISED(1), LOWERED(-1);
+        RAISED(1), LOWERED(0.35);
         public double position;
         ArmPosition(double pos) {
             position = pos;
@@ -23,7 +21,7 @@ public class WobbleSubsystem extends ServoSubsystem implements Stated<String> {
     }
 
     public enum ClawPosition{
-        OPEN(1), CLOSED(-1);
+        OPEN(1), CLOSED(0);
         public double position;
         ClawPosition(double pos) {
             position = pos;
@@ -35,12 +33,11 @@ public class WobbleSubsystem extends ServoSubsystem implements Stated<String> {
 
     public ArmPosition armPosition;
     public ClawPosition clawPosition;
-    //(a+b)/2=armpos    (a-b+1)/2=clawpos
-    //
-    public WobbleSubsystem(Servo s1, Servo s2){
-        super(s1, s2);
-        servo1 = s1;
-        servo2 = s2;
+
+    public WobbleSubsystem(Servo arm, Servo claw){
+        super(arm, claw);
+        armServo = arm;
+        clawServo = claw;
         armPosition = ArmPosition.LOWERED;
         clawPosition = ClawPosition.CLOSED;
     }
@@ -49,24 +46,18 @@ public class WobbleSubsystem extends ServoSubsystem implements Stated<String> {
 
 
     public void setClawPosition(ClawPosition pos){
-        if(clawPosition != pos) {
-            servo1.setPosition(servo1.getPosition() - pos.getPosition());
-            servo2.setPosition(servo2.getPosition() + pos.getPosition());
-            clawPosition = pos;
-        }
+        clawServo.setPosition(pos.getPosition());
+        clawPosition = pos;
 
     }
     public void setArmPosition(ArmPosition pos){
-        if(armPosition != pos) {
-            servo1.setPosition(servo1.getPosition() + pos.getPosition());
-            servo2.setPosition(servo2.getPosition() + pos.getPosition());
-            armPosition = pos;
-        }
+        armServo.setPosition(pos.getPosition());
+        armPosition = pos;
     }
 
     @Override
     public String getState() {
-        return "CLAW: "+(servo2.getPosition()-servo1.getPosition())/2+". ARM: "+(servo2.getPosition()+servo1.getPosition())/2;
+        return "CLAW: "+clawPosition.getPosition()+". ARM: "+armPosition.getPosition();
     }
 
 }

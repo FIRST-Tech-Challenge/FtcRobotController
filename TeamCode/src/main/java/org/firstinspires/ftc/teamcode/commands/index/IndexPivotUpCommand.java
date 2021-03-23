@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.index;
 
-import com.technototes.library.command.Command;
+import com.technototes.library.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.commands.WaitCommand;
 import org.firstinspires.ftc.teamcode.subsystems.IndexSubsystem;
 
 public class IndexPivotUpCommand extends WaitCommand {
@@ -15,7 +14,7 @@ public class IndexPivotUpCommand extends WaitCommand {
     }
 
     @Override
-    public void execute() {
+    public void init() {
         indexSubsystem.raiseToShooter();
     }
 }

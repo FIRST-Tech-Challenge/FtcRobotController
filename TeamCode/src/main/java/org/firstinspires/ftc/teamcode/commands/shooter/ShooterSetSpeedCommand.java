@@ -14,13 +14,10 @@ public class ShooterSetSpeedCommand extends Command {
         supplier = sup;
     }
 
-    @Override
-    public void execute() {
-        subsystem.setVelocity(supplier.getAsDouble()*100);
-    }
 
     @Override
-    public void end(boolean cancel) {
-        if(cancel) subsystem.stop();
+    public void execute() {
+        subsystem.setVelocity(supplier.getAsDouble()*2655);
     }
+
 }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.technototes.library.command.simple.MecanumDriveCommand;
 import com.technototes.logger.Color;
 import com.technototes.logger.Log;
 import com.technototes.logger.Loggable;
@@ -20,7 +21,7 @@ public class Robot implements Loggable {
     public DrivebaseSubsystem drivebaseSubsystem;
 
     //index
-    @Log.NumberBar(name = "Ring Capacity", index = 1, color = Color.DARK_GRAY, completeBarColor = Color.YELLOW, incompleteBarColor = Color.LIGHT_GRAY)
+    @Log.NumberBar(name = "Ring Capacity", index = -1, color = Color.DARK_GRAY, completeBarColor = Color.YELLOW, incompleteBarColor = Color.LIGHT_GRAY)
     public IndexSubsystem indexSubsystem;
 
     //intake
@@ -28,6 +29,7 @@ public class Robot implements Loggable {
     public IntakeSubsystem intakeSubsystem;
 
     //shooter
+    @Log(name = "Shooter", color = Color.GREEN)
     public ShooterSubsystem shooterSubsystem;
 
     //wobble
@@ -43,9 +45,9 @@ public class Robot implements Loggable {
 
         intakeSubsystem = new IntakeSubsystem(hardware.intakeMotorGroup);
 
-        shooterSubsystem = new ShooterSubsystem(hardware.shooterMotor1, hardware.shooterMotor2);
+        shooterSubsystem = new ShooterSubsystem(hardware.shooterMotorGroup);
 
-        wobbleSubsystem =  new WobbleSubsystem(hardware.wobbleServo1, hardware.wobbleServo2);
+        wobbleSubsystem =  new WobbleSubsystem(hardware.wobbleArmServo, hardware.wobbleClawServo);
 
     }
 }

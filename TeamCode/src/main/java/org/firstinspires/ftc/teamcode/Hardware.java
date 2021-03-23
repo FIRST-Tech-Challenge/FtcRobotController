@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import com.technototes.library.hardware.HardwareDevice;
 import com.technototes.library.hardware.motor.EncodedMotor;
 import com.technototes.library.hardware.motor.EncodedMotorGroup;
 import com.technototes.library.hardware.motor.Motor;
 import com.technototes.library.hardware.motor.MotorGroup;
+import org.firstinspires.ftc.teamcode.subsystems.GyroSensor;
 import com.technototes.library.hardware.sensor.IMU;
 import com.technototes.library.hardware.servo.Servo;
 import com.technototes.logger.Loggable;
@@ -20,7 +23,7 @@ public class Hardware implements Loggable {
     public Motor<DcMotor> rlDriveMotor;
     public Motor<DcMotor> rrDriveMotor;
 
-    public IMU imu;
+    public GyroSensor imu;
 
     //index
     public Servo indexArmServo;
@@ -34,19 +37,21 @@ public class Hardware implements Loggable {
     //shooter
     public EncodedMotor<DcMotor> shooterMotor1;
     public EncodedMotor<DcMotor> shooterMotor2;
+    public EncodedMotorGroup shooterMotorGroup;
+
 
     //wobble
-    public Servo wobbleServo1;
-    public Servo wobbleServo2;
+    public Servo wobbleArmServo;
+    public Servo wobbleClawServo;
 
     public Hardware(){
-        //TODO .invert instead of setInverted(true);
         flDriveMotor = new Motor<>("flMotor");
         frDriveMotor = new Motor<>("frMotor");
         rlDriveMotor = new Motor<>("rlMotor");
         rrDriveMotor = new Motor<>("rrMotor");
 
-        imu = new IMU("imu");
+        //TODO fix this whoops
+        imu = new GyroSensor("imu");
 
         indexArmServo = new Servo("indexarm");
         indexPivotServo = new Servo("indexpivot");
@@ -57,8 +62,9 @@ public class Hardware implements Loggable {
 
         shooterMotor1 = new EncodedMotor<>("shooter1");
         shooterMotor2 = new EncodedMotor<>("shooter2");
+        shooterMotorGroup = new EncodedMotorGroup(shooterMotor1.setInverted(true), shooterMotor2.setInverted(true));
 
-        wobbleServo1 = new Servo("wobble1");
-        wobbleServo2 = new Servo("wobble2");
+        wobbleArmServo = new Servo("wobblearm");
+        wobbleClawServo = new Servo("wobbleclaw");
     }
 }

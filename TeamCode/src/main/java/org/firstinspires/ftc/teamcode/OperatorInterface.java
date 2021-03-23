@@ -1,12 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.technototes.control.gamepad.GamepadButton;
+import com.technototes.control.gamepad.GamepadStick;
 import com.technototes.library.command.CommandScheduler;
 import com.technototes.library.command.ConditionalCommand;
+import com.technototes.library.command.ParallelCommandGroup;
+import com.technototes.library.command.SequentialCommandGroup;
+import com.technototes.library.command.WaitCommand;
 import com.technototes.library.control.gamepad.CommandAxis;
 import com.technototes.library.control.gamepad.CommandButton;
 import com.technototes.library.control.gamepad.CommandGamepad;
 
+import org.firstinspires.ftc.teamcode.commands.drivebase.AlignToShootCommand;
 import org.firstinspires.ftc.teamcode.commands.drivebase.DriveCommand;
+import org.firstinspires.ftc.teamcode.commands.drivebase.NormalSpeedCommand;
+import org.firstinspires.ftc.teamcode.commands.drivebase.SnailSpeedCommand;
+import org.firstinspires.ftc.teamcode.commands.drivebase.TurboSpeedCommand;
 import org.firstinspires.ftc.teamcode.commands.index.ArmExtendCommand;
 import org.firstinspires.ftc.teamcode.commands.index.ArmRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.index.IndexPivotDownCommand;
@@ -15,7 +24,12 @@ import org.firstinspires.ftc.teamcode.commands.index.SendRingToShooterCommand;
 import org.firstinspires.ftc.teamcode.commands.intake.IntakeInCommand;
 import org.firstinspires.ftc.teamcode.commands.intake.IntakeOutCommand;
 import org.firstinspires.ftc.teamcode.commands.intake.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.commands.shooter.ShootAtRateCommand;
 import org.firstinspires.ftc.teamcode.commands.shooter.ShooterSetSpeedCommand;
+import org.firstinspires.ftc.teamcode.commands.wobble.WobbleCloseCommand;
+import org.firstinspires.ftc.teamcode.commands.wobble.WobbleLowerCommand;
+import org.firstinspires.ftc.teamcode.commands.wobble.WobbleOpenCommand;
+import org.firstinspires.ftc.teamcode.commands.wobble.WobbleRaiseCommand;
 import org.firstinspires.ftc.teamcode.subsystems.IndexSubsystem;
 
 /** Class for driver controls
@@ -39,7 +53,14 @@ public class OperatorInterface {
 
     public CommandButton wobbleClawButton, wobbleArmButton;
 
-    public CommandButton indexFeedButton;
+    public CommandButton firePrepButton;
+    public CommandAxis fireAxis;
+
+    public CommandButton shooterSpeedPrepButton;
+    public CommandAxis shooterSpeedAxis;
+
+    public GamepadStick driveLStick, driveRStick;
+    public CommandButton turboModeButton, snailModeButton;
 
     public OperatorInterface(CommandGamepad driver, CommandGamepad codriver, Robot r){
 
@@ -50,28 +71,47 @@ public class OperatorInterface {
 
         //set buttons
         intakeMainButton = driverGamepad.a;
-        intakeSpitButton = driverGamepad.x;
+        intakeSpitButton = driverGamepad.b;
 
-        //indexFeedButton = codriverGamepad.a;
+        wobbleClawButton = driverGamepad.x;
+        wobbleArmButton = driverGamepad.y;
 
-        //indexFeedButton.whenPressed(new SendRingToShooterCommand(robot.indexSubsystem));
+        firePrepButton = driverGamepad.leftBumper;
+        fireAxis = driverGamepad.leftTrigger;
+
+        shooterSpeedPrepButton = driverGamepad.rightBumper;
+        shooterSpeedAxis = driverGamepad.rightTrigger;
+
+        driveLStick = driverGamepad.leftStick;
+        driveRStick = driverGamepad.rightStick;
+
+        turboModeButton = driverGamepad.leftStickButton;
+        snailModeButton = driverGamepad.rightStickButton;
+
+        wobbleArmButton.whenToggled(new WobbleRaiseCommand(robot.wobbleSubsystem))
+                .whenInverseToggled(new WobbleLowerCommand(robot.wobbleSubsystem));
+        wobbleClawButton.whenToggled(new WobbleOpenCommand(robot.wobbleSubsystem))
+                .whenInverseToggled(new WobbleCloseCommand(robot.wobbleSubsystem));
 
         //intake commands
-        //TODO command.asConditional(BooleanSupplier condition)
-        intakeMainButton.whenToggled(new ConditionalCommand(robot.indexSubsystem::isFull, new IntakeInCommand(robot.intakeSubsystem)))
+        intakeMainButton.whenToggled(new IntakeInCommand(robot.intakeSubsystem))
                 .whenInverseToggled(new IntakeStopCommand(robot.intakeSubsystem));
-        intakeSpitButton.whenPressed(new IntakeOutCommand(robot.intakeSubsystem));
+        intakeSpitButton.whenPressed(new IntakeOutCommand(robot.intakeSubsystem))
+                .whenReleased(new IntakeStopCommand(robot.intakeSubsystem));
 
+        shooterSpeedPrepButton.whilePressed(new ShooterSetSpeedCommand(robot.shooterSubsystem, shooterSpeedAxis));
+
+        firePrepButton.whenPressed(new ParallelCommandGroup(
+                new IndexPivotUpCommand(robot.indexSubsystem), new AlignToShootCommand(robot.drivebaseSubsystem, robot.shooterSubsystem)))
+                .whilePressed(new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new WaitCommand((1-fireAxis.getAsDouble())/2), new ArmRetractCommand(robot.indexSubsystem)))
+                .whenReleased(new IndexPivotDownCommand(robot.indexSubsystem));
         //drive command
-        CommandScheduler.getInstance().scheduleJoystick(new DriveCommand(robot.drivebaseSubsystem, driverGamepad.leftStick, driverGamepad.rightStick), ()->true);
+        CommandScheduler.getInstance().scheduleJoystick(new DriveCommand(robot.drivebaseSubsystem, driveLStick, driveRStick), ()->true);
 
-
-        driverGamepad.y.whenToggled(new IndexPivotUpCommand(robot.indexSubsystem));
-        driverGamepad.y.whenInverseToggled(new IndexPivotDownCommand(robot.indexSubsystem));
-        driverGamepad.dpad.left.whenPressed(new ArmExtendCommand(robot.indexSubsystem));
-        driverGamepad.dpad.right.whenPressed(new ArmRetractCommand(robot.indexSubsystem));
-        //TODO fix trigger threshold
-        CommandScheduler.getInstance().scheduleJoystick(new ShooterSetSpeedCommand(robot.shooterSubsystem, driverGamepad.leftTrigger), ()->true);
+        snailModeButton.whenPressed(new SnailSpeedCommand(robot.drivebaseSubsystem))
+                .whenReleased(new NormalSpeedCommand(robot.drivebaseSubsystem));
+        turboModeButton.whenPressed(new TurboSpeedCommand(robot.drivebaseSubsystem))
+                .whenReleased(new NormalSpeedCommand(robot.drivebaseSubsystem));
 
     }
 }

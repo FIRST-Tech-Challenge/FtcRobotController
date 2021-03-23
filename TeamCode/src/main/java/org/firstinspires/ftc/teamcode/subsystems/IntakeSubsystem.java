@@ -9,6 +9,7 @@ import com.technototes.logger.Stated;
  *
  */
 public class IntakeSubsystem extends MotorSubsystem<Motor<?>> implements Stated<String> {
+    public Motor motor;
     /** Enum for intake speed
      *
      */
@@ -25,13 +26,14 @@ public class IntakeSubsystem extends MotorSubsystem<Motor<?>> implements Stated<
     }
     public IntakeSubsystem(Motor m) {
         super(m);
+        motor = m;
     }
     //functions for controlling intake
     public void intake(){
-        setSpeed(IntakeSpeed.IN.getSpeed());
+        motor.setSpeed(IntakeSpeed.IN.getSpeed());
     }
     public void extake() {
-        setSpeed(IntakeSpeed.OUT.getSpeed());
+        motor.setSpeed(IntakeSpeed.OUT.getSpeed());
     }
 
     /** Returns current status of intake for logging
@@ -40,7 +42,7 @@ public class IntakeSubsystem extends MotorSubsystem<Motor<?>> implements Stated<
      */
     @Override
     public String getState() {
-        return getSpeed() > 0 ? "INTAKING" : getSpeed() < 0 ? "EXTAKING" : "IDLE";
+        return motor.getSpeed() > 0 ? "INTAKING" : motor.getSpeed() < 0 ? "EXTAKING" : "IDLE";
     }
 
 }

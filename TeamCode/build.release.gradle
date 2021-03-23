@@ -6,7 +6,7 @@ dependencies {
     implementation (name: 'tfod-release', ext:'aar')
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext:'aar')
 
-    implementation 'com.github.technototes:TechnoLib:0.9.4'
+    implementation 'com.github.technototes:TechnoLib:0.9.6'
 
 
 }

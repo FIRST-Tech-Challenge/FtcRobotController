@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.index;
 
-import com.technototes.library.command.Command;
 import com.technototes.library.command.SequentialCommandGroup;
 
-import org.firstinspires.ftc.teamcode.commands.WaitCommand;
 import org.firstinspires.ftc.teamcode.subsystems.IndexSubsystem;
 
 public class SendRingToShooterCommand extends SequentialCommandGroup {

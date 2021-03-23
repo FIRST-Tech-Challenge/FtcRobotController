@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.samplecode.strafer.odometry;
-//TODO odometry
 public interface Odometry {
 
     default Position getPosition(){

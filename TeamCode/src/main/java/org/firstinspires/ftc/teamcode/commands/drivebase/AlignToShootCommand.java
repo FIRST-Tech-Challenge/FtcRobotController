@@ -5,7 +5,7 @@ import com.technototes.library.command.ParallelCommandGroup;
 
 import org.firstinspires.ftc.teamcode.subsystems.DrivebaseSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
-
+//TODO this command
 public class AlignToShootCommand extends Command {
     public DrivebaseSubsystem drivebaseSubsystem;
     public ShooterSubsystem shooterSubsystem;
@@ -17,17 +17,17 @@ public class AlignToShootCommand extends Command {
 
     @Override
     public void init() {
-        //TODO calculate changes needed
+        //calculate changes needed
     }
 
     @Override
     public void execute() {
-        //TODO make the changes
+        //make the changes
     }
 
     @Override
     public boolean isFinished() {
-        //TODO check if changes are made
+        //check if changes are made
         return super.isFinished();
     }
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.wobble;
 
-import org.firstinspires.ftc.teamcode.commands.WaitCommand;
+import com.technototes.library.command.WaitCommand;
+
 import org.firstinspires.ftc.teamcode.subsystems.WobbleSubsystem;
 
 public class WobbleLowerCommand extends WaitCommand {
@@ -14,7 +15,7 @@ public class WobbleLowerCommand extends WaitCommand {
     }
 
     @Override
-    public void execute() {
+    public void init() {
         subsystem.setArmPosition(WobbleSubsystem.ArmPosition.LOWERED);
     }
 

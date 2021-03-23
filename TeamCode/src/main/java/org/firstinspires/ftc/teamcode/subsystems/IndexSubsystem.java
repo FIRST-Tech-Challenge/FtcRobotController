@@ -1,13 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.technototes.library.command.Command;
 import com.technototes.library.hardware.servo.Servo;
 import com.technototes.library.subsystem.servo.ServoSubsystem;
 import com.technototes.logger.Stated;
-
-import org.firstinspires.ftc.teamcode.commands.WaitCommand;
-import org.firstinspires.ftc.teamcode.commands.index.ArmExtendCommand;
-import org.firstinspires.ftc.teamcode.commands.index.ArmRetractCommand;
 
 public class IndexSubsystem extends ServoSubsystem implements Stated<Integer> {
 
@@ -29,6 +24,7 @@ public class IndexSubsystem extends ServoSubsystem implements Stated<Integer> {
     public IndexState indexState;
 
     public IndexSubsystem(Servo p, Servo a){
+        super(p, a);
         pivot = p;
         arm = a;
         indexState = IndexState.EMPTY;

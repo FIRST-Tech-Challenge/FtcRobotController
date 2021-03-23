@@ -5,9 +5,7 @@ import com.technototes.library.command.InstantCommand;
 import com.technototes.library.control.gamepad.CommandGamepad;
 import com.technototes.library.hardware.motor.EncodedMotor;
 import com.technototes.library.hardware.motor.Motor;
-
-import static com.technototes.subsystem.DrivebaseSubsystem.DriveSpeed.NORMAL;
-import static com.technototes.subsystem.DrivebaseSubsystem.DriveSpeed.TURBO;
+import com.technototes.subsystem.DrivebaseSubsystem;
 
 public class OperatorInterface {
     public Robot robot;
@@ -23,8 +21,8 @@ public class OperatorInterface {
     }
 
     public void setDriverControls() {
-        driverGamepad.y.whenToggled(new InstantCommand(() -> robot.drivebaseSubsystem.driveSpeed = TURBO))
-                .whenInverseToggled(new InstantCommand(() -> robot.drivebaseSubsystem.driveSpeed = NORMAL));
+        driverGamepad.y.whenToggled(new InstantCommand(() -> robot.drivebaseSubsystem.driveSpeed = DrivebaseSubsystem.SampleDriveSpeed.TURBO))
+                .whenInverseToggled(new InstantCommand(() -> robot.drivebaseSubsystem.driveSpeed = DrivebaseSubsystem.SampleDriveSpeed.NORMAL));
         driverGamepad.a.whenPressed(new InstantCommand(() -> {
             robot.drivebaseSubsystem.flMotor.zeroEncoder();
             robot.drivebaseSubsystem.frMotor.zeroEncoder();
