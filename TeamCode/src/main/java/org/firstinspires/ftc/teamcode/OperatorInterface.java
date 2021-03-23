@@ -78,6 +78,8 @@ public class OperatorInterface {
 
         firePrepButton = driverGamepad.leftBumper;
         fireAxis = driverGamepad.leftTrigger;
+        //to actually fire
+        fireAxis.setTriggerThreshold(0.1);
 
         shooterSpeedPrepButton = driverGamepad.rightBumper;
         shooterSpeedAxis = driverGamepad.rightTrigger;
@@ -96,14 +98,15 @@ public class OperatorInterface {
         //intake commands
         intakeMainButton.whenToggled(new IntakeInCommand(robot.intakeSubsystem))
                 .whenInverseToggled(new IntakeStopCommand(robot.intakeSubsystem));
+
         intakeSpitButton.whenPressed(new IntakeOutCommand(robot.intakeSubsystem))
                 .whenReleased(new IntakeStopCommand(robot.intakeSubsystem));
 
         shooterSpeedPrepButton.whilePressed(new ShooterSetSpeedCommand(robot.shooterSubsystem, shooterSpeedAxis));
-
         firePrepButton.whenPressed(new ParallelCommandGroup(
-                new IndexPivotUpCommand(robot.indexSubsystem), new AlignToShootCommand(robot.drivebaseSubsystem, robot.shooterSubsystem)))
-                .whilePressed(new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new WaitCommand((1-fireAxis.getAsDouble())/2), new ArmRetractCommand(robot.indexSubsystem)))
+                new IndexPivotUpCommand(robot.indexSubsystem),
+                new AlignToShootCommand(robot.drivebaseSubsystem, robot.shooterSubsystem)))
+                .schedule(fireAxis, new SequentialCommandGroup(new ArmExtendCommand(robot.indexSubsystem), new WaitCommand(()->1-fireAxis.getAsDouble()), new ArmRetractCommand(robot.indexSubsystem)))
                 .whenReleased(new IndexPivotDownCommand(robot.indexSubsystem));
         //drive command
         CommandScheduler.getInstance().scheduleJoystick(new DriveCommand(robot.drivebaseSubsystem, driveLStick, driveRStick), ()->true);

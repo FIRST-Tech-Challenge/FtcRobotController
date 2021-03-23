@@ -18,10 +18,10 @@ import com.technototes.logger.Loggable;
 public class Hardware implements Loggable {
 
     //drivebase
-    public Motor<DcMotor> flDriveMotor;
-    public Motor<DcMotor> frDriveMotor;
-    public Motor<DcMotor> rlDriveMotor;
-    public Motor<DcMotor> rrDriveMotor;
+    public EncodedMotor<DcMotor> flDriveMotor;
+    public EncodedMotor<DcMotor> frDriveMotor;
+    public EncodedMotor<DcMotor> rlDriveMotor;
+    public EncodedMotor<DcMotor> rrDriveMotor;
 
     public GyroSensor imu;
 
@@ -45,12 +45,12 @@ public class Hardware implements Loggable {
     public Servo wobbleClawServo;
 
     public Hardware(){
-        flDriveMotor = new Motor<>("flMotor");
-        frDriveMotor = new Motor<>("frMotor");
-        rlDriveMotor = new Motor<>("rlMotor");
-        rrDriveMotor = new Motor<>("rrMotor");
+        flDriveMotor = new EncodedMotor<>("flMotor");
+        frDriveMotor = new EncodedMotor<>("frMotor");
+        rlDriveMotor = new EncodedMotor<>("rlMotor");
+        rrDriveMotor = new EncodedMotor<>("rrMotor");
 
-        //TODO fix this whoops
+        //TODO fix
         imu = new GyroSensor("imu");
 
         indexArmServo = new Servo("indexarm");
@@ -62,7 +62,7 @@ public class Hardware implements Loggable {
 
         shooterMotor1 = new EncodedMotor<>("shooter1");
         shooterMotor2 = new EncodedMotor<>("shooter2");
-        shooterMotorGroup = new EncodedMotorGroup(shooterMotor1.setInverted(true), shooterMotor2.setInverted(true));
+        shooterMotorGroup = new EncodedMotorGroup(shooterMotor1.invert(), shooterMotor2.invert());
 
         wobbleArmServo = new Servo("wobblearm");
         wobbleClawServo = new Servo("wobbleclaw");

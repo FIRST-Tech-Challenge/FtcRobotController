@@ -11,7 +11,7 @@ import com.technototes.logger.Stated;
 /** Drivebase subsystem
  *
  */
-public class DrivebaseSubsystem extends MecanumDrivebaseSubsystem<Motor<?>> implements Stated<DrivebaseSubsystem.DriveSpeed> {
+public class DrivebaseSubsystem extends EncodedMecanumDrivebaseSubsystem implements Stated<DrivebaseSubsystem.DriveSpeed> {
     public GyroSensor imu;
 
 
@@ -33,7 +33,7 @@ public class DrivebaseSubsystem extends MecanumDrivebaseSubsystem<Motor<?>> impl
 
     public DriveSpeed driveSpeed;
 
-    public DrivebaseSubsystem(Motor flMotor, Motor frMotor, Motor rlMotor, Motor rrMotor, GyroSensor i) {
+    public DrivebaseSubsystem(EncodedMotor flMotor, EncodedMotor frMotor, EncodedMotor rlMotor, EncodedMotor rrMotor, GyroSensor i) {
         //note order
         super(()->0, frMotor, flMotor, rrMotor, rlMotor);
         driveSpeed = DriveSpeed.NORMAL;
@@ -49,7 +49,7 @@ public class DrivebaseSubsystem extends MecanumDrivebaseSubsystem<Motor<?>> impl
 
     @Override
     public double getSpeed() {
-        return driveSpeed.getSpeed();
+        return driveSpeed.getSpeedAsVelocity();
     }
 
 
