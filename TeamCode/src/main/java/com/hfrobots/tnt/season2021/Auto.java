@@ -401,7 +401,7 @@ public class Auto extends OpMode {
 
                 switch (deliverToTarget) {
                     case A:
-                        trajectoryBuilder.forward(58);
+                        trajectoryBuilder.forward(58 - 4);
                         break;
                     case B:
                         // Instead, use A, + park from A
@@ -410,7 +410,7 @@ public class Auto extends OpMode {
 
                         break;
                     case C:
-                        trajectoryBuilder.forward(106);
+                        trajectoryBuilder.forward(101);
                         break;
                 }
 
@@ -464,7 +464,7 @@ public class Auto extends OpMode {
 
                 switch (deliverToTarget) {
                     case A:
-                        trajectoryBuilder.strafeLeft(22).forward(12 + 19);
+                        trajectoryBuilder.strafeLeft(22).forward(12 + 19 + 4 + 6);
                         break;
                     case B:
                         trajectoryBuilder.forward(20);
@@ -504,8 +504,6 @@ public class Auto extends OpMode {
             public State doStuffAndGetNextState() {
                 runWobbleGoalStateMachine = true;
 
-                wobbleGoal.closeGripper();
-
                 Class<? extends State> wobbleStateClass = wobbleGoal.getCurrentState().getClass();
 
                 if (!wobbleStateClass.equals(WobbleGoal.AutoStowState.class)) {
@@ -534,13 +532,13 @@ public class Auto extends OpMode {
 
                 switch (deliverToTarget) {
                     case A:
-                        trajectoryBuilder.back(16);
+                        trajectoryBuilder.back(16 + 4 + 6);
                         break;
                     case B:
                         trajectoryBuilder.back(26+5);
                         break;
                     case C:
-                        trajectoryBuilder.back(64);
+                        trajectoryBuilder.back(64 - 5);
                         break;
                 }
 
@@ -593,12 +591,13 @@ public class Auto extends OpMode {
             public Turn get() {
                 switch (deliverToTarget) {
                     case A:
+                        return new Turn(Rotation.CCW, 2);
                     case C:
-                        return new Turn(Rotation.CCW, 5);  // FIXME: This needs the angles for a, c
+                        return new Turn(Rotation.CCW, 4);
                     case B:
                         return new Turn(Rotation.CW, 19);
                     default:
-                        return new Turn(Rotation.CCW, 5);  // FIXME: This needs the angles for a, c
+                        return new Turn(Rotation.CCW, 5);
                 }
             }
         };

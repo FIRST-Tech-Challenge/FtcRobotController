@@ -30,6 +30,7 @@ import com.ftc9929.corelib.state.State;
 import com.ftc9929.corelib.state.StopwatchTimeoutSafetyState;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Ticker;
 import com.google.common.collect.Lists;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -294,10 +295,27 @@ public class WobbleGoal {
         }
     }
 
-    class AutoStowState extends AutoMotionState{
+    class AutoStowState extends AutoMotionState {
+        private final Stopwatch myStopwatch;
+
         protected AutoStowState(Telemetry telemetry, Ticker ticker) {
             super("AutoStowState", telemetry, ticker,
                     stowLimitSwitch, TOWARDS_STOW_POWER_MAGNITUDE);
+
+            myStopwatch = Stopwatch.createUnstarted(ticker);
+        }
+
+        @Override
+        public State doStuffAndGetNextState() {
+            if (!myStopwatch.isRunning()) {
+                myStopwatch.start();
+            } else if (myStopwatch.elapsed(TimeUnit.MILLISECONDS) >= 1500) {
+                closeGripper();
+
+                myStopwatch.reset();
+            }
+
+            return super.doStuffAndGetNextState();
         }
     }
 

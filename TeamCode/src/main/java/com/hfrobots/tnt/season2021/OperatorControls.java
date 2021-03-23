@@ -194,25 +194,32 @@ public class OperatorControls {
     private void setupDerivedControls() {
         // Launch-related controls - mirror if using real gamepads
         if (driverGamepad != null) {
-            // Debounced example
-            stopLauncher = new AnyButton(operatorGamepad.getBButton(), driverGamepad.getBButton()).debounced();
+            stopLauncher = new AnyButton(operatorGamepad.getBButton(),
+                    driverGamepad.getBButton()).debounced();
 
             // Left bumper for driver, because right stick is already steering
-            launchTrigger = new AnyButton(rightBumper, driverGamepad.getLeftBumper()); // On-off example
+            launchTrigger = new AnyButton(rightBumper, driverGamepad.getLeftBumper());
 
-            disableRingHoldDown = new AnyButton(operatorGamepad.getYButton(), driverGamepad.getYButton()).debounced();
+            disableRingHoldDown = new AnyButton(operatorGamepad.getYButton(),
+                    driverGamepad.getYButton()).debounced();
 
             // This button will have to be different on the drivers gamepad, right bumper?
 
-            upToSpeedToggle = new ToggledButton(new AnyButton(new RangeInputButton(rightTrigger, 0.65f),
+            upToSpeedToggle = new ToggledButton(new AnyButton(
+                    new RangeInputButton(rightTrigger, 0.65f),
                     driverGamepad.getRightBumper()));
 
-            stopLauncher = new AnyButton(operatorGamepad.getBButton(), driverGamepad.getBButton()).debounced();
+            stopLauncher = new AnyButton(operatorGamepad.getBButton(),
+                    driverGamepad.getBButton()).debounced();
 
-            invertHopper = new AnyButton(operatorGamepad.getDpadDown(), driverGamepad.getDpadDown());
+            invertHopper = new AnyButton(operatorGamepad.getDpadDown(),
+                    driverGamepad.getDpadDown());
 
-            launcherToMiddlePosition = new AnyButton(operatorGamepad.getDpadLeft(), driverGamepad.getDpadLeft()).debounced(); // FIXME
-            launcherToHighPosition = new AnyButton(operatorGamepad.getDpadRight(), driverGamepad.getDpadRight()).debounced();// FIXME
+            launcherToMiddlePosition = new AnyButton(
+                    operatorGamepad.getDpadLeft(), driverGamepad.getDpadLeft()).debounced();
+
+            launcherToHighPosition = new AnyButton(operatorGamepad.getDpadRight(),
+                    driverGamepad.getDpadRight()).debounced();
         } else {
             launchTrigger = rightBumper;
             disableRingHoldDown = yYellowButton;
