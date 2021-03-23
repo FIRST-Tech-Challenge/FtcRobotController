@@ -52,7 +52,8 @@ public class UpliftRobot {
     public HardwareMap hardwareMap;
     public DcMotor leftFront, leftBack, rightFront, rightBack;
     public DcMotorEx shooter1, shooter2;
-    public DcMotor intake, transfer;
+    public DcMotor intake;
+    public DcMotorEx transfer;
     public Servo intakeLifter;
     public Servo wobbleLeft, wobbleRight;
     public Servo flicker, clamp;
@@ -145,14 +146,14 @@ public class UpliftRobot {
         }
 
         try {
-            transfer = hardwareMap.get(DcMotor.class, "transfer");
+            transfer = hardwareMap.get(DcMotorEx.class, "transfer");
             transfer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "touch_bottom");
             digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
-            digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
-            digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
+//            digitalTouchTop = hardwareMap.get(DigitalChannel.class, "touch_top");
+//            digitalTouchTop.setMode(DigitalChannel.Mode.INPUT);
 
             transferInitialized = true;
         } catch (Exception ex) {

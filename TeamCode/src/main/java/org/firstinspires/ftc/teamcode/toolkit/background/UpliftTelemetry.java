@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.toolkit.background;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
+import org.firstinspires.ftc.teamcode.subsystems.TransferSubsystem;
 import org.firstinspires.ftc.teamcode.toolkit.core.Background;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftAuto;
 import org.firstinspires.ftc.teamcode.toolkit.core.UpliftTele;
@@ -41,7 +43,8 @@ public class UpliftTelemetry extends Background {
             telem.addData("Right Encoder pos:\t", robot.odometry.getRightTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Center Encoder pos:\t", robot.odometry.getCenterTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Slow Mode:\t", robot.slowMode);
-            telem.addData("Transfer Pos:\t", robot.transfer.getCurrentPosition());
+            telem.addData("Transfer Pos:\t", robot.transferSub.transfer.getCurrentPosition() - robot.transferSub.transferOffset);
+            telem.addData("Transfer PID:\t", robot.transfer.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
         }
         telem.addData("Shooting State\t",  robot.shootingState + "");
         telem.update();

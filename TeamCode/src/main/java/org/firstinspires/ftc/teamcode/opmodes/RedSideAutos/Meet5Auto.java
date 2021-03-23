@@ -48,6 +48,7 @@ public class Meet5Auto extends UpliftAuto {
         intakeSub.liftRoller();
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
+        transferSub.initTransferPos();
     }
 
     @Override
