@@ -56,8 +56,8 @@ public class UpliftRobot {
     public Servo intakeLifter;
     public Servo wobbleLeft, wobbleRight;
     public Servo flicker, clamp;
-    public Servo stickLeft, stickRight;
-    public CRServo sweeperLeft, sweeperRight;
+    public Servo sweeperJoint, stick;
+    public CRServo sweeperLeft;
     public DigitalChannel digitalTouchBottom, digitalTouchTop;
     public DistanceSensor shooterSensor;
 
@@ -179,10 +179,12 @@ public class UpliftRobot {
 
         try {
             intake = hardwareMap.get(DcMotor.class, "intake");
+            intake.setDirection(DcMotorSimple.Direction.REVERSE);
             intakeLifter = hardwareMap.get(Servo.class, "intake_lifter");
 
-            stickLeft = hardwareMap.get(Servo.class, "stick_left");
+            sweeperJoint = hardwareMap.get(Servo.class, "sweeper_joint");
             sweeperLeft = hardwareMap.get(CRServo.class, "sweeper_left");
+            stick = hardwareMap.get(Servo.class, "stick");
 
             intakeInitialized = true;
         } catch (Exception ex) {

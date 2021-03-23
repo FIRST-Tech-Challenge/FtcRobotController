@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 import static org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants.CLAMP_POS;
 import static org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants.FLICKER_POS;
 import static org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants.INTAKE_LIFTER_POS;
-import static org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants.STICK_LEFT_POS;
-import static org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants.STICK_RIGHT_POS;
+import static org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants.STICK_POS;
+import static org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants.SWEEPER_JOINT_POS;
 import static org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants.SWEEPER_LEFT_POWER;
 import static org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants.SWEEPER_RIGHT_POWER;
 import static org.firstinspires.ftc.teamcode.toolkit.ftcdashboard.DashboardConstants.WOBBLE_POS;
@@ -47,11 +47,11 @@ public class ServoTester extends UpliftAuto {
         waitForStart();
 
         while(opModeIsActive()) {
-//            robot.stickLeft.setPosition(STICK_LEFT_POS);
-//            robot.stickRight.setPosition(STICK_RIGHT_POS);
+//            robot.sweeperJoint.setPosition(SWEEPER_JOINT_POS);
 //            robot.sweeperRight.setPower(SWEEPER_RIGHT_POWER);
 //            robot.sweeperLeft.setPower(SWEEPER_LEFT_POWER);
-            robot.intakeLifter.setPosition(INTAKE_LIFTER_POS);
+            robot.stick.setPosition(STICK_POS);
+//            robot.intakeLifter.setPosition(INTAKE_LIFTER_POS);
 //            robot.flicker.setPosition(FLICKER_POS);
 //            robot.wobbleSub.setWobblePosition(WOBBLE_POS);
 //            robot.clamp.setPosition(CLAMP_POS);

@@ -22,24 +22,27 @@ public class IntakeCommands extends Command {
 
     @Override
     public void init() {
-        intake.raiseSticks();
         intake.initRoller();
+        intake.initSweeper();
+        intake.initStick();
     }
 
     @Override
     public void start() {
+        intake.dropStick();
         intake.dropRoller();
-        intake.dropSticks();
+        intake.dropSweeper();
     }
 
     @Override
     public void loop() {
         intake.setIntakePower(Range.clip(opMode.gamepad2.left_stick_y, -1, 1));
         if(intake.getPower() > 0){
-            intake.sweepersOn();
-        }
-        else{
-            intake.sweepersOff();
+            intake.sweeperOn();
+            intake.dropStick();
+        } else {
+            intake.sweeperOff();
+            intake.raiseStick();
         }
     }
 

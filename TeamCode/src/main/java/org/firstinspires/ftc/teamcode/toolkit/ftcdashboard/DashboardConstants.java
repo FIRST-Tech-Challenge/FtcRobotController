@@ -4,8 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class DashboardConstants {
-    public static double STICK_LEFT_POS = 0.7;
-    public static double STICK_RIGHT_POS = 0.5;
+    public static double SWEEPER_JOINT_POS = 0.7;
+    public static double STICK_POS = 0.5;
     public static double SWEEPER_LEFT_POWER = 0;
     public static double SWEEPER_RIGHT_POWER = 0;
     public static double INTAKE_LIFTER_POS = 1;

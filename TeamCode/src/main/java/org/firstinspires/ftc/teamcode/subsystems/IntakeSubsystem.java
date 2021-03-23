@@ -4,20 +4,17 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.UpliftRobot;
 import org.firstinspires.ftc.teamcode.toolkit.core.Subsystem;
-import org.firstinspires.ftc.teamcode.toolkit.misc.Utils;
 
 public class IntakeSubsystem extends Subsystem {
 
     private UpliftRobot robot;
     private DcMotor intake;
     private Servo intakeLifter;
-    public Servo stickLeft;
-    public Servo stickRight;
+    public Servo sweeperJoint;
+    public Servo stick;
     public CRServo sweeperLeft;
-    public CRServo sweeperRight;
 
 
     public IntakeSubsystem(UpliftRobot robot){
@@ -25,10 +22,9 @@ public class IntakeSubsystem extends Subsystem {
         this.robot = robot;
         this.intake = robot.intake;
         this.intakeLifter = robot.intakeLifter;
-        this.stickLeft = robot.stickLeft;
-        this.stickRight = robot.stickRight;
+        this.sweeperJoint = robot.sweeperJoint;
+        this.stick = robot.stick;
         this.sweeperLeft = robot.sweeperLeft;
-        this.sweeperRight = robot.sweeperRight;
     }
 
     @Override
@@ -80,22 +76,31 @@ public class IntakeSubsystem extends Subsystem {
         intakeLifter.setPosition(0.65);
     }
 
-    public void dropSticks() {
-        stickLeft.setPosition(0.175);
-//        stickRight.setPosition(0.825);
+    public void initStick() {
+        stick.setPosition(0.1);
     }
 
-    public void raiseSticks() {
-        stickLeft.setPosition(0.5);
-//        stickRight.setPosition(0.5);
+    public void dropStick() {
+        stick.setPosition(1);
     }
 
-    public void sweepersOn() {
+    public void raiseStick() {
+        stick.setPosition(0.9);
+    }
+
+    public void initSweeper() {
+        sweeperJoint.setPosition(0.5);
+    }
+
+    public void dropSweeper() {
+        sweeperJoint.setPosition(0.175);
+    }
+
+    public void sweeperOn() {
         sweeperLeft.setPower(-1);
-//        sweeperRight.setPower(-1);
     }
-    public void sweepersOff() {
+
+    public void sweeperOff() {
         sweeperLeft.setPower(0);
-//        sweeperRight.setPower(-1);
     }
 }
