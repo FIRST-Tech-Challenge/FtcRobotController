@@ -54,6 +54,10 @@ public class IntakeSubsystem extends Subsystem {
     public void setIntakePower(double power){
         intake.setPower(power);
     }
+
+    public double getPower(){
+        return -intake.getPower();
+    }
     
 //    public void IntakeCount(){
 //        if (robot.intakeSensor.getDistance(DistanceUnit.CM)<5.48){
@@ -78,16 +82,20 @@ public class IntakeSubsystem extends Subsystem {
 
     public void dropSticks() {
         stickLeft.setPosition(0.175);
-        stickRight.setPosition(0.825);
+//        stickRight.setPosition(0.825);
     }
 
     public void raiseSticks() {
         stickLeft.setPosition(0.5);
-        stickRight.setPosition(0.5);
+//        stickRight.setPosition(0.5);
     }
 
     public void sweepersOn() {
-        sweeperLeft.setPower(1);
-        sweeperRight.setPower(-1);
+        sweeperLeft.setPower(-1);
+//        sweeperRight.setPower(-1);
+    }
+    public void sweepersOff() {
+        sweeperLeft.setPower(0);
+//        sweeperRight.setPower(-1);
     }
 }

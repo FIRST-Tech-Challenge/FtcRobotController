@@ -16,5 +16,5 @@ public class DashboardConstants {
     public static double Ki = 0;
     public static double Kd = 0;
     public static double Kf = 13;
-    public static double targetVel = 1500;
+    public static double targetVel = 2000;
 }

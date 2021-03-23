@@ -76,7 +76,7 @@ public class UpliftRobot {
     public boolean slowMode = false;
     public double shooter1Vel = -1;
     public double shooter2Vel = -1;
-    public double highGoalVelocity = 2200;
+    public double highGoalVelocity = 1700;
     public double powerShotVelocity = 1050;
     public double kP = 50;
     public double kI = 0;
@@ -182,9 +182,7 @@ public class UpliftRobot {
             intakeLifter = hardwareMap.get(Servo.class, "intake_lifter");
 
             stickLeft = hardwareMap.get(Servo.class, "stick_left");
-            stickRight = hardwareMap.get(Servo.class, "stick_right");
             sweeperLeft = hardwareMap.get(CRServo.class, "sweeper_left");
-            sweeperRight = hardwareMap.get(CRServo.class, "sweeper_right");
 
             intakeInitialized = true;
         } catch (Exception ex) {
@@ -338,7 +336,6 @@ public class UpliftRobot {
         cancelClass.stop();
     }
 
-    public ShootingState shootingState;
     public enum ShootingState {
         IDLE,
         PREPARING_HIGHGOAL,
@@ -352,6 +349,7 @@ public class UpliftRobot {
         DONE_PS3,
         DONE_SHOOTING,
     }
+    public ShootingState shootingState = ShootingState.IDLE;
     public void setShootingState(ShootingState state) {
         shootingState = state;
     }

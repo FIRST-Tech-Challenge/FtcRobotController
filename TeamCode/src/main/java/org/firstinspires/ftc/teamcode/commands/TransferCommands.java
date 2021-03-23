@@ -35,15 +35,15 @@ public class TransferCommands extends Command {
     public void loop() {
 
         // if transfer going down and bottom touch sensor is pressed, stop
-        if (!transfer.transferTouchBottom.getState() && opMode.gamepad2.right_stick_y > 0) {
-            transfer.setTransferPower(0);
-        // if transfer going up and top touch sensor is pressed, stop
-        } else if (!transfer.transferTouchTop.getState() && opMode.gamepad2.right_stick_y < 0) {
-            transfer.setTransferPower(0);
-        // else, set the transfer power to 1/2 of the joystick val
-        } else {
-            transfer.setTransferPower(Range.clip(-opMode.gamepad2.right_stick_y / 2, -1, 1));
-        }
+//        if (!transfer.transferTouchBottom.getState() && opMode.gamepad2.right_stick_y > 0) {
+//            transfer.setTransferPower(0);
+//        // if transfer going up and top touch sensor is pressed, stop
+//        } else if (!transfer.transferTouchTop.getState() && opMode.gamepad2.right_stick_y < 0) {
+//            transfer.setTransferPower(0);
+//        // else, set the transfer power to 1/2 of the joystick val
+//        } else {
+            transfer.setTransferPower(Range.clip(-opMode.gamepad2.right_stick_y, -1, 1));
+//        }
 
         // if Y pressed on OPERATOR gamepad or shooting state is PREPARING_HIGHGOAL, prepare for shooting highgoal by raising transfer
         // *NOTE: Y button on the OPERATOR gamepad also turns on shooter to the highgoal velocity (simultaneously)
