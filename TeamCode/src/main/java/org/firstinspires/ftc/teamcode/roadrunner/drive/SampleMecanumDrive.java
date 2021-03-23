@@ -170,7 +170,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        // setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap,this)); //Comment out this line if you want to tune for max velocity
+        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap,this)); //Comment out this line if you want to tune for max velocity
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
