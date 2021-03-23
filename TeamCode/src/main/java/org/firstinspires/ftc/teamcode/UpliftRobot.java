@@ -147,6 +147,7 @@ public class UpliftRobot {
         try {
             transfer = hardwareMap.get(DcMotor.class, "transfer");
             transfer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "touch_bottom");
             digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);
