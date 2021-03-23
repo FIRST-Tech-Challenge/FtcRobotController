@@ -34,7 +34,13 @@ public class IntakeCommands extends Command {
 
     @Override
     public void loop() {
-        intake.setIntakePower(Range.clip(opMode.gamepad2.left_stick_y, -1, 1) * 0.8);
+        intake.setIntakePower(Range.clip(opMode.gamepad2.left_stick_y, -1, 1));
+        if(intake.getPower() > 0){
+            intake.sweepersOn();
+        }
+        else{
+            intake.sweepersOff();
+        }
     }
 
     @Override
