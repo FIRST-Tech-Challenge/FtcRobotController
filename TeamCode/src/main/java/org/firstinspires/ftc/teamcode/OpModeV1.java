@@ -18,6 +18,7 @@ public class OpModeV1 extends LinearOpMode {
     private DcMotor backRight;
     private DcMotor shooter;
     private DcMotor belt;
+    private DcMotor intake;
 
     //code to play once the OpMode is active
     public void runOpMode() {
@@ -30,13 +31,15 @@ public class OpModeV1 extends LinearOpMode {
 
         shooter = hardwareMap.get(DcMotor.class, "buzz");
         belt = hardwareMap.get(DcMotor.class, "belt");
+        intake = hardwareMap.get(DcMotor.class, "intake");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         shooter.setDirection(DcMotorSimple.Direction.FORWARD);
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
         belt.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
@@ -44,8 +47,12 @@ public class OpModeV1 extends LinearOpMode {
         // Variable initialization
         double throttle;
         double pivot;
-        double rampDirection;
         double beltPower;
+        boolean powerA;
+        boolean powerB;
+        boolean powerX;
+        boolean powerY;
+        boolean intakePower;
         double shooterPower;
         boolean strafeRight;
         boolean strafeLeft;
@@ -54,11 +61,16 @@ public class OpModeV1 extends LinearOpMode {
             // Read in values from controller
             throttle = gamepad1.right_stick_y;
             pivot = gamepad1.left_stick_x;
-            beltPower = gamepad2.left_trigger;
+            beltPower = gamepad2.left_stick_y;
             shooterPower = gamepad2.right_trigger;
-            rampDirection = gamepad2.right_stick_y;
             strafeRight = gamepad1.right_bumper;
             strafeLeft = gamepad1.left_bumper;
+            powerA = gamepad2.a;
+            powerB = gamepad2.b;
+            powerX = gamepad2.x;
+            powerY = gamepad2.y;
+            intakePower = gamepad2.left_bumper;
+
 
             // Driving
             if (strafeRight){
@@ -77,20 +89,36 @@ public class OpModeV1 extends LinearOpMode {
                 backLeft.setPower(throttle);
                 backRight.setPower(throttle);
 
-                frontLeft.setPower(pivot);
-                frontRight.setPower(-pivot);
-                backLeft.setPower(pivot);
-                backRight.setPower(-pivot);
+                frontLeft.setPower(-pivot);
+                frontRight.setPower(pivot);
+                backLeft.setPower(-pivot);
+                backRight.setPower(pivot);
             }
 
-            if (shooterPower >= 0.75){
-                shooter.setPower(0.75);
+            if (shooterPower > 0){
+                if (powerA){
+                    shooter.setPower(1);
+                }else if (powerB){
+                    shooter.setPower(0.8);
+                }else if (powerX){
+                    shooter.setPower(0.5);
+                }else if (powerY){
+                    shooter.setPower(0.75);
+                }
             }else{
-                shooter.setPower(shooterPower);
+                shooter.setPower(0);
+            }
+
+            if (intakePower){
+                intake.setPower(.5);
+            }else{
+                intake.setPower(0);
             }
 
             if (beltPower > 0){
                 belt.setPower(0.5);
+            }else if(beltPower<0){
+                belt.setPower(-0.5);
             }else{
                 belt.setPower(0);
             }

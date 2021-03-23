@@ -52,11 +52,10 @@ import java.util.List;
  * is explained below.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
-@Disabled
 public class TensorFlowTest extends LinearOpMode {
-    private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
-    private static final String LABEL_QUAD = "Quad";
-    private static final String LABEL_SINGLE = "Single";
+    private static final String TFOD_MODEL_ASSET = "detect.tflite";
+    private static final String LABEL_QUAD = "four";
+    private static final String LABEL_SINGLE = "one";
 
     private static ftcsecrets.secrets appSecrets = new ftcsecrets.secrets();
 
@@ -82,6 +81,8 @@ public class TensorFlowTest extends LinearOpMode {
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
          **/
+
+
         if (tensorFlowObjDetector != null) {
             tensorFlowObjDetector.activate();
 
@@ -118,16 +119,11 @@ public class TensorFlowTest extends LinearOpMode {
                             // step through the list of recognitions and display boundary info.
                             int i = 0;
                             for (Recognition recognition : updatedRecognitions) {
-                                telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                                telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                        recognition.getLeft(), recognition.getTop());
-                                telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                        recognition.getRight(), recognition.getBottom());
 
                                 // check label to see which target zone to go after.
-                                if (recognition.getLabel().equals("Single")) {
+                                if (recognition.getLabel().equals(LABEL_SINGLE)) {
                                     telemetry.addData("Target Zone", "B");
-                                } else if (recognition.getLabel().equals("Quad")) {
+                                } else if (recognition.getLabel().equals(LABEL_QUAD)) {
                                     telemetry.addData("Target Zone", "C");
                                 } else {
                                     telemetry.addData("Target Zone", "UNKNOWN");
@@ -137,6 +133,7 @@ public class TensorFlowTest extends LinearOpMode {
 
                         telemetry.update();
                     }
+
                 }
             }
         }
@@ -144,6 +141,7 @@ public class TensorFlowTest extends LinearOpMode {
         if (tensorFlowObjDetector != null) {
             tensorFlowObjDetector.shutdown();
         }
+
     }
 
     /**
@@ -170,7 +168,7 @@ public class TensorFlowTest extends LinearOpMode {
     private void initTensorFlowObjDetector() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
             "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+       TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
        tfodParameters.minResultConfidence = 0.8f;
        tensorFlowObjDetector = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
        tensorFlowObjDetector.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_QUAD, LABEL_SINGLE);
