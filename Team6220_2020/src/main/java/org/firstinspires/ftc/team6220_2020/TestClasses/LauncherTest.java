@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.team6220_2020.TestClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.team6220_2020.MasterOpMode;
+import org.firstinspires.ftc.team6220_2020.Constants;
 import org.firstinspires.ftc.team6220_2020.MasterTeleOp;
 
 @TeleOp(name = "LauncherTestWithRPM", group = "TeleOp")
@@ -22,7 +21,7 @@ public class LauncherTest extends MasterTeleOp {
 
             driveLauncherWithController();
 
-            telemetry.addData("Launcher RPM", getMotorSpeed(motorLauncher, 200));
+            telemetry.addData("Launcher RPM", (getMotorTicksPerMinute(motorLauncher, 100)) / Constants.AM_37_TICKS_PER_ROTATION);
             telemetry.update();
 
             idle();

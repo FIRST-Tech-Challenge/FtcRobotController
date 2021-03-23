@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public abstract class MasterOpMode extends LinearOpMode
 {
     //Motors
-    /*DcMotor motorFrontLeft;
-    DcMotor motorFrontRight;
-    DcMotor motorBackLeft;
-    DcMotor motorBackRight;*/
+    /*public static DcMotor motorFrontLeft;
+    public static DcMotor motorFrontRight;
+    public static DcMotor motorBackLeft;
+    public static DcMotor motorBackRight;*/
     // Todo - move to miscallenous motors.
-    public DcMotor motorLauncher;
+    public static DcMotor motorLauncher;
 
     //Other Devices
 
@@ -64,11 +64,17 @@ public abstract class MasterOpMode extends LinearOpMode
         }
     }*/
 
+    //Sets the launch motor to a given power
     public void driveLauncher(double power){
         motorLauncher.setPower(power);
     }
 
-    public double getMotorSpeed(DcMotor motor, int delayInMillis) {
+    //This method returns the speed of a given motor after a delay od delayInMillis
+    //@param motor Input the motor you want to know the RPM of
+    //@param delayInMillis Input the delay you want to measure the change in encoder ticks in milliseconds.
+    public double getMotorTicksPerMinute(DcMotor motor, int delayInMillis) {
+
+        //Variables used only in this method
         double startTime = System.currentTimeMillis();
         double startPosition = motor.getCurrentPosition();
         double endTime;
@@ -76,6 +82,7 @@ public abstract class MasterOpMode extends LinearOpMode
         double positionChange;
         double timeChange;
 
+        //Waits delayInMillis milliseconds before recording endTime and endPosition
         while (true) {
             if (System.currentTimeMillis() - startTime >= delayInMillis) break;
         }
@@ -83,17 +90,21 @@ public abstract class MasterOpMode extends LinearOpMode
         endTime = System.currentTimeMillis();
         endPosition = motor.getCurrentPosition();
 
+        //Calculates the ▲Position and the ▲Time
         positionChange = endPosition - startPosition;
         timeChange = endTime - startTime;
 
+        //Converts the ▲Time from milliseconds to minutes then finds encoder ticks per minute
         double timeChangeInMin = timeChange / 60000;
-        double ticksPerMinute = positionChange/timeChangeInMin;
 
-        if(timeChange != 0){
-            return (ticksPerMinute / Constants.AM_37_TICKS_PER_ROTATION);
-        } else{
-            return 0;
+        //To avoid divide by zero we need to be sure timeChangeInMin does not equal zero.
+        double ticksPerMinute = 0;
+        if(timeChangeInMin != 0) {
+            ticksPerMinute = positionChange / timeChangeInMin;
         }
+
+        //If timeChange is not zero return the motor RPM otherwise return zero.
+        return (ticksPerMinute);
 
     }
 }
