@@ -120,16 +120,16 @@ public class Final_Teleop extends LinearOpMode {
                 spinPower = 0;
             }
             if (gamepad2.a) {
-                SPower = -0.5;
-            } else if (gamepad2.b) {
                 SPower = 0.5;
+            } else if (gamepad2.b) {
+                SPower = -0.5;
             } else {
                 SPower = 0;
             }
             if (gamepad2.x) {
-                factoryPower = -0.25;
+                factoryPower = -0.4;
             } else if (gamepad2.y) {
-                factoryPower = 0.25;
+                factoryPower = 0.4;
             } else {
                 factoryPower = 0;
             }
