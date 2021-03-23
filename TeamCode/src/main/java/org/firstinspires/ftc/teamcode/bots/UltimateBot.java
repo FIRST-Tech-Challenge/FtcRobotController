@@ -461,7 +461,7 @@ public class UltimateBot extends YellowBot {
         //get the orientation as the locator knows it. we'll use it later for corrections
         double originalOrientation = locator.getAdjustedCurrentHeading();
         Log.d("UltimateBot", String.format("original orientation: %.2f", originalOrientation));
-        double strafeSpeed = 0.4;
+        double strafeSpeed = 0.3;
         double spinSpeed = 0.1;
         double strafeToFirst = 10;
         double strafeBetweenPegs = 5;
@@ -495,12 +495,12 @@ public class UltimateBot extends YellowBot {
         newOrientation = locator.getAdjustedCurrentHeading();
         Log.d("UltimateBot", String.format("newOrientation 2: %.2f", newOrientation));
         //spin to the desired orientation
-        double diff = newOrientation - originalOrientation;
-        if (Math.abs(diff ) > marginError) {
-            double updated = originalOrientation + diff/2;
-            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
-            spin(profileSpin, locator);
-        }
+//        double diff = newOrientation - originalOrientation;
+//        if (Math.abs(diff ) > marginError) {
+//            double updated = originalOrientation + diff/2;
+//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+//            spin(profileSpin, locator);
+//        }
         //shoot
         shootServo();
 
@@ -514,12 +514,12 @@ public class UltimateBot extends YellowBot {
         newOrientation = locator.getAdjustedCurrentHeading();
         Log.d("UltimateBot", String.format("newOrientation 2: %.2f", newOrientation));
         //spin to the desired orientation
-        diff = newOrientation - originalOrientation;
-        if (Math.abs(diff ) > marginError) {
-            double updated = newOrientation - 2;
-            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
-            spin(profileSpin, locator);
-        }
+//        diff = newOrientation - originalOrientation;
+//        if (Math.abs(diff ) > marginError) {
+//            double updated = newOrientation - 2;
+//            BotMoveProfile profileSpin = BotMoveProfile.getFinalHeadProfile(updated, spinSpeed, locator);
+//            spin(profileSpin, locator);
+//        }
         //shoot
         shootServo();
 
