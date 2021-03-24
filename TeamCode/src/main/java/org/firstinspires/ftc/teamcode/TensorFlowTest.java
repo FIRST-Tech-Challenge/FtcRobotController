@@ -39,6 +39,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 import java.util.List;
 
 /**
@@ -61,8 +63,12 @@ public class TensorFlowTest extends LinearOpMode {
 
     private static final String VUFORIA_KEY = ftcsecrets.secrets.VUFORIA_KEY;
 
-
     private VuforiaLocalizer vuforia;
+
+    private DcMotor frontLeft;
+    private DcMotor frontRight;
+    private DcMotor backLeft;
+    private DcMotor backRight;
 
     /**
      * {@link #tensorFlowObjDetector} is the variable we will use to store our instance of the TensorFlow Object
@@ -76,6 +82,8 @@ public class TensorFlowTest extends LinearOpMode {
         // first.
         initVuforia();
         initTensorFlowObjDetector();
+
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -94,7 +102,7 @@ public class TensorFlowTest extends LinearOpMode {
             // (typically 1.78 or 16/9).
 
             // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
-            //tfod.setZoom(2.5, 1.78);
+            tensorFlowObjDetector.setZoom(2.5, 1.78);
         }
 
         /** Wait for the game to begin */
