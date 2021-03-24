@@ -11,7 +11,7 @@ public abstract class MasterOpMode extends LinearOpMode
     public static DcMotor motorFrontRight;
     public static DcMotor motorBackLeft;
     public static DcMotor motorBackRight;*/
-    // Todo - move to miscallenous motors.
+    // Todo - move to miscellaneous motors.
     public static DcMotor motorLauncher;
 
     //Other Devices
@@ -22,7 +22,7 @@ public abstract class MasterOpMode extends LinearOpMode
         //motorFrontRight = hardwareMap.dcMotor.get("motorFR");
         //motorBackLeft = hardwareMap.dcMotor.get("motorBL");
         //motorBackRight = hardwareMap.dcMotor.get("motorBR");
-        // Todo - move to miscallenous motors.
+        // Todo - move to miscellaneous motors.
         motorLauncher = hardwareMap.dcMotor.get("motorLauncher");
 
 
@@ -34,7 +34,7 @@ public abstract class MasterOpMode extends LinearOpMode
         motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
-        // Todo - move to miscallenous motors.
+        // Todo - move to miscellaneous motors.
         motorLauncher.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorLauncher.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }

@@ -13,7 +13,7 @@ public abstract class MasterTeleOp extends MasterOpMode
     public void driveLauncherWithController()
     {
         // Todo - migrate to DriverInput class and control to toggle
-        if (gamepad2.a /*a is pressed odd*/) {
+        if (gamepad2.right_bumper /*a is pressed odd*/) {
             driveLauncher(1.0);
         }
         else {
