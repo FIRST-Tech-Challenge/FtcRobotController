@@ -8,6 +8,8 @@ public class AutoCompetition extends MasterAutonomous{
     public void runOpMode() throws InterruptedException {
         Initialize();
 
+        runSetup();
+
         waitForStart();
 
         driveForwardInches(24);
