@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.team6220_2020;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-
 import org.firstinspires.ftc.team6220_2020.ResourceClasses.Button;
 
 public abstract class MasterAutonomous extends MasterOpMode
@@ -19,6 +18,12 @@ public abstract class MasterAutonomous extends MasterOpMode
     // The number of the rings at start up
     int numRings = 0;
 
+    //Start Position Variables. The various start positions are stored in the array start positions are chosen in runSetup.
+    int matchStartPosition;
+    int[][] startPositions = {/*Position 1: X,Y */{0,0},/*Position 2: X,Y */{4,6}};
+    int numStartPositions = startPositions.length - 1;
+
+    //Position values to use in navigation
     float xPos = 0;
     float yPos = 0;
     float lastX = 0;
@@ -56,11 +61,15 @@ public abstract class MasterAutonomous extends MasterOpMode
 
             // Display the current setup
             telemetry.addData("Is on red alliance: ", isRedAlliance);
-            telemetry.addData("Is scoring foundation: ", moveWobbleGoal);
+            telemetry.addData("Is scoring wobble goal: ", moveWobbleGoal);
             telemetry.update();
             idle();
 
         }
+
+        //Sets the match start position
+        xPos = startPositions[matchStartPosition][0];
+        yPos = startPositions[matchStartPosition][1];
 
     }
 
@@ -81,11 +90,15 @@ public abstract class MasterAutonomous extends MasterOpMode
 
         while(!targetAcquired)
         {
-            // Update positions using last Vuforia pos + distance measured by encoders (utilizes fact that encoders have been reset to 0).
+            // Update positions using last distance measured by encoders (utilizes fact that encoders have been reset to 0).
             xPos = lastX + (float) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() +
-                    motorBL.getCurrentPosition() - motorFR.getCurrentPosition() + motorBR.getCurrentPosition()) / (4 /*Math.sqrt(2)*/));
+                    motorBL.getCurrentPosition() - motorFR.getCurrentPosition() + motorBR.getCurrentPosition()) / (4));
             yPos = lastY + (float) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() -
                     motorBL.getCurrentPosition() + motorFR.getCurrentPosition() + motorBR.getCurrentPosition()) / 4);
+
+            telemetry.addData("X Position: ", xPos);
+            telemetry.addData("Y Position: ", yPos);
+            telemetry.update();
         }
     }
 
