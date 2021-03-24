@@ -1309,7 +1309,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (side == ProgramType.AUTO_BLUE) {
             if (tZone == TargetZone.ZONE_A) {//0
                 chassis.driveTo(auto_chassis_power, 25, 165, 0, false, 2);
-                chassis.rotateToFast(1,-45,0.5);
+                chassis.rotateToFast(1,-50,0.5);
             } else if (tZone == TargetZone.ZONE_B) {//1
                 chassis.driveTo(auto_chassis_power, 70, 240, 0, true, 4);
             } else if (tZone == TargetZone.ZONE_C) {//4
@@ -1456,7 +1456,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (tZone == TargetZone.ZONE_C) {
             chassis.driveTo(1.0, side(130), 170, 0, false, 3);
         } else {
-            chassis.driveTo(.8, side(135), 170, 0, false, 5); // need to do something about this
+            chassis.driveTo(.8, side(127), 170, 0, false, 5); // need to do something about this
         }
 
         if (hopper != null) {
@@ -1624,7 +1624,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double target_heading = chassis.odo_heading();
 
         if(angleCollection){
-            target_heading=0;
+            target_heading=1;
             if (Math.abs(chassis.odo_heading() - target_heading) > 0.5) {
                 if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
                     chassis.rotateTo(0.3, target_heading);

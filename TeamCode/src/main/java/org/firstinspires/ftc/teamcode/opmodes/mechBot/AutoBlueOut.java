@@ -69,9 +69,9 @@ public class AutoBlueOut extends LinearOpMode {
                 //if ((robot.runtimeAuto.seconds() < 29.5) && opModeIsActive()
                 robot.detectPosition();
                 robot.deliverFirstWobbleGoal();
-                if ((robot.runtimeAuto.seconds() < 20) && opModeIsActive()) {
+                if (opModeIsActive()) {
                     robot.doPowerShots();
-                    if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+                    if (opModeIsActive()){
                         robot.getSecondWobbleGoal();
                         robot.deliverSecondWobbleGoalAndShootBonusRings();
                     }
