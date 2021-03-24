@@ -19,26 +19,25 @@ public abstract class MasterAutonomous extends MasterOpMode
     int numRings = 0;
 
     //Start Position Variables. The various start positions are stored in the array start positions are chosen in runSetup.
-    int matchStartPosition;
+    int matchStartPosition = 0;
     int[][] startPositions = {/*Position 1: X,Y */{0,0},/*Position 2: X,Y */{4,6}};
     int numStartPositions = startPositions.length - 1;
 
     //Position values to use in navigation
-    float xPos = 0;
-    float yPos = 0;
-    float lastX = 0;
-    float lastY = 0;
+    double xPos = 0;
+    double yPos = 0;
+    double lastX = 0;
+    double lastY = 0;
     //-----------------------------------------------------------------------------------------
 
     // Allows the 1st driver to decide which autonomous routine should be run using gamepad input
     void runSetup()
     {
         // Creates the telemetry log
-        // Ensure log can't overflow
-        telemetry.log().setCapacity(5);
         telemetry.log().add("Red / Blue = B / X");
         telemetry.log().add("Increase / Decrease Delay = DPad Up / Down");
         telemetry.log().add("Score / Not Score Wobble Goal = Toggle Y");
+        telemetry.log().add("Toggle Start Position = Toggle X");
         telemetry.log().add("Press Start to exit setup.");
 
         boolean settingUp = true;
@@ -51,8 +50,16 @@ public abstract class MasterAutonomous extends MasterOpMode
             else if (driver1.isButtonJustPressed(Button.X))
                 isRedAlliance = false;
 
-            if(driver1.isButtonJustReleased(Button.Y)){
+            //Toggles through moving wobble goal
+            if(driver1.isButtonJustReleased(Button.Y))
                 moveWobbleGoal = !moveWobbleGoal;
+
+            //Toggles through start positions
+            if(driver1.isButtonJustPressed(Button.X)){
+                matchStartPosition++;
+                if(matchStartPosition > numStartPositions){
+                    matchStartPosition = 0;
+                }
             }
 
             // If the driver presses start, we exit setup.
@@ -62,6 +69,7 @@ public abstract class MasterAutonomous extends MasterOpMode
             // Display the current setup
             telemetry.addData("Is on red alliance: ", isRedAlliance);
             telemetry.addData("Is scoring wobble goal: ", moveWobbleGoal);
+            telemetry.addData("Start position: ", matchStartPosition);
             telemetry.update();
             idle();
 
@@ -73,7 +81,7 @@ public abstract class MasterAutonomous extends MasterOpMode
 
     }
 
-    public void driveForwardInches(double target)
+    public void driveForwardInches(double targetDistance)
     {
         // Reset motor encoders and return them to RUN_USING_ENCODERS.
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -88,12 +96,32 @@ public abstract class MasterAutonomous extends MasterOpMode
 
         boolean targetAcquired = false;
 
+        //Starting position to measure distance traveled.
+        double startX = xPos;
+        double startY = yPos;
+
         while(!targetAcquired)
         {
+
+            //This calculates the distance traveled in inches
+            //Todo implement PID loop
+            double distanceTraveled = Math.sqrt(Math.pow((startX - xPos),2) + Math.pow((startY - yPos),2));
+            if(targetDistance - distanceTraveled < 12){
+                driveMecanum(0.0,0.7,0.0);
+            } else if(targetDistance - distanceTraveled < Constants.POSITION_TOLERANCE_IN){
+                driveMecanum(0.0,0.2,0.0);
+            } else if(targetDistance - distanceTraveled > 12){
+                driveMecanum(0.0,-0.7,0.0);
+            } else if(targetDistance - distanceTraveled > Constants.POSITION_TOLERANCE_IN){
+                driveMecanum(0.0,-0.2,0.0);
+            } else{
+                targetAcquired = true;
+            }
+
             // Update positions using last distance measured by encoders (utilizes fact that encoders have been reset to 0).
-            xPos = lastX + (float) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() +
+            xPos = lastX + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() +
                     motorBL.getCurrentPosition() - motorFR.getCurrentPosition() + motorBR.getCurrentPosition()) / (4));
-            yPos = lastY + (float) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() -
+            yPos = lastY + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() -
                     motorBL.getCurrentPosition() + motorFR.getCurrentPosition() + motorBR.getCurrentPosition()) / 4);
 
             telemetry.addData("X Position: ", xPos);
