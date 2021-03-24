@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.annotation.Target;
 
 import static java.lang.Thread.interrupted;
 import static java.lang.Thread.sleep;
@@ -1300,7 +1301,9 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         // start pos - 1 or 2 (1 inside, 2 outside) <---- probably need to change this to enum?
         // still need to change positions to be far left for blue side
         if (hopper != null) {
-            hopper.hopperUpCombo(true);
+            if(tZone != TargetZone.ZONE_A) {
+                hopper.hopperUpCombo(true);
+            }
             TaskManager.processTasks();
         }
         if (side == ProgramType.AUTO_BLUE) {
@@ -1454,6 +1457,14 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
             chassis.driveTo(1.0, side(130), 170, 0, false, 3);
         } else {
             chassis.driveTo(.8, side(135), 170, 0, false, 5); // need to do something about this
+        }
+
+        if (hopper != null) {
+            hopper.hopperUpCombo(true);
+            TaskManager.processTasks();
+        }
+        while (!TaskManager.isComplete("Transfer Up Combo")) {
+            TaskManager.processTasks();
         }
 //        if (tZone == TargetZone.ZONE_C) { // temporarily disable the shooting
 //            shooter.shootOutByRpm(0);
