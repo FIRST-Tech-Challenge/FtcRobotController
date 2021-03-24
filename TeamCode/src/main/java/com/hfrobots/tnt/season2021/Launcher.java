@@ -36,7 +36,7 @@ public class Launcher {
 
     // GoBilda 1:1 positive power rotation CCW, max theoretical encoder/sec is 2800, measured is 2700
 
-    public final static int LAUNCH_SPEED_ENC_SEC = 1600;
+    public final static int LAUNCH_SPEED_ENC_SEC = 1500;
 
     private final static int LAUNCH_SPEED_TOLERANCE_ENC_SEC = 300;
 
@@ -59,7 +59,7 @@ public class Launcher {
 
     private final Servo launcherLiftServo;
 
-    public final static double RING_FEEDER_FEEDING_POSITION = 0.7;
+    public final static double RING_FEEDER_FEEDING_POSITION = 0.5;
 
     public final static double RING_FEEDER_PARKED_POSITION = 1.0;
 

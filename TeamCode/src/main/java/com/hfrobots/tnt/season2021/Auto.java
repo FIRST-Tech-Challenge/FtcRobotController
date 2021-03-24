@@ -532,10 +532,10 @@ public class Auto extends OpMode {
 
                 switch (deliverToTarget) {
                     case A:
-                        trajectoryBuilder.back(16 + 4 + 6);
+                        trajectoryBuilder.back(16 + 4);
                         break;
                     case B:
-                        trajectoryBuilder.back(26+5);
+                        trajectoryBuilder.back(26 + 5 + 5);
                         break;
                     case C:
                         trajectoryBuilder.back(64 - 5);
@@ -595,7 +595,7 @@ public class Auto extends OpMode {
                     case C:
                         return new Turn(Rotation.CCW, 4);
                     case B:
-                        return new Turn(Rotation.CW, 19);
+                        return new Turn(Rotation.CW, 19); // FIXME
                     default:
                         return new Turn(Rotation.CCW, 5);
                 }
