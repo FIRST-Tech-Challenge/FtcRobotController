@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-
 @TeleOp(name = "Mecanum TeleOp Version 2")
 public class V2MecanumTeleOp extends LinearOpMode {
     //    private Gyroscope imu;
