@@ -91,9 +91,9 @@ public class AutoMenu extends LinearOpMode {
                 robot.detectPosition();
                 if (robot.autoPara.isDoPowerShots() && robot.tZone!= ToboMech.TargetZone.ZONE_C) {
                     robot.deliverFirstWobbleGoal();
-                    if ((robot.runtimeAuto.seconds() < 20) && opModeIsActive()) {
+                    if (opModeIsActive()) {
                         robot.doPowerShots();
-                        if ((robot.runtimeAuto.seconds() < 25) && opModeIsActive()){
+                        if (opModeIsActive()){
                             robot.getSecondWobbleGoal();
                             robot.deliverSecondWobbleGoalAndShootBonusRings();
                         }

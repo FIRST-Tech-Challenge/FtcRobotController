@@ -1456,7 +1456,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         if (tZone == TargetZone.ZONE_C) {
             chassis.driveTo(1.0, side(130), 170, 0, false, 3);
         } else {
-            chassis.driveTo(.8, side(127), 170, 0, false, 5); // need to do something about this
+            chassis.driveTo(.8, side(126), 170, 0, false, 5); // need to do something about this
         }
 
         if (hopper != null) {
@@ -1624,7 +1624,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         double target_heading = chassis.odo_heading();
 
         if(angleCollection){
-            target_heading=1;
+            target_heading=2;
             if (Math.abs(chassis.odo_heading() - target_heading) > 0.5) {
                 if (Math.abs(chassis.odo_heading() - target_heading) > 10) {
                     chassis.rotateTo(0.3, target_heading);
@@ -1653,7 +1653,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //shooter.shootOutByRpm(SEMI_POWER_SHOT_RPM-60);
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
         // chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+18,chassis.odo_y_pos_cm(),target_heading-0.5,false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+16,chassis.odo_y_pos_cm(),target_heading-0.5,false,1);
         sleep(200);
         hopper.feederAuto();
         if (n==2) {
@@ -1666,7 +1666,7 @@ public class ToboMech extends Logger<ToboMech> implements Robot2 {
         //chassis.rawRotateTo(0.25, chassis.odo_heading()+3.5, false, 1);
 
         //chassis.driveStraight(0.5, 19, 90, 2);
-        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+18,chassis.odo_y_pos_cm(),target_heading-0.5,false,1);
+        chassis.driveTo(0.5, chassis.odo_x_pos_cm()+16,chassis.odo_y_pos_cm(),target_heading-0.5,false,1);
         sleep(200);
         hopper.feederAuto();
         sleep(100);
