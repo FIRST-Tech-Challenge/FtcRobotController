@@ -34,6 +34,9 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     private double ticks = 537;//537
 
 
+    private double ticks = 537;//537
+
+
     @Override
     public void runOpMode() {
 //        imu = hardwareMap.get(Gyroscope.class, "imu");
@@ -182,8 +185,8 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
                 yPressed = false;
             }
             if (gamepad1.a) {
-                robot.forwardToWhite(.9,.5,.3);
-                robot.forward(.5, -2.7);
+                forwardToWhite(.9,.5,.3);
+                forward(.5, -2.7);
             }
 
             if (gamepad2.left_stick_y > .87) {
@@ -224,5 +227,65 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
             }
 
         }
+    }
+    public void forwardToWhite (double speed, double rotations, double speed2) {
+        robot.frontLeft.setPower(speed2);
+        robot.frontRight.setPower(speed2);
+        robot.backLeft.setPower(speed2);
+        robot.backRight.setPower(speed2);
+
+        while (robot.colorSensor.alpha() < 600 && !gamepad1.x) {
+
+            telemetry.addData("Light Level: ", robot.colorSensor.alpha());
+            telemetry.update();
+        }
+
+        robot.stopMotors();
+    }
+    public void forward (double speed, double rotations){
+        int leftCurrent = robot.frontLeft.getCurrentPosition();
+        int rightCurrent = robot.frontRight.getCurrentPosition();
+        int backLeftCurrent = robot.backLeft.getCurrentPosition();
+        int backRightCurrent = robot.backRight.getCurrentPosition();
+
+        telemetry.addData("Target Front Left Motor Position", leftCurrent);
+        telemetry.addData("Target Front Right Motor Position", rightCurrent);
+        telemetry.addData("Target Back Left Motor Position", backLeftCurrent);
+        telemetry.addData("Target Back Right Motor Position", backRightCurrent);
+        telemetry.update();
+
+        double toPositionLeft = leftCurrent + rotations*ticks;
+        double toPositionRight = rightCurrent + rotations*ticks;
+        double toPositionbackLeft = backLeftCurrent + rotations*ticks;
+        double toPositionbackRight = backRightCurrent + rotations*ticks;
+
+        telemetry.addData("Target Front Left Motor Position", toPositionLeft);
+        telemetry.addData("Target Front Right Motor Position", toPositionRight);
+        telemetry.addData("Target Back Left Motor Position", toPositionbackLeft);
+        telemetry.addData("Target Front Left Motor Position", toPositionbackLeft);
+        telemetry.update();
+
+        robot.frontLeft.setTargetPosition((int)toPositionLeft);
+        robot.frontRight.setTargetPosition((int)toPositionRight);
+        robot.backLeft.setTargetPosition((int)toPositionbackLeft);
+        robot.backRight.setTargetPosition((int)toPositionbackRight);
+
+        robot.motorSetMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        robot.frontLeft.setPower(Math.abs(speed));
+        robot.frontRight.setPower(Math.abs(speed));
+        robot.backLeft.setPower(Math.abs(speed));
+        robot.backRight.setPower(Math.abs(speed));
+
+        while (opModeIsActive() &&
+                (robot.frontLeft.isBusy() && robot.frontRight.isBusy() && robot.backLeft.isBusy() && robot.backRight.isBusy()) && !gamepad1.x) {
+
+            // Display it for the driver.
+            robot.motorTelemetry();
+        }
+        robot.stopMotors();
+
+        robot.motorSetMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 }
