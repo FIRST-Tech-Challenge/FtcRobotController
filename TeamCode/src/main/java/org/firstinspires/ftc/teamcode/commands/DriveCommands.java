@@ -96,23 +96,23 @@ public class DriveCommands extends Command {
         // initialize the gamepad stick values to the three needed axes
         double leftY = Range.clip((-opMode.gamepad1.left_stick_y), -1, 1);
         double rightX;
-        if(opMode.gamepad1.right_stick_x < 0) {
-            rightX = -Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 2), -1, 1);
-        } else {
-            rightX = Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 2), -1, 1);
-        }
+//        if(opMode.gamepad1.right_stick_x < 0) {
+//            rightX = -Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 2), -1, 1);
+//        } else {
+//            rightX = Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 2), -1, 1);
+//        }
+        rightX = Range.clip(Math.pow(opMode.gamepad1.right_stick_x, 3), -1, 1);
         double leftX = Range.clip(opMode.gamepad1.left_stick_x, -1, 1);
 
         // find the angle of the left joystick
         double joystickAngle = Math.toDegrees(MathFunctions.atan2UL(leftY, leftX));
 
+        magnitude = Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2));
+        turnValue = rightX;
+
         if(robot.slowMode) {
-            magnitude = Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2)) / 2;
-            turnValue = rightX / 2;
-        }
-        else {
-            magnitude = Math.sqrt(Math.pow(leftX, 2) + Math.pow(leftY, 2));
-            turnValue = rightX;
+            magnitude /= 2;
+            turnValue /= 2;
         }
 
         // find the turnValue directly from the rightX input value (scaled for smoothness)

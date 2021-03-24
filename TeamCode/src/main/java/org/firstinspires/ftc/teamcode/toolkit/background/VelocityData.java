@@ -39,7 +39,7 @@ public class VelocityData extends Background {
         dashTelem.addData("Powershot Velocity", robot.powerShotVelocity);
         dashTelem.addData("Lower Limit", 1000);
         dashTelem.addData("Upper Limit", 3000);
-        dashTelem.update();
+//        dashTelem.update();
     }
 
     public boolean isHighGoalShooterReady() {

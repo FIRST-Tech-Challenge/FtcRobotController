@@ -77,7 +77,7 @@ public class UpliftRobot {
     public boolean slowMode = false;
     public double shooter1Vel = -1;
     public double shooter2Vel = -1;
-    public double highGoalVelocity = 1700;
+    public double highGoalVelocity = 1900;
     public double powerShotVelocity = 1050;
     public double kP = 50;
     public double kI = 0;
@@ -149,7 +149,7 @@ public class UpliftRobot {
             transfer = hardwareMap.get(DcMotorEx.class, "transfer");
             transfer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             transfer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            transfer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            transfer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             digitalTouchBottom = hardwareMap.get(DigitalChannel.class, "touch_bottom");
             digitalTouchBottom.setMode(DigitalChannel.Mode.INPUT);

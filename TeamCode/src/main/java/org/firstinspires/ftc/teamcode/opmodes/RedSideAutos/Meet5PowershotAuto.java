@@ -43,8 +43,12 @@ public class Meet5PowershotAuto extends UpliftAuto {
 
     @Override
     public void initAction() {
+        intakeSub.initRoller();
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
+        transferSub.initTransferPos();
+        intakeSub.initStick();
+        intakeSub.initSweeper();
     }
 
     @Override

@@ -45,10 +45,12 @@ public class Meet5Auto extends UpliftAuto {
 
     @Override
     public void initAction() {
-        intakeSub.liftRoller();
+        intakeSub.initRoller();
         wobbleSub.closeWobble();
         wobbleSub.highWobble();
         transferSub.initTransferPos();
+        intakeSub.initStick();
+        intakeSub.initSweeper();
     }
 
     @Override
@@ -62,7 +64,6 @@ public class Meet5Auto extends UpliftAuto {
         // set the initial position, ring stack count, and prepare shooter/transfer/intake
         odom.setOdometryPosition(105.25, 8.5, 0);
         stack = robot.ringDetector.ringCount;
-        intakeSub.dropRoller();
         shooterSub.setShooterVelocity(robot.highGoalVelocity);
         transferSub.raiseTransfer();
 
@@ -95,7 +96,9 @@ public class Meet5Auto extends UpliftAuto {
 
             // drive to drop off first wobble
             driveSub.driveToPosition(134, 122, 1, 180);
-            wobbleSub.dropOff();
+            wobbleSub.dropWobble();
+            robot.safeSleep(500);
+            wobbleSub.openWobble();
             driveSub.driveToPosition(134, 112, 1, 180);
 
             // drive to pick up second wobble

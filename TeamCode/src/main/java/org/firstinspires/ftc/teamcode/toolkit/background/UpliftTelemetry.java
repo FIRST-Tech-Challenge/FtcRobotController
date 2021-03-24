@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.toolkit.background;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -21,7 +22,8 @@ public class UpliftTelemetry extends Background {
         super(robot);
         this.robot = robot;
         this.opMode = robot.opMode;
-        this.telem = opMode.telemetry;
+        this.telem = FtcDashboard.getInstance().getTelemetry();
+//        this.telem = robot.opMode.telemetry;
     }
 
     @Override
@@ -44,7 +46,7 @@ public class UpliftTelemetry extends Background {
             telem.addData("Center Encoder pos:\t", robot.odometry.getCenterTicks() / UpliftRobot.COUNTS_PER_INCH);
             telem.addData("Slow Mode:\t", robot.slowMode);
             telem.addData("Transfer Pos:\t", robot.transferSub.transfer.getCurrentPosition());
-            telem.addData("Transfer PID:\t", robot.transfer.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+            telem.addData("Transfer Mode:\t", robot.transfer.getMode());
         }
         telem.addData("Shooting State\t",  robot.shootingState + "");
         telem.update();
