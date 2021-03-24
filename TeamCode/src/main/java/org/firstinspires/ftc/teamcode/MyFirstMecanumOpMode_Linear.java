@@ -25,6 +25,8 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
     DcMotorImplEx shooterMotor = null;
     Servo wobbleGoalGrippyThing = null;
     CRServo intakeOne = null;
+    CRServo intakeTwo = null;
+    CRServo trigger = null;
   //  CRServo intakeTwo = null;
     CRServo shooterServo1 = null;
     CRServo shooterServo2 = null;
@@ -51,9 +53,11 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
         shooterMotor = (DcMotorImplEx) hardwareMap.dcMotor.get("shooterMotor");
         wobbleGoalGrippyThing = hardwareMap.servo.get("wobbleGrip");
         intakeOne = hardwareMap.crservo.get("intakeServoOne");
+        intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
       //  intakeTwo = hardwareMap.crservo.get("intakeServoTwo");
         shooterServo1 = hardwareMap.crservo.get("shooterServo1");
         shooterServo2 = hardwareMap.crservo.get("shooterServo2");
+        trigger = hardwareMap.crservo.get("trigger");
 
         leftFrontMotor.setDirection(DcMotor.Direction.FORWARD);
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -148,10 +152,14 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
 
             if (gamepad2.a) {
                 intakeOne.setPower(0.9);
+                intakeTwo.setPower(0.9);
             } else if (gamepad2.b) {
                 intakeOne.setPower(-0.9);
+                intakeTwo.setPower(-0.9);
             } else if (gamepad2.x){
                 intakeOne.setPower(0);
+                intakeTwo.setPower(0);
+
             }
             /*beep boop
             *
@@ -208,11 +216,11 @@ public class MyFirstMecanumOpMode_Linear extends LinearOpMode {
                 }
             }
             while (gamepad2.dpad_left) {
-                /*
-                servo.setPosition(.7);
-                robot.pause();
-                servo.setPosition(.2);
-                 */
+                trigger.setPower(-.7);
+                robot.pause(700);
+                trigger.setPower(.7);
+                robot.pause(700);
+
             }
 
         }
