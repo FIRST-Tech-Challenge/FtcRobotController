@@ -80,7 +80,7 @@ public class WobbleSubsystem extends Subsystem {
     }
 
     public void closeWobble() {
-        clamp.setPosition(0.3);
+        clamp.setPosition(0.35);
         robot.safeSleep(500);
     }
 

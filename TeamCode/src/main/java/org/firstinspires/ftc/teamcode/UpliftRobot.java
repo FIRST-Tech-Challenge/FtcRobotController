@@ -59,6 +59,7 @@ public class UpliftRobot {
     public Servo flicker, clamp;
     public Servo sweeperJoint, stick;
     public CRServo sweeperLeft;
+    public CRServo sweeperRight;
     public DigitalChannel digitalTouchBottom, digitalTouchTop;
     public DistanceSensor shooterSensor;
 
@@ -77,7 +78,7 @@ public class UpliftRobot {
     public boolean slowMode = false;
     public double shooter1Vel = -1;
     public double shooter2Vel = -1;
-    public double highGoalVelocity = 1900;
+    public double highGoalVelocity = 1950;
     public double powerShotVelocity = 1050;
     public double kP = 50;
     public double kI = 0;
@@ -172,7 +173,7 @@ public class UpliftRobot {
             shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
             shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-//            shooterSensor = hardwareMap.get(DistanceSensor.class, "shooter_sensor");
+            shooterSensor = hardwareMap.get(DistanceSensor.class, "shooter_sensor");
 
             shooterInitialized = true;
         } catch (Exception ex) {
@@ -187,6 +188,7 @@ public class UpliftRobot {
 
             sweeperJoint = hardwareMap.get(Servo.class, "sweeper_joint");
             sweeperLeft = hardwareMap.get(CRServo.class, "sweeper_left");
+            sweeperRight = hardwareMap.get(CRServo.class, "sweeper_right");
             stick = hardwareMap.get(Servo.class, "stick");
 
             intakeInitialized = true;

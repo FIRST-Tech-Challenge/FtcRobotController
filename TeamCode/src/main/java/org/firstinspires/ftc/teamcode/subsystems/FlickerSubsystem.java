@@ -49,7 +49,7 @@ public class FlickerSubsystem extends Subsystem {
         }
 
         // move out
-        flicker.setPosition(0.10);
+        flicker.setPosition(0.08);
         if(!robot.safeSleep(500)) {
             safeDisable();
             return;

@@ -15,6 +15,7 @@ public class IntakeSubsystem extends Subsystem {
     public Servo sweeperJoint;
     public Servo stick;
     public CRServo sweeperLeft;
+    public CRServo sweeperRight;
 
 
     public IntakeSubsystem(UpliftRobot robot){
@@ -25,6 +26,7 @@ public class IntakeSubsystem extends Subsystem {
         this.sweeperJoint = robot.sweeperJoint;
         this.stick = robot.stick;
         this.sweeperLeft = robot.sweeperLeft;
+        this.sweeperRight = robot.sweeperRight;
     }
 
     @Override
@@ -65,15 +67,15 @@ public class IntakeSubsystem extends Subsystem {
 //    }
 
     public void initRoller() {
-        intakeLifter.setPosition(1);
+        intakeLifter.setPosition(0.95);
     }
 
     public void liftRoller() {
-        intakeLifter.setPosition(0.85);
+        intakeLifter.setPosition(0.78);
     }
 
     public void dropRoller() {
-        intakeLifter.setPosition(0.65);
+        intakeLifter.setPosition(0.52);
     }
 
     public void initStick() {
@@ -98,9 +100,11 @@ public class IntakeSubsystem extends Subsystem {
 
     public void sweeperOn() {
         sweeperLeft.setPower(-1);
+        sweeperRight.setPower(-1);
     }
 
     public void sweeperOff() {
         sweeperLeft.setPower(0);
+        sweeperRight.setPower(0);
     }
 }

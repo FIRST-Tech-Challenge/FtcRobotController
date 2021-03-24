@@ -51,11 +51,10 @@ public class ServoTester extends UpliftAuto {
 //            robot.sweeperRight.setPower(SWEEPER_RIGHT_POWER);
 //            robot.sweeperLeft.setPower(SWEEPER_LEFT_POWER);
 //            robot.stick.setPosition(STICK_POS);
-            robot.intakeLifter.setPosition(INTAKE_LIFTER_POS);
-
+//            robot.intakeLifter.setPosition(INTAKE_LIFTER_POS);
 //            robot.flicker.setPosition(FLICKER_POS);
 //            robot.wobbleSub.setWobblePosition(WOBBLE_POS);
-//            robot.clamp.setPosition(CLAMP_POS);
+            robot.clamp.setPosition(CLAMP_POS);
         }
 
     }

@@ -37,11 +37,13 @@ public class FlickerCommands extends Command {
 
         // Method for shooting (only flicks 3 rings, then tells transfer to drop and shooter to slow)
         if(opMode.gamepad1.y) {
-            for(int i = 0; i < 2; i++) {
+            double initialTime = System.currentTimeMillis();
+            for(int i = 0; i < 3; i++) {
+                while(!robot.velocityData.isHighGoalShooterReady() && (System.currentTimeMillis() - initialTime) < 2000 && !robot.operatorCancel) {
+                    robot.safeSleep(1);
+                }
                 flicker.flickRing();
-                robot.safeSleep(100);
             }
-            flicker.flickRing();
             robot.setShootingState(UpliftRobot.ShootingState.DONE_SHOOTING);
         }
 
