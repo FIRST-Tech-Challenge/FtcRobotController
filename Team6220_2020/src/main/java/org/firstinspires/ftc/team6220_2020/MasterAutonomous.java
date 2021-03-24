@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team6220_2020;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.team6220_2020.ResourceClasses.Button;
+import org.firstinspires.ftc.team6220_2020.ResourceClasses.PIDFilter;
 
 public abstract class MasterAutonomous extends MasterOpMode
 {
@@ -28,6 +29,9 @@ public abstract class MasterAutonomous extends MasterOpMode
     double yPos = 0;
     double lastX = 0;
     double lastY = 0;
+
+    //PID filters for navigation
+    PIDFilter translationPID = new PIDFilter(Constants.TRANSLATION_P, Constants.TRANSLATION_I, Constants.TRANSLATION_D);
     //-----------------------------------------------------------------------------------------
 
     // Allows the 1st driver to decide which autonomous routine should be run using gamepad input
@@ -104,19 +108,13 @@ public abstract class MasterAutonomous extends MasterOpMode
         {
 
             //This calculates the distance traveled in inches
-            //Todo implement PID loop
             double distanceTraveled = Math.sqrt(Math.pow((startX - xPos),2) + Math.pow((startY - yPos),2));
-            if(targetDistance - distanceTraveled < 12){
-                driveMecanum(0.0,0.7,0.0);
-            } else if(targetDistance - distanceTraveled < Constants.POSITION_TOLERANCE_IN){
-                driveMecanum(0.0,0.2,0.0);
-            } else if(targetDistance - distanceTraveled > 12){
-                driveMecanum(0.0,-0.7,0.0);
-            } else if(targetDistance - distanceTraveled > Constants.POSITION_TOLERANCE_IN){
-                driveMecanum(0.0,-0.2,0.0);
-            } else{
-                targetAcquired = true;
-            }
+
+            //This adds a value to the PID loop si it can update
+            translationPID.roll(distanceTraveled);
+
+            //We drive the mecanum wheels with the PID value
+            driveMecanum(0.0,translationPID.getFilteredValue(),0.0);
 
             // Update positions using last distance measured by encoders (utilizes fact that encoders have been reset to 0).
             xPos = lastX + (double) (Constants.IN_PER_ANDYMARK_TICK * (-motorFL.getCurrentPosition() +
@@ -130,4 +128,11 @@ public abstract class MasterAutonomous extends MasterOpMode
         }
     }
 
+    //Pauses for time milliseconds
+    public void pauseMillis(double time){
+        double startTime = System.currentTimeMillis();
+        while(System.currentTimeMillis() - startTime < time){
+            idle();
+        }
+    }
 }
